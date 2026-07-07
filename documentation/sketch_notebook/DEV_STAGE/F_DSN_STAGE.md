@@ -1,4 +1,4 @@
-# [M] Session 003 | 11:??_07_07_2026 | Markei
+# [M] Session 004 | 11:??_07_07_2026 | Markei
 
 # F_DSN_STAGE — Main Design Materialization Stage
 
@@ -7,16 +7,27 @@
 > - `documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md`
 > - `documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md`
 >
-> Purpose: Codex-ready design notebook update brief for the StoragePage `KeyError: "color"` boundary decision.
+> Purpose: Codex-ready design notebook update brief for the simplified installable/user-facing Markei application milestone.
 > Status: Main-approved for Codex materialization after user review.
 
 ---
 
 # 1. Main Design Synthesis
 
-The active issue is not a reason to modify the repository boundary.
+The product goal is:
 
-The repaired architecture remains:
+```text
+Markei should become a local-first desktop application that non-developer users can open, understand, and use without running Python commands or managing repository files.
+```
+
+Design, Operational, and Didactic reports agree that user-readiness has two linked dimensions:
+
+```text
+1. runtime/distribution readiness
+2. user-facing workflow simplicity
+```
+
+The simplified user-facing version should preserve the current architecture:
 
 ```text
 UI
@@ -28,158 +39,166 @@ Repository
 database.py / SQLite
 ```
 
-The current failure is higher in the dependency chain:
-
-```text
-StoragePage expects presentation metadata named `color`.
-ProductService returns semantic price variation data, but not presentation color.
-```
-
-Design, Operational, and Didactic reports converge on the same interpretation:
-
-```text
-`KeyError: "color"` is a UI/service contract mismatch.
-```
-
-It is not primarily:
-
-- a repository problem;
-- a database problem;
-- a domain model problem;
-- a reason to make ProductService depend on PySide6.
+But the user-facing surface should no longer feel like a development/debugging view of internal categories.
 
 ---
 
-# 2. Design Decision Approved for Materialization
+# 2. Design Decisions Approved for Materialization
 
-## Decision: Preserve semantic service boundary and keep presentation color in UI
+## Decision 1 — Markei MVP remains local-first and offline-capable
 
 Status:
 
 ```text
-Accepted for current MVP repair.
-```
-
-Context:
-
-`StoragePage.load_products()` expects price variation data to include `"color"`, but `ProductService.get_price_variation()` returns only semantic/business data:
-
-```text
-delta
-percentage
-text
+Accepted for simplified installable MVP.
 ```
 
 Decision:
 
 ```text
-ProductService may own price variation semantics.
-StoragePage or a UI-side presentation mapper owns color mapping.
-QColor must remain in the desktop UI layer.
+Markei should not require accounts, cloud sync, scraping, barcode services, remote price APIs, or analytics for MVP use.
 ```
 
 Consequences:
 
-- `ProductService` remains independent of PySide6/Qt.
-- The service layer remains usable by tests, CLI tools, future APIs, or alternate UIs.
-- UI styling can change without touching business logic.
-- StoragePage must not assume service dictionaries contain Qt presentation keys.
+- user data remains local;
+- SQLite remains the persistence mechanism;
+- backups/exports should be user-controlled;
+- packaging should prioritize local data safety before installer polish.
+
+## Decision 2 — First-user flow should be Add-first
+
+Status:
+
+```text
+Accepted for simplified MVP direction.
+```
+
+Decision:
+
+```text
+The first useful moment in Markei is registering a purchase.
+```
+
+Recommended first-user flow:
+
+```text
+Open app
+↓
+Create/load local database automatically
+↓
+If empty, show empty state
+↓
+Guide user to add first product/purchase
+↓
+Save receipt line
+↓
+Refresh inventory summary
+↓
+Explain that predictions improve after repeated purchases
+```
+
+## Decision 3 — User-facing navigation should be simplified
+
+Status:
+
+```text
+Accepted as design direction; implementation may be phased.
+```
+
+Current top-level tabs:
+
+```text
+Register
+Storage
+Shortage
+Market
+History
+Settings
+```
+
+Recommended simplified MVP surfaces:
+
+```text
+Add Purchase
+Inventory
+History
+Settings
+```
+
+Storage, Shortage, and Market should become sections or filters inside Inventory rather than three equal top-level workflows.
+
+Suggested user-facing vocabulary:
+
+```text
+Register -> Add Purchase
+Storage -> In stock / Inventory
+Shortage -> Ending soon
+Market -> Buy again / Shopping list
+History -> History
+Settings -> Settings
+```
+
+Important boundary:
+
+```text
+This naming/navigation simplification does not require immediate internal module renaming.
+```
+
+Internal concepts can remain while user-facing labels become simpler.
+
+## Decision 4 — Settings owns preferences and safe data-management commands
+
+Status:
+
+```text
+Accepted for MVP design direction.
+```
+
+Settings should expose:
+
+```text
+default reorder threshold
+data location display
+backup/export local data
+restore/import later
+reset database with strong confirmation
+app version/about
+```
+
+Settings should not expose:
+
+```text
+raw SQL
+table editing
+schema internals
+manual database initialization
+normal product operations that bypass ProductService
+```
+
+## Decision 5 — Installed app must separate program files from user data
+
+Status:
+
+```text
+Accepted for packaging architecture.
+```
+
+Design distinction:
+
+```text
+Program files:
+    executable, bundled Python/runtime files, bundled resources, UI resources.
+
+User data:
+    market.sqlite, settings, logs, backups/exports.
+```
+
+The user should not need to know that Markei uses SQLite, but should be able to see where local data lives and how to back it up.
 
 ---
 
-# 3. Boundary Ownership
-
-## Repository
-
-Owns:
-
-```text
-SQL operations
-persistent product rows
-persistent purchase rows
-row-to-model mapping
-database access through database.py
-```
-
-Does not own:
-
-```text
-price variation meaning
-UI colors
-QColor
-table styling
-```
-
-## ProductService
-
-Owns:
-
-```text
-business interpretation
-price variation semantics
-product status classification
-purchase interval calculations
-expected next purchase logic
-```
-
-May expose semantic fields such as:
-
-```text
-price_delta
-price_delta_percent
-price_status
-price_trend
-unknown / increased / decreased / same
-```
-
-Does not own:
-
-```text
-QColor
-text brush
-background brush
-visual palette
-widget styling
-table rendering
-```
-
-## StoragePage
-
-Owns:
-
-```text
-rendering storage data
-creating table items
-mapping semantic values to visible style
-choosing QColor / visual emphasis
-handling optional UI display fallbacks
-```
-
-Does not own:
-
-```text
-SQL
-repository access
-business calculations
-purchase duration algorithms
-```
-
-## Optional future UI mapper
-
-A future UI-side mapper may own:
-
-```text
-semantic status -> color
-semantic status -> label
-semantic status -> icon
-semantic status -> tooltip
-```
-
-This mapper must remain in the UI/presentation side of the architecture, not in `app/core/services.py`.
-
----
-
-# 4. Permanent Design Updates Required
+# 3. Permanent Design Updates Required
 
 Create or update design files under:
 
@@ -193,6 +212,7 @@ Recommended files if not already present:
 documentation/sketch_notebook/design/01_ARCHITECTURE.md
 documentation/sketch_notebook/design/03_DECISIONS.md
 documentation/sketch_notebook/design/09_DOMAIN_MODEL.md
+documentation/sketch_notebook/design/11_PRODUCT_INTERFACE.md
 ```
 
 If these files already exist, append/update conservatively.
@@ -201,7 +221,7 @@ Do not edit methodology files.
 
 ---
 
-# 5. Architecture Note to Persist
+# 4. Architecture Note to Persist
 
 Add/update architecture content stating:
 
@@ -211,132 +231,130 @@ Core dependency direction remains:
 UI -> ProductService -> Repository -> database.py -> SQLite
 ```
 
-Add this refinement:
+Add packaging/user-run refinement:
 
 ```text
-Presentation styling belongs to the UI side of the architecture.
+Installed builds must separate bundled application resources from user-writable runtime data.
 
-ProductService may return semantic business/application data, but should not return Qt/PySide objects or display-only metadata such as QColor, QBrush, text color, or background color.
+schema.sql and seed.sql are application resources.
+market.sqlite is user data.
+```
+
+Add product-interface refinement:
+
+```text
+User-facing navigation may simplify internal concepts without renaming internal modules immediately.
+
+Storage, Shortage, and Market are domain/status interpretations. In the simplified UI they may be presented as Inventory sections or filters: In stock, Ending soon, and Buy again.
 ```
 
 ---
 
-# 6. Decision Note to Persist
+# 5. Decision Notes to Persist
 
 Add/update decision content:
 
 ```text
-Decision: Keep price variation color mapping in the UI layer.
+Decision: Keep Markei local-first for MVP.
 
-Status: Accepted for current MVP repair.
+Status: Accepted.
 
 Context:
-StoragePage failed with `KeyError: "color"` because it expected ProductService price-variation output to contain a presentation key named `color`.
+Markei is a household purchase-memory app. Its MVP value does not require accounts, cloud services, scraping, barcode services, remote APIs, or analytics.
 
 Decision:
-ProductService should remain responsible for price variation semantics only. StoragePage, or a future UI-side presentation mapper, should translate semantic price variation into QColor or other visual styling.
+Keep supermarket/product/purchase data local to the user's machine. Future sync or cloud features must be optional and explicitly user-controlled.
+```
+
+```text
+Decision: Simplify user-facing navigation.
+
+Status: Accepted as MVP design direction.
+
+Context:
+The current UI exposes Register, Storage, Shortage, Market, History, and Settings as equal top-level tabs. This mirrors internal project concepts but may overburden first users.
+
+Decision:
+Move toward Add Purchase, Inventory, History, and Settings as the primary user-facing surfaces. Treat Storage, Shortage, and Market as sections/filters inside Inventory.
 
 Consequences:
-- service layer remains free of PySide6/Qt;
-- service return values remain semantic rather than presentation-specific;
-- UI remains responsible for visual choices;
-- future interfaces can reuse ProductService without importing Qt.
+Internal modules may remain unchanged initially. User-facing labels and navigation can be simplified first.
+```
+
+```text
+Decision: Separate installed program files from user data.
+
+Status: Accepted.
+
+Context:
+A packaged app should not store live user data inside the application bundle or installation folder.
+
+Decision:
+Bundled resources such as schema.sql and seed.sql belong with application resources. The live market.sqlite database belongs in a user-writable app data folder.
+
+Consequences:
+Packaging work must update database path handling before Markei is treated as reliably installable for non-developer users.
 ```
 
 ---
 
-# 7. Domain / Boundary Note to Persist
+# 6. Product Interface Note to Persist
 
-Add/update domain or boundary content:
+Add/update product-interface content:
 
 ```text
-Price variation has two layers of meaning.
+First-user flow should be Add-first.
 
-Business/application meaning:
-- price increased;
-- price decreased;
-- price stayed same;
-- price comparison unavailable.
+When the database is empty, Markei should guide the user to register the first supermarket purchase rather than showing all conceptual tabs with no data.
 
-Presentation meaning:
-- red text;
-- green text;
-- neutral gray text;
-- icon or badge choice.
+After the first save, Markei should show what was saved and communicate that predictions improve after repeated purchases of the same product.
+```
 
-The first belongs to ProductService.
-The second belongs to StoragePage or another UI-side presentation component.
+Add simplified MVP IA:
+
+```text
+Add Purchase
+    manual receipt entry and save feedback
+
+Inventory
+    In stock / Ending soon / Buy again sections or filters
+
+History
+    read-only audit trail of registered purchases
+
+Settings
+    preferences, data location, backup/export, reset with confirmation, version/about
 ```
 
 ---
 
-# 8. Shiboken Design Note
+# 7. Scope Boundary for Codex
 
-Add/update a small design caution only if appropriate:
+This F_DSN_STAGE authorizes permanent design notebook updates.
+
+It does not automatically authorize a full UI rewrite.
+
+For application implementation, Codex should follow D_OPS_STAGE first:
 
 ```text
-PySide6/Shiboken warnings are UI binding signals unless evidence shows Qt objects leaking into core layers.
-
-They should not be treated as architectural proof by themselves.
-
-However, introducing Qt objects into ProductService would make such warnings more likely to cross architectural boundaries.
+make database path handling packaging-safe
+add packaging runbook/build script
+validate source and packaged startup
 ```
 
-Keep this short. The Shiboken issue is operationally relevant but not the main design decision.
+User-facing navigation simplification may be staged as a later implementation milestone unless the user explicitly asks to implement it now.
 
 ---
 
-# 9. Codex Prompt — Design Materialization
-
-Codex, read first:
-
-```text
-AGENTS.md
-documentation/sketch_notebook/INDEX.md
-documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
-documentation/sketch_notebook/methodology/PROMOTION_RULES.md
-documentation/sketch_notebook/methodology/CHAT_BEHAVIOUR.md
-documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
-documentation/sketch_notebook/methodology/FLUX.md
-```
-
-Do not modify:
-
-```text
-documentation/sketch_notebook/methodology/
-```
-
-Task:
-
-Use:
-
-```text
-documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
-documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
-documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md
-```
-
-as sources, and synthesize stable design conclusions into permanent design notes under:
-
-```text
-documentation/sketch_notebook/design/
-```
-
-Include only stable design conclusions.
-
-Do not preserve raw staged fragments.
-
-Do not duplicate existing canonical knowledge if the same decision already exists; update conservatively.
-
----
-
-# 10. Expected Codex Report
+# 8. Expected Codex Report
 
 Codex must report:
 
 1. design files created/updated;
 2. architecture note added/updated;
-3. decision note added/updated;
-4. boundary note added/updated;
-5. whether Qt/PySide objects were kept out of core-layer design guidance;
-6. unresolved design risks.
+3. local-first decision added/updated;
+4. navigation simplification decision added/updated;
+5. program-files/user-data separation decision added/updated;
+6. product-interface note added/updated;
+7. whether source code UI navigation was left unchanged unless separately authorized;
+8. unresolved design risks.
