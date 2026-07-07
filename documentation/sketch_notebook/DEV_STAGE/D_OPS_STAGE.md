@@ -1,81 +1,199 @@
-# [M] Session 001 | 10:05_07_07_2026 | Markei
+# [M] Session 002 | 10:??_07_07_2026 | Markei
 
 # D_OPS_STAGE — Main Operational Materialization Stage
 
-> Source stages:
-> - `DEV_STAGE/A_OPERATIONAL.md`
-> - `DEV_STAGE/B_DIDACTIC.md`
-> - `DEV_STAGE/C_DESIGN.md`
+> Source inputs:
+> - User terminal output after pushed Codex version
+> - Current `app/core/repository.py`
+> - Current `app/core/services.py`
+> - Current `app/desktop/ui/pages/storage_page.py`
 >
-> Purpose: Codex-ready operational patch brief.
+> Purpose: Codex-ready operational patch brief for the next runtime failure.
 > Status: Main-approved for Codex materialization after user review.
 
 ---
 
-# 1. Main Synthesis
+# 1. Post-Codex Review
 
-The three functional perspectives agree on the same operational conclusion.
+The previous Repository ImportError repair appears materialized.
 
-The runtime error:
+Current repository state shows:
 
-```text
-ImportError: cannot import name 'Repository' from app.core.repository
+```python
+class Repository(RepositoryContract):
+    def __init__(self):
+        self.connection = connect()
+        self.cursor = self.connection.cursor()
 ```
 
-is caused by `app/core/services.py` expecting `app.core.repository` to expose a module-level symbol named `Repository`, while `app/core/repository.py` does not currently define/export a visible top-level `Repository` class.
+Therefore the old failure:
 
-Operational and Design reports both indicate that repository-like persistence methods appear structurally displaced, likely under an `if __name__ == "__main__":` block or otherwise outside the expected class boundary.
+```text
+ImportError: cannot import name 'Repository' from 'app.core.repository'
+```
 
-Didactic analysis confirms the Python-level interpretation: the module is found, but the requested symbol is missing.
-
-This is an implementation-structure failure in `app/core/repository.py`, not a service-layer design problem.
+is no longer the active blocker.
 
 ---
 
-# 2. Main Operational Decision
+# 2. New Runtime Failure
 
-Do not patch `services.py` as the first response.
-
-Do not move SQL into `services.py`.
-
-Restore the persistence adapter expected by the service layer.
-
-Approved minimal operational direction:
+User terminal output:
 
 ```text
-Rebuild app/core/repository.py around a top-level Repository class.
+python main.py
+Shiboken::Conversions::_pythonToCppCopy: Cannot copy-convert 000001D5C392FA40 (list) to C++.
+Traceback (most recent call last):
+  File "H:\Users\Gus\source\repo\markei\main.py", line 7, in <module>
+    main()
+  File "H:\Users\Gus\source\repo\markei\app\main.py", line 30, in main
+    window = MainWindow()
+  File "H:\Users\Gus\source\repo\markei\app\desktop\main_window.py", line 38, in __init__
+    self.storage_page = StoragePage(self)
+  File "H:\Users\Gus\source\repo\markei\app\desktop\ui\pages\storage_page.py", line 62, in __init__
+    self.load_products()
+  File "H:\Users\Gus\source\repo\markei\app\desktop\ui\pages\storage_page.py", line 297, in load_products
+    variation["color"]
+KeyError: 'color'
 ```
-
-The repository class should satisfy or align with `RepositoryContract` where possible.
 
 ---
 
-# 3. Required Pre-Patch Cleanup
+# 3. Main Operational Diagnosis
 
-Before any application patch, Codex must check for conflict markers in stage files.
+The crash is caused by a mismatch between UI expectation and service return contract.
 
-Search for:
+`StoragePage.load_products()` does:
 
-```text
-<<<<<<<
-=======
->>>>>>>
+```python
+variation = self.service.get_price_variation(product)
+item = QTableWidgetItem(variation["text"])
+item.setForeground(variation["color"])
 ```
 
-especially in:
+But `ProductService.get_price_variation()` returns dictionaries containing only:
 
 ```text
-documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
-documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
+delta
+percentage
+text
 ```
 
-If conflict markers remain, Codex should remove only the markers while preserving both useful staged reports sequentially.
+For products without previous/current price history, the returned dictionary is:
 
-This cleanup is notebook hygiene and should happen before implementation.
+```python
+{
+    "delta": None,
+    "percentage": None,
+    "text": "—",
+}
+```
+
+For products with price history, the returned dictionary is:
+
+```python
+{
+    "delta": delta,
+    "percentage": percentage,
+    "text": text,
+}
+```
+
+No branch returns `"color"`.
+
+Therefore `variation["color"]` raises `KeyError` as soon as Storage loads a product row.
 
 ---
 
-# 4. Codex Prompt — Operational Implementation
+# 4. Boundary Decision
+
+Do not add `QColor` or any PySide6 object to `ProductService`.
+
+Reason:
+
+`ProductService` is the business orchestration layer and must not depend on desktop UI technology.
+
+The existing architecture remains:
+
+```text
+Desktop UI
+↓
+ProductService
+↓
+Repository
+↓
+database.py / SQLite
+```
+
+Color is presentation logic. It belongs in `app/desktop/ui/pages/storage_page.py`, not in `app/core/services.py`.
+
+---
+
+# 5. Approved Minimal Patch Direction
+
+Patch `app/desktop/ui/pages/storage_page.py` only, unless inspection reveals the same direct `variation["color"]` dependency elsewhere.
+
+Recommended minimal implementation:
+
+1. Keep `ProductService.get_price_variation()` unchanged.
+2. Add a UI helper to `StoragePage`, for example:
+
+```python
+def price_variation_color(self, variation: dict) -> QColor:
+    delta = variation.get("delta")
+
+    if delta is None or delta == 0:
+        return QColor("gray")
+
+    if delta > 0:
+        return QColor("red")
+
+    return QColor("green")
+```
+
+3. Replace:
+
+```python
+item.setForeground(
+    variation["color"]
+)
+```
+
+with:
+
+```python
+item.setForeground(
+    self.price_variation_color(variation)
+)
+```
+
+Alternative acceptable minimal patch:
+
+```python
+color = variation.get("color")
+if color is not None:
+    item.setForeground(color)
+```
+
+However, the helper-based patch is preferred because `QColor` is already imported in `storage_page.py`, and price-delta coloring is presentation behavior.
+
+---
+
+# 6. Shiboken Warning
+
+The Shiboken warning appears before the fatal `KeyError`:
+
+```text
+Shiboken::Conversions::_pythonToCppCopy: Cannot copy-convert ... (list) to C++.
+```
+
+Codex should not assume this is solved by the KeyError patch.
+
+After fixing the KeyError, run the app again. If the warning remains and becomes actionable, treat it as a separate UI type-conversion issue.
+
+---
+
+# 7. Codex Prompt — Operational Implementation
 
 Codex, read first:
 
@@ -84,6 +202,8 @@ AGENTS.md
 documentation/sketch_notebook/INDEX.md
 documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
 documentation/sketch_notebook/methodology/PROMOTION_RULES.md
+documentation/sketch_notebook/methodology/CHAT_BEHAVIOUR.md
+documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
 documentation/sketch_notebook/methodology/FLUX.md
 ```
 
@@ -98,62 +218,33 @@ Task:
 1. Inspect:
 
 ```text
-app/core/repository.py
+app/desktop/ui/pages/storage_page.py
 app/core/services.py
-app/core/contracts.py
-app/core/models.py
-app/core/database.py
-database/schema.sql
 ```
 
-2. Repair `app/core/repository.py` so that this succeeds:
+2. Confirm that `ProductService.get_price_variation()` does not return `"color"`.
 
-```python
-from app.core.repository import Repository
-```
+3. Patch `StoragePage` so it does not index `variation["color"]` directly.
 
-3. Prefer this structure unless inspection proves it incompatible:
+4. Keep Qt/PySide color handling in the desktop UI layer.
 
-```python
-from .contracts import RepositoryContract
-from .database import connect
-from .models import Category, Product, Purchase, Store
+5. Do not move PySide6 imports into `app/core/services.py`.
 
-class Repository(RepositoryContract):
-    def __init__(self):
-        self.connection = connect()
-        self.cursor = self.connection.cursor()
-```
+6. Do not change repository/database/model code for this patch.
 
-4. Move or restore persistence methods into `Repository` as instance methods.
-
-5. Add or repair helpers required by existing methods:
+7. Search for other occurrences of:
 
 ```text
-commit
-close
-cursor_execute
-row_to_product
-row_to_purchase
-row_to_category
-row_to_store
+variation["color"]
 ```
 
-6. Fix any recursive `cursor_execute` implementation so it delegates to:
+or equivalent direct `color` assumptions on the return value of `get_price_variation()`.
 
-```python
-self.cursor.execute(sql, parameters)
-```
-
-7. Do not expand the feature set.
-
-8. Defer promotion-specific repository behavior unless the required model/schema exists.
-
-9. Keep `services.py` unchanged unless import/signature alignment strictly requires a minimal adjustment.
+8. If found in other desktop UI pages, apply the same UI-layer fix there.
 
 ---
 
-# 5. Required Validation Commands
+# 8. Required Validation Commands
 
 After patching, run:
 
@@ -164,32 +255,31 @@ python -m compileall app
 Then:
 
 ```bash
-python -c "from app.core.repository import Repository; print(Repository)"
+python -c "from app.core.services import ProductService; service = ProductService(); print(service.get_price_variation(service.get_products()[0]) if service.get_products() else 'no products'); service.close()"
 ```
 
 Then:
 
 ```bash
-python -c "from app.core.services import ProductService; service = ProductService(); print(type(service.repository)); service.close()"
+python main.py
 ```
 
-If available:
+Report:
 
-```bash
-python -m app.main
-```
-
-Report all command outputs.
+1. whether the app window opens;
+2. whether the `KeyError: 'color'` is gone;
+3. whether the Shiboken warning remains;
+4. any new traceback.
 
 ---
 
-# 6. Expected Codex Report
+# 9. Expected Codex Report
 
 Codex must report:
 
 1. files changed;
-2. exact repository structure chosen;
-3. whether `RepositoryContract` was used;
+2. exact UI helper or fallback chosen;
+3. whether `services.py` was left UI-free;
 4. validation commands run;
 5. command outputs;
 6. remaining risks.
