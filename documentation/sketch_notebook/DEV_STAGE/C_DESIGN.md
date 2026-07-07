@@ -1,187 +1,4 @@
-# DEV_TRACK — C_DESIGN
-
-## 2026-07-07 — Design Evaluation: ProductService Repository Boundary
-
-### Scope
-
-Design Chat evaluated whether `app/core/services.py` should depend on:
-
-- a concrete `Repository` class;
-- module-level repository functions;
-- or another persistence abstraction.
-
-Only this DEV_TRACK staging file was updated. Permanent notebook files were not modified.
-
-### Methodological context read
-
-Available and read:
-
-- `app/documentation/sketch_notebook/methodology/CHAT_BEHAVIOUR.md`
-- `app/documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md`
-- `app/documentation/sketch_notebook/methodology/PROMOTION_RULES.md`
-
-Observed repository state:
-
-- `PROMOTION_RULES.md` currently exists but is empty.
-- `METHOD_FOUNDATIONS.md` was not found at the requested path or under the discovered `app/documentation/sketch_notebook/methodology/` prefix.
-- `FLUX.md` was not found at the requested path or under the discovered `app/documentation/sketch_notebook/methodology/` prefix.
-
-### Orientation files
-
-The requested endpoint file was not found at:
-
-- `documentation/sketch_notebook/03_DECISIONS.md`
-- `app/documentation/sketch_notebook/03_DECISIONS.md`
-
-The optional design/domain files were also not found at the discovered notebook prefix:
-
-- `app/documentation/sketch_notebook/01_ARCHITECTURE.md`
-- `app/documentation/sketch_notebook/05_DOMAIN_MODEL.md`
-
-Therefore this design evaluation is based on the available methodology files and current code contracts.
-
-### Architectural diagnosis
-
-`app/core/services.py` already declares a layered architecture:
-
-```text
-UI
-→ ProductService
-→ Repository
-→ SQLite
-```
-
-The service layer is explicitly described as the business orchestration layer. It coordinates repository operations, enforces business rules, registers receipts, maintains product lifecycle state, recalculates product summaries, and exposes application services to the UI.
-
-The same file explicitly says that the service layer must not:
-
-- execute SQL;
-- know SQLite;
-- manipulate database cursors.
-
-This means `services.py` should not import and coordinate low-level persistence functions directly if doing so would expose database mechanics to the service layer.
-
-`app/core/contracts.py` reinforces the same boundary:
-
-- `RepositoryContract` is the lowest persistence layer and contains SQL only.
-- `ServiceContract` is the business layer, has no SQL, and coordinates repository operations.
-
-Therefore the intended architecture is object-oriented service orchestration over a persistence abstraction.
-
-### Evaluation of dependency options
-
-#### Option 1 — `services.py` imports a concrete `Repository` class
-
-This matches the current implementation intent.
-
-`ProductService.__init__()` currently does:
-
-```python
-self.repository = Repository()
-```
-
-and the service methods call repository object methods such as:
-
-- `get_products()`
-- `get_product()`
-- `get_purchases()`
-- `create_product()`
-- `update_product()`
-- `insert_purchase()`
-- `delete_product()`
-- `delete_purchase()`
-
-This is coherent with `RepositoryContract`, which defines repository behavior as object methods.
-
-#### Option 2 — `services.py` imports repository functions
-
-This is not the preferred design.
-
-Function imports would flatten the boundary between the service layer and persistence module. It would also move the code away from the existing `RepositoryContract` / `ServiceContract` model.
-
-Repository helper functions may exist internally inside `repository.py`, especially for connection setup, reset, and database initialization. However, application persistence operations should remain behind a repository object.
-
-#### Option 3 — `services.py` imports another abstraction
-
-Long-term, the cleanest abstraction is not necessarily the concrete class itself, but a repository interface/contract.
-
-Recommended future direction:
-
-```python
-class ProductService(ServiceContract):
-    def __init__(self, repository: RepositoryContract | None = None):
-        self.repository = repository or Repository()
-```
-
-This would preserve the simple default runtime behavior while allowing tests or future persistence implementations to inject another repository object.
-
-However, this is a refinement, not the minimal fix required for the current ImportError.
-
-### ImportError classification
-
-The ImportError reflects an implementation bug, not an architectural inconsistency.
-
-Current `services.py` imports:
-
-```python
-from .repository import Repository
-```
-
-and instantiates:
-
-```python
-self.repository = Repository()
-```
-
-That is architecturally consistent with the service/repository boundary.
-
-The inconsistency is in `app/core/repository.py`:
-
-- the file begins with database helper functions;
-- no module-scope `class Repository` is visible;
-- repository-style methods such as `create_product` appear nested under `if __name__ == "__main__":`;
-- therefore the module does not export the name `Repository` that `services.py` imports.
-
-So the failure is best classified as repository implementation drift or structural corruption of the repository module.
-
-### Design decision proposal
-
-Adopt the following design decision for Main Chat synthesis:
-
-`services.py` should depend on a repository object, preferably through `RepositoryContract`, with `Repository` as the default concrete SQLite implementation.
-
-Do not convert `services.py` to direct module-level persistence-function imports.
-
-The canonical dependency direction should remain:
-
-```text
-ProductService
-→ RepositoryContract-compatible repository object
-→ SQLite repository implementation
-→ sqlite3/database helpers
-```
-
-### Required repository changes
-
-Implementation should be handled by Operational Chat / Codex, but the required structural changes are:
-
-1. Restore or create a module-scope `class Repository(RepositoryContract)` in `app/core/repository.py`.
-2. Add the missing top-level imports required by that module, including `sqlite3`, model types, config/database helpers, and `RepositoryContract` as needed.
-3. Keep database lifecycle helpers such as `connect`, `close`, and `reset` as module-level helpers if useful.
-4. Move persistence methods out of the `if __name__ == "__main__":` block and into the `Repository` class.
-5. Ensure `Repository` owns connection/cursor state or otherwise clearly owns persistence access.
-6. Ensure methods expected by `ProductService` and `RepositoryContract` exist on the class.
-7. Add/restore lower-level helper methods used by the repository implementation, such as `cursor_execute`, `commit`, `row_to_product`, and `row_to_purchase` if they are required by the existing method bodies.
-8. Validate that `from .repository import Repository` succeeds before running the UI.
-
-### Status
-
-Design decision staged for Main Chat synthesis.
-
-Permanent notebook files were not modified.
-
-Implementation is not performed in this Design Chat pass.
-# [D] Session 001 | 09:45_07_07_2026 | Markei
+# [D] Session 002 | 10:45_07_07_2026 | Markei
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ROLE
@@ -190,6 +7,8 @@ ROLE
 Design Chat
 
 Responsibility: architecture, domain boundaries, responsibility allocation, abstractions, and long-term maintainability.
+
+This pass evaluates only architectural responsibilities after the Repository repair. It does not edit application code.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 BOOTSTRAP STATUS
@@ -201,45 +20,94 @@ Read successfully:
 - documentation/sketch_notebook/INDEX.md
 - documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
 - documentation/sketch_notebook/methodology/PROMOTION_RULES.md
+- documentation/sketch_notebook/methodology/CHAT_BEHAVIOUR.md
+- documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
 - documentation/sketch_notebook/methodology/FLUX.md
+- documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
 
-Bootstrap inconsistency observed:
+Relevant methodology constraints:
 
-- documentation/sketch_notebook/methodology/CHAT_BEHAVIOUR.md returned 404.
-- documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md returned 404.
-
-Design implication:
-
-The methodology boot sequence is partially unavailable in the repository. This does not change the application architecture diagnosis below, but Main Chat should verify whether these methodology files are intentionally absent, renamed, or not yet materialized.
+- Functional Design Chat may write only `documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md`.
+- Functional Design Chat must not edit application source code.
+- Design Chat observes architecture, domain modeling, separation of responsibilities, and structural consistency.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 PROBLEM ANALYSED
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-ImportError:
+Reported current failure:
 
-    cannot import name 'Repository' from 'app.core.repository'
+    StoragePage initialization fails with:
 
-Relevant dependency:
+        KeyError: "color"
 
-    app/core/services.py
-        imports Repository from app.core.repository
-        instantiates Repository inside ProductService.__init__
+Reported context:
 
-Observed repository state:
+- Repository repair has already moved the application beyond the previous persistence adapter failure.
+- The current failure happens during StoragePage initialization.
+- The question is whether the service layer should provide UI metadata such as colors, and whether Qt objects such as QColor belong inside ProductService.
 
-    app/core/repository.py
-        does not expose a visible top-level Repository class at the beginning of the file.
-        begins with database connection functions.
-        contains repository-like methods later in the file, but they appear structurally displaced / indented under an execution block rather than owned by a class declaration.
+This Design Chat pass evaluates architecture only. It does not propose a code patch except where necessary to explain layer ownership.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ARCHITECTURAL DIAGNOSIS
+1. ARCHITECTURAL OBSERVATIONS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-The immediate import error is not merely an import typo. It indicates a broken architectural boundary between the business layer and the persistence layer.
+Observation 1 — The failure moved upward in the dependency chain.
 
-The intended architecture, as described by services.py, is:
+The previous architectural concern was whether ProductService could correctly depend on a concrete Repository adapter. The current reported failure occurs during StoragePage initialization, which places the symptom in the UI/presentation area rather than in the persistence repair itself.
+
+Architectural implication:
+
+    Repository repair exposed the next boundary problem.
+
+The system now appears to be failing not because persistence cannot be imported, but because the UI expects a presentation field named `color` that is not present in the data object it receives.
+
+Observation 2 — `KeyError: "color"` indicates a contract mismatch.
+
+A missing `color` key means one layer expects the returned product/status structure to contain presentation metadata.
+
+There are two possible architectural interpretations:
+
+1. ProductService promised a UI-ready dictionary containing `color`, but failed to provide it.
+2. StoragePage invented an expectation that ProductService should provide `color`, even though ProductService owns business semantics rather than visual rendering.
+
+The second interpretation is architecturally preferable because it preserves layer separation.
+
+Observation 3 — Price variation has two meanings.
+
+Price variation can mean:
+
+- domain semantics: price increased, decreased, stayed stable, has no previous comparison, or is affected by promotion logic;
+- presentation styling: green/red/gray/yellow, QColor objects, table brushes, labels, or icons.
+
+These are not the same responsibility.
+
+The domain meaning may belong to the business layer.
+The color representation belongs to the UI layer.
+
+Observation 4 — QColor is a Qt presentation object.
+
+QColor is not a domain value. It is part of the PySide6/Qt presentation framework.
+
+If ProductService imports, constructs, stores, or returns QColor, then the service layer becomes coupled to the UI framework. That would make the service less testable, less reusable, and less clearly separated from presentation concerns.
+
+Observation 5 — Shiboken warning is not itself an architectural diagnosis.
+
+A Shiboken warning usually belongs to the Python/Qt binding runtime boundary. By itself, it does not prove an application architecture violation.
+
+However, if Qt objects are being created, passed, retained, or transformed outside the UI layer, the warning may become supporting evidence that presentation objects are leaking into non-presentation code.
+
+Therefore:
+
+    Shiboken warning alone: runtime/UI binding concern.
+    Shiboken warning plus service-owned QColor: architectural boundary smell.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. BOUNDARY OWNERSHIP
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Canonical dependency direction remains:
 
     UI
     ↓
@@ -247,298 +115,268 @@ The intended architecture, as described by services.py, is:
     ↓
     Repository
     ↓
-    SQLite
+    database.py / SQLite
 
-In that structure:
+Layer ownership for this problem:
 
-- ProductService owns workflows and business rules.
-- Repository owns persistence operations and SQL access.
-- database.py owns SQLite connection creation, schema initialization, and low-level database configuration.
-- models.py owns domain data structures.
-- contracts.py owns abstract responsibility declarations.
+1. Repository
 
-The current implementation violates that intended structure because repository.py appears to contain database-manager responsibilities and repository method fragments without exporting the concrete Repository abstraction expected by ProductService.
+Owns:
 
-Therefore, the import failure is a symptom of a deeper design inconsistency:
+- persisted products;
+- persisted purchases;
+- persisted prices;
+- raw historical purchase data;
+- SQL and row reconstruction.
 
-    The concrete persistence adapter expected by the service layer is missing or malformed.
+Does not own:
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-INTENDED STRUCTURE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- price variation meaning;
+- shortage/market interpretation;
+- UI colors;
+- QColor;
+- table styling.
 
-The intended structure should be:
+2. ProductService
 
-    app/core/database.py
-        SQLite lifecycle only:
-        - configure connection
-        - initialize database
-        - connect
-        - close
-        - reset
-        - database_exists
+Owns:
 
-    app/core/repository.py
-        Concrete Repository implementation only:
-        - class Repository(RepositoryContract)
-        - __init__ opens connection through database.connect()
-        - cursor belongs to Repository instance
-        - commit / close / context-manager support
-        - CRUD and query methods for products, purchases, categories, stores, promotions
-        - row_to_product / row_to_purchase / row_to_category / row_to_store / row_to_promotion mapping helpers
-        - no database initialization logic duplicated from database.py
+- business interpretation of purchase history;
+- product availability status;
+- price variation semantics;
+- domain labels or enum-like semantic states such as `price_up`, `price_down`, `price_same`, `no_previous_price`;
+- calculations needed to decide what a product means in the application domain.
 
-    app/core/services.py
-        Business orchestration only:
-        - class ProductService(ServiceContract)
-        - register_receipt workflow
-        - recalculate_product
-        - status classification
-        - price / duration calculations
-        - no SQL
-        - no sqlite3 cursor access
+Does not own:
 
-    app/core/models.py
-        Domain entities only:
-        - Product
-        - Purchase
-        - Category
-        - Store
-        - Promotion, if supported by repository/schema
+- PySide6 objects;
+- QColor;
+- table item styling;
+- visual palettes;
+- UI widget concerns;
+- final presentation colors.
 
-    app/core/contracts.py
-        Abstract responsibility declarations only:
-        - ProductContract
-        - PurchaseContract
-        - RepositoryContract
-        - ServiceContract
+3. StoragePage
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-RESPONSIBILITY ALLOCATION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Owns:
 
-Correct responsibility allocation:
+- rendering storage data;
+- translating domain status into visible UI representation;
+- choosing table colors, labels, icons, or text formatting;
+- handling absent optional presentation fields defensively if UI metadata is used internally.
 
-1. database.py
+Does not own:
 
-Should be the infrastructure gateway for SQLite connection lifecycle.
+- domain calculations for price variation;
+- purchase interval calculation;
+- expected depletion logic;
+- persistence queries;
+- direct SQL access.
 
-It should not know Product, Purchase, Repository, or business workflows.
+4. Presentation adapter / UI mapper, if introduced later
 
-2. repository.py
+May own:
 
-Should be the concrete persistence adapter.
+- mapping domain semantic states to UI metadata;
+- converting `price_down` into green text;
+- converting `price_up` into red text;
+- converting shortage status into warning style;
+- constructing QColor or other Qt presentation values.
 
-It should know:
-
-- SQL
-- sqlite3 rows
-- database schema
-- model reconstruction from rows
-
-It should not know:
-
-- reorder business meaning
-- shortage / market status classification
-- purchase prediction rules
-- UI presentation
-
-3. services.py
-
-Should be the business application layer.
-
-It may coordinate repository operations and calculate domain summaries.
-
-It should not know:
-
-- SQL
-- sqlite3
-- cursors
-- row factories
-
-4. models.py
-
-Should remain passive domain structures.
-
-It should not execute queries or perform persistence.
-
-5. contracts.py
-
-Should describe layer expectations, but should not replace concrete implementation.
-
-The contract currently establishes the idea of RepositoryContract, but repository.py must provide the concrete Repository class that satisfies it.
+This can live inside the UI layer without burdening StoragePage directly, but it must still remain presentation-side, not service-side.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ARCHITECTURAL CONSISTENCY
+3. DESIGN DECISION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Consistent elements already present:
+Decision 1 — Price variation semantics belong to the service/domain side.
 
-- services.py explicitly documents that ProductService should coordinate Repository and never execute SQL.
-- contracts.py defines RepositoryContract as the lowest persistence layer and says it contains SQL only.
-- database.py documents itself as a Database Manager and correctly excludes business logic, Product knowledge, and Repository knowledge.
-- models.py documents itself as domain models without SQL or database manipulation.
+ProductService may expose semantic information such as:
 
-Inconsistent elements:
+    price_status = "increased"
+    price_status = "decreased"
+    price_status = "same"
+    price_status = "unknown"
 
-- repository.py appears to duplicate database.py connection responsibilities.
-- repository.py does not currently expose the concrete Repository class required by services.py.
-- repository-like methods appear after an `if __name__ == "__main__"` block, which makes them local functions rather than class methods if the indentation is exactly as fetched.
-- repository.py contains a recursive `cursor_execute` implementation at the end, calling itself instead of delegating to `self.cursor.execute(...)`.
-- ProductService depends on Repository as a stable abstraction, but the concrete adapter is structurally absent.
+or equivalent non-UI domain values.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-DESIGN DECISIONS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+This is acceptable because price comparison is business meaning, not visual rendering.
 
-Decision candidate 1 — Keep Repository as a concrete adapter.
+Decision 2 — Presentation colors belong to the UI side.
 
-The application should keep `ProductService -> Repository -> database.py -> SQLite` as the main dependency chain.
+Color is not domain meaning. Color is a chosen representation of meaning.
 
-Do not move SQL into services.py.
+The UI may decide:
 
-Do not make database.py perform domain queries.
+    increased -> red
+    decreased -> green
+    same -> neutral
+    unknown -> muted
 
-Decision candidate 2 — Remove duplicated database lifecycle code from repository.py.
+But ProductService should not decide that mapping.
 
-Repository should import connection lifecycle functions from database.py instead of redefining them.
+Decision 3 — ProductService should not expose UI metadata.
 
-Recommended dependency:
+ProductService should not expose fields whose purpose is directly visual, such as:
 
-    from .database import connect, close
+- `color`
+- `background_color`
+- `text_color`
+- `brush`
+- `qcolor`
+- `display_role`
+- `font_weight`
 
-Decision candidate 3 — Restore Repository as a class, not as free functions.
+If ProductService returns dictionaries, those dictionaries should describe domain/application facts, not Qt presentation objects.
 
-Repository should be a top-level class:
+Decision 4 — QColor does not belong inside the service layer.
 
-    class Repository(RepositoryContract):
-        ...
+QColor belongs to PySide6/Qt presentation code.
 
-All persistence methods currently intended to use `self` should live inside that class.
+ProductService should remain independent of Qt imports. A service layer that imports QColor would violate the intended architecture by making business logic depend on a GUI framework.
 
-Decision candidate 4 — Keep row mapping inside Repository for now.
+Decision 5 — StoragePage currently appears to violate the boundary if it expects ProductService to provide `color`.
 
-Mapping sqlite3.Row to dataclasses is a persistence concern. Until the project grows, separate mapper files are unnecessary.
+If StoragePage currently reads something equivalent to:
 
-Decision candidate 5 — Preserve ProductService as the business boundary.
+    product_data["color"]
 
-The current ProductService responsibilities are architecturally appropriate. The repair should avoid changing service workflows unless method names or repository signatures require alignment.
+from service output, then StoragePage is depending on service output as if it were UI-ready presentation data.
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-DESIGN PROPOSALS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+That is an architectural boundary smell.
 
-Proposal A — Minimal structural repair
+The correct expectation is:
 
-1. Rebuild app/core/repository.py around a top-level Repository class.
-2. Import RepositoryContract from contracts.py.
-3. Import domain models from models.py.
-4. Import connect from database.py.
-5. Implement __init__ with:
+    StoragePage receives semantic state.
+    StoragePage or a UI-side mapper converts semantic state into presentation style.
 
-       self.connection = connect()
-       self.cursor = self.connection.cursor()
+Decision 6 — The Shiboken warning is secondary.
 
-6. Ensure all existing repository methods are class methods.
-7. Add commit and close methods if absent.
-8. Fix cursor_execute to call:
+The Shiboken warning should not be treated as the primary design problem unless evidence shows Qt objects leaking into ProductService or domain structures.
 
-       return self.cursor.execute(sql, parameters)
-
-9. Keep services.py unchanged unless signatures fail.
-
-Proposal B — Boundary cleanup after minimal repair
-
-After the import error is fixed and runtime is validated:
-
-1. Audit repository.py for database-manager duplication.
-2. Remove duplicate connect/reset/initialize functions from repository.py.
-3. Keep database.py as the only database lifecycle module.
-4. Add a small import smoke test for ProductService.
-5. Add a small repository construction test.
-
-Proposal C — Contract alignment
-
-RepositoryContract currently declares only part of the behavior used by ProductService.
-
-After the immediate bug is fixed, Main Chat may decide whether to:
-
-- keep RepositoryContract minimal;
-- expand it to include all methods ProductService relies on;
-- or postpone contract strictness until the MVP stabilizes.
-
-Design recommendation: postpone broad contract expansion until the concrete Repository is stable.
+The primary design problem is the unclear service-to-UI contract around `color`.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STRUCTURAL RISKS
+4. RECOMMENDED ARCHITECTURAL REPAIR
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Risk 1 — Broken class boundary
+Recommended repair direction:
 
-If repository methods remain outside a concrete Repository class, every service workflow depending on `Repository()` will fail.
+    Replace UI metadata crossing the service boundary with semantic domain state crossing the service boundary.
 
-Risk 2 — Layer collapse
+The repaired architecture should be:
 
-If the fix copies SQL into services.py, the architecture will lose its intended separation between business orchestration and persistence.
+    ProductService
+        returns domain/application semantics:
+        - product data
+        - storage status
+        - price variation status
+        - dates / quantities / calculated values
 
-Risk 3 — Database lifecycle duplication
+    StoragePage or UI mapper
+        translates semantics into presentation:
+        - QColor
+        - text color
+        - background color
+        - icons
+        - labels
+        - table item decoration
 
-Duplicating connect/reset/initialize logic in both database.py and repository.py creates drift and makes later database changes harder.
+Minimal architectural correction:
 
-Risk 4 — Recursive cursor helper
+1. Do not add QColor to ProductService.
+2. Do not make ProductService return `color` as a required field.
+3. Do let ProductService return a stable semantic field for price variation if the UI needs one.
+4. Do map that semantic field to QColor inside the UI layer.
+5. Do make StoragePage stop assuming that service data contains presentation keys.
 
-The current cursor_execute shape appears recursive. If it becomes reachable, repository calls may fail with recursion rather than executing SQL.
+Acceptable service fields:
 
-Risk 5 — Contract theatre
+    price_variation
+    price_trend
+    price_status
+    stock_status
+    days_until_expected_end
+    expected_next_purchase
 
-Contracts are useful only if the concrete implementation exists and matches the service dependency. RepositoryContract without Repository gives the appearance of architecture while leaving the executable boundary broken.
+Unacceptable service fields:
 
-Risk 6 — Methodology path drift
+    color
+    qcolor
+    text_brush
+    background_brush
+    qt_display_role
 
-The task references some older/missing paths and required methodology files are absent. This indicates notebook synchronization risk separate from the application bug.
+Possible UI-side abstraction:
+
+    StoragePresentationMapper
+
+This mapper would be a presentation concern, not a domain/service concern. It may be introduced later if StoragePage becomes too large, but the key design rule is that it remains on the UI side of the boundary.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-FILES INSPECTED
+5. LONG-TERM IMPLICATIONS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-- AGENTS.md
-- documentation/sketch_notebook/INDEX.md
-- documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
-- documentation/sketch_notebook/methodology/PROMOTION_RULES.md
-- documentation/sketch_notebook/methodology/FLUX.md
-- documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
-- documentation/sketch_notebook/04_TODO.md
-- documentation/sketch_notebook/10_ACTIONS.md
-- app/core/repository.py
-- app/core/services.py
-- app/core/database.py
-- app/core/contracts.py
-- app/core/models.py
+Implication 1 — Service independence remains preserved.
 
-Missing / unavailable during inspection:
+Keeping QColor out of ProductService keeps the service usable from:
 
-- documentation/sketch_notebook/methodology/CHAT_BEHAVIOUR.md
-- documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
-- documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md before this write
-- documentation/sketch_notebook/04_TODO.md
-- documentation/sketch_notebook/10_ACTIONS.md
+- PySide6 UI;
+- tests;
+- future CLI tools;
+- future API layer;
+- future alternate UI.
+
+Implication 2 — UI styling remains flexible.
+
+If colors belong to StoragePage or a UI mapper, the project can later change themes, accessibility contrast, dark mode, icons, or visual language without touching business logic.
+
+Implication 3 — Domain semantics become testable.
+
+A test can assert:
+
+    price_status == "decreased"
+
+without needing a QApplication, QColor, QBrush, or Shiboken-managed Qt object.
+
+Implication 4 — Avoids presentation-driven service contracts.
+
+If ProductService starts returning `color`, later pages may request `icon`, `font`, `tooltip`, `css`, or table-specific formatting from the service. That would gradually turn the service into a view-model factory instead of a business/application service.
+
+Implication 5 — A UI mapper may become useful later.
+
+As the UI grows, repeated mappings such as:
+
+    domain status -> color
+    domain status -> label
+    domain status -> tooltip
+
+may justify a dedicated presentation mapper. This should be considered a UI architecture refinement, not a service-layer expansion.
+
+Implication 6 — The current bug should not trigger a service-layer workaround.
+
+The tempting fix is to add `color` into the service response. Architecturally, that would solve the immediate KeyError by weakening the boundary.
+
+Preferred repair:
+
+    make the service contract semantic;
+    make the UI responsible for presentation.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 MAIN CHAT SYNTHESIS REQUEST
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Main Chat should synthesize this with the Operational Chat report before materialization.
+Main Chat should synthesize this design decision with Operational evidence before materialization.
 
-Recommended Main synthesis direction:
+Recommended synthesis direction:
 
-1. Treat the ImportError as a malformed Repository implementation, not as a service-layer problem.
-2. Approve a minimal Codex materialization stage for repository.py only if Operational evidence agrees.
-3. Preserve the intended architecture:
-
-       ProductService -> Repository -> database.py -> SQLite
-
-4. Avoid service-layer workaround patches.
-5. Decide separately whether missing methodology files require a methodology materialization task.
+1. Treat `KeyError: "color"` as a UI/service contract mismatch.
+2. Preserve ProductService as business/application layer.
+3. Keep price variation semantics in ProductService.
+4. Keep presentation colors and QColor in the UI layer.
+5. Do not patch the service by adding QColor or visual metadata.
+6. Repair StoragePage so it maps semantic service output into presentation locally or through a UI-side mapper.
+7. Treat Shiboken warning as secondary unless Operational evidence proves Qt objects are leaking across the service boundary.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STAGING RESULT
