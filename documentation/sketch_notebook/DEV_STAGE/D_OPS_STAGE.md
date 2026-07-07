@@ -1,250 +1,264 @@
-# [M] Session 002 | 10:??_07_07_2026 | Markei
+# [M] Session 003 | 11:??_07_07_2026 | Markei
 
 # D_OPS_STAGE — Main Operational Materialization Stage
 
-> Source inputs:
-> - User terminal output after pushed Codex version
-> - Current `app/core/repository.py`
-> - Current `app/core/services.py`
-> - Current `app/desktop/ui/pages/storage_page.py`
+> Source stages:
+> - `documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md`
+> - `documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md`
+> - `documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md`
 >
-> Purpose: Codex-ready operational patch brief for the next runtime failure.
+> Purpose: Codex-ready operational implementation brief for the current StoragePage runtime failure.
 > Status: Main-approved for Codex materialization after user review.
 
 ---
 
-# 1. Post-Codex Review
+# 1. Main Operational Synthesis
 
-The previous Repository ImportError repair appears materialized.
+The previous Repository ImportError is no longer the active blocker.
 
-Current repository state shows:
+Operational evidence confirms `app/core/repository.py` now defines a module-level `Repository` class and initializes a SQLite connection/cursor.
 
-```python
-class Repository(RepositoryContract):
-    def __init__(self):
-        self.connection = connect()
-        self.cursor = self.connection.cursor()
-```
-
-Therefore the old failure:
+The active failure is now:
 
 ```text
-ImportError: cannot import name 'Repository' from 'app.core.repository'
+KeyError: "color"
 ```
 
-is no longer the active blocker.
-
----
-
-# 2. New Runtime Failure
-
-User terminal output:
+The execution path is:
 
 ```text
 python main.py
-Shiboken::Conversions::_pythonToCppCopy: Cannot copy-convert 000001D5C392FA40 (list) to C++.
-Traceback (most recent call last):
-  File "H:\Users\Gus\source\repo\markei\main.py", line 7, in <module>
-    main()
-  File "H:\Users\Gus\source\repo\markei\app\main.py", line 30, in main
-    window = MainWindow()
-  File "H:\Users\Gus\source\repo\markei\app\desktop\main_window.py", line 38, in __init__
-    self.storage_page = StoragePage(self)
-  File "H:\Users\Gus\source\repo\markei\app\desktop\ui\pages\storage_page.py", line 62, in __init__
-    self.load_products()
-  File "H:\Users\Gus\source\repo\markei\app\desktop\ui\pages\storage_page.py", line 297, in load_products
-    variation["color"]
-KeyError: 'color'
+↓
+app/main.py
+↓
+MainWindow.__init__
+↓
+StoragePage(self)
+↓
+StoragePage.__init__
+↓
+StoragePage.build_ui()
+↓
+StoragePage.load_products()
+↓
+ProductService.get_price_variation(product)
+↓
+StoragePage expects variation["color"]
+↓
+KeyError: "color"
 ```
 
----
+The immediate operational cause is a return-shape mismatch:
 
-# 3. Main Operational Diagnosis
+- `StoragePage.load_products()` expects `variation["color"]`.
+- `ProductService.get_price_variation()` returns dictionaries containing `delta`, `percentage`, and `text`, but no `color` key.
 
-The crash is caused by a mismatch between UI expectation and service return contract.
-
-`StoragePage.load_products()` does:
-
-```python
-variation = self.service.get_price_variation(product)
-item = QTableWidgetItem(variation["text"])
-item.setForeground(variation["color"])
-```
-
-But `ProductService.get_price_variation()` returns dictionaries containing only:
+Therefore the failing source target is:
 
 ```text
-delta
-percentage
-text
+app/desktop/ui/pages/storage_page.py
 ```
 
-For products without previous/current price history, the returned dictionary is:
-
-```python
-{
-    "delta": None,
-    "percentage": None,
-    "text": "—",
-}
-```
-
-For products with price history, the returned dictionary is:
-
-```python
-{
-    "delta": delta,
-    "percentage": percentage,
-    "text": text,
-}
-```
-
-No branch returns `"color"`.
-
-Therefore `variation["color"]` raises `KeyError` as soon as Storage loads a product row.
+`app/core/services.py` is relevant for inspection but should not be patched to return Qt objects.
 
 ---
 
-# 4. Boundary Decision
+# 2. Shiboken Warning Synthesis
 
-Do not add `QColor` or any PySide6 object to `ProductService`.
+The terminal also reports:
+
+```text
+Shiboken::Conversions::_pythonToCppCopy:
+Cannot copy-convert (...) list to C++.
+```
+
+Operational analysis identifies the likely cause in `StoragePage.build_ui()`:
+
+```python
+self.table.setHorizontalHeaderLabels([
+    [
+        "Product",
+        "Brand",
+        "Quantity",
+        "Price",
+        "Δ Price",
+        "Cycle",
+        "Next Purchase",
+        "Remaining",
+        "Status",
+        "ID",
+    ]
+])
+```
+
+`setHorizontalHeaderLabels()` expects a flat list of strings, but StoragePage passes a nested list.
+
+This warning is independent from the `KeyError`:
+
+- Shiboken warning occurs during table header setup.
+- `KeyError: "color"` occurs later during row rendering.
+
+Both should be repaired in the same focused StoragePage patch because both are in the same file and affect the same startup path.
+
+---
+
+# 3. Main Operational Decision
+
+Approved operational patch scope:
+
+```text
+app/desktop/ui/pages/storage_page.py
+```
+
+Do not modify for this task unless strictly necessary:
+
+```text
+app/core/services.py
+app/core/repository.py
+app/core/database.py
+app/core/models.py
+```
 
 Reason:
 
-`ProductService` is the business orchestration layer and must not depend on desktop UI technology.
-
-The existing architecture remains:
-
-```text
-Desktop UI
-↓
-ProductService
-↓
-Repository
-↓
-database.py / SQLite
-```
-
-Color is presentation logic. It belongs in `app/desktop/ui/pages/storage_page.py`, not in `app/core/services.py`.
+- The service/repository read path is coherent enough to reach UI row rendering.
+- The runtime blocker is in UI consumption and UI table setup.
+- The design boundary requires Qt presentation values to remain in the UI layer.
 
 ---
 
-# 5. Approved Minimal Patch Direction
+# 4. Required Code Changes
 
-Patch `app/desktop/ui/pages/storage_page.py` only, unless inspection reveals the same direct `variation["color"]` dependency elsewhere.
+## 4.1 Fix header label list shape
 
-Recommended minimal implementation:
+In `StoragePage.build_ui()`, replace the nested list passed to `setHorizontalHeaderLabels()` with a flat list:
 
-1. Keep `ProductService.get_price_variation()` unchanged.
-2. Add a UI helper to `StoragePage`, for example:
+```python
+self.table.setHorizontalHeaderLabels([
+    "Product",
+    "Brand",
+    "Quantity",
+    "Price",
+    "Δ Price",
+    "Cycle",
+    "Next Purchase",
+    "Remaining",
+    "Status",
+    "ID",
+])
+```
+
+Expected effect:
+
+- removes the Shiboken list-to-C++ conversion warning from this table-header call;
+- preserves the existing 10-column table structure.
+
+## 4.2 Fix price variation color handling in UI
+
+In `StoragePage`, add a UI-local helper that derives presentation color from semantic price variation data:
 
 ```python
 def price_variation_color(self, variation: dict) -> QColor:
     delta = variation.get("delta")
 
     if delta is None or delta == 0:
-        return QColor("gray")
+        return QColor(150, 150, 150)
 
     if delta > 0:
-        return QColor("red")
+        return QColor(230, 126, 34)
 
-    return QColor("green")
+    return QColor(46, 204, 113)
 ```
 
-3. Replace:
+Then replace direct access to:
 
 ```python
-item.setForeground(
-    variation["color"]
-)
+variation["color"]
 ```
 
 with:
 
 ```python
-item.setForeground(
-    self.price_variation_color(variation)
-)
+self.price_variation_color(variation)
 ```
 
-Alternative acceptable minimal patch:
+Expected effect:
+
+- removes `KeyError: "color"`;
+- keeps `ProductService.get_price_variation()` semantic and UI-free;
+- keeps `QColor` in the desktop UI layer.
+
+## 4.3 Fix nearby StoragePage double-click ID bug
+
+Operational analysis found a nearby bug in the same file:
 
 ```python
-color = variation.get("color")
-if color is not None:
-    item.setForeground(color)
+product_id = self.table.item(row, 7).text()
 ```
 
-However, the helper-based patch is preferred because `QColor` is already imported in `storage_page.py`, and price-delta coloring is presentation behavior.
+Column `7` is `Remaining`, not `ID`. The ID column is set at index `9`.
+
+Update to:
+
+```python
+product_id = self.table.item(row, 9).text()
+```
+
+This is approved in the same focused patch because it is in the same file, uses the same table schema, and will likely surface immediately after StoragePage starts rendering correctly.
+
+## 4.4 Make optional brand rendering safe
+
+Operational analysis also found:
+
+```python
+QTableWidgetItem(product.brand)
+```
+
+`Product.brand` is optional. If the current code passes `None` to `QTableWidgetItem`, PySide conversion may fail or warn.
+
+Patch this in `StoragePage.load_products()` to use a string fallback:
+
+```python
+QTableWidgetItem(product.brand or "—")
+```
+
+or equivalent.
+
+This is approved because it is a minimal StoragePage UI-safety fix and may reduce remaining Qt conversion issues.
 
 ---
 
-# 6. Shiboken Warning
+# 5. Do Not Do
 
-The Shiboken warning appears before the fatal `KeyError`:
+Codex must not:
 
-```text
-Shiboken::Conversions::_pythonToCppCopy: Cannot copy-convert ... (list) to C++.
-```
-
-Codex should not assume this is solved by the KeyError patch.
-
-After fixing the KeyError, run the app again. If the warning remains and becomes actionable, treat it as a separate UI type-conversion issue.
+1. Add `QColor` imports to `app/core/services.py`.
+2. Add a `"color"` key to `ProductService.get_price_variation()`.
+3. Move price variation calculations into `StoragePage` beyond presentation-color mapping.
+4. Change repository/database/model code for this runtime patch.
+5. Introduce a broad UI architecture refactor.
+6. Modify methodology files.
 
 ---
 
-# 7. Codex Prompt — Operational Implementation
+# 6. Required Inspection Before Patch
 
-Codex, read first:
-
-```text
-AGENTS.md
-documentation/sketch_notebook/INDEX.md
-documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
-documentation/sketch_notebook/methodology/PROMOTION_RULES.md
-documentation/sketch_notebook/methodology/CHAT_BEHAVIOUR.md
-documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
-documentation/sketch_notebook/methodology/FLUX.md
-```
-
-Do not modify:
-
-```text
-documentation/sketch_notebook/methodology/
-```
-
-Task:
-
-1. Inspect:
-
-```text
-app/desktop/ui/pages/storage_page.py
-app/core/services.py
-```
-
-2. Confirm that `ProductService.get_price_variation()` does not return `"color"`.
-
-3. Patch `StoragePage` so it does not index `variation["color"]` directly.
-
-4. Keep Qt/PySide color handling in the desktop UI layer.
-
-5. Do not move PySide6 imports into `app/core/services.py`.
-
-6. Do not change repository/database/model code for this patch.
-
-7. Search for other occurrences of:
+Before editing, Codex should search for these patterns:
 
 ```text
 variation["color"]
+setHorizontalHeaderLabels([
+QTableWidgetItem(product.brand)
+self.table.item(row, 7)
 ```
 
-or equivalent direct `color` assumptions on the return value of `get_price_variation()`.
+If equivalent `variation["color"]` usage appears outside StoragePage, report it before expanding scope.
 
-8. If found in other desktop UI pages, apply the same UI-layer fix there.
+If equivalent nested header lists appear in other pages, report them. Patch only if they are clearly the same table-label bug and within desktop UI pages.
 
 ---
 
-# 8. Required Validation Commands
+# 7. Required Validation Commands
 
 After patching, run:
 
@@ -252,24 +266,46 @@ After patching, run:
 python -m compileall app
 ```
 
-Then:
+Then run a service smoke test:
 
 ```bash
-python -c "from app.core.services import ProductService; service = ProductService(); print(service.get_price_variation(service.get_products()[0]) if service.get_products() else 'no products'); service.close()"
+python - <<'PY'
+from app.core.services import ProductService
+
+service = ProductService()
+products = service.get_products()
+print("products", len(products))
+if products:
+    print(service.get_price_variation(products[0]))
+service.close()
+PY
 ```
 
-Then:
+Then run the app:
 
 ```bash
 python main.py
 ```
 
-Report:
+If the local execution convention uses module mode, also try:
 
-1. whether the app window opens;
-2. whether the `KeyError: 'color'` is gone;
-3. whether the Shiboken warning remains;
-4. any new traceback.
+```bash
+python -m app.main
+```
+
+---
+
+# 8. Expected Results
+
+Expected after patch:
+
+1. `python -m compileall app` succeeds.
+2. Service smoke test prints a dictionary with `delta`, `percentage`, and `text`.
+3. StoragePage no longer raises `KeyError: "color"`.
+4. The Shiboken nested-list warning disappears if it came from `setHorizontalHeaderLabels()`.
+5. MainWindow opens far enough to show Register, Storage, Shortage, Market, History, and Settings tabs.
+
+If a new traceback appears, Codex must report it exactly and avoid speculative fixes beyond this patch scope.
 
 ---
 
@@ -278,8 +314,11 @@ Report:
 Codex must report:
 
 1. files changed;
-2. exact UI helper or fallback chosen;
-3. whether `services.py` was left UI-free;
-4. validation commands run;
-5. command outputs;
-6. remaining risks.
+2. exact StoragePage changes made;
+3. whether `ProductService` remained UI-free;
+4. whether nested header labels were fixed;
+5. whether `variation["color"]` remains anywhere;
+6. whether the double-click ID column was corrected;
+7. validation commands run;
+8. command outputs;
+9. remaining risks.
