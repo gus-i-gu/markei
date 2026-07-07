@@ -1,4 +1,4 @@
-# [M] Session 003 | 11:??_07_07_2026 | Markei
+# [M] Session 004 | 11:??_07_07_2026 | Markei
 
 # E_DDC_STAGE — Main Didactic Materialization Stage
 
@@ -7,37 +7,42 @@
 > - `documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md`
 > - `documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md`
 >
-> Purpose: Codex-ready didactic notebook update brief for the StoragePage `KeyError: "color"` learning sample.
+> Purpose: Codex-ready didactic notebook update brief for turning Markei from a developer-run Python project into a user-run desktop application.
 > Status: Main-approved for Codex materialization after user review.
 
 ---
 
 # 1. Main Didactic Synthesis
 
-The active learning sample is no longer the old Repository ImportError.
-
-The current learning sample is:
+The current learning milestone is:
 
 ```text
-KeyError: "color"
+Turning Markei into an installable/executable user-run application.
 ```
 
-It occurs during StoragePage initialization when UI code expects a dictionary key that is not present in the service return value.
-
-This teaches a different class of problem than the previous ImportError:
+The central didactic distinction is:
 
 ```text
-Previous failure:
-    module/symbol import-surface failure
+Developer-run project
+    A developer has Python, dependencies, source files, terminal commands, and repository-relative paths.
 
-Current failure:
-    runtime data-shape / interface expectation failure
+User-run application
+    A user launches an app, uses visible workflows, and expects their data to persist safely without knowing Python or the repository structure.
 ```
 
-The didactic value is that a small dictionary lookup exposes a larger concept:
+This milestone should teach that packaging is not only making an `.exe`.
+
+It also changes the execution contract:
 
 ```text
-software modules communicate through contracts, even when those contracts are implicit.
+from command-based execution
+    to application launch
+
+from source-folder assumptions
+    to packaged runtime assumptions
+
+from repository database
+    to user-owned app data
 ```
 
 ---
@@ -56,14 +61,16 @@ Do not modify application code as part of this didactic materialization.
 
 Approved didactic promotions:
 
-1. Python dictionaries and missing keys.
-2. `KeyError` as a runtime exception.
-3. Direct dictionary lookup vs safe/fallback lookup.
-4. Stack trace interpretation as an execution map.
-5. Data contracts and implicit contracts between modules.
-6. Interface expectations between service and UI.
-7. Business data vs presentation metadata.
-8. PySide6/Shiboken warning as a secondary runtime signal, not automatically the same cause as the Python exception.
+1. Script vs application.
+2. Executable vs installer.
+3. Dependency and packaging.
+4. Local database and app data folder.
+5. User-facing interface vs developer interface.
+6. Release artifact.
+7. User data ownership.
+8. Frozen Python application.
+9. Path assumptions as part of runtime contract.
+10. Release workflow: build, test, package, install, verify data preservation.
 
 ---
 
@@ -81,7 +88,7 @@ documentation/sketch_notebook/didactics/08_CONCEPT_MAP.md
 
 Do not invent a large didactic system.
 
-Keep the material focused on the current runtime failure.
+Keep the material focused on the installable/user-run application transition.
 
 ---
 
@@ -90,48 +97,40 @@ Keep the material focused on the current runtime failure.
 Add a KANBAN-style learning entry titled:
 
 ```text
-Runtime data contracts and KeyError in StoragePage
+From developer-run script to user-run desktop application
 ```
 
 Recommended concept markers:
 
 ```text
-&&& Mapping / associative array
-&&& Data contract
-&&& Interface expectation
-&&& Boundary
-&&& Separation of concerns
-&&& Presentation data vs business data
-&&& Defensive programming
-&&% Python dictionary
-&&% Dictionary key
-&&% KeyError
-&&% Direct dictionary lookup
-&&% Safe dictionary access
-&&% Stack trace
-&%% StoragePage initialization
-&%% Service-to-UI contract
-&%% Price variation semantics
-&%% Presentation metadata
-%%% PySide6 / Qt / Shiboken
+&&& Script vs Application
+&&& Executable
+&&& Installer
+&&& User-Facing Interface
+&&& Developer Interface
+&&& Release Artifact
+&&& User Data Ownership
+%%% Dependency
+%%% Packaging
+%%% Frozen Python Application
+&%% Local Database
+&%% App Data Folder
+&%% Packaged Runtime
+&%% Runtime Path Contract
 ```
 
 Core explanation:
 
 ```text
-`KeyError: "color"` means Python tried to retrieve the key `"color"` from a dictionary-like object, but that key was absent at runtime.
+A developer-run Markei assumes a Python environment, a repository folder, installed packages, and terminal knowledge.
 
-In Markei, StoragePage expected presentation metadata that ProductService did not provide. This reveals an implicit service-to-UI contract mismatch.
+A user-run Markei should launch like a normal desktop app, hide Python startup details, and store user data in a stable user-owned location.
 ```
 
 Project connection:
 
 ```text
-ProductService currently returns price variation data as semantic/business information: delta, percentage, and text.
-
-StoragePage attempted to consume that result as if it also contained presentation metadata: color.
-
-The error teaches the difference between domain/business data and UI presentation data.
+Markei already has a PySide6 interface, but it still needs packaging-safe runtime paths and user-data handling before it can be trusted as an installable desktop application.
 ```
 
 ---
@@ -141,31 +140,31 @@ The error teaches the difference between domain/business data and UI presentatio
 Add concise project-contextual glossary entries for:
 
 ```text
-dictionary
-key
-value
-missing key
-KeyError
-direct lookup
-safe lookup
-default value
-exception
-runtime
-stack trace
-mapping
-data contract
-implicit contract
-interface expectation
-boundary
-presentation data
-business data
-presentation metadata
-price variation
-defensive programming
-fail fast
-fallback
-Shiboken
-type conversion
+script
+application
+entry point
+executable
+installer
+dependency
+runtime dependency
+development dependency
+packaging
+release artifact
+frozen Python application
+local database
+SQLite database file
+app data folder
+user data
+program files
+resource file
+bundled resource
+runtime path
+path assumption
+user-facing interface
+developer interface
+build artifact
+installer
+portable app folder
 ```
 
 Suggested definitions should be short and grounded in Markei.
@@ -173,13 +172,13 @@ Suggested definitions should be short and grounded in Markei.
 Example style:
 
 ```text
-KeyError
-    Python exception raised when code requests a missing key from a dictionary-like object. In the StoragePage failure, the missing key was `"color"`.
+App data folder
+    A user-specific location where an installed app stores persistent data. For Markei, this should contain the live `market.sqlite` database rather than placing user data inside the installed program folder.
 ```
 
 ```text
-Presentation metadata
-    Display-only data used by the UI, such as color, icon, badge, or row emphasis. In Markei, presentation metadata should not be confused with product/business facts.
+Frozen Python application
+    A Python application bundled into a form that can run without the user manually installing Python packages. Markei can use this approach through a tool such as PyInstaller.
 ```
 
 ---
@@ -189,59 +188,65 @@ Presentation metadata
 Add relationships similar to:
 
 ```text
-Python dictionary
-    -> key
-    -> value
-    -> direct lookup
-    -> safe lookup
-    -> KeyError
+Developer-run project
+    -> Python interpreter
+    -> virtual environment
+    -> requirements.txt
+    -> terminal command
+    -> repository-relative paths
 
-KeyError
-    -> runtime exception
-    -> stack trace
-    -> missing key
+User-run application
+    -> executable
+    -> installer or portable folder
+    -> app data folder
+    -> visible interface
+    -> persistent user data
 
-StoragePage initialization
-    -> service-to-UI contract
-    -> product display data
-    -> presentation metadata
+Packaging
+    -> dependencies
+    -> bundled resources
+    -> executable
+    -> release artifact
 
-ProductService
-    -> business data
-    -> price variation semantics
+Local database
+    -> SQLite database file
+    -> user data ownership
+    -> app data folder
+    -> backup/export later
 
-StoragePage
-    -> presentation data
-    -> maps semantic data to visual style
-
-PySide6 / Shiboken
-    -> Python-to-C++ type conversion
-    -> warning may be separate from Python exception
+Runtime path contract
+    -> source-tree paths
+    -> frozen application paths
+    -> bundled resources
+    -> user-writable data paths
 ```
 
 ---
 
 # 7. Didactic Boundary Rules
 
-Codex must not use didactic materialization to prescribe application implementation.
+Codex must not use didactic materialization to decide exact packaging implementation.
 
 The didactic notebook may explain:
 
 ```text
-Direct lookup fails if a key is absent.
-Safe lookup can provide a fallback.
-Business data and presentation data should be distinguished.
+An executable launches an app.
+An installer places an app on a user's system.
+A dependency is something the app needs to run.
+A local database should be treated as user-owned data.
+Packaged apps must separate bundled resources from writable user data.
 ```
 
 The didactic notebook must not claim:
 
 ```text
-The final patch must be exactly X.
-ProductService must forever return only these fields.
-StoragePage must forever implement colors directly.
+PyInstaller is the only possible packaging tool forever.
+The final installer must be Inno Setup / NSIS / MSIX.
+All database path details are permanently settled.
 ```
 
-Implementation decisions belong to D/F synthesis and Codex materialization, not permanent didactic explanation.
+Operational choices belong to D_OPS_STAGE.
+Design/product choices belong to F_DSN_STAGE.
 
 ---
 
@@ -253,5 +258,5 @@ Codex must report:
 2. KANBAN concepts added;
 3. glossary entries added;
 4. concept-map relationships added;
-5. whether material stayed focused on the current `KeyError: "color"` sample;
+5. whether material stayed focused on developer-run to user-run transition;
 6. unresolved didactic risks or duplicated concepts found.
