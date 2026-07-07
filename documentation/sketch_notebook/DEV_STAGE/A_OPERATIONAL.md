@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 4. DEV_TRACK/01_OPERATIONAL.md update
 
 This update already exists in the repository. It records the same diagnosis: services.py imports Repository, but repository.py does not define an importable Repository class; methods are nested under if __name__ == "__main__":; and the recommended fix is to restore the class boundary and move methods into it.
@@ -479,13 +479,6 @@ code documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
 
 Each conflicted file will likely contain conflict markers:
 
-```text
-<<<<<<< HEAD
-local version
-=======
-remote version
->>>>>>> origin/main
-```
 
 ### 3. Resolve `A_OPERATIONAL.md`
 
@@ -497,11 +490,6 @@ Recommended order:
 2. Keep the remote operational content after it if it was created later remotely.
 3. Remove all conflict markers:
 
-```text
-<<<<<<< HEAD
-=======
->>>>>>> origin/main
-```
 
 4. Ensure the final file is valid Markdown and reads as consecutive operational notes.
 
