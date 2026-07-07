@@ -1,47 +1,4 @@
-
-4. DEV_TRACK/01_OPERATIONAL.md update
-
-This update already exists in the repository. It records the same diagnosis: services.py imports Repository, but repository.py does not define an importable Repository class; methods are nested under if __name__ == "__main__":; and the recommended fix is to restore the class boundary and move methods into it.
-
-Current staged operational entry:
-
-## 2026-07-07 — Operational Diagnosis: Repository ImportError
-
-### Trigger
-
-Runtime error:
-
-ImportError: cannot import name 'Repository' from 'app.core.repository'
-
-### Suspected Cause
-
-app/core/services.py imports Repository from app.core.repository and instantiates it inside ProductService.__init__, but app/core/repository.py does not currently define an importable Repository class.
-
-The repository file appears structurally corrupted or partially overwritten:
-- It begins directly with database connection functions.
-- Required imports are absent from the visible top of the file.
-- Repository-style product and purchase methods are nested under if __name__ == "__main__" instead of inside class Repository.
-- Therefore from .repository import Repository fails during module import.
-
-### Operational Classification
-
-This is not primarily a business-logic bug. It is a module/class boundary failure caused by repository structure drift.
-
-### Status
-
-Staged for Codex implementation.
-
-I would keep that entry, but change the final status after patching to:
-
-### Status
-
-Implementation required in `app/core/repository.py`.
-
-Next operational step:
-restore `Repository` as a module-scope class, move persistence methods into it, fix `cursor_execute`, and validate imports before running the UI.
-
-The attached CS & Coding methodology emphasizes that debugging should expose architectural reasoning and that knowledge should precede modification, which fits this diagnosis: first identify the broken layer boundary, then patch.
-# [O] Session [001] | 09:44_07_07_2026 | Markei
+# [O] Session [NNN] | HH:MM_07_07_2026 | Markei
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ROLE
@@ -49,9 +6,17 @@ ROLE
 
 Operational Chat.
 
-Scope: runtime behaviour, debugging diagnosis, command planning, implementation risk assessment.
+Scope: runtime execution, immediate debugging diagnosis, repair sequencing, file involvement, implementation risk assessment.
 
-Write authority for this session: `documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md` only.
+Write authority for this session:
+
+```text
+documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
+```
+
+No application source files were modified.
+No permanent notebook files were modified.
+No methodology files were modified.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 BOOTSTRAP STATUS
@@ -63,220 +28,92 @@ Read successfully:
 2. `documentation/sketch_notebook/INDEX.md`
 3. `documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md`
 4. `documentation/sketch_notebook/methodology/PROMOTION_RULES.md`
-5. `documentation/sketch_notebook/methodology/FLUX.md`
+5. `documentation/sketch_notebook/methodology/CHAT_BEHAVIOUR.md`
+6. `documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md`
+7. `documentation/sketch_notebook/methodology/FLUX.md`
+8. `documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md`
 
-Bootstrap anomalies:
+Operational authority confirmed:
 
-- `documentation/sketch_notebook/methodology/CHAT_BEHAVIOUR.md` was referenced by `INDEX.md` but was not found.
-- `documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md` was referenced by `INDEX.md` but was not found.
-- Previous diagnostic references to `documentation/sketch_notebook/04_TODO.md` and `documentation/sketch_notebook/10_ACTIONS.md` could not be loaded because those files were not found at the canonical notebook root.
-
-Operational consequence:
-
-- Work proceeded only as a functional Operational Chat staging report.
-- No methodology, permanent notebook, or application source files were modified.
+- Functional Operational Chat may inspect application source files when required for debugging.
+- Functional Operational Chat may write only this assigned stage file.
+- Application source files are not to be edited by this chat.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 TASK INVESTIGATED
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Runtime error under investigation:
+Previous failure reported as already repaired:
 
 ```text
 ImportError: cannot import name 'Repository' from 'app.core.repository'
 ```
 
-Primary source files inspected:
+Current failure reported by user:
 
-- `app/core/repository.py`
+```text
+KeyError: "color"
+```
+
+occurring while opening `StoragePage`.
+
+Additional terminal warning reported:
+
+```text
+Shiboken::Conversions::_pythonToCppCopy:
+Cannot copy-convert (...) list to C++.
+```
+
+Investigation focus:
+
+- exact traceback
+- runtime execution path
+- UI initialization sequence
+- object ownership
+- service/repository interactions
+- whether `KeyError: "color"` is primary
+- whether the Shiboken warning is independent
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SOURCE FILES INSPECTED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Application/runtime files:
+
+- `app/main.py`
+- `app/desktop/main_window.py`
+- `app/desktop/ui/pages/storage_page.py`
+- `app/desktop/ui/pages/shortage_page.py`
+- `app/desktop/ui/pages/market_page.py`
 - `app/core/services.py`
-- `app/core/contracts.py`
+- `app/core/repository.py`
 - `app/core/database.py`
 - `app/core/models.py`
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-FINDINGS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Notebook/methodology files:
 
-## 1. Immediate suspected cause
-
-`app/core/services.py` imports `Repository` from `app.core.repository`:
-
-```python
-from .repository import Repository
-```
-
-and instantiates it inside `ProductService.__init__`:
-
-```python
-self.repository = Repository()
-```
-
-However, `app/core/repository.py` does not currently expose a module-level `Repository` class.
-
-The file begins with database connection functions such as `connect`, `close`, and `reset`, without the expected repository imports or class declaration.
-
-A large block of repository-like methods appears indented under:
-
-```python
-if __name__ == "__main__":
-```
-
-This means those `def create_product`, `def update_product`, `def get_products`, etc. definitions are not class methods and are not exported as `Repository`.
-
-Therefore Python can import the module file, but cannot find a symbol named `Repository` inside it.
-
-## 2. Secondary structural issue
-
-`app/core/repository.py` appears partially corrupted or accidentally overwritten with content from `database.py`.
-
-Evidence:
-
-- `repository.py` starts with database lifecycle functions rather than repository class setup.
-- `database.py` already owns the database lifecycle responsibilities.
-- `services.py` documentation expects this architecture:
-
-```text
-ProductService
-        ↓
-Repository
-        ↓
-SQLite
-```
-
-but the repository implementation is not currently shaped as a repository object.
-
-## 3. Contract mismatch
-
-`app/core/contracts.py` defines `RepositoryContract`, including abstract methods such as:
-
-- `create_product`
-- `update_product`
-- `delete_product`
-- `insert_purchase`
-- `delete_purchase`
-- `get_product`
-- `get_products`
-- `get_purchases`
-
-`app/core/repository.py` should likely define:
-
-```python
-class Repository(RepositoryContract):
-    ...
-```
-
-or at minimum:
-
-```python
-class Repository:
-    ...
-```
-
-but no such class exists in the inspected file.
-
-## 4. Additional implementation risks discovered
-
-Even after adding a `Repository` class wrapper, the file likely has follow-up runtime errors:
-
-### 4.1 Missing or misplaced initialization
-
-A working repository probably needs:
-
-```python
-self.connection = connect()
-self.cursor = self.connection.cursor()
-```
-
-inside `Repository.__init__`.
-
-### 4.2 Missing commit / close helpers
-
-Several methods call:
-
-```python
-self.commit()
-self.close()
-```
-
-but no confirmed module-level class methods for `commit` or `close` were observed in the inspected repository excerpt.
-
-### 4.3 `cursor_execute` recursion bug
-
-The observed `cursor_execute` implementation calls itself:
-
-```python
-return self.cursor_execute(sql, parameters)
-```
-
-This would cause infinite recursion once repository methods are actually invoked.
-
-It should likely call:
-
-```python
-return self.cursor.execute(sql, parameters)
-```
-
-### 4.4 Row mapper dependency risk
-
-Several methods call row conversion helpers such as:
-
-```python
-self.row_to_product(...)
-self.row_to_purchase(...)
-self.row_to_category(...)
-self.row_to_store(...)
-self.row_to_promotion(...)
-```
-
-Those helpers must exist as methods on `Repository`, or the next runtime failure will be `AttributeError` after the import error is fixed.
-
-### 4.5 Model/schema alignment risk
-
-The current models include `Category`, `Store`, `Product`, and `Purchase`.
-
-Repository methods also refer to `Promotion`, but the inspected `models.py` excerpt did not confirm a `Promotion` dataclass.
-
-If `Promotion` is not defined elsewhere, repository reconstruction must either remove promotion methods for MVP or add/import the correct model only if design approves it.
+- `AGENTS.md`
+- `documentation/sketch_notebook/INDEX.md`
+- `documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md`
+- `documentation/sketch_notebook/methodology/PROMOTION_RULES.md`
+- `documentation/sketch_notebook/methodology/CHAT_BEHAVIOUR.md`
+- `documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md`
+- `documentation/sketch_notebook/methodology/FLUX.md`
+- `documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md`
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-OPERATIONAL DIAGNOSIS
+CURRENT REPOSITORY STATE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-The import error is not caused by Python path resolution alone.
+## 1. Repository ImportError appears repaired
 
-The direct cause is that `app/core/repository.py` does not define/export `Repository`.
-
-The deeper operational cause is likely an incomplete or malformed repository refactor: repository behaviour exists as loose or wrongly-indented functions, while `ProductService` expects an instantiable repository object.
-
-This is a source-structure failure, not a database-data failure.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PROPOSED ACTIONS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-## Minimal patch plan
-
-Patch only after Main Chat synthesis and Codex/materialization instruction.
-
-1. Rebuild `app/core/repository.py` around a module-level `Repository` class.
-2. Import required dependencies at the top:
-
-```python
-from __future__ import annotations
-
-from .contracts import RepositoryContract
-from .database import connect, close as close_connection
-from .models import Category, Product, Purchase, Store
-```
-
-3. Define:
+`app/core/repository.py` currently defines a module-level class:
 
 ```python
 class Repository(RepositoryContract):
 ```
 
-4. Add `__init__`:
+The class initializes a SQLite connection and cursor:
 
 ```python
 def __init__(self):
@@ -284,394 +121,730 @@ def __init__(self):
     self.cursor = self.connection.cursor()
 ```
 
-5. Move the existing SQL methods inside the class, outside `if __name__ == "__main__"`.
-6. Add working helpers:
+It also provides working repository helpers:
 
 ```python
 def cursor_execute(self, sql, parameters=()):
     return self.cursor.execute(sql, parameters)
-
-def commit(self):
-    self.connection.commit()
-
-def close(self):
-    close_connection(self.connection)
 ```
 
-7. Add or verify row mapper methods for every returned model:
+Therefore, the previous failure where `ProductService` could not import `Repository` is no longer the visible blocker in the inspected repository state.
 
-- `row_to_product`
-- `row_to_purchase`
-- `row_to_category`
-- `row_to_store`
+## 2. ProductService still owns repository access
 
-8. Defer `Promotion` support unless the model and schema are confirmed present.
-9. Keep `database.py` responsible only for database creation/configuration/connection.
-10. Keep `services.py` unchanged initially, because its import expectation is architecturally correct.
+`app/core/services.py` imports and instantiates `Repository`:
 
-## Exact files to inspect before patching
+```python
+from .repository import Repository
 
-Required:
+class ProductService(ServiceContract):
+    def __init__(self):
+        self.repository = Repository()
+```
 
-- `app/core/repository.py`
-- `app/core/services.py`
-- `app/core/contracts.py`
-- `app/core/models.py`
-- `app/core/database.py`
-- `database/schema.sql`
+The UI does not call repository methods directly. It goes through `ProductService`.
 
-Optional but useful:
+## 3. StoragePage constructs its own service
 
-- `app/ui/pages/register_page.py`
-- `app/ui/pages/storage_page.py`
-- `app/ui/pages/history_page.py`
-- `app/main.py`
+`StoragePage.__init__` does the following:
+
+```python
+super().__init__()
+self.main_window = main_window
+self.service = ProductService()
+self.build_ui()
+self.load_products()
+```
+
+This means opening/constructing `StoragePage` immediately:
+
+1. creates a Qt widget;
+2. stores the passed `MainWindow` reference;
+3. creates a `ProductService`;
+4. creates a `Repository` through the service;
+5. builds the table UI;
+6. immediately loads products from the database.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-COMMANDS / TESTS REQUIRED
+EXACT TRACEBACK STATUS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-After patching, run in repository root:
+The exact local traceback text was not available through GitHub inspection. Only the reported terminal failure was provided:
+
+```text
+KeyError: "color"
+```
+
+Based on the current repository state, the expected runtime traceback chain is:
+
+```text
+python -m app.main
+  app/main.py
+    main()
+      window = MainWindow()
+
+  app/desktop/main_window.py
+    MainWindow.__init__()
+      self.storage_page = StoragePage(self)
+
+  app/desktop/ui/pages/storage_page.py
+    StoragePage.__init__()
+      self.build_ui()
+      self.load_products()
+
+  app/desktop/ui/pages/storage_page.py
+    StoragePage.load_products()
+      variation = self.service.get_price_variation(product)
+      item = QTableWidgetItem(variation["text"])
+      item.setForeground(variation["color"])
+
+KeyError: "color"
+```
+
+The failing line is operationally identified as:
+
+```python
+item.setForeground(
+    variation["color"]
+)
+```
+
+inside `StoragePage.load_products()`.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RUNTIME EXECUTION CHAIN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## Application bootstrap
+
+`app/main.py`:
+
+```python
+app = QApplication(sys.argv)
+window = MainWindow()
+window.show()
+sys.exit(app.exec())
+```
+
+## MainWindow initialization
+
+`MainWindow.__init__` creates the tab widget, then constructs page objects in this order:
+
+1. `RegisterPage()`
+2. `StoragePage(self)`
+3. `ShortagePage(self)`
+4. `MarketPage(self)`
+5. `HistoryPage()`
+6. `SettingsPage()`
+
+The Storage failure happens before the Storage tab is added with `addTab`, because `StoragePage(self)` must finish construction first.
+
+## StoragePage initialization
+
+`StoragePage.__init__` performs both UI construction and data loading synchronously.
+
+Execution path:
+
+```text
+MainWindow.__init__
+↓
+StoragePage.__init__
+↓
+ProductService.__init__
+↓
+Repository.__init__
+↓
+StoragePage.build_ui
+↓
+StoragePage.load_products
+↓
+ProductService.get_storage_products
+↓
+Repository.get_products
+↓
+Repository.row_to_product
+↓
+ProductService.product_status
+↓
+StoragePage row rendering
+↓
+ProductService.get_price_variation
+↓
+StoragePage expects variation["color"]
+↓
+KeyError: "color"
+```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PRIMARY FAILURE DIAGNOSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## Primary failure
+
+`KeyError: "color"` is the primary Python exception blocking StoragePage initialization.
+
+`StoragePage.load_products()` assumes `ProductService.get_price_variation(product)` returns a dictionary containing:
+
+```python
+"text"
+"color"
+```
+
+but `ProductService.get_price_variation()` currently returns only:
+
+```python
+"delta"
+"percentage"
+"text"
+```
+
+This is true in both branches:
+
+### No price history branch
+
+```python
+return {
+    "delta": None,
+    "percentage": None,
+    "text": "—",
+}
+```
+
+### Price history branch
+
+```python
+return {
+    "delta": delta,
+    "percentage": percentage,
+    "text": text,
+}
+```
+
+No branch returns `"color"`.
+
+Therefore the first product rendered in StoragePage can trigger:
+
+```python
+variation["color"]
+```
+
+and fail immediately.
+
+## Operational classification
+
+This is an interface mismatch between service return shape and UI consumption.
+
+It is not primarily:
+
+- a repository import failure;
+- a SQLite connection failure;
+- a product-status classification failure;
+- a row-mapping failure;
+- a Qt object ownership failure.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SHIBOKEN WARNING DIAGNOSIS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## Warning source
+
+The Shiboken warning is most likely caused by this call in `StoragePage.build_ui()`:
+
+```python
+self.table.setHorizontalHeaderLabels([
+    [
+        "Product",
+        "Brand",
+        "Quantity",
+        "Price",
+        "Δ Price",
+        "Cycle",
+        "Next Purchase",
+        "Remaining",
+        "Status",
+        "ID",
+    ]
+])
+```
+
+`setHorizontalHeaderLabels()` expects a flat list of strings.
+
+Current StoragePage passes a list containing another list:
+
+```python
+[["Product", "Brand", ...]]
+```
+
+That nested list forces PySide/Shiboken to convert a Python `list` where it expects string-like entries for a C++ string list, producing a conversion warning.
+
+## Independence from KeyError
+
+The Shiboken warning is operationally independent from `KeyError: "color"`.
+
+Reason:
+
+- Shiboken warning occurs during `StoragePage.build_ui()` while configuring table headers.
+- `KeyError: "color"` occurs later during `StoragePage.load_products()` while rendering price variation cells.
+
+The warning may appear first in terminal output, but it is not the direct cause of the Python `KeyError`.
+
+## Why ShortagePage and MarketPage matter
+
+`ShortagePage` and `MarketPage` use a flat header-label list, so they do not show the same nested-list header bug.
+
+StoragePage is the outlier.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+UI INITIALIZATION SEQUENCE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Current sequence:
+
+```text
+QApplication created
+↓
+MainWindow created
+↓
+QTabWidget created
+↓
+RegisterPage created
+↓
+StoragePage created
+    ↓
+    ProductService created
+        ↓
+        Repository created
+            ↓
+            SQLite connection opened
+    ↓
+    StoragePage.build_ui()
+        ↓
+        QTableWidget created
+        setColumnCount(10)
+        setHorizontalHeaderLabels([[...]])
+        Shiboken warning likely emitted here
+    ↓
+    StoragePage.load_products()
+        ↓
+        service.get_storage_products()
+        repository.get_products()
+        product_status filtering
+        per-row rendering
+        service.get_price_variation(product)
+        variation["color"]
+        KeyError raised here
+↓
+MainWindow initialization aborts
+↓
+window.show() is never reached or does not complete normally
+```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OBJECT OWNERSHIP OBSERVATIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## Qt widget ownership
+
+`StoragePage.__init__` receives `main_window`, but calls:
+
+```python
+super().__init__()
+```
+
+not:
+
+```python
+super().__init__(main_window)
+```
+
+Therefore the Python constructor stores the main window manually:
+
+```python
+self.main_window = main_window
+```
+
+but does not initially set the Qt parent through the QWidget constructor.
+
+After construction, `MainWindow` stores the page as:
+
+```python
+self.storage_page = StoragePage(self)
+```
+
+and later passes it into:
+
+```python
+self.tabs.addTab(self.storage_page, "Storage")
+```
+
+The Python attribute keeps the object alive; `QTabWidget.addTab` should also take widget ownership in Qt terms once reached.
+
+## Operational relevance
+
+Object ownership does not appear to be the cause of the current failure.
+
+The StoragePage constructor aborts before page insertion becomes the central operational issue.
+
+## Service/repository ownership
+
+Each inventory page creates its own `ProductService`:
+
+- `StoragePage` creates one service.
+- `ShortagePage` creates one service.
+- `MarketPage` creates one service.
+
+Each `ProductService` creates its own `Repository`.
+Each `Repository` opens its own SQLite connection.
+
+This is not the immediate cause of `KeyError: "color"`, but it is an implementation risk because several long-lived Qt pages may hold separate database connections for the full window lifetime.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SERVICE / REPOSITORY INTERACTIONS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## Storage data path
+
+`StoragePage.load_products()` calls:
+
+```python
+products = self.service.get_storage_products()
+```
+
+`ProductService.get_storage_products()` calls:
+
+```python
+return [
+    product
+    for product in self.repository.get_products()
+    if self.product_status(product) == "storage"
+]
+```
+
+`Repository.get_products()` runs:
+
+```sql
+SELECT *
+FROM products
+ORDER BY product_name
+```
+
+and maps each SQLite row through:
+
+```python
+self.row_to_product(row)
+```
+
+The repository/data path appears coherent enough to reach UI row rendering.
+
+## Price variation data path
+
+`StoragePage.load_products()` then calls:
+
+```python
+variation = self.service.get_price_variation(product)
+```
+
+The service returns a dictionary containing price variation values and display text, but no color.
+
+The UI assumes color exists.
+
+Therefore, the service/repository read path is not the failing point; the UI/service presentation contract is the failing point.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXACT FILES INVOLVED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## Directly involved in Python exception
+
+1. `app/desktop/ui/pages/storage_page.py`
+
+   Uses:
+
+   ```python
+   variation["color"]
+   ```
+
+   but does not guarantee that the key exists.
+
+2. `app/core/services.py`
+
+   `get_price_variation()` returns dictionaries without a `"color"` key.
+
+## Directly involved in Shiboken warning
+
+1. `app/desktop/ui/pages/storage_page.py`
+
+   Passes nested header labels to `setHorizontalHeaderLabels()`.
+
+## Involved in execution chain but not primary failure
+
+1. `app/main.py`
+
+   Creates `QApplication` and `MainWindow`.
+
+2. `app/desktop/main_window.py`
+
+   Constructs `StoragePage(self)` during `MainWindow.__init__`.
+
+3. `app/core/repository.py`
+
+   Provides `Repository`, now present and importable.
+
+4. `app/core/database.py`
+
+   Provides SQLite connection and `sqlite3.Row` row factory.
+
+5. `app/core/models.py`
+
+   Defines the `Product` object consumed by the service and UI.
+
+## Related copied-risk files
+
+1. `app/desktop/ui/pages/shortage_page.py`
+2. `app/desktop/ui/pages/market_page.py`
+
+They contain similar table/rendering patterns, but their header labels are flat and their status color code does not use `get_price_variation()`.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MINIMAL OPERATIONAL REPAIR PLAN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+No source files were modified in this session.
+
+Recommended minimal repair for Codex/Main materialization:
+
+## 1. Fix StoragePage header labels
+
+In `app/desktop/ui/pages/storage_page.py`, change the nested list:
+
+```python
+self.table.setHorizontalHeaderLabels([
+    [
+        "Product",
+        ...,
+        "ID",
+    ]
+])
+```
+
+to a flat list:
+
+```python
+self.table.setHorizontalHeaderLabels([
+    "Product",
+    "Brand",
+    "Quantity",
+    "Price",
+    "Δ Price",
+    "Cycle",
+    "Next Purchase",
+    "Remaining",
+    "Status",
+    "ID",
+])
+```
+
+Expected result:
+
+- remove Shiboken conversion warning;
+- keep table column count unchanged at 10.
+
+## 2. Fix price variation color contract minimally
+
+Preferred minimal operational repair:
+
+- Keep `ProductService.get_price_variation()` free of Qt/PySide objects.
+- Change `StoragePage.load_products()` so it does not require `variation["color"]`.
+- Derive the `QColor` locally in the UI from `variation["delta"]` or use a default color when no price history exists.
+
+Example operational intent, not a final architecture design:
+
+```python
+variation = self.service.get_price_variation(product)
+item = QTableWidgetItem(variation["text"])
+
+if variation["delta"] is None:
+    color = QColor(150, 150, 150)
+elif variation["delta"] > 0:
+    color = QColor(230, 126, 34)
+elif variation["delta"] < 0:
+    color = QColor(46, 204, 113)
+else:
+    color = QColor(150, 150, 150)
+
+item.setForeground(color)
+```
+
+This avoids importing `QColor` into the service layer.
+
+Alternative minimal repair:
+
+- Make `StoragePage` use:
+
+```python
+variation.get("color", QColor(150, 150, 150))
+```
+
+This is smaller but less complete, because it hides the missing return-shape mismatch rather than explicitly deciding color from price delta.
+
+## 3. Validate StoragePage boot
+
+After source repair, run:
 
 ```bash
 python -m compileall app
 ```
 
-Import smoke test:
-
-```bash
-python -c "from app.core.repository import Repository; print(Repository)"
-```
-
-Service smoke test:
-
-```bash
-python -c "from app.core.services import ProductService; service = ProductService(); print(type(service.repository)); service.close()"
-```
-
-Repository read smoke test:
-
-```bash
-python -c "from app.core.repository import Repository; repo = Repository(); print(repo.count_products()); repo.close()"
-```
-
-Application boot test:
+Then run:
 
 ```bash
 python -m app.main
 ```
 
-If package entrypoint is configured:
+Expected result:
+
+- no `KeyError: "color"`;
+- no Shiboken list conversion warning from StoragePage headers;
+- MainWindow opens with Register, Storage, Shortage, Market, History, Settings tabs.
+
+## 4. Optional smoke test for the service return shape
+
+Run:
 
 ```bash
-python -m app
+python - <<'PY'
+from app.core.services import ProductService
+
+service = ProductService()
+products = service.get_products()
+print("products", len(products))
+if products:
+    print(service.get_price_variation(products[0]))
+service.close()
+PY
 ```
 
-No commands were run in this session because the available interface was GitHub file inspection/editing, not a local runtime shell.
+Expected output shape:
+
+```text
+{"delta": ..., "percentage": ..., "text": ...}
+```
+
+StoragePage should no longer require a `"color"` key if the preferred UI-local color repair is used.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 IMPLEMENTATION RISKS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-1. Fixing only the missing class name may expose the recursive `cursor_execute` bug immediately.
-2. Fixing `cursor_execute` may expose missing `row_to_*` mapper methods.
-3. Adding mappers may expose schema/model naming mismatches.
-4. Promotion-related repository methods may refer to undefined models or tables.
-5. The current `RepositoryContract` is narrower than the full repository method set; extra methods may be acceptable, but contract coverage should remain coherent.
-6. If `app/core/repository.py` was accidentally overwritten, reconstructing it manually risks losing intended methods unless old commit history is inspected.
+## 1. Adding QColor to ProductService would blur layers
+
+A quick patch could add `"color": QColor(...)` inside `ProductService.get_price_variation()`.
+
+Operational risk:
+
+- `app/core/services.py` would depend on PySide6/Qt GUI objects.
+- This would make business/service code UI-framework-dependent.
+- It may complicate later non-desktop use.
+
+Minimal safer direction: keep colors in UI rendering code.
+
+## 2. Using `variation.get("color")` hides the mismatch
+
+A very small UI patch can prevent the crash:
+
+```python
+variation.get("color", QColor(150, 150, 150))
+```
+
+Operational risk:
+
+- It prevents the exception but leaves the UI/service mismatch implicit.
+- It may mask future return-shape mistakes.
+
+## 3. StoragePage currently loads data during construction
+
+Because `StoragePage.__init__` calls `load_products()` immediately, any data-rendering failure aborts `MainWindow.__init__`.
+
+Operational risk:
+
+- one page rendering failure prevents the entire app window from opening.
+
+No architecture redesign is recommended in this report, but this explains why the failure appears while opening the page/window.
+
+## 4. Multiple page-owned services create multiple database connections
+
+Storage, Shortage, and Market each create their own `ProductService`, and therefore each opens a `Repository` / SQLite connection.
+
+Operational risk:
+
+- connections may remain open for the page lifetime;
+- database reset/reinitialization can fail if a connection remains open;
+- future refresh flows may produce locking symptoms.
+
+This is not the current `KeyError` cause.
+
+## 5. Double-click product ID bug remains nearby
+
+`StoragePage` sets the ID column at index 9:
+
+```python
+self.table.setItem(row, 9, id_item)
+```
+
+but `edit_selected_product()` reads:
+
+```python
+product_id = self.table.item(row, 7).text()
+```
+
+Column 7 is `Remaining`, not `ID`.
+
+Operational risk:
+
+- after StoragePage opens, double-click editing may fetch the wrong product ID.
+
+This is not part of the current crash, but it is in the same file and likely to surface after the page renders.
+
+## 6. Brand may be None
+
+`StoragePage` constructs:
+
+```python
+QTableWidgetItem(product.brand)
+```
+
+`Product.brand` is optional.
+
+Operational risk:
+
+- if `brand` is `None`, PySide may reject or mishandle the value depending on binding conversion.
+
+This is not the reported `KeyError`, but it is another possible UI conversion issue.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-REMAINING UNCERTAINTIES
+OPERATIONAL CONCLUSION
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-- Whether `CHAT_BEHAVIOUR.md` and `CHAT_PROTOCOL.md` are missing, renamed, or not committed yet.
-- Whether `04_TODO.md` and `10_ACTIONS.md` were intentionally retired after the DEV_STAGE migration.
-- Whether a previous correct version of `app/core/repository.py` exists in Git history and should be restored instead of manually rebuilt.
-- Whether `Promotion` is part of the current MVP schema/model set or leftover planned functionality.
-- Whether `app/core/__init__.py` is intentionally absent.
+`KeyError: "color"` is the primary runtime failure currently blocking StoragePage data rendering.
+
+The immediate cause is:
+
+```text
+StoragePage expects ProductService.get_price_variation() to return variation["color"], but ProductService never returns a "color" key.
+```
+
+The Shiboken warning is independent and most likely caused by StoragePage passing a nested list to `QTableWidget.setHorizontalHeaderLabels()`.
+
+Minimal repair should target only:
+
+1. `app/desktop/ui/pages/storage_page.py` header-label list shape;
+2. `app/desktop/ui/pages/storage_page.py` price-variation color handling, preferably deriving `QColor` in the UI from service-provided numeric delta;
+3. optionally the same file's ID-column double-click index after the crash is fixed.
+
+No application source modifications were performed by this Operational Chat.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 FILE UPDATED
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SESSION CONTINUATION | LOCAL MERGE RECOVERY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-## Local state reported by user
-
-```text
-git status
-
-On branch main
-Your branch and 'origin/main' have diverged,
-and have 1 and 2 different commits each, respectively.
-
-You have unmerged paths.
-
-Unmerged paths:
-        both added:      documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
-        both added:      documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
-
-no changes added to commit
-```
-
-## Operational diagnosis
-
-The local repository is currently in the middle of a merge conflict.
-
-Both local `main` and remote `origin/main` independently added the same DEV_STAGE files:
-
 - `documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md`
-- `documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md`
-
-This is a `both added` conflict, not a normal line-level edit conflict.
-
-Operational meaning:
-
-- Git does not know whether to keep the local version, the remote version, or a manually combined version.
-- No new operational source-code work should happen until this merge is resolved.
-- The local branch has one commit not present on remote.
-- The remote branch has two commits not present locally.
-- The local working tree must be cleaned before further patching or source commits.
-
-## Important authority boundary
-
-Operational Chat may stage/write only:
-
-```text
-documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
-```
-
-Operational Chat must not resolve or rewrite `C_DESIGN.md` semantically.
-
-For `C_DESIGN.md`, the safe operational instruction is to preserve both versions or defer semantic resolution to Design/Main Chat.
-
-## Recommended recovery path
-
-Preferred path: resolve the merge manually, preserve both stage-file contributions, then create a merge commit.
-
-Do not use `git push --force`.
-
-Do not delete either side blindly.
-
-Do not continue repository implementation work until `git status` is clean.
-
-## Step-by-step commands
-
-### 1. Inspect the conflicted files
-
-```bash
-git status
-
-git diff -- documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
-
-git diff -- documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
-```
-
-### 2. Open both conflicted files in VS Code
-
-```bash
-code documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
-code documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
-```
-
-Each conflicted file will likely contain conflict markers:
-
-
-### 3. Resolve `A_OPERATIONAL.md`
-
-For `A_OPERATIONAL.md`, keep both operational entries sequentially.
-
-Recommended order:
-
-1. Keep the local operational content first if it was created earlier locally.
-2. Keep the remote operational content after it if it was created later remotely.
-3. Remove all conflict markers:
-
-
-4. Ensure the final file is valid Markdown and reads as consecutive operational notes.
-
-If unsure which side is local or remote, inspect with:
-
-```bash
-git show :2:documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
-
-git show :3:documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
-```
-
-In an unmerged file:
-
-- `:2:` is usually `ours` / local `HEAD`.
-- `:3:` is usually `theirs` / incoming remote side.
-
-### 4. Resolve `C_DESIGN.md` conservatively
-
-Because this is outside Operational Chat semantic authority, do not rewrite its design content.
-
-Recommended safe options:
-
-Option A — preserve both versions sequentially:
-
-```bash
-git show :2:documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md > C_DESIGN.local.tmp
-
-git show :3:documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md > C_DESIGN.remote.tmp
-```
-
-Then manually combine them into:
-
-```text
-documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
-```
-
-with clear separators such as:
-
-```text
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-LOCAL DESIGN STAGE VERSION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-...
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-REMOTE DESIGN STAGE VERSION
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-...
-```
-
-Option B — stop and ask Main/Design Chat before resolving `C_DESIGN.md`.
-
-Use Option B if the two design versions contradict each other or appear to represent different design decisions.
-
-### 5. Mark conflicts as resolved
-
-After editing both files and removing all conflict markers:
-
-```bash
-git add documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
-
-git add documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
-```
-
-### 6. Verify there are no remaining conflict markers
-
-```bash
-git diff --check
-
-git status
-```
-
-Optional direct marker search in PowerShell:
-
-```powershell
-Select-String -Path documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md, documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md -Pattern '<<<<<<<|=======|>>>>>>>'
-```
-
-If this prints anything, conflict markers remain and must be removed before committing.
-
-### 7. Complete the merge commit
-
-```bash
-git commit
-```
-
-Use the default merge message, or:
-
-```bash
-git commit -m "Merge remote DEV_STAGE updates"
-```
-
-### 8. Push after the merge commit succeeds
-
-```bash
-git push origin main
-```
-
-### 9. Confirm clean state
-
-```bash
-git status
-```
-
-Expected final result:
-
-```text
-On branch main
-Your branch is up to date with 'origin/main'.
-nothing to commit, working tree clean
-```
-
-## Alternative recovery path if the merge should be abandoned
-
-If the current merge attempt is too confused and no manual conflict work should be kept:
-
-```bash
-git merge --abort
-```
-
-Then inspect the branch situation again:
-
-```bash
-git status
-
-git log --oneline --decorate --graph --all -n 10
-```
-
-Then retry integration explicitly:
-
-```bash
-git pull --no-rebase origin main
-```
-
-This will likely recreate the same conflicts, but from a cleaner merge state.
-
-## Commands not recommended here
-
-Avoid:
-
-```bash
-git push --force
-```
-
-because it may overwrite the remote functional-stage commits.
-
-Avoid:
-
-```bash
-git reset --hard origin/main
-```
-
-unless the local-only commit is known to be disposable.
-
-Avoid:
-
-```bash
-git checkout --ours documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
-```
-
-or:
-
-```bash
-git checkout --theirs documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
-```
-
-unless Main/Design Chat explicitly decides which side should win.
-
-## Validation after recovery
-
-After the merge is resolved and pushed, run:
-
-```bash
-git log --oneline --decorate --graph --all -n 10
-
-git status
-```
-
-Then continue with the repository import-error patch only after Main Chat synthesis.
-
-## File updated in this continuation
-
-- `documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md`
-
