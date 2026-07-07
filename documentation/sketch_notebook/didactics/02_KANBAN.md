@@ -32,3 +32,45 @@ layers.
 In Markei, `ProductService` expects a concrete repository object. The repository
 module must therefore export a concrete implementation compatible with
 `RepositoryContract`.
+
+## Runtime data contracts and KeyError in StoragePage
+
+Markers:
+
+- &&& Mapping / associative array
+- &&& Data contract
+- &&& Interface expectation
+- &&& Boundary
+- &&& Separation of concerns
+- &&& Presentation data vs business data
+- &&& Defensive programming
+- &&% Python dictionary
+- &&% Dictionary key
+- &&% KeyError
+- &&% Direct dictionary lookup
+- &&% Safe dictionary access
+- &&% Stack trace
+- &%% StoragePage initialization
+- &%% Service-to-UI contract
+- &%% Price variation semantics
+- &%% Presentation metadata
+- %%% PySide6 / Qt / Shiboken
+
+Core explanation:
+
+`KeyError: "color"` means Python tried to retrieve the key `"color"` from a
+dictionary-like object, but that key was absent at runtime.
+
+In Markei, `StoragePage` expected presentation metadata that `ProductService`
+did not provide. This reveals an implicit service-to-UI contract mismatch.
+
+Project connection:
+
+`ProductService` currently returns price variation data as semantic/business
+information: `delta`, `percentage`, and `text`.
+
+`StoragePage` attempted to consume that result as if it also contained
+presentation metadata: `color`.
+
+The error teaches the difference between domain/business data and UI
+presentation data.

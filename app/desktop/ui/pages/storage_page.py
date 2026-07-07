@@ -36,8 +36,6 @@ from PySide6.QtWidgets import (
 
 )
 from app.core.services import ProductService
-
-
 class StoragePage(QWidget):
 
     ####################################################
@@ -130,18 +128,16 @@ class StoragePage(QWidget):
 
         self.table.setHorizontalHeaderLabels([
 
-            [
-                "Product",
-                "Brand",
-                "Quantity",
-                "Price",
-                "Δ Price",
-                "Cycle",
-                "Next Purchase",
-                "Remaining",
-                "Status",
-                "ID",
-            ]
+            "Product",
+            "Brand",
+            "Quantity",
+            "Price",
+            "Δ Price",
+            "Cycle",
+            "Next Purchase",
+            "Remaining",
+            "Status",
+            "ID",
 
         ])
 
@@ -227,7 +223,7 @@ class StoragePage(QWidget):
 
                 QTableWidgetItem(
 
-                    product.brand
+                    product.brand or "—"
 
                 )
 
@@ -294,7 +290,7 @@ class StoragePage(QWidget):
             )
 
             item.setForeground(
-                variation["color"]
+                self.price_variation_color(variation)
             )
 
             self.table.setItem(
@@ -535,6 +531,23 @@ class StoragePage(QWidget):
 
         return item
 
+    def price_variation_color(self, variation: dict) -> QColor:
+        """
+        Map semantic price variation to UI presentation color.
+        """
+
+        delta = variation.get("delta")
+
+        if delta is None or delta == 0:
+
+            return QColor(150, 150, 150)
+
+        if delta > 0:
+
+            return QColor(230, 126, 34)
+
+        return QColor(46, 204, 113)
+
     def edit_selected_product(
     self,
     row,
@@ -544,12 +557,10 @@ class StoragePage(QWidget):
         User double-clicked a row.
         """
 
-        product_id = self.table.item(row, 7).text()
+        product_id = self.table.item(row, 9).text()
 
         product = self.service.get_product(product_id)
 
         self.main_window.edit_product(
         product
         )
-
-       

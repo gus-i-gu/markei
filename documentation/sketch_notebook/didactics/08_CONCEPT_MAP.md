@@ -27,3 +27,34 @@ Repository
     -> owns SQL operations
     -> maps sqlite3 rows to domain models
 ```
+
+```text
+Python dictionary
+    -> key
+    -> value
+    -> direct lookup
+    -> safe lookup
+    -> KeyError
+
+KeyError
+    -> runtime exception
+    -> stack trace
+    -> missing key
+
+StoragePage initialization
+    -> service-to-UI contract
+    -> product display data
+    -> presentation metadata
+
+ProductService
+    -> business data
+    -> price variation semantics
+
+StoragePage
+    -> presentation data
+    -> maps semantic data to visual style
+
+PySide6 / Shiboken
+    -> Python-to-C++ type conversion
+    -> warning may be separate from Python exception
+```
