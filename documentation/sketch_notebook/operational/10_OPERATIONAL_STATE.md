@@ -1,40 +1,66 @@
 # Operational State
 
-> Checkpoint refreshed from `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`.
+> Checkpoint refreshed from Cycle 02 Codex evidence and manual validation.
 
 ## Current Implementation State
 
-- Product View materialization has been reported by Codex and is operationally classified as implemented with remaining manual UI validation.
-- Schema now includes nullable `purchases.expiration_date`, `products.average_shelf_life_days`, `products.expected_expiration_date`, and `stores.address`.
-- Database migration is reported as idempotent through `PRAGMA table_info(...)` checks and `ALTER TABLE ... ADD COLUMN ...` only when columns are missing.
-- `average_duration_days` remains the purchase-to-purchase rhythm.
-- `expected_next_purchase` remains the purchase-rhythm prediction.
-- `average_shelf_life_days` is now separate purchase-to-expiration rhythm.
-- `expected_expiration_date` is now separate expiration prediction.
-- Product View read model is assembled in service layer and rendered read-only in Register through a reusable panel.
-- Average price is derived from purchases for Product View rather than cached as product state.
+- Cycle 01 Product View remains implemented and operational after Cycle 02.
+- Register remains operational after Cycle 02.
+- History page is implemented and functional.
+- Settings page is implemented and functional.
+- Store editing through Settings is implemented and updates are reflected across pages.
+- Store address persistence/display exists and now has Settings UI editing support.
+- Store update through Register still requires investigation.
+- Product View read model remains service-driven and read-only.
 - Inventory classification remains based on `expected_next_purchase`.
+- Purchase rhythm remains separate from shelf-life rhythm:
+  - `average_duration_days` / `expected_next_purchase`
+  - `average_shelf_life_days` / `expected_expiration_date`
+- History grouping is service-driven with Month -> Week sections.
+- Default History time rules are implemented:
+  - month boundary: first Wednesday
+  - week boundary: Wednesday
+- History totals are service-prepared from stored purchase values.
+- SQLite-backed settings persistence exists through `settings(key, value)`.
+- Page sorting persistence exists through `pages.order`, but tab-reordering UI behavior remains deferred.
+- History configuration UI currently exposes only implemented defaults.
 
-## Validation State
+## Validation Evidence
 
-- `python -m compileall app`: passed.
-- `python -m app.core.database`: passed without destructive reset.
-- PRAGMA schema inspection: passed for new product, purchase, and store columns.
-- Product View service read on migrated user database: passed.
-- Isolated temp-`LOCALAPPDATA` write workflow: passed.
-- `python -m app.main`: reached Qt event loop with no startup/import traceback, then spawned GUI processes were stopped.
-- `git diff --check`: passed; line-ending normalization warnings only.
+- Cycle 02 Codex validation passed `python -m compileall app`.
+- Database initialization/migration opened existing user DB without destructive reset.
+- `settings` table migration validated with `PRAGMA table_info(settings)` returning `key`, `value`.
+- Existing user DB contained default settings for `history.week_boundary`, `history.month_boundary_rule`, and `pages.order`.
+- Existing user DB History service read returned one month section and zero unparsed purchase dates.
+- Product View regression check returned expected Cycle 01 keys.
+- Inventory regression check returned normal `product_status()` behavior.
+- Qt app startup reached event loop without traceback; full terminal-driven interaction remained limited.
+- Boundary test grouped `30/06/2026` into Operational June 2026.
+- Boundary test grouped `01/07/2026` into Operational July 2026.
+- Boundary test started a new Wednesday week on `08/07/2026`.
+- Settings persistence read/write survived SQLite-backed service readback.
+- Store create/update worked through service/repository and manual validation confirms store edits are reflected across pages.
+- Manual validation confirms History page, Settings page, Register, and Product View are functional.
 
 ## Remaining Operational Work
 
-- Manually verify desktop UI behavior after double-click from Storage, Shortage, and Market into Register.
-- Manually inspect lower Register Product View panel contents for identity, average price, store/latest price, purchase history, and expiration fields.
-- Decide later whether store address editing belongs in a store-management milestone.
-- Watch for mixed historical date formats affecting shelf-life recalculation.
+- Investigate store update through Register.
+- Investigate multi-store History totals.
+- Decide whether/when `pages.order` should be consumed by MainWindow for actual tab/page sorting behavior.
+- Expand manual UI QA for History grouped rendering and Settings store editing after further changes.
+- Continue monitoring unsupported historical date formats surfaced through `unparsed_rows`.
 
-## Active Risks
+## Known Implementation Limitations
 
-- Manual GUI validation is incomplete.
-- Existing historical records may contain date-format drift.
-- Store address persistence/display exists, but no editing UI exists yet.
-- Shelf-life fields are nullable, so older purchases may display blank expiration values.
+- Store deletion remains intentionally deferred.
+- Page sorting is persisted but not yet applied to MainWindow tab ordering.
+- History configuration UI currently exposes implemented defaults rather than a broad custom rule editor.
+- Existing unsupported date formats are reported, not repaired.
+- Full automated PySide6 interaction coverage is not present.
+
+## Active Operational Risks
+
+- Multi-store aggregate behavior may need correction or clearer validation.
+- Store update paths may diverge between Settings and Register if Register attempts store-related edits.
+- Date-format drift can affect History bucketing if stored rows use unsupported formats.
+- Settings persistence must not silently desynchronize from visible UI behavior.
