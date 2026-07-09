@@ -9,15 +9,16 @@
 
 # 1. Current Milestone
 
-Markei has completed Cycle 03 — Read-Model Consolidation.
+Markei remains after Cycle 03 — Read-Model Consolidation.
 
-Cycle 03 materialized:
+Cycle 04 Sprint 01 was started as a Settings boundary and integration-preparation cycle, but it was intentionally stopped before application materialization because domain staging behavior became unreliable.
 
-- unified `Lists` page;
-- embedded History analytics;
-- global latest / delta price display in Lists;
-- service-owned read models for Lists and History analytics;
-- mobile-readiness preparation through boundaries, not rewrite.
+Current milestone classification:
+
+```text
+Cycle 03 application state remains the last validated application baseline.
+Cycle 04 is paused after a disturbed staging attempt.
+```
 
 This file is the Main-owned global recovery surface. It intentionally combines current-state checkpoint behavior with accepted global project-state canon. It should remain concise and point to domain checkpoints for depth.
 
@@ -25,7 +26,7 @@ This file is the Main-owned global recovery surface. It intentionally combines c
 
 # 2. Current Application State
 
-Public desktop tabs are now:
+Public desktop tabs remain:
 
 ```text
 Register
@@ -34,7 +35,7 @@ History
 Settings
 ```
 
-Former public Storage / Shortage / Market meanings are now Lists internal views:
+Former public Storage / Shortage / Market meanings remain Lists internal views:
 
 ```text
 Storage  -> in-house
@@ -58,16 +59,17 @@ Current feature state:
 - Register remains purchase-entry-only.
 - Settings remains the store-management surface.
 - Product View remains service-driven and operational.
-- Lists is the public inventory surface.
+- Lists remains the public inventory surface.
 - History remains grouped by service-owned Month -> Week logic.
-- History now includes embedded read-only analytics.
+- History includes embedded read-only analytics.
 - Cycle 03 introduced no schema changes.
+- Cycle 04 introduced no accepted application implementation.
 
 ---
 
 # 3. Current Architecture State
 
-Accepted boundary:
+Accepted boundary remains:
 
 ```text
 Desktop UI
@@ -98,11 +100,13 @@ Repository owns SQL retrieval, persistence, settings access, and row mapping.
 
 SQLite owns persisted facts, relationships, settings, and migrations.
 
+Cycle 04 design staging temporarily clarified that Settings boundary correction should preserve this architecture, but all A/B/C DEV_STAGE files were later pruned. Treat that design material as historical Git evidence only unless recovered deliberately.
+
 ---
 
 # 4. Current Didactic State
 
-Cycle 03 learning focus:
+Cycle 03 learning focus remains:
 
 ```text
 raw data
@@ -113,7 +117,7 @@ raw data
 → UI presentation
 ```
 
-New or reinforced concept areas:
+New or reinforced Cycle 03 concept areas:
 
 - percentage as derived aggregate;
 - filtering frame;
@@ -125,13 +129,19 @@ New or reinforced concept areas:
 - unified Lists page with internal views;
 - mobile readiness without rewrite.
 
-Didactic concepts are registered in `didactics/02_KANBAN.md`, summarized in `didactics/08_CONCEPT_MAP.md`, and explained through `didactics/07_GLOSSARY.md`.
+Cycle 04 produced a didactic warning rather than a stable didactic state change:
+
+- Didactic staging may have drifted toward project-local intuitive concepts rather than intrinsic CS and Coding concepts.
+- This concern is observational only.
+- Do not rewrite `02_KANBAN.md` from this observation without a later explicit didactic audit.
+
+Didactic concepts remain registered in `didactics/02_KANBAN.md`, summarized in `didactics/08_CONCEPT_MAP.md`, and explained through `didactics/07_GLOSSARY.md`.
 
 ---
 
 # 5. Mobile Readiness
 
-Current classification:
+Current classification remains:
 
 ```text
 Prepared for future mobile discussion.
@@ -158,6 +168,8 @@ Not ready:
 - automated service tests;
 - explicit separation between UI labels and semantic values.
 
+Cycle 04 surfaced additional future-mobile pressure through proposed supermarket/reward integration placeholders and possible NFC-e/photo recognition, but no mobile or integration architecture was accepted.
+
 ---
 
 # 6. Current Sketch Notebook State
@@ -178,19 +190,55 @@ O/A/D domain absorption
 Main reconciliation
 ```
 
-The loop worked, but exposed method refinements:
+The Cycle 03 loop worked and produced strong application results, but exposed method refinements around recovery economy, checkpoint compactness, derived-file discipline, read-window rules, Main-root continuity roles, and reconciliation definitions.
 
-- some files became over-verbose;
-- checkpoints need compactness enforcement;
-- derived files need resorting discipline;
-- ever-growing files need read-window rules;
-- `06_SESSION_SCHEME.md` needs formal registration as a forward checkpoint;
-- `[M]_STAGE/J_MAIN_STAGE.md` needs routing decision;
-- `PROVISORY_[M]_DOUBLE_LAB.MD` is a temporary lab bridge, not canon.
+Inter-cycle methodology fine-tuning then updated the method enough for `INDEX.md`-driven bootstrap and recovery-economy behavior to be treated as accepted working method.
+
+Cycle 04 then exposed a different class of problem:
+
+```text
+Execution / tool / session behavior became unreliable during domain staging.
+```
+
+Observed Cycle 04 disturbance:
+
+- Operational and Didactic domain attempts produced canvas-style responses instead of stable repository-backed DEV_STAGE updates.
+- Design staging had been committed earlier, but Main later chose to prune all A/B/C DEV_STAGE files for consistency.
+- The disturbance appeared at the execution/staging materialization layer rather than as an obvious contradiction in the Sketch Notebook semantic method.
+- The cause is unknown.
+- No solution is accepted in this state file.
+
+Current DEV_STAGE status:
+
+```text
+A_OPERATIONAL.md -> pruned placeholder
+B_DIDACTIC.md   -> pruned placeholder
+C_DESIGN.md     -> pruned placeholder
+```
 
 ---
 
-# 7. Active Risks
+# 7. Achievements Preserved From Cycle 04 Attempt
+
+Cycle 04 preserved these useful outcomes despite being stopped:
+
+- INDEX-driven domain-chat bootstrap was reaffirmed.
+- Domain prompts were refined to stress movement according to `INDEX.md` navigation rather than hard-coded methodology enumeration.
+- Sprint 01 scope was clarified as Settings boundary correction plus integration preparation.
+- The intended Settings work was scoped to:
+  - seven-weekday week boundary;
+  - configurable month boundary;
+  - compact Store section;
+  - passive supermarket/reward API placeholder fields.
+- The API/reward identifier was classified as provider-neutral for now, not hard-coded as CPF/government-ID semantics.
+- A later `PROMPT_COLLECTION.md` artifact was identified as useful.
+- A didactic audit need was identified for after Cycle 04 recovery.
+
+These are preserved observations, not implementation proof.
+
+---
+
+# 8. Active Risks
 
 Application risks:
 
@@ -200,49 +248,54 @@ Application risks:
 - Multi-store analytics totals need richer validation.
 - Old Storage/Shortage/Market page files remain transitional.
 - `pages.order` remains persisted but inert.
+- Settings boundary correction remains unimplemented.
+- Supermarket/reward API fields remain unimplemented and undefined beyond placeholder intent.
 
-Methodology risks:
+Methodology / execution risks:
 
-- Root Main files are being initialized after the first complete cycle rather than before it.
-- `06_SESSION_SCHEME.md`, `[M]_STAGE`, and `PROVISORY_[M]_DOUBLE_LAB.MD` require routing registration or explicit provisional classification.
-- File-growth and reconciliation rules need methodology revision.
+- Domain-chat staging may produce non-repository canvas outputs under some conditions.
+- Long-session/context/tool routing effects may have disturbed reliable staging behavior.
+- The cause of the Cycle 04 disturbance is unknown.
+- A/B/C DEV_STAGE files are intentionally pruned and should not be treated as current domain evidence.
+- The next session must not infer implementation progress from transient Cycle 04 conversation outputs.
 
 ---
 
-# 8. Next Recovery Files
+# 9. Next Recovery Files
+
+Start with:
+
+```text
+documentation/sketch_notebook/INDEX.md
+documentation/sketch_notebook/00_PROJECT_STATE.md
+documentation/sketch_notebook/05_SESSION_LOG.md
+documentation/sketch_notebook/06_SESSION_SCHEME.md
+```
+
+Then inspect:
+
+```text
+documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
+documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md
+documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
+```
 
 For operational state:
 
 ```text
-operational/10_OPERATIONAL_STATE.md
+documentation/sketch_notebook/operational/10_OPERATIONAL_STATE.md
 ```
 
 For learning state:
 
 ```text
-didactics/08_CONCEPT_MAP.md
+documentation/sketch_notebook/didactics/08_CONCEPT_MAP.md
 ```
 
 For design state:
 
 ```text
-design/09_DESIGN_STATE.md
+documentation/sketch_notebook/design/09_DESIGN_STATE.md
 ```
 
-For next-session agenda:
-
-```text
-06_SESSION_SCHEME.md
-```
-
-For session history:
-
-```text
-05_SESSION_LOG.md
-```
-
-For Main staging of current method-lab conclusions:
-
-```text
-[M]_STAGE/J_MAIN_STAGE.md
-```
+Use Git history only if forensic reconstruction of pruned Cycle 04 stage content is required.
