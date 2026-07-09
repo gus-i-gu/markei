@@ -1,29 +1,41 @@
 # PROMOTION_RULES.md
 
-> Version: 0.2
+> Version: 0.3
 > Status: Draft
 > Persistence Class: Canonical
 > Knowledge Class: Methodological
 > Authority: Main Chat
-> Scope: Knowledge state transitions in the Sketch Notebook Method
+> Scope: Knowledge-state transitions in the Sketch Notebook Method
 
 ---
 
 # 1. Purpose
 
-`PROMOTION_RULES.md` defines how knowledge changes state inside the Sketch Notebook Method.
+`PROMOTION_RULES.md` defines how knowledge changes semantic state inside the Sketch Notebook Method.
 
-It does not define file paths, write permissions, commit rules, or exact routing.
+It answers one primary question:
+
+> What does this knowledge become?
+
+It does not define:
+
+* exact file paths;
+* write authority;
+* commit rules;
+* boot order;
+* staging filenames;
+* Codex report filenames;
+* domain checkpoint filenames.
 
 Those operational rules belong to `FLUX.md`.
 
-Promotion is semantic.
+`METHOD_FOUNDATIONS.md` defines the ontology of the method.
 
-Flux is operational.
+`FLUX.md` defines routing and authority.
 
-This document answers one primary question:
+`CHAT_PROTOCOL.md` defines communication structure.
 
-> How does knowledge evolve from transient conversation into persistent project memory or implementation?
+`PROMOTION_RULES.md` defines semantic transformation.
 
 ---
 
@@ -33,20 +45,25 @@ Promotion is the controlled transformation of knowledge from one maturity state 
 
 Promotion is not merely copying text between files.
 
-A promotion changes the epistemic status of information.
+Promotion changes the epistemic status of information.
 
-Information may become:
+A piece of knowledge may become:
 
-- captured;
-- staged;
-- synthesized;
-- validated;
-- canonical;
-- derived;
-- historical;
-- materialized.
+```text
+captured
+staged
+classified
+validated
+synthesized
+canonical
+derived
+checkpointed
+observational
+materialized
+reconciled
+```
 
-Promotion gives structure to the movement from raw conversation toward stable project knowledge.
+Promotion gives structure to the movement from transient conversation toward durable project memory, implementation, or historical record.
 
 ---
 
@@ -54,97 +71,337 @@ Promotion gives structure to the movement from raw conversation toward stable pr
 
 Promotion and materialization are different operations.
 
-## Promotion
+## 3.1 Promotion
 
 Promotion is semantic.
 
-It determines what knowledge means, how mature it is, and which knowledge state it belongs to.
+It determines:
 
-Promotion happens through reasoning and synthesis.
+* what the knowledge means;
+* how mature the knowledge is;
+* which domain owns it;
+* whether it is canonical, derived, checkpoint, observational, or staged;
+* whether it should affect implementation or memory.
 
-## Materialization
+Promotion happens through reasoning, classification, validation, synthesis, and reconciliation.
+
+## 3.2 Materialization
 
 Materialization is physical.
 
-It applies promoted or synthesized knowledge into repository files, source code, markdown documents, or other persistent artifacts.
+It changes files.
 
-Materialization is performed by Codex CLI or by explicit human editing.
+Materialization may affect:
 
-Promotion decides what should change.
+* source code;
+* notebook files;
+* stage files;
+* domain folders;
+* methodology files;
+* repository structure.
 
-Materialization changes the files.
+Materialization is performed by Codex, explicit human editing, or other authorized file-editing processes.
+
+## 3.3 Relationship
+
+Promotion decides what a change means.
+
+Materialization applies a change to files.
+
+A materialized change is not automatically semantically valid.
+
+A promoted conclusion is not persistent until it is materialized or otherwise recorded in the appropriate notebook memory.
 
 ---
 
 # 4. Knowledge States
 
-The Sketch Notebook Method recognizes the following conceptual knowledge states.
+The Sketch Notebook Method recognizes several knowledge states.
+
+These states are semantic.
+
+Exact paths and writable locations are defined by `FLUX.md`.
+
+---
 
 ## 4.1 Transient Conversation
 
-Raw dialogue, reasoning, questions, hypotheses, and exploratory thought.
+Transient Conversation is raw dialogue.
+
+It may include:
+
+* ideas;
+* doubts;
+* questions;
+* explanations;
+* hypotheses;
+* plans;
+* arguments;
+* exploratory reasoning.
 
 This state is temporary.
 
-Nothing in conversation is persistent until captured.
+Nothing in conversation is persistent project memory until captured, staged, materialized, or recorded.
 
-## 4.2 Functional Stage
+---
 
-Domain-specific staging performed by functional chats.
+## 4.2 Captured Knowledge
 
-Functional staging captures useful reasoning from Operational, Didactic, or Design perspectives.
+Captured Knowledge is information identified as potentially relevant.
+
+Capture exists to prevent useful reasoning from disappearing inside chat history.
+
+Capture does not imply approval.
+
+Capture only means:
+
+> This may matter later.
+
+Captured knowledge may be incomplete, uncertain, contradictory, or exploratory.
+
+---
+
+## 4.3 Classified Knowledge
+
+Classified Knowledge has been assigned a semantic domain or role.
+
+Classification answers:
+
+> What kind of knowledge is this?
+
+Common classifications include:
+
+* operational action;
+* operational observation;
+* operational model candidate;
+* didactic concept;
+* glossary candidate;
+* learning observation;
+* design observation;
+* architectural decision candidate;
+* derived summary candidate;
+* checkpoint update;
+* methodology refinement;
+* implementation instruction;
+* historical event;
+* structural gap;
+* drift report.
+
+Classification does not make knowledge canonical.
+
+It only identifies what kind of handling it requires.
+
+---
+
+## 4.4 Functional Stage
+
+Functional Stage is domain-specific staging performed by functional chats.
+
+Functional staging captures current reasoning from:
+
+* Operational Chat;
+* Didactic Chat;
+* Design Chat.
 
 Functional stage material is not canonical.
 
-It is working material awaiting Main synthesis.
+It is working material awaiting Main synthesis, domain-memory update, or later reconciliation.
 
-## 4.3 Main Synthesis
+---
 
-The Main Chat integrates functional stage material.
+## 4.5 Main Synthesis
 
-It compares domain perspectives, resolves contradictions, extracts conclusions, and prepares coherent materialization instructions.
+Main Synthesis is the integration of staged material by Main Chat.
 
-Main synthesis transforms multiple staged reports into coordinated project direction.
+Main synthesis may:
 
-## 4.4 Materialization Stage
+* compare functional reports;
+* resolve contradictions;
+* detect drift;
+* choose implementation direction;
+* prepare materialization instructions;
+* determine notebook update requirements;
+* defer unresolved questions.
 
-Main-approved staging prepared for Codex or human implementation.
+Main synthesis transforms multiple domain perspectives into coherent project direction.
 
-Materialization stage material may include:
+---
 
-- patch instructions;
-- notebook update proposals;
-- application implementation plans;
-- command sequences;
-- conceptual updates to be written into permanent folders.
+## 4.6 Materialization Stage
 
-Materialization stage is still not the final project memory.
+Materialization Stage is Main-approved instruction before physical change.
 
-It is the instruction layer before physical change.
+It may include:
 
-## 4.5 Canonical Knowledge
+* patch instructions;
+* application implementation plans;
+* notebook update proposals;
+* command sequences;
+* validation instructions;
+* domain-memory update instructions;
+* methodology update instructions.
 
-Validated knowledge accepted as authoritative within its domain.
+Materialization stage material is not final memory.
 
-Canonical knowledge belongs in permanent notebook memory.
+It is the instruction layer before physical materialization.
 
-Examples include architectural decisions, method specifications, KANBANs, domain models, and stable operational references.
+---
 
-## 4.6 Derived Knowledge
+## 4.7 Codex Report Stage
 
-Views, summaries, maps, indexes, or snapshots generated from canonical knowledge.
+Codex Report Stage is post-materialization evidence.
 
-Derived knowledge should not introduce independent truth.
+It records what Codex actually did.
 
-It reorganizes what is already canonical.
+It may include:
 
-## 4.7 Observational Record
+* files changed;
+* files created;
+* files deleted;
+* commands run;
+* validation results;
+* skipped instructions;
+* failed instructions;
+* unresolved risks;
+* suggested follow-up.
 
-Append-only records of what happened.
+Codex report material is observational evidence.
 
-Observational records preserve the sequence of work, actions, and sessions.
+It is not canonical knowledge.
 
-They do not define current truth.
+It becomes useful when functional chats classify it, domain files absorb it, and Main Chat reconciles it.
+
+---
+
+## 4.8 Canonical Knowledge
+
+Canonical Knowledge defines accepted truth within a domain.
+
+Canonical knowledge should be:
+
+* validated;
+* stable enough to depend on;
+* owned by one domain;
+* free from unresolved contradiction;
+* revisable only through deliberate update.
+
+Examples include:
+
+* methodology principles;
+* didactic KANBAN concepts;
+* architecture rules;
+* accepted design decisions;
+* operational models;
+* domain models;
+* stable responsibility boundaries.
+
+Canonical knowledge belongs in permanent domain memory.
+
+---
+
+## 4.9 Derived Knowledge
+
+Derived Knowledge reorganizes, summarizes, indexes, maps, or explains canonical knowledge.
+
+Derived knowledge does not create independent truth.
+
+It depends on canonical knowledge.
+
+Examples include:
+
+* glossary entries;
+* model overviews;
+* concept maps;
+* TODO views;
+* project-state summaries;
+* navigation summaries.
+
+If derived knowledge contradicts canonical knowledge, the derived knowledge is stale or invalid unless the canonical file is also being revised through an authorized process.
+
+---
+
+## 4.10 Domain Checkpoint
+
+A Domain Checkpoint is ephemeral derived knowledge optimized for recovery.
+
+It summarizes the current state of a domain so a role can recover context without reading all canonical, derived, observational, or repository material.
+
+A checkpoint should answer:
+
+* where the domain currently stands;
+* what is stable;
+* what is active;
+* what is unresolved;
+* what recently changed;
+* what should be read next if deeper context is required.
+
+A checkpoint does not introduce independent truth.
+
+A checkpoint should be refreshed when domain state changes.
+
+A checkpoint may become stale.
+
+A stale checkpoint should be regenerated from canonical, derived, observational, and implementation evidence.
+
+---
+
+## 4.11 Observational Record
+
+An Observational Record preserves what happened.
+
+It records:
+
+* actions;
+* sessions;
+* lectures;
+* decisions;
+* validation attempts;
+* failures;
+* materialization events;
+* human overrides;
+* drift observations;
+* reconciliation events.
+
+Observational records do not define current truth by themselves.
+
+They preserve sequence and evidence.
+
+They should generally be append-oriented.
+
+---
+
+## 4.12 Reconciled Knowledge
+
+Reconciled Knowledge has been checked against other relevant project-memory layers.
+
+Reconciliation may compare:
+
+* checkpoint state;
+* canonical domain knowledge;
+* derived domain knowledge;
+* observational history;
+* stage files;
+* Codex reports;
+* source code;
+* human direction.
+
+Reconciled knowledge may produce:
+
+* canonical correction;
+* derived regeneration;
+* checkpoint refresh;
+* observational note;
+* new TODO;
+* design revision;
+* didactic update;
+* operational update;
+* methodology refinement.
+
+Reconciliation does not always promote knowledge.
+
+Sometimes it confirms that no change is needed.
+
+Sometimes it detects drift.
 
 ---
 
@@ -155,6 +412,10 @@ The general lifecycle is:
 ```text
 Transient Conversation
 ↓
+Capture
+↓
+Classification
+↓
 Functional Stage
 ↓
 Main Synthesis
@@ -163,56 +424,205 @@ Materialization Stage
 ↓
 Materialization
 ↓
-Canonical / Operational / Derived / Observational Memory
+Codex Report Stage
+↓
+Domain Classification
+↓
+Canonical / Derived / Checkpoint / Observational Memory
+↓
+Reconciliation
 ↓
 Persistence
 ```
 
-This lifecycle may be shortened for small tasks, but it should not be bypassed when knowledge affects project structure, methodology, learning, or implementation.
+This lifecycle may be shortened for small tasks.
+
+It should not be bypassed when knowledge affects:
+
+* methodology;
+* project architecture;
+* learning state;
+* implementation behavior;
+* domain memory;
+* file structure;
+* source code;
+* durable project direction.
 
 ---
 
-# 6. Capture
+# 6. Domain Symmetry and Promotion
 
-Capture is the transition from transient conversation into staged material.
+Every functional domain should expose four semantic roles:
 
-Capture exists to prevent useful reasoning from disappearing inside chat history.
+```text
+Canonical Knowledge
+Derived Knowledge
+Domain Checkpoint
+Observational History
+```
 
-Captured material may be incomplete, uncertain, or exploratory.
+Promotion must respect these roles.
 
-Capture does not imply approval.
+The same event may produce updates in more than one role.
 
-Capture only means:
+Example:
 
-> This information may matter later.
+```text
+A new architectural decision is accepted.
+↓
+Canonical: architecture file updated.
+Observational: decision log entry appended.
+Derived: model overview refreshed.
+Checkpoint: design state refreshed.
+```
+
+A single file should not permanently carry incompatible semantic roles if doing so creates drift.
+
+Canonical files should be able to improve definitions.
+
+Observational files should preserve historical sequence.
+
+Derived files should summarize truth without creating it.
+
+Checkpoints should remain compact and recoverable.
 
 ---
 
-# 7. Classification
+# 7. Hierarchical Recovery and Promotion
+
+The Hierarchical Recovery Principle affects how promotion is validated.
+
+Before promoting new knowledge, the system should prefer the least expensive sufficient source.
+
+The recovery order is:
+
+```text
+Domain Checkpoint
+↓
+Canonical Knowledge
+↓
+Derived Knowledge
+↓
+Observational History
+↓
+Repository Inspection
+```
+
+This order is not a proof hierarchy.
+
+It is a recovery-cost hierarchy.
+
+For promotion decisions:
+
+* a checkpoint may identify the current state;
+* canonical knowledge determines stable truth;
+* derived knowledge explains or summarizes canonical truth;
+* observational history explains how the current state emerged;
+* repository inspection verifies implementation reality when needed.
+
+A checkpoint alone should not be treated as canonical evidence.
+
+A derived summary alone should not override canonical knowledge.
+
+An observational record alone should not define current truth.
+
+Repository inspection may override notebook assumptions when implementation truth contradicts project memory, but that contradiction should be recorded as drift and reconciled.
+
+---
+
+# 8. Capture
+
+Capture is the transition from transient conversation into potentially useful memory.
+
+Capture may occur when:
+
+* a user proposes a new direction;
+* a bug exposes a concept;
+* a design question appears;
+* a command fails;
+* a new relationship is discovered;
+* Codex reports a materialization result;
+* a chat identifies drift;
+* a recurring term needs definition.
+
+Captured knowledge should be preserved in the appropriate stage, report, log, or domain file according to `FLUX.md`.
+
+Capture does not validate.
+
+Capture does not promote to canon.
+
+Capture only prevents loss.
+
+---
+
+# 9. Classification
 
 Classification determines what kind of knowledge has been captured.
 
-Typical classifications include:
+Classification asks:
 
-- operational action;
-- bug report;
-- design observation;
-- architectural decision candidate;
-- didactic concept;
-- glossary candidate;
-- methodology refinement;
-- implementation instruction;
-- historical event.
+```text
+Which domain owns this?
+Which semantic role does it serve?
+How mature is it?
+What should happen next?
+```
 
-Classification does not make knowledge canonical.
+Classification dimensions include:
 
-It only identifies the appropriate semantic domain.
+## 9.1 Domain Classification
+
+Possible domain classifications include:
+
+```text
+operational
+didactic
+design
+methodological
+main/global
+implementation/source
+```
+
+## 9.2 Semantic Role Classification
+
+Possible semantic-role classifications include:
+
+```text
+canonical
+derived
+checkpoint
+observational
+stage
+materialization instruction
+Codex report evidence
+structural gap
+drift
+```
+
+## 9.3 Maturity Classification
+
+Possible maturity classifications include:
+
+```text
+raw
+captured
+staged
+validated
+accepted
+deferred
+rejected
+superseded
+stale
+reconciled
+```
+
+Classification is required before durable promotion.
 
 ---
 
-# 8. Validation
+# 10. Validation
 
-Validation determines whether staged knowledge is stable enough to move forward.
+Validation determines whether knowledge is stable enough to move forward.
 
 Before promotion, the system should ask:
 
@@ -221,116 +631,294 @@ Before promotion, the system should ask:
 3. Is it sufficiently supported by evidence or reasoning?
 4. Does it belong to this domain?
 5. Does another canonical source already own this knowledge?
-6. Is it ready to affect permanent memory or implementation?
+6. Is it consistent with current checkpoints?
+7. Is it consistent with canonical files?
+8. Is it consistent with derived files?
+9. Is it consistent with observational evidence?
+10. Is repository inspection required?
+11. Is it ready to affect permanent memory or implementation?
 
-Unvalidated knowledge should remain staged or be discarded.
+Unvalidated knowledge should remain staged, remain observational, be marked as unresolved, or be discarded.
 
 ---
 
-# 9. Synthesis
+# 11. Synthesis
 
-Synthesis combines staged material into coherent direction.
+Synthesis combines classified and validated material into coherent direction.
 
-Synthesis is mainly performed by the Main Chat.
+Synthesis is mainly performed by Main Chat.
 
 Synthesis may:
 
-- merge functional reports;
-- resolve conflicts;
-- choose an implementation direction;
-- prepare Codex instructions;
-- determine notebook updates;
-- decide that more investigation is required.
+* merge functional reports;
+* resolve contradictions;
+* identify drift;
+* choose an implementation direction;
+* prepare Codex instructions;
+* determine domain-memory updates;
+* determine checkpoint refresh needs;
+* decide that more investigation is required.
 
 Synthesis is the bridge between functional reasoning and materialization.
 
+Synthesis does not automatically make knowledge canonical.
+
+Canonical promotion still requires domain-appropriate validation and placement.
+
 ---
 
-# 10. Canonical Promotion
+# 12. Canonical Promotion
 
-Canonical promotion occurs when knowledge becomes the authoritative reference for its domain.
+Canonical Promotion occurs when knowledge becomes accepted truth within a domain.
 
 Examples:
 
-- a design proposal becomes a decision;
-- a recurring concept becomes a KANBAN;
-- a methodological insight becomes part of a methodology specification;
-- an implementation boundary becomes part of architecture documentation.
+* a recurring concept becomes a KANBAN entry;
+* a stable architecture rule enters architecture documentation;
+* an operational convention becomes part of the operational model;
+* a methodology principle becomes part of methodology specification;
+* a domain relationship becomes an accepted design decision.
 
 Canonical promotion should be careful and deliberate.
 
 A canonical document should not receive raw, uncertain, or contradictory material.
 
+Canonical promotion should identify:
+
+* the domain owner;
+* the canonical home;
+* supporting evidence;
+* affected derived files;
+* affected checkpoints;
+* relevant observational records;
+* whether repository verification is required.
+
+Canonical knowledge may be revised.
+
+Revision should preserve historical explanation through observational records when the change is significant.
+
 ---
 
-# 11. Derived Generation
+# 13. Derived Generation
 
-Derived generation occurs after canonical knowledge changes.
+Derived Generation occurs when canonical knowledge is reorganized into a useful view.
 
-Derived documents should be regenerated or revised to reflect canonical updates.
+Derived generation may produce or refresh:
 
-Derived generation may produce:
-
-- project state summaries;
-- concept maps;
-- glossary references;
-- current action views;
-- navigation indexes.
+* glossary entries;
+* model overviews;
+* concept maps;
+* TODO views;
+* project state summaries;
+* architecture summaries;
+* navigation summaries.
 
 Derived documents are useful views.
 
 They are not independent sources of truth.
 
----
+Derived generation should occur when:
 
-# 12. Observational Recording
+* canonical knowledge changes;
+* derived material becomes stale;
+* Main reconciliation detects drift;
+* a checkpoint needs compact support material;
+* a domain requires easier recovery or explanation.
 
-Observational recording preserves what happened.
-
-It should record events, not redefine knowledge.
-
-Examples of observational entries include:
-
-- session summaries;
-- execution attempts;
-- test results;
-- materialization events;
-- decisions accepted or postponed;
-- promotions performed.
-
-Observational records should generally be append-only.
+If derived material conflicts with canonical material, the derived material should be corrected or regenerated.
 
 ---
 
-# 13. Promotion Directions
+# 14. Checkpoint Refresh
 
-Promotion may occur in two conceptual directions.
+Checkpoint Refresh occurs when a domain checkpoint is updated to reflect the current state of a domain.
 
-## 13.1 Vertical Promotion
+Checkpoint refresh is a form of derived generation.
 
-Vertical promotion changes maturity.
+It is optimized for low-token recovery.
+
+Checkpoint refresh may summarize:
+
+* stable canonical state;
+* active work;
+* recent changes;
+* unresolved issues;
+* drift;
+* next files to inspect;
+* next likely actions or concepts.
+
+A checkpoint should not become:
+
+* a canonical register;
+* a long historical log;
+* a replacement for domain files;
+* a place for independent truth.
+
+Checkpoint refresh should happen after:
+
+* Codex report classification;
+* domain-memory updates;
+* canonical promotion;
+* derived regeneration;
+* important observational recording;
+* Main reconciliation;
+* meaningful implementation changes.
+
+A checkpoint may remain empty or minimal when the domain itself has not yet been initialized.
+
+---
+
+# 15. Observational Recording
+
+Observational Recording preserves what happened.
+
+It should record events, not redefine truth.
+
+Examples include:
+
+* session summaries;
+* execution attempts;
+* test results;
+* materialization events;
+* decisions accepted or postponed;
+* concepts introduced;
+* misconceptions detected;
+* Codex reports;
+* promotions performed;
+* reconciliation events.
+
+Observational records should generally be append-oriented.
+
+Observational records may later support canonical promotion, but they do not become canonical merely because they are recorded.
+
+---
+
+# 16. Codex Report Absorption
+
+Codex Report Absorption is the process of interpreting G/H/I report evidence after materialization.
+
+Codex reports should be treated as observational evidence.
+
+Functional chats should classify Codex report content into domain roles:
+
+```text
+canonical update candidate
+derived update candidate
+checkpoint refresh
+observational record
+structural gap
+drift
+future TODO
+```
+
+Codex reports should not be copied blindly into permanent memory.
+
+They should be interpreted by the appropriate functional chat.
+
+Main Chat then reconciles domain updates with global project state.
+
+---
+
+# 17. Drift Detection
+
+Drift occurs when two or more project-memory layers disagree.
+
+Examples:
+
+* checkpoint contradicts canonical file;
+* derived file omits new canonical knowledge;
+* observational history says something changed but checkpoint does not reflect it;
+* repository implementation differs from notebook memory;
+* Codex report says an instruction failed but stage files imply success;
+* human direction supersedes notebook state;
+* old filenames remain referenced after methodological rename.
+
+Drift is not automatically failure.
+
+Drift is a signal that reconciliation is required.
+
+Drift should be classified as:
+
+```text
+checkpoint drift
+derived drift
+canonical drift
+observational gap
+implementation drift
+routing drift
+methodology drift
+naming drift
+```
+
+---
+
+# 18. Reconciliation
+
+Reconciliation compares project-memory layers and resolves or records drift.
+
+Reconciliation asks:
+
+1. Does the checkpoint reflect the canonical state?
+2. Does derived knowledge reflect canonical knowledge?
+3. Does observational history explain how the current state emerged?
+4. Does repository state agree with notebook memory?
+5. Did materialization match Main-approved instructions?
+6. Did human direction override prior knowledge?
+7. Are filenames and routes still canonical?
+8. Are domain roles still distinguishable?
+
+Reconciliation may result in:
+
+* no change;
+* checkpoint refresh;
+* derived regeneration;
+* canonical correction;
+* observational note;
+* new TODO;
+* design revision;
+* didactic update;
+* operational update;
+* methodology refinement;
+* source-code correction;
+* stage-file correction.
+
+Reconciliation should preserve history when correcting current truth.
+
+---
+
+# 19. Promotion Directions
+
+Promotion may occur in several directions.
+
+## 19.1 Vertical Promotion
+
+Vertical Promotion changes maturity.
 
 Example:
 
 ```text
 Raw observation
 ↓
-staged report
+Captured note
 ↓
-validated conclusion
+Functional stage
 ↓
-canonical decision
+Validated conclusion
 ↓
-derived summary
+Canonical knowledge
+↓
+Derived summary
+↓
+Checkpoint refresh
 ```
 
 Vertical promotion answers:
 
 > How mature is this knowledge?
 
-## 13.2 Horizontal Promotion
+## 19.2 Horizontal Promotion
 
-Horizontal promotion changes domain ownership or perspective.
+Horizontal Promotion changes domain ownership or perspective.
 
 Example:
 
@@ -342,63 +930,212 @@ Operational bug discovery
 or:
 
 ```text
-Design pattern discussion
+Design relationship decision
 → Didactic KANBAN candidate
 ```
 
 Horizontal promotion answers:
 
-> Which domain should own this knowledge?
+> Which domain should own or interpret this knowledge?
 
-Horizontal promotion may happen before or during vertical promotion.
+## 19.3 Reflective Promotion
+
+Reflective Promotion updates the methodology itself.
+
+Example:
+
+```text
+Repeated file drift
+↓
+Methodological observation
+↓
+Main synthesis
+↓
+FLUX update
+```
+
+Reflective promotion answers:
+
+> Does the method itself need to change?
+
+Reflective promotion should be rare and human-supervised.
 
 ---
 
-# 14. Promotion Integrity Rules
+# 20. Domain-Specific Promotion
+
+## 20.1 Operational Promotion
+
+Operational promotion may transform:
+
+* failed command → operational record;
+* repeated validation procedure → operational model;
+* current blocker → operational state;
+* deferred action → TODO;
+* Codex implementation evidence → operational record or state update.
+
+Operational canonical promotion belongs to stable operational knowledge.
+
+Operational observation belongs to operational history.
+
+Operational state belongs to the operational checkpoint.
+
+## 20.2 Didactic Promotion
+
+Didactic promotion may transform:
+
+* implementation problem → concept candidate;
+* recurring concept → KANBAN entry;
+* concept definition → glossary entry;
+* current learning dependency → concept map;
+* lecture event → lecture register;
+* misconception → learning observation.
+
+Didactic canonical promotion should preserve KANBAN numbering and concept identity.
+
+Didactic derived generation should not create new concept truth.
+
+## 20.3 Design Promotion
+
+Design promotion may transform:
+
+* design observation → decision candidate;
+* accepted responsibility boundary → architecture;
+* postponed decision → decision log;
+* model summary → model overview;
+* current architecture state → design checkpoint;
+* implementation contradiction → design drift.
+
+Design canonical promotion belongs in architecture or other accepted design canonical files.
+
+Design observational recording belongs in decision history.
+
+Design checkpoint refresh belongs in design state.
+
+## 20.4 Methodological Promotion
+
+Methodological promotion may transform:
+
+* repeated workflow failure → method issue;
+* recurring vocabulary ambiguity → method glossary entry;
+* routing ambiguity → FLUX update;
+* concept-state ambiguity → PROMOTION_RULES update;
+* communication inconsistency → CHAT_PROTOCOL update;
+* foundational ambiguity → METHOD_FOUNDATIONS update.
+
+Methodological promotion must be deliberate.
+
+It should be supervised by Main Chat and the human developer.
+
+---
+
+# 21. Structural Gaps
+
+A Structural Gap exists when the method requires a semantic role but the repository does not yet provide an adequate file, route, or protocol.
+
+Examples:
+
+* a domain lacks observational history;
+* a domain checkpoint exists but is empty or structurally unusable;
+* a canonical file is missing for a required domain role;
+* a methodology term is used but not defined;
+* a file rename occurred but old references remain;
+* a functional chat is responsible for a duty but has no protocol.
+
+Structural gaps should not be silently patched by arbitrary file creation.
+
+They should be reported, synthesized, and materialized through the authority defined by `FLUX.md`.
+
+---
+
+# 22. Promotion Integrity Rules
 
 ## Rule 1 — Conversation is not persistence
 
-A fact, idea, decision, or concept is not part of project memory until captured or materialized.
+A fact, idea, decision, or concept is not part of project memory until captured, staged, recorded, or materialized.
 
 ## Rule 2 — Staging is not canon
 
 Stage material may be useful, but it is not authoritative.
 
-## Rule 3 — Canonical ownership must be unique
+## Rule 3 — Codex reports are evidence, not canon
+
+G/H/I reports describe materialization evidence.
+
+They must be interpreted before becoming domain memory.
+
+## Rule 4 — Canonical ownership must be unique
 
 Each stable knowledge object should have one canonical home.
 
-Duplicate canonical truth creates drift, and need to be refactored.
+Duplicate canonical truth creates drift.
 
-## Rule 4 — Derived knowledge cannot create truth
+## Rule 5 — Derived knowledge cannot create truth
 
-Derived documents summarize or reorganize.
+Derived documents summarize, reorganize, map, or explain.
 
-They do not establish new facts.
+They do not establish independent facts.
 
-## Rule 5 — Historical records do not define truth
+## Rule 6 — Checkpoints cannot create truth
+
+Domain checkpoints summarize current domain state for recovery.
+
+They do not override canonical files.
+
+## Rule 7 — Observational records do not define current truth
 
 Historical records preserve sequence and evidence.
 
-They do not determine current project state.
+They do not determine current project state by themselves.
 
-## Rule 6 — Materialization requires synthesis
+## Rule 8 — Materialization requires synthesis
 
 Permanent repository changes should follow Main synthesis or explicit human instruction.
 
-## Rule 7 — Methodology changes require methodological context
+## Rule 9 — Methodology changes require methodological context
 
-Changes to methodology specifications should happen only during explicit methodology work.
+Changes to methodology specifications should happen only during explicit methodological work.
+
+## Rule 10 — File creation and renaming require routing authority
+
+New files and file renames must follow `FLUX.md`.
+
+Semantic need alone does not authorize arbitrary file creation.
+
+## Rule 11 — Reconciliation preserves history
+
+Correcting current truth should not erase useful historical evidence.
 
 ---
 
-# 15. Relationship with FLUX
+# 23. Relationship with METHOD_FOUNDATIONS
+
+`METHOD_FOUNDATIONS.md` defines what the Sketch Notebook Method is.
+
+It defines foundational ontology, including:
+
+* project memory;
+* knowledge domains;
+* Domain Symmetry;
+* Domain Checkpoints;
+* Hierarchical Recovery;
+* Continuous Reconciliation.
+
+`PROMOTION_RULES.md` depends on that ontology.
+
+It should not redefine the method’s foundation.
+
+It defines how knowledge moves through the ontology.
+
+---
+
+# 24. Relationship with FLUX
 
 `PROMOTION_RULES.md` defines semantic transformation.
 
 `FLUX.md` defines operational routing.
 
-This document intentionally avoids exact filenames, writable paths, and commit scopes except when referencing the conceptual role of stage, synthesis, and materialization.
+This document intentionally avoids exact file paths, writable paths, commit scopes, and concrete authority rules except when referring to conceptual roles.
 
 If a question asks:
 
@@ -412,22 +1149,44 @@ If a question asks:
 
 consult `FLUX.md`.
 
----
-
-# 16. Relationship with METHOD_FOUNDATIONS
-
-`METHOD_FOUNDATIONS.md` defines what the Sketch Notebook Method is.
-
-`PROMOTION_RULES.md` defines how knowledge changes state inside that method.
-
-Promotion depends on the ontology defined by `METHOD_FOUNDATIONS.md`.
-
-It should not redefine the method's ontology.
+If promotion requires materialization, `FLUX.md` determines who may perform it.
 
 ---
 
-# 17. Closing Principle
+# 25. Relationship with CHAT_PROTOCOL
+
+`CHAT_PROTOCOL.md` defines communication structure.
+
+Promotion may require structured reporting.
+
+Examples:
+
+* Didactic concepts require a defined concept format.
+* Checkpoints may require compact recovery structure.
+* Observational records may require readable append-oriented entries.
+
+`PROMOTION_RULES.md` determines the semantic state.
+
+`CHAT_PROTOCOL.md` determines the communication form.
+
+---
+
+# 26. Closing Principle
 
 Promotion is the discipline that prevents conversation from becoming chaos.
 
-It allows ideas to pass through capture, validation, synthesis, and materialization without confusing raw thought, staged material, canonical knowledge, derived views, and historical memory.
+It allows knowledge to move through capture, classification, validation, synthesis, materialization, checkpointing, observation, and reconciliation.
+
+It protects the project from confusing:
+
+* raw thought with stable truth;
+* stage files with canonical memory;
+* Codex reports with interpretation;
+* derived summaries with authority;
+* checkpoints with canon;
+* historical records with current state;
+* materialized files with validated knowledge.
+
+The Sketch Notebook does not merely store information.
+
+It changes the status of information deliberately.
