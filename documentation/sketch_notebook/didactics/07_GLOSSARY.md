@@ -3,6 +3,7 @@
 > Domain: Didactic
 > Status: Derived from `02_KANBAN.md`
 > Last absorbed evidence: `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
+> Current cycle: Cycle 02 — History + Settings
 
 ---
 
@@ -22,11 +23,11 @@ The meaning and responsibility assigned to a named model field within a domain, 
 
 Project Usage
 
-Used to distinguish `average_duration_days` from `average_shelf_life_days` in Markei.
+Used to distinguish product rhythm fields and History/Settings field names such as `purchase_date`, `total_price`, and `settings.key`.
 
 Related Concepts
 
-Raw Data Versus Derived Data; Naming as Data Contract; Markei Purchase Rhythm Versus Shelf-Life Rhythm.
+Raw Data Versus Derived Data; Naming as Data Contract; Grouping Versus Sorting.
 
 ---
 
@@ -46,11 +47,11 @@ Data directly entered, observed, or imported before calculation or prediction.
 
 Project Usage
 
-`Purchase.expiration_date` is raw batch-level data entered with a receipt and may be null.
+Purchase rows and purchase-level expiration dates are raw facts in Markei.
 
 Related Concepts
 
-Derived Data; Cached Summary Field; Optional Values and Nullable Fields.
+Derived Data; Aggregation and Totals; Cached Summary Field.
 
 ---
 
@@ -66,15 +67,15 @@ Foundational Computer Science
 
 Definition
 
-Data produced by applying calculation, aggregation, inference, or prediction to other data.
+Data produced by applying calculation, aggregation, inference, grouping, or prediction to other data.
 
 Project Usage
 
-`average_shelf_life_days`, `expected_expiration_date`, and Product View average price are derived from purchase records.
+Product summaries, History sections, store totals, and average unit prices are derived from purchase records.
 
 Related Concepts
 
-Raw Data; Cached Summary Field; Service-Owned Calculation Responsibility.
+Raw Data; Aggregation and Totals; Service-Owned Calculation Responsibility.
 
 ---
 
@@ -94,11 +95,11 @@ The use of stable, precise names to preserve data meaning across program boundar
 
 Project Usage
 
-Markei keeps `expiration_date`, `average_shelf_life_days`, and `expected_expiration_date` distinct across schema, models, repositories, services, and UI.
+Markei uses explicit names for purchase rows, settings keys, time buckets, totals, and read-model fields.
 
 Related Concepts
 
-Domain Model Field Semantics; Repository Result Shape; Read Model.
+Domain Model Field Semantics; Repository Result Shape; Configuration State.
 
 ---
 
@@ -118,11 +119,107 @@ A retained value calculated from other records and used as a summary for access,
 
 Project Usage
 
-`expected_expiration_date` is a product-level summary, not the purchase-level expiration fact.
+`expected_expiration_date` is cached product summary data; History totals are derived display aggregates unless later persisted by design.
 
 Related Concepts
 
-Raw Data Versus Derived Data; Service-Owned Calculation Responsibility.
+Raw Data Versus Derived Data; Aggregation and Totals.
+
+---
+
+## Time Bucketing
+
+KANBAN ID
+
+&&&05
+
+Type
+
+Foundational Computer Science
+
+Definition
+
+The classification of temporal records into discrete periods according to explicit start/end boundary rules.
+
+Project Usage
+
+Markei History assigns purchases to operational weeks and months using Wednesday boundary rules.
+
+Related Concepts
+
+Date/Datetime Boundary Handling; Grouping Versus Sorting; History Read Model.
+
+---
+
+## Aggregation and Totals
+
+KANBAN ID
+
+&&&06
+
+Type
+
+Foundational Computer Science
+
+Definition
+
+The derivation of summary values from a collection of records using operations such as sum, mean, grouping, or counting.
+
+Project Usage
+
+Markei History sums `total_price`, averages `unit_price`, keeps quantity totals grouped by unit, and groups totals by store label.
+
+Related Concepts
+
+Raw Data Versus Derived Data; History Read Model; Service-Owned Calculation Responsibility.
+
+---
+
+## Grouping Versus Sorting
+
+KANBAN ID
+
+&&&07
+
+Type
+
+Foundational Computer Science
+
+Definition
+
+Sorting orders records according to comparison criteria, while grouping partitions records into collections based on shared keys or computed membership rules.
+
+Project Usage
+
+Markei sorts purchases chronologically, then groups them into operational month and week sections.
+
+Related Concepts
+
+Time Bucketing; Aggregation and Totals; Repository Result Shape.
+
+---
+
+## Configuration State
+
+KANBAN ID
+
+&&&08
+
+Type
+
+Foundational Computer Science
+
+Definition
+
+Persisted application preference data used to parameterize future behavior across sessions.
+
+Project Usage
+
+Markei Settings stores sorting and History time-reference values used by services later.
+
+Related Concepts
+
+Settings-Owned Preferences; SQLite Settings Persistence; Simple Key/Value Table.
 
 ---
 
@@ -142,11 +239,11 @@ A value that may be present or absent in the language model.
 
 Project Usage
 
-Markei Python models use optional fields so missing expiration or address data can be represented safely.
+Markei Python models and settings defaults handle missing expiration, address, or preference values safely.
 
 Related Concepts
 
-Nullable Field; Dataclass Field Evolution.
+Nullable Field; Dataclass Field Evolution; Date/Datetime Boundary Handling.
 
 ---
 
@@ -166,7 +263,7 @@ A persistent field that may contain no value and must be handled explicitly by a
 
 Project Usage
 
-Markei allows missing expiration dates and store addresses to render as placeholders instead of errors.
+Markei allows missing expiration dates and store addresses to render or edit safely.
 
 Related Concepts
 
@@ -174,11 +271,59 @@ Optional Value; SQLite Schema Evolution.
 
 ---
 
+## Dataclass Field Evolution
+
+KANBAN ID
+
+&&%02
+
+Type
+
+Python / Language Concept
+
+Definition
+
+Controlled change of Python dataclass fields, defaults, and optionality as the domain model matures.
+
+Project Usage
+
+Markei models evolve as Product, History, Store, and Settings concepts become more explicit.
+
+Related Concepts
+
+Optional Value; Naming as Data Contract.
+
+---
+
+## Date/Datetime Boundary Handling
+
+KANBAN ID
+
+&&%03
+
+Type
+
+Python / Language Concept
+
+Definition
+
+The use of language-level temporal values and arithmetic to determine period starts, period ends, ordering, and membership.
+
+Project Usage
+
+Markei services use date parsing and Wednesday boundary rules to assign purchases to operational periods.
+
+Related Concepts
+
+Time Bucketing; Grouping Versus Sorting.
+
+---
+
 ## Read Model
 
 KANBAN ID
 
-&%%02
+&%%02 / &%%05
 
 Type
 
@@ -190,11 +335,11 @@ A data shape prepared for reading and presentation rather than direct persistenc
 
 Project Usage
 
-`ProductService` assembles Product View identity, price, shelf-life, store, and purchase-history rows.
+Markei uses service-prepared Product View and History read models so UI renders prepared meaning instead of calculating it.
 
 Related Concepts
 
-Repository Result Shape; Service-Owned Calculation Responsibility; PySide6 Read-Only Widget Composition.
+Repository Result Shape; Service-Owned Calculation Responsibility; History Read Model.
 
 ---
 
@@ -246,6 +391,102 @@ Purchase Rhythm; Cached Summary Field.
 
 ---
 
+## History Read Model
+
+KANBAN ID
+
+&%%05
+
+Type
+
+Markei Implementation Concept
+
+Definition
+
+A Markei-specific read structure produced by services for rendering chronological and grouped purchase history without assigning calculation responsibility to the UI.
+
+Project Usage
+
+History renders operational month/week sections, ordered purchase rows, and Total rows prepared by services.
+
+Related Concepts
+
+Time Bucketing; Aggregation and Totals; Service-Owned Calculation Responsibility.
+
+---
+
+## Settings-Owned Preferences
+
+KANBAN ID
+
+&%%06
+
+Type
+
+Markei Implementation Concept
+
+Definition
+
+Configuration values exposed and persisted through the Settings page, then interpreted by the relevant service workflows.
+
+Project Usage
+
+Settings stores page sorting and History time-reference values; History services interpret them later.
+
+Related Concepts
+
+Configuration State; SQLite Settings Persistence.
+
+---
+
+## Store Editing Workflow
+
+KANBAN ID
+
+&%%07
+
+Type
+
+Markei Implementation Concept
+
+Definition
+
+The Markei-specific path through which store records are shown, edited, validated, persisted, and reflected in later views.
+
+Project Usage
+
+Settings turns Cycle 01 store-address display/persistence into editable store data.
+
+Related Concepts
+
+Optional Value; Settings-Owned Preferences; PySide6 Editable Form Composition.
+
+---
+
+## History Grouping Service Responsibility
+
+KANBAN ID
+
+&%%08
+
+Type
+
+Markei Implementation Concept
+
+Definition
+
+The assignment of History period construction, operational date boundaries, aggregate rows, and settings interpretation to the service layer.
+
+Project Usage
+
+History services build grouped sections and totals while History UI renders the prepared result.
+
+Related Concepts
+
+Service-Owned Calculation Responsibility; History Read Model; Time Bucketing.
+
+---
+
 ## Repository Result Shape
 
 KANBAN ID
@@ -262,11 +503,11 @@ The structure, field names, and relationship representation returned from persis
 
 Project Usage
 
-Markei repository queries return explicit keys such as `purchase_date`, `expiration_date`, and `latest_unit_price`.
+Markei repository queries return explicit purchase/time/store/settings facts for service interpretation.
 
 Related Concepts
 
-Naming as Data Contract; Product View Read Model.
+Naming as Data Contract; History Read Model.
 
 ---
 
@@ -282,15 +523,15 @@ Markei Implementation Concept
 
 Definition
 
-The principle that services coordinate calculation, aggregation, prediction, and repository access before UI rendering.
+The principle that services coordinate calculation, aggregation, prediction, grouping, and repository access before UI rendering.
 
 Project Usage
 
-Markei Product View receives average price, shelf-life, and expected expiration from service-prepared data rather than UI calculations.
+Markei services own Product View calculations, History grouping, Total rows, and Settings interpretation.
 
 Related Concepts
 
-Read Model; Raw Data Versus Derived Data.
+Read Model; Raw Data Versus Derived Data; History Grouping Service Responsibility.
 
 ---
 
@@ -310,11 +551,11 @@ Controlled modification of SQLite tables and columns over time while preserving 
 
 Project Usage
 
-Markei migrations add columns only when absent instead of resetting the database.
+Markei migrations add needed structures without resetting the database.
 
 Related Concepts
 
-SQLite PRAGMA; Nullable Field.
+SQLite PRAGMA; SQLite Settings Persistence.
 
 ---
 
@@ -334,11 +575,59 @@ A SQLite command family for querying or modifying database metadata, configurati
 
 Project Usage
 
-Markei uses `PRAGMA table_info(table_name)` to inspect existing columns before `ALTER TABLE` migration steps.
+Markei uses PRAGMA-backed checks for idempotent migrations across Product View and Settings cycles.
 
 Related Concepts
 
-SQLite Schema Evolution; Repository Result Shape.
+SQLite Schema Evolution; Repository Result Shape; SQLite Settings Persistence.
+
+---
+
+## SQLite Settings Persistence
+
+KANBAN ID
+
+%%%04
+
+Type
+
+Dependency / Tool Concept
+
+Definition
+
+The use of SQLite tables and repository/service access patterns to store and retrieve application configuration state.
+
+Project Usage
+
+Markei stores settings as `settings.key` and `settings.value`, inserts defaults without overwriting user choices, and reads them to guide History grouping.
+
+Related Concepts
+
+Configuration State; Simple Key/Value Table; Settings-Owned Preferences.
+
+---
+
+## Simple Key/Value Table
+
+KANBAN ID
+
+%%%04
+
+Type
+
+Derived terminology / persistence pattern
+
+Definition
+
+A table design where each setting or fact is stored as a named key paired with a value, usually as text.
+
+Project Usage
+
+Markei Settings can store entries such as `history.week_boundary = wednesday`. This is a glossary concept and lecture example under SQLite Settings Persistence, not a standalone KANBAN concept in Cycle 02.
+
+Related Concepts
+
+Configuration State; SQLite Settings Persistence.
 
 ---
 
@@ -358,8 +647,32 @@ The construction of display-only Qt UI components by composing widgets, layouts,
 
 Project Usage
 
-Markei extracts Product View rendering into `ProductDetailPanel` while services prepare the data.
+Markei Product View and History render service-prepared data without owning calculations.
 
 Related Concepts
 
 Read Model; Service-Owned Calculation Responsibility.
+
+---
+
+## PySide6 Editable Form Composition
+
+KANBAN ID
+
+%%%05
+
+Type
+
+Dependency / Tool Concept
+
+Definition
+
+The construction of Qt input forms that collect user edits and delegate validation/persistence to application services.
+
+Project Usage
+
+Markei Settings exposes editable controls for store editing, sorting configuration, and time-reference configuration.
+
+Related Concepts
+
+Settings-Owned Preferences; Store Editing Workflow.

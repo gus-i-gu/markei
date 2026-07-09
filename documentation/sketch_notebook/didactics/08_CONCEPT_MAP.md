@@ -2,44 +2,63 @@
 
 > Domain: Didactic
 > Status: Checkpoint
-> Current Milestone: Register Product View — Product rhythms and read model
+> Current Milestone: Cycle 02 — History + Settings
 
 ---
 
 ## Current Milestone
 
-Markei added a lower Product View for Register-page product selection. The learning focus is the distinction between purchase rhythm, shelf-life rhythm, raw receipt data, derived product summaries, and service-prepared read models.
+Markei is extending from Product View learning into History and Settings. The learning focus is now service-prepared History read models, time bucketing, aggregation, grouping versus sorting, durable configuration state, store editing, and SQLite-backed settings persistence.
 
 ## Stable Concepts
 
-None yet.
+- None fully Green yet.
 
 ## Active Concepts
 
 - &&&01 — Domain Model Field Semantics
 - &&&02 — Raw Data Versus Derived Data
 - &&&03 — Naming as Data Contract
-- &%%01 — Markei Purchase Rhythm Versus Shelf-Life Rhythm
-- &%%02 — Product View Read Model
-- &%%04 — Service-Owned Calculation Responsibility
-
-## Unstable Concepts
-
 - &&&04 — Cached Summary Field
 - &&%01 — Optional Values and Nullable Fields
 - &&%02 — Dataclass Field Evolution
+- &%%02 — Product View Read Model
 - &%%03 — Repository Result Shape
+- &%%04 — Service-Owned Calculation Responsibility
 - %%%01 — SQLite Schema Evolution
 - %%%02 — SQLite PRAGMA
 - %%%03 — PySide6 Read-Only Widget Composition
 
+## New / Unstable Concepts
+
+- &&&05 — Time Bucketing
+- &&&06 — Aggregation and Totals
+- &&&07 — Grouping Versus Sorting
+- &&&08 — Configuration State
+- &&%03 — Date/Datetime Boundary Handling
+- &%%05 — History Read Model
+- &%%06 — Settings-Owned Preferences
+- &%%07 — Store Editing Workflow
+- &%%08 — History Grouping Service Responsibility
+- %%%04 — SQLite Settings Persistence
+- %%%05 — PySide6 Editable Form Composition
+
+## Explicit Decisions
+
+- Simple Key/Value Table is not promoted to standalone KANBAN in Cycle 02. It is a glossary concept and lecture example under `%%%04 SQLite Settings Persistence`.
+- SQLite PRAGMA moves from exploratory Red toward reinforced Yellow after reuse across Product View and Settings migration cycles. It is not Green yet; it still needs explicit teaching as SQLite metadata introspection rather than ordinary SQL.
+- History totals are derived display aggregates, not cached summary fields unless future Design/Main synthesis chooses persistence.
+- Settings owns preference editing and persistence; History service owns interpretation of those preferences.
+
 ## Next Concepts
 
-1. Teach same technical type versus different semantic ownership.
-2. Teach raw receipt facts versus derived product summaries.
-3. Teach nullable values as valid absence rather than failure.
-4. Teach read models as service-prepared display data.
-5. Teach SQLite `PRAGMA table_info` as schema introspection for safe migration.
+1. Grouping versus sorting.
+2. Time bucketing with Wednesday boundary rules.
+3. Aggregation and Total rows as derived data.
+4. Configuration state and Settings-owned preferences.
+5. SQLite settings persistence and simple key/value table tradeoffs.
+6. Date/datetime boundary handling in Python.
+7. PySide6 editable forms after service responsibilities are clear.
 
 ## Dependency Spine
 
@@ -50,17 +69,25 @@ None yet.
 ↓
 &&&02 Raw Data Versus Derived Data
 ↓
-&&&04 Cached Summary Field
+&&&07 Grouping Versus Sorting
 ↓
-&%%01 Purchase Rhythm Versus Shelf-Life Rhythm
+&&&05 Time Bucketing
 ↓
-&%%02 Product View Read Model
+&&%03 Date/Datetime Boundary Handling
+↓
+&&&06 Aggregation and Totals
+↓
+&%%05 History Read Model
 ↓
 &%%04 Service-Owned Calculation Responsibility
 ↓
-&%%03 Repository Result Shape
+&%%08 History Grouping Service Responsibility
 ↓
-%%%01 SQLite Schema Evolution
+&&&08 Configuration State
+↓
+&%%06 Settings-Owned Preferences
+↓
+%%%04 SQLite Settings Persistence
 ↓
 %%%02 SQLite PRAGMA
 ```
@@ -68,23 +95,37 @@ None yet.
 ## Project Learning Spine
 
 ```text
-Register inventory double-click
+Raw purchase/time/store rows
 ↓
-ProductDetailPanel read-only display
+Repository explicit result shape
 ↓
-ProductService read-model assembly
+Chronological sorting by date and ID
 ↓
-Repository explicit result keys
+Service time bucketing by Wednesday rules
 ↓
-Purchase.expiration_date as raw batch data
+Operational month/week sections
 ↓
-Product.average_shelf_life_days as derived summary
+Derived store/timeframe Total rows
 ↓
-Product.expected_expiration_date as cached summary
+History read model
 ↓
-SQLite migration guarded by PRAGMA table_info
+History UI read-only tree rendering
+↓
+Settings persisted preferences
+↓
+History service interprets settings on later reads
 ```
+
+## Lecture Progression
+
+1. Explain grouping versus sorting using History rows.
+2. Explain time bucketing using the first-Wednesday month rule and Wednesday week rule.
+3. Explain aggregation with monetary sum, average unit price, unit-separated quantity totals, and store totals.
+4. Explain configuration state using Settings values that change later History interpretation.
+5. Explain simple key/value settings table as a flexible but validation-heavy persistence pattern.
+6. Revisit SQLite PRAGMA as repeated migration introspection.
+7. Contrast read-only History rendering with editable Settings forms.
 
 ## Session Delta
 
-Codex didactic evidence from `H_DDC_CODEX.md` was absorbed into the didactic domain. The domain now has first canonical KANBAN entries, glossary derivatives, and a compact checkpoint centered on Product View learning: purchase rhythm vs shelf-life rhythm, raw vs derived data, Optional/nullable values, read models, service-owned calculations, SQLite schema evolution, and SQLite PRAGMA.
+Cycle 02 Codex evidence was reconciled with Cycle 01 didactic memory. New concepts were added for History + Settings while preserving Cycle 01 continuity around raw vs derived data, naming contracts, read models, repository result shape, service-owned responsibility, nullable values, SQLite schema evolution, PRAGMA, and PySide6 composition.

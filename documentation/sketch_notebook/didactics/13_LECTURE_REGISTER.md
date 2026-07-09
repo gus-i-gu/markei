@@ -50,3 +50,65 @@ The main learner risk is semantic collapse: treating `average_duration_days`, `a
 - Product View UI may be mistaken as the owner of calculations.
 - SQLite PRAGMA may be treated as ordinary SQL instead of SQLite metadata introspection.
 - Nullable fields may be treated as errors instead of intentionally supported absence.
+
+---
+
+## 2026-07-09 — Cycle 02 History + Settings Didactic Reconciliation
+
+### Source Evidence
+
+- `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
+
+### Learning Event
+
+Cycle 02 introduced History and Settings as a continuation of Cycle 01. The feature exposed time bucketing by business boundaries, grouping distinct from sorting, aggregate Total rows, SQLite-backed configuration state, Settings-owned preferences, store editing, and separate read-only versus editable PySide6 composition.
+
+### Concepts Promoted / Added
+
+- &&&05 — Time Bucketing
+- &&&06 — Aggregation and Totals
+- &&&07 — Grouping Versus Sorting
+- &&&08 — Configuration State
+- &&%03 — Date/Datetime Boundary Handling
+- &%%05 — History Read Model
+- &%%06 — Settings-Owned Preferences
+- &%%07 — Store Editing Workflow
+- &%%08 — History Grouping Service Responsibility
+- %%%04 — SQLite Settings Persistence
+- %%%05 — PySide6 Editable Form Composition
+
+### Concepts Reinforced From Cycle 01
+
+- &&&02 — Raw Data Versus Derived Data
+- &&&03 — Naming as Data Contract
+- &&%01 — Optional Values and Nullable Fields
+- &%%03 — Repository Result Shape
+- &%%04 — Service-Owned Calculation Responsibility
+- %%%01 — SQLite Schema Evolution
+- %%%02 — SQLite PRAGMA
+- %%%03 — PySide6 Read-Only Widget Composition
+
+### Explicit Decisions
+
+- Simple Key/Value Table is a glossary concept and lecture example under `%%%04 SQLite Settings Persistence`, not a standalone KANBAN concept in this cycle.
+- SQLite PRAGMA moves from Red exploratory to Yellow reinforced knowledge after reuse in two successful migration cycles. It is still not Green until taught explicitly.
+- Page sorting persistence exists, but page sorting behavior is not fully implemented; teaching must preserve that distinction.
+- Operational month grouping is not plain calendar-month grouping; it depends on the first-Wednesday boundary.
+
+### Recommended Next Lecture Sequence
+
+1. Grouping versus sorting.
+2. Time bucketing by business boundaries.
+3. Aggregation and totals as derived data.
+4. Configuration state and Settings-owned preferences.
+5. Simple key/value settings table tradeoffs.
+6. SQLite PRAGMA as migration introspection.
+7. Read-only History UI versus editable Settings forms.
+
+### Remaining Didactic Risks
+
+- The learner may treat grouping as only visual sorting.
+- Total rows may be mistaken for raw purchase rows.
+- Settings may be mistaken as the owner of History calculations.
+- Simple key/value tables may look easier than they are because values require parsing and validation.
+- PRAGMA may still be mistaken for normal table data access rather than metadata introspection.
