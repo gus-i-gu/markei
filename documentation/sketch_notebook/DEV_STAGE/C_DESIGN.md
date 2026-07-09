@@ -1,10 +1,10 @@
-# Design Stage — Cycle 03 Coordinated Staging
+# Design Stage — Cycle 04 Settings Boundary Review
 
 ## 1. Methodology Recovery
 
-`documentation/sketch_notebook/INDEX.md` was read first.
+`documentation/sketch_notebook/INDEX.md` was read first as the canonical Sketch Notebook entrypoint.
 
-The current INDEX route defines the methodology boot order as:
+The current boot route was followed:
 
 ```text
 INDEX
@@ -18,42 +18,47 @@ PROMOTION_RULES
 CHAT_PROTOCOL
 ```
 
-The Design Chat loaded the boot route in that order:
+Recovered methodology constraints relevant to this Design Chat:
 
-1. `documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md`
-2. `documentation/sketch_notebook/methodology/FLUX.md`
-3. `documentation/sketch_notebook/methodology/PROMOTION_RULES.md`
-4. `documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md`
-
-`CHAT_BEHAVIOUR.md` and `METHOD_GLOSSARY.md` were not required for this stage because the Design Chat role, active-stage route, and terminology were sufficiently clear from the required boot files.
-
-Active-stage authority is limited to:
+- Design Chat observes the project as architecture.
+- Design Chat communicates through responsibility analysis, domain ownership, relationship design, UI responsibility, long-term maintainability, and implementation boundaries.
+- Active functional staging authority is limited to:
 
 ```text
 documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
 ```
 
-No source code, methodology files, Main stage files, Codex report files, other functional stage files, permanent design memory files, created files, or renamed files are in scope for this active-staging materialization.
+No application source files, methodology files, Main-root continuity files, Codex reports, or permanent design memory files were modified during this active design staging pass.
 
-## 2. Recovered Design State
+## 2. Recovery Path
 
-Design recovery followed hierarchical recovery.
+Design recovery followed the Hierarchical Recovery Principle.
 
-The first recovery surface was:
+Primary checkpoint read:
 
 ```text
 documentation/sketch_notebook/design/09_DESIGN_STATE.md
 ```
 
-The checkpoint was sufficient to recover the stable Cycle 01 and Cycle 02 design state, but deeper design files were also read because Cycle 03 introduces coordinated responsibility boundaries for Lists, History analytics, and mobile preparation:
+Deeper design files inspected because Cycle 04 introduces architectural pressure on existing Settings, History grouping, service interpretation, and future integration boundaries:
 
 ```text
 documentation/sketch_notebook/design/01_ARCHITECTURE.md
 documentation/sketch_notebook/design/14_MODEL_OVERVIEW.md
-documentation/sketch_notebook/design/03_DECISION_LOG.md
 ```
 
-Recovered architecture:
+Implementation inspection was limited to architectural validation targets:
+
+```text
+app/core/services.py
+app/core/repository.py
+app/desktop/main_window.py
+app/desktop/ui/pages/settings_page.py
+```
+
+## 3. Recovered Stable Architecture
+
+Canonical layer direction remains:
 
 ```text
 Desktop UI
@@ -65,699 +70,519 @@ Repository
 SQLite schema / storage
 ```
 
-Current stable boundary rules:
+Stable boundary rules remain valid:
 
-- Desktop UI owns rendering, user events, page composition, and navigation hooks.
-- ProductService owns business meaning, calculations, workflow coordination, settings/configuration interpretation, and UI-facing read-model assembly.
-- Repository owns SQL retrieval, persistence operations, settings persistence access, and row-to-model mapping.
-- Schema/storage owns persisted facts, relationships, migration-visible data shape, and application settings storage.
-- Models describe domain entities and may hold cached summaries, but must not execute SQL or perform business orchestration.
+- Desktop UI owns rendering, controls, page composition, navigation hooks, and event handling.
+- ProductService owns business meaning, calculations, workflow coordination, settings interpretation, time-boundary interpretation, and read-model assembly.
+- Repository owns SQL retrieval, persistence operations, settings persistence access, and row mapping.
+- Schema/storage owns persisted facts, relationships, migration-visible data shape, and key/value settings storage.
+- Models describe domain entities and cached summaries, but do not execute SQL or orchestrate workflows.
 
-Recovered Cycle 01 Product View state:
+Cycle 04 must extend these boundaries rather than moving meaning into SettingsPage or Repository.
 
-- Product View is a reusable read-only `ProductDetailPanel`.
-- RegisterPage owns placement below the receipt form, not Product View calculations.
-- ProductService owns Product View read-model assembly and shelf-life meaning.
-- Repository owns SQL retrieval, persistence support, and row mapping.
-- Product owns cached summaries: `average_duration_days`, `expected_next_purchase`, `average_shelf_life_days`, and `expected_expiration_date`.
-- Purchase owns optional `expiration_date` as receipt/batch history.
-- Store owns nullable `address`.
-- Average price remains derived from purchases.
-- Purchase rhythm and shelf-life rhythm remain separate.
-- Storage / Shortage / Market classification remains purchase-rhythm based unless explicitly redesigned.
+## 4. Cycle 04 Human Direction Classified As Design Input
 
-Recovered Cycle 02 History + Settings state:
+Human direction introduces the following architectural concerns:
 
-- History uses a service-prepared read model.
-- ProductService owns History period grouping and read-model assembly.
-- ProductService owns first-Wednesday operational month grouping and Wednesday week grouping semantics.
-- ProductService owns aggregate/total-row meaning.
-- Repository retrieves purchase/store/settings data without deciding period semantics.
-- HistoryPage renders grouped sections, purchase rows, summaries, and total rows.
-- SettingsPage owns configuration surfaces.
-- SettingsPage owns store editing placement.
-- Store create/update belongs in Settings, not RegisterPage.
-- SQLite key/value settings persistence is accepted.
-- `history.week_boundary` and `history.month_boundary_rule` affect History grouping through service interpretation.
-- `pages.order` persistence exists, but MainWindow page-order consumption remains deferred.
+1. Update Settings page.
+2. Correct current UI flaws around week/month boundaries.
+3. Week boundary should be free choice among the seven weekdays through a dropdown.
+4. Month boundary should support either:
+   - a month date/day-of-month choice; or
+   - the first chosen weekday of the month.
+5. Compact the Stores section into a smaller component.
+6. Add a field for future supermarket/reward-system API integration to upload/import products and prices into Products/Purchases during purchase effectuation.
+7. Preserve mobile work as later work.
+8. Treat photographic NFC-e recognition as future/hard and not part of the current cycle.
 
-Cycle 03 should extend the same architecture rather than replacing it.
+Design classification:
 
-## 3. Main Decisions Accepted
+- Settings boundary expansion: accepted as active design pressure.
+- History boundary semantics: accepted as active design pressure.
+- Store UI compaction: accepted as UI composition/refactoring pressure, not a domain ownership change.
+- API integration field: accepted as configuration surface / future integration placeholder only.
+- API behavior, sync, authentication, provider protocol, NFC-e OCR/photo recognition, and mobile implementation: deferred design questions.
 
-Main has resolved the first coordination decisions for Cycle 03. These are accepted as design constraints:
+## 5. Implementation Evidence Summary
 
-1. History analytics starts embedded in HistoryPage.
-2. Detachable History analytics behavior is deferred.
-3. Analytics frame means date range plus optional store filter.
-4. Average purchase timelapse means the average interval between all parsed purchases in the selected date/store frame, ordered by date.
-5. Product cycle means `average_duration_days`, the existing purchase recurrence rhythm.
-6. Cycle comparison means product cycle minus frame/store average timelapse.
-7. Cycle comparison display is simple faster/slower/equal.
-8. No configurable comparison tolerance is introduced in Cycle 03.
-9. Latest price and delta price are global per product for Lists in Cycle 03.
-10. Latest price and delta price are not scoped to selected store/frame in Cycle 03.
-11. Lists default view is the hybrid all-products list with a Status column.
-12. Lists must expose the internal views:
-    - `in-house`
-    - `shortage`
-    - `to-buy`
-    - `in-house + shortage`
-    - `shortage + to-buy`
-13. `pages.order` remains deferred.
-14. Persisted tab ordering must not be activated this cycle.
-15. Register remains purchase-entry-only.
-16. Store management stays in Settings.
-17. Old Storage/Shortage/Market page files should be retained temporarily unless safe deletion is explicitly justified.
-18. Schema changes for analytics and Lists should be avoided unless an unavoidable implementation blocker is discovered.
+### 5.1 Settings UI currently under-exposes configured choices
 
-Design direction to preserve:
+`SettingsPage.build_history_group()` currently creates a week-boundary combo with only `Wednesday / wednesday` and a month-boundary combo with only `First Wednesday / first_wednesday`.
 
-- ProductService owns read-model assembly, business meaning, History grouping, analytics derivation, percentage calculation, cycle comparison, inventory classification, and list row assembly.
-- Repository owns SQL retrieval, persistence support, settings access, and row mapping.
-- UI pages/widgets render prepared data and own interaction/layout only.
-- Mobile preparation means portable service/read-model contracts, not a mobile rewrite.
+Design conclusion:
 
-## 4. Responsibility Boundaries
+- The UI is narrower than the intended settings model.
+- The week-boundary flaw is primarily a SettingsPage presentation/input limitation.
+- The month-boundary flaw is both a SettingsPage input limitation and a ProductService interpretation limitation.
 
-### ListsPage view selection/layout
+### 5.2 ProductService already partially supports arbitrary week starts
 
-Owner: `ListsPage`.
+`ProductService.get_settings()` defaults `history.week_boundary` to `wednesday` and `history.month_boundary_rule` to `first_wednesday`.
 
-`ListsPage` owns:
+`ProductService.week_start(value, boundary)` delegates the boundary string to `weekday_number(name)`.
 
-- the public Lists tab surface;
-- default hybrid all-products view selection;
-- switching between internal views;
-- adjacent grouped view layout;
-- table/widget composition;
-- empty states;
-- user interaction events;
-- rendering service-prepared rows.
+`weekday_number(name)` maps all `calendar.day_name` values to weekday indices and falls back to Wednesday.
 
-`ListsPage` must not own:
+Design conclusion:
 
-- product status classification;
-- date/threshold comparison;
-- latest price lookup;
-- delta price calculation;
-- purchase rhythm interpretation;
-- direct SQL or Repository access.
+- The service already has the architectural location for arbitrary week-start interpretation.
+- The UI should expose seven weekday choices rather than creating new week semantics.
+- The fallback-to-Wednesday behavior may remain a defensive default, but Settings should prevent invalid values where possible.
 
-### Product status classification
+### 5.3 ProductService still hardcodes first-Wednesday month semantics
 
-Owner: `ProductService`.
+`ProductService.first_wednesday(...)`, `operational_month_start(...)`, and `next_operational_month_start(...)` currently implement first-Wednesday operational month semantics directly.
 
-Product status classification remains purchase-rhythm based unless a later design cycle explicitly changes list semantics.
+`get_history_view()` reads `history.week_boundary`, but does not read or pass `history.month_boundary_rule` into operational month calculation.
 
-The service should classify rows into:
+Design conclusion:
 
-```text
-in-house
-shortage
-to-buy
-```
+- The canonical boundary owner is still correct: ProductService owns History period grouping semantics.
+- The current month implementation is too specific for Cycle 04.
+- Month-boundary interpretation should be generalized inside ProductService, not moved into HistoryPage, SettingsPage, or Repository.
 
-Classification should use the existing product purchase-rhythm semantics, including `expected_next_purchase`, threshold behavior, and the current/reference date as interpreted by the service.
+### 5.4 Repository settings boundary is sufficient for new simple settings
 
-### Shared Lists row read model
+Repository exposes generic key/value settings through `get_setting`, `set_setting`, and `get_settings`.
 
-Owner: `ProductService`.
+Design conclusion:
 
-The shared Lists row read model should be assembled once and reused across:
+- New Settings fields can use existing key/value persistence if they are plain configuration values.
+- Repository should not parse weekday/month-boundary meanings.
+- Schema changes are not required for simple boundary settings or placeholder integration configuration unless secrets/credentials semantics are later introduced.
 
-- hybrid all-products view;
-- `in-house` view;
-- `shortage` view;
-- `to-buy` view;
-- `in-house + shortage` view;
-- `shortage + to-buy` view.
+### 5.5 MainWindow still uses static tab order
 
-Internal views should filter or group prepared rows by status, not recalculate status or price fields.
+MainWindow statically creates `Register`, `Lists`, `History`, and `Settings` tabs.
 
-### Latest price / delta price
+Design conclusion:
 
-Owner: `ProductService` for meaning and row assembly.
+- The previous design decision remains intact: `pages.order` persistence exists but is not consumed by MainWindow.
+- Cycle 04 Settings work should not accidentally activate page-order semantics unless Main explicitly accepts that design change.
 
-Repository may retrieve latest and previous purchase rows or provide raw supporting query results. ProductService owns:
+## 6. Responsibility Analysis
 
-- latest price meaning;
-- previous price selection meaning;
-- delta price calculation;
-- delta display direction;
-- missing-data fallback behavior.
+### SettingsPage
 
-Cycle 03 scope defines latest price and delta price as global per product for Lists, not scoped by selected store/frame.
+Owner of:
 
-These values should be read-model fields, not new Product cached summaries.
+- configuration surface layout;
+- seven-weekday dropdown rendering;
+- month-boundary control rendering;
+- compact Store editor component placement;
+- integration placeholder field placement;
+- save button events;
+- user feedback after save.
 
-### History analytics frame interpretation
+Must not own:
 
-Owner: `ProductService`.
+- week-start arithmetic;
+- operational month calculation;
+- interpretation of month-boundary modes;
+- History regrouping logic;
+- SQL persistence semantics;
+- external API protocol behavior;
+- receipt import/product upload workflow semantics.
 
-The analytics frame is:
+### ProductService
 
-```text
-date range + optional store filter
-```
+Owner of:
 
-HistoryPage or the embedded analytics component may collect the frame from user controls, but ProductService interprets it.
+- settings defaults;
+- validation/normalization of setting values if added;
+- week-boundary interpretation;
+- month-boundary interpretation;
+- History grouped read-model assembly;
+- future integration-setting read model if UI needs prepared configuration data;
+- deciding how saved settings affect History refresh behavior.
 
-Repository may accept date/store filter parameters for retrieval, but it must not decide frame semantics.
+Must not own:
 
-### Percentage expenditure
+- widget layout;
+- direct SQL;
+- provider-specific API client behavior unless a later integration boundary explicitly places an application-service adapter under or beside ProductService.
 
-Owner: `ProductService`.
+### Repository
 
-Percentage expenditure is derived within the selected analytics frame:
+Owner of:
 
-```text
-product_total_spent / frame_total_spent
-```
+- reading/writing setting key/value pairs;
+- retrieving purchase/store/product rows;
+- row mapping;
+- persistence support.
 
-The service owns:
+Must not own:
 
-- numerator meaning;
-- denominator meaning;
-- zero-total fallback behavior;
-- percentage row assembly.
+- weekday meaning;
+- first-weekday-of-month meaning;
+- day-of-month operational boundary meaning;
+- UI defaults;
+- API-provider semantics;
+- product import orchestration.
 
-The UI renders the percentage only.
+### HistoryPage
 
-### Frame/store average timelapse
+Owner of:
 
-Owner: `ProductService`.
+- rendering the service-prepared grouped History view;
+- refresh events;
+- displaying period labels and rows returned by ProductService.
 
-Main-defined meaning:
+Must not own:
 
-```text
-average interval between all parsed purchases in the selected date/store frame, ordered by date
-```
+- grouping purchases into weeks/months;
+- interpreting settings values;
+- calculating operational boundaries.
 
-The service owns:
+### Store editor component
 
-- ordering by purchase date;
-- exclusion of unparsed or invalid rows;
-- interval calculation;
-- average interval calculation;
-- insufficient-data handling.
+A compact Store editor may be extracted as a UI component if useful.
 
-Repository retrieves purchase rows and may filter by date/store, but it does not calculate or define the timelapse meaning.
+Owner of:
 
-### Product cycle comparison
+- store selector rendering;
+- store edit form rendering;
+- New / Save interactions;
+- calling SettingsPage or service-level save hooks.
 
-Owner: `ProductService`.
+Must not own:
 
-Product cycle means:
+- store persistence rules beyond invoking service methods;
+- ProductService business meaning;
+- RegisterPage responsibilities.
 
-```text
-average_duration_days
-```
+### Future integration configuration component
 
-Cycle comparison means:
+A future integration section may appear in Settings as configuration only.
+
+Owner of:
+
+- displaying provider/system identifier fields;
+- storing non-secret placeholder values if accepted;
+- making future integration readiness visible.
+
+Must not own yet:
+
+- external network calls;
+- credential storage/security design;
+- product import execution;
+- purchase effectuation workflow;
+- NFC-e/photo recognition;
+- mobile sync.
+
+## 7. Proposed Architectural Evolution
+
+### 7.1 Generalize week boundary without changing ownership
+
+Keep the setting key:
 
 ```text
-product average_duration_days - frame/store average purchase timelapse
+history.week_boundary
 ```
 
-Cycle display is simple:
+Allowed semantic values:
 
 ```text
-faster
-slower
-equal
+monday
+tuesday
+wednesday
+thursday
+friday
+saturday
+sunday
 ```
 
-No configurable tolerance exists in Cycle 03.
+Architecture:
 
-The service owns missing-data states, such as no product cycle, no frame average, or insufficient parsed purchases.
+```text
+SettingsPage weekday dropdown
+    ↓ selected weekday key
+ProductService.set_setting(...)
+    ↓
+Repository.set_setting(...)
+    ↓
+SQLite settings
 
-### Mobile-readiness boundaries
+HistoryPage refresh
+    ↓
+ProductService.get_history_view()
+    ↓ reads and interprets history.week_boundary
+```
+
+Design status:
+
+- Boundary-preserving.
+- No schema change required.
+- Service already contains most interpretation logic.
+
+### 7.2 Replace fixed first-Wednesday month semantics with a month-boundary model
+
+The existing key may be evolved or supplemented:
+
+```text
+history.month_boundary_rule
+```
+
+Recommended semantic model:
+
+```text
+mode = day_of_month | first_weekday
+```
+
+Potential settings keys:
+
+```text
+history.month_boundary_mode
+history.month_boundary_day
+history.month_boundary_weekday
+```
+
+or a single structured value if the project wants to preserve one key:
+
+```text
+day_of_month:1
+first_weekday:monday
+first_weekday:wednesday
+```
+
+Design preference:
+
+- Separate keys are easier for SettingsPage controls and service validation.
+- A single structured key is simpler for persistence but more fragile unless parsed carefully.
+
+Recommended owner:
+
+- SettingsPage displays mode-specific controls.
+- ProductService interprets mode and computes operational month start/end.
+- Repository persists keys only.
+
+Design status:
+
+- Boundary-preserving if implemented in ProductService.
+- Requires canonical design update after Main acceptance.
+- Should replace function naming that implies Wednesday-only semantics.
+
+### 7.3 Compact Stores without moving Store ownership
+
+Settings remains the store-management surface.
+
+Recommended UI shape:
+
+```text
+SettingsPage
+    History Settings section
+    Stores compact editor component
+    Integration placeholder section
+```
+
+The Stores section may be made smaller through UI composition:
+
+- one row selector + New button;
+- compact form layout;
+- collapsible/boxed component if desired;
+- save controls grouped tightly.
+
+Design invariant:
+
+- Store create/update remains in Settings.
+- RegisterPage must not become store-management surface.
+
+### 7.4 Add integration placeholder as configuration, not integration behavior
+
+Proposed Settings section:
+
+```text
+Reward / Supermarket API Integration
+```
+
+Possible placeholder fields:
+
+```text
+integration.reward_system_identifier
+integration.supermarket_api_endpoint
+integration.enabled
+```
+
+Design constraint:
+
+- This cycle may stage fields only.
+- No external API client, credential storage, network behavior, import parser, receipt effectuation workflow, or NFC-e recognition should be introduced unless Main creates a separate accepted design cycle.
+
+Risk note:
+
+- If the field stores secrets or tokens, the architecture must first define local credential/security handling. Until then, keep it as non-secret endpoint/system metadata or disabled placeholder text.
+
+## 8. Boundary Evaluation
+
+### Boundary-preserving changes
+
+- Expanding SettingsPage dropdown choices for week boundary.
+- Persisting additional non-secret key/value settings through existing Repository settings access.
+- Moving month-boundary interpretation into generalized ProductService methods.
+- Compacting Store UI as a Settings-owned component.
+- Adding disabled or non-functional integration configuration placeholders.
+
+### Boundary-risk changes
+
+- Letting SettingsPage compute week/month period boundaries.
+- Letting Repository encode first-weekday or day-of-month behavior.
+- Letting HistoryPage regroup purchases after receiving raw rows.
+- Treating API placeholder fields as a working import pipeline.
+- Storing API secrets without a credential boundary.
+- Activating `pages.order` while editing Settings unless explicitly accepted.
+- Renaming or deleting old Storage/Shortage/Market files as part of this cycle without separate cleanup acceptance.
+
+## 9. Design Risks
+
+### Risk 1 — Month-boundary semantics become duplicated
+
+If SettingsPage, HistoryPage, and ProductService each understand month-boundary modes, the project will drift.
+
+Guard:
+
+- ProductService must be the single owner of month-boundary interpretation.
+- UI should pass semantic keys only.
+
+### Risk 2 — Current function names preserve stale Wednesday meaning
+
+Functions named `first_wednesday`, `operational_month_start`, and `next_operational_month_start` encode the old special case.
+
+Guard:
+
+- A later implementation may rename or wrap these internally, but the design requirement is semantic generalization, not name churn for its own sake.
+
+### Risk 3 — Integration field expands into premature API architecture
+
+A simple API field can easily become provider auth, network client, import mapping, and purchase workflow redesign.
+
+Guard:
+
+- Treat this cycle as configuration placeholder only.
+- Defer provider protocol, credentials, import mapping, and effectuation workflow.
+
+### Risk 4 — Store compaction reduces clarity
+
+Compacting Store UI may hide required fields or confuse New vs Edit state.
+
+Guard:
+
+- Preserve explicit selector, ID/read-only state, editable fields, and Save/New events.
+- Compact layout, not meaning.
+
+### Risk 5 — Page ordering is accidentally activated
+
+Settings still exposes `pages.order`, while MainWindow uses static tab creation.
+
+Guard:
+
+- Do not consume `pages.order` in MainWindow during this cycle unless Main explicitly accepts page-order activation.
+
+### Risk 6 — Mobile/API pressure breaks desktop boundary
+
+Future mobile/API ideas may pressure the app toward backend rewrite too early.
+
+Guard:
+
+- Preserve PySide6 desktop app.
+- Improve service/read-model/configuration boundaries only.
+- Defer mobile implementation, sync, authentication, and NFC-e recognition.
+
+## 10. Architectural Decisions Proposed For Main Synthesis
+
+### Proposed decision A — Week boundary free choice
+
+Accept seven weekday choices for `history.week_boundary`.
 
 Owner split:
 
-- ProductService owns platform-neutral semantics and read-model contracts.
-- Repository owns persistence isolation and raw data access.
-- Desktop UI owns PySide6 rendering and interaction only.
-- Domain models preserve platform-neutral meanings.
-- Future mobile/API adapters may consume the same service/read-model contracts later.
+- SettingsPage exposes choices.
+- ProductService interprets selected weekday.
+- Repository persists the string.
 
-Mobile preparation in Cycle 03 means contract discipline, not Android implementation, API rewrite, cloud sync, or a new backend.
+### Proposed decision B — Month boundary mode split
 
-## 5. Read Model Contracts
-
-These are plain read-model shapes, not code requirements.
-
-### Lists service method
-
-Proposed service method:
+Accept month-boundary semantics as one of:
 
 ```text
-get_lists_view(reference_date=None, view_key="all")
+day_of_month
+first_weekday
 ```
 
-Possible input meanings:
+Owner split:
 
-- `reference_date`: date used for remaining-days/status classification; defaults to current date if omitted.
-- `view_key`: requested presentation filter.
+- SettingsPage exposes mode and corresponding field.
+- ProductService interprets operational month start/end.
+- Repository persists setting values only.
 
-Supported `view_key` values:
+### Proposed decision C — Store section compact component
+
+Accept compacting Stores as UI composition inside Settings.
+
+Owner split remains unchanged:
+
+- Store management belongs in Settings.
+- ProductService validates/saves store data.
+- Repository persists Store rows.
+
+### Proposed decision D — API integration field is placeholder-only
+
+Accept a Settings integration section only as non-functional configuration staging.
+
+Deferred:
+
+- provider API client;
+- authentication/credential storage;
+- product/price import mapping;
+- purchase effectuation workflow;
+- NFC-e recognition;
+- mobile integration.
+
+## 11. Design DEV_STAGE Material For Main Chat
+
+Main Chat may synthesize the following Codex-ready design direction if accepted:
 
 ```text
-all
-in-house
-shortage
-to-buy
-in-house+shortage
-shortage+to-buy
+Cycle 04 should update Settings without changing the layer architecture.
+
+SettingsPage should expose History boundary settings:
+- week boundary as seven weekday options;
+- month boundary as either day-of-month or first selected weekday.
+
+ProductService should remain the sole owner of interpreting those setting values into History week/month boundaries.
+
+Repository should continue to persist settings as key/value strings and must not interpret period semantics.
+
+HistoryPage should continue rendering the service-prepared grouped read model only.
+
+The Stores section may be compacted as a Settings-owned UI component, but Store create/update remains in Settings through ProductService.
+
+A supermarket/reward-system API field may be added to Settings as a placeholder configuration surface only. No external API behavior, credential model, import pipeline, purchase effectuation integration, NFC-e recognition, or mobile implementation should be introduced in this cycle.
+
+Do not activate `pages.order` consumption unless Main explicitly expands the cycle scope.
 ```
 
-The service may return all rows plus grouped subsets so the UI can switch views without recalculating.
+## 12. Recommended Permanent Design Memory Updates After Materialization
 
-### Lists view model shape
+After Codex materialization and evidence report, Design Chat should update permanent design memory if implementation matches accepted direction:
 
 ```text
-ListsView
-    reference_date
-    default_view_key
-    available_views
-    rows
-    groups
-        in-house
-        shortage
-        to-buy
-    combined_groups
-        in-house+shortage
-        shortage+to-buy
-    empty_states
+documentation/sketch_notebook/design/01_ARCHITECTURE.md
+documentation/sketch_notebook/design/03_DECISION_LOG.md
+documentation/sketch_notebook/design/09_DESIGN_STATE.md
+documentation/sketch_notebook/design/14_MODEL_OVERVIEW.md
 ```
 
-### Lists row shape
-
-Required row fields:
-
-```text
-ListProductRow
-    product_id              # ID
-    product_name            # Product
-    brand                   # Brand
-    current_quantity        # Quantity
-    latest_price            # Price
-    delta_price             # Δ Price
-    average_duration_days   # Cycle
-    expected_next_purchase  # Next Purchase
-    remaining_days          # Remaining
-    status                  # Status: in-house / shortage / to-buy
-```
-
-Recommended supporting fields:
-
-```text
-    unit
-    latest_purchase_date
-    previous_price
-    delta_price_direction   # up / down / equal / unavailable
-    status_label
-    remaining_label
-    price_label
-    delta_price_label
-    missing_data_reason
-```
-
-The UI may render labels directly if provided, but the semantic values should remain available for sorting/filtering.
-
-### History analytics service method
-
-Proposed service method:
-
-```text
-get_history_analytics_view(start_date, end_date, store_id=None)
-```
-
-Input meanings:
-
-- `start_date`: inclusive frame start.
-- `end_date`: inclusive frame end.
-- `store_id`: optional store filter; omitted or null means all stores.
-
-### History analytics view model shape
-
-```text
-HistoryAnalyticsView
-    frame
-        start_date
-        end_date
-        store_id
-        store_name
-        label
-    summary
-        total_spent
-        purchase_count
-        parsed_purchase_count
-        unparsed_or_excluded_count
-        average_purchase_timelapse_days
-        insufficient_data_reason
-    rows
-    unparsed_or_excluded_rows
-```
-
-### History analytics row shape
-
-```text
-HistoryAnalyticsProductRow
-    product_id
-    product_name
-    brand
-    total_spent
-    expenditure_percentage
-    purchase_count
-    average_duration_days
-    frame_average_timelapse_days
-    cycle_difference_days
-    cycle_comparison        # faster / slower / equal / unavailable
-    insufficient_data_reason
-```
-
-### Unparsed / excluded rows shape
-
-If needed, unparsed or excluded rows should be surfaced as diagnostic read-model data, not silently hidden:
-
-```text
-ExcludedAnalyticsRow
-    purchase_id
-    product_id
-    product_name
-    purchase_date
-    store_id
-    reason
-```
-
-Possible reasons:
-
-```text
-missing_purchase_date
-outside_frame
-store_filter_mismatch
-missing_total_price
-invalid_total_price
-insufficient_interval_data
-```
-
-This protects analytics interpretation from silent data loss.
-
-## 6. UI Architecture
-
-### ListsPage public tab
-
-Cycle 03 should replace the public Storage, Shortage, and Market navigation surfaces with one public Lists tab.
-
-`ListsPage` is the public page. It should host internal views:
-
-```text
-all
-in-house
-shortage
-to-buy
-in-house + shortage
-shortage + to-buy
-```
-
-Default view:
-
-```text
-all-products hybrid list with Status column
-```
-
-The hybrid view should use the same service-prepared `ListProductRow` shape as every internal view.
-
-### Old page files
-
-Old Storage/Shortage/Market page files should be retained temporarily unless safe deletion is explicitly justified.
-
-During transition, they may be:
-
-- left unused;
-- wrapped by ListsPage;
-- converted into internal renderer components;
-- kept as compatibility references while public navigation moves to ListsPage.
-
-They should not remain independent public navigation surfaces once ListsPage is active.
-
-They should not continue to own separate business logic.
-
-### History analytics component
-
-History analytics starts embedded in HistoryPage.
-
-Recommended structure:
-
-```text
-HistoryPage
-    grouped History read model rendering
-    embedded HistoryAnalyticsWidget
-```
-
-`HistoryAnalyticsWidget` owns:
-
-- control rendering for date range and optional store filter;
-- refresh events;
-- table/summary rendering;
-- empty/insufficient-data display.
-
-`HistoryAnalyticsWidget` must not own:
-
-- frame interpretation;
-- percentage calculation;
-- frame average timelapse calculation;
-- product cycle comparison;
-- SQL retrieval.
-
-Detachable behavior is deferred and should not be introduced in Cycle 03.
-
-### No UI-owned calculations
-
-Cycle 03 must preserve the existing UI boundary:
-
-- UI renders prepared data.
-- UI emits user events.
-- UI passes selected filters/view keys to ProductService.
-- UI does not compute business values.
-
-This applies to ListsPage, internal list views, HistoryPage, and the embedded History analytics component.
-
-## 7. Persistence / Schema Position
-
-### Raw purchase data
-
-Raw persisted purchase data belongs to Purchase / SQLite persistence:
-
-- purchase date;
-- quantity;
-- unit;
-- unit price;
-- total price;
-- promotion flag;
-- product relationship;
-- store relationship;
-- optional expiration date.
-
-Repository retrieves this data and maps rows.
-
-### Cached product summaries
-
-Existing Product cached summaries remain:
-
-- `average_duration_days`;
-- `expected_next_purchase`;
-- `average_shelf_life_days`;
-- `expected_expiration_date`.
-
-Cycle 03 uses `average_duration_days` as Product cycle for analytics comparison.
-
-No new Product cached fields are required for latest price, delta price, expenditure percentage, or analytics comparison.
-
-### Derived list rows
-
-Derived Lists values include:
-
-- status;
-- latest price;
-- previous price;
-- delta price;
-- delta price direction;
-- remaining days;
-- list grouping;
-- display labels.
-
-These are service-prepared read-model values.
-
-They should not require schema changes in Cycle 03.
-
-### Derived analytics metrics
-
-Derived analytics values include:
-
-- frame total spent;
-- product total spent in frame;
-- expenditure percentage;
-- frame/store average purchase timelapse;
-- product cycle comparison;
-- cycle difference days;
-- unparsed/excluded-row counts.
-
-These are service-prepared analytics read-model values.
-
-They should not be cached or persisted in Cycle 03.
-
-### Display-only percentages/comparisons
-
-Display-only values include:
-
-- formatted percentages;
-- faster/slower/equal labels;
-- formatted price strings;
-- formatted delta price strings;
-- empty/insufficient-data messages.
-
-They may be prepared by the service or lightly formatted by UI, but the semantic value must come from the service read model.
-
-### Schema decision
-
-Schema changes are not required for Cycle 03 unless implementation discovers an unavoidable blocker.
-
-Avoid adding schema fields for:
-
-```text
-latest_price
-delta_price
-expenditure_percentage
-frame_average_timelapse_days
-cycle_comparison
-```
-
-Avoid introducing persisted analytics cache in this cycle.
-
-Avoid activating `pages.order` consumption in MainWindow this cycle.
-
-## 8. Mobile Preparation
-
-Cycle 03 should prepare mobile portability by strengthening boundaries, not by starting a mobile rewrite.
-
-Prepare now:
-
-- stable service methods such as `get_lists_view(...)` and `get_history_analytics_view(...)`;
-- platform-neutral read models composed of simple values, rows, groups, labels, and status keys;
-- reduced duplication across former Storage/Shortage/Market views;
-- Repository/Service boundary preservation;
-- UI independence from classification, analytics, and price delta calculation;
-- stable domain terms that can later be reused by another interface.
-
-Recommended portability target:
-
-```text
-PySide6 UI
-    ↓
-ProductService read-model contracts
-    ↓
-Repository / SQLite
-```
-
-Future portability path:
-
-```text
-Mobile UI
-    ↓
-API or application-service adapter
-    ↓
-ProductService read-model contracts
-    ↓
-Repository / persistence
-```
-
-Remain deferred:
-
-- Android/mobile implementation;
-- API/backend rewrite;
-- authentication/account model;
-- cloud sync;
-- detachable analytics lifecycle;
-- persisted analytics cache;
-- replacing PySide6 pages;
-- activating persisted page/tab ordering;
-- mobile-specific database synchronization.
-
-## 9. Drift / Boundary Risks
-
-### Risk: ListsPage duplicates former page business logic
-
-Avoidance:
-
-- ListsPage should request one service-prepared Lists read model.
-- Internal views should render/filter prepared rows.
-- Status classification must remain in ProductService.
-
-### Risk: latest price and delta price are recalculated per view
-
-Avoidance:
-
-- Add latest/delta fields to the shared Lists row read model.
-- Use the same row shape for all list view modes.
-- Repository may retrieve latest/previous purchases, but ProductService owns delta meaning.
-
-### Risk: Repository becomes analytics owner
-
-Avoidance:
-
-- Repository may filter and retrieve raw purchase rows.
-- Repository may expose simple supporting retrieval helpers.
-- ProductService must calculate or at least semantically own frame interpretation, average timelapse, percentages, and comparisons.
-
-### Risk: HistoryAnalyticsWidget becomes calculation-heavy
-
-Avoidance:
-
-- Widget should pass date/store selections to ProductService.
-- Widget should render returned summary and rows.
-- Widget should not calculate expenditure percentages, timelapses, or faster/slower/equal comparison.
-
-### Risk: Product model absorbs frame-dependent analytics
-
-Avoidance:
-
-- Keep frame-dependent analytics in read models.
-- Do not add Product fields for analytics percentages, frame averages, or cycle comparison.
-
-### Risk: `pages.order` accidentally becomes active
-
-Avoidance:
-
-- Do not modify MainWindow to consume persisted tab ordering in Cycle 03.
-- Lists navigation changes should be explicit and static for this cycle.
-
-### Risk: Register becomes store-management surface again
-
-Avoidance:
-
-- Keep Register purchase-entry-only.
-- Keep store create/update in Settings.
-- Lists and History analytics may display store information but should not become store-management surfaces.
-
-### Risk: mobile preparation becomes rewrite pressure
-
-Avoidance:
-
-- Prepare read-model contracts only.
-- Keep PySide6 stable.
-- Defer API, mobile app, sync, and backend redesign.
-
-## 10. GitHub Materialization Result
-
-`documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md` was updated directly through the GitHub connector as the Design Chat active-stage file for Cycle 03 coordinated staging.
-
-Commit message:
-
-```text
-Stage design plan for Cycle 03
-```
-
-Commit SHA should be recorded from the GitHub connector response after successful materialization.
+Candidate canonical additions:
+
+- History week boundary is configurable across seven weekdays.
+- History month boundary supports day-of-month or first-selected-weekday semantics.
+- ProductService owns all History boundary interpretation.
+- Settings may include integration configuration placeholders without owning integration behavior.
+
+Candidate deferred design questions:
+
+- How should API credentials be stored if integration becomes real?
+- Should provider-specific integrations live beside ProductService as separate adapters?
+- How should imported products/prices map into Product and Purchase records?
+- Should receipt effectuation become a separate application service?
+- What formal mobile/API boundary is required before NFC-e recognition?
