@@ -2,13 +2,30 @@
 
 > Domain: Didactic
 > Status: Checkpoint
-> Current Milestone: Cycle 02 — History + Settings
+> Current Milestone: Cycle 03 — Read-Model Consolidation
 
 ---
 
 ## Current Milestone
 
-Markei is extending from Product View learning into History and Settings. The learning focus is now service-prepared History read models, time bucketing, aggregation, grouping versus sorting, durable configuration state, store editing, and SQLite-backed settings persistence.
+Markei has moved from Cycle 02 History + Settings into Cycle 03 read-model consolidation. The learning focus is now the repeated pipeline:
+
+```text
+raw data
+→ filtered frame
+→ aggregate
+→ derived metric
+→ read model
+→ UI presentation
+```
+
+Cycle 03 consolidates this pipeline through:
+
+- Lists as one unified page with internal views;
+- embedded History analytics inside `HistoryPage`;
+- latest price and delta price as Lists read-model/display values;
+- product cycle comparison using `average_duration_days` versus frame average purchase timelapse;
+- mobile readiness through service/read-model boundaries rather than rewrite.
 
 ## Stable Concepts
 
@@ -20,45 +37,74 @@ Markei is extending from Product View learning into History and Settings. The le
 - &&&02 — Raw Data Versus Derived Data
 - &&&03 — Naming as Data Contract
 - &&&04 — Cached Summary Field
+- &&&06 — Aggregation and Totals
+- &&&07 — Grouping Versus Sorting
 - &&%01 — Optional Values and Nullable Fields
-- &&%02 — Dataclass Field Evolution
-- &%%02 — Product View Read Model
+- &&%03 — Date/Datetime Boundary Handling
+- &%%01 — Markei Purchase Rhythm Versus Shelf-Life Rhythm
 - &%%03 — Repository Result Shape
 - &%%04 — Service-Owned Calculation Responsibility
-- %%%01 — SQLite Schema Evolution
-- %%%02 — SQLite PRAGMA
+- &%%05 — History Read Model
 - %%%03 — PySide6 Read-Only Widget Composition
 
 ## New / Unstable Concepts
 
-- &&&05 — Time Bucketing
-- &&&06 — Aggregation and Totals
-- &&&07 — Grouping Versus Sorting
-- &&&08 — Configuration State
-- &&%03 — Date/Datetime Boundary Handling
-- &%%05 — History Read Model
-- &%%06 — Settings-Owned Preferences
-- &%%07 — Store Editing Workflow
-- &%%08 — History Grouping Service Responsibility
-- %%%04 — SQLite Settings Persistence
-- %%%05 — PySide6 Editable Form Composition
+- &&&09 — Percentage as Derived Aggregate
+- &&&10 — Filtering Frame
+- &&&11 — Comparative Metric
+- &&&12 — Baseline Definition
+- &&&13 — Status Classification Versus UI Filtering
+- &&&14 — Mobile Readiness Without Rewrite
+- &&%04 — Platform-Neutral Read-Model Shape
+- &&%05 — Nullable Derived Display Values
+- &&%06 — UI View State
+- &%%09 — History Analytics Read Model
+- &%%10 — Unified Lists Page With Internal Views
+- &%%11 — Latest Value / Delta Calculation
+- &%%12 — Service Contract Stability
+- %%%06 — PySide6 Composition for Embedded Analytics
+- %%%07 — PySide6 Unified Page View Controls
+- %%%08 — SQLite Read Queries Versus Cached Columns
 
 ## Explicit Decisions
 
-- Simple Key/Value Table is not promoted to standalone KANBAN in Cycle 02. It is a glossary concept and lecture example under `%%%04 SQLite Settings Persistence`.
-- SQLite PRAGMA moves from exploratory Red toward reinforced Yellow after reuse across Product View and Settings migration cycles. It is not Green yet; it still needs explicit teaching as SQLite metadata introspection rather than ordinary SQL.
-- History totals are derived display aggregates, not cached summary fields unless future Design/Main synthesis chooses persistence.
-- Settings owns preference editing and persistence; History service owns interpretation of those preferences.
+- Cycle 03 did not introduce schema changes for Lists or History analytics.
+- History analytics starts embedded in `HistoryPage`; detachable analytics remains deferred.
+- Analytics frame means date range plus optional store filter.
+- Frame average purchase timelapse means the average interval between all parsed purchases inside the selected frame, ordered by date.
+- Product cycle means `average_duration_days`, the existing purchase recurrence rhythm.
+- Product cycle is not shelf-life or expiration rhythm.
+- Cycle comparison means product cycle minus frame average purchase timelapse, displayed as faster/slower/equal without configurable tolerance.
+- Latest price and delta price are global per product for Lists in Cycle 03, not scoped to History date/store frames.
+- Lists default view is the hybrid all-products view with a Status column.
+- Lists internal views are `in-house`, `shortage`, `to-buy`, `in-house + shortage`, and `shortage + to-buy`.
+- Register remains purchase-entry-only; Settings remains store-management surface.
+- `pages.order` remains deferred/inert for active tab ordering.
+- Mobile readiness is a boundary lesson, not a mobile implementation decision.
+
+## Kept Explicitly Unstable
+
+- detachable analytics widget lifecycle;
+- store/frame-scoped price delta;
+- configurable comparison tolerance;
+- active `pages.order` consumption;
+- mobile implementation architecture;
+- API/backend rewrite;
+- persisted analytics cache;
+- physical deletion of old Storage/Shortage/Market page files.
 
 ## Next Concepts
 
-1. Grouping versus sorting.
-2. Time bucketing with Wednesday boundary rules.
-3. Aggregation and Total rows as derived data.
-4. Configuration state and Settings-owned preferences.
-5. SQLite settings persistence and simple key/value table tradeoffs.
-6. Date/datetime boundary handling in Python.
-7. PySide6 editable forms after service responsibilities are clear.
+1. Filtering frame before analytics calculation.
+2. Product unit price versus product total spent versus frame total spent versus expenditure percentage.
+3. Baseline definition and comparative metrics.
+4. Product cycle versus shelf-life rhythm.
+5. Lists internal views as UI state over one read model.
+6. Status classification versus UI filtering.
+7. Nullable derived display values for missing delta/cycle/frame data.
+8. Platform-neutral service read models as mobile-readiness boundary.
+9. PySide6 composition for embedded analytics and unified page controls.
+10. SQLite read queries versus cached analytics columns.
 
 ## Dependency Spine
 
@@ -69,63 +115,71 @@ Markei is extending from Product View learning into History and Settings. The le
 ↓
 &&&02 Raw Data Versus Derived Data
 ↓
-&&&07 Grouping Versus Sorting
-↓
-&&&05 Time Bucketing
-↓
-&&%03 Date/Datetime Boundary Handling
-↓
 &&&06 Aggregation and Totals
 ↓
-&%%05 History Read Model
+&&&09 Percentage as Derived Aggregate
+↓
+&&&10 Filtering Frame
+↓
+&&&12 Baseline Definition
+↓
+&&&11 Comparative Metric
+↓
+&%%09 History Analytics Read Model
 ↓
 &%%04 Service-Owned Calculation Responsibility
 ↓
-&%%08 History Grouping Service Responsibility
+&%%12 Service Contract Stability
 ↓
-&&&08 Configuration State
+&&%04 Platform-Neutral Read-Model Shape
 ↓
-&%%06 Settings-Owned Preferences
-↓
-%%%04 SQLite Settings Persistence
-↓
-%%%02 SQLite PRAGMA
+&&&14 Mobile Readiness Without Rewrite
 ```
 
 ## Project Learning Spine
 
 ```text
-Raw purchase/time/store rows
+Raw purchase/product/store rows
 ↓
 Repository explicit result shape
 ↓
-Chronological sorting by date and ID
+ProductService read-model assembly
 ↓
-Service time bucketing by Wednesday rules
+Lists unified 10-column row shape
 ↓
-Operational month/week sections
+Lists internal views over shared rows
 ↓
-Derived store/timeframe Total rows
+Status classification displayed as a column
 ↓
-History read model
+Global latest/delta price display values
 ↓
-History UI read-only tree rendering
+History date/store frame controls
 ↓
-Settings persisted preferences
+Parsed frame rows and excluded/unparsed diagnostics
 ↓
-History service interprets settings on later reads
+Frame totals and average purchase timelapse
+↓
+Product expenditure percentage and cycle comparison
+↓
+Embedded History analytics rendering
+↓
+Platform-neutral service dictionaries/lists as future adapter boundary
 ```
 
 ## Lecture Progression
 
-1. Explain grouping versus sorting using History rows.
-2. Explain time bucketing using the first-Wednesday month rule and Wednesday week rule.
-3. Explain aggregation with monetary sum, average unit price, unit-separated quantity totals, and store totals.
-4. Explain configuration state using Settings values that change later History interpretation.
-5. Explain simple key/value settings table as a flexible but validation-heavy persistence pattern.
-6. Revisit SQLite PRAGMA as repeated migration introspection.
-7. Contrast read-only History rendering with editable Settings forms.
+1. Raw rows versus derived display/read-model values.
+2. Date/store filtering frame and excluded/unparsed rows.
+3. Aggregation and totals before percentage.
+4. Expenditure percentage as part/whole inside the selected frame.
+5. Baseline definition and frame average purchase timelapse.
+6. Product cycle as `average_duration_days`, not shelf-life.
+7. Comparative metric as cycle minus baseline.
+8. Lists as one page with internal views.
+9. Status classification versus UI filtering.
+10. Latest price and delta price as global per-product read-model values.
+11. Service contracts and platform-neutral read models as mobile readiness without rewrite.
 
 ## Session Delta
 
-Cycle 02 Codex evidence was reconciled with Cycle 01 didactic memory. New concepts were added for History + Settings while preserving Cycle 01 continuity around raw vs derived data, naming contracts, read models, repository result shape, service-owned responsibility, nullable values, SQLite schema evolution, PRAGMA, and PySide6 composition.
+Cycle 03 Codex evidence was absorbed from `H_DDC_CODEX.md`, with `G_OPS_CODEX.md` and `I_DSN_CODEX.md` used for validation and boundary context. The notebook now reflects that Lists and History analytics were implemented as service-owned read models, UI renders prepared values without direct SQL, no schema changes were introduced, and mobile preparation remains a separation/boundary concept rather than a rewrite path.
