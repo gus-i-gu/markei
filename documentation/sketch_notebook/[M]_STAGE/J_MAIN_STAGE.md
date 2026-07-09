@@ -1,960 +1,230 @@
 # J_MAIN_STAGE.md
 
 > Status: Main staging draft
-> Scope: Cycle 03 closure, Main-root file preparation, and methodology-lab handoff
+> Scope: Methodology revision plan after Cycle 03 stress test
 > Authority: Main Chat under human-supervised methodological revision
-> Persistence class: Stage / provisional synthesis
+> Persistence class: Main stage / refreshable synthesis
 
 ---
 
 # 1. Purpose
 
-This file stages Main-level conclusions and methodology-lab notes before patching the Main-root continuity files:
+This J stage consolidates the current Main-level methodology revision plan before editing `/methodology/` files.
 
-```text
-00_PROJECT_STATE.md
-05_SESSION_LOG.md
-06_SESSION_SCHEME.md
-```
+Earlier draft content for `00_PROJECT_STATE.md`, `05_SESSION_LOG.md`, `06_SESSION_SCHEME.md`, and `PROVISORY_[M]_DOUBLE_LAB.MD` has already been materialized into those files. This refreshed J stage now focuses on:
 
-It also stages proposed content for the temporary communication file:
-
-```text
-PROVISORY_[M]_DOUBLE_LAB.md
-```
-
-The provisional file is not created by this stage. Its creation remains subject to explicit Main/human authorization because new Sketch Notebook files require routing registration.
+1. Main-root file registration;
+2. special status of `00_PROJECT_STATE.md`;
+3. `06_SESSION_SCHEME.md` as forward checkpoint;
+4. read-window / file-growth protocol;
+5. reconciliation protocol;
+6. temporary methodology-sprint communication files;
+7. methodology rebuild sequence;
+8. commit-noise and verbosity-control strategy.
 
 ---
 
-# 2. Current Structural Observation
+# 2. Current Problem Statement
 
-Cycle 03 successfully tested the full Sketch Notebook loop:
-
-```text
-A/B/C functional staging
-↓
-D/E/F Main materialization staging
-↓
-Codex implementation
-↓
-G/H/I Codex evidence
-↓
-O/A/D domain memory absorption
-↓
-Main reconciliation
-```
-
-The implementation result was strong:
-
-- public inventory navigation became one `Lists` tab;
-- former Storage / Shortage / Market meanings became Lists internal views;
-- History analytics was embedded in HistoryPage;
-- ProductService owns Lists and History analytics read models;
-- no schema changes were introduced;
-- no mobile rewrite occurred;
-- mobile readiness improved through service/read-model boundaries.
-
-The methodology result was also strong, but exposed a verbosity and recovery-cost problem.
-
-Cycle 03 produced rich domain memory, especially in canonical and observational files. This is useful for preservation, but risky for recovery if every future chat rereads full large files.
-
----
-
-# 3. Main Assessment Of Over-Verbosity
-
-## 3.1 What worked
-
-Verbose capture worked well for ever-growing records and detailed canonical registers.
-
-Useful examples:
-
-- `operational/11_OPERATIONAL_RECORD.md` preserves execution evidence.
-- `didactics/13_LECTURE_REGISTER.md` preserves learning events.
-- `design/03_DECISION_LOG.md` preserves decision history.
-- `didactics/02_KANBAN.md` now provides a rich canonical concept register.
-
-## 3.2 What disappointed
-
-Verbose capture is weaker in files whose semantic purpose is compression or rearrangement.
-
-Risky targets:
-
-- checkpoints, because they should be compact recovery surfaces;
-- derived files, because they should reorganize truth rather than duplicate all truth;
-- global state files, because they must support fast next-session recovery.
-
-## 3.3 Proposed principle
-
-The method should not merely ask whether content is correct.
-
-It should also ask whether the file still performs its semantic role at its current length.
-
----
-
-# 4. Proposed File Growth Vocabulary
-
-## 4.1 Ever-growing files
-
-Ever-growing files preserve sequence and evidence.
-
-They are usually append-oriented.
-
-Examples:
-
-```text
-05_SESSION_LOG.md
-operational/11_OPERATIONAL_RECORD.md
-didactics/13_LECTURE_REGISTER.md
-design/03_DECISION_LOG.md
-```
-
-Rule candidate:
-
-```text
-Ever-growing files should not be fully reread by default after they exceed the sprint read limit.
-```
-
-Recommended recovery method after threshold:
-
-1. read file header;
-2. read latest entry or latest bounded line window;
-3. search by date / cycle / heading when older context is needed;
-4. read older sections only by targeted consultation.
-
-## 4.2 Refreshable files
-
-Refreshable files are rewritten or compactly updated from other knowledge layers.
-
-Examples:
-
-```text
-00_PROJECT_STATE.md
-06_SESSION_SCHEME.md
-operational/10_OPERATIONAL_STATE.md
-didactics/08_CONCEPT_MAP.md
-design/09_DESIGN_STATE.md
-```
-
-Rule candidate:
-
-```text
-Refreshable files should remain compact and optimized for recovery.
-```
-
-## 4.3 Derived / resorted files
-
-Derived files reorganize canonical truth.
-
-Examples:
-
-```text
-operational/04_TODO.md
-didactics/07_GLOSSARY.md
-design/14_MODEL_OVERVIEW.md
-```
-
-Rule candidate:
-
-```text
-Derived files must not become duplicate canon. If they grow too much, they should be resorted, compacted, or indexed.
-```
-
-## 4.4 Canonical files
-
-Canonical files own accepted domain truth.
-
-Examples:
-
-```text
-operational/12_OPERATIONAL_MODEL.md
-didactics/02_KANBAN.md
-design/01_ARCHITECTURE.md
-methodology/*.md
-```
-
-Rule candidate:
-
-```text
-Canonical files may grow, but full-file reread should be replaced by checkpoint-first recovery and targeted heading/concept lookup once they cross the sprint read limit.
-```
-
-## 4.5 Checkpoints
-
-Checkpoints are compact recovery surfaces.
-
-Examples:
-
-```text
-00_PROJECT_STATE.md
-operational/10_OPERATIONAL_STATE.md
-didactics/08_CONCEPT_MAP.md
-design/09_DESIGN_STATE.md
-```
-
-Rule candidate:
-
-```text
-A checkpoint fails its role if it becomes a long register or historical record.
-```
-
----
-
-# 5. Proposed Length Constraint
-
-Introduce a methodology variable:
-
-```text
-SPRINT_READ_LIMIT = 800 lines
-```
-
-Optional stronger marker:
-
-```text
-REPARTITION_REVIEW_LIMIT = 1300 lines
-```
-
-## 5.1 At 800 lines
-
-When a file reaches 800 lines:
-
-- assign or confirm its file-growth class;
-- define a read-window policy;
-- update prompts so agents do not reread the entire file by default;
-- prefer checkpoint-first recovery and targeted search.
-
-## 5.2 At 1300 lines
-
-When a file reaches 1300 lines:
-
-- perform a repartition review;
-- consider section indexing, compaction, re-sorting, or a Main-approved structural change;
-- avoid arbitrary file creation;
-- preserve historical evidence if compaction changes current truth.
-
-## 5.3 Checkpoint exception
-
-Checkpoints should normally be much smaller than 800 lines.
-
-Proposed checkpoint guidance:
-
-```text
-Target: under 200–300 lines.
-Review: approaching 400 lines.
-Failure: 800 lines.
-```
-
----
-
-# 6. Reconciliation Protocol Candidate
-
-Cycle 03 exposed the need to distinguish two forms of reconciliation.
-
-## 6.1 Vertical reconciliation
-
-Vertical reconciliation checks whether knowledge remains coherent across semantic layers through time.
-
-It asks:
-
-```text
-Does the checkpoint reflect canonical state?
-Does derived knowledge reflect canon?
-Does observational history explain how the current state emerged?
-Does repository implementation agree with notebook memory?
-Does project state reflect validated domain state?
-```
-
-Typical vertical chain:
-
-```text
-Codex reports
-↓
-observational domain records
-↓
-canonical / derived updates
-↓
-domain checkpoints
-↓
-00_PROJECT_STATE.md
-↓
-05_SESSION_LOG.md
-```
-
-## 6.2 Horizontal reconciliation
-
-Horizontal reconciliation checks whether domains remain complementary rather than contradictory.
-
-It asks:
-
-```text
-Does Operational state contradict Design boundaries?
-Does Didactic framing distort implementation reality?
-Does Design duplicate Operational execution rules?
-Does one domain claim ownership that belongs to another?
-Are shared concepts named consistently across domains?
-```
-
-Cycle 03 example:
-
-```text
-Operational: Lists is implemented and public tabs changed.
-Design: ListsPage is the public inventory surface.
-Didactics: Lists is a unified UI surface over one service read model.
-```
-
-These claims are complementary.
-
-Minor terminology refinement:
-
-```text
-all = default Lists view key / hybrid all-products presentation
-in-house / shortage / to-buy = semantic internal views
-in-house + shortage / shortage + to-buy = composite filter views
-```
-
----
-
-# 7. Special Class: 00_PROJECT_STATE.md
-
-`00_PROJECT_STATE.md` creates an ambiguity that should become explicit methodology.
-
-It is both:
-
-1. a global checkpoint for fast recovery;
-2. a Main-owned current-state canon for the whole project.
-
-This makes it a special class within the Domain Symmetry model.
-
-Proposed term:
-
-```text
-Global State Canon-Checkpoint
-```
-
-## 7.1 Proposed meaning
-
-`00_PROJECT_STATE.md` should define the accepted current state of the project at Main level, while remaining concise enough to support fast boot.
-
-It is more authoritative than ordinary checkpoints because it is Main-owned global current state.
-
-It is less detailed than full canonical domain files because it must not duplicate all domain truth.
-
-## 7.2 Proposed constraints
-
-`00_PROJECT_STATE.md` should:
-
-- state the current project milestone;
-- state current implementation state;
-- state current notebook/methodology state;
-- summarize accepted cross-domain reconciliation;
-- identify active risks and next recovery files;
-- avoid long historical detail;
-- point to domain checkpoints for depth;
-- point to `05_SESSION_LOG.md` for session history;
-- point to `06_SESSION_SCHEME.md` for next-session agenda.
-
-## 7.3 Proposed methodology placement
-
-This special class should be defined in methodology where promotion levels and knowledge states are described.
-
-Candidate owner:
-
-```text
-PROMOTION_RULES.md
-```
-
-Supporting routing owner:
-
-```text
-FLUX.md
-```
-
-Navigation registration owner:
-
-```text
-INDEX.md
-```
-
----
-
-# 8. Main Root File Drafts
-
-This section stages sample content for three Main-root files.
-
-They are not yet patched by this stage.
-
----
-
-## 8.1 Draft for 00_PROJECT_STATE.md
-
-```markdown
-# 00_PROJECT_STATE.md
-
-> Status: Active global state
-> Authority: Main Chat
-> Persistence class: Global State Canon-Checkpoint
-> Scope: Fast recovery of current Markei + Sketch Notebook state
-
----
-
-# Current Milestone
-
-Markei has completed Cycle 03 — Read-Model Consolidation.
-
-Cycle 03 materialized:
-
-- unified `Lists` page;
-- embedded History analytics;
-- global latest / delta price display in Lists;
-- service-owned read models for Lists and History analytics;
-- mobile-readiness preparation through boundaries, not rewrite.
-
-# Current Application State
-
-Public desktop tabs are now:
-
-```text
-Register
-Lists
-History
-Settings
-```
-
-Former public Storage / Shortage / Market meanings are now Lists internal views:
-
-```text
-Storage  -> in-house
-Shortage -> shortage
-Market   -> to-buy
-```
-
-Lists supports:
-
-```text
-all
-in-house
-shortage
-to-buy
-in-house + shortage
-shortage + to-buy
-```
-
-History remains grouped by service-owned Month -> Week logic and now includes embedded read-only analytics.
-
-Register remains purchase-entry-only.
-
-Settings remains the store-management surface.
-
-No Cycle 03 schema changes were introduced.
-
-# Current Architecture State
-
-Accepted boundary:
-
-```text
-Desktop UI
-↓
-ProductService
-↓
-Repository
-↓
-SQLite
-```
-
-ProductService owns:
-
-- Product View read models;
-- Lists read models;
-- grouped History read models;
-- History analytics read models;
-- status classification;
-- latest/delta price meaning;
-- analytics frame interpretation;
-- percentages;
-- frame average purchase timelapse;
-- product-cycle comparison.
-
-UI owns rendering, controls, navigation hooks, and event handling.
-
-Repository owns SQL retrieval, persistence, settings access, and row mapping.
-
-SQLite owns persisted facts and settings.
-
-# Current Didactic State
-
-Cycle 03 learning focus:
-
-```text
-raw data
-→ filtered frame
-→ aggregate
-→ derived metric
-→ read model
-→ UI presentation
-```
-
-New or reinforced concepts include:
-
-- percentage as derived aggregate;
-- filtering frame;
-- comparative metric;
-- baseline definition;
-- status classification versus UI filtering;
-- platform-neutral read-model shape;
-- History analytics read model;
-- unified Lists page with internal views;
-- mobile readiness without rewrite.
-
-# Mobile Readiness
-
-Current classification:
-
-```text
-Prepared for future mobile discussion.
-Not ready for mobile implementation.
-```
-
-Prepared:
-
-- service-owned Lists read model;
-- service-owned History analytics read model;
-- platform-neutral dictionaries/lists;
-- UI calculation ownership reduced.
-
-Not ready:
-
-- mobile UI;
-- API/backend rewrite;
-- sync/auth design;
-- mobile persistence strategy;
-- typed service contracts;
-- dependency injection/service factory;
-- formal date validation;
-- automated service tests;
-- separation between UI labels and semantic values.
-
-# Active Risks
-
-- Manual UI QA remains incomplete.
-- Invalid analytics date input behaves like omitted boundary.
-- Same-day purchases can produce sub-day frame average timelapse.
-- Multi-store analytics totals need richer validation.
-- Old Storage/Shortage/Market page files remain transitional.
-- `pages.order` remains persisted but inert.
-- Main-root and methodology files require revision to register `06_SESSION_SCHEME.md`, `[M]_STAGE`, and file-growth rules.
-
-# Next Recovery Files
-
-For operational state:
-
-```text
-operational/10_OPERATIONAL_STATE.md
-```
-
-For learning state:
-
-```text
-didactics/08_CONCEPT_MAP.md
-```
-
-For design state:
-
-```text
-design/09_DESIGN_STATE.md
-```
-
-For next-session agenda:
-
-```text
-06_SESSION_SCHEME.md
-```
-
-For session history:
-
-```text
-05_SESSION_LOG.md
-```
-```
-
----
-
-## 8.2 Draft for 05_SESSION_LOG.md
-
-```markdown
-# 05_SESSION_LOG.md
-
-> Status: Global observational history
-> Authority: Main Chat
-> Persistence class: Ever-growing observational record
-> Scope: Session-level drift, reconciliation, accepted direction, and continuity notes
-
----
-
-## 2026-07-09 — Cycle 03 Closure And Methodology Stress Test
-
-### Session Scope
-
-This session completed experimental Cycle 03 closure for Markei and tested the Sketch Notebook workflow through a full loop:
+Cycle 03 proved that Sketch Notebook can coordinate:
 
 ```text
 functional staging
 → Main synthesis
 → Codex materialization
-→ Codex evidence
+→ Codex reports
 → domain absorption
 → Main reconciliation
 ```
 
-### Application Achievements
+The method worked, but exposed a documentation-control problem:
 
-- Codex materialized the unified Lists page.
-- Public tabs became Register / Lists / History / Settings.
-- Former Storage / Shortage / Market meanings became Lists internal views.
-- Lists gained shared 10-column display with Price and Δ Price.
-- History gained embedded read-only analytics.
-- ProductService now exposes Lists and History analytics read models.
-- No schema changes were introduced.
-- No mobile rewrite occurred.
-
-### Validation Evidence
-
-Codex reported:
-
-- compile validation passed;
-- database smoke opened existing DB without destructive reset;
-- Lists smoke returned all required view counts;
-- History read-model smoke returned `months=1`, `unparsed=0`;
-- analytics smoke returned parsed/unparsed/excluded counts and totals;
-- offscreen Qt startup returned public tabs Register / Lists / History / Settings.
-
-### Domain Reconciliation
-
-Operational, Didactic, and Design folders absorbed G/H/I evidence.
-
-No blocking cross-domain contradiction was found.
-
-Accepted reconciliation:
-
-- Operational owns validation state and remaining manual QA tasks.
-- Didactics owns read-model consolidation as learning progression.
-- Design owns boundary decisions around Lists and History analytics.
-- Main owns global coherence and next-session continuity.
-
-### Methodology Observations
-
-Cycle 03 produced strong results but revealed over-verbosity risk.
-
-Observation:
-
-- ever-growing files can tolerate verbosity better;
-- derived files and checkpoints are harmed by excessive detail;
-- canonical registers may grow but need targeted recovery rules;
-- checkpoints need stronger compactness constraints;
-- Main-root files need clearer roles.
-
-### Proposed Method Refinements
-
-- Define file-growth classes:
-  - ever-growing;
-  - refreshable;
-  - derived / resorted;
-  - canonical;
-  - checkpoint;
-  - forward checkpoint.
-- Introduce `SPRINT_READ_LIMIT = 800 lines`.
-- Introduce `REPARTITION_REVIEW_LIMIT = 1300 lines`.
-- Define vertical and horizontal reconciliation.
-- Define `00_PROJECT_STATE.md` as a Global State Canon-Checkpoint.
-- Register `06_SESSION_SCHEME.md` as a forward checkpoint.
-- Register `[M]_STAGE/J_MAIN_STAGE.md` as Main staging surface if accepted.
-
-### Remaining Risks
-
-- Manual UI QA remains pending.
-- Invalid analytics date handling needs explicit behavior.
-- Same-day average timelapse semantics need review.
-- Old inventory page files need cleanup decision.
-- Methodology files need revision to incorporate new routing and file-growth protocol.
-
-### Next Session Direction
-
-Next session should focus on methodology revision before new feature implementation.
-
-Primary topics:
-
-1. patch `00_PROJECT_STATE.md`;
-2. patch `05_SESSION_LOG.md`;
-3. patch `06_SESSION_SCHEME.md`;
-4. revise INDEX / FLUX / PROMOTION_RULES / METHOD_GLOSSARY as needed;
-5. run canon consistency audit after root files are initialized.
-```
+- ever-growing files can absorb verbose evidence;
+- derived files become disappointing when they duplicate too much;
+- checkpoints fail if they become long registers;
+- canonical registers may grow, but must not be fully reread by default;
+- Main-root files need explicit methodology status;
+- temporary lab files need controlled routing;
+- reconciliation needs clearer distinction from promotion.
 
 ---
 
-## 8.3 Draft for 06_SESSION_SCHEME.md
+# 3. Main-Root File Methodology Proposal
 
-```markdown
-# 06_SESSION_SCHEME.md
+Main-root files usually do not move data across the Sketch Notebook domain folders. They are localized Main continuity files used for closure, retrieval, and next-session orientation.
 
-> Status: Forward checkpoint
-> Authority: Main Chat
-> Persistence class: Refreshable planning checkpoint
-> Scope: Next-session agenda, expected files, unresolved decisions, and continuity frame
+They should receive a specific clause in `FLUX.md` and be represented in `INDEX.md` flow.
+
+## 3.1 `00_PROJECT_STATE.md`
+
+Proposed class:
+
+```text
+Global State Canon-Checkpoint
+```
+
+Reason:
+
+`00_PROJECT_STATE.md` behaves as both:
+
+1. a global recovery checkpoint;
+2. a Main-owned current-state canon for the project as a whole.
+
+This creates a double authoritative level.
+
+It should be more authoritative than ordinary checkpoints, but less detailed than permanent domain canon.
+
+It should:
+
+- expose the current accepted project state;
+- summarize cross-domain reconciliation;
+- point to domain checkpoints for depth;
+- avoid long history;
+- remain concise enough for boot.
+
+Likely methodology homes:
+
+- `PROMOTION_RULES.md` defines the semantic class;
+- `FLUX.md` defines routing and authority;
+- `INDEX.md` exposes navigation;
+- `METHOD_GLOSSARY.md` defines the term.
+
+## 3.2 `05_SESSION_LOG.md`
+
+Proposed class:
+
+```text
+Global Ever-Growing Observational Record
+```
+
+Reason:
+
+`05_SESSION_LOG.md` records Main-level events, reconciliations, drift, accepted direction, and closure notes.
+
+It is consolidated observational knowledge. It is not ephemeral in meaning, but it is append-oriented in physical behavior.
+
+It should not define current truth by itself. It supports later reconciliation and explains how current truth emerged.
+
+## 3.3 `06_SESSION_SCHEME.md`
+
+Proposed class:
+
+```text
+Forward Checkpoint
+```
+
+Reason:
+
+`06_SESSION_SCHEME.md` describes a forward-to-be recovery surface: next topics, pending decisions, expected files, and exit criteria.
+
+It is not a historical log.
+It is not canon.
+It is a refreshable prevision checkpoint for the next session.
+
+It should:
+
+- orient the next Main boot;
+- identify expected topics;
+- name likely files to inspect;
+- preserve unresolved questions;
+- be refreshed at session close or before a major pivot.
 
 ---
 
-# Next Session Focus
+# 4. Methodology Folder Revision Needs
 
-The next session should prioritize Sketch Notebook methodology refinement after the Cycle 03 stress test.
+## 4.1 `INDEX.md`
 
-Primary objective:
+Needs to register:
 
-```text
-Reduce recovery cost without losing evidence richness.
-```
+- `06_SESSION_SCHEME.md` under top-level structure;
+- `[M]_STAGE/J_MAIN_STAGE.md` if accepted as a Main staging surface;
+- `PROVISORY_[M]_DOUBLE_LAB.MD` as temporary/provisional if retained;
+- Main-root file roles in Global Coordination Files;
+- Main Chat route including `06_SESSION_SCHEME.md` for next-session orientation.
 
-# Topics To Resolve
+## 4.2 `FLUX.md`
 
-1. Register Main-root file roles:
-   - `00_PROJECT_STATE.md` as Global State Canon-Checkpoint;
-   - `05_SESSION_LOG.md` as ever-growing global observational history;
-   - `06_SESSION_SCHEME.md` as forward checkpoint.
+Needs clauses for:
 
-2. Register or decide status of:
-   - `[M]_STAGE/J_MAIN_STAGE.md`;
-   - `PROVISORY_[M]_DOUBLE_LAB.md`.
+- Main-root localized files;
+- Main-root file write authority;
+- read-window / file-growth routing;
+- retrievable landmarks;
+- temporary methodology-sprint communication files;
+- commit-noise strategy for methodology revisions.
 
-3. Define file-growth protocol:
-   - ever-growing files;
-   - refreshable files;
-   - derived / resorted files;
-   - canonical files;
-   - checkpoints;
-   - forward checkpoints.
+## 4.3 `PROMOTION_RULES.md`
 
-4. Define length thresholds:
-   - `SPRINT_READ_LIMIT = 800 lines`;
-   - `REPARTITION_REVIEW_LIMIT = 1300 lines`;
-   - checkpoint compactness guidance.
+Needs semantic clauses for:
 
-5. Define reconciliation protocol:
-   - vertical reconciliation;
-   - horizontal reconciliation.
+- `Global State Canon-Checkpoint`;
+- `Forward Checkpoint`;
+- `Global Ever-Growing Observational Record` if useful;
+- vertical reconciliation;
+- horizontal reconciliation;
+- relationship between promotion and reconciliation.
 
-6. Decide where methodology clauses belong:
-   - `INDEX.md` for navigation registration;
-   - `FLUX.md` for routing and file-growth operations;
-   - `PROMOTION_RULES.md` for semantic classes and reconciliation types;
-   - `METHOD_GLOSSARY.md` for vocabulary;
-   - optional future protocol file only if needed.
-
-# Expected Files To Inspect
-
-Start with:
+Promotion answers:
 
 ```text
-INDEX.md
-methodology/FLUX.md
-methodology/PROMOTION_RULES.md
-methodology/METHOD_GLOSSARY.md
-00_PROJECT_STATE.md
-05_SESSION_LOG.md
-06_SESSION_SCHEME.md
-[M]_STAGE/J_MAIN_STAGE.md
+What does this knowledge become?
 ```
 
-Consult domain checkpoints only if current project state needs confirmation:
+Reconciliation answers:
 
 ```text
-operational/10_OPERATIONAL_STATE.md
-didactics/08_CONCEPT_MAP.md
-design/09_DESIGN_STATE.md
+How is already-captured/promoted knowledge made mutually consistent across files, time, and domains?
 ```
 
-# Deferred Application Work
+Reconciliation should complement promotion, not duplicate it.
 
-Do not start a new Markei feature cycle until methodology closure is patched or explicitly deferred.
+## 4.4 `METHOD_FOUNDATIONS.md`
 
-Pending application work remains:
+May need a small update only if the special Main-root files affect the foundational ontology.
 
-- manual UI QA;
-- invalid analytics date input handling;
-- same-day timelapse review;
-- old Storage/Shortage/Market page file cleanup decision;
-- mobile-readiness audit continuation.
+Possible addition:
 
-# Exit Criteria For Next Session
+- Main-global continuity layer is not a fourth functional domain;
+- it is a coordination layer above domain symmetry;
+- `00_PROJECT_STATE.md` is a global canon-checkpoint exception;
+- `06_SESSION_SCHEME.md` is a forward checkpoint.
 
-A successful next session should leave:
+Avoid rewriting the whole foundations file unless the specialized methodology chat finds foundational contradiction.
 
-- `00_PROJECT_STATE.md` initialized;
-- `05_SESSION_LOG.md` initialized;
-- `06_SESSION_SCHEME.md` initialized;
-- routing for `06_SESSION_SCHEME.md` clarified;
-- decision on `[M]_STAGE` and provisional lab file routing;
-- methodology patch plan prepared or staged.
-```
+## 4.5 `METHOD_GLOSSARY.md`
+
+Needs definitions for:
+
+- Global State Canon-Checkpoint;
+- Forward Checkpoint;
+- Ever-Growing File;
+- Refreshable File;
+- Derived / Resorted File;
+- Read Window Protocol;
+- Retrievable Landmark;
+- Vertical Reconciliation;
+- Horizontal Reconciliation;
+- Temporary Methodology-Sprint Communication File.
 
 ---
 
-# 9. Proposed PROVISORY_[M]_DOUBLE_LAB.md Content
+# 5. Read Window Protocol Proposal
 
-This section stages the text for a temporary lab-communication file.
+The Read Window Protocol should live primarily in `FLUX.md` because it constrains routing, recovery, and file-consumption behavior.
 
-The file has not been created by this stage.
+## 5.1 Purpose
 
-```markdown
-# PROVISORY_[M]_DOUBLE_LAB.md
+Prevent future chats from burning tokens by rereading large files unnecessarily.
 
-> Status: Provisional lab bridge
-> Authority: Main Chat + specialized methodology chat
-> Scope: Temporary communication surface for Sketch Notebook system refinement
-> Warning: This is not canonical methodology. It exists only for the current mid-sprint lab unless later promoted.
+## 5.2 File thresholds
 
----
-
-# 1. Context
-
-This provisional note summarizes the latest Main Chat observations after Markei Cycle 03 and prepares a second methodology-specialized chat to refine the Sketch Notebook system.
-
-Cycle 03 successfully completed a full Sketch Notebook loop:
-
-```text
-A/B/C functional staging
-→ D/E/F Main synthesis
-→ Codex materialization
-→ G/H/I Codex reports
-→ O/A/D domain absorption
-→ Main reconciliation
-```
-
-The application result was strong. The methodology result was promising but exposed file-growth and reconciliation issues.
-
----
-
-# 2. Markei Cycle 03 Outcome
-
-Implemented and reconciled:
-
-- unified Lists page;
-- internal views replacing public Storage / Shortage / Market tabs;
-- embedded History analytics;
-- service-owned Lists read model;
-- service-owned History analytics read model;
-- global latest/delta price display;
-- no schema change;
-- no mobile rewrite.
-
-Current classification:
-
-```text
-Desktop architecture: improved and mostly stable, pending manual QA.
-Mobile readiness: improved for future discussion, not ready for mobile implementation.
-Methodology: successful but over-verbose.
-```
-
----
-
-# 3. Methodology Problem Exposed
-
-The domain reports and domain-memory absorption were accurate but over-verbose.
-
-Verbosity worked acceptably for ever-growing files, but caused concern for:
-
-- checkpoints;
-- derived files;
-- global state summaries;
-- future recovery cost.
-
-The system needs a rule that distinguishes file semantic role from allowed growth behavior.
-
----
-
-# 4. Proposed File Classes
-
-## Ever-growing
-
-Append-oriented files preserving sequence and evidence.
-
-Examples:
-
-```text
-05_SESSION_LOG.md
-operational/11_OPERATIONAL_RECORD.md
-didactics/13_LECTURE_REGISTER.md
-design/03_DECISION_LOG.md
-```
-
-## Refreshable
-
-Current-state files rewritten or compactly refreshed.
-
-Examples:
-
-```text
-00_PROJECT_STATE.md
-06_SESSION_SCHEME.md
-operational/10_OPERATIONAL_STATE.md
-didactics/08_CONCEPT_MAP.md
-design/09_DESIGN_STATE.md
-```
-
-## Derived / resorted
-
-Files that reorganize or summarize canonical truth.
-
-Examples:
-
-```text
-operational/04_TODO.md
-didactics/07_GLOSSARY.md
-design/14_MODEL_OVERVIEW.md
-```
-
-## Canonical
-
-Accepted truth owned by a domain.
-
-Examples:
-
-```text
-operational/12_OPERATIONAL_MODEL.md
-didactics/02_KANBAN.md
-design/01_ARCHITECTURE.md
-methodology/*.md
-```
-
-## Forward checkpoint
-
-A refreshable planning checkpoint for the next session.
-
-Candidate:
-
-```text
-06_SESSION_SCHEME.md
-```
-
----
-
-# 5. Proposed Length Protocol
-
-Candidate variables:
+Candidate constants:
 
 ```text
 SPRINT_READ_LIMIT = 800 lines
 REPARTITION_REVIEW_LIMIT = 1300 lines
 ```
-
-At 800 lines:
-
-- define read-window policy;
-- avoid full reread by default;
-- prefer header + latest entry + targeted search.
-
-At 1300 lines:
-
-- perform repartition review;
-- consider compaction, indexing, or Main-approved structural change.
 
 Checkpoint guidance:
 
@@ -964,134 +234,307 @@ Review: near 400 lines
 Failure: 800 lines
 ```
 
+## 5.3 Strict and latu readings
+
+The protocol should distinguish:
+
+```text
+strict read window = only header + latest landmark + targeted sections
+latu read window   = wider recent region plus targeted older consultation
+```
+
+Use strict read window when:
+
+- a file is ever-growing and over threshold;
+- the task does not require full history;
+- a checkpoint already provides current state.
+
+Use latu read window when:
+
+- drift is suspected;
+- canon consistency is being audited;
+- a historical decision must be reconstructed;
+- prior landmarks are relevant.
+
+## 5.4 Avoid new file creation by default
+
+Reaction policy should avoid creating new files automatically when files pass threshold.
+
+New files can mess the structure and increase routing burden.
+
+Preferred reaction:
+
+```text
+insert retrievable landmarks
++ define read-window policy
++ use targeted search
++ compact refreshable files
++ only propose file split under Main/human-supervised structural revision
+```
+
+## 5.5 Retrievable landmarks
+
+Proposed landmark format:
+
+```text
+<!-- SN_LANDMARK: YYYY-MM-DD | Cycle NN | short-label -->
+```
+
+Example:
+
+```text
+<!-- SN_LANDMARK: 2026-07-09 | Cycle 03 | read-model-consolidation-closure -->
+```
+
+Agents can search for the latest `SN_LANDMARK` and read forward from there, avoiding older token cost unless needed.
+
+Landmarks should be used especially in ever-growing files and large canonical registers.
+
 ---
 
-# 6. Proposed Reconciliation Protocol
+# 6. Reconciliation Protocol Proposal
 
-## Vertical reconciliation
+Reconciliation should be described primarily in `PROMOTION_RULES.md` because it complements semantic promotion.
 
-Checks coherence through time and semantic maturity layers:
+It may also need routing constraints in `FLUX.md`.
 
-```text
-observational evidence
-↓
-canonical / derived updates
-↓
-checkpoint refresh
-↓
-global project state
-```
+## 6.1 Relationship to promotion
 
-## Horizontal reconciliation
+Promotion regulates how knowledge changes state.
 
-Checks coherence across domains:
+Reconciliation regulates how knowledge already captured, promoted, materialized, or summarized is made mutually consistent.
+
+Promotion flow example:
 
 ```text
-Operational ↔ Design ↔ Didactics ↔ Main
+observation → classified concept → canonical concept → glossary → checkpoint
 ```
+
+Reconciliation flow example:
+
+```text
+Codex report says X changed
+Design canon says X means Y
+Operational state says X is pending
+Main checks whether these claims contradict or complement each other
+```
+
+## 6.2 Vertical reconciliation
+
+Vertical reconciliation checks consistency through time and semantic layers.
+
+It asks:
+
+- Does checkpoint reflect canonical state?
+- Does derived knowledge reflect canon?
+- Does observational history explain the current state?
+- Does source code agree with notebook memory?
+- Does `00_PROJECT_STATE.md` reflect reconciled domain state?
 
 Goal:
 
-- complementary constraints;
-- no duplicate canonical ownership;
-- no cross-domain contradiction;
-- clear ownership of shared terms.
+```text
+stable and robust truth across sessions
+```
 
----
+## 6.3 Horizontal reconciliation
 
-# 7. 00_PROJECT_STATE.md Ambiguity
+Horizontal reconciliation checks consistency across domain responsibilities.
 
-`00_PROJECT_STATE.md` is special.
+It asks:
 
-It behaves both as:
+- Does Operational state contradict Design boundaries?
+- Does Design duplicate Operational execution rules?
+- Does Didactic framing misrepresent implementation or architecture?
+- Does Main state distort domain-specific truth?
+- Are equivalent terms complementary rather than duplicated as competing canon?
 
-1. global checkpoint;
-2. Main-owned current-state canon.
-
-Proposed term:
+Goal:
 
 ```text
-Global State Canon-Checkpoint
+complementary constraints and rules without duplicate canonical ownership
 ```
 
-This should be described in methodology, likely in:
+## 6.4 Difference from horizontal promotion
+
+Horizontal promotion transfers or reinterprets knowledge across domains.
+
+Horizontal reconciliation compares domain outputs after promotion/materialization to ensure they remain compatible.
+
+Avoid overlap by wording:
+
+- horizontal promotion = ownership/perspective movement;
+- horizontal reconciliation = compatibility check across already-owned perspectives.
+
+---
+
+# 7. Temporary Methodology-Sprint Files
+
+`FLUX.md` should include a small clause for temporary files created specifically for chat communication within a methodology sprint.
+
+Working term:
 
 ```text
-PROMOTION_RULES.md
-FLUX.md
-INDEX.md
-METHOD_GLOSSARY.md
+Temporary Methodology-Sprint Communication File
 ```
 
----
-
-# 8. Main-Root Files To Initialize
-
-Prepare or patch:
+Example:
 
 ```text
-00_PROJECT_STATE.md
-05_SESSION_LOG.md
-06_SESSION_SCHEME.md
+PROVISORY_[M]_DOUBLE_LAB.MD
 ```
 
-Suggested roles:
+Proposed constraints:
 
-- `00_PROJECT_STATE.md`: current global state and essential recovery context;
-- `05_SESSION_LOG.md`: ever-growing session history;
-- `06_SESSION_SCHEME.md`: forward checkpoint for next session agenda.
+- must be explicitly marked provisional;
+- must not be treated as canon;
+- must have an intended disposal, absorption, or promotion decision;
+- must be registered or referenced in current Main staging if used;
+- must not proliferate;
+- must be removed, archived, or promoted after the sprint;
+- must not become a parallel methodology source.
 
----
-
-# 9. Structural Questions For Specialized Methodology Chat
-
-1. Should `[M]_STAGE/J_MAIN_STAGE.md` become a permanent Main staging route?
-2. Should `PROVISORY_[M]_DOUBLE_LAB.md` be created, or should provisional communication remain inside J?
-3. Should file-growth rules live in `FLUX.md`, a new protocol file, or both?
-4. Should vertical/horizontal reconciliation live in `PROMOTION_RULES.md`, `FLUX.md`, or a new protocol file?
-5. How should `00_PROJECT_STATE.md` be formally classified?
-6. Should INDEX be updated immediately to register `06_SESSION_SCHEME.md` and `[M]_STAGE`?
-7. How should prompts enforce read-window policies after large files cross threshold?
+This clause should make temporary lab communication possible without opening uncontrolled file creation.
 
 ---
 
-# 10. Recommended Immediate Direction
+# 8. Methodology Rebuild Sequence Debate
 
-Do not start a new Markei implementation feature until the Main-root and methodology-routing gaps are resolved or deliberately deferred.
+Recommended sequence, minimizing contradiction risk:
 
-Prioritize:
+## Option A — Conservative in-place patch
 
-1. initialize `00_PROJECT_STATE.md`;
-2. initialize `05_SESSION_LOG.md`;
-3. initialize `06_SESSION_SCHEME.md`;
-4. decide status of `[M]_STAGE`;
-5. decide status of provisional double-lab file;
-6. patch methodology routing and vocabulary.
+1. Patch `INDEX.md` to register new Main-root/stage/provisional surfaces.
+2. Patch `PROMOTION_RULES.md` for semantic classes and reconciliation types.
+3. Patch `FLUX.md` for routing/read-window/temp-file rules.
+4. Patch `METHOD_GLOSSARY.md` for vocabulary.
+5. Patch `METHOD_FOUNDATIONS.md` only if needed.
+6. Run consistency pass.
+
+Pros:
+
+- low file-creation noise;
+- respects current structure;
+- avoids protocol sprawl.
+
+Cons:
+
+- existing methodology files may become denser.
+
+## Option B — New protocol file
+
+Create a dedicated reconciliation/read-window protocol file.
+
+Pros:
+
+- focused and easier to consult.
+
+Cons:
+
+- new root/methodology file increases structure;
+- more INDEX/FLUX routing updates;
+- risks premature protocol fragmentation.
+
+Current Main recommendation:
+
+```text
+Prefer Option A for now.
+Do not create a new methodology protocol file yet.
 ```
 
----
-
-# 10. Issues To Raise Before Patching 00 / 05 / 06
-
-1. `06_SESSION_SCHEME.md` exists but is not yet registered in `INDEX.md`.
-2. `[M]_STAGE/J_MAIN_STAGE.md` exists but is not yet registered in `INDEX.md` or `FLUX.md`.
-3. `PROVISORY_[M]_DOUBLE_LAB.md` was requested conceptually, but does not currently exist in the repository.
-4. Creating or registering new files requires explicit Main/human-supervised methodological revision.
-5. `00_PROJECT_STATE.md` needs formal classification because it combines global checkpoint behavior with Main-owned current-state canon.
-6. File-growth rules should probably be staged before large-file recovery becomes normal practice.
+If the in-place clauses become too large after one more cycle, promote a new protocol file through explicit methodology revision.
 
 ---
 
-# 11. Recommended Next Patch Sequence
+# 9. Commit Noise And Verbose Noise Strategy
 
-1. Review this J stage.
-2. Decide whether to create `PROVISORY_[M]_DOUBLE_LAB.md` or keep its content inside J.
-3. Patch `00_PROJECT_STATE.md`, `05_SESSION_LOG.md`, and `06_SESSION_SCHEME.md` using the drafts above, adjusted after review.
-4. Patch `INDEX.md` to register:
-   - `06_SESSION_SCHEME.md`;
-   - `[M]_STAGE/J_MAIN_STAGE.md` if accepted.
-5. Patch methodology files:
-   - `PROMOTION_RULES.md` for `Global State Canon-Checkpoint` and reconciliation types;
-   - `FLUX.md` for file-growth/read-window routing;
-   - `METHOD_GLOSSARY.md` for new terms.
-6. Run a final methodology consistency pass.
+## 9.1 Commit-noise reduction
+
+For methodology revision, prefer clustered commits by semantic concern rather than one tiny commit per file.
+
+Suggested commit groups:
+
+1. `Register Main root and staging surfaces`
+   - `INDEX.md`
+   - possibly `FLUX.md` routing references
+
+2. `Define reconciliation and global state classes`
+   - `PROMOTION_RULES.md`
+   - `METHOD_GLOSSARY.md`
+
+3. `Define read-window and temporary sprint file routing`
+   - `FLUX.md`
+   - `METHOD_GLOSSARY.md`
+
+4. `Adjust foundations if required`
+   - `METHOD_FOUNDATIONS.md`
+
+Avoid mixing unrelated application changes with methodology changes.
+
+## 9.2 Verbose-noise reduction
+
+For stage files:
+
+- prefer compact current conclusions over long restatement;
+- point to materialized files instead of copying them;
+- avoid keeping outdated drafts once they have been materialized elsewhere.
+
+For append/ever-growing files:
+
+- add landmarks;
+- append concise entries;
+- do not rewrite history unless correcting a factual error.
+
+For derived files:
+
+- resort and compact;
+- do not add every observation;
+- preserve only the current useful view.
+
+For checkpoints:
+
+- target recovery, not completeness;
+- point to deeper files;
+- remove repeated explanations.
+
+---
+
+# 10. Current Decisions Staged
+
+1. Main-root files need explicit methodology treatment.
+2. `00_PROJECT_STATE.md` should be treated as a Global State Canon-Checkpoint.
+3. `05_SESSION_LOG.md` should remain global ever-growing observational knowledge.
+4. `06_SESSION_SCHEME.md` should become a forward checkpoint.
+5. Read Window Protocol belongs primarily in `FLUX.md`.
+6. Reconciliation Protocol belongs primarily in `PROMOTION_RULES.md`.
+7. `FLUX.md` should include temporary methodology-sprint communication file rules.
+8. Prefer retrievable landmarks over automatic file splitting.
+9. Prefer in-place methodology patches before creating a new protocol file.
+10. Prefer clustered methodology commits to reduce commit noise.
+11. Preserve compactness in J by refreshing the stage rather than appending indefinitely.
+
+---
+
+# 11. Open Questions
+
+1. Should `[M]_STAGE/J_MAIN_STAGE.md` become a permanent Main staging surface?
+2. Should `PROVISORY_[M]_DOUBLE_LAB.MD` be deleted after the methodology sprint, archived as evidence, or promoted into a registered temporary-file class example?
+3. Should `00_PROJECT_STATE.md` be considered canonical enough to override a stale domain checkpoint, or only to signal drift requiring domain inspection?
+4. Should retrievable landmarks be mandatory only after threshold, or recommended from the beginning of ever-growing files?
+5. Should line thresholds be exact method constants or recommended defaults adjustable per project?
+6. Should the specialized methodology chat propose direct patches or return a staged methodology patch plan for Main review?
+
+---
+
+# 12. Recommended Next Action
+
+Use this J stage as the handoff into methodology revision debate.
+
+Next concrete work:
+
+1. review this plan with the specialized methodology chat;
+2. decide Option A vs Option B for methodology patching;
+3. prepare concise patch instructions for `INDEX.md`, `FLUX.md`, `PROMOTION_RULES.md`, and `METHOD_GLOSSARY.md`;
+4. modify `METHOD_FOUNDATIONS.md` only if the special Main-root class changes the foundational ontology;
+5. run a final consistency pass across methodology files;
+6. only then return to Markei feature work or mobile-readiness implementation.
