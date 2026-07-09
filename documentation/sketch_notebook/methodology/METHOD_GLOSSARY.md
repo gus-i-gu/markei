@@ -820,3 +820,362 @@ When a term requires a rule, consult the file that owns the rule.
 When a term requires a definition, consult this glossary.
 
 The glossary should evolve only when methodology vocabulary stabilizes enough to be worth naming.
+
+---
+
+# 13. Appended Vocabulary — Methodology Refinement Sprint 01
+
+This section records vocabulary introduced or stabilized during the methodology refinement sprint following Markei Cycle 03.
+
+These terms are consultative definitions.
+
+Rules remain owned by the methodology files that define them.
+
+---
+
+## Main-Root Continuity Files
+
+Main-owned files located directly under `documentation/sketch_notebook/` that support global recovery, session closure, and next-session preparation.
+
+Current examples:
+
+```text
+documentation/sketch_notebook/00_PROJECT_STATE.md
+documentation/sketch_notebook/05_SESSION_LOG.md
+documentation/sketch_notebook/06_SESSION_SCHEME.md
+```
+
+Main-root continuity files are not functional domain files, methodology files, or DEV_STAGE files.
+
+---
+
+## Main-Root Continuity Flux
+
+The operational flow through which Main Chat closes a session and prepares the next session using Main-root continuity files.
+
+Typical flow:
+
+```text
+Domain checkpoints
+↓
+Codex reports
+↓
+Human validation
+↓
+Main reconciliation
+↓
+00_PROJECT_STATE refresh
+↓
+05_SESSION_LOG append
+↓
+06_SESSION_SCHEME refresh
+```
+
+---
+
+## Global State Canon-Checkpoint
+
+A special Main-owned semantic class for a file that functions both as accepted global current-state summary and fast recovery checkpoint.
+
+Current example:
+
+```text
+00_PROJECT_STATE.md
+```
+
+It summarizes global state without replacing domain-owned canonical files.
+
+---
+
+## Global Observational History
+
+An append-oriented Main-owned observational record for session-level events, reconciliation, drift, accepted direction, and continuity notes.
+
+Current example:
+
+```text
+05_SESSION_LOG.md
+```
+
+It explains how global state changed, but it does not define current truth by itself.
+
+---
+
+## Forward Checkpoint
+
+A refreshable checkpoint that prepares the next session by describing intended recovery focus, expected files, unresolved decisions, deferred work, and exit criteria.
+
+Current example:
+
+```text
+06_SESSION_SCHEME.md
+```
+
+A forward checkpoint is predictive.
+
+It does not validate that future work has occurred.
+
+---
+
+## Recovery-Economy
+
+The operational discipline that keeps project recovery cost from growing in proportion to notebook age.
+
+Recovery-Economy evaluates whether a file still performs its semantic responsibility rather than judging file length alone.
+
+Rules for Recovery-Economy are owned by `FLUX.md`.
+
+---
+
+## Semantic Responsibility Over Length
+
+The principle that a file should be evaluated by whether it performs its assigned semantic role, not merely by how many lines it contains.
+
+A long file is not automatically unhealthy.
+
+A file becomes unhealthy when its length prevents it from functioning as its intended semantic class.
+
+---
+
+## File Operation Contract
+
+The mapping between a file’s semantic class and its preferred maintenance operation.
+
+Typical operations include:
+
+```text
+Checkpoint -> Refresh
+Canonical -> Reconcile
+Derived / resorted -> Extend / Reconcile
+Observational -> Append
+```
+
+Operational handling of this contract belongs to `FLUX.md`.
+
+---
+
+## Append Contract
+
+The rule that observational files preserve chronology by appending new dated sections rather than rewriting historical records.
+
+Existing historical sections are considered immutable unless factual correction, archival restructuring, or Main-authorized historical revision is explicitly approved.
+
+---
+
+## Refresh Contract
+
+The rule that refreshable files exist for fast recovery and should answer:
+
+```text
+What exists?
+What changed?
+What remains open?
+Where should recovery continue?
+```
+
+Refreshable files should not become canonical registers, historical logs, lectures, or implementation reports.
+
+---
+
+## Read Window Protocol
+
+The practice of recovering from large files through bounded reading rather than full rereading.
+
+Typical sequence:
+
+```text
+file header
+↓
+latest Landline Mark
+↓
+targeted search
+↓
+bounded section read
+↓
+older Landline Mark only if required
+```
+
+The Read Window Protocol is operational and belongs to `FLUX.md`.
+
+---
+
+## Landline Mark
+
+A stable heading or marker that allows agents to recover relevant late sections of a large file without rereading the entire file.
+
+The name evokes a fixed recovery line: a known place where a future chat can reconnect to the file.
+
+Suggested format:
+
+```text
+## LANDLINE: Latest Session
+## LANDLINE: Cycle 03 Reconciliation
+## LANDLINE: Current Methodology Risks
+```
+
+Landline Marks should represent semantic transitions rather than arbitrary page divisions.
+
+---
+
+## Sprint Read Limit
+
+A Recovery-Economy threshold that indicates when a file should stop being reread in full by default.
+
+Current value:
+
+```text
+SPRINT_READ_LIMIT = 800 lines
+```
+
+Crossing this threshold activates read-window discipline.
+
+It does not authorize automatic file creation.
+
+---
+
+## Repartition Review Limit
+
+A Recovery-Economy threshold that indicates when a file may need structural review.
+
+Current value:
+
+```text
+REPARTITION_REVIEW_LIMIT = 1300 lines
+```
+
+Crossing this threshold may trigger indexing, compaction, resorting, or Main-approved structural change.
+
+---
+
+## Boundary-Stable
+
+A description for a system whose responsibilities, ownership, or architectural boundaries have stabilized even though implementation details may still evolve.
+
+Use `boundary-stable` instead of `stable` when implementation still has known risks, deferred decisions, or manual validation gaps.
+
+---
+
+## Vertical Reconciliation
+
+Reconciliation across semantic layers and time.
+
+Typical chain:
+
+```text
+observational evidence
+↓
+canonical / derived updates
+↓
+checkpoint refresh
+↓
+global project state
+```
+
+Vertical reconciliation checks whether each layer reflects the correct semantic maturity.
+
+---
+
+## Horizontal Reconciliation
+
+Reconciliation across domains or perspectives.
+
+Typical chain:
+
+```text
+Operational ↔ Didactic ↔ Design ↔ Main
+```
+
+Horizontal reconciliation checks whether domains remain complementary rather than contradictory or duplicative.
+
+---
+
+## Duplicate Semantic Data
+
+A drift condition where two or more files attempt to own the same meaning at the same authority level.
+
+Duplicate semantic data differs from legitimate summary, reference, or domain-specific interpretation.
+
+Reconciliation should identify one canonical owner and convert other occurrences into summaries, references, derived views, checkpoint notes, observational history, or removal candidates.
+
+---
+
+## Semantic Owner
+
+The file, domain, or layer responsible for maintaining the authoritative form of a knowledge object.
+
+Semantic ownership prevents the same stable rule, concept, boundary, or state claim from becoming duplicate canon.
+
+---
+
+## Duplicate Ownership
+
+A form of duplicate semantic data where more than one file or domain claims authority over the same stable meaning.
+
+Duplicate ownership should be resolved through reconciliation.
+
+---
+
+## Perspectival Repetition
+
+Allowed repetition of the same event across different domains when each domain interprets the event through its own responsibility.
+
+Example:
+
+```text
+Operational: validation passed or failed.
+Design: boundary consequence changed.
+Didactic: concept became teachable.
+Main: global state shifted.
+```
+
+Perspectival repetition is not duplicate semantic data when ownership remains distinct.
+
+---
+
+## Methodology Refinement Sprint
+
+An explicit, human-supervised work period focused on changing the Sketch Notebook Method itself.
+
+A methodology refinement sprint is not an ordinary Markei feature cycle.
+
+It may revise methodology files, Main-root continuity files, and navigation files under Main supervision.
+
+---
+
+## Temporary Methodology Sprint File
+
+A provisional file created for chat-to-chat communication during a methodology refinement sprint.
+
+Temporary methodology sprint files must declare provisional status, authority, scope, owner, and expiry condition.
+
+They must end as absorbed, promoted, converted into an approved route, deleted, or explicitly left temporary with an expiry condition.
+
+---
+
+## Provisional Lab Bridge
+
+A temporary methodology sprint file used to communicate experimental observations or staged method-lab conclusions before formal methodology promotion.
+
+Current example:
+
+```text
+PROVISORY_[M]_DOUBLE_LAB.MD
+```
+
+A provisional lab bridge is not canonical methodology by itself.
+
+---
+
+## Disjunct Flux Protocol
+
+A specialized operational flow that coexists with ordinary functional-domain flow without replacing it.
+
+Main-root continuity flow is a disjunct flux protocol because it coordinates global session closure and next-session preparation separately from domain-memory promotion.
+
+---
+
+## Recovery-Cost Drift
+
+A form of drift where the notebook still contains correct information but requires too much rereading, duplicated inspection, or broad context loading to recover the correct state.
+
+Recovery-cost drift is addressed through Recovery-Economy rather than automatic file creation.
