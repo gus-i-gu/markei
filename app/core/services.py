@@ -217,6 +217,8 @@ class ProductService(ServiceContract):
 
         notes: str = "",
 
+        expiration_date: str | None = None,
+
     ) -> dict:
         """
         Register one receipt line.
@@ -286,6 +288,10 @@ class ProductService(ServiceContract):
 
                 expected_next_purchase=None,
 
+                average_shelf_life_days=None,
+
+                expected_expiration_date=None,
+
                 price_delta=None,
 
                 price_delta_percent=None,
@@ -346,6 +352,8 @@ class ProductService(ServiceContract):
             total_price=total_price,
 
             promotion=promotion,
+
+            expiration_date=expiration_date,
 
             notes=notes,
 
@@ -481,6 +489,18 @@ class ProductService(ServiceContract):
         product.price_delta_percent = (
 
             current.price_delta_percent
+
+        )
+
+        product.average_shelf_life_days = (
+
+            current.average_shelf_life_days
+
+        )
+
+        product.expected_expiration_date = (
+
+            current.expected_expiration_date
 
         )
 
@@ -644,6 +664,10 @@ class ProductService(ServiceContract):
 
             product.expected_next_purchase = None
 
+            product.average_shelf_life_days = None
+
+            product.expected_expiration_date = None
+
             product.price_delta = None
 
             product.price_delta_percent = None
@@ -797,6 +821,33 @@ class ProductService(ServiceContract):
                 current.purchase_date,
 
                 product.average_duration_days,
+
+            )
+
+        )
+
+
+        ###################################################
+        # Shelf-life summary
+        ###################################################
+
+        product.average_shelf_life_days = (
+
+            self.calculate_average_shelf_life(
+
+                purchases
+
+            )
+
+        )
+
+        product.expected_expiration_date = (
+
+            self.estimate_expiration_date(
+
+                current.purchase_date,
+
+                product.average_shelf_life_days,
 
             )
 
@@ -962,6 +1013,70 @@ class ProductService(ServiceContract):
 
         )
 
+
+    #######################################################
+
+    def get_product_view(
+
+        self,
+
+        product_id: str,
+
+    ) -> dict | None:
+        """
+        Return the read model used by ProductDetailPanel.
+        """
+
+        product = self.repository.get_product(
+
+            product_id
+
+        )
+
+        if product is None:
+
+            return None
+
+        return {
+
+            "product_id": product.id,
+
+            "product_name": product.product_name,
+
+            "brand": product.brand,
+
+            "average_price": self.repository.get_average_unit_price(
+
+                product_id
+
+            ),
+
+            "average_shelf_life_days": (
+
+                product.average_shelf_life_days
+
+            ),
+
+            "expected_expiration_date": (
+
+                product.expected_expiration_date
+
+            ),
+
+            "stores": self.repository.get_latest_store_price_rows(
+
+                product_id
+
+            ),
+
+            "last_purchases": self.repository.get_last_purchase_rows(
+
+                product_id
+
+            ),
+
+        }
+
     #######################################################
     #
     # CALCULATION SERVICES
@@ -1064,6 +1179,54 @@ class ProductService(ServiceContract):
 
     #######################################################
 
+    def calculate_average_shelf_life(
+
+        self,
+
+        purchases: list[Purchase],
+
+    ) -> int | None:
+        """
+        Calculate average days from purchase to expiration.
+        """
+
+        durations = []
+
+        for purchase in purchases:
+
+            if not purchase.expiration_date:
+
+                continue
+
+            durations.append(
+
+                self.calculate_duration(
+
+                    purchase.purchase_date,
+
+                    purchase.expiration_date,
+
+                )
+
+            )
+
+        if not durations:
+
+            return None
+
+        return round(
+
+            sum(durations)
+
+            /
+
+            len(durations)
+
+        )
+
+
+    #######################################################
+
     def estimate_next_purchase_date(
 
         self,
@@ -1097,6 +1260,46 @@ class ProductService(ServiceContract):
 
         )
 
+
+        return expected.strftime(
+
+            DATE_FORMAT
+
+        )
+
+
+    #######################################################
+
+    def estimate_expiration_date(
+
+        self,
+
+        purchase_date: str,
+
+        average_shelf_life: int | None,
+
+    ) -> str | None:
+        """
+        Estimate expiration from purchase date and shelf-life.
+        """
+
+        if average_shelf_life is None:
+
+            return None
+
+        purchase = datetime.strptime(
+
+            purchase_date,
+
+            DATE_FORMAT,
+
+        )
+
+        expected = purchase + timedelta(
+
+            days=average_shelf_life
+
+        )
 
         return expected.strftime(
 

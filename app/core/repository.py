@@ -53,11 +53,13 @@ class Repository(RepositoryContract):
                 average_daily_consumption,
                 average_duration_days,
                 expected_next_purchase,
+                average_shelf_life_days,
+                expected_expiration_date,
                 price_delta,
                 price_delta_percent,
                 created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 product.id,
@@ -76,6 +78,8 @@ class Repository(RepositoryContract):
                 product.average_daily_consumption,
                 product.average_duration_days,
                 product.expected_next_purchase,
+                product.average_shelf_life_days,
+                product.expected_expiration_date,
                 product.price_delta,
                 product.price_delta_percent,
                 product.created_at,
@@ -104,6 +108,8 @@ class Repository(RepositoryContract):
                 average_daily_consumption = ?,
                 average_duration_days = ?,
                 expected_next_purchase = ?,
+                average_shelf_life_days = ?,
+                expected_expiration_date = ?,
                 price_delta = ?,
                 price_delta_percent = ?
             WHERE id = ?
@@ -124,6 +130,8 @@ class Repository(RepositoryContract):
                 product.average_daily_consumption,
                 product.average_duration_days,
                 product.expected_next_purchase,
+                product.average_shelf_life_days,
+                product.expected_expiration_date,
                 product.price_delta,
                 product.price_delta_percent,
                 product.id,
@@ -211,9 +219,10 @@ class Repository(RepositoryContract):
                 unit_price,
                 total_price,
                 promotion,
+                expiration_date,
                 notes
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 purchase.product_id,
@@ -224,6 +233,7 @@ class Repository(RepositoryContract):
                 purchase.unit_price,
                 purchase.total_price,
                 int(purchase.promotion),
+                purchase.expiration_date,
                 purchase.notes,
             ),
         )
@@ -273,6 +283,75 @@ class Repository(RepositoryContract):
             )
 
         return [self.row_to_purchase(row) for row in self.cursor.fetchall()]
+
+    def get_average_unit_price(self, product_id: str) -> float | None:
+        self.cursor_execute(
+            """
+            SELECT AVG(unit_price) AS average_unit_price
+            FROM purchases
+            WHERE product_id = ?
+            """,
+            (product_id,),
+        )
+        row = self.cursor.fetchone()
+
+        if row is None:
+            return None
+
+        return row["average_unit_price"]
+
+    def get_latest_store_price_rows(self, product_id: str) -> list[dict]:
+        self.cursor_execute(
+            """
+            SELECT
+                p.store_id AS store_id,
+                s.name AS store_name,
+                s.address AS store_address,
+                p.unit_price AS latest_unit_price,
+                p.purchase_date AS latest_purchase_date
+            FROM purchases p
+            LEFT JOIN stores s
+                ON s.id = p.store_id
+            INNER JOIN (
+                SELECT
+                    store_id,
+                    MAX(purchase_date || printf('%010d', id)) AS latest_key
+                FROM purchases
+                WHERE product_id = ?
+                GROUP BY store_id
+            ) latest
+                ON (
+                    latest.store_id IS p.store_id
+                    AND latest.latest_key = p.purchase_date || printf('%010d', p.id)
+                )
+            WHERE p.product_id = ?
+            ORDER BY s.name, p.store_id
+            """,
+            (product_id, product_id),
+        )
+        return [dict(row) for row in self.cursor.fetchall()]
+
+    def get_last_purchase_rows(
+        self,
+        product_id: str,
+        limit: int = 10,
+    ) -> list[dict]:
+        self.cursor_execute(
+            """
+            SELECT
+                purchase_date,
+                unit_price,
+                quantity,
+                unit,
+                expiration_date
+            FROM purchases
+            WHERE product_id = ?
+            ORDER BY purchase_date DESC, id DESC
+            LIMIT ?
+            """,
+            (product_id, limit),
+        )
+        return [dict(row) for row in self.cursor.fetchall()]
 
     def get_last_purchase(self, product_id: str) -> Purchase | None:
         self.cursor_execute(
@@ -447,6 +526,14 @@ class Repository(RepositoryContract):
             average_daily_consumption=row["average_daily_consumption"],
             average_duration_days=row["average_duration_days"],
             expected_next_purchase=row["expected_next_purchase"],
+            average_shelf_life_days=self.row_value(
+                row,
+                "average_shelf_life_days",
+            ),
+            expected_expiration_date=self.row_value(
+                row,
+                "expected_expiration_date",
+            ),
             price_delta=self.row_value(row, "price_delta"),
             price_delta_percent=self.row_value(row, "price_delta_percent"),
             created_at=row["created_at"],
@@ -466,6 +553,7 @@ class Repository(RepositoryContract):
             unit_price=row["unit_price"],
             total_price=row["total_price"],
             promotion=bool(row["promotion"]),
+            expiration_date=self.row_value(row, "expiration_date"),
             notes=row["notes"],
         )
 
@@ -488,6 +576,7 @@ class Repository(RepositoryContract):
             name=row["name"],
             city=row["city"],
             state=row["state"],
+            address=self.row_value(row, "address"),
         )
 
     #######################################################

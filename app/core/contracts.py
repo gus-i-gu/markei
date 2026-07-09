@@ -71,6 +71,10 @@ class ProductContract:
 
         "expected_next_purchase",
 
+        "average_shelf_life_days",
+
+        "expected_expiration_date",
+
         "price_delta",
 
         "price_delta_percent",
@@ -109,6 +113,8 @@ class PurchaseContract:
         "total_price",
 
         "promotion",
+
+        "expiration_date",
 
         "notes",
 

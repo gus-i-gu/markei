@@ -36,6 +36,10 @@ CREATE TABLE products (
 
     expected_next_purchase TEXT,
 
+    average_shelf_life_days INTEGER,
+
+    expected_expiration_date TEXT,
+
     price_delta REAL,
 
     price_delta_percent REAL,
@@ -69,6 +73,8 @@ CREATE TABLE purchases (
     total_price REAL NOT NULL,
 
     promotion INTEGER NOT NULL DEFAULT 0,
+
+    expiration_date TEXT,
 
     notes TEXT,
 
@@ -104,7 +110,9 @@ CREATE TABLE stores (
 
     city TEXT,
 
-    state TEXT
+    state TEXT,
+
+    address TEXT
 
 );
 

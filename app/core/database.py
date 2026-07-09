@@ -228,6 +228,10 @@ def initialize(
 
         if not recreate:
 
+            connection = connect()
+
+            connection.close()
+
             return
 
         DATABASE_PATH.unlink()
@@ -310,6 +314,124 @@ def initialize(
 
     )
 
+
+###########################################################
+#
+# DATABASE MIGRATION
+#
+###########################################################
+
+def table_columns(
+
+    connection: sqlite3.Connection,
+
+    table_name: str,
+
+) -> set[str]:
+    """
+    Return the current column names for a table.
+    """
+
+    rows = connection.execute(
+
+        f"PRAGMA table_info({table_name});"
+
+    ).fetchall()
+
+    return {
+
+        row["name"]
+
+        for row in rows
+
+    }
+
+
+def ensure_column(
+
+    connection: sqlite3.Connection,
+
+    table_name: str,
+
+    column_name: str,
+
+    definition: str,
+
+) -> None:
+    """
+    Add a nullable column only when it is missing.
+    """
+
+    if column_name in table_columns(connection, table_name):
+
+        return
+
+    connection.execute(
+
+        f"ALTER TABLE {table_name} ADD COLUMN {column_name} {definition};"
+
+    )
+
+
+def migrate(
+
+    connection: sqlite3.Connection,
+
+) -> None:
+    """
+    Apply idempotent schema upgrades for existing databases.
+    """
+
+    ensure_column(
+
+        connection,
+
+        "purchases",
+
+        "expiration_date",
+
+        "TEXT",
+
+    )
+
+    ensure_column(
+
+        connection,
+
+        "products",
+
+        "average_shelf_life_days",
+
+        "INTEGER",
+
+    )
+
+    ensure_column(
+
+        connection,
+
+        "products",
+
+        "expected_expiration_date",
+
+        "TEXT",
+
+    )
+
+    ensure_column(
+
+        connection,
+
+        "stores",
+
+        "address",
+
+        "TEXT",
+
+    )
+
+    connection.commit()
+
 ###########################################################
 #
 # DATABASE CONNECTION
@@ -360,11 +482,19 @@ def connect() -> sqlite3.Connection:
     # Configure connection
     #######################################################
 
-    return configure(
+    connection = configure(
 
         connection
 
     )
+
+    migrate(
+
+        connection
+
+    )
+
+    return connection
 
 
 ###########################################################
@@ -414,11 +544,7 @@ def reset() -> None:
 
 if __name__ == "__main__":
 
-    initialize(
-
-        recreate=True,
-
-    )
+    initialize()
 
     print(
 

@@ -73,6 +73,8 @@ class Store:
 
     state: Optional[str] = None
 
+    address: Optional[str] = None
+
     def __str__(self) -> str:
 
         return self.name
@@ -147,6 +149,10 @@ class Product:
     average_duration_days: Optional[int] = None
 
     expected_next_purchase: Optional[str] = None
+
+    average_shelf_life_days: Optional[int] = None
+
+    expected_expiration_date: Optional[str] = None
 
     price_delta: Optional[float] = None
 
@@ -248,6 +254,8 @@ class Purchase:
     total_price: float = 0.0
 
     promotion: bool = False
+
+    expiration_date: Optional[str] = None
 
     notes: Optional[str] = None
 

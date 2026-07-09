@@ -23,6 +23,7 @@ from PySide6.QtWidgets import (
 )
 
 from app.core.services import ProductService
+from app.desktop.ui.widgets.product_detail_panel import ProductDetailPanel
 
 
 class RegisterPage(QWidget):
@@ -106,6 +107,16 @@ class RegisterPage(QWidget):
 
         self.notes_input = QLineEdit()
 
+        self.expiration_date_input = QDateEdit()
+        self.expiration_date_input.setCalendarPopup(True)
+        self.expiration_date_input.setSpecialValueText("-")
+        self.expiration_date_input.setMinimumDate(
+            QDate(1900, 1, 1)
+        )
+        self.expiration_date_input.setDate(
+            self.expiration_date_input.minimumDate()
+        )
+
         ##################################################
         # Form rows
         ##################################################
@@ -121,6 +132,7 @@ class RegisterPage(QWidget):
         form.addRow("", self.promotion_input)
         form.addRow("Store ID", self.store_id_input)
         form.addRow("Purchase Date", self.purchase_date_input)
+        form.addRow("Expiration Date", self.expiration_date_input)
         form.addRow("Notes", self.notes_input)
 
         main_layout.addLayout(form)
@@ -156,7 +168,11 @@ class RegisterPage(QWidget):
             self.status_label
         )
 
-        main_layout.addStretch()
+        self.product_detail_panel = ProductDetailPanel()
+
+        main_layout.addWidget(
+            self.product_detail_panel
+        )
 
         ##################################################
         # Signal connections
@@ -279,6 +295,26 @@ class RegisterPage(QWidget):
         )
 
 
+    def expiration_date_string(
+        self,
+    ) -> str | None:
+
+        if (
+            self.expiration_date_input.date()
+            ==
+            self.expiration_date_input.minimumDate()
+        ):
+            return None
+
+        return (
+            self.expiration_date_input
+            .date()
+            .toString(
+                "dd/MM/yyyy"
+            )
+        )
+
+
     def promotion_value(
         self,
     ) -> int:
@@ -353,6 +389,10 @@ class RegisterPage(QWidget):
             QDate.currentDate()
         )
 
+        self.expiration_date_input.setDate(
+            self.expiration_date_input.minimumDate()
+        )
+
         self.notes_input.clear()
 
         self.current_product = None
@@ -360,6 +400,8 @@ class RegisterPage(QWidget):
         self.set_edit_mode(
             False
         )
+
+        self.product_detail_panel.clear()
 
 
     ##################################################
@@ -420,6 +462,12 @@ class RegisterPage(QWidget):
 
         self.set_edit_mode(
             True
+        )
+
+        self.product_detail_panel.load(
+            self.service.get_product_view(
+                product.id
+            )
         )
 
             ##################################################
@@ -501,6 +549,8 @@ class RegisterPage(QWidget):
                 unit=self.unit_input.text().strip(),
 
                 purchase_date=self.purchase_date_string(),
+
+                expiration_date=self.expiration_date_string(),
 
                 store_id=self.store_id(),
 
