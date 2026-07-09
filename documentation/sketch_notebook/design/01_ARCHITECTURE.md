@@ -1,6 +1,6 @@
 # 01_ARCHITECTURE.md
 
-> Version: 0.2
+> Version: 0.3
 > Status: Draft
 > Persistence Class: Canonical
 > Knowledge Class: Design / Architecture
@@ -49,7 +49,7 @@ Canonical decision:
 Current composition:
 
 ```text
-Inventory table double-click
+Inventory selection
     ↓ product_id
 MainWindow navigation
     ↓
@@ -64,31 +64,62 @@ Repository retrieval
 SQLite persistence
 ```
 
-The Product View may later be reused by Storage, Shortage, Market, or History without moving business logic into those pages.
-
-Cycle 02 did not change this architecture.
+The Product View may later be reused by Lists or History without moving business logic into those pages.
 
 ---
 
-# 3. History Architecture
+# 3. Lists Architecture
 
-History uses a service-prepared read model.
+Lists is now the public inventory surface.
 
 Canonical decision:
 
-- History page owns rendering only.
-- History page renders grouped sections, purchase rows, and total rows from service-prepared data.
-- ProductService owns History read-model assembly.
-- ProductService owns time bucketing semantics, including first-Wednesday operational month grouping and Wednesday week grouping.
-- ProductService owns aggregate/total-row meaning.
-- Repository retrieves purchase, store, and settings data without deciding period semantics.
-- SQLite persists settings values used by History grouping.
+- Public inventory navigation is represented by one `ListsPage`.
+- Former Storage / Shortage / Market meanings are internal Lists views.
+- Internal view names are `in-house`, `shortage`, and `to-buy`.
+- Lists also supports combined views `in-house + shortage` and `shortage + to-buy`.
+- The default Lists view is the hybrid all-products list with a Status column.
+- ProductService owns Lists read-model assembly, status classification, latest price meaning, delta price meaning, remaining-days meaning, and row labels.
+- ListsPage owns view selection, table rendering, refresh behavior, and product-opening events.
+- Repository retrieves supporting product/purchase rows without deciding status or price-delta semantics.
+- Old Storage/Shortage/Market page files may remain temporarily as transition artifacts, but they are no longer public inventory navigation surfaces.
 
 Current composition:
 
 ```text
+ListsPage
+    ↓ selected view key
+ProductService.get_lists_view(...)
+    ↓ assembles list rows and status groups
+Repository
+    ↓ retrieves products / purchases / summaries
+SQLite
+```
+
+Lists classification remains purchase-rhythm based through existing `expected_next_purchase` and threshold semantics unless a future design explicitly changes inventory status meaning.
+
+---
+
+# 4. History Architecture
+
+History uses service-prepared read models.
+
+Canonical decision:
+
+- History page owns rendering only.
+- History page renders grouped sections, purchase rows, summaries, total rows, and embedded analytics from service-prepared data.
+- ProductService owns History read-model assembly.
+- ProductService owns time bucketing semantics, including first-Wednesday operational month grouping and Wednesday week grouping.
+- ProductService owns aggregate/total-row meaning.
+- ProductService owns History analytics frame interpretation, totals, expenditure percentages, average purchase timelapse, and product-cycle comparison.
+- Repository retrieves purchase, store, and settings data without deciding period or analytics semantics.
+- SQLite persists settings values used by History grouping, but no analytics cache is persisted.
+
+Current grouped History composition:
+
+```text
 HistoryPage
-    ↓ requests History view
+    ↓ requests grouped History view
 ProductService
     ↓ reads settings and raw rows
 Repository
@@ -96,11 +127,23 @@ Repository
 SQLite
 ```
 
-History grouping is not a repository responsibility and must not be rebuilt inside the UI.
+Current embedded analytics composition:
+
+```text
+HistoryPage embedded analytics controls
+    ↓ date range + optional store filter
+ProductService.get_history_analytics_view(...)
+    ↓ derives frame totals / percentages / timelapse / comparison
+Repository
+    ↓ retrieves supporting purchase/store rows
+SQLite
+```
+
+History grouping and analytics are not repository responsibilities and must not be rebuilt inside the UI.
 
 ---
 
-# 4. Settings Architecture
+# 5. Settings Architecture
 
 Settings is the configuration owner for user-facing application preferences.
 
@@ -118,7 +161,7 @@ Settings may host focused editor components for store editing, time-reference co
 
 ---
 
-# 5. Product / Purchase / Store Ownership
+# 6. Product / Purchase / Store Ownership
 
 Canonical ownership:
 
@@ -126,7 +169,8 @@ Canonical ownership:
 - Purchase owns immutable receipt/batch facts.
 - Store owns store identity and location facts.
 - Product View owns no domain facts; it renders service-prepared data.
-- History View owns no domain facts; it renders service-prepared grouped read-model data.
+- Lists View owns no domain facts; it renders service-prepared list read-model data.
+- History View owns no domain facts; it renders service-prepared grouped and analytics read-model data.
 
 Specific accepted ownership:
 
@@ -135,41 +179,63 @@ Specific accepted ownership:
 - Purchase owns optional `expiration_date` as a receipt/batch-level fact.
 - Store owns nullable `address`.
 - Average price remains derived from purchases and is not a cached Product field.
-- History total rows are derived read-model summaries, not Product fields.
+- Latest price and delta price in Lists are derived read-model fields, not schema fields.
+- History total rows and analytics rows are derived read-model summaries, not Product fields.
 
 ---
 
-# 6. Rhythm and Time Separation
+# 7. Rhythm and Time Separation
 
-Markei separates three temporal meanings:
+Markei separates temporal meanings:
 
 - Purchase rhythm: how often the user buys the product.
 - Shelf-life rhythm: how long a purchased batch lasts before expiration.
 - History period grouping: how purchases are bucketed for display and reporting.
+- Analytics frame timelapse: average interval between parsed purchases in a selected date/store frame.
 
 Canonical mapping:
 
 ```text
-average_duration_days      -> purchase-to-purchase rhythm
-expected_next_purchase     -> prediction from purchase rhythm
-average_shelf_life_days    -> purchase-to-expiration rhythm
-expected_expiration_date   -> prediction/state from shelf-life rhythm
-history.week_boundary      -> History weekly bucket boundary
+average_duration_days       -> purchase-to-purchase rhythm / product cycle
+expected_next_purchase      -> prediction from purchase rhythm
+average_shelf_life_days     -> purchase-to-expiration rhythm
+expected_expiration_date    -> prediction/state from shelf-life rhythm
+history.week_boundary       -> History weekly bucket boundary
 history.month_boundary_rule -> History operational month boundary rule
+analytics frame average     -> selected-frame purchase interval average
 ```
 
-Purchase classification for Storage / Shortage / Market remains based on `expected_next_purchase` unless a later design decision explicitly changes list semantics.
+Purchase classification for Lists remains based on `expected_next_purchase` unless a later design decision explicitly changes list semantics.
 
-History grouping settings do not change Product purchase rhythm or shelf-life rhythm.
+History grouping settings do not change Product purchase rhythm, shelf-life rhythm, or analytics frame meaning.
 
 ---
 
-# 7. Boundary Drift Guards
+# 8. Mobile Readiness Boundary
 
-- UI must not calculate averages, shelf-life summaries, latest store prices, product status, History period buckets, or predictions.
-- Repository must not decide business meaning for returned rows, period buckets, settings interpretation, or aggregates.
-- ProductService must remain the owner of Product View and History read-model assembly.
-- Product must not absorb purchase-specific history beyond cached summaries.
+Cycle 03 improved mobile readiness by making Lists and History analytics available through service-owned, platform-neutral read-model contracts.
+
+Current classification:
+
+- Prepared: service/read-model semantics are less tied to PySide6 widgets.
+- Not ready: mobile implementation, API/backend rewrite, sync, authentication, and mobile persistence are not designed.
+
+Next likely mobile-preparation topics:
+
+- typed read-model contracts;
+- service factory or dependency injection boundaries;
+- explicit date validation strategy;
+- automated service tests;
+- separation between UI labels and semantic values.
+
+---
+
+# 9. Boundary Drift Guards
+
+- UI must not calculate averages, shelf-life summaries, latest prices, price deltas, product status, History period buckets, analytics percentages, frame averages, comparisons, or predictions.
+- Repository must not decide business meaning for returned rows, period buckets, settings interpretation, status classification, analytics frames, or aggregates.
+- ProductService remains the owner of Product View, Lists, grouped History, and History analytics read-model assembly.
+- Product must not absorb purchase-specific history or frame-dependent analytics beyond accepted cached summaries.
 - Purchase expiration remains purchase-level history.
 - Store address editing belongs to Settings/store-management surfaces, not RegisterPage.
 - Page-order persistence must not imply MainWindow ordering until that consumption is explicitly designed and implemented.
