@@ -3,163 +3,309 @@
 > Status: Active Main materialization stage
 > Authority: Main Chat
 > Persistence class: Materialization stage material
-> Scope: Cycle 04 didactic evidence capture for Settings boundary correction
+> Cycle: 05
+> Sprint: 01 — Windows Desktop Installation
+> Scope: Didactic evidence capture for packaged execution, installation, persistent user state, and release validation
 
 ---
 
-# Cycle 04 Didactic Materialization Stage
+# Cycle 05 Sprint 01 Didactic Materialization Stage
 
 ## 1. Purpose
 
-This stage gives Codex didactic reporting instructions for Cycle 04 Settings stabilization.
+This stage instructs Codex to capture implementation-backed learning evidence while materializing the Windows installation path.
 
-Codex must preserve learning evidence for Didactic Chat in:
+Codex must report into:
 
 ```text
 documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
 ```
 
-Codex must not edit permanent didactic files during this pass.
+Codex must not promote concepts or edit permanent didactic memory.
 
-## 2. Required Bootstrap and Source Inputs
+## 2. Mandatory Bootstrap
 
-Read first:
+Load into active context, in exactly this order:
 
-- `documentation/sketch_notebook/INDEX.md`
-- `documentation/sketch_notebook/00_PROJECT_STATE.md`
-- `documentation/sketch_notebook/06_SESSION_SCHEME.md`
+```text
+documentation/sketch_notebook/INDEX.md
+documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
+documentation/sketch_notebook/methodology/FLUX.md
+documentation/sketch_notebook/methodology/PROMOTION_RULES.md
+documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
+```
 
 Then read:
 
-- `documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md`
-- `documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md`
-- `documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md`
-- `documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md`
-- `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`
+```text
+documentation/sketch_notebook/00_PROJECT_STATE.md
+documentation/sketch_notebook/06_SESSION_SCHEME.md
+documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md
+documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
+documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
+documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md
+```
 
-Use `documentation/sketch_notebook/` as the active notebook root.
+Use only `documentation/sketch_notebook/` as the notebook root.
 
-## 3. Didactic Invariants
+## 3. Didactic Boundary
 
-Codex should preserve and report these distinctions:
+Codex reports evidence. Codex must not:
 
-- Settings values are configuration state, not the calculations themselves.
-- SettingsPage edits preferences; services interpret preferences.
-- Defaults are fallback contracts.
-- Validation is separate from UI rendering.
-- Enumerated choices should use stable semantic values, not only display labels.
-- Time reference must be treated as a behavioral anchor, not as a vague label.
-- Week/month grouping is time bucketing.
-- Mobile readiness means stable contracts and boundaries, not mobile implementation.
-- Placeholder fields are not working capabilities.
+- declare concepts canonical;
+- assign final learning status;
+- repair or reuse KANBAN numbers;
+- rewrite the glossary or concept map;
+- promote a packaging tool into canonical truth;
+- infer learning maturity from a successful build.
 
-## 4. Concepts Codex Should Report for Didactic Chat
+## 4. Distinctions to Preserve
 
-Report these as implementation evidence or concept candidates in `H_DDC_CODEX.md`.
+Report evidence that keeps these distinctions explicit:
 
-Foundational concepts:
+```text
+source execution ≠ packaged execution
+packaging ≠ installation
+executable ≠ installer
+build-time dependency ≠ runtime dependency
+bundled resource ≠ writable user data
+schema initialization ≠ sample-data seeding
+empty database ≠ broken database
+development fixture ≠ production default
+successful build ≠ validated release
+portable application ≠ installed application
+desktop packaging ≠ mobile implementation
+```
 
-- Configuration State.
-- Default Value as Fallback Contract.
-- Validation Boundary.
-- Time Reference as Behavioral Anchor.
-- Time Bucketing.
-- Mobile Readiness Without Rewrite.
-- Adapter Boundary.
-- Capability Versus Placeholder.
+## 5. Concept Candidates to Observe
 
-Language / implementation concepts:
+Use identifiers from `B_DIDACTIC.md` only as stage references:
 
-- Enumerated Choice Values.
-- Date/Datetime Boundary Handling.
-- UI View State versus persisted Settings state.
-- Platform-neutral settings/read-model shape.
+```text
+&&&20 — Packaged Application Lifecycle
+&&&21 — Packaging Versus Installation
+&&&22 — Resource State Versus User State
+&&&23 — Build-Time Versus Runtime Dependency
+&&&24 — Reproducible Build Process
+&&&25 — Successful Build Versus Validated Release
+&&&26 — Release Version and Compatibility Contract
+&&%09 — Frozen Python Execution Context
+&%%15 — Markei Installed Data Lifecycle
+```
 
-Markei-specific concepts:
+Report numbering drift. Do not materialize these entries into permanent didactic files.
 
-- Settings-Owned Preferences.
-- History Grouping Service Responsibility.
-- Service Contract Stability.
-- ProductService-owned settings interpretation.
-- Repository-owned settings persistence.
+## 6. Required Learning Evidence
 
-## 5. Learning Evidence Codex Should Capture
-
-### Settings boundary evidence
-
-Report where each responsibility ended up:
-
-- SettingsPage UI controls.
-- ProductService validation and interpretation.
-- Repository persistence.
-- SQLite key/value storage.
-- HistoryPage/ListPage rendering only.
-
-### Defaults and validation evidence
+### Entrypoint
 
 Report:
 
-- what default values were introduced or preserved;
-- how invalid values are handled;
-- whether validation happens outside UI-only controls;
-- how existing persisted values are preserved.
+- the PyInstaller entrypoint;
+- root-to-application delegation;
+- whether source and packaged execution share the same startup function;
+- whether source-only path manipulation remains necessary.
 
-### Time reference evidence
+### Frozen Python execution
+
+Report observed behavior involving:
+
+```text
+sys.frozen
+_MEIPASS
+sys.executable
+__file__
+current working directory
+source resource lookup
+packaged resource lookup
+```
+
+Do not generalize beyond observed implementation evidence.
+
+### Dependencies
+
+Separate and report:
+
+```text
+application runtime dependencies
+build-only dependencies
+transitive packaged components
+external installer tooling
+```
+
+Record declaration locations, version constraints, and Qt components requiring explicit collection.
+
+### Packaging and installation
+
+Report separately:
+
+```text
+PyInstaller input and output
+Inno Setup input and output
+installed application state
+```
+
+Identify which tool owns each transition.
+
+### Resource state
+
+Classify:
+
+```text
+schema.sql
+seed or development fixture
+icons
+version metadata
+Qt plugins
+installed runtime files
+```
+
+### User state
 
 Report:
 
-- whether `time_reference.day_boundary_time` was persisted;
-- whether it is validated as `HH:MM`;
-- whether any current behavior consumes it;
-- if not consumed, why the data model does not yet support material effect.
+- where `market.sqlite` is created;
+- which component creates it;
+- whether the installer touches it;
+- persistence across restart, upgrade, uninstall, and reinstall;
+- observed SQLite sidecars;
+- documented backup guidance.
 
-### Time bucketing evidence
+### Initialization versus seeding
 
 Report:
 
-- how seven-day week boundary support works;
-- how month boundary mode works;
-- where History grouping consumes these settings.
+- how schema creation occurs;
+- how production avoids sample business rows;
+- how mandatory settings are created;
+- whether initialization succeeds without production `seed.sql`;
+- whether sample data remains only as an explicit fixture.
 
-### Mobile-readiness evidence
+### Empty state
 
-Report only boundary preparation:
+Report observed behavior of Register, Lists, History, and Settings under zero products, purchases, stores, and user-created categories.
 
-- stable semantic values;
-- service-level interpretation;
-- UI-label versus stored-value separation;
-- no mobile implementation performed.
+For every correction identify:
 
-## 6. Concepts Not Ready for Canon
+1. the failed assumption;
+2. the narrow implementation change;
+3. the resulting behavior.
 
-Codex should report these as deferred or unstable if they appear:
+### Release version
 
-- mobile UI implementation;
-- platform-specific mobile framework choices;
-- active external service integration;
-- receipt recognition;
-- store deletion behavior;
-- active `pages.order` tab ordering;
-- permanent KANBAN promotion.
+Report how version information reaches runtime, executable metadata, installer metadata, and artifact naming. Identify duplicated version truth.
 
-## 7. H_DDC_CODEX.md Report Shape
+### Validation layers
 
-After materialization, write `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`.
+Separate:
+
+```text
+build completion
+runtime launch
+seed-free first launch
+first-data persistence
+installer launch
+upgrade
+uninstall and reinstall
+failure-path behavior
+clean-profile or clean-machine behavior
+```
+
+Do not merge them into a single success claim.
+
+## 7. Existing Concepts to Reinforce
+
+Where evidence supports them, report reinforcement of:
+
+- Naming as Data Contract;
+- Configuration State;
+- Default Value as Fallback Contract;
+- Validation Boundary;
+- Adapter Boundary;
+- Capability Versus Placeholder;
+- SQLite Schema Evolution;
+- Service Contract Stability;
+- Platform-Neutral Read-Model Shape.
+
+Do not assign final status.
+
+## 8. Tool-Specific Knowledge Policy
+
+PyInstaller and Inno Setup are project tooling and implementation evidence. They do not automatically become canonical concepts.
+
+Use tool behavior to demonstrate reusable concepts, for example:
+
+```text
+PyInstaller resource collection
+→ packaged-resource discovery evidence
+
+Inno Setup uninstall policy
+→ installation-lifecycle evidence
+
+Qt plugin collection
+→ runtime dependency-closure evidence
+```
+
+## 9. Explicit Deferrals
+
+```text
+mobile framework
+mobile UI
+backend/API
+authentication
+synchronization
+cross-device persistence
+mobile stores
+MSIX
+Microsoft Store
+automatic updater
+production signing-certificate acquisition
+remote crash reporting
+strict byte-identical deterministic builds
+full CI release publishing
+```
+
+One-file execution remains a deferred alternative.
+
+## 10. H_DDC_CODEX.md Report Shape
+
+After materialization write:
+
+```text
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+```
 
 Required sections:
 
-1. Source stage files read.
-2. Coding concepts exposed.
-3. Concept candidates by marker.
+1. Bootstrap and stage files read.
+2. Implementation events observed.
+3. Concept candidates by proposed identifier.
 4. Existing concepts reinforced.
-5. Settings boundary evidence.
-6. Defaults and validation evidence.
-7. Time reference evidence.
-8. Time bucketing evidence.
-9. Service vs Repository vs UI responsibility evidence.
-10. Mobile-readiness boundary evidence.
-11. Concepts deferred / not ready for canon.
-12. Didactic risks or remaining confusions.
-13. Suggested Didactic Chat follow-up.
+5. Entrypoint evidence.
+6. Source versus frozen execution evidence.
+7. Build-time versus runtime dependency evidence.
+8. Packaging versus installation evidence.
+9. Executable versus installer evidence.
+10. Bundled-resource evidence.
+11. Writable-user-state evidence.
+12. Schema initialization versus seeding evidence.
+13. Empty-database evidence.
+14. Installed SQLite lifecycle evidence.
+15. Release-version evidence.
+16. Successful build versus validated release evidence.
+17. Tool-specific observations.
+18. Concept-numbering or notebook drift observed.
+19. Concepts not ready for canon.
+20. Deferred concepts.
+21. Remaining didactic risks.
+22. Suggested Didactic Chat follow-up.
 
-Keep the report compact and evidence-oriented. Do not reproduce long code. Do not edit permanent didactic files.
+Keep the report compact and evidence-oriented. Do not reproduce complete source files.
+
+## 11. Completion Boundary
+
+Complete after sufficient evidence exists for Didactic Chat to evaluate how Markei changed from a source-run project into an installable application without confusing application state, build state, installation state, and user state.
+
+Do not promote concepts or begin Sprint 02.

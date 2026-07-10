@@ -3,180 +3,433 @@
 > Status: Active Main materialization stage
 > Authority: Main Chat
 > Persistence class: Materialization stage material
-> Scope: Cycle 04 Settings boundary correction
+> Cycle: 05
+> Sprint: 01 — Windows Desktop Installation
+> Scope: Runtime safety, seed-free SQLite initialization, PyInstaller one-folder build, Inno Setup installer, and release validation
 
 ---
 
-# Cycle 04 Operational Materialization Stage
+# Cycle 05 Sprint 01 Operational Materialization Stage
 
 ## 1. Purpose
 
-This stage prepares Codex to implement the operational part of Cycle 04 from the current repository-backed A/B/C stage files.
+This stage authorizes Codex to materialize the operational portion of Cycle 05 Sprint 01.
 
-The scope is Settings stabilization. It is not mobile implementation.
+Target delivery chain:
 
-Codex may edit application source files required by this stage and must report execution evidence into `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`.
+```text
+Markei source
+→ PyInstaller one-folder runtime
+→ Inno Setup per-user installer
+→ installed Windows application
+```
 
-Codex must not edit methodology files or permanent domain memory during this pass.
+Preserve:
 
-## 2. Required Bootstrap and Source Inputs
+```text
+Desktop UI
+→ ProductService
+→ Repository
+→ SQLite
+```
 
-Read first:
+Codex must report execution evidence into:
 
-- `documentation/sketch_notebook/INDEX.md`
-- `documentation/sketch_notebook/00_PROJECT_STATE.md`
-- `documentation/sketch_notebook/06_SESSION_SCHEME.md`
+```text
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+```
+
+Codex must not edit methodology files, permanent domain memory, Main-root continuity, or Sprint 02 mobile implementation during this pass.
+
+## 2. Mandatory Bootstrap
+
+Load into active context, in exactly this order:
+
+```text
+documentation/sketch_notebook/INDEX.md
+documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
+documentation/sketch_notebook/methodology/FLUX.md
+documentation/sketch_notebook/methodology/PROMOTION_RULES.md
+documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
+```
 
 Then read:
 
-- `documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md`
-- `documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md`
-- `documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md`
+```text
+documentation/sketch_notebook/00_PROJECT_STATE.md
+documentation/sketch_notebook/06_SESSION_SCHEME.md
+documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
+documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md
+documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
+documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md
+```
 
-Use `documentation/sketch_notebook/` as the active notebook root. Treat bare `sketch_notebook/` prompt references as path drift.
+Use only:
 
-## 3. Main Synthesis Decisions
+```text
+documentation/sketch_notebook/
+```
 
-Accepted for materialization:
+as the notebook root.
 
-1. Settings remains the user-facing configuration and store-management surface.
-2. SettingsPage edits values; it does not own business interpretation.
-3. ProductService validates and interprets settings that affect History or Lists behavior.
-4. Repository persists settings through the existing key/value settings flow.
-5. Existing user data must be preserved.
-6. History week boundary must support all seven weekdays.
-7. History month boundary must be generalized beyond the current fixed first-Wednesday behavior.
-8. Time reference is staged as an operational-day boundary preference.
-9. Mobile work remains deferred.
+## 3. Accepted Main Decisions
 
-Resolved key choice for Cycle 04:
+1. Use PyInstaller one-folder output.
+2. Use Inno Setup for a per-user installer.
+3. Install application files under `%LOCALAPPDATA%\Programs\Markei\`.
+4. Keep writable user data under `%LOCALAPPDATA%\Markei\`.
+5. Keep SQLite for Sprint 01.
+6. Do not bundle or install an active `market.sqlite`.
+7. Bundle `schema.sql` as a mandatory read-only resource.
+8. Do not execute the current sample-data seed in production.
+9. Mandatory settings must remain available without sample products, stores, categories, or purchases.
+10. Zero business records is a valid first-launch state.
+11. Upgrade and normal uninstall must preserve `%LOCALAPPDATA%\Markei`.
+12. Packaging must remain outside ProductService, Repository, and domain models.
+13. Mobile, API, backend, authentication, synchronization, and remote persistence remain deferred.
 
-- Canonical new key: `time_reference.day_boundary_time`
-- Do not introduce `history.time_reference_time` as the canonical key.
+## 4. Repository Baseline
 
-## 4. Implementation Tasks
+Current entry chain:
 
-### 4.1 Settings defaults and validation
+```text
+main.py
+→ app.main.main()
+→ QApplication
+→ MainWindow
+→ Qt event loop
+```
 
-Create or centralize service-level validation/default behavior for these Settings values:
+Current metadata authority candidate:
 
-- `history.week_boundary`
-- `history.month_boundary_mode`
-- `history.month_boundary_weekday`
-- `history.month_boundary_day`
-- `time_reference.day_boundary_time`
+```text
+app/core/config.py
+```
 
-Recommended defaults:
+Current database path:
 
-- `history.week_boundary = wednesday`
-- `history.month_boundary_mode = first_weekday`
-- `history.month_boundary_weekday = wednesday`
-- `history.month_boundary_day = 1`
-- `time_reference.day_boundary_time = 00:00`
+```text
+%LOCALAPPDATA%\Markei\market.sqlite
+```
 
-Allowed values:
+Current initialization executes `schema.sql` and executes `seed.sql` whenever the file exists. This must become production-safe.
 
-- weekday fields: monday through sunday, stored as lowercase semantic values;
-- month mode: `first_weekday` or `day_of_month`;
-- month day: integer from 1 to 28;
-- time reference: normalized 24-hour `HH:MM`.
+## 5. Authorized Runtime Changes
 
-Repository should remain low-level persistence. ProductService should own validation and interpretation.
+Expected inspection and possible modification targets:
 
-### 4.2 SettingsPage controls
+```text
+main.py
+app/main.py
+app/core/config.py
+app/core/database.py
+app/database/schema.sql
+app/database/seed.sql
+app/desktop/main_window.py
+app/desktop/pages/
+app/core/services.py
+app/core/repository.py
+requirements.txt
+.gitignore
+README.md
+```
 
-Update the current Settings page.
+Make only narrow changes required by packaging, first launch, and empty-state correctness.
 
-Required UI behavior:
+### 5.1 Startup failure boundary
 
-- week boundary selector with seven weekdays;
-- month boundary mode selector;
-- month weekday selector used by `first_weekday` mode;
-- month day selector or numeric input for day 1-28;
-- time reference input for `HH:MM`;
-- save/load behavior through service/repository flow;
-- dependent pages refresh after save where refresh orchestration already exists;
-- existing store create/update behavior preserved.
+Implement a top-level startup boundary that:
 
-Keep the store editor compact where practical. Do not add store deletion in this pass.
+- records a traceback in a writable log location;
+- shows a concise Qt error dialog where possible;
+- includes the log path;
+- exits non-zero;
+- never silently deletes, recreates, or resets the user database.
 
-### 4.3 History grouping consumption
+### 5.2 Resource lookup
 
-Update ProductService History grouping behavior so persisted week/month settings affect grouped History.
+Ensure packaged execution finds:
 
-Required behavior:
+```text
+app/database/schema.sql
+```
 
-- `history.week_boundary` controls weekly bucket boundary.
-- `history.month_boundary_mode = first_weekday` starts operational months at the first configured weekday of the month.
-- `history.month_boundary_mode = day_of_month` starts operational months at the configured day of month, limited to 1-28.
-- invalid persisted values fall back to defaults rather than breaking History.
+Resource lookup must not depend on the repository root, current working directory, shortcut directory, or a developer Python installation.
 
-### 4.4 Time reference handling
+Preserve source execution.
 
-Implement `time_reference.day_boundary_time` as a persisted and validated setting.
+### 5.3 Production initialization
 
-Cycle 04 behavior limit:
+Separate schema initialization from sample development data.
 
-- Provide a ProductService helper or equivalent internal function for deriving an operational date from a date or datetime and the configured boundary time.
-- Apply it only where the current data model safely supports it.
-- Do not change purchase rhythm, expected next purchase, Lists status, or depletion prediction in this pass unless existing code already uses reliable datetime values.
-- If current purchases only store dates with no time of day, report that the setting is persisted and validated but has no material grouping effect yet.
+Production first launch must create required tables, indexes, and mandatory settings without creating sample products, purchases, stores, dated inventory, or user-looking records.
 
-### 4.5 Pages order
+Acceptable narrow approaches:
 
-Do not activate `pages.order` in MainWindow during this pass.
+1. exclude `seed.sql` from the production artifact;
+2. move sample rows into an explicit development fixture;
+3. make seed execution explicit instead of file-existence driven.
 
-Codex may hide or de-emphasize a stale page-order UI control if the change is small. Otherwise, leave it unchanged and report the risk.
+Do not distribute a pruned `market.sqlite` as the production initialization mechanism.
 
-## 5. Explicit Deferrals
+### 5.4 Empty database robustness
 
-Do not implement:
+Validate with:
 
-- mobile UI;
-- server/shared backend;
-- synchronization;
-- store deletion;
-- destructive database reset;
-- permanent notebook domain updates;
-- methodology edits;
-- active MainWindow tab ordering from `pages.order`.
+```text
+zero products
+zero purchases
+zero stores
+zero user-created categories
+```
 
-## 6. Validation Requirements
+Required results:
 
-Run and report available validation. Minimum expected checks:
+- all public pages open;
+- list services return empty collections safely;
+- aggregate results handle no rows;
+- no UI indexes an absent first row;
+- empty selectors do not crash;
+- History opens without purchases;
+- Lists opens without products;
+- Settings loads mandatory defaults;
+- Register supports the first valid workflow or clearly reports a missing prerequisite.
 
-- compile all application files;
-- non-destructive Settings persistence smoke;
-- Settings page import/open smoke;
-- History grouping smoke for changed week boundary;
-- History grouping smoke for changed month boundary;
-- invalid settings fallback smoke;
-- manual Settings UI check;
-- manual store create/update regression check;
-- public tabs remain Register, Lists, History, Settings.
+Do not add fake production data to conceal an incomplete first-user workflow.
 
-Report exact commands used and their results.
+### 5.5 Version authority
 
-## 7. G_OPS_CODEX.md Report Shape
+Use one authoritative version for runtime, executable metadata, installer metadata, and artifact naming. Prefer `app/core/config.py`. Report unavoidable duplication.
 
-After materialization, write `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`.
+## 6. Authorized Packaging Files
+
+Create as required:
+
+```text
+packaging/markei.spec
+packaging/windows/markei.iss
+packaging/windows/version_info.txt
+requirements-build.txt
+```
+
+Create only when a valid asset exists:
+
+```text
+packaging/windows/markei.ico
+```
+
+Optional:
+
+```text
+scripts/build_windows.ps1
+scripts/validate_windows_package.ps1
+```
+
+### 6.1 PyInstaller requirements
+
+Configure:
+
+- one-folder output;
+- windowed executable;
+- root `main.py` entrypoint;
+- executable name `Markei`;
+- clean build;
+- no UPX initially;
+- bundled `schema.sql` at the runtime path expected by the application;
+- required PySide6 and Qt plugins;
+- version metadata;
+- icon when available.
+
+Do not configure one-file output.
+
+Expected runtime artifact:
+
+```text
+dist/Markei/Markei.exe
+```
+
+### 6.2 Dependency declaration
+
+Separate application runtime dependencies from build-only dependencies. Constrain the tested PySide6 and PyInstaller versions. Document the supported Windows Python build version.
+
+### 6.3 Inno Setup requirements
+
+Configure a per-user installer that:
+
+- requires no administrator elevation;
+- installs the complete one-folder runtime;
+- installs under `%LOCALAPPDATA%\Programs\Markei`;
+- creates a Start Menu shortcut;
+- may offer an optional desktop shortcut;
+- registers uninstall;
+- uses a stable application/upgrade identifier;
+- supports replacement of application-owned files;
+- preserves `%LOCALAPPDATA%\Markei` during normal uninstall;
+- does not install `market.sqlite`;
+- does not execute SQL or migrations;
+- uses the accepted version.
+
+Expected primary artifact:
+
+```text
+Markei-Setup-<version>.exe
+```
+
+## 7. Documentation Requirements
+
+Document:
+
+- supported Windows target and Python build version;
+- clean environment creation;
+- runtime and build dependency installation;
+- PyInstaller and Inno Setup commands;
+- artifact locations;
+- source regression launch;
+- database and log locations;
+- backup procedure;
+- upgrade behavior;
+- uninstall data-preservation policy;
+- production seed policy;
+- unsigned-binary and SmartScreen expectations.
+
+## 8. Validation Requirements
+
+Run all available checks and report unavailable checks explicitly.
+
+### Source regression
+
+```powershell
+python -m compileall -q main.py app
+python main.py
+```
+
+### Clean build
+
+```powershell
+py -<accepted-version> -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pip install -r requirements-build.txt
+python -m PyInstaller --noconfirm --clean packaging\markei.spec
+```
+
+Record exact dependency versions.
+
+### Frozen runtime
+
+Validate launch without Python, outside the repository, from an arbitrary working directory, with Qt plugins and bundled schema available.
+
+### Seed-free first launch
+
+With no existing user database:
+
+1. launch the frozen application;
+2. confirm `%LOCALAPPDATA%\Markei` is created;
+3. confirm `market.sqlite` is created;
+4. confirm schema and mandatory defaults exist;
+5. confirm no sample business rows exist;
+6. open every public page;
+7. confirm no empty-state failure.
+
+### First real data
+
+Create the first valid real record sequence through the UI where practical, restart, and confirm persistence. If the UI cannot create a required prerequisite, report a blocker instead of seeding fake production data.
+
+### Installer, upgrade, uninstall
+
+Where tooling permits:
+
+- build and install per user;
+- launch from Start Menu without Python;
+- confirm external user data;
+- upgrade over representative data;
+- confirm migration idempotence and data preservation;
+- uninstall and confirm user data remains;
+- reinstall and confirm retained data is reopened.
+
+### Failure behavior
+
+Exercise missing schema, unwritable data directory, damaged database, and migration failure where practical. Require readable error, diagnostics, non-zero exit, and no silent reset.
+
+Record SmartScreen and antivirus observations without treating unsigned reputation as automatic failure.
+
+## 9. Stop Conditions
+
+Stop and report if:
+
+1. the package cannot locate `schema.sql`;
+2. production launch depends on sample seed rows;
+3. an empty database crashes a public page;
+4. first use requires hidden manual SQL;
+5. mutable data is placed inside the installation directory;
+6. upgrade replaces or resets `market.sqlite`;
+7. uninstall deletes user data;
+8. startup failures remain silent;
+9. packaging requires unrelated ProductService or Repository redesign;
+10. dependency versions cannot be reproduced;
+11. materialization expands into Sprint 02;
+12. a destructive migration is discovered.
+
+## 10. Explicit Deferrals
+
+```text
+PyInstaller one-file
+Nuitka
+Briefcase restructuring
+MSIX
+Microsoft Store
+automatic updater
+production code signing
+remote crash reporting
+mobile implementation
+API/backend
+authentication
+synchronization
+cross-device persistence
+receipt recognition
+destructive database pruning
+installer-managed migrations
+```
+
+## 11. G_OPS_CODEX.md Report Shape
+
+After materialization write:
+
+```text
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+```
 
 Required sections:
 
-1. Source stage files read.
-2. Files changed.
-3. Files created.
-4. Files deleted.
-5. Commands run.
-6. Validation results.
-7. Settings defaults/validation evidence.
-8. Week boundary implementation evidence.
-9. Month boundary implementation evidence.
-10. Time reference implementation evidence.
-11. Store editor regression evidence.
-12. Pages-order handling evidence.
-13. Instructions completed.
-14. Instructions skipped.
-15. Failures or blockers.
-16. Unresolved operational risks.
-17. Suggested follow-up.
+1. Bootstrap and stage files read.
+2. Repository baseline confirmed.
+3. Files changed, created, and deleted.
+4. Dependency versions selected.
+5. Startup failure-boundary evidence.
+6. Resource and user-data path evidence.
+7. Production seed-policy evidence.
+8. Empty-database corrections.
+9. PyInstaller configuration evidence.
+10. Inno Setup configuration evidence.
+11. Commands executed.
+12. Source regression results.
+13. Frozen-runtime results.
+14. Seed-free first-launch results.
+15. First-user-data persistence results.
+16. Installer, upgrade, uninstall, and reinstall results.
+17. Failure-path results.
+18. SmartScreen or antivirus observations.
+19. Instructions completed and skipped.
+20. Failures, blockers, and unresolved risks.
+21. Suggested follow-up.
+
+Use exact paths and commands. Do not claim validation that was not performed.
+
+## 12. Completion Boundary
+
+Complete only after authorized materialization and evidence reporting, or after stopping at a declared blocker with sufficient evidence.
+
+Do not update permanent memory or begin Sprint 02.
