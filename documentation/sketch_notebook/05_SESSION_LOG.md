@@ -125,3 +125,96 @@ Primary topics:
 4. define file-growth and read-window rules;
 5. define vertical and horizontal reconciliation;
 6. run canon consistency audit after methodology routing is patched.
+
+---
+
+## 2026-07-09 — Cycle 04 Settings Stabilization Closure
+
+### Session Scope
+
+Cycle 04 began on unstable ground after inconsistent domain-chat staging behavior. Main recovered by requiring repository-backed bootstrap and staging, then completed the full Sketch Notebook loop:
+
+```text
+INDEX-driven recovery
+-> A/B/C functional staging
+-> D/E/F Main synthesis
+-> Codex materialization
+-> G/H/I evidence
+-> O/A/D domain reconciliation
+-> Main closure
+```
+
+### Application Achievements
+
+- Settings week boundary expanded to all seven weekdays.
+- Month boundary now supports first selected weekday or day-of-month.
+- Month weekday supports seven semantic weekday values.
+- Month day is constrained to 1-28.
+- `time_reference.day_boundary_time` was added as the canonical operational-day setting.
+- ProductService now owns Settings defaults, strict user-edit validation, tolerant persisted-value fallback, period interpretation, and operational-date derivation.
+- SettingsPage delegates behavior-affecting validation and persistence through ProductService.
+- Repository remains generic key/value persistence.
+- Database defaults are inserted non-destructively.
+- Legacy `history.month_boundary_rule` remains compatibility residue.
+- `pages.order` remains persisted but inert.
+
+### Validation Evidence
+
+Codex reported:
+
+- compile validation passed with the explicit project interpreter;
+- temporary-database Settings persistence passed;
+- invalid persisted values fell back safely;
+- invalid submitted time was rejected;
+- week-boundary tests passed for Monday and Sunday;
+- both month-boundary modes passed smoke validation;
+- operational-date helper passed a boundary-time smoke;
+- legacy month-rule compatibility passed;
+- offscreen Settings controls and public tabs passed;
+- store create/update passed at service level.
+
+Human interactive Settings and store-editor QA remain pending.
+
+### Domain Reconciliation
+
+Operational, Didactic, and Design domains absorbed Cycle 04 evidence into permanent memory.
+
+Accepted cross-domain reconciliation:
+
+- Operational owns validation state, manual QA, and implementation risks.
+- Didactics owns configuration-state, validation, fallback, semantic-value, and time-bucketing learning.
+- Design owns the SettingsPage / ProductService / Repository / SQLite responsibility boundary.
+- Main owns global milestone closure and next-session recovery.
+
+No intentional architectural boundary drift was found.
+
+### Important Limitation
+
+Current purchases are date-only. The day-boundary setting and operational-date helper are implemented, but they do not materially change existing History grouping.
+
+### New Watch Point
+
+Design source inspection found a possible first-weekday period-end calculation issue. Operational verification should confirm that the displayed period end is one day before the next operational month begins.
+
+### Methodology Outcome
+
+The earlier staging disturbance did not prevent completion. Repository-backed staging, explicit role prompts, Codex evidence, and domain reconciliation restored continuity.
+
+The disturbance remains useful historical evidence, but it is no longer the current project state.
+
+### Remaining Risks
+
+- Human Settings save-feedback QA.
+- Human store create/update UI QA.
+- First-weekday period-end verification.
+- Full Register / Lists / History / Settings / Product View interaction QA.
+- Invalid analytics date handling.
+- Same-day timelapse semantics.
+- Multi-store analytics fixtures.
+- Legacy month-key cleanup decision.
+- Inert `pages.order` cleanup decision.
+- Transitional old inventory page files.
+
+### Closure Result
+
+Cycle 04 is closed as materialized, validated at service/offscreen level, reconciled into all permanent domains, and globally checkpointed by Main.
