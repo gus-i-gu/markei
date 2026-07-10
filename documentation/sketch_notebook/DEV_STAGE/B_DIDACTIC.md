@@ -1,754 +1,46 @@
-# Didactic Structural Recovery Report
+# Didactic Canonical Reconstruction Stage
 
 > Status: Active functional stage
 > Role: Didactic Chat [A]
-> Branch reviewed: `sketch-notebook-recovery`
-> Scope: Structural learning recovery from `app/core/`, `app/database/`, and `app/desktop/`
-> Knowledge state: Staged, evidence-backed, non-canonical
-> Constraint: No application source, methodology file, Main-owned file, Codex report, or other functional stage file was modified.
+> Branch: `sketch-notebook-recovery`
+> Scope: Reconciliation of current structural evidence with recoverable Main synthesis and preparation of the first canonical didactic reconstruction tranche
+> Knowledge state: Staged, reconciled, not yet materialized into permanent didactic memory
+> Supersedes: `Didactic Structural Recovery Report` at commit `6b20498b3893eb8d8fc3d0aeb53668393f87391a`
 
 ---
 
-## 1. Recovery Purpose
+## 1. Purpose
 
-The permanent didactic domain is empty in this recovery branch, so the current repository implementation must be treated as implementation evidence from which didactic knowledge can later be reconstructed.
-
-This report does not promote concepts into `02_KANBAN.md`, derive final glossary entries, or establish a completed learning checkpoint. It stages a current structural picture and classifies the concepts that the repository presently teaches.
-
-The review followed the requested order:
+This stage begins reconstruction of the permanent didactic domain after the recovery branch pruned the current contents of:
 
 ```text
-app/core/
-↓
-app/database/
-↓
-app/desktop/
+documentation/sketch_notebook/didactics/02_KANBAN.md
+documentation/sketch_notebook/didactics/07_GLOSSARY.md
+documentation/sketch_notebook/didactics/08_CONCEPT_MAP.md
+documentation/sketch_notebook/didactics/13_LECTURE_REGISTER.md
 ```
 
-Commit-oriented interpretation is intentionally deferred until after this structural baseline.
+The reconstruction order follows Domain Symmetry:
+
+```text
+Canonical Knowledge
+↓
+Derived Knowledge
+↓
+Domain Checkpoint
+↓
+Observational History
+```
+
+This file stages canonical reconstruction only. It does not yet derive glossary entries or refresh the concept-map checkpoint.
 
 ---
 
-## 2. Recovered Package Picture
+## 2. Sources Reconciled
 
-The currently evidenced application structure is:
+### 2.1 Current Didactic structural evidence
 
-```text
-main.py
-↓
-app/main.py
-↓
-app/desktop/
-    main_window.py
-    ui/pages/
-    ui/widgets/
-↓
-app/core/
-    services.py
-    repository.py
-    database.py
-    models.py
-    contracts.py
-    config.py
-↓
-app/database/
-    schema.sql
-    seed.sql (optional runtime resource when present)
-↓
-SQLite user database
-```
-
-The dominant dependency direction is:
-
-```text
-Desktop presentation
-↓
-ProductService
-↓
-Repository
-↓
-Database connection manager
-↓
-SQLite
-```
-
-Domain models and abstract contracts support that chain without owning presentation or SQL execution.
-
-This structure is not a strict framework-enforced clean architecture. It is a practical layered desktop application whose boundaries are expressed through package placement, imports, docstrings, abstract base classes, and method responsibilities.
-
----
-
-## 3. `app/core/` — Recovered Learning Model
-
-### 3.1 Core package responsibility
-
-`app/core/` is the platform-neutral application center. It contains the domain entities, business workflows, persistence contracts, concrete SQLite adapter, database lifecycle functions, and configuration constants used by the desktop presentation.
-
-The package teaches that “core” does not mean one homogeneous layer. It currently groups several related but distinct responsibilities:
-
-```text
-Domain description       → models.py
-Responsibility contract  → contracts.py
-Business interpretation  → services.py
-Persistence adaptation   → repository.py
-Connection lifecycle     → database.py
-Shared constants/paths   → config.py
-```
-
-The package boundary is therefore broader than the service layer. A future learner should distinguish package cohesion from class-level responsibility.
-
-### 3.2 Domain models
-
-`models.py` defines `Category`, `Store`, `Product`, and `Purchase` as slotted dataclasses.
-
-Recovered distinction:
-
-```text
-Model
-≠ database table implementation
-≠ SQL mapper
-≠ business workflow
-```
-
-The models describe application entities and carry data across layers. `Product` combines editable metadata, current inventory state, and cached analytical summaries. `Purchase` represents an append-oriented receipt event and is documented as immutable except for deletion.
-
-Important concept candidates:
-
-- domain entity;
-- dataclass as structured data carrier;
-- editable state versus event record;
-- persistent identity;
-- cached summary versus source event;
-- optional value;
-- property as derived object-level query.
-
-### 3.3 Contracts
-
-`contracts.py` defines abstract responsibility surfaces rather than implementations.
-
-It contains:
-
-- field classifications for `Product` and `Purchase`;
-- `RepositoryContract`;
-- `ServiceContract`;
-- system invariants.
-
-Recovered distinction:
-
-```text
-Contract
-= declares expected behavior and responsibility
-
-Concrete class
-= supplies executable behavior
-```
-
-`Repository` inherits `RepositoryContract`; `ProductService` inherits `ServiceContract`. This makes the architecture partially explicit, although the concrete service currently constructs the concrete repository directly rather than receiving it through dependency injection.
-
-Concept candidates:
-
-- interface contract;
-- abstract base class;
-- invariant;
-- implementation versus declaration;
-- substitutability;
-- dependency inversion as an intended but only partially realized boundary.
-
-### 3.4 ProductService
-
-`services.py` is the business orchestration layer. It coordinates repository operations, validates input, applies calculations, interprets settings, and assembles UI-facing read models.
-
-Its declared boundary is:
-
-```text
-ProductService knows:
-- workflows
-- rules
-- calculations
-
-ProductService does not know:
-- SQL syntax
-- SQLite cursors
-- physical schema operations
-```
-
-This is the clearest platform-neutral boundary in the current system. Desktop pages import `ProductService`, not `Repository` or `sqlite3`.
-
-The service also appears to own presentation-neutral dictionaries used as read models, such as rows returned to list views. This is didactically important:
-
-```text
-Domain model
-≠ view model
-```
-
-A `Product` represents application state. A list-row dictionary represents a particular presentation-ready projection of that state, including formatted labels and status fields.
-
-Concept candidates:
-
-- application service;
-- orchestration;
-- validation boundary;
-- business rule;
-- read model;
-- platform-neutral presentation data;
-- fallback/default configuration;
-- legacy configuration compatibility.
-
-### 3.5 Repository
-
-`repository.py` is the concrete SQLite persistence adapter. It owns SQL statements, query execution, transaction commits, and row-to-model conversion.
-
-Its constructor opens one connection and one cursor:
-
-```text
-Repository()
-↓
-connect()
-↓
-configured sqlite3.Connection
-↓
-repository cursor
-```
-
-The repository persists entities, retrieves entities, returns selected query rows for service-level interpretation, and delegates physical connection creation/configuration to `database.py`.
-
-Recovered distinction:
-
-```text
-Repository owns persistence operations.
-Database manager owns connection creation and schema lifecycle.
-Service owns business meaning.
-```
-
-The repository therefore is not “the database.” It is an adapter through which application operations are translated into SQL.
-
-Concept candidates:
-
-- Repository pattern;
-- persistence adapter;
-- SQL boundary;
-- row mapping;
-- parameterized query;
-- transaction commit;
-- connection-scoped repository;
-- raw query projection versus domain entity result.
-
-### 3.6 Connection ownership
-
-The current connection model is instance-oriented:
-
-```text
-Each ProductService
-owns one Repository
-which owns one SQLite connection and cursor.
-```
-
-Desktop pages construct their own `ProductService` instances. Consequently, multiple pages may hold separate long-lived SQLite connections during one application session.
-
-This is not automatically incorrect. SQLite supports multiple connections, and WAL mode is enabled. However, it creates a precise learning question:
-
-```text
-Who owns the connection lifetime?
-```
-
-The repository opens the connection. Page-level `closeEvent()` methods attempt to close their service, but page widgets normally live inside the main window and may not receive independent close events in the same way as top-level windows. The implementation therefore exposes a distinction between declared cleanup support and proven application-wide shutdown ownership.
-
-This should be staged as an unstable concept rather than a confirmed defect until shutdown behavior is reviewed operationally.
-
-Concept candidates:
-
-- resource ownership;
-- connection lifetime;
-- deterministic cleanup;
-- widget lifetime versus application lifetime;
-- long-lived connection;
-- WAL concurrency;
-- ownership chain.
-
----
-
-## 4. `app/database/` — Recovered Learning Model
-
-### 4.1 SQL resources versus runtime database
-
-`app/database/schema.sql` is a bundled source resource. The live `market.sqlite` database is placed in the user data directory rather than inside the installed application resources.
-
-Recovered distinction:
-
-```text
-schema.sql
-= version-controlled creation specification
-
-market.sqlite
-= mutable user state
-```
-
-`database.py` resolves bundled resources separately from writable user data:
-
-```text
-RESOURCE_DATABASE_DIR
-→ bundled schema/seed resources
-
-USER_DATABASE_DIR
-→ %LOCALAPPDATA%/Markei
-
-DATABASE_PATH
-→ writable market.sqlite
-```
-
-This separation is central to both packaging and persistence learning.
-
-### 4.2 Schema structure
-
-The SQL schema currently defines:
-
-- `categories`;
-- `products`;
-- `stores`;
-- `purchases`;
-- `settings`;
-- `promotions`;
-- indexes for product name, purchase product, and purchase date.
-
-The main relational spine is:
-
-```text
-Category 1 ── * Product
-Product  1 ── * Purchase
-Store    1 ── * Purchase
-Product  1 ── * Promotion
-Store    1 ── * Promotion
-```
-
-`purchases.product_id` uses `ON UPDATE CASCADE` and `ON DELETE CASCADE`, teaching that relational actions can preserve referential consistency when a product identifier changes or a product is removed.
-
-Concept candidates:
-
-- relational schema;
-- primary key;
-- foreign key;
-- referential integrity;
-- cascading update/delete;
-- index;
-- one-to-many relationship;
-- durable fact versus cached summary.
-
-### 4.3 Initialization versus migration
-
-The database manager explicitly separates two lifecycle operations.
-
-Initialization:
-
-```text
-missing database
-↓
-create user directory
-↓
-create SQLite file
-↓
-execute schema.sql
-↓
-optionally execute seed.sql
-↓
-commit and close
-```
-
-Migration:
-
-```text
-existing database connection
-↓
-inspect current schema
-↓
-add missing columns/tables/default settings
-↓
-commit
-```
-
-Recovered distinction:
-
-```text
-Initialization creates a new persistence state.
-Migration evolves an existing persistence state.
-```
-
-`connect()` combines existence checking, connection opening, configuration, and migration. Thus every normal connection path also acts as a schema-evolution checkpoint.
-
-The migration strategy is currently imperative and idempotent rather than version-table driven. Functions such as `ensure_column`, `ensure_settings_table`, and `ensure_default_setting` inspect or insert only when needed.
-
-Concept candidates:
-
-- initialization;
-- migration;
-- idempotence;
-- schema introspection;
-- additive migration;
-- production seed policy;
-- compatibility with existing user data.
-
-### 4.4 SQLite connection configuration
-
-Every connection created through the manager is configured with:
-
-```text
-foreign_keys = ON
-journal_mode = WAL
-synchronous = NORMAL
-row_factory = sqlite3.Row
-```
-
-These settings teach separate concerns:
-
-- referential rules must be enabled per connection in SQLite;
-- WAL affects journaling and concurrent access behavior;
-- synchronous mode trades durability guarantees against performance;
-- `sqlite3.Row` allows name-based row access and supports mapping to models.
-
-The phrase “database configuration” should therefore not be collapsed into one concept. It includes integrity, journaling, durability/performance, and row representation.
-
----
-
-## 5. `app/desktop/` — Recovered Learning Model
-
-### 5.1 Presentation adapter
-
-`app/desktop/` is the PySide6 presentation package. It translates user interaction into service calls and renders service results into widgets.
-
-The entry chain is:
-
-```text
-app/main.py
-↓
-QApplication
-↓
-MainWindow
-↓
-page widgets
-↓
-Qt event loop
-```
-
-`MainWindow` owns the public tabs:
-
-- Register;
-- Lists;
-- History;
-- Settings.
-
-Storage, Shortage, and Market are internal views selected within the unified Lists page rather than separate top-level page classes.
-
-### 5.2 Page responsibility
-
-The reviewed pages import `ProductService` directly.
-
-Example boundary:
-
-```text
-ListsPage
-↓ asks ProductService for get_lists_view(...)
-↓ receives presentation-ready row dictionaries
-↓ creates QTableWidgetItem objects
-```
-
-The UI decides widget construction, selection behavior, colors, and navigation. The service decides business status and row content.
-
-This is a useful adapter boundary:
-
-```text
-Service returns meaning.
-Desktop decides rendering.
-```
-
-`RegisterPage` is documented as the writable purchase-entry page and uses `ProductService` for application operations. `MainWindow` coordinates page navigation and refreshes, but does not execute SQL or calculate inventory state.
-
-Concept candidates:
-
-- presentation adapter;
-- event-driven UI;
-- widget composition;
-- signal/slot;
-- navigation coordinator;
-- read-only view versus writable workflow;
-- rendering responsibility;
-- page refresh coordination.
-
-### 5.3 View models
-
-The Lists page consumes dictionaries containing values such as:
-
-- `product_name`;
-- `quantity_label`;
-- `price_label`;
-- `delta_price_label`;
-- `cycle_label`;
-- `remaining_label`;
-- `status`;
-- `status_label`.
-
-These dictionaries are neither raw database rows nor complete domain models. They are view models assembled for a presentation use case.
-
-Recovered distinction:
-
-```text
-Database row
-→ persistence representation
-
-Domain model
-→ application entity representation
-
-View model
-→ presentation-specific representation
-```
-
-The current view-model type is an untyped dictionary. This keeps the boundary platform-neutral but leaves field names as runtime string contracts. The learner should understand both the benefit and the fragility of that choice.
-
-Concept candidates:
-
-- view model;
-- projection;
-- formatting boundary;
-- dictionary data contract;
-- platform neutrality;
-- typed versus untyped boundary object.
-
----
-
-## 6. Recovered Functional Picture
-
-The current application behavior can be summarized as:
-
-```text
-Register receipt or edit product
-↓
-Desktop page collects user values
-↓
-ProductService validates and interprets workflow
-↓
-Repository persists or retrieves records
-↓
-Database manager supplies configured/migrated connection
-↓
-SQLite stores categories, products, purchases, stores, settings, promotions
-↓
-ProductService recalculates summaries and assembles read models
-↓
-MainWindow refreshes Lists and History
-```
-
-The core durable distinction is:
-
-```text
-Purchase
-= historical source event
-
-Product summary fields
-= recalculated/cached current interpretation
-```
-
-Settings are stored as key/value persistence facts. ProductService applies defaults, validation, and compatibility interpretation before exposing them to the UI.
-
----
-
-## 7. Structural Strengths Evidenced
-
-1. Desktop pages depend on `ProductService`, not directly on SQL or SQLite.
-2. Repository and database-manager responsibilities are explicitly separated.
-3. Domain models do not execute SQL.
-4. New database initialization and existing database migration are distinct functions.
-5. Bundled resources and writable user data use separate paths.
-6. SQLite integrity and row behavior are configured centrally.
-7. List presentation consumes service-created read models rather than constructing business status from raw rows.
-8. System invariants are documented in a contract module.
-
-These are implementation observations, not yet canonical didactic claims.
-
----
-
-## 8. Structural Tensions And Learning Questions
-
-The following are staged as questions or unstable concepts, not defects:
-
-### 8.1 Concrete dependency construction
-
-`ProductService` inherits an abstract contract but directly constructs `Repository()`.
-
-Learning question:
-
-```text
-Does a contract provide practical substitutability
-when the concrete dependency is constructed internally?
-```
-
-This introduces dependency injection and test substitution as future concepts.
-
-### 8.2 Multiple service and connection instances
-
-Each page appears to instantiate its own service, and each service creates its own repository and connection.
-
-Learning question:
-
-```text
-Should connection ownership belong to each page,
-a shared application service container,
-or a shorter operation scope?
-```
-
-No architectural correction is proposed in this report.
-
-### 8.3 Shutdown ownership
-
-Pages contain local cleanup attempts, but application-wide shutdown behavior has not yet been structurally proven.
-
-Learning question:
-
-```text
-Which object receives the final responsibility
-for closing all service/repository resources?
-```
-
-### 8.4 Untyped view models
-
-Dictionary-based view models preserve presentation independence but depend on string-key agreement.
-
-Learning question:
-
-```text
-When does a flexible dictionary become a fragile implicit contract?
-```
-
-### 8.5 Migration maturity
-
-The migration layer is additive and idempotent but has no evidenced explicit migration version ledger.
-
-Learning question:
-
-```text
-At what project complexity does schema inspection
-need to become ordered versioned migration history?
-```
-
-### 8.6 Broad core package
-
-`app/core/` contains domain, service, persistence, and database lifecycle responsibilities.
-
-Learning question:
-
-```text
-When is one cohesive package sufficient,
-and when should internal layers become separate subpackages?
-```
-
----
-
-## 9. Proposed Didactic Reconstruction Spine
-
-The repository supports the following initial learning progression:
-
-```text
-1. Python package and module structure
-↓
-2. Responsibility boundary
-↓
-3. Domain entity and dataclass
-↓
-4. Contract versus implementation
-↓
-5. Application service and business orchestration
-↓
-6. Repository as persistence adapter
-↓
-7. SQLite connection and cursor ownership
-↓
-8. Relational schema and referential integrity
-↓
-9. Initialization versus migration
-↓
-10. Event-driven desktop adapter
-↓
-11. Domain model versus view model
-↓
-12. Resource lifetime and application shutdown
-```
-
-This sequence should guide later KANBAN reconstruction, but no identifiers are assigned here because the canonical register is currently empty and identifier recovery may require commit-oriented analysis.
-
----
-
-## 10. Knowledge-State Classification
-
-### Canonical-concept candidates
-
-- package/module boundary;
-- layered responsibility;
-- domain entity;
-- contract versus implementation;
-- application service;
-- Repository pattern;
-- persistence adapter;
-- relational integrity;
-- initialization versus migration;
-- resource ownership;
-- view model;
-- presentation adapter.
-
-### Glossary-derivative candidates
-
-- cursor;
-- row factory;
-- WAL;
-- idempotent migration;
-- schema introspection;
-- projection;
-- signal/slot;
-- user-data directory;
-- bundled resource;
-- cascading foreign key action.
-
-### Active/unstable concepts
-
-- connection ownership across page-local services;
-- shutdown and deterministic cleanup;
-- dependency inversion versus direct construction;
-- typed versus dictionary view models;
-- additive migration versus versioned migration;
-- package cohesion versus internal layer subdivision.
-
-### Observational learning evidence
-
-- all permanent didactic files were empty at recovery start;
-- repository structure supplies the first recoverable learning baseline;
-- no prior KANBAN identifiers should be inferred solely from transient conversation;
-- commit history should be inspected next to recover concept evolution, former identifiers, and superseded structural interpretations.
-
----
-
-## 11. Recommended Next Recovery Read
-
-After this structural stage, commit-oriented analysis should focus on commits that introduced or changed:
-
-1. `app/core/contracts.py` and model naming;
-2. repository/service separation;
-3. database initialization and migration;
-4. view-model assembly;
-5. desktop page consolidation;
-6. connection closing and packaging paths;
-7. prior didactic KANBAN/checkpoint material before the recovery pruning.
-
-The goal of that phase is not merely to list changes. It is to recover:
-
-```text
-which concepts appeared
-why they appeared
-which terminology stabilized
-which distinctions were corrected
-which KANBAN identifiers were previously occupied
-```
-
----
-
-## 12. Stage Conclusion
-
-The contemporary repository evidences a working layered model:
+The superseded `B_DIDACTIC.md` structural review established the contemporary implementation chain:
 
 ```text
 PySide6 desktop adapter
@@ -758,6 +50,353 @@ PySide6 desktop adapter
 → SQLite schema and user database
 ```
 
-The most important didactic recovery themes are package structure, responsibility ownership, persistence boundaries, connection lifetime, initialization versus migration, and the distinction among database rows, domain models, and view models.
+Its main stable observations were:
 
-This report is ready for Main Chat synthesis. It must remain staged until commit history and any recoverable pre-pruning didactic evidence are reconciled.
+1. desktop pages call `ProductService`, not SQL;
+2. `ProductService` owns business interpretation and read-model assembly;
+3. `Repository` owns SQL operations and row mapping;
+4. the database manager owns configured connection creation, initialization, and migration;
+5. domain models carry named application state without executing SQL;
+6. raw persisted facts, cached summaries, and presentation projections are distinct representations;
+7. initialization creates new persistence state while migration evolves existing persistence state.
+
+### 2.2 Recoverable Main-stage synthesis
+
+`[M]_STAGE/J_MAIN_STAGE.md` is absent from the current recovery branch. The latest recoverable version was read from commit:
+
+```text
+c51938b7d603f05aa8745db7a54f3a257dd27ee5
+```
+
+That Main stage carried this accepted application boundary:
+
+```text
+Desktop UI
+→ ProductService
+→ Repository
+→ SQLite
+```
+
+It also preserved the following stable conclusions:
+
+- UI labels and persisted semantic values are separate;
+- `ProductService` owns business interpretation;
+- `Repository` is a persistence adapter rather than a business-meaning owner;
+- service-owned read models are platform-neutral contracts;
+- mobile or alternate presentation work must not copy PySide6 widget behavior into the application core;
+- typed contracts, dependency boundaries, persistence ownership, migration, and validation require explicit treatment.
+
+The recoverable J file is Main staging evidence, not canonical didactic truth. Its claims are accepted here only where they agree with contemporary repository evidence and recoverable historical didactic canon.
+
+### 2.3 Recoverable historical canonical register
+
+The last pre-pruning `02_KANBAN.md` was recovered from commit:
+
+```text
+bd4b4cd9233d08c2907c2bfe0644206994ad351a
+```
+
+That register proves that the following identifiers were already canonical and occupied:
+
+```text
+&&&01  Domain Model Field Semantics
+&&&02  Raw Data Versus Derived Data
+&&&03  Naming as Data Contract
+```
+
+These concepts remain directly supported by the current models, repository rows, service calculations, settings keys, read-model dictionaries, and desktop rendering boundary.
+
+No new KANBAN number is assigned in this tranche.
+
+---
+
+## 3. Reconciliation Result
+
+### 3.1 Stable agreement
+
+The current structural review, recoverable Main synthesis, historical canonical register, and contemporary source code agree on one foundational learning sequence:
+
+```text
+Names carry semantic responsibility
+↓
+Some values are source facts and others are derived interpretations
+↓
+Each layer must preserve those meanings while transforming representation
+```
+
+This supports restoration of the first three historical canonical concepts without semantic invention.
+
+### 3.2 Conflicts and limits
+
+The following material is not promoted in this tranche:
+
+- mobile architecture proposals from the historical J stage;
+- unresolved connection-lifetime ownership;
+- dependency injection as an implemented capability;
+- typed view models as current implementation;
+- versioned migration history;
+- package subdivision proposals;
+- any new KANBAN identifier.
+
+These remain staged questions or later canonical candidates because contemporary implementation does not yet prove a stable accepted answer.
+
+### 3.3 Promotion decision
+
+The first canonical reconstruction tranche should restore:
+
+```text
+&&&01
+&&&02
+&&&03
+```
+
+Their wording is refreshed only where necessary to reflect the current repository. Their identities, semantic roles, and numbering remain historically continuous.
+
+---
+
+# 4. Proposed Canonical Materialization
+
+The following text is prepared for later materialization into:
+
+```text
+documentation/sketch_notebook/didactics/02_KANBAN.md
+```
+
+It remains staged until the authorized materialization step occurs.
+
+---
+
+## &&&01
+
+### Domain Model Field Semantics
+
+#### Description
+
+A field is not merely a place where a value is stored. Its name and location express what the value means, which layer owns that meaning, and how other parts of the program may use it.
+
+Two fields can use the same Python or SQLite type while representing different domain concepts. Treating them as interchangeable because their technical types match can corrupt business meaning without producing an obvious syntax error.
+
+#### Formal Definition
+
+Domain model field semantics are the stable meaning, responsibility, and permitted interpretation assigned to a named field within the application domain, independently of the field's storage type or presentation format.
+
+#### Practical Example
+
+Two integer fields may both count days, while one describes the typical interval between purchases and another describes expected shelf life. Their shared type does not make their meanings equivalent.
+
+#### Language Implementation
+
+In Python, field semantics appear through:
+
+- dataclass attributes;
+- function parameters and return values;
+- dictionary keys;
+- type annotations;
+- property names;
+- validation rules.
+
+Python does not automatically enforce the full business meaning of similarly typed values. Clear naming and responsibility boundaries therefore carry part of the contract.
+
+#### Project Implementation
+
+In Markei:
+
+- `average_duration_days` represents purchase-cycle duration;
+- `average_shelf_life_days` represents shelf-life duration;
+- `current_quantity` represents current inventory state;
+- `quantity` on `Purchase` represents one historical receipt event;
+- `status` and `status_label` in a Lists read model represent service interpretation prepared for presentation.
+
+The schema, domain models, repository mappings, service calculations, and desktop rendering must preserve these distinctions.
+
+#### Required Concepts
+
+None.
+
+#### Related Concepts
+
+`&&&02`, `&&&03`.
+
+#### Status
+
+Yellow.
+
+#### Source
+
+Recovered historical `02_KANBAN.md`; current `app/core/models.py`, `app/core/repository.py`, `app/core/services.py`, `app/database/schema.sql`, and desktop read-model consumption; reconciled with recoverable `J_MAIN_STAGE.md`.
+
+---
+
+## &&&02
+
+### Raw Data Versus Derived Data
+
+#### Description
+
+Applications work with both source facts and values calculated from those facts. The distinction matters because a calculation, label, prediction, or cached summary does not have the same evidential role as the records from which it was produced.
+
+Confusing raw and derived data can cause the application to overwrite history with interpretation or persist values that should instead be recalculated.
+
+#### Formal Definition
+
+Raw data is information directly entered, observed, imported, or retrieved as a source fact. Derived data is information produced by applying calculation, aggregation, filtering, grouping, formatting, prediction, or business interpretation to other data.
+
+#### Practical Example
+
+A receipt purchase is a source event. A predicted next-purchase date, inventory status, formatted price label, or expenditure percentage is derived from one or more source records.
+
+#### Language Implementation
+
+In Python, raw and derived values may both appear as object attributes or dictionary entries. Their distinction is therefore expressed through:
+
+- naming;
+- construction responsibility;
+- mutability rules;
+- service workflows;
+- persistence decisions;
+- recalculation behavior.
+
+A value being present in a dataclass or dictionary does not by itself reveal whether it is raw or derived.
+
+#### Project Implementation
+
+In Markei:
+
+- `Purchase` records are historical source events;
+- store, category, and settings rows are persisted facts;
+- product summary fields such as expected dates and price deltas are derived or cached interpretations;
+- Lists and History read-model labels are derived presentation data;
+- initialization and migration operate on persistence structure rather than business interpretation.
+
+`ProductService` is the main owner of business derivation. `Repository` retrieves and persists facts without becoming the owner of their business meaning.
+
+#### Required Concepts
+
+`&&&01`.
+
+#### Related Concepts
+
+`&&&03`.
+
+#### Status
+
+Yellow.
+
+#### Source
+
+Recovered historical `02_KANBAN.md`; current Product/Purchase distinction, service read-model assembly, repository persistence boundary, and Main-stage responsibility synthesis.
+
+---
+
+## &&&03
+
+### Naming as Data Contract
+
+#### Description
+
+Names connect the meanings used by different layers. A field name, settings key, method name, or read-model key tells another component what value it is receiving and how that value should be interpreted.
+
+A naming mismatch can break a system even when every individual value has the expected technical type.
+
+#### Formal Definition
+
+Naming as a data contract is the use of stable, precise, and responsibility-aware names to define the expected meaning and shape of information exchanged between components.
+
+#### Practical Example
+
+`product_name`, `quantity_label`, `expected_next_purchase`, and `history.week_boundary` identify different kinds of data. Replacing them with vague or inconsistent names would force each consumer to guess their meaning.
+
+#### Language Implementation
+
+In Python, naming contracts appear in:
+
+- dataclass fields;
+- abstract and concrete method signatures;
+- keyword arguments;
+- dictionary keys;
+- constants;
+- settings keys;
+- imported symbols.
+
+Untyped dictionaries make naming especially important because their keys function as runtime contracts between producer and consumer.
+
+#### Project Implementation
+
+Markei preserves names across several representations:
+
+```text
+SQLite column
+→ repository row mapping
+→ domain model or service projection
+→ desktop rendering
+```
+
+Examples include:
+
+- `product_name` across schema, model, repository, service, and UI;
+- settings keys such as `history.week_boundary`;
+- Lists read-model keys such as `quantity_label`, `remaining_label`, `status`, and `status_label`;
+- distinct names for raw values and formatted display values.
+
+The current dictionary-based view models are platform-neutral, but their correctness depends on producer and consumer agreeing on every key and its meaning.
+
+#### Required Concepts
+
+`&&&01`.
+
+#### Related Concepts
+
+`&&&02`.
+
+#### Status
+
+Yellow.
+
+#### Source
+
+Recovered historical `02_KANBAN.md`; current schema/model/repository/service/UI naming chain; recoverable Main-stage distinction between persisted semantic values and UI labels.
+
+---
+
+## 5. Canonical File Header Proposal
+
+When materialized, `02_KANBAN.md` should begin with metadata equivalent to:
+
+```text
+# 02_KANBAN.md
+
+> Domain: Didactic
+> Status: Canonical concept register under recovery reconstruction
+> Recovery source: repository evidence, recoverable historical canon, and reconciled Main staging
+> Current tranche: &&&01–&&&03
+```
+
+The header should not claim that the complete historical register has already been restored.
+
+---
+
+## 6. Next Investigation
+
+Before the second canonical tranche, commit-oriented recovery should determine:
+
+1. the complete historically occupied ranges for `&&&`, `&&%`, `&%%`, and `%%%`;
+2. which historical concepts remain valid under the current package structure;
+3. which concepts were superseded, renamed, or only checkpointed but never materialized canonically;
+4. whether the structural candidates `package/module boundary`, `layered responsibility`, `resource ownership`, `initialization versus migration`, and `view model` already have historical identifiers;
+5. which concept should follow `&&&03` in dependency order rather than merely file order.
+
+Only after canonical recovery is sufficiently stable should Didactic Chat derive `07_GLOSSARY.md` and refresh `08_CONCEPT_MAP.md`.
+
+---
+
+## 7. Stage Conclusion
+
+The first safe canonical reconstruction is not a newly invented curriculum. It is a historically continuous restoration of three concepts whose identifiers, meanings, and current implementation evidence agree:
+
+```text
+&&&01  Domain Model Field Semantics
+&&&02  Raw Data Versus Derived Data
+&&&03  Naming as Data Contract
+```
+
+This stage is ready for Main review and authorized materialization into the canonical didactic register.
