@@ -1,455 +1,2051 @@
-# Cycle 04 Didactic Report
+1. Recovered Learning Baseline
 
-> Status: Active functional stage report
+Accepted project baseline
+
+Cycle 04 closed with Markei operating through:
+
+Desktop UI
+→ ProductService
+→ Repository
+→ SQLite
+
+The application is currently a developer-run PySide6 desktop project. Its public surfaces are Register, Lists, History, and Settings. ProductService owns business interpretation and read-model assembly; Repository owns SQL retrieval and persistence; SQLite owns durable facts and schema evolution.
+
+The current executable entry chain is:
+
+main.py
+→ app.main.main()
+→ QApplication
+→ MainWindow
+→ Qt event loop
+
+The root entrypoint delegates to app.main, while app/main.py imports PySide6, constructs QApplication, displays MainWindow, and starts the event loop.
+
+Relevant existing learning state
+
+The strongest existing foundations for Sprint 01 are:
+
+&&&03 — Naming as Data Contract
+
+&&&08 — Configuration State
+
+&&&15 — Default Value as Fallback Contract
+
+&&&16 — Validation Boundary
+
+&&&18 — Adapter Boundary
+
+&&&19 — Capability Versus Placeholder
+
+&&%04 — Platform-Neutral Read-Model Shape
+
+&%%12 — Service Contract Stability
+
+%%%01 — SQLite Schema Evolution
+
+The Cycle 04 checkpoint already teaches that platform preparation is not platform implementation and that presentation adapters should not own service behavior. Those distinctions transfer directly into packaging: packaging must preserve the current application boundaries rather than redefine them.
+
+Didactic register drift
+
+There is a repository-backed inconsistency between the Didactic checkpoint and canonical register:
+
+Checkpoint references:
+&&&15 through &&&19
+&&%07 through &&%08
+&%%13 through &%%14
+%%%09
+
+Visible canonical register currently ends at:
+&&&14
+&&%06
+&%%12
+%%%08
+
+The checkpoint therefore records concepts that are absent from the current 02_KANBAN.md materialization. These identifiers must be treated as occupied. New proposals below begin at:
+
+&&&20
+&&%09
+&%%15
+%%%10
+
+This is didactic-memory drift requiring later reconciliation, not permission to reuse missing numbers.
+
+Sprint-direction reconciliation
+
+06_SESSION_SCHEME.md and J_MAIN_STAGE.md still describe Cycle 05 primarily as mobile preparation. The current human direction supersedes that staged emphasis by splitting Cycle 05 into:
+
+Sprint 01 — Windows desktop packaging and installation
+Sprint 02 — mobile implementation preparation through a repository clone
+
+Mobile, synchronization, backend, API, identity, and second-presentation-layer concepts therefore remain deferred during this analysis unless needed to clarify a packaging boundary.
+
+2. Sprint 01 Conceptual Transformation
+
+Running Markei from the repository and delivering Markei as an installed application are different execution environments.
+
+Developer-run project
+
+The current developer supplies much of the execution environment:
+
+repository checkout
++ compatible Python interpreter
++ installed PySide6 dependency
++ source directory structure
++ development working directory
++ command such as python main.py
+= running application
+
+Python loads modules directly from source. The developer’s environment resolves imports and provides PySide6. Relative assumptions may appear to work because the current working directory resembles the repository root.
+
+Packaged application
+
+Packaging changes how that environment is supplied:
+
+application source
++ Python runtime components
++ direct and transitive dependencies
++ required non-code resources
++ packaging configuration
+= packaged application artifact
+
+The result is commonly called a frozen application: Python source is transformed or collected into a distributable application whose user does not need to install or invoke the project’s development interpreter manually.
+
+Packaging does not necessarily produce an installer. It first produces an application artifact, such as:
+
+one-folder application
+or
+one-file executable
+
+Installed desktop application
+
+Installation adds a separate deployment step:
+
+packaged application artifact
++ installer metadata and behavior
+= installed desktop application
+
+An installer may place files under an application installation directory, create shortcuts, register uninstall information, and establish a predictable launch path.
+
+The installed program must then create or open its writable user state independently from its installed files:
+
+installed program files
+≠
+writable user database
+
+Markei already contains an initial implementation of this distinction. Bundled schema resources are discovered relative to a resource base, while the live SQLite database is directed to %LOCALAPPDATA%\Markei\market.sqlite.
+
+Release artifact
+
+A build becomes a release artifact only when its identity and validation evidence are established:
+
+successful build
++ known version
++ preserved build configuration
++ validation in a clean user-like environment
++ integrity of bundled resources
++ persistence and upgrade checks
+= reproducible release artifact
+
+Markei currently declares VERSION = "0.1.0", but a version constant alone does not prove that the executable, installer, database compatibility, and release records share the same version identity.
+
+The Sprint 01 transformation is therefore:
+
+Developer supplies the runtime and repository context
+↓
+Build process supplies the runtime and packaged context
+↓
+Installer supplies the machine-level placement and launch context
+↓
+Application supplies first-launch initialization and user-data continuity
+↓
+Release process supplies version identity and validation evidence
+
+3. Concept Classification
+
+Concept
+
+Classification
+
+Existing reference or rationale
+
+Source execution versus packaged execution
+
+New canonical-concept candidate
+
+Central transformation of Sprint 01; not represented by an existing concept
+
+Interpreter and runtime bundling
+
+New canonical-concept candidate
+
+Required to understand why the user need not install or invoke Python
+
+Dependency resolution
+
+Existing but requires reinforcement
+
+&%%12 covers service contracts, but not build dependency collection
+
+Direct dependency
+
+Glossary-only candidate
+
+A supporting term under dependency closure
+
+Transitive dependency
+
+Glossary-only candidate
+
+Necessary terminology, but not independently broad enough for canon
+
+Build environment
+
+New canonical-concept candidate
+
+Required to explain platform-specific and repeatable artifact production
+
+Build artifact
+
+Glossary-only candidate
+
+Derived from packaging/release concepts
+
+Executable
+
+Glossary-only candidate
+
+Must be distinguished from installer, but does not require a full canonical lesson
+
+Application bundle
+
+Glossary-only candidate
+
+Umbrella term for a one-folder or bundled application result
+
+Installer
+
+Glossary-only candidate
+
+Derived deployment term under packaging-versus-installation
+
+Packaging versus installation
+
+New canonical-concept candidate
+
+Critical process boundary with direct Sprint 01 consequences
+
+One-file distribution
+
+Glossary-only candidate
+
+Distribution strategy subordinate to packaging topology
+
+One-folder distribution
+
+Glossary-only candidate
+
+Distribution strategy subordinate to packaging topology
+
+Frozen application
+
+Glossary-only candidate
+
+Standard term derived from packaged Python execution
+
+Entrypoint
+
+Existing but requires reinforcement
+
+Root main.py and app/main.py already expose the concept, but it is not currently packaging-oriented
+
+Resource discovery
+
+New canonical-concept candidate
+
+Required because schema and seed files must remain discoverable after freezing
+
+Relative and absolute paths
+
+Existing but requires reinforcement
+
+Existing Python/path knowledge must be applied to frozen and installed contexts
+
+Resource path versus user-data path
+
+New canonical-concept candidate
+
+Essential to protect writable database state
+
+Development paths versus installed paths
+
+Glossary-only candidate
+
+Derived distinction under resource/data location boundary
+
+Writable application data
+
+Glossary-only candidate
+
+Derived term under resource/data location boundary
+
+Application configuration directory
+
+Glossary-only candidate
+
+Relevant only if later separated from the database; currently no distinct directory model is evidenced
+
+First-launch initialization
+
+Existing but requires reinforcement
+
+connect() already initializes a missing database
+
+Database migration in an installed application
+
+Existing but requires reinforcement
+
+%%%01 already covers schema evolution; installed lifecycle adds persistence and upgrade context
+
+Idempotent migration
+
+Glossary-only candidate
+
+Existing behavior under SQLite schema evolution
+
+Release versioning
+
+New canonical-concept candidate
+
+Needed to connect source version, artifact identity, installer identity, and upgrade rules
+
+Deterministic build
+
+Glossary-only candidate
+
+A strict technical property that may not be immediately attainable
+
+Reproducible build process
+
+New canonical-concept candidate
+
+Sprint needs repeatable build inputs and commands even if byte-identical determinism is deferred
+
+Code signing
+
+Glossary-only candidate
+
+Conceptual release-hardening term; implementation may be deferred
+
+Antivirus false positive
+
+Glossary-only candidate
+
+Release-risk terminology, not a stable Markei concept by itself
+
+Upgrade compatibility
+
+New canonical-concept candidate
+
+User data and migrations must survive application replacement
+
+Rollback
+
+Glossary-only candidate
+
+Derived release-recovery term
+
+Portable application versus installed application
+
+New canonical-concept candidate
+
+Directly affects data paths, shortcuts, upgrade responsibility, and user expectations
+
+Packaging configuration versus application behavior
+
+Existing but requires reinforcement
+
+Extends &&&18 Adapter Boundary, &&&19 Capability Versus Placeholder, and responsibility separation
+
+Build-time dependency versus runtime dependency
+
+New canonical-concept candidate
+
+Required to reason about tools used to produce Markei versus components Markei needs when launched
+
+Successful build versus validated release
+
+New canonical-concept candidate
+
+Prevents treating artifact creation as completion
+
+Installer design details
+
+Not required
+
+Didactic Chat must distinguish the installer without designing it
+
+Packaging-tool selection
+
+Not required
+
+Tool choice belongs to later operational/design synthesis
+
+Synchronization
+
+Deferred to Sprint 02
+
+Explicitly outside Sprint 01
+
+Backend/API architecture
+
+Deferred to Sprint 02
+
+Explicitly outside Sprint 01
+
+Authentication and accounts
+
+Deferred to Sprint 02
+
+Explicitly outside Sprint 01
+
+Mobile framework packaging
+
+Deferred to Sprint 02
+
+No active Sprint 01 evidence
+
+Cross-device persistence
+
+Deferred to Sprint 02
+
+Installed local persistence is active; cross-device persistence is not
+
+Mobile application stores
+
+Deferred to Sprint 02
+
+Not part of Windows desktop installation
+
+4. Learning Dependency Sequence
+
+The shortest coherent sequence is:
+
+1. Existing application entrypoint and execution chain
+↓
+2. Source execution versus frozen execution
+↓
+3. Direct, transitive, build-time, and runtime dependencies
+↓
+4. Build environment and reproducible build inputs
+↓
+5. Packaging versus installation
+↓
+6. One-folder, one-file, portable, and installed distributions
+↓
+7. Bundled-resource discovery
+↓
+8. Resource paths versus writable user-data paths
+↓
+9. First-launch initialization and installed-database migration
+↓
+10. Release versioning and upgrade compatibility
+↓
+11. Successful build versus validated release
+↓
+12. Optional release hardening: signing, antivirus reputation, rollback
+
+1. Entrypoint and execution chain
+
+The learner must first know what the build is expected to launch. Markei has two related entrypoint files:
+
+main.py
+app/main.py
+
+Without a clear entrypoint, packaging options and import failures cannot be interpreted correctly.
+
+2. Source execution versus frozen execution
+
+This explains why repository paths, import behavior, interpreter availability, and resource lookup can change after packaging.
+
+3. Dependency categories
+
+Before collecting dependencies, the learner must distinguish:
+
+direct dependency
+transitive dependency
+build-time dependency
+runtime dependency
+
+Otherwise, the packaging tool itself may be confused with application runtime content.
+
+4. Build environment
+
+A build is produced inside an environment containing a particular operating system, Python version, dependency set, and packaging configuration. This must be understood before reproducibility can be discussed.
+
+5. Packaging versus installation
+
+The learner can now distinguish production of runnable application files from placement of those files into a user-facing Windows installation.
+
+6. Distribution topology
+
+One-file and one-folder are packaging topologies. Portable and installed are deployment modes. These dimensions overlap but are not synonyms.
+
+7. Resource discovery
+
+Once source files no longer live in their ordinary repository positions, non-code files such as schema.sql and seed.sql require explicit inclusion and runtime discovery.
+
+8. User-data separation
+
+Only after bundled resources are understood can the learner safely distinguish read-only or replaceable program resources from persistent writable user state.
+
+9. Initialization and migration
+
+First launch creates missing state; later launches and upgrades migrate existing state. These are separate lifecycle events and must preserve user information.
+
+10. Version and compatibility
+
+An application version becomes meaningful when it identifies the built artifact and informs compatibility decisions between software and persisted data.
+
+11. Release validation
+
+The artifact must be tested in the environment it is intended to serve, not only in the build environment.
+
+12. Hardening
+
+Code signing, antivirus reputation, rollback packaging, and stronger reproducibility matter after the core lifecycle is understandable. Introducing them earlier would overload the minimum model.
+
+5. Critical Distinctions
+
+Packaging is not installation
+
+Packaging
+= producing runnable application files
+
+Installation
+= placing and registering those files for ordinary user launch
+
+An application can be packaged but distributed portably without an installer.
+
+Executable is not installer
+
+Executable
+= launches the application
+
+Installer
+= deploys the application
+
+An installer may contain or unpack one or more executables, resources, libraries, and metadata.
+
+Bundled resources are not writable user data
+
+Bundled resources
+= application-supplied files required for operation
+= replaceable during upgrade
+= should generally be treated as read-only
+
+Writable user data
+= state created or modified by the user
+= must survive restart and ordinary upgrade
+= must live in a user-writable location
+
+For Markei:
+
+schema.sql and seed.sql
+→ bundled resources
+
+market.sqlite
+→ writable user data
+
+The database module already models this separation through RESOURCE_DATABASE_DIR and USER_DATABASE_DIR.
+
+Application code is not build configuration
+
+Application code
+= defines Markei’s runtime behavior
+
+Build configuration
+= tells a packaging process how to collect and transform Markei
+
+Build configuration may identify the entrypoint, application name, icon, non-code resources, hidden imports, output topology, and version metadata. It should not become the owner of ProductService, repository, database, or UI behavior.
+
+Development database is not installed-user database
+
+A database inside or near the source repository is developer state. An installed-user database is persistent per-user application state.
+
+Markei currently directs its active database to:
+
+%LOCALAPPDATA%\Markei\market.sqlite
+
+This is appropriate conceptual preparation for installed execution. The bundled schema remains separate and is used to initialize a missing user database.
+
+Build-time dependency is not runtime dependency
+
+Build-time dependency
+= needed to produce an artifact
+
+Runtime dependency
+= needed when the produced application executes
+
+A packaging tool is usually a build-time dependency. PySide6 contributes runtime libraries that must be available to the packaged application. The current requirements.txt lists only PySide6, so the complete build environment is not yet declared there.
+
+Portable distribution is not installed distribution
+
+Portable distribution
+= user extracts or copies application files and launches them directly
+
+Installed distribution
+= installer owns placement, shortcuts, uninstall registration, and upgrade path
+
+Portable does not mean that user data should be stored beside the executable. That is a separate design choice.
+
+Successful build is not validated release
+
+Successful build
+= packaging process completed
+
+Validated release
+= artifact launches and behaves correctly in a clean user-like environment
+
+A validated Markei release must confirm at minimum:
+
+application launch without a development Python command;
+
+Qt platform/plugin availability;
+
+bundled schema discovery;
+
+first-launch database creation;
+
+writable database persistence;
+
+reopening existing data;
+
+migration execution against an existing database;
+
+principal UI workflow availability;
+
+artifact and version identity.
+
+6. Markei Grounding
+
+Active concept
+
+Concrete Markei grounding
+
+Entrypoint
+
+Root main.py imports and calls app.main.main(). app/main.py creates QApplication, MainWindow, and the Qt event loop.
+
+Source versus packaged execution
+
+app/main.py currently contains a source-execution path adjustment through sys.path.insert(...), which deserves review under frozen execution without assuming it is wrong.
+
+Runtime dependency
+
+PySide6 is imported directly by app/main.py and is the sole declared requirement.
+
+Frozen execution context
+
+resource_base() checks sys.frozen and optionally uses sys._MEIPASS, showing that packaging-aware runtime logic has already begun.
+
+Bundled resource discovery
+
+SCHEMA_PATH and SEED_PATH derive from resource_base() / "app" / "database", so packaging must include those files in the corresponding logical resource structure.
+
+Writable user data
+
+user_data_dir() selects %LOCALAPPDATA%\Markei, and DATABASE_PATH uses that directory rather than the installation directory.
+
+First-launch initialization
+
+connect() detects a missing database and invokes initialize().
+
+Initialization resource
+
+initialize() creates the user directory, opens the database, executes schema.sql, optionally executes seed.sql, and commits.
+
+User-data preservation
+
+Existing databases are preserved unless recreate=True; normal initialization reconnects rather than deleting the file.
+
+Installed database migration
+
+Every normal connect() call invokes migrate(), which uses idempotent checks and INSERT OR IGNORE defaults.
+
+Release versioning
+
+app/core/config.py declares APP_NAME = "Markei" and VERSION = "0.1.0". Sprint 01 must teach that these values need alignment with artifact and installer metadata.
+
+Packaging configuration versus behavior
+
+Packaging may collect app, PySide6 components, and SQL resources, but it must not absorb service, repository, or database responsibility.
+
+Upgrade compatibility
+
+Existing user databases may contain earlier schema versions. The migration system is therefore part of release compatibility, not merely developer setup.
+
+Reproducibility
+
+The repository currently declares PySide6 without a version constraint and does not expose packaging-tool or build-environment declarations through the inspected dependency file. This does not prove builds are irreproducible, but it means repeatability is not established by that file.
+
+Successful build versus validated release
+
+Existing Cycle 04 validation was developer/service/offscreen oriented. Sprint 01 needs artifact-level launch, resource, persistence, and upgrade evidence rather than assuming previous source validation transfers automatically.
+
+This grounding identifies learning evidence. It does not choose a packaging tool, installer technology, output topology, signing provider, or implementation patch.
+
+7. KANBAN Proposals
+
+&&&20 — Packaged Application Lifecycle
+
+Why it deserves canonical treatment
+
+This is the central Sprint 01 model connecting source execution, packaging, distribution, installation, launch, persistence, upgrade, and release validation. Without it, the learner may treat executable generation as the entire desktop-delivery problem.
+
+Prerequisite concepts
+
+&&&03 — Naming as Data Contract
+
+&&&18 — Adapter Boundary
+
+&&&19 — Capability Versus Placeholder
+
+Related concepts
+
+proposed &&&21
+
+proposed &&&22
+
+proposed &&&23
+
+proposed &&%09
+
+proposed &%%15
+
+Recommended initial status
+
+Red.
+
+Motivating Sprint 01 evidence
+
+Markei currently runs through source entrypoints and a developer-provided environment. Human direction requires transition through packaged application, executable, installed application, persistent user data, and reproducible release artifact.
+
+&&&21 — Packaging Versus Installation
+
+Why it deserves canonical treatment
+
+The distinction prevents executable generation, installer creation, application placement, shortcut creation, uninstall registration, and upgrade behavior from being treated as one operation.
+
+Prerequisite concepts
+
+proposed &&&20
+
+Related concepts
+
+executable
+
+installer
+
+application bundle
+
+portable distribution
+
+installed distribution
+
+Recommended initial status
+
+Red.
+
+Motivating Sprint 01 evidence
+
+Sprint 01 explicitly requires both executable preparation and intuitive desktop installation. These are connected but independently validatable outputs.
+
+&&&22 — Resource State Versus User State
+
+Why it deserves canonical treatment
+
+This distinction protects persistent data by separating application-supplied resources from user-created writable state. It is broadly reusable and directly determines whether upgrades can replace application files without destroying user data.
+
+Prerequisite concepts
+
+&&&02 — Raw Data Versus Derived Data
+
+&&&08 — Configuration State
+
+proposed &&&20
+
+Related concepts
+
+%%%01 — SQLite Schema Evolution
+
+proposed &&%09
+
+proposed &%%15
+
+Recommended initial status
+
+Yellow.
+
+Motivating Sprint 01 evidence
+
+Markei already separates bundled schema.sql and optional seed.sql from %LOCALAPPDATA%\Markei\market.sqlite.
+
+&&&23 — Build-Time Versus Runtime Dependency
+
+Why it deserves canonical treatment
+
+The distinction is required to understand which components produce Markei and which components must be present inside or beside the packaged application when a user launches it.
+
+Prerequisite concepts
+
+proposed &&&20
+
+Related concepts
+
+direct dependency
+
+transitive dependency
+
+build environment
+
+dependency closure
+
+proposed &&&24
+
+Recommended initial status
+
+Red.
+
+Motivating Sprint 01 evidence
+
+PySide6 is an application runtime dependency, while the eventual packaging system will be a build dependency. The current dependency declaration contains only unpinned PySide6.
+
+&&&24 — Reproducible Build Process
+
+Why it deserves canonical treatment
+
+Sprint 01 requires a release artifact that can be regenerated from known inputs. The concept is broader than one tool and remains valuable across future desktop and mobile release work.
+
+Prerequisite concepts
+
+proposed &&&23
+
+proposed &&&20
+
+Related concepts
+
+build environment
+
+dependency pinning
+
+deterministic build
+
+packaging configuration
+
+release versioning
+
+Recommended initial status
+
+Red.
+
+Motivating Sprint 01 evidence
+
+The inspected repository declares application version and PySide6 dependency but does not yet establish a repository-backed, versioned packaging environment or repeatable artifact procedure.
+
+&&&25 — Successful Build Versus Validated Release
+
+Why it deserves canonical treatment
+
+This distinction prevents a packaging command’s success from being mistaken for evidence that the application can be installed, launched, initialized, upgraded, and used by an ordinary Windows user.
+
+Prerequisite concepts
+
+&&&16 — Validation Boundary
+
+proposed &&&20
+
+proposed &&&21
+
+Related concepts
+
+release artifact
+
+clean-environment validation
+
+antivirus false positive
+
+code signing
+
+rollback
+
+Recommended initial status
+
+Red.
+
+Motivating Sprint 01 evidence
+
+Previous application validation concerns source/service behavior. Sprint 01 introduces artifact-specific failure modes involving bundled resources, Qt runtime components, writable paths, installation, and clean-machine launch.
+
+&&&26 — Release Version and Compatibility Contract
+
+Why it deserves canonical treatment
+
+A release version must connect application identity, packaged artifact identity, installer identity, database compatibility, and upgrade expectations. It is more than a display string.
+
+Prerequisite concepts
+
+&&&03 — Naming as Data Contract
+
+proposed &&&20
+
+proposed &&&22
+
+Related concepts
+
+%%%01 — SQLite Schema Evolution
+
+semantic version
+
+migration
+
+rollback
+
+upgrade compatibility
+
+Recommended initial status
+
+Red.
+
+Motivating Sprint 01 evidence
+
+Markei declares version 0.1.0, maintains existing SQLite databases, and applies migrations during connection. These facts create an implicit compatibility contract that packaging must make visible and testable.
+
+&&%09 — Frozen Python Execution Context
+
+Why it deserves canonical treatment
+
+This is the Python-specific model explaining sys.frozen, temporary extraction/resource locations, packaged import behavior, and differences between __file__, sys.executable, the working directory, and a resource base.
+
+Prerequisite concepts
+
+proposed &&&20
+
+relative and absolute path understanding
+
+Related concepts
+
+proposed &&&22
+
+resource discovery
+
+entrypoint
+
+application bundle
+
+Recommended initial status
+
+Yellow.
+
+Motivating Sprint 01 evidence
+
+resource_base() already tests sys.frozen and references sys._MEIPASS, so frozen execution is present in implementation evidence rather than merely theoretical.
+
+&%%15 — Markei Installed Data Lifecycle
+
+Why it deserves canonical treatment
+
+This Markei-specific concept unifies first-launch database creation, existing-data preservation, schema migration, user-data location, upgrade compatibility, and recovery expectations.
+
+Prerequisite concepts
+
+%%%01 — SQLite Schema Evolution
+
+proposed &&&22
+
+proposed &&&26
+
+Related concepts
+
+first-launch initialization
+
+application data directory
+
+idempotent migration
+
+rollback
+
+backup
+
+Recommended initial status
+
+Yellow.
+
+Motivating Sprint 01 evidence
+
+Markei creates %LOCALAPPDATA%\Markei, initializes market.sqlite from bundled SQL resources, preserves an existing database by default, and migrates it during ordinary connection.
+
+No %%%10 tool-specific concept is proposed yet. A packaging technology should not become canonical merely because it is eventually selected. Tool-specific canonical treatment should wait until implementation evidence reveals reusable behavior that cannot be adequately derived from the foundational and Python-specific concepts above.
+
+8. Glossary Proposals
+
+Term
+
+KANBAN ID
+
+Type
+
+Proposed treatment
+
+Source execution
+
+&&&20
+
+Derived terminology
+
+Running modules from repository source through a separately installed interpreter
+
+Packaged execution
+
+&&&20
+
+Derived terminology
+
+Running an application from collected or frozen distribution files
+
+Frozen application
+
+&&%09
+
+Python-specific derived terminology
+
+Python application distributed with collected runtime components rather than ordinary source invocation
+
+Entrypoint
+
+None
+
+Derived terminology
+
+Initial callable or module selected to start the application
+
+Dependency closure
+
+&&&23
+
+Derived terminology
+
+Complete direct and transitive dependency set required for a build or runtime
+
+Direct dependency
+
+&&&23
+
+Derived terminology
+
+Dependency declared or imported directly by the project
+
+Transitive dependency
+
+&&&23
+
+Derived terminology
+
+Dependency required through another dependency
+
+Build-time dependency
+
+&&&23
+
+Derived terminology
+
+Component required to produce an artifact
+
+Runtime dependency
+
+&&&23
+
+Derived terminology
+
+Component required when the packaged application executes
+
+Build environment
+
+&&&24
+
+Derived terminology
+
+Operating system, interpreter, libraries, tools, and configuration used to produce an artifact
+
+Build artifact
+
+&&&20
+
+Derived terminology
+
+Output created by the build process
+
+Application bundle
+
+&&&20
+
+Derived terminology
+
+Collected application executable, libraries, and resources
+
+Executable
+
+&&&21
+
+Derived terminology
+
+File or launcher that starts the application
+
+Installer
+
+&&&21
+
+Derived terminology
+
+Deployment program or package that places and registers the application
+
+One-file distribution
+
+&&&21
+
+Derived terminology
+
+Packaged topology presented as one launchable file
+
+One-folder distribution
+
+&&&21
+
+Derived terminology
+
+Packaged topology containing an executable and adjacent support files
+
+Portable application
+
+&&&21
+
+Derived terminology
+
+Application launched directly from copied or extracted files without ordinary installation registration
+
+Installed application
+
+&&&21
+
+Derived terminology
+
+Application deployed through an installation lifecycle
+
+Bundled resource
+
+&&&22
+
+Derived terminology
+
+Application-supplied non-user file required at runtime
+
+Writable user data
+
+&&&22
+
+Derived terminology
+
+Persistent state created or changed during use
+
+Resource base
+
+&&%09
+
+Project/Python terminology
+
+Runtime base used to locate bundled application resources
+
+User-data directory
+
+&&&22
+
+Derived terminology
+
+Per-user writable location for persistent application state
+
+First-launch initialization
+
+&%%15
+
+Project-derived terminology
+
+Creation of missing user-state structures during the first ordinary launch
+
+Idempotent migration
+
+%%%01
+
+Derived terminology
+
+Migration safe to evaluate repeatedly without duplicating or corrupting state
+
+Release artifact
+
+&&&25
+
+Derived terminology
+
+Versioned and validated artifact intended for distribution
+
+Clean-environment validation
+
+&&&25
+
+Derived terminology
+
+Validation performed without relying on the developer’s existing repository or interpreter setup
+
+Reproducible build process
+
+&&&24
+
+Derived terminology
+
+Documented build procedure that regenerates equivalent functional artifacts from controlled inputs
+
+Deterministic build
+
+&&&24
+
+Derived terminology
+
+Stronger condition in which identical inputs produce byte-identical output
+
+Code signing
+
+None
+
+Derived terminology
+
+Cryptographic publisher identity and integrity mechanism for distributed code
+
+Antivirus false positive
+
+None
+
+Derived terminology
+
+Benign artifact incorrectly classified as malicious or suspicious
+
+Upgrade compatibility
+
+&&&26
+
+Derived terminology
+
+Ability of a newer release to operate safely with existing installed state
+
+Rollback
+
+&&&26
+
+Derived terminology
+
+Controlled return to an earlier compatible release or state
+
+Packaging configuration
+
+&&&24
+
+Project-derived terminology
+
+Build instructions describing artifact collection without defining application behavior
+
+Markei installed data lifecycle
+
+&%%15
+
+Project abstraction
+
+Creation, opening, migration, persistence, and protection of the installed user database
+
+schema.sql, seed.sql, %LOCALAPPDATA%\Markei, and market.sqlite should appear as project usage examples rather than independent glossary truth.
+
+9. Concept Map Update Proposal
+
+Current Milestone
+
+Cycle 05 — Sprint 01
+Windows Desktop Packaging and Installation Readiness
+
+Current learning transformation:
+
+source entrypoint
+→ frozen Python execution
+→ dependency collection
+→ packaged application
+→ portable or installed distribution
+→ bundled-resource discovery
+→ writable user database
+→ first-launch initialization / migration
+→ versioned and validated release artifact
+
+Stable Concepts
+
+None fully Green.
+
+Active Concepts
+
+&&&03 — Naming as Data Contract
+&&&08 — Configuration State
+&&&15 — Default Value as Fallback Contract
+&&&16 — Validation Boundary
+&&&18 — Adapter Boundary
+&&&19 — Capability Versus Placeholder
+&&%04 — Platform-Neutral Read-Model Shape
+&%%12 — Service Contract Stability
+%%%01 — SQLite Schema Evolution
+
+Proposed:
+&&&20 — Packaged Application Lifecycle
+&&&21 — Packaging Versus Installation
+&&&22 — Resource State Versus User State
+&&&23 — Build-Time Versus Runtime Dependency
+&&&24 — Reproducible Build Process
+&&&25 — Successful Build Versus Validated Release
+&&&26 — Release Version and Compatibility Contract
+&&%09 — Frozen Python Execution Context
+&%%15 — Markei Installed Data Lifecycle
+
+Unstable Concepts
+
+&&&18 — Adapter Boundary
+&&&19 — Capability Versus Placeholder
+&&&20 — Packaged Application Lifecycle
+&&&21 — Packaging Versus Installation
+&&&23 — Build-Time Versus Runtime Dependency
+&&&24 — Reproducible Build Process
+&&&25 — Successful Build Versus Validated Release
+&&&26 — Release Version and Compatibility Contract
+
+&&&22, &&%09, and &%%15 may begin at Yellow because current implementation already supplies concrete resource-path, user-data-path, initialization, and migration evidence. The remaining proposed concepts should begin Red until artifact-level evidence exists.
+
+Next Concepts
+
+Trace main.py → app.main.main() as the packaged entrypoint.
+
+Explain how frozen execution differs from repository execution.
+
+Classify direct, transitive, build-time, and runtime dependencies.
+
+Trace schema.sql from bundled resource to first-launch database creation.
+
+Trace market.sqlite from %LOCALAPPDATA% through connection and migration.
+
+Distinguish package artifact, portable distribution, executable, installer, and installed application.
+
+Connect VERSION to artifact identity and database compatibility.
+
+Validate the distinction between successful build and validated release.
+
+Introduce signing and antivirus reputation only after the unsigned artifact lifecycle is understood.
+
+Dependency Spine
+
+&&&03 Naming as Data Contract
+↓
+Entrypoint reinforcement
+↓
+&&&20 Packaged Application Lifecycle
+├──→ &&&23 Build-Time Versus Runtime Dependency
+│    ↓
+│    &&&24 Reproducible Build Process
+│
+├──→ &&&21 Packaging Versus Installation
+│
+└──→ &&%09 Frozen Python Execution Context
+     ↓
+     &&&22 Resource State Versus User State
+     ↓
+     %%%01 SQLite Schema Evolution
+     ↓
+     &%%15 Markei Installed Data Lifecycle
+     ↓
+     &&&26 Release Version and Compatibility Contract
+     ↓
+     &&&25 Successful Build Versus Validated Release
+
+Project Learning Spine
+
+main.py
+↓
+app/main.py
+↓
+PySide6 and runtime dependencies
+↓
+frozen executable context
+↓
+bundled app/database/schema.sql
+↓
+%LOCALAPPDATA%\Markei\market.sqlite
+↓
+initialize()
+↓
+migrate()
+↓
+versioned packaged artifact
+↓
+portable or installed distribution
+↓
+clean-environment release validation
+
+Session Delta
+
+Cycle 05 was re-scoped by human direction.
+
+Sprint 01 now owns Windows desktop packaging and installation learning.
+Sprint 02 retains mobile preparation.
+
+The Didactic checkpoint contains identifiers not present in the current
+canonical KANBAN materialization. Those identifiers remain occupied, and
+new numbering begins after the highest checkpointed number.
+
+10. Didactic Risks and Deferrals
+
+Conceptual overload
+
+Packaging vocabulary can expand rapidly into build systems, installer databases, Windows internals, code-signing infrastructure, CI/CD, update servers, and operating-system security. Sprint 01 should preserve a minimum spine:
+
+entrypoint
+→ frozen execution
+→ dependencies
+→ artifact
+→ resources/data
+→ installation
+→ persistence/migration
+→ version/validation
+
+Code signing, antivirus reputation, rollback automation, and strict deterministic builds should remain secondary until the ordinary unsigned release lifecycle is understood.
+
+Premature mobile expansion
+
+The existing forward checkpoint and Main stage contain extensive mobile preparation material. That content should not leak into Sprint 01 through terms such as cross-platform persistence, synchronization, account identity, API versioning, mobile stores, or shared backend deployment.
+
+Local installed-user persistence is active. Cross-device persistence is not.
+
+Misleading terminology
+
+The following substitutions must be avoided:
+
+EXE = installer
+one-file = installed
+portable = stores data beside executable
+packaged = validated
+version constant = release versioning system
+bundled database = user database
+build succeeded = release succeeded
+resource path = current working directory
+
+Canonical-register drift
+
+The checkpoint-to-KANBAN numbering discrepancy must be reconciled before any KANBAN materialization. Reusing apparently absent identifiers would create duplicated semantic ownership.
+
+Tool-driven promotion
+
+A selected packaging or installer product should not automatically receive a canonical concept. Canonical promotion should depend on reusable learning evidence, not tool presence.
+
+Evidence still required
+
+Repository evidence is still needed to determine:
+
+the complete dependency graph, including transitive Qt components;
+
+whether additional non-code resources exist beyond SQL files;
+
+whether icons, metadata, translations, or Qt plugins require explicit collection;
+
+whether sys.path.insert(...) is needed, harmless, or problematic in the frozen artifact;
+
+whether resource lookup behaves identically in one-file and one-folder modes;
+
+how the chosen artifact exposes application version metadata;
+
+whether installed upgrades preserve %LOCALAPPDATA%\Markei\market.sqlite;
+
+whether migration failure has a safe recovery path;
+
+whether the artifact launches on a clean Windows environment;
+
+whether antivirus products flag the resulting artifact;
+
+whether rollback means application rollback only or application-plus-database rollback.
+
+These are evidence gaps, not permission for Didactic Chat to design the installer.
+
+Deferred subjects
+
+Sprint 02:
+- mobile framework
+- mobile UI
+- API/backend
+- synchronization
+- accounts and authentication
+- cross-device identifiers
+- desktop/mobile coexistence architecture
+- mobile distribution
+
+Later release hardening:
+- production signing certificate acquisition
+- automated update channel
+- formal rollback mechanism
+- byte-identical deterministic builds
+- CI release pipeline
+
+11. Didactic Stage Draft
+
+# B_DIDACTIC.md
+
+> Status: Functional didactic staging
+> Cycle: 05
+> Sprint: 01
 > Domain: Didactic
-> Authority: Didactic Chat [A]
-> Persistence class: Functional stage material
-> Scope: Learning structure, concept sequencing, Settings concepts, mobile-readiness concepts
+> Authority: Didactic Chat analysis for Main synthesis
+> Persistence class: Non-canonical functional stage
+> Scope: Minimum learning model for Markei Windows packaging, installation, persistence, and release validation
 
 ---
 
-## 1. Recovery Notes
+## 1. Human Direction
 
-### Files read
-
-Boot / methodology:
+Cycle 05 is divided into:
 
 ```text
-documentation/sketch_notebook/INDEX.md
-documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
-documentation/sketch_notebook/methodology/FLUX.md
-documentation/sketch_notebook/methodology/PROMOTION_RULES.md
-documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
-```
+Sprint 01
+Quick, intuitive Windows desktop installation and executable preparation.
 
-Didactic recovery:
+Sprint 02
+Repository-clone preparation for the shortest responsible route to mobile implementation.
 
-```text
-documentation/sketch_notebook/didactics/08_CONCEPT_MAP.md
-documentation/sketch_notebook/didactics/02_KANBAN.md
-documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md
-documentation/sketch_notebook/06_SESSION_SCHEME.md
-```
+This stage concerns Sprint 01 only.
 
-### Learning-state recovery
+API, backend, synchronization, accounts, authentication, mobile framework selection, and cross-device persistence remain deferred unless required to clarify a packaging boundary.
 
-The concept map is not empty. It currently records Cycle 03 as the last fully absorbed didactic state: read-model consolidation, Lists unification, embedded History analytics, and mobile readiness as a boundary concept rather than a mobile implementation decision.
+2. Recovered Baseline
 
-The existing didactic stage file was a pruned placeholder, not an active report. This report replaces that placeholder with a clean Cycle 04 didactic staging surface.
+Current application boundary:
 
-### Path drift / route mismatch observed
+Desktop UI
+→ ProductService
+→ Repository
+→ SQLite
 
-The requested path `sketch_notebook/INDEX.md` was not available through the connected GitHub repository during this recovery attempt.
+Current source entry chain:
 
-The repository exposed the notebook at:
+main.py
+→ app.main.main()
+→ QApplication
+→ MainWindow
+→ Qt event loop
 
-```text
-documentation/sketch_notebook/INDEX.md
-```
+Current dependency declaration:
 
-This is the path declared canonical by the current repository notebook. Therefore, this report treats the prompt path as a route mismatch/path-drift observation, not as permission to invent or migrate files.
+PySide6
 
----
+Current packaging-relevant persistence behavior:
 
-## 2. Current Learning Problem
+bundled resource base
+→ app/database/schema.sql
+→ optional app/database/seed.sql
 
-Cycle 04 requires the developer to understand Settings as a configuration boundary rather than a miscellaneous page.
+user-data base
+→ %LOCALAPPDATA%\Markei
+→ market.sqlite
 
-The learning problem is not only “how to add fields to Settings.” The deeper problem is understanding how saved preferences affect later calculations, UI state, read models, validation, and future platform work without making Settings itself own all behavior.
+connect() initializes a missing user database and applies idempotent migrations to an existing database.
 
-The key conceptual tension is:
+Current application metadata includes:
 
-```text
-Settings stores and edits preferences.
-Services interpret preferences.
-Read models expose interpreted results.
-UI pages render and select views.
-```
+APP_NAME = "Markei"
+VERSION = "0.1.0"
 
-For Cycle 04, the developer should learn how configuration values become inputs into behavior without becoming the behavior itself.
+3. Reconciliation Finding
 
-This is especially important for “time reference time,” because it sounds like a single setting but can mean several different concepts:
+The Didactic checkpoint references identifiers not present in the visible canonical KANBAN register.
 
-- the date/time used as “now” when classifying products;
-- the boundary used to group History into weeks or months;
-- the anchor used for testing or replaying behavior;
-- the reference point for predicted depletion, shortage, or market status;
-- a user preference that changes display behavior across sessions.
+Checkpoint maxima:
 
-Before implementation, the learner needs to distinguish these meanings so that one vague setting does not accidentally collapse several responsibilities into one field.
+&&&19
+&&%08
+&%%14
+%%%09
 
----
+Visible canonical-register maxima:
 
-## 3. Settings Concepts
+&&&14
+&&%06
+&%%12
+%%%08
 
-### &&& Configuration State
+Treat all checkpointed identifiers as occupied.
 
-Settings work depends first on `&&&08 — Configuration State`.
+New proposals begin at:
 
-A setting is persisted preference data. It is not the calculation itself. The setting should answer:
+&&&20
+&&%09
+&%%15
+%%%10
 
-```text
-What did the user choose?
-```
+This is didactic drift requiring later Main reconciliation and materialization review.
 
-It should not answer:
+4. Sprint 01 Learning Transformation
 
-```text
-How should every page calculate every derived result?
-```
+developer-run Python project
+→ frozen or collected application
+→ distributable executable/application bundle
+→ portable or installed Windows distribution
+→ writable per-user state
+→ versioned and validated release artifact
 
-Learning status: Red → should become active Yellow during Cycle 04.
+Developer-run execution relies on a separately installed interpreter, source tree, dependency environment, and development launch command.
 
-### &%% Settings-Owned Preferences
+Packaged execution supplies collected runtime components, dependencies, entrypoint, and bundled resources.
 
-`&%%06 — Settings-Owned Preferences` is the Markei-specific form of configuration state.
+Installation is separate from packaging. It places and registers a packaged application for ordinary user launch.
 
-Settings owns:
+Installed application files must remain separate from persistent user data.
 
-- exposing the preference to the user;
-- validating acceptable preference values;
-- saving the preference;
-- loading the preference back into UI controls.
+A successful packaging command is not sufficient evidence of a valid release.
 
-Settings does not own:
+5. Critical Distinctions
 
-- History grouping calculations;
-- Lists status classification;
-- product duration prediction;
-- mobile behavior;
-- API integration behavior.
+packaging
+is not
+installation
 
-Learning status: Red → immediate Cycle 04 focus.
+executable
+is not
+installer
 
-### &&& Default Value
+bundled schema/resource
+is not
+writable user database
 
-The learner should understand default values as the behavior used before the user changes a setting.
+application behavior
+is not
+build configuration
 
-In Cycle 04, defaults matter for:
+repository/development database
+is not
+installed-user database
 
-- default shortage threshold;
-- default week boundary;
-- default month boundary logic;
-- default “time reference” mode;
-- default mobile-readiness behavior when mobile preferences do not yet exist.
+build-time dependency
+is not
+runtime dependency
 
-A default should be explicit, stable, and explainable.
+portable distribution
+is not
+installed distribution
 
-Proposed marker: `&&&15 — Default Value as Fallback Contract`.
+successful build
+is not
+validated release
 
-Learning status: Red.
+6. Proposed Canonical Concepts
 
-### &&& Validation Boundary
+&&&20 — Packaged Application Lifecycle
 
-Settings requires validation before persistence.
+Purpose:
 
-Validation means a setting must be checked against allowed choices before it becomes stored state. For example, a weekday setting should be one of seven weekdays, not arbitrary text.
+Define the complete learning path from source execution through packaging, distribution, installation, persistent state, upgrade, and release validation.
 
-Validation is conceptually separate from rendering. A combo box may reduce invalid input, but the application still needs a rule for what counts as valid configuration.
+Prerequisites:
 
-Proposed marker: `&&&16 — Validation Boundary`.
+&&&03
+&&&18
+&&&19
 
-Learning status: Red.
+Initial status:
 
-### &&% Enumerated Choice
+Red
 
-Several Settings values are choices from a small fixed set:
+&&&21 — Packaging Versus Installation
 
-- weekday boundary;
-- month boundary strategy;
-- time reference mode;
-- mobile-readiness preference flags;
-- placeholder API provider type.
+Purpose:
 
-The developer should learn the concept of an enumerated choice: a value constrained to a known set of valid options.
+Separate artifact production from machine-level deployment and registration.
 
-Proposed marker: `&&%07 — Enumerated Choice Values`.
+Prerequisites:
 
-Learning status: Red.
+&&&20
 
-### &&& Time Reference
+Initial status:
 
-“Time reference time” should be learned as a conceptual dependency, not only as a UI field.
+Red
 
-A time reference is the point in time from which time-sensitive calculations interpret the app state.
+&&&22 — Resource State Versus User State
 
-Possible meanings must be separated:
+Purpose:
 
-1. **Current-time reference** — What does “today” mean for classification?
-2. **History boundary reference** — What weekday or day starts a reporting period?
-3. **Testing/reference override** — Can the app pretend today is another date for testing or review?
-4. **Prediction reference** — From which date are expected depletion, shortage, and market states measured?
-5. **Display reference** — Which date/time is shown or selected in the UI?
+Separate replaceable bundled application resources from persistent writable user data.
 
-The didactic conclusion is that “time reference time” is not yet a single Green concept. It should be decomposed before implementation instructions are written.
+Prerequisites:
 
-Proposed marker: `&&&17 — Time Reference as Behavioral Anchor`.
+&&&02
+&&&08
+&&&20
 
-Learning status: Red.
+Initial status:
 
-### &&% Date/Datetime Boundary Handling
+Yellow
 
-`&&%03 — Date/Datetime Boundary Handling` already exists and remains Red.
+Markei evidence:
 
-Cycle 04 should reinforce it through:
+schema.sql / seed.sql
+versus
+%LOCALAPPDATA%\Markei\market.sqlite
 
-- free-choice week boundary;
-- month boundary by selected date or first weekday;
-- inclusive/exclusive period membership;
-- current reference date for “now”-based classifications.
+&&&23 — Build-Time Versus Runtime Dependency
 
-Learning status: Red → active Yellow target.
+Purpose:
 
-### &&& Time Bucketing
+Separate tools that produce Markei from components required when packaged Markei executes.
 
-`&&&05 — Time Bucketing` already exists and remains Red.
+Prerequisites:
 
-Cycle 04 extends it from a fixed Wednesday rule into a configurable boundary rule.
+&&&20
 
-The learner should understand:
+Initial status:
 
-```text
-A date does not naturally belong to a project period until the app applies a boundary rule.
-```
+Red
 
-Learning status: Red → active Yellow target.
+&&&24 — Reproducible Build Process
 
-### &&% UI View State
+Purpose:
 
-`&&%06 — UI View State` already exists and is Yellow.
+Explain how controlled build inputs, dependency versions, environment, configuration, and commands permit equivalent artifacts to be regenerated.
 
-Settings introduces a more persistent version of state:
+Prerequisites:
 
-```text
-UI view state may be temporary.
-Settings state persists across sessions.
-```
+&&&20
+&&&23
 
-The learner should distinguish temporary control state from saved preference state.
+Initial status:
 
-Learning status: Yellow.
+Red
 
-### &%% History Grouping Service Responsibility
+&&&25 — Successful Build Versus Validated Release
 
-`&%%08 — History Grouping Service Responsibility` remains relevant.
+Purpose:
 
-If Settings allows free week/month boundary choices, History services should interpret the saved preference. History UI should not own the period math.
+Require clean-environment launch, resource, persistence, migration, and workflow evidence beyond packaging-command completion.
 
-Learning status: Yellow.
+Prerequisites:
 
----
+&&&16
+&&&20
+&&&21
 
-## 4. Mobile-Readiness Concepts
+Initial status:
 
-Cycle 04 should begin mobile learning as boundary preparation, not toolchain commitment.
+Red
 
-### Reusable concepts to learn now
+&&&26 — Release Version and Compatibility Contract
 
-#### &&& Mobile Readiness Without Rewrite
+Purpose:
 
-Already present as `&&&14` and still Red.
+Connect source version, artifact version, installer version, persisted-data compatibility, migration, upgrade, and rollback expectations.
 
-The core idea remains: prepare portable contracts and boundaries before choosing or implementing mobile UI.
+Prerequisites:
 
-Learning status: Red → active Yellow target.
+&&&03
+&&&20
+&&&22
 
-#### &&% Platform-Neutral Read-Model Shape
+Initial status:
 
-Already present as `&&%04` and Yellow.
+Red
 
-This becomes more important because Settings preferences should be represented in simple shapes that another adapter could later consume.
+&&%09 — Frozen Python Execution Context
 
-Learning status: Yellow.
+Purpose:
 
-#### &%% Service Contract Stability
+Explain Python behavior under frozen execution, including sys.frozen, sys._MEIPASS, sys.executable, __file__, working-directory independence, import collection, and bundled-resource discovery.
 
-Already present as `&%%12` and Yellow.
+Prerequisites:
 
-Mobile development depends on stable service contracts. A future mobile UI should not need to rediscover business rules hidden in PySide6 pages.
+&&&20
+relative/absolute path understanding
 
-Learning status: Yellow.
+Initial status:
 
-#### &&& Adapter Boundary
+Yellow
 
-The developer should learn adapter boundary before mobile coding.
+Markei evidence:
 
-An adapter boundary is the separation between reusable application behavior and platform-specific input/output.
+if getattr(sys, "frozen", False):
+    ...
 
-Proposed marker: `&&&18 — Adapter Boundary`.
+&%%15 — Markei Installed Data Lifecycle
 
-Learning status: Red.
+Purpose:
 
-#### &&& Capability Versus Placeholder
+Unify per-user database location, first-launch creation, existing-data preservation, migration, upgrade compatibility, and recovery expectations.
 
-Cycle 04 mentions API integration and future mobile features such as receipt recognition. The learner should distinguish a placeholder field from a working capability.
+Prerequisites:
 
-A placeholder can preserve a future integration slot without pretending the app already integrates with an external system.
+%%%01
+&&&22
+&&&26
 
-Proposed marker: `&&&19 — Capability Versus Placeholder`.
+Initial status:
 
-Learning status: Red.
+Yellow
 
-### Technology-specific concepts to defer
+7. Glossary Candidates
 
-The following should not become immediate learning prerequisites unless Main chooses a mobile stack:
+Derived from the proposed canonical concepts:
 
-- Android/iOS packaging;
-- camera APIs;
-- NFC-e/OCR recognition pipeline;
-- app-store distribution;
-- mobile database sync;
-- offline-first conflict resolution;
-- authentication and remote backend design;
-- framework-specific mobile widgets.
+source execution
+packaged execution
+frozen application
+entrypoint
+direct dependency
+transitive dependency
+dependency closure
+build-time dependency
+runtime dependency
+build environment
+build artifact
+application bundle
+executable
+installer
+one-file distribution
+one-folder distribution
+portable application
+installed application
+bundled resource
+resource base
+writable user data
+user-data directory
+first-launch initialization
+idempotent migration
+release artifact
+clean-environment validation
+reproducible build process
+deterministic build
+upgrade compatibility
+rollback
+packaging configuration
 
-These are real future concepts, but they are not needed before Cycle 04 Settings boundary correction.
+Glossary-only release-hardening terms:
 
-### Package/dependency concepts
+code signing
+antivirus false positive
+publisher reputation
 
-No new package/dependency concept should be promoted yet.
+No packaging tool should receive canonical treatment merely because it is selected.
 
-Potential future `%%%` candidates may include a mobile UI framework or OCR/receipt-recognition package, but only after the project chooses an actual technology path.
+8. Learning Dependency Spine
 
----
-
-## 5. Proposed Learning Sequence
-
-### Immediate Cycle 04 progression
-
-1. `&&&08 — Configuration State` — Red → Yellow
-2. `&%%06 — Settings-Owned Preferences` — Red → Yellow
-3. `&&&15 — Default Value as Fallback Contract` — Red
-4. `&&&16 — Validation Boundary` — Red
-5. `&&%07 — Enumerated Choice Values` — Red
-6. `&&&17 — Time Reference as Behavioral Anchor` — Red
-7. `&&%03 — Date/Datetime Boundary Handling` — Red → Yellow
-8. `&&&05 — Time Bucketing` — Red → Yellow
-9. `&%%08 — History Grouping Service Responsibility` — Yellow reinforcement
-10. `&&&14 — Mobile Readiness Without Rewrite` — Red → Yellow
-11. `&&&18 — Adapter Boundary` — Red
-12. `&%%12 — Service Contract Stability` — Yellow reinforcement
-13. `&&&19 — Capability Versus Placeholder` — Red
-
-### Compact dependency spine
-
-```text
-&&&08 Configuration State
+entrypoint
 ↓
-&%%06 Settings-Owned Preferences
+source execution versus frozen execution
 ↓
-&&&15 Default Value as Fallback Contract
+direct / transitive dependencies
 ↓
-&&&16 Validation Boundary
+build-time / runtime dependency
 ↓
-&&%07 Enumerated Choice Values
+build environment
 ↓
-&&&17 Time Reference as Behavioral Anchor
+reproducible build process
 ↓
-&&%03 Date/Datetime Boundary Handling
+packaging versus installation
 ↓
-&&&05 Time Bucketing
+portable / installed distribution
 ↓
-&%%08 History Grouping Service Responsibility
+bundled-resource discovery
 ↓
-&&&14 Mobile Readiness Without Rewrite
+resource state versus user state
 ↓
-&&&18 Adapter Boundary
+first-launch initialization
 ↓
-&%%12 Service Contract Stability
-```
+installed database migration
+↓
+release version and compatibility
+↓
+successful build versus validated release
+↓
+optional signing / antivirus / rollback hardening
 
-### Maturity summary
+9. Markei Learning Spine
 
-Green:
+main.py
+↓
+app/main.py
+↓
+QApplication / MainWindow
+↓
+PySide6 runtime collection
+↓
+frozen execution context
+↓
+resource_base()
+↓
+schema.sql and seed.sql
+↓
+user_data_dir()
+↓
+%LOCALAPPDATA%\Markei\market.sqlite
+↓
+initialize()
+↓
+migrate()
+↓
+VERSION
+↓
+packaged artifact
+↓
+portable or installed delivery
+↓
+clean-environment validation
 
-- None newly promoted.
-- Existing concept map still reports no fully Green concepts.
+10. Proposed Concept-Map Checkpoint
 
-Yellow:
+Current milestone:
 
-- `&&&01 — Domain Model Field Semantics`
-- `&&&02 — Raw Data Versus Derived Data`
-- `&&&03 — Naming as Data Contract`
-- `&&%04 — Platform-Neutral Read-Model Shape`
-- `&&%06 — UI View State`
-- `&%%04 — Service-Owned Calculation Responsibility`
-- `&%%08 — History Grouping Service Responsibility`
-- `&%%12 — Service Contract Stability`
+Cycle 05 — Sprint 01
+Windows Desktop Packaging and Installation Readiness
 
-Red:
+Stable concepts:
 
-- `&&&05 — Time Bucketing`
-- `&&&08 — Configuration State`
-- `&&&14 — Mobile Readiness Without Rewrite`
-- `&&%03 — Date/Datetime Boundary Handling`
-- `&%%06 — Settings-Owned Preferences`
-- `&&&15 — Default Value as Fallback Contract`
-- `&&&16 — Validation Boundary`
-- `&&%07 — Enumerated Choice Values`
-- `&&&17 — Time Reference as Behavioral Anchor`
-- `&&&18 — Adapter Boundary`
-- `&&&19 — Capability Versus Placeholder`
+None fully Green.
 
----
+Active existing concepts:
 
-## 6. KANBAN Candidates
+&&&03
+&&&08
+&&&15
+&&&16
+&&&18
+&&&19
+&&%04
+&%%12
+%%%01
 
-Do not promote yet. Candidate concepts for later `02_KANBAN.md` update:
+Active proposed concepts:
 
-### `&&&15 — Default Value as Fallback Contract`
+&&&20
+&&&21
+&&&22
+&&&23
+&&&24
+&&&25
+&&&26
+&&%09
+&%%15
 
-A default value is the explicit fallback used when no user preference has been set.
+Next learning work:
 
-### `&&&16 — Validation Boundary`
+Trace the packaged entrypoint.
 
-A validation boundary is the point where incoming or editable data is checked before it is accepted as application state.
+Explain frozen execution.
 
-### `&&&17 — Time Reference as Behavioral Anchor`
+Classify dependency categories.
 
-A time reference is the temporal anchor used by calculations, classification, prediction, or display to interpret time-sensitive records.
+Trace bundled schema discovery.
 
-### `&&&18 — Adapter Boundary`
+Trace installed-user database creation and migration.
 
-An adapter boundary separates reusable application behavior from platform-specific rendering, device input, or external integration code.
+Separate executable, bundle, portable distribution, installer, and installed application.
 
-### `&&&19 — Capability Versus Placeholder`
+Connect version identity to database compatibility.
 
-A capability performs a real behavior. A placeholder preserves a future slot or configuration surface without pretending the behavior exists yet.
+Define artifact-level release validation.
 
-### `&&%07 — Enumerated Choice Values`
+11. Risks and Deferrals
 
-An enumerated choice value is a value constrained to a known set of valid options, such as weekdays or mode names.
+Risks:
 
-Potential later `%%%` concepts are deferred until a mobile or integration dependency is actually selected.
+treating executable and installer as synonyms;
 
----
+storing user data inside replaceable application files;
 
-## 7. Main Chat Handoff
+assuming the working directory is the repository root;
 
-### Didactic conclusions ready for Main synthesis
+confusing packaging-tool behavior with application behavior;
 
-1. Settings should be taught as configuration state plus preference persistence, not as an all-purpose behavior owner.
-2. “Time reference time” should not be implemented as a vague setting until Main/Design clarifies which temporal role it owns.
-3. The most didactically useful decomposition is:
+treating successful artifact creation as release validation;
 
-```text
-current-time reference
-history boundary reference
-testing/reference override
-prediction reference
-display reference
-```
+overloading the sprint with signing, CI, update servers, or strict deterministic-build requirements;
 
-4. Cycle 04 Settings learning should reinforce existing Red concepts: Configuration State, Settings-Owned Preferences, Time Bucketing, and Date/Datetime Boundary Handling.
-5. New concept candidates should remain staged, not promoted, until implementation direction or Codex evidence confirms them.
-6. Mobile development should begin as a boundary lesson: service contracts, adapter boundary, platform-neutral read models, and placeholder discipline.
-7. Technology-specific mobile topics should remain deferred until the project chooses a concrete mobile stack or integration path.
-8. API/reward-system fields should be taught as placeholders unless implementation actually connects to an external provider.
+reusing KANBAN numbers absent from the canonical register but present in the checkpoint;
 
-### Unresolved learning questions
+promoting a packaging product instead of the reusable concept it demonstrates.
 
-1. Does “time reference time” mean app-wide current-date override, History grouping boundary, prediction anchor, UI display preference, or more than one separate setting?
-2. Should week/month boundary preferences be taught as one generalized time-bucketing concept or as separate weekly/monthly configuration concepts?
-3. Should Settings include mobile-readiness preferences now, or should mobile readiness remain a service-contract concept without Settings UI?
-4. Should API/reward-system placeholders be part of Settings learning now, or should they remain operational/design placeholders only?
-5. Does Main want Cycle 04 didactics to promote new KANBAN entries after implementation evidence, or keep this cycle as staged learning support only?
+Implementation evidence still required:
+
+complete dependency closure;
+
+Qt plugin/resource collection behavior;
+
+complete non-code resource inventory;
+
+one-file versus one-folder resource behavior;
+
+clean Windows launch;
+
+first-launch database creation;
+
+existing database reopening;
+
+migration under packaged execution;
+
+upgrade preservation;
+
+release metadata consistency;
+
+antivirus behavior;
+
+rollback boundary.
+
+Deferred to Sprint 02:
+
+mobile framework
+mobile UI
+backend/API
+synchronization
+accounts/authentication
+cross-device persistence
+mobile distribution
+
+Deferred release hardening:
+
+production code-signing acquisition
+automated updater
+formal rollback automation
+byte-identical deterministic builds
+CI release publishing
+
+12. Stage Status
+
+This document is functional Didactic staging.
+
+It does not:
+
+promote concepts into 02_KANBAN.md;
+
+update 07_GLOSSARY.md;
+
+update 08_CONCEPT_MAP.md;
+
+select a packaging tool;
+
+design an installer;
+
+authorize source changes;
+
+begin Sprint 02;
+
+establish that a release artifact has been built or validated.
+
+Main Chat should reconcile this stage with Operational and Design evidence before preparing any didactic materialization instructions.
+
