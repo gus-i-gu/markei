@@ -222,3 +222,115 @@ These are checkpoint recommendations, not canonical concepts.
 This retrospective is ready to compress into `08_CONCEPT_MAP.md`.
 
 After checkpoint materialization, this DEV_STAGE content remains ephemeral evidence. `13_LECTURE_REGISTER.md` remains empty until explicit observational registration. The failed Cycle 05 mobile-preparation attempt may later become the first observational metadata entry once checkpoint completion is accepted.
+
+---
+
+## 9. Appended Methodological Learning Note — Why Cycle 05 Failed
+
+Cycle 05 did not fail because no useful work occurred. It failed as a **controlled learning and coordination cycle** because its declared question, completion criteria, and active execution direction stopped referring to the same object.
+
+The cycle began with a broad but explicit learning objective:
+
+```text
+understand and order the prerequisites for mobile implementation
+```
+
+That objective required unresolved product, architecture, persistence, synchronization, identity, migration, contract, and validation decisions to be made visible and reconciled before implementation. The planning artifacts correctly identified those dependencies, but the methodology did not preserve them as enforced stop conditions when the active direction changed.
+
+The decisive breakdown was therefore:
+
+```text
+planned objective
+≠ active sprint objective
+≠ closure evidence
+```
+
+### 9.1 Scope changed without formal cycle redefinition
+
+The project moved from mobile-preparation reasoning to desktop packaging execution. That pivot may have been locally valuable, but it was not first represented as a formally closed, suspended, or superseded mobile cycle followed by a newly named packaging cycle.
+
+As a result, the label `Cycle 05` accumulated two incompatible meanings:
+
+```text
+Cycle 05 as mobile-readiness preparation
+Cycle 05 as Windows packaging and installation
+```
+
+The shared name obscured the fact that the first objective remained incomplete while the second objective had different dependencies and evidence requirements.
+
+### 9.2 Exit criteria were documented but not operationally binding
+
+The mobile-preparation stage defined meaningful exit criteria. However, those criteria functioned as descriptive planning rather than as gates that prevented unrelated materialization from being interpreted as cycle progress.
+
+Methodologically, an exit condition is useful only when later reconciliation asks:
+
+```text
+Was the condition satisfied?
+Was it explicitly deferred?
+Was the cycle cancelled or replaced?
+```
+
+Cycle 05 instead advanced through a pivot without recording one of those outcomes at the moment of transition.
+
+### 9.3 Knowledge states were allowed to blur
+
+The cycle mixed several maturity states:
+
+- questions that had only been identified;
+- proposed architecture that had not been accepted;
+- packaging configuration that existed;
+- frozen-runtime behavior that had been validated;
+- installer lifecycle behavior that remained blocked.
+
+Without strict state labels at the cycle level, “planned,” “configured,” “implemented,” and “validated” could appear as one stream of progress. The later packaging checkpoint repaired this distinction, but only after the cycle identity had already drifted.
+
+### 9.4 Local success displaced global reconciliation
+
+The packaging sprint produced concrete evidence quickly. That made it easier for immediate executable progress to dominate the broader unresolved mobile-preparation program.
+
+This illustrates a methodological asymmetry:
+
+```text
+implementation success is visible immediately
+unresolved coordination debt is visible only through reconciliation
+```
+
+When reconciliation is delayed, a successful local artifact can create the impression that the governing cycle is succeeding even though its original strategic exit conditions remain unmet.
+
+### 9.5 The notebook captured activity better than transition meaning
+
+The historical files recorded substantial analysis and implementation detail, but the transition itself lacked a compact authoritative statement such as:
+
+```text
+Mobile-preparation Cycle 05 is suspended as incomplete.
+A separate Windows Packaging Sprint begins.
+Its completion does not satisfy mobile-preparation exit criteria.
+```
+
+The absence of that statement allowed later checkpoints and identifiers to inherit mixed context. The recovery process had to reconstruct the distinction retrospectively from commits instead of reading it directly from a deliberate transition record.
+
+### 9.6 Overall conceptual lesson
+
+The central learning is that a development cycle is not defined only by chronological commits or a shared number. It is defined by the coherence of:
+
+```text
+objective
+→ prerequisite decisions
+→ authorized scope
+→ evidence model
+→ exit conditions
+→ closure statement
+```
+
+When one of these changes materially, the cycle must be explicitly re-scoped, suspended, or closed. Otherwise, useful work can still occur while the cycle itself fails as a unit of project knowledge.
+
+For future Sketch Notebook operation, a major pivot should require a small transition reconciliation containing:
+
+1. the previous objective and its completion status;
+2. unresolved items carried forward;
+3. the reason for the pivot;
+4. the new objective and evidence class;
+5. whether the new work supersedes, suspends, or merely interrupts the former cycle;
+6. separate exit criteria and naming when the semantic object has changed.
+
+This note is observational and methodological. It does not redefine the current didactic canon. It is staged for later inclusion alongside the first recovery metadata in `13_LECTURE_REGISTER.md`.
