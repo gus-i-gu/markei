@@ -1,65 +1,99 @@
 # C_DESIGN.md
 
 > Status: Functional Design Stage
-> Knowledge State: Staged / Observational / Unpromoted
+> Knowledge State: Staged / Reconciled Candidate / Unpromoted
 > Authority: Design Chat [D]
-> Scope: Consolidated structural recovery of the current Markei implementation for later Main synthesis and Sketch Notebook repopulation
+> Scope: Design-domain recovery, reconciliation report, and initial canonical candidate for `design/01_ARCHITECTURE.md`
 > Branch inspected: `sketch-notebook-recovery`
 
 ---
 
-# 1. Review Objective
+# 1. Stage Purpose
 
-Recover the current functional and structural picture from implementation evidence before commit-oriented historical analysis.
+This file preserves Design Chat reasoning for Main synthesis. It records the recovered implementation structure, reports reconciliation status against Main staging, and stages the first candidate body for canonical design knowledge.
 
-Inspected surfaces:
+This file is not canonical architecture. Canonical design knowledge belongs in:
 
 ```text
-app/main.py
-app/core/
-    contracts.py
-    models.py
-    services.py
-    repository.py
-    database.py
-app/database/
-    schema.sql
-app/desktop/
-    main_window.py
-    ui/pages/register_page.py
-    ui/pages/lists_page.py
-    ui/pages/history_page.py
-    ui/pages/settings_page.py
-    ui/widgets/product_detail_panel.py
+documentation/sketch_notebook/design/01_ARCHITECTURE.md
 ```
 
-This report does not promote architecture into canonical design memory. It stages implementation observations, inferred responsibility boundaries, drift candidates, and unresolved design questions.
+Physical materialization of that file requires Main-approved routing.
 
 ---
 
-# 2. Consolidated Structural Picture
+# 2. Reconciliation Inputs
+
+## 2.1 Design functional stage
+
+The Design stage was recovered from direct repository inspection of:
 
 ```text
 app/main.py
-    ↓ creates
-QApplication + MainWindow
-    ↓ composes and coordinates
-RegisterPage / ListsPage / HistoryPage / SettingsPage
-    ↓ each page constructs independently
-ProductService
-    ↓ constructs
-Repository
-    ↓ owns
-one SQLite connection + cursor
-    ↓ delegates lifecycle to
-app.core.database
-    ↓ initializes / configures / migrates / connects
+app/core/contracts.py
+app/core/models.py
+app/core/services.py
+app/core/repository.py
+app/core/database.py
 app/database/schema.sql
-    ↓ defines
-SQLite persistence model
+app/desktop/main_window.py
+app/desktop/ui/pages/*
+app/desktop/ui/widgets/product_detail_panel.py
 ```
 
-Observed dependency direction:
+The recovered evidence supports a stable present-state structural picture.
+
+## 2.2 Main stage
+
+Expected reconciliation input:
+
+```text
+documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md
+```
+
+Repository result:
+
+```text
+file absent on sketch-notebook-recovery
+```
+
+The path was checked directly and through repository search.
+
+Consequences:
+
+- no Main-stage proposition was available to confirm, reject, or constrain the Design findings;
+- Design Chat must not invent or write `J_MAIN_STAGE.md`;
+- the missing Main-stage counterpart is a structural reconciliation gap;
+- the canonical candidate below is reconciled against implementation evidence and methodology only, not against a Main-authored J synthesis.
+
+This absence must be surfaced to Main Chat before materialization.
+
+---
+
+# 3. Methodological Routing Result
+
+`FLUX.md` assigns Design Chat active-stage authority only over:
+
+```text
+documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
+```
+
+It identifies the permanent Design symmetry files as:
+
+```text
+Canonical Knowledge      design/01_ARCHITECTURE.md
+Derived Knowledge        design/14_MODEL_OVERVIEW.md
+Domain Checkpoint        design/09_DESIGN_STATE.md
+Observational History    design/03_DECISION_LOG.md
+```
+
+During active functional staging, Design Chat must not edit Main stage files or prematurely materialize permanent domain memory. Therefore this pass stages a proposed canonical body here. It does not write `01_ARCHITECTURE.md` directly.
+
+---
+
+# 4. Recovered Current Architecture
+
+## 4.1 Runtime dependency direction
 
 ```text
 Desktop UI
@@ -69,333 +103,165 @@ Desktop UI
                 → SQLite
 ```
 
-Supporting types flow inward from `app.core.models` and `app.core.contracts`, but runtime dependency inversion is incomplete because concrete classes construct their own concrete dependencies.
+Supporting domain representations and declared invariants live in `app/core/models.py` and `app/core/contracts.py`.
+
+Runtime inversion is incomplete because concrete UI pages construct `ProductService`, and `ProductService` constructs `Repository`.
+
+## 4.2 Functional layers
+
+```text
+Desktop bootstrap
+    app/main.py
+
+Desktop composition and coordination
+    app/desktop/main_window.py
+
+Qt presentation
+    app/desktop/ui/pages/*
+    app/desktop/ui/widgets/*
+
+Application facade and business layer
+    app/core/services.py
+
+Persistence facade
+    app/core/repository.py
+
+Persistence lifecycle and compatibility
+    app/core/database.py
+
+Domain representation and declared invariants
+    app/core/models.py
+    app/core/contracts.py
+    app/core/config.py
+
+Bundled persistence definition
+    app/database/schema.sql
+
+External writable state
+    %LOCALAPPDATA%/Markei/market.sqlite
+```
 
 ---
 
-# 3. Domain and Persistence Model
+# 5. Canonical Candidate — Architecture Foundations
 
-## 3.1 Domain entities
+The following sections are staged as the first proposed content for `design/01_ARCHITECTURE.md`.
 
-`app/core/models.py` defines:
+## 5.1 System form
 
-- `Category`
-- `Store`
-- `Product`
-- `Purchase`
+Markei is a local desktop monolith implemented with Python, PySide6, and SQLite.
 
-Current model character:
+The application is organized as a layered system rather than as independently deployed services. Layer boundaries separate presentation, business coordination, persistence behavior, and database lifecycle while preserving a small deployment unit.
 
-- Models are persistence-oriented dataclasses with small semantic helpers.
-- Models do not execute SQL or orchestrate application workflows.
-- Relationships are identifier-based rather than nested object graphs.
-- `Purchase` is the immutable historical ledger, except that erroneous records may be deleted.
-- `Product` combines editable metadata, current inventory state, and cached analytical summaries derived from purchases.
+## 5.2 Dependency direction
 
-Design interpretation:
+The accepted dependency-direction candidate is:
 
 ```text
-Purchase = historical source record
-Product  = editable aggregate identity + persisted current-state projection/cache
+Desktop presentation
+    ↓
+Application and business services
+    ↓
+Persistence adapter
+    ↓
+Database lifecycle manager
+    ↓
+SQLite
 ```
 
-This dual role is coherent only while recalculation ownership remains centralized and all write paths preserve the invariant.
+Higher layers may request behavior from lower layers. Lower persistence layers must not depend on Qt presentation objects.
 
-## 3.2 Persistent relationships
+The desktop UI must not execute SQL or manipulate database cursors.
 
-`app/database/schema.sql` defines:
+The service layer must not contain SQLite statements or depend on Qt widgets.
+
+The repository owns SQLite statements and row-to-model mapping.
+
+The database manager owns database location, initialization, connection configuration, migration, and closure primitives.
+
+## 5.3 Domain records and source relationships
+
+The active domain model contains `Category`, `Store`, `Product`, and `Purchase`.
+
+Persistent relationships are:
 
 ```text
 Category 1 ─── * Product
 Product  1 ─── * Purchase
-Store    1 ─── * Purchase (optional)
-Product  1 ─── * Promotion
-Store    1 ─── * Promotion (optional)
-Settings key ─ value
+Store    1 ─── * Purchase, optional
 ```
 
-Important semantics:
+`Purchase` is the historical purchase ledger. A receipt entry creates a Purchase record. Purchase records are not edited as ordinary mutable state; erroneous records may be deleted and dependent summaries recalculated.
 
-- Product deletion cascades to purchases.
-- Product identifier updates cascade to purchases.
-- Category and Store deletion behavior is not explicitly declared.
-- Promotions exist structurally but are not represented by an inspected domain model or active service/UI workflow.
+`Product` owns editable product identity and metadata while also storing cached current and analytical state derived from Purchase history.
 
-Staged drift candidate:
+The Product cache remains valid only while one service-owned recalculation path is authoritative for calculated fields.
 
-```text
-promotions table = dormant roadmap structure, incomplete feature, or stale schema
-classification unresolved
-```
+## 5.4 Product calculated-state invariant
 
----
+Editable Product state and calculated Product state are distinct responsibilities.
 
-# 4. Declared Architecture Contracts
+Editable state includes product identity, category, name, brand, unit, minimum quantity, reorder threshold, and notes.
 
-`app/core/contracts.py` declares:
+Calculated state includes current quantity, price history, purchase dates, consumption estimates, duration estimates, expected next purchase, shelf-life estimates, expected expiration, and price deltas.
 
-- editable versus calculated Product fields;
-- Purchase immutability;
-- repository and service abstract bases;
-- system invariants;
-- service-owned Product-summary recalculation.
+Calculated fields must not be independently authored by desktop pages or arbitrary repository callers. They are produced through the Product recalculation workflow.
 
-Positive architectural value:
+## 5.5 Application service responsibility
 
-- It records important responsibility boundaries close to implementation.
-- It identifies calculated Product fields as protected derived state.
-- It distinguishes historical Purchase truth from current Product summary.
+The current `ProductService` acts as the Markei application facade.
 
-Runtime mismatch:
+It owns receipt and product workflows, Product-summary recalculation, inventory classification, history grouping and analytics, settings validation and persistence coordination, store administration, and platform-neutral read-model preparation.
 
-- `RepositoryContract` exposes only a subset of concrete repository behavior.
-- `ServiceContract` excludes stores, settings, history projections, analytics, list projections, and product-view projections now provided by `ProductService`.
-- `ProductService` constructs `Repository` directly rather than receiving a contract implementation.
-- Desktop pages construct `ProductService` directly rather than receiving an application-facing contract.
+This breadth is accepted as the recovered current architecture of the small monolith. It does not establish that one service class must remain permanent.
 
-Current classification:
+Future decomposition must preserve workflow, transaction, and calculated-state ownership rather than splitting methods solely by file size.
 
-```text
-contracts.py
-    = useful architectural declaration
-    + partial abstract interface
-    ≠ active complete dependency-inversion boundary
-```
+## 5.6 Repository responsibility
 
-This is not necessarily a defect for the current desktop monolith, but the distinction must be preserved when repopulating design canon.
+The current Repository is the complete SQLite persistence facade for the monolith.
 
----
+It owns SQL execution, CRUD and query operations, row-to-domain mapping, one SQLite connection and cursor per Repository instance, and persistence resource closure.
 
-# 5. Application Service Cohesion
+The repository must not own business classification, history grouping, inventory forecasting, or Qt presentation behavior.
 
-## 5.1 Actual ProductService responsibility
+Repository and service decomposition are coupled architectural decisions because transaction boundaries and aggregate workflows cross multiple persistence operations.
 
-`ProductService` now owns several capability groups:
+## 5.7 Database resource boundary
+
+Installed application resources and writable user state are separate:
 
 ```text
-Commands
-    register receipt
-    update/delete product
-    delete purchase
-    save store
-    save settings
+Bundled read-only schema
+    application resource directory
 
-Domain calculations
-    recalculate Product summary
-    duration and consumption calculations
-    next-purchase estimation
-    shelf-life and expiration estimation
-    price variation
-
-Inventory projections
-    storage / shortage / market classification
-    unified Lists read model
-
-History projections
-    month/week grouping
-    period summaries
-    expenditure analytics
-    frame comparison
-
-Administration
-    settings defaults and validation
-    legacy setting adaptation
-    store management
-
-Presentation-oriented models
-    labels
-    platform-neutral dictionaries
-    Product detail views
-```
-
-Positive boundary:
-
-- SQL remains outside the service.
-- Business calculations are centralized.
-- Desktop pages consume application operations and prepared read models.
-- History grouping and analytics are not duplicated inside widgets.
-
-Cohesion finding:
-
-```text
-ProductService is no longer merely a product service.
-It currently behaves as the Markei application facade.
-```
-
-The service remains workable for the small monolith, but its name and declared contract no longer describe its actual breadth.
-
-## 5.2 Read-model boundary
-
-The service emits dictionary-based read models for:
-
-- Lists rows;
-- History month/week groups;
-- History analytics;
-- Product detail views.
-
-The desktop layer retains widget-specific presentation concerns:
-
-- tables and trees;
-- colors;
-- text placement;
-- event connections;
-- user feedback dialogs.
-
-The service currently also emits formatted labels such as money, status, cycle, date, and remaining-time strings.
-
-Staged interpretation:
-
-```text
-Domain calculation
-    → application projection
-        → partially formatted platform-neutral dictionary
-            → Qt-specific rendering
-```
-
-This is a reasonable MVP boundary. It is not yet clear whether formatting belongs intentionally in the application facade or should eventually move to desktop presenters/view models.
-
----
-
-# 6. Repository Cohesion and Transaction Model
-
-## 6.1 Repository responsibility
-
-`Repository` owns:
-
-- SQL execution;
-- row-to-domain mapping;
-- products, purchases, categories, stores, settings, and some promotion queries;
-- one SQLite connection and cursor;
-- commit helpers;
-- lifecycle closure;
-- context-manager support.
-
-`app.core.database` owns connection acquisition and closure mechanics.
-
-Positive boundary:
-
-- Persistence mechanics are centralized.
-- Service code does not manipulate cursors.
-- Models remain independent of SQLite.
-
-Breadth finding:
-
-```text
-one Repository = complete persistence facade for the monolith
-```
-
-This mirrors the single application-service facade. Splitting either layer independently would require deliberate aggregate and transaction ownership decisions.
-
-## 6.2 Proven transaction behavior
-
-Repository mutation methods commit internally.
-
-Observed receipt workflow:
-
-```text
-get Product
-→ create Product OR update Product     [commit]
-→ insert Purchase                      [commit]
-→ recalculate Product
-→ update Product summary               [commit]
-```
-
-Therefore receipt registration is sequentially consistent but not atomic.
-
-Possible partial states after interruption or exception include:
-
-```text
-Product created without Purchase
-Product metadata updated without Purchase
-Purchase inserted before Product summary refresh
-Purchase deleted before recalculation completes
-```
-
-This is now a confirmed architectural property, not merely an uncertainty.
-
-Required future decision:
-
-- accept best-effort sequential consistency for the local MVP; or
-- introduce service-owned transaction boundaries for workflows that must succeed or roll back as one unit.
-
-A transaction change cannot be made safely as a repository-only refactor because current repository methods commit autonomously.
-
----
-
-# 7. Database Lifecycle and Resource Boundaries
-
-## 7.1 Resource versus user state
-
-```text
-Bundled read-only resource
-    app/database/schema.sql
-
-Writable runtime state
+Writable user database
     %LOCALAPPDATA%/Markei/market.sqlite
 ```
 
-This is a sound installed-application boundary.
+Application replacement or uninstall must not implicitly redefine the writable database as an installed program resource.
 
-## 7.2 Connection acquisition side effects
+Database initialization and compatibility migration belong to the persistence lifecycle boundary, not to presentation logic.
 
-`connect()` performs:
+## 5.8 Desktop composition
 
-```text
-check database existence
-→ initialize from schema when absent
-→ open connection
-→ configure PRAGMAs and row factory
-→ apply idempotent migrations
-→ return connection
-```
+`app/main.py` is the desktop bootstrap. It creates the Qt application and the main window.
 
-Consequences:
+`MainWindow` is the current desktop shell and informal UI coordinator. It owns page construction, tab composition, navigation, edit routing, and cross-page refresh calls.
 
-- Repository construction also performs startup compatibility work.
-- Every page-owned service creates a repository and triggers migration checks.
-- Ordinary dependency construction and schema-evolution responsibility are coupled.
+Pages own Qt interaction and rendering. They consume application operations and read models rather than database commands.
 
-The current behavior is viable because migrations are idempotent, but startup ownership is implicit.
-
----
-
-# 8. Desktop Composition and Coordination
-
-## 8.1 Entry point
-
-`app/main.py` is intentionally thin:
-
-- create `QApplication`;
-- create `MainWindow`;
-- show it;
-- enter the Qt event loop.
-
-It does not construct shared application dependencies or coordinate application shutdown.
-
-## 8.2 MainWindow
-
-`MainWindow` owns:
-
-- page construction;
-- tab composition;
-- navigation helpers;
-- edit routing into Register;
-- refresh coordination for Lists and History.
-
-Current relationship:
+`ProductDetailPanel` represents the preferred read-only presentation boundary:
 
 ```text
-MainWindow knows concrete pages
-Pages know selected MainWindow methods
+service prepares view data
+    ↓
+widget renders view data
 ```
 
-This forms an informal desktop coordinator with bidirectional UI coupling.
+## 5.9 Current composition limitation
 
-The pattern is manageable for the current application but should be explicitly named before more cross-page behavior is added.
-
-## 8.3 Per-page service ownership
-
-Confirmed page ownership:
+Each page currently constructs its own service, repository, and SQLite connection:
 
 ```text
 RegisterPage → ProductService → Repository → connection
@@ -404,188 +270,124 @@ HistoryPage  → ProductService → Repository → connection
 SettingsPage → ProductService → Repository → connection
 ```
 
-Consequences:
+This is a recovered implementation property, not a preferred permanent principle.
 
-- four service facades and four long-lived repository connections are created during normal window composition;
-- UI tests cannot naturally inject substitutes;
-- startup migration checks repeat;
-- application resource ownership is distributed among child widgets;
-- no single composition object has an authoritative list of resources to close.
+Application resource ownership and shutdown are consequently distributed among pages. A future composition decision must establish either one shared application facade and explicit composition-root shutdown, or multiple bounded services/repositories with explicit ownership for each connection.
 
-## 8.4 Local closeEvent behavior
+## 5.10 Transaction integrity
 
-HistoryPage and SettingsPage explicitly close their own services in `closeEvent`, swallowing cleanup exceptions.
+Repository mutation methods currently commit autonomously.
 
-This partially mitigates resource leakage but does not establish reliable application-level ownership because:
-
-- child-page close event delivery depends on Qt widget lifecycle behavior;
-- cleanup policy is duplicated across pages;
-- swallowed exceptions remove cleanup evidence;
-- MainWindow does not expose a single shutdown sequence;
-- closure consistency across all pages remains an implementation convention rather than a composition invariant.
-
-The correct interpretation is therefore:
+Receipt registration therefore performs multiple commits:
 
 ```text
-cleanup exists locally
-but shutdown ownership remains structurally implicit
+create or update Product
+→ insert Purchase
+→ recalculate and update Product summary
 ```
 
-## 8.5 Settings and refresh coupling
+The current workflow is sequentially consistent but not atomic.
 
-SettingsPage edits both persisted application settings and Store entities, then calls `MainWindow.refresh_pages()`.
+This is an implementation limitation, not a canonical target. Workflows that semantically represent one user action should eventually declare whether partial persistence is acceptable or whether all participating mutations must commit or roll back together.
 
-MainWindow refreshes Lists and History, while Settings refreshes itself locally.
+Transaction ownership belongs at the workflow boundary. It cannot be corrected safely by splitting the repository without first defining service-level unit-of-work semantics.
 
-This demonstrates that MainWindow already acts as a small application event coordinator, but through direct method calls rather than signals or an event abstraction.
+## 5.11 Presentation read models
 
-## 8.6 ProductDetailPanel
+Services may expose platform-neutral read models so presentation layers do not recreate business calculations.
 
-`ProductDetailPanel` is a read-only Qt renderer for a service-prepared dictionary.
+Qt-specific responsibilities remain in desktop widgets: widget construction, event and signal binding, colors and selection behavior, dialogs, and visual placement.
 
-Positive boundary:
+The current dictionary read models are valid for the MVP. Whether they later become explicit immutable view-model types remains an unresolved refinement rather than a foundational requirement.
 
-- It has no service or repository dependency.
-- It does not calculate business state.
-- It renders identity, summary, store-price, and recent-purchase projections.
+---
 
-This widget is the clearest example of the desired presentation boundary:
+# 6. Excluded From Initial Canon
+
+## 6.1 Promotions
+
+The `promotions` table exists in `schema.sql`, but no active Promotion model, service workflow, or desktop feature was recovered.
+
+Classification remains open:
 
 ```text
-service prepares view data
-widget renders view data
+dormant roadmap structure
+or incomplete feature
+or stale schema
 ```
 
+## 6.2 Persisted page order
+
+`pages.order` is persisted, but current MainWindow tab composition is hard-coded and consolidates Storage, Shortage, and Market into Lists. The setting is persisted but currently inert for desktop composition.
+
+## 6.3 Contract mechanism
+
+`contracts.py` records useful invariants and partial abstract interfaces, but concrete runtime construction does not currently depend on those abstractions.
+
+It remains unclassified as the intended complete dependency-inversion boundary, a partial interface awaiting expansion, or source-adjacent architectural documentation.
+
 ---
 
-# 9. Current Functional Architecture
+# 7. Decisions Requiring Main Reconciliation
+
+Before materializing `design/01_ARCHITECTURE.md`, Main Chat should explicitly accept, revise, or defer these points:
+
+1. Accept the layered local-desktop-monolith description.
+2. Accept Purchase as historical ledger and Product as editable identity plus persisted calculated cache.
+3. Accept ProductService as the recovered current application facade without making its permanence mandatory.
+4. Accept Repository as the recovered monolithic persistence facade.
+5. Classify per-page service ownership as implementation state rather than architectural target.
+6. Classify non-atomic receipt registration as a limitation requiring a later transaction decision.
+7. Confirm MainWindow as the current desktop coordinator.
+8. Decide whether the missing `J_MAIN_STAGE.md` should be created, restored, or intentionally replaced by another Main synthesis surface.
+
+---
+
+# 8. Proposed Materialization Target
+
+Upon Main acceptance, the first Design domain materialization should populate:
 
 ```text
-Desktop Bootstrap
-    app/main.py
-
-Desktop Composition / Coordination
-    app/desktop/main_window.py
-
-Qt Presentation
-    app/desktop/ui/pages/*
-    app/desktop/ui/widgets/*
-
-Application Facade / Business Layer
-    app/core/services.py
-
-Persistence Facade
-    app/core/repository.py
-
-Persistence Lifecycle / Compatibility
-    app/core/database.py
-
-Domain Representation / Declared Invariants
-    app/core/models.py
-    app/core/contracts.py
-    app/core/config.py
-
-Bundled Persistence Definition
-    app/database/schema.sql
-
-External Runtime State
-    %LOCALAPPDATA%/Markei/market.sqlite
+documentation/sketch_notebook/design/01_ARCHITECTURE.md
 ```
 
----
-
-# 10. Stable-Looking Boundaries for Later Promotion Review
-
-The following appear deliberate and coherent enough to become candidates for canonical design recovery after Main reconciliation:
-
-1. Desktop UI does not execute SQL.
-2. Application service owns workflows, validation, calculations, and UI-consumable projections.
-3. Repository owns SQLite statements and row mapping.
-4. Database manager owns connection configuration, initialization, migration, and resource/user-data location.
-5. Domain models do not perform persistence.
-6. Purchase is the historical ledger.
-7. Product stores editable state plus a cached summary recalculated from Purchase history.
-8. MainWindow composes pages and coordinates navigation and refresh.
-9. ProductDetailPanel-style widgets render prepared view data without business or persistence dependencies.
-10. Bundled application resources are separated from writable user data.
-
-These are still staged observations, not canonical architecture.
-
----
-
-# 11. Architectural Risks and Drift Candidates
-
-## High relevance
-
-- Receipt registration and purchase deletion workflows are not transactionally atomic.
-- Connection ownership is distributed through per-page concrete service construction.
-- Application shutdown has local cleanup attempts but no explicit composition-level owner.
-- ProductService breadth and naming no longer match its application-facade role.
-- Contracts do not cover the concrete service/repository surface they appear to describe.
-
-## Medium relevance
-
-- MainWindow and pages form bidirectional direct-call coupling.
-- Database migration runs during every repository construction.
-- Product mixes editable aggregate state and cached analytical projection.
-- Read models are untyped dictionaries with partially application-owned formatting.
-- Cleanup exceptions are swallowed by page close handlers.
-
-## Structural drift candidates
-
-- `promotions` exists in persistence but lacks a recovered active domain/application/UI path.
-- `pages.order` is persisted but tab composition remains hard-coded.
-- Source comments call `contracts.py` canonical architecture while notebook design canon is empty; source declarations require reconciliation, not direct promotion.
-- Current visible tabs are Register, Lists, History, and Settings, while persisted default page order still names Register, Storage, Shortage, Market, History, and Settings.
-- Legacy Storage/Shortage/Market concepts now appear consolidated inside the Lists page, creating naming drift between settings/defaults and desktop composition.
-
----
-
-# 12. Unresolved Design Decisions
-
-1. Should desktop composition use one shared application facade, or bounded services with explicitly owned repositories/connections?
-2. Should `app/main.py`, MainWindow, or a dedicated application container own startup and shutdown?
-3. Where should initialization and migration occur: connection acquisition or a dedicated startup phase?
-4. Is non-atomic receipt registration acceptable for the local MVP?
-5. If atomicity is required, should transaction ownership belong to service workflows, a unit-of-work abstraction, or repository workflow methods?
-6. Is Product intentionally both editable aggregate and persisted projection cache?
-7. Should ProductService be renamed as the application facade or decomposed by capability?
-8. Should contracts become complete runtime interfaces/protocols or remain architectural declarations?
-9. Should MainWindow remain the direct desktop coordinator or should pages communicate through signals/events?
-10. Should read-model dictionaries become explicit immutable view-model types?
-11. Should presentation formatting remain in service projections or move to desktop presenters/widgets?
-12. Is `promotions` active roadmap structure or stale schema?
-13. Should `pages.order` be consumed, migrated to current tab semantics, or retired?
-14. Should local page close handlers be replaced by one authoritative application shutdown sequence?
-
----
-
-# 13. Recommended Transition to Commit-Oriented Analysis
-
-The present implementation picture is now sufficiently complete for historical inspection.
-
-Commit-oriented analysis should be limited to explaining:
-
-- when the monolithic ProductService acquired settings, history analytics, and read-model responsibilities;
-- when Storage/Shortage/Market became unified under Lists;
-- whether per-page service construction was deliberate or inherited;
-- whether contracts were intended for active dependency inversion or documentation;
-- whether promotions and `pages.order` are active roadmap commitments or abandoned structures;
-- whether packaging work introduced an intended application lifecycle boundary not yet reflected in desktop composition.
-
-Historical commits must not override current implementation evidence. They should explain design intent and classify accumulation, drift, and deliberate architecture.
-
----
-
-# 14. Stage Classification
+Suggested metadata:
 
 ```text
-Canonical design knowledge: none promoted
-Derived design knowledge: none promoted
-Design checkpoint: still empty
-Observational design history: still empty
-Functional design stage: consolidated
-Repository files changed: C_DESIGN.md only
-Application implementation changed: no
-Ready for commit-oriented design analysis: yes
+Status: Draft / Recovered Canon
+Persistence Class: Canonical
+Knowledge Class: Design
+Authority: Design Chat, reconciled by Main Chat
+Scope: Markei dependency direction, responsibility boundaries, domain relationships, persistence boundaries, and desktop composition
+```
+
+The later Design recovery sequence should be:
+
+```text
+01_ARCHITECTURE.md
+    ↓ derive
+14_MODEL_OVERVIEW.md
+    ↓ checkpoint
+09_DESIGN_STATE.md
+    ↓ preserve accepted evolution
+03_DECISION_LOG.md
+```
+
+The observational history file should record the recovery and acceptance event, not duplicate the full canon.
+
+---
+
+# 9. Stage Classification
+
+```text
+Implementation evidence: inspected
+C_DESIGN structural report: reconciled and condensed
+J_MAIN_STAGE comparison: blocked by absent file
+Canonical candidate: staged in C_DESIGN
+Canonical domain file: not materialized
+Derived design file: not materialized
+Design checkpoint: not materialized
+Design observational history: not materialized
+Application code changed: no
+Methodology files changed: no
 ```
