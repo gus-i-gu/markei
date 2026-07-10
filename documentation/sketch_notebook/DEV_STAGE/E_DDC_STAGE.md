@@ -5,7 +5,9 @@
 > Persistence class: Materialization stage material
 > Cycle: 05
 > Sprint: 01 — Windows Desktop Installation
-> Scope: Didactic evidence capture for packaged execution, installation, persistent user state, and release validation
+> Domain: Didactic evidence materialization
+> Scope: Evidence capture for packaged execution, installation, persistent user state, and release validation
+> Codex report target: `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
 
 ---
 
@@ -13,27 +15,35 @@
 
 ## 1. Purpose
 
-This stage instructs Codex to capture implementation-backed learning evidence while materializing the Windows installation path.
+This file is direct evidence-reporting authority for Codex.
 
-Codex must report into:
+While implementing D_OPS_STAGE.md under the architectural guardrails of F_DSN_STAGE.md, capture implementation-backed learning evidence for later Didactic Chat reconciliation.
+
+Codex reports evidence. Codex does not decide semantic promotion.
+
+## 2. Mandatory Context Bootstrap
+
+Read first:
 
 ```text
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+AGENTS.md
 ```
 
-Codex must not promote concepts or edit permanent didactic memory.
-
-## 2. Mandatory Bootstrap
-
-Load into active context, in exactly this order:
+Then load into active context in exactly this order:
 
 ```text
 documentation/sketch_notebook/INDEX.md
+↓
 documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
+↓
 documentation/sketch_notebook/methodology/FLUX.md
+↓
 documentation/sketch_notebook/methodology/PROMOTION_RULES.md
+↓
 documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
 ```
+
+Keep the combined context active throughout implementation and evidence reporting.
 
 Then read:
 
@@ -48,22 +58,60 @@ documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md
 documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md
 ```
 
-Use only `documentation/sketch_notebook/` as the notebook root.
+D/E/F are direct materialization authority. A/B/C are supporting inputs only.
 
-## 3. Didactic Boundary
+## 3. Recovery Economy
 
-Codex reports evidence. Codex must not:
+Use the least expensive sufficient source:
 
-- declare concepts canonical;
-- assign final learning status;
-- repair or reuse KANBAN numbers;
-- rewrite the glossary or concept map;
-- promote a packaging tool into canonical truth;
-- infer learning maturity from a successful build.
+```text
+AGENTS.md
+→ INDEX.md
+→ methodology bootstrap
+→ E plus coordinated D/F instructions
+→ implementation evidence produced by the task
+→ H report
+```
 
-## 4. Distinctions to Preserve
+Do not read the complete KANBAN, glossary, concept history, or other permanent didactic files unless a staged ambiguity cannot be resolved from B_DIDACTIC.md and the checkpoint route.
 
-Report evidence that keeps these distinctions explicit:
+Do not duplicate long code or repeat D/F operational detail inside H.
+
+## 4. Strict Notebook Write Boundary
+
+Codex must not modify:
+
+```text
+documentation/sketch_notebook/methodology/
+documentation/sketch_notebook/operational/
+documentation/sketch_notebook/didactics/
+documentation/sketch_notebook/design/
+documentation/sketch_notebook/[M]_STAGE/
+documentation/sketch_notebook/INDEX.md
+documentation/sketch_notebook/00_PROJECT_STATE.md
+documentation/sketch_notebook/05_SESSION_LOG.md
+documentation/sketch_notebook/06_SESSION_SCHEME.md
+documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
+documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md
+documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
+documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md
+```
+
+The didactic report write authorized by this stage is:
+
+```text
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+```
+
+G and I are authorized by their corresponding stages.
+
+Do not promote concepts or edit permanent didactic memory.
+
+## 5. Didactic Invariants
+
+Preserve these distinctions in implementation evidence:
 
 ```text
 source execution ≠ packaged execution
@@ -79,9 +127,11 @@ portable application ≠ installed application
 desktop packaging ≠ mobile implementation
 ```
 
-## 5. Concept Candidates to Observe
+Do not infer learning maturity from a successful build.
 
-Use identifiers from `B_DIDACTIC.md` only as stage references:
+## 6. Concept Candidates to Observe
+
+Use identifiers from B_DIDACTIC.md only as staged references:
 
 ```text
 &&&20 — Packaged Application Lifecycle
@@ -95,11 +145,11 @@ Use identifiers from `B_DIDACTIC.md` only as stage references:
 &%%15 — Markei Installed Data Lifecycle
 ```
 
-Report numbering drift. Do not materialize these entries into permanent didactic files.
+Report numbering drift if observed. Do not materialize these entries into permanent files and do not assign final Green/Yellow/Red status.
 
-## 6. Required Learning Evidence
+## 7. Required Learning Evidence
 
-### Entrypoint
+### 7.1 Entrypoint
 
 Report:
 
@@ -108,7 +158,7 @@ Report:
 - whether source and packaged execution share the same startup function;
 - whether source-only path manipulation remains necessary.
 
-### Frozen Python execution
+### 7.2 Frozen Python execution
 
 Report observed behavior involving:
 
@@ -124,9 +174,9 @@ packaged resource lookup
 
 Do not generalize beyond observed implementation evidence.
 
-### Dependencies
+### 7.3 Dependencies
 
-Separate and report:
+Separate:
 
 ```text
 application runtime dependencies
@@ -137,7 +187,7 @@ external installer tooling
 
 Record declaration locations, version constraints, and Qt components requiring explicit collection.
 
-### Packaging and installation
+### 7.4 Packaging and installation
 
 Report separately:
 
@@ -149,20 +199,20 @@ installed application state
 
 Identify which tool owns each transition.
 
-### Resource state
+### 7.5 Resource state
 
-Classify:
+Classify implementation evidence for:
 
 ```text
 schema.sql
-seed or development fixture
+sample seed or development fixture
 icons
 version metadata
 Qt plugins
 installed runtime files
 ```
 
-### User state
+### 7.6 User state
 
 Report:
 
@@ -173,31 +223,31 @@ Report:
 - observed SQLite sidecars;
 - documented backup guidance.
 
-### Initialization versus seeding
+### 7.7 Initialization versus seeding
 
 Report:
 
 - how schema creation occurs;
 - how production avoids sample business rows;
 - how mandatory settings are created;
-- whether initialization succeeds without production `seed.sql`;
+- whether initialization succeeds without production seed data;
 - whether sample data remains only as an explicit fixture.
 
-### Empty state
+### 7.8 Empty state
 
 Report observed behavior of Register, Lists, History, and Settings under zero products, purchases, stores, and user-created categories.
 
-For every correction identify:
+For each correction identify:
 
-1. the failed assumption;
-2. the narrow implementation change;
-3. the resulting behavior.
+1. failed assumption;
+2. narrow implementation change;
+3. resulting behavior.
 
-### Release version
+### 7.9 Release version
 
 Report how version information reaches runtime, executable metadata, installer metadata, and artifact naming. Identify duplicated version truth.
 
-### Validation layers
+### 7.10 Validation layers
 
 Separate:
 
@@ -213,11 +263,11 @@ failure-path behavior
 clean-profile or clean-machine behavior
 ```
 
-Do not merge them into a single success claim.
+Do not merge these into one success statement.
 
-## 7. Existing Concepts to Reinforce
+## 8. Existing Concepts to Reinforce
 
-Where evidence supports them, report reinforcement of:
+Where implementation evidence supports them, report reinforcement of:
 
 - Naming as Data Contract;
 - Configuration State;
@@ -231,24 +281,24 @@ Where evidence supports them, report reinforcement of:
 
 Do not assign final status.
 
-## 8. Tool-Specific Knowledge Policy
+## 9. Tool-Specific Knowledge Policy
 
 PyInstaller and Inno Setup are project tooling and implementation evidence. They do not automatically become canonical concepts.
 
-Use tool behavior to demonstrate reusable concepts, for example:
+Use tool behavior only to evidence reusable concepts:
 
 ```text
 PyInstaller resource collection
-→ packaged-resource discovery evidence
+→ packaged-resource discovery
 
 Inno Setup uninstall policy
-→ installation-lifecycle evidence
+→ installation lifecycle
 
 Qt plugin collection
-→ runtime dependency-closure evidence
+→ runtime dependency closure
 ```
 
-## 9. Explicit Deferrals
+## 10. Explicit Deferrals
 
 ```text
 mobile framework
@@ -269,9 +319,9 @@ full CI release publishing
 
 One-file execution remains a deferred alternative.
 
-## 10. H_DDC_CODEX.md Report Shape
+## 11. H_DDC_CODEX.md Report Contract
 
-After materialization write:
+Write:
 
 ```text
 documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
@@ -302,10 +352,10 @@ Required sections:
 21. Remaining didactic risks.
 22. Suggested Didactic Chat follow-up.
 
-Keep the report compact and evidence-oriented. Do not reproduce complete source files.
+Keep the report compact, factual, and evidence-oriented. Do not reproduce complete source files.
 
-## 11. Completion Boundary
+## 12. Completion Boundary
 
-Complete after sufficient evidence exists for Didactic Chat to evaluate how Markei changed from a source-run project into an installable application without confusing application state, build state, installation state, and user state.
+Complete after enough implementation evidence exists for Didactic Chat to evaluate how Markei changed from a source-run project into an installable application without confusing application state, build state, installation state, and user state.
 
-Do not promote concepts or begin Sprint 02.
+Do not promote concepts. Do not update permanent didactic memory. Do not begin Sprint 02.

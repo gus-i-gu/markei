@@ -5,7 +5,9 @@
 > Persistence class: Materialization stage material
 > Cycle: 05
 > Sprint: 01 — Windows Desktop Installation
+> Domain: Design materialization
 > Scope: Architectural guardrails for packaging, installation, SQLite initialization, user-data preservation, and desktop/mobile isolation
+> Codex report target: `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
 
 ---
 
@@ -13,7 +15,9 @@
 
 ## 1. Purpose
 
-This stage translates the accepted Cycle 05 Sprint 01 design into implementation guardrails.
+This file is direct architectural authority for Codex.
+
+It constrains implementation performed under D_OPS_STAGE.md and defines the design evidence to report after materialization.
 
 Coordination:
 
@@ -28,25 +32,29 @@ F_DSN_STAGE.md
     architectural boundaries and design evidence
 ```
 
-Codex must report into:
+## 2. Mandatory Context Bootstrap
+
+Read first:
 
 ```text
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+AGENTS.md
 ```
 
-Codex must not edit permanent design memory or methodology files.
-
-## 2. Mandatory Bootstrap
-
-Load into active context, in exactly this order:
+Then load into active context in exactly this order:
 
 ```text
 documentation/sketch_notebook/INDEX.md
+↓
 documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
+↓
 documentation/sketch_notebook/methodology/FLUX.md
+↓
 documentation/sketch_notebook/methodology/PROMOTION_RULES.md
+↓
 documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
 ```
+
+Keep the combined context active throughout implementation, validation, and design reporting.
 
 Then read:
 
@@ -61,9 +69,58 @@ documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md
 documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md
 ```
 
-Use only `documentation/sketch_notebook/` as the notebook root.
+D/E/F are direct materialization authority. A/B/C are supporting inputs only.
 
-## 3. Accepted Architecture
+## 3. Recovery Economy
+
+Use the least expensive sufficient source:
+
+```text
+AGENTS.md
+→ INDEX.md
+→ methodology bootstrap
+→ F plus coordinated D/E instructions
+→ only implementation files needed to verify boundaries
+→ I report
+```
+
+Do not reread full architecture registers, decision history, or unrelated source modules unless a staged ambiguity, detected drift, or implementation dependency requires it.
+
+If the selected architecture cannot be materialized without a new design decision, stop and report instead of silently redefining the boundary.
+
+## 4. Strict Notebook Write Boundary
+
+Codex must not modify:
+
+```text
+documentation/sketch_notebook/methodology/
+documentation/sketch_notebook/operational/
+documentation/sketch_notebook/didactics/
+documentation/sketch_notebook/design/
+documentation/sketch_notebook/[M]_STAGE/
+documentation/sketch_notebook/INDEX.md
+documentation/sketch_notebook/00_PROJECT_STATE.md
+documentation/sketch_notebook/05_SESSION_LOG.md
+documentation/sketch_notebook/06_SESSION_SCHEME.md
+documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
+documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md
+documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md
+documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md
+```
+
+The design report write authorized by this stage is:
+
+```text
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+```
+
+G and H are authorized by their corresponding stages.
+
+Do not update permanent design memory.
+
+## 5. Accepted Architecture
 
 Preserve:
 
@@ -85,12 +142,12 @@ source application
 → installed application
 ```
 
-Runtime data remains separate:
+Runtime state remains separate:
 
 ```text
 installed application files
 +
-bundled read-only schema resources
+bundled read-only resources
 +
 external writable user-data directory
 → SQLite database
@@ -98,7 +155,7 @@ external writable user-data directory
 
 Packaging wraps Markei. It does not become a business layer.
 
-## 4. Accepted Distribution Design
+## 6. Accepted Distribution Design
 
 Primary distribution:
 
@@ -112,7 +169,7 @@ Primary artifact:
 Markei-Setup-<version>.exe
 ```
 
-Installation scope and locations:
+Locations:
 
 ```text
 per-user installation
@@ -125,61 +182,63 @@ A portable ZIP of the validated one-folder runtime is optional and secondary.
 
 A single-file executable is rejected for Sprint 01.
 
-## 5. Responsibility Map
+## 7. Responsibility Map
 
-### Root entrypoint
+### 7.1 Root entrypoint
 
-Owns narrow process delegation. It must not own schema meaning, business validation, SQL, or installer behavior.
+Owns narrow process delegation.
 
-### Desktop startup infrastructure
+Must not own schema meaning, business validation, SQL, or installer behavior.
+
+### 7.2 Desktop startup infrastructure
 
 Owns `QApplication`, top-level startup orchestration, main-window construction, fatal startup presentation, and diagnostic-log initiation.
 
-It must not own product rules, list calculations, purchase calculations, repository queries, or migration semantics.
+Must not own product rules, list calculations, purchase calculations, repository queries, or migration semantics.
 
-### Runtime-path infrastructure
+### 7.3 Runtime-path infrastructure
 
 Owns bundled resource resolution, writable user-data resolution, source/frozen path differences, and working-directory independence.
 
-It must not become ProductService behavior, Repository contract, domain-model state, or mobile persistence policy.
+Must not become ProductService behavior, Repository contract, domain-model state, or mobile persistence policy.
 
-### Database lifecycle
+### 7.4 Database lifecycle
 
-Owns database-directory creation, first-launch SQLite creation, schema execution, connection configuration, idempotent migration, mandatory database defaults, and existing-data preservation.
+Owns database-directory creation, first-launch SQLite creation, schema execution, connection configuration, idempotent migration, mandatory defaults, and existing-data preservation.
 
-It must not own installer placement, shortcuts, or sample UI content.
+Must not own installer placement, shortcuts, or sample UI content.
 
-### Repository
+### 7.5 Repository
 
 Owns SQL persistence, retrieval, row mapping, and contract-appropriate empty results.
 
-It must not own Windows paths, PyInstaller detection, installer state, Start Menu behavior, production seed selection, or release versioning.
+Must not own Windows paths, PyInstaller detection, installer state, Start Menu behavior, production seed selection, or release versioning.
 
-### ProductService
+### 7.6 ProductService
 
 Owns business validation, interpretation, read-model assembly, and service-level handling of empty repository results.
 
-It must not own resource lookup, executable metadata, build dependencies, installation paths, or uninstall behavior.
+Must not own resource lookup, executable metadata, build dependencies, installation paths, or uninstall behavior.
 
-### Desktop pages
+### 7.7 Desktop pages
 
 Own rendering, controls, user events, and empty-state presentation.
 
-They must not execute schema initialization, create production sample records, inspect `_MEIPASS`, decide installer behavior, or relocate the database.
+Must not execute schema initialization, create production sample records, inspect `_MEIPASS`, decide installer behavior, or relocate the database.
 
-### PyInstaller configuration
+### 7.8 PyInstaller configuration
 
 Owns runtime freezing, module collection, PySide6/Qt collection, read-only resources, executable identity, metadata, and one-folder output.
 
-It must not own installation placement, shortcuts, uninstall, SQLite initialization, migration, or user-data deletion.
+Must not own installation placement, shortcuts, uninstall, SQLite initialization, migration, or user-data deletion.
 
-### Inno Setup configuration
+### 7.9 Inno Setup configuration
 
 Owns per-user placement, Start Menu and optional desktop shortcuts, uninstall registration, stable upgrade identity, installer metadata, and replacement of application-owned files.
 
-It must not own Python import analysis, Qt plugin analysis, database creation, SQL execution, migration, or business records.
+Must not own Python import analysis, Qt plugin analysis, database creation, SQL execution, migration, or business records.
 
-## 6. Resource and State Boundary
+## 8. Resource and State Boundary
 
 Bundled read-only resources may include:
 
@@ -203,9 +262,9 @@ future backups
 future exports
 ```
 
-Writable state must not live inside the frozen runtime, installer payload as active state, beside `Markei.exe` by default, or in a protected installation location.
+Writable state must not live inside the frozen runtime, inside the installer payload as active state, beside `Markei.exe` by default, or in a protected installation location.
 
-## 7. Schema and Seed Design
+## 9. Schema and Seed Design
 
 Accepted:
 
@@ -223,11 +282,11 @@ installer executes SQL
 sample products or stores become first-user content
 ```
 
-Mandatory application settings may come from schema defaults, application-owned idempotent insertion, or a production-specific defaults resource containing no business samples.
+Mandatory settings may come from schema defaults, application-owned idempotent insertion, or a production-specific defaults resource with no business samples.
 
 The current sample seed may remain only as an explicit development/test fixture. Its presence must not silently populate production.
 
-## 8. Empty-State Design
+## 10. Empty-State Design
 
 The absence of business rows is valid state:
 
@@ -243,7 +302,7 @@ A page may render an empty-state message. It must not manufacture fake records.
 
 If first use requires category or store creation, the owning UI must expose that path or clearly identify the unmet prerequisite.
 
-## 9. Version Boundary
+## 11. Version Boundary
 
 One authoritative version should drive runtime display, executable metadata, installer metadata, and artifact naming.
 
@@ -257,7 +316,7 @@ Build and installer scripts should derive or receive that value rather than crea
 
 Application release version does not replace a future schema-version ledger.
 
-## 10. Upgrade Design
+## 12. Upgrade Design
 
 ```text
 installer replaces application-owned files
@@ -267,9 +326,9 @@ installer replaces application-owned files
 → user records remain available
 ```
 
-Upgrade must not replace the database, rerun sample seed, delete SQLite sidecars while active, reset settings, move migration into Inno Setup, or silently recreate incompatible data.
+Upgrade must not replace the database, rerun sample seed, delete active SQLite sidecars, reset settings, move migration into Inno Setup, or silently recreate incompatible data.
 
-## 11. Uninstall Design
+## 13. Uninstall Design
 
 Normal uninstall removes application files, frozen dependencies, bundled resources, shortcuts, and uninstall registration.
 
@@ -281,15 +340,15 @@ Normal uninstall preserves:
 
 Application uninstall is not user-data deletion. Explicit data removal is deferred.
 
-## 12. Startup Error Boundary
+## 14. Startup Error Boundary
 
-Database lifecycle raises meaningful failures. Desktop startup presents fatal failures.
+Database lifecycle raises meaningful technical failures. Desktop startup presents fatal failures.
 
 The startup boundary may log traceback details, show a concise error, expose the log path, and exit non-zero.
 
 It must not reset the database, suppress migration failure, create sample recovery data, silently recreate corruption, or absorb ordinary business validation.
 
-## 13. Desktop-to-Mobile Isolation
+## 15. Desktop-to-Mobile Isolation
 
 Desktop-specific infrastructure may include:
 
@@ -302,13 +361,13 @@ Windows icon and version metadata
 Start Menu and uninstall configuration
 ```
 
-These concerns must not enter ProductService contracts, Repository contracts, domain models, business read models, database entities, or business setting semantics.
+These concerns must not enter ProductService contracts, Repository contracts, domain models, business read models, database entities, or business-setting semantics.
 
 The Sprint 02 clone should be able to omit Windows delivery files without changing business meaning.
 
 SQLite remains accepted for Sprint 01. This does not make SQLite a public mobile or cross-device contract.
 
-## 14. Change Classification
+## 16. Change Classification
 
 Required for packaging correctness:
 
@@ -354,7 +413,7 @@ silent user-data deletion
 broad dependency-injection rewrite
 ```
 
-## 15. Expected File Surface
+## 17. Expected File Surface
 
 Existing files that may participate:
 
@@ -388,7 +447,7 @@ scripts/validate_windows_package.ps1
 
 Create only justified files. Do not create speculative mobile structures.
 
-## 16. Boundary Drift to Report
+## 18. Boundary Drift to Report
 
 Report if:
 
@@ -405,7 +464,9 @@ Report if:
 - desktop paths become platform-neutral domain requirements;
 - Sprint 02 begins.
 
-## 17. Required Design Evidence
+Do not silently normalize boundary drift.
+
+## 19. Required Design Evidence
 
 Report evidence that:
 
@@ -421,9 +482,9 @@ Report evidence that:
 10. upgrade and uninstall preserve data;
 11. Windows packaging is removable from the future mobile clone.
 
-## 18. I_DSN_CODEX.md Report Shape
+## 20. I_DSN_CODEX.md Report Contract
 
-After materialization write:
+Write:
 
 ```text
 documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
@@ -453,8 +514,8 @@ Required sections:
 
 Keep the report compact and evidence-oriented. Do not reproduce complete files.
 
-## 19. Completion Boundary
+## 21. Completion Boundary
 
 Complete after materializing the selected installation architecture while preserving accepted boundaries, or after reporting concrete evidence that a new Main decision is required.
 
-Do not edit permanent design memory, methodology, or Sprint 02 implementation.
+Do not update permanent design memory. Do not begin Sprint 02.
