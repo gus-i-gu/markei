@@ -1,6 +1,6 @@
 # 03_DECISION_LOG.md
 
-> Version: 0.4
+> Version: 0.5
 > Status: Draft
 > Persistence Class: Observational
 > Knowledge Class: Design History
@@ -297,3 +297,112 @@ This does not make the project ready for mobile implementation.
 - Minor compatibility residue remains through `history.month_boundary_rule`.
 - Operational correctness watch: the current `get_history_view()` expression appears to subtract one day from the next month start only for `day_of_month` mode. The first-weekday period-end label should be verified separately. This does not alter the accepted ownership design.
 - Human interactive Settings/store QA remains incomplete; offscreen and service-level evidence does not fully validate presentation behavior.
+
+---
+
+# Cycle 05 Sprint 01 Windows Desktop Installation — Design Absorption
+
+Accepted evidence source:
+
+- human-directed Cycle 05 Sprint 01 absorption evidence;
+- materialized Windows desktop-installation branch state;
+- runtime validation summarized by Operational and Didactic domain absorption.
+
+The repository copies of `G_OPS_CODEX.md`, `H_DDC_CODEX.md`, and `I_DSN_CODEX.md` still described Cycle 04 when this absorption occurred. That mismatch is recorded as evidence-report drift. The human explicitly classified the supplied Sprint 01 evidence as verified, so Design memory was reconciled from the accepted evidence without rewriting DEV_STAGE reports.
+
+## Accepted Architectural Decisions
+
+- The desktop distribution boundary is:
+
+```text
+source application
+→ PyInstaller one-folder runtime
+→ Inno Setup per-user installer configuration
+```
+
+- The persistent-state boundary is:
+
+```text
+installed application files
+≠
+%LOCALAPPDATA%\Markei user data
+```
+
+- PyInstaller owns runtime freezing, PySide6/Qt collection, `schema.sql` bundling, and executable metadata.
+- Inno Setup owns per-user placement, shortcut configuration, uninstall registration, and stable upgrade identity.
+- Database lifecycle owns schema discovery, first-launch initialization, configuration defaults, migrations, and external user-data preservation.
+- Production initialization is schema-only and seed-free.
+- Production runtime contains `schema.sql` and excludes `seed.sql`, `market.sqlite`, WAL/SHM files, and sample business records.
+- The current application boundary remains Desktop UI -> ProductService -> Repository -> SQLite.
+- Packaging and installer configuration do not become business or persistence layers.
+- Runtime-path helpers remain in `app/core/database.py` for the shortest Sprint 01 route.
+- Possible extraction into a desktop runtime-path module is deferred.
+- SQLite remains desktop-local persistence and is not promoted into a mobile, synchronization, backend, or cross-device contract.
+
+## Validated Runtime Evidence
+
+- PyInstaller one-folder runtime was produced.
+- Frozen executable launch succeeded.
+- Schema discovery was independent of the working directory.
+- Production first launch created an empty business database with six configuration rows.
+- Verified fresh state:
+
+```text
+products: 0
+purchases: 0
+stores: 0
+categories: 0
+settings: 6
+```
+
+- First receipt operation no longer depends on a seeded store.
+- Startup failures can be logged under writable user data.
+- Public pages constructed successfully: Register, Lists, History, Settings.
+- PySide6 and PyInstaller dependencies were pinned.
+
+## Configured but Unvalidated Installer Decisions
+
+- Inno Setup source configuration exists for per-user installation.
+- Start Menu shortcut configuration exists.
+- Uninstall registration and stable upgrade identity are represented in configuration.
+- User data is intended to remain outside installer-owned files.
+
+These are accepted configuration decisions, not validated lifecycle behavior.
+
+## Active Blocker
+
+```text
+Inno Setup ISCC.exe unavailable
+```
+
+Because the installer compiler was unavailable, the following were not promoted as validated:
+
+- compiled installer artifact;
+- Start Menu launch from an installed application;
+- installed upgrade preservation;
+- uninstall preservation;
+- reinstall recovery;
+- SmartScreen or antivirus behavior.
+
+## Desktop-to-Mobile Isolation
+
+- Windows packaging files and path rules remain desktop infrastructure.
+- ProductService and Repository contracts remain free of installer concerns.
+- The future Sprint 02 clone may omit packaging and installer configuration without changing business meaning.
+- Desktop `%LOCALAPPDATA%` policy does not define future mobile persistence.
+- No API, backend, authentication, synchronization, or mobile presentation architecture was introduced.
+
+## Deferred Design Decisions
+
+- Whether runtime-path helpers should later move into a desktop-specific module.
+- The exact installed upgrade compatibility and rollback policy.
+- Whether uninstall should offer an explicit optional data-deletion action while preserving data by default.
+- Production signing and SmartScreen reputation requirements.
+- Automatic update strategy.
+- Mobile persistence, synchronization, backend, identity, contracts, and framework selection.
+
+## Remaining Watch Points
+
+- Manual interactive UI walkthrough remains incomplete.
+- The Cycle 04 first-weekday operational-month period-end calculation remains unresolved.
+- Installer lifecycle validation must be performed against a compiled artifact before Sprint 01 can be described as a fully validated installed release.

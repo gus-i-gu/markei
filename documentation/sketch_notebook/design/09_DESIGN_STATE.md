@@ -1,6 +1,6 @@
 # 09_DESIGN_STATE.md
 
-> Version: 0.4
+> Version: 0.5
 > Status: Active Checkpoint
 > Persistence Class: Checkpoint
 > Knowledge Class: Design State
@@ -11,7 +11,7 @@
 
 # Current Design State
 
-Markei has completed four boundary-preserving design cycles.
+Markei has completed four application-boundary design cycles and has materialized the Windows desktop-distribution architecture for Cycle 05 Sprint 01.
 
 ## Cycle 01 — Product View
 
@@ -98,15 +98,111 @@ Cycle 04 design state:
 - `pages.order` remains persisted but inert.
 - No mobile, backend, synchronization, external-integration, or receipt-recognition architecture was introduced.
 
+## Cycle 05 Sprint 01 — Windows Desktop Installation
+
+Accepted distribution boundary:
+
+```text
+source application
+→ PyInstaller one-folder runtime
+→ Inno Setup per-user installer configuration
+```
+
+Accepted persistent-state boundary:
+
+```text
+installed application files
+≠
+%LOCALAPPDATA%\Markei user data
+```
+
+Stable ownership:
+
+```text
+PyInstaller
+    freezes the Python/PySide6 runtime
+    collects Qt dependencies and plugins
+    bundles schema.sql as a read-only resource
+    carries executable metadata
+
+Inno Setup
+    defines per-user placement
+    configures shortcuts
+    registers uninstall
+    carries stable upgrade identity
+
+Database lifecycle
+    resolves bundled schema resources
+    initializes a missing user database
+    inserts configuration defaults
+    applies migrations
+    preserves writable user data outside installation files
+```
+
+Materialized and validated:
+
+- PyInstaller one-folder runtime.
+- Frozen executable launch.
+- Working-directory-independent `schema.sql` discovery.
+- Schema-only production initialization.
+- Seed-free empty business database.
+- User database under `%LOCALAPPDATA%\Markei`.
+- First receipt flow without a seeded store.
+- Startup failure logging under user data.
+- Pinned PySide6 and PyInstaller dependencies.
+- Public pages constructed successfully: Register, Lists, History, Settings.
+- Fresh production database state was verified as `products: 0`, `purchases: 0`, `stores: 0`, `categories: 0`, `settings: 6`.
+
+Production runtime contains:
+
+```text
+schema.sql
+```
+
+Production runtime does not contain:
+
+```text
+seed.sql
+market.sqlite
+SQLite WAL/SHM files
+sample business records
+```
+
+Configured but not yet validated:
+
+- Inno Setup per-user installer script.
+- Start Menu shortcut behavior.
+- Installed upgrade preservation.
+- Uninstall preservation.
+- Reinstall recovery.
+- Stable upgrade identity as exercised by compiled artifacts.
+
+Active blocker:
+
+```text
+Inno Setup ISCC.exe unavailable
+```
+
+The unavailable compiler prevents the installer artifact and installed lifecycle from being treated as validated.
+
+Desktop-specific shortest-route coupling remains accepted:
+
+```text
+runtime-path helpers remain in app/core/database.py
+```
+
+Possible extraction into a desktop runtime-path module is deferred. This coupling must not spread into ProductService, Repository contracts, models, or read models.
+
 # Boundary Status
 
-- No intentional architecture boundary drift was found through Cycle 04.
+- No intentional application-layer boundary drift was introduced through Cycle 05 Sprint 01.
 - UI owns rendering, controls, view selection, navigation hooks, and events.
-- UI must not calculate product status, price meaning, History grouping, analytics values, or operational-date semantics.
 - ProductService owns Product View, Lists, grouped History, History analytics, Settings validation, Settings fallback, and temporal interpretation.
 - Repository owns SQL retrieval, persistence operations, generic settings access, and row mapping.
-- Repository must not own period or setting semantics.
-- SQLite owns persisted facts and key/value settings.
+- Repository must not own period, setting, packaging, installer, or Windows-path semantics.
+- SQLite owns persisted facts and key/value settings for the desktop application.
+- PyInstaller and Inno Setup remain delivery infrastructure outside the business boundary.
+- Packaging configuration must not become a business or persistence layer.
 - RegisterPage remains receipt-focused.
 - SettingsPage remains the configuration and store-management surface.
 - HistoryPage continues to render service-prepared grouping and does not own bucket calculations.
@@ -115,11 +211,20 @@ Cycle 04 design state:
 
 Implementation watch point:
 
-- The Cycle 04 source appears to calculate the displayed first-weekday operational-month end differently from day-of-month mode. Operational verification should confirm that first-weekday period-end labels end one day before the next operational month begins. This is an implementation correctness risk, not an accepted design change.
+- The Cycle 04 source appears to calculate the displayed first-weekday operational-month end differently from day-of-month mode. Operational verification should confirm that first-weekday period-end labels end one day before the next operational month begins. This remains an implementation correctness risk, not an accepted design change.
+- Manual interactive UI QA remains unresolved despite successful construction and automated/offscreen evidence.
 
-# Mobile Readiness Classification
+# Desktop-to-Mobile Isolation
 
-Current classification: improved preparation for future mobile discussion; not ready for mobile implementation.
+Current classification: desktop installation architecture materialized; mobile architecture remains deferred to Sprint 02.
+
+Preserved isolation:
+
+- Packaging configuration and Windows path policy remain desktop infrastructure.
+- ProductService contracts remain free of PyInstaller, Inno Setup, shortcut, installation, and uninstall concerns.
+- Repository contracts remain free of installer concerns.
+- SQLite remains the current desktop persistence implementation and is not promoted into a mobile, shared-backend, synchronization, or cross-device contract.
+- The future repository clone may omit Windows packaging files without changing business meaning.
 
 Prepared now:
 
@@ -128,7 +233,8 @@ Prepared now:
 - service-owned Settings validation and interpretation;
 - stored semantic values separated from desktop labels;
 - operational-date interpretation available outside PySide6;
-- UI logic limited primarily to rendering and events.
+- UI logic limited primarily to rendering and events;
+- desktop packaging isolated from the application-service boundary.
 
 Not yet ready:
 
@@ -139,10 +245,16 @@ Not yet ready:
 - formal typed service contracts;
 - service factory/dependency injection boundary;
 - broader date/time storage strategy;
-- automated service-level and UI interaction coverage.
+- automated service-level and UI interaction coverage;
+- desktop-to-mobile data migration or coexistence architecture.
 
 # Deferred Design Questions
 
+- Should runtime-path resolution later move from `app/core/database.py` to a desktop infrastructure module?
+- What installer upgrade code and versioning policy will be accepted after compiled lifecycle validation?
+- Should uninstall expose an explicit optional user-data deletion action while preserving data by default?
+- What rollback policy is required for future schema-changing upgrades?
+- When should production signing and SmartScreen reputation become release requirements?
 - Should future purchase records store time-of-day so `time_reference.day_boundary_time` can materially affect grouping?
 - Should operational-day semantics later affect Lists status, purchase rhythm, depletion prediction, or expected next purchase?
 - Should legacy `history.month_boundary_rule` be migrated/removed or remain inert compatibility data?
@@ -164,3 +276,4 @@ Not yet ready:
 - Design history: `documentation/sketch_notebook/design/03_DECISION_LOG.md`
 - Derived model map: `documentation/sketch_notebook/design/14_MODEL_OVERVIEW.md`
 - Latest Codex design evidence when reconciling materialization: `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
+- Installer compilation and installed-lifecycle evidence when `ISCC.exe` becomes available.

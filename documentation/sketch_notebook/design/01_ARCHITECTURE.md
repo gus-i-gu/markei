@@ -1,6 +1,6 @@
 # 01_ARCHITECTURE.md
 
-> Version: 0.4
+> Version: 0.5
 > Status: Draft
 > Persistence Class: Canonical
 > Knowledge Class: Design / Architecture
@@ -251,15 +251,18 @@ Temporal invariants:
 - Settings remain generic key/value rows.
 - New canonical defaults are inserted non-destructively.
 - Existing settings are not overwritten by default insertion.
-- No new schema columns or tables were required for Cycle 04.
 - Legacy month-boundary data may remain present but becomes inert once canonical keys exist.
 - A future migration/removal decision requires separate authorization.
+- Production first launch is schema-only: `schema.sql` initializes the database and configuration defaults without seeding business records.
+- `seed.sql` is a development fixture and is not part of the production runtime.
+- The writable desktop database belongs under `%LOCALAPPDATA%\Markei`, outside application installation files.
+- Installed application replacement or removal must not implicitly delete user data.
 
 ---
 
 # 9. Mobile Readiness Boundary
 
-Cycle 03 provided portable read-model contracts. Cycle 04 added portable Settings semantics.
+Cycles 03 and 04 provided portable read-model and Settings semantics. Cycle 05 Sprint 01 adds desktop delivery without promoting desktop delivery mechanics into platform-neutral contracts.
 
 Prepared:
 
@@ -267,7 +270,8 @@ Prepared:
 - platform-neutral primitive/dictionary outputs;
 - service-owned Settings validation and interpretation;
 - semantic stored values separated from desktop labels;
-- operational-date interpretation outside PySide6.
+- operational-date interpretation outside PySide6;
+- Windows packaging isolated from ProductService and Repository contracts.
 
 Not ready:
 
@@ -278,9 +282,12 @@ Not ready:
 - formal typed contracts;
 - service factory/dependency injection;
 - comprehensive date/time storage strategy;
-- automated service and UI interaction coverage.
+- automated service and UI interaction coverage;
+- desktop/mobile migration or coexistence architecture.
 
 Mobile preparation must not expand into a mobile rewrite without a later design cycle.
+
+SQLite remains the current desktop persistence implementation. It is not a mobile, synchronization, shared-backend, or cross-device contract.
 
 ---
 
@@ -295,3 +302,96 @@ Mobile preparation must not expand into a mobile rewrite without a later design 
 - MainWindow must not consume `pages.order` until explicitly designed and materialized.
 - Register must not become a store-management surface.
 - Mobile preparation must not silently introduce mobile, backend, synchronization, or external-integration architecture.
+- Packaging and installer configuration must not become a business layer.
+- ProductService and Repository contracts must not expose PyInstaller, Inno Setup, installation paths, shortcuts, uninstall behavior, or Windows path policy.
+
+---
+
+# 11. Windows Desktop Distribution Architecture
+
+Cycle 05 Sprint 01 establishes this accepted delivery boundary:
+
+```text
+source application
+→ PyInstaller one-folder runtime
+→ Inno Setup per-user installer configuration
+```
+
+This delivery boundary wraps the existing application architecture. It does not replace or extend the business-layer chain.
+
+## 11.1 Runtime and Installation Separation
+
+Canonical persistent-state boundary:
+
+```text
+installed application files
+≠
+%LOCALAPPDATA%\Markei user data
+```
+
+Installed application files include:
+
+- `Markei.exe`;
+- frozen Python and PySide6 dependencies;
+- Qt runtime plugins;
+- bundled read-only `schema.sql`;
+- executable metadata.
+
+Writable user data includes:
+
+- `market.sqlite`;
+- SQLite WAL/SHM sidecars when present;
+- startup diagnostics;
+- future user-owned backups or exports.
+
+The production frozen runtime must not contain:
+
+- `seed.sql`;
+- `market.sqlite`;
+- WAL/SHM files;
+- sample products, purchases, stores, or categories.
+
+## 11.2 Delivery Responsibility Map
+
+```text
+PyInstaller
+    runtime freezing
+    Python/PySide6 and Qt collection
+    schema.sql bundling
+    executable metadata
+
+Inno Setup
+    per-user placement
+    shortcuts
+    uninstall registration
+    stable upgrade identity
+
+Database lifecycle
+    resource discovery
+    schema initialization
+    settings defaults
+    migrations
+    external user-data preservation
+```
+
+The executable builder does not own installer lifecycle. The installer does not own SQL, schema interpretation, migrations, or business records.
+
+## 11.3 Validation Boundary
+
+The PyInstaller one-folder runtime, frozen launch, working-directory-independent schema discovery, schema-only initialization, external user-data path, startup logging, first receipt without seeded store, and public-page construction are validated.
+
+The Inno Setup source configuration is accepted, but the installer lifecycle is not yet validated because `ISCC.exe` was unavailable. The following remain configured or unresolved rather than validated:
+
+- compiled installer artifact;
+- Start Menu launch;
+- installed upgrade preservation;
+- uninstall preservation;
+- reinstall recovery;
+- SmartScreen and antivirus behavior;
+- signing and rollback policy.
+
+## 11.4 Runtime-Path Coupling
+
+For the shortest sound Sprint 01 route, runtime resource and user-data helpers remain in `app/core/database.py`.
+
+This is accepted desktop infrastructure coupling, not a new platform-neutral contract. Possible extraction to a desktop runtime-path module is deferred. The coupling must not spread into ProductService, Repository contracts, models, or read models.

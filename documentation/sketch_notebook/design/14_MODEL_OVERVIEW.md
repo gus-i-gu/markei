@@ -1,6 +1,6 @@
 # 14_MODEL_OVERVIEW.md
 
-> Version: 0.4
+> Version: 0.5
 > Status: Draft
 > Persistence Class: Derived
 > Knowledge Class: Design / Model Overview
@@ -29,7 +29,7 @@ Relevant summaries:
 - `average_shelf_life_days`;
 - `expected_expiration_date`.
 
-Product must not own individual purchase history rows, History aggregate rows, Lists display rows, Settings semantics, operational-date rules, or History analytics rows.
+Product must not own individual purchase history rows, History aggregate rows, Lists display rows, Settings semantics, operational-date rules, History analytics rows, or desktop packaging state.
 
 ## Purchase
 
@@ -322,12 +322,14 @@ Owns static public tab mounting and refresh orchestration. Current public tabs r
 
 # 9. Persistence and Migration Overview
 
-- Cycle 04 required no new table or column.
 - Canonical defaults are added through non-destructive default insertion.
 - Existing values are preserved.
-- Fresh databases seed canonical Cycle 04 keys.
 - Legacy month-boundary values may remain stored but are compatibility input rather than canonical state.
 - Migration/removal of legacy keys requires a later explicit decision.
+- Production initialization uses `schema.sql` without `seed.sql`.
+- Fresh production initialization creates six Settings rows while product, purchase, store, and category tables remain empty.
+- The writable desktop database is `%LOCALAPPDATA%\Markei\market.sqlite`.
+- SQLite WAL/SHM files, when present, belong beside the writable database rather than in the installation directory.
 
 ---
 
@@ -341,6 +343,13 @@ Cycle 04 improves portability through:
 - a platform-neutral operational-date helper;
 - unchanged generic Repository persistence.
 
+Cycle 05 Sprint 01 adds desktop delivery while preserving platform isolation:
+
+- packaging and installer files remain desktop infrastructure;
+- ProductService and Repository contracts remain free of installer concerns;
+- SQLite remains the current desktop persistence implementation rather than a future mobile contract;
+- the Sprint 02 clone may omit Windows packaging without changing business meaning.
+
 Still not ready:
 
 - mobile presentation implementation;
@@ -351,6 +360,132 @@ Still not ready:
 - typed service contracts;
 - dependency injection/service factory;
 - time-of-day capture strategy;
-- comprehensive automated testing.
+- comprehensive automated testing;
+- desktop/mobile data migration and coexistence design.
 
 Mobile readiness remains preparation through boundaries, not authorization for a mobile rewrite.
+
+---
+
+# 11. Desktop Delivery and Runtime Context
+
+Accepted Cycle 05 Sprint 01 delivery chain:
+
+```text
+Markei source application
+    ↓
+PyInstaller one-folder runtime
+    ↓
+Inno Setup per-user installer configuration
+    ↓
+installed Windows application
+```
+
+The frozen runtime is a generated delivery artifact. The Inno Setup script is installer source configuration. A configured installer is not equivalent to a compiled or validated installed release.
+
+## 11.1 Runtime Artifact Model
+
+```text
+PyInstaller
+    ↓ freezes
+Markei.exe
+Python runtime
+PySide6 / Qt dependencies
+Qt platform plugins
+schema.sql
+```
+
+PyInstaller owns:
+
+- runtime freezing;
+- dependency and Qt collection;
+- read-only schema resource bundling;
+- executable metadata.
+
+The validated production runtime contains `schema.sql` and excludes:
+
+```text
+seed.sql
+market.sqlite
+market.sqlite-wal
+market.sqlite-shm
+sample business records
+```
+
+## 11.2 Installation Model
+
+```text
+Inno Setup configuration
+    ↓ places and registers
+installed one-folder runtime
+Start Menu shortcut
+optional desktop shortcut
+uninstall entry
+stable upgrade identity
+```
+
+Inno Setup owns installation placement and Windows shell lifecycle metadata. It does not execute SQL, initialize the database, interpret migrations, or own business records.
+
+The installer source configuration is accepted, but compilation and installed lifecycle remain unvalidated because `ISCC.exe` was unavailable.
+
+## 11.3 Persistent-State Model
+
+```text
+installed application files
+    separate from
+%LOCALAPPDATA%\Markei
+    ├── market.sqlite
+    ├── SQLite sidecars when active
+    └── logs
+```
+
+Database lifecycle owns:
+
+- bundled-resource discovery;
+- creation of the writable user-data directory;
+- schema-only database initialization;
+- settings defaults;
+- migrations;
+- preservation of existing user data.
+
+External user-data placement supports preservation, but upgrade, uninstall, and reinstall preservation require direct validation against a compiled installer.
+
+## 11.4 Startup and Failure Model
+
+```text
+root main.py
+    ↓
+app.main
+    ↓
+QApplication + MainWindow
+```
+
+Startup infrastructure may present fatal initialization errors and write diagnostics under `%LOCALAPPDATA%\Markei\logs`. It does not own business meaning or SQL workflows.
+
+## 11.5 Desktop-Specific Coupling
+
+For the shortest Sprint 01 route, runtime resource and user-data helpers remain in `app/core/database.py`.
+
+This is a desktop infrastructure coupling and not a ProductService, Repository, model, mobile, synchronization, or cross-device contract. Extraction to a desktop runtime-path module remains deferred.
+
+## 11.6 Validation State
+
+Validated:
+
+- one-folder runtime generation;
+- frozen executable launch;
+- working-directory-independent schema lookup;
+- schema-only empty first launch;
+- external `%LOCALAPPDATA%\Markei` database;
+- first receipt without a seeded store;
+- startup logging;
+- construction of Register, Lists, History, and Settings.
+
+Configured but unvalidated:
+
+- compiled installer;
+- Start Menu installed launch;
+- upgrade preservation;
+- uninstall preservation;
+- reinstall recovery;
+- SmartScreen and antivirus behavior.
