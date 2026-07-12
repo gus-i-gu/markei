@@ -1,10 +1,11 @@
 # 02_KANBAN.md
 
 > Domain: Didactic
-> Status: Canonical concept register — Cycle 06
+> Status: Canonical concept register — Cycle 06 Sprint 02
 > Authority: Didactic Chat [A], reconciled through Main reference
-> Reconciliation sources: `DEV_STAGE/B_DIDACTIC.md`, `DEV_STAGE/E_DDC_STAGE.md`, `DEV_STAGE/H_DDC_CODEX.md`, `DEV_STAGE/G_OPS_CODEX.md`, and `[M]_STAGE/J_[M]_STAGE.md`
+> Reconciliation sources: `DEV_STAGE/E_DDC_STAGE.md`, `DEV_STAGE/H_DDC_CODEX.md`, `DEV_STAGE/G_OPS_CODEX.md`, and `[M]_STAGE/J_[M]_STAGE.md`
 > Scope: Stable concepts evidenced by the contemporary Markei repository
+> Maturity rule: implementation success does not establish learner mastery
 
 ---
 
@@ -21,7 +22,7 @@ A screen gathers input, a service coordinates a use case, and a repository store
 #### Language Implementation
 Python expresses boundaries through packages, modules, classes, imports, interfaces, and method calls.
 #### Project Implementation
-Markei separates desktop presentation, `ProductService`, `Repository`, database lifecycle, packaging collection, installer placement, validation evidence, and Main/human acceptance.
+Markei separates desktop presentation, `ProductService`, `Repository`, database lifecycle, packaging, installer placement, validation evidence, and Main/human acceptance.
 #### Required Concepts
 None.
 #### Related Concepts
@@ -67,7 +68,7 @@ The use of stable, precise, responsibility-aware names to define the meaning and
 #### Language Implementation
 Naming contracts appear in attributes, signatures, dictionary keys, constants, settings keys, artifacts, and status reports.
 #### Project Implementation
-Markei carries stable data names across SQLite, mappings, models, projections, and UI; Cycle 06 also uses exact evidence-state vocabulary.
+Cycle 06 keeps automated technical validation distinct from human-visible UI acceptance and final Main/human acceptance.
 #### Required Concepts
 `&&&01`.
 #### Related Concepts
@@ -84,13 +85,13 @@ Current naming chain and Cycle 06 evidence classification.
 #### Description
 Resources require an identifiable owner and a defined lifetime.
 #### Formal Definition
-Resource ownership assigns creation, use, sharing, and release responsibility; lifetime is the interval during which the resource remains retained and valid.
+Resource ownership assigns creation, use, sharing, and release responsibility; lifetime is the interval during which a resource remains retained and valid.
 #### Practical Example
-A repository owns a database connection, while the application composition must determine when all repositories close.
+A repository owns a database connection, while the application composition determines when all repositories close.
 #### Language Implementation
 Python expresses lifetime through constructors, `close()`, context managers, `try/finally`, event hooks, and composition.
 #### Project Implementation
-Markei creates four page-owned service/repository chains. Cycle 06 validation initially found retained SQLite access; a bounded, idempotent `MainWindow.closeEvent()` coordinator then closed all four services and the focused source/frozen gate passed.
+A bounded, idempotent `MainWindow.closeEvent()` closes all four page-owned services. Source/frozen and installed close/reopen evidence passed, while human-visible walkthrough remains pending.
 #### Required Concepts
 `&&&01`.
 #### Related Concepts
@@ -98,7 +99,7 @@ Markei creates four page-owned service/repository chains. Cycle 06 validation in
 #### Status
 Red.
 #### Source
-Cycle 06 shutdown failure, correction, and rerun evidence.
+Cycle 06 shutdown failure, correction, and installed lifecycle rerun evidence.
 
 ---
 
@@ -107,13 +108,13 @@ Cycle 06 shutdown failure, correction, and rerun evidence.
 #### Description
 A claim is limited by the strongest evidence actually obtained. Configuration, artifact creation, execution, deployment, validation, and acceptance are distinct states.
 #### Formal Definition
-An evidence state records what has been demonstrated; a validation boundary identifies the exact environment, lifecycle stage, conditions, and behavior covered by that evidence. Evidence from an earlier state cannot prove a later state.
+An evidence state records what has been demonstrated; a validation boundary identifies the exact environment, lifecycle stage, conditions, and behavior covered by that evidence. Evidence from one boundary cannot automatically prove another.
 #### Practical Example
-An installer source file proves installer configuration, not that an installer executable was compiled, installed, or accepted.
+A compiled installer proves artifact creation; it does not by itself prove installation, workflow behavior, retention, or acceptance.
 #### Language Implementation
-Projects encode evidence through test results, command exits, artifact inspection, hashes, logs, status enums, reports, and explicit acceptance decisions.
+Projects encode evidence through command results, artifact inspection, hashes, logs, test results, environment records, and explicit acceptance decisions.
 #### Project Implementation
-Cycle 06 currently supports `configured: yes`, `built: yes`, `launched: yes — frozen`, `installed: blocked`, `validated: partial`, and `accepted: no`. Shutdown validation first failed, justified a bounded correction, and passed on rerun; installed shutdown remains outside that boundary.
+Cycle 06 progressed from installer configuration to compiled installer, per-user installation, Start Menu launch, technical workflow persistence, close/reopen, same-version reinstall, uninstall retention, and reinstall recovery. Automated installed-lifecycle evidence is strong, but human-visible UI acceptance and SmartScreen behavior remain pending or unknown; `accepted: no`.
 #### Required Concepts
 `&&&01`, `&&&02`, `&&&03`.
 #### Related Concepts
@@ -121,7 +122,7 @@ Cycle 06 currently supports `configured: yes`, `built: yes`, `launched: yes — 
 #### Status
 Red.
 #### Source
-Main Cycle 06 reconciliation plus G/H evidence.
+Sprint 02 Main reconciliation plus G/H evidence.
 
 ---
 
@@ -184,7 +185,7 @@ A short database operation can use `with`; a desktop session may close repositor
 #### Language Implementation
 Python uses `with`, `__enter__`, `__exit__`, `try/finally`, and explicit `close()` methods.
 #### Project Implementation
-Repositories and services expose close behavior. Cycle 06 added an idempotent `MainWindow.closeEvent()` cleanup path after focused evidence demonstrated the previous close path retained the isolated database.
+Markei uses explicit service closure in `MainWindow.closeEvent()`. Automated installed close and immediate reopen passed after the Sprint 01 correction.
 #### Required Concepts
 `&&&04`.
 #### Related Concepts
@@ -192,22 +193,22 @@ Repositories and services expose close behavior. Cycle 06 added an idempotent `M
 #### Status
 Red.
 #### Source
-Cycle 06 shutdown validation and bounded correction.
+Cycle 06 shutdown and installed-reopen evidence.
 
 ---
 
 ## &&%04
 ### Source, Frozen, and Installed Execution Context
 #### Description
-The same application can run from repository source, from a collected executable distribution, or from an installer-placed distribution. These contexts share business architecture but differ operationally.
+The same application can run from repository source, a collected executable distribution, or an installer-placed distribution. These contexts share business architecture but differ operationally.
 #### Formal Definition
-Source execution runs modules and resources through a development interpreter; frozen execution runs collected code and resources through a generated executable; installed execution runs the frozen runtime after installer-controlled placement, registration, and launch-path creation.
+Source execution runs modules and resources through a development interpreter; frozen execution runs collected code and resources through a generated executable; installed execution runs that frozen runtime after installer-controlled placement, registration, and launch-path creation.
 #### Practical Example
-`python main.py`, `dist/Markei/Markei.exe`, and a Start Menu shortcut may start the same application through different resource and dependency contexts.
+`python main.py`, `dist/Markei/Markei.exe`, and a Start Menu shortcut start the same application through different execution contexts.
 #### Language Implementation
-Python applications distinguish contexts using entrypoints, `sys.frozen`, `_MEIPASS`, resource resolution, collected dependencies, and platform-specific writable paths.
+Python applications distinguish contexts through entrypoints, `sys.frozen`, `_MEIPASS`, resource resolution, collected dependencies, and platform-specific writable paths.
 #### Project Implementation
-Markei source and frozen execution are evidenced. The frozen executable launched twice using isolated external user data. `installer/Markei.iss` defines installed placement and shortcuts, but no compiled installer or installed launch exists yet.
+Source and frozen execution were previously evidenced. Sprint 02 added actual installed execution from a Start Menu shortcut under `%LOCALAPPDATA%\Programs\Markei`, without requiring a Python command or source checkout.
 #### Required Concepts
 `&&&01`, `&&%01`, `%%%05`.
 #### Related Concepts
@@ -215,7 +216,7 @@ Markei source and frozen execution are evidenced. The frozen executable launched
 #### Status
 Red.
 #### Source
-Cycle 06 release configuration and frozen-launch evidence.
+Cycle 06 source, frozen, and installed-launch evidence.
 
 ---
 
@@ -278,15 +279,15 @@ A page reads widgets, calls a service, and renders prepared data.
 #### Language Implementation
 PySide6 uses widgets, layouts, signals, slots, event handlers, and dialogs.
 #### Project Implementation
-Markei pages call `ProductService`; `MainWindow` coordinates tabs, navigation, refresh, and now final page-service cleanup.
+Markei pages call `ProductService`; automated Sprint 02 evidence exercised the same service/database path, but a full human-visible UI walkthrough remains pending.
 #### Required Concepts
 `&&&01`, `&&%01`, `&%%01`.
 #### Related Concepts
-`&&&04`, `&&%03`, `&%%04`.
+`&&&04`, `&&%03`, `&%%04`, `&&&05`.
 #### Status
 Yellow.
 #### Source
-Current desktop composition.
+Current desktop composition and Sprint 02 validation boundary.
 
 ---
 
@@ -301,7 +302,7 @@ Stored numbers become a Product object and then formatted Lists labels.
 #### Language Implementation
 Python may use `sqlite3.Row`, dataclasses, dictionaries, `TypedDict`, or dedicated view models.
 #### Project Implementation
-Markei maps rows into models or projections, then services prepare dictionaries consumed by Qt widgets.
+Sprint 02 technical evidence included persisted product/purchase rows plus Lists, History, and Settings projections.
 #### Required Concepts
 `&&&02`, `&&&03`, `&&%02`, `&%%01`.
 #### Related Concepts
@@ -309,7 +310,7 @@ Markei maps rows into models or projections, then services prepare dictionaries 
 #### Status
 Yellow.
 #### Source
-Current mapping and projection boundary.
+Current mapping and installed technical workflow evidence.
 
 ---
 
@@ -324,7 +325,7 @@ Creating a product, adding a purchase, and updating a summary may leave partial 
 #### Language Implementation
 SQLite workflow atomicity uses transaction boundaries, commits, rollbacks, and service/repository coordination.
 #### Project Implementation
-Markei receipt registration and deletion/recalculation remain multi-commit workflows. This is inherited validation debt, not a packaging concept or a proven beta failure.
+Markei receipt registration and deletion/recalculation remain multi-commit workflows. Sprint 02 success does not remove this inherited debt.
 #### Required Concepts
 `&&&01`, `&%%01`, `&%%02`.
 #### Related Concepts
@@ -341,13 +342,13 @@ Current repository/service behavior and Cycle 06 scope boundary.
 #### Description
 Packaging and installation move through distinct configurations, generated artifacts, deployed states, and lifecycle evidence.
 #### Formal Definition
-A release artifact lifecycle transforms source configuration into a frozen distribution, installer configuration into a compiled installer, and that installer into an installed application whose upgrade, uninstall, reinstall, and retained-data behavior require separate validation.
+A release artifact lifecycle transforms source configuration into a frozen distribution, installer configuration into a compiled installer, and that installer into an installed application whose reinstall, uninstall, recovery, and retained-data behavior require separate validation.
 #### Practical Example
-A `.spec` file is not an executable; an executable directory is not an installer; an installer source is not a compiled setup program; an installed program is not automatically lifecycle-validated.
+A `.spec` file is not an executable; an executable directory is not an installer; installer source is not compiled setup media; installation is not lifecycle acceptance.
 #### Language Implementation
-Projects use packaging specifications, build wrappers, generated distribution directories, installer definitions, compiler outputs, installation metadata, and lifecycle tests.
+Projects use packaging specifications, build wrappers, generated distributions, installer definitions, compiler outputs, installation metadata, and lifecycle tests.
 #### Project Implementation
-`Markei.spec` and `scripts/build_windows.ps1` produced `dist/Markei/Markei.exe`. `installer/Markei.iss` and `scripts/build_installer.ps1` configure the next transformation, but missing `ISCC.exe` blocked the compiled installer and all installed lifecycle gates.
+Sprint 02 produced `dist/installer/Markei-Setup-0.1.0-x64.exe`, installed files under `%LOCALAPPDATA%\Programs\Markei`, validated same-version reinstall, removed installed files during uninstall while retaining `%LOCALAPPDATA%\Markei`, and recovered retained data after reinstall.
 #### Required Concepts
 `&&&01`, `&&&04`, `&&%04`, `%%%05`.
 #### Related Concepts
@@ -355,7 +356,7 @@ Projects use packaging specifications, build wrappers, generated distribution di
 #### Status
 Red.
 #### Source
-Cycle 06 build, artifact, installer-blocker, and Main reconciliation evidence.
+Cycle 06 installer artifact and installed lifecycle evidence.
 
 ---
 
@@ -364,15 +365,15 @@ Cycle 06 build, artifact, installer-blocker, and Main reconciliation evidence.
 ## %%%01
 ### SQLite Initialization Versus Migration
 #### Description
-Initialization creates a new database; migration changes an existing database while preserving compatible user state. Seeding is a third operation that inserts initial rows.
+Initialization creates a new database; migration changes an existing database while preserving compatible user state. Seeding inserts predefined rows.
 #### Formal Definition
-Initialization establishes baseline persistence, migration transforms existing persistence, and seeding inserts predefined records into an initialized structure.
+Initialization establishes baseline persistence, migration transforms existing persistence, and seeding inserts optional predefined records into an initialized structure.
 #### Practical Example
-A first launch creates tables; a later launch adds a missing column; optional fixtures insert sample rows.
+A first launch creates tables; migration ensures required defaults; a development fixture may insert sample rows.
 #### Language Implementation
 Python may use `connect`, `executescript`, schema inspection, conditional DDL, idempotent inserts, and commits.
 #### Project Implementation
-Markei production packaging includes `schema.sql` but excludes `seed.sql`; fresh production launch therefore creates structure and defaults without sample business rows. Additive compatibility migration still runs for existing data.
+Production includes `schema.sql` and excludes `seed.sql`. Sprint 02 showed that category `F` / `General` and store `1` / `Default Store` are required structural defaults, created idempotently without sample products or purchases.
 #### Required Concepts
 `&&&01`, `&%%02`.
 #### Related Concepts
@@ -380,7 +381,7 @@ Markei production packaging includes `schema.sql` but excludes `seed.sql`; fresh
 #### Status
 Yellow.
 #### Source
-Current database lifecycle and Cycle 06 schema-only evidence.
+Current database lifecycle and Sprint 02 fresh-production correction.
 
 ---
 
@@ -395,7 +396,7 @@ Four repositories can hold four independent database sessions.
 #### Language Implementation
 Python uses `sqlite3.Connection` and `sqlite3.Cursor`, explicit commit/rollback, row factories, PRAGMAs, and close operations.
 #### Project Implementation
-Each Markei repository opens one connection and cursor. The four page-owned chains are now closed through the validated `MainWindow` close coordinator in the focused source/frozen gate; installed behavior remains untested.
+Each Markei repository opens one connection and cursor. The four page-owned chains closed successfully during automated installed close/reopen validation.
 #### Required Concepts
 `&&&04`, `&%%02`.
 #### Related Concepts
@@ -403,7 +404,7 @@ Each Markei repository opens one connection and cursor. The four page-owned chai
 #### Status
 Red.
 #### Source
-Current ownership structure and Cycle 06 shutdown evidence.
+Current ownership structure and installed lifecycle evidence.
 
 ---
 
@@ -441,7 +442,7 @@ A purchase references a product and follows declared update/delete behavior.
 #### Language Implementation
 SQLite uses `CREATE TABLE`, keys, indexes, nullability, and foreign-key actions.
 #### Project Implementation
-Markei defines categories, products, stores, purchases, settings, and promotions with explicit relationships.
+The fresh-production Register failure exposed that required category/store references must exist before inserting a purchase-backed product workflow.
 #### Required Concepts
 `&&&01`, `&%%02`.
 #### Related Concepts
@@ -449,7 +450,7 @@ Markei defines categories, products, stores, purchases, settings, and promotions
 #### Status
 Yellow.
 #### Source
-Current SQL schema.
+Current schema and Sprint 02 referential-integrity evidence.
 
 ---
 
@@ -462,9 +463,9 @@ A bundled resource is supplied with the application runtime; writable user data 
 #### Practical Example
 A schema script travels with the application while the user's database belongs in a per-user directory.
 #### Language Implementation
-Python resolves source/frozen resources with paths and runtime indicators, while user data uses platform directories or environment variables.
+Python resolves source/frozen resources through paths and runtime indicators, while user data uses platform directories or environment variables.
 #### Project Implementation
-For the primary beta, `schema.sql` is bundled, `seed.sql` is a development/test fixture excluded from production, `market.sqlite` is retained writable state, WAL/SHM are transient companions, and `startup.log` is writable diagnostics under `%LOCALAPPDATA%/Markei`. External placement supports preservation but does not validate uninstall retention.
+Installed program files under `%LOCALAPPDATA%\Programs\Markei` were removed by uninstall, while `%LOCALAPPDATA%\Markei\market.sqlite` remained and was recovered after reinstall. `schema.sql` is bundled, `seed.sql` is excluded, and logs/WAL/SHM remain writable external state.
 #### Required Concepts
 `&&&04`, `%%%01`.
 #### Related Concepts
@@ -472,7 +473,7 @@ For the primary beta, `schema.sql` is bundled, `seed.sql` is a development/test 
 #### Status
 Yellow.
 #### Source
-Cycle 06 package inspection, startup diagnostics, and installer configuration.
+Sprint 02 uninstall retention and reinstall recovery evidence.
 
 ---
 
@@ -481,13 +482,13 @@ Cycle 06 package inspection, startup diagnostics, and installer configuration.
 #### Description
 Dependencies belong to different lifecycle stages and must not be treated as one undifferentiated requirement set.
 #### Formal Definition
-A build-time dependency is required to produce a frozen artifact; a runtime dependency is required by the executing application and may be collected into or placed beside it; an installer-time dependency is required to compile or run installation tooling.
+A build-time dependency produces a frozen artifact; a runtime dependency supports the executing application; an installer-time dependency compiles or executes installation tooling.
 #### Practical Example
-A packaging tool may be needed only on the builder, collected GUI libraries are needed by the executable, and an installer compiler is needed only to produce setup media.
+A packaging tool may exist only on the builder, collected GUI libraries support the executable, and an installer compiler produces setup media.
 #### Language Implementation
 Projects separate dependency manifests, build commands, collected modules/native libraries, and external compiler discovery.
 #### Project Implementation
-Cycle 06 recorded PyInstaller 6.21.0 and PySide6 6.11.1 in `requirements-build.txt`. PyInstaller produced the one-folder runtime; collected PySide6/Qt components support execution; Inno Setup's `ISCC.exe` is an installer-time prerequisite whose absence blocked installer compilation without invalidating the frozen build.
+PyInstaller produced the frozen runtime; collected PySide6/Qt components support execution. Inno Setup 6.7.3 was installed per-user and discovered at `%LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe`; it compiled the installer but is not required by the installed Markei application.
 #### Required Concepts
 `&&%01`, `&&%04`, `&%%06`.
 #### Related Concepts
@@ -495,12 +496,10 @@ Cycle 06 recorded PyInstaller 6.21.0 and PySide6 6.11.1 in `requirements-build.t
 #### Status
 Red.
 #### Source
-Cycle 06 dependency record, successful frozen build, and installer-time blocker.
+Sprint 02 toolchain discovery and installed runtime evidence.
 
 ---
 
 # Canonical Boundary
 
-The four Cycle 06 additions — `&&&05`, `&&%04`, `&%%06`, and `%%%06` — are canonical **Red** concepts. They are supported as teachable distinctions but have not been demonstrated as learner mastery.
-
-The register does not claim that a compiled installer exists, that installed execution has occurred, that uninstall retention is validated, or that the beta is accepted. Tool names remain project examples rather than standalone concepts. Existing architecture, migration, transaction, and packaging decisions remain owned by their proper project domains.
+The four Cycle 06 release concepts remain **Red**. Sprint 02 strengthens their project examples but does not demonstrate learner mastery. No concept is Green. Automated technical workflow validation does not equal a human-visible UI walkthrough, SmartScreen behavior remains unknown for normal visible execution, and final beta acceptance remains owned by Main/human review.
