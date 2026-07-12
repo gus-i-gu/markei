@@ -19,6 +19,8 @@ class MainWindow(QMainWindow):
 
         super().__init__()
 
+        self._services_closed = False
+
         self.setWindowTitle("Markei")
 
         ####################################################
@@ -168,3 +170,44 @@ class MainWindow(QMainWindow):
         self.lists_page.load_products()
 
         self.history_page.load_history()
+
+    ####################################################
+    #
+    # Shutdown
+    #
+    ####################################################
+
+    def close_page_services(self):
+        """
+        Idempotently release page-owned service resources.
+        """
+
+        if self._services_closed:
+            return
+
+        pages = (
+            self.register_page,
+            self.lists_page,
+            self.history_page,
+            self.settings_page,
+        )
+
+        for page in pages:
+            service = getattr(page, "service", None)
+
+            if service is not None:
+                service.close()
+
+        self._services_closed = True
+
+    def closeEvent(
+        self,
+        event,
+    ):
+        """
+        Coordinate final page-owned service cleanup on window close.
+        """
+
+        self.close_page_services()
+
+        event.accept()
