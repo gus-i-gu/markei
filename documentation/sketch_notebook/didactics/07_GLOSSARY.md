@@ -266,37 +266,40 @@ A platform-security or reputation observation distinct from application correctn
 ---
 
 <!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
-> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content appended below it belongs to Sprint 03 or later. If recovery cost becomes excessive or this file grows beyond approximately 1,000 lines, this reviewed marker is an eligible semantic-partition boundary under human/Main authorization.
+> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content below it is a derived retrieval surface for later evidence and must follow `02_KANBAN.md`.
 
-# Sprint 03 Local-Evidence Retrieval
+# Sprint 04 Current-Evidence Retrieval
 
-These notes derive from the canonical evidence boundary recorded in `02_KANBAN.md`.
+These terms derive from the canonical concepts and evidence limits in `02_KANBAN.md`; they introduce no independent truth.
 
-## Local Implementation Evidence
-**KANBAN IDs:** `&&&06`, `&&&10`, `&&%05`, `&%%07`–`&%%12`, `&%%15`–`&%%17`, `%%%07`  
-Dart/Drift tests now exercise the local catalogue, Purchase aggregate, immutable local event, pending queue, dimensional quantity, minor-unit money, persistence, rollback, and minimal analytics registry. This is local unit-test evidence, not platform or learner validation.
+## Three Product Identities
+**KANBAN IDs:** `&&&06`, `&%%07`, `&%%08`  
+The user Product code is an account-private visible reference; the local Product UUID is the immutable record identity; a possible future central UUID would identify a versioned shared semantic set. They are not interchangeable.
 
-## Versioned Semantic Fixture
-**KANBAN IDs:** `&%%08`, `&%%09`, `&%%11`, `&%%14`  
-A human-readable cross-language example containing inputs, expectations, or required fields. Current JSON fixtures coordinate meaning but do not yet specify a complete wire protocol, schema validation, or Dart/TypeScript parity.
+## Display Fact and Normalized Key
+**KANBAN ID:** `&%%08`  
+A display fact preserves user-readable text. A normalized key applies versioned deterministic rules for comparison. Sprint 04 uses NFKC and whitespace collapse and tests Portuguese/Unicode cases; normalization does not authorize automatic Product merge.
 
-## Offline Queue Preparation
-**KANBAN ID:** `&%%12`  
-Atomic creation of a durable pending-event row beside local facts. It does not prove upload, server acceptance, retry deduplication, cursor download, or synchronization.
+## Structural Schema Validation
+**KANBAN ID:** `&%%14`  
+The v2 JSON Schemas check the structure of readable catalogue, Purchase, and sync-event examples. Cross-field domain rules and cross-language semantic parity still belong to implementation and fixture tests.
 
-## Generated Code
-**KANBAN IDs:** `%%%07`, `&%%02`  
-Source produced from reviewed schema/configuration and tooling. Drift database code and Flutter platform runners are regeneration outputs; their existence does not equal handwritten domain design or platform validation.
+## Local Atomic Delivery Preparation
+**KANBAN IDs:** `&%%05`, `&%%09`–`&%%13`  
+One local transaction writes the Purchase aggregate, append-only event, pending queue entry, and device sequence. This proves rollback and durable preparation, not upload, acknowledgement, cursor download, or convergence.
 
-## Host-Unvalidated Platform Target
-**KANBAN ID:** `%%%07`  
-A generated platform project not yet built or run on the required host. Android, Windows, and iOS remain host-unvalidated in Sprint 03 Unit 01.
-
-## Provisional Device Ordering
+## Monotonic Device Sequence
 **KANBAN ID:** `&%%13`  
-The intended monotonic device sequence and cursor responsibility is not implemented reliably: repeated registration may reset sequence allocation, and no server cursor exists.
+Successful local events from one device receive increasing sequence numbers; a failed transaction consumes none. The local sequence orders that device’s events but is not a server synchronization cursor.
 
-## Local Event Versus Synchronization
-**KANBAN IDs:** `&%%11`, `&%%12`, `&%%14`, `&&&09`  
-A persisted local append-only event and queue are prerequisites for synchronization. They are not evidence of an API, server idempotency, cursor application, cross-device convergence, authentication, or authorization.
+## Schema Migration Evidence
+**KANBAN IDs:** `&&&10`, `&%%08`, `%%%01`  
+The tested v1-to-v2 migration preserves a Product record, adds identity/display fields, assigns a marked temporary legacy code, records the migration, and survives reopen. It is bounded migration evidence, not proof of every historical upgrade path.
 
+## Responsive Flutter Workflow Evidence
+**KANBAN ID:** `%%%07`  
+The Flutter client now composes a multi-item Purchase form and local history through application/repository boundaries. Widget tests and Windows build/launch evidence are stronger than generated runner presence; Android and iOS remain outside validated equivalence.
+
+## Evidence Is Not Mastery
+**KANBAN IDs:** all referenced concepts  
+Source, tests, schemas, and host runs show project behavior. They do not change learner maturity without explicit explanation or other learner evidence.
