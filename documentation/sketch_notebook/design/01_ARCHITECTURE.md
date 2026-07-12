@@ -1,6 +1,6 @@
 # 01_ARCHITECTURE.md
 
-> Version: 0.3-cycle06-sprint02
+> Version: 0.4-cycle07-sprint02
 > Status: Reconciled Canon
 > Persistence Class: Canonical
 > Knowledge Class: Design
@@ -289,3 +289,114 @@ The following remain outside this Design absorption:
 - unrelated Promotion or `pages.order` decisions.
 
 Derived and checkpoint files must not introduce claims absent from this canon.
+
+---
+
+# 16. Accepted Cycle 07 Shared-Beta Planning Architecture
+
+This section defines accepted stable planning boundaries for the future shared client. It does not replace the accepted Cycle 06 desktop architecture until parity and human/Main acceptance.
+
+## 16.1 Client and dependency direction
+
+Flutter/Dart is the accepted planning basis for one future Windows, Android, and iOS client.
+
+```text
+Flutter presentation
+→ application/use cases
+→ domain/contracts/versioned analytics
+→ repository interfaces
+→ local persistence/event queue/synchronization adapters
+```
+
+Dependencies point inward toward application and domain meaning. Presentation owns responsive rendering, navigation, input, accessibility, and formatting. Use cases coordinate workflows. Domain owns identity, aggregate, quantity, money, event, and analytical contracts. Infrastructure implements repository and synchronization boundaries.
+
+Python is not embedded in the Flutter client. Python-to-Dart continuity uses language-neutral contracts, deterministic fixtures, expected behavior, and migration evidence.
+
+## 16.2 Local-first persistence
+
+Every client installation owns application-private local persistence and remains usable for the reduced workflow while offline.
+
+A local Purchase registration atomically commits the Purchase aggregate, its Purchase Items, required local catalogue references, one pending synchronization event, and affected projections. Network operations occur after local commit.
+
+Downloaded events and local cursor advancement commit together. Projections remain rebuildable from authoritative facts and versioned rules.
+
+## 16.3 Catalogue and purchase model
+
+The first shared beta owns an account-private reusable catalogue.
+
+```text
+Account
+├── Products
+├── Stores
+└── Purchases
+    └── one or more Purchase Items
+        └── reference Product
+```
+
+Product identity distinguishes PACKAGED and BULK modes. Packaged identity uses normalized name, brand, package amount, and explicit dimension/unit. Bulk identity uses normalized name, brand, and BULK mode. Exact normalized equivalence may reuse; fuzzy similarity is advisory and never merges automatically.
+
+Product identity fields remain immutable in the first beta. A changed identifying name, brand, mode, or package specification creates a distinct Product identity. Future successor/product-family relationships may connect identities without rewriting history.
+
+Purchase is an atomic aggregate containing one or more Purchase Items. The first UI may guide one item, but the contract remains multi-item capable. Purchase Items preserve immutable commercial observations.
+
+Quantity is dimensionally explicit across MASS/KG, VOLUME/L, and COUNT/UNIT. Mass and volume are never inferred from one another. Currency is explicit and monetary facts use integer minor units. Raw catalogue, purchase, and item observations are authoritative; prices, status, intervals, inflation/deflation, shrinkflation, forecasts, and presentation models are derived.
+
+## 16.4 Versioned analytics
+
+The Flutter client owns versioned Dart analytical behavior. Each reproducible algorithm has a stable identifier and version. Once used, a version does not change meaning; improved behavior receives a new version. Raw purchase facts are not rewritten when analytics evolve, and cached projections remain rebuildable.
+
+## 16.5 Synchronization and cloud boundary
+
+```text
+Flutter client
+→ authenticated custom synchronization API
+→ Neon Postgres
+```
+
+Clients do not hold privileged Neon credentials and do not bypass the API.
+
+The custom API owns authentication-token verification, immutable account resolution, account/device authorization, runtime event validation, idempotent append, device-sequence policy, account-scoped cursor allocation and download, protocol versions, server transactions, stable errors, and diagnostics.
+
+TypeScript is favored for the API boundary. Neon is favored as managed Postgres persistence behind that API. These preferences do not accept an exact framework, host, migration tool, or physical schema.
+
+The first synchronization slice is append-only. Event UUID identifies retries; device UUID plus monotonic sequence describes one installation's creation order; occurrence timestamp records business time; opaque account-scoped cursor describes accepted download order. Purchase events are atomic, batch uploads return per-event transactional results, and new devices bootstrap from cursor zero.
+
+Verified email is a login requirement. Immutable internal account UUID—not email—owns data.
+
+## 16.6 Protected transition
+
+The accepted Python/PySide6 beta and original Cycle 06 database remain recoverable throughout the transition.
+
+```text
+preserve accepted desktop beta
+→ define cross-language contracts and fixtures
+→ build against fresh isolated Flutter data
+→ evidence reduced workflow and projection parity
+→ evidence synchronization and platform lifecycle
+→ migrate only from a protected copy with deterministic mapping
+→ retain rollback
+→ retire/demote PySide6 only after human/Main acceptance
+```
+
+Direct destructive conversion or shared opening of the ordinary Cycle 06 database is outside the accepted transition boundary.
+
+## 16.7 Explicit exclusions from canon
+
+The following remain provisional, open, or empirical and are not canonical implementation choices:
+
+- deterministic Product UUID derivation;
+- exact normalization-v1 rules;
+- exact cursor implementation;
+- decimal scale, range, and serialization;
+- fractional COUNT policy;
+- RLS adoption;
+- legacy ambiguity handling;
+- Flutter persistence and secure-storage plugins;
+- state management and navigation;
+- authentication provider;
+- TypeScript framework/runtime/host;
+- physical SQLite/Postgres tables and migrations;
+- repository directory topology;
+- paging limits and parity threshold.
+
+Editing/deletion, catalogue merges/aliases, global catalogue, household sharing, complex conflicts, realtime/background synchronization, public/app-store release, and PySide6 retirement remain deferred.
