@@ -1,255 +1,88 @@
-# F_DSN_STAGE — Cycle 06 Sprint 02 Final Desktop Validation
+# F_DSN_STAGE — Cycle 07 Sprint 03 Flutter Foundation
 
-> Status: Main-approved Design materialization stage
-> Authority: Main Chat [M]
-> Branch: `sketch-notebook-recovery`
-> Inputs: `A_OPERATIONAL.md`, `B_DIDACTIC.md`, `C_DESIGN.md`
-> Codex report target: `DEV_STAGE/I_DSN_CODEX.md`
+> Cycle: 07 | Sprint: 03 | Unit: 01
+> Status: Main-approved materialization stage
+> Branch: `cycle-07-mobile-preparation`
+> Baseline: `f6414fbe7394453387067a5a34ca6cc7621bbed3`
+> Sources: `[M]_STAGE/J_[M]_STAGE.md` §§17–18; `00_PROJECT_STATE.md`; `05_SESSION_LOG.md`; `06_SESSION_SCHEME.md`
 
-## 1. Objective
+---
 
-Validate that the compiled installer and installed Windows lifecycle preserve the accepted Markei architecture and deployment boundaries.
-
-Sprint 02 does not authorize a new architecture. It authorizes only evidence-triggered, beta-bounded corrections when a directly observed gate fails.
-
-## 2. Accepted Architecture Preserved
-
-The application boundary remains:
+# 1. Exact topology
 
 ```text
-Desktop UI
-→ ProductService
-→ Repository
-→ Database Manager
-→ SQLite
+clients/markei_flutter/
+├── android/                 generated when supported
+├── ios/                     generated when supported; no validation claim without macOS/Xcode
+├── windows/                 generated when supported
+├── lib/
+│   ├── app/
+│   ├── domain/{analytics,catalogue,purchase,store,sync}/
+│   ├── application/
+│   └── infrastructure/local/
+└── test/
+contracts/shared_beta/v1/
+├── README.md
+├── catalogue_identity.json
+├── purchase_aggregate.json
+└── sync_event.json
 ```
 
-Packaging and installation remain deployment concerns around this application. They do not own business workflows, SQL, migration semantics, or user-created state.
+Conventional Flutter-generated files may appear under the client. Do not create `services/sync_api/` in this unit.
 
-## 3. Boundaries That Must Remain Stable
-
-Do not reopen without contradictory installed-lifecycle evidence:
-
-- `main.py` is the launcher adapter and outer startup-diagnostic boundary;
-- `app.main.main()` constructs the Qt application;
-- `Markei.spec` owns one-folder frozen composition;
-- `scripts/build_windows.ps1` invokes the spec;
-- `installer/Markei.iss` owns placement, identity, shortcuts, and uninstall registration;
-- `scripts/build_installer.ps1` owns compiler discovery and invocation;
-- `schema.sql` is bundled read-only application content;
-- `seed.sql` is excluded from production;
-- `%LOCALAPPDATA%\Markei\market.sqlite` is retained writable user data;
-- WAL/SHM are transient writable companions;
-- startup logs are generated under `%LOCALAPPDATA%\Markei\logs`;
-- identity is `Markei` / `Markei.exe` / `0.1.0` / publisher `Markei` / stable AppId;
-- Start Menu shortcut is required;
-- desktop shortcut is optional;
-- `MainWindow.closeEvent()` coordinates final idempotent closure of four page-owned services.
-
-## 4. Expected Installed Boundary
-
-The installer may place only replaceable program content under the per-user program directory:
+# 2. Dependency direction
 
 ```text
-Markei.exe
-collected Python / PySide6 / Qt runtime files
-schema.sql
-approved static assets
-version metadata
+Flutter composition → application use cases → domain models/ports
+                                      ← infrastructure/local Drift adapters
 ```
 
-It must not install or treat as replaceable program content:
+Domain imports neither Flutter widgets, Drift, HTTP, Python, nor platform plugins. Widgets do not issue SQL or own transactions. Infrastructure implements inward-facing ports.
+
+# 3. Immutable domain concepts
+
+AccountId, DeviceId, ProductId, StoreId, PurchaseId, PurchaseItemId, EventId; ProductMode; MeasurementKind; CanonicalUnit; NormalizedQuantity; Money; Product; Store; Purchase; PurchaseItem; SyncEvent; pending state; AnalyticDefinition identifier/version.
+
+Purchase contains at least one Item and one Store. Product identity is account-private. PACKAGED identity includes normalized name, brand, mode, kind, amount, and unit. BULK identity includes account, normalized name, brand, and mode.
+
+# 4. Drift schema responsibilities
+
+- `local_accounts`;
+- `devices` with next monotonic sequence;
+- `products` with normalization version and account-scoped exact identity key;
+- `stores`;
+- `purchases` with occurrence time and currency;
+- `purchase_items` with Product reference, explicit dimension/unit, and integer line total;
+- `sync_events` with immutable versioned payload and unique identity;
+- `pending_events`, or an equivalently explicit queue responsibility;
+- `sync_state` with nullable future opaque account cursor;
+- `migration_ledger` for fresh-schema provenance.
+
+Applied-event/cursor behavior may be represented minimally but cannot claim real sync. Projections may remain rebuildable queries; do not persist duplicate mutable truth without evidence.
+
+# 5. Transaction boundary
 
 ```text
-market.sqlite
-*.sqlite-wal
-*.sqlite-shm
-seed.sql
-startup.log
-tests
-caches
-source tree
+resolve/create Store
++ resolve/create exact Products
++ validate all Items
++ insert Purchase and Items
++ allocate device sequence
++ insert immutable purchase.registered event
++ enqueue pending event
+= one local transaction
 ```
 
-The installed executable must launch without Python, a source checkout, repository working directory, or development environment.
+Any failure rolls back the aggregate. No network work occurs inside it. Stable IDs/uniqueness prepare retry safety but do not prove server idempotency.
 
-Resource lookup must continue to find packaged `schema.sql`; writable-path lookup must continue to use `%LOCALAPPDATA%\Markei`.
+# 6. Isolation
 
-## 5. Shortcut and Identity Boundary
+The Flutter database uses an app-private path; tests use temporary or in-memory stores. Code must not discover, open, copy, rename, migrate, or hash the ordinary Cycle 06 SQLite database. Legacy import is a later unit.
 
-Installed evidence must verify:
+# 7. Deferred
 
-- per-user installation under `%LOCALAPPDATA%\Programs\Markei`;
-- stable AppId retained across same-version reinstall and compatible upgrade;
-- Start Menu shortcut launches the installed executable;
-- optional desktop shortcut is created only when selected;
-- application, executable, and installer identity remain synchronized.
+Production auth/authorization, Neon, TypeScript API, direct Postgres access, household collaboration, merge/alias, edits/deletion, background/realtime sync, public catalogue, full UI workflow, complete parity, and PySide6 retirement.
 
-A shortcut failure is primarily an installer registration defect, not an application-architecture failure.
+# 8. Acceptance boundary
 
-## 6. Lifecycle Interpretation
-
-### Clean installation
-
-Expected:
-
-```text
-compiled installer
-→ per-user program placement
-→ registered uninstall entry
-→ Start Menu shortcut
-→ no user database shipped as program content
-```
-
-### Same-version reinstall
-
-Expected:
-
-```text
-replace or repair program files
-+ retain stable AppId
-+ retain %LOCALAPPDATA%/Markei
-+ reopen compatible existing database
-```
-
-### Compatible beta upgrade
-
-When a compatible version transition is actually exercised:
-
-```text
-stable installer identity
-→ replace program files
-→ retain user state
-→ reopen database
-→ apply current additive compatibility behavior
-```
-
-Cycle 06 does not establish downgrade handling, rollback, incompatible-schema recovery, or a migration ledger.
-
-### Uninstall
-
-Accepted policy:
-
-```text
-remove installed program files and shortcuts
-preserve %LOCALAPPDATA%/Markei by default
-```
-
-This becomes validated only through direct post-uninstall inspection.
-
-### Reinstall after uninstall
-
-Expected:
-
-```text
-reinstall compatible package
-→ launch from Start Menu
-→ reopen retained database
-→ recover principal workflow state
-```
-
-## 7. Installed Shutdown Boundary
-
-Sprint 01 proved source/frozen cleanup after adding bounded `MainWindow` coordination.
-
-Sprint 02 must verify that installed normal closure reaches the same path and permits immediate reopen without retained database lock.
-
-If installed shutdown fails:
-
-1. prove whether `MainWindow.closeEvent()` executed;
-2. identify which page service or repository remained open;
-3. apply only the smallest correction within existing desktop shutdown coordination;
-4. rerun installed close/reopen and dependent lifecycle gates.
-
-Do not introduce a composition root, dependency injection, or shared-lifetime redesign.
-
-## 8. Failure Classification
-
-Use this primary classification before changing source:
-
-| Failure | Design interpretation |
-| --- | --- |
-| `ISCC.exe` unavailable | Toolchain prerequisite; no architecture change. |
-| Installer compile error | Correct only `.iss` or compile-wrapper boundary. |
-| Missing runtime file after install | Determine packaging omission versus installer-copy defect. |
-| Broken Start Menu shortcut | Installer registration defect. |
-| Installed app cannot locate `schema.sql` | Packaging/resource-resolution defect. |
-| Installed app writes under program files | Writable-state boundary defect. |
-| Workflow fails only installed | Narrow installed dependency/path/workflow defect. |
-| Database locked after installed close | Existing lifecycle coordination defect. |
-| Data removed by uninstall | Retention-policy defect. |
-| SmartScreen warning without runtime failure | Reputation/security observation. |
-| Human rejects usability | Human-acceptance failure with exact reason. |
-
-## 9. Evidence-Triggered Correction Authority
-
-Only after direct failure evidence may Codex correct:
-
-- compiler discovery/invocation;
-- installer file inclusion, destination, architecture, identity, shortcut, or uninstall registration;
-- PyInstaller collection of a missing installed dependency/resource;
-- launcher diagnostics for an installed-only startup failure;
-- existing resource or writable-path resolution;
-- current MainWindow shutdown coordination;
-- a narrowly reproduced beta-blocking workflow;
-- focused validation tooling or logs.
-
-No speculative correction is authorized.
-
-## 10. Acceptance Chain
-
-The installed boundary is evidenced only when this chain passes:
-
-```text
-compiled installer artifact with expected identity
-→ clean per-user installation
-→ correct installed file boundary
-→ Start Menu launch without Python/source checkout
-→ Register / Lists / History / Settings pass
-→ close and immediate reopen pass
-→ persisted data remains correct
-→ same-version reinstall or compatible upgrade preserves data
-→ uninstall removes program files and preserves user state
-→ reinstall recovers retained compatible data
-→ SmartScreen/antivirus observations recorded
-→ Main/human acceptance
-```
-
-Installer compilation alone does not establish `installed`, `validated`, or `accepted`.
-
-## 11. Explicit Deferrals
-
-Do not introduce:
-
-- composition-root redesign or dependency injection;
-- service/repository lifetime redesign or decomposition;
-- transaction redesign unless a demonstrated blocker is separately reconciled;
-- schema redesign or migration ledger;
-- mobile, backend/API, synchronization, authentication, or cloud persistence;
-- one-file packaging;
-- auto-update, signing, rollback framework;
-- optional uninstall data-deletion UX;
-- broad UI/navigation redesign.
-
-Workflow atomicity remains inherited debt unless ordinary installed testing demonstrates a concrete release blocker.
-
-## 12. I Report Contract
-
-Replace `DEV_STAGE/I_DSN_CODEX.md` with a concise Sprint 02 report containing:
-
-1. whether the accepted deployment boundary was preserved;
-2. compiled installer identity and placement evidence;
-3. installed program-file versus user-state evidence;
-4. Start Menu and optional desktop-shortcut results;
-5. installed resource and writable-path behavior;
-6. installed shutdown/reopen result;
-7. same-version reinstall or compatible upgrade result;
-8. uninstall-retention result;
-9. reinstall-recovery result;
-10. every failed gate, primary classification, bounded correction, and rerun;
-11. SmartScreen/antivirus classification;
-12. remaining unvalidated design boundaries;
-13. explicit deferrals preserved;
-14. confirmation that permanent Design files were not modified.
-
-Use evidence-appropriate states only. Codex must not declare final beta acceptance.
+This is a local foundation, not the full Sprint 03 vertical slice or Cycle 07 completion. Later D/E/F must separately authorize the purchase UI/platform execution and then the isolated TypeScript/Postgres two-device sync harness.
