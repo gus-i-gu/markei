@@ -544,3 +544,50 @@ Acceptance still requires:
 ## Deferrals
 
 Deferred: application implementation, D/E/F, framework and repository-topology selection, permanent source reorganization, backend, authentication, synchronization, household sharing, desktop/mobile database exchange, production migration design, store release, and full feature parity.
+
+
+---
+
+# 12. Event 14 — Cycle 07 Sprint 02 Flutter Shared-Beta Reconciliation
+
+## Client-language supersession
+
+Human/Main accepted Flutter/Dart as the planning basis for the future shared Windows, Android, and iOS client. This superseded the earlier TypeScript-client exploration direction while retaining TypeScript as the favored custom synchronization-API language.
+
+Rationale: one Dart/Flutter client can own presentation, use cases, local persistence, event queue, synchronization coordination, authenticated session, platform lifecycle, and analytics without embedding Python or coordinating multiple installed client runtimes. Python/PySide6 remains the accepted Cycle 06 implementation, behavioral reference, migration source, and rollback.
+
+Retained alternatives are evidence controls rather than active client directions. TypeScript remains valuable at the API boundary; Python remains a possible API fallback. Exact Flutter persistence, secure storage, state-management, navigation, and packaging dependencies remain unvalidated.
+
+## Catalogue and purchase direction
+
+The first shared beta adopts an account-private reusable catalogue. Product identity distinguishes PACKAGED and BULK modes and uses normalized name, brand, and—when packaged—explicit dimensional package amount/unit. Exact normalized equivalence may reuse; fuzzy similarity warns but never merges automatically. Deterministic account-scoped Product UUID derivation and normalization-v1 mechanics remain provisional pending cross-language fixtures.
+
+Purchase is an atomic aggregate containing one or more Purchase Items. The first UI may guide one item, but the domain contract remains multi-item capable. One append-only `purchase.registered` event containing immutable item lines is the favored first synchronized event.
+
+Dimensional quantity separates MASS/KG, VOLUME/L, and COUNT/UNIT without mass/volume inference. Money carries explicit currency and integer minor units. Line totals and purchase observations are authoritative; normalized prices, price changes, personal inflation/deflation, forecasts, and other analytics are derived.
+
+## Analytics, synchronization, and cloud direction
+
+The Flutter client owns a versioned Dart analytics registry. Stable algorithm identifiers and versions preserve reproducibility; raw facts are never rewritten by analytical evolution.
+
+Synchronization planning accepts event UUID idempotency, device UUID plus monotonic sequence, occurrence time as business time, opaque account-scoped cursor as download order, sequence-gap rejection, per-event upload transactions/results, cursor-zero bootstrap, and transactional local event application plus cursor advancement.
+
+The mandatory boundary is:
+
+```text
+Flutter client
+→ authenticated custom synchronization API
+→ Neon Postgres
+```
+
+The TypeScript API owns token verification, account/device authorization, runtime validation, idempotent event append, sequence enforcement, cursor allocation/download, protocol versions, transactions, stable errors, and diagnostics. Neon owns managed persistence and constraints, not synchronization meaning. RLS remains an open defense-in-depth candidate.
+
+## Migration and rollback policy
+
+Transition is additive. The accepted PySide6 beta and original database remain protected until Flutter desktop/mobile parity and human/Main acceptance. Migration operates from a protected copy, uses deterministic legacy-to-UUID mapping and idempotent import evidence, reports ambiguous units/money/package facts instead of guessing, validates counts/totals/dates/projections, and retains rollback. Direct destructive conversion or shared access to the ordinary Cycle 06 database is not authorized.
+
+## Explicit deferrals and empirical questions
+
+Deferred: purchase editing/deletion, aliases/merges, global catalogue, household sharing, product-family/successor UI, complex conflicts, realtime/background sync, broad settings synchronization, app-store/public release, permanent repository split, and PySide6 retirement.
+
+Still empirical or open: Flutter persistence and secure-storage plugins; state management/navigation; auth provider; API framework/runtime/host; Postgres migration tool; canonical JSON toolchain; exact decimal scale/range; fractional COUNT; currency metadata; normalization migration; legacy ambiguity policy; RLS; paging limits; queue-corruption recovery; iOS/macOS evidence; and parity threshold.
