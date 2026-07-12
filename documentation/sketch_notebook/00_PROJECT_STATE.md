@@ -1,278 +1,193 @@
 # 00_PROJECT_STATE.md
 
-> Version: Cycle 06 closure / Cycle 07 entry 0.3
+> Version: Cycle 07 Sprint 01 reconciliation 0.4
 > Status: Active Global State Canon-Checkpoint
 > Persistence Class: Canon-Checkpoint
 > Knowledge Class: Main / Global
 > Authority: Main Chat [M]
-> Branch: `sketch-notebook-recovery`
+> Branch: `cycle-07-mobile-preparation`
+> Baseline: `f6414fbe7394453387067a5a34ca6cc7621bbed3`
 > Reconciliation source: `[M]_STAGE/J_[M]_STAGE.md`
 > Scope: Concise accepted global state and low-cost recovery entrypoint
 
 ---
 
-# 1. Global Milestone State
+# 1. Global State
 
-Cycle 06 is closed with the controlled Windows primary beta accepted by Main/human direction.
+Cycle 06 is accepted and closed at the controlled Windows primary-beta boundary.
 
-Cycle 06 milestone:
+Cycle 07 is active as a mobile-development preparation and architecture-discovery cycle in the isolated `markei-mobile` clone and `cycle-07-mobile-preparation` branch.
 
-> Produce and validate a fully executable and installable Windows primary beta of Markei.
-
-Final evidence classification:
+Current state:
 
 ```text
-configured: validated
-built: validated
-launched: validated — frozen and installed Start Menu launch
-installed: validated — per-user installed lifecycle
-validated: accepted for the controlled primary-beta boundary
-accepted: yes — controlled beta, not production/public maturity
+Cycle 06 desktop beta: accepted and protected
+Cycle 07 Sprint 01 investigation: complete
+domain permanent-memory reconciliation: complete
+mobile framework: not selected
+mobile prototype: not implemented
+implementation authorization: none
+D/E/F: postponed
 ```
-
-Acceptance is bounded. The technically validated lifecycle used the current ordinary Windows user with existing data backed up and restored. Human-visible SmartScreen behavior and a complete manual visual walkthrough were not separately captured; they remain release observations for future distribution rather than blockers to the accepted controlled beta.
 
 ---
 
-# 2. Current Application and Architecture
+# 2. Accepted Desktop Baseline
 
 Markei remains a local Python desktop application using PySide6 and SQLite.
 
 ```text
-main.py
-→ app.main.main()
-→ MainWindow
-→ Register / Lists / History / Settings
+Desktop UI
 → ProductService
 → Repository
-→ app.core.database
+→ Database Manager
 → SQLite
 ```
 
-Storage, Shortage, and Market remain modes inside Lists.
+The accepted Windows boundary includes:
 
-Responsibility direction:
+- one-folder PyInstaller runtime;
+- per-user Inno Setup installer;
+- Start Menu launch;
+- external writable state under `%LOCALAPPDATA%/Markei`;
+- schema-only production packaging;
+- structural category/store defaults without sample purchases;
+- retained data across same-version reinstall, uninstall, and reinstall recovery.
 
-| Layer | Responsibility |
-| --- | --- |
-| Desktop | Qt rendering, input, navigation, dialogs, refresh coordination, and final page-service shutdown coordination |
-| `ProductService` | Workflows, validation, calculations, settings, stores, and UI-facing projections |
-| `Repository` | SQL, row/model mapping, persistence operations, commits, and connection/cursor ownership |
-| Database Manager | Resource and user-data paths, initialization, SQLite configuration, additive compatibility work, structural defaults, and reset primitives |
-| SQLite | Persistent facts and declared relationships |
-
-Packaging and installation remain deployment concerns around this application boundary. They do not own business workflows, SQL, or user-created state.
+The accepted desktop implementation must not be destabilized by mobile investigation.
 
 ---
 
-# 3. Accepted Windows Release Boundary
+# 3. Cycle 07 Portability Knowledge
 
-Production packaging and installation are materially defined:
-
-```text
-Markei.spec
-    authoritative one-folder windowed PyInstaller definition
-    includes schema.sql
-    excludes seed.sql and live/transient user data
-    UPX disabled
-    Windows version resource attached
-
-scripts/build_windows.ps1
-    clean-build invocation wrapper
-
-installer/Markei.iss
-    per-user Windows x64 installer source
-    stable AppId
-    Start Menu shortcut
-    optional desktop shortcut
-    preserves external user data by default
-
-scripts/build_installer.ps1
-    Inno Setup compile wrapper
-    discovers system and per-user ISCC.exe locations
-```
-
-Release identity:
+Sprint 01 established:
 
 ```text
-Display name: Markei
-Executable: Markei.exe
-Version: 0.1.0
-Publisher: Markei
-Installer AppId: {9F5F5C2A-43EA-4CF0-9C25-FF9E7BB57D3A}
+reusable behavior
+≠
+portable application
 ```
 
-Program files install under:
+Likely reusable knowledge includes domain models and vocabulary, validation and calculation rules, purchase/inventory workflow meanings, schema semantics, structural defaults, and deterministic desktop behavior as a fixture source.
 
-```text
-%LOCALAPPDATA%/Programs/Markei
-```
+Current mobile-relevant coupling includes:
 
-Retained writable user state remains under:
+- concrete Repository construction inside ProductService;
+- immediate SQLite lifecycle ownership;
+- Windows/desktop path and resource assumptions;
+- presentation-shaped service projections;
+- incomplete abstract contracts;
+- per-method commits across multi-step workflows;
+- desktop widget/page lifecycle ownership.
 
-```text
-%LOCALAPPDATA%/Markei
-    market.sqlite
-    transient WAL/SHM companions
-    logs/startup.log
-```
-
-`schema.sql` is a bundled production resource. `seed.sql` remains a development/test fixture excluded from production.
-
-Fresh production initialization creates only required idempotent structural defaults:
-
-```text
-category F / General
-store 1 / Default Store
-```
-
-No sample products or purchases are created.
+No mobile runtime, package, device workflow, sandbox persistence, semantic-parity suite, or iOS build has been validated.
 
 ---
 
-# 4. Accepted Cycle 06 Evidence
+# 4. Current Approach Direction
 
-The recovery branch contains evidence for:
-
-- source compilation and five standard-library release tests;
-- clean one-folder frozen build;
-- frozen launch and immediate reopen;
-- compiled Inno Setup installer;
-- per-user installation;
-- installed Start Menu shortcut launch without a Python command or source checkout;
-- external database initialization;
-- structural defaults without sample products or purchases;
-- installed technical Register persistence;
-- Lists, History, and Settings projection evidence;
-- installed close and immediate reopen;
-- same-version reinstall with retained data;
-- uninstall with retained `%LOCALAPPDATA%/Markei` state;
-- reinstall and retained-data recovery.
-
-Artifact evidence:
+Reconciled approach status:
 
 ```text
-Frozen executable
-    SHA256 E13E276139E5F680D91A9816FC79776EB9837CA901C2DEBCF6B9CFAF8594A282
+Approach C
+    contract-first native/cross-platform client
+    primary strategic direction
+    favored by human/Main
+    framework not selected
+    not empirically accepted
 
-Installer
-    dist/installer/Markei-Setup-0.1.0-x64.exe
-    SHA256 122A772D66BBE7D5522EF2262E7E89D6D2E332B6318135BB25D55A27F75F4623
-    size 34,448,651 bytes
+Approach A
+    shared Python core with Python-native mobile UI
+    bounded Android falsification challenger
+    not authorized
+
+Approach B
+    web/hybrid mobile client
+    viable secondary route
+
+Approach D
+    service-backed client
+    deferred without demonstrated synchronization requirements
 ```
 
-Two evidence-triggered corrections were accepted:
+Operational and Design are not treated as contradictory. Operational identifies the cheapest direct-reuse experiment; Design identifies the stronger maintained-product architecture.
 
-```text
-per-user Inno Setup compiler not discovered
-→ add per-user ISCC.exe discovery
-
-fresh production Register foreign-key failure
-→ add required structural category/store defaults
-```
-
-No broad architecture redesign was required.
+Development cost includes learning, setup, rewriting, native toolchains, testing, lifecycle, semantic parity, distribution, debugging, accessibility, and long-term maintenance—not only initial code volume.
 
 ---
 
-# 5. Current Domain State
+# 5. Persistence and Scope Boundary
+
+The default mobile direction remains:
+
+```text
+offline-first
+single-device
+fresh mobile-local sandbox data
+no backend
+no authentication
+no synchronization
+no ordinary desktop database access
+```
+
+A future prototype must preserve one bounded workflow, mobile-local path isolation, atomic behavior, close/reopen persistence, and semantic agreement with deterministic fixtures.
+
+---
+
+# 6. Current Domain State
 
 ## Operational
 
-The Operational domain records a compiled installer and technically validated installed lifecycle. Remaining items are release hygiene and future distribution observations, including artifact-channel policy, the non-blocking Inno architecture warning, signing/reputation considerations, and inherited workflow atomicity debt.
-
-Checkpoint:
+The Operational checkpoint records Cycle 07 investigation completion, development-cost boundaries, future validation gates, and the Python-native challenger’s stop conditions.
 
 ```text
-documentation/sketch_notebook/operational/10_OPERATIONAL_STATE.md
+operational/10_OPERATIONAL_STATE.md
 ```
 
 ## Didactic
 
-The Didactic domain preserves the distinction among configuration, artifacts, execution contexts, validation, acceptance, and learner mastery. The four Cycle 06 release concepts remain Red because software success is not explicit learner validation.
-
-Checkpoint:
+The Didactic checkpoint records portability distinctions and candidate concepts without automatic KANBAN promotion or maturity change.
 
 ```text
-documentation/sketch_notebook/didactics/08_CONCEPT_MAP.md
+didactics/08_CONCEPT_MAP.md
 ```
 
 ## Design
 
-The Design domain records that the installed lifecycle preserved the accepted Desktop → ProductService → Repository → Database Manager → SQLite boundary, external writable state, stable installer identity, schema-only packaging, structural defaults, and MainWindow shutdown coordination.
-
-Checkpoint:
+The Design checkpoint records the contract-first strategic preference, the preserved challenger, platform/lifecycle ownership, and explicit non-acceptance of a framework or implementation.
 
 ```text
-documentation/sketch_notebook/design/09_DESIGN_STATE.md
+design/09_DESIGN_STATE.md
 ```
 
 ---
 
-# 6. Residual Risks and Non-Blocking Debt
+# 7. Next Knowledge Work
 
-Cycle 06 closure does not erase:
+Before implementation, specify:
 
-- human-visible SmartScreen behavior for unsigned distribution;
-- code signing and public reputation requirements;
-- generated installer artifact/version-control policy;
-- Inno Setup `x64` deprecation warning;
-- true cross-version upgrade testing beyond same-version reinstall;
-- workflow-level atomicity across multi-commit actions;
-- broader migration strategy;
-- optional uninstall data-deletion UX;
-- future application/service decomposition questions.
+1. language-neutral behavior scenarios;
+2. typed inputs and stable outputs/status codes;
+3. deterministic golden fixtures;
+4. validation and persistence effects;
+5. one atomic registration workflow;
+6. mobile-local data-isolation invariant;
+7. lifecycle persistence gates;
+8. semantic-parity rules;
+9. stop conditions for any Python-native challenger;
+10. criteria for selecting a maintained mobile framework.
 
-These are not part of the accepted Cycle 06 controlled-beta milestone unless later evidence reclassifies them as blockers.
-
----
-
-# 7. Cycle 07 Entry Direction
-
-Cycle 07 is a preparation and architecture-discovery cycle for mobile development under an isolated cloned repository/worktree context.
-
-It must not immediately rewrite the accepted desktop implementation.
-
-Primary direction:
-
-```text
-preserve accepted Windows desktop baseline
-→ create isolated mobile-preparation clone and branch
-→ recover methodology and current domain state
-→ inventory reusable platform-neutral logic
-→ identify desktop-only dependencies
-→ compare mobile delivery approaches
-→ define persistence and synchronization assumptions
-→ prototype the smallest vertical slice
-→ reconcile evidence before selecting an implementation architecture
-```
-
-The active Cycle 07 boundaries and exit criteria are defined in:
-
-```text
-documentation/sketch_notebook/06_SESSION_SCHEME.md
-```
+D/E/F remain postponed until human/Main direction selects one bounded empirical task.
 
 ---
 
 # 8. Global Recovery Route
 
-Use the least expensive sufficient source:
-
 ```text
-1. Read this file for accepted global state.
-2. Read 06_SESSION_SCHEME.md for Cycle 07 preparation boundaries.
+1. Read this file for current accepted global state.
+2. Read 06_SESSION_SCHEME.md for the next-session boundary.
 3. Read the relevant domain checkpoint.
-4. Read derived or canonical domain memory only when exact detail is required.
-5. Read 05_SESSION_LOG.md for chronology.
-6. Read [M]_STAGE/J_[M]_STAGE.md for the Cycle 06 closure and Cycle 07 handoff.
-7. Inspect source only when notebook memory is insufficient or implementation truth is directly required.
-```
-
-Domain checkpoints:
-
-```text
-Operational  operational/10_OPERATIONAL_STATE.md
-Didactic     didactics/08_CONCEPT_MAP.md
-Design       design/09_DESIGN_STATE.md
+4. Read J_[M]_STAGE.md for cross-domain rationale.
+5. Read A/B/C or observational history only when exact evidence or chronology is needed.
+6. Inspect source only when notebook memory is insufficient or implementation truth is directly required.
 ```
