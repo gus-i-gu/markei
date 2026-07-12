@@ -1714,3 +1714,8 @@ documentation/sketch_notebook/06_SESSION_SCHEME.md
 The goal of FLUX is not only to move information forward.
 
 The goal is to preserve evidence, responsibility, learning, recovery, file coherence, continuity, and reconciliation without confusing stage, synthesis, materialization, report, canonical memory, derivative memory, checkpoint memory, forward checkpoint memory, Main-root continuity, and historical record.
+
+---
+
+<!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
+> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content appended below it belongs to Sprint 03 or later. If recovery cost becomes excessive or this file grows beyond approximately 1,000 lines, this reviewed marker is an eligible semantic-partition boundary under human/Main authorization.
