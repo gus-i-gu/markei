@@ -500,6 +500,403 @@ Sprint 02 toolchain discovery and installed runtime evidence.
 
 ---
 
+## &&&06
+### Stable Identity
+#### Description
+An identity remains stable when mutable labels change.
+#### Formal Definition
+A durable identifier that refers to one logical subject independently of changeable descriptive attributes.
+#### Practical Example
+An account number remains the same after its contact email changes.
+#### Language Implementation
+Dart can represent UUID identities with immutable typed value objects.
+#### Project Implementation
+Markei uses distinct account, device, Product, Purchase, Purchase Item, and event UUIDs.
+#### Required Concepts
+`&&&01`, `&&&03`.
+#### Related Concepts
+`&&&07`, `&%%08`, `&%%11`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &&&07
+### Authentication
+#### Description
+Authentication establishes evidence that a caller controls an identity.
+#### Formal Definition
+The verification of credentials or factors that produces an authenticated principal or session.
+#### Practical Example
+Verified sign-in proves control of an account before protected requests are accepted.
+#### Language Implementation
+Flutter obtains and securely retains an access token through a selected authentication provider.
+#### Project Implementation
+Verified email resolves an authenticated Markei account UUID; email is not the ownership key.
+#### Required Concepts
+`&&&06`.
+#### Related Concepts
+`&&&08`, `&%%14`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &&&08
+### Authorization
+#### Description
+Authorization determines what an authenticated principal may do.
+#### Formal Definition
+A policy decision that permits or rejects an operation by a principal on a resource.
+#### Practical Example
+A signed-in account may read its own records but not another account's records.
+#### Language Implementation
+The Flutter client presents a token; the API performs authorization rather than trusting client claims.
+#### Project Implementation
+Markei scopes shared events to the authenticated account; row ownership is an authorization example.
+#### Required Concepts
+`&&&07`, `&&&01`.
+#### Related Concepts
+`&%%14`, `&&&06`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &&&09
+### Eventual Consistency
+#### Description
+Replicas may differ temporarily yet converge after synchronization.
+#### Formal Definition
+A consistency model in which replicas receiving and deterministically applying the same accepted facts eventually reach equivalent state.
+#### Practical Example
+An offline device shows older data until it reconnects and catches up.
+#### Language Implementation
+Flutter persists a cursor, downloads unseen events, and rebuilds local projections deterministically.
+#### Project Implementation
+Markei devices converge on catalogue, purchases, and Storage/Shortage/Market projections after sync.
+#### Required Concepts
+`&%%13`, `&%%14`.
+#### Related Concepts
+`&%%12`, `&&&02`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &&&10
+### Historical Integrity
+#### Description
+Later changes must not silently rewrite the meaning of accepted history.
+#### Formal Definition
+The preservation of original identities and authoritative observations required to interpret past events reproducibly.
+#### Practical Example
+A package-size change creates a new identity instead of altering an old receipt.
+#### Language Implementation
+Immutable Dart identities and append-only events preserve earlier references.
+#### Project Implementation
+Markei Purchase Items retain original Product IDs and commercial observations; analytic evolution does not rewrite purchases.
+#### Required Concepts
+`&&&02`, `&&&06`.
+#### Related Concepts
+`&%%17`, `&%%08`, `&%%11`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &&%05
+### Immutable Dart Model
+#### Description
+An immutable Dart model represents state through fixed fields and replacement values.
+#### Formal Definition
+A typed Dart object whose identity-bearing state cannot mutate after construction.
+#### Practical Example
+A corrected value is created as a new object rather than editing the original instance.
+#### Language Implementation
+Dart uses `final` fields, const-capable constructors, value equality, and copy/replacement patterns.
+#### Project Implementation
+Markei event envelopes, catalogue identities, Money, and Quantity are modeled as immutable values.
+#### Required Concepts
+`&&%02`, `&&&04`.
+#### Related Concepts
+`&&&10`, `&%%11`, `%%%07`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &%%07
+### Reusable Catalogue
+#### Description
+A reusable catalogue stores recurring account-private identities separately from purchases.
+#### Formal Definition
+An owner-scoped reference set whose entities can be reused by multiple historical transactions.
+#### Practical Example
+Several receipts reference the same household product identity.
+#### Language Implementation
+Dart repositories and use cases expose immutable catalogue models to Flutter.
+#### Project Implementation
+Markei keeps account-private Products and Stores that Purchase Items reference repeatedly.
+#### Required Concepts
+`&&&06`, `&%%02`.
+#### Related Concepts
+`&%%08`, `&%%10`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &%%08
+### Product Identification Set and Deterministic Normalization
+#### Description
+A product identity is derived from exact normalized identity facts, not fuzzy similarity.
+#### Formal Definition
+A deterministic mapping from an account-scoped canonical attribute tuple to one stable Product ID.
+#### Practical Example
+Mechanically equivalent 350 g and 0.350 kg inputs resolve to one packaged identity.
+#### Language Implementation
+Pure Dart normalization converts text, dimensions, units, and amounts before UUID derivation.
+#### Project Implementation
+Markei distinguishes PACKAGED and BULK modes; fuzzy similarity warns but never automatically merges.
+#### Required Concepts
+`&%%07`, `&&&06`, `&&&03`.
+#### Related Concepts
+`&%%15`, `&&&10`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &%%09
+### Purchase Aggregate
+#### Description
+A Purchase owns one consistency boundary for receipt registration.
+#### Formal Definition
+An aggregate root that enforces invariants and atomic change across its members and required persistence effects.
+#### Practical Example
+A receipt header and all valid lines commit together or none commit.
+#### Language Implementation
+A Dart Purchase command coordinates models and repository transaction through one use case.
+#### Project Implementation
+Markei commits Purchase, Purchase Items, and pending synchronization event atomically.
+#### Required Concepts
+`&%%01`, `&%%05`.
+#### Related Concepts
+`&%%10`, `&%%11`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &%%10
+### Purchase Item
+#### Description
+A Purchase Item records one product-specific commercial observation within a Purchase.
+#### Formal Definition
+An aggregate member that references a catalogue Product and carries transaction-specific quantity and price facts.
+#### Practical Example
+One receipt line records two packages of a product and its line total.
+#### Language Implementation
+An immutable Dart item model belongs to a Purchase aggregate model.
+#### Project Implementation
+Markei stores Product reference, package count, dimensional amount, money, promotion, and related observations.
+#### Required Concepts
+`&%%09`, `&%%08`.
+#### Related Concepts
+`&%%15`, `&%%16`, `&&&10`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &%%11
+### Append-Only Synchronization Event
+#### Description
+An accepted synchronization fact is appended rather than overwritten.
+#### Formal Definition
+An immutable, uniquely identified protocol fact that is validated and applied deterministically.
+#### Practical Example
+A `purchase.registered` event remains in history after acceptance.
+#### Language Implementation
+Dart encodes an immutable event envelope to a language-neutral payload.
+#### Project Implementation
+Markei synchronizes one atomic Purchase with immutable Purchase Item lines as the first event.
+#### Required Concepts
+`&&&06`, `&%%09`.
+#### Related Concepts
+`&%%12`, `&%%14`, `&&&10`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &%%12
+### Offline Queue and Idempotent Delivery
+#### Description
+Durable pending work can be retried without duplicate effect.
+#### Formal Definition
+A persistent queue combined with event uniqueness and content rules so repeated logical submission is equivalent to one acceptance.
+#### Practical Example
+A lost response causes retry of the same event, not creation of a second order.
+#### Language Implementation
+Flutter stores pending events locally and retries the same UUID and payload.
+#### Project Implementation
+Markei returns prior acceptance for identical retries and rejects changed content under an accepted event UUID.
+#### Required Concepts
+`&%%11`, `&%%05`.
+#### Related Concepts
+`&%%13`, `&&&09`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &%%13
+### Device Ordering and Synchronization Cursor
+#### Description
+Device creation order and server download order are distinct.
+#### Formal Definition
+A device-monotonic sequence records local event order while an opaque server cursor identifies accepted-event download position.
+#### Practical Example
+A device fills a sequence gap while another client pages after its last server cursor.
+#### Language Implementation
+Dart persists device sequence and account cursor independently of occurrence time.
+#### Project Implementation
+Markei rejects/request gaps and downloads account-scoped accepted events in bounded cursor pages.
+#### Required Concepts
+`&%%12`, `&&&06`.
+#### Related Concepts
+`&%%14`, `&&&09`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &%%14
+### Sync Protocol
+#### Description
+A sync protocol defines stable cross-runtime exchange behavior.
+#### Formal Definition
+A versioned contract governing identities, payloads, validation, authorization, retries, ordering, cursors, errors, and compatibility.
+#### Practical Example
+Two applications interpret one accepted message and error code identically.
+#### Language Implementation
+Dart client DTOs exchange language-neutral JSON with a TypeScript API that validates runtime payloads.
+#### Project Implementation
+Markei's custom API owns token validation, idempotent append, cursor download, protocol versions, and stable errors.
+#### Required Concepts
+`&&&08`, `&%%13`.
+#### Related Concepts
+`%%%01`, `&&&09`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &%%15
+### Dimensional Quantity
+#### Description
+A quantity combines magnitude with an explicit physical dimension and unit.
+#### Formal Definition
+A fixed-precision amount qualified by measurement kind and canonical unit.
+#### Practical Example
+One litre is VOLUME/L and is not inferred to equal one kilogram MASS/KG.
+#### Language Implementation
+Dart can use immutable Quantity values and enums for MASS/KG, VOLUME/L, and COUNT/UNIT.
+#### Project Implementation
+Markei separates Product package amount, Purchase Item package count, and normalized purchased amount.
+#### Required Concepts
+`&&&03`, `&&%05`.
+#### Related Concepts
+`&%%08`, `&%%10`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &%%16
+### Monetary Minor Unit
+#### Description
+Money is represented by currency plus an integer smallest-unit amount.
+#### Formal Definition
+A monetary value composed of an explicit currency code and integer count of its minor unit.
+#### Practical Example
+BRL 8.79 is represented as BRL and 879 minor units.
+#### Language Implementation
+Dart uses an immutable Money value rather than binary floating-point for ordinary currency facts.
+#### Project Implementation
+Markei stores Purchase currency and authoritative line totals in minor units; UI may default territorial currency.
+#### Required Concepts
+`&&&03`, `&&%05`.
+#### Related Concepts
+`&%%10`, `&%%17`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## &%%17
+### Versioned Analytic
+#### Description
+Analytical rules evolve through new versions without rewriting source facts.
+#### Formal Definition
+A derived algorithm identified by stable name and immutable semantic version, with results reproducible from authoritative inputs.
+#### Practical Example
+An improved price-change formula becomes version 2 while version 1 keeps its meaning.
+#### Language Implementation
+A Dart analytics registry selects pure algorithms by identifier/version and validates them with fixtures.
+#### Project Implementation
+Markei versions normalized price, purchase interval, and personalized inflation/deflation projections while purchases remain authoritative.
+#### Required Concepts
+`&&&02`, `&&&10`.
+#### Related Concepts
+`&%%16`, `&&&05`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+---
+
+## %%%07
+### Flutter Framework and Responsive Widget Composition
+#### Description
+Flutter composes one client presentation across platform-appropriate layouts.
+#### Formal Definition
+A framework-managed widget tree that renders application state responsively under platform constraints and lifecycle events.
+#### Practical Example
+A wide layout uses a navigation rail while a phone uses compact navigation.
+#### Language Implementation
+Flutter supplies widgets, constraints, navigation, lifecycle hooks, plugins, and platform build targets; Dart remains the language.
+#### Project Implementation
+Markei uses Flutter for shared Windows/Android/iOS presentation while durable state remains outside widget memory.
+#### Required Concepts
+`&&%05`, `&%%03`, `&&&04`.
+#### Related Concepts
+`&&%03`, `&%%09`, `&%%14`.
+#### Status
+Red.
+#### Source
+Cycle 07 Sprint 02 Flutter shared-beta model design, Main J sections 17–18, and A/B/C restaging.
+
+---
+
 # Canonical Boundary
 
-The four Cycle 06 release concepts remain **Red**. Sprint 02 strengthens their project examples but does not demonstrate learner mastery. No concept is Green. Automated technical workflow validation does not equal a human-visible UI walkthrough, SmartScreen behavior remains unknown for normal visible execution, and final beta acceptance remains owned by Main/human review.
+Cycle 07 Sprint 02 introduces the Flutter shared-beta model concepts as **Red** because model-design discussion establishes reusable concept identity, not learner mastery. No existing maturity changed. Authoritative Fact / Derived Projection remains owned by `&&&02`; Purchase atomicity extends `&%%05`; Row Ownership remains an Authorization example; composition root and lifecycle remain related to existing responsibility/resource concepts; protocol versioning belongs to `&%%14`; storage-schema versioning remains related to `%%%01`; and append-only event identity remains distinct from Dart immutability.
