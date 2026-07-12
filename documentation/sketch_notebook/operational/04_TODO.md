@@ -143,3 +143,70 @@ no D/E/F
 
 <!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
 > **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content appended below it belongs to Sprint 03 or later. If recovery cost becomes excessive or this file grows beyond approximately 1,000 lines, this reviewed marker is an eligible semantic-partition boundary under human/Main authorization.
+# Cycle 07 Sprint 03 Review — Active Sprint 04 Gates
+
+The prior Sprint 03 preparation gates produced a local Flutter/Dart and Drift foundation. Current active work is now:
+
+## P0 — Correct device-sequence continuity
+
+- reproduce repeated Purchase registration;
+- require observed sequences `1, 2, 3` without reset;
+- add durable uniqueness for account/device/sequence ownership;
+- define recovery after interrupted allocation;
+- rerun rollback and close/reopen tests.
+
+Do not allow synchronization work to depend on device ordering until this passes.
+
+## P0 — Harden normalization and identifiers
+
+- add Portuguese and Unicode fixtures, including accented product names;
+- preserve display text separately from normalized identity;
+- define normalization form, case, whitespace, punctuation, diacritic, and version policy;
+- add fixed deterministic Product-ID expectations;
+- decide whether identifiers require RFC UUID semantics or stable opaque IDs;
+- execute Dart/TypeScript parity before protocol promotion.
+
+## P0 — Complete language-neutral contract examples
+
+Expand Purchase and sync fixtures with complete valid/invalid inputs and expected outputs. Define types, ranges, nullability, enums, unknown-field behavior, timestamps, decimals, canonical ordering where required, and version compatibility. Evaluate JSON Schema or an equivalent validator without discarding human-readable examples.
+
+## P0 — Local shared-client vertical slice
+
+Implement only after new D/E/F authority:
+
+```text
+minimal Flutter Purchase UI
+→ fresh app-private database
+→ Product and Store selection/create
+→ multi-item staging
+→ atomic registration and pending event
+→ visible projection/history
+→ close/reopen
+```
+
+Product similarity remains warning-only. Store deduplication is not claimed.
+
+## P0 — Host platform evidence
+
+- install/verify Visual Studio C++ desktop workload, then build/run Windows;
+- install/verify Android SDK and emulator/device, then build/run Android;
+- capture clean tool versions, build commands, logs, artifacts, lifecycle, database path, and close/reopen evidence;
+- keep iOS blocked until macOS/Xcode evidence exists.
+
+Generated platform directories do not satisfy these gates.
+
+## P1 — Schema evolution and generated ownership
+
+- rehearse Drift v1 → v2 migration and failure recovery;
+- decide migration-ledger authored identity versus execution timestamp;
+- verify `local_database.g.dart` regeneration from reviewed schema/config;
+- retain `pubspec.lock` as resolved dependency evidence;
+- exclude build outputs and local databases.
+
+## Deferred route
+
+The TypeScript API/disposable Postgres protocol harness remains the likely following unit. Authentication, Neon, upload/download, cursor bootstrap, cross-device convergence, legacy import, and PySide6 retirement remain unimplemented and deferred.
+
+## Completion boundary
+
+Sprint 04 planning is ready for Main after functional-domain reconciliation and human approval of one bounded route. D/E/F remain inactive until then.
