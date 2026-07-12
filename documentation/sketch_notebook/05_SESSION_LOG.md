@@ -1,6 +1,6 @@
 # 05_SESSION_LOG.md
 
-> Version: Global history 0.4
+> Version: Global history 0.5
 > Status: Active Global Observational History
 > Persistence Class: Observational
 > Knowledge Class: Main / Global
@@ -552,3 +552,64 @@ Main then identified likely device-sequence reset, Unicode normalization risk, p
 Operational, Didactic, and Design chats reconciled A/G, B/H, and C/I with J section 19 into all twelve permanent-domain files. The domains agreed that no KANBAN maturity change was justified and unanimously recommended completing the local Flutter purchase workflow before the TypeScript/Postgres synchronization harness.
 
 Main accepted that recommendation in J section 20 and advanced global continuity to Sprint 04 entry. No Sprint 04 source implementation was authorized during this closure.
+
+# Cycle 07 Sprint 04 — Windows Local Vertical Slice Materialized
+
+> Date: 2026-07-12
+> Materialization commit: `bcc9452805ea5eee19f37653dc017fb5f3c78a0c`
+> Permanent-domain reconciled head: `c195ed9b4197927db9c015076159534aa47c88e3`
+> Main reconciliation: J §22
+
+Codex implemented Product-code/internal-ID separation, Unicode normalization v2, sequence correction, Drift schema v2 migration, v2 JSON Schemas, multi-item Purchase UI, and local History.
+
+Evidence:
+
+```text
+flutter analyze: passed
+flutter test: 21 passed
+flutter build windows: passed
+Windows startup smoke: passed
+Python tests: 5 passed
+Android: blocked by absent SDK
+Windows manual UI acceptance: pending
+```
+
+PDR2 reconciled the permanent domains. Main found the Operational checkpoint remained stale at pre-materialization state; J §22 and implementation truth supersede it until PDR2-O is rerun.
+
+## VS Code terminal — Windows manual UI verification
+
+From the repository root:
+
+```powershell
+git switch cycle-07-mobile-preparation
+git pull --ff-only
+cd .\clients\markei_flutter
+flutter pub get
+flutter doctor -v
+flutter devices
+flutter run -d windows
+```
+
+Manual check:
+
+```text
+create/select Store
+→ stage two Products/Items
+→ register Purchase
+→ open History
+→ verify Store, total, and item count
+→ close window
+→ run flutter run -d windows again
+→ verify History persists
+```
+
+If debug launch fails but the release build exists:
+
+```powershell
+flutter build windows
+.\build\windows\x64\runner\Release\markei.exe
+```
+
+Record visible pass/fail separately from automated smoke evidence.
+
+The human selected full Android implementation as the next milestone. Android installation and execution require new D/E/F.
