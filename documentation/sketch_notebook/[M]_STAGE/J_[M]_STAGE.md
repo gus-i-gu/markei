@@ -2829,3 +2829,85 @@ next milestone: Android full implementation
 new Android D/E/F: not yet written
 Cycle 07: open
 ```
+
+
+---
+
+# 23. Cycle 07 Sprint 05 A/B/C Reconciliation and Materialization Authority
+
+> Date: 2026-07-12  
+> Class: provisional Main staging  
+> Inputs: Sprint 05 A/B/C, J §22, 00/05/06, repository truth, and human Windows execution evidence  
+> Branch: `cycle-07-mobile-preparation`
+
+## 23.1 Reconciled evidence
+
+Operational, Didactic, and Design agree that Sprint 04 established a real Windows-local Flutter workflow rather than only generated scaffolding. Human execution adds the following bounded validation:
+
+- Flutter 3.44.6 and Dart 3.12.2 executed;
+- dependency resolution succeeded;
+- Windows build and launch succeeded;
+- one Purchase was registered;
+- History displayed Store, item count, and BRL total;
+- close/reopen persistence succeeded;
+- the UI remains a functional scaffold, not accepted visual design.
+
+Android remains generated and host-unvalidated. The local event queue remains preparation for synchronization, not synchronization.
+
+## 23.2 Main resolutions
+
+Main resolves the A/B/C questions as follows:
+
+1. **Flutter SDK:** `H:\Users\Gus\develop\flutter` is the selected SDK because it was deliberately installed and resolves first through `where.exe flutter`. The reported `C:\Users\gusrm\flutter` location must be inspected but not removed. PATH, VS Code, `flutter doctor`, and Android `local.properties` must converge on H: before materialization continues.
+2. **Android identity:** use `com.gusigu.markei` as namespace and application ID, with visible label `Markei`. Production signing remains deferred.
+3. **Device identity:** replace `windows-device` with one UUID v4 generated once per app-private database and persisted beside the sequence state. It is not secret, not hardware-derived, not platform-named, and is removed by uninstall/data-clear with other local-only state.
+4. **Account identity:** retain `local-account` as an explicit prototype placeholder. Authentication is deferred.
+5. **Runtime route:** emulator-first; a physical device is an allowed fallback if emulator acceleration is blocked. At least one Android runtime must execute for acceptance.
+6. **UI boundary:** allow only corrections required to complete Purchase/History on a narrow Android screen: scrolling, keyboard obstruction, focus, back, rotation, text scale, overflow, and lifecycle stability. Broad visual redesign is deferred.
+7. **Rotation:** committed facts and Device identity must survive. Unsaved staged Items may reset for this prototype only if the behavior is visible, deterministic, and recorded; silent partial commit is forbidden.
+8. **Version/backup:** keep the current prototype version unless build tooling requires a bounded correction. Do not design production backup, signing, or release policy in Sprint 05.
+9. **Tool authority:** Android Studio, SDK Platform 36, Build-Tools, Command-line Tools, Emulator, Platform-Tools, CMake, matching NDK, licences, and one system image are authorized only through D/E/F. GUI/UAC/licence choices remain human-manual confirmations.
+
+## 23.3 Materialization units
+
+```text
+Unit 1 — converge Flutter SDK and capture host baseline
+Unit 2 — install/validate Android toolchain and one runtime
+Unit 3 — stabilize Android application identity
+Unit 4 — implement persistent database-owned Device UUID
+Unit 5 — build and run debug APK
+Unit 6 — validate Purchase/History, lifecycle, persistence, and sequence
+Unit 7 — make only blocking responsive corrections
+Unit 8 — rerun Flutter, Windows, and Python regressions
+Unit 9 — redact G/H/I evidence
+```
+
+Units must be executed in order. Host failure must not be hidden through source expansion.
+
+## 23.4 Acceptance
+
+Sprint 05 succeeds only with:
+
+- one converged Flutter SDK;
+- Android doctor readiness and accepted licences;
+- one recognized Android runtime;
+- stable application ID and label;
+- persistent UUID v4 reused after cold relaunch;
+- successful debug APK build and Android launch;
+- controlled two-item Purchase and correct History;
+- background/resume, Back, keyboard, rotation, process restart, and sequence evidence;
+- app-private persistence without broad storage permissions;
+- Flutter analysis/tests, Windows build, and Python regressions passing;
+- exact G/H/I reports.
+
+Build-only evidence cannot close Sprint 05.
+
+## 23.5 Stop and deferred boundaries
+
+Stop on destructive SDK replacement, unresolved toolchain identity, unapproved licence/UAC action, absent runtime, broad storage request, Cycle 06 data access, Device UUID reset, sequence duplication, silent database reset, unrelated architecture expansion, or Windows/Python regression.
+
+Deferred: visual redesign, authentication, TypeScript API, Neon/Postgres, actual synchronization, central catalogue, legacy import, editing/deletion, production signing/Play Store, iOS, and PySide6 retirement.
+
+## 23.6 Authority transition
+
+A/B/C investigation is reconciled. D/E/F now authorize the bounded Sprint 05 materialization described above. Permanent documentation is not updated by this transition. Codex must load the methodology prompt collection and D/E/F, materialize source and host changes within their gates, and replace G/H/I with evidence.
