@@ -1,175 +1,159 @@
 # Main Synthesis Summary
 
-Cycle 07 Shared Beta Planning, Sprint 02 can operationally support the favored product shape:
+Cycle 07 Sprint 02 should operationally treat Flutter/Dart as the accepted planning basis for one maintained Windows/Android/iOS client, not as an already validated toolchain. The future shared beta keeps an application-private local database on every installation, performs catalogue and purchase work offline, and synchronizes immutable purchase aggregates through a favored TypeScript API into Neon Postgres. PySide6 remains the accepted reference and rollback until measured parity; the Flutter client must never embed Python or open the ordinary Cycle 06 database.
+
+The smallest useful Sprint 03 experiment is Windows-first plus Android: establish one pinned Flutter workspace, run deterministic Dart fixtures, create a fresh isolated SQLite database, atomically register one multi-item-capable Purchase containing one Purchase Item and its pending event, close/reopen, then exercise a local TypeScript/Postgres two-device protocol harness. iOS must remain explicitly unvalidated until the same lifecycle and plugin gates run on macOS/Xcode.
+
+Drift is the leading persistence candidate for evaluation because it advertises Android/iOS/Windows, transactions, migrations, generated typing, and tests. `sqflite_common_ffi` is a lower-level retained candidate, especially for desktop and unit-test compatibility. `flutter_secure_storage` is a candidate for refresh credentials across the three targets, but its platform behavior, Windows packaging, Android backup settings, logout, upgrade, and reinstall semantics remain assumptions.
+
+# Accepted Planning Direction
+
+The report accepts, without implementation:
 
 ```text
-one shared cross-platform client
-+ offline-first local database per installation
-+ verified-email account
-+ small authenticated synchronization API
-+ Neon Postgres append-only event store
+Flutter + Dart shared client
+TypeScript synchronization API favored
+Neon Postgres favored
+verified-email identity → immutable account UUID
+account-private reusable catalogue
+Purchase aggregate → one or more Purchase Items
+append-only purchase.registered synchronization
+versioned Dart analytics
+PySide6 preserved until parity
+no embedded Python runtime
 ```
 
-The smallest credible synchronized workflow is not “share the database.” It is: register a purchase locally while offline, persist a pending event, upload it after authenticated reconnect, append it idempotently under the account, receive a server cursor, download it on a second device, apply it transactionally, rebuild projections, and prove close/reopen persistence. Clients must never contain a privileged Neon connection string; possession would allow extraction and bypass the API’s account authorization, validation, rate, and protocol boundaries.
+Packaged catalogue identity normalizes product name, brand, `PACKAGED` mode, package amount, and explicit dimension/unit. Bulk identity uses name, brand, and `BULK`. Exact normalization may reuse; similarity only warns and requires a user choice. Package/brand changes create new identities. Quantity remains dimensionally explicit—mass, volume, and count are never converted into each other. Currency and integer minor-unit amounts remain explicit.
 
-Both compared API stacks are operationally plausible. A TypeScript API has a coherent JSON/schema ecosystem and fits serverless Node hosting well. A Python API can reuse team knowledge and may make behavioral comparison with current Python easier, but it does not directly reuse the desktop service/repository because the synchronized client and Postgres event service have different responsibilities. The shared-client family remains unselected; Flutter is a useful feasibility reference because its official documentation covers Android, iOS, Windows, authenticated HTTP, SQLite, testing, and platform-specific tooling, but this is evidence of capability, not framework acceptance.
+A Purchase is locally atomic with all items and one pending synchronization event. The first UI may collect one item, but storage and fixtures must prove the multi-item-capable aggregate boundary. Raw catalogue/purchase/item facts are authoritative; projections and versioned analytics are rebuildable.
 
-Recommendation: Sprint 03 should be an isolated protocol experiment, not a UI rewrite. Run one API locally against disposable Postgres, use a fake or test identity issuer, and simulate two device-local stores. Prove idempotent append, cursor download, transactional application, retries, authorization isolation, and restart recovery before provisioning production infrastructure.
+# Flutter/Dart Host and Toolchain Requirements
 
-# Evidence and Assumptions
+Windows development requires a pinned Flutter SDK/Dart version, Git, editor tooling, and `flutter doctor` evidence. Windows desktop additionally requires Visual Studio’s Desktop development with C++ workload and the supported Windows SDK/toolchain. Android requires Android Studio or equivalent SDK management, platform SDK, build-tools, command-line tools, emulator/hardware acceleration, accepted licenses, JDK compatibility, ADB, and either an emulator image or physical debug device. Official setup routes are distinct: [Flutter Windows setup](https://docs.flutter.dev/platform-integration/windows/setup) and [Android setup](https://docs.flutter.dev/platform-integration/android/setup).
 
-Repository evidence was read only from `cycle-07-mobile-preparation`. The accepted baseline is `f6414fbe7394453387067a5a34ca6cc7621bbed3`. Main section 14 activates shared-beta planning while leaving architecture, framework, authentication provider, API runtime/host, Neon project, implementation, and D/E/F unaccepted or postponed. Current Markei evidence provides Python behavior and SQLite semantics, not a sync protocol.
+iOS is a separate host boundary: macOS, compatible Xcode, Xcode command-line tools, CocoaPods/Swift Package Manager as required by plugins, Simulator or provisioned device, signing identity, and Apple project configuration. Windows/Android success proves no iOS compatibility. [Flutter iOS setup](https://docs.flutter.dev/platform-integration/ios/setup).
 
-Official Neon documentation states that connection strings contain database role credentials, supports direct and pooled connections, requires encrypted connections, and recommends pooled connections for web applications and connection-per-request workloads. Its PgBouncer pool uses transaction mode; direct connections are recommended for schema migrations, dumps/restores, and session-level operations. Neon supports Node and Python connection routes. [Neon connection guide](https://neon.com/docs/connect/connect-from-any-app) and [pooling guide](https://neon.com/docs/connect/connection-pooling).
+Windows packaging later requires a release build, bundled native/plugin DLLs, runtime dependency inspection, installer identity, signing/reputation planning, clean-machine install, user-data path verification, upgrade/uninstall behavior, and immediate reopen. App-store publication is excluded.
 
-Official Auth0 documentation demonstrates one plausible provider pattern: verification links or OTP can establish email access, while JWT/JWKS validation protects an API. It explicitly warns that email verification is not, by itself, proof of identity or complete account security. [Email verification](https://auth0.com/docs/manage-users/user-accounts/verify-emails) and [JWT validation](https://auth0.com/docs/secure/tokens/json-web-tokens/validate-json-web-tokens). Auth0 is an example, not a selected provider.
+Pin `pubspec.lock` for the application and record Flutter channel/version, Dart version, Android Gradle/JDK/SDK versions, Visual Studio toolset, Xcode version, plugin versions, and API Node/package-manager versions. CI should use locked dependencies, fail on unexpected lock changes, run static analysis and tests, and build from a clean cache periodically. Untested compatibility between any pinned combination is an **assumption**.
 
-Official Flutter documentation lists Android, iOS, and Windows support and distinct platform setup/deployment paths. It also documents SQLite persistence, authenticated requests, layer testing, and native debugging. [Flutter supported platforms](https://docs.flutter.dev/reference/supported-platforms) and [iOS setup](https://docs.flutter.dev/platform-integration/ios/setup). Flutter is not selected.
+# Local Persistence and Secure Storage
 
-**Assumptions requiring testing:** a candidate shared-client SQLite library is reliable on all three targets; the chosen auth SDK supports Windows desktop and secure token storage; API hosting supports the selected driver and connection mode; cold Neon compute latency is acceptable; event volumes fit low-cost quotas; provider free tiers remain available; local projection rebuild remains deterministic; and one cursor stream per account is sufficient for the first slice.
+Candidate A, Drift, is favored for the experiment. Its package documentation advertises SQLite, transactions, schema migrations, generated type safety, Android/iOS/Windows, and test support. [Drift package](https://pub.dev/packages/drift). Required validation includes generated-code reproducibility, decimal/minor-unit representation, foreign keys, unique normalized identity constraints, transactions, migration upgrades, release-mode native library inclusion, concurrent reads, close/reopen, and lifecycle interruption.
 
-# Candidate Operational Stacks
+Candidate B, `sqflite_common_ffi`, advertises Windows plus Android/iOS and in-memory unit testing. Its documentation warns that desktop path selection should use an explicit application path and describes native SQLite packaging concerns. [sqflite_common_ffi](https://pub.dev/packages/sqflite_common_ffi). It remains useful as a simpler comparison, not a selected production layer.
 
-## Stack 1 — shared client + small TypeScript API + Neon
+Database path resolution must use the Flutter platform’s application-support/data directory and an environment-specific filename. The experiment asserts that this path differs from Cycle 06 `%LOCALAPPDATA%/Markei/market.sqlite`. It must neither copy nor migrate that file. Legacy import is later, explicit, read-only-first, backed up, deterministic, and reversible.
 
-Candidate components: shared client family; local SQLite; TypeScript API on a Node-compatible managed runtime; schema validation; Postgres driver or Neon serverless driver; migrations owned by the API repository; external verified-email/OIDC provider.
+`flutter_secure_storage` advertises Android/iOS/Windows platform storage and documents Android cipher/backup requirements and iOS Keychain accessibility. [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage). Store refresh tokens or equivalent long-lived credentials there; keep access tokens memory-bounded where practical. Never store Postgres credentials, API secrets, or auth management keys in the client. Test locked-device behavior, backup/restore, reinstall, logout/delete, token rotation, corrupted entry recovery, and plugin upgrade. Cross-platform support is **assumed until packaged builds pass**.
 
-Operational strengths:
+Flutter lifecycle validation must cover cold start, inactive/background/paused/detached transitions where applicable, foreground resume, OS process termination, and reopened database/token state. Correctness must derive from transactional durability, not from receiving a graceful shutdown callback.
 
-- one typed JSON vocabulary across client-facing protocol and API;
-- mature request validation and test tooling;
-- Neon documents both ordinary Node Postgres and serverless-driver routes;
-- serverless or container hosting options are broad;
-- JSON event payload handling is direct.
+# TypeScript API and Neon Environment
 
-Operational costs and risks:
+Local development services are: Flutter/Dart tests with two isolated device databases; TypeScript API process; locked Node/package manager; runtime JSON-schema validation; disposable local Postgres; migration runner; fake/test OIDC issuer; and captured structured logs. Node’s built-in runner is a plausible protocol-test basis, but framework/test selection remains open. [Node test runner](https://nodejs.org/api/test.html).
 
-- adds Node/package-manager/runtime learning and dependency management;
-- runtime differences matter: long-lived Node service, serverless functions, and edge runtimes do not share identical TCP, pooling, process, or filesystem behavior;
-- TypeScript types disappear at runtime, so payload validation remains mandatory;
-- behavior parity with desktop Python must come from fixtures, not shared source;
-- database migrations and transaction behavior still require Postgres-specific tests.
+The API owns token verification, account authorization, runtime payload validation, event idempotency, device-sequence policy, cursor allocation/download, per-event transactions, protocol versions, stable errors, and diagnostics. Clients contain no privileged Neon URL.
 
-Preferred database mode: pooled Neon URL for ordinary concurrent API traffic; direct URL, held only by controlled migration/administration jobs, for migration tools that need session semantics. The exact driver/serverless choice is **assumption until hosted-runtime testing**.
+After local Postgres passes, repeat against a non-production Neon project/branch and role. Use a pooled connection for ordinary web/API requests and a direct controlled connection for migrations, dumps/restores, or tools needing session behavior, matching Neon’s current guidance. [Neon pooling](https://neon.com/docs/connect/connection-pooling). Separate local, CI/test, staging, and production auth applications, URLs, roles, databases, API deployments, secrets, logs, and retention. No external provisioning occurs in this restaging.
 
-## Stack 2 — shared client + small Python API + Neon
+# Cross-Language Contracts and Fixtures
 
-Candidate components: same shared client/local store; Python ASGI API such as FastAPI; Pydantic-style validation; Psycopg or another supported Postgres driver; API-owned migrations; same external identity boundary.
+Dart and TypeScript must exchange canonical JSON fixtures independent of either runtime’s internal classes. One versioned fixture package/directory should contain:
 
-Operational strengths:
+- event envelope schema and stable error codes;
+- catalogue normalization cases;
+- packaged/bulk product cases;
+- Purchase with one and multiple item lines;
+- explicit quantity dimension/unit;
+- currency and integer minor-unit money;
+- expected event UUID/device sequence/cursor behavior;
+- expected local projections;
+- analytics identifier/version and result.
 
-- existing Python familiarity lowers initial API debugging cost;
-- deterministic fixtures may be executed against both current Python behavior and API protocol tests;
-- Neon documents Python connectivity;
-- local API tests are straightforward with a disposable Postgres instance.
+Canonical JSON rules must specify field names, nullability, UUID text form, integer ranges, decimal serialization, UTC/business timestamps, enum values, unknown-field policy, schema/protocol version, and deterministic normalization. Dart decodes, validates, re-encodes, and compares fixtures; TypeScript does the same with runtime validation. Golden JSON should be byte-stable only where canonicalization is explicitly defined; semantic equality is otherwise the gate.
 
-Operational costs and risks:
+Dart unit tests own pure normalization, identity, aggregate, projection, and versioned analytics. Database tests own transactions/migrations. Flutter widget/integration tests own staging and lifecycle behavior. API/Postgres tests own authorization, append/cursor semantics, and failure recovery. Python is only a fixture/reference source during parity comparison.
 
-- current Markei repository/service code is SQLite- and desktop-composition-shaped, so reuse must not collapse local application and cloud sync responsibilities;
-- Python environment, dependency locking, ASGI server, worker/process, and driver pooling must be reproducible;
-- managed/serverless Python hosts may impose cold starts or connection lifecycle constraints;
-- a Python API does not remove the shared-client language boundary.
+Logs correlate `request_id`, `batch_id`, `event_id`, device UUID, pseudonymous account identifier, device sequence, cursor range, protocol/app/analytics versions, latency, retry class, and sanitized outcome. Tokens, database URLs, verification codes, and sensitive notes are redacted.
 
-Preferred database mode matches Stack 1: pooled for application requests; direct for migrations and recovery tasks. API transaction scope must atomically validate account/device sequence, insert-or-recognize the event UUID, allocate/return the server cursor, and commit.
+# Platform Validation Matrix
 
-Operationally, TypeScript is slightly favored for a compact JSON synchronization service if the client also uses a TypeScript-family framework; Python is slightly favored if rapid protocol experimentation and existing knowledge dominate. Neither advantage is proven, and client framework selection remains outside this report.
+| Gate | Windows | Android | iOS |
+| --- | --- | --- | --- |
+| Clean toolchain | Flutter doctor + VS C++/SDK captured | SDK/JDK/ADB/emulator/device captured | macOS/Xcode/signing captured |
+| Build/run | Debug and release app launch | Emulator and physical-device debug/release-relevant launch | Explicitly unvalidated until macOS/Xcode |
+| Fresh local DB | App-private path and schema | App-private path and schema | Later identical gate |
+| Catalogue exact normalization | Packaged equivalence reuses ID | Same fixture result | Later same fixture |
+| Similarity warning | Warning; no automatic merge | Same | Later |
+| Packaged/bulk | Distinct identity rules pass | Same | Later |
+| Atomic purchase | Purchase + items + pending event commit/rollback together | Same | Later |
+| Close/reopen | Facts, cursor, queue persist | After process kill/relaunch | Later lifecycle test |
+| Projection parity | Golden catalogue/list facts match | Match Windows | Later |
+| Analytics parity | Analytic ID/version/result match fixture | Match Windows | Later |
+| Secure token storage | Packaged plugin test | Backup/logout/rotation test | Keychain test later |
+| Cycle 06 isolation | Original path/hash untouched | No access route | No access route |
 
-# Local and Hosted Environments
+# Synchronization Failure Matrix
 
-Minimum local services:
+| Scenario | Pass condition |
+| --- | --- |
+| Offline pending event | Local aggregate/event persists with no API |
+| Retry after lost response | Identical UUID/content returns prior per-event acceptance; one server event |
+| Conflicting duplicate UUID | Rejected with stable error; accepted event unchanged |
+| Device-sequence gap | Rejected and missing earlier sequence requested |
+| Cursor download | Ordered account-scoped bounded page; opaque next cursor |
+| Download interruption | Events and cursor both commit or neither commits |
+| Second-device bootstrap | Cursor zero pages rebuild same authoritative facts/projections |
+| Cross-account request | Token/account mismatch reads and writes nothing |
+| Malformed/version event | Stable validation/protocol error; no cursor allocation |
+| API/Postgres restart | Durable append/cursor recover; client retry succeeds |
+| Multi-event upload | Per-event transactional results; one failure does not corrupt others |
+| Local close/reopen | Queue, applied IDs, cursor, facts and versions persist |
 
-1. shared-client test harness with two isolated local databases (“device A” and “device B”);
-2. API process;
-3. local disposable Postgres container or process;
-4. migration runner;
-5. fake/test OIDC issuer or provider test tenant;
-6. network fault proxy or deterministic test doubles;
-7. structured log sink visible in test output.
+# Migration and Rollback
 
-Yes, API and database can be tested locally without Neon. Local Postgres should validate schema, uniqueness constraints, transactions, cursor allocation, account scoping, and restart behavior. A later Neon test environment is still required to validate TLS, pooled/direct URLs, scale-to-zero/cold start, network latency, provider limits, and hosting integration.
+Flutter-local migrations are ordered, versioned, tested from empty and from every supported prior beta schema. Before migration, close competing connections and create a recoverable backup where the platform permits. Migration failure must leave either the old valid schema/data or a recoverable copy; it must never silently reset user data.
 
-Environment separation:
+API/Neon migrations are owned by the API boundary. CI applies them to fresh Postgres and representative prior schemas. Deployment order must preserve backward protocol compatibility: expand schema, deploy compatible API, migrate/backfill if required, then remove old fields only after all supported clients no longer depend on them. Ordinary API uses pooled connections; migrations use controlled direct access.
 
-```text
-local: disposable Postgres + fake/test identity
-test/CI: isolated database/branch + test identity tenant + non-production API
-staging: separate Neon project or branch/role + staging auth app + staging API
-production: independent credentials, database/role, auth app, API and retention policy
-```
+Rollback means application/API rollback plus forward corrective migration by default; destructive down migrations are not assumed safe. Neon branching/restore may support rehearsal/recovery, but does not replace migration tests.
 
-No production token, database URL, signing secret, or auth management key belongs in source, client assets, logs, fixtures, or build output. Environment variable names may be committed; values must live in local ignored files or host secret storage. Mobile/desktop clients may contain public auth configuration and API base URL, never API private keys or Postgres credentials.
+Cycle 06 migration remains deferred. Preserve PySide6 binaries, schema documentation, installer evidence, and original database. A later importer reads a copied backup, deterministically maps legacy IDs/units/money into new UUID facts, produces a report, and never mutates the source.
 
-Schema migrations are API-owned, forward-reviewed artifacts. CI should apply them to a fresh database and upgrade a representative prior schema. Ordinary API traffic uses pooled connections; migrations use a direct connection when required. A failed migration must stop deployment before new API code receives traffic. Rollback defaults to application rollback plus a forward corrective migration; destructive down-migrations are not assumed safe. Backup/restore and Neon branching/time-travel are operational aids, not substitutes for tested migrations.
+# Development Cost
 
-# Authentication and Secrets Boundary
+Flutter concentrates client UI, lifecycle, persistence access, networking, analytics, and tests in Dart across three targets. Its upfront cost is learning Dart/Flutter, establishing responsive desktop/mobile patterns, selecting plugins, native toolchains, and recreating proven Python behavior through fixtures. Cost grows if Windows plugins lag mobile, native packaging fails, secure storage differs, or iOS issues appear late.
 
-Verified email answers “was access to this mailbox demonstrated?” It does not safely become the database key or authorization rule. On first accepted identity, Markei maps the provider’s immutable subject (`issuer + sub`) to an internal immutable account UUID. Email may change; account UUID must not.
+Tauri retains TypeScript familiarity and offers Windows/mobile distribution, but adds Rust, IPC/security capabilities, WebView behavior, and platform/mobile plugin evaluation. Its official prerequisites include Rust, C++/WebView2 on Windows, and separate Android/iOS toolchains. [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/).
 
-The client obtains an access token through the provider SDK and sends it to the API. The API validates signature through trusted JWKS, expected issuer, audience, expiry/not-before, permitted algorithm, and required claims. It then resolves the internal account UUID and checks `email_verified` or equivalent policy before sync. Every event query and append is scoped by the resolved account UUID; client-supplied `account_id` is never trusted as authorization.
+React Native plus React Native Windows retains React/TypeScript and native components, but Windows is an additional implementation/package with release alignment, native project/toolchain, module-compatibility, and upgrade responsibilities. Current RNW documentation shows a distinct Windows dependency/project initialization route. [React Native Windows](https://microsoft.github.io/react-native-windows/docs/getting-started/).
 
-Refresh tokens or equivalent long-lived credentials must use OS secure storage where the chosen client framework supports it; this is **untested** on Android, iOS, and Windows. Logs must redact authorization headers, cookies, verification codes, database URLs, and event payload fields that may contain user data. Key rotation, JWKS cache refresh, logout/revocation behavior, and clock skew require empirical tests.
+Flutter is favored because one client framework/language better matches the product goal. This does not prove lower total cost. The alternatives remain controls if Flutter fails essential SQLite, secure storage, accessibility, packaging, or lifecycle gates.
 
-# Sync Failure Model
+# Proposed Sprint 03 Experiment
 
-Local purchase registration commits the purchase fact, pending event, event UUID, device UUID, and monotonically increasing device sequence in one local transaction. Sync is manual/foreground in the first slice.
+After D/E/F authorization only:
 
-Upload uses bounded batches and request IDs. The server has a unique constraint on `(account_id, event_id)` and likely `(account_id, device_id, device_sequence)`. Re-uploading the same identical event returns the original acceptance/cursor; the same event UUID with different content is rejected and logged. A device-sequence gap is rejected or quarantined rather than silently reordered; exact policy is **assumption pending protocol decision**.
+1. pin Flutter/Dart and TypeScript/Node environments;
+2. define shared JSON schemas and golden fixtures;
+3. evaluate Drift first on Windows and Android;
+4. create two fresh app-private local stores;
+5. pass exact/similar and packaged/bulk catalogue cases;
+6. atomically register one one-item Purchase using a multi-item contract plus pending event;
+7. close/reopen and rebuild versioned projections/analytics;
+8. run a local TypeScript API with disposable Postgres and fake account tokens;
+9. prove retry, gap, cursor, bootstrap, cross-account, restart, and correlation logs;
+10. build/run Windows and Android;
+11. verify Cycle 06 database path/hash untouched;
+12. record iOS as blocked/unvalidated pending macOS/Xcode, then later repeat there.
 
-A network failure before response leaves local events pending because acceptance is unknown. Retry is safe through idempotency. A server transaction either accepts the whole valid batch or returns per-event results only if partial acceptance semantics are explicitly designed. For Sprint 03, atomic whole-batch acceptance is operationally simpler.
+Do not provision Neon until local protocol and migration gates pass. The experiment ends before broad UI, legacy import, publication, or PySide6 retirement.
 
-Download requests events after the last committed local server cursor. The server returns an ordered bounded page and next cursor. The client applies the page and advances its cursor in one local transaction, then rebuilds affected projections. Network loss before commit leaves the old cursor; retry re-downloads safely. Loss after commit but before acknowledgement is also safe because the cursor and applied event identities are durable.
+# Stop Conditions
 
-Logs should include timestamp, environment, service version, request ID, account hash/pseudonymous ID, device ID, batch ID, event count, cursor range, outcome code, latency, retry classification, and database error class. They must not include access tokens or privileged connection strings. Client diagnostics should correlate request ID, local pending count, last cursor, and sanitized failure class.
-
-# Two-Device Validation Matrix
-
-| Scenario | Required procedure | Pass evidence |
-| --- | --- | --- |
-| Offline purchase creation | Disable network on A; register purchase; close/reopen | Purchase and pending event persist; no cloud dependency |
-| Retry same event | Upload A event, discard response, retry identical batch | One server row; same acceptance/cursor; pending clears once |
-| Two devices upload | A and B create different events offline, then upload | Both account-scoped events append once; stable cursor order |
-| Download after cursor | B stores cursor N; add event; request after N | Only later events returned; cursor advances transactionally |
-| Loss during upload | Interrupt before/after server commit | Pending retained until confirmed; retry creates no duplicate |
-| Loss during download | Interrupt before local page commit | Local cursor/data both remain old, or both advance—never split |
-| Invalid/expired auth | Send expired, wrong-audience, or invalid-signature token | 401; no event read/write; sanitized diagnostic |
-| Unauthorized account | Token for account X requests Y data | 403/empty according to contract; zero leakage or mutation |
-| Malformed payload | Missing IDs, invalid type/version/quantity | 4xx validation result; no append/cursor allocation |
-| Duplicate event UUID | Repeat identical, then conflicting payload | Identical is idempotent; conflicting duplicate rejected |
-| Device sequence gap | Send sequence 3 before 2 | Defined rejection/quarantine; no silent acceptance |
-| API restart | Restart between sync attempts | Durable events/cursors remain; client retry succeeds |
-| Local close/reopen | Close each client after apply | Event identities, cursor and projections persist |
-| Desktop isolation | Run shared-client test beside Cycle 06 data | Different resolved path; desktop DB hash/path untouched |
-
-# Cost and Operational Risk
-
-A free/low-cost prototype is realistic if it uses two simulated devices, one small API instance, a disposable local Postgres, a test identity tenant, and a low-traffic Neon test database. Neon currently advertises a free plan with scale-to-zero, limited compute/storage, branching, and short restore history, but quotas and provider terms can change. [Neon pricing](https://neon.com/pricing). API hosting, auth email delivery, logs, domain/TLS, CI minutes, macOS access, and device availability may create separate costs.
-
-Largest risks are protocol bugs causing silent divergence; account-scope authorization mistakes; leaked secrets; non-idempotent retries; cursor/local-transaction splits; migration failure; cold-start/connection behavior; auth SDK gaps on Windows; iOS macOS/Xcode dependency; insufficient observability; and treating append-only events as automatically conflict-free. Append-only removes editing conflicts from the first slice, but two devices can still introduce ordering, identity, reference, and duplicate problems.
-
-Operational cost rises sharply when supporting three packaged clients, secure token storage, provider SDK differences, schema evolution, API deployments, logs, recovery, and two-device regressions. Neon reduces Postgres infrastructure work; it does not own sync semantics, authorization, migrations, client queues, or recovery.
-
-# Recommended Sprint 03 Experiment
-
-Authorize only after D/E/F:
-
-1. freeze a versioned event envelope and two deterministic purchase fixtures;
-2. implement a local protocol harness with two isolated SQLite stores;
-3. run either TypeScript or Python API locally against disposable Postgres;
-4. use fake/test tokens with account X/Y claims;
-5. implement `POST /sync/events` idempotent atomic append and `GET /sync/events?after=` cursor download;
-6. execute every matrix row, including API restart and network interruption;
-7. record schema migration, logs, request IDs, batch/cursor evidence, and database counts;
-8. repeat the same API tests against a non-production Neon environment using pooled application and direct migration connections;
-9. stop before UI framework integration unless the protocol passes.
-
-This experiment answers protocol feasibility independent of final client UI. TypeScript versus Python should be selected for the experiment by smallest reproducible environment, not treated as permanent acceptance.
-
-# Blockers and Stop Conditions
-
-Blockers: no accepted event schema; no auth provider; no shared-client framework; no host/runtime; no Neon project; no secure-storage evidence; no migration tool; no API observability/retention policy; no decision on device-sequence gaps or atomic batch semantics.
-
-Stop if any test can leak another account’s events; retry creates duplicates; cursor advances without local application; event acceptance is non-transactional; secrets appear in client/logs; migration cannot be rehearsed; ordinary desktop data is reachable; provider SDK lacks a required target; or the experiment expands into editing, deletion, real-time/background sync, household sharing, broad schema redesign, or production claims.
+Stop if Flutter cannot produce reproducible Windows and Android builds; selected SQLite or secure-storage plugins fail a required target; aggregate/event atomicity cannot be guaranteed; normalization differs across platforms; similarity auto-merges; retry duplicates; gaps are silently accepted; cursor advances without applied facts; another account’s data is exposed; credentials enter client/logs; migrations risk silent reset; original Cycle 06 data is reachable; or scope expands into editing/deletion, global catalogue, household sharing, background/realtime sync, production provisioning, app-store work, or embedded Python.
 
 # Handoff to Main
 
-Main should reconcile this with Design’s protocol ownership and Didactic’s identity/idempotency ordering. Operationally, both API languages are viable assumptions; the immediate evidence need is a provider-neutral, two-device protocol harness. Preserve pooled connections for API traffic, direct controlled connections for migrations, immutable internal account/device/event identities, transactional cursor application, strict account authorization, and complete request/batch diagnostics. Do not authorize infrastructure or framework implementation until the event envelope, failure policies, environment separation, validation matrix, and Sprint 03 stop conditions are accepted.
+Main should reconcile Drift-first persistence, secure-storage verification, cross-language canonical fixtures, platform-specific toolchain gates, and the local protocol harness as the smallest future evidence unit. Flutter/Dart is accepted for planning; Windows/Android compatibility remains assumed until built, and iOS remains explicitly unvalidated until macOS/Xcode evidence. Keep Tauri and React Native Windows as cost controls, TypeScript at the API boundary, Neon after local proof, PySide6 as rollback, and D/E/F postponed until Sprint 03 scope is authorized.
