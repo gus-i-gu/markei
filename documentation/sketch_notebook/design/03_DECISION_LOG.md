@@ -474,3 +474,73 @@ Cycle 06 not closed
 ```
 
 The next append should record human-visible acceptance results, SmartScreen/security observations, artifact-policy resolution, or a bounded failure discovered during those final gates.
+
+---
+
+# 11. Event 13 — Cycle 07 Sprint 01 Mobile Portability Reconciliation
+
+## Knowledge classification
+
+Cycle 07 Sprint 01 completed investigation only. Cycle 06 remains accepted and closed. No application change, framework selection, repository-topology decision, or D/E/F implementation authorization occurred.
+
+The portability inventory established observationally:
+
+- domain dataclasses are platform-neutral and likely reusable where Python runs;
+- substantial validation, calculation, and workflow meaning is UI-framework-neutral;
+- `ProductService` remains coupled because it constructs the concrete `Repository`;
+- Repository construction opens SQLite through desktop-shaped path, resource, connection, commit, and shutdown behavior;
+- Python abstract contracts express responsibilities but are not language-neutral contracts;
+- PySide6 presentation, page-owned service construction, MainWindow shutdown coordination, and Windows packaging are desktop-specific;
+- mobile runtime, sandbox persistence, suspend/resume, Android/iOS packaging, accessibility, and semantic parity remain untested.
+
+## Competing pathways and development-cost models
+
+### Operational challenger — time-boxed Python-native Android experiment
+
+Approach A remains the cheapest bounded way to test direct source reuse. Its initial implementation can be smaller because models, calculations, validations, and perhaps service workflows stay in Python. If it works cleanly, it avoids immediate behavior reimplementation and yields fast Android evidence.
+
+That saving is conditional. Toolchain setup may require Linux or WSL, SDK/NDK/JDK layers, framework packaging recipes, emulator/device work, and mobile-safe resource and database paths. Cost can move into runtime compatibility, lifecycle handling, native integration, accessibility, packaging diagnosis, and framework-specific debugging. Android success would not establish iOS parity: iOS adds macOS/Xcode and a distinct Python packaging path. If the experiment fails late, its construction seams and packaging work may have little lasting product value, although recorded fixtures and failure evidence remain reusable.
+
+Classification:
+
+```text
+bounded falsification challenger
+not accepted long-term architecture
+```
+
+A future spike should stop when mobile SQLite/core behavior, lifecycle safety, packaging, accessibility, or required construction changes cease to be bounded.
+
+### Design strategic candidate — native/cross-platform client with contracts and fixtures
+
+Approach C costs more initially. Stable behavior must be described in language-neutral commands, results, invariants, error cases, and deterministic fixtures; mobile behavior must then be partly reimplemented. Direct Python source reuse is lower, and maintaining semantic parity requires deliberate tests.
+
+That early cost may reduce long-term cost through conventional Android/iOS tooling, explicit application lifecycle and persistence ownership, platform-appropriate presentation, mature accessibility and native integration, clearer debugging boundaries, and framework-independent semantic fixtures. Fixtures make drift observable instead of relying on two implementations merely looking similar. A mobile-local repository boundary also leaves a clearer future synchronization seam without requiring a backend now. Abandoning one unsuccessful C-family framework still loses UI/toolchain work, but language-neutral contracts and fixtures remain usable by another client.
+
+Classification:
+
+```text
+favored strategic architecture candidate
+framework not selected
+implementation not authorized
+```
+
+## Human/Main preference
+
+Human/Main currently favors Approach C as the strategic direction. This is stronger than a neutral list of alternatives: planning and documentation should treat contract/fixture specification and explicit mobile ownership as the leading direction. It is weaker than final acceptance: no framework, repository topology, persistence library, schema-sharing policy, or implementation structure is selected. The preference does not authorize implementation, does not erase Approach A as a bounded challenger, and remains revisable when empirical evidence arrives.
+
+## Evidence required before acceptance
+
+Acceptance still requires:
+
+1. deterministic scenarios for first purchase, repeat purchase, status transition, invalid input, structural defaults, atomic registration, and close/reopen persistence;
+2. a language-neutral contract boundary excluding presentation labels and formatting;
+3. evidence of sandboxed local persistence and lifecycle ownership on Android;
+4. an explicit iOS feasibility and parity gate using macOS/Xcode;
+5. accessibility, navigation, native integration, packaging, debugging, and migration evidence for a selected framework;
+6. a measured comparison of fixture-driven reimplementation cost against a strictly time-boxed direct-reuse spike;
+7. confirmation that ordinary desktop data is never accessed;
+8. Main/human acceptance after evidence reconciliation.
+
+## Deferrals
+
+Deferred: application implementation, D/E/F, framework and repository-topology selection, permanent source reorganization, backend, authentication, synchronization, household sharing, desktop/mobile database exchange, production migration design, store release, and full feature parity.
