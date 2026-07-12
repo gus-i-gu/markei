@@ -10,6 +10,9 @@
 
 ---
 
+<!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
+> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content appended below it belongs to Sprint 03 or later.
+
 # Current State
 
 Cycle 06 remains accepted and protected. Sprint 03 Unit 01 materially added an isolated Flutter/Dart foundation without replacing Python/PySide6 or accessing its database.
@@ -131,6 +134,3 @@ Rationale/history
 Main orientation
     [M]_STAGE/J_[M]_STAGE.md section 19
 ```
-
-<!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
-> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content appended below it belongs to Sprint 03 or later.
