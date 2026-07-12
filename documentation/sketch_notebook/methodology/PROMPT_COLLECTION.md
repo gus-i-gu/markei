@@ -1,6 +1,6 @@
 # PROMPT_COLLECTION.md
 
-> Version: 0.5
+> Version: 0.6
 > Status: Active Methodology Prompt Register
 > Persistence Class: Canonical / Operational
 > Knowledge Class: Methodological
@@ -83,6 +83,7 @@ Rules:
 | `PDR-D` | Design Permanent Reconciliation | Reconcile latest J + C/I into Design memory |
 | `MSU-01` | Main State-of-Union Review | Main read-only reconciliation after domain staging exists |
 | `MSU-02` | Functional State-of-Union Exploration | O/A/D recover from J + 00/05/06, inspect application truth, and write A/B/C staging |
+| `PDR2-INDEX` | Permanent Reconciliation v2 Index | Default post-Codex permanent-domain route with checkpoint-first recovery |
 
 ---
 
@@ -786,7 +787,326 @@ MSU-02 outputs A/B/C for subsequent MSU-01 Main review and J reconciliation.
 
 ---
 
-# 17. Maintenance Rule
+<!-- TEMPORAL_MARKER:C07-S04-METHODOLOGY-PDR2-2026-07-12 -->
+> Temporal boundary — Permanent Reconciliation v2 introduction. Content above preserves the first prompt-collection generation; content below introduces the checkpoint-centered post-Codex route.
+
+# 17. PDR2-INDEX — Permanent Reconciliation v2
+
+PDR2 supersedes PDR-00/PDR-O/PDR-A/PDR-D for ordinary post-Codex permanent-domain reconciliation.
+
+The first-generation PDR prompts remain historical and callable only when an explicit task requires them.
+
+## PDR2 prompt index
+
+| ID | Role | Required evidence | Permanent outputs |
+| --- | --- | --- | --- |
+| `PDR2-00` | Shared protocol | checkpoint + G/H/I + latest J + repository + A/B/C context | four semantic roles |
+| `PDR2-O` | Operational [O] | G + J + execution truth + A | 12 canonical, 04 derived, 11 observational, 10 checkpoint |
+| `PDR2-A` | Didactic [A] | H + J + code/test concepts + B | 02 canonical, 07 derived, 13 observational, 08 checkpoint |
+| `PDR2-D` | Design [D] | I + J + architecture truth + C | 01 canonical, 14 derived, 03 observational, 09 checkpoint |
+
+Default post-Codex call:
+
+```text
+Run PDR2-[ROLE] against the active branch.
+```
+
+---
+
+# 18. PDR2-00 — Checkpoint-Centered Permanent Reconciliation
+
+```text
+Run PDR2-00 through the selected role prompt PDR2-O, PDR2-A, or PDR2-D.
+
+Purpose:
+Translate Codex evidence and repository truth into complete permanent-domain memory while making the checkpoint the cheapest reliable recovery surface.
+
+This is post-Codex classification and promotion.
+It is not implementation or Main-root reconciliation.
+
+BOOT
+
+1. Initialize through the matching PRI role.
+2. Run PMC-01.
+3. Run PMC-02 only if routing, authority, knowledge-state, or promotion confidence is uncertain or stale.
+4. Verify repository, active branch, remote head, baseline ancestry, and clean/non-overlapping worktree.
+
+REQUIRED RECOVERY ORDER
+
+1. Read the role checkpoint first.
+2. State what the checkpoint currently claims.
+3. Read the paired G/H/I Codex report completely.
+4. Read the latest chronological J reconciliation section.
+5. Read the paired A/B/C stage for pre-materialization intent and contrary findings.
+6. Inspect the repository implementation and tests under the role’s competence.
+7. Read the remaining three permanent role files from their latest temporal marker forward.
+8. Read older permanent content only when canonical history, a contradiction, or semantic ownership cannot otherwise be resolved.
+
+The checkpoint is an entry hypothesis, not automatic truth.
+G/H/I is evidence, not automatic promotion.
+J is Main reconciliation, not a replacement for domain classification.
+Repository truth resolves implementation claims.
+A/B/C preserves intended gates and alternatives.
+
+REQUIRED CROSS-CHECK
+
+Compare:
+
+- checkpoint claim;
+- Codex report;
+- latest J classification;
+- source/test/build truth;
+- pre-materialization A/B/C expectation;
+- existing canonical, derived, and observational memory.
+
+Report:
+
+- confirmed knowledge;
+- stale checkpoint claims;
+- implementation/documentation drift;
+- missing evidence;
+- conflicts;
+- accepted resolutions;
+- unresolved questions for Main/human.
+
+CLAIM VOCABULARY
+
+Use only:
+
+proposed, provisional, accepted, implemented, validated, host-unvalidated, blocked, deferred.
+
+Do not collapse:
+- generated into validated;
+- unit-tested into platform-validated;
+- local queue into synchronization;
+- schema validation into semantic parity;
+- Main preference into implementation authority;
+- Codex report into learner evidence.
+
+FOUR-ROLE REDACTION ORDER
+
+Update all four semantic roles in this order:
+
+1. Observational
+   - append the event, commands, evidence, failures, deviations, and chronology;
+   - never rewrite accepted history merely to simplify it.
+
+2. Canonical
+   - add or minimally amend stable accepted rules only;
+   - exclude temporary commands, host accidents, speculative implementation details, and duplicate explanations;
+   - explicitly record no canonical change when evidence is insufficient.
+
+3. Derived
+   - regenerate the current explanation/map/TODO from accepted canon, current evidence, and unresolved work;
+   - remove stale derived statements;
+   - derived content may be rewritten because it is rebuildable.
+
+4. Checkpoint
+   - rewrite last, after the other three roles are reconciled;
+   - summarize current truth and recovery pointers;
+   - do not append a second competing current-state narrative.
+
+Every PDR2 run must review all four files.
+A file may remain textually unchanged only when the final report states why its semantic role received no new knowledge.
+
+CHECKPOINT RECOVERY-ECONOMY CONTRACT
+
+The checkpoint must:
+
+- be the first domain recovery surface;
+- remain compact, preferably at or below 250 lines after its latest temporal marker;
+- state cycle, sprint, branch, inspected implementation head, evidence report, and latest J section;
+- classify implemented, validated, host-unvalidated, defective, blocked, and deferred state;
+- contain current accepted decisions and unresolved defects;
+- state the next valid route and authority boundary;
+- point to canonical, derived, observational, G/H/I, and J sources;
+- omit long chronology, command transcripts, lecture prose, and full alternatives.
+
+Checkpoint update rule:
+
+1. Preserve the header and all content before the latest TEMPORAL_MARKER.
+2. Replace the current checkpoint segment after that marker with one compact current checkpoint.
+3. If no temporal marker exists, append a new marker after the prior content, then write the compact checkpoint.
+4. Never use checkpoint rewriting to erase observational history; Git history and the observational file preserve chronology.
+5. Ensure there is one unambiguous current-state section.
+
+TEMPORAL-MARKER RULE FOR NON-CHECKPOINT FILES
+
+- find the latest TEMPORAL_MARKER;
+- count lines after it, or all lines if absent;
+- when more than 800 lines follow it, add a new reviewed marker at the current end before appending;
+- do not create a marker at 800 lines or fewer;
+- report every count and marker action;
+- line count alone never authorizes a new file.
+
+REQUIRED FINAL AUDIT
+
+Before committing:
+
+- inspect all four diffs;
+- verify semantic-role placement;
+- search for stale claims contradicted by G/H/I or source;
+- verify checkpoint pointers and inspected commit;
+- verify only the four authorized permanent files changed;
+- report files reviewed but unchanged.
+
+Publication authority:
+
+A direct PDR2 role invocation authorizes committing and pushing only that role’s four permanent files to the active branch.
+Pull/rebase safely if remote advanced.
+Never force-push.
+
+Final response must report:
+
+- commit SHA;
+- four files and semantic roles;
+- checkpoint line count and recovery pointers;
+- evidence promoted;
+- evidence retained as provisional/blocked/deferred;
+- marker actions;
+- repository surfaces inspected;
+- conflicts and resolutions;
+- remaining Main/human questions;
+- clean status.
+```
+
+---
+
+# 19. PDR2-O — Operational Complete Reconciliation
+
+```text
+Initialize as Operational Chat [O] and run PDR2-00.
+
+Paired evidence:
+- DEV_STAGE/G_OPS_CODEX.md
+- latest J reconciliation
+- DEV_STAGE/A_OPERATIONAL.md
+- relevant environment, commands, dependencies, persistence, migration, runtime, build, packaging, and test truth.
+
+Permanent roles:
+
+Canonical:
+- operational/12_OPERATIONAL_MODEL.md
+
+Derived:
+- operational/04_TODO.md
+
+Observational:
+- operational/11_OPERATIONAL_RECORD.md
+
+Checkpoint:
+- operational/10_OPERATIONAL_STATE.md
+
+Required reconciliation:
+
+- exact commands and outcomes;
+- installed versus merely declared tools;
+- source-level, database, platform, lifecycle, and packaging evidence;
+- generated-source ownership and regeneration;
+- data isolation, migration, rollback, failure recovery, and user-manual evidence;
+- host blockers and operational cost;
+- next executable gates.
+
+Canonical receives stable operational rules.
+TODO is rebuilt from remaining work and ordered gates.
+Record appends the materialization event and failures.
+Checkpoint is rewritten last as the compact current Operational truth.
+
+Do not select architecture, alter KANBAN, edit source, or write Main files.
+```
+
+---
+
+# 20. PDR2-A — Didactic Complete Reconciliation
+
+```text
+Initialize as Didactic Chat [A] and run PDR2-00.
+
+Paired evidence:
+- DEV_STAGE/H_DDC_CODEX.md
+- latest J reconciliation
+- DEV_STAGE/B_DIDACTIC.md
+- relevant handwritten code, tests, contracts, dependencies, UI behavior, and executed examples.
+
+Permanent roles:
+
+Canonical:
+- didactics/02_KANBAN.md
+
+Derived:
+- didactics/07_GLOSSARY.md
+
+Observational:
+- didactics/13_LECTURE_REGISTER.md
+
+Checkpoint:
+- didactics/08_CONCEPT_MAP.md
+
+Required reconciliation:
+
+- concepts planned versus represented versus executed;
+- learner-facing distinctions exposed by implementation;
+- fixture, schema, domain, transaction, platform, and generated-source evidence;
+- maturity evidence and limits;
+- misconceptions and remaining learning boundary;
+- exact KANBAN evidence for any proposed transition.
+
+KANBAN receives only canonical concept/maturity truth.
+Glossary is regenerated as concise current terminology.
+Lecture Register appends the learning/evidence event.
+Concept Map is rewritten last as the compact current Didactic recovery checkpoint.
+
+No maturity transition follows automatically from Codex work.
+Do not select architecture, claim Operational acceptance, edit source, or write Main files.
+```
+
+---
+
+# 21. PDR2-D — Design Complete Reconciliation
+
+```text
+Initialize as Design Chat [D] and run PDR2-00.
+
+Paired evidence:
+- DEV_STAGE/I_DSN_CODEX.md
+- latest J reconciliation
+- DEV_STAGE/C_DESIGN.md
+- relevant handwritten topology, domain models, schema/migration, contracts, ports, UI composition, dependencies, and tests.
+
+Permanent roles:
+
+Canonical:
+- design/01_ARCHITECTURE.md
+
+Derived:
+- design/14_MODEL_OVERVIEW.md
+
+Observational:
+- design/03_DECISION_LOG.md
+
+Checkpoint:
+- design/09_DESIGN_STATE.md
+
+Required reconciliation:
+
+- stable responsibilities, invariants, and dependency direction;
+- materialized topology versus intended architecture;
+- identity, transaction, schema, migration, contract, projection, and lifecycle ownership;
+- alternatives, deviations, reversibility, and development cost;
+- generated framework structure versus accepted product architecture;
+- deferred distributed/cloud boundaries.
+
+Architecture receives stable accepted design only.
+Model Overview is regenerated from current accepted structure.
+Decision Log appends decisions, alternatives, deviations, and rationale.
+Design State is rewritten last as the compact current Design recovery checkpoint.
+
+Do not claim Operational validation, alter Didactic maturity, edit source, or write Main files.
+```
+
+---
+
+# 22. Maintenance Rule
 
 This file should change when:
 
