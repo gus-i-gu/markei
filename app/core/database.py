@@ -419,6 +419,48 @@ def ensure_default_setting(
     )
 
 
+def ensure_default_category(
+
+    connection: sqlite3.Connection,
+
+) -> None:
+    """
+    Insert the default Register category without sample products.
+    """
+
+    connection.execute(
+
+        """
+        INSERT OR IGNORE INTO categories (id, name, description)
+        VALUES (?, ?, ?)
+        """,
+
+        ("F", "General", "Default category"),
+
+    )
+
+
+def ensure_default_store(
+
+    connection: sqlite3.Connection,
+
+) -> None:
+    """
+    Insert the default Register store without sample purchases.
+    """
+
+    connection.execute(
+
+        """
+        INSERT OR IGNORE INTO stores (id, name, city, state, address)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+
+        (1, "Default Store", "", "", ""),
+
+    )
+
+
 def migrate(
 
     connection: sqlite3.Connection,
@@ -539,6 +581,18 @@ def migrate(
         "pages.order",
 
         "Register,Storage,Shortage,Market,History,Settings",
+
+    )
+
+    ensure_default_category(
+
+        connection
+
+    )
+
+    ensure_default_store(
+
+        connection
 
     )
 

@@ -111,19 +111,28 @@ class ReleaseConfigurationTests(unittest.TestCase):
                         settings = connection.execute(
                             "SELECT key, value FROM settings ORDER BY key"
                         ).fetchall()
+                        category = connection.execute(
+                            "SELECT id, name FROM categories"
+                        ).fetchone()
+                        store = connection.execute(
+                            "SELECT id, name FROM stores"
+                        ).fetchone()
                     finally:
                         connection.close()
 
                     self.assertEqual(
                         counts,
                         {
-                            "categories": 0,
-                            "stores": 0,
+                            "categories": 1,
+                            "stores": 1,
                             "products": 0,
                             "purchases": 0,
                         },
                     )
                     self.assertTrue(settings)
+
+                    self.assertEqual(tuple(category), ("F", "General"))
+                    self.assertEqual(tuple(store), (1, "Default Store"))
 
                     connection = database.connect()
                     try:
