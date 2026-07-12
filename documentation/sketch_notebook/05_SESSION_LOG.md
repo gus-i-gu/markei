@@ -251,3 +251,105 @@ clone and isolate
 ```
 
 The authoritative Cycle 07 preparation boundary is `06_SESSION_SCHEME.md`.
+
+
+---
+
+# 6. Session 004 — Cycle 07 Sprint 01 Portability Investigation
+
+```text
+Date: 2026-07-12
+Repository: gus-i-gu/markei
+Branch: cycle-07-mobile-preparation
+Baseline: f6414fbe7394453387067a5a34ca6cc7621bbed3
+Class: mobile portability investigation and permanent-memory reconciliation
+Outcome: strategic direction staged; implementation postponed
+```
+
+## 6.1 Isolation and initialization
+
+The human developer created an isolated sibling clone named `markei-mobile`, connected it to the existing `gus-i-gu/markei` repository, and created `cycle-07-mobile-preparation` from the exact accepted Cycle 06 closure commit.
+
+GitHub remained the canonical Sketch Notebook host. Notion was considered as a future projection or recovery layer but was not assigned authority.
+
+## 6.2 Functional investigation
+
+Operational, Didactic, and Design inspected the platform boundary without modifying application code.
+
+The reports agreed that Markei contains reusable domain behavior but is not mobile-portable as currently composed. Reuse candidates include domain models, validation/calculation rules, workflow meanings, schema semantics, and structural defaults. Coupling remains in concrete repository construction, SQLite lifecycle, Windows-shaped paths/resources, presentation-shaped projections, transaction boundaries, and desktop lifecycle ownership.
+
+The reports compared:
+
+```text
+A. shared Python core + Python-native mobile UI
+B. web/hybrid mobile client
+C. native/cross-platform client + explicit contracts/fixtures
+D. service-backed client
+```
+
+## 6.3 Preserved pathway tension
+
+Operational recommended Approach A as the cheapest bounded experiment for directly falsifying Python-core reuse on Android.
+
+Design recommended Approach C as the stronger strategic architecture for a maintained mobile product.
+
+Main reconciled the difference as perspectival:
+
+```text
+Operational:
+    cheapest direct-reuse experiment
+
+Design:
+    strongest maintained-product direction
+```
+
+The human/Main direction favors Approach C while preserving Approach A as a bounded challenger.
+
+Development cost was recorded as more than initial code volume. It includes learning, setup, behavior reimplementation, toolchains, debugging, Android/iOS differences, testing, semantic parity, lifecycle, accessibility, distribution, dependency upgrades, and long-term maintenance.
+
+## 6.4 Permanent-domain absorption
+
+Functional chats updated their own permanent memory:
+
+```text
+Operational
+    04_TODO.md
+    10_OPERATIONAL_STATE.md
+    11_OPERATIONAL_RECORD.md
+
+Didactic
+    08_CONCEPT_MAP.md
+    13_LECTURE_REGISTER.md
+
+Design
+    03_DECISION_LOG.md
+    09_DESIGN_STATE.md
+```
+
+No canonical architecture or framework was promoted. No Didactic maturity changed. No application, methodology, D/E/F, or G/H/I files were modified.
+
+## 6.5 Main reconciliation
+
+Main recorded:
+
+```text
+primary strategic direction:
+    contract-first native/cross-platform client
+
+bounded challenger:
+    time-boxed Python-native Android experiment
+
+backend:
+    deferred
+
+framework:
+    not selected
+
+implementation:
+    not authorized
+
+D/E/F:
+    postponed
+```
+
+The next knowledge target is a technology-neutral behavior and fixture specification. An empirical prototype remains required before Cycle 07 can close, but its materialization awaits later human/Main direction.
