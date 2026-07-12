@@ -11,126 +11,97 @@
 ---
 
 <!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
-> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content appended below it belongs to Sprint 03 or later.
+> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above preserves prior checkpoints. This is the single current Design checkpoint.
 
-# Current State
+# Cycle 07 Sprint 04 Design Checkpoint
 
-Cycle 06 remains accepted and protected. Sprint 03 Unit 01 materially added an isolated Flutter/Dart foundation without replacing Python/PySide6 or accessing its database.
+> Branch: `cycle-07-mobile-preparation`  
+> Inspected implementation head: branch state containing Sprint 04 Codex report and J section 21  
+> Evidence: `DEV_STAGE/I_DSN_CODEX.md`  
+> Main reconciliation: `[M]_STAGE/J_[M]_STAGE.md`, section 21  
+> Pre-materialization Design intent: `DEV_STAGE/C_DESIGN.md`
 
-```text
-implemented and locally unit-tested
-    Dart domain/application boundaries
-    Drift fresh local persistence
-    account-private catalogue structures
-    Purchase + Purchase Items
-    atomic local event/queue transaction
-    close/reopen persistence
-    minimal analytics registry
+## Current architecture
 
-generated but host-unvalidated
-    Android, Windows, iOS platform targets
-
-not implemented
-    user purchase workflow
-    authentication/authorization
-    TypeScript API
-    Postgres/Neon
-    upload/download synchronization
-    cross-device convergence
-    legacy import and parity
-```
-
-# Materialized Architecture
+Cycle 06 remains accepted, protected, and recoverable. Sprint 04 extends the isolated Flutter/Dart client into a local Windows-executed vertical slice without opening or converting the ordinary PySide6 database.
 
 ```text
-Flutter composition
-→ Register Purchase application port
-→ infrastructure-independent Dart domain
-→ local repository boundary
-→ Drift adapter and fresh SQLite database
+Flutter presentation
+→ application commands/query ports
+→ independent Dart domain
+→ local repository adapters
+→ Drift schema v2
+→ application-private SQLite
 ```
 
-Widgets own no SQL or durable transaction. The domain imports no Flutter widget, Drift, HTTP, Python, or platform-plugin APIs. Drift is now implemented for the local foundation.
+The composition root owns database and adapter construction. Widgets own no SQL or durable transaction. Python remains outside the Flutter runtime.
 
-The local Register transaction resolves catalogue references, validates Items, inserts Purchase/Items, prepares `purchase.registered`, enqueues it, and commits atomically. Invalid Items roll back all writes. Network work is absent from the transaction.
+## Implemented and validated
 
-# Implemented Representations
+- Product internal ID and user Product code are distinct; new internal IDs use UUID v4.
+- Product codes are required, display-preserving, normalized, and account-scoped unique.
+- normalization v2 preserves accented Portuguese text and separates display from normalized facts;
+- Purchase remains a one-or-more Item aggregate;
+- registration atomically writes catalogue references, Purchase/Items, device sequence, immutable event, and pending queue entry;
+- Device creation no longer resets sequence; account/device/sequence uniqueness exists;
+- Drift v1→v2 migration preserves Product IDs/references and backfills reviewable legacy codes;
+- JSON Schema Draft 7 validates versioned v2 structures; Dart tests own semantic invariants;
+- minimal Purchase/History navigation, multi-item staging, local submission, and visible history exist;
+- formatting, analysis, 21 Flutter tests, five Python tests, Windows build, and Windows startup smoke passed.
 
-- account-private Products and Stores;
-- PACKAGED/BULK Product modes;
-- MASS/VOLUME/COUNT with canonical KG/L/UNIT;
-- six-decimal microunits and fractional COUNT rejection;
-- ISO currency plus integer minor units;
-- Purchase aggregates with one or more Items;
-- identifier/version analytics registry;
-- fresh local schema version 1 and migration-ledger structure;
-- versioned semantic JSON fixtures.
-
-These claims are local and test-bounded.
-
-# Defects and Provisional Areas
-
-**Likely defect:** repeated Purchase registration may reset the Device sequence and reuse sequence 1. Monotonic device ordering is not accepted as implemented.
-
-**Normalization risk:** current `\w`-based normalization may damage accented Portuguese text. Normalization v1, locale/Unicode policy, and identity migration remain provisional.
-
-**Identifier question:** Product IDs are deterministic UUID-shaped SHA-256 derivations, but RFC UUID semantics and TypeScript parity are unproven.
-
-**Contract gap:** purchase and sync fixtures are examples, not complete schemas or wire specifications.
-
-**Migration gap:** fresh database creation is tested; schema upgrade/recovery and legacy import are not.
-
-**Catalogue gap:** Store reuse is exact-name matching; Store branch/location identity and deduplication remain undefined. Product similarity remains warning-only.
-
-# Validation Boundary
-
-Passed:
-
-- Dart formatting and generation;
-- `flutter analyze`;
-- nine Flutter tests;
-- five Python regression tests;
-- atomic rollback and close/reopen tests.
-
-Host-unvalidated:
-
-- Android build/run;
-- Windows build/run;
-- iOS build/run;
-- responsive/shared-application lifecycle.
-
-# Recommended Next Design Route
-
-Design recommends a bounded local shared-client vertical slice first:
+## Evidence limits
 
 ```text
-correct sequence and Unicode identity defects
-→ strengthen canonical fixtures
-→ minimal Flutter Purchase UI
-→ catalogue and Store selection/creation
-→ multi-item staging
-→ atomic registration
-→ visible local projection/history
-→ close/reopen
-→ Windows and Android execution
+validated
+    local domain/persistence/migration/contract tests
+    Windows build and five-second startup smoke
+
+implemented but not fully accepted
+    minimal UI and local history
+    schema v2 as one controlled upgrade
+    local account/device placeholder composition
+
+blocked or host-unvalidated
+    manual UI/accessibility review
+    Android build — SDK absent; installation prohibited
+    Android execution
+    iOS build/run
 ```
 
-The TypeScript/Postgres local protocol harness should follow rather than be silently combined. This is a recommendation, not Sprint 04 authority.
+A generated platform target is not platform validation. A pending event queue is not synchronization. Structural schema validation is not cross-language semantic parity.
 
-# Authorization and Recovery
+## Accepted Design boundaries
 
-Domain permanent reconciliation is complete through this checkpoint. Main must next reconcile domain updates, refresh 00/05/06, and define Sprint 04. D/E/F remain inactive until human approval.
+- Flutter/Dart remains the future shared-client basis with inward dependencies.
+- Local persistence is application-private and offline-first.
+- User Product code is distinct from immutable relational Product identity.
+- Versioned exact Product identity uses normalized catalogue facts; fuzzy matching warns only.
+- Purchase and its Items commit as one local aggregate with one prepared append-only event.
+- PySide6 and its database remain protected until parity and human/Main acceptance.
+- TypeScript API and Neon remain favored planning boundaries, not implemented components.
 
-```text
-Canonical architecture
-    design/01_ARCHITECTURE.md
+## Provisional, defective, or incomplete
 
-Derived map
-    design/14_MODEL_OVERVIEW.md
+- the fixed local account/device identifiers are not production identity or authentication;
+- Store exact-name reuse is not branch/location identity or deduplication;
+- Product-code editing, alias, retirement, and reuse policy is absent;
+- fresh-create migration-ledger time remains source-fixed, while upgrade time is runtime UTC;
+- one v1→v2 migration does not establish general downgrade, recovery, or import policy;
+- manual Windows workflow, responsive behavior, and accessibility remain unevidenced;
+- Android/iOS feasibility remains incomplete.
 
-Rationale/history
-    design/03_DECISION_LOG.md
+## Deferred
 
-Main orientation
-    [M]_STAGE/J_[M]_STAGE.md section 19
-```
+Authentication/authorization, TypeScript API, Neon/Postgres, actual upload/download synchronization, server cursor allocation, second-device convergence, central Product catalogue identity, legacy desktop import, editing/deletion, background/realtime sync, public release, and PySide6 retirement.
+
+## Next valid route
+
+Main should reconcile Sprint 04 evidence and decide whether the next bounded unit is manual Windows acceptance/correction or the first local synchronization/API harness. Any API, auth, Neon, Android-tool installation, import, or retirement work requires fresh Main/human authority through D/E/F.
+
+## Recovery pointers
+
+- Canonical: `design/01_ARCHITECTURE.md`, sections 16–18.
+- Derived map: `design/14_MODEL_OVERVIEW.md`, current post-marker segment.
+- Observational history: `design/03_DECISION_LOG.md`, Event 16.
+- Codex evidence: `DEV_STAGE/I_DSN_CODEX.md`.
+- Main decision: `[M]_STAGE/J_[M]_STAGE.md`, section 21.
