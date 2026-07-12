@@ -1,6 +1,6 @@
 # 10_OPERATIONAL_STATE.md
 
-> Version: Cycle 06 checkpoint 0.3
+> Version: Cycle 06 checkpoint 0.4
 > Status: Active operational checkpoint
 > Persistence Class: Checkpoint
 > Knowledge Class: Operational
@@ -12,118 +12,110 @@
 
 # 1. Current Cycle 06 State
 
-Markei's first Windows release-enablement unit has been materialized and reconciled.
+Cycle 06 Sprint 02 crossed the installer and installed-runtime boundary.
 
 ```text
-configured: yes
-built: yes
-launched: yes — isolated frozen launch and immediate reopen
-installed: blocked
-validated: partial
+configured: validated
+built: validated
+launched: validated — frozen and installed shortcut launch
+installed: validated — automated per-user lifecycle
+validated: partial-to-strong technical evidence
 accepted: no
 ```
 
-The frozen one-folder runtime was built and partially validated. The installer source is configured, but installer compilation is blocked because `ISCC.exe` was unavailable. The installed lifecycle is unvalidated, and the beta is not accepted.
+Markei is technically release-candidate ready for controlled beta review, but the beta is not accepted or closed. Human-visible UI walkthrough, interactive installer/security observation, and final Main/human acceptance remain pending.
 
 # 2. Validated Current-Branch Evidence
 
-The following gates passed on `sketch-notebook-recovery`:
+The following gates have current evidence:
 
-- source compilation;
-- five standard-library release tests;
-- one-folder PyInstaller build;
-- creation of `dist\Markei\Markei.exe`;
-- schema-only package/resource boundary;
-- absence of seed fixture, live database, WAL/SHM, and startup log from the distribution;
-- isolated frozen first launch;
-- external writable database creation;
-- zero sample business rows on first launch;
-- startup-log creation;
-- focused source shutdown validation after correction;
-- closure of all four page-owned repositories;
-- immediate frozen reopen.
+- Inno Setup 6.7.3 installed per user and discovered by `scripts/build_installer.ps1`;
+- source compilation and five standard-library release tests;
+- rebuilt one-folder frozen runtime;
+- compiled installer artifact;
+- per-user installation under `%LOCALAPPDATA%\Programs\Markei`;
+- Start Menu shortcut creation and installed executable launch;
+- external database creation under `%LOCALAPPDATA%\Markei`;
+- structural defaults `F / General` and `1 / Default Store`;
+- zero sample products and purchases on fresh production initialization;
+- Register-equivalent ProductService persistence;
+- expected Lists, History, and Settings projection evidence;
+- installed close and immediate reopen;
+- same-version reinstall with retained data;
+- uninstall with retained database;
+- reinstall with retained-data recovery.
 
-The executable evidence recorded by Codex was:
-
-```text
-dist\Markei\Markei.exe
-SHA256 E35643F282B612A8080B38C45743697673323F2918589D7869CE4E9839535D1B
-```
-
-# 3. Shutdown Correction
-
-Focused validation initially showed that the isolated SQLite file remained open after window closure. A bounded `MainWindow.closeEvent()` coordinator was added to idempotently close the four page-owned services. The rerun confirmed all repositories closed and the isolated database directory became removable.
-
-This resolves the focused source/frozen shutdown gate. Installed shutdown remains unvalidated because no installed execution has occurred.
-
-# 4. Current Packaging Boundary
-
-Current production packaging is:
+Artifact evidence:
 
 ```text
-Markei.spec
-    authoritative one-folder windowed build
-    includes schema.sql
-    excludes seed.sql
-    excludes tests
-    UPX disabled
-    version resource attached
+frozen executable
+    dist\Markei\Markei.exe
+    SHA256 E13E276139E5F680D91A9816FC79776EB9837CA901C2DEBCF6B9CFAF8594A282
 
-scripts/build_windows.ps1
-    clean-build invocation wrapper
-
-installer/Markei.iss
-    per-user x64 installer source
-    Start Menu shortcut
-    optional desktop shortcut
-    external user data preserved by default
-
-scripts/build_installer.ps1
-    installer compile wrapper
-    blocked without ISCC.exe
+installer
+    dist\installer\Markei-Setup-0.1.0-x64.exe
+    SHA256 122A772D66BBE7D5522EF2262E7E89D6D2E332B6318135BB25D55A27F75F4623
+    size 34,448,651 bytes
 ```
 
-Startup failures are written to:
+# 3. Evidence Boundaries
+
+Automated lifecycle validation used the current ordinary Windows user. Existing Markei data was backed up and restored. This evidences ordinary per-user install semantics, but not dedicated clean-account isolation.
+
+Register, Lists, History, and Settings were technically validated through the installed database and the same ProductService path used by the application. A complete human-visible UI walkthrough remains pending.
+
+Defender was enabled and the binaries were unsigned. No SmartScreen prompt was observed during silent/programmatic execution. Human-visible SmartScreen behavior remains `unknown`.
+
+# 4. Bounded Sprint 02 Corrections
+
+Two direct failures produced bounded corrections:
 
 ```text
-%LOCALAPPDATA%/Markei/logs/startup.log
+ISCC.exe not discovered
+→ add per-user Inno Setup path to build_installer.ps1
+→ installer compile passed
+
+fresh production Register foreign-key failure
+→ add idempotent structural category/store defaults
+→ tests, build, workflow, and lifecycle rerun passed
 ```
 
-Writable database state remains at:
+The Inno Setup `x64` deprecation warning is non-blocking maintenance debt.
+
+# 5. Artifact Repository Drift
+
+The current branch contains:
 
 ```text
-%LOCALAPPDATA%/Markei/market.sqlite
+dist/installer/Markei-Setup-0.1.0-x64.exe
 ```
 
-# 5. Remaining Beta Blockers
+G incorrectly describes this artifact as generated but uncommitted. Operational policy is that generated release binaries should be delivered through an approved release/artifact channel rather than retained as ordinary source files. Removal and ignore-rule materialization require a separate authorized cleanup; this documentation pass leaves the artifact unchanged.
+
+# 6. Remaining Gates
 
 ```text
-provide Inno Setup / ISCC.exe
-→ compile installer
-→ inspect installer artifact
-→ clean install
-→ Start Menu launch
-→ principal workflow QA
-→ close and immediate installed reopen
-→ persistence verification
-→ compatible upgrade/reinstall
-→ uninstall retention verification
-→ reinstall recovery
-→ SmartScreen/antivirus observation
-→ human acceptance
+interactive installer wizard observation
+→ human-visible Register / Lists / History / Settings walkthrough
+→ human-visible normal close and immediate reopen
+→ human-visible SmartScreen / antivirus observation
+→ human acceptance for controlled beta use
+→ Main closure
 ```
+
+A dedicated-account rerun is not automatically blocking unless current-user backup/restore evidence is later judged ambiguous.
 
 Workflow atomicity remains inherited Operational debt and was not changed.
 
-# 6. Recovery Route
+# 7. Recovery Route
 
 ```text
 1. Read this checkpoint.
-2. Read 04_TODO.md for remaining work.
-3. Read 12_OPERATIONAL_MODEL.md for stable rules.
-4. Read 11_OPERATIONAL_RECORD.md for chronology and artifact evidence.
-5. Read J_[M]_STAGE.md and G_OPS_CODEX.md only when reconciliation detail is required.
+2. Read 04_TODO.md for remaining human and cleanup work.
+3. Read 12_OPERATIONAL_MODEL.md for stable rules and artifact policy.
+4. Read 11_OPERATIONAL_RECORD.md for Sprint 01/02 chronology and hashes.
+5. Read J_[M]_STAGE.md or G_OPS_CODEX.md only for reconciliation detail.
 6. Inspect source only when these surfaces are insufficient or drift is suspected.
 ```
 
-Refresh this checkpoint when installer compilation or any installed-lifecycle gate changes status.
+Refresh this checkpoint when human acceptance, SmartScreen observation, artifact cleanup, or Cycle 06 closure changes state.
