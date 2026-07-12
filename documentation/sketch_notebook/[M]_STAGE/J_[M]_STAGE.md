@@ -1109,3 +1109,290 @@ implementation authorization: none
 D/E/F: postponed
 next step: domain documentation and definition round
 ```
+
+
+---
+
+# 16. Human/Main Structural Definitions and TypeScript Exploration Direction
+
+## 16.1 Catalogue identity
+
+The first shared beta defines an account-private catalogue product through this normalized identification set:
+
+```text
+normalized product name
++
+normalized product brand
++
+measurement mode
++
+normalized package amount and unit, when packaged
+```
+
+Rules:
+
+- a brand change creates a different Product ID;
+- a packaged amount/size change creates a different Product ID;
+- packaged products include normalized package amount/unit in identity;
+- bulk/weighted products use `BULK` mode and omit package amount from identity;
+- products remain private to one account;
+- global catalogue deduplication is deferred;
+- exact normalized equivalence may reuse an existing product automatically;
+- fuzzy textual similarity only warns and requests user clarification;
+- Markei must not merge products automatically from similarity alone;
+- spelling correction and manual deduplication are deferred.
+
+A deterministic account-scoped Product UUID derived from the normalized identification set is favored for evaluation because two offline devices can then resolve mechanically equivalent identities such as `350 g` and `0.350 kg` to the same Product ID. Its correction/migration implications still require fixture evidence.
+
+## 16.2 Purchase registration structure
+
+The accepted planning flow is:
+
+```text
+stage purchase
+→ create purchase UUID and occurrence timestamp
+→ select/create account-private store
+→ add one or more purchase items
+→ resolve Product ID directly or through identification set
+→ exact match reuses catalogue product
+→ similar match asks user
+→ no match creates catalogue product
+→ commit purchase aggregate atomically
+→ append pending synchronization event
+```
+
+The first UI may stage one item at a time. The domain contract must support one purchase containing several purchase items.
+
+## 16.3 Historical integrity and package change
+
+Product identification properties are treated as immutable in the first beta. A changed name, brand, or package identity produces a new Product ID rather than rewriting an existing identity.
+
+Therefore, broad duplicated product snapshots on every purchase item are not required initially. Purchase items preserve historical meaning by retaining their original Product ID and commercial observations.
+
+A future relation may express:
+
+```text
+new product supersedes prior product
+or
+both variants belong to one analytical product family
+```
+
+This is useful for package shrinkage and long-range analytics but is deferred from the reduced synchronized slice.
+
+## 16.4 Currency representation
+
+Household purchases normally use the territorial currency associated with the account/store context. The interface may infer and default that currency so ordinary entry does not ask the user repeatedly.
+
+Persisted commercial facts must nevertheless retain an explicit standard currency code. Store location alone must not be the only historical currency evidence.
+
+Planning representation:
+
+```text
+account default currency
++ purchase currency code
++ money stored as integer minor units
+```
+
+Example:
+
+```text
+BRL 8.79
+→ currency_code = BRL
+→ amount_minor = 879
+```
+
+The guide may explain money abstractly, but `M` is not the sole stored database unit.
+
+## 16.5 Quantity and dimensional representation
+
+The earlier broad `m` symbol is rejected as the sole stored measure because equal numeric magnitudes across mass, volume, and count do not mean the same physical quantity. Markei must never infer mass from volume or assume `1 L = 1 kg`.
+
+Planning representation:
+
+```text
+measurement_kind
+    MASS | VOLUME | COUNT
+
+measurement_unit
+    KG | L | UNIT
+
+normalized_amount
+    fixed precision with three displayed decimals
+```
+
+Examples:
+
+```text
+350 g
+→ 0.350 KG
+→ MASS
+
+1 litre
+→ 1.000 L
+→ VOLUME
+
+5 units
+→ 5.000 UNIT
+→ COUNT
+```
+
+The abstract `m` notation may appear in an explanatory guide only when paired with the explicit dimension/unit. The database and contracts store explicit dimensions.
+
+Package amount and purchased amount remain distinct:
+
+```text
+Product:
+    package_amount = 0.350 KG
+
+Purchase Item:
+    package_count = 2
+    purchased_amount = 0.700 KG
+```
+
+## 16.6 Price facts and analytics basis
+
+Candidate authoritative purchase-item price facts:
+
+```text
+currency code
+line total in minor units
+package count
+normalized purchased amount and unit
+promotion observation
+```
+
+Candidate derived analytics:
+
+```text
+package price
+normalized measure price
+price change
+normalized price change
+personal inflation/deflation indicators
+store comparisons
+forecasts
+```
+
+Raw purchase facts remain authoritative.
+
+## 16.7 Versioned analytics boundary
+
+A dedicated TypeScript analytics boundary is accepted as planning direction.
+
+Initial form may be:
+
+```text
+analytics.ts
+    registry of pure, versioned analytical algorithms
+```
+
+Rules:
+
+- each analytic has a stable identifier and version;
+- once used for reproducible results, a version's meaning is not changed;
+- improved formulas receive a new version;
+- services/use cases select the relevant analytic by identifier;
+- persisted or cached analytical results record the version used when necessary;
+- raw purchase facts are never rewritten by analytical evolution;
+- Git history preserves source chronology;
+- semantic growth may later split `analytics.ts` into an `analytics/` directory.
+
+This is not authorization to create the file yet.
+
+## 16.8 Synchronization semantics accepted for planning
+
+The first protocol should use:
+
+```text
+event UUID
+    duplicate protection and retry identity
+
+device UUID + monotonic device sequence
+    creation order for one installation
+
+client occurrence timestamp
+    business time, not global synchronization order
+
+opaque account-scoped server cursor
+    ordered incremental download position
+```
+
+Planning policies:
+
+- a sequence gap is rejected and the missing earlier event is requested;
+- identical retry under the same event UUID returns the prior acceptance;
+- different content under an accepted event UUID is rejected;
+- a second device bootstraps from cursor zero in bounded pages;
+- one purchase event is atomic and includes its purchase-item lines;
+- an upload request may contain several purchase events and return per-event transactional results;
+- API authorization is mandatory;
+- database row-level security remains a defense-in-depth evaluation;
+- general edit/delete conflict resolution remains deferred.
+
+## 16.9 TypeScript exploration direction
+
+TypeScript is accepted as the primary language for the next shared-client/API exploration.
+
+This does not authorize a hybrid Python/TypeScript runtime inside the new client.
+
+Planning boundary:
+
+```text
+accepted PySide6 beta
+    preserved as reference, fixture source, and rollback
+
+new shared client
+    TypeScript-oriented candidate
+
+custom synchronization API
+    TypeScript favored for first comparison/protocol harness
+
+Python ↔ TypeScript continuity
+    specifications
+    deterministic fixtures
+    expected behavior
+    migration evidence
+
+not
+    embedded Python runtime or client IPC bridge
+```
+
+Reasons:
+
+- a Python/TypeScript installed-client bridge would add two runtimes, serialization, lifecycle coordination, cross-language debugging, and multi-platform packaging;
+- language-neutral contracts and fixtures allow gradual semantic replacement without embedding the desktop runtime;
+- TypeScript can serve client, protocol types, runtime validation, API, tests, and analytics while preserving clear boundaries.
+
+Primary client-family comparison:
+
+```text
+Tauri 2 + TypeScript frontend
+versus
+React Native + React Native Windows
+```
+
+Flutter remains the non-TypeScript control candidate. Capacitor remains secondary because Windows desktop is not its primary official target.
+
+No framework is accepted yet. The next empirical comparison must measure local SQLite support, secure token storage, Windows/Android/iOS lifecycle, packaging, accessibility, testing, native integration, and maintenance cost.
+
+## 16.10 Current decision state
+
+```text
+catalogue identity: provisionally defined
+purchase aggregate: provisionally defined
+historical identity policy: provisionally defined
+currency storage: provisionally defined
+quantity dimensions: provisionally defined
+analytics versioning: provisionally defined
+sync ordering/idempotency: provisionally defined
+TypeScript exploration: accepted
+embedded Python bridge: rejected as primary architecture
+Tauri vs React Native Windows: open
+auth provider: open
+exact API runtime/host: open
+physical schema: not materialized
+implementation: not authorized
+D/E/F: postponed
+```
+
+The next action is domain-memory reconciliation and Didactic KANBAN promotion, followed by Main-root continuity refresh. Framework or schema implementation requires a later explicit authorization.
