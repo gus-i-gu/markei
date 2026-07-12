@@ -1,6 +1,6 @@
 # PROMPT_COLLECTION.md
 
-> Version: 0.3
+> Version: 0.4
 > Status: Active Methodology Prompt Register
 > Persistence Class: Canonical / Operational
 > Knowledge Class: Methodological
@@ -81,6 +81,7 @@ Rules:
 | `PDR-O` | Operational Permanent Reconciliation | Reconcile latest J + A/G into Operational memory |
 | `PDR-A` | Didactic Permanent Reconciliation | Reconcile latest J + B/H into Didactic memory |
 | `PDR-D` | Design Permanent Reconciliation | Reconcile latest J + C/I into Design memory |
+| `MSU-01` | Main State-of-Union Review | Reconcile J, 00/05/06, A/B/C, and bounded repository truth before a new phase |
 
 ---
 
@@ -542,7 +543,110 @@ If the invoking task authorizes publication, commit only the four Design files a
 
 ---
 
-# 15. Maintenance Rule
+# 15. MSU-01 — Main State-of-Union Review
+
+```text
+Initialize through PRI-M and run PMC-01. Run PMC-02 only when routing, authority, knowledge-state, or promotion confidence is uncertain or possibly stale. Then run MSU-01.
+
+Purpose:
+Produce a read-only Main state-of-union review before new J reconciliation, D/E/F preparation, permanent promotion, or implementation.
+
+Resolve and verify:
+- repository: gus-i-gu/markei;
+- active branch from the explicit task or 06_SESSION_SCHEME.md;
+- remote branch head and baseline ancestry;
+- whether the inspected branch advanced beyond the commits named by Main continuity.
+
+Read economically in this order:
+
+1. 00_PROJECT_STATE.md — current accepted global state.
+2. 06_SESSION_SCHEME.md — active sprint, milestone, human decisions, gates, and next route.
+3. 05_SESSION_LOG.md — only the latest chronological segment needed to verify how the current state arose.
+4. The latest chronological reconciliation section in [M]_STAGE/J_[M]_STAGE.md.
+5. DEV_STAGE/A_OPERATIONAL.md.
+6. DEV_STAGE/B_DIDACTIC.md.
+7. DEV_STAGE/C_DESIGN.md.
+8. Any task-named D/E/F or G/H/I evidence.
+9. Relevant permanent-domain checkpoints:
+   - operational/10_OPERATIONAL_STATE.md;
+   - didactics/08_CONCEPT_MAP.md;
+   - design/09_DESIGN_STATE.md.
+10. Bounded repository inspection for claims that documentation alone cannot establish.
+
+Repository inspection must begin with:
+- branch/head comparison;
+- changed-file inventory since the last Main reconciliation;
+- source/test topology relevant to the active milestone;
+- dependency manifests and entrypoints;
+- implementation files named by J, 06, or A/B/C;
+- test/build evidence already committed.
+
+Do not read generated files line by line unless generator drift is the direct question. Review generated ownership through source schema/configuration, dependency locks, regeneration commands, and validation evidence.
+
+Compare the sources and report:
+
+A. Current authority
+- active cycle, sprint, branch, baseline, and latest reconciled commit;
+- current phase and whether D/E/F or implementation is active.
+
+B. Accepted state
+- stable product, domain, architecture, operational, and methodological decisions.
+
+C. Materialized evidence
+- implemented source;
+- passed tests/builds;
+- generated-but-unvalidated targets;
+- preserved legacy boundaries.
+
+D. Provisional or defective state
+- suspected defects;
+- incomplete contracts;
+- host/toolchain blockers;
+- questions that still require human definition.
+
+E. A/B/C agreement and conflict
+- Operational recommendation;
+- Didactic evidence/maturity boundary;
+- Design recommendation;
+- contradictions, stale reports, or missing staging.
+
+F. Human decisions
+- decisions already supplied and their exact effect;
+- remaining choices;
+- host changes or external accounts requiring explicit permission.
+
+G. Next valid route
+- the smallest coherent milestone;
+- work that must remain deferred;
+- whether Main may now prepare J, 00/05/06, or D/E/F.
+
+For every claim use one of:
+proposed, provisional, accepted, implemented, validated, host-unvalidated, blocked, deferred.
+
+State-of-union output must end with:
+
+```text
+Ready now:
+Not ready:
+Human action:
+Main next write:
+Implementation authority:
+```
+
+MSU-01 is read-only. It does not authorize:
+- changes to J, 00, 05, or 06;
+- A/B/C, D/E/F, or G/H/I edits;
+- permanent-domain promotion;
+- source changes;
+- tool installation;
+- commits, pushes, provisioning, or external accounts.
+
+A separate invoking instruction must name exact writable files and authorize the next transition.
+```
+
+---
+
+# 16. Maintenance Rule
 
 This file should change when:
 
