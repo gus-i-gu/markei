@@ -1,196 +1,159 @@
 # Main Synthesis Summary
 
-Cycle 07 Shared Beta Planning changes Markei’s learning problem from “Can a mobile client work locally?” to “How can desktop and mobile preserve one account’s facts while each remains useful offline?” The favored planning target is one cross-platform client with local persistence, verified-email identity, a small custom synchronization API, Neon as shared event storage, and an append-only first synchronization workflow.
+Flutter/Dart is now accepted as the planning basis for one maintained Windows, Android, and iOS Markei client. TypeScript remains favored for the custom synchronization API, Neon for managed shared persistence, and Python/PySide6 as the protected beta reference and rollback. This is a model-design decision, not implementation evidence.
 
-The central lesson is separation of responsibilities. Email verification helps prove account access; an immutable account UUID identifies the account; an access token carries temporary proof to the API; the API validates, authorizes, orders, and accepts events; Neon stores shared facts; each client owns its local database, offline queue, and rebuilt projections. A managed database reduces database administration, but it does not invent synchronization rules.
+The Didactic consequence is substantial enough for canonical concept introduction: stable identity, account-private catalogue structure, purchase aggregation, explicit quantity/money representation, synchronization, and versioned analytics now have reusable definitions and concrete Markei manifestations. Human clarification permits introduction during design when a concept has genuinely been approached. It does not permit maturity inflation: every proposed entry begins Red.
 
-The first shared slice should synchronize immutable purchase events and necessary identity/reference facts. Storage, Shortage, Market, expected dates, and averages should normally be rebuilt locally from those authoritative facts. This report stages concepts only. It does not select providers, authorize implementation, create KANBAN entries, or change maturity.
+Existing ceilings are `&&&05`, `&&%04`, `&%%06`, and `%%%06`. Proposed IDs therefore begin at 06, 05, 07, and 07 respectively. Final promotion remains for the permanent-documentation pass after Main reconciliation.
 
-# Conceptual Model of the Shared App
+# Dart and Flutter Learning Boundary
 
-Each installation is a client with its own durable local database. “Offline-first” means registering and viewing purchases should continue when the network is unavailable. It does not mean permanently offline: when connectivity returns, the client uploads queued local events and downloads events it has not seen.
+Dart is the programming language: it supplies types, classes, records, functions, asynchronous operations, immutability conventions, and compilation. Flutter is the UI/application framework: it supplies widgets, rendering, navigation, responsive layout, platform lifecycle integration, plugins, and build targets.
 
-The shared model is:
+An immutable Dart model represents state through final fields and replacement objects rather than uncontrolled in-place change. This suits event payloads and catalogue identities: accepted identity facts should not silently mutate. A Flutter widget describes presentation. Responsive composition chooses arrangements according to available space and interaction context; it does not change business facts.
 
-```text
-user action
-→ local transaction
-→ append authoritative event locally
-→ update/rebuild local projections
-→ queue event for synchronization
-→ authenticated API upload
-→ idempotent shared append
-→ server cursor
-→ other client downloads unseen events
-→ transactional local application
-→ deterministic projection rebuild
-```
+Shared source means the same Dart implementation executes across targets. Shared behavior means two implementations—Dart client, TypeScript API, or preserved Python reference—obey the same language-neutral contract and fixtures. Markei uses shared Dart source inside the client, while Dart/TypeScript/Python continuity depends on shared behavior.
 
-The API is an application boundary, not merely a tunnel to Neon. It protects database credentials and owns validation, account isolation, retry behavior, cursor semantics, and protocol compatibility. Neon is the managed Postgres store behind that boundary. “Managed” means infrastructure duties such as hosting and availability are reduced; synchronization logic still belongs to Markei.
+The composition root is the startup boundary that creates the database, repositories, use cases, sync client, analytics registry, and lifecycle owner, then connects them. Application lifecycle covers start, foreground/background transitions, suspension, termination, and relaunch. Flutter coordinates these events, but local transactions and durable queues—not widget memory—protect facts.
 
-A shared client does not mean a copied database file. Database-file copying mixes local engine state, partially written changes, platform paths, and device-specific lifecycle. Synchronization exchanges defined facts through a protocol.
+# Catalogue and Purchase Model
 
-# Identity, Authentication and Authorization
+The reusable catalogue is private to one account. It remembers household product identities that can be referenced repeatedly without becoming a global product database.
 
-**Identity** answers “Which account, device, entity, or event is this?” **Authentication** answers “What evidence proves this caller controls the account?” **Authorization** answers “What may this authenticated caller read or write?”
+A packaged Product identity combines normalized name, brand, `PACKAGED` mode, package amount, dimension, and unit. A bulk Product uses name, brand, and `BULK` mode; package amount is omitted. Deterministic normalization converts mechanically equivalent input to one canonical form: for example, `350 g` and `0.350 kg`. Fuzzy similarity may warn, but cannot merge automatically.
 
-A verified email address is a login and communication attribute. It may change, differ in capitalization, or be replaced. It should not be the permanent key connecting every purchase. After verification, the system resolves an immutable account UUID. That UUID remains the stable owner even if the email changes.
+A Purchase is an aggregate: one consistency boundary containing receipt-level identity, store, occurrence time, currency, one or more Purchase Items, and its pending synchronization event. A Purchase Item is one commercial observation referencing a catalogue Product and recording quantity, line total, package count, promotion, and other item facts.
 
-An access token is short-lived proof presented to the API. It may contain or resolve the account identity and expiry. It is not a database credential. A database credential can directly access Neon and may carry broad privileges; embedding it in clients would bypass Markei’s validation and account-ownership rules.
+Atomicity extends existing `&%%05`: Purchase, Items, and pending event either commit together or not at all. The first UI may guide one item at a time, but the model must not make “one purchase equals one item” permanent.
 
-Authorization applies after authentication. The API must still ensure that an event’s `account_id` belongs to the authenticated account. **Row ownership** means every shared event or relevant reference fact is scoped to its owning account, preventing one account from reading or appending another account’s data.
+Historical integrity means later catalogue or analytic changes do not rewrite accepted purchase meaning. In the first beta, identity-changing brand, name, or package changes produce a new Product ID.
 
-# Local Persistence and Synchronization
+# Dimensional Quantity and Money
 
-Local persistence means one installation retains data across close, restart, and offline use. Shared state means facts accepted into the account-scoped server history can become available to other authorized installations. Synchronization is the protocol that moves and applies those facts; it is not “make two SQLite files identical.”
+A dimensional quantity combines numeric magnitude with measurement kind and unit. Markei stores MASS/KG, VOLUME/L, or COUNT/UNIT explicitly. It never assumes volume equals mass. Product package amount and Purchase Item purchased amount remain distinct: two 0.350 KG packages mean package count 2 and purchased amount 0.700 KG.
 
-An **offline queue** records events created locally but not yet acknowledged by the server. Losing the network must not lose the purchase. Reconnecting should retry safely. Downloading must also be incremental: the client asks for events after its last acknowledged server cursor, applies them transactionally, then advances its local cursor.
+Money uses an explicit currency code and integer minor units: BRL 8.79 becomes `BRL` plus `879`. Integer minor units avoid binary floating-point ambiguity for ordinary currency arithmetic. Account currency may provide a UI default, but each Purchase retains historical currency evidence.
 
-**Eventual consistency** means devices may temporarily show different state while offline or between synchronization rounds, but should converge after they have received and deterministically applied the same accepted facts. It is not permission for arbitrary permanent disagreement.
+# Synchronization Concepts
 
-**Conflict avoidance** designs the first slice so conflicting edits are uncommon: immutable purchases, no purchase editing/deletion, stable IDs, and append-only exchange. **Conflict resolution** defines what happens when legitimate competing changes exist. By excluding mutable concurrent workflows, Sprint 02 can avoid designing a general resolution system without pretending conflicts are universally solved.
+Authentication proves control of an account; authorization decides what the authenticated account may access. Row ownership remains an authorization example, not an independent concept. Stable UUIDs identify account, device, Product, Purchase, Item, and event independently of mutable labels such as email.
 
-# Append-Only Event Model
+An append-only event records an accepted fact without overwriting it. The offline queue durably holds unsent events. Idempotency makes retry safe: identical event UUID and content returns prior acceptance; reused UUID with changed content is rejected.
 
-An append-only event records that something happened; accepted events are not overwritten in place. For Markei, “purchase registered” is a strong first event because purchases are already treated as immutable historical facts. A mutable record instead represents a current value that can be replaced, which demands rules for concurrent edits and lost updates.
+Device sequence orders creation on one installation. Client occurrence timestamp records business time. An opaque account-scoped server cursor orders accepted events for incremental download. Eventual consistency means temporarily different clients converge after receiving and deterministically applying the same accepted history.
 
-Event identity and entity identity differ. An `event_id` UUID identifies one occurrence in the synchronization history. An `entity_id` identifies the product, purchase, store, or other domain object affected. Two events may concern the same entity, while one retry of the same event retains the same event UUID.
+The Sync Protocol is language-neutral: JSON shapes, stable errors, validation, idempotency, sequence gaps, cursor paging, authorization, and protocol versions must mean the same to Dart and TypeScript. It is not a shared language or direct database connection.
 
-A planning event needs:
+# Versioned Analytics
+
+Authoritative purchase facts remain the source evidence. Storage, Shortage, Market, normalized price, price change, personalized inflation/deflation, store comparison, and forecasts are derived projections.
+
+A versioned analytic has a stable identifier and immutable rule version. A better formula creates a new version rather than silently changing old meaning. Cached results record the version when reproducibility requires it. Raw purchases are never rewritten by analytical evolution.
+
+# Dependency Spine
 
 ```text
-event UUID
-account UUID
-device UUID
-per-device sequence
-entity type and entity UUID
-operation type
-payload
-client occurrence time
-server acceptance cursor
-schema/protocol versions
-```
-
-The authoritative fact is the accepted purchase event and required identity/reference facts. Cached averages and status labels are interpretations of those facts, not competing events to be synchronized independently.
-
-# Ordering, Idempotency and Cursors
-
-Timestamps alone are insufficient. Device clocks differ; an offline event may arrive late; two events may share a timestamp; and network retries may deliver events in a different order. Client occurrence time remains useful for domain meaning—when the purchase happened—but cannot alone establish unique identity, duplicate protection, or global delivery order.
-
-The combined roles are:
-
-- **Event UUID:** globally identifies the logical event and lets retries refer to the same fact.
-- **Device sequence:** records creation order from one installation and exposes gaps or repeated submissions.
-- **Client occurrence time:** preserves the user/domain time associated with the purchase, while remaining untrusted for global ordering.
-- **Server cursor:** gives accepted events a server-owned incremental download position.
-
-**Idempotency** means repeating the same request has the same intended result as accepting it once. If upload acknowledgement is lost, the client retries the same event UUID. The API recognizes it and returns the existing acceptance rather than creating a second purchase.
-
-A retry is another attempt to deliver the same event; duplication is accidentally storing or applying that event more than once. Idempotency connects them safely. A per-device sequence does not replace the event UUID: it orders one device’s events but is not globally unique. The server cursor does not replace purchase time: it orders server acceptance/download, not real-world occurrence.
-
-# Facts and Derived Projections
-
-An **authoritative fact** is the accepted source statement from which other state can be reproduced. A **derived projection** is a read-oriented view calculated from facts.
-
-For Markei:
-
-```text
-purchase events
-→ local purchase history
-→ duration and consumption calculations
-→ expected dates
-→ Storage / Shortage / Market projections
-```
-
-Synchronizing projections as mutable truth risks disagreement: desktop and mobile could upload different calculated values. Synchronizing purchase facts and rebuilding projections from one specified rule set makes semantic parity testable. A golden fixture can provide events and expected projections to both clients.
-
-A protocol version describes the message rules: required fields, endpoints, cursor behavior, error meanings, and compatibility. A schema version describes a particular stored data shape or event payload shape. They may evolve together, but they are not interchangeable. The API can support more than one protocol version while migrating storage independently.
-
-# Concept Dependency Spine
-
-```text
-Stable Identity
+&&&01 Responsibility Boundary
+→ Stable Identity
 → Authentication
-→ Authorization / Row Ownership
-→ API boundary and access token
-→ Local Persistence
-→ Append-Only Event / Offline Queue
-→ Event Identity
-→ Idempotency
-→ Per-Device Ordering
-→ Synchronization Cursor
-→ Sync Protocol and Versioning
+→ Authorization
+→ Reusable Catalogue
+→ Product Identification Set / Deterministic Normalization
+→ Purchase Aggregate / Purchase Item
+→ &%%05 Workflow Atomicity
+→ Historical Integrity
+→ Append-Only Event
+→ Offline Queue / Idempotency
+→ Device Ordering / Synchronization Cursor
+→ Sync Protocol
 → Eventual Consistency
-→ Authoritative Fact / Derived Projection
-→ Conflict Avoidance
-→ later Conflict Resolution, only when mutable workflows require it
+→ &&&02 Raw versus Derived Data
+→ Versioned Analytic
 ```
 
-Existing concepts provide prerequisites: Responsibility Boundary, Naming as Data Contract, Raw versus Derived Data, Application Service, Repository Pattern, Resource Ownership, Workflow Atomicity, SQLite ownership, and Evidence State.
+Supporting type spine:
 
-# KANBAN Candidates
+```text
+Dart immutable model
+→ Flutter responsive widget composition
+→ composition root and lifecycle ownership
+→ dimensional quantity
+→ monetary minor unit
+```
 
-No concept is promoted in this staging task. Candidates for later evaluation are:
+# Canonical Promotion Recommendations
 
-- Authentication
-- Authorization
-- Stable Identity
-- Append-Only Event
-- Idempotency
-- Event Ordering
-- Synchronization Cursor
-- Eventual Consistency
-- Authoritative Fact
-- Derived Projection
-- Sync Protocol
-- Row Ownership
-- Offline Queue
-- Schema/Protocol Versioning
+Every entry below has initial maturity **Red** and source **Cycle 07 Sprint 02 J sections 15–17 plus Flutter A/B/C restaging**.
 
-Some may merge with existing identities. “Authoritative Fact / Derived Projection” overlaps `&&&02 Raw Data Versus Derived Data`; “Row Ownership” may be a specialized authorization example; transaction behavior overlaps `&%%05`. Later promotion should create only concepts with independent reusable meaning and concrete evidence.
+## Foundational proposals
 
-Glossary candidates use the same names but remain derivative candidates until canonical identity exists. No glossary truth is created here.
+**`&&&06 Stable Identity`.** Description: identity survives mutable labels. Formal: durable UUID-based reference to one logical object. Example: account number persists after contact change. Dart/Flutter: immutable UUID value object. Markei: account/device/Product/Purchase/Item/event IDs. Prerequisites: `&&&01`, `&&&03`. Related: normalization, synchronization.
+
+**`&&&07 Authentication`.** Description: proving who controls an account. Formal: verification of credentials yielding an authenticated principal. Example: verified sign-in produces a session. Dart/Flutter: secure token acquisition/storage. Markei: verified email resolves account UUID. Prerequisites: `&&&06`. Related: Authorization, Sync Protocol.
+
+**`&&&08 Authorization`.** Description: limiting an authenticated principal’s actions. Formal: policy decision over principal, resource, and operation. Example: one account cannot read another’s rows. Dart/Flutter: token sent to API; client does not self-authorize. Markei: account-scoped events; row ownership example. Prerequisites: `&&&07`. Related: API boundary.
+
+**`&&&09 Eventual Consistency`.** Description: replicas may differ temporarily but converge. Formal: identical accepted history and deterministic application eventually produce equivalent state. Example: offline device catches up later. Dart/Flutter: reconnect synchronization. Markei: two clients rebuild the same projections. Prerequisites: Sync Protocol, cursor. Related: idempotency.
+
+**`&&&10 Historical Integrity`.** Description: later change must not rewrite earlier meaning. Formal: accepted historical facts retain their original identity and interpretation inputs. Example: package change creates a new identity. Dart/Flutter: immutable event/model history. Markei: old Purchase Items retain Product IDs and commercial facts. Prerequisites: `&&&02`, `&&&06`. Related: Versioned Analytic.
+
+## Language/framework proposals
+
+**`&&%05 Immutable Dart Model`.** Description: structured Dart data changed by replacement. Formal: typed object whose identity-bearing fields cannot mutate after construction. Example: create a revised value instead of editing the original. Dart/Flutter: `final` fields and immutable constructors. Markei: event envelopes and catalogue identities. Prerequisites: `&&%02`. Related: Historical Integrity.
+
+**`%%%07 Flutter Framework and Responsive Widget Composition`.** Description: Flutter renders one client across platform layouts. Formal: framework-managed widget tree composed responsively from application state. Example: navigation rail on desktop, compact navigation on phone. Dart/Flutter: widgets, constraints, lifecycle hooks. Markei: shared Register/history/projection UI. Prerequisites: `&&%05`, `&%%03`. Related: composition root.
+
+## Target/model proposals
+
+**`&%%07 Reusable Catalogue`.** Description: account-private reusable identities separate from purchases. Formal: owner-scoped reference set for recurring domain objects. Example: repeated receipts reference one product. Dart/Flutter: catalogue repository/use case. Markei: private Products and Stores. Prerequisites: `&&&06`, `&%%02`. Related: Purchase Item.
+
+**`&%%08 Product Identification Set and Deterministic Normalization`.** Description: exact canonical facts determine Product identity. Formal: deterministic mapping from normalized identity tuple to stable account-scoped ID. Example: 350 g equals 0.350 kg. Dart/Flutter: pure normalization/value objects. Markei: packaged versus BULK identity; fuzzy matches only warn. Prerequisites: `&%%07`. Related: Dimensional Quantity.
+
+**`&%%09 Purchase Aggregate`.** Description: Purchase owns one atomic registration boundary. Formal: aggregate root enforcing consistency across header, Items, and pending event. Example: invalid line rejects the aggregate. Dart/Flutter: Purchase command and transaction use case. Markei: multi-item-capable receipt. Prerequisites: `&%%01`, `&%%05`. Related: Purchase Item.
+
+**`&%%10 Purchase Item`.** Description: one Product observation inside a Purchase. Formal: aggregate member carrying product reference and commercial facts. Example: one receipt line. Dart/Flutter: immutable item model. Markei: quantity, line total, package count, promotion. Prerequisites: `&%%09`, `&%%08`. Related: projections.
+
+**`&%%11 Append-Only Synchronization Event`.** Description: accepted facts are appended, not overwritten. Formal: immutable identified protocol fact applied deterministically. Example: `purchase.registered`. Dart/Flutter: event model encoded to JSON. Markei: atomic Purchase with Item lines. Prerequisites: `&&&06`, `&%%09`. Related: idempotency.
+
+**`&%%12 Offline Queue and Idempotent Delivery`.** Description: durable pending work can be retried without duplicate effect. Formal: queue plus uniqueness rule making repeated logical submission equivalent to one acceptance. Example: lost acknowledgement triggers safe retry. Dart/Flutter: local pending-event table. Markei: UUID/content equality policy. Prerequisites: `&%%11`, `&%%05`. Related: cursor.
+
+**`&%%13 Device Ordering and Synchronization Cursor`.** Description: creation order and download order have different owners. Formal: device-monotonic sequence plus opaque server acceptance position. Example: missing device sequence is requested; cursor pages unseen events. Dart/Flutter: persisted sequence/cursor. Markei: account-scoped incremental sync. Prerequisites: `&%%12`. Related: occurrence timestamp.
+
+**`&%%14 Sync Protocol`.** Description: stable cross-runtime rules for exchange. Formal: versioned contract governing payloads, validation, authorization, retry, ordering, errors, and compatibility. Example: Dart client and TypeScript API interpret one event identically. Dart/Flutter: typed DTOs plus runtime validation at boundaries. Markei: custom API/Neon boundary. Prerequisites: `&&&08`, `&%%13`. Related: schema version.
+
+**`&%%15 Dimensional Quantity`.** Description: magnitude is inseparable from dimension/unit. Formal: fixed-precision amount qualified by measurement kind and canonical unit. Example: 1 L is not 1 KG. Dart/Flutter: sealed enum/value object. Markei: MASS/KG, VOLUME/L, COUNT/UNIT. Prerequisites: `&&&03`. Related: normalization.
+
+**`&%%16 Monetary Minor Unit`.** Description: money is currency plus integer smallest-unit amount. Formal: ISO-like currency code paired with integer minor units. Example: BRL 8.79 → 879. Dart/Flutter: immutable Money value. Markei: Purchase currency and line totals. Prerequisites: `&&&03`. Related: analytics.
+
+**`&%%17 Versioned Analytic`.** Description: derived algorithms evolve without rewriting facts. Formal: analytic identified by stable name/version whose released meaning is immutable. Example: improved inflation formula gets v2. Dart/Flutter: Dart analytics registry and fixtures. Markei: rebuildable price/consumption projections. Prerequisites: `&&&02`, `&&&10`. Related: semantic parity.
+
+# Concepts Reconciled With Existing Canon
+
+Authoritative Fact and Derived Projection extend `&&&02`; no duplicate entry is recommended. Purchase atomicity extends `&%%05`. Row Ownership remains an Authorization example. Composition root and application lifecycle extend `&&&01`, `&&&04`, and `&&%03` until repeated implementation evidence justifies separate entries. Product Identification Set owns deterministic normalization. Append-only event remains distinct from immutable Dart syntax. Protocol versioning belongs to Sync Protocol; storage schema versioning remains related to `%%%01`.
 
 # Learner Checkpoints
 
-1. Explain why verified email and account UUID serve different purposes.
-2. Distinguish authentication from authorization using an attempted cross-account event.
-3. Explain why a client receives an access token rather than Neon credentials.
-4. Describe what remains possible while completely offline.
-5. Distinguish an event UUID from the purchase/product entity UUID.
-6. Explain four reasons timestamps cannot provide total synchronization order.
-7. Assign one job each to event UUID, device sequence, occurrence time, and server cursor.
-8. Show why retrying after a lost acknowledgement must not create a second purchase.
-9. Explain eventual consistency without claiming immediate equality.
-10. Identify authoritative purchase facts and rebuilt Storage/Shortage/Market projections.
-11. Distinguish protocol version from storage schema version.
-12. Explain which exclusions avoid conflicts and which future feature would require resolution.
+1. Distinguish Dart from Flutter and shared source from shared behavior.
+2. Explain why widgets do not own durable facts or transactions.
+3. Derive packaged and BULK identities; explain why fuzzy similarity cannot merge.
+4. Distinguish Purchase aggregate from Purchase Item.
+5. Show why Purchase, Items, and pending event commit together.
+6. Represent 350 g, 1 L, five units, and BRL 8.79 without ambiguity.
+7. Distinguish authentication, authorization, and stable identity.
+8. Assign roles to event UUID, device sequence, occurrence time, and server cursor.
+9. Explain idempotency and eventual convergence after offline work.
+10. Separate purchase facts from Storage/Shortage/Market and inflation projections.
+11. Explain how Dart and TypeScript share a protocol without sharing source.
+12. Explain why analytic v2 must not change v1 history.
 
-# Misconceptions to Prevent
+# Maturity Guard
 
-```text
-email address = permanent account identity
-authentication = authorization
-access token = database password
-managed Postgres = synchronization system
-API = direct database connection
-local persistence = shared state
-synchronization = database-file copying
-timestamp = unique identity or total order
-retry = new event
-event identity = entity identity
-append-only = no validation
-offline-first = never connects
-eventual consistency = uncontrolled inconsistency
-derived projection = authoritative fact
-conflict avoidance = general conflict resolution
-protocol version = schema version
-planning preference = validated architecture
-technical evidence = learner mastery
-```
+All proposed concepts are Red. Human design discussion demonstrates approach, not mastery. No existing Green/Yellow/Red status changes. Promotion creates stable learning objects; maturity changes only after explicit learner evidence.
+
+# Permanent-Documentation Update Plan
+
+After Main acceptance, Didactic may add the recommended entries to `02_KANBAN.md` in sequence, derive only matching terminology into `07_GLOSSARY.md`, refresh `08_CONCEPT_MAP.md` with the new dependency spine, and append the design-stage promotion event to `13_LECTURE_REGISTER.md`. The permanent pass should recheck IDs immediately before writing and may split entries if Main identifies duplicate ownership.
 
 # Handoff to Main
 
-Main can reconcile this dependency model with Operational feasibility and Design ownership. The next planning decision should define the minimum event envelope, account/device identity rules, API-visible idempotency and cursor behavior, deterministic purchase fixtures, local transaction boundary, and explicit exclusions.
-
-The favored shared-beta target is conceptually coherent, but provider selection, Neon schema, API runtime, authentication service, protocol acceptance, framework selection, and implementation remain open. D/E/F should remain postponed until Main converts the reconciled A/B/C plans into one bounded authorization. No KANBAN concept or maturity state changed.
+Accept the proposed canonical set as the minimum model-design learning vocabulary, or return specific merge/split corrections before permanent promotion. Keep Flutter/Dart as planning basis, TypeScript API contracts language-neutral, PySide6 recoverable, and all implementation/D/E/F inactive. No maturity change is recommended.
