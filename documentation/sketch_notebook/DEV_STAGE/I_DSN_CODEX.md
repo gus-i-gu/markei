@@ -103,7 +103,7 @@ dist\installer\Markei-Setup-0.1.0-x64.exe
 SHA256: 122A772D66BBE7D5522EF2262E7E89D6D2E332B6318135BB25D55A27F75F4623
 ```
 
-Frozen executable:
+Frozen executable observed during rebuilt package validation before generated-output cleanup:
 
 ```text
 dist\Markei\Markei.exe

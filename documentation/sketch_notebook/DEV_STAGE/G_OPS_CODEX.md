@@ -108,7 +108,7 @@ The warning did not block compilation.
 
 ## Artifacts
 
-Frozen executable:
+Frozen executable observed during the rebuilt package validation before generated-output cleanup:
 
 ```text
 dist\Markei\Markei.exe
@@ -124,7 +124,7 @@ SHA256: 122A772D66BBE7D5522EF2262E7E89D6D2E332B6318135BB25D55A27F75F4623
 Size: 34,448,651 bytes
 ```
 
-Distribution inspection:
+Distribution inspection during rebuilt package validation:
 
 - `dist\Markei\Markei.exe` present.
 - `_internal\app\database\schema.sql` present.
