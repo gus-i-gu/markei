@@ -167,3 +167,119 @@ The next Didactic evaluation requires explicit learner explanations or implement
 
 <!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
 > **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content appended below it belongs to Sprint 03 or later. If recovery cost becomes excessive or this file grows beyond approximately 1,000 lines, this reviewed marker is an eligible semantic-partition boundary under human/Main authorization.
+
+# Cycle 07 Sprint 03 Unit 01 Didactic Checkpoint
+
+## Current Learning State
+
+The Flutter/Dart foundation is now implemented and unit-tested locally. A fresh Drift database, immutable Dart domain models, account-private catalogue, Purchase aggregate, Purchase Items, local `purchase.registered` event, pending queue row, and minimal versioned analytics registry exist. Nine Flutter tests and five Python regression tests passed.
+
+This evidence is bounded:
+
+```text
+local implementation: evidenced
+local unit tests: passed
+fresh local persistence and close/reopen: evidenced
+generated Flutter targets: present
+Windows/Android/iOS runtime: host-unvalidated
+responsive Flutter workflow: absent
+authentication/authorization: absent
+server sync/cursor/eventual consistency: absent
+legacy migration and schema upgrade: absent
+learner mastery: not evidenced
+```
+
+## Maturity
+
+No maturity changed. All Cycle 07 concepts remain Red because implementation and passing tests are not explicit learner evidence.
+
+## Evidence-Bearing Concepts
+
+Strong local executable evidence:
+
+```text
+&&&06 Stable Identity
+&&&10 Historical Integrity
+&&%05 Immutable Dart Model
+&%%07 Reusable Catalogue
+&%%09 Purchase Aggregate
+&%%10 Purchase Item
+&%%11 Append-Only Synchronization Event — local event only
+&%%15 Dimensional Quantity
+&%%16 Monetary Minor Unit
+&%%17 Versioned Analytic
+```
+
+Bounded or provisional evidence:
+
+```text
+&%%08 Deterministic Normalization
+    basic unit equivalence passes
+    Unicode/Portuguese and cross-language parity unresolved
+
+&%%12 Offline Queue and Idempotent Delivery
+    queue preparation passes
+    server idempotency absent
+
+%%%07 Flutter Framework and Responsive Widget Composition
+    framework/test setup evidenced
+    responsive composition and platform runtime absent
+```
+
+Unimplemented or defective:
+
+```text
+&&&07 Authentication
+&&&08 Authorization
+&&&09 Eventual Consistency
+&%%13 Device Ordering and Synchronization Cursor
+&%%14 Sync Protocol
+```
+
+Device ordering has a likely sequence-reset defect. Current JSON files are versioned semantic fixtures or contract examples, not a complete protocol specification.
+
+## Updated Dependency/Evidence Spine
+
+```text
+immutable Dart models
+→ local catalogue identity
+→ Purchase aggregate validation
+→ atomic Drift transaction
+→ local immutable event
+→ pending queue preparation
+→ close/reopen persistence
+→ local projection/analytics registry
+→ platform workflow evidence — pending
+→ API/idempotency/cursor evidence — pending
+→ cross-device convergence — pending
+```
+
+## Distinctions to Preserve
+
+- Local implementation is not platform validation.
+- Generated target files are not responsive application evidence.
+- Offline queue preparation is not synchronization.
+- Fixture examples are not a complete protocol.
+- Local event identity is not proven server idempotency.
+- Occurrence time is not device order or server cursor.
+- Passing tests are not learner mastery.
+- Fresh schema creation is not migration validation.
+- Handwritten domain design differs from generated Drift/platform code.
+
+## Next Learner Questions
+
+1. Which Sprint 03 claims are implemented, validated locally, host-unvalidated, or absent?
+2. Why does a persisted pending event not prove synchronization?
+3. What would make the JSON examples a complete language-neutral protocol contract?
+4. Why can a generated Flutter target exist without platform validation?
+5. How should handwritten schema definitions and generated Drift code be reviewed differently?
+6. Why might `\w`-style normalization damage Portuguese names?
+7. What must a normalization-version migration preserve?
+8. How should repeated registrations prove device sequences 1, 2, 3?
+9. Why are authentication, authorization, and eventual consistency still conceptually Red/unimplemented?
+10. Which evidence would support an actual maturity transition?
+
+## Next Learning Boundary
+
+Main currently favors the local shared-client route first: correct sequence and normalization defects, strengthen fixtures, add a minimal Flutter Purchase workflow and visible projection, then obtain Windows/Android runtime evidence. The local protocol harness remains a later route. This is Main orientation, not Didactic architecture selection or Sprint 04 authorization.
+
