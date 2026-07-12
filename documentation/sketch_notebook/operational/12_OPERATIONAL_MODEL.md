@@ -265,3 +265,17 @@ When normalized identity affects stable identifiers across runtimes:
 ## Contract-example boundary
 
 Human-readable JSON examples coordinate semantics but do not become a complete wire contract until required types, ranges, nullability, enums, unknown-field behavior, timestamp/decimal form, version compatibility, valid/invalid examples, and runtime validation are defined and tested.
+
+# Sprint-Gated Host and Migration Rules
+
+## Explicit host-mutation authority
+
+Installing or modifying platform toolchains is a host mutation and requires an implementation stage that names the exact product, workload or component, permitted version boundary, invocation method, expected validation, failure handling, and stop condition. Planning acceptance alone is insufficient authority. Post-install evidence must distinguish tool presence, target detection, build success, launch success, and lifecycle validation.
+
+## Identity-bearing migration safety
+
+When a local schema introduces a user-facing code, normalized key, or new internal identity role, migration must preserve every existing primary/foreign-key relationship. Missing human-authored values may receive an explicitly temporary, account-unique bootstrap value, but migration must not invent product meaning. Temporary values remain identifiable for later review.
+
+## Structural schema validation boundary
+
+Executable schema validation proves payload structure only. Domain invariants, normalization equivalence, transaction behavior, cross-runtime semantic parity, and lifecycle persistence require separate tests. Readable valid and invalid examples remain part of the operational evidence set alongside the machine validator.
