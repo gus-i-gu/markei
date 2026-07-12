@@ -510,3 +510,61 @@ implementation authorization: none
 D/E/F: postponed
 next mode: documentation-first refinement and domain-memory reconciliation
 ```
+
+
+---
+
+# 13. Permanent-Domain Absorption Result
+
+Operational, Didactic, and Design completed the authorized permanent-memory reconciliation pass.
+
+Materialized domain updates:
+
+```text
+Operational
+    operational/10_OPERATIONAL_STATE.md
+    operational/04_TODO.md
+    operational/11_OPERATIONAL_RECORD.md
+
+Didactic
+    didactics/08_CONCEPT_MAP.md
+    didactics/13_LECTURE_REGISTER.md
+
+Design
+    design/09_DESIGN_STATE.md
+    design/03_DECISION_LOG.md
+```
+
+Main classification:
+
+- checkpoints now reflect Cycle 06 closure and active Cycle 07 investigation;
+- observational files preserve both the Python-native challenger and contract-first strategic pathway;
+- the human/Main preference for the Design pathway is recorded as provisional planning direction;
+- development cost is described across learning, setup, rewriting, toolchains, testing, lifecycle, semantic parity, distribution, and maintenance;
+- no Didactic maturity changed;
+- no framework, permanent repository topology, backend, or implementation architecture was accepted;
+- no application, methodology, D/E/F, or Codex-report files were modified;
+- no further J synthesis is required before the Main-root continuity refresh.
+
+Current reconciled position:
+
+```text
+primary strategic direction
+    contract-first native/cross-platform client
+
+bounded challenger
+    time-boxed Python-native Android falsification experiment
+
+next required knowledge
+    language-neutral behavior scenarios
+    deterministic fixtures
+    explicit validation and stop criteria
+
+implementation authorization
+    none
+
+D/E/F
+    postponed
+```
+
+The next cycle step remains documentation/specification work. Main should activate D/E/F only when the human requests an empirical prototype and one bounded uncertainty has been selected.
