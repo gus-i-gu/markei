@@ -132,3 +132,133 @@ A platform-security or reputation observation distinct from application correctn
 - Installed technical validation does not prove learner mastery.
 - Human-visible Register, Lists, History, Settings, close/reopen, and SmartScreen observations remain learner-facing evidence gaps.
 - Tool names remain project examples rather than standalone concepts.
+
+---
+
+# Flutter Shared-Beta Canonical Derivations
+
+## Stable Identity
+**KANBAN ID:** `&&&06`  
+**Type:** Foundational Computer Science  
+**Definition:** A durable identifier for one logical subject independent of mutable labels.  
+**Project Usage:** Account, device, Product, Purchase, Item, and event UUIDs.  
+**Related Concepts:** See `&&&06` in `02_KANBAN.md`.
+
+## Authentication
+**KANBAN ID:** `&&&07`  
+**Type:** Foundational Computer Science  
+**Definition:** Verification that establishes an authenticated principal.  
+**Project Usage:** Verified sign-in resolves the internal account UUID.  
+**Related Concepts:** See `&&&07` in `02_KANBAN.md`.
+
+## Authorization
+**KANBAN ID:** `&&&08`  
+**Type:** Foundational Computer Science  
+**Definition:** Policy deciding which operations a principal may perform on resources.  
+**Project Usage:** The API restricts events to the authenticated account; row ownership is an example.  
+**Related Concepts:** See `&&&08` in `02_KANBAN.md`.
+
+## Eventual Consistency
+**KANBAN ID:** `&&&09`  
+**Type:** Foundational Computer Science  
+**Definition:** Replicas converge after receiving and deterministically applying the same accepted facts.  
+**Project Usage:** Offline Markei clients catch up through cursor synchronization.  
+**Related Concepts:** See `&&&09` in `02_KANBAN.md`.
+
+## Historical Integrity
+**KANBAN ID:** `&&&10`  
+**Type:** Foundational Computer Science  
+**Definition:** Preservation of the identity and facts required to interpret accepted history.  
+**Project Usage:** Package or brand change creates a new Product ID without rewriting old Purchase Items.  
+**Related Concepts:** See `&&&10` in `02_KANBAN.md`.
+
+## Immutable Dart Model
+**KANBAN ID:** `&&%05`  
+**Type:** Dart Language  
+**Definition:** Typed Dart data whose identity-bearing fields do not mutate after construction.  
+**Project Usage:** Events, catalogue identities, Money, and Quantity use immutable values.  
+**Related Concepts:** See `&&%05` in `02_KANBAN.md`.
+
+## Reusable Catalogue
+**KANBAN ID:** `&%%07`  
+**Type:** Project / Model  
+**Definition:** An account-scoped set of recurring identities referenced by historical transactions.  
+**Project Usage:** Products and Stores are reused across Purchases.  
+**Related Concepts:** See `&%%07` in `02_KANBAN.md`.
+
+## Product Identification Set and Deterministic Normalization
+**KANBAN ID:** `&%%08`  
+**Type:** Project / Model  
+**Definition:** Canonical identity attributes mapped deterministically to one account-scoped Product ID.  
+**Project Usage:** Packaged and BULK identities normalize units; fuzzy matches never auto-merge.  
+**Related Concepts:** See `&%%08` in `02_KANBAN.md`.
+
+## Purchase Aggregate
+**KANBAN ID:** `&%%09`  
+**Type:** Project / Model  
+**Definition:** Consistency boundary owning Purchase header, Items, and required persistence effects.  
+**Project Usage:** Purchase, Items, and pending event commit atomically.  
+**Related Concepts:** See `&%%09` in `02_KANBAN.md`.
+
+## Purchase Item
+**KANBAN ID:** `&%%10`  
+**Type:** Project / Model  
+**Definition:** Product-specific commercial observation belonging to a Purchase.  
+**Project Usage:** Stores Product reference, quantity, line total, package count, and promotion.  
+**Related Concepts:** See `&%%10` in `02_KANBAN.md`.
+
+## Append-Only Synchronization Event
+**KANBAN ID:** `&%%11`  
+**Type:** Project / Synchronization  
+**Definition:** Immutable identified protocol fact appended to shared history.  
+**Project Usage:** `purchase.registered` carries one atomic Purchase and its Item lines.  
+**Related Concepts:** See `&%%11` in `02_KANBAN.md`.
+
+## Offline Queue and Idempotent Delivery
+**KANBAN ID:** `&%%12`  
+**Type:** Project / Synchronization  
+**Definition:** Durable pending events plus retry rules that prevent duplicate effect.  
+**Project Usage:** The same event UUID/content returns prior acceptance.  
+**Related Concepts:** See `&%%12` in `02_KANBAN.md`.
+
+## Device Ordering and Synchronization Cursor
+**KANBAN ID:** `&%%13`  
+**Type:** Project / Synchronization  
+**Definition:** Device sequence records local creation order; server cursor records accepted download order.  
+**Project Usage:** Clients detect sequence gaps and page unseen account events.  
+**Related Concepts:** See `&%%13` in `02_KANBAN.md`.
+
+## Sync Protocol
+**KANBAN ID:** `&%%14`  
+**Type:** Project / Synchronization  
+**Definition:** Versioned cross-runtime rules for validated, authorized, ordered event exchange.  
+**Project Usage:** Dart client and TypeScript API share language-neutral payload and error semantics.  
+**Related Concepts:** See `&%%14` in `02_KANBAN.md`.
+
+## Dimensional Quantity
+**KANBAN ID:** `&%%15`  
+**Type:** Project / Value Model  
+**Definition:** Fixed-precision magnitude qualified by physical dimension and unit.  
+**Project Usage:** MASS/KG, VOLUME/L, and COUNT/UNIT remain distinct.  
+**Related Concepts:** See `&%%15` in `02_KANBAN.md`.
+
+## Monetary Minor Unit
+**KANBAN ID:** `&%%16`  
+**Type:** Project / Value Model  
+**Definition:** Currency code paired with integer count of the currency's minor unit.  
+**Project Usage:** BRL 8.79 is BRL plus 879.  
+**Related Concepts:** See `&%%16` in `02_KANBAN.md`.
+
+## Versioned Analytic
+**KANBAN ID:** `&%%17`  
+**Type:** Project / Analytics  
+**Definition:** Derived algorithm with stable identity and immutable semantic version.  
+**Project Usage:** Improved price-change rules create a new version without rewriting purchases.  
+**Related Concepts:** See `&%%17` in `02_KANBAN.md`.
+
+## Flutter Framework and Responsive Widget Composition
+**KANBAN ID:** `%%%07`  
+**Type:** Framework / Dependency  
+**Definition:** Flutter-managed responsive widget tree rendered from application state across platforms.  
+**Project Usage:** Markei adapts one client presentation to Windows, Android, and iOS.  
+**Related Concepts:** See `%%%07` in `02_KANBAN.md`.
