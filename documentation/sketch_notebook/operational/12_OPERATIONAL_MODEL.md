@@ -1,6 +1,6 @@
 # 12_OPERATIONAL_MODEL.md
 
-> Version: Cycle 06 reconciliation 0.3
+> Version: Cycle 06 reconciliation 0.4
 > Status: Canonical operational knowledge
 > Persistence Class: Canonical
 > Knowledge Class: Operational
@@ -12,7 +12,7 @@
 
 # 1. Purpose
 
-This file defines stable Operational knowledge for Markei execution, packaging, persistence, diagnostics, and release validation. Current priority belongs in `04_TODO.md`; current state belongs in `10_OPERATIONAL_STATE.md`; chronology belongs in `11_OPERATIONAL_RECORD.md`.
+This file defines stable Operational knowledge for Markei execution, packaging, persistence, diagnostics, installer production, and release validation. Current work belongs in `04_TODO.md`; current evidence state belongs in `10_OPERATIONAL_STATE.md`; chronology and artifact hashes belong in `11_OPERATIONAL_RECORD.md`.
 
 # 2. Runtime and Persistence Boundary
 
@@ -30,58 +30,53 @@ main.py
 → SQLite
 ```
 
-Writable user state is external to packaged application files:
+Writable user state and diagnostics remain external to replaceable application files:
 
 ```text
 %LOCALAPPDATA%/Markei/market.sqlite
 %LOCALAPPDATA%/Markei/logs/startup.log
 ```
 
-A home-directory fallback may be used when `LOCALAPPDATA` is unavailable. Packaged resources and writable user data are different operational classes. A live database, WAL/SHM files, logs, caches, tests, and sample business fixtures are not valid production package content.
+A live database, WAL/SHM companions, logs, caches, tests, and sample fixtures are not valid production package or installer content.
 
-# 3. Production Resource Policy
+# 3. Production Initialization Policy
 
-The production frozen runtime is schema-only:
+The production package includes `app/database/schema.sql` and excludes `app/database/seed.sql`.
 
-```text
-include: app/database/schema.sql
-exclude: app/database/seed.sql
-```
-
-`seed.sql` remains a development/test fixture. First launch initializes structural/default settings without sample category, store, product, or purchase rows.
-
-Resource-path handling in source does not prove artifact inclusion. Every frozen build must be inspected directly for required and forbidden resources.
-
-# 4. Packaging Authority and Toolchain Layers
-
-`Markei.spec` is the authoritative one-folder PyInstaller definition. `scripts/build_windows.ps1` is an invocation and clean-build wrapper; it must not independently redefine package contents.
-
-Operational dependencies are separated by phase:
+Fresh or compatible databases receive idempotent structural application defaults through database compatibility handling:
 
 ```text
-build time
-    Python + PyInstaller + PySide6
-
-runtime
-    frozen Markei distribution and bundled Qt/runtime resources
-
-installer time
-    Inno Setup / ISCC.exe
+category F / General
+store 1 / Default Store
+required settings defaults
 ```
 
-A successful frozen build does not imply successful installer compilation. Installer compilation is a separate evidence gate.
+These rows are required application structure, not demonstration business data. Production initialization must retain zero sample products and zero sample purchases. Structural defaults must be inserted without overwriting compatible user choices.
 
-The observed successful builder environment was:
+# 4. Packaging and Installer Authority
+
+`Markei.spec` is the authoritative one-folder PyInstaller definition. `scripts/build_windows.ps1` is its invocation and clean-build wrapper; it must not redefine package composition independently.
+
+`installer/Markei.iss` is the installer authority. `scripts/build_installer.ps1` locates and invokes Inno Setup; supported compiler discovery includes:
 
 ```text
-Python 3.14.6
-PyInstaller 6.21.0
-PySide6 6.11.1
+explicit -ISCCPath
+→ ISCC_PATH environment variable
+→ per-user %LOCALAPPDATA%/Programs/Inno Setup 6/ISCC.exe
+→ standard Program Files locations
 ```
 
-Exact versions belong in the build dependency surface only after a successful contemporary build.
+Operational dependencies are phase-specific:
 
-# 5. Frozen and Installed Evidence Gates
+```text
+build time      Python + PyInstaller + PySide6
+runtime         frozen Markei distribution
+installer time  Inno Setup / ISCC.exe
+```
+
+An installer-time dependency is not required by the installed application.
+
+# 5. Evidence Ladder
 
 Use these statuses precisely:
 
@@ -93,94 +88,98 @@ installed
 validated
 accepted
 blocked
+unknown
 ```
 
 The release ladder is:
 
 ```text
 configuration materialized
-→ frozen artifact built
+→ frozen artifact built and inspected
 → frozen artifact launched
-→ frozen resource/data boundary validated
-→ installer compiled
-→ installer artifact inspected
+→ installer compiled and inspected
 → application installed
-→ installed launch and workflows validated
-→ upgrade/uninstall/reinstall lifecycle validated
-→ human/Main acceptance
+→ installed shortcut launch
+→ technical workflow path validated
+→ close/reopen and persistence validated
+→ reinstall/uninstall/recovery validated
+→ human-visible workflow and security observations
+→ Main/human acceptance
 ```
 
-Evidence from one gate does not prove a later gate. Installer source without a compiled artifact is `configured`, not `installed`. Frozen launch does not validate Start Menu launch or installed lifecycle behavior.
+Evidence from one gate does not prove a later gate. Automated ProductService/database evidence validates the technical workflow path but does not replace a human-visible UI walkthrough. Silent or programmatic execution does not establish human-visible SmartScreen behavior.
 
-# 6. Startup Diagnostics Boundary
+# 6. Installed Lifecycle Rules
 
-The root executable entrypoint owns the outer startup-exception boundary. Unhandled startup exceptions must:
+The primary beta installer consumes the built one-folder distribution and installs per user under `%LOCALAPPDATA%\Programs\Markei`, with a Start Menu shortcut and optional desktop shortcut. Writable state remains under `%LOCALAPPDATA%\Markei`.
 
-- produce a non-successful process result;
-- write UTF-8 timestamp, exception type, message, and traceback to the writable per-user startup log;
-- provide a concise visible error when Qt permits, otherwise stderr;
-- avoid writing diagnostics under installed application files.
+The accepted technical lifecycle route is:
 
-Startup-log creation is validated separately from every possible installed startup failure.
+```text
+install
+→ Start Menu launch
+→ create and read application data
+→ close and immediate reopen
+→ same-version reinstall
+→ uninstall while retaining user data
+→ reinstall and recover retained compatible data
+```
 
-# 7. Connection and Shutdown Model
+Validation may use the current ordinary Windows user only when existing data is backed up, test state is isolated sufficiently to avoid ambiguity, and the original state is restored. This proves ordinary per-user semantics; it does not prove dedicated-account isolation.
 
-Normal MainWindow construction creates four page-owned service/repository/SQLite chains. Repository and ProductService expose local close capability.
+# 7. Startup and Shutdown Boundaries
 
-Current composition-level shutdown behavior is:
+The root executable entrypoint owns startup exception diagnostics. Unhandled startup exceptions must produce a failing process result, write an inspectable UTF-8 per-user log, and show a concise visible error when Qt permits.
+
+Normal MainWindow composition owns final coordination of the four page-owned service/repository chains:
 
 ```text
 MainWindow.closeEvent()
-→ idempotently close Register, Lists, History, and Settings services
-→ each service closes its Repository
-→ each Repository closes its SQLite connection
+→ close Register, Lists, History, and Settings services idempotently
+→ close repositories and SQLite connections
 ```
 
-The composition-level correction was evidence-triggered: focused validation initially showed an isolated SQLite file remained held open. The bounded `MainWindow` coordinator was added, and the source/frozen shutdown gate then passed.
-
-Stable rule:
+Stable correction rule:
 
 ```text
-validate lifecycle behavior first
-→ make the smallest correction justified by demonstrated failure
-→ rerun the failed gate
+validate the lifecycle gate
+→ classify the demonstrated failure
+→ make the smallest bounded correction
+→ rerun the failed and dependent gates
 ```
-
-Validated source/frozen shutdown does not prove installed shutdown; the installed execution context requires its own evidence.
 
 # 8. Database and Transaction Safety
 
-Every opened Repository must have an identifiable owner and deterministic close path. Validation that creates, migrates, resets, corrupts, or injects failure must use an isolated user-data root and close all connections before cleanup.
+Every Repository must have an identifiable owner and deterministic close path. Validation that initializes, migrates, resets, corrupts, or injects failure must protect ordinary user data and close all connections before cleanup.
 
-Repository mutation methods commit individual persistence operations. Multi-step receipt registration and purchase deletion/recalculation remain non-atomic as complete business workflows. Workflow atomicity is inherited Operational debt; it was not changed by the release-enablement unit.
+Repository mutations commit individual persistence operations. Receipt registration and purchase deletion/recalculation remain non-atomic as complete workflows. Workflow atomicity is inherited Operational debt and is not resolved by successful packaging or installed-lifecycle validation.
 
-# 9. Installer and Installed Lifecycle Rules
+# 9. Release Artifact Policy
 
-The installer consumes the built one-folder distribution rather than source files. The configured primary beta topology is per-user, x64, no-administrator installation with:
-
-- stable installer identity;
-- Start Menu shortcut;
-- optional desktop shortcut;
-- application files under the per-user Programs location;
-- writable state under `%LOCALAPPDATA%/Markei`;
-- default preservation of user data during uninstall.
-
-Configuration does not validate retention. Acceptance requires direct evidence for:
+Generated frozen distributions and installer executables are reproducible release outputs, not source truth. Operational policy is:
 
 ```text
-clean install
-→ Start Menu launch
-→ principal workflows
-→ close and immediate reopen
-→ persistence
-→ compatible upgrade/reinstall
-→ uninstall
-→ retained-data verification
-→ reinstall recovery
+source repository
+    version packaging definitions, scripts, tests, and metadata
+
+release evidence
+    record artifact path, size, cryptographic hash, toolchain, and commands
+
+release delivery
+    publish binaries through an approved release/artifact channel
+    do not retain generated binaries as ordinary source-controlled files
 ```
 
-SmartScreen and antivirus observations are release evidence, not proof derived from source configuration.
+The current branch contains `dist/installer/Markei-Setup-0.1.0-x64.exe`, despite the Sprint 02 G report describing it as uncommitted. This is repository drift. Removing the binary and adding an ignore rule require a separately authorized repository-cleanup change; documentation reconciliation must not alter the artifact.
 
-# 10. Canonical Maintenance Rule
+# 10. Non-Blocking Toolchain Debt
 
-Update this model only when stable Operational behavior or reusable validation rules change. Command output, artifact hashes, transient blockers, and current work status belong in the record, checkpoint, or TODO rather than canon.
+Inno Setup currently accepts `x64` while warning that it is deprecated in favor of `x64compatible`. The warning is non-blocking for the evidenced build but remains bounded installer-maintenance debt.
+
+# 11. Acceptance Boundary
+
+Technical installed-lifecycle validation does not grant beta acceptance. Final acceptance still requires human-visible installer and principal UI walkthrough evidence, normal close/reopen confirmation, human-visible SmartScreen or antivirus observations, and Main/human approval.
+
+# 12. Canonical Maintenance Rule
+
+Update this model only when stable Operational behavior or reusable validation rules change. Current hashes, command transcripts, temporary blockers, and chronological corrections belong in the record, checkpoint, or TODO.
