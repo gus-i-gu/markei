@@ -1,193 +1,164 @@
 # 08_CONCEPT_MAP.md
 
 > Domain: Didactic
-> Status: Cycle 07 Sprint 01 portability checkpoint
+> Status: Cycle 07 Sprint 02 Flutter canonical checkpoint
 > Authority: Didactic Chat [A]
 > Canon source: `02_KANBAN.md`
 > Derivative source: `07_GLOSSARY.md`
-> Evidence sources: `[M]_STAGE/J_[M]_STAGE.md`, `DEV_STAGE/A_OPERATIONAL.md`, `DEV_STAGE/B_DIDACTIC.md`, `DEV_STAGE/C_DESIGN.md`, and `13_LECTURE_REGISTER.md`
-> Current milestone: Reconcile mobile-portability knowledge before any prototype materialization
+> Evidence sources: `[M]_STAGE/J_[M]_STAGE.md` sections 17–18, `DEV_STAGE/A_OPERATIONAL.md`, `DEV_STAGE/B_DIDACTIC.md`, `DEV_STAGE/C_DESIGN.md`, and `13_LECTURE_REGISTER.md`
+> Current milestone: Flutter/Dart shared-client model and synchronized-beta concept preparation
 
 ---
 
 ## Current Learning State
 
-Cycle 06 is accepted and closed. Cycle 07 Sprint 01 investigated mobile portability without implementing or validating a prototype. The learner-facing result is a classified comparison between two cost pathways, not proof of a selected runtime or learner mastery.
+Flutter/Dart is the accepted planning basis for one maintained Windows, Android, and iOS client. TypeScript remains favored for the custom synchronization API, Neon for managed shared persistence, and Python/PySide6 as the protected beta reference and rollback.
 
-Current project direction:
+The reusable catalogue, Purchase aggregate, dimensional quantity/money, append-only synchronization, and versioned analytics models are defined for planning. No Flutter code, API, schema, provider, infrastructure, or D/E/F materialization has been authorized or validated.
 
-```text
-primary preference: contract-first native/cross-platform client
-bounded challenger: Python-native mobile runtime
-default persistence: mobile-local and offline-first
-backend/synchronization: deferred without demonstrated requirement
-D/E/F materialization: postponed
-```
-
-The preference for the contract-first pathway is reasoned but provisional. It does not establish technical validation, permanent architecture acceptance, or conceptual understanding.
+Concept introduction during model design is authorized because the concepts have reusable meaning and concrete Markei manifestations. Introduction is not learner mastery.
 
 ## Maturity
 
 ### Green
 
-None. Software evidence and project preference do not establish learner mastery.
+None.
 
 ### Yellow
 
 `&&&01`, `&&&02`, `&&&03`, `&&%01`, `&&%02`, `&%%01`, `&%%02`, `&%%03`, `&%%04`, `%%%01`, `%%%03`, `%%%04`, `%%%05`.
 
-### Red
+### Red — existing
 
 `&&&04`, `&&&05`, `&&%03`, `&&%04`, `&%%05`, `&%%06`, `%%%02`, `%%%06`.
 
-No maturity changed during Cycle 07 Sprint 01 because no explicit learner responses or prototype evidence were recorded.
-
-## Active Candidate Concepts
-
-The following are classified candidates, not canonical KANBAN entries:
+### Red — introduced in Cycle 07 Sprint 02
 
 ```text
-Platform Boundary
-Composition Root
-Dependency Injection
-Behavioral Contract
-Golden Fixture
-Semantic Parity
-Local Persistence
-Offline-First
-Transaction Boundary
-Application Lifecycle Ownership
-Synchronization
+&&&06 Stable Identity
+&&&07 Authentication
+&&&08 Authorization
+&&&09 Eventual Consistency
+&&&10 Historical Integrity
+&&%05 Immutable Dart Model
+&%%07 Reusable Catalogue
+&%%08 Product Identification Set and Deterministic Normalization
+&%%09 Purchase Aggregate
+&%%10 Purchase Item
+&%%11 Append-Only Synchronization Event
+&%%12 Offline Queue and Idempotent Delivery
+&%%13 Device Ordering and Synchronization Cursor
+&%%14 Sync Protocol
+&%%15 Dimensional Quantity
+&%%16 Monetary Minor Unit
+&%%17 Versioned Analytic
+%%%07 Flutter Framework and Responsive Widget Composition
 ```
 
-Existing canon supplies partial prerequisites, but the candidates require prototype-grounded examples and a later promotion decision before receiving KANBAN identifiers.
+No pre-existing maturity changed. All introduced concepts begin Red because no explicit learner validation exists.
 
 ## Dependency Spine
 
-Existing canonical foundation:
+Identity and access:
 
 ```text
 &&&01 Responsibility Boundary
-→ &%%01 Application Service
-→ &%%02 Repository Pattern and Persistence Adapter
-→ &&&04 Resource Ownership and Lifetime
-→ %%%02 SQLite Connection and Cursor Ownership
+→ &&&06 Stable Identity
+→ &&&07 Authentication
+→ &&&08 Authorization
+```
+
+Catalogue and purchase:
+
+```text
+&&%05 Immutable Dart Model
+→ &%%07 Reusable Catalogue
+→ &%%08 Product Identification Set and Deterministic Normalization
+→ &%%09 Purchase Aggregate
+→ &%%10 Purchase Item
 → &%%05 Statement Atomicity Versus Workflow Atomicity
-→ &&&05 Evidence State and Validation Boundary
+→ &&&10 Historical Integrity
 ```
 
-Candidate progression:
+Synchronization:
 
 ```text
-Platform Boundary
-→ Composition Root
-→ Dependency Injection
-→ Application Lifecycle Ownership
-→ Local Persistence
-→ Transaction Boundary
-→ Offline-First
+&%%09 Purchase Aggregate
+→ &%%11 Append-Only Synchronization Event
+→ &%%12 Offline Queue and Idempotent Delivery
+→ &%%13 Device Ordering and Synchronization Cursor
+→ &%%14 Sync Protocol
+→ &&&09 Eventual Consistency
 ```
 
-Behavior-preservation progression:
+Types and analytics:
 
 ```text
-Behavioral Contract
-→ Golden Fixture
-→ Semantic Parity
+&&&03 Naming as Data Contract
+→ &%%15 Dimensional Quantity
+→ &%%16 Monetary Minor Unit
+→ &&&02 Raw Data Versus Derived Data
+→ &%%17 Versioned Analytic
 ```
 
-Deferred network progression:
+Presentation support:
 
 ```text
-Local Persistence
-→ Offline-First
-→ Synchronization
+&&%05 Immutable Dart Model
+→ %%%07 Flutter Framework and Responsive Widget Composition
+→ &%%03 Presentation Adapter
+→ &&&04 Resource Ownership and Lifetime
 ```
 
-Synchronization remains last because it adds identities, transport, conflicts, failure recovery, security, and remote operations that the current single-device prototype does not require.
+## Reconciled Ownership
 
-## Two Development-Cost Pathways
+- Authoritative facts and derived projections extend `&&&02`.
+- Purchase atomicity extends `&%%05`.
+- Row ownership is an `&&&08 Authorization` example.
+- Composition root and lifecycle remain related to `&&&01`, `&&&04`, and `&&%03`.
+- Protocol versioning belongs to `&%%14`.
+- Storage-schema versioning remains related to `%%%01`.
+- `&%%11` append-only event semantics are distinct from `&&%05` Dart immutability.
+- Dart is the language; Flutter is the framework.
 
-### Python-native pathway
+## Current Project Learning Spine
 
 ```text
-more direct Python source reuse
-→ potentially less initial rewriting
-→ unknown mobile runtime/toolkit feasibility
-→ possible later cost in packaging, lifecycle, native integration,
-  accessibility, platform support, distribution, and debugging
+protected PySide6 beta
+→ language-neutral contracts and fixtures
+→ immutable Dart models
+→ Flutter shared-client composition
+→ account-private reusable catalogue
+→ atomic Purchase with Purchase Items
+→ application-private local persistence
+→ append-only pending event
+→ authenticated/authorized custom API
+→ idempotent event acceptance
+→ account cursor download
+→ local deterministic projection rebuild
+→ versioned analytics
+→ parity and migration evidence
 ```
-
-### Contract-first cross-platform pathway
-
-```text
-less direct runtime reuse
-→ more initial implementation and learning
-→ explicit contracts and fixtures
-→ conventional mobile tooling and lifecycle ownership
-→ intended reduction in semantic drift and long-term platform uncertainty
-```
-
-Development cost means all effort needed to create, understand, prove, ship, debug, and maintain the software. It includes learning, setup, cognitive complexity, duplicate implementation, tests, fragile tools, multi-platform maintenance, semantic-drift prevention, distribution, and future change—not merely money or lines of code.
-
-Neither pathway is proven cheaper overall. Sprint 01 identifies where each may place cost. A later bounded experiment is required to compare actual setup, implementation, testing, lifecycle, and debugging effort.
-
-## Active Distinctions
-
-```text
-shared language ≠ shared runtime
-platform-neutral component ≠ portable application
-business behavior ≠ UI implementation
-source-code reuse ≠ contract reuse
-Python abstract class ≠ language-neutral behavioral contract
-local persistence ≠ synchronization
-offline-first ≠ cloud-backed
-service layer ≠ network server
-project preference ≠ permanent architecture acceptance
-technical investigation ≠ prototype validation
-project decision ≠ learner maturity
-less code today ≠ lower total development cost
-duplicate implementation ≠ semantic drift when fixtures enforce parity
-```
-
-## Current Project Examples
-
-- Python dataclasses are platform-neutral candidates, but direct reuse still requires a mobile Python runtime.
-- `ProductService` contains reusable-looking rules but constructs the concrete repository.
-- The database manager contains Windows/PyInstaller path assumptions.
-- The desktop PySide6 presentation is platform-specific.
-- The mobile entrypoint is empty and supplies no runtime evidence.
-- The contract-first proposal uses explicit behavior examples and a mobile-owned sandboxed database.
-- The Python-native proposal remains a bounded challenger whose packaging and lifecycle costs require device evidence.
-- No ordinary desktop database may be accessed by a future mobile prototype.
 
 ## Next Learner Questions
 
-1. What is the difference between sharing Python syntax, sharing Python source, and sharing a Python runtime?
-2. Which Markei components are platform-neutral, and which make the whole application platform-bound?
-3. What creates and connects repositories, use cases, and lifecycle owners in a composition root?
-4. How does dependency injection allow a mobile-local repository to replace the desktop repository?
-5. What must a behavioral contract state beyond a Python method signature?
-6. How does a golden fixture detect semantic drift between two implementations?
-7. What evidence demonstrates semantic parity without claiming identical source?
-8. Who owns the local database, transaction, initialization, suspension, and relaunch lifecycle?
-9. Why can an application be offline-first without supporting synchronization?
-10. Which requirement would justify introducing synchronization or a backend?
-11. How should setup, learning, testing, debugging, maintenance, and future change be included in a cost comparison?
-12. What bounded prototype result would support or challenge the current contract-first preference?
+1. How do Dart language responsibilities differ from Flutter framework responsibilities?
+2. Which state belongs in immutable models, local persistence, use cases, and widgets?
+3. Why is email not a stable ownership identity?
+4. How does authorization differ from successful authentication?
+5. Which exact facts identify PACKAGED and BULK Products?
+6. Why can normalization merge 350 g with 0.350 kg while fuzzy similarity cannot?
+7. Which invariants belong to the Purchase aggregate?
+8. Why must Purchase, Items, and pending event commit atomically?
+9. How do event UUID, device sequence, occurrence time, and cursor differ?
+10. How does idempotent delivery protect a retry?
+11. Why can clients differ temporarily under eventual consistency?
+12. How do dimensional quantity and minor-unit money prevent ambiguous facts?
+13. Which facts are authoritative and which projections are rebuildable?
+14. Why does analytic version 2 not rewrite version 1 or raw purchases?
+15. How can Dart and TypeScript share behavior without sharing source?
+16. What evidence would justify maturity movement for any new concept?
 
 ## Immediate Learning Boundary
 
-Before prototype materialization, the learner should be able to explain:
-
-```text
-where each pathway executes
-what is reused as source versus preserved as behavior
-who owns mobile-local state
-why one use case needs a transaction boundary
-why offline-first does not imply synchronization
-which evidence would validate only the prototype claim
-how initial cost differs from recurring maintenance cost
-```
-
-Canonical KANBAN creation remains deferred until prototype preparation supplies independent concept need and concrete project examples. The glossary remains unchanged because no canonical concepts were added. D/E/F and application implementation remain postponed.
+The next Didactic evaluation requires explicit learner explanations or implementation-linked evidence. Architecture discussion and canonical introduction do not change maturity. D/E/F remain postponed.
