@@ -3,9 +3,9 @@
 > Domain: Didactic
 > Status: Observational history
 > Authority: Didactic Chat [A]
-> Scope: Didactic-domain recovery, repopulation, reconciliation corrections, and Cycle 05 learning record
+> Scope: Didactic-domain recovery, repopulation, reconciliation corrections, Cycle 05 learning record, and Cycle 06 concept classification
 > Current truth sources: `02_KANBAN.md`, `07_GLOSSARY.md`, and `08_CONCEPT_MAP.md`
-> Historical evidence source: `DEV_STAGE/B_DIDACTIC.md` and referenced commits
+> Historical evidence source: `DEV_STAGE/B_DIDACTIC.md`, `DEV_STAGE/E_DDC_STAGE.md`, `DEV_STAGE/H_DDC_CODEX.md`, `DEV_STAGE/G_OPS_CODEX.md`, `[M]_STAGE/J_[M]_STAGE.md`, and referenced commits
 > Rule: This file explains how present knowledge emerged; it does not override canon or checkpoint state.
 
 ---
@@ -738,3 +738,165 @@ major pivots require explicit semantic transition records
 ```
 
 Future observations should append new events rather than rewrite this recovery history, except to correct factual errors with an explicit amendment.
+
+---
+
+# Observation 002 — Cycle 06 Release-Evidence Concept Classification
+
+## Observation Metadata
+
+```text
+Observation class: Post-materialization Didactic reconciliation
+Role: Didactic Chat [A]
+Repository: gus-i-gu/markei
+Branch: sketch-notebook-recovery
+Date: 2026-07-12
+Main reconciliation: documentation/sketch_notebook/[M]_STAGE/J_[M]_STAGE.md
+Evidence reports: DEV_STAGE/H_DDC_CODEX.md and DEV_STAGE/G_OPS_CODEX.md
+```
+
+Main authorized Didactic classification after the first bounded Cycle 06 materialization unit. Permanent Didactic files had deliberately remained unchanged during Codex execution, so this observation records the later functional-domain classification rather than treating H as automatic promotion.
+
+## 1. Concepts classified
+
+The current register had no occupancy conflicts after `&&&04`, `&&%03`, `&%%05`, and `%%%05`. Four candidates were therefore materialized under their staged identifiers:
+
+```text
+&&&05  Evidence State and Validation Boundary              Red
+&&%04  Source, Frozen, and Installed Execution Context     Red
+&%%06  Packaging and Installation Artifact Lifecycle       Red
+%%%06  Build-Time, Runtime, and Installer-Time Dependency  Red
+```
+
+No concept became Green. Implementation success, command success, generated artifacts, and test results do not demonstrate learner mastery.
+
+## 2. Source, frozen, and installed distinction
+
+Cycle 06 provided direct evidence for source and frozen contexts while preserving the installed boundary:
+
+```text
+source execution
+    evidenced
+
+frozen one-folder distribution
+    built
+
+frozen launch and immediate reopen
+    evidenced
+
+installer source
+    configured
+
+compiled installer
+    blocked
+
+installed execution
+    blocked
+```
+
+This justified a canonical concept because the contexts differ in resource lookup, dependency collection, launch path, deployment placement, diagnostics, and available evidence while retaining the same business architecture.
+
+## 3. Resource and user-state distinction
+
+The materialization supplied concrete examples for `%%%05`:
+
+```text
+schema.sql
+    bundled production resource
+
+seed.sql
+    development/test fixture excluded from production
+
+market.sqlite
+    writable external user state
+
+WAL / SHM
+    transient writable companions
+
+startup.log
+    writable per-user diagnostics
+```
+
+The installer is configured to preserve `%LOCALAPPDATA%/Markei`, but that configuration is not uninstall-retention validation. The lifecycle remains unexecuted.
+
+## 4. Evidence states and artifact lifecycle
+
+The accepted project classification was:
+
+```text
+configured: yes
+built: yes
+launched: yes — frozen
+installed: blocked
+validated: partial
+accepted: no
+```
+
+The Didactic update derived the following distinctions:
+
+```text
+packaging configuration ≠ frozen distribution
+frozen distribution ≠ compiled installer
+installer configuration ≠ installer artifact
+frozen launch ≠ installed launch
+external placement ≠ validated retention
+partial validation ≠ release acceptance
+```
+
+PyInstaller and Inno Setup remained implementation examples rather than standalone concept names.
+
+## 5. Shutdown failure as learning evidence
+
+Focused shutdown validation initially failed because the isolated SQLite database remained held open. That failure did not prove that the entire architecture required redesign. It established a narrow validation result.
+
+A bounded, idempotent `MainWindow.closeEvent()` coordinator was added to close all four page-owned services. The focused source probe and rebuilt frozen launch/reopen then passed.
+
+This sequence reinforced:
+
+```text
+&&&04  Resource Ownership and Lifetime
+&&%03  Context Manager and Deterministic Cleanup
+%%%02  SQLite Connection and Cursor Ownership
+&&&05  Evidence State and Validation Boundary
+```
+
+The passed source/frozen gate does not validate installed shutdown, because installed execution has not occurred.
+
+## 6. Dependency-stage distinction
+
+Cycle 06 recorded PyInstaller 6.21.0 and PySide6 6.11.1 for the successful build environment. PyInstaller was used to produce the distribution; collected PySide6/Qt components support the running application; Inno Setup's `ISCC.exe` was required to compile the installer and was absent.
+
+The missing installer-time dependency blocked only the later artifact and lifecycle gates. It did not invalidate the already evidenced frozen build.
+
+## 7. Checkpoint effect
+
+The Concept Map moved from a stale Cycle 05 packaging transition to the active Cycle 06 milestone. Its learning spine now ends with explicit blocked and pending states:
+
+```text
+source
+→ packaging configuration
+→ frozen distribution
+→ frozen launch
+→ installer configuration
+→ compiled installer — blocked
+→ installed execution — blocked
+→ lifecycle validation — pending
+→ acceptance — pending
+```
+
+Immediate future learning evidence must come from installer compilation, installed launch, principal workflows, persistence across reopen, upgrade/reinstall, uninstall retention, retained-data recovery, Windows reputation observations, and human acceptance.
+
+## Observation Closure
+
+The Cycle 06 Didactic reconciliation established four new Red concepts, refreshed derived terminology and the current checkpoint, reinforced existing cleanup, ownership, initialization, atomicity, and resource concepts, and preserved the evidence boundary:
+
+```text
+working implementation
+≠ mastered concept
+
+frozen beta candidate
+≠ installed beta
+
+partial validation
+≠ accepted release
+```

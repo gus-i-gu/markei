@@ -1,643 +1,506 @@
 # 02_KANBAN.md
 
 > Domain: Didactic
-> Status: Canonical concept register — recovery baseline
+> Status: Canonical concept register — Cycle 06
 > Authority: Didactic Chat [A], reconciled through Main reference
-> Recovery sources: `DEV_STAGE/B_DIDACTIC.md` and `[M]_STAGE/J_[M]_STAGE.md`
+> Reconciliation sources: `DEV_STAGE/B_DIDACTIC.md`, `DEV_STAGE/E_DDC_STAGE.md`, `DEV_STAGE/H_DDC_CODEX.md`, `DEV_STAGE/G_OPS_CODEX.md`, and `[M]_STAGE/J_[M]_STAGE.md`
 > Scope: Stable concepts evidenced by the contemporary Markei repository
-> Observational history: intentionally excluded until checkpoint completion
 
 ---
 
 # Foundational Computer Science
 
 ## &&&01
-
 ### Responsibility Boundary
-
 #### Description
-A responsibility boundary identifies which part of a system is expected to know, decide, or perform a particular kind of work. Clear boundaries prevent presentation, business rules, persistence, and infrastructure from silently becoming mixed together.
-
+A responsibility boundary identifies which component should know, decide, or perform a kind of work.
 #### Formal Definition
-A responsibility boundary is an explicit allocation of knowledge and behavior to a component or layer, together with constraints on which responsibilities belong elsewhere.
-
+An explicit allocation of knowledge and behavior to a component or layer, together with constraints on what belongs elsewhere.
 #### Practical Example
-A screen may collect user input and display results, while a service validates the input and a repository stores it. The screen should not also contain database queries simply because it initiated the action.
-
+A screen gathers input, a service coordinates a use case, and a repository stores data.
 #### Language Implementation
-In Python, responsibility boundaries appear through modules, packages, classes, imports, method calls, abstract interfaces, and naming conventions. They are enforced partly by structure and partly by discipline.
-
+Python expresses boundaries through packages, modules, classes, imports, interfaces, and method calls.
 #### Project Implementation
-Markei currently expresses this chain:
-
-```text
-Desktop presentation
-→ ProductService
-→ Repository
-→ Database manager
-→ SQLite
-```
-
-Desktop code renders widgets and collects input. `ProductService` owns workflows, calculations, settings interpretation, and service projections. `Repository` owns SQL and row mapping. `app.core.database` owns connection configuration, initialization, migration, and database paths.
-
+Markei separates desktop presentation, `ProductService`, `Repository`, database lifecycle, packaging collection, installer placement, validation evidence, and Main/human acceptance.
 #### Required Concepts
 None.
-
 #### Related Concepts
-`&&&02`, `&&&03`, `&%%01`, `&%%02`, `&%%03`.
-
+`&&&02`, `&&&03`, `&&&05`, `&%%01`, `&%%02`, `&%%03`.
 #### Status
 Yellow.
-
 #### Source
-Reconciled dependency and responsibility spine in `B_DIDACTIC.md` and `J_[M]_STAGE.md`.
+Current application and Cycle 06 reconciliation.
 
 ---
 
 ## &&&02
-
 ### Raw Data Versus Derived Data
-
 #### Description
-Applications handle both source facts and values calculated from those facts. A prediction, status, label, aggregate, or cached summary does not have the same evidential role as the records from which it was produced.
-
+Source facts and values calculated from those facts have different evidential roles.
 #### Formal Definition
-Raw data is information directly entered, observed, imported, or retrieved as a source fact. Derived data is information produced through calculation, aggregation, filtering, grouping, formatting, prediction, or business interpretation.
-
+Raw data is directly entered, observed, imported, or retrieved; derived data is produced through calculation, aggregation, filtering, formatting, prediction, or interpretation.
 #### Practical Example
-A purchase recorded from a receipt is a source event. An expected next-purchase date or inventory status is derived from purchase history.
-
+A receipt purchase is a source event; an expected next-purchase date is derived from history.
 #### Language Implementation
-In Python, raw and derived values may both appear as dataclass fields or dictionary keys. Their distinction must therefore be preserved through naming, ownership, construction rules, persistence decisions, and recalculation behavior.
-
+Both may be represented by fields or keys, so naming, ownership, recalculation, and persistence rules preserve the distinction.
 #### Project Implementation
-In Markei, `Purchase` records are historical receipt events. Product summary fields such as expected dates, price deltas, and calculated inventory state are derived or cached interpretations. Lists and History labels are service-produced presentation data.
-
+Markei treats purchases as historical events and product summaries, status labels, and projections as derived or cached interpretations.
 #### Required Concepts
 `&&&01`.
-
 #### Related Concepts
-`&&&03`, `&&&04`, `&%%02`, `&%%04`.
-
+`&&&03`, `&&&05`, `&&%02`, `&%%04`.
 #### Status
 Yellow.
-
 #### Source
-Reconciled Product/Purchase model and service read-model boundary.
+Current Product/Purchase and service-projection boundary.
 
 ---
 
 ## &&&03
-
 ### Naming as Data Contract
-
 #### Description
-Names communicate meaning between layers. A field name, settings key, method name, or read-model key tells another component what value it receives and how that value should be interpreted.
-
+Names communicate the expected meaning of data and project states across boundaries.
 #### Formal Definition
-Naming as a data contract is the use of stable, precise, responsibility-aware names to define the expected meaning and shape of information exchanged between components.
-
+The use of stable, precise, responsibility-aware names to define the meaning and shape of exchanged information.
 #### Practical Example
-`product_name`, `expected_next_purchase`, `quantity_label`, and `history.week_boundary` describe different meanings even when some are represented as strings.
-
+`configured`, `built`, `launched`, `installed`, `validated`, and `accepted` are not interchangeable labels.
 #### Language Implementation
-In Python, naming contracts appear in dataclass attributes, function signatures, keyword arguments, dictionary keys, constants, imported symbols, and settings keys. Untyped dictionaries make naming especially important because keys become runtime contracts.
-
+Naming contracts appear in attributes, signatures, dictionary keys, constants, settings keys, artifacts, and status reports.
 #### Project Implementation
-Markei carries names across:
-
-```text
-SQLite column
-→ repository mapping
-→ domain model or service projection
-→ desktop rendering
-```
-
-Examples include `product_name`, persisted settings keys, and Lists projection keys such as `remaining_label`, `status`, and `status_label`.
-
+Markei carries stable data names across SQLite, mappings, models, projections, and UI; Cycle 06 also uses exact evidence-state vocabulary.
 #### Required Concepts
 `&&&01`.
-
 #### Related Concepts
-`&&&02`, `&&%02`, `&%%04`.
-
+`&&&02`, `&&&05`, `&&%02`, `&%%04`.
 #### Status
 Yellow.
-
 #### Source
-Reconciled schema/model/repository/service/UI naming chain.
+Current naming chain and Cycle 06 evidence classification.
 
 ---
 
 ## &&&04
-
 ### Resource Ownership and Lifetime
-
 #### Description
-Resources such as database connections must have an identifiable owner and a defined lifetime. Creating a resource and being able to close it are different from proving that the whole application closes it at the correct moment.
-
+Resources require an identifiable owner and a defined lifetime.
 #### Formal Definition
-Resource ownership is the assignment of responsibility for creating, using, sharing, and releasing a finite runtime resource. Resource lifetime is the interval during which that resource remains valid and retained.
-
+Resource ownership assigns creation, use, sharing, and release responsibility; lifetime is the interval during which the resource remains retained and valid.
 #### Practical Example
-A repository may open a database connection and expose `close()`, while a composition object must still determine when all repositories should be closed during application shutdown.
-
+A repository owns a database connection, while the application composition must determine when all repositories close.
 #### Language Implementation
-In Python, ownership and lifetime may be expressed through constructors, context managers, `close()` methods, `try/finally`, dependency injection, application shutdown hooks, and object composition.
-
+Python expresses lifetime through constructors, `close()`, context managers, `try/finally`, event hooks, and composition.
 #### Project Implementation
-Each principal Markei desktop page constructs a `ProductService`; each service constructs a `Repository`; each repository owns one SQLite connection and cursor. Local close capability exists, but one application-level shutdown owner is not yet established. This is taught as a current ownership structure and unresolved lifecycle question, not as a proven runtime leak.
-
+Markei creates four page-owned service/repository chains. Cycle 06 validation initially found retained SQLite access; a bounded, idempotent `MainWindow.closeEvent()` coordinator then closed all four services and the focused source/frozen gate passed.
 #### Required Concepts
 `&&&01`.
-
 #### Related Concepts
-`&&%03`, `&%%03`, `%%%02`.
-
+`&&%03`, `&&&05`, `%%%02`, `&%%06`.
 #### Status
 Red.
-
 #### Source
-Main reconciliation of page-owned services, repository connections, and shutdown responsibility.
+Cycle 06 shutdown failure, correction, and rerun evidence.
+
+---
+
+## &&&05
+### Evidence State and Validation Boundary
+#### Description
+A claim is limited by the strongest evidence actually obtained. Configuration, artifact creation, execution, deployment, validation, and acceptance are distinct states.
+#### Formal Definition
+An evidence state records what has been demonstrated; a validation boundary identifies the exact environment, lifecycle stage, conditions, and behavior covered by that evidence. Evidence from an earlier state cannot prove a later state.
+#### Practical Example
+An installer source file proves installer configuration, not that an installer executable was compiled, installed, or accepted.
+#### Language Implementation
+Projects encode evidence through test results, command exits, artifact inspection, hashes, logs, status enums, reports, and explicit acceptance decisions.
+#### Project Implementation
+Cycle 06 currently supports `configured: yes`, `built: yes`, `launched: yes — frozen`, `installed: blocked`, `validated: partial`, and `accepted: no`. Shutdown validation first failed, justified a bounded correction, and passed on rerun; installed shutdown remains outside that boundary.
+#### Required Concepts
+`&&&01`, `&&&02`, `&&&03`.
+#### Related Concepts
+`&&%04`, `&%%06`, `%%%06`, `&&&04`.
+#### Status
+Red.
+#### Source
+Main Cycle 06 reconciliation plus G/H evidence.
 
 ---
 
 # Python Language Concepts
 
 ## &&%01
-
 ### Package and Module Boundary
-
 #### Description
-A module groups Python definitions in one file. A package groups related modules under a shared import namespace. File placement helps communicate responsibility but does not automatically enforce architectural correctness.
-
+A module groups definitions in one file; a package groups related modules under an import namespace.
 #### Formal Definition
-A Python module is an importable unit normally represented by one `.py` file. A Python package is an importable namespace containing related modules and optionally subpackages.
-
+A module is an importable unit normally represented by a `.py` file; a package is an importable namespace containing modules or subpackages.
 #### Practical Example
-A package may place business services, persistence adapters, and models together while still requiring each module to retain a distinct responsibility.
-
+Business services and database infrastructure may share a package while retaining separate responsibilities.
 #### Language Implementation
-Python boundaries appear through directories, `__init__.py` package markers where applicable, absolute or relative imports, module-level names, and the import graph.
-
+Python boundaries use directories, package markers, imports, and module-level names.
 #### Project Implementation
-Markei uses:
-
-```text
-app/core/
-app/database/
-app/desktop/
-```
-
-`app/core` contains several internal responsibilities rather than one homogeneous layer. `app/database` contains SQL resources. `app/desktop` contains PySide6 presentation code.
-
+Markei uses `app/core`, `app/database`, and `app/desktop`; physical grouping does not erase semantic responsibility.
 #### Required Concepts
 `&&&01`.
-
 #### Related Concepts
-`&&%02`, `&%%01`, `&%%03`.
-
+`&&%02`, `&&%04`, `&%%01`, `&%%03`.
 #### Status
 Yellow.
-
 #### Source
-Confirmed repository topography in the Main reconciliation reference.
+Current repository topology.
 
 ---
 
 ## &&%02
-
 ### Dataclass as Structured Data Carrier
-
 #### Description
-A dataclass provides a concise way to define objects whose main role is to carry named data. It does not, by itself, determine whether the object is a domain entity, database row, command, or view model.
-
+A dataclass concisely defines objects whose main role is carrying named data.
 #### Formal Definition
-A Python dataclass is a class declaration enhanced by generated methods for initialized fields, representation, comparison, and related data-oriented behavior.
-
+A class declaration enhanced by generated initialization, representation, comparison, and related data-oriented behavior.
 #### Practical Example
-A purchase object can carry a product ID, date, quantity, price, and notes without owning SQL statements or the full purchase-registration workflow.
-
+A purchase object carries product, date, quantity, and price without owning SQL.
 #### Language Implementation
-Python uses `@dataclass` and typed fields. `slots=True` restricts instances to declared attributes and can reduce accidental attribute creation.
-
+Python uses `@dataclass`, typed fields, and optionally `slots=True`.
 #### Project Implementation
-Markei defines `Category`, `Store`, `Product`, and `Purchase` as slotted dataclasses. They carry application data across layers while SQL remains in `Repository` and workflows remain in `ProductService`.
-
+Markei defines `Category`, `Store`, `Product`, and `Purchase` as slotted dataclasses while persistence and workflows remain elsewhere.
 #### Required Concepts
 `&&&01`, `&&&03`.
-
 #### Related Concepts
 `&&&02`, `&%%04`.
-
 #### Status
 Yellow.
-
 #### Source
-Current `app/core/models.py` and reconciled domain-entity interpretation.
+Current models and reconciled entity boundary.
 
 ---
 
 ## &&%03
-
 ### Context Manager and Deterministic Cleanup
-
 #### Description
-A context manager ties resource acquisition and release to a visible lexical scope. It is one way to make cleanup deterministic, although long-lived application resources may require composition-level lifecycle handling instead.
-
+A context manager ties setup and cleanup to a visible scope; long-lived applications may require an explicit lifecycle event instead.
 #### Formal Definition
-A context manager is a Python object implementing the context-management protocol so setup occurs on entry and cleanup occurs on exit, including exceptional exit.
-
+An object implementing context management so setup occurs on entry and cleanup on exit, including exceptional exit.
 #### Practical Example
-A short database operation can open a repository inside a `with` block and guarantee closure when the block ends. A desktop application may instead hold repositories for the application session and close them during shutdown.
-
+A short database operation can use `with`; a desktop session may close repositories during window shutdown.
 #### Language Implementation
-Python uses `with`, `__enter__`, and `__exit__`, along with `try/finally` and explicit `close()` methods for other cleanup patterns.
-
+Python uses `with`, `__enter__`, `__exit__`, `try/finally`, and explicit `close()` methods.
 #### Project Implementation
-Markei repositories and services expose explicit closure behavior, and the repository supports lifecycle ownership. The current desktop composition still requires validation and a design decision about which object owns final shutdown.
-
+Repositories and services expose close behavior. Cycle 06 added an idempotent `MainWindow.closeEvent()` cleanup path after focused evidence demonstrated the previous close path retained the isolated database.
 #### Required Concepts
 `&&&04`.
-
 #### Related Concepts
-`%%%02`, `&%%03`.
-
+`&&&05`, `%%%02`, `&%%06`.
 #### Status
 Red.
-
 #### Source
-Reconciled cleanup capability and unresolved application-shutdown ownership.
+Cycle 06 shutdown validation and bounded correction.
+
+---
+
+## &&%04
+### Source, Frozen, and Installed Execution Context
+#### Description
+The same application can run from repository source, from a collected executable distribution, or from an installer-placed distribution. These contexts share business architecture but differ operationally.
+#### Formal Definition
+Source execution runs modules and resources through a development interpreter; frozen execution runs collected code and resources through a generated executable; installed execution runs the frozen runtime after installer-controlled placement, registration, and launch-path creation.
+#### Practical Example
+`python main.py`, `dist/Markei/Markei.exe`, and a Start Menu shortcut may start the same application through different resource and dependency contexts.
+#### Language Implementation
+Python applications distinguish contexts using entrypoints, `sys.frozen`, `_MEIPASS`, resource resolution, collected dependencies, and platform-specific writable paths.
+#### Project Implementation
+Markei source and frozen execution are evidenced. The frozen executable launched twice using isolated external user data. `installer/Markei.iss` defines installed placement and shortcuts, but no compiled installer or installed launch exists yet.
+#### Required Concepts
+`&&&01`, `&&%01`, `%%%05`.
+#### Related Concepts
+`&&&05`, `&%%06`, `%%%06`.
+#### Status
+Red.
+#### Source
+Cycle 06 release configuration and frozen-launch evidence.
 
 ---
 
 # Target-File and Architecture Concepts
 
 ## &%%01
-
 ### Application Service
-
 #### Description
-An application service coordinates a user-facing use case. It applies business rules, validates inputs, calls persistence operations, and prepares results without becoming presentation code or raw database infrastructure.
-
+An application service coordinates a user-facing use case without becoming presentation or persistence infrastructure.
 #### Formal Definition
-An application service is a boundary object that orchestrates domain and persistence operations to fulfill application use cases while shielding callers from lower-level implementation details.
-
+A boundary object that orchestrates domain and persistence operations to fulfill application use cases.
 #### Practical Example
-A receipt-registration service can validate input, create or locate a product, insert a purchase, recalculate summaries, and return a result without the UI knowing SQL.
-
+Receipt registration validates input, records a purchase, recalculates summaries, and returns results without exposing SQL to the UI.
 #### Language Implementation
-In Python, an application service is commonly a class with methods representing use cases. It may depend on repository contracts or concrete repositories and return domain objects or projections.
-
+Commonly a class whose methods represent use cases and depend on repositories.
 #### Project Implementation
-`ProductService` owns purchase and product commands, recalculation, Lists and History projections, settings interpretation, store management, and product-detail projections. It currently functions as a broad application facade despite its narrower name.
-
+`ProductService` coordinates commands, calculations, settings, stores, and UI-facing projections.
 #### Required Concepts
 `&&&01`, `&&%01`.
-
 #### Related Concepts
-`&%%02`, `&%%04`.
-
+`&%%02`, `&%%04`, `&%%05`.
 #### Status
 Yellow.
-
 #### Source
-Reconciled ProductService responsibility inventory.
+Current service responsibility inventory.
 
 ---
 
 ## &%%02
-
 ### Repository Pattern and Persistence Adapter
-
 #### Description
-A repository gives application code a controlled way to retrieve and persist data without exposing SQL details to every caller. It is not the database itself and should not own business interpretation merely because it accesses stored facts.
-
+A repository translates application-oriented persistence operations into storage operations.
 #### Formal Definition
-A repository is a persistence abstraction that translates application-oriented operations into storage operations and maps storage representations to application representations.
-
+A persistence abstraction that maps application requests and representations to database commands and results.
 #### Practical Example
-A service asks for purchases of a product. The repository executes the query and returns mapped results; the service decides how those purchases affect inventory status.
-
+A service asks for purchases; the repository runs SQL and returns mapped results.
 #### Language Implementation
-In Python, a repository may be a class containing parameterized SQL statements, cursor execution, transaction calls, and row-to-object mapping methods.
-
+Python repositories commonly contain parameterized SQL, cursor execution, commits, and row mapping.
 #### Project Implementation
-Markei's `Repository` is a broad SQLite persistence facade for products, purchases, categories, stores, settings, and related query projections. It owns SQL, mappings, one connection, one cursor, and individual commits. Connection configuration and migration remain delegated to `app.core.database`.
-
+Markei's `Repository` owns SQL, mappings, one connection, one cursor, and individual commits; database setup remains in `app.core.database`.
 #### Required Concepts
 `&&&01`, `&&&02`, `&%%01`.
-
 #### Related Concepts
 `%%%02`, `%%%03`, `&%%05`.
-
 #### Status
 Yellow.
-
 #### Source
-Current repository implementation and Main reconciliation.
+Current repository implementation.
 
 ---
 
 ## &%%03
-
 ### Presentation Adapter
-
 #### Description
-A presentation adapter translates user interaction into application-service calls and translates service results into platform-specific rendering. It should not become the owner of SQL or business calculations.
-
+A presentation adapter translates platform input into application calls and application results into rendering.
 #### Formal Definition
-A presentation adapter is a component that converts platform-specific input and output into calls and representations understood by the application boundary.
-
+A component that converts platform-specific interaction into application-boundary calls and representations.
 #### Practical Example
-A desktop page reads widget values, calls a service, receives a prepared result, and renders rows or messages.
-
+A page reads widgets, calls a service, and renders prepared data.
 #### Language Implementation
-In PySide6, this appears through widgets, layouts, signals, slots, event handlers, dialogs, and calls to service methods.
-
+PySide6 uses widgets, layouts, signals, slots, event handlers, and dialogs.
 #### Project Implementation
-`app/desktop` contains `MainWindow`, page widgets, and `ProductDetailPanel`. Pages call `ProductService` rather than `Repository` or SQLite. `MainWindow` coordinates tabs, navigation, edit routing, and page refreshes.
-
+Markei pages call `ProductService`; `MainWindow` coordinates tabs, navigation, refresh, and now final page-service cleanup.
 #### Required Concepts
 `&&&01`, `&&%01`, `&%%01`.
-
 #### Related Concepts
-`&%%04`, `%%%04`.
-
+`&&&04`, `&&%03`, `&%%04`.
 #### Status
 Yellow.
-
 #### Source
-Reconciled desktop composition and page responsibilities.
+Current desktop composition.
 
 ---
 
 ## &%%04
-
 ### Database Row, Domain Model, and View Model
-
 #### Description
-The same underlying information may appear in several representations, each shaped for a different responsibility. A database row, domain model, and view model should not be treated as interchangeable merely because they contain overlapping fields.
-
+Overlapping information may appear in representations shaped for persistence, application meaning, or presentation.
 #### Formal Definition
-A database row is a persistence representation, a domain model is an application entity representation, and a view model is a use-case-specific presentation representation prepared for rendering.
-
+A database row is a persistence representation, a domain model is an application entity representation, and a view model is a use-case-specific rendering representation.
 #### Practical Example
-A database row may contain stored numeric values, a Product object may expose application state, and a Lists row may contain formatted labels and status text for a table.
-
+Stored numbers become a Product object and then formatted Lists labels.
 #### Language Implementation
-Python may represent rows as `sqlite3.Row`, domain models as dataclasses, and view models as dictionaries, dataclasses, TypedDicts, or other boundary objects.
-
+Python may use `sqlite3.Row`, dataclasses, dictionaries, `TypedDict`, or dedicated view models.
 #### Project Implementation
-Markei currently uses:
-
-```text
-sqlite3.Row
-→ repository mapping
-→ Product/Purchase or raw projection
-→ ProductService dictionary projection
-→ Qt widgets
-```
-
-Lists, History, analytics, and product-detail surfaces consume dictionary-based projections. These are platform-neutral but untyped. Whether they should become explicit typed objects remains unresolved and is not canonically prescribed here.
-
+Markei maps rows into models or projections, then services prepare dictionaries consumed by Qt widgets.
 #### Required Concepts
 `&&&02`, `&&&03`, `&&%02`, `&%%01`.
-
 #### Related Concepts
 `&%%03`, `%%%03`.
-
 #### Status
 Yellow.
-
 #### Source
-Main reconciliation of the current view-model boundary.
+Current mapping and projection boundary.
 
 ---
 
 ## &%%05
-
 ### Statement Atomicity Versus Workflow Atomicity
-
 #### Description
-A single database statement may complete atomically while a larger business workflow remains non-atomic if several statements commit separately. This distinction matters when an operation includes multiple dependent changes.
-
+One database statement can be atomic while a multi-step use case remains non-atomic when its steps commit separately.
 #### Formal Definition
-Statement atomicity is the all-or-nothing execution of one database statement. Workflow atomicity is the all-or-nothing execution of an entire multi-step application use case within one transaction boundary.
-
+Statement atomicity is all-or-nothing execution of one statement; workflow atomicity is all-or-nothing execution of a complete use case within one transaction boundary.
 #### Practical Example
-Creating a product, inserting a purchase, and recalculating a summary may each succeed independently. If each step commits separately, failure in a later step can leave an earlier change persisted.
-
+Creating a product, adding a purchase, and updating a summary may leave partial state if each commits independently.
 #### Language Implementation
-Python's SQLite integration controls workflow atomicity through transaction boundaries, connection commits, rollbacks, context managers, and repository/service coordination.
-
+SQLite workflow atomicity uses transaction boundaries, commits, rollbacks, and service/repository coordination.
 #### Project Implementation
-Markei repository mutation methods commit individually. Receipt registration and purchase deletion with recalculation are multi-commit workflows and therefore not transactionally atomic as complete use cases. Whether to introduce a workflow transaction boundary remains a design decision.
-
+Markei receipt registration and deletion/recalculation remain multi-commit workflows. This is inherited validation debt, not a packaging concept or a proven beta failure.
 #### Required Concepts
 `&&&01`, `&%%01`, `&%%02`.
-
 #### Related Concepts
-`%%%02`.
-
+`&&&05`, `%%%02`.
 #### Status
 Red.
-
 #### Source
-Main source verification resolving the receipt-workflow atomicity conflict.
+Current repository/service behavior and Cycle 06 scope boundary.
+
+---
+
+## &%%06
+### Packaging and Installation Artifact Lifecycle
+#### Description
+Packaging and installation move through distinct configurations, generated artifacts, deployed states, and lifecycle evidence.
+#### Formal Definition
+A release artifact lifecycle transforms source configuration into a frozen distribution, installer configuration into a compiled installer, and that installer into an installed application whose upgrade, uninstall, reinstall, and retained-data behavior require separate validation.
+#### Practical Example
+A `.spec` file is not an executable; an executable directory is not an installer; an installer source is not a compiled setup program; an installed program is not automatically lifecycle-validated.
+#### Language Implementation
+Projects use packaging specifications, build wrappers, generated distribution directories, installer definitions, compiler outputs, installation metadata, and lifecycle tests.
+#### Project Implementation
+`Markei.spec` and `scripts/build_windows.ps1` produced `dist/Markei/Markei.exe`. `installer/Markei.iss` and `scripts/build_installer.ps1` configure the next transformation, but missing `ISCC.exe` blocked the compiled installer and all installed lifecycle gates.
+#### Required Concepts
+`&&&01`, `&&&04`, `&&%04`, `%%%05`.
+#### Related Concepts
+`&&&05`, `%%%06`.
+#### Status
+Red.
+#### Source
+Cycle 06 build, artifact, installer-blocker, and Main reconciliation evidence.
 
 ---
 
 # Packages, Dependencies, and SQLite Concepts
 
 ## %%%01
-
 ### SQLite Initialization Versus Migration
-
 #### Description
-Initialization and migration solve different persistence-lifecycle problems. Initialization creates a new database state. Migration changes an existing database while preserving compatible user data.
-
+Initialization creates a new database; migration changes an existing database while preserving compatible user state. Seeding is a third operation that inserts initial rows.
 #### Formal Definition
-Database initialization creates a fresh persistence structure from a baseline schema. Database migration transforms an existing persistence structure toward a newer expected form.
-
+Initialization establishes baseline persistence, migration transforms existing persistence, and seeding inserts predefined records into an initialized structure.
 #### Practical Example
-A first launch creates tables from `schema.sql`. A later launch adds a missing column or default settings row without deleting existing purchases.
-
+A first launch creates tables; a later launch adds a missing column; optional fixtures insert sample rows.
 #### Language Implementation
-Python may initialize through `sqlite3.connect()` and `executescript()`. Migration may use schema inspection, conditional DDL, idempotent inserts, and explicit commits.
-
+Python may use `connect`, `executescript`, schema inspection, conditional DDL, idempotent inserts, and commits.
 #### Project Implementation
-Markei initialization creates the user-data directory, preserves an existing database unless recreation is requested, executes `schema.sql`, optionally executes `seed.sql`, commits, and closes. Existing connections run additive compatibility migration using checks such as `PRAGMA table_info`, conditional columns, table creation, and `INSERT OR IGNORE` defaults. No numbered migration ledger currently exists.
-
+Markei production packaging includes `schema.sql` but excludes `seed.sql`; fresh production launch therefore creates structure and defaults without sample business rows. Additive compatibility migration still runs for existing data.
 #### Required Concepts
 `&&&01`, `&%%02`.
-
 #### Related Concepts
-`%%%02`, `%%%03`.
-
+`%%%02`, `%%%03`, `%%%05`, `&&&05`.
 #### Status
 Yellow.
-
 #### Source
-Reconciled database lifecycle.
+Current database lifecycle and Cycle 06 schema-only evidence.
 
 ---
 
 ## %%%02
-
 ### SQLite Connection and Cursor Ownership
-
 #### Description
-A connection represents an active session with SQLite. A cursor executes statements and reads results through that connection. Their ownership determines transaction scope, lifetime, configuration, and cleanup.
-
+A connection owns SQLite session and transaction state; a cursor is a connection-bound execution interface.
 #### Formal Definition
-A SQLite connection is the Python runtime object that owns database-session state and transaction context. A cursor is a connection-bound execution interface for SQL statements and result traversal.
-
+A connection is the runtime object owning database-session state and transaction context; a cursor executes statements and traverses results through that connection.
 #### Practical Example
-One repository can hold one connection and cursor for repeated operations. Several repositories can therefore create several independent database sessions.
-
+Four repositories can hold four independent database sessions.
 #### Language Implementation
-Python uses `sqlite3.Connection` and `sqlite3.Cursor`. Connections configure row factories and PRAGMAs, create cursors, commit or roll back transactions, and must eventually close.
-
+Python uses `sqlite3.Connection` and `sqlite3.Cursor`, explicit commit/rollback, row factories, PRAGMAs, and close operations.
 #### Project Implementation
-Each Markei `Repository` opens one configured connection and cursor. Because four principal pages construct their own services and repositories, normal MainWindow composition creates four long-lived connections. WAL is enabled, but application-wide shutdown ownership remains unresolved and requires validation.
-
+Each Markei repository opens one connection and cursor. The four page-owned chains are now closed through the validated `MainWindow` close coordinator in the focused source/frozen gate; installed behavior remains untested.
 #### Required Concepts
 `&&&04`, `&%%02`.
-
 #### Related Concepts
-`&&%03`, `%%%03`, `&%%05`.
-
+`&&%03`, `&&&05`, `%%%03`, `&%%05`.
 #### Status
 Red.
-
 #### Source
-Main conflict resolution on service and connection count.
+Current ownership structure and Cycle 06 shutdown evidence.
 
 ---
 
 ## %%%03
-
 ### SQLite PRAGMA and Connection Configuration
-
 #### Description
-SQLite behavior is partly configured per connection. Database integrity, journaling, durability/performance, and row representation are separate concerns even when configured in one function.
-
+SQLite behavior is partly configured per connection.
 #### Formal Definition
-SQLite PRAGMA statements are special commands used to inspect or modify SQLite metadata and connection/database behavior. Connection configuration is the centralized application of required settings to each new connection.
-
+PRAGMA statements inspect or modify SQLite metadata and connection/database behavior; centralized configuration applies expected settings to each connection.
 #### Practical Example
-Foreign-key enforcement can be enabled, WAL journaling selected, synchronous behavior adjusted, and named row access configured whenever a connection opens.
-
+Foreign keys, WAL, synchronous mode, and named row access are configured separately.
 #### Language Implementation
-Python executes PRAGMA statements through `sqlite3.Connection.execute()` or cursors. `connection.row_factory = sqlite3.Row` changes returned row representation.
-
+Python uses connection execution and `row_factory` assignment.
 #### Project Implementation
-Every Markei connection obtained through the database manager applies:
-
-```text
-PRAGMA foreign_keys = ON
-PRAGMA journal_mode = WAL
-PRAGMA synchronous = NORMAL
-row_factory = sqlite3.Row
-```
-
-These settings support referential enforcement, journaling behavior, a durability/performance trade-off, and name-based row access.
-
+Markei enables foreign keys, requests WAL, uses synchronous `NORMAL`, and configures `sqlite3.Row`.
 #### Required Concepts
 `%%%02`.
-
 #### Related Concepts
-`%%%01`, `&%%02`, `&%%04`.
-
+`%%%01`, `%%%04`, `&%%04`.
 #### Status
 Yellow.
-
 #### Source
-Confirmed connection configuration in the Main reconciliation reference.
+Current connection configuration.
 
 ---
 
 ## %%%04
-
 ### Relational Schema and Referential Integrity
-
 #### Description
-A relational schema defines tables, columns, keys, and relationships. Referential integrity ensures that references between records remain valid according to declared rules.
-
+A relational schema defines tables, columns, keys, relationships, and constraints.
 #### Formal Definition
-A relational schema is the structural specification of relations and constraints in a database. Referential integrity is the requirement that foreign-key values correspond to valid referenced records or permitted null states.
-
+Referential integrity requires foreign-key references to correspond to valid records or permitted null states.
 #### Practical Example
-A purchase references a product. Deleting the product may be prohibited, detached, or cascaded according to the declared foreign-key action.
-
+A purchase references a product and follows declared update/delete behavior.
 #### Language Implementation
-SQLite expresses schemas through `CREATE TABLE`, primary keys, foreign keys, indexes, nullability, and `ON UPDATE` or `ON DELETE` actions.
-
+SQLite uses `CREATE TABLE`, keys, indexes, nullability, and foreign-key actions.
 #### Project Implementation
-Markei defines `categories`, `products`, `stores`, `purchases`, `settings`, and `promotions`. The main relationship spine is Category-to-Product, Product-to-Purchase, Store-to-Purchase, and Product/Store-to-Promotion. `purchases.product_id` uses update and delete cascades. Other relationships do not all declare equivalent actions.
-
+Markei defines categories, products, stores, purchases, settings, and promotions with explicit relationships.
 #### Required Concepts
 `&&&01`, `&%%02`.
-
 #### Related Concepts
 `%%%01`, `%%%03`.
-
 #### Status
 Yellow.
-
 #### Source
-Confirmed current SQL schema and Main reconciliation.
+Current SQL schema.
 
 ---
 
 ## %%%05
-
 ### Bundled Resource Versus Writable User Data
-
 #### Description
-Application resources distributed with the program and user-created mutable data have different lifecycles. Replaceable program files should not be confused with persistent user state.
-
+Replaceable application resources and persistent mutable user state have different locations and lifecycles.
 #### Formal Definition
-A bundled resource is a version-controlled file supplied with the application runtime. Writable user data is mutable state created or modified during use and expected to persist independently of application installation files.
-
+A bundled resource is supplied with the application runtime; writable user data is created or modified during use and persists independently from installed program files.
 #### Practical Example
-A schema script can be bundled with the application, while the user's database belongs in a writable per-user directory.
-
+A schema script travels with the application while the user's database belongs in a per-user directory.
 #### Language Implementation
-Python commonly resolves resource paths using `pathlib`, frozen-runtime indicators, and packaging paths, while user data paths use environment variables or platform-specific directories.
-
+Python resolves source/frozen resources with paths and runtime indicators, while user data uses platform directories or environment variables.
 #### Project Implementation
-Markei treats `app/database/schema.sql` and `seed.sql` as bundled resources and stores `market.sqlite` under `%LOCALAPPDATA%/Markei`, with a home-directory fallback. Frozen execution is supported through `sys.frozen` and `_MEIPASS` lookup. Packaged-resource inclusion and installer lifecycle preservation remain operational validation questions.
-
+For the primary beta, `schema.sql` is bundled, `seed.sql` is a development/test fixture excluded from production, `market.sqlite` is retained writable state, WAL/SHM are transient companions, and `startup.log` is writable diagnostics under `%LOCALAPPDATA%/Markei`. External placement supports preservation but does not validate uninstall retention.
 #### Required Concepts
 `&&&04`, `%%%01`.
-
 #### Related Concepts
-`&&%01`.
-
+`&&%01`, `&&%04`, `&%%06`.
 #### Status
 Yellow.
-
 #### Source
-Reconciled resource and writable-state separation.
+Cycle 06 package inspection, startup diagnostics, and installer configuration.
 
 ---
 
-# Canonical Recovery Notes
+## %%%06
+### Build-Time, Runtime, and Installer-Time Dependency
+#### Description
+Dependencies belong to different lifecycle stages and must not be treated as one undifferentiated requirement set.
+#### Formal Definition
+A build-time dependency is required to produce a frozen artifact; a runtime dependency is required by the executing application and may be collected into or placed beside it; an installer-time dependency is required to compile or run installation tooling.
+#### Practical Example
+A packaging tool may be needed only on the builder, collected GUI libraries are needed by the executable, and an installer compiler is needed only to produce setup media.
+#### Language Implementation
+Projects separate dependency manifests, build commands, collected modules/native libraries, and external compiler discovery.
+#### Project Implementation
+Cycle 06 recorded PyInstaller 6.21.0 and PySide6 6.11.1 in `requirements-build.txt`. PyInstaller produced the one-folder runtime; collected PySide6/Qt components support execution; Inno Setup's `ISCC.exe` is an installer-time prerequisite whose absence blocked installer compilation without invalidating the frozen build.
+#### Required Concepts
+`&&%01`, `&&%04`, `&%%06`.
+#### Related Concepts
+`&&&05`, `%%%05`.
+#### Status
+Red.
+#### Source
+Cycle 06 dependency record, successful frozen build, and installer-time blocker.
 
-This register contains only concepts supported by the current implementation and the exact Main recovery reconciliation reference.
+---
 
-The following remain intentionally non-canonical decisions:
+# Canonical Boundary
 
-- whether page-local services are the desired final lifecycle model;
-- which composition object should own shutdown;
-- whether complete workflow transactions are required;
-- whether `ProductService` or `Repository` should be decomposed;
-- whether contracts should become complete substitutable interfaces;
-- whether dictionary view models should become typed objects;
-- whether migration should adopt a numbered version ledger;
-- whether the promotions table and `pages.order` are active, dormant, or stale;
-- whether packaged resources and installer lifecycle are fully validated.
+The four Cycle 06 additions — `&&&05`, `&&%04`, `&%%06`, and `%%%06` — are canonical **Red** concepts. They are supported as teachable distinctions but have not been demonstrated as learner mastery.
 
-These unresolved matters may appear later in the checkpoint as active or unstable concepts, but they do not define accepted solutions in canonical didactic knowledge.
+The register does not claim that a compiled installer exists, that installed execution has occurred, that uninstall retention is validated, or that the beta is accepted. Tool names remain project examples rather than standalone concepts. Existing architecture, migration, transaction, and packaging decisions remain owned by their proper project domains.
