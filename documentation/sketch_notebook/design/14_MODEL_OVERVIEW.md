@@ -1,188 +1,156 @@
 # 14_MODEL_OVERVIEW.md
 
-> Version: 0.4-cycle07-sprint02
+> Version: 0.5-cycle07-sprint03-unit01
 > Status: Active Derived Overview
 > Persistence Class: Derived
 > Knowledge Class: Design
 > Authority: Design Chat [D]
 > Canonical Source: `design/01_ARCHITECTURE.md`
-> Scope: Compact map of accepted desktop recovery and Flutter shared-beta planning boundaries
+> Scope: Compact responsibility and evidence map after the local Flutter foundation
 
 ---
 
-# 1. System Map
+# 1. Implemented Local Direction
 
 ```text
-Flutter presentation
-→ application / use cases
-→ domain / contracts / versioned analytics
-→ repository interfaces
-→ local persistence / event queue / synchronization adapters
-→ authenticated TypeScript synchronization API
-→ Neon Postgres
+Flutter composition
+→ application / Register Purchase
+→ independent Dart domain
+→ repository boundary
+→ Drift local adapter
+→ fresh application-private SQLite database
 ```
 
 ```text
-Python/PySide6 Cycle 06 beta
-    preserved as behavioral reference, migration source, and rollback
-    until Flutter parity receives human/Main acceptance
+Python/PySide6 beta
+    preserved
+    separate database
+    behavioral reference and rollback
 ```
 
-# 2. Responsibility Map
-
-| Boundary | Responsibility |
-| --- | --- |
-| Flutter presentation | Responsive Windows/mobile UI, navigation, input, accessibility, formatting |
-| Application/use cases | Catalogue resolution, Register Purchase, projection reads, auth and sync requests |
-| Domain/contracts | Identity, aggregate, quantity, money, event and invariant meaning |
-| Dart analytics registry | Stable algorithm identifiers/versions and deterministic calculations |
-| Repository interfaces | Application-facing persistence contracts |
-| Local persistence | Application-private authoritative facts, applied events, projections and cursor |
-| Event queue | Pending/in-flight/accepted/rejected upload state and safe retry |
-| Sync coordinator | Upload, cursor download, transactional application and status |
-| Auth session | Account/device session and platform-secure credential boundary |
-| TypeScript API | Token verification, authorization, validation, idempotency, sequence, cursor and transactions |
-| Neon | Managed Postgres persistence, constraints, roles, migrations and recovery facilities |
-
-# 3. Domain Relationship Map
+# 2. Domain Map
 
 ```text
 Account
+├── Device
 ├── Products
 ├── Stores
-├── Devices
 └── Purchases
     └── Purchase Items
         └── reference Product
+
+Purchase registration
+├── immutable local purchase.registered event
+└── pending queue entry
 ```
 
-**Account** is the immutable ownership boundary. Verified email is replaceable login identity.
+Products support PACKAGED and BULK identity modes. Purchase is multi-item capable even though no full user workflow exists.
 
-**Product** is an account-private reusable catalogue identity. PACKAGED identity includes normalized name, brand, package mode, amount and explicit dimension/unit. BULK identity omits package amount.
+# 3. Implemented Ownership
 
-**Store** is an account-private reusable purchase reference.
+| Surface | Current ownership/evidence |
+| --- | --- |
+| Flutter app/composition | Generated and analyzable; platform runtime unvalidated |
+| Application port | Coordinates Register Purchase |
+| Dart domain | Catalogue, Store, Purchase, Item, quantity, money, sync envelope, analytics |
+| Drift adapter | Fresh local schema and atomic transaction; implemented/tested |
+| Semantic fixtures | Versioned examples; incomplete as wire contracts |
+| Generated files | Owned through source schema/configuration and regeneration |
+| PySide6 | Preserved accepted beta; not retired |
 
-**Purchase** is an atomic occurrence at one Store with timestamp and currency.
-
-**Purchase Item** is an immutable commercial observation referencing one Product. The first UI may capture one Item; the aggregate supports several.
-
-# 4. Event and Ordering Map
+# 4. Atomic Local Workflow
 
 ```text
-purchase.registered envelope
-    event UUID
-    protocol + payload versions
-    account UUID
-    device UUID + monotonic device sequence
-    occurrence timestamp
-    Purchase aggregate + Item lines
+resolve/create exact Store and Products
+→ validate all Items
+→ insert Purchase and Items
+→ allocate local event metadata
+→ insert purchase.registered
+→ enqueue pending event
+→ commit once
 ```
 
-```text
-event UUID
-    idempotent retry identity
+Invalid Item validation rolls back every write. Local facts and pending events survive close/reopen. No network work exists inside the transaction.
 
+# 5. Implemented Representation
+
+```text
+Quantity
+    MASS → KG
+    VOLUME → L
+    COUNT → UNIT
+    six-decimal microunits
+    fractional COUNT rejected
+
+Money
+    ISO currency code
+    integer minor units
+
+Analytics
+    stable identifier + version registry
+    raw facts preserved
+```
+
+# 6. Evidence Classification
+
+**Implemented and locally tested:** domain boundaries, Drift fresh creation, catalogue structures, aggregate transaction, rollback, persistence/reopen, queue preparation, minimal analytics.
+
+**Generated but host-unvalidated:** Android, Windows, and iOS targets.
+
+**Not implemented:** purchase UI, authentication, API, Postgres/Neon, actual synchronization, second-device convergence, import, parity.
+
+# 7. Defects and Open Boundaries
+
+```text
 device sequence
-    per-installation creation order and gap detection
+    likely reset/reuse defect
+    monotonic ordering not established
 
-occurrence timestamp
-    business time, not sync order
+normalization
+    accented/Unicode behavior unsafe or unknown
+    v1 remains provisional
 
-account cursor
-    opaque server-accepted download position
+Product identifier
+    deterministic UUID-shaped candidate
+    RFC/cross-language contract absent
+
+fixtures
+    useful examples
+    incomplete protocol schema
+
+migration
+    fresh creation tested
+    upgrade/recovery and legacy import absent
+
+Store
+    exact-name reuse only
+    no deduplication/branch identity
 ```
 
-Each event is accepted transactionally. Upload batches return per-event outcomes. Downloaded events and local cursor advancement commit together. A new device bootstraps from cursor zero in bounded pages.
-
-# 5. Authoritative Facts and Projections
-
-Authoritative:
-
-- account/device ownership;
-- Product and Store identities;
-- Purchase and Purchase Item observations;
-- dimensional quantity;
-- explicit currency and minor-unit line totals;
-- immutable accepted events and server ordering;
-- explicit future correction facts when introduced.
-
-Derived and rebuildable:
-
-- package and normalized prices;
-- purchase interval and expected next purchase;
-- stock estimate;
-- Storage/Shortage/Market status;
-- price change;
-- personal inflation/deflation;
-- shrinkflation and product-family analytics;
-- store comparison and forecasts;
-- presentation labels/grouping.
-
-Derived results use stable Dart algorithm identifiers and versions where reproducibility matters.
-
-# 6. Local-First Transaction Map
+# 8. Next Route Comparison
 
 ```text
-Register Purchase locally
-→ validate aggregate
-→ resolve/create catalogue references
-→ commit Purchase + Items
-→ append pending event
-→ update/rebuild projection
-→ commit once
-→ synchronize later
+Route 1 — recommended first
+    fix sequence/Unicode
+    strengthen fixtures
+    minimal Flutter Purchase UI
+    local projection/history
+    close/reopen
+    Windows + Android execution
+
+Route 2 — later candidate
+    complete wire contract
+    TypeScript API
+    disposable Postgres
+    idempotency/sequence/cursor
+    second-device and account isolation
 ```
 
-```text
-Apply remote page
-→ insert unseen events
-→ apply account-owned facts
-→ rebuild affected projections
-→ advance account cursor
-→ commit once
-```
+Route 1 is a Design recommendation, not materialization authority.
 
-Network work never stays inside the local database transaction.
+# 9. Recovery Boundary
 
-# 7. Cloud Boundary
-
-```text
-Flutter client
-    access token only
-        ↓
-TypeScript API
-    authentication + authorization + protocol
-        ↓
-Neon Postgres
-    no privileged client access
-```
-
-RLS may provide defense in depth; API authorization remains mandatory.
-
-# 8. Transition and Evidence
-
-```text
-preserve PySide6 + original data
-→ define contracts and fixtures
-→ fresh isolated Flutter data
-→ prove reduced Register/projection parity
-→ prove sync on simulated devices
-→ validate Windows + Android
-→ validate iOS separately
-→ deterministic protected-copy migration
-→ human/Main acceptance
-→ only then consider PySide6 retirement
-```
-
-# 9. Provisional or Open
-
-Provisional: normalization v1, deterministic Product UUID, purchase snapshot minimum, cursor implementation, sequence recovery, decimal representation, fractional COUNT, RLS and legacy ambiguity policy.
-
-Open: Flutter persistence/secure-storage/state/navigation choices, auth provider, TypeScript API framework/host, migration tool, physical local/cloud schemas, repository topology and parity threshold.
-
-No candidate dependency or physical schema is validated or accepted by this derived overview.
-
----
+Flutter test success establishes local behavior only. It does not validate platform lifecycle, responsive composition, distributed synchronization, cloud architecture, or product parity.
 
 <!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
-> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content appended below it belongs to Sprint 03 or later. If recovery cost becomes excessive or this file grows beyond approximately 1,000 lines, this reviewed marker is an eligible semantic-partition boundary under human/Main authorization.
+> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content appended below it belongs to Sprint 03 or later.
