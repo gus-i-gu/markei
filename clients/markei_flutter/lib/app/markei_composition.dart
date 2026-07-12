@@ -3,6 +3,7 @@ import '../application/purchase_history.dart';
 import '../application/register_purchase.dart';
 import '../domain/shared/ids.dart';
 import '../infrastructure/local/local_database.dart';
+import '../infrastructure/local/local_device_identity_repository.dart';
 import '../infrastructure/local/local_purchase_repository.dart';
 import '../infrastructure/local/local_query_repository.dart';
 
@@ -23,16 +24,20 @@ final class MarkeiComposition {
   final AccountId accountId;
   final DeviceId deviceId;
 
-  factory MarkeiComposition.appPrivate() {
+  static Future<MarkeiComposition> appPrivate() async {
     final database = LocalDatabase.appPrivate();
     final queries = LocalQueryRepository(database);
+    const accountId = AccountId('local-account');
+    final deviceId = await LocalDeviceIdentityRepository(
+      database,
+    ).loadOrCreateDeviceId(accountId);
     return MarkeiComposition(
       database: database,
       purchaseRegistration: LocalPurchaseRepository(database),
       catalogueQueries: queries,
       purchaseHistory: queries,
-      accountId: const AccountId('local-account'),
-      deviceId: const DeviceId('windows-device'),
+      accountId: accountId,
+      deviceId: deviceId,
     );
   }
 }

@@ -24,22 +24,24 @@ class _MarkeiAppState extends State<MarkeiApp> {
       theme: ThemeData(colorSchemeSeed: const Color(0xff246b5a)),
       home: Scaffold(
         appBar: AppBar(title: const Text('Markei')),
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: [
-            PurchasePage(
-              accountId: widget.composition.accountId,
-              deviceId: widget.composition.deviceId,
-              registration: widget.composition.purchaseRegistration,
-              catalogueQueries: widget.composition.catalogueQueries,
-              onRegistered: () => setState(() => _refreshSignal++),
-            ),
-            HistoryPage(
-              accountId: widget.composition.accountId,
-              history: widget.composition.purchaseHistory,
-              refreshSignal: _refreshSignal,
-            ),
-          ],
+        body: SafeArea(
+          child: IndexedStack(
+            index: _selectedIndex,
+            children: [
+              PurchasePage(
+                accountId: widget.composition.accountId,
+                deviceId: widget.composition.deviceId,
+                registration: widget.composition.purchaseRegistration,
+                catalogueQueries: widget.composition.catalogueQueries,
+                onRegistered: () => setState(() => _refreshSignal++),
+              ),
+              HistoryPage(
+                accountId: widget.composition.accountId,
+                history: widget.composition.purchaseHistory,
+                refreshSignal: _refreshSignal,
+              ),
+            ],
+          ),
         ),
         bottomNavigationBar: NavigationBar(
           selectedIndex: _selectedIndex,

@@ -44,6 +44,13 @@ class _PurchasePageState extends State<PurchasePage> {
   bool _bulk = false;
   String? _message;
 
+  int get _stagedTotalMinorUnits {
+    return _items.fold<int>(
+      0,
+      (total, item) => total + item.lineTotal.minorUnits,
+    );
+  }
+
   @override
   void dispose() {
     _storeController.dispose();
@@ -247,6 +254,13 @@ class _PurchasePageState extends State<PurchasePage> {
             ),
           ],
         ),
+        if (_items.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Text(
+            'Staged total BRL ${(_stagedTotalMinorUnits / 100).toStringAsFixed(2)}',
+            key: const Key('purchase.stagedTotal'),
+          ),
+        ],
         if (_message != null) ...[
           const SizedBox(height: 12),
           Text(_message!, key: const Key('purchase.message')),

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'app/markei_app.dart';
 import 'app/markei_composition.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MarkeiApp(composition: MarkeiComposition.appPrivate()));
+  final composition = await MarkeiComposition.appPrivate();
+  runApp(MarkeiApp(composition: composition));
 }

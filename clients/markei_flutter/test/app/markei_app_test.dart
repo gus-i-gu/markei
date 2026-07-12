@@ -54,6 +54,57 @@ void main() {
     expect(find.text('2 item(s)'), findsOneWidget);
     expect(find.text('BRL 21.49'), findsOneWidget);
   });
+
+  testWidgets('phone-width purchase flow shows totals and persists history', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    final composition = MarkeiComposition(
+      database: db,
+      purchaseRegistration: LocalPurchaseRepository(db),
+      catalogueQueries: queries,
+      purchaseHistory: queries,
+      accountId: const AccountId('11111111-1111-4111-8111-111111111111'),
+      deviceId: const DeviceId('22222222-2222-4222-8222-222222222222'),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+
+    await _stageItem(
+      tester,
+      code: 'ARROZ-002',
+      name: 'Arroz Branco',
+      total: '12.99',
+    );
+    expect(find.text('Staged total BRL 12.99'), findsOneWidget);
+
+    await _stageItem(
+      tester,
+      code: 'FEIJAO-002',
+      name: 'Feijao Preto',
+      total: '8.50',
+    );
+    expect(find.text('Staged total BRL 21.49'), findsOneWidget);
+
+    await _tapVisible(tester, find.byKey(const Key('purchase.register')));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Device sequence 1'), findsOneWidget);
+
+    await tester.tap(find.text('History'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Mercado Central'), findsOneWidget);
+    expect(find.text('2 item(s)'), findsOneWidget);
+    expect(find.text('BRL 21.49'), findsOneWidget);
+  });
 }
 
 Future<void> _stageItem(
@@ -62,10 +113,40 @@ Future<void> _stageItem(
   required String name,
   required String total,
 }) async {
-  await tester.enterText(find.byKey(const Key('product.code')), code);
-  await tester.enterText(find.byKey(const Key('product.name')), name);
-  await tester.enterText(find.byKey(const Key('product.brand')), 'Marca A');
-  await tester.enterText(find.byKey(const Key('item.lineTotal')), total);
-  await tester.tap(find.byKey(const Key('item.add')));
+  await _enterVisibleText(tester, find.byKey(const Key('product.code')), code);
+  await _enterVisibleText(tester, find.byKey(const Key('product.name')), name);
+  await _enterVisibleText(
+    tester,
+    find.byKey(const Key('product.brand')),
+    'Marca A',
+  );
+  await _enterVisibleText(
+    tester,
+    find.byKey(const Key('item.lineTotal')),
+    total,
+  );
+  await _tapVisible(tester, find.byKey(const Key('item.add')));
   await tester.pumpAndSettle();
+}
+
+Future<void> _enterVisibleText(
+  WidgetTester tester,
+  Finder finder,
+  String text,
+) async {
+  await Scrollable.ensureVisible(
+    tester.element(finder),
+    duration: const Duration(milliseconds: 1),
+  );
+  await tester.pumpAndSettle();
+  await tester.enterText(finder, text);
+}
+
+Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
+  await Scrollable.ensureVisible(
+    tester.element(finder),
+    duration: const Duration(milliseconds: 1),
+  );
+  await tester.pumpAndSettle();
+  await tester.tap(finder);
 }
