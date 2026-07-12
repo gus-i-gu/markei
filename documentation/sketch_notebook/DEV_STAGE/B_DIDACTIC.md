@@ -1,77 +1,196 @@
 # Main Synthesis Summary
 
-Cycle 07 Sprint 01 should teach portability as a set of boundaries, not as a technology-name choice. Markei already separates much business vocabulary from PySide6, but that does not prove that the application can move unchanged to mobile. The smallest useful learning target is an offline-first, single-device prototype that uses mobile-local data, exercises one business workflow, and treats desktop behavior as evidence rather than the desktop database as a shared resource. A backend is not conceptually required unless later requirements introduce cross-device or multi-user coordination.
+Cycle 07 Shared Beta Planning changes Markei’s learning problem from “Can a mobile client work locally?” to “How can desktop and mobile preserve one account’s facts while each remains useful offline?” The favored planning target is one cross-platform client with local persistence, verified-email identity, a small custom synchronization API, Neon as shared event storage, and an append-only first synchronization workflow.
 
-Cycle 06 is accepted and closed. The Didactic checkpoint still says acceptance is pending; this is inherited checkpoint drift, not evidence for reopening the cycle. No existing concept maturity is changed by this report.
+The central lesson is separation of responsibilities. Email verification helps prove account access; an immutable account UUID identifies the account; an access token carries temporary proof to the API; the API validates, authorizes, orders, and accepts events; Neon stores shared facts; each client owns its local database, offline queue, and rebuilt projections. A managed database reduces database administration, but it does not invent synchronization rules.
 
-## Inspected Evidence
+The first shared slice should synchronize immutable purchase events and necessary identity/reference facts. Storage, Shortage, Market, expected dates, and averages should normally be rebuilt locally from those authoritative facts. This report stages concepts only. It does not select providers, authorize implementation, create KANBAN entries, or change maturity.
 
-Inspection explicitly used branch `cycle-07-mobile-preparation`. Current HEAD `889c9ac365e0d717ac33431bd82af286b0f343f1` descends from the verified baseline `f6414fbe7394453387067a5a34ca6cc7621bbed3`.
+# Conceptual Model of the Shared App
 
-Methodology and Cycle context were recovered from `AGENTS.md`, `INDEX.md`, the four required methodology files, `00_PROJECT_STATE.md`, `06_SESSION_SCHEME.md`, `didactics/08_CONCEPT_MAP.md`, and `[M]_STAGE/J_[M]_STAGE.md`.
+Each installation is a client with its own durable local database. “Offline-first” means registering and viewing purchases should continue when the network is unavailable. It does not mean permanently offline: when connectivity returns, the client uploads queued local events and downloads events it has not seen.
 
-Implementation evidence included `app/core/models.py`, `contracts.py`, `services.py`, `repository.py`, `database.py`, `config.py`, all tracked source under `app/desktop/` and `app/mobile/`, both entry points, and `app/database/schema.sql`. The models are Python dataclasses without UI imports. `ProductService` contains validation, calculations, settings, and UI-facing projections, but imports and constructs the concrete `Repository`. The repository owns SQLite operations. The database manager assumes bundled resources plus a Windows-oriented `%LOCALAPPDATA%`/home fallback. The desktop tree is a substantial PySide6 UI; `app/mobile/main.py` is empty. The schema expresses durable product, purchase, category, store, setting, and promotion facts.
+The shared model is:
 
-## Concepts Required for the Decision
+```text
+user action
+→ local transaction
+→ append authoritative event locally
+→ update/rebuild local projections
+→ queue event for synchronization
+→ authenticated API upload
+→ idempotent shared append
+→ server cursor
+→ other client downloads unseen events
+→ transactional local application
+→ deterministic projection rebuild
+```
 
-**Shared language versus shared runtime.** Two platforms may both use Python source syntax while needing different interpreters, packaging systems, native bridges, libraries, and lifecycle support. Shared Python therefore reduces translation only if a supported Python runtime and every required dependency can execute inside the mobile platform boundary.
+The API is an application boundary, not merely a tunnel to Neon. It protects database credentials and owns validation, account isolation, retry behavior, cursor semantics, and protocol compatibility. Neon is the managed Postgres store behind that boundary. “Managed” means infrastructure duties such as hosting and availability are reduced; synchronization logic still belongs to Markei.
 
-**Platform-neutral code versus portable application.** Code is platform-neutral when its meaning does not depend on a particular UI toolkit, operating-system path, packaging context, or device lifecycle. An application is portable only when its entire executable chain—runtime, dependencies, storage paths, resources, lifecycle, UI, and deployment—works on the target. Markei’s dataclasses and many calculations look platform-neutral; the concrete repository construction and Windows-shaped database location remain portability questions.
+A shared client does not mean a copied database file. Database-file copying mixes local engine state, partially written changes, platform paths, and device-specific lifecycle. Synchronization exchanges defined facts through a protocol.
 
-**Business behavior versus UI implementation.** Business behavior defines what registering a receipt, recalculating a product, or classifying a list means. UI implementation defines how a user enters, navigates, and sees that behavior. PySide6 pages are desktop presentation, while service rules are candidate business behavior. UI-facing dictionaries may preserve useful meanings, but their shape could also reflect current widgets and must be tested as contracts rather than assumed universal.
+# Identity, Authentication and Authorization
 
-**Contract reuse versus source-code reuse.** Source reuse means executing the same implementation. Contract reuse means preserving inputs, outputs, invariants, error cases, and fixtures even when another language reimplements the behavior. `contracts.py` names responsibilities, but its Python abstract classes alone are not a language-neutral mobile contract. Cross-language clients would learn more from explicit schemas and shared behavioral examples than from copying Python interfaces.
+**Identity** answers “Which account, device, entity, or event is this?” **Authentication** answers “What evidence proves this caller controls the account?” **Authorization** answers “What may this authenticated caller read or write?”
 
-**Client, service, and contract.** A client is the user-facing application and its local orchestration. A service owns business workflows; it need not mean a network server. A contract describes the stable boundary by which callers use behavior. This vocabulary prevents “service layer” from being mistaken for “backend.”
+A verified email address is a login and communication attribute. It may change, differ in capitalization, or be replaced. It should not be the permanent key connecting every purchase. After verification, the system resolves an immutable account UUID. That UUID remains the stable owner even if the email changes.
 
-**Local persistence versus synchronization.** Local persistence keeps state across launches on one installation. Synchronization reconciles state between independent stores and therefore requires identity, transport, conflict, failure, and security semantics. SQLite proves local persistence, not synchronization. The mobile prototype should create its own sandboxed database and must not access the ordinary desktop database.
+An access token is short-lived proof presented to the API. It may contain or resolve the account identity and expiry. It is not a database credential. A database credential can directly access Neon and may carry broad privileges; embedding it in clients would bypass Markei’s validation and account-ownership rules.
 
-**Offline-first versus cloud-backed operation.** Offline-first means core work remains available against authoritative local state without a network; optional synchronization can happen later. Cloud-backed operation makes remote infrastructure part of the operating boundary, even if caches exist. Markei’s current single-device workflow supports investigating offline-first without accounts or a backend.
+Authorization applies after authentication. The API must still ensure that an event’s `account_id` belongs to the authenticated account. **Row ownership** means every shared event or relevant reference fact is scoped to its owning account, preventing one account from reading or appending another account’s data.
 
-**Prototype evidence versus production architecture.** A prototype answers a bounded uncertainty: can one vertical slice run and preserve its meanings? It does not prove maintainability, complete migration, store distribution, accessibility, synchronization, security, or production fitness. Evidence should be recorded at exactly the level demonstrated.
+# Local Persistence and Synchronization
 
-## Candidate Concept Dependency Order
+Local persistence means one installation retains data across close, restart, and offline use. Shared state means facts accepted into the account-scoped server history can become available to other authorized installations. Synchronization is the protocol that moves and applies those facts; it is not “make two SQLite files identical.”
 
-1. Platform boundary and execution context.
-2. Business behavior versus presentation.
-3. Shared language versus shared runtime.
-4. Platform-neutral component versus portable application.
-5. Client, service, repository, and contract boundaries.
-6. Source reuse versus contract/fixture reuse.
-7. Mobile-local persistence and sandbox ownership.
-8. Offline-first operation.
-9. Synchronization and conflict semantics, only if required.
-10. Prototype evidence versus production acceptance.
+An **offline queue** records events created locally but not yet acknowledged by the server. Losing the network must not lose the purchase. Reconnecting should retry safely. Downloading must also be incremental: the client asks for events after its last acknowledged server cursor, applies them transactionally, then advances its local cursor.
 
-## Approach Families from the Learner’s Perspective
+**Eventual consistency** means devices may temporarily show different state while offline or between synchronization rounds, but should converge after they have received and deterministically applied the same accepted facts. It is not permission for arbitrary permanent disagreement.
 
-| Family | Main learning gain | Principal misconception to avoid | Prototype question |
-| --- | --- | --- | --- |
-| A. Shared Python core + Python-native UI | Tests whether source and business behavior can share one runtime | “Written in Python” means mobile-ready | Can a supported mobile Python runtime execute one service workflow with sandboxed SQLite and a native-feeling screen? |
-| B. Web/hybrid presentation | Separates portable UI skills from local storage and native bridges | Web UI automatically implies a server | Can a packaged client perform the slice offline with local persistence and no Python process? |
-| C. Native/cross-platform client + explicit contracts | Makes behavior preservation independent of implementation language | Reimplementation must drift | Can contract examples and fixtures reproduce one Python-defined workflow locally? |
-| D. Service-backed client | Teaches remote authority, accounts, sync, and failure boundaries | Mobile automatically requires cloud infrastructure | Which demonstrated requirement cannot be satisfied by a local client? |
+**Conflict avoidance** designs the first slice so conflicting edits are uncommon: immutable purchases, no purchase editing/deletion, stable IDs, and append-only exchange. **Conflict resolution** defines what happens when legitimate competing changes exist. By excluding mutable concurrent workflows, Sprint 02 can avoid designing a general resolution system without pretending conflicts are universally solved.
 
-A offers maximal possible source reuse but depends most strongly on mobile Python runtime evidence. B may match existing web-language familiarity and remain offline, but likely replaces or relocates Python behavior. C makes the reuse distinction clearest and may offer stronger platform integration at the cost of duplicated implementation. D should remain deferred under current requirements because it adds concepts and operations not needed to test local portability.
+# Append-Only Event Model
 
-## Possible KANBAN Candidates — Not Promoted
+An append-only event records that something happened; accepted events are not overwritten in place. For Markei, “purchase registered” is a strong first event because purchases are already treated as immutable historical facts. A mutable record instead represents a current value that can be replaced, which demands rules for concurrent edits and lost updates.
 
-- `&&&` Platform Boundary and Execution Context.
-- `&&&` Source Reuse versus Contract Reuse.
-- `&&&` Local Persistence versus Synchronization.
-- `&&&` Offline-First State Authority.
-- `&&&` Prototype Evidence versus Production Architecture.
-- `&&%` Python Language Availability versus Python Runtime Availability.
-- `&%%` UI Projection as Contract Candidate.
-- `&%%` Mobile Sandbox and Database Ownership.
-- `%%%` Mobile Runtime, Packaging, and Native Bridge Dependency.
+Event identity and entity identity differ. An `event_id` UUID identifies one occurrence in the synchronization history. An `entity_id` identifies the product, purchase, store, or other domain object affected. Two events may concern the same entity, while one retry of the same event retains the same event UUID.
 
-These are candidates only. IDs, canonical definitions, relationships, and maturity require later Didactic promotion authority and learner evidence.
+A planning event needs:
 
-## Minimum Concepts Before Prototype Materialization
+```text
+event UUID
+account UUID
+device UUID
+per-device sequence
+entity type and entity UUID
+operation type
+payload
+client occurrence time
+server acceptance cursor
+schema/protocol versions
+```
 
-Before Main authorizes a prototype, the learner needs only to explain: where code executes; which behavior is being preserved; whether preservation uses the same source or an explicit contract; who owns the mobile-local database; why offline-first does not mean synchronized; and what single claim the prototype can validate. Synchronization algorithms, authentication, cloud hosting, production migrations, and final repository topology are unnecessary unless the selected slice or demonstrated requirements make them unavoidable.
+The authoritative fact is the accepted purchase event and required identity/reference facts. Cached averages and status labels are interpretations of those facts, not competing events to be synchronized independently.
 
-## Handoff to Main
+# Ordering, Idempotency and Cursors
 
-Select a vertical slice that registers or reads one meaningful local fact through a mobile presentation, preserves an explicit business invariant, uses a fresh sandboxed store, and produces evidence for one approach family. Keep backend, desktop-database access, full UI parity, maturity changes, and production-architecture claims outside the Sprint 01 conclusion.
+Timestamps alone are insufficient. Device clocks differ; an offline event may arrive late; two events may share a timestamp; and network retries may deliver events in a different order. Client occurrence time remains useful for domain meaning—when the purchase happened—but cannot alone establish unique identity, duplicate protection, or global delivery order.
+
+The combined roles are:
+
+- **Event UUID:** globally identifies the logical event and lets retries refer to the same fact.
+- **Device sequence:** records creation order from one installation and exposes gaps or repeated submissions.
+- **Client occurrence time:** preserves the user/domain time associated with the purchase, while remaining untrusted for global ordering.
+- **Server cursor:** gives accepted events a server-owned incremental download position.
+
+**Idempotency** means repeating the same request has the same intended result as accepting it once. If upload acknowledgement is lost, the client retries the same event UUID. The API recognizes it and returns the existing acceptance rather than creating a second purchase.
+
+A retry is another attempt to deliver the same event; duplication is accidentally storing or applying that event more than once. Idempotency connects them safely. A per-device sequence does not replace the event UUID: it orders one device’s events but is not globally unique. The server cursor does not replace purchase time: it orders server acceptance/download, not real-world occurrence.
+
+# Facts and Derived Projections
+
+An **authoritative fact** is the accepted source statement from which other state can be reproduced. A **derived projection** is a read-oriented view calculated from facts.
+
+For Markei:
+
+```text
+purchase events
+→ local purchase history
+→ duration and consumption calculations
+→ expected dates
+→ Storage / Shortage / Market projections
+```
+
+Synchronizing projections as mutable truth risks disagreement: desktop and mobile could upload different calculated values. Synchronizing purchase facts and rebuilding projections from one specified rule set makes semantic parity testable. A golden fixture can provide events and expected projections to both clients.
+
+A protocol version describes the message rules: required fields, endpoints, cursor behavior, error meanings, and compatibility. A schema version describes a particular stored data shape or event payload shape. They may evolve together, but they are not interchangeable. The API can support more than one protocol version while migrating storage independently.
+
+# Concept Dependency Spine
+
+```text
+Stable Identity
+→ Authentication
+→ Authorization / Row Ownership
+→ API boundary and access token
+→ Local Persistence
+→ Append-Only Event / Offline Queue
+→ Event Identity
+→ Idempotency
+→ Per-Device Ordering
+→ Synchronization Cursor
+→ Sync Protocol and Versioning
+→ Eventual Consistency
+→ Authoritative Fact / Derived Projection
+→ Conflict Avoidance
+→ later Conflict Resolution, only when mutable workflows require it
+```
+
+Existing concepts provide prerequisites: Responsibility Boundary, Naming as Data Contract, Raw versus Derived Data, Application Service, Repository Pattern, Resource Ownership, Workflow Atomicity, SQLite ownership, and Evidence State.
+
+# KANBAN Candidates
+
+No concept is promoted in this staging task. Candidates for later evaluation are:
+
+- Authentication
+- Authorization
+- Stable Identity
+- Append-Only Event
+- Idempotency
+- Event Ordering
+- Synchronization Cursor
+- Eventual Consistency
+- Authoritative Fact
+- Derived Projection
+- Sync Protocol
+- Row Ownership
+- Offline Queue
+- Schema/Protocol Versioning
+
+Some may merge with existing identities. “Authoritative Fact / Derived Projection” overlaps `&&&02 Raw Data Versus Derived Data`; “Row Ownership” may be a specialized authorization example; transaction behavior overlaps `&%%05`. Later promotion should create only concepts with independent reusable meaning and concrete evidence.
+
+Glossary candidates use the same names but remain derivative candidates until canonical identity exists. No glossary truth is created here.
+
+# Learner Checkpoints
+
+1. Explain why verified email and account UUID serve different purposes.
+2. Distinguish authentication from authorization using an attempted cross-account event.
+3. Explain why a client receives an access token rather than Neon credentials.
+4. Describe what remains possible while completely offline.
+5. Distinguish an event UUID from the purchase/product entity UUID.
+6. Explain four reasons timestamps cannot provide total synchronization order.
+7. Assign one job each to event UUID, device sequence, occurrence time, and server cursor.
+8. Show why retrying after a lost acknowledgement must not create a second purchase.
+9. Explain eventual consistency without claiming immediate equality.
+10. Identify authoritative purchase facts and rebuilt Storage/Shortage/Market projections.
+11. Distinguish protocol version from storage schema version.
+12. Explain which exclusions avoid conflicts and which future feature would require resolution.
+
+# Misconceptions to Prevent
+
+```text
+email address = permanent account identity
+authentication = authorization
+access token = database password
+managed Postgres = synchronization system
+API = direct database connection
+local persistence = shared state
+synchronization = database-file copying
+timestamp = unique identity or total order
+retry = new event
+event identity = entity identity
+append-only = no validation
+offline-first = never connects
+eventual consistency = uncontrolled inconsistency
+derived projection = authoritative fact
+conflict avoidance = general conflict resolution
+protocol version = schema version
+planning preference = validated architecture
+technical evidence = learner mastery
+```
+
+# Handoff to Main
+
+Main can reconcile this dependency model with Operational feasibility and Design ownership. The next planning decision should define the minimum event envelope, account/device identity rules, API-visible idempotency and cursor behavior, deterministic purchase fixtures, local transaction boundary, and explicit exclusions.
+
+The favored shared-beta target is conceptually coherent, but provider selection, Neon schema, API runtime, authentication service, protocol acceptance, framework selection, and implementation remain open. D/E/F should remain postponed until Main converts the reconciled A/B/C plans into one bounded authorization. No KANBAN concept or maturity state changed.
