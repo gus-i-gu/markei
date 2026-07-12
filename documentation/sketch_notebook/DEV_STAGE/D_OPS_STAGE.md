@@ -1,554 +1,259 @@
-# D_OPS_STAGE — Cycle 07 Sprint 04 Windows Local Vertical Slice
+# D_OPS_STAGE.md — Cycle 07 Sprint 05 Android Materialization
 
-> Role owner: Main Chat [M]
-> Operational sources: `A_OPERATIONAL.md`, J §21, `06_SESSION_SCHEME.md`
-> Status: Main-approved Codex materialization authority
-> Repository: `gus-i-gu/markei`
-> Required branch: `cycle-07-mobile-preparation`
-> Accepted baseline: `f6414fbe7394453387067a5a34ca6cc7621bbed3`
-> A/B/C inspected head: `495dea0c3bc82f04037bcf55d4f11505e3b482b5`
-> J authority commit: `93605b64ebe685ab795790de7121c968e347fb85`
-> Sprint outcome: corrected, schema-validated, user-visible local Flutter Purchase workflow executed on Windows
-> Maximum scope: this D/E/F package only
+> Status: Main-approved temporary implementation directive  
+> Authority: Main Chat [M]  
+> Branch: `cycle-07-mobile-preparation`  
+> Reconciliation: J §23  
+> Inputs: Sprint 05 A/B/C, 00/05/06, repository truth, human Windows evidence  
+> Scope: Android debug parity and bounded shared-client correction
 
 ---
 
-# 1. Materialization mandate
+# 1. Outcome
 
-This is an implementation task.
+Materialize and validate Markei as an Android debug application while preserving the validated Flutter Windows workflow and protected Python/PySide6 beta.
 
-Codex must modify the authorized Flutter source, local Drift schema, versioned contracts, tests, and G/H/I reports.
-
-A documentation-only response is failure unless a stop condition prevents source work.
-
-The protected Python/PySide6 beta remains untouched and recoverable.
-
-The ordinary Cycle 06 database must never be opened, copied, hashed, migrated, reset, or used by Flutter.
-
----
-
-# 2. Required result
-
-Implement and validate:
+Success is runtime evidence, not generated files:
 
 ```text
-device sequence correction
-+ Product identity separation
-+ Product user code
-+ Unicode normalization v2
-+ Drift schema v2 migration
-+ shared_beta/v2 JSON Schemas and examples
-+ minimal multi-item Purchase interface
-+ visible local Purchase history
-+ application-private database composition
-+ close/reopen persistence
-+ Windows build and launch
-+ conditional Android build
-+ Python regressions
+one Flutter SDK
++ Android doctor ready
++ one Android runtime online
++ stable application ID
++ persistent installation UUID
++ debug APK
++ Android Purchase/History
++ lifecycle and persistence evidence
++ Windows/Python regressions
++ G/H/I
 ```
 
-Do not begin TypeScript, API, Postgres, Neon, authentication, or actual synchronization.
+# 2. Fixed Main decisions
 
----
+- selected Flutter SDK: `H:\Users\Gus\develop\flutter`;
+- do not delete or mutate `C:\Users\gusrm\flutter`;
+- Android namespace/application ID: `com.gusigu.markei`;
+- display label: `Markei`;
+- primary runtime: emulator; physical device is fallback;
+- Device identity: database-owned persisted UUID v4;
+- Account remains `local-account`;
+- debug signing only;
+- UI changes limited to Android workflow blockers;
+- production release, cloud, synchronization, authentication, and broad redesign are deferred.
 
-# 3. Preflight
+# 3. Authorized writes
 
-Before editing, run and record:
+Codex may modify only:
+
+- `clients/markei_flutter/android/**` except secrets, production keystores, and host-local `local.properties` in commits;
+- `clients/markei_flutter/lib/**`;
+- `clients/markei_flutter/test/**`;
+- `clients/markei_flutter/pubspec.yaml` and lockfile only if a dependency is strictly required and justified;
+- generated Dart outputs corresponding to authorized schema changes;
+- `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`;
+- `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`;
+- `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`.
+
+Codex may run formatting and generators that update only their owned generated files. Do not modify Python source, Cycle 06 databases, contracts unrelated to Device bootstrap, permanent documentation, J, 00, 05, 06, A/B/C, D/E/F, or methodology.
+
+# 4. Host-mutation authority
+
+After preflight, Codex may guide or invoke installation of:
+
+- current stable Android Studio compatible with Flutter 3.44.6;
+- Android SDK Platform 36;
+- Build-Tools;
+- Command-line Tools latest;
+- Emulator;
+- Platform-Tools;
+- CMake;
+- NDK side-by-side matching `flutter.ndkVersion`;
+- one compatible x64 emulator system image.
+
+Human must confirm GUI choices, UAC prompts, licence text, install locations, virtualization changes, physical-device debugging, and any reboot. Do not automate acceptance of licences without the human present. Do not install preview/canary channels, global package managers, production signing tools, or unrelated workloads.
+
+# 5. Preflight and stop gate
+
+From repository root, capture without mutation:
 
 ```powershell
 git status --short --branch
 git branch --show-current
 git rev-parse HEAD
 git rev-parse origin/cycle-07-mobile-preparation
-git merge-base --is-ancestor f6414fbe7394453387067a5a34ca6cc7621bbed3 HEAD
-git diff --name-only
+where.exe flutter
+Get-Command flutter -All | Format-List Source,Version
 flutter --version
 dart --version
 flutter doctor -v
-flutter devices
-python --version
+$env:Path -split ';' | Where-Object { $_ -match 'flutter|dart|android' }
+Test-Path "H:\Users\Gus\develop\flutter"
+Test-Path "C:\Users\gusrm\flutter"
 ```
 
-Required branch:
+Requirements:
 
-```text
-cycle-07-mobile-preparation
-```
+- clean or fully understood worktree;
+- correct branch;
+- H: resolves first;
+- Flutter 3.44.6/Dart 3.12.2;
+- existing C: clone remains untouched;
+- sufficient disk;
+- no unreviewed personal/device data in logs.
 
-Stop before editing when:
+If VS Code, shell, doctor, or `android/local.properties` disagree, update user/editor configuration and regenerate host-local properties so all use H:. Do not commit `local.properties`. Stop if convergence cannot be demonstrated.
 
-- the required branch is not active;
-- the accepted baseline is not an ancestor;
-- uncommitted changes overlap authorized paths;
-- remote/local divergence cannot be reconciled without force;
-- D/E/F disagree;
-- the ordinary database cannot remain isolated.
+# 6. Android installation gate
 
-Non-overlapping user changes must be preserved.
+Before installation, record existing Android Studio, SDK, Java, adb, emulator, virtualization, and environment-variable state. Prefer Android Studio Setup Wizard/SDK Manager.
 
-Never run `git reset --hard`, `git clean`, destructive checkout, or force-push.
-
----
-
-# 4. Environment baseline
-
-Expected recorded environment from Sprint 03:
-
-```text
-Flutter 3.44.6 stable
-Dart 3.12.2
-Windows host
-Android SDK absent
-Visual Studio C++ workload absent
-```
-
-Use the installed Flutter stable toolchain.
-
-Do not upgrade Flutter/Dart unless the current project cannot resolve with the recorded version and the user separately approves the upgrade.
-
-Commit the resolved `pubspec.lock`.
-
----
-
-# 5. Authorized Dart dependencies
-
-Authorize:
-
-```yaml
-unorm_dart: ^0.3.2
-json_schema: ^5.2.2
-```
-
-Use `unorm_dart` for local Unicode normalization.
-
-Use `json_schema` in contract-validation tests.
-
-No runtime remote schema fetch is allowed.
-
-Schema references must resolve from local files or in-memory caches.
-
-No new state-management, routing, networking, authentication, telemetry, or cloud dependency is authorized.
-
-If dependency resolution selects compatible newer patch versions, retain the lockfile and report exact versions.
-
-Stop if either package cannot resolve with the current Dart SDK.
-
----
-
-# 6. Windows tooling permission
-
-The user authorizes Windows tool installation required by this D/E/F package.
-
-First diagnose:
+After installation, with human confirmation:
 
 ```powershell
+flutter doctor --android-licenses
 flutter doctor -v
-winget --version
-winget list --id Microsoft.VisualStudio.2022.Community
-winget list --id Microsoft.VisualStudio.2022.BuildTools
-```
-
-Required Flutter workload:
-
-```text
-Microsoft.VisualStudio.Workload.NativeDesktop
-Desktop development with C++
-MSVC toolchain
-Windows SDK
-CMake tools
-```
-
-If no suitable Visual Studio installation exists, Codex may request sandbox/UAC approval and run:
-
-```powershell
-winget install --id Microsoft.VisualStudio.2022.Community -e --override "--wait --passive --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
-```
-
-If Visual Studio exists without the workload:
-
-- prefer modifying it through Visual Studio Installer;
-- request the required UAC approval;
-- select `Desktop development with C++`;
-- do not remove existing workloads;
-- do not install optional unrelated workloads.
-
-After installation:
-
-```powershell
-flutter doctor -v
+flutter emulators
 flutter devices
+adb devices -l
 ```
 
-Pass requires:
+Pass only when Android toolchain is doctor-ready and one intended runtime is online. Sanitize serial numbers in reports. Do not root, unlock, bypass security, request broad storage, or inspect personal device contents.
 
-- Visual Studio Windows-development check passes;
-- a Windows device appears.
+# 7. Source Unit A — stable Android identity
 
-Stop and report when:
+Replace `com.example.markei` consistently in:
 
-- enterprise policy blocks installation;
-- UAC is denied;
-- winget is unavailable;
-- a reboot is required;
-- installation would replace/remove unrelated components;
-- Flutter doctor remains red after one bounded repair attempt.
+- Gradle namespace;
+- Gradle application ID;
+- Kotlin package declaration/path;
+- tests/configuration that directly reference the placeholder.
 
-Do not repeatedly reinstall Visual Studio.
+Set label to `Markei`. Preserve Flutter embedding v2. Do not add product logic to Kotlin. Do not introduce release keystore material.
 
----
+Validate with repository search showing no active `com.example.markei` reference.
 
-# 7. Android boundary
+# 8. Source Unit B — persistent Device UUID
 
-Android installation is not authorized by this package.
+Remove `windows-device` from shared production composition.
 
-Run:
+Implement one local identity boundary that:
+
+1. opens the app-private Drift database;
+2. loads the persisted Device record;
+3. creates UUID v4 only when absent;
+4. stores it transactionally;
+5. reuses it before sequence allocation;
+6. survives process restart;
+7. yields distinct UUIDs for distinct fresh databases.
+
+Keep Device identity coupled to its sequence state. Do not use hardware identifiers, email, Product data, path, platform name, timestamp alone, preferences, or secure storage. Do not change `local-account`.
+
+If schema changes, increment schema version, provide an additive migration, preserve all Purchase/Product/History facts, regenerate owned code, and add migration/reopen tests. Never reset the database as migration.
+
+# 9. Source Unit C — bounded mobile behavior
+
+Run the existing shared Dart entrypoint on Android. Correct only demonstrated blockers involving:
+
+- narrow-screen overflow/scrolling;
+- keyboard obstruction and input actions;
+- focus/validation visibility;
+- bottom navigation and Android Back;
+- safe areas;
+- portrait/landscape rebuild;
+- readable text scale/tap targets;
+- background/resume;
+- committed-data recovery after process restart.
+
+Unsaved staged Items may reset on rotation only if deterministic and visible. They must never partially commit. Do not add a new state-management/navigation framework or redesign the interface.
+
+# 10. Controlled validation data
+
+Use non-personal test data:
+
+```text
+Store: Sprint 05 Test Store
+Product 1: Test Rice / Markei Test / 1 KG
+Product 2: Test Milk / Markei Test / 1 L
+Currency: BRL
+```
+
+Register one two-item Purchase, verify calculated total and History, then background/resume, use Back, open/close keyboard, rotate, terminate process without clearing data, relaunch, verify facts, register a second Purchase, and verify Device UUID stability plus monotonic sequence.
+
+Do not uninstall or clear app data during the persistence pass.
+
+# 11. Build and automated evidence
+
+From `clients\markei_flutter`:
 
 ```powershell
-flutter doctor -v
-flutter devices
-```
-
-If an Android SDK is already healthy:
-
-```powershell
-flutter build apk --debug
-```
-
-If it is absent or unhealthy:
-
-- do not install Android Studio;
-- do not install SDK packages;
-- record the exact doctor/device blocker;
-- classify Android as host-blocked without failing Sprint 04.
-
-Android execution is not required.
-
-iOS is outside scope.
-
----
-
-# 8. Authorized repository paths
-
-Codex may create or modify only:
-
-```text
-clients/markei_flutter/pubspec.yaml
-clients/markei_flutter/pubspec.lock
-clients/markei_flutter/lib/**
-clients/markei_flutter/test/**
-clients/markei_flutter/integration_test/**
-clients/markei_flutter/windows/** only when Flutter regeneration changes required generated integration
-clients/markei_flutter/android/** only when an authorized conditional build requires conventional regeneration
-contracts/shared_beta/v2/**
-documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-```
-
-Generated `local_database.g.dart` may be regenerated and committed.
-
-Do not edit generated source manually.
-
-Do not modify:
-
-```text
-app/**
-tests/** except running the existing Python tests
-contracts/shared_beta/v1/**
-documentation/sketch_notebook permanent files
-A/B/C
-D/E/F after materialization begins
-J
-00/05/06
-methodology/**
-installer/**
-build/**
-dist/**
-ordinary SQLite data
-```
-
-If a required change falls outside authorized paths, stop and report.
-
----
-
-# 9. Implementation order
-
-Use this order:
-
-1. Add dependencies.
-2. Add failing Product identity/Unicode tests.
-3. Correct domain identity behavior.
-4. Add failing repeated-sequence tests.
-5. Correct Device creation/allocation and uniqueness.
-6. Advance Drift schema to v2.
-7. Add v1→v2 migration rehearsal.
-8. Create v2 JSON Schemas/examples.
-9. Add schema-validation tests.
-10. Add repository read/query operations.
-11. Add composition root and local database lifecycle.
-12. Add minimal Purchase UI.
-13. Add local history UI.
-14. Add widget/integration tests.
-15. Run generation, format, analysis, and tests.
-16. Install/validate Windows tooling when needed.
-17. Build and launch Windows.
-18. Attempt Android build only if already available.
-19. Run Python regressions.
-20. Audit scope and update G/H/I.
-
-Do not implement UI before correctness tests exist.
-
----
-
-# 10. Required correctness tests
-
-Product tests must prove:
-
-- internal Product ID is immutable and UUID v4 for new rows;
-- user Product code is required;
-- display code is preserved;
-- normalized code is account-scoped and case-insensitively unique;
-- code length after trim is 1–64 characters;
-- composed/decomposed Portuguese accents normalize equally;
-- display name and brand are preserved;
-- semantic normalization does not remove `é`, `ã`, `ç`, or `ó`;
-- PACKAGED identity includes canonical quantity;
-- BULK identity excludes package quantity;
-- gram/kilogram equivalence remains;
-- similarity only warns;
-- no automatic merge occurs.
-
-Sequence tests must prove:
-
-- first registration uses sequence 1;
-- second uses 2;
-- third uses 3;
-- reopen continues with 4;
-- invalid Purchase does not consume a committed sequence;
-- duplicate account/device/sequence is rejected;
-- Device registration never resets an existing sequence.
-
-Migration tests must prove:
-
-- fresh v2 creation;
-- v1 Product/Purchase/event data survives v2 open;
-- old Product IDs and Purchase references remain unchanged;
-- legacy Product rows receive unique temporary user codes;
-- migration ledger records runtime execution;
-- migration failure does not silently delete/reset data.
-
----
-
-# 11. Contract validation commands
-
-Contract tests run through Flutter/Dart tests.
-
-Required schemas:
-
-```text
-contracts/shared_beta/v2/schemas/catalogue_product.schema.json
-contracts/shared_beta/v2/schemas/purchase_aggregate.schema.json
-contracts/shared_beta/v2/schemas/purchase_registered_event.schema.json
-```
-
-Required example groups:
-
-```text
-contracts/shared_beta/v2/examples/valid/**
-contracts/shared_beta/v2/examples/invalid/**
-```
-
-Tests must:
-
-- load every schema locally;
-- validate every valid example;
-- reject every invalid example;
-- assert expected validation failures;
-- separately test cross-field domain invariants;
-- avoid network access.
-
-Schema Draft 7 is the accepted structural target.
-
----
-
-# 12. Required Flutter validation
-
-From `clients/markei_flutter`:
-
-```powershell
+flutter clean
 flutter pub get
 dart run build_runner build --delete-conflicting-outputs
-dart format .
 dart format --output=none --set-exit-if-changed .
 flutter analyze
 flutter test
+flutter build apk --debug
+flutter run -d <device-id>
 ```
 
-All must pass.
-
-Do not suppress analyzer failures broadly.
-
-Do not delete meaningful tests to obtain a pass.
-
----
-
-# 13. Windows build and launch
-
-After doctor passes:
+Then regress:
 
 ```powershell
 flutter build windows
-flutter run -d windows
-```
-
-Required launch evidence:
-
-- Markei window opens;
-- no startup exception;
-- app-private database initializes;
-- Purchase form is visible;
-- history view is reachable;
-- no Cycle 06 path is opened.
-
-If interactive automation is unavailable, Codex must:
-
-1. launch successfully;
-2. record console/startup evidence;
-3. provide the human checklist in G;
-4. classify human interaction as pending rather than fabricated.
-
-Do not claim the UI workflow passed without executed interaction evidence.
-
----
-
-# 14. Human manual acceptance checklist
-
-Ask the user to perform only after a successful Windows launch:
-
-1. Start a Purchase.
-2. Enter a Store.
-3. Create a Product with a personal Product code.
-4. Add two Purchase Items.
-5. Review the displayed total.
-6. Register the Purchase.
-7. Confirm success.
-8. Open history.
-9. Confirm Store, time, total, and item count.
-10. Close the app.
-11. Launch it again.
-12. Confirm the Purchase still appears.
-
-The user reports pass/fail and any visible message.
-
-Codex records human-reported evidence distinctly from automated evidence.
-
----
-
-# 15. Python regression boundary
-
-Run from repository root:
-
-```powershell
+cd ..\..
 python -m unittest discover -s tests
 ```
 
-Before and after, verify:
+Use the repository’s actual Python test command if inspection proves it differs; report the correction. Record exact exit codes, versions, device class, APK path/size, changed files, and human versus automated evidence.
 
-```powershell
-git status --short
-git diff -- app/database/market.sqlite
-```
+# 12. Required tests
 
-Do not launch the ordinary Python application as incidental validation.
+At minimum add/retain tests proving:
 
-Do not run destructive reset helpers.
+- fresh database creates a valid UUID v4;
+- reopen reuses the same UUID;
+- two fresh databases receive different UUIDs;
+- sequence remains monotonic for the persisted Device;
+- migration preserves existing facts and gives them a stable Device owner if needed;
+- Purchase aggregate remains atomic;
+- History derives from committed facts;
+- narrow widget layout has no blocking overflow at the chosen phone width;
+- existing Flutter test suite remains green.
 
-Pass requires no tracked Python/database change.
+Do not claim emulator/device lifecycle from widget tests.
 
----
+# 13. Failure and rollback
 
-# 16. Data isolation evidence
+Stop on:
 
-Flutter must use:
+- unresolved Flutter SDK identity;
+- destructive tool replacement;
+- licence/UAC action without human confirmation;
+- no runtime online;
+- application ID unresolved;
+- Device UUID changes after ordinary relaunch;
+- duplicate/reused sequence;
+- silent database reset or lost facts;
+- broad storage permission;
+- Cycle 06 path access;
+- unrelated dependency/framework expansion;
+- Windows or Python regression not explainable within scope.
 
-```text
-platform application-support directory
-/ markei_shared_beta.sqlite
-```
+Preserve logs and data. Revert only Sprint 05 source changes through an intentional later patch; never delete evidence or user databases.
 
-Tests use temporary or in-memory databases.
+# 14. Required reports
 
-Add safe diagnostic access sufficient to report the Flutter database path without reading user data.
+Replace G/H/I.
 
-Prove the path differs from Cycle 06 `%LOCALAPPDATA%/Markei/market.sqlite`.
+G: host/tool versions, installations, licences, SDK convergence, commands, build/run/device/lifecycle/persistence evidence, paths without private data, regressions, failures, changed files.
 
-Never print Purchase contents, Product names, or other user data in diagnostic logs.
+H: evidence ladder, application/device/account/Product/event identity distinctions, Android concepts exercised, responsive/lifecycle evidence, learner limits, no automatic maturity change.
 
----
+I: final topology, application ID, Device bootstrap ownership, schema/migration, platform-host boundary, responsive deviations, dependency direction, reversibility, deferred cloud/UI work.
 
-# 17. Failure and rollback behavior
+# 15. Publication
 
-Implementation failures must not trigger:
-
-- silent database deletion;
-- schema reset;
-- fallback to Cycle 06 database;
-- partial Purchase persistence;
-- partial sequence allocation;
-- Product auto-merge;
-- dependency/toolchain broad upgrade;
-- source changes outside scope.
-
-If schema migration fails, preserve the database and surface an actionable error.
-
-Rollback means reverting only the new Sprint 04 implementation changes through an intentional later patch.
-
-Do not erase evidence.
-
----
-
-# 18. G/H/I reporting
-
-Update G with:
-
-- environment and tool versions;
-- authorized installations;
-- commands and results;
-- changed files;
-- generated files;
-- Windows build/launch evidence;
-- Android result/blocker;
-- database-path isolation;
-- Python regression;
-- manual checklist status;
-- failures and stop conditions.
-
-Update H with:
-
-- fixtures and concepts evidenced;
-- code/internal/central identity distinction;
-- Unicode and schema-validation evidence;
-- local queue versus sync distinction;
-- learner evidence limits;
-- no automatic maturity change.
-
-Update I with:
-
-- final topology;
-- Product identity responsibilities;
-- schema v2 and migration;
-- transaction/sequence ownership;
-- UI/application dependency direction;
-- contract ownership;
-- deviations and deferred boundaries.
-
-Do not update permanent documentation.
-
----
-
-# 19. Final scope audit
-
-Run:
+After implementation and validation:
 
 ```powershell
 git status --short
@@ -556,17 +261,4 @@ git diff --stat
 git diff --name-only
 ```
 
-Report every changed path.
-
-Only authorized paths may remain.
-
-Do not commit or push unless the invoking Codex prompt separately authorizes publication.
-
-Final response must lead with:
-
-- source implemented;
-- tests passed/failed;
-- Windows build/launch state;
-- human action still needed;
-- exact blockers;
-- G/H/I updated.
+Commit only authorized source/tests/generated outputs and G/H/I to `cycle-07-mobile-preparation`. Pull/rebase safely if remote advanced; never force-push. Report commit SHA and clean status.
