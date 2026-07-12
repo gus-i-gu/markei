@@ -1,6 +1,6 @@
 # INDEX.md
 
-> Version: 0.5
+> Version: 0.6
 > Status: Draft
 > Persistence Class: Derived / Navigational
 > Knowledge Class: Navigational
@@ -18,7 +18,7 @@ Every chat, agent, or human reviewer should begin here before exploring the rest
 Its purpose is to expose:
 
 - the canonical notebook root;
-- the methodology boot order;
+- the methodology boot and low-token recovery orders;
 - the complete Sketch Notebook root tree;
 - Main-root continuity files;
 - methodology files;
@@ -56,7 +56,23 @@ Sketch Notebook material must not be created under `app/documentation/`, adjacen
 
 # 3. Methodological Boot Order
 
-The standard methodology boot order is:
+The ordinary low-token boot is:
+
+```text
+INDEX
+↓
+PROMPT_COLLECTION
+↓
+role initializer
+↓
+retained-context check
+↓
+Main-root/domain checkpoint
+↓
+task-named evidence
+```
+
+The full canonical methodology boot, used for methodology revision or unresolved rule recovery, is:
 
 ```text
 INDEX
@@ -102,6 +118,7 @@ It should be consulted when:
 Canonical methodology files:
 
 ```text
+documentation/sketch_notebook/methodology/PROMPT_COLLECTION.md
 documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
 documentation/sketch_notebook/methodology/FLUX.md
 documentation/sketch_notebook/methodology/PROMOTION_RULES.md
@@ -114,6 +131,7 @@ Responsibilities:
 
 | File | Primary responsibility |
 | --- | --- |
+| `PROMPT_COLLECTION.md` | Indexed low-token retained-context checks and role initializers |
 | `METHOD_FOUNDATIONS.md` | What the Sketch Notebook Method is |
 | `FLUX.md` | How information is routed, staged, written, materialized, reported, recovered, created, renamed, and controlled for recovery economy |
 | `PROMOTION_RULES.md` | How knowledge changes semantic state and how reconciliation prevents duplicate semantic ownership |
@@ -177,6 +195,8 @@ Repository Inspection
 
 This is a cost discipline.
 
+For ordinary activity, invoke the applicable `PROMPT_COLLECTION.md` identifier before expanding canonical methodology. Retained memory must be verified against the smallest authoritative recovery surface capable of resolving the task.
+
 A role should not consume full canonical registers, historical logs, or source files when the relevant Main-root file or domain checkpoint already answers the task.
 
 A role may inspect deeper sources when:
@@ -208,6 +228,7 @@ documentation/sketch_notebook/
 ├── PROVISORY_[M]_DOUBLE_LAB.MD
 │
 ├── methodology/
+│   ├── PROMPT_COLLECTION.md
 │   ├── METHOD_FOUNDATIONS.md
 │   ├── FLUX.md
 │   ├── PROMOTION_RULES.md
