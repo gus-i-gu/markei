@@ -1,6 +1,6 @@
 # PROMPT_COLLECTION.md
 
-> Version: 0.1
+> Version: 0.2
 > Status: Active Methodology Prompt Register
 > Persistence Class: Canonical / Operational
 > Knowledge Class: Methodological
@@ -71,6 +71,7 @@ Rules:
 | ID | Name | Use |
 | --- | --- | --- |
 | `PMC-01` | Context Memory State Check | Test retained methodology and expose uncertainty before recovery |
+| `PMC-02` | FLUX and Promotion Orientation Check | Test retained routing, authority, knowledge-state, and promotion rules |
 | `PRI-M` | Main Role Initialization | Initialize or refresh Main Chat |
 | `PRI-O` | Operational Role Initialization | Initialize or refresh Operational Chat |
 | `PRI-A` | Didactic Role Initialization | Initialize or refresh Didactic Chat |
@@ -114,7 +115,58 @@ Finish with no more than ten lines stating confirmed role, current workflow stag
 
 ---
 
-# 5. PRI-M — Main Role Initialization
+# 5. PMC-02 — FLUX and Promotion Orientation Check
+
+```text
+Run PMC-02: FLUX and PROMOTION_RULES retained-orientation check.
+
+Do not read FLUX.md or PROMOTION_RULES.md before the first report.
+
+From retained context, report two compact blocks.
+
+FLUX orientation:
+1. the ordinary information route from functional investigation through Main, Codex, evidence, permanent-domain reconciliation, and Main continuity;
+2. which role owns A/B/C, D/E/F, G/H/I, J, permanent domain memory, and 00/05/06;
+3. the difference between analysis authority, materialization authority, and promotion authority;
+4. hierarchical recovery order and when deeper/source inspection is justified;
+5. the rule for creating, renaming, or modifying methodology and permanent files;
+6. the current workflow position and next valid transition.
+
+PROMOTION_RULES orientation:
+1. the difference between raw, staged, observational, classified/permanent, derived, checkpoint, and Main-synthesized knowledge;
+2. what evidence is required before implementation claims or Didactic maturity changes;
+3. how semantic ownership prevents duplicate or conflicting permanent truth;
+4. how candidate, provisional, accepted, implemented, validated, blocked, and deferred claims must remain distinct;
+5. when functional chats may update permanent memory;
+6. what Main reconciliation must check before 00/05/06 or a new D/E/F phase.
+
+For every item, label confidence:
+- retained;
+- uncertain;
+- possibly stale.
+
+Do not fill uncertainty with inference.
+
+After the first report, verify only uncertain or possibly stale items:
+- use targeted sections of FLUX.md for routing, authority, recovery, file control, and phase transitions;
+- use targeted sections of PROMOTION_RULES.md for knowledge state, semantic roles, evidence, promotion, and reconciliation.
+
+Read either complete file only if targeted recovery cannot resolve a contradiction.
+
+Finish with:
+- confirmed FLUX rules;
+- confirmed promotion rules;
+- corrected drift;
+- canonical sections consulted;
+- remaining uncertainty;
+- whether the next proposed workflow action is methodologically valid.
+
+PMC-02 is read-only. It does not authorize staging, promotion, implementation, commits, or permanent-file changes.
+```
+
+---
+
+# 6. PRI-M — Main Role Initialization
 
 ```text
 Initialize as Main Chat [M].
@@ -148,7 +200,7 @@ Do not reread complete methodology unless PMC-01 exposes a methodological uncert
 
 ---
 
-# 6. PRI-O — Operational Role Initialization
+# 7. PRI-O — Operational Role Initialization
 
 ```text
 Initialize as Operational Chat [O].
@@ -186,7 +238,7 @@ Write only paths explicitly authorized by the invoking task.
 
 ---
 
-# 7. PRI-A — Didactic Role Initialization
+# 8. PRI-A — Didactic Role Initialization
 
 ```text
 Initialize as Didactic Chat [A].
@@ -224,7 +276,7 @@ Write only paths explicitly authorized by the invoking task.
 
 ---
 
-# 8. PRI-D — Design Role Initialization
+# 9. PRI-D — Design Role Initialization
 
 ```text
 Initialize as Design Chat [D].
@@ -262,7 +314,7 @@ Write only paths explicitly authorized by the invoking task.
 
 ---
 
-# 9. PRI-CODEX — Codex Materialization Initialization
+# 10. PRI-CODEX — Codex Materialization Initialization
 
 ```text
 Initialize as the Codex materialization agent.
@@ -293,7 +345,7 @@ Do not commit or push unless the invoking task explicitly authorizes it.
 
 ---
 
-# 10. Maintenance Rule
+# 11. Maintenance Rule
 
 This file should change when:
 
