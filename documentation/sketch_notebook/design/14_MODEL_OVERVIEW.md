@@ -1,6 +1,6 @@
 # 14_MODEL_OVERVIEW.md
 
-> Version: 0.2-cycle06
+> Version: 0.3-cycle06-sprint02
 > Status: Active Derived Overview
 > Persistence Class: Derived
 > Knowledge Class: Design
@@ -11,8 +11,6 @@
 ---
 
 # 1. System at a Glance
-
-Markei is a local PySide6 and SQLite desktop monolith.
 
 ```text
 Desktop UI
@@ -26,8 +24,6 @@ Database Manager
 SQLite
 ```
 
-Main responsibility rule:
-
 ```text
 presentation requests behavior
 service owns application meaning
@@ -35,6 +31,7 @@ repository owns SQL
 Database Manager owns database lifecycle
 packaging owns frozen composition
 installer owns placement and registration
+Main/human own final acceptance
 ```
 
 ---
@@ -43,55 +40,35 @@ installer owns placement and registration
 
 | Surface | Current responsibility |
 | --- | --- |
-| `main.py` | Packaged launcher adapter and outer startup-diagnostic boundary |
-| `app/main.py` | Creates `QApplication`, constructs `MainWindow`, and enters the event loop |
-| `app/desktop/main_window.py` | Composes pages, coordinates navigation/refresh, and closes page-owned services on final window shutdown |
-| `app/desktop/ui/pages/*` | Receives input and renders public desktop workflows |
+| `main.py` | Launcher adapter and outer startup-diagnostic boundary |
+| `app/main.py` | Qt application construction and event loop |
+| `app/desktop/main_window.py` | Page composition, navigation/refresh, and final page-service shutdown coordination |
 | `app/core/services.py` | Workflows, validation, calculations, settings, stores, and read models |
-| `app/core/repository.py` | SQL, row mapping, persistence operations, commits, and connection ownership |
-| `app/core/database.py` | Resource/user paths, initialization, configuration, additive migration, reset, and connection primitives |
-| `Markei.spec` | Authoritative one-folder PyInstaller composition |
-| `scripts/build_windows.ps1` | Invokes the authoritative spec |
+| `app/core/repository.py` | SQL, mapping, persistence operations, commits, and connection ownership |
+| `app/core/database.py` | Resource/user paths, initialization, structural defaults, additive compatibility, and connection primitives |
+| `Markei.spec` | Authoritative one-folder frozen composition |
+| `scripts/build_windows.ps1` | Invokes the packaging authority |
 | `installer/Markei.iss` | Installer identity, placement, shortcuts, and uninstall registration |
 | `scripts/build_installer.ps1` | Locates Inno Setup and invokes installer compilation |
 
-Packaging and installer surfaces do not own business workflows, SQL meaning, or persistence semantics.
+The per-user Inno discovery correction belongs to tooling, not application architecture.
 
 ---
 
-# 3. Desktop and Lifecycle Model
-
-Public surfaces:
+# 3. Desktop and Shutdown Model
 
 ```text
-Register
-Lists
-History
-Settings
+RegisterPage → ProductService → Repository → SQLite connection
+ListsPage    → ProductService → Repository → SQLite connection
+HistoryPage  → ProductService → Repository → SQLite connection
+SettingsPage → ProductService → Repository → SQLite connection
 ```
 
-Lists modes:
-
-```text
-Storage  → in-house
-Shortage → shortage
-Market   → to-buy
-```
-
-Current ownership:
-
-```text
-4 pages
-→ 4 ProductService instances
-→ 4 Repository instances
-→ 4 SQLite connections
-```
-
-Each service/repository retains its local close path. `MainWindow.closeEvent()` is the accepted idempotent final coordinator that closes all four page-owned services. This bounded correction followed a focused shutdown failure and is not a composition-root redesign.
+`MainWindow.closeEvent()` idempotently coordinates final closure of all four services. Installed close and immediate reopen passed without a broader composition redesign.
 
 ---
 
-# 4. Deployment Map
+# 4. Deployment and Lifecycle Map
 
 ```text
 Source
@@ -104,15 +81,17 @@ Build
     scripts/build_windows.ps1
     dist/Markei
 
-Install
+Installer build
     installer/Markei.iss
     scripts/build_installer.ps1
-    compiled installer — blocked
+    Inno Setup compiler
+    dist/installer/Markei-Setup-0.1.0-x64.exe
 
 Installed application
-    replaceable program files
-    Start Menu shortcut — configured
+    %LOCALAPPDATA%/Programs/Markei/Markei.exe
+    Start Menu shortcut — validated
     optional desktop shortcut — configured
+    uninstall registration — validated technically
 
 User state
     %LOCALAPPDATA%/Markei/market.sqlite
@@ -120,22 +99,24 @@ User state
     %LOCALAPPDATA%/Markei/logs/startup.log
 ```
 
-Installed program files and user state are separate sibling concerns.
+Installed program files and retained user state are separate sibling concerns.
 
 ---
 
-# 5. Resource Classification
+# 5. Resource and Defaults Map
 
 | Item | Classification |
 | --- | --- |
 | `schema.sql` | Bundled read-only production resource |
-| `seed.sql` | Development/test fixture, excluded from production package |
+| `seed.sql` | Development/test fixture excluded from production |
+| category `F` / `General` | Structural Register default |
+| store `1` / `Default Store` | Structural Register default |
 | `market.sqlite` | Retained writable user data |
-| WAL/SHM | Transient writable companions, never bundled |
+| WAL/SHM | Transient writable companions |
 | startup logs | Generated writable diagnostics |
 | version metadata/static assets | Replaceable release content |
 
-Fresh production initialization is schema-only and contains no sample business rows.
+Fresh production state contains structural defaults but zero sample products and purchases.
 
 ---
 
@@ -151,55 +132,83 @@ Target: Windows x64 controlled beta
 ```
 
 ```text
-Start Menu shortcut: required
+Start Menu shortcut: required and technically validated
 Desktop shortcut: optional installer task
 Uninstall data policy: preserve %LOCALAPPDATA%/Markei by default
 ```
 
-The installer source records these choices, but installed behavior remains unvalidated.
+---
+
+# 7. Lifecycle Evidence Map
+
+```text
+installer compiled
+→ per-user install passed
+→ Start Menu launch passed
+→ external database initialized
+→ service-backed principal workflow evidence passed
+→ close and immediate reopen passed
+→ same-version reinstall preserved data
+→ uninstall preserved data
+→ reinstall recovered retained data
+```
+
+Validation environment:
+
+```text
+current ordinary Windows user
+existing Markei data backed up and restored
+no dedicated clean account
+```
 
 ---
 
-# 7. Evidence Status
+# 8. Evidence Status
 
 ```text
-configured: yes
-built: yes
-launched: yes — frozen
-installed: blocked
-validated: partial
+configured: validated
+built: validated
+launched: validated — frozen and installed shortcut launch
+installed: validated — automated per-user lifecycle
+validated: partial-to-strong technical evidence
 accepted: no
 ```
 
-Validated boundaries include source/static checks, schema-only frozen first launch, resource exclusion, startup-log creation, shutdown closure, and frozen reopen.
+Still pending:
 
-Blocked boundaries include installer compilation and all installed lifecycle transitions.
-
----
-
-# 8. Stable Boundaries
-
-1. Desktop code does not execute SQL.
-2. ProductService owns application workflows and meaning.
-3. Repository owns SQL and persistence mapping.
-4. Database Manager owns database lifecycle and compatibility behavior.
-5. Packaging and installer layers remain deployment concerns.
-6. `Markei.spec` is the package authority.
-7. Bundled resources and writable user state remain separate.
-8. MainWindow coordinates final shutdown of page-owned services.
-9. A built frozen runtime is not an installed or accepted beta.
+- human-visible installer wizard observation;
+- human-visible Register / Lists / History / Settings walkthrough;
+- human-visible close/reopen confirmation;
+- human-visible SmartScreen behavior;
+- final Main/human acceptance;
+- artifact-versioning policy resolution outside Design ownership.
 
 ---
 
-# 9. Open or Deferred Areas
+# 9. Stable Boundaries
 
-- installed lifecycle validation;
+1. Business and persistence responsibilities remain unchanged.
+2. Packaging and installer layers remain deployment concerns.
+3. Structural defaults are not sample business data.
+4. Installed program files and user state remain separate.
+5. Same-version reinstall, uninstall preservation, and reinstall recovery are technically validated.
+6. MainWindow shutdown coordination remained sufficient in the installed lifecycle.
+7. Automated technical workflow evidence is not a complete human visual UI walkthrough.
+8. SmartScreen behavior remains unknown.
+9. Final beta acceptance is not a Design-domain decision.
+
+---
+
+# 10. Open or Deferred Areas
+
+- human-visible acceptance gates;
+- compatible-version upgrade evidence beyond same-version reinstall;
 - workflow transaction atomicity;
-- future service/repository decomposition;
+- broader migration strategy;
+- service/repository decomposition;
 - composition-root or dependency-injection redesign;
-- numbered migration framework;
 - optional uninstall data-deletion UX;
 - signing, rollback, auto-update, one-file packaging;
 - mobile, backend, synchronization, authentication, and cloud persistence.
 
-For exact accepted wording, consult `01_ARCHITECTURE.md`. For current gates, consult `09_DESIGN_STATE.md`. For chronology, consult `03_DECISION_LOG.md`.
+For exact accepted wording, consult `01_ARCHITECTURE.md`. For current status, consult `09_DESIGN_STATE.md`. For chronology, consult `03_DECISION_LOG.md`.

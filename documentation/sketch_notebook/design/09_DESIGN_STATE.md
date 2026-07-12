@@ -1,28 +1,26 @@
 # 09_DESIGN_STATE.md
 
-> Version: 0.2-cycle06
+> Version: 0.3-cycle06-sprint02
 > Status: Active Checkpoint
 > Persistence Class: Checkpoint
 > Knowledge Class: Design State
 > Authority: Design Chat [D]
-> Scope: Low-cost recovery surface for the current Cycle 06 Design state
+> Scope: Low-cost recovery surface for current Cycle 06 Design state
 > Sources: `01_ARCHITECTURE.md`, `14_MODEL_OVERVIEW.md`, `DEV_STAGE/G_OPS_CODEX.md`, `DEV_STAGE/I_DSN_CODEX.md`, `[M]_STAGE/J_[M]_STAGE.md`
 
 ---
 
 # Current Milestone
 
-Cycle 06 remains focused on one milestone:
+Cycle 06 still has one milestone:
 
 > Produce and validate a fully executable and installable Windows primary beta of Markei.
 
-The first bounded materialization unit is complete, but the milestone is not closed.
+Sprint 02 crossed the compiled-installer and automated installed-lifecycle boundary. The beta is not yet accepted or globally closed.
 
 ---
 
 # Current Architecture
-
-Markei remains a layered local desktop monolith:
 
 ```text
 Desktop UI
@@ -36,150 +34,137 @@ Database Manager
 SQLite
 ```
 
-Packaging and installation remain deployment concerns around this application boundary. No broad business, persistence, schema, or composition redesign was introduced.
+Packaging and installation remain deployment concerns. No broad business, persistence, transaction, schema, service, repository, or composition redesign occurred.
 
 ---
 
-# Cycle 06 Deployment State
-
-Accepted current status:
+# Current Evidence State
 
 ```text
-packaging boundary materialized
-frozen runtime built and launched
-resource/user-state boundary partially validated
-startup diagnostics validated by test
-shutdown correction validated in focused and frozen checks
-installer source configured
-installer compilation blocked
-installed lifecycle unvalidated
-beta not accepted
-```
-
-Evidence classification:
-
-```text
-configured: yes
-built: yes
-launched: yes — frozen isolated launch and reopen
-installed: blocked
-validated: partial
+configured: validated
+built: validated
+launched: validated — frozen and installed shortcut launch
+installed: validated — automated per-user lifecycle
+validated: partial-to-strong technical evidence
 accepted: no
 ```
 
+Technically validated:
+
+- Inno Setup 6.7.3 available through per-user installation;
+- installer compiler discovery corrected;
+- frozen runtime rebuilt;
+- installer compiled and inspected;
+- per-user installation completed;
+- installed executable and Start Menu shortcut present;
+- Start Menu shortcut launched the installed executable;
+- external database initialized;
+- service-backed Register / Lists / History / Settings evidence passed;
+- installed close and immediate reopen passed;
+- same-version reinstall preserved data;
+- uninstall preserved `%LOCALAPPDATA%/Markei`;
+- reinstall recovered retained data.
+
 ---
 
-# Accepted Boundaries
+# Accepted Sprint 02 Boundary Delta
 
-## Packaging
+## Tooling
 
-- `Markei.spec` is the authoritative one-folder PyInstaller definition.
-- `scripts/build_windows.ps1` invokes the spec rather than duplicating package composition.
-- Production packaging includes `schema.sql`.
-- Production packaging excludes `seed.sql`, live databases, WAL/SHM, logs, tests, caches, and development residue.
+`scripts/build_installer.ps1` now discovers the per-user Inno Setup path. This is a tooling correction, not an architectural change.
 
-## User state
+## Structural defaults
 
-- `%LOCALAPPDATA%/Markei/market.sqlite` is retained writable user data.
-- WAL/SHM files are transient writable companions.
-- `%LOCALAPPDATA%/Markei/logs/startup.log` is generated writable diagnostics.
-- External placement supports retention but does not prove uninstall or reinstall preservation.
+Fresh production initialization now creates idempotently:
 
-## Startup
+```text
+category F / General
+store 1 / Default Store
+```
 
-- Root `main.py` remains the launcher adapter and owns the outer startup-diagnostic boundary.
-- `app.main.main()` remains responsible for Qt application construction.
+These are structural defaults required by current Register foreign-key behavior. They are not sample business data. Production still excludes `seed.sql` and creates zero sample products and purchases.
+
+## Installed boundary
+
+Observed technical behavior matched the accepted split:
+
+```text
+%LOCALAPPDATA%/Programs/Markei
+    replaceable program files
+    Markei.exe
+    uninstall registration
+    Start Menu shortcut
+
+%LOCALAPPDATA%/Markei
+    market.sqlite
+    transient WAL/SHM
+    logs
+```
 
 ## Shutdown
 
-- Four pages continue to own four service/repository/connection chains.
-- Focused validation initially demonstrated that distributed cleanup alone left the isolated SQLite file open.
-- `MainWindow.closeEvent()` now idempotently coordinates closure of all four page-owned services.
-- Local service/repository close responsibility remains intact.
-- This is a bounded lifecycle correction, not a composition-root redesign.
-
-## Installer and identity
-
-Configured release identity:
-
-```text
-Markei
-Markei.exe
-0.1.0
-Publisher: Markei
-Stable AppId: {9F5F5C2A-43EA-4CF0-9C25-FF9E7BB57D3A}
-```
-
-Configured installer policy:
-
-```text
-per-user installation
-Start Menu shortcut
-optional desktop shortcut
-preserve %LOCALAPPDATA%/Markei by default
-```
-
-These installer behaviors are configured, not installed or lifecycle-validated.
+Installed normal closure reached the existing `MainWindow.closeEvent()` path and supported immediate reopen. No broader lifecycle redesign was required.
 
 ---
 
-# Validated Evidence
-
-The following evidence is accepted for the bounded materialization:
-
-- source/static compilation passed;
-- five standard-library release tests passed;
-- one-folder frozen runtime built;
-- frozen runtime launched and reopened from an isolated profile;
-- first launch created schema/default settings without sample business rows;
-- distribution included `schema.sql` and excluded `seed.sql`, live DB, WAL/SHM, and startup logs;
-- startup log path and content creation were validated;
-- shutdown correction closed all four repositories and released the isolated database directory.
-
----
-
-# Remaining Blocked Lifecycle Gates
+# Artifact Evidence
 
 ```text
-provide Inno Setup / ISCC.exe
-→ compile installer
-→ inspect installer artifact
-→ clean per-user install
-→ launch from Start Menu without Python/source checkout
-→ exercise Register / Lists / History / Settings
-→ close and immediate reopen
-→ verify retained data
-→ test compatible reinstall or upgrade
-→ uninstall
-→ verify preservation policy
-→ reinstall and recover retained data
-→ human acceptance
+Installer:
+    dist/installer/Markei-Setup-0.1.0-x64.exe
+    SHA256 122A772D66BBE7D5522EF2262E7E89D6D2E332B6318135BB25D55A27F75F4623
+    size 34,448,651 bytes
+
+Frozen executable:
+    SHA256 E13E276139E5F680D91A9816FC79776EB9837CA901C2DEBCF6B9CFAF8594A282
 ```
 
-No compiled installer artifact currently exists.
+The installer artifact is present on the branch despite G describing it as generated but uncommitted. Artifact-versioning policy remains for Main/Operational reconciliation and is not decided by Design.
+
+The Inno `x64` deprecation warning is non-blocking tooling debt.
 
 ---
 
-# Current Open Risks
+# Remaining Validation Limits
 
-1. Installed program placement, shortcuts, and uninstall registration remain unvalidated.
-2. Default data preservation through uninstall/reinstall remains configured but unproven.
-3. Compatible upgrade/reinstall behavior against retained SQLite state remains unvalidated.
-4. Human principal-workflow acceptance remains outstanding.
-5. Workflow atomicity remains inherited product/design debt and was not changed.
+```text
+human-visible installer wizard observation
+human-visible Register / Lists / History / Settings walkthrough
+human-visible close/reopen confirmation
+human-visible SmartScreen behavior
+human acceptance of the controlled beta
+artifact-versioning policy resolution
+```
+
+Technical workflow evidence used the installed user database and ProductService path, but it was not a complete human visual UI walkthrough.
+
+Validation used the current ordinary Windows user with existing Markei data backed up and restored. Dedicated-account isolation was not evidenced.
+
+Defender enabled and `NotSigned` status were observed. No SmartScreen prompt appeared during silent/programmatic execution; human-visible SmartScreen behavior remains unknown.
+
+---
+
+# Current Open Risks and Debt
+
+1. Human-visible UI acceptance remains pending.
+2. Human-visible SmartScreen/security interaction remains unknown.
+3. Artifact-versioning policy remains unresolved outside Design ownership.
+4. A true compatible-version upgrade was not exercised; same-version reinstall passed.
+5. Workflow atomicity remains inherited Design debt.
+6. Broader migration strategy remains unresolved and was not required by installed gates.
 
 ---
 
 # Explicit Deferrals
 
-Outside Cycle 06:
+Outside this Design update:
 
 - composition-root or dependency-injection redesign;
 - ProductService/Repository decomposition;
-- workflow transaction redesign unless separately evidenced and reconciled;
+- workflow transaction redesign;
 - schema redesign or migration ledger;
 - mobile, backend/API, synchronization, authentication, and cloud persistence;
-- auto-update, signing, rollback framework, and one-file packaging;
+- auto-update, signing, rollback, and one-file packaging;
 - optional uninstall data-deletion UX;
 - broad UI/navigation redesign.
 
@@ -201,4 +186,4 @@ Chronology and rationale
     → design/03_DECISION_LOG.md
 ```
 
-The next Design checkpoint update should follow installer compilation and installed-lifecycle evidence, not configuration alone.
+The next Design checkpoint update should follow human-visible acceptance evidence or a bounded failure discovered during those remaining gates.

@@ -1,6 +1,6 @@
 # 01_ARCHITECTURE.md
 
-> Version: 0.2-cycle06
+> Version: 0.3-cycle06-sprint02
 > Status: Reconciled Canon
 > Persistence Class: Canonical
 > Knowledge Class: Design
@@ -34,21 +34,13 @@ Canonical dependency rules remain:
 4. Database Manager owns resource and user-data paths, initialization, SQLite configuration, additive compatibility migration, reset, and connection primitives.
 5. Domain models carry application data and do not execute persistence or orchestrate workflows.
 
-The present concrete construction remains page-local: each principal page constructs a ProductService, which constructs a Repository. This describes current implementation and is not a mandate for dependency injection or a future composition-root redesign.
+The current concrete construction remains page-local. This is accepted implementation structure, not a mandate for dependency injection, a new composition root, or shared service/repository lifetime.
 
 ---
 
 # 2. Desktop Composition and Shutdown
 
-`app.main.main()` owns Qt application construction: it creates `QApplication`, constructs `MainWindow`, shows it, and enters the event loop.
-
-`MainWindow` owns the current desktop shell:
-
-- construction of Register, Lists, History, and Settings;
-- tab composition, navigation, edit routing, and refresh coordination;
-- final coordination of page-owned service closure during normal window shutdown.
-
-The four page-local chains remain:
+`app.main.main()` owns Qt application construction. `MainWindow` owns the current desktop shell, including page construction, tab composition, navigation, edit routing, refresh coordination, and final coordination of page-owned service closure.
 
 ```text
 RegisterPage → ProductService → Repository → SQLite connection
@@ -57,9 +49,9 @@ HistoryPage  → ProductService → Repository → SQLite connection
 SettingsPage → ProductService → Repository → SQLite connection
 ```
 
-Each service and repository retains its local close responsibility. `MainWindow.closeEvent()` provides the accepted idempotent final coordinator that invokes those local close paths for all four pages. This bounded coordination was introduced after focused validation demonstrated that distributed cleanup alone left the isolated SQLite file open.
+Each service and repository retains its local close responsibility. `MainWindow.closeEvent()` remains the accepted idempotent final coordinator for all four page-owned services.
 
-This decision does not establish a new composition root, shared-service model, or dependency-injection architecture.
+Sprint 02 installed close and immediate reopen evidence reached this same shutdown path successfully. No installed lifecycle gate required a broader lifetime or composition redesign.
 
 ---
 
@@ -69,15 +61,15 @@ This decision does not establish a new composition root, shared-service model, o
 
 `Repository` remains the broad SQLite persistence facade for products, purchases, categories, stores, settings, SQL execution, row mapping, commits, and closure.
 
-Repository mutation methods commit individually. Receipt registration and purchase deletion/recalculation remain multi-commit workflows rather than one atomic business transaction. Workflow atomicity remains inherited Design debt and was not changed by Cycle 06 packaging work.
+Repository mutation methods still commit individually. Receipt registration and purchase deletion/recalculation remain multi-commit workflows rather than one atomic business transaction. Workflow atomicity remains inherited Design debt.
 
-The current additive migration behavior is not a numbered or general migration framework.
+The current additive compatibility behavior is not a numbered or general migration framework.
 
 ---
 
 # 4. Deployment Boundaries
 
-Cycle 06 establishes five distinct execution and deployment states:
+Cycle 06 now has technical evidence across these distinct states:
 
 ```text
 Source tree
@@ -89,14 +81,17 @@ Frozen runtime
 Installer source
     Inno Setup definition consuming the frozen distribution
 
+Compiled installer
+    Markei-Setup-0.1.0-x64.exe
+
 Installed program files
-    replaceable executable and runtime content
+    per-user executable and runtime content
 
 Writable user state
-    retained per-user database, transient SQLite companions, and diagnostics
+    retained database, transient SQLite companions, and diagnostics
 ```
 
-A configured installer is not an installed application. A built and launched frozen runtime does not prove installer or installed-lifecycle behavior.
+A configured installer, compiled installer, installed application, validated installed lifecycle, and accepted beta remain different evidence states.
 
 ## 4.1 Launcher and application construction
 
@@ -109,7 +104,7 @@ app.main.main()
     owns Qt application construction and execution
 ```
 
-An unhandled launcher-level startup exception is written to a per-user diagnostic log and produces a concise visible error where Qt permits. Startup diagnostics remain outside business and persistence layers.
+Unhandled launcher-level startup exceptions are written to a per-user diagnostic log and surfaced visibly where Qt permits.
 
 ## 4.2 Packaging authority
 
@@ -119,68 +114,99 @@ Markei.spec
 
 scripts/build_windows.ps1
     operational invocation wrapper
-    not an independent package definition
 ```
 
-The packaging layer owns collection of executable code, Python/Qt runtime components, approved read-only resources, and executable metadata. It does not own business workflows, SQL semantics, database migration meaning, or user-created data.
+The packaging layer owns collection of executable code, Python/Qt runtime components, approved read-only resources, and executable metadata. It does not own workflows, SQL semantics, migration meaning, or user-created data.
 
 ## 4.3 Installer authority
 
 ```text
 installer/Markei.iss
-    placement, installer identity, shortcuts, and uninstall registration
+    placement, identity, shortcuts, and uninstall registration
 
 scripts/build_installer.ps1
     compiler discovery and installer-build invocation
 ```
 
+Sprint 02 added per-user Inno Setup discovery to the wrapper. That correction is tooling behavior, not a new architectural boundary.
+
 The installer consumes the frozen distribution. It does not redefine package composition or persistence semantics.
 
 ---
 
-# 5. Resource and Writable-State Classification
+# 5. Resource, Defaults, and Writable-State Classification
 
 | Item | Accepted classification |
 | --- | --- |
 | `app/database/schema.sql` | Bundled read-only, replaceable application resource |
-| `app/database/seed.sql` | Development/test fixture; excluded from the production beta package |
+| `app/database/seed.sql` | Development/test fixture; excluded from production |
+| category `F` / `General` | Structural application default required by current Register behavior |
+| store `1` / `Default Store` | Structural application default required by current Register behavior |
 | `%LOCALAPPDATA%/Markei/market.sqlite` | Retained writable user data |
 | `market.sqlite-wal`, `market.sqlite-shm` | Transient writable companions; never bundled |
 | `%LOCALAPPDATA%/Markei/logs/startup.log` | Generated writable startup diagnostics |
 | settings stored in SQLite | Retained user data |
 | executable metadata and static assets | Replaceable application content |
 
-Fresh production initialization is schema-only: it creates structural/default settings through current initialization and compatibility behavior, without sample category, store, product, purchase, or other demonstration business rows.
+Fresh production initialization remains schema-only with idempotent structural defaults. It contains no sample products or purchases.
 
-Installed application files and retained user state are separate sibling concerns. External placement supports preservation but does not itself prove uninstall, reinstall, or upgrade behavior.
+The structural category and store are not demonstration data. They are required referential defaults for current Register behavior when the sample-bearing seed is absent.
 
 ---
 
-# 6. Primary-Beta Retention and Upgrade Boundary
+# 6. Installed Program and User-State Boundary
 
-Accepted primary-beta policy:
+Installed program files are replaceable deployment content under the per-user program directory. Writable user state remains under `%LOCALAPPDATA%/Markei`.
+
+Sprint 02 technically validated:
+
+```text
+per-user installation
+→ installed executable present
+→ Start Menu shortcut launch
+→ external database creation
+→ installed workflow persistence
+→ close and immediate reopen
+→ same-version reinstall with retained data
+→ uninstall with retained database
+→ reinstall with retained-data recovery
+```
+
+The observed installation, shortcut, uninstall registration, user-state separation, and retained-data behavior match the accepted boundary.
+
+The validation used the current ordinary Windows user with existing Markei data backed up and restored. It did not use a dedicated clean account.
+
+---
+
+# 7. Retention and Upgrade Boundary
+
+Accepted primary-beta behavior:
 
 ```text
 uninstall
     removes replaceable application files and shortcuts
     preserves %LOCALAPPDATA%/Markei by default
 
-same-version reinstall or compatible beta upgrade
+same-version reinstall
     retains stable installer identity
     replaces program files
-    may reopen compatible retained user data
+    preserves compatible user data
+    reopens the existing database
+
+compatible beta upgrade
+    retains stable installer identity
+    replaces program files
+    preserves user state
     applies current additive compatibility behavior
 ```
 
-Optional uninstall-time data-deletion UX is deferred. Incompatible database formats, downgrade behavior, rollback, and a numbered migration framework are outside Cycle 06.
+Same-version reinstall, uninstall preservation, and reinstall recovery are now technically validated in the reported environment.
 
-Installer-source configuration records this policy, but the installed lifecycle remains unvalidated until a compiled installer is exercised.
+A later compatible-version upgrade remains a separate transition unless directly exercised. Downgrade handling, rollback, incompatible-schema recovery, and a migration ledger remain outside Cycle 06.
 
 ---
 
-# 7. Release Identity Contract
-
-The first controlled Windows x64 beta uses one coordinated release identity:
+# 8. Release Identity and Shortcut Contract
 
 ```text
 Display name: Markei
@@ -188,70 +214,78 @@ Executable: Markei.exe
 Version: 0.1.0
 Publisher: Markei
 Installer AppId: {9F5F5C2A-43EA-4CF0-9C25-FF9E7BB57D3A}
+Target: Windows x64 controlled beta
 ```
 
-The AppId remains stable across compatible upgrades. Application version, executable metadata, installer metadata, shortcut names, and artifact names are one release contract; silent divergence is Design drift.
-
-Shortcut policy:
+The AppId remains stable across compatible upgrades. Executable metadata, installer metadata, shortcut names, and artifact names form one coordinated release contract.
 
 ```text
-Start Menu shortcut: required
-Desktop shortcut: optional installer task
+Start Menu shortcut: required and technically validated
+Desktop shortcut: optional installer task; not required for beta acceptance
 ```
 
-These are installation-UX decisions and do not alter application-layer architecture.
+The current Inno `x64` deprecation warning is non-blocking tooling debt, not an architecture failure.
 
 ---
 
-# 8. Evidence Boundary
+# 9. Evidence Boundary
 
-Current accepted evidence classification:
+Current accepted technical classification:
 
 ```text
-configured: yes
-built: yes
-launched: yes — frozen isolated launch and reopen
-installed: blocked
-validated: partial — source/static/frozen/resource/startup/shutdown gates
+configured: validated
+built: validated
+launched: validated — frozen and installed shortcut launch
+installed: validated — automated per-user lifecycle
+validated: partial-to-strong technical evidence
 accepted: no
 ```
 
-Installer source, Start Menu behavior, optional desktop shortcut behavior, uninstall preservation, compatible reinstall, and upgrade are configured but not lifecycle-validated. No compiled installer artifact exists because `ISCC.exe` was unavailable during the bounded materialization.
+Technically validated boundaries include installer compilation, per-user placement, Start Menu launch, installed data path, service-backed principal workflow persistence, installed close/reopen, same-version reinstall, uninstall retention, and reinstall recovery.
+
+Still outside technical acceptance:
+
+- complete human-visible installer wizard observation;
+- complete human-visible Register / Lists / History / Settings walkthrough;
+- human-visible close/reopen confirmation;
+- human-visible SmartScreen behavior;
+- final Main/human beta acceptance.
+
+Defender enabled and unsigned binaries were observed. Human-visible SmartScreen behavior remains unknown.
 
 ---
 
-# 9. Accepted Current Boundaries
+# 10. Accepted Current Boundaries
 
 1. Markei remains a layered local desktop monolith.
-2. Packaging and installation are deployment concerns around, not inside, the business architecture.
-3. Root `main.py` is the launcher adapter and outer startup-diagnostic boundary.
-4. `app.main.main()` remains the Qt construction function.
-5. `Markei.spec` is the authoritative package definition; the Windows build script invokes it.
-6. Installer source owns placement, shortcuts, identity, and uninstall registration.
-7. Production packaging includes `schema.sql` and excludes `seed.sql` and all writable state.
-8. User data and diagnostics remain external to replaceable program files.
-9. Uninstall preserves `%LOCALAPPDATA%/Markei` by default for the primary beta.
-10. Release identity is coordinated across executable and installer surfaces.
-11. MainWindow coordinates idempotent final closure of four page-owned services while local close responsibilities remain intact.
-12. Installed-lifecycle behavior and final beta acceptance remain unproven.
+2. Packaging and installation remain deployment concerns around the business architecture.
+3. Root `main.py` owns launcher-level startup diagnostics.
+4. `Markei.spec` remains the authoritative package definition.
+5. Installer source owns placement, identity, shortcuts, and uninstall registration.
+6. Production includes `schema.sql`, excludes `seed.sql`, and creates only structural defaults.
+7. Installed program files and retained user state remain separate.
+8. Per-user installation, Start Menu launch, installed close/reopen, same-version reinstall, uninstall preservation, and reinstall recovery are technically validated.
+9. MainWindow final service-close coordination remains sufficient for the tested installed lifecycle.
+10. Technical installed workflow evidence does not equal human visual UI acceptance.
+11. Final beta acceptance and Cycle closure remain Main/human decisions.
 
 ---
 
-# 10. Explicitly Unresolved or Deferred
+# 11. Explicitly Unresolved or Deferred
 
-The following are not authorized by this Design absorption:
+The following remain outside this Design absorption:
 
 - composition-root or dependency-injection redesign;
 - shared-service or repository-lifetime redesign;
 - ProductService or Repository decomposition;
 - workflow transaction redesign;
 - schema redesign or migration ledger;
+- compatible-version upgrade evidence not yet directly exercised;
 - typed view-model conversion or broad UI redesign;
 - mobile, backend/API, synchronization, authentication, or cloud persistence;
-- automatic update, signing, or rollback framework;
-- one-file packaging;
+- automatic update, signing, rollback, or one-file packaging;
 - optional uninstall data-deletion UX;
-- incompatible-version, downgrade, or rollback strategy;
+- incompatible-version and downgrade strategy;
 - unrelated Promotion or `pages.order` decisions.
 
-Derived and checkpoint files must not introduce architectural claims absent from this canon.
+Derived and checkpoint files must not introduce claims absent from this canon.

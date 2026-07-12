@@ -1,12 +1,12 @@
 # 03_DECISION_LOG.md
 
-> Version: 0.2-cycle06
+> Version: 0.3-cycle06-sprint02
 > Status: Active Observational Record
 > Persistence Class: Observational History
 > Knowledge Class: Design History
 > Authority: Design Chat [D]
 > Scope: Chronological Design-domain decisions, reconciliation events, materializations, corrections, and deferred boundaries
-> Current Coverage: Recovery repopulation through Cycle 06 post-Codex Design absorption
+> Current Coverage: Recovery repopulation through Cycle 06 Sprint 02 installed-lifecycle evidence
 
 ---
 
@@ -225,7 +225,7 @@ Rationale: distributed lifecycle ownership was a structural concern, not yet pro
 
 ---
 
-# 4. Event 08 — Cycle 06 Materialization Evidence
+# 4. Event 08 — Cycle 06 Sprint 01 Materialization Evidence
 
 ## Source boundaries materialized
 
@@ -253,29 +253,11 @@ validated: partial
 
 Source/static checks, five standard-library release tests, frozen build, resource inspection, schema-only first launch, startup-log creation, and frozen reopen passed.
 
-## Observed shutdown failure
+## Observed shutdown failure and bounded correction
 
-The validate-first probe failed:
+The validate-first probe showed the isolated SQLite file remained open after `MainWindow.close()`. Codex added `MainWindow.closeEvent()` and `close_page_services()` to idempotently close Register, Lists, History, and Settings services.
 
-```text
-MainWindow.close()
-→ isolated SQLite file remained open
-→ isolated LOCALAPPDATA removal failed with WinError 32
-```
-
-This converted a plausible structural risk into an observed bounded lifecycle defect.
-
-## Bounded MainWindow correction
-
-Codex added:
-
-```text
-MainWindow.closeEvent()
-→ close_page_services()
-→ idempotent closure of Register, Lists, History, and Settings services
-```
-
-Rerun evidence showed all four repositories open before close and closed afterward; the isolated database directory became removable.
+Rerun evidence showed all four repositories closed and the isolated database directory became removable.
 
 Design classification:
 
@@ -290,8 +272,6 @@ not dependency injection
 
 `installer/Markei.iss` and `scripts/build_installer.ps1` were configured, but `ISCC.exe` was unavailable.
 
-Therefore:
-
 ```text
 installer source: configured
 compiled installer: blocked
@@ -300,11 +280,9 @@ installed lifecycle: unvalidated
 beta acceptance: no
 ```
 
-No installer configuration was promoted as installation evidence.
-
 ---
 
-# 5. Event 09 — Main Post-Codex Reconciliation
+# 5. Event 09 — Sprint 01 Main Post-Codex Reconciliation
 
 Main reviewed G/H/I and critical implementation files in commit:
 
@@ -317,7 +295,7 @@ Main accepted the bounded unit as technically successful but insufficient to clo
 
 Accepted Design absorption:
 
-- deployment states remain distinct: source, frozen runtime, installer source, installed program files, and writable user state;
+- deployment states remain distinct;
 - launcher-owned startup diagnostics are stable;
 - `schema.sql` is production resource and `seed.sql` is fixture-only;
 - retained user data remains external;
@@ -336,26 +314,133 @@ validated: partial
 accepted: no
 ```
 
-Remaining lifecycle route:
+---
+
+# 6. Event 10 — Sprint 02 Installer Toolchain and Structural Defaults
+
+## Installer compiler discovery
+
+Inno Setup 6.7.3 was installed in a per-user location. The original wrapper did not discover that path.
+
+Bounded correction:
 
 ```text
-provide ISCC.exe
-→ compile installer
-→ inspect artifact
-→ install per-user
-→ Start Menu launch
-→ principal workflows
-→ close/reopen
-→ retained-data verification
-→ compatible reinstall/upgrade
-→ uninstall preservation
-→ reinstall recovery
-→ human acceptance
+scripts/build_installer.ps1
+→ add %LOCALAPPDATA%\Programs\Inno Setup 6\ISCC.exe candidate
+```
+
+Design classification: tooling correction only. Packaging authority and installer authority remained unchanged.
+
+## Structural production defaults
+
+The fresh installed Register-equivalent workflow failed with a foreign-key error because the seed-free database lacked current Register defaults.
+
+Bounded correction:
+
+```text
+category F / General
+store 1 / Default Store
+```
+
+These rows were classified as idempotent structural application defaults, not sample business data. Production continued to exclude `seed.sql` and to create zero sample products and purchases.
+
+This refined the earlier schema-only policy without reversing it:
+
+```text
+schema.sql
++ structural defaults required by current application invariants
++ zero sample business records
 ```
 
 ---
 
-# 6. Explicit Deferrals Preserved
+# 7. Event 11 — Sprint 02 Compiled Installer and Installed Lifecycle
+
+## Artifact and build evidence
+
+The installer compiled successfully:
+
+```text
+dist/installer/Markei-Setup-0.1.0-x64.exe
+SHA256 122A772D66BBE7D5522EF2262E7E89D6D2E332B6318135BB25D55A27F75F4623
+size 34,448,651 bytes
+```
+
+The Inno `x64` deprecation warning was recorded as non-blocking tooling debt.
+
+## Installed boundary evidence
+
+The following transitions passed technically:
+
+```text
+per-user install
+→ installed executable under %LOCALAPPDATA%/Programs/Markei
+→ Start Menu shortcut launch
+→ external database creation
+→ service-backed Register / Lists / History / Settings evidence
+→ close and immediate reopen
+→ same-version reinstall with preserved data
+→ uninstall with retained database
+→ reinstall with retained-data recovery
+```
+
+Observed installed behavior matched the accepted separation between replaceable program files and `%LOCALAPPDATA%/Markei` user state.
+
+The installed shutdown path used the existing MainWindow close coordination successfully. No broad architecture correction was required.
+
+## Validation environment
+
+The lifecycle used the current ordinary Windows user. Existing Markei data was backed up before testing and restored afterward. Dedicated-account isolation was not evidenced.
+
+## SmartScreen and signing
+
+Defender was enabled and the executable/installer were unsigned. No SmartScreen prompt appeared during silent/programmatic execution.
+
+Design classification:
+
+```text
+human-visible SmartScreen behavior: unknown
+not an application correctness failure
+```
+
+---
+
+# 8. Event 12 — Sprint 02 Main Post-Codex Reconciliation
+
+Main reconciled Sprint 02 G/H/I and implementation evidence in the active `J_[M]_STAGE.md`.
+
+Accepted evidence state:
+
+```text
+configured: validated
+built: validated
+launched: validated — frozen and installed shortcut launch
+installed: validated — automated per-user lifecycle
+validated: partial-to-strong technical evidence
+accepted: no
+```
+
+Main preserved the distinction:
+
+```text
+installed technical workflow path: validated
+human-visible UI workflow acceptance: pending
+```
+
+Still pending:
+
+- human-visible installer wizard observation;
+- human-visible Register / Lists / History / Settings walkthrough;
+- human-visible close/reopen confirmation;
+- human-visible SmartScreen/security observation;
+- final Main/human acceptance;
+- artifact-versioning policy resolution.
+
+Main also identified a report/repository contradiction: G described the installer artifact as generated but uncommitted, while branch evidence showed it added. Design records the contradiction but does not decide artifact retention policy.
+
+---
+
+# 9. Explicit Deferrals Preserved
 
 Cycle 06 did not introduce or authorize:
 
@@ -368,21 +453,24 @@ Cycle 06 did not introduce or authorize:
 - optional uninstall data-deletion UX;
 - broad UI/navigation redesign.
 
-Workflow atomicity remains inherited Design debt unless a later bounded failure and Main reconciliation reopen it.
+Workflow atomicity and broader migration strategy remain inherited Design debt.
 
 ---
 
-# 7. Current Observational Result
+# 10. Current Observational Result
 
 ```text
-canonical release boundaries absorbed
-model overview refreshed
-design checkpoint refreshed
-installer lifecycle still blocked
-application source unchanged by Design absorption
-other domains unchanged
-methodology unchanged
-Main-root continuity unchanged
+compiled installer evidenced
+installed per-user lifecycle technically validated
+structural defaults classified
+program/user-state separation observed
+same-version reinstall passed
+uninstall retention passed
+reinstall recovery passed
+MainWindow shutdown coordination sufficient in tested installed lifecycle
+human-visible acceptance still pending
+beta not accepted
+Cycle 06 not closed
 ```
 
-The next append should record installer compilation and installed-lifecycle evidence, or a bounded failure discovered during those gates.
+The next append should record human-visible acceptance results, SmartScreen/security observations, artifact-policy resolution, or a bounded failure discovered during those final gates.
