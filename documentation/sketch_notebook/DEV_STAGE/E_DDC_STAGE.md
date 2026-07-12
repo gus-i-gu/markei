@@ -1,58 +1,683 @@
-# E_DDC_STAGE — Cycle 07 Sprint 03 Flutter Foundation
+# E_DDC_STAGE — Cycle 07 Sprint 04 Evidence and Learning Contract
 
-> Cycle: 07 | Sprint: 03 | Unit: 01
-> Status: Main-approved materialization stage
-> Branch: `cycle-07-mobile-preparation`
-> Baseline: `f6414fbe7394453387067a5a34ca6cc7621bbed3`
-> Sources: `[M]_STAGE/J_[M]_STAGE.md` §§17–18; `00_PROJECT_STATE.md`; `05_SESSION_LOG.md`; `06_SESSION_SCHEME.md`
+> Role owner: Main Chat [M]
+> Didactic sources: `B_DIDACTIC.md`, J §21, `06_SESSION_SCHEME.md`
+> Status: Main-approved Codex materialization authority
+> Repository: `gus-i-gu/markei`
+> Required branch: `cycle-07-mobile-preparation`
+> Scope: evidence design for the corrected Windows local vertical slice
+> Companion authority: `D_OPS_STAGE.md` and `F_DSN_STAGE.md`
 
 ---
 
-# 1. Learning purpose
+# 1. Purpose
 
-Turn the reconciled model into bounded executable evidence. Tests must distinguish stable domain facts, language-neutral fixtures, Dart representations, local persistence records, and later synchronization envelopes.
+Sprint 04 must produce code and evidence that preserve conceptual distinctions.
 
-# 2. Required fixture scenarios
+Codex must not merely add fields and widgets.
 
-Create small versioned JSON fixtures for:
+Tests, fixtures, naming, UI copy, and H reporting must demonstrate what each responsibility means and what remains unproven.
 
-1. PACKAGED Product identity: account + normalized name + normalized brand + mode + measurement kind + normalized package amount + canonical unit;
-2. BULK Product identity, excluding package amount;
-3. equivalent gram/kilogram display inputs producing the same exact identity;
-4. similar spelling producing only an advisory candidate, never automatic merge;
-5. valid one-item Purchase;
-6. valid multi-item Purchase;
-7. invalid Item proving aggregate rollback;
-8. `purchase.registered` event containing event/account/device UUIDs, device sequence, payload version, occurrence time, and complete Purchase payload;
-9. close/reopen expectations.
+This file does not authorize KANBAN maturity changes.
 
-Expected values are semantic facts, not localized UI prose.
+---
 
-# 3. Concept evidence
+# 2. Central teaching boundary
 
-H must say what tests actually demonstrate for stable identity, immutable Dart model, reusable catalogue, Product Identification Set and deterministic normalization, Purchase aggregate, Purchase Item, dimensional quantity, monetary minor unit, append-only event, offline queue preparation, and historical integrity.
-
-No maturity change is authorized. Authentication, authorization, cross-device eventual consistency, cursor download, real server idempotency, and platform lifecycle remain unvalidated unless executed.
-
-# 4. Representation guidance
-
-Use explicit value types:
+The primary Sprint 04 distinction is:
 
 ```text
-ProductMode: PACKAGED | BULK
-MeasurementKind: MASS | VOLUME | COUNT
-CanonicalUnit: KG | L | UNIT
-Money: ISO currencyCode + integer minorUnits
+user Product code
+≠
+internal Product record ID
+≠
+Product Identification Set
+≠
+future central Product ID
 ```
 
-Use a decimal-safe fixed representation for normalized quantity and record scale/range in I. Binary floating point cannot be a durable identity key. Reject fractional COUNT in this unit. Do not assume every currency has two minor digits.
+Every layer must preserve this distinction.
 
-Exact normalization may reuse an identity. Fuzzy similarity only warns. If deterministic Product UUID is tested, its namespace, canonical bytes, and normalization version must be fixture-visible.
+---
 
-# 5. Analytics boundary
+# 3. User Product code
 
-Create only enough Dart analytics-registry structure to prove versioned pure-calculation ownership. One bounded calculation or placeholder is sufficient. Analytics cannot rewrite raw facts or live inside widgets.
+Definition:
 
-# 6. Stop rule
+> An account-private handle chosen by the user to recognize and retrieve a Product in that account’s catalogue.
 
-Do not expand into correction/merge/alias, product supersession, household sharing, cloud sync, purchase editing, or a complete analytics suite. Record unresolved questions in H.
+Required properties:
+
+- required for new Products;
+- chosen by the user;
+- display value preserved;
+- 1–64 visible characters after trim;
+- account-scoped;
+- unique after code normalization;
+- case-insensitively unique;
+- not a primary key;
+- not derived from Product meaning;
+- not a future global identity;
+- not editable in this Sprint;
+- not reusable through a retirement workflow in this Sprint.
+
+Examples:
+
+```text
+CAF-001
+cafe-casa
+A12
+arroz_5kg
+produto cozinha 7
+```
+
+UI must label it:
+
+```text
+Product code
+```
+
+Do not label it UUID, database ID, barcode, central ID, or Product Identification Set.
+
+---
+
+# 4. Internal Product record ID
+
+Definition:
+
+> An immutable application-controlled identity used by database relations, events, and repository operations.
+
+Required properties:
+
+- generated by the application;
+- UUID v4 for newly created Products;
+- opaque to ordinary user workflow;
+- immutable;
+- primary/foreign-key identity;
+- preserved across display/code changes;
+- existing v1 Product IDs preserved during migration;
+- never regenerated from name, brand, or package quantity.
+
+Tests may inspect it.
+
+Ordinary Product forms should not ask the user to type it.
+
+---
+
+# 5. Product Identification Set
+
+Definition:
+
+> Versioned normalized Product facts used for exact catalogue matching.
+
+PACKAGED identity includes:
+
+```text
+account
+normalization version
+normalized name
+normalized brand
+PACKAGED
+measurement kind
+canonical package amount
+canonical package unit
+```
+
+BULK identity includes:
+
+```text
+account
+normalization version
+normalized name
+normalized brand
+BULK
+```
+
+It is not the user Product code.
+
+It does not automatically become a central UUID.
+
+It may detect an exact existing Product.
+
+Similarity remains advisory.
+
+---
+
+# 6. Future central Product identity
+
+Definition:
+
+> A deferred system-controlled identity that may later map equivalent production identities across private catalogues.
+
+Sprint 04 must not:
+
+- create a central catalogue;
+- populate a fake central UUID;
+- derive central identity locally;
+- synchronize private Products;
+- suggest that a user code is globally meaningful.
+
+Schemas may reserve no central field unless F explicitly requires one.
+
+F does not require one.
+
+---
+
+# 7. Unicode normalization v2
+
+The learner-facing rule is:
+
+```text
+preserve what the user typed for display
++
+derive a versioned canonical value for exact matching
+```
+
+Required normalization steps:
+
+1. Unicode NFKC.
+2. Trim outer whitespace.
+3. Collapse repeated whitespace.
+4. Lowercase.
+5. Replace the fixed semantic punctuation set with spaces for Product name/brand.
+6. Collapse whitespace again.
+7. Preserve Portuguese accented letters.
+8. Convert quantities only within the same dimension.
+9. Record normalization version 2.
+
+Required examples:
+
+| Display input | Required relationship |
+| --- | --- |
+| `Café Pilão` | accents preserved |
+| decomposed `Café Pilão` | exact-equal after NFKC |
+| ` CAFÉ   PILÃO ` | exact-equal after case/space normalization |
+| `Café-Pilão` | follows documented punctuation-to-space rule |
+| `Café Pilao` | not exact; may warn |
+| `1 kg` and `1000 g` | exact quantity equivalence |
+| `1 L` and `1 kg` | never equivalent |
+| PACKAGED and BULK | never exact-equivalent |
+
+Tests must show display text is not overwritten by the canonical value.
+
+---
+
+# 8. Opaque-code normalization
+
+Code normalization is separate from semantic name normalization.
+
+Required code-key steps:
+
+1. NFKC.
+2. Trim.
+3. Collapse whitespace.
+4. Lowercase.
+
+Do not strip punctuation from Product codes.
+
+Do not infer meaning from them.
+
+Examples:
+
+```text
+CAF-001
+caf-001
+```
+
+These collide inside one account.
+
+The same normalized code in different accounts does not collide.
+
+---
+
+# 9. JSON Schema teaching boundary
+
+JSON Schema provides structural validation.
+
+It can prove:
+
+- required fields;
+- field types;
+- enums;
+- numeric/string bounds;
+- timestamp format;
+- additional-property policy;
+- nested shape;
+- schema version presence.
+
+It does not by itself prove:
+
+- aggregate totals;
+- cross-field currency agreement;
+- exact normalization;
+- code uniqueness in a database;
+- device monotonicity;
+- transaction atomicity;
+- semantic parity between runtimes;
+- synchronization.
+
+H must preserve this distinction.
+
+---
+
+# 10. Versioned contract package
+
+Keep v1 unchanged as historical evidence.
+
+Create v2.
+
+V2 contains:
+
+```text
+schemas
+readable valid examples
+readable invalid examples
+README
+```
+
+Every schema and example must state its version.
+
+Every invalid example must state outside the instance—or through test naming—why it is invalid.
+
+Do not insert explanatory fields that the schema would reject merely to describe the failure.
+
+Use test case names or a manifest for expected failures.
+
+---
+
+# 11. Required catalogue schema evidence
+
+Valid Product example must show:
+
+- internal Product ID;
+- user Product code;
+- display name and brand;
+- normalized name and brand;
+- normalization version 2;
+- PACKAGED or BULK;
+- measurement kind;
+- package amount/unit rules;
+- account ID;
+- no central UUID.
+
+Invalid examples must include:
+
+- missing user code;
+- empty code;
+- code longer than 64;
+- missing internal ID;
+- PACKAGED without package amount;
+- BULK with forbidden package amount;
+- invalid measurement kind;
+- invalid unit/dimension pairing;
+- unexpected additional property.
+
+Domain tests separately prove uniqueness and normalization.
+
+---
+
+# 12. Required Purchase schema evidence
+
+Valid examples:
+
+- one-item Purchase;
+- two-item Purchase;
+- PACKAGED Item;
+- BULK Item;
+- explicit currency;
+- integer minor units;
+- occurrence timestamp;
+- Store reference;
+- Product internal IDs and user-facing codes where presentation/bootstrap requires them.
+
+Invalid examples:
+
+- zero Items;
+- zero package count;
+- fractional COUNT;
+- currency mismatch;
+- negative line total;
+- malformed timestamp;
+- missing Product reference;
+- unknown property;
+- calculated total mismatch as a domain-invalid case.
+
+Schema and domain failure must be distinguished.
+
+---
+
+# 13. Required event schema evidence
+
+Valid event:
+
+```text
+event ID
+account ID
+device ID
+device sequence
+event type purchase.registered
+payload version
+occurrence timestamp
+complete Purchase payload
+content hash where owned
+```
+
+Invalid examples:
+
+- zero/negative sequence;
+- missing event ID;
+- wrong event type;
+- unsupported payload version;
+- incomplete Purchase payload;
+- additional property;
+- malformed timestamp.
+
+Do not call successful local validation server acceptance.
+
+---
+
+# 14. Device-sequence evidence
+
+Required executable story:
+
+```text
+register first Purchase  → event sequence 1
+register second Purchase → event sequence 2
+register third Purchase  → event sequence 3
+close database
+reopen database
+register fourth Purchase → event sequence 4
+```
+
+Required failure story:
+
+```text
+attempt invalid Purchase
+→ transaction rolls back
+→ no Purchase
+→ no event
+→ no pending row
+→ next successful sequence remains correct
+```
+
+This proves local durable ordering only.
+
+It does not prove server gap handling or cross-device order.
+
+---
+
+# 15. Migration evidence
+
+Teach:
+
+```text
+schema version
+≠
+normalization version
+≠
+payload version
+≠
+analytic version
+```
+
+Required migration story:
+
+```text
+create v1 test database
+insert Product/Purchase/event/pending facts
+open with v2
+preserve IDs and references
+assign temporary legacy Product code
+preserve facts
+record migration
+continue sequence
+```
+
+Temporary legacy code must be visibly distinguishable from a user-confirmed code.
+
+Do not claim legacy Cycle 06 import.
+
+---
+
+# 16. Flutter architecture evidence
+
+UI tests must demonstrate:
+
+- widgets collect and display input;
+- application service/use case coordinates registration;
+- repository owns persistence;
+- Drift owns SQL;
+- transaction remains outside widgets;
+- UI shows validation errors without partial writes;
+- history is read through an application/repository query;
+- app startup owns database creation;
+- app disposal closes the database.
+
+No controller framework or state-management package is required.
+
+Simple Flutter state is acceptable.
+
+---
+
+# 17. Minimal user workflow evidence
+
+Automated widget tests should cover:
+
+1. foundation screen replaced.
+2. Purchase form visible.
+3. Store entry.
+4. Product code entry.
+5. Product name/brand entry.
+6. package mode and quantity.
+7. line price.
+8. add first Item.
+9. add second Item.
+10. staged Item list visible.
+11. total visible.
+12. submit.
+13. success visible.
+14. history entry visible.
+15. invalid input produces a clear error.
+
+A persistence integration/manual test covers close/reopen.
+
+---
+
+# 18. History/projection boundary
+
+Minimum history row:
+
+```text
+Purchase ID
+occurrence time
+Store display name
+currency
+total minor units rendered as money
+item count
+```
+
+This is a local read model.
+
+It is not:
+
+- Storage/Shortage/Market parity;
+- analytics dashboard;
+- synchronized history;
+- editable ledger.
+
+Broad projections remain later work.
+
+---
+
+# 19. Windows versus Android evidence
+
+Windows evidence categories:
+
+```text
+generated
+built
+launched
+interacted
+closed/reopened
+persisted
+```
+
+Report each separately.
+
+Windows build/launch is required.
+
+Human interaction may be reported as human-observed evidence when automation cannot drive the desktop window.
+
+Android categories:
+
+```text
+SDK available or absent
+device available or absent
+build attempted or blocked
+build passed or failed
+execution not required
+```
+
+Do not merge Windows and Android claims.
+
+---
+
+# 20. Generated-source distinction
+
+Required explanation:
+
+```text
+handwritten source
+    direct review and tests
+
+generated Drift/platform source
+    generator input + lockfile + clean regeneration + build evidence
+
+build artifacts
+    execution output, not permanent design truth
+```
+
+Large generated files do not equal large handwritten business complexity.
+
+---
+
+# 21. Required automated test groups
+
+Codex should organize tests so failures identify responsibility:
+
+```text
+identity and Unicode
+user Product code
+quantity and money
+contract schemas/examples
+device sequence
+migration v1→v2
+atomic repository
+application use case
+widget Purchase workflow
+history query/presentation
+database close/reopen
+```
+
+Avoid one monolithic test.
+
+---
+
+# 22. Evidence matrix for H
+
+H must include at least:
+
+| Claim | Evidence | Classification |
+| --- | --- | --- |
+| user Product code separated | model/schema/UI/tests | implemented/validated |
+| internal ID immutable | model/migration/tests | implemented/validated |
+| central ID absent | schema inspection | deferred |
+| Unicode v2 | fixtures/tests | implemented/validated locally |
+| JSON Schema | schema test results | validated structurally |
+| semantic invariants | domain tests | validated locally |
+| sequence 1–4 | repository tests | validated locally |
+| atomic rollback | repository tests | validated locally |
+| Purchase UI | widget/runtime evidence | implemented/validated as executed |
+| Windows | build/launch/manual evidence | classified per action |
+| Android | build or blocker | conditional |
+| synchronization | none | deferred |
+
+---
+
+# 23. KANBAN boundary
+
+Do not change KANBAN.
+
+G/H/I may recommend later review.
+
+No maturity change follows automatically from:
+
+- code creation;
+- test pass;
+- Windows launch;
+- JSON Schema creation;
+- Codex explanation.
+
+Learner evidence remains separately owned.
+
+---
+
+# 24. Required H report structure
+
+`H_DDC_CODEX.md` must contain:
+
+1. source D/E/F.
+2. concepts exercised.
+3. fixtures created.
+4. test scenarios.
+5. evidence classifications.
+6. user/internal/central identity distinction.
+7. schema versus semantic validation.
+8. local event versus synchronization.
+9. Windows versus Android boundary.
+10. generated versus handwritten ownership.
+11. concepts still unvalidated.
+12. no-maturity-change statement.
+13. human-observed evidence separately marked.
+14. recommended permanent Didactic follow-up.
+
+---
+
+# 25. Stop conditions
+
+Stop and report if:
+
+- user code becomes the database primary key;
+- internal ID is regenerated from Product meaning;
+- existing IDs are rewritten during migration;
+- a central UUID is invented;
+- Unicode display text is destroyed;
+- code and semantic normalization are conflated;
+- JSON Schema replaces domain tests;
+- readable examples are removed;
+- local queue is described as synchronization;
+- Windows generation is described as launch;
+- Android absence fails the whole Sprint;
+- UI writes SQL directly;
+- permanent Didactic documents are modified.
+
+---
+
+# 26. Completion definition
+
+E is satisfied only when evidence can explain:
+
+```text
+what the user controls
+what the application controls
+what is normalized
+what remains displayed
+what JSON Schema validates
+what domain tests validate
+what the transaction guarantees
+what Windows execution proves
+what Android does not yet prove
+what remains deferred
+```
+
+Documentation-only explanation without corresponding implementation evidence is insufficient.
