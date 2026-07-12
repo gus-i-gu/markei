@@ -1,10 +1,10 @@
 # 12_OPERATIONAL_MODEL.md
 
-> Version: Cycle 06 reconciliation 0.4
+> Version: Cycle 07 synchronization safety reconciliation 0.5
 > Status: Canonical operational knowledge
 > Persistence Class: Canonical
 > Knowledge Class: Operational
-> Branch: `sketch-notebook-recovery`
+> Branch: `cycle-07-mobile-preparation`
 > Authority: Operational Chat under Main reconciliation
 > Reconciliation sources: `DEV_STAGE/D_OPS_STAGE.md`, `DEV_STAGE/G_OPS_CODEX.md`, `[M]_STAGE/J_[M]_STAGE.md`
 
@@ -180,6 +180,46 @@ Inno Setup currently accepts `x64` while warning that it is deprecated in favor 
 
 Technical installed-lifecycle validation does not grant beta acceptance. Final acceptance still requires human-visible installer and principal UI walkthrough evidence, normal close/reopen confirmation, human-visible SmartScreen or antivirus observations, and Main/human approval.
 
-# 12. Canonical Maintenance Rule
+# 13. Canonical Maintenance Rule
 
 Update this model only when stable Operational behavior or reusable validation rules change. Current hashes, command transcripts, temporary blockers, and chronological corrections belong in the record, checkpoint, or TODO.
+
+# 12. Shared-Client Synchronization Safety Rules
+
+These rules are technology-independent and apply to any later shared-client implementation.
+
+## 12.1 Privileged database credentials
+
+Distributed clients must never contain privileged shared-database credentials. All shared reads and writes pass through an authenticated and authorized service boundary that validates account ownership, protocol version, payload, and operation.
+
+## 12.2 Atomic local fact creation
+
+When a user action creates local authoritative facts and an outbound synchronization event, the facts, event identity, queue state, and local ordering metadata must commit in one transaction:
+
+```text
+all durable together
+or
+none durable
+```
+
+A successful UI response must not leave authoritative facts without their required outbound event, or a queued event without its corresponding local facts.
+
+## 12.3 Atomic downloaded-event application
+
+Downloaded accepted events, applied-event identity records, affected authoritative facts, and the local server-cursor advancement must commit in one local transaction. The cursor must never advance beyond facts that were durably applied.
+
+## 12.4 Unknown network outcomes
+
+A lost response creates an unknown outcome, not a known failure. Clients retain pending work and retry with the same immutable event identity. The service must make identical retry safe and reject conflicting content under an already accepted identity.
+
+## 12.5 Local proof before production infrastructure
+
+Synchronization semantics, authorization isolation, transactions, retries, ordering/cursors, migrations, restart recovery, and diagnostics must first pass against disposable local infrastructure. Production or managed infrastructure is introduced only after the local protocol boundary is evidenced.
+
+## 12.6 Migration rehearsal and recovery
+
+Every supported migration path must be rehearsed against fresh state and representative prior state. A failed migration must preserve the prior valid state or a recoverable copy. Deployment and rollback procedures must define compatibility order, backups/recovery, diagnostics, and forward correction; destructive reversal is never assumed safe.
+
+## 12.7 Accepted desktop-data isolation
+
+New clients and experiments use distinct application-private storage and must not open, copy, mutate, or destructively convert accepted desktop user data without a separately authorized migration procedure. The accepted application and data remain recoverable until explicit parity and migration acceptance.
