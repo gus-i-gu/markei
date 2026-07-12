@@ -1,47 +1,72 @@
-# H_DDC_CODEX — Cycle 06 Sprint 02 Didactic Codex Report
+# H_DDC_CODEX - Cycle 07 Sprint 03 Didactic Codex Report
 
-> Status: Codex evidence report
-> Branch: `sketch-notebook-recovery`
+> Status: Fixture and concept evidence implemented
+> Branch: `cycle-07-mobile-preparation`
 > Source stage: `E_DDC_STAGE.md`
 > Date: 2026-07-12
 
-## Didactic Materialization Status
+## Source Stage Files
 
-Permanent Didactic files were not modified.
+- `documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md`
+- `documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md`
+- `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`
 
-This report records Sprint 02 reinforcement evidence only for later Didactic Chat classification. It does not create concepts, promote concepts, or update permanent Didactic memory.
+## Fixture Evidence
 
-## Reinforcement Evidence
+Created versioned fixtures in `contracts/shared_beta/v1/`:
 
-- Evidence-state vocabulary was kept separate: `configured`, `built`, `launched`, `installed`, `validated`, `accepted`, `blocked`, and `unknown` were not collapsed into one another.
-- The compiled installer was treated as an artifact, not as installation evidence.
-- Installation was treated as distinct from workflow validation.
-- Automated workflow validation was treated as distinct from Main/human acceptance.
-- Build-time, installer-time, runtime, and user-data concerns remained observable as separate contexts.
-- The fresh-production Register failure demonstrated the difference between sample seed data and required structural defaults.
-- The correction inserted structural defaults only and preserved the no-sample-products/no-sample-purchases production policy.
-- Shutdown/reopen, reinstall, uninstall retention, and reinstall recovery were validated as lifecycle stages rather than assumed from a successful build.
+- `catalogue_identity.json`
+  - PACKAGED Product identity.
+  - BULK Product identity.
+  - gram/kilogram exact equivalence.
+  - similar spelling as warning-only, no automatic merge.
+- `purchase_aggregate.json`
+  - one-item Purchase expectation.
+  - multi-item Purchase expectation.
+  - invalid Item rollback expectation.
+  - close/reopen expectation.
+- `sync_event.json`
+  - `purchase.registered` envelope fields, payload version, device sequence, and pending queue state.
 
-## Evidence Observed
+## Concept Evidence Demonstrated By Tests
 
-- `python -m compileall app main.py` passed.
-- `python -m unittest discover -s tests` passed with 5 tests.
-- Frozen runtime rebuilt.
-- Installer compiled after the per-user `ISCC.exe` discovery correction.
-- Clean per-user install completed.
-- Start Menu shortcut launch created the production user database.
-- Register-equivalent workflow, Lists projection, History projection, and Settings evidence were validated through installed user data.
-- Close/reopen, same-version reinstall, uninstall retention, and reinstall recovery were validated.
-- SmartScreen behavior remains `unknown` for human-visible execution because silent/programmatic execution did not surface a prompt.
+- Stable identity: exact identity key includes account, normalization version, normalized name/brand, mode, and packaged quantity when applicable.
+- Immutable Dart model: domain/value objects use final fields and constructor-provided state.
+- Reusable catalogue: Purchase Items reference Products rather than embedding mutable product observations as product identity.
+- Product Identification Set: PACKAGED includes normalized package amount/unit; BULK excludes package amount.
+- Deterministic normalization: `1 kg` and `1000 g` produce the same exact Product identity and Product ID.
+- Similarity: spelling-adjacent Products produce advisory similarity without identity reuse.
+- Purchase aggregate: Purchase requires at least one Item and validates item/currency invariants.
+- Purchase Item: invalid package count fails validation and rolls back the transaction.
+- Dimensional quantity: MASS, VOLUME, COUNT and KG, L, UNIT are explicit; fractional COUNT is rejected.
+- Minor-unit money: line totals and Purchase totals use ISO currency plus integer minor units.
+- Append-only event preparation: a local immutable `purchase.registered` payload is persisted with event ID, account ID, device ID, device sequence, payload version, and content hash.
+- Offline queue preparation: pending event queue row is created atomically with the local facts.
+- Historical integrity: close/reopen test preserves facts and pending event in a fresh local database file.
+- Versioned analytics: a minimal registry boundary resolves `purchase.total_minor_units@1` without touching raw facts.
 
-## Didactic Boundaries Preserved
+## Validation Results
 
-- No permanent Didactic files were edited.
-- No KANBAN IDs were added.
-- No glossary entries were promoted.
-- No concept-map relationships were rewritten.
-- Tool names remained examples in evidence rather than canonical concepts.
+- `flutter test`: 9 tests passed.
+- `flutter analyze`: no issues.
+- `dart format --output=none --set-exit-if-changed .`: passed.
+- Python unittest suite: 5 tests passed; no Python source changes.
 
-## Remaining Didactic Follow-Up
+## No Maturity Change
 
-Didactic Chat may later classify whether Sprint 02 evidence should reinforce existing concepts around evidence boundaries, execution contexts, artifact lifecycle, and structural defaults. Codex did not perform that classification.
+No KANBAN maturity change is authorized or implied by this report.
+
+## Still Unvalidated
+
+- Authentication and authorization.
+- Cross-device eventual consistency.
+- Cursor download/application.
+- Real server idempotency.
+- Android runtime lifecycle.
+- Windows desktop runtime lifecycle.
+- iOS lifecycle.
+- Complete UI workflow.
+
+## Suggested Functional Follow-Up
+
+Didactic Chat can classify this as executable evidence for the local shared-beta concepts only. Server synchronization and platform lifecycle concepts remain Red/unvalidated unless later materialization runs them.

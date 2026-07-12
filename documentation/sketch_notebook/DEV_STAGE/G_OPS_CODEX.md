@@ -1,265 +1,105 @@
-# G_OPS_CODEX — Cycle 06 Sprint 02 Operational Codex Report
+# G_OPS_CODEX - Cycle 07 Sprint 03 Operational Codex Report
 
-> Status: Codex implementation evidence
-> Branch: `sketch-notebook-recovery`
+> Status: Implemented and validated with host limits
+> Branch: `cycle-07-mobile-preparation`
 > Source stages: `D_OPS_STAGE.md`, `E_DDC_STAGE.md`, `F_DSN_STAGE.md`
 > Date: 2026-07-12
 
-## Bootstrap
+## Source Stage Files
 
-- `AGENTS.md` loaded and applied.
-- `documentation/sketch_notebook/INDEX.md` loaded.
-- Methodology boot sequence completed: `METHOD_FOUNDATIONS.md`, `FLUX.md`, `PROMOTION_RULES.md`, `CHAT_PROTOCOL.md`.
-- Current state recovered from `00_PROJECT_STATE.md`, `06_SESSION_SCHEME.md`, and `[M]_STAGE/J_[M]_STAGE.md`.
-- Sprint 02 implementation authority read from D/E/F before implementation inspection.
+- `documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md`
+- `documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md`
+- `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`
+
+## Bootstrap And Preflight
+
+- Loaded `AGENTS.md`, `INDEX.md`, methodology boot files, `00_PROJECT_STATE.md`, `05_SESSION_LOG.md`, `06_SESSION_SCHEME.md`, and D/E/F before source edits.
+- Existing modified G/H/I were preserved as previous-run evidence until replaced after this implementation attempt.
+- Preflight:
+  - `git status --short --branch`: branch `cycle-07-mobile-preparation`; only G/H/I modified from previous run.
+  - `git branch --show-current`: `cycle-07-mobile-preparation`.
+  - `git rev-parse HEAD`: `c4af0e4d2b78a17fc1fa3364a77f5f90e307ce6c`.
+  - `git merge-base --is-ancestor f6414fbe7394453387067a5a34ca6cc7621bbed3 HEAD`: passed.
+- Initial `flutter`, `dart`, and `flutter doctor -v` were unavailable on PATH. Human approved toolchain installation/configuration.
+- Flutter SDK installed from official stable Git repository to `C:\Users\gusrm\flutter`.
+- Toolchain after installation:
+  - Flutter `3.44.6`, stable, revision `ee80f08bbf`, Dart `3.12.2`.
+  - `flutter doctor -v`: Flutter and Windows version passed; Android SDK unavailable; Chrome unavailable; Visual Studio unavailable.
+
+## Files Created
+
+- `clients/markei_flutter/`: Flutter app named `markei`, generated with Android, iOS, and Windows target directories.
+- `contracts/shared_beta/v1/README.md`
+- `contracts/shared_beta/v1/catalogue_identity.json`
+- `contracts/shared_beta/v1/purchase_aggregate.json`
+- `contracts/shared_beta/v1/sync_event.json`
 
 ## Files Changed
 
-Modified source/configuration:
-
-- `scripts/build_installer.ps1`
-- `app/core/database.py`
-- `tests/test_release_configuration.py`
-
-Modified report files:
-
+- `clients/markei_flutter/pubspec.yaml`
+- `clients/markei_flutter/pubspec.lock`
+- Dart source and tests under `clients/markei_flutter/lib/` and `clients/markei_flutter/test/`
+- Drift generated source: `clients/markei_flutter/lib/infrastructure/local/local_database.g.dart`
 - `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
 - `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
 - `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
 
-Generated but not committed:
+## Files Deleted
 
-- `dist/installer/Markei-Setup-0.1.0-x64.exe`
+- Replaced generated Flutter counter test `clients/markei_flutter/test/widget_test.dart` with domain/persistence tests.
 
-## Bounded Corrections
+## Implementation Completed
 
-### Installer Compiler Discovery
+- Created additive Flutter/Dart client without moving, deleting, refactoring, importing, or migrating the Python/PySide6 beta.
+- Added immutable Dart domain/value models for required IDs, products, quantities, money, stores, purchases, purchase items, sync events, pending state, and analytics definition/version.
+- Implemented exact packaged and bulk product normalization.
+- Implemented advisory similarity check that never merges automatically.
+- Implemented Drift schema for local accounts, devices, products, stores, purchases, purchase items, sync events, pending events, sync state, and migration ledger.
+- Implemented one local transaction that resolves/creates Store and Products, validates Items, inserts Purchase and Items, allocates device sequence, creates immutable `purchase.registered` event, and enqueues a pending event.
+- Implemented rollback coverage for invalid Purchase Item.
+- Implemented close/reopen persistence test using a temporary file database.
 
-Failure:
-
-- `.\scripts\build_installer.ps1` initially failed because `ISCC.exe` was not found.
-- Inno Setup 6.7.3 was installed by `winget` under the per-user path:
-  `C:\Users\gusrm\AppData\Local\Programs\Inno Setup 6\ISCC.exe`.
-
-Correction:
-
-- Added `$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe` to `scripts/build_installer.ps1`.
-
-### Fresh Production Register Defaults
-
-Failure:
-
-- Fresh installed production workflow failed with `sqlite3.IntegrityError: FOREIGN KEY constraint failed`.
-- Evidence showed Register defaults require category `F` and store `1`, while the production package intentionally excludes sample `seed.sql`.
-
-Correction:
-
-- Added migration-time structural defaults only:
-  - category `F` / `General`
-  - store `1` / `Default Store`
-- No sample products or purchases were introduced.
-- Release configuration tests now verify those structural defaults and still verify zero products and purchases.
-
-## Commands And Evidence
+## Commands Run
 
 ```text
-git branch --show-current
-```
-
-Result: `sketch-notebook-recovery`.
-
-```text
-winget install --id JRSoftware.InnoSetup --silent --accept-package-agreements --accept-source-agreements
-```
-
-Result: Inno Setup installed. `winget list --id JRSoftware.InnoSetup` reported version `6.7.3`.
-
-```text
-python -m compileall app main.py
-```
-
-Result: passed after corrections.
-
-```text
+git clone --branch stable https://github.com/flutter/flutter.git "$env:USERPROFILE\flutter"
+flutter create --project-name markei --platforms android,ios,windows clients/markei_flutter
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs
+dart format .
+dart format --output=none --set-exit-if-changed .
+flutter analyze
+flutter test
 python -m unittest discover -s tests
 ```
 
-Result: passed, 5 tests.
+## Validation Results
 
-```text
-.\scripts\build_windows.ps1
-```
+- `flutter pub get`: passed.
+- `dart run build_runner build --delete-conflicting-outputs`: passed; Drift generated source written.
+- `dart format .`: passed; formatted source.
+- `dart format --output=none --set-exit-if-changed .`: passed, 0 changed.
+- `flutter analyze`: passed, no issues.
+- `flutter test`: passed, 9 tests.
+- `python -m unittest discover -s tests`: passed, 5 tests.
 
-Result: passed after structural-default correction.
+## Implemented But Host-Unvalidated
 
-```text
-.\scripts\build_installer.ps1
-```
+- Android target directory exists, but Android SDK is unavailable.
+- Windows target directory exists, but Visual Studio C++ desktop workload is unavailable.
+- iOS target directory exists as generated by Flutter; no macOS/Xcode validation was possible on this host.
+- No platform run/build acceptance is claimed.
 
-Result: passed after per-user `ISCC.exe` path correction.
+## Ordinary Cycle 06 Database Evidence
 
-Observed Inno warning:
+- Flutter code does not discover, open, copy, rename, migrate, hash, or inspect the ordinary Cycle 06 SQLite database.
+- Python unittest printed database initialization messages, but `git status --short` showed no Python/database file changes and `git diff -- app/database/market.sqlite` was empty.
 
-```text
-Architecture identifier "x64" is deprecated. Substituting "x64os"; "x64compatible" preferred in most cases.
-```
+## Skipped Or Deferred
 
-The warning did not block compilation.
+- TypeScript API, Neon, authentication, authorization, networking, cloud sync, full purchase UI, merge/alias, editing/deletion, and PySide6 retirement.
 
-## Artifacts
+## Unresolved Risks
 
-Frozen executable observed during the rebuilt package validation before generated-output cleanup:
-
-```text
-dist\Markei\Markei.exe
-SHA256: E13E276139E5F680D91A9816FC79776EB9837CA901C2DEBCF6B9CFAF8594A282
-Size: 2,173,220 bytes
-```
-
-Installer:
-
-```text
-dist\installer\Markei-Setup-0.1.0-x64.exe
-SHA256: 122A772D66BBE7D5522EF2262E7E89D6D2E332B6318135BB25D55A27F75F4623
-Size: 34,448,651 bytes
-```
-
-Distribution inspection during rebuilt package validation:
-
-- `dist\Markei\Markei.exe` present.
-- `_internal\app\database\schema.sql` present.
-- `seed.sql`, `market.sqlite`, WAL/SHM files, and startup logs were not present in the frozen distribution after restore/inspection.
-
-## Installed Lifecycle Gates
-
-Environment:
-
-- Automated lifecycle validation used the current ordinary Windows user.
-- Existing `%LOCALAPPDATA%\Markei` was backed up before clean-install testing and restored afterward.
-- Restored evidence: `%LOCALAPPDATA%\Markei\market.sqlite` exists; temporary backup path no longer exists.
-
-Clean per-user install:
-
-```text
-installed
-```
-
-Evidence:
-
-- Silent installer exited with code `0`.
-- Installed executable existed at `%LOCALAPPDATA%\Programs\Markei\Markei.exe`.
-- Start Menu shortcut existed at `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Markei\Markei.lnk`.
-
-Start Menu launch:
-
-```text
-launched
-```
-
-Evidence:
-
-- Shortcut launch started the installed process.
-- First launch created `%LOCALAPPDATA%\Markei\market.sqlite`.
-- No startup diagnostic log was produced during normal startup.
-- `CloseMainWindow()` returned `true`.
-
-Register / Lists / History / Settings validation:
-
-```text
-validated
-```
-
-Evidence:
-
-- Installed user database contained one category, one store, one product, and one purchase after Register-equivalent `ProductService` workflow.
-- Product evidence: `T006` / `Cycle 06 Test Product`.
-- List projection returned product row with quantity `2 unit`, latest price `3.5`, status `in-house`, and label `$ 3.50`.
-- History projection returned expected keys including `months`, `settings`, and `unparsed_rows`.
-- Settings evidence showed `week_boundary` as `wednesday`.
-
-Close and immediate reopen:
-
-```text
-validated
-```
-
-Evidence:
-
-- Installed app reopened twice after close.
-- `CloseMainWindow()` returned `true` on each close.
-- Database persisted across reopen with counts:
-  `categories=1`, `stores=1`, `products=1`, `purchases=1`.
-
-Same-version reinstall:
-
-```text
-validated
-```
-
-Evidence:
-
-- Same-version reinstall exited with code `0`.
-- `%LOCALAPPDATA%\Markei\market.sqlite` remained present.
-- Test product and purchase remained present after reinstall.
-
-Uninstall with retained user data:
-
-```text
-validated
-```
-
-Evidence:
-
-- Uninstall exited with code `0`.
-- `%LOCALAPPDATA%\Markei\market.sqlite` remained present after uninstall.
-- Data counts remained:
-  `categories=1`, `stores=1`, `products=1`, `purchases=1`.
-
-Reinstall and retained-data recovery:
-
-```text
-validated
-```
-
-Evidence:
-
-- Reinstall exited with code `0`.
-- Installed app launched after reinstall and closed cleanly.
-- Data counts and `Cycle 06 Test Product` remained present.
-
-SmartScreen / antivirus:
-
-```text
-unknown
-```
-
-Evidence:
-
-- Microsoft Defender status showed antivirus and real-time protection enabled.
-- Installer and executable Authenticode status: `NotSigned`.
-- No SmartScreen prompt was observed during silent installation or programmatic launch.
-- Human-visible SmartScreen behavior remains unvalidated because the installer was executed silently.
-
-## Evidence Status
-
-```text
-configured: validated
-built: validated
-launched: validated
-installed: validated
-validated: validated for automated installed lifecycle
-accepted: unknown
-blocked: human-visible SmartScreen and dedicated-account validation if required
-```
-
-No beta acceptance is claimed.
-
-## Deviations Or Limits
-
-- A dedicated separate Windows test account was not used; automated validation used the current ordinary Windows user with existing Markei data backed up and restored.
-- Visual/manual UI confirmation of Register, Lists, History, and Settings remains human validation. Automated installed lifecycle evidence exercised the same `ProductService` and database path used by the installed desktop application.
-- The Inno architecture warning remains as non-blocking implementation debt.
-
-## Prohibited Scope Check
-
-No mobile, backend, API, synchronization, authentication, cloud, schema redesign, transaction redesign, broad service/repository decomposition, one-file packaging, auto-update, signing, rollback framework, optional uninstall data deletion UX, or permanent Sketch Notebook promotion was introduced.
+- Android and Windows runtime/build validation require host prerequisites.
+- Server idempotency, cursor download, and cross-device synchronization remain future units.

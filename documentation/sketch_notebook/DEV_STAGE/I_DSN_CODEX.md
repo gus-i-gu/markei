@@ -1,131 +1,126 @@
-# I_DSN_CODEX — Cycle 06 Sprint 02 Design Codex Report
+# I_DSN_CODEX - Cycle 07 Sprint 03 Design Codex Report
 
-> Status: Codex evidence report
-> Branch: `sketch-notebook-recovery`
+> Status: Local Flutter foundation materialized
+> Branch: `cycle-07-mobile-preparation`
 > Source stage: `F_DSN_STAGE.md`
 > Date: 2026-07-12
 
-## Design Materialization Status
+## Source Stage Files
 
-Permanent Design files were not modified.
+- `documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md`
+- `documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md`
+- `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`
 
-This report records whether Sprint 02 installed lifecycle validation preserved accepted Design boundaries. It does not update permanent Design memory or reopen Main decisions.
-
-## Boundaries Preserved
-
-- Desktop UI remained the application surface.
-- Desktop workflow continued through `ProductService`.
-- `ProductService` continued through `Repository`.
-- `Repository` continued through the database layer.
-- SQLite remained the persistence store.
-- `%LOCALAPPDATA%\Markei` remained the writable per-user data location.
-- `schema.sql` remained the bundled production resource.
-- `seed.sql` remained excluded from the production frozen package.
-- `market.sqlite` remained user data and was not bundled.
-- Installer uninstall behavior retained user data by default.
-- Startup diagnostics remained under `%LOCALAPPDATA%\Markei\logs`.
-- Installer identity and shortcut behavior remained centralized in `installer/Markei.iss`.
-- Frozen packaging remained centralized in `Markei.spec`, with `scripts/build_windows.ps1` acting as a wrapper.
-
-## Bounded Design-Relevant Corrections
-
-### Installer Wrapper
-
-`scripts/build_installer.ps1` now discovers the Inno Setup per-user install path. This preserves one authoritative installer configuration and changes only compiler discovery.
-
-### Structural Production Defaults
-
-`app/core/database.py` now creates only required structural defaults during migration:
-
-- category `F` / `General`
-- store `1` / `Default Store`
-
-This preserves the accepted production seed policy because sample products and purchases are still absent from fresh production databases.
-
-## Installed Lifecycle Evidence
-
-Clean install:
+## Implemented Topology
 
 ```text
-installed
+clients/markei_flutter/
+├── android/
+├── ios/
+├── windows/
+├── lib/
+│   ├── app/
+│   ├── application/
+│   ├── domain/
+│   │   ├── analytics/
+│   │   ├── catalogue/
+│   │   ├── purchase/
+│   │   ├── shared/
+│   │   ├── store/
+│   │   └── sync/
+│   └── infrastructure/local/
+└── test/
+
+contracts/shared_beta/v1/
+├── README.md
+├── catalogue_identity.json
+├── purchase_aggregate.json
+└── sync_event.json
 ```
 
-Start Menu launch:
+No `services/sync_api/` directory was created.
+
+## Dependency Direction
+
+- Flutter composition lives in `lib/app/` and `lib/main.dart`.
+- Application use-case port lives in `lib/application/register_purchase.dart`.
+- Domain models live under `lib/domain/`.
+- Drift implementation lives under `lib/infrastructure/local/`.
+- Domain imports no Flutter widgets, Drift, HTTP, Python, or platform plugin APIs.
+- Widgets issue no SQL and own no durable transaction.
+
+## Dependencies Added
+
+- Runtime: `crypto`, `drift`, `path`, `path_provider`, `sqlite3_flutter_libs`, `uuid`.
+- Development: `build_runner`, `drift_dev`, `flutter_lints`, `flutter_test`.
+- `pubspec.lock` was generated and retained.
+
+## Schema Responsibilities Implemented
+
+- `local_accounts`
+- `devices`
+- `products`
+- `stores`
+- `purchases`
+- `purchase_items`
+- `sync_events`
+- `pending_events`
+- `sync_state`
+- `migration_ledger`
+
+The schema is fresh and local. It is not the Cycle 06 SQLite schema and does not access the Cycle 06 database.
+
+## Transaction Boundary Implemented
+
+`LocalPurchaseRepository.registerPurchase` performs one Drift transaction:
 
 ```text
-launched
+resolve/create Store
++ resolve/create exact Products
++ validate all Items
++ insert Purchase and Items
++ allocate device sequence
++ insert immutable purchase.registered event
++ enqueue pending event
+= one local transaction
 ```
 
-Register / Lists / History / Settings data path:
+The invalid Item test proves rollback of Store, Product, Purchase, Purchase Item, sync event, and pending event writes. No network work exists inside the transaction.
 
-```text
-validated
-```
+## Representation Decisions
 
-Close and immediate reopen:
+- Quantity uses fixed 6-decimal microunits.
+- COUNT rejects fractional values in this unit.
+- MASS normalizes `g` and `kg` to canonical `KG`.
+- VOLUME normalizes `ml` and `l` to canonical `L`.
+- Money uses ISO currency code plus integer minor units.
+- Product normalization version is `1`.
+- Deterministic Product ID uses SHA-256 over namespace `markei.shared-beta.product.v1` and the exact identity key.
 
-```text
-validated
-```
+## Validation Evidence
 
-Same-version reinstall:
+- `dart format --output=none --set-exit-if-changed .`: passed.
+- `flutter analyze`: no issues.
+- `flutter test`: 9 tests passed.
+- `python -m unittest discover -s tests`: 5 tests passed.
 
-```text
-validated
-```
+## Implemented But Host-Unvalidated
 
-Uninstall with retained user data:
+- Android, Windows, and iOS project directories were generated.
+- Android SDK is unavailable, so Android build/run is unvalidated.
+- Visual Studio C++ desktop workload is unavailable, so Windows build/run is unvalidated.
+- macOS/Xcode is unavailable, so iOS validation is unclaimed.
 
-```text
-validated
-```
+## Deviations
 
-Reinstall and retained-data recovery:
+- Flutter SDK was unavailable at first; human approved installing/configuring it from the official stable Flutter Git repository.
+- `flutter doctor -v` still reports Android SDK, Chrome, and Visual Studio gaps.
+- The local foundation is implemented and tested, but platform execution evidence is deferred by host prerequisites.
 
-```text
-validated
-```
+## Deferred By Scope
 
-SmartScreen / antivirus:
+Production auth/authorization, Neon, TypeScript API, direct Postgres access, household collaboration, merge/alias, edits/deletion, background/realtime sync, public catalogue, full UI workflow, complete parity, and PySide6 retirement.
 
-```text
-unknown
-```
+## Suggested Functional Follow-Up
 
-No installed lifecycle gate required a redesign of the Desktop, ProductService, Repository, Database Manager, or SQLite boundaries.
-
-## Artifact And Identity Evidence
-
-Installer artifact:
-
-```text
-dist\installer\Markei-Setup-0.1.0-x64.exe
-SHA256: 122A772D66BBE7D5522EF2262E7E89D6D2E332B6318135BB25D55A27F75F4623
-```
-
-Frozen executable observed during rebuilt package validation before generated-output cleanup:
-
-```text
-dist\Markei\Markei.exe
-SHA256: E13E276139E5F680D91A9816FC79776EB9837CA901C2DEBCF6B9CFAF8594A282
-```
-
-Installed executable:
-
-```text
-%LOCALAPPDATA%\Programs\Markei\Markei.exe
-```
-
-Start Menu shortcut:
-
-```text
-%APPDATA%\Microsoft\Windows\Start Menu\Programs\Markei\Markei.lnk
-```
-
-## Explicit Deferrals Preserved
-
-No mobile, backend/API, synchronization, authentication, cloud persistence, auto-update, signing, rollback framework, migration ledger, broad `ProductService`/`Repository` decomposition, UI/navigation redesign, optional uninstall data-removal UX, or one-file packaging was introduced.
-
-## Remaining Design Follow-Up
-
-Design Chat may later decide how to absorb the installed lifecycle evidence into permanent Design memory. Codex did not perform semantic promotion or beta acceptance.
+Design Chat should treat the local domain/persistence boundary as materialized and tested, while keeping platform runtime and server synchronization as separate future materialization units.
