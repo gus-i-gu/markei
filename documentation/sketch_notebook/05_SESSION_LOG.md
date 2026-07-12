@@ -1,11 +1,11 @@
 # 05_SESSION_LOG.md
 
-> Version: Global history 0.3
+> Version: Global history 0.4
 > Status: Active Global Observational History
 > Persistence Class: Observational
 > Knowledge Class: Main / Global
 > Authority: Main Chat [M]
-> Branch: `sketch-notebook-recovery`
+> Branch: `cycle-07-mobile-preparation`
 > Current-state source: `00_PROJECT_STATE.md`
 > Domain-history sources: `operational/11_OPERATIONAL_RECORD.md`, `didactics/13_LECTURE_REGISTER.md`, and `design/03_DECISION_LOG.md`
 > Scope: Main-level chronology, reconciliation events, corrections, and cycle continuity
@@ -524,3 +524,31 @@ Sprint 03 should begin the additive transition into a fresh Flutter structure an
 
 <!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
 > **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content appended below it belongs to Sprint 03 or later. If recovery cost becomes excessive or this file grows beyond approximately 1,000 lines, this reviewed marker is an eligible semantic-partition boundary under human/Main authorization.
+
+# Cycle 07 Sprint 03 Closure — Flutter Foundation and Domain Reconciliation
+
+> Date: 2026-07-12
+> Implementation commit: `5ef64a1d5b6af6d397d4f3a7aea6d635911be12d`
+> Domain-reconciled head: `36996361ce06e8833b91e04800ccbe0944d778e1`
+> Main reconciliation: J sections 19–20
+
+Sprint 03 Unit 01 materialized an additive Flutter/Dart client foundation, fresh Drift schema, account-private catalogue structures, Purchase aggregate transaction, local append-only event preparation, pending queue, semantic JSON fixtures, and a minimal analytics registry.
+
+Evidence recorded:
+
+```text
+Flutter/Dart setup and generation: passed
+flutter analyze: passed
+Flutter tests: 9 passed
+Python regression tests: 5 passed
+rollback and close/reopen: passed
+Windows build/run: blocked by missing Visual Studio C++ workload
+Android build/run: blocked by missing SDK/device
+iOS: unavailable without macOS/Xcode
+```
+
+Main then identified likely device-sequence reset, Unicode normalization risk, provisional deterministic-ID semantics, incomplete wire fixtures, unrehearsed schema upgrades, and incomplete Store identity.
+
+Operational, Didactic, and Design chats reconciled A/G, B/H, and C/I with J section 19 into all twelve permanent-domain files. The domains agreed that no KANBAN maturity change was justified and unanimously recommended completing the local Flutter purchase workflow before the TypeScript/Postgres synchronization harness.
+
+Main accepted that recommendation in J section 20 and advanced global continuity to Sprint 04 entry. No Sprint 04 source implementation was authorized during this closure.
