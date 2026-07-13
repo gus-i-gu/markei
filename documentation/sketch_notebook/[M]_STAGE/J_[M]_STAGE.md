@@ -572,3 +572,463 @@ Do not edit files, create concepts, or change maturity during evaluation.
 The prior J staging is methodologically valid as a provisional diagnosis, but it is not yet sufficient as direct edit authority. The revision must be driven by semantic classification, not line reduction. The central Didactic problem is not file size: it is that implementation chronology, current-state retrieval, and stable concept ownership have crossed their intended boundaries.
 
 Status: critical evaluation complete; permanent Didactic mutation remains unauthorized.
+
+---
+
+# Cycle 08 Methodology Review — Design Domain
+
+> Status: Critical evaluation staged for human/Main review  
+> Methodology basis: `METHOD_FOUNDATIONS.md`, `FLUX.md`, and `PROMOTION_RULES.md`  
+> Evaluated surfaces: `design/01_ARCHITECTURE.md`, `design/09_DESIGN_STATE.md`, and `design/14_MODEL_OVERVIEW.md`  
+> Observational surface inspected only for routing: `design/03_DECISION_LOG.md`
+
+## 1. Review purpose
+
+Evaluate whether Design canonical knowledge, checkpoint recovery, and derived modelling still satisfy their methodology roles at the Cycle 08 boundary. Stage a bounded revision proposal without modifying permanent Design files or selecting Cycle 08 implementation architecture.
+
+## 2. Current semantic assignment
+
+| File | Assigned role | Current condition |
+| --- | --- | --- |
+| `01_ARCHITECTURE.md` | Canonical accepted architecture | Strong stable boundaries, but chronological implementation/evidence sections and future topology are mixed into canon |
+| `09_DESIGN_STATE.md` | Compact current Design checkpoint | Correct semantic role; stale at Cycle 07 Sprint 05 and overly detailed in Operational evidence |
+| `14_MODEL_OVERVIEW.md` | Derived responsibility/model map | Clear and useful, but substantially duplicates the checkpoint and parts of canonical architecture |
+| `03_DECISION_LOG.md` | Append-oriented observational Design history | Correct home for decision sequence, alternatives, reversibility, and superseded context; detailed evaluation intentionally skipped |
+
+## 3. Methodological verdict
+
+The Design structure remains valid under Domain Symmetry. No additional file is justified. The required correction is semantic redistribution:
+
+- canonical architecture owns stable accepted responsibilities, dependency direction, invariants, and protected boundaries;
+- the derived overview reorganizes canon into a compact system/model map without adding truth;
+- the checkpoint exposes current accepted, provisional, implemented, blocked, and deferred Design state;
+- the Decision Log preserves chronology, alternatives, and why boundaries changed.
+
+The existing files are recoverable, but vertical reconciliation is incomplete because implementation evidence and chronological acceptance have entered canonical architecture, while the checkpoint and derived overview repeat each other.
+
+Any revision must classify knowledge before moving it. Line reduction is not authority to remove accepted architecture.
+
+## 4. Canonical-file evaluation — `01_ARCHITECTURE.md`
+
+### 4.1 Canonical coverage
+
+The canonical file currently covers:
+
+1. protected Python/PySide6 desktop composition;
+2. application/service/repository/persistence boundaries;
+3. packaging, installer, writable-state, retention, and release identity;
+4. evidence boundaries;
+5. shared Flutter client dependency direction;
+6. local-first Drift persistence;
+7. private Catalogue, Product, Store, Purchase, and Item responsibilities;
+8. dimensional quantity, money, and versioned analytics;
+9. prepared events, queue, Device sequence, and proposed synchronization topology;
+10. account/authentication/authorization direction;
+11. protected migration and rollback;
+12. implemented Flutter foundation;
+13. Product identity and exact/advisory matching;
+14. atomic Purchase/event/queue transaction;
+15. local schema and contract responsibility;
+16. Android host and installation identity;
+17. persistent Device ownership and prototype selection debt;
+18. functional scaffold and platform-evidence boundaries.
+
+### 4.2 Canonical strengths
+
+- Dependency direction is explicit and stable.
+- Domain code remains independent of widgets, Drift, HTTP, Python, and platform hosts.
+- Presentation, application, domain, and infrastructure responsibilities are distinguishable.
+- Purchase registration has a clear transaction boundary.
+- Product visible code, internal record identity, and normalized identification facts are separated.
+- Exact matching and advisory similarity are not confused with automatic merge.
+- Local event preparation is explicitly distinguished from synchronization.
+- Android application identity is separated from Account, Device, and domain identities.
+- The Python beta and original data remain protected during transition.
+- Prototype Device lookup debt is stated rather than silently promoted.
+- Configuration facts are not automatically treated as domain architecture.
+
+### 4.3 Canonical deficiencies
+
+#### DSN-CAN-01 — Canonical architecture is chronological
+
+Sections 17–19 narrate successive implementation sprints. Some content is stable architecture, but some records what was implemented or validated during a particular sprint. Canonical architecture should improve the current definition rather than accumulate one accepted architecture per sprint.
+
+Classification: canonical/observational mixing and recovery-cost drift.
+
+Required resolution:
+
+- reconcile stable rules into thematic architecture sections;
+- preserve supersession and rationale in the Decision Log;
+- retain evidence boundaries only as concise qualification;
+- avoid deleting unique accepted invariants while removing chronology.
+
+#### DSN-CAN-02 — Accepted architecture and implementation evidence are mixed
+
+Statements such as test totals, emulator execution, schema migration results, runtime database observations, and host validation support acceptance but are not themselves architecture.
+
+Classification: canonical/Operational evidence overlap.
+
+Required resolution:
+
+Canonical architecture may state an evidence-qualified boundary, such as “Android is an evidenced host for the shared client,” but detailed commands, test counts, devices, and validation ladders belong to Operational or observational memory.
+
+#### DSN-CAN-03 — Future distributed topology is overly concrete
+
+The file describes authenticated TypeScript API, Neon Postgres, cursor allocation, batch behavior, verified email, and event acceptance in architectural present tense. These are scheduled Cycle 09 boundaries, not implemented Cycle 08 architecture.
+
+Classification: maturity/evidence-state wording drift.
+
+Required resolution:
+
+Label each distributed statement as:
+
+- accepted future boundary;
+- provisional candidate;
+- deferred implementation;
+- explicitly unselected physical mechanism.
+
+Stable prohibitions—such as clients not holding privileged database credentials—may remain canonical if accepted independently of the future stack.
+
+#### DSN-CAN-04 — Stable invariant and provisional implementation choice need clearer grammar
+
+The file already contains exclusions, but readers must infer whether Drift, UUID v4, JSON Schema Draft 7, TypeScript, Neon, schema v2, and first-20 lookup are stable, implemented, provisional, or prototype-only.
+
+Required resolution:
+
+Every technology or mechanism should be classified by architectural status:
+
+- stable responsibility/invariant;
+- accepted current implementation;
+- reversible adapter choice;
+- prototype-only heuristic;
+- candidate future dependency;
+- deferred/unselected.
+
+#### DSN-CAN-05 — Cycle 08 presentation architecture is intentionally absent
+
+The file correctly refuses to promote the functional scaffold into final UI architecture. Cycle 08 now requires investigation of:
+
+- responsive navigation responsibilities;
+- narrow/wide composition;
+- Catalogue/Product/Store/Purchase/History screen boundaries;
+- staging and review state ownership;
+- validation, empty, success, and failure states;
+- draft lifetime and recovery;
+- atomic registration acknowledgement;
+- price-comparison input/output boundaries;
+- raw facts versus derived presentation;
+- accessibility, focus, keyboard, Back, and lifecycle responsibilities;
+- export/backup and recovery interfaces.
+
+These are design questions, not yet accepted canon.
+
+#### DSN-CAN-06 — Structural navigation is uneven
+
+The canonical sequence jumps from section 11 to section 16 and later appends 17–19. Even if historically explainable, it weakens current recovery and suggests that removed or superseded sections are not clearly represented.
+
+Classification: internal navigation drift.
+
+Required resolution:
+
+During authorized reconciliation, either restore a coherent thematic section map or explicitly reserve/supersede missing sections. Renumbering headings is allowed only if references in checkpoints, prompts, and other files are updated coherently; it must not alter architectural meaning.
+
+### 4.4 Canonical disposition test
+
+For every architecture statement, ask:
+
+1. What responsibility, dependency, invariant, or boundary does it define?
+2. Is it stable accepted architecture, current implementation, provisional choice, prototype debt, or future direction?
+3. Is Design the semantic owner, or is the statement primarily Operational evidence?
+4. Would the statement remain valid if the adapter, schema, framework, or host changed?
+5. Is the same stable rule owned elsewhere at equal authority?
+6. Does the statement describe current reality or scheduled Cycle 09 behavior?
+7. Can the reason for a superseded rule be recovered from the Decision Log?
+8. Can future implementation depend on this statement without reading sprint chronology?
+
+Only stable accepted Design knowledge belongs in canonical architecture.
+
+## 5. Checkpoint-efficacy evaluation — `09_DESIGN_STATE.md`
+
+### 5.1 Current efficacy
+
+The checkpoint provides:
+
+- a current topology;
+- implemented and validated structures;
+- accepted boundaries;
+- prototype debt;
+- evidence limits;
+- next route;
+- recovery pointers.
+
+Its length is compact relative to the canonical file, and it successfully exposes the Device invariant debt.
+
+### 5.2 Current inefficiencies
+
+- It is still titled and scoped to Cycle 07 Sprint 05.
+- Its header version says Sprint 03 while its body says Sprint 05.
+- It contains detailed Operational evidence, including test totals and emulator facts.
+- It points to C/F/I and old J §24, all of which were cleansed at Cycle 08 entry.
+- Its next route concerns closing Sprint 05 rather than Cycle 08 Design investigation.
+- It does not expose the active product/UI questions.
+- It combines “implemented and validated” without consistently separating source materialization, automated evidence, host evidence, and human acceptance.
+
+### 5.3 Checkpoint success criteria
+
+A Cycle 08 Design checkpoint should answer in one bounded read:
+
+1. What architecture is accepted?
+2. What implementation structures currently materialize it?
+3. Which choices remain provisional or reversible?
+4. Which debts threaten the active cycle?
+5. Which Cycle 08 boundaries are under investigation?
+6. Which work is explicitly deferred to Cycles 09 and 10?
+7. What evidence limits constrain design claims?
+8. What should Design Chat read next?
+9. What authority transition is valid?
+
+### 5.4 Recommended checkpoint shape
+
+```text
+Accepted architecture
+→ current materialized topology
+→ provisional/reversible choices
+→ active Cycle 08 design questions
+→ carried invariant debt
+→ evidence boundary
+→ deferred Cycle 09/10 work
+→ recovery pointers
+→ next authority transition
+```
+
+The checkpoint should be refreshed, not appended as another historical sprint report.
+
+## 6. Derived-consistency evaluation — `14_MODEL_OVERVIEW.md`
+
+### 6.1 Current strengths
+
+- The system map is readable.
+- Identity ownership is centralized effectively.
+- Device bootstrap and prototype debt are clear.
+- Purchase transaction and configuration boundaries are compact.
+- The file points to canonical architecture.
+- It distinguishes current local structure from deferred synchronization.
+
+### 6.2 Derived inconsistencies
+
+#### DSN-DER-01 — Overview/checkpoint duplication
+
+Sections on prototype debt, evidence, next route, and recovery pointers closely reproduce `09_DESIGN_STATE.md`.
+
+Required resolution:
+
+The model overview should emphasize structural relationships and ownership. The checkpoint should own current status, evidence classification, active questions, and next route.
+
+#### DSN-DER-02 — Implementation topology may outrun canonical status
+
+The overview describes concrete composition calls, table fields, schema version, host facts, and deferred API stack. These are useful, but a derived file cannot silently promote them beyond the architectural status assigned in canon.
+
+Required resolution:
+
+Every concrete mechanism must trace to a canonical accepted/current implementation statement and retain its provisional or prototype label.
+
+#### DSN-DER-03 — Current-state reporting weakens rebuildability
+
+Test totals, emulator observations, and detailed validation classes age quickly. A model map should remain mostly correct when evidence counts change.
+
+Required resolution:
+
+Replace detailed evidence with short boundary labels and point to the checkpoint or Operational memory.
+
+#### DSN-DER-04 — Product model is underrepresented for Cycle 08
+
+The overview maps identity and Purchase transaction well but does not yet expose Store identity, Product reuse/creation, advisory duplicate handling, draft Items, review, History detail, or analytics presentation.
+
+Required resolution:
+
+After Design investigation and canonical acceptance, derive a Cycle 08 responsibility map from the accepted architecture. Do not add speculative product structure before that acceptance.
+
+### 6.3 Derived consistency test
+
+For every section or relationship, ask:
+
+1. Which canonical architecture section owns it?
+2. Does it reorganize accepted truth or add a new invariant?
+3. Does it preserve provisional/prototype/deferred labels?
+4. Is it structural, or is it current checkpoint/evidence material?
+5. Would it remain useful if test counts or platform evidence changed?
+6. Does it duplicate another derived/checkpoint surface?
+7. Can it be regenerated predictably after canonical revision?
+
+Any new responsibility or invariant introduced only in the overview fails the Derived Knowledge rule.
+
+## 7. Cross-surface reconciliation
+
+Desired relationship:
+
+```text
+01_ARCHITECTURE
+stable responsibilities + dependencies + invariants + accepted boundaries
+        ↓ derives
+14_MODEL_OVERVIEW
+compact structural map + identity/ownership relationships
+        ↓ summarizes current design state
+09_DESIGN_STATE
+accepted/provisional/materialized/deferred status + active questions + recovery route
+```
+
+Current drift:
+
+- Architecture carries sprint chronology and detailed evidence.
+- Model Overview carries checkpoint/evidence sections.
+- Design State repeats much of the overview and old Operational validation.
+- All three refer to Cycle 07 evidence surfaces that were cleansed.
+
+## 8. Cycle 08 Design investigation boundary
+
+Design Chat should investigate, without premature architecture selection:
+
+- responsive shell and navigation responsibilities;
+- wide/narrow composition and state continuity;
+- Catalogue browse/search/select/create;
+- exact reuse versus advisory duplicate warning;
+- Product corrections and historical integrity;
+- Store identity, branch/location, reuse, and creation;
+- Purchase draft ownership and lifetime;
+- Item edit/remove/reorder and running totals;
+- review and atomic registration boundary;
+- success, failure, retry, and duplicate-submit prevention;
+- History list/detail and immutable facts;
+- normalized price observations and versioned comparison analytics;
+- personal price change versus broader inflation claims;
+- empty/loading/validation/recovery states;
+- migration, export, backup, and recovery interfaces;
+- Windows/Android focus, keyboard, Back, safe-area, accessibility, and lifecycle composition;
+- explicit installation-to-Device invariant timing.
+
+No UI framework, navigation package, state package, schema, API, or synchronization mechanism is selected by this investigation.
+
+## 9. Proposed bounded revision unit
+
+If later authorized:
+
+1. `01_ARCHITECTURE.md`
+   - reconcile stable boundaries thematically;
+   - separate canonical rules from sprint evidence;
+   - classify current, provisional, prototype, future, and deferred mechanisms;
+   - preserve the protected transition and Device debt;
+   - correct internal navigation and cross-references.
+
+2. `14_MODEL_OVERVIEW.md`
+   - rebuild from accepted canonical architecture;
+   - focus on responsibilities, identities, dependency direction, and aggregate relationships;
+   - remove detailed evidence and next-route duplication;
+   - include Cycle 08 product relationships only after canonical acceptance.
+
+3. `09_DESIGN_STATE.md`
+   - refresh as the Cycle 08 Design checkpoint;
+   - expose accepted state, materialized topology, active investigation, carried debt, evidence limits, deferrals, and next route;
+   - remove stale references to cleansed C/F/I/J sections.
+
+4. `03_DECISION_LOG.md`
+   - preserve existing history;
+   - append only the later accepted Design-revision event and its rationale;
+   - do not use it as current-state canon.
+
+## 10. Non-goals
+
+The Design revision must not:
+
+- select the final Cycle 08 UI architecture before A/B/C and human decisions;
+- add Flutter dependencies or frameworks;
+- modify schema or source;
+- activate authentication, API, Neon, or synchronization;
+- turn the first-20 Device heuristic into accepted architecture;
+- rewrite decision history;
+- create or rename Design files;
+- claim Operational validation;
+- change Didactic maturity;
+- duplicate Main global state.
+
+## 11. Validation gates
+
+- every accepted responsibility and invariant has one canonical owner;
+- chronological evidence removed from architecture remains recoverable;
+- no Operational test/build details become canonical Design truth;
+- future Cycle 09 topology is explicitly classified;
+- Model Overview introduces no independent truth;
+- Design State is compact, current, and free of cleansed-stage dependencies;
+- prototype Device debt remains visible;
+- Python/PySide6 protection remains explicit;
+- Cycle 08 product questions remain proposed until human/Main acceptance;
+- diff is limited to the four Design files during later materialization;
+- methodology and application source remain unchanged.
+
+## 12. Human decisions required
+
+1. Should canonical architecture be rewritten into one thematic current model, with all sprint-specific acceptance chronology left to the Decision Log?
+2. Should TypeScript and Neon remain named accepted Cycle 09 direction in canon, or be generalized to “custom API” and “managed Postgres” until physical selection is revalidated?
+3. Should implemented adapter choices such as Drift and JSON Schema remain in canonical architecture as accepted current mechanisms, or live primarily in the derived model with canon owning only their responsibilities?
+4. Should section numbers be normalized during pruning, with repository-wide reference repair?
+5. At what Cycle 08 point must the explicit installation–Device invariant become mandatory: before Catalogue/Purchase expansion, before backup/recovery work, or only before Cycle 09 synchronization?
+
+## 13. Critical evaluation prompt for the next Design pass
+
+```text
+Evaluate the Design domain under METHOD_FOUNDATIONS, FLUX, and PROMOTION_RULES.
+
+Scope:
+- canonical: design/01_ARCHITECTURE.md;
+- derived: design/14_MODEL_OVERVIEW.md;
+- checkpoint: design/09_DESIGN_STATE.md;
+- inspect design/03_DECISION_LOG.md only to verify that removed chronology has a durable observational home.
+
+For 01_ARCHITECTURE.md:
+1. inventory stable responsibilities, dependencies, invariants, and protected boundaries;
+2. separate canonical architecture from sprint chronology and Operational evidence;
+3. classify every mechanism as stable, current implementation, reversible adapter, prototype-only, future candidate, or deferred;
+4. identify duplicate semantic ownership;
+5. preserve accepted Product/Purchase/identity/transaction rules and protected PySide6 transition;
+6. treat Cycle 08 UI/product structures as investigation until human/Main acceptance.
+
+For 14_MODEL_OVERVIEW.md:
+1. trace every model relationship to canonical architecture;
+2. remove independent truth and checkpoint duplication;
+3. preserve status labels;
+4. optimize the file for structural comprehension and regeneration;
+5. add Cycle 08 relationships only after canonical acceptance.
+
+For 09_DESIGN_STATE.md:
+1. regenerate a compact Cycle 08 current checkpoint;
+2. expose accepted architecture, materialized topology, provisional choices, active questions, Device debt, evidence limits, deferrals, and next authority;
+3. remove stale references to cleansed stages;
+4. point to deeper sources rather than reproducing validation history.
+
+Report:
+- accepted canonical coverage;
+- canonical gaps and chronology drift;
+- checkpoint efficacy;
+- derived consistency;
+- duplicate ownership;
+- proposed relocations;
+- Cycle 08 Design questions;
+- exact writable paths;
+- validation gates;
+- unresolved human decisions.
+
+Do not edit permanent files, select architecture, modify source, or promote provisional Cycle 08 structures during evaluation.
+```
+
+## 14. Main recommendation
+
+Proceed later with a conservative thematic reconciliation:
+
+- preserve stable architectural meaning;
+- move chronology and detailed evidence out of canon by classification, not deletion;
+- rebuild the model overview as a structural derivative;
+- refresh the checkpoint for Cycle 08;
+- classify future synchronization topology explicitly;
+- keep Cycle 08 product/UI architecture provisional until functional investigation and human decisions;
+- retain the Device invariant as visible gating debt.
+
+Status: Design confrontation complete; permanent Design mutation remains unauthorized.
