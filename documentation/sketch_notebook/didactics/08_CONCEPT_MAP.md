@@ -166,97 +166,104 @@ The next Didactic evaluation requires explicit learner explanations or implement
 ---
 
 <!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
-> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker preserves the prior milestone. This checkpoint below is the current compact recovery surface.
+> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above preserves the earlier milestone. The compact segment below is the current Didactic recovery checkpoint.
 
-# Cycle 07 Sprint 04 Didactic Checkpoint
+# Cycle 07 Sprint 05 Didactic Checkpoint
 
-## Current Learning State
+> Branch: `cycle-07-mobile-preparation`  
+> Inspected implementation head: `ca53097b346ae42b216188dabc56a6eef45b051c`  
+> Evidence: `DEV_STAGE/H_DDC_CODEX.md`  
+> Main reconciliation: J §24
 
-Cycle 07 Sprint 04 has a tested local Flutter Purchase vertical slice and Windows host evidence. It separates the account-private Product code, immutable local Product record UUID, and future central semantic UUID responsibility; uses normalization v2; validates readable v2 JSON examples against JSON Schema; migrates local schema v1 to v2; preserves atomic Purchase/event/queue writes; and proves local device sequences 1, 2, 3 across rollback boundaries.
+## Current Truth
 
-This is project evidence, not learner mastery. Authentication, authorization, API synchronization, server cursors, cross-device convergence, and a central catalogue remain absent. Android is tooling-blocked, iOS host-unvalidated, and manual UI acceptance remains open.
+Sprint 05 established an Android debug-development vertical slice. The Android toolchain is installed and recognized; an API 36 emulator booted; the debug APK was built, installed, and launched; the package is `com.gusigu.markei` with label `Markei`; a human confirmed Purchase registration; app-private Drift data showed a Purchase and an installation-local UUID v4 Device with sequence advanced to 2. Flutter tests total 27, Windows build passed, and five Python regressions passed.
 
-## Maturity Guard
+The production composition now loads or creates a database-owned Device UUID instead of injecting `windows-device`. Tests cover fresh UUID creation, same-database reuse, different fresh-database identities, sequence continuation after reopen, historical non-UUID preservation, and a phone-width Purchase/History workflow.
 
-All Cycle 07 Sprint 02 concepts retain their existing `Red` status. Earlier Green, Yellow, and Red entries are unchanged. No maturity transition is inferred from implementation, tests, schemas, generated code, build success, or Main preference.
+## Maturity
 
-## Current Evidence Map
+No KANBAN maturity changed. All Cycle 07 Sprint 02 concepts remain `Red`; earlier statuses remain unchanged. The human observed application execution, but supplied no explicit concept explanation, comparison, or transfer evidence. Codex implementation, tests, and host success are not learner mastery.
 
-### Strong local implementation/test evidence
+## Evidence Classification
 
-- `&&&06` Stable Identity — Product code and immutable local Product UUID have separate ownership.
-- `&&&10` Historical Integrity — append-only facts and tested v1-to-v2 migration preserve history boundaries.
-- `&&%05` Immutable Dart Model — value objects and domain facts remain immutable.
-- `&%%07`–`&%%10` — catalogue, identification, Purchase aggregate, and Items drive the local workflow.
-- `&%%11`–`&%%13` — local event, queue preparation, rollback, and monotonic device ordering are evidenced locally.
-- `&%%15`–`&%%17` — dimensional quantities, minor-unit money, and versioned analytics remain executable concepts.
-- `%%%07` — responsive widget composition and Windows execution have evidence.
+### Implemented and validated within the current boundary
 
-### Stronger specification, still bounded
+- Android application ID/label coherence and debug APK identity.
+- persistent local Device UUID creation/reuse and per-Device sequence continuation.
+- shared Flutter Purchase registration and History projection.
+- app-private local database use on the emulator.
+- phone-width widget workflow, Flutter analysis/tests, Windows build, and Python regression path.
 
-- `&%%08` — normalization v2 has Unicode fixtures, but TypeScript parity and central identity assignment are unproved.
-- `&%%14` — JSON Schema plus readable examples provide structural contracts, not an implemented synchronization protocol.
+### Human-observed
 
-### Still absent as distributed behavior
+- emulator application launch and Purchase registration.
+- runtime database facts consistent with one persisted Purchase and advanced Device sequence.
 
-- `&&&07` Authentication.
-- `&&&08` Authorization; row ownership remains an example only.
-- `&&&09` Eventual Consistency.
-- server idempotency, server cursor application, remote replay, and convergence portions of `&%%12`–`&%%14`.
+### Provisional or partially validated
 
-## Dependency Spine
+- full Android lifecycle: keyboard, Back, rotation, background/resume, text scale, staged-state behavior, and complete process-recreation checklist.
+- responsive behavior beyond the controlled phone-width widget case.
+- UI/UX and accessibility quality; current UI is a functional scaffold.
+- Device selection algorithm: prototype lookup scans the first 20 created rows and lacks an explicit current-installation relation.
+- Account identity remains the `local-account` prototype placeholder.
 
-```text
-immutable values and stable local identities
-→ account-private Product code + local Product UUID
-→ versioned semantic normalization
-→ dimensional quantity + minor-unit money
-→ Purchase aggregate and Items
-→ one local transaction
-→ append-only local event
-→ pending offline queue
-→ monotonic per-device sequence
-→ schema migration and historical preservation
-→ JSON Schema structural contract
-→ Flutter composition and local history projection
-→ Windows host validation
-→ authentication/authorization — pending
-→ API idempotency/server cursor — pending
-→ cross-device eventual consistency — pending
-```
+### Host-unvalidated, blocked, or deferred
+
+- physical Android-device compatibility and wider device matrix: host-unvalidated/deferred.
+- production signing/release, Play Store lifecycle, and Android upgrade distribution: deferred.
+- authentication, authorization, API/server synchronization, cursor replay, and eventual consistency: deferred/unimplemented.
+- central catalogue, iOS runtime, and PySide6 retirement: deferred.
 
 ## Distinctions to Preserve
 
-- Visible Product code is not the immutable local Product UUID.
-- A future central Product UUID is neither of those identities.
-- Normalized semantic facts aid comparison; they do not authorize automatic merge.
-- JSON Schema validates structure; domain tests own cross-field meaning.
-- Local device sequence is not server cursor order.
-- Atomic queue creation is not synchronization.
-- Windows validation does not prove Android or iOS behavior.
-- A history projection is derived from authoritative Purchase facts.
-- Project implementation evidence is not learner maturity.
+- Flutter SDK ≠ Android SDK ≠ Android Studio ≠ emulator.
+- APK built ≠ installed ≠ launched ≠ interacted ≠ lifecycle-validated ≠ persistence-validated.
+- application ID ≠ display label ≠ Account ID ≠ Device UUID.
+- Device UUID ≠ Product IDs ≠ Purchase UUID ≠ Event UUID; Device sequence is ordering, not identity.
+- phone-width widget evidence ≠ real Android responsive/lifecycle evidence.
+- Purchase registration creates a new immutable Purchase; unsupported upsert semantics must not be inferred.
+- local event queue ≠ synchronization.
+- functional UI scaffold ≠ accepted visual design.
+- emulator evidence ≠ physical-device compatibility.
+- project evidence ≠ learner maturity.
+
+## Dependency and Learning Spine
+
+```text
+platform/toolchain vocabulary
+→ evidence ladder
+→ application/package identity
+→ installation-local Device identity
+→ per-Device ordering
+→ immutable Purchase registration
+→ local event/queue preparation
+→ app-private persistence
+→ responsive and lifecycle distinctions
+→ cross-platform regression classification
+→ explicit learner explanation before maturity change
+```
 
 ## Next Learner Questions
 
-1. Why must user Product code, local record UUID, and future central UUID remain separate?
-2. Which normalization facts are versioned, and what must migration preserve?
-3. Which rules can JSON Schema express, and which remain domain invariants?
-4. Why does rollback preserve both Purchase atomicity and device ordering?
-5. What does a local pending event prove, and what distributed evidence is still missing?
-6. How do device sequence and future server cursor solve different ordering problems?
-7. Why is Windows build/launch evidence platform-specific?
-8. What explicit learner evidence would justify changing one Red concept?
+1. What does each evidence-ladder step prove, and what does it not prove?
+2. Why must application ID, Account ID, Device UUID, Event UUID, and Device sequence remain distinct?
+3. Why is registration not Purchase upsert?
+4. Which state should survive rebuild, rotation, backgrounding, process restart, data clear, and uninstall?
+5. Why can a phone-width widget pass while real keyboard or Back behavior remains unvalidated?
+6. What evidence would justify calling the UI responsive rather than a functional scaffold?
+7. Why does one emulator not prove physical-device compatibility?
+8. What learner explanation would justify moving one Red concept?
 
-## Permanent-Memory Pointers
+## Recovery Pointers
 
-- Observation and chronology: `13_LECTURE_REGISTER.md`, Observation 007.
-- Canonical concepts and evidence limits: `02_KANBAN.md`, Cycle 07 Sprint 04 evidence reconciliation.
-- Derived retrieval terminology: `07_GLOSSARY.md`, Sprint 04 current-evidence retrieval.
-- Staged synthesis: `DEV_STAGE/B_DIDACTIC.md`.
-- Materialization evidence: `DEV_STAGE/H_DDC_CODEX.md`.
-- Main authority and limits: `[M]_STAGE/J_[M]_STAGE.md`, §21.
+- Canonical concepts/evidence limits: `02_KANBAN.md`, Sprint 05 Android evidence reconciliation.
+- Derived terminology: `07_GLOSSARY.md`, Sprint 05 current-evidence retrieval.
+- Observational chronology: `13_LECTURE_REGISTER.md`, Observation 008.
+- Codex evidence: `DEV_STAGE/H_DDC_CODEX.md`.
+- Pre-materialization learning gates: `DEV_STAGE/B_DIDACTIC.md` and `DEV_STAGE/E_DDC_STAGE.md`.
+- Main classification and unresolved debt: `[M]_STAGE/J_[M]_STAGE.md`, §24.
 
-## Next Learning Boundary
+## Next Valid Route and Authority
 
-The next Didactic step is explanation and evidence classification, not automatic promotion. Distributed concepts should be revisited only when authentication, authorization, API idempotency, server cursors, replay, and convergence exist as bounded evidence. Platform claims must remain separated by Windows, Android, and iOS validation boundaries.
+PDR2-A may publish these four permanent Didactic files. Main must then reconcile domain results and decide whether Sprint 05 closes or needs a bounded lifecycle supplement. Additional source work, 00/05/06 updates, and future D/E/F remain inactive until Main/human authorization. A later UI/UX sprint is only a candidate.
