@@ -447,3 +447,8 @@ explicit learner concept evidence: absent
 # Current Observation Boundary
 
 Sprint 05 validates an Android debug-development slice and a persistent installation-local Device identity. The next learner boundary is to explain the evidence ladder, identity taxonomy, lifecycle distinctions, registration semantics, and the difference between emulator evidence and broader device compatibility.
+
+---
+
+<!-- TEMPORAL_MARKER:C08-ENTRY-2026-07-12 -->
+> Temporal boundary — Cycle 08 begins here. Content above belongs to Cycle 07 or earlier reviewed project history; content below belongs to Cycle 08 work and later reconciliation.
