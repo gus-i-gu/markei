@@ -608,3 +608,63 @@ Repository inspection confirmed that the Flutter presentation remains a foundati
 J §21 accepted the Sprint 04 planning resolution: UUID v4 for new immutable internal Product identities; required account-private user Product code; Unicode NFKC normalization v2 with preserved display text; `shared_beta/v2` using JSON Schema Draft 7 and readable examples; Drift schema v2 migration; sequence uniqueness and 1,2,3 recovery proof; minimal multi-item UI/history; Windows build/run; conditional Android build only if tooling already exists. These are accepted instructions for forthcoming D/E/F, not implementation evidence.
 
 No commands, installations, migrations, builds, tests, or application executions were performed during this reconciliation. No source or user database was modified.
+
+# Cycle 07 Sprint 05 — Android Materialization and PDR2 Confrontation
+
+## 2026-07-12 — Host, build, runtime, and regression evidence
+
+PDR2-O reconciled `G_OPS_CODEX.md`, J §24, Sprint 05 A and D, repository comparison from `c2d74e445a6c7819b9c36573f6d63836d990c471`, current Android/Dart/tests, and all four permanent Operational roles at inspected head `ca53097b346ae42b216188dabc56a6eef45b051c`.
+
+Host/tool evidence:
+
+```text
+selected Flutter SDK: H:\Users\Gus\develop\flutter
+alternate C:\Users\gusrm\flutter: inspected, not modified
+Android Studio: 2026.1.1.10 installed
+Android SDK: C:\Users\gusrm\AppData\Local\Android\Sdk
+Platform / target: Android 36
+Build-Tools: 36.0.0
+CMake: 3.22.1
+NDK: 28.2.13676358
+system image: android-36 google_apis x86_64
+AVD: Markei_Sprint05_API36
+licenses: accepted with human confirmation
+flutter doctor: Android toolchain healthy
+```
+
+Materialized runtime identity includes `com.gusigu.markei`, label `Markei`, the moved Kotlin host, compile/target SDK 36, asynchronous composition bootstrap, and a Drift-backed UUID-v4 Device identity that is reused after database reopen. The repository contains tests for fresh identity, reopen reuse, distinct databases, monotonic sequence, historical non-UUID preservation, and a phone-width Purchase/History flow.
+
+Validation evidence:
+
+- formatting and analysis passed;
+- 27 Flutter tests passed;
+- debug APK built, badging inspected, installed, and launched;
+- API-36 emulator booted as the intended target;
+- app-private database observed at `/data/data/com.gusigu.markei/files/markei_shared_beta.sqlite`;
+- runtime database contained one UUID-v4 Device, `next_sequence = 2`, and one Purchase;
+- human confirmed Purchase registration on the emulator;
+- Windows release build passed;
+- five Python regressions passed;
+- Cycle 06 source/database isolation remained reported.
+
+The accepted operation is **Purchase registration**. G's phrase “purchase upsert/registration” is corrected here: source evidence does not support mutable Purchase replacement and “Purchase upsert” is not accepted terminology.
+
+## Evidence limits and required supplement
+
+ADB-driven form entry was blocked by emulator input/stylus overlays and Gboard behavior. Launch, force-stop/relaunch, database inspection, and the human registration prove a meaningful Android-local slice, but do not provide a complete checklist for keyboard obstruction, Android Back, rotation, background/resume, text scale, staged-state behavior, or a human-visible History check after process restart. Physical-device, Android release/signing, upgrade, backup, accessibility, and Play Store evidence are absent.
+
+A supplemental Android lifecycle checklist is therefore required before Sprint 05 closure. It is evidence-first: no source change is authorized unless the checklist exposes a bounded defect and Main separately routes that correction.
+
+## Repository/report contradiction
+
+G says `clients/markei_flutter/devtools_options.yaml` was preserved untracked and not committed. Repository comparison shows it was added as a three-line DevTools extension configuration file. It has no enabled extension and no demonstrated build/runtime effect, but G's scope statement is inaccurate.
+
+Intentional project ownership is not established. The file remains committed during this documentation pass. Main/human should later choose either to retain it as explicit shared DevTools configuration or remove/ignore it in a bounded hygiene change. No source cleanup is implied by PDR2-O.
+
+## Installed-environment recovery and cost
+
+The Android SDK and AVD are reproducible from the recorded component/version manifest; they are not source artifacts. Exact disk consumption was not recorded, so storage cost remains unknown. The system image, emulator, NDK, CMake, build tools, and Gradle caches are expected to be the major host-storage consumers, but no numeric cost is promoted.
+
+Preserve the SDK and AVD until the lifecycle supplement is complete. Later recovery or cleanup must inventory installed SDK packages and AVDs first, remove only named components through supported SDK/AVD tooling under explicit authority, and never delete the whole SDK directory or unrelated user configurations merely to reclaim space.
+
+No commands, installations, runtime actions, or source changes were performed by this reconciliation.
