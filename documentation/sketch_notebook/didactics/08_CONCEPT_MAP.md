@@ -267,3 +267,8 @@ platform/toolchain vocabulary
 ## Next Valid Route and Authority
 
 PDR2-A may publish these four permanent Didactic files. Main must then reconcile domain results and decide whether Sprint 05 closes or needs a bounded lifecycle supplement. Additional source work, 00/05/06 updates, and future D/E/F remain inactive until Main/human authorization. A later UI/UX sprint is only a candidate.
+
+---
+
+<!-- TEMPORAL_MARKER:C08-ENTRY-2026-07-12 -->
+> Temporal boundary — Cycle 08 begins here. Content above belongs to Cycle 07 or earlier reviewed project history; content below belongs to Cycle 08 work and later reconciliation.
