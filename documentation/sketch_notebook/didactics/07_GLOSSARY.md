@@ -266,40 +266,42 @@ A platform-security or reputation observation distinct from application correctn
 ---
 
 <!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
-> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content below it is a derived retrieval surface for later evidence and must follow `02_KANBAN.md`.
+> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state. Content below is a rebuildable current retrieval surface derived from `02_KANBAN.md`.
 
-# Sprint 04 Current-Evidence Retrieval
+# Sprint 05 Current-Evidence Retrieval
 
-These terms derive from the canonical concepts and evidence limits in `02_KANBAN.md`; they introduce no independent truth.
-
-## Three Product Identities
-**KANBAN IDs:** `&&&06`, `&%%07`, `&%%08`  
-The user Product code is an account-private visible reference; the local Product UUID is the immutable record identity; a possible future central UUID would identify a versioned shared semantic set. They are not interchangeable.
-
-## Display Fact and Normalized Key
-**KANBAN ID:** `&%%08`  
-A display fact preserves user-readable text. A normalized key applies versioned deterministic rules for comparison. Sprint 04 uses NFKC and whitespace collapse and tests Portuguese/Unicode cases; normalization does not authorize automatic Product merge.
-
-## Structural Schema Validation
-**KANBAN ID:** `&%%14`  
-The v2 JSON Schemas check the structure of readable catalogue, Purchase, and sync-event examples. Cross-field domain rules and cross-language semantic parity still belong to implementation and fixture tests.
-
-## Local Atomic Delivery Preparation
-**KANBAN IDs:** `&%%05`, `&%%09`–`&%%13`  
-One local transaction writes the Purchase aggregate, append-only event, pending queue entry, and device sequence. This proves rollback and durable preparation, not upload, acknowledgement, cursor download, or convergence.
-
-## Monotonic Device Sequence
-**KANBAN ID:** `&%%13`  
-Successful local events from one device receive increasing sequence numbers; a failed transaction consumes none. The local sequence orders that device’s events but is not a server synchronization cursor.
-
-## Schema Migration Evidence
-**KANBAN IDs:** `&&&10`, `&%%08`, `%%%01`  
-The tested v1-to-v2 migration preserves a Product record, adds identity/display fields, assigns a marked temporary legacy code, records the migration, and survives reopen. It is bounded migration evidence, not proof of every historical upgrade path.
-
-## Responsive Flutter Workflow Evidence
+## Platform Evidence Ladder
 **KANBAN ID:** `%%%07`  
-The Flutter client now composes a multi-item Purchase form and local history through application/repository boundaries. Widget tests and Windows build/launch evidence are stronger than generated runner presence; Android and iOS remain outside validated equivalence.
+Flutter SDK selection, Android SDK recognition, emulator availability, APK build, install, launch, interaction, lifecycle, and persistence are different evidence levels. Sprint 05 reached emulator launch and human-observed registration, with only partial lifecycle evidence.
+
+## Android Application ID and Display Label
+**KANBAN IDs:** `%%%07`, `&&&06`  
+`com.gusigu.markei` identifies the installed Android package and sandbox. `Markei` is the visible label. Neither identifies the account, device, Product, Purchase, or event.
+
+## Installation-Local Device UUID
+**KANBAN IDs:** `&&&06`, `&%%13`  
+A UUID v4 stored in the app-private database identifies one local installation for event sequencing. Tests show reuse after reopen and distinct identities for distinct fresh databases. It is not authentication or a hardware ID.
+
+## Identity Taxonomy
+**KANBAN IDs:** `&&&06`, `&%%07`–`&%%11`, `&%%13`  
+Account ID owns local data provisionally; Device UUID owns one installation’s sequence; Product user code is a visible account-private reference; Product UUID identifies a local record; Purchase UUID identifies one registered aggregate; Event UUID identifies one event/delivery fact; Device sequence orders that Device’s events.
+
+## Purchase Registration
+**KANBAN IDs:** `&%%09`, `&%%10`, `&&&10`  
+Current source creates and inserts a new immutable Purchase aggregate. “Upsert” is not supported terminology for replacing an existing Purchase.
+
+## Local Queue Is Not Synchronization
+**KANBAN IDs:** `&%%11`–`&%%14`, `&&&09`  
+A local event and pending row prepare later delivery. They do not prove API upload, server idempotency, cursor download, replay, conflict handling, or convergence.
+
+## Phone-Width Widget Evidence
+**KANBAN ID:** `%%%07`  
+A widget test demonstrates that the controlled Purchase/History path works at a narrow logical width. It does not prove Android keyboard, Back, rotation, background/resume, process recreation, physical-device compatibility, or final visual quality.
+
+## Functional UI Scaffold
+**KANBAN ID:** `%%%07`  
+SafeArea, scrolling, staged total, and navigation support the bounded workflow. The scaffold is implemented and usable for evidence gathering, while visual design and accessibility acceptance remain provisional.
 
 ## Evidence Is Not Mastery
 **KANBAN IDs:** all referenced concepts  
-Source, tests, schemas, and host runs show project behavior. They do not change learner maturity without explicit explanation or other learner evidence.
+Source representation, passing tests, host execution, and human-observed application use strengthen project evidence. Maturity changes require explicit learner evidence such as explanation, comparison, or transfer.
