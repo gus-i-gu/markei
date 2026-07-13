@@ -345,3 +345,38 @@ Report:
 - corrections required in J/E.
 
 Codex remains inactive. No Didactic promotion is authorized.
+
+
+---
+
+<!-- CODEX_ACTIVATION_MARKER:C08-ACT-01-Didactic-2026-07-13 -->
+# Cycle 08 — Codex Activation C08-ACT-01
+
+> Status: ACTIVE — AUTHORIZED FOR CODEX IMPLEMENTATION
+> Authority: explicit Main/human authorization on 2026-07-13
+> Scope: bounded Unit 1 only — responsive shell and typed presentation states
+> Supersedes: earlier “Codex remains inactive” and “not authorized” statements only for the scope defined below
+
+## Authorized didactic scope
+
+Codex may implement user-facing language needed by Unit 1 to distinguish:
+
+- loading;
+- genuine empty state;
+- recoverable presentation error;
+- successful local state;
+- validation feedback already owned by touched views.
+
+Within touched surfaces, ordinary UI copy must not expose raw exceptions, Device UUID/sequence, synchronization claims, backup claims, or analytics claims. “Registered locally” may describe an evidenced local result; “synced,” “uploaded,” and “backed up” remain prohibited.
+
+## Vocabulary boundary
+
+Use existing product terms unless a touched label must be clarified. This activation does not decide Catalogue naming, optional Product code, quantity truth, Store identity, retry semantics, draft recovery, personal-inflation wording, or export/restore promises.
+
+No KANBAN maturity change or permanent Didactic promotion is authorized by implementation evidence alone.
+
+## Required evidence
+
+G/H/I must record the exact copy/state changes, tests, observed behavior, unresolved language choices and any mismatch between repository behavior and this staging.
+
+This latest activation marker controls Codex authority for E.
