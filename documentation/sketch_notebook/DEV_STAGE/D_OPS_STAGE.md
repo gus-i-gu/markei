@@ -205,3 +205,161 @@ Replace A with C08-R02 and report:
 - recommendation for the first bounded implementation unit.
 
 No command execution, host mutation, commit, or source edit is authorized by this file.
+
+---
+
+<!-- ENRICHMENT_MARKER:C08-C08-R02-Operational-2026-07-13 -->
+# Cycle 08 Round C08-R02 — Provisional Operational Enrichment
+
+> Status: PROVISIONAL — NOT AUTHORIZED FOR CODEX  
+> Purpose: Domain confrontation; no implementation authority  
+> Main source: J C08-R02 reconciliation at `b244f41c9f76baec3123e7584364969bcc7bc588`  
+> Inputs: latest cumulative A/B/C C08-R02 rounds and preceding D/E/F content
+
+## 1. Successive-round classification
+
+Retained:
+
+- clean-checkout and tracked-file preflight;
+- baseline analysis/tests/build evidence;
+- atomicity and retry as separate gates;
+- migration/no-silent-reset;
+- responsive/lifecycle matrix;
+- volume measurement before acceptance budgets;
+- backup alternatives;
+- Device hard gate before synchronization.
+
+Corrected:
+
+- current Catalogue/Store query ports are latent; Store/Product selection journeys are not implemented;
+- tab-switch draft retention already exists through IndexedStack;
+- History has fixed-50/N+1 behavior and collapses error/loading into empty;
+- MASS/BRL are current UI limits;
+- 100/1,000 are better initial measurement tiers than assuming 10,000 as an entry gate;
+- corruption/insufficient-storage evidence may require explicit adapter seams or controlled fault injection.
+
+Newly added:
+
+- typed presentation/error-state validation;
+- raw-exception and Device-sequence copy audit;
+- current query-count evidence;
+- Product-code cross-layer gate;
+- Store normalization collision gate;
+- schema-free versus schema-bearing execution split.
+
+## 2. Exact current surfaces
+
+Operational confrontation should trace:
+
+- shell state: `app/markei_app.dart`;
+- draft and registration UI: `app/pages/purchase_page.dart`;
+- History states: `app/pages/history_page.dart`;
+- Catalogue/Store ports: `application/catalogue_queries.dart`;
+- command/result: `application/register_purchase.dart`;
+- History summary contract: `application/purchase_history.dart`;
+- local transaction: `infrastructure/local/local_purchase_repository.dart`;
+- query cost: `infrastructure/local/local_query_repository.dart`;
+- schema/migrations: `infrastructure/local/local_database.dart`;
+- Device selection: `infrastructure/local/local_device_identity_repository.dart`.
+
+## 3. Schema-free candidate gates
+
+### O2.1 Shell and states
+
+Proposed later evidence:
+
+- constraint-driven narrow/wide destinations;
+- selected destination preserved on resize;
+- distinct loading, empty, error and success;
+- raw exceptions never rendered;
+- Device sequence absent from normal success copy;
+- keyboard, focus, Back and larger text;
+- current tab-switch draft retention preserved intentionally.
+
+### O2.2 Draft coordinator
+
+If session-only:
+
+- add/replace/remove/cancel;
+- stable draft-line identity;
+- running total;
+- review phase;
+- busy/failure/success/unknown algebra;
+- no persistence or migration;
+- pure coordinator tests plus widget tests.
+
+### O2.3 Product/Store selection presentation
+
+Using existing ports:
+
+- list/empty/search behavior;
+- existing Product choice;
+- similar advisory candidates;
+- explicit create-anyway;
+- Store list/select/create UI.
+
+Do not claim durable Store deduplication until its identity policy exists.
+
+### O2.4 History query correction
+
+Before analytics:
+
+- distinguish loading/empty/error;
+- eliminate or measure N+1 Item counts;
+- expose occurrence time;
+- define bounded paging/list behavior;
+- add Purchase detail query.
+
+## 4. Schema-bearing candidate gates
+
+Treat independently:
+
+1. SubmissionId uniqueness and retry-result recovery;
+2. Store normalized/branch identity;
+3. optional Product code;
+4. History performance indexes;
+5. installation-to-Device relation;
+6. durable drafts.
+
+Each requires:
+
+- explicit schema version;
+- representative v2 fixture;
+- backfill/collision policy;
+- migration failure without reset;
+- reopen/restart;
+- generated Drift reconciliation;
+- targeted transaction tests.
+
+## 5. Evidence requests for Operational C08-R03
+
+Report:
+
+- exact current baseline commands and host requirements;
+- which existing tests extend each schema-free candidate;
+- query count/plan for current History;
+- feasible failure injection for startup/query/transaction/migration;
+- known-outcome versus unknown-outcome retry evidence;
+- measured cost for 100/1,000 dataset tiers;
+- minimum Windows/Android matrix;
+- honest backup alternative;
+- timing recommendation for Device correction;
+- smallest reversible implementation unit.
+
+## 6. Decisions Main cannot infer
+
+- accepted destination topology;
+- Product-code policy;
+- quantity truth;
+- Store identity;
+- draft lifetime;
+- busy-only versus durable idempotency;
+- export/restore promise;
+- performance budgets;
+- Device timing.
+
+## 7. Next enrichment condition
+
+D may become more exact only after A C08-R03 reports repository/test evidence and the high-impact human choices are narrowed.
+
+Codex remains inactive.
