@@ -1032,3 +1032,538 @@ Proceed later with a conservative thematic reconciliation:
 - retain the Device invariant as visible gating debt.
 
 Status: Design confrontation complete; permanent Design mutation remains unauthorized.
+
+---
+
+# Cycle 08 Methodology Review — Operational Domain
+
+> Status: Critical evaluation staged for human/Main review  
+> Methodology basis: `METHOD_FOUNDATIONS.md`, `FLUX.md`, and `PROMOTION_RULES.md`  
+> Evaluated surfaces: `operational/12_OPERATIONAL_MODEL.md`, `operational/10_OPERATIONAL_STATE.md`, and `operational/04_TODO.md`  
+> Observational surface inspected only for routing: `operational/11_OPERATIONAL_RECORD.md`
+
+## 1. Review purpose
+
+Complete the acquired-documentation review by evaluating whether Operational canonical knowledge, checkpoint recovery, and derived executable planning still satisfy their methodology roles at the Cycle 08 boundary. Stage a bounded revision proposal without modifying permanent Operational files, host tools, dependencies, application source, or platform state.
+
+## 2. Current semantic assignment
+
+| File | Assigned role | Current condition |
+| --- | --- | --- |
+| `12_OPERATIONAL_MODEL.md` | Canonical stable Operational rules | Strong evidence and safety model; some product/repository incidents, concrete release configuration, and future synchronization rules need classification |
+| `10_OPERATIONAL_STATE.md` | Compact current Operational checkpoint | Semantically correct but stale at Cycle 07 Sprint 05, internally version-stale, and dependent on cleansed staging |
+| `04_TODO.md` | Derived executable gates/backlog | Contains useful gates but combines obsolete Cycle 07 preparation, inactive Cycle 09 work, and carried current debt |
+| `11_OPERATIONAL_RECORD.md` | Append-oriented execution history | Correct home for commands, results, contradictions, host changes, and chronological evidence; detailed evaluation intentionally skipped |
+
+## 3. Methodological verdict
+
+The four-file Operational structure remains valid. No new file is justified.
+
+The domain needs vertical reconciliation:
+
+- stable repeatable execution, validation, safety, recovery, and evidence rules belong in the canonical Operational model;
+- current passing, partial, blocked, host-unvalidated, and deferred state belongs in the checkpoint;
+- executable next gates and bounded backlog belong in TODO;
+- commands, versions, hashes, incidents, contradictions, and results belong in the Record.
+
+The existing model itself states this maintenance rule, but later appendices partially violate it. The revision must enforce the rule by semantic classification, not indiscriminate deletion.
+
+## 4. Canonical-file evaluation — `12_OPERATIONAL_MODEL.md`
+
+### 4.1 Canonical coverage
+
+The Operational canon currently covers:
+
+1. runtime and writable-persistence separation;
+2. schema-first production initialization;
+3. packaging and installer authority;
+4. an explicit evidence ladder;
+5. installed lifecycle and retained-data rules;
+6. startup diagnostics and deterministic shutdown;
+7. database ownership and transaction safety;
+8. artifact/source separation;
+9. beta acceptance boundaries;
+10. local synchronization safety;
+11. unknown network outcomes and idempotent retry;
+12. migration rehearsal and recovery;
+13. protection of accepted desktop data;
+14. generated-source ownership;
+15. platform scaffold versus platform validation;
+16. monotonic sequence and identity-normalization proof;
+17. contract examples versus complete protocol;
+18. host-mutation authority;
+19. identity-bearing migration safety;
+20. structural schema validation boundaries;
+21. Android evidence classification;
+22. lifecycle-checklist closure;
+23. SDK/AVD recovery;
+24. repository/report reconciliation;
+25. precise workflow terminology.
+
+### 4.2 Canonical strengths
+
+- The evidence ladder prevents later gates from being inferred from earlier ones.
+- Host mutation, cleanup, and ordinary-user-data safety are explicitly bounded.
+- Reproducible artifacts are distinguished from source truth.
+- Runtime, installer, and build-time dependencies are separated.
+- Platform scaffolding does not count as platform validation.
+- Transactions, migrations, unknown network outcomes, and cursor advancement have strong safety rules.
+- Accepted Python data remains isolated from experiments.
+- Generated files are reviewed through generators, configuration, regeneration, and validation.
+- Human-visible acceptance remains distinct from automated technical evidence.
+- Local queue preparation is not confused with synchronization.
+- The model correctly treats report/repository disagreement as drift rather than choosing documentation over source.
+
+### 4.3 Canonical deficiencies
+
+#### OPS-CAN-01 — Stable rule and repository incident are mixed
+
+The model records the specific committed installer binary contradiction and the `x64compatible` warning. These facts were useful, but they are repository incidents or bounded maintenance debt rather than timeless Operational rules.
+
+Classification: canonical/observational mixing.
+
+Required resolution:
+
+- preserve the general artifact policy and warning-classification rule in canon;
+- leave the specific binary contradiction, filename, warning instance, and disposition history in the Record/checkpoint/TODO;
+- do not erase unresolved cleanup merely to purify canon.
+
+#### OPS-CAN-02 — Concrete Cycle 06 release configuration may be over-canonical
+
+Per-user install paths, exact launcher composition, PyInstaller/Inno Setup roles, and page-specific shutdown chains are accepted for the protected Python beta. They are not universal rules for the Flutter shared client.
+
+Classification: product-generation scope ambiguity.
+
+Required resolution:
+
+Explicitly label rules as:
+
+- project-wide Operational invariant;
+- protected Python-beta Operational contract;
+- current Flutter-client Operational contract;
+- future distributed-safety rule.
+
+This preserves valid historical/current contracts without making them apply to every client.
+
+#### OPS-CAN-03 — Future synchronization safety is canonical before implementation
+
+The synchronization safety rules are valuable technology-independent invariants. However, “canonical” must mean accepted operational requirements for future work, not implemented or validated synchronization behavior.
+
+Required resolution:
+
+Keep rules such as no privileged client credentials, atomic event/fact persistence, safe retry, and atomic cursor application, while labeling them “accepted future gates; implementation absent until Cycle 09.”
+
+#### OPS-CAN-04 — Canonical appendices are cycle-derived
+
+Generated-source, host/migration, and Android recovery sections contain stable reusable rules, but they were appended after individual sprints. Their knowledge is valid; their organization remains chronological and may grow one appendix per cycle.
+
+Classification: canonical navigation/recovery-cost drift.
+
+Required resolution:
+
+Reconcile these rules into thematic sections during authorized revision and preserve their origin in the Record. Do not retain sprint-shaped headings in canon when the rule is cycle-independent.
+
+#### OPS-CAN-05 — Acceptance vocabulary is not fully normalized
+
+The model uses configured, built, launched, installed, validated, accepted, blocked, and unknown. Later documentation also relies on implemented, automated-test evidenced, host-executed, human-observed, partial, host-unvalidated, and deferred.
+
+Required resolution:
+
+Define one Operational evidence taxonomy with permitted combinations and scope:
+
+```text
+materialized
+automated-test evidenced
+built
+installed
+launched
+workflow-observed
+persistence-observed
+lifecycle-validated
+physical-device validated
+release/distribution validated
+host-unvalidated
+blocked
+deferred
+accepted by human/Main
+```
+
+The taxonomy must allow platform and workflow qualifiers and must not collapse implementation into acceptance.
+
+#### OPS-CAN-06 — Cycle 08 product-beta gates are absent
+
+The model has strong platform and persistence safety but does not yet state reusable validation rules for:
+
+- responsive navigation and wide/narrow acceptance;
+- Catalogue search/reuse/create and advisory duplicates;
+- Store selection/create;
+- staged multi-item edits/removal/review;
+- duplicate-submit prevention;
+- atomic registration and failure recovery;
+- History list/detail consistency;
+- normalized personal price comparison;
+- empty, validation, success, failure, and retry states;
+- larger catalogue/history volumes;
+- backup/export decision and recovery;
+- accessibility/focus/keyboard/Back;
+- migration from current local schema;
+- the installation–Device invariant before synchronization.
+
+These are candidates for Operational investigation. Only reusable accepted validation rules should later enter canon.
+
+### 4.4 Canonical disposition test
+
+For every Operational statement, ask:
+
+1. Is this a reusable execution, validation, safety, recovery, or evidence rule?
+2. Is it project-wide, Python-beta-specific, Flutter-specific, or a future distributed gate?
+3. Is it a stable rule or a dated incident/result?
+4. Does it prescribe an evidence boundary or claim evidence already exists?
+5. Is Operational the semantic owner, or is it primarily Design architecture or Main state?
+6. Can the rule survive tool/version/path changes?
+7. Is an inactive future gate clearly distinguished from implemented behavior?
+8. Can historical origin and failure detail be recovered from the Record?
+
+Only stable reusable Operational knowledge belongs in the canonical model.
+
+## 5. Checkpoint-efficacy evaluation — `10_OPERATIONAL_STATE.md`
+
+### 5.1 Current efficacy
+
+The checkpoint exposes:
+
+- implemented and validated evidence;
+- partial and deferred work;
+- a current operational decision;
+- host recovery requirements;
+- authority and next route;
+- deeper recovery pointers.
+
+It is the correct Operational entry point and remains moderate in size.
+
+### 5.2 Current inefficiencies
+
+- Header version says Cycle 07 Sprint 02 while the latest body is Sprint 05.
+- Branch and inspected head are obsolete for Cycle 08.
+- It points to cleansed A/G/J staging.
+- It treats the supplemental lifecycle checklist as the current next route even though Cycle 07 is now closed and the debt is carried.
+- It contains detailed SDK paths, test totals, emulator details, and repository contradictions that exceed the minimum checkpoint requirement.
+- The checkpoint mixes old planning candidates with later implemented reality.
+- It does not expose Cycle 08 Sprint 01 investigation authority or product-beta evidence planning.
+
+### 5.3 Checkpoint success criteria
+
+A Cycle 08 Operational checkpoint should answer in one bounded read:
+
+1. What environments and workflows are verified?
+2. What evidence survives from Cycle 07?
+3. Which claims remain host-unvalidated or partial?
+4. What carried debts constrain Cycle 08?
+5. What Cycle 08 validation questions are active?
+6. What work is blocked or deferred to Cycles 09/10?
+7. Which host environments must be preserved?
+8. What is the next valid authority transition?
+9. What should Operational Chat read next?
+
+### 5.4 Recommended checkpoint shape
+
+```text
+Verified baseline
+→ protected environments/data
+→ carried partial evidence and debt
+→ active Cycle 08 investigation
+→ failure/recovery risks
+→ deferred Cycle 09/10 work
+→ recovery pointers
+→ next authority boundary
+```
+
+Refresh it as current state; do not append another historical report.
+
+## 6. Derived-consistency evaluation — `04_TODO.md`
+
+### 6.1 Current strengths
+
+- Tasks are expressed as executable gates.
+- Priorities and completion boundaries are explicit.
+- Failure injection, close/reopen, isolation, migration, and platform checks are well formed.
+- Host cleanup requires inventory and named removal.
+- The lifecycle checklist correctly stops when defects require new authority.
+- The file distinguishes future Neon advancement from local proof.
+
+### 6.2 Derived inconsistencies
+
+#### OPS-DER-01 — Obsolete preparation remains active beside completed work
+
+The first ten sections describe Cycle 07 Sprint 03 preparation even though much of the Flutter foundation, persistence, transaction, Windows, and Android work was later materialized.
+
+Classification: stale derived backlog.
+
+Required resolution:
+
+Rebuild TODO from current canonical rules, checkpoint state, and Cycle 08 objective. Completed gates should not remain active merely because their historical plan is useful.
+
+#### OPS-DER-02 — Inactive Cycle 09 work dominates current TODO
+
+Secure credential storage, TypeScript protocol harness, disposable Postgres, Neon, account isolation, and cursor behavior are scheduled for Cycle 09. Keeping them as P0 in the active Cycle 08 TODO misstates priority and authority.
+
+Required resolution:
+
+Move them to an explicitly deferred/scheduled section or concise forward reference. They must not compete with Cycle 08 product-beta gates.
+
+#### OPS-DER-03 — TODO duplicates checkpoint state
+
+The fast recovery card, closure boundary, evidence wording, and current host state partly repeat `10_OPERATIONAL_STATE.md`.
+
+Required resolution:
+
+Checkpoint owns current truth. TODO should own executable outstanding gates, prerequisites, cost, stop conditions, and completion criteria.
+
+#### OPS-DER-04 — Some tasks are no longer correctly scoped
+
+The supplemental Android checklist remains valid debt, but Cycle 07 closure means it should be framed as carried Cycle 08 acceptance debt, not a condition for reopening Sprint 05. Likewise DevTools disposition is hygiene, not product-beta P0.
+
+Required resolution:
+
+Reclassify by current impact:
+
+- Cycle 08 acceptance gate;
+- Cycle 08 investigation;
+- bounded hygiene;
+- deferred Cycle 09;
+- deferred Cycle 10.
+
+#### OPS-DER-05 — Cycle 08 operational plan is missing
+
+The active TODO needs gates for:
+
+- current build/run/test reproducibility;
+- responsive layout and navigation validation matrix;
+- keyboard, Back, focus, larger text, rotation, resume, and process restart;
+- Catalogue/Store/Purchase/History workflow validation;
+- atomic failure/duplicate-submit testing;
+- data-volume and performance evidence;
+- migration from existing Flutter schema;
+- backup/export decision;
+- corruption and recovery behavior;
+- app-private persistence across Windows/Android;
+- physical-device and release boundaries;
+- installation–Device invariant timing;
+- privacy-safe diagnostics;
+- explicit costs and stop conditions.
+
+These remain investigation candidates until A and Main staging approve exact gates.
+
+### 6.3 Derived consistency test
+
+For every TODO item, ask:
+
+1. Which canonical Operational rule or accepted checkpoint debt derives this task?
+2. Is it active in Cycle 08, carried debt, hygiene, Cycle 09, or Cycle 10?
+3. Is its authority active, or is it merely scheduled?
+4. Does it name prerequisites, command/evidence target, stop condition, and completion boundary?
+5. Has it already been completed or superseded?
+6. Does it duplicate current-state prose from the checkpoint?
+7. Can it be removed or regenerated when the state changes?
+8. Would executing it mutate source, host, data, or external infrastructure without D/E/F?
+
+Any task without current derivation and authority should be deferred or removed from the active queue.
+
+## 7. Cross-surface reconciliation
+
+Desired relationship:
+
+```text
+12_OPERATIONAL_MODEL
+stable execution + evidence + safety + recovery rules
+        ↓ derives
+04_TODO
+current executable gates + prerequisites + costs + stop conditions
+        ↓ summarizes current execution state
+10_OPERATIONAL_STATE
+verified/partial/blocked/deferred baseline + next authority
+```
+
+Current drift:
+
+- the canonical model contains dated repository/tool incidents;
+- TODO preserves obsolete planning and inactive future work as current P0;
+- the checkpoint preserves detailed Cycle 07 evidence and cleansed-stage references;
+- all three partially repeat evidence classifications and current route.
+
+## 8. Cycle 08 Operational investigation boundary
+
+Operational Chat should investigate, without implementation:
+
+- current clean clone/bootstrap/run/build/test paths;
+- Windows and Android toolchain preservation/recovery cost;
+- responsive validation tooling and manual matrix;
+- Catalogue and Store workflow testability;
+- staged Purchase editing/removal/review;
+- atomic commit and duplicate-submit failure injection;
+- History detail consistency and price-observation reconstruction;
+- analytics fixtures, numeric precision, units, and interval comparison;
+- larger catalogue/history volume and performance;
+- fresh install, schema migration, reopen, corruption, and recovery;
+- backup/export feasibility and acceptance boundary;
+- privacy-safe logs and diagnostic export;
+- app-private storage behavior;
+- keyboard, Back, focus, text scale, rotation, background/resume, and process recreation;
+- emulator versus physical-device boundary;
+- release/packaging deferrals;
+- installation–Device invariant timing;
+- exact operational costs, blockers, and stop conditions.
+
+No tool installation, dependency addition, schema mutation, source change, release signing, external infrastructure, or synchronization is authorized by the investigation.
+
+## 9. Proposed bounded revision unit
+
+If later authorized:
+
+1. `12_OPERATIONAL_MODEL.md`
+   - reconcile stable rules thematically;
+   - label Python, Flutter, and future distributed scopes;
+   - move dated incidents and concrete evidence to observational/current surfaces;
+   - normalize evidence vocabulary;
+   - preserve data safety, transaction, migration, host-mutation, and recovery rules.
+
+2. `04_TODO.md`
+   - rebuild from the Cycle 08 checkpoint and objective;
+   - remove completed Cycle 07 tasks from the active queue;
+   - segregate carried debt, hygiene, Cycle 09, and Cycle 10;
+   - define Cycle 08 investigation/acceptance gates with costs and stop conditions;
+   - avoid duplicating checkpoint state.
+
+3. `10_OPERATIONAL_STATE.md`
+   - refresh as the Cycle 08 Operational checkpoint;
+   - retain only the verified baseline, carried debt, active investigation, evidence limits, preserved environment, and next authority;
+   - remove stale references to cleansed A/G/J.
+
+4. `11_OPERATIONAL_RECORD.md`
+   - preserve all history;
+   - append the later accepted Operational documentation-revision event;
+   - remain the home for commands, versions, incidents, contradictions, and results.
+
+## 10. Non-goals
+
+The Operational revision must not:
+
+- run builds, tests, emulators, installers, or devices during documentation revision;
+- install or remove tools;
+- mutate user data or host configuration;
+- modify source, dependencies, schema, or external services;
+- activate Cycle 09 synchronization;
+- claim Design architecture or Didactic maturity;
+- rewrite Operational history;
+- create or rename files;
+- infer product acceptance from prior technical evidence.
+
+## 11. Validation gates
+
+- every canonical rule is stable and scope-labeled;
+- dated incidents remain recoverable outside canon;
+- evidence taxonomy does not collapse build, launch, workflow, lifecycle, physical-device, release, and acceptance gates;
+- TODO contains only current or explicitly deferred work;
+- completed Cycle 07 tasks are not presented as active;
+- Cycle 09/10 work is clearly inactive;
+- checkpoint is current, compact, and free of cleansed-stage dependencies;
+- host/tool cleanup remains separately authorized;
+- accepted Python beta and data protection remain explicit;
+- Cycle 08 gates remain proposed until A/B/C and Main/human approval;
+- later diff is limited to the four Operational files;
+- methodology and application source remain unchanged.
+
+## 12. Human decisions required
+
+1. Should the Operational canon retain product-generation-specific contracts for both Python and Flutter, or contain only project-wide rules with client-specific appendices?
+2. Should accepted future synchronization safety rules remain canonical now, provided they are explicitly labeled unimplemented Cycle 09 gates?
+3. Should `04_TODO.md` retain deferred Cycle 09/10 sections, or contain only active-cycle work with forward tasks held in Main continuity?
+4. Should the carried Android lifecycle checklist be mandatory during Cycle 08 responsive-foundation work or deferred to the final Cycle 08 acceptance sprint?
+5. Should DevTools configuration disposition remain a named hygiene task or be retired unless it causes reproducibility drift?
+6. Which evidence taxonomy should become the single Operational vocabulary across checkpoints, reports, and acceptance gates?
+
+## 13. Critical evaluation prompt for the next Operational pass
+
+```text
+Evaluate the Operational domain under METHOD_FOUNDATIONS, FLUX, and PROMOTION_RULES.
+
+Scope:
+- canonical: operational/12_OPERATIONAL_MODEL.md;
+- derived: operational/04_TODO.md;
+- checkpoint: operational/10_OPERATIONAL_STATE.md;
+- inspect operational/11_OPERATIONAL_RECORD.md only to verify that relocated incidents and results have a durable observational home.
+
+For 12_OPERATIONAL_MODEL.md:
+1. inventory stable execution, evidence, safety, transaction, migration, host, artifact, and recovery rules;
+2. distinguish project-wide, Python-beta, Flutter-client, and future distributed scopes;
+3. separate stable rules from dated incidents, versions, commands, and results;
+4. normalize evidence-state vocabulary;
+5. preserve data protection and explicit mutation authority;
+6. classify Cycle 08 validation rules as candidates until accepted.
+
+For 04_TODO.md:
+1. derive every task from canonical rules and the current checkpoint;
+2. remove completed or superseded Cycle 07 work from the active queue;
+3. distinguish Cycle 08, carried debt, hygiene, Cycle 09, and Cycle 10;
+4. require prerequisites, evidence target, cost, stop condition, and completion boundary;
+5. prevent inactive tasks from implying authority.
+
+For 10_OPERATIONAL_STATE.md:
+1. regenerate a compact Cycle 08 checkpoint;
+2. expose verified baseline, partial/host-unvalidated evidence, carried debt, active investigation, preserved environment, deferrals, and next authority;
+3. remove stale references to cleansed stages;
+4. point to deeper sources rather than reproducing execution history.
+
+Report:
+- accepted canonical coverage;
+- canonical scope/incident drift;
+- checkpoint efficacy;
+- derived TODO consistency;
+- duplicate semantic ownership;
+- proposed relocations;
+- Cycle 08 Operational gates;
+- evidence vocabulary;
+- exact writable paths;
+- validation gates;
+- unresolved human decisions.
+
+Do not edit permanent files, run tools, mutate hosts/data, modify source, or activate deferred work during evaluation.
+```
+
+## 14. Main recommendation
+
+Proceed later with a conservative Operational reconciliation:
+
+- preserve the strong safety and evidence model;
+- separate product-generation scope and future gates;
+- move incidents out of canon without losing unresolved debt;
+- rebuild TODO for Cycle 08;
+- refresh the checkpoint;
+- keep host mutations and cleanup separately authorized;
+- treat carried lifecycle work as named acceptance debt;
+- keep Cycle 09/10 operational work inactive.
+
+Status: Operational confrontation complete; permanent Operational mutation remains unauthorized.
+
+---
+
+# Acquired Documentation Review — Cross-Domain Closure
+
+The Didactic, Design, and Operational permanent folders have now been reviewed under the same methodology test.
+
+Common drift pattern:
+
+```text
+chronological evidence entered canonical files
++ current-state material entered derived files
++ checkpoints retained obsolete cycle/stage references
+= vertical reconciliation and recovery-economy debt
+```
+
+Domain-specific emphasis:
+
+- Didactic: protect concept identity and learner-evidence maturity while separating curriculum, vocabulary, checkpoint, and execution chronology.
+- Design: protect responsibilities/invariants while separating architecture, implementation evidence, model derivation, and future topology.
+- Operational: protect safety/evidence/recovery rules while separating stable procedures, incidents, active gates, and inactive future work.
+
+No domain requires a new permanent file. The next valid transition is human resolution of the staged questions, followed by a single Main-approved documentation-revision authority that names exact writable files and validation gates. Application implementation remains inactive.
