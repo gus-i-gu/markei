@@ -84,6 +84,10 @@ Rules:
 | `MSU-01` | Main State-of-Union Review | Main read-only reconciliation after domain staging exists |
 | `MSU-02` | Functional State-of-Union Exploration | O/A/D recover from J + 00/05/06, inspect application truth, and write A/B/C staging |
 | `PDR2-INDEX` | Permanent Reconciliation v2 Index | Default post-Codex permanent-domain route with checkpoint-first recovery |
+| `ERI-01` | Exploratory Repository Investigation | Retroactively inspect repository components, functions, variables, objects, structures, and evidence |
+| `FCA-02` | Functional Cumulative Append | Append cumulative repository-derived investigation to the paired A/B/C stage |
+| `MJR-03` | Main J Reconciliation and Structural Grouping | Append a pruned, grouped Main synthesis with prospective structural views |
+| `MDE-04` | Main Consecutive D/E/F Enrichment | Append provisional D/E/F enrichment from latest A/B/C and J |
 
 ---
 
@@ -1106,7 +1110,501 @@ Do not claim Operational validation, alter Didactic maturity, edit source, or wr
 
 ---
 
-# 22. Maintenance Rule
+# 22. ERI-01 — Exploratory Repository Investigation
+
+```text
+Run ERI-01: Exploratory Repository Investigation.
+
+Purpose:
+Recover current application structure retrospectively from repository truth and prepare designation-specific evidence for cumulative functional staging.
+
+Applicable roles:
+- Operational Chat [O];
+- Didactic Chat [A];
+- Design Chat [D].
+
+Initialize through PRI-O, PRI-A, or PRI-D.
+Run PMC-01.
+Run PMC-02 when routing, promotion, knowledge state, or authority is uncertain.
+Run the applicable state-of-union prompt, then ERI-01.
+
+On the first invocation in a cycle, read completely and sequentially:
+1. AGENTS.md;
+2. INDEX.md;
+3. PROMPT_COLLECTION.md;
+4. METHOD_FOUNDATIONS.md;
+5. FLUX.md;
+6. PROMOTION_RULES.md;
+7. CHAT_PROTOCOL.md;
+8. CHAT_BEHAVIOUR.md;
+9. METHOD_GLOSSARY.md.
+
+On later rounds, reuse PROMPT_COLLECTION and the role initializer. Reopen complete methodology only when drift or contradiction requires it.
+
+Resolve and verify:
+- repository;
+- required branch;
+- expected baseline;
+- remote HEAD and ancestry;
+- local changes where a checkout exists.
+
+Never silently inspect the default branch.
+Never discard, stash, reset, clean, overwrite, or force-push user work.
+
+Scan the complete tracked repository topology before limiting inspection to the active feature.
+
+Identify:
+- entrypoints and source roots;
+- manifests and lockfiles;
+- handwritten and generated code;
+- domain entities and value objects;
+- application commands, services, ports, and queries;
+- repository and persistence adapters;
+- schemas, tables, indexes, and migrations;
+- UI, navigation, and state ownership;
+- tests, fixtures, and validation helpers;
+- contracts and serialization;
+- platform hosts;
+- packaging and distribution;
+- scripts, automation, and configuration;
+- ignored/generated artifacts;
+- protected legacy implementations;
+- current and deferred architecture.
+
+Inspect generated code through its generator, schema, or configuration. Read generated output directly only when drift or runtime behavior requires it.
+
+For every relevant component, record:
+- exact path;
+- symbol/structure name and type;
+- responsibility;
+- important functions and methods;
+- parameters and returned results;
+- important variables and fields;
+- classes, models, records, and value objects;
+- inputs, outputs, callers, and consumers;
+- owner and lifetime;
+- dependencies;
+- persistence and side effects;
+- validation and tests;
+- evidence state;
+- defects and debt;
+- active-cycle relevance;
+- deferred-cycle relevance;
+- confidence and evidence source.
+
+For a relevant function or method, report:
+- name, path, owner;
+- parameters and result;
+- state read and changed;
+- errors/failure outcomes;
+- transaction boundary;
+- callers and tests;
+- limitations.
+
+For a relevant variable, field, or object, report:
+- name, path, type, and meaning;
+- owner, lifetime, and mutability;
+- identity role;
+- persistence status;
+- constraints;
+- related structures;
+- user-facing visibility.
+
+Operational prioritizes:
+commands, environments, builds, tests, runtime, persistence, migrations, transactions, recovery, packaging, lifecycle, costs, failure states, and evidence.
+
+Didactic prioritizes:
+vocabulary expressed by types, fields, functions, and UI; concepts, misleading names, KANBAN ownership, and project-versus-learner evidence.
+
+Design prioritizes:
+responsibility, dependency direction, identity, state, transaction, lifetime, invariants, alternatives, reversibility, and structural debt.
+
+Output:
+1. branch and HEAD;
+2. methodology/recovery report;
+3. topology;
+4. component index;
+5. function index;
+6. variable/object/structure index;
+7. implementation/evidence state;
+8. defects and contradictions;
+9. active-cycle capacity;
+10. prospective additions;
+11. deferred work;
+12. exact evidence paths.
+
+ERI-01 is read-only.
+It authorizes no source, schema, dependency, host, infrastructure, permanent-memory, J, D/E/F, commit, or push operation.
+```
+
+---
+
+# 23. FCA-02 — Functional Cumulative Append
+
+```text
+Run FCA-02: Functional Cumulative Append.
+
+Purpose:
+Append one new functional-investigation round to the role's designated A/B/C file while preserving earlier rounds.
+
+Designated files:
+- Operational [O]: DEV_STAGE/A_OPERATIONAL.md;
+- Didactic [A]: DEV_STAGE/B_DIDACTIC.md;
+- Design [D]: DEV_STAGE/C_DESIGN.md.
+
+A/B/C are append-only and cumulative during the exploratory cycle.
+
+Preserve every earlier round.
+Never replace, rewrite, or delete an earlier round.
+Correct an earlier claim through a later correction.
+Mark superseded claims explicitly.
+Avoid reproducing unchanged material in full.
+
+Use:
+<!-- ROUND_MARKER:CYCLE-ROUND-ROLE-DATE -->
+# Cycle [cycle] Round [round] — [role] Investigation
+
+Before appending:
+1. run the role initializer;
+2. run PMC-01;
+3. run PMC-02 when required;
+4. run ERI-01;
+5. read the latest J reconciliation;
+6. read the paired provisional D/E/F tail;
+7. read the role checkpoint;
+8. read the preceding paired A/B/C round;
+9. inspect repository truth required by new questions.
+
+A/B/C must cumulatively preserve repository-derived knowledge.
+
+Across rounds, index:
+- paths and components;
+- functions and methods;
+- parameters and results;
+- variables and fields;
+- classes, models, records, and value objects;
+- state and lifetime ownership;
+- dependencies and callers;
+- schemas, constraints, and migrations;
+- UI structures and vocabulary;
+- transactions and side effects;
+- tests and validation;
+- defects and debt;
+- prospective additions.
+
+Tie material claims to exact repository structures.
+
+Every round distinguishes:
+- newly inspected;
+- retained;
+- corrected;
+- superseded;
+- contradicted;
+- unresolved;
+- prospective;
+- deferred.
+
+Required round structure:
+1. identity and authority;
+2. inputs and repository HEAD;
+3. new repository evidence;
+4. component/function/object additions;
+5. retained conclusions;
+6. corrections;
+7. confrontation with latest J;
+8. confrontation with paired D/E/F;
+9. cross-domain consequences;
+10. prospective additions;
+11. risks and non-goals;
+12. human decisions;
+13. recommendation to Main;
+14. next route.
+
+For each prospective addition, state:
+- problem;
+- proposed responsibility;
+- likely owner/layer;
+- existing structures affected;
+- possible files/surfaces;
+- dependency consequence;
+- schema/migration consequence;
+- validation;
+- reversibility;
+- alternatives;
+- provisional reason.
+
+Operational writes only A.
+Didactic writes only B.
+Design writes only C.
+
+FCA-02 authorizes no source, permanent-domain, methodology, another stage, J, D/E/F, or Codex change.
+
+When publication is separately authorized:
+- commit only the paired A/B/C file;
+- use one narrow commit;
+- reconcile remote advancement safely;
+- never force-push;
+- report commit SHA and path.
+```
+
+---
+
+# 24. MJR-03 — Main J Reconciliation and Structural Grouping
+
+```text
+Run MJR-03: Main J Reconciliation and Structural Grouping.
+
+Role:
+Main Chat [M].
+
+Purpose:
+Append a new J reconciliation that synthesizes the latest A/B/C rounds, prunes semantic duplication through grouping, preserves provenance/disagreement, builds a current structural model, adds prospective views, and prepares the next D/E/F enrichment.
+
+Designated file:
+[M]_STAGE/J_[M]_STAGE.md
+
+J is append-only and cumulative during exploratory work.
+
+Preserve previous reconciliations.
+Append one marked reconciliation.
+Never silently rewrite an earlier round.
+Correct earlier synthesis explicitly.
+Avoid reproducing A/B/C verbatim.
+
+Use:
+<!-- RECONCILIATION_MARKER:CYCLE-ROUND-DATE -->
+# Cycle [cycle] Round [round] — Main Reconciliation
+
+Read:
+1. PRI-M and PMC-01;
+2. PMC-02 when required;
+3. latest A round;
+4. latest B round;
+5. latest C round;
+6. preceding J reconciliation;
+7. current provisional D/E/F tails;
+8. relevant checkpoints;
+9. repository truth needed for contradictions.
+
+Pruning means semantic compression, not deletion.
+
+Group repeated facts under one structural object.
+Preserve A/B/C provenance.
+Retain designation-specific interpretations.
+Identify one semantic owner.
+Keep contradictions explicit.
+Point to A/B/C for detail.
+Never turn a proposal into acceptance.
+
+Group knowledge by structures such as:
+- entrypoint and composition;
+- presentation/navigation;
+- application commands and query ports;
+- domain entities and value objects;
+- Catalogue/Product identity;
+- Store identity;
+- Purchase draft and registered aggregate;
+- persistence, schema, and migrations;
+- History projections;
+- analytics;
+- platform hosts;
+- tests and validation;
+- protected legacy boundary;
+- deferred synchronization.
+
+For every group, synthesize:
+- repository facts;
+- functions/methods;
+- variables/objects;
+- accepted responsibilities;
+- unresolved ownership;
+- defects and debt;
+- evidence;
+- prospective additions;
+- cross-domain consequences.
+
+Classify each conclusion:
+- repository fact;
+- accepted carried boundary;
+- provisional synthesis;
+- prospective addition;
+- contradicted;
+- blocked;
+- deferred;
+- human decision required.
+
+For every prospective addition, report:
+- responsibility;
+- likely layer and owner;
+- existing components affected;
+- possible structures;
+- schema/dependency implications;
+- validation;
+- alternatives;
+- reversibility;
+- unresolved human choice.
+
+Do not invent filenames unless repository structure or authority supports them.
+
+Required structure:
+1. identity and inputs;
+2. HEAD and stage versions;
+3. accepted baseline;
+4. new repository facts;
+5. grouped structural model;
+6. agreements;
+7. contradictions;
+8. corrections to previous J;
+9. prospective additions;
+10. schema/dependency/migration outlook;
+11. product/vocabulary decisions;
+12. validation outlook;
+13. human decisions;
+14. deferrals;
+15. next D/E/F instructions;
+16. next A/B/C round;
+17. authority state.
+
+State:
+PROVISIONAL MAIN SYNTHESIS — NOT AUTHORIZED FOR CODEX
+
+MJR-03 authorizes no source implementation, permanent promotion, or Codex execution.
+```
+
+---
+
+# 25. MDE-04 — Main Consecutive D/E/F Enrichment
+
+```text
+Run MDE-04: Main Consecutive D/E/F Enrichment.
+
+Role:
+Main Chat [M], after MJR-03.
+
+Purpose:
+Append a provisional enrichment round to D/E/F using the latest cumulative A/B/C rounds, latest J reconciliation, repository evidence, and preceding D/E/F round.
+
+Designated files:
+- DEV_STAGE/D_OPS_STAGE.md;
+- DEV_STAGE/E_DDC_STAGE.md;
+- DEV_STAGE/F_DSN_STAGE.md.
+
+D/E/F are append-only during exploratory staging.
+
+Preserve prior provisional rounds.
+Append one marked round.
+Never silently replace an alternative/instruction.
+Classify retained, corrected, superseded, rejected, and new material.
+Avoid copying unchanged content.
+
+Use:
+<!-- ENRICHMENT_MARKER:CYCLE-ROUND-DOMAIN-DATE -->
+# Cycle [cycle] Round [round] — Provisional [domain] Enrichment
+
+Every round begins:
+Status: PROVISIONAL — NOT AUTHORIZED FOR CODEX
+Purpose: Domain confrontation; no implementation authority
+
+Before appending:
+1. run PRI-M and PMC-01;
+2. run PMC-02 when required;
+3. recover latest MJR-03;
+4. read latest A/B/C rounds;
+5. read preceding D/E/F round;
+6. inspect repository truth needed for exact claims;
+7. preserve unresolved human decisions.
+
+Pairing:
+- D derives primarily from latest A + J + execution evidence;
+- E derives primarily from latest B + J + vocabulary/UI evidence;
+- F derives primarily from latest C + J + structural evidence.
+
+D appends:
+- repository preflight;
+- validation surfaces and proposed commands;
+- tests/lifecycle gates;
+- failure injection;
+- migration/recovery;
+- volume/performance;
+- backup/export;
+- costs and stop conditions;
+- relevant paths, functions, objects, tests;
+- Operational contradictions.
+
+E appends:
+- accepted/provisional vocabulary;
+- terms linked to repository fields/functions/UI;
+- validation/success/failure/retry/recovery language;
+- conceptual ownership;
+- misleading language;
+- analytics claim limits;
+- learner evidence;
+- terminology decisions;
+- no maturity promotion.
+
+F appends:
+- responsibility map;
+- classes, functions, models, ports, adapters;
+- state ownership/lifetime;
+- identity/transaction invariants;
+- prospective structures;
+- dependency direction;
+- schema/migration consequences;
+- alternatives/reversibility;
+- bounded unit candidates;
+- architecture decisions.
+
+Every prospective structure records:
+- repository problem;
+- proposed responsibility;
+- existing/missing owner;
+- relevant functions/objects;
+- affected surfaces;
+- state lifetime;
+- dependency direction;
+- persistence and migration impact;
+- tests;
+- Operational cost;
+- Didactic vocabulary effect;
+- alternatives;
+- reversibility;
+- status.
+
+Classify:
+- retained;
+- corrected;
+- superseded;
+- newly added;
+- rejected;
+- awaiting human decision;
+- ready for confrontation.
+
+End each append with:
+1. paired-domain questions;
+2. evidence requested next;
+3. contradictions;
+4. decisions Main cannot infer;
+5. next-enrichment conditions;
+6. confirmation that Codex is inactive.
+
+Append-only provisional D/E/F is not executable.
+
+Codex remains prohibited until separate final activation:
+- identifies controlling D/E/F sections;
+- marks superseded provisional sections;
+- names writable files and outcomes;
+- supplies validation and rollback;
+- resolves or carries human decisions;
+- states implementation authority unambiguously.
+
+Until activation:
+D/E/F = exploratory Main staging
+D/E/F ≠ Codex authority
+```
+
+---
+
+# 26. Maintenance Rule
 
 This file should change when:
 
