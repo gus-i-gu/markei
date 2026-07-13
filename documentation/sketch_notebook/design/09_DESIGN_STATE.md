@@ -113,3 +113,8 @@ Additional implementation remains inactive until Main/human authority is express
 - Observational: `design/03_DECISION_LOG.md`, Event 17.
 - Evidence: `DEV_STAGE/I_DSN_CODEX.md`.
 - Main: `[M]_STAGE/J_[M]_STAGE.md`, §24.
+
+---
+
+<!-- TEMPORAL_MARKER:C08-ENTRY-2026-07-12 -->
+> Temporal boundary — Cycle 08 begins here. Content above belongs to Cycle 07 or earlier reviewed project history; content below belongs to Cycle 08 work and later reconciliation.
