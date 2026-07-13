@@ -279,3 +279,43 @@ When a local schema introduces a user-facing code, normalized key, or new intern
 ## Structural schema validation boundary
 
 Executable schema validation proves payload structure only. Domain invariants, normalization equivalence, transaction behavior, cross-runtime semantic parity, and lifecycle persistence require separate tests. Readable valid and invalid examples remain part of the operational evidence set alongside the machine validator.
+
+# Android Runtime Evidence and Host-Recovery Rules
+
+## Gate-specific platform classification
+
+Android evidence must be classified independently as:
+
+```text
+tool installed
+doctor validated
+runtime recognized
+artifact built
+artifact installed
+process launched
+workflow human-observed
+app-private persistence observed
+lifecycle matrix completed
+physical-device validated
+release/distribution validated
+```
+
+A later gate is never implied by an earlier one. Emulator execution does not prove physical-device compatibility; debug execution does not prove release signing, upgrade, backup, accessibility, or store distribution.
+
+## Lifecycle checklist closure
+
+When a stage's acceptance criteria name keyboard, Back, rotation, background/resume, text scale, process restart, or staged-state behavior, closure requires an explicit result for each named gate. Build, widget tests, database inspection, and a single manual workflow may establish partial lifecycle evidence but cannot silently stand in for the missing checklist. A supplemental checklist should remain evidence-only unless it exposes a bounded defect requiring separately authorized correction.
+
+## SDK and AVD recovery
+
+Installed SDK packages and virtual devices are reproducible host dependencies, not repository source. Operational evidence must record the selected Flutter SDK, Android SDK root, installed package identifiers/versions, system image, AVD definition, license state, and doctor result.
+
+Recovery uses the recorded manifest and supported SDK/AVD tools. Cleanup requires separate authority, an inventory first, and named-component removal. Never delete an entire SDK root, unrelated AVDs, IDE configuration, or alternate Flutter SDK merely because one sprint no longer needs them. Host storage cost is reported from measured evidence; component type alone does not justify a numeric claim.
+
+## Repository/report scope reconciliation
+
+A materialization report's changed-file claim must be checked against the committed comparison. If repository truth contains an extra configuration file, preserve the contradiction observationally and classify ownership before cleanup. A harmless or generated-looking file is not automatically intentional, and a report statement does not override the commit.
+
+## Workflow terminology
+
+Operational reports name the executed domain operation. Current Markei behavior registers a new immutable Purchase aggregate. “Purchase upsert” is unsupported unless implementation explicitly provides update-or-insert semantics for Purchase identity.
