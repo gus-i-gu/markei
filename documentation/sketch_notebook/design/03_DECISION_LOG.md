@@ -735,3 +735,64 @@ provisional or blocked
     manual UI/accessibility acceptance
     Android and iOS platform evidence
 ```
+
+
+# 15. Event 17 — Cycle 07 Sprint 05 Android Local Slice
+
+## Materialization and validation
+
+Sprint 05 materialized Android debug-development support over the existing shared Flutter architecture. The Android host now uses namespace/application ID `com.gusigu.markei`, label `Markei`, Flutter embedding v2, and a minimal `FlutterActivity`. Shared Dart composition, application ports, domain contracts, Drift repositories, and the protected Python beta remain structurally intact.
+
+Reported and repository-supported evidence includes 27 passing Flutter tests, clean analysis, a debug APK build, APK identity inspection, API 36 emulator boot, APK install/launch, Android app-private database observation, human-confirmed Purchase registration, Windows build regression, and five Python regressions. The runtime database was observed under the Android application sandbox with one UUID v4 Device for `local-account`, sequence advanced to 2, and one Purchase.
+
+This evidence establishes an Android-local functional slice. It does not establish production signing/release, broad device compatibility, complete lifecycle behavior, accessibility acceptance, or final visual design.
+
+## Identity decisions and preserved history
+
+Sprint 05 separated these responsibilities:
+
+```text
+Android application ID   installation/update/sandbox identity
+Markei label              presentation metadata
+local-account             provisional local Account placeholder
+Device UUID v4            app-private installation event origin
+Device sequence           ordering ledger attached to Device row
+Product/Purchase/Event IDs unchanged domain and event identities
+```
+
+Runtime composition no longer injects `windows-device`. It asynchronously opens the app-private database and asks `LocalDeviceIdentityRepository` to load or create a Device UUID v4 before registering events.
+
+No Drift schema migration was added. Schema v2 already contains `devices(id, account_id, next_sequence, created_at)` and event uniqueness by account/device/sequence. Reusing that structure was cheaper and safer than manufacturing an unnecessary schema version. Historical non-UUID rows are preserved as evidence and are not selected as the new current Device; destructive conversion could have reassigned historical event ownership.
+
+## Prototype-only Device selection rule
+
+Repository inspection exposed a bounded heuristic: the Device repository reads only the first 20 Account Devices ordered by creation time and selects the first UUID v4 row. Current tests prove UUID creation, reopen reuse, distinct fresh-database identity, sequence 1→2 continuity, and preservation of a historical `windows-device` row.
+
+This rule is acceptable only for the present single-installation prototype because the test population is bounded. It is not the accepted future synchronization invariant. Risks include:
+
+- an existing UUID beyond the first 20 rows being missed;
+- multiple UUID rows being resolved only by earliest creation time;
+- concurrent bootstrap transactions creating multiple candidates because no installation singleton/key owns uniqueness;
+- Account Device history being confused with the identity of this installation.
+
+Before real multi-device synchronization, Design requires an explicit current-installation Device relation: one local installation metadata record must identify exactly one Device row, bootstrap must be idempotent under concurrency, and sequence allocation must remain attached to that selected Device. The exact schema and migration are deferred until the synchronization/device-registration unit.
+
+## Host configuration versus architecture
+
+Compile SDK 36, target SDK 36, NDK resolution, Java 17, Gradle, emulator image, and Android Studio are operational/build configuration. Pinning SDK 36 corrected toolchain drift and made the build reproducible; it does not define domain architecture or a permanent product invariant.
+
+The stable application ID is architectural because it owns Android sandbox continuity. Exact SDK versions may change through controlled Operational evidence without reopening Product, Device, or persistence ownership.
+
+## Functional scaffold boundary
+
+`SafeArea` and the staged BRL total are accepted as bounded functional-scaffold corrections. They support system-inset safety and make the multi-item acceptance path observable without selecting a design system or rewriting navigation/state management.
+
+Phone-width widget evidence and human emulator registration support narrow functional usability. They do not prove keyboard, Back, rotation, background/resume, larger text, accessibility, physical-device behavior, or final visual quality. Any supplemental Android pass should be limited to a recorded lifecycle/ergonomics checklist and evidence-backed blockers. Broader information architecture, styling, accessibility refinement, and visual acceptance belong to a later UI/UX sprint.
+
+## Deviations, reversibility, and cost
+
+Automated ADB form entry was blocked by emulator input overlays/Gboard behavior, while manual registration succeeded. This preserves the distinction between automation limitations and application failure.
+
+The Device repository adds a small local infrastructure seam without new package or schema cost and remains reversible independently of UI, API, or cloud work. Deferring an explicit installation singleton avoids premature migration work now, but carries deliberate debt that becomes unsafe once multiple Devices or concurrent bootstrap are realistic.
+
+Deferred: physical-device validation, full lifecycle matrix, production signing/release, backup policy, authentication, API/Neon, real synchronization, central catalogue, import, broad UI redesign, iOS, and PySide6 retirement.
