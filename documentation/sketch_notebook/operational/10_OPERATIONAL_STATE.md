@@ -162,3 +162,8 @@ No additional implementation is active. Read `04_TODO.md` for the lifecycle chec
 3. `12_OPERATIONAL_MODEL.md` — stable evidence/recovery rules.
 4. Latest `11_OPERATIONAL_RECORD.md` entry — command and contradiction chronology.
 5. G — Codex transcript; J §24 — Main classification; A/D — intended gates.
+
+---
+
+<!-- TEMPORAL_MARKER:C08-ENTRY-2026-07-12 -->
+> Temporal boundary — Cycle 08 begins here. Content above belongs to Cycle 07 or earlier reviewed project history; content below belongs to Cycle 08 work and later reconciliation.
