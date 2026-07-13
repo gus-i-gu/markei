@@ -238,3 +238,202 @@ Replace C with C08-R02 and report:
 - proposed first bounded implementation unit.
 
 No architecture is accepted merely because it appears here. No source or schema mutation is authorized.
+
+---
+
+<!-- ENRICHMENT_MARKER:C08-C08-R02-Design-2026-07-13 -->
+# Cycle 08 Round C08-R02 — Provisional Design Enrichment
+
+> Status: PROVISIONAL — NOT AUTHORIZED FOR CODEX  
+> Purpose: Domain confrontation; no implementation authority  
+> Main source: J C08-R02 reconciliation at `b244f41c9f76baec3123e7584364969bcc7bc588`  
+> Inputs: latest cumulative A/B/C C08-R02 rounds and preceding D/E/F content
+
+## 1. Successive-round classification
+
+Retained:
+
+- inward dependency direction;
+- package-neutral responsive shell;
+- coordinator below widgets and above facts;
+- exact Product reuse/advisory similarity;
+- existing/new Store selection;
+- SubmissionId distinct from UI busy state;
+- separate History list/detail/observation/comparison;
+- Drift migration ownership;
+- Device debt before synchronization.
+
+Corrected:
+
+- IndexedStack already provides current tab-session retention;
+- Product code is mandatory across current domain/UI;
+- similarity is bounded by current Product policy;
+- Store command remains free-text;
+- History state/query defects are concrete;
+- F’s earlier instruction to replace C is superseded by append-only FCA-02;
+- submission identity should remain distinct from EventId provisionally.
+
+Newly added:
+
+- DraftLineKey;
+- explicit presentation/result algebra;
+- existing/new Store reference;
+- Product-code policy as an isolated structural decision;
+- schema-free and schema-bearing unit split.
+
+## 2. Schema-free structural candidates
+
+### F2.1 Responsive shell
+
+Owner: presentation shell.
+
+Responsibilities:
+
+- semantic destinations;
+- constraint-driven navigation presentation;
+- destination preservation;
+- typed async states;
+- focus/Back/safe-area/text-scale behavior.
+
+No schema or package required by current evidence.
+
+### F2.2 Draft coordinator
+
+Owner: application-facing presentation model.
+
+Responsibilities:
+
+- DraftLineKey;
+- Store selection/draft;
+- staged lines;
+- add/replace/remove;
+- totals;
+- validation;
+- review phase;
+- busy/failed/succeeded/unknown result;
+- SubmissionId creation/retention boundary.
+
+Initial lifetime: app session, preserving tab/resize/background behavior selected by the human. Process persistence remains separate.
+
+### F2.3 Product resolution
+
+Owner split:
+
+- domain: exact identity and advisory similarity;
+- application: list/filter/resolution result;
+- presentation: explicit existing/create-anyway choice;
+- adapter: account ownership and exact reuse.
+
+Current list ports may support bounded client filtering; scalable repository search remains evidence-driven.
+
+### F2.4 History structure
+
+Introduce conceptual ports for:
+
+- summary page/list;
+- Purchase detail;
+- Product observations;
+- versioned comparison.
+
+Fix state/query behavior before adding analytics cache or broad infrastructure.
+
+## 3. Schema-bearing structural candidates
+
+### F2.5 Store reference and identity
+
+Command should move from free-text `storeName` toward sealed existing/new Store reference.
+
+Durable normalization/branch identity remains blocked on human policy and collision migration.
+
+### F2.6 SubmissionId
+
+Provisionally:
+
+- created when one submit intent becomes ready;
+- carried by command;
+- enforced durably;
+- identical canonical content returns prior result;
+- conflicting content fails;
+- remains distinct from PurchaseId and EventId.
+
+Migration should prefer nullable legacy submission identity rather than inventing retry equivalence for old Purchases.
+
+### F2.7 Product-code policy
+
+Retaining mandatory code is lowest cost.
+
+Optional code requires coordinated changes to:
+
+- ProductCode/domain construction;
+- ProductDraft;
+- identity/normalization rules;
+- application command/reference behavior;
+- persistence nullability/uniqueness;
+- fixtures/contracts;
+- migrations and tests.
+
+### F2.8 Installation relation
+
+Must eventually own exactly one current Device, concurrency-safe bootstrap, historical Device separation and restore semantics.
+
+## 4. Prospective structure record
+
+| Structure | Existing owner affected | Lifetime | Persistence impact | Status |
+| --- | --- | --- | --- | --- |
+| shell state | MarkeiApp | app session | none | highest-priority reversible |
+| result algebra | Purchase/History presentation + application results | operation/view | none | high-priority |
+| DraftLineKey/coordinator | PurchasePage/PurchaseItemDraft/composition | session initially | none | second bounded unit |
+| Product resolution | Catalogue ports/ProductReference/Purchase UI | picker/draft | none initially | Cycle 08 core |
+| Store reference | RegisterPurchaseCommand/Store adapter | draft→durable Store | possible schema | blocked on identity |
+| SubmissionId | command/repository/Purchase result | submit intent→durable | schema/migration | isolated unit |
+| History ports | purchase_history/query adapter | view/query | indexes only if measured | Cycle 08 core |
+| comparison | analytics + observation query | rebuildable | none initially | later unit |
+| installation relation | Device repository/composition | installation | schema/migration | hardening gate |
+
+## 5. Bounded candidate order
+
+```text
+1. shell + typed states
+2. draft coordinator + explicit review
+3. Product resolution + Store picker contract
+4. isolated SubmissionId migration
+5. History detail/observations
+6. first versioned comparison
+7. recovery/backup/Device hardening
+```
+
+Do not combine schema-free shell work with Store, SubmissionId, Product-code or Device migrations.
+
+## 6. Design questions for C08-R03
+
+1. Confirm destination topology.
+2. Confirm Product-code policy.
+3. Confirm quantity truth.
+4. Confirm Store identity.
+5. Confirm draft lifetime.
+6. Confirm Review presentation.
+7. Confirm durable idempotency scope.
+8. Define canonical content for identical retry, including occurrence time.
+9. Confirm comparison basis.
+10. Confirm backup and Device timing.
+11. Identify exact existing tests/symbols for the first unit.
+12. Challenge whether shell + typed states is sufficient as Unit 1.
+
+## 7. Evidence requested next
+
+Design C08-R03 should provide:
+
+- precise responsibility map;
+- preferred alternatives and rejected alternatives;
+- lifecycle implications;
+- exact likely surfaces without editing;
+- separate schema/migration consequences;
+- rollback/reversibility;
+- corrections required in J/F;
+- smallest implementation-ready candidate.
+
+## 8. Activation boundary
+
+No candidate is accepted merely because it appears here.
+
+Codex remains inactive.
