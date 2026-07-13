@@ -1,159 +1,269 @@
-# F_DSN_STAGE — Cycle 08 Codex Design Directive
+# F_DSN_STAGE — Cycle 08 Product-Beta Design Directive
 
 > Cycle: 08 — Shared-Client Product Beta
-> Directive: C08-IMP-01
-> Status: ACTIVE — CODEX IMPLEMENTATION AUTHORIZED
+> Directive: C08-PB-01
+> Status: ACTIVE — CODEX PRODUCT IMPLEMENTATION AUTHORIZED
 > Authority: explicit human instruction reconciled by Main [M]
-> Scope: responsive shell and explicit presentation-state architecture
-> Paired directives: `D_OPS_STAGE.md`, `E_DDC_STAGE.md`
-> Temporal control: this directive supersedes the earlier provisional and C08-ACT-01 text in this file
+> Paired directives: `D_OPS_STAGE.md` and `E_DDC_STAGE.md`
+> Control: this directive fully supersedes C08-IMP-01 and every earlier F authorization
 
-## 1. Accepted implementation boundary
+## 1. Accepted architecture
 
-C08-IMP-01 is the first schema-free Cycle 08 unit.
-
-Implement:
-
-1. a single semantic model for the existing Purchase and History destinations;
-2. constraint-driven compact and wide navigation presentations;
-3. selected-destination preservation across layout changes;
-4. continued mounted-page preservation through the existing indexed content strategy or an equivalent SDK-only mechanism;
-5. explicit presentation-state models for touched asynchronous/result surfaces;
-6. focused tests for navigation, resize, state rendering and current draft preservation.
-
-Do not add Catalogue or Stores as destinations in this unit.
-
-## 2. Required dependency direction
-
-Preserve:
+Preserve the existing dependency direction:
 
 ```text
 Flutter presentation
-→ application commands and query ports
+→ application commands/query ports
 → independent Dart domain
 ← infrastructure adapters
 → Drift application-private SQLite
 ```
 
-Presentation may interpret application results. It must not query Drift tables, parse event payloads or own persistence rules.
+Cycle 08 adds product-facing coordination and queries without replacing this structure, adding a framework or changing the schema.
 
-The shell owns navigation presentation and selected destination. Purchase and History pages own only their bounded presentation state. Registered Purchase facts remain owned by domain/application/infrastructure layers.
+Widgets render and collect input. Application-facing coordinators own workflow state. Domain objects own Product, Quantity, Money and Purchase invariants. Infrastructure owns Drift queries and the atomic transaction.
 
-## 3. Responsive-shell design
+## 2. Product topology
 
-Use one destination definition containing, at minimum:
+Accepted top-level destinations:
 
-- stable destination identity;
-- label;
-- icon;
-- corresponding page/content.
+1. Purchase;
+2. Products;
+3. History.
 
-The compact and wide controls must derive from the same definition.
+Store is selected or created inside Purchase.
 
-Use constraints, not `Platform`, to select navigation. Keep the breakpoint as a named presentation constant near the shell. Codex may choose its numeric value as a local reversible implementation detail, but must:
+All destinations come from one semantic definition used by compact and wide navigation. The shell owns selected destination and layout choice. Pages remain mounted where necessary to preserve the current app-session draft.
 
-- explain the choice in I;
-- test immediately below it;
-- test at or above it;
-- demonstrate no destination or page-state loss when crossing it.
+## 3. Presentation-state model
 
-Do not introduce a router, state-management package or UI framework.
+Use small dependency-free typed states for asynchronous/result surfaces.
 
-## 4. Presentation-state design
-
-Use small explicit presentation types rather than interpreting “no data” as every non-success condition.
-
-History requires the conceptual algebra:
+Required conceptual forms:
 
 ```text
-loading
-| empty
-| data(Purchase summaries)
-| failure(safe retry capability)
+LoadState<T> =
+  loading
+  | empty
+  | data(T)
+  | failure(safeMessage, retry)
+
+SubmissionState =
+  editing
+  | reviewing
+  | submitting
+  | succeeded(result)
+  | failed(safeMessage)
 ```
 
-Purchase registration requires the conceptual algebra:
+Concrete Dart names may differ. Do not force infrastructure exceptions into presentation types.
+
+## 4. Products structure
+
+Add a Products presentation surface driven by `CatalogueQueryRepository`.
+
+Responsibilities:
+
+- load Products for the local account;
+- local text filtering over the bounded current list;
+- expose empty, no-match, failure and data states;
+- return/select a Product for Purchase;
+- initiate new Product entry.
+
+Product resolution remains:
+
+- `ExistingProductReference` for explicit reuse;
+- `NewProductReference` for creation;
+- current exact identity rules in domain/repository;
+- current similarity policy as advisory only.
+
+The creation flow must query advisory candidates before staging and capture explicit use-existing/create-anyway intent.
+
+Do not introduce automatic merge, pagination infrastructure or a search dependency.
+
+## 5. Purchase draft coordinator
+
+Introduce an application-facing, dependency-free session coordinator or equivalent testable model.
+
+It owns:
+
+- selected existing/new Store intent;
+- stable `DraftLineKey` identity;
+- staged lines;
+- add/replace/remove;
+- running total;
+- editing and review phases;
+- validation/result state;
+- in-flight registration guard;
+- reset after success;
+- retained draft after recoverable failure.
+
+Text controllers, focus nodes and widget layout remain presentation-owned.
+
+Draft lifetime is app-session/mounted only. Do not persist it.
+
+## 6. Store reference boundary
+
+The Purchase flow must expose existing Store selection and new Store creation.
+
+Preferred application contract:
 
 ```text
-editing
-| invalid(field feedback)
-| submitting
-| succeeded(local Purchase result)
-| failed(safe product failure)
+StoreReference =
+  ExistingStoreReference(StoreId)
+  | NewStoreReference(displayName)
 ```
 
-The concrete Dart representation may be sealed types, immutable value objects or another dependency-free typed form consistent with the repository’s supported Dart version. Keep it presentation-focused; do not redesign application/domain contracts unless the existing contract cannot express the currently evidenced result.
+Exact names may differ. This application-contract refinement is authorized if required to prevent an explicit Store selection from collapsing back into free text.
 
-Raw exceptions may be retained for diagnostics where the repository already supports diagnostics, but must not become ordinary UI state or copy.
+Infrastructure resolution must:
 
-## 5. State and lifecycle invariants
+- verify selected Store account ownership;
+- preserve the selected Store UUID;
+- create a new Store only for explicit new intent;
+- retain current schema and current display-name facts.
+
+No normalization, branch field, merge rule or unique index is authorized.
+
+## 7. Registration boundary
+
+The existing Drift transaction remains the authority for atomic Purchase, Items, Event and PendingEvent persistence.
+
+The coordinator must:
+
+- create one command from the reviewed draft;
+- disable repeat registration while the call is in flight;
+- show success only from the returned repository result;
+- retain the draft on known failure;
+- refresh Products/History and clear the draft after success.
+
+This is duplicate-tap mitigation, not durable idempotency. Do not add SubmissionId or schema changes.
+
+## 8. History and detail ports
+
+Separate application query responsibilities:
+
+- recent Purchase summaries;
+- Purchase detail;
+- Product price observations.
+
+Add immutable query records that do not expose Drift rows.
+
+The local adapter should:
+
+- fetch summary Item counts without one query per Purchase where practical;
+- fetch one Purchase and its Items/Products for detail;
+- preserve account isolation;
+- order by occurrence time deterministically;
+- retain the current bounded recent-list policy unless a simple cursor/limit extension is necessary.
+
+Widgets consume these ports only.
+
+## 9. Comparison use case
+
+Implement a pure, versioned comparison over observations returned by a query port.
+
+Comparable observations require:
+
+- same Product identity;
+- same currency;
+- same quantity kind;
+- same canonical unit;
+- positive normalized purchased amount.
+
+Derived unit price:
+
+```text
+line total minor units / normalized purchased quantity
+```
+
+Compare the latest and immediately previous compatible observations by occurrence time. Return either:
+
+- comparable result containing source observations, derived prices and percentage change; or
+- explicit insufficient/incompatible reason.
+
+Use deterministic integer/rational arithmetic where practical. Avoid floating-point authority for Money. No cache or schema change.
+
+## 10. Responsive and lifecycle invariants
 
 The implementation must preserve:
 
-- selected destination across compact/wide transition;
-- Purchase page mounting across destination changes;
-- current in-memory Purchase draft across tab changes and shell resize;
-- no new promise of process-death restoration;
-- no duplicate registration behavior introduced by shell rebuilds;
-- application-private local persistence boundaries.
+- destination selection across compact/wide resize;
+- staged Purchase Items across destination changes and resize;
+- no page recreation that triggers duplicate registration;
+- focus and keyboard access to form actions;
+- safe Back behavior from review to edit;
+- readable larger-text layouts;
+- Android portrait/landscape and Windows narrow/wide composition.
 
-Focus, Back behavior, safe areas and larger text must not regress on touched layouts. Host-level claims require host evidence.
+Process-death restoration is not promised.
 
-## 6. Tests required by design
+## 11. Tests required
 
-Add focused tests proving:
+Behavior-level tests must cover:
 
-- compact layout selects compact navigation;
-- wide layout selects wide navigation;
-- both controls expose the same destinations;
-- selection survives resizing across the breakpoint;
-- Purchase draft state survives destination change and resize;
-- History loading does not look empty;
-- History failure does not look empty and does not expose exception text;
-- History data remains renderable;
-- Purchase success copy does not expose Device sequence.
+- three-destination compact/wide shell;
+- resize and draft preservation;
+- Products load/search/no-match/failure;
+- existing Product selection;
+- similar advisory and explicit create-anyway;
+- existing/new Store reference;
+- multi-line add/edit/remove;
+- review/back/register;
+- in-flight duplicate-submit guard;
+- known registration failure retaining draft;
+- History loading/empty/failure/data/detail;
+- summary query count behavior;
+- comparable/incompatible/insufficient price comparison;
+- technical identifiers absent from ordinary copy.
 
-Prefer behavior assertions over widget-tree implementation details.
+Repository tests must continue proving atomic rollback and reopen behavior.
 
-## 7. Explicit exclusions
+## 12. Writable architectural surface
 
-Do not modify:
+Codex may add or modify source and tests under the Flutter client for:
 
-- domain identities or Product construction;
-- Product-code requirements;
-- Store identity or registration command structure;
-- Purchase atomic transaction rules;
-- schema version, tables, indexes or migrations;
-- Device bootstrap or first-20 lookup debt;
-- queue/event semantics;
-- authentication, API, Neon or synchronization;
-- Python/PySide6 architecture or data;
-- analytics, export or restore.
+- app shell and composition;
+- Products, Purchase and History presentation;
+- dependency-free presentation/coordinator models;
+- application commands and query ports;
+- domain-level pure comparison structures/functions;
+- local query and Purchase repository adapters;
+- focused tests.
 
-Generated Drift changes indicate scope drift and require a stop unless they are unrelated pre-existing work.
+Generated Drift output must not change because schema changes are outside scope.
 
-## 8. Codex exit contract
+## 13. Explicit exclusions
 
-Codex completes C08-IMP-01 only when:
+Do not add:
 
-- implementation matches D/E/F;
-- required focused tests pass;
-- available baseline validation is reported;
-- the diff remains bounded;
-- G/H/I contain exact evidence and deviations;
-- all exclusions remain untouched.
+- dependencies or frameworks;
+- schema versions, migrations, tables, columns or indexes;
+- optional Product code;
+- Store normalization/branch identity;
+- durable SubmissionId/idempotency;
+- persisted drafts;
+- Device relation changes;
+- authentication/API/Neon/synchronization;
+- export/restore implementation;
+- analytics cache, forecasting or official inflation;
+- registered Purchase mutation;
+- Python/PySide6 changes.
 
-If repository truth requires a materially different architecture, Codex must stop, document the contradiction and return to Main instead of broadening the unit.
+If one product behavior appears to require an exclusion, isolate the blocker and continue independent units where possible.
 
-## 9. Subsequent architecture route
+## 14. Completion architecture
 
-After G/H/I and PDR2 reconciliation, Main may activate later units in this order, subject to human decisions:
+C08-PB-01 is architecturally complete when the Flutter UI visibly supports:
 
-1. session draft coordinator and explicit review;
-2. Product resolution and Store picker;
-3. isolated durable SubmissionId;
-4. History detail and Product observation ports;
-5. versioned personal price comparison;
-6. recovery/export and installation-Device hardening.
+```text
+Products
+↘
+Purchase: Product + Store → staged Items → review → atomic local registration
+↘
+History: summary → detail → compatible price comparison
+```
 
-Schema-free and schema-bearing units must remain separate.
+and G/H/I accurately report implementation and validation.
+
+A responsive shell alone, state-type refactor alone, or documentation-only result is explicitly insufficient.
