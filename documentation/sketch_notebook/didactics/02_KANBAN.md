@@ -1001,3 +1001,24 @@ No KANBAN status changes. Human-observed application use is project evidence; no
 
 <!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
 > Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above this marker belongs to Cycle 08 or earlier reviewed project history. Content below belongs to Intermid Cycle Recovery and later reconciliation.
+
+
+# Intermid Recovery ProductReference Evidence Reconciliation
+
+> Evidence sources: `DEV_STAGE/H_DDC_CODEX.md`, `[M]_STAGE/J_MAIN_STAGE.md` §§20–25, current `purchase_page.dart`, and `markei_app_test.dart`  
+> Evidence class: implemented and locally widget-tested for the existing-Product edit path  
+> Maturity effect: none
+
+The corrected staged-Item edit path strengthens the project manifestations of `&&&06 Stable Identity`, `&%%07 Reusable Catalogue`, and `&%%10 Purchase Item` without creating a new concept.
+
+Accepted project distinction:
+
+- `ProductReference` identifies the Product subject retained by the staged line.
+- Product label accompanies that retained reference for presentation.
+- package count, purchased quantity, unit, and line total are editable Purchase Item values.
+- a stable draft-line key identifies the line in the widget list; it does not substitute for Product identity.
+- saving an edit reuses the retained Product reference rather than inferring identity from current form or dropdown state.
+
+The focused regression directly validates `ExistingProductReference`: after editing Item values and registering, the Purchase Item keeps the original Product ID and no duplicate Product row is created. The shared source path retains the base `ProductReference` and therefore structurally covers `NewProductReference`, but that variant has no separate focused regression.
+
+No KANBAN status changes. Repository behavior and passing tests strengthen project evidence only; learner maturity still requires explicit explanation, comparison, prediction, or transfer.
