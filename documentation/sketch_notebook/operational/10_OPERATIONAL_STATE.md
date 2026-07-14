@@ -1,344 +1,101 @@
 # 10_OPERATIONAL_STATE.md
 
-> Version: Cycle 07 Sprint 02 Flutter checkpoint 0.6
-> Status: Active operational checkpoint
+> Version: Cycle 09 post-Codex checkpoint
+> Status: Active Operational checkpoint
 > Persistence Class: Checkpoint
 > Knowledge Class: Operational
-> Branch: `cycle-07-mobile-preparation`
-> Canonical source: `operational/12_OPERATIONAL_MODEL.md`
-> Active work source: `operational/04_TODO.md`
-> Reconciliation source: `[M]_STAGE/J_[M]_STAGE.md`
-
----
-
-# 1. Current Cycle State
-
-Cycle 06 remains accepted and closed for the controlled Windows primary beta.
-
-Cycle 07 Sprint 02 planning and A/B/C Flutter restaging are complete. Main reconciliation is complete, and permanent-domain reconciliation is active. No application code, Flutter project, TypeScript API, database schema, authentication integration, Neon infrastructure, or D/E/F/G/H/I work has been authorized or produced.
-
-```text
-Cycle 06: accepted and closed
-Cycle 07 Sprint 02 planning: complete
-Flutter A/B/C restaging: complete
-Main reconciliation: complete
-Operational permanent-memory reconciliation: active/completed by this checkpoint
-implementation authorization: none
-D/E/F: postponed
-next evidence target: Sprint 03 preparation
-```
-
-# 2. Accepted Planning Decisions
-
-Accepted for planning and permanent-domain classification:
-
-- Flutter/Dart is the shared Windows/Android/iOS client basis.
-- TypeScript is favored for the synchronization API/protocol harness.
-- Neon Postgres is favored as managed shared persistence.
-- Every installation remains local-first with application-private storage.
-- Account data is owned by immutable account UUID, not email.
-- The first beta uses an account-private reusable catalogue.
-- Purchase is an atomic aggregate containing one or more Purchase Items.
-- One append-only `purchase.registered` event contains immutable item lines.
-- Retry identity uses event UUID; one device uses UUID plus monotonic sequence; downloads use an opaque account-scoped cursor.
-- Downloaded events and cursor advancement commit together locally.
-- Raw facts remain authoritative; projections and Dart analytics are rebuildable and versioned.
-- PySide6 and the original Cycle 06 database remain protected until evidenced parity and human/Main acceptance.
-- No embedded Python runtime or client IPC bridge belongs in the Flutter client.
-
-Accepted planning does not mean implemented, packaged, validated, deployed, or production-ready.
-
-# 3. Provisional and Untested Decisions
-
-The following are preferred experiment candidates or definitions requiring fixtures:
-
-- Drift as the first Flutter SQLite candidate;
-- `sqflite_common_ffi` as the retained persistence comparison;
-- `flutter_secure_storage` as a credential-storage candidate;
-- exact Flutter project layout and state/navigation choices;
-- exact TypeScript API framework, Node runtime, hosting platform, and migration tool;
-- authentication provider;
-- Neon role, schema, branching, pooling, limits, and recovery behavior;
-- deterministic Product UUID derivation and normalization versioning;
-- exact decimal scale/ranges, fractional COUNT policy, and currency metadata;
-- RLS as defense in depth;
-- exact parity threshold for PySide6 retirement.
-
-No compatibility claim for these candidates is validated. Windows and Android require empirical build/run evidence. iOS is explicitly unvalidated until macOS/Xcode execution.
-
-# 4. Next Evidence Target — Sprint 03 Preparation
-
-The next bounded evidence unit should prepare, then later execute only if D/E/F authorize:
-
-```text
-pinned Flutter/Dart + TypeScript/Node environments
-→ canonical Dart/TypeScript JSON fixtures
-→ fresh isolated local databases for simulated devices A/B
-→ exact normalization and advisory-only similarity behavior
-→ packaged/bulk catalogue identity
-→ atomic Purchase + Items + pending event
-→ close/reopen and projection/analytics rebuild
-→ local TypeScript API + disposable Postgres
-→ retry / sequence-gap / cursor / bootstrap / restart / account-isolation gates
-→ Windows and Android build/run
-→ Cycle 06 database isolation
-→ iOS later through macOS/Xcode
-→ non-production Neon only after local protocol proof
-```
-
-# 5. Scope and Recovery
-
-No framework initialization, tool installation, database access, infrastructure provisioning, authentication account creation, deployment, source modification, or D/E/F/G/H/I activity is authorized.
-
-Recovery route:
-
-```text
-1. Read this checkpoint.
-2. Read 04_TODO.md for Sprint 03 preparation gates.
-3. Read 11_OPERATIONAL_RECORD.md for chronology and candidate evidence boundaries.
-4. Read J sections 17–18 for Main planning acceptance.
-5. Read 12_OPERATIONAL_MODEL.md for stable technology-independent rules.
-```
-
----
-
-<!-- TEMPORAL_MARKER:C07-S02-CLOSURE -->
-> **Temporal boundary — Cycle 07 Sprint 02 closure (2026-07-12).** Content above this marker belongs to the preparation and first-reconciliation state established before Sprint 03 materialization. Content appended below it belongs to Sprint 03 or later. If recovery cost becomes excessive or this file grows beyond approximately 1,000 lines, this reviewed marker is an eligible semantic-partition boundary under human/Main authorization.
-# Cycle 07 Sprint 05 Operational Checkpoint
-
-> Branch: `cycle-07-mobile-preparation`
-> Inspected head: `ca53097b346ae42b216188dabc56a6eef45b051c`
-> Codex evidence: `DEV_STAGE/G_OPS_CODEX.md`
-> Main reconciliation: `[M]_STAGE/J_[M]_STAGE.md` §24
-> Preparation staging: `DEV_STAGE/A_OPERATIONAL.md`
-
-## Implemented and validated
-
-```text
-Cycle 06 Python/PySide6 beta: accepted and protected
-Flutter/Dart SDK: H: path selected and doctor-evidenced
-Android Studio/SDK 36/tool components: installed
-Android licenses/toolchain: doctor-validated
-application ID/label: com.gusigu.markei / Markei
-persistent app-private Device UUID: implemented and tested
-Flutter tests: 27 passed
-debug APK: built and identity-inspected
-API-36 emulator: booted
-APK: installed and launched
-app-private Drift database: runtime-observed
-Purchase registration: human-confirmed
-Windows Flutter build: passed
-Python regressions: 5 passed
-```
-
-Repository truth supports the source, test, identity, APK, emulator, database, Windows, and Python claims. The local event queue remains synchronization preparation only.
-
-## Partial, contradictory, and deferred
-
-Partial: force-stop/relaunch and database inspection provide meaningful persistence evidence, but the required keyboard, Back, rotation, background/resume, text-scale, staged-state, and human-visible History-after-restart matrix is incomplete. One emulator is evidenced; no physical device is validated.
-
-Contradiction: G says `devtools_options.yaml` was not committed; repository truth shows it added. It is harmless empty-extension configuration, but intentional ownership is unresolved and deferred to bounded hygiene.
-
-Deferred: physical device, Android release/signing/upgrade/backup/accessibility/Play Store, iOS, authentication, TypeScript API, Postgres/Neon, real synchronization, central catalogue, legacy import, editing/deletion, and PySide6 retirement.
-
-## Current operational decision
-
-A supplemental Android lifecycle checklist is required before ordinary Sprint 05 closure because J §23 acceptance explicitly named those behaviors. The checklist is evidence-first and authorizes no source change. Main may instead narrow closure explicitly and carry every missing gate as debt.
-
-Use “Purchase registration”; “Purchase upsert” is unsupported.
-
-## Host recovery
-
-The selected Flutter SDK, Android SDK root, component versions, system image, and AVD are recorded in G/Record. Exact storage cost is unknown because it was not measured. Preserve the environment until the lifecycle supplement closes; cleanup requires inventory, explicit authority, and named-component removal.
-
-## Authority and next route
-
-No additional implementation is active. Read `04_TODO.md` for the lifecycle checklist and hygiene/recovery gates. If the checklist exposes a defect, stop for Main routing. After evidence closure, Main may close Sprint 05 and select the next objective.
-
-## Recovery pointers
-
-1. This checkpoint — compact current truth.
-2. `04_TODO.md` — active lifecycle, hygiene, and recovery gates.
-3. `12_OPERATIONAL_MODEL.md` — stable evidence/recovery rules.
-4. Latest `11_OPERATIONAL_RECORD.md` entry — command and contradiction chronology.
-5. G — Codex transcript; J §24 — Main classification; A/D — intended gates.
-
----
-
-<!-- TEMPORAL_MARKER:C08-ENTRY-2026-07-12 -->
-> Temporal boundary — Cycle 08 begins here. Content above belongs to Cycle 07 or earlier reviewed project history; content below belongs to Cycle 08 work and later reconciliation.
-
-# Cycle 08 C08-PB-01 Operational Checkpoint
-
-> Branch: `cycle-08-shared-client-product-beta`
-> Inspected implementation head: `fb3b7f21e007e383e5951f4bb67b95d283f7a6fc`
-> Directive head: `4f5ef21cb0d31f5efbf386b3e51cff15c543a802`
-> Evidence: `DEV_STAGE/G_OPS_CODEX.md`
-> Orientation: latest `[M]_STAGE/J_[M]_STAGE.md`
-> Preparation: `DEV_STAGE/A_OPERATIONAL.md`
-
-## Current classification
-
-Implemented:
-
-- responsive Purchase/Products/History shell;
-- Product search/create and advisory existing/create-anyway paths;
-- existing/new Store references;
-- session-only keyed Purchase draft with edit/remove/review;
-- safe product-facing loading/empty/error copy;
-- detailed History and compatible same-Product price change;
-- mounted-session in-flight submission guard;
-- existing atomic Drift Purchase transaction.
-
-Validated:
-
-- 6 focused widget tests;
-- format, 34 files unchanged;
-- Flutter analysis, no issues;
-- 31 Flutter tests;
-- Windows release artifact build;
-- 5 Python regressions.
-
-Host-unvalidated:
-
-- Android APK for this materialization: missing Java/`JAVA_HOME`;
-- Android runtime and lifecycle;
-- physical Android devices;
-- iOS.
-
-Blocked or defective:
-
-- no manual Windows runtime smoke;
-- phone-width long-form registration not covered;
-- transient Product-success copy not asserted;
-- existing-Product edit from the similarity-selection path does not reliably preserve its Product reference;
-- tracked Python `__pycache__`/`.pyc` artifacts require bounded hygiene;
-- busy-state duplicate prevention is not durable idempotency.
-
-Deferred:
-
-- Store identity hardening;
-- export/restore and corruption recovery;
-- performance budgets;
-- production signing/distribution;
-- authentication/API/Neon/synchronization;
-- PySide6 retirement.
-
-## Evidence boundary
-
-Windows build success is not Windows manual acceptance. Android remains host-unvalidated rather than failed at product level. Automated width-specific coverage does not imply lifecycle or device acceptance.
-
-## Authority and next route
-
-No source correction, host mutation, or implementation is active. Read `04_TODO.md` for ordered gates. A bounded Main stage is required before correcting the existing-Product edit defect, repository hygiene, or host configuration.
-
-## Recovery pointers
-
-1. this checkpoint;
-2. `04_TODO.md` — remaining gates;
-3. `12_OPERATIONAL_MODEL.md` — stable evidence rules;
-4. latest `11_OPERATIONAL_RECORD.md` — chronology;
-5. G — materialization transcript;
-6. A and latest J — intended scope and Main orientation.
-
----
-
-<!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
-> Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above this marker belongs to Cycle 08 or earlier reviewed project history. Content below belongs to Intermid Cycle Recovery and later reconciliation.
-
-# Intermid Cycle Recovery Operational Checkpoint
-
 > Branch: `intermid-cycle-recovery`
-> Inspected implementation head: `409e5f1e013a282165efd5f31bed17a396ad6543`
-> Reconciliation baseline: `84fc6e4e49dedc7ce629a97a78dd86486dbf0cf8`
+> Inspected implementation: `e37cb700feeca4001cc7835b584c46bb81926af3`
 > Evidence: `DEV_STAGE/G_OPS_CODEX.md`
-> Main reconciliation: latest `[M]_STAGE/J_MAIN_STAGE.md` post-Codex section
-> Preparation and authority: `DEV_STAGE/A_OPERATIONAL.md` + consumed `DEV_STAGE/D_OPS_STAGE.md`
+> Main reference: latest `[M]_STAGE/J_MAIN_STAGE.md`
+> Canonical owner: `operational/12_OPERATIONAL_MODEL.md`
+> Active actions: `operational/04_TODO.md`
 
-## Current classification
+---
 
-Implemented:
+# Current Operational State
 
-- responsive local Purchase, Products, and History client;
-- Drift schema v2 with app-private SQLite and persistent local Device identity;
-- session-only multi-line Purchase draft, review, edit, remove, and in-flight submission guard;
-- one local transaction for Store/Product resolution, Purchase, Items, device sequence, SyncEvent, and PendingEvent;
-- detailed History and narrow compatible same-Product price comparison;
-- corrected staged-line editing that retains the original Product reference and label while changing Item values.
+Cycle 09 C09-U02 is materialized and reconciled within the evidence boundaries below. No further source, schema, dependency, host, staging or Main-root authority is active.
 
-Validated within the latest local Flutter evidence boundary:
+## Implemented
 
-- existing-Product edit retains the original Product ID;
-- edited package count, quantity/unit, and line total persist through registration;
-- no duplicate Product row is created;
-- focused app widget suite: 7 passed;
-- full Flutter suite: 32 passed;
+- Flutter/Drift schema v3 with People, Payment Methods, Account preferences, nullable Purchase references, nullable BULK package count and Product normalization v3.
+- Sequential v1/v2 migration handling, deterministic legacy-code retention, collision preflight and generated Drift update.
+- Home-first responsive navigation; Lists, Purchase, History, Catalogue, Guide, Documentation and Settings; Analytics and Household remain disabled/PIN-labelled.
+- kg/g/L/ml/un support, comma/point quantity input and fractional COUNT rejection.
+- Exact Product lookup ports and advisory-only similarity.
+- Typed application failure infrastructure.
+- Versioned transient `personal-cycle-v1` Storage/Shortage/Market/All projections.
+- Accessible History checkbox/tap multi-selection, selected-Purchase CSV and PDF-byte/local-file generation.
+- Protected Python/PySide6 source and database remained unchanged.
+
+## Validated within named scope
+
+- Flutter dependency resolution and Drift regeneration passed.
+- Dart formatting passed.
+- Flutter tests: 39 passed.
 - Flutter analysis: no issues.
+- Diff whitespace check passed, with CRLF notices only.
+- Python release-configuration `unittest`: 5 passed.
+- Windows release build passed.
+- Built Windows process remained running for a bounded five-second smoke.
 
-The direct regression proves `ExistingProductReference`. Generic retention of the base `ProductReference`, including the new-Product variant, is source-implemented but not separately regression-validated.
+Repository inspection confirms code existence. Commands above are Codex-host evidence and were not rerun during permanent reconciliation.
 
-## Evidence boundaries
+## Partial or contradicted
 
-Widget/in-memory evidence does not establish:
+- BULK hides package count, but still requests Line total; accepted price-per-unit and total derivation are incomplete.
+- Typed failures exist, but Purchase/Catalogue frequently present generic catch-all errors.
+- Exact lookup ports exist, while visible Catalogue search remains substring-based.
+- PDF generation/local temporary save exists; destination/cancel and native sharing do not.
+- History selection exists; select-all and desktop double-click were not found.
+- Product details use tap/long-press panel; shared adaptive route and desktop double-click were not found.
+- Nickname uniqueness also restricts duplicate archived nicknames, exceeding the intended active-only rule.
+- Product codes are populated by creation/migration, but schema columns remain nullable.
+- Migration-failure injection and full manual workflow evidence were not reported.
 
-- app-private file-backed close/reopen or migration behavior;
-- Windows manual runtime acceptance;
-- Android build, install, runtime, lifecycle, or physical-device acceptance;
-- iOS behavior;
-- packaging, signing, release, distribution, backup, or restore acceptance.
+## Host-unvalidated
 
-The local SyncEvent/PendingEvent structures remain synchronization preparation only. The mounted-session submission guard is not durable idempotency.
+- Android build/runtime/lifecycle: Codex host lacked Java and `JAVA_HOME`.
+- Dense phone-width manual workflow and lifecycle matrix.
+- Full Windows manual workflow, file destination/cancellation and native-share behavior.
+- iOS, physical devices, signing and release distribution.
 
-## Corrected and superseded state
-
-The existing-Product edit defect recorded in the prior Cycle 08 checkpoint is corrected and locally regression-validated at `409e5f1e013a282165efd5f31bed17a396ad6543`.
-
-The prior active TODO for that correction is superseded. Historical defect and materialization chronology remain in `11_OPERATIONAL_RECORD.md`, A/D/G, J, and Git history.
-
-## Host-unvalidated and unresolved
-
-- current-host Flutter/Windows/Python command reproduction beyond the recorded local Codex run;
-- Windows manual Purchase/Products/History and restart smoke;
-- Android Java/JDK recovery, APK build, runtime, lifecycle, and physical device;
-- iOS;
-- phone-width long-form registration;
-- file-backed restart and representative v1→v2 migration fixtures;
-- transaction rollback failure injection;
-- Catalogue/History performance budgets;
-- tracked Python bytecode and ignore-policy hygiene.
+Android is host-unvalidated, not failed at product level. Windows build/smoke is not full manual acceptance.
 
 ## Deferred
 
-- schema v3;
-- Store identity/normalization;
-- durable SubmissionId and retry semantics;
-- installation–Device lifecycle changes;
-- persistent drafts;
-- export/restore and corruption recovery;
-- authentication, API, Neon, upload/download, and multi-device convergence;
-- production signing/distribution;
-- PySide6 retirement.
+Product correction/merge, Store redesign, SubmissionId, persisted drafts, registered Purchase edit/delete, native share, Analytics calculations, Household behavior, authentication, API/Neon/synchronization, production distribution and PySide6 retirement.
 
-## Authority and next route
+## Current action
 
-No source, schema, host, staging, or Main-root change is active.
-
-Next valid route:
+Main/human should choose one bounded follow-up from `04_TODO.md`. Recommended first unit:
 
 ```text
-Main reconciles refreshed O/A/D checkpoints
-→ selects one bounded remaining gate
-→ controlling D/E/F
-→ Codex materialization and evidence
-→ renewed FLX-PRM-04 reconciliation
+BULK price-per-unit correction
++ typed failure presentation
++ exact Catalogue lookup UI
++ focused regression tests
 ```
 
-## Recovery pointers
+Keep schema invariants (nickname uniqueness and Product-code nullability) in a separate migration unit unless Main explicitly combines them with representative migration/recovery evidence.
 
-1. this checkpoint — compact current Operational truth;
-2. `04_TODO.md` — ordered remaining gates;
-3. `12_OPERATIONAL_MODEL.md` — stable evidence and existing-reference rules;
-4. latest `11_OPERATIONAL_RECORD.md` entry — correction and validation chronology;
-5. `DEV_STAGE/G_OPS_CODEX.md` — commands and local evidence;
-6. latest `[M]_STAGE/J_MAIN_STAGE.md` — Main classification;
-7. A/D — pre-materialization findings and consumed Operational instruction.
+## Recovery route
+
+1. Read this checkpoint.
+2. Read `04_TODO.md` for ordered active actions.
+3. Read the latest Cycle 09 entry in `11_OPERATIONAL_RECORD.md` for chronology and command evidence.
+4. Read the Cycle 09 section of `12_OPERATIONAL_MODEL.md` for stable execution rules.
+5. Read G and post-Codex J for materialization evidence and cross-domain contradictions.
+6. Inspect `06714d7..e37cb70` only when reports conflict or precision is insufficient.
+
+## Handoff
+
+```text
+Operational checkpoint refreshed
+→ Main reconciles O/A/D checkpoints
+→ bounded D/E/F unit
+→ Codex implementation/validation
+→ G/H/I
+→ renewed FLX-PRM-04
+```
