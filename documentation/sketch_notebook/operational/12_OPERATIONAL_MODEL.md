@@ -359,3 +359,7 @@ Python `__pycache__` and `.pyc` files are generated runtime artifacts, not sourc
 
 When a draft line references an existing durable Product, editing presentation fields must preserve that reference unless the user explicitly chooses replacement. Tests must cover existing Product selection, edit, save, review, and registration without accidental conversion to an empty/new Product draft.
 
+---
+
+<!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
+> Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above this marker belongs to Cycle 08 or earlier reviewed project history. Content below belongs to Intermid Cycle Recovery and later reconciliation.
