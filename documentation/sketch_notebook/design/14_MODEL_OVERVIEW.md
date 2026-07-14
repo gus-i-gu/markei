@@ -197,7 +197,7 @@ Implemented narrowly:
 
 - Home/Lists/Purchase/History/More compact navigation;
 - Purchase exact-code resolution/autofill, manual occurrence and BULK calculator;
-- Catalogue tap selection and explicit/bouble-click detail focus;
+- Catalogue tap selection and explicit/double-click detail focus;
 - History checkbox/tap selection, select-all and detail focus.
 
 Partial/open:
