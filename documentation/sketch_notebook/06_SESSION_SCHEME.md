@@ -1,221 +1,226 @@
 # 06_SESSION_SCHEME.md
 
-> Version: Cycle 10 conditional forward checkpoint 1.0
-> Status: Active Forward Checkpoint — perspective only
+> Version: Cycle 10 forward checkpoint 2.0
+> Status: Active Forward Checkpoint — preparation only
 > Persistence Class: Forward Checkpoint
 > Knowledge Class: Main / Prospective
 > Authority: Main Chat [M]
 > Branch: `intermid-cycle-recovery`
-> Cycle 09 implementation: `e37cb700feeca4001cc7835b584c46bb81926af3`
-> Post-Codex reconciliation: `8c542c3174f3f070312c3d4169886a6f36bc00a0`
-> Permanent-domain baseline inspected: `eaa12efe3815ecf9cac34255eadca5010c7af505`
+> Cycle 09 implementation: `1d817972aea0229c9f109f236f4d224671927aab`
+> Cycle 09 post-Codex J: `4bf2e52d9d3e23437c4da1d8bb05e2402e189dd5`
+> Permanent-domain baseline: `d21507ad8cd1ce69bbb6768d2583bb1a84a5af44`
 > Current-state source: `00_PROJECT_STATE.md`
 
 ---
 
-<!-- TEMPORAL_MARKER:C10-CONDITIONAL-PERSPECTIVE-2026-07-14 -->
+<!-- TEMPORAL_MARKER:C10-PREPARATION-2026-07-14 -->
 
-# Cycle 10 Perspective — Cross-Platform Beta Consolidation
+# Cycle 10 — Cross-Platform Local Beta Consolidation
 
-## 1. Status and governing condition
+## 1. Status
 
-Cycle 09 Sprint 01 is reconciled. Cycle 10 is not active implementation authority.
+Cycle 09 is closed. Cycle 10 is prepared as the next investigation cycle but has no active
+source, schema, dependency or host-mutation authority.
 
-Before activation, human/Main must choose one transition:
+Activation requires:
 
 ```text
-Option A
-    finish Cycle 09 with a bounded correction unit
-    → reconcile it
-    → activate Cycle 10 from a clean local-beta baseline
-
-Option B
-    accept/defer the remaining Cycle 09 contradictions explicitly
-    → make them Cycle 10 Unit 01
-    → freeze fresh A/B/C and D/E/F
+clean shared branch
+→ complete methodology boot
+→ fresh A/B/C investigation
+→ Main J reconciliation
+→ controlling D/E/F
+→ bounded Codex materialization
 ```
 
-The transition must not relabel partial behavior as accepted completion.
+Cycle 09 D/E/F are consumed and must not be reused.
 
-## 2. Proposed mission
+## 2. Governing schedule decision
 
-Cycle 10 should consolidate the cross-platform local beta into a reliable, explainable and
-recoverable application boundary.
+Human direction moves UI polishing and UX improvement to Cycle 11. Cycle 10 must not silently
+reintroduce the deferred visual scope as “consolidation.”
 
-Proposed mission:
+Deferred to Cycle 11:
 
-> Correct the remaining local data/UI contradictions, complete truthful recovery/export
-> interactions, and establish Windows/Android beta evidence before broader analytics,
-> synchronization or public-release work.
+- target-image page recomposition and visual polish;
+- full responsive Lists tables/cards/filters and summary presentation;
+- page-level adoption/expansion of Markei design components;
+- History double-click and Product-detail UX refinement;
+- native-share presentation and broader accessibility interaction improvement;
+- the proposed minimum Analytics page.
 
-This perspective narrows the older generic “release preparation” schedule. Production
-release remains a later acceptance state unless Cycle 10 evidence actually earns it.
+Cycle 10 may record baseline visual/accessibility observations but should not claim their repair.
 
-## 3. Expected starting state
+## 3. Mission
+
+> Consolidate the local Flutter/Drift beta through data-recovery proof, deterministic artifact
+> integrity, measured local behavior, behavior-preserving modularity and bounded Windows/Android
+> functional evidence, without redesigning the visible product or activating cloud scope.
+
+Cycle 10 is a reliability and evidence cycle, not public-release preparation.
+
+## 4. Starting state
 
 Available from Cycle 09:
 
-- Flutter/Drift schema v3 and sequential legacy migration route;
-- Home, Lists, Purchase, History, Catalogue and Settings;
-- local optional People/Payment Method labels;
-- Product normalization/exact-lookup ports;
-- quantity and unit normalization;
-- transient personal-cycle Lists;
-- History CSV and PDF-byte generation;
-- Windows release build/smoke evidence;
+- handwritten Drift schema v4 and tested sequential migrations;
+- immutable Account-scoped Person `@...`, Payment Method `#...` and Product visible codes;
+- optional Purchase references and archive-resolvable labels;
+- manual local Purchase occurrence converted to persisted UTC;
+- exact Product-code lookup/autofill without implicit Item addition;
+- supported dimensional units and same-unit BULK fixed-point calculation;
+- transient rebuildable Lists projections;
+- selected-Purchase deterministic CSV/PDF generation;
+- typed application failures;
+- Windows build/bounded launch evidence;
 - protected Python/PySide6 isolation.
 
-Carried boundaries:
+Carried technical boundaries:
 
-- Android host/runtime/lifecycle unvalidated at the Cycle 09 Codex host;
-- incomplete BULK price-per-unit workflow;
-- nickname archive uniqueness conflict;
-- partial error, exact lookup, Product details and History interactions;
-- manual temporary-file PDF flow only;
-- missing Cycle 09 Didactic permanent absorption;
-- no release, synchronization or Analytics acceptance.
+- migration failure/rollback/no-silent-reset evidence is incomplete;
+- export destination, cancellation, cleanup and recovery policy are not fully evidenced;
+- Lists, lookup, History and export paths lack measurement-driven performance decisions;
+- Windows lacks a complete recorded manual functional workflow;
+- Android build/install/runtime/lifecycle is host-unvalidated because Java was unavailable;
+- Purchase, Catalogue and History exceed the ordinary modularity guideline;
+- visual and accessibility convergence is deferred to Cycle 11.
 
-## 4. Proposed workstreams
+## 5. Proposed workstreams
 
-### A. Data and pricing correctness
+### A. Baseline and recovery integrity
 
-- replace BULK Line total input with Price per unit and derived half-up minor-unit total;
-- preserve one authoritative persisted price/total model;
-- correct active-only nickname uniqueness without losing archived history;
-- decide whether nullable Product-code storage remains compatibility policy;
-- prove representative migration, failure rollback, close/reopen and no-silent-reset.
+- freeze the exact schema-v4/database fixture and Cycle 10 acceptance matrix;
+- test representative v1/v2/v3→v4 migration, close/reopen and retained data;
+- exercise migration failure and verify rollback/no-silent-reset behavior;
+- document database location, backup boundary and recovery failure outcomes;
+- preserve registered Purchase facts and protected Python storage isolation.
 
-### B. Truthful interaction and recovery
+### B. Artifact and local portability integrity
 
-- map typed failures to field/operation/recovery/outcome UI messages;
-- expose exact Product-code and exact-identification lookup explicitly;
-- complete adaptive Product details and accessible History selection conveniences;
-- preserve drafts on known-not-applied failures and distinguish unknown outcomes;
-- keep optional Person/Payment Method absence non-blocking.
+- validate deterministic CSV/PDF content for explicit selected Purchases;
+- define destination, cancellation, overwrite, cleanup and privacy behavior as contracts;
+- decide whether Cycle 10 proves export only or also local backup/restore/import;
+- do not add native sharing UI or any implicit upload path;
+- keep exports read-only and user-initiated.
 
-### C. Export, portability and local recovery
+### C. Measurement before optimization
 
-- add user-selected CSV/PDF destinations with cancellation and failure reporting;
-- decide native share scope per supported platform;
-- define overwrite, cleanup and privacy behavior;
-- investigate export/import or backup/restore without claiming cloud synchronization;
-- keep exports selected, explicit, read-only and local unless the user chooses otherwise.
+- establish representative local fixtures and timing method;
+- measure Lists projection, exact lookup, Catalogue search, History and export;
+- add indexes, paging or query changes only when evidence identifies a problem;
+- preserve Product-first Lists semantics and rebuildability;
+- report fixture size, host and command with every performance claim.
 
-### D. Cross-platform beta evidence
+### D. Behavior-preserving modular extraction
 
-- rerun full Flutter tests and analysis;
-- validate Windows build plus complete manual Home→Catalogue→Purchase→Lists→History flow;
-- restore Android Java/Gradle toolchain and validate build/install/launch;
-- exercise narrow layouts, keyboard, Back, rotation, background/resume and larger text;
-- preserve Python regression and database-isolation checks;
-- classify emulator, physical-device, lifecycle and release evidence separately.
+- split Purchase, Catalogue and History into bounded page sections/controllers;
+- keep current visible behavior, data ownership and navigation unchanged;
+- avoid design-system expansion or page recomposition;
+- add/retain regression tests before extraction;
+- stop if extraction requires an unsettled UX decision.
 
-### E. Documentation and learning continuity
+### E. Cross-platform functional evidence
 
-- absorb Cycle 09 terminology into Didactic permanent memory without changing maturity;
-- keep project tests separate from learner evidence;
-- document user-visible local-only/privacy boundaries;
-- update Guide/Documentation copy only from accepted behavior.
+- rerun Flutter analysis and the full automated suite;
+- record a complete Windows Home→Catalogue→Purchase→Lists→History functional workflow;
+- restore Java/Gradle only under explicit host authority;
+- validate Android build/install/launch and bounded lifecycle behavior when the host permits;
+- classify build, emulator, physical-device, lifecycle and manual evidence separately;
+- retain visual/accessibility findings as Cycle 11 inputs rather than Cycle 10 closure claims.
 
-## 5. Suggested bounded units
+### F. Documentation continuity
+
+- keep evidence states narrow and environment-specific;
+- update Guide/privacy wording only from accepted local behavior;
+- reconcile permanent domain checkpoints before Main closure;
+- preserve unchanged learner maturity unless direct learner evidence appears.
+
+## 6. Suggested bounded units
 
 ```text
-C10-U01  A/B/C investigation and correction-scope decision
-C10-U02  BULK pricing or schema-constraint correction — one migration boundary
-C10-U03  typed errors, exact lookup and Product-detail interaction
-C10-U04  export destination, PDF/native-share and recovery boundary
-C10-U05  Windows/Android responsive and lifecycle acceptance
-C10-U06  permanent-domain and Main-root reconciliation
+C10-U01  Baseline, fixtures and acceptance matrix
+C10-U02  Migration failure, rollback, reopen and local recovery evidence
+C10-U03  CSV/PDF artifact integrity and portability-policy decision
+C10-U04  Measurement-led local query/performance correction, if evidence requires it
+C10-U05  Behavior-preserving Purchase/Catalogue/History extraction
+C10-U06  Windows and Android functional validation
+C10-U07  Domain promotion and Main-root closure
 ```
 
-Do not combine U02 schema work with unrelated UI/export dependencies merely for schedule
-convenience. Each unit needs one invariant, rollback boundary and evidence story.
+Each unit needs one invariant, rollback boundary and named evidence story. A unit may conclude
+with no source change when investigation does not justify mutation.
 
-## 6. Explicit non-goals without new human direction
+## 7. Entry decisions for Main/human
 
-- authentication, authorization, TypeScript API or Neon;
-- upload/download, cursor bootstrap, convergence or multi-device synchronization;
-- remote usage analytics or developer-side data retention;
-- full Analytics implementation; the current human direction places a small Analytics set
-  around Cycle 11 rather than this immediate consolidation;
-- Household collaboration behavior;
-- Product merge/correction or Store redesign;
-- public release, production signing or store publication;
+1. Does Cycle 10 cover deterministic export only, or local backup/restore/import as well?
+2. Which database versions and representative fixtures are mandatory for recovery evidence?
+3. What Windows manual workflow is required for functional acceptance?
+4. Which Android host/emulator/physical-device checks are realistically available?
+5. What fixture sizes and timing thresholds justify query/index work?
+6. Should modular extraction precede or follow platform functional validation?
+
+These decisions require investigation; none authorizes implementation by itself.
+
+## 8. Explicit non-goals
+
+- UI aesthetic convergence or target-image reconstruction;
+- new UX interaction policy, native-sharing UI or accessibility redesign;
+- Analytics or Household behavior;
+- authentication, authorization, API/Neon or remote storage;
+- upload/download, convergence or multi-device synchronization;
+- Product merge/correction, Store redesign or registered Purchase mutation;
+- production signing, store publication or public release;
 - PySide6 retirement.
 
-Local SyncEvent/PendingEvent rows remain preparation, not synchronization.
+Local SyncEvent/PendingEvent preparation is not real synchronization.
 
-## 7. Evidence gates
-
-Cycle 10 may claim a behavior only at its narrowest proven boundary:
+## 9. Evidence gates
 
 | Claim | Minimum evidence |
 | --- | --- |
-| code exists | repository inspection |
-| pricing/error/projection works | focused unit/widget tests |
-| schema correction preserves data | file-backed migration, reopen and failure evidence |
-| export/share works | generated artifact plus destination/cancel/platform observation |
-| Windows beta workflow works | build and recorded manual workflow |
-| Android beta workflow works | build/install/launch/runtime/lifecycle observation |
-| learner maturity changed | explicit learner explanation or application evidence |
-| release-ready | signing, upgrade, privacy, recovery, support and distribution evidence |
+| migration preserves data | representative file-backed migration and reopen |
+| failure cannot silently reset | induced failure plus rollback/original-file evidence |
+| export is deterministic | repeated artifact comparison on named fixtures |
+| backup/restore works | explicit round trip and identity/data comparison |
+| query is improved | repeatable before/after measurement on the same fixture/host |
+| extraction preserves behavior | focused regressions plus unchanged workflow observation |
+| Windows workflow works | build and recorded complete manual functional path |
+| Android boundary works | build/install/launch and named lifecycle evidence |
+| learner maturity changed | explicit learner explanation, prediction or transfer |
 
-No single widget suite, emulator run or bounded launch proves production acceptance.
+No green test suite proves visual parity, accessibility acceptance, production readiness or
+cloud synchronization.
 
-## 8. Human/Main decisions required at entry
-
-1. Are the Cycle 09 contradictions a final Cycle 09 correction or Cycle 10 Unit 01?
-2. Is native OS sharing required, or is user-selected save sufficient for the beta?
-3. Does Cycle 10 require import/restore, or only deterministic export and documented local
-   database recovery?
-4. Which Windows and Android devices/lifecycle checks are mandatory for exit?
-5. Should Product-code nullability be preserved for compatibility or corrected by migration?
-6. Is the archived-nickname uniqueness correction required before further user testing?
-7. Is Cycle 10 still local-only consolidation, with account/API/Neon deferred?
-
-## 9. Entry and exit direction
-
-Entry requires:
-
-- latest shared branch pulled and clean/understood;
-- Didactic no-change/follow-up disposition acknowledged;
-- one human-selected first unit;
-- fresh domain investigation where semantics remain unsettled;
-- fresh D/E/F before source, schema, dependency or host mutation.
+## 10. Exit direction
 
 Proposed Cycle 10 exit:
 
-- selected Cycle 09 contradictions corrected or explicitly deferred;
-- migration/recovery evidence matches schema risk;
-- export/share behavior is truthful and user-controlled;
-- complete Windows beta workflow recorded;
-- Android boundary either evidenced or explicitly host-unvalidated with a recovery plan;
-- domain checkpoints and Main continuity reconciled;
-- Analytics/synchronization/release claims remain inactive unless separately authorized and
-  evidenced.
+- schema-v4 recovery behavior is evidenced at the agreed fixture/version boundary;
+- export/portability scope is truthful and documented;
+- optimization decisions are measurement-led;
+- selected oversized pages are extracted without intentional visual/UX change;
+- Windows functional workflow is recorded;
+- Android is evidenced or remains explicitly host-unvalidated with a recovery route;
+- permanent domains and Main continuity are reconciled;
+- Cycle 11 receives preserved visual/UX observations without premature closure claims.
 
-## 10. Recovery route and authority
+## 11. Recovery route
 
-Read in the next Main session:
+At Cycle 10 entry read:
 
 1. `00_PROJECT_STATE.md`;
 2. this forward checkpoint;
-3. Operational and Design current checkpoints;
-4. Didactic checkpoint and its Cycle 09 absorption status;
-5. post-Codex J and G/H/I only for unresolved evidence;
-6. repository source only for the selected first unit.
+3. `operational/10_OPERATIONAL_STATE.md` and `04_TODO.md`;
+4. `design/09_DESIGN_STATE.md` for schema and modularity boundaries;
+5. `didactics/08_CONCEPT_MAP.md` for stable vocabulary and maturity;
+6. post-Codex J/G/H/I only for unresolved Cycle 09 evidence;
+7. repository source only for the selected first unit.
 
 ```text
-Cycle 09 Sprint 01 authority: consumed
-Cycle 10 perspective: active as planning only
-A/B/C investigation: requires human/Main unit selection
+Cycle 09: closed
+Cycle 10 perspective: prepared
+A/B/C: not yet staged
 D/E/F: not prepared
-source/schema/dependency/host mutation: inactive
-commit/push for future work: requires ordinary authority
+source/schema/dependency/host authority: inactive
+Cycle 11 visual/UX scope: preserved and deferred
 ```
-
-
----
-
-<!-- TEMPORAL_MARKER:C09-S02-ENTRY-2026-07-14 -->
-> Temporal boundary — Cycle 09 Sprint 02 begins here. Content above is the reviewed pre-Sprint-02 baseline and retains its existing authority and semantic role. Content below belongs to Sprint 02 investigation, current-UI archival evidence, aesthetic reconciliation, staging, implementation, and later closure. This marker alone authorizes no source change, semantic promotion, or methodology revision.

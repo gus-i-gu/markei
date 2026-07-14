@@ -1,150 +1,163 @@
 # 00_PROJECT_STATE.md
 
-> Version: Cycle 09 Sprint 01 Main closure 1.0
+> Version: Cycle 09 Main closure 2.0
 > Status: Active Global State Canon-Checkpoint
 > Persistence Class: Canon-Checkpoint
 > Knowledge Class: Main / Global
 > Authority: Main Chat [M]
 > Branch: `intermid-cycle-recovery`
-> Inspected implementation: `e37cb700feeca4001cc7835b584c46bb81926af3`
-> Post-Codex reconciliation: `8c542c3174f3f070312c3d4169886a6f36bc00a0`
-> Latest permanent-domain head inspected: `eaa12efe3815ecf9cac34255eadca5010c7af505`
-> Scope: Current global state after Cycle 09 Sprint 01 reconciliation
+> Reconciled implementation: `1d817972aea0229c9f109f236f4d224671927aab`
+> Post-Codex J: `4bf2e52d9d3e23437c4da1d8bb05e2402e189dd5`
+> Permanent-domain head inspected: `d21507ad8cd1ce69bbb6768d2583bb1a84a5af44`
+> Scope: Current global state after Cycle 09 closure
 
 ---
 
-<!-- TEMPORAL_MARKER:C09-S01-MAIN-CLOSURE-2026-07-14 -->
+<!-- TEMPORAL_MARKER:C09-MAIN-CLOSURE-2026-07-14 -->
 
-# Cycle 09 Sprint 01 — Main Closure State
+# Cycle 09 — Main Closure State
 
 ## 1. Current milestone
 
-Cycle 09 Sprint 01 materialized and reconciled the local Product/database expansion on
-`intermid-cycle-recovery`.
+Cycle 09 is reconciled and closed on `intermid-cycle-recovery`.
 
 ```text
 Cycle 08 / Intermid recovery foundation: closed
-Cycle 09 Sprint 01 investigation and staging: complete
-Cycle 09 C09-U02 materialization: complete at e37cb70
-post-Codex Main reconciliation: complete at 8c542c3
-Operational permanent reconciliation: complete at e2339b7
-Design permanent reconciliation: complete at eaa12ef
-Didactic Cycle 09 permanent return: no new commit observed
-Cycle 10 perspective: prepared, inactive
+Cycle 09 Sprint 01 local expansion: reconciled
+Cycle 09 Sprint 02 functional correction: reconciled
+Cycle 09 implementation: complete at 1d81797
+post-Codex Main reconciliation: complete at 4bf2e52
+Design permanent promotion: complete through 8203ef6
+Didactic permanent promotion: complete at df1df60
+Operational permanent promotion: complete through d21507a
+Cycle 10 forward checkpoint: prepared; implementation inactive
+Cycle 11 UI/UX convergence: explicitly deferred
 ```
 
 The protected Python/PySide6 beta and its database remain isolated and recoverable.
 
-## 2. Current application state
+## 2. Accepted application state
 
-The active Flutter/Drift local beta now includes:
+The active Flutter/Drift local beta includes:
 
-- Home-first responsive navigation;
-- Home, Lists, Purchase, History, Catalogue and Settings;
-- disabled/PIN-labelled Analytics and Household placeholders;
-- schema v3 People, Payment Methods and Account preferences;
-- optional Purchase references with archive-aware historical labels;
-- Product normalization v3, code/exact-identity lookup ports and collision preflight;
-- PACKAGED/BULK distinction with nullable BULK package count;
-- `kg`, `g`, `L`, `ml`, `un`, comma/point input and fractional COUNT rejection;
-- transient `personal-cycle-v1` Storage/Shortage/Market/All projections;
-- History multi-selection, deterministic CSV and PDF-byte/local-file generation;
+- Home, Lists, Purchase, History, Catalogue and Settings under adaptive navigation;
+- schema v4 with Account-scoped immutable Person `@001...` and Payment Method `#001...`
+  visible references while opaque UUIDs remain relational identity;
+- optional Person and Payment Method Purchase references;
+- mandatory normalized Account-scoped immutable Product codes;
+- manual Purchase occurrence date/time distinct from insertion time;
+- exact Product-code lookup and autofill without implicit Item addition;
+- PACKAGED/BULK distinction, supported units and comma/point numeric input;
+- same-unit BULK price-rate calculation with read-only half-up line total;
+- transient Storage/Shortage/Market/All projections derived from registered history;
+- Catalogue selection/detail and History multi-selection/detail increments;
+- deterministic selected-Purchase CSV and PDF generation;
 - typed application failure infrastructure;
-- v1/v2→v3 migration handling and generated Drift reconciliation.
+- a small SDK-first theme/component foundation and compact navigation.
 
-No cloud service, authentication, remote analytics, external data retention or real
+No authentication, cloud/API/Neon path, remote analytics, external data retention or real
 synchronization was introduced.
 
 ## 3. Evidence boundary
 
-Codex reported at `e37cb70`:
+Reported Cycle 09 Sprint 02 evidence at `1d81797`:
 
 ```text
-Flutter tests                              39 passed
+Flutter tests                              43 passed
 Flutter analysis                           no issues
-Drift regeneration and Dart formatting     passed
+schema-v4 migration tests                  passed
 Windows release build                      passed
-Windows bounded five-second launch          passed
-Python release-configuration unittest       5 passed
-Android build/runtime                       host-unvalidated: Java unavailable
+Windows bounded hidden launch              passed
+protected Python tests                     5 passed
+Android build/runtime                      host-unvalidated: Java unavailable
 ```
 
-File-backed migration/reopen tests exist. This Main closure did not rerun Flutter or
-platform commands because the reconciliation host has no Flutter executable.
+The Windows evidence is build/smoke evidence, not complete manual workflow or visual
+acceptance. Android is host-unvalidated, not failed. Manual keyboard, focus, text-scale,
+screen-reader, compact-device lifecycle and production-release evidence remain absent.
 
-The Windows result is build/smoke evidence, not a complete manual workflow or lifecycle
-acceptance. Android is host-unvalidated, not failed.
+## 4. Domain reconciliation
 
-## 4. Permanent-memory reconciliation
+Operational memory accepts the functional increment and named evidence while retaining
+platform, recovery, visual and maintainability actions. Didactic memory stabilizes the
+identity, occurrence, lookup, BULK, Lists and evidence vocabulary without changing learner
+maturity. Design memory accepts schema-v4 and application-boundary decisions while recording
+the visual architecture as partial.
 
-Operational memory records the implementation, validation boundary and ordered corrective
-actions. Design memory accepts the schema/application topology and preserves the identified
-contradictions. Their current checkpoints are authoritative for domain depth.
+Main continuity summarizes those owners; it does not replace them.
 
-No Cycle 09 Didactic permanent-memory commit was found after J. No learner-maturity change
-is justified by project implementation or tests. Existing Didactic canon remains in force;
-Cycle 09 vocabulary absorption remains an explicit documentation follow-up rather than an
-assumed promotion.
+## 5. Closed, partial and deferred state
 
-Main continuity summarizes these results and does not replace domain ownership.
+Closed within the stated boundary:
 
-## 5. Partial, contradicted and deferred state
+- visible local-reference sequences and optional Purchase references;
+- non-null immutable Product codes and exact-code autofill;
+- manual occurrence date/time;
+- same-unit BULK derived total;
+- narrow Lists availability-language correction;
+- Catalogue/History functional interaction increments;
+- automated Flutter/migration evidence and Windows build/smoke.
 
-Priority correction candidates:
+Partial and carried forward:
 
-1. BULK still requests Line total instead of Price per unit with derived half-up total.
-2. `(accountId, normalizedNickname, active)` also restricts duplicate archived nicknames.
-3. typed failures exist but many UI paths still collapse them into generic messages.
-4. exact Product lookup ports exist but Catalogue presentation remains substring-based.
-5. Product-details adaptation and History double-click/select-all remain partial.
-6. PDF generation exists; save destination, cancellation and native share remain absent.
-7. Product codes are populated by commands/migration but remain nullable in Drift storage.
+- migration failure/no-silent-reset and complete recovery evidence;
+- deterministic export artifact lifecycle and portability policy;
+- measured Lists, lookup, History and export performance;
+- manual Windows workflow and Android build/install/runtime/lifecycle evidence;
+- Purchase (~1,020 lines), Catalogue (~377) and History (~330) modularity debt.
 
-Still deferred:
+Deferred to Cycle 11 by human direction:
 
-- Product correction/merge and Store redesign;
-- durable SubmissionId and persisted drafts;
-- registered Purchase edit/delete;
-- Analytics calculations and Household behavior;
-- authentication, API, Neon, upload/download and convergence;
-- production signing, distribution and public release;
-- PySide6 retirement.
+- target-image UI polishing and page-level visual convergence;
+- full responsive Lists table/card/filter composition;
+- page adoption of the shared Markei component system;
+- History double-click UX correction and Product-detail UX refinement;
+- native-share presentation and broader accessibility/interaction improvement;
+- the separately proposed minimum Analytics page.
 
-## 6. Current authority
+Still outside immediate authority: authentication, API/Neon, synchronization, Household
+behavior, registered Purchase mutation, Product merge/correction, public release, signing,
+distribution and PySide6 retirement.
 
-Cycle 09 Sprint 01 D/E/F authority is consumed. No source, schema, dependency, host or
-release change is active.
+## 6. Cycle 10 direction and authority
 
-Before Cycle 10 materialization, Main/human must decide whether the correction candidates
-form a final Cycle 09 correction unit or the first bounded Cycle 10 unit. Either route
-requires fresh A/B/C investigation where meaning is unsettled and fresh controlling D/E/F.
+Cycle 10 is **Cross-Platform Local Beta Consolidation**. Its forward mission is to improve
+reliability and evidence without redesigning the visible product:
 
-Cycle 10 is a forward perspective only. It does not authorize implementation.
+1. freeze a Cycle 10 baseline and acceptance matrix;
+2. strengthen migration, reopen, rollback and no-silent-reset evidence;
+3. establish deterministic local export/recovery integrity and privacy boundaries;
+4. measure projection, lookup, History and export paths before optimization;
+5. extract oversized pages without intentional UI or behavior changes;
+6. record complete Windows functional and bounded Android platform evidence;
+7. reconcile domain and Main memory.
+
+Cycle 10 source authority is inactive until fresh A/B/C investigation, Main reconciliation
+and controlling D/E/F are prepared. Cycle 09 D/E/F are consumed.
 
 ## 7. Active risks
 
-- incomplete BULK pricing behavior can store a manually supplied total rather than the
-  intended unit-price-derived value;
-- the nickname constraint may reject legitimate archived-history patterns;
-- generic UI errors weaken recovery guidance;
-- temporary fixed-name export files lack destination/cancellation/native-share behavior;
-- Android and dense responsive/lifecycle behavior remain unvalidated;
-- missing Cycle 09 Didactic absorption may leave terminology recovery stale;
-- calling the beta release-ready would exceed current evidence.
+- platform confidence exceeds neither the named Windows build/smoke nor the blocked Android host;
+- incomplete migration/recovery evidence can hide destructive failure behavior;
+- export exists, but portability, destination and cleanup policy are not fully evidenced;
+- monolithic page files increase regression risk for later Cycle 11 recomposition;
+- the existing visual scaffold may be mistaken for accepted target aesthetics;
+- release, cloud and synchronization language must remain inactive.
 
 ## 8. Recovery route
 
 Read next:
 
-1. `06_SESSION_SCHEME.md` for the conditional Cycle 10 perspective;
-2. `operational/10_OPERATIONAL_STATE.md` for evidence and action priority;
-3. `design/09_DESIGN_STATE.md` for architecture classifications;
-4. `didactics/08_CONCEPT_MAP.md` for the inherited learning checkpoint;
-5. `[M]_STAGE/J_MAIN_STAGE.md` for the post-Codex conflict audit;
-6. G/H/I and repository source only when the checkpoints cannot resolve a claim.
+1. `06_SESSION_SCHEME.md` for Cycle 10 preparation and entry gates;
+2. `operational/10_OPERATIONAL_STATE.md` for execution evidence and remaining actions;
+3. `design/09_DESIGN_STATE.md` for accepted architecture and visual/modularity debt;
+4. `didactics/08_CONCEPT_MAP.md` for stable vocabulary and unchanged maturity;
+5. `[M]_STAGE/J_MAIN_STAGE.md` for post-Codex classifications;
+6. G/H/I or source only when the checkpoints cannot resolve a claim.
 
-
----
-
-<!-- TEMPORAL_MARKER:C09-S02-ENTRY-2026-07-14 -->
-> Temporal boundary — Cycle 09 Sprint 02 begins here. Content above is the reviewed pre-Sprint-02 baseline and retains its existing authority and semantic role. Content below belongs to Sprint 02 investigation, current-UI archival evidence, aesthetic reconciliation, staging, implementation, and later closure. This marker alone authorizes no source change, semantic promotion, or methodology revision.
+```text
+Cycle 09: closed
+Cycle 09 materialization authority: consumed
+Cycle 10: prepared, not yet activated for implementation
+Cycle 11 UI/UX convergence: deferred and preserved
+```

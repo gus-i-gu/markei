@@ -890,3 +890,60 @@ source/schema authority: inactive
 
 <!-- TEMPORAL_MARKER:C09-S02-ENTRY-2026-07-14 -->
 > Temporal boundary — Cycle 09 Sprint 02 begins here. Content above is the reviewed pre-Sprint-02 baseline and retains its existing authority and semantic role. Content below belongs to Sprint 02 investigation, current-UI archival evidence, aesthetic reconciliation, staging, implementation, and later closure. This marker alone authorizes no source change, semantic promotion, or methodology revision.
+
+---
+
+<!-- TEMPORAL_MARKER:C09-FINAL-MAIN-CLOSURE-2026-07-14 -->
+
+# Cycle 09 Final Main Closure
+
+> Date: 2026-07-14
+> Branch: `intermid-cycle-recovery`
+> Implementation: `1d817972aea0229c9f109f236f4d224671927aab`
+> Post-Codex J: `4bf2e52d9d3e23437c4da1d8bb05e2402e189dd5`
+> Permanent-domain head inspected: `d21507ad8cd1ce69bbb6768d2583bb1a84a5af44`
+
+## Closure event
+
+Main reconciled the complete Cycle 09 Sprint 02 route:
+
+1. Codex materialized schema-v4 and local functional corrections at `1d81797`;
+2. G/H/I were confronted with source, tests and the human Windows observation;
+3. J accepted the functional increment but rejected visual-convergence closure;
+4. Design promoted the schema/application boundary and recorded partial UI architecture;
+5. Didactic promoted stable UX vocabulary without changing learner maturity;
+6. Operational promoted named evidence and retained open platform/recovery actions;
+7. Main refreshed the global state and the next-cycle recovery frame.
+
+## Accepted balance
+
+Cycle 09 delivered visible Person/Payment reference sequences, mandatory immutable Product
+codes, manual occurrence time, exact-code autofill, same-unit BULK calculation, narrow Lists
+language repair and Catalogue/History functional increments. Reported evidence comprises 43
+Flutter tests, clean analysis, migration tests, Windows build/bounded launch and five protected
+Python tests. Android and complete manual/accessibility/platform acceptance remain unvalidated.
+
+The small theme/component foundation did not reproduce target images 01–05. Home and Lists
+were not materially recomposed, shared components are not consistently consumed, History
+double-click differs from the controlling selection contract, native sharing is absent, and
+the principal page files retain modularity debt. These facts are preserved rather than hidden
+behind green automated evidence.
+
+## Schedule decision
+
+Human/Main closed Cycle 09 and moved UI polishing and UX improvement to Cycle 11. This includes
+page-level visual convergence, full Lists presentation, shared-component adoption, History
+double-click/Product-detail refinement, native-share presentation and broader accessibility
+improvement. The proposed minimum Analytics page remains aligned with Cycle 11.
+
+Cycle 10 is prepared as Cross-Platform Local Beta Consolidation: migration/recovery proof,
+export integrity, measured local performance, behavior-preserving modular extraction and
+Windows/Android functional evidence. It does not inherit the deferred visual redesign.
+
+```text
+Cycle 09: closed
+domain promotions: reconciled
+Main-root closure: refreshed
+Cycle 10: planning prepared; source authority inactive
+Cycle 11 UI/UX work: explicitly deferred
+```
