@@ -467,3 +467,153 @@ Read next:
 
 <!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
 > Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above this marker belongs to Cycle 08 or earlier reviewed project history. Content below belongs to Intermid Cycle Recovery and later reconciliation.
+
+
+---
+
+# Intermid Cycle Recovery Closure / Cycle 09 Entry
+
+> Date: 2026-07-14
+> Branch: `intermid-cycle-recovery`
+> Corrected implementation: `409e5f1e013a282165efd5f31bed17a396ad6543`
+> Post-Codex Main reconciliation: `84fc6e4e49dedc7ce629a97a78dd86486dbf0cf8`
+> Permanent-domain reconciled head: `b590f9659426ee94bb9581da4013f40410716fed`
+> Status: Intermid Cycle Recovery closed; Cycle 09 planning active
+
+## Current global truth
+
+The active product implementation is the local-first Flutter/Drift client under
+`clients/markei_flutter/`. The protected Python/PySide6 beta remains isolated
+and recoverable.
+
+Implemented product surface:
+
+- responsive Purchase, Products, and History destinations;
+- reusable Product catalogue creation/search/reuse;
+- Store selection or creation;
+- session-owned multi-line Purchase draft with edit, remove, review, total, and
+  guarded submission;
+- one local registration transaction covering Store/Product resolution,
+  Purchase, Items, Device sequence, SyncEvent, and PendingEvent;
+- detailed local History and compatible personal price comparison;
+- Drift schema v2 in app-private SQLite;
+- persistent local Device identity;
+- local event/pending preparation without remote synchronization.
+
+## Recovery correction accepted
+
+The staged-line edit defect is closed at
+`409e5f1e013a282165efd5f31bed17a396ad6543`.
+
+Presentation edit state now retains:
+
+```text
+line/edit key
+ProductReference
+Product label
+```
+
+Saving rebuilds only editable Purchase Item values. The directly tested
+existing-Product path retains the original Product ID and creates no duplicate
+Product. The common `ProductReference` path structurally supports new-Product
+references, but that variant has no separate focused regression.
+
+Recorded materialization evidence:
+
+```text
+focused app widget tests: 7 passed
+full Flutter tests:       32 passed
+Flutter analysis:         no issues
+final blocker:            none within the bounded unit
+```
+
+## Permanent-memory reconciliation
+
+Operational memory now classifies the defect as corrected while retaining
+file-backed, migration, rollback, host, lifecycle, packaging, and release gates.
+
+Didactic memory reinforces existing Stable Identity, Reusable Catalogue,
+Purchase Item, and Evidence Boundary concepts. No new concept or KANBAN maturity
+transition was justified.
+
+Design memory accepts presentation-local edit identity ownership without
+changing application ports, domain identities, repository transactions, Drift
+schema, migration, composition, or navigation.
+
+The permanent Operational model required no new stable rule in this bounded
+unit; its existing model remains authoritative.
+
+## Evidence limits carried forward
+
+Not yet accepted:
+
+- manual Windows Purchase → Products → History and close/reopen smoke;
+- app-private file-backed restart and representative migration evidence;
+- transaction rollback failure injection;
+- Android Java/JDK recovery, current build/runtime/lifecycle evidence, and
+  physical-device coverage;
+- long-form phone-width, keyboard, Back, rotation, background/resume, larger
+  text, and accessibility acceptance;
+- production signing, distribution, backup/export/restore, or support contract;
+- durable registration idempotency;
+- authentication, API, Neon, upload/download, or convergence.
+
+Local SyncEvent/PendingEvent storage remains synchronization preparation only.
+
+## Active cycle
+
+Cycle 09 — Database/UI Fine-Tuning.
+
+Mission:
+
+> Improve the MVP interface and local data model together, allowing persistence
+> to expand only where an accepted user-facing workflow requires new facts,
+> identity, lifecycle, query, or recovery behavior.
+
+Cycle 09 supersedes the older schedule that placed account/API/Neon work
+immediately after Cycle 08. Synchronization remains a later, separately
+authorized cycle.
+
+## Cycle 09 priority spine
+
+```text
+recover current UI/data contracts
+→ identify the smallest MVP interaction gaps
+→ prove file-backed and migration safety
+→ select one UI-driven data decision
+→ define domain and schema consequences
+→ materialize one reversible vertical slice
+→ validate UI, persistence, migration, and regression behavior
+→ repeat only for remaining MVP-critical gaps
+→ close with Windows/Android acceptance evidence
+```
+
+No schema v3 is assumed. A schema change requires an accepted UI/product need,
+identity semantics, migration/recovery contract, and focused evidence.
+
+## Cycle 09 candidate decision queue
+
+Evaluate separately:
+
+1. Store identity and duplicate/correction behavior;
+2. durable Purchase submission identity and retry semantics;
+3. Product correction/alias/merge boundaries;
+4. installation–Device ownership timing;
+5. draft persistence versus the accepted session-only promise;
+6. History/Catalogue query budgets and measured index need;
+7. export/restore and corruption-recovery expectations.
+
+A candidate may be rejected or deferred. These decisions must not be combined
+into one broad migration.
+
+## Authority
+
+Cycle 09 is active for recovery, investigation, prioritization, and staging
+only. No source, schema, dependency, host, or synchronization materialization is
+authorized until Main selects one bounded unit and freezes fresh D/E/F.
+
+Read next:
+
+1. `06_SESSION_SCHEME.md`, latest Cycle 09 entry;
+2. the applicable domain checkpoint;
+3. current repository source only where the selected investigation requires it.
