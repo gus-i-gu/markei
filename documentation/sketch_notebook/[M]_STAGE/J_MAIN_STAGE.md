@@ -442,3 +442,209 @@ schema/dependency/host changes: unauthorized
 permanent promotion: inactive
 Pruning: not yet active
 ~~~
+
+
+---
+
+<!-- ROUND_MARKER:INTERMID-RECOVERY-MAIN-RECONCILIATION-2026-07-14 -->
+
+# Ordinary-Sequence Main Reconciliation and Codex Activation
+
+> Date: 2026-07-14
+> Sequence: FLX-ORD-01 — Ordinary Sequence
+> Authority: Main synthesis and bounded D/E/F activation
+> Inputs: A_OPERATIONAL.md, B_DIDACTIC.md, C_DESIGN.md, IRC-R00 repository view
+> Status: RECONCILED FOR ONE BOUNDED MATERIALIZATION UNIT
+
+## 12. Sequence reconciliation
+
+The earlier IRC-R00 sections remain the historical investigative seed. The human
+subsequently selected the Ordinary Sequence for the domain passes. The completed
+A/B/C reports consistently identify themselves as bounded FLX-ORD-01 inputs.
+
+This section therefore supersedes the earlier inactive-D/E/F state for the
+single unit declared below. It does not erase the prior investigation or convert
+unselected proposals into implementation authority.
+
+Canonical Main-stage path is:
+
+```text
+documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md
+```
+
+`J_[M]_STAGE.md` is obsolete and must not be recreated.
+
+## 13. Reconciled domain synthesis
+
+### 13.1 Operational
+
+Accepted:
+
+- Application source remains at the inspected Cycle 08 implementation boundary;
+  later branch changes are documentation-only.
+- The Flutter/Drift client has historically passing focused/full tests, clean
+  analysis, a Windows release build, and protected Python regressions.
+- Those results were not rerun during the recovery assessment and are not
+  present-host acceptance.
+- Local registration is organized as one Drift transaction, but executable
+  failure-injection evidence remains absent.
+- Android validation remains blocked by host Java/JAVA_HOME evidence; final
+  manual Windows and physical-device acceptance remain open.
+- Existing-Product staged-line editing is a directly observable source defect.
+- Tracked Python bytecode and missing/uncertain ignore policy are real hygiene
+  debt, but constitute a separate bounded unit.
+
+### 13.2 Didactic
+
+Accepted:
+
+- Product identity, Product code, similarity, Store reference, staged Item,
+  registered Purchase Item, atomicity, idempotency, derived price comparison,
+  local queue, and synchronization are distinct concepts in the implementation.
+- Repository implementation and passing tests are project evidence, not learner
+  maturity evidence.
+- No KANBAN maturity transition is authorized.
+- Permanent Didactic memory is stale relative to Cycle 08 vocabulary, but its
+  reconciliation belongs to a later FLX-PRM-04 pass.
+- The active source correction should preserve the distinction between mutable
+  Item quantities/prices and stable Product reference identity.
+
+### 13.3 Design
+
+Accepted:
+
+- Stable draft-line keys preserve list identity, not Product identity.
+- The current edit flow restores quantity/price controls but does not retain the
+  original `ProductReference`.
+- The smallest correction is presentation-local: edit state must retain the
+  complete original Product reference and label while allowing Item values to
+  be changed.
+- No schema, migration, repository, domain-identity, or synchronization change
+  is required for this correction.
+- Store normalization, SubmissionId, installation–Device invariants, persisted
+  drafts, schema v3, indexes, and caches remain independent decisions.
+
+## 14. Contradiction resolution
+
+The apparent sequence conflict is resolved as follows:
+
+- IRC-R00 was an investigative seed under FLX-INV-02.
+- The human explicitly selected FLX-ORD-01 for the A/B/C passes.
+- A/B/C completed bounded Ordinary assessments without activating source work.
+- Main now reconciles them and freezes one controlling D/E/F envelope.
+- Codex materialization is active only for that envelope.
+
+No domain report contradicts the existence or scope of the edit defect. The
+reports differ only in perspective: Operational classifies validation risk,
+Didactic classifies conceptual boundaries, and Design identifies the smallest
+reversible correction.
+
+## 15. Main decision
+
+### Active bounded unit
+
+Correct staged-line editing so saving an edited line preserves the exact
+original `ProductReference` and Product label.
+
+The correction applies to both reference variants:
+
+- `ExistingProductReference(ProductId)`;
+- `NewProductReference(ProductDraft)`.
+
+Editing may change the staged Item's quantity, unit, package count, and line
+total. It must not silently change the Product reference, create a replacement
+Product draft, depend on the current Product dropdown selection, or create a
+duplicate Product.
+
+### Required regression evidence
+
+A focused widget/integration regression must demonstrate:
+
+1. an existing Product is available;
+2. an Item is staged with that Product;
+3. the staged line enters edit mode;
+4. quantity or price is changed;
+5. “Save staged Item” is used;
+6. registration completes;
+7. the registered Item still references the original Product ID;
+8. no duplicate Product is created.
+
+The implementation may add the smallest test seam needed to inspect the
+registered command or persisted result, but it must prefer existing local
+repository/UI integration and must not redesign application contracts.
+
+### Acceptance gates
+
+Required when supported by the available host:
+
+- format check for touched Dart files;
+- focused `markei_app_test.dart` execution;
+- full Flutter test suite;
+- Flutter analysis.
+
+If a command cannot run because of the environment, Codex must report the exact
+blocker and must not convert inspection into a passing result.
+
+## 16. Explicitly excluded decisions
+
+Not authorized in this unit:
+
+- schema v3 or migration changes;
+- Store normalization, aliases, branches, or merging;
+- durable SubmissionId or distributed idempotency;
+- installation–Device lifecycle changes;
+- persistent Purchase drafts;
+- transaction failure-injection infrastructure;
+- query indexes, pagination, or analytics caches;
+- Python bytecode cleanup or ignore-policy changes;
+- authentication, API, Neon, upload/download, or synchronization;
+- packaging, signing, distribution, backup, or restore;
+- permanent Operational, Didactic, Design, or Main-root promotion;
+- methodology changes.
+
+## 17. Controlling handoff
+
+The controlling files are:
+
+```text
+DEV_STAGE/D_OPS_STAGE.md
+DEV_STAGE/E_DDC_STAGE.md
+DEV_STAGE/F_DSN_STAGE.md
+```
+
+They form one envelope:
+
+- D defines validation and Operational evidence;
+- E protects Didactic meaning and maturity boundaries;
+- F defines the source correction and Design invariants.
+
+Codex must read all three before mutation. One file alone is insufficient
+authority. After materialization, Codex reports to G/H/I; those reports remain
+evidence and do not promote permanent memory.
+
+## 18. Stop conditions
+
+Stop and return to Main if:
+
+- preserving Product identity requires schema/domain-contract changes;
+- the existing/new reference variants cannot be preserved without changing
+  Product creation semantics;
+- a regression exposes unrelated persistence corruption;
+- the branch has conflicting source changes;
+- the test cannot distinguish preserved identity from duplicate creation;
+- requested work expands into any excluded decision.
+
+## 19. Authority state
+
+```text
+A/B/C: reconciled as Ordinary functional evidence
+J_MAIN_STAGE: updated Main synthesis
+D/E/F: controlling for one bounded edit-identity correction
+Codex: authorized only within D/E/F
+source mutation: narrowly authorized by F
+validation: required by D
+didactic maturity promotion: prohibited by E
+permanent promotion: inactive
+next evidence: G/H/I
+next reconciliation: Main/human, then FLX-PRM-04 if selected
+```
