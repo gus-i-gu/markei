@@ -315,3 +315,18 @@ Source representation, passing tests, host execution, and human-observed applica
 
 <!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
 > Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above this marker belongs to Cycle 08 or earlier reviewed project history. Content below belongs to Intermid Cycle Recovery and later reconciliation.
+
+
+# Intermid Recovery Current-Evidence Retrieval
+
+## ProductReference Identity Versus Editable Item Values
+**KANBAN IDs:** `&&&06`, `&%%07`, `&%%10`  
+A `ProductReference` identifies which reusable Product a staged Purchase Item concerns. Package count, purchased quantity, unit, and line total are transaction-specific Item values and may change without changing Product identity. A draft-line key identifies the staged line, not the Product.
+
+## Existing-Product Edit Evidence
+**KANBAN IDs:** `&&&05`, `&&&06`, `&%%10`  
+The focused widget regression edits Item values, registers the Purchase, verifies the original Product ID, and verifies that only one Product row exists. This is direct evidence for `ExistingProductReference`; the shared reference-polymorphic source path for `NewProductReference` remains source-structure evidence without a separate regression.
+
+## Project Evidence Is Not Learner Maturity
+**KANBAN IDs:** all referenced concepts  
+Implementation, widget tests, and analysis show that the distinction exists and behaves within the tested boundary. Maturity still requires the learner to explain or transfer the distinction independently.
