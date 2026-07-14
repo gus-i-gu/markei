@@ -1,12 +1,12 @@
 # 09_DESIGN_STATE.md
 
-> Version: 0.6-cycle07-sprint03-unit01
+> Version: 0.7-cycle09-sprint02-promotion
 > Status: Active Checkpoint
 > Persistence Class: Checkpoint
 > Knowledge Class: Design State
 > Authority: Design Chat [D]
-> Scope: Current Design state after Sprint 03 Unit 01 Flutter foundation
-> Sources: J section 19, C_DESIGN, I_DSN_CODEX, repository materialization evidence
+> Scope: Current Design checkpoint after Cycle 09 Sprint 02 promotion
+> Sources: C/F/I, post-Codex J, target references and handwritten repository evidence
 
 ---
 
@@ -122,88 +122,102 @@ Additional implementation remains inactive until Main/human authority is express
 ---
 
 <!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
-> Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above is historical. This is the current Cycle 09 checkpoint.
+> Temporal boundary — Intermid Cycle Recovery begins here. Content above is historical. This is the current Design checkpoint.
 
-# Cycle 09 Design Checkpoint
+# Cycle 09 Sprint 02 Design Checkpoint
 
-> Branch: `intermid-cycle-recovery`
-> Inspected implementation: `e37cb700feeca4001cc7835b584c46bb81926af3`
-> Sequence: FLX-PRM-04
-> Evidence: C/F/I, post-Codex J, and targeted handwritten source
-> Generated Drift evidence: derived only
+> Sequence: FLX-PRM-04 / PRC-01  
+> Branch: `intermid-cycle-recovery`  
+> Required ancestry: `4bf2e52d9d3e23437c4da1d8bb05e2402e189dd5`  
+> Source range: `5ddff3c5eae582f0e25c1ecd0cfb3fe962026cf3..1d817972aea0229c9f109f236f4d224671927aab`  
+> Generated Drift: derived evidence only
 
 ## Current architecture
 
 ```text
-Flutter presentation
-→ application ports/read models/failures
+adaptive Flutter presentation
+→ application ports/read models/results/calculations
 → independent Dart domain
 ← local adapters
-→ handwritten Drift schema v3 / app-private SQLite
+→ handwritten Drift schema v4 / app-private SQLite
 ```
 
-Cycle 09 expands the local product beta without changing the inward dependency direction or protected Python/PySide6 boundary.
+Offline-first dependency direction and the protected Python/PySide6 boundary remain stable.
 
-## Accepted and implemented
+## Promoted as implemented
 
-- Home-first responsive navigation and static descriptors.
-- schema v3 People, PaymentMethods, AccountPreferences and nullable Purchase references.
-- nullable package count for BULK.
-- normalization v3, exact-collision preflight and deterministic legacy-code backfill.
-- transient `personal-cycle-v1` Lists projections without persisted List/cache.
-- History selected IDs, stable export DTOs, deterministic CSV and PDF bytes.
-- exact Product lookup ports and Product-detail query.
-- typed application failures.
-- optional references preserve archived historical labels.
-- registered Purchase edit/delete, Analytics and Household remain inactive.
+- tested schema-v4 migration/reopen boundary;
+- opaque Person/Payment UUID identity plus immutable Account-scoped `@/#` visible codes and counters;
+- mandatory immutable Account-scoped Product codes with normalized uniqueness and deterministic legacy backfill;
+- optional archive-resolvable Purchase references;
+- exact local Purchase date/time parsing and conversion to one persisted UTC occurrence;
+- same-selected-unit BULK fixed-point calculation with read-only half-up minor-unit total;
+- exact Product-code resolution/autofill without implicit Item addition;
+- Product-first rebuildable Lists query; no persisted List/cache;
+- compact Home/Lists/Purchase/History/More navigation;
+- Catalogue selection/detail and History select-all/detail increments.
 
-## Required classifications
+## Partial, contradicted or deferred
 
-| Claim | Current state |
+| Claim | State |
 | --- | --- |
-| BULK price-per-unit UI | contradicted completion: Line total remains the input |
-| active-only nickname uniqueness | contradicted: current key also limits archived duplicates |
-| Product-code columns | resolved as nullable compatibility storage; NOT NULL contradicted |
-| PDF generation | implemented |
-| OS-native/save-dialog sharing | deferred; temporary-file/manual flow only |
-| exact lookup ports | implemented |
-| exact lookup presentation | partial |
-| Product detail card/query | implemented bounded form |
-| adaptive shared Product details | partial/deferred |
-| complete typed error presentation | partial |
-| History double-click/select-all | partial |
+| complete design system | partial: small theme foundation only |
+| shared Markei components | exist, but pages do not consume them |
+| Home visual rebuild | not materialized |
+| Lists relational table/card/filter target | not materialized |
+| Catalogue/History composition | partial; standard list structure retained |
+| Purchase composition | functional increment; former ~1,020-line form retained |
+| adaptive Product details | partial/open |
+| History double-click | contradicted: focuses detail instead of toggling selection |
+| native OS PDF sharing | deferred; temporary-file/manual fallback |
+| target-image parity | not achieved |
+| Android/manual accessibility | unvalidated |
+| Windows workflow/visual acceptance | unvalidated |
+| release readiness | not accepted |
 
-## Evidence boundary
+Catalogue (~377 lines), History (~330) and Purchase (~1,020) exceed ordinary ~250-line modularity guidance. This debt is architectural because it increases responsive and visual-change coupling.
 
-Reported: 39 Flutter tests, clean analysis, Windows release build and bounded launch, file-backed migration/reopen evidence, and five Python regressions.
+## Stable invariants
 
-Not established: Android recovery/runtime, native share, injected migration-failure behavior, full manual workflow, comprehensive accessibility/responsive acceptance, or release readiness.
+- registered Purchase facts remain authoritative; projections and exports are rebuildable;
+- Product UUID, visible code, exact identity, similarity and idempotency remain distinct;
+- no competing BULK price-per-unit fact is persisted;
+- exact lookup, selection, details and Item addition remain separate operations;
+- archived references remain historically readable;
+- exports do not mutate Purchases or upload data;
+- generated code cannot override handwritten schema truth.
+
+## Evidence limits
+
+Automated source/tests establish the promoted schema and focused application contracts. They do not establish screenshot parity, manual accessibility, native sharing, Android runtime, Windows workflow acceptance, DST-zone provenance or production release.
 
 ## Remaining Design conflicts
 
-1. correct nickname uniqueness without losing archived history;
-2. implement BULK unit-price input and half-up line-total derivation;
-3. expose exact lookup in Catalogue UI;
-4. establish shared adaptive Product-details navigation;
-5. complete typed failure mapping;
-6. define user-controlled save/native-share behavior and cleanup;
-7. finish History selection conveniences.
-
-Deferred: auth/API/Neon/synchronization, Store redesign, SubmissionId, persisted drafts, Product merge/correction, registered Purchase mutation, Analytics/Household behavior and production release.
+1. freeze History double-click semantics against the selection contract;
+2. define the actual token/state/component set and require page adoption;
+3. define relational Lists desktop-table/mobile-card content and filters;
+4. choose adaptive Product-detail pane/route/sheet behavior;
+5. split Purchase/Catalogue/History into bounded components;
+6. define native share/save lifecycle if activated;
+7. define screenshot, compact/expanded, Windows and accessibility acceptance gates.
 
 ## Next Main handoff
 
-Main should classify the two contradicted items as a focused correction unit, decide whether exact lookup/adaptive details/native share remain deferred or enter that unit, and preserve Android/manual/release gaps as Operational evidence boundaries. Fresh D/E/F are required before source or schema changes.
+Authorize, reject or narrow one schema-free visual-convergence unit:
 
-## Recovery pointers
+```text
+expand tokens and reusable primitives
+→ make pages consume the shared system
+→ recompose Home
+→ recompose Lists relational presentation
+→ recompose Catalogue
+→ split and recompose Purchase
+→ recompose History and resolve double-click
+→ expanded/compact screenshot comparison
+→ Windows workflow and accessibility validation
+```
 
-- Canonical: `design/01_ARCHITECTURE.md`, section 21.
-- Observational: `design/03_DECISION_LOG.md`, Event 19.
-- Derived: `design/14_MODEL_OVERVIEW.md`, Cycle 09 map.
-- Evidence: C/F/I and post-Codex `J_MAIN_STAGE.md`.
+No source implementation is active from this checkpoint. Fresh D/E/F authority is required.
 
+Recovery: Architecture §21; Decision Log Event 21; Model Overview current Cycle 09 segment; C/F/I and post-Codex J.
 
----
-
-<!-- TEMPORAL_MARKER:C09-S02-ENTRY-2026-07-14 -->
-> Temporal boundary — Cycle 09 Sprint 02 begins here. Content above is the reviewed pre-Sprint-02 baseline and retains its existing authority and semantic role. Content below belongs to Sprint 02 investigation, current-UI archival evidence, aesthetic reconciliation, staging, implementation, and later closure. This marker alone authorizes no source change, semantic promotion, or methodology revision.
