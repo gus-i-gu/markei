@@ -245,3 +245,100 @@ No source correction, host mutation, or implementation is active. Read `04_TODO.
 
 <!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
 > Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above this marker belongs to Cycle 08 or earlier reviewed project history. Content below belongs to Intermid Cycle Recovery and later reconciliation.
+
+# Intermid Cycle Recovery Operational Checkpoint
+
+> Branch: `intermid-cycle-recovery`
+> Inspected implementation head: `409e5f1e013a282165efd5f31bed17a396ad6543`
+> Reconciliation baseline: `84fc6e4e49dedc7ce629a97a78dd86486dbf0cf8`
+> Evidence: `DEV_STAGE/G_OPS_CODEX.md`
+> Main reconciliation: latest `[M]_STAGE/J_MAIN_STAGE.md` post-Codex section
+> Preparation and authority: `DEV_STAGE/A_OPERATIONAL.md` + consumed `DEV_STAGE/D_OPS_STAGE.md`
+
+## Current classification
+
+Implemented:
+
+- responsive local Purchase, Products, and History client;
+- Drift schema v2 with app-private SQLite and persistent local Device identity;
+- session-only multi-line Purchase draft, review, edit, remove, and in-flight submission guard;
+- one local transaction for Store/Product resolution, Purchase, Items, device sequence, SyncEvent, and PendingEvent;
+- detailed History and narrow compatible same-Product price comparison;
+- corrected staged-line editing that retains the original Product reference and label while changing Item values.
+
+Validated within the latest local Flutter evidence boundary:
+
+- existing-Product edit retains the original Product ID;
+- edited package count, quantity/unit, and line total persist through registration;
+- no duplicate Product row is created;
+- focused app widget suite: 7 passed;
+- full Flutter suite: 32 passed;
+- Flutter analysis: no issues.
+
+The direct regression proves `ExistingProductReference`. Generic retention of the base `ProductReference`, including the new-Product variant, is source-implemented but not separately regression-validated.
+
+## Evidence boundaries
+
+Widget/in-memory evidence does not establish:
+
+- app-private file-backed close/reopen or migration behavior;
+- Windows manual runtime acceptance;
+- Android build, install, runtime, lifecycle, or physical-device acceptance;
+- iOS behavior;
+- packaging, signing, release, distribution, backup, or restore acceptance.
+
+The local SyncEvent/PendingEvent structures remain synchronization preparation only. The mounted-session submission guard is not durable idempotency.
+
+## Corrected and superseded state
+
+The existing-Product edit defect recorded in the prior Cycle 08 checkpoint is corrected and locally regression-validated at `409e5f1e013a282165efd5f31bed17a396ad6543`.
+
+The prior active TODO for that correction is superseded. Historical defect and materialization chronology remain in `11_OPERATIONAL_RECORD.md`, A/D/G, J, and Git history.
+
+## Host-unvalidated and unresolved
+
+- current-host Flutter/Windows/Python command reproduction beyond the recorded local Codex run;
+- Windows manual Purchase/Products/History and restart smoke;
+- Android Java/JDK recovery, APK build, runtime, lifecycle, and physical device;
+- iOS;
+- phone-width long-form registration;
+- file-backed restart and representative v1→v2 migration fixtures;
+- transaction rollback failure injection;
+- Catalogue/History performance budgets;
+- tracked Python bytecode and ignore-policy hygiene.
+
+## Deferred
+
+- schema v3;
+- Store identity/normalization;
+- durable SubmissionId and retry semantics;
+- installation–Device lifecycle changes;
+- persistent drafts;
+- export/restore and corruption recovery;
+- authentication, API, Neon, upload/download, and multi-device convergence;
+- production signing/distribution;
+- PySide6 retirement.
+
+## Authority and next route
+
+No source, schema, host, staging, or Main-root change is active.
+
+Next valid route:
+
+```text
+Main reconciles refreshed O/A/D checkpoints
+→ selects one bounded remaining gate
+→ controlling D/E/F
+→ Codex materialization and evidence
+→ renewed FLX-PRM-04 reconciliation
+```
+
+## Recovery pointers
+
+1. this checkpoint — compact current Operational truth;
+2. `04_TODO.md` — ordered remaining gates;
+3. `12_OPERATIONAL_MODEL.md` — stable evidence and existing-reference rules;
+4. latest `11_OPERATIONAL_RECORD.md` entry — correction and validation chronology;
+5. `DEV_STAGE/G_OPS_CODEX.md` — commands and local evidence;
+6. latest `[M]_STAGE/J_MAIN_STAGE.md` — Main classification;
+7. A/D — pre-materialization findings and consumed Operational instruction.
