@@ -679,3 +679,121 @@ No Cycle 08 source implementation was authorized in this session.
 
 <!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
 > Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above this marker belongs to Cycle 08 or earlier reviewed project history. Content below belongs to Intermid Cycle Recovery and later reconciliation.
+
+
+---
+
+# Intermid Cycle Recovery Closure Record
+
+> Date: 2026-07-14
+> Branch: `intermid-cycle-recovery`
+> Implementation commit: `409e5f1e013a282165efd5f31bed17a396ad6543`
+> Main post-Codex reconciliation: `84fc6e4e49dedc7ce629a97a78dd86486dbf0cf8`
+> Permanent-domain reconciled head: `b590f9659426ee94bb9581da4013f40410716fed`
+
+## Recovery chronology
+
+The recovery cycle:
+
+1. repaired and clarified Sketch Notebook sequence routing;
+2. established `[M]_STAGE/J_MAIN_STAGE.md` as the canonical Main staging
+   surface and retired the old `J_[M]_STAGE.md` name;
+3. recovered the current Flutter application, schema, tests, host evidence, and
+   permanent-memory drift;
+4. received bounded Operational, Didactic, and Design A/B/C assessments;
+5. reconciled those assessments into one D/E/F Ordinary Sequence envelope;
+6. authorized only the existing-Product staged-line edit correction;
+7. received Codex materialization and G/H/I evidence;
+8. reconciled the evidence in J;
+9. completed FLX-PRM-04 permanent-domain updates;
+10. refreshed Main-root continuity for Cycle 09 entry.
+
+## Materialized result
+
+`PurchasePage` now retains the staged line's original
+`ProductReference` and Product label during editing. Quantity, unit, package
+count, and line total remain editable Item values. Save, edited-line removal,
+and successful registration clear associated edit state.
+
+The regression directly demonstrates:
+
+- original existing Product ID retained;
+- edited Item values persisted;
+- Product row count remains one.
+
+Final recorded commands:
+
+```text
+dart format touched files                passed
+flutter test test/app/markei_app_test.dart
+                                         passed: 7 tests
+flutter test                             passed: 32 tests
+flutter analyze                          passed: no issues
+```
+
+No schema, migration, dependency, application contract, domain identity,
+repository transaction, synchronization, or unrelated source path changed.
+
+## Permanent reconciliation result
+
+Operational:
+
+- corrected defect promoted as current local evidence;
+- platform, restart, migration, rollback, lifecycle, and release gates retained;
+- ordered TODO refreshed;
+- stable Operational model unchanged.
+
+Didactic:
+
+- existing identity/catalogue/Item/evidence concepts reinforced;
+- direct regression evidence kept separate from source-structure inference;
+- no KANBAN maturity changed.
+
+Design:
+
+- presentation-local edit ownership accepted;
+- schema v2 and existing dependency/transaction boundaries preserved;
+- Store, SubmissionId, Device lifecycle, persisted drafts, query policy,
+  backup/restore identity, and synchronization retained as separate decisions.
+
+## Closure balance
+
+Completed:
+
+- state-of-knowledge recovery;
+- canonical J transition;
+- complete A/B/C → J → D/E/F → Codex → G/H/I → permanent-memory route;
+- one confirmed MVP defect corrected and regression protected;
+- Cycle 09 decision inputs made explicit.
+
+Incomplete and carried forward:
+
+- file-backed persistence/migration/rollback evidence;
+- current Windows and Android manual/lifecycle acceptance;
+- repository bytecode hygiene;
+- MVP database/UI decisions;
+- production recovery/distribution;
+- authentication and real synchronization.
+
+## Schedule decision
+
+The earlier forward schedule that placed account/API/Neon work in Cycle 09 is
+superseded.
+
+Cycle 09 is Database/UI Fine-Tuning. It will expand the local model only from
+accepted MVP interface requirements. Neon synchronization remains later and
+requires its own identity, migration, transport, convergence, and Operational
+authority.
+
+## Closure disposition
+
+```text
+Intermid Cycle Recovery: closed
+FLX-ORD-01 edit unit: complete
+FLX-PRM-04 reconciliation: complete
+D/E/F authority: consumed
+permanent domain checkpoints: refreshed
+Main-root continuity: refreshed
+Cycle 09: planning/investigation active
+source/schema authority: inactive
+```
