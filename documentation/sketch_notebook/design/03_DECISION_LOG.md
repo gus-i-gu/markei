@@ -850,3 +850,62 @@ Accepted and implemented: staged-line edit identity belongs to presentation edit
 Corrected: the prior existing-Product edit defect is no longer active at the materialization commit.
 
 Deferred as separate decisions: schema v3, Store identity/normalization, durable `SubmissionId`, installation–Device lifecycle, persisted drafts, query/index policy, backup/restore identity, authentication, API/Neon, and synchronization.
+
+# 19. Event 19 — Cycle 09 Local Product Expansion Reconciliation
+
+## Evidence and promotion boundary
+
+Cycle 09 Unit C09-U02 was materialized at `e37cb700feeca4001cc7835b584c46bb81926af3`. Design reconciliation compared C, F, I, post-Codex J and targeted handwritten source. Generated `local_database.g.dart` was treated only as derived evidence; `local_database.dart` remains the physical schema/migration authority.
+
+Reported materialization evidence includes 39 passing Flutter tests, clean analysis, a Windows release build and bounded launch, file-backed v2→v3 migration/reopen evidence, and five Python regressions. Android, native share, complete manual workflow, injected migration failure, full accessibility and release acceptance remain outside this Design acceptance.
+
+## Accepted and implemented architecture
+
+The inward Flutter/application/domain/adapter dependency direction remains intact. Schema v3 adds People, PaymentMethods and AccountPreferences; Purchases receive nullable Person/Payment Method references; PurchaseItems permits null package count for BULK. Product normalization v3 and migration preflight preserve internal IDs and stop on exact-identity collisions. Legacy null Product codes are deterministically backfilled, while the handwritten Product code columns remain nullable for compatibility.
+
+Home-first navigation, transient versioned Lists projections, History selected-ID state, export DTOs, deterministic CSV/PDF bytes, typed application failures, exact Product lookup ports, local reference lifecycle and Product-detail query ownership are implemented. No manually persisted List/cache or external synchronization path was introduced.
+
+## Corrected claim classifications
+
+1. **BULK price-per-unit — contradicted completion.** Nullable BULK package count is implemented, but Purchase presentation still requests Line total. It does not request price per unit or perform the frozen half-up derived-total flow. The stable architecture remains: BULK must not persist competing price truths. The UI correction is future work.
+
+2. **Active-only nickname uniqueness — contradicted physical constraint.** People and PaymentMethods use `(accountId, normalizedNickname, active)` unique keys. This enforces one active nickname but also only one archived row per nickname. It does not implement arbitrary historical archived duplicates under an active-only uniqueness policy.
+
+3. **Nullable Product codes — resolved compatibility boundary; NOT NULL claim contradicted.** Creation and migration produce codes, lookup uses normalized code, and migration backfills legacy rows. Nevertheless the authoritative handwritten columns remain nullable. Design accepts required codes at new-command/application boundaries without claiming database-level NOT NULL.
+
+4. **Native PDF sharing — deferred; PDF generation implemented.** Stable DTO and PDF-byte generation exist. History writes a fixed temporary file and instructs manual sharing. No save destination/cancellation contract or native OS share adapter exists.
+
+5. **Exact lookup presentation — partial.** Repository/application ports support exact code and exact normalized identity lookup. Catalogue presentation still performs in-memory substring filtering over code/name/brand instead of exposing the exact operations explicitly.
+
+6. **Adaptive Product details — partial.** Catalogue tap/long-press reveals a local detail card and a Product-detail query port exists. A shared adaptive Product route/pane/sheet and desktop double-click convenience are absent.
+
+## Preserved and deferred boundaries
+
+Typed failures exist, but generic page catches mean the full user-facing failure contract is partial. History has checkbox/tap selection but lacks the requested double-click shortcut and select-all. Authentication, API/Neon, synchronization, Store redesign, SubmissionId, persisted drafts, Product merge/correction, registered Purchase mutation, native sharing, Analytics/Household behavior and production release remain deferred.
+
+## Decision disposition
+
+```text
+accepted and implemented
+    schema v3 optional local references and archive-aware historical labels
+    nullable BULK package-count representation
+    normalization v3 collision-preflight migration
+    transient personal-cycle-v1 projections
+    stable export DTO + deterministic CSV/PDF bytes
+    exact lookup application/repository ports
+
+partial
+    typed failure presentation
+    exact lookup presentation
+    History selection conveniences
+    adaptive Product details
+
+contradicted
+    completed BULK price-per-unit UI
+    active-only nickname uniqueness as physically implemented
+    Product-code NOT NULL storage claim
+
+deferred
+    native PDF sharing/save chooser
+    corrective implementation for the contradictions
+```
