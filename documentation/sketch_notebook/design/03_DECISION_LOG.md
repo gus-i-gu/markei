@@ -1101,3 +1101,37 @@ not promoted
     functional contract changes
     source/schema/dependency work
 ```
+
+# Event 21 — Cycle 09 Sprint 02 Permanent Design Promotion
+
+Sequence: FLX-PRM-04  
+Evidence boundary: C/F/I, post-Codex J, target references 01–05, handwritten source/tests in `5ddff3c…1d81797`; generated Drift derived only.
+
+## Claim transitions
+
+| Claim | Prior state | Controlling evidence | Resulting state / owner |
+| --- | --- | --- | --- |
+| Local persistence | schema v3 | handwritten schema v4, migration fixture/reopen tests | implemented; Architecture |
+| Person/Payment identity | opaque IDs; visible codes proposed | non-null `@/#` codes, Account counters, scoped unique keys | implemented; Architecture |
+| Product codes | nullable-storage compatibility | v4 rebuild/backfill plus non-null/unique columns and immutable commands | implemented; Architecture |
+| Purchase occurrence | implicit/current instant | exact local text parser → UTC command fact | implemented; Architecture |
+| BULK pricing | contradicted completion | fixed-point same-unit calculator and read-only total UI | implemented; Architecture |
+| Exact Product resolution | ports implemented, presentation partial | Purchase exact-code resolve/autofill | implemented narrowly; Architecture |
+| Lists | rebuildable thin projection | Product-first joins retained; page/read composition still thin | partial/open |
+| Compact navigation | planned | Home/Lists/Purchase/History/More mapping | implemented, responsive acceptance partial |
+| Shared visual system | proposed | 44-line theme; three 57-line primitives unused by pages | partial/open |
+| Home/Lists visual target | proposed | implementation diff/source and target references | not materialized |
+| Catalogue/History composition | sparse baseline | standard ListTile composition persists | partial/open |
+| Purchase composition | long-form baseline | functions added inside ~1,020-line page | functional increment; architecture debt open |
+| History double-click | selection toggle contract | source focuses detail only | contradicted; Main decision required |
+| Native PDF sharing | deferred | no dependency/adapter; temporary-file manual flow | deferred |
+| Visual parity/accessibility | proposed/unvalidated | no target-comparison or manual accessibility evidence | open/unvalidated |
+
+## Reconciliation
+
+Source corrected stale schema-v3, nullable-Product-code and unimplemented-BULK statements without erasing their earlier observational history. J and source agree that green automated checks do not establish target-image parity. No Design claim promotes Android, Windows workflow, native-share, accessibility or release acceptance.
+
+## Prospective next unit
+
+Pending Main authority, Design recommends one bounded schema-free visual-convergence unit: expand tokens/primitives; adopt them page-by-page; recompose Home, relational Lists and Catalogue; split/recompose Purchase; recompose History and freeze double-click semantics; validate expanded/compact screenshots, Windows workflow and accessibility. No implementation is activated by this event.
+
