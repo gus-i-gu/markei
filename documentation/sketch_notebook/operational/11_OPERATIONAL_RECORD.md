@@ -819,3 +819,91 @@ No source, methodology, Main continuity or non-Operational memory changed during
 
 <!-- TEMPORAL_MARKER:C09-S02-ENTRY-2026-07-14 -->
 > Temporal boundary — Cycle 09 Sprint 02 begins here. Content above is the reviewed pre-Sprint-02 baseline and retains its existing authority and semantic role. Content below belongs to Sprint 02 investigation, current-UI archival evidence, aesthetic reconciliation, staging, implementation, and later closure. This marker alone authorizes no source change, semantic promotion, or methodology revision.
+
+
+---
+
+## 2026-07-14 — Cycle 09 Sprint 02 current-UI observation
+
+Sequence: evidence-only Operational observation  
+Role: Operational Chat [O]  
+Sprint boundary: latest `C09-S02-ENTRY-2026-07-14` marker  
+Inspected commit: `c67d573f1335ffd55c659a9ee795982ca72c2c32`  
+Writable surface: this observational record only  
+Evidence boundary: user-described screenshots/current runtime plus GitHub source/test inspection; no local Flutter execution, test rerun, emulator, manual input replay, or pixel inspection was available
+
+### Evidence-source separation
+
+**User-observed runtime behavior**
+
+The user reports from the current Flutter UI that:
+
+- Purchase does not expose the intended time/date field after Store;
+- Catalogue Product selection is difficult or non-functional for the intended workflow;
+- Catalogue lacks the expected desktop double-click selection;
+- Lists do not surface the Catalogue Products associated through Purchase relational data;
+- Person and Payment Method expose nickname but no visible ID;
+- BULK Product/Purchase flows lack price-per-unit or price-per-volume input and automatic total calculation;
+- the current visual presentation remains materially different from the previously accepted mockup direction.
+
+These are valid current-session observations. Exact reproduction inputs, database contents, viewport, platform and action sequence were not captured in this pass.
+
+**Screenshot evidence**
+
+The prompt identifies target mockups 1–5 and current screenshots 6–10. The image binaries are not present in the connected repository or exposed to this Operational chat, so no pixel-level claim about color, spacing, typography, hierarchy or exact control placement is made here. The user’s identification of screenshots 6–10 as the current UI and 1–5 as targets is archived as provenance. A later Main/Design pass should retain the images or a numbered visual inventory in an accessible evidence surface before translating aesthetics into executable acceptance criteria.
+
+**Source evidence at `c67d573`**
+
+- `PurchasePage` sends `DateTime.now().toUtc()` directly during registration. It has no date/time controller, picker or visible purchase-occurrence field after Store. The reported absence is source-confirmed.
+- Catalogue rows use `onTap` and `onLongPress` to show an inline Product detail panel. No double-click handler, explicit “Select Product” action or shared selection callback exists in `ProductsPage`. Product selection for Purchase is instead a separate dropdown inside `PurchasePage`. The intended cross-page selection workflow is therefore absent.
+- `ListsPage` calls `ProductListProjectionRepository.productListProjection`; `LocalQueryRepository` reads Products and Purchase/PurchaseItem observations and constructs projections. Relational projection code exists. The user-observed empty/failing result may reflect data association, projection classification, refresh, threshold/date logic, or presentation state; source inspection alone does not identify which.
+- Settings and Purchase use `LocalReference.id` internally, but Settings renders `reference.historyLabel` plus Active/Archived only. No Person or Payment Method ID text is presented. The reported visible-ID gap is source-confirmed.
+- BULK makes `packageCount` null and hides Packages bought, but the quantity area still requests `Line total`. No price-per-unit/volume controller or automatic half-up total derivation exists. The reported BULK pricing gap is source-confirmed.
+- The shell supplies ten destinations to one `NavigationRail` or one phone-width `NavigationBar`. No compact overflow menu, grouped secondary navigation, drawer or destination paging is present. Ten labels in the narrow bar create a strong density/legibility risk; actual overflow/clipping remains runtime evidence.
+- Major pages use `ListView`, so vertical scrolling exists structurally. The long-form Purchase widget test is performed at wide width; the 390×844 test checks only shell/local notice/empty History. Phone-width form completion, keyboard obstruction and overflow remain unvalidated.
+- `IndexedStack` preserves destination widgets while switching between narrow and wide layouts; one widget test confirms the selected destination survives a width change. This is presentation-state continuity evidence, not process restart or complete desktop/mobile workflow continuity.
+- History has explicit loading/error/retry/empty states. Lists has loading/error/empty text but no visible retry action. Catalogue and Purchase expose loading plus generic feedback; their error recovery is less explicit and commonly catch-all. Screenshot/runtime behavior is still needed for focus retention, recovery after retry and long-content scrolling.
+- Navigation already labels Analytics/Household as planned and disabled. Their presence contributes to current density even though they do not provide executable workflows.
+
+### Target-versus-current Operational gap register
+
+1. **Purchase occurrence editing — confirmed absent.** Required reproduction: choose Store, inspect the next focusable control, register with a non-current intended timestamp, then verify History/storage value and timezone formatting `hh:mm _ dd/mm/yyyy`.
+2. **Catalogue selection — confirmed interaction mismatch.** Required reproduction: keyboard, ordinary click/tap, long-press and desktop double-click on an existing Product; record whether detail opens, selection state becomes visible, and Purchase can consume that Product without a separate ambiguous search.
+3. **Lists relational projection — runtime failure reported, implementation present.** Required fixture: at least one Product with one Purchase and one with two dated Purchases; capture Product IDs, PurchaseItem links, threshold, current date, selected Storage/Shortage/Market/All view, query result and rendered state.
+4. **Reference IDs — confirmed presentation omission.** Required decision: whether users should see the full immutable ID, a short stable display code, or “ID · Nickname,” and on which Settings/Purchase/History/export surfaces.
+5. **BULK pricing — confirmed incomplete.** Required fixture: kg/L amount plus price per unit/volume, comma and point decimals, deterministic rounding and derived Line total; confirm whether total remains editable or read-only.
+6. **Responsive density — risk supported, failure unmeasured.** Required viewports: 390×844, narrow desktop, 720 px transition, ordinary wide desktop; record clipped labels, rail height, touch target size, horizontal overflow and scroll reachability.
+7. **Scrolling and focus — partial source support.** Required tests: complete long Purchase and Settings flows with keyboard open, larger text, focus traversal, Back, rotation/resize and return to prior destination.
+8. **Loading/empty/error recovery — uneven implementation.** Required fault fixtures for Catalogue, Lists, Purchase references and History; verify distinct messages, retry affordance, retained selection/draft and successful recovery.
+9. **Desktop/mobile continuity — partially evidenced only.** Required paired workflow: same seeded database, Catalogue selection → Purchase → Lists → History on desktop width and phone width, plus close/reopen where file-backed continuity is claimed.
+10. **Aesthetic transition — not operationalized.** Numbered mockup elements must be translated into measurable hierarchy, spacing, control order, responsive behavior and state requirements before implementation authorization.
+
+### Archived observations and non-conclusions
+
+Archived as observed: the user’s current-UI gaps, screenshot numbering/provenance, and requested Sprint 02 comparison scope.
+
+Source-confirmed: occurrence field absent; Catalogue selection/double-click mismatch; reference IDs hidden; BULK price-per-unit absent; ten-destination density risk; uneven recovery affordances; insufficient phone-width workflow coverage.
+
+Not concluded:
+
+- Lists repository logic is absent;
+- relational data is corrupt;
+- a specific query or migration is defective;
+- screenshots prove behavior outside the captured frame;
+- navigation actually overflows on every device;
+- target mockup aesthetics are fully specified;
+- any source/schema correction is authorized.
+
+### Questions requiring Main selection
+
+1. Is Purchase occurrence user-editable, default-now editable, or display-only, and what timezone/storage/display contract applies?
+2. Does Catalogue selection navigate into Purchase, create a shared selected-Product state, or only open Product details?
+3. Is desktop double-click required acceptance or optional convenience after explicit action/tap/keyboard paths?
+4. What exact cycle fixture and status thresholds define a correct Lists projection for one versus multiple Purchases?
+5. Which visible ID form is acceptable for Person and Payment Method?
+6. For BULK, is price per unit authoritative with derived total, and may the derived total be overridden?
+7. Which destinations remain primary on phone width, and which move into secondary navigation?
+8. Which numbered target-mockup elements are functional acceptance requirements versus aesthetic preference?
+9. Should Sprint 02 first authorize an evidence/reproduction pass, or freeze a combined functional-and-aesthetic implementation unit?
+
+Recommended next handoff: Main should reconcile this observation with Design/Didactic Sprint 02 evidence, secure accessible copies or structured inventories of screenshots 1–10, freeze the nine decisions above, then prepare bounded D/E/F. No implementation authority is implied by this record.
