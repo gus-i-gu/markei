@@ -806,3 +806,47 @@ Deferred: physical-device validation, full lifecycle matrix, production signing/
 
 <!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
 > Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above this marker belongs to Cycle 08 or earlier reviewed project history. Content below belongs to Intermid Cycle Recovery and later reconciliation.
+
+
+---
+
+# Event 18 — Intermid Cycle Edit-Identity Reconciliation
+
+## Context and authority
+
+The Intermid Cycle Recovery identified a presentation defect in staged Purchase Item editing: the stable draft-line key preserved list identity, but the original Product reference was not retained when editable Item values were restored. Main isolated one bounded Ordinary Sequence unit through `D_OPS_STAGE.md`, `E_DDC_STAGE.md`, and `F_DSN_STAGE.md`. Codex materialized commit `409e5f1e013a282165efd5f31bed17a396ad6543`.
+
+## Materialized responsibility
+
+`_PurchasePageState` now owns three associated edit-state values:
+
+```text
+_editingKey
+_editingReference
+_editingProductLabel
+```
+
+Entering edit mode copies the staged line key, its `ProductReference`, and its Product label into presentation-local edit state. Saving calls a dedicated edit path that rebuilds the `PurchaseItemDraft` values from editable controls while reusing the retained reference and label. Saving, removing the line currently being edited, and successful Purchase registration clear the associated edit state. Product selection is also cleared after line save to prevent a stale dropdown object from competing with staged-line identity.
+
+This correction remains presentation-local. It changes no application contract, domain identity, repository transaction, Drift table, migration, composition, or navigation responsibility.
+
+## Evidence and limits
+
+Direct regression evidence exists for `ExistingProductReference`: the widget test creates one Product, stages and edits it, changes package count, quantity, and line total, registers, and verifies that the registered Item retains the original Product ID and that Product count remains one.
+
+Final recorded evidence:
+
+- focused app tests: 7 passed;
+- full Flutter tests: 32 passed;
+- Flutter analysis: no issues;
+- touched Dart files formatted.
+
+The common edit-state field is typed as `ProductReference`, and the save path reuses that reference without reconstructing it, so source structure supports preservation of `NewProductReference`. No separate new-Product edit regression was produced; this remains structural support rather than direct regression evidence.
+
+## Decision disposition
+
+Accepted and implemented: staged-line edit identity belongs to presentation edit state; Item values may be rebuilt without changing Product identity.
+
+Corrected: the prior existing-Product edit defect is no longer active at the materialization commit.
+
+Deferred as separate decisions: schema v3, Store identity/normalization, durable `SubmissionId`, installation–Device lifecycle, persisted drafts, query/index policy, backup/restore identity, authentication, API/Neon, and synchronization.
