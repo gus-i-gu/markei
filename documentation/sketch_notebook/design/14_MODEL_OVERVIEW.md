@@ -160,107 +160,81 @@ optional bounded Android lifecycle/ergonomics supplement
 ---
 
 <!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
-> Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above belongs to Cycle 08 or earlier reviewed project history. This regenerated segment is the current Cycle 09 Design map.
+> Temporal boundary — Intermid Cycle Recovery begins here. Content above is historical; this regenerated segment is the current Cycle 09 map.
 
-# Cycle 09 Current Design Map
+# Cycle 09 Sprint 02 Model Overview
 
-## 1. Topology
+## Current topology
 
 ```text
-Flutter shell/pages
-→ application ports/read models/failures
-→ Dart domain semantics
-← local adapters
-→ handwritten Drift v3
-→ app-private SQLite
+adaptive Flutter presentation
+→ application ports/read models/results/calculations
+→ Dart domain identity and quantity semantics
+← local Drift/platform adapters
+→ handwritten schema v4 / app-private SQLite
 ```
 
-Generated Drift is derived. Python/PySide6 and its database remain protected.
+Generated Drift is derived evidence. Python/PySide6 and its database remain protected.
 
-## 2. Implemented local expansion
+## Stable implemented model
 
-- Home-first responsive navigation and static offline descriptors.
-- transient `personal-cycle-v1` Lists projections; no List aggregate/cache.
-- People, PaymentMethods and AccountPreferences.
-- nullable historical Purchase references.
-- null BULK package count.
-- normalization v3 with collision preflight and legacy-code backfill.
-- History selected IDs, export DTOs, deterministic CSV and PDF bytes.
-- typed application failures and exact Product lookup ports.
-- ProductId-bound detail query and bounded Catalogue detail card.
-
-## 3. Current claim states
-
-| Claim | State |
+| Concern | Current model |
 | --- | --- |
-| BULK null package count | implemented |
-| BULK price-per-unit input + half-up total | contradicted completion; UI still asks Line total |
-| active-only nickname uniqueness | contradicted; physical key also limits archived duplicates |
-| required codes for new Product commands | implemented |
-| database Product-code NOT NULL | contradicted; columns remain nullable |
-| PDF byte generation | implemented |
-| native/save-dialog PDF sharing | deferred; temporary-file/manual sharing only |
-| exact lookup application/repository ports | implemented |
-| exact lookup Catalogue presentation | partial; substring filtering remains |
-| Product detail query/card | implemented bounded form |
-| shared adaptive Product details | partial/deferred |
-| typed user-facing failures | partial across pages |
-| History checkbox/tap selection | implemented |
-| double-click/select-all conveniences | partial |
+| Person | opaque UUID + immutable Account-scoped `@nnn` code + nickname + archive state |
+| Payment Method | opaque UUID + immutable Account-scoped `#nnn` code + nickname + archive state |
+| Product | opaque UUID + mandatory immutable Account-scoped visible code + versioned exact identity |
+| Purchase occurrence | editable local civil input converted to one persisted UTC instant |
+| BULK | amount × price per same selected unit → half-up minor-unit line total |
+| Lists | Product-first, rebuildable projection; no List aggregate/cache |
+| Details | ProductId-bound application read model; shared adaptive surface incomplete |
+| Exports | stable DTOs and deterministic CSV/PDF bytes; no Purchase mutation |
 
-## 4. Ownership map
+AccountPreferences owns next visible-reference counters. Optional Purchase references remain restrictive and archive-resolvable. Product code, Product UUID, exact identity, similarity and idempotency stay separate.
+
+## Presentation state
+
+Implemented narrowly:
+
+- Home/Lists/Purchase/History/More compact navigation;
+- Purchase exact-code resolution/autofill, manual occurrence and BULK calculator;
+- Catalogue tap selection and explicit/bouble-click detail focus;
+- History checkbox/tap selection, select-all and detail focus.
+
+Partial/open:
+
+- theme is only a small Material foundation;
+- MarkeiCard/StatePanel/StatusChip exist but pages do not consume them;
+- Home and Lists were not materially rebuilt;
+- Lists lacks relational table/card/filter hierarchy;
+- Catalogue and History remain standard list compositions;
+- Purchase remains a ~1,020-line long form; Catalogue ~377 and History ~330;
+- History double-click focuses detail, contradicting selection-toggle intent;
+- target images 01–05 are not visually materialized;
+- native sharing and complete responsive/accessibility validation are absent.
+
+## Ownership
 
 ```text
 presentation
-    destination, draft, selected IDs, detail-card visibility, feedback
+    navigation, drafts, transient selection/detail/filter state
 
 application
-    Home descriptors, projections, lookups, references/preferences,
-    export DTOs/encoders, typed failure vocabulary
+    exact lookup, occurrence parsing, BULK calculation,
+    projections, export/read DTOs, typed results
 
 domain
-    Product normalization/identity, dimensional quantity,
-    BULK package-count meaning, local-reference values
+    Product identity, reference values, quantity/unit invariants
 
-repository/handwritten Drift
-    schema v3, migration/collision preflight, transactions,
-    reference lifecycle, query translation and export retrieval
+repository / handwritten Drift
+    schema v4, migration/backfill/counters, FKs,
+    Account scoping, joins, transactions
 ```
 
-## 5. Stable boundaries
+## Evidence and next route
 
-- registered facts remain authoritative; Lists and exports are rebuildable.
-- Product UUID, visible code, exact identity, similarity and idempotency remain distinct.
-- optional references preserve archived historical labels.
-- BULK stores no competing price-per-unit fact.
-- exports do not mutate Purchases or upload data.
-- local event/pending structures remain synchronization preparation only.
+Source range: `5ddff3c5eae582f0e25c1ecd0cfb3fe962026cf3..1d817972aea0229c9f109f236f4d224671927aab`. J accepts the functional/schema increment and rejects visual closure. Android, native share, Windows workflow acceptance, accessibility, screenshot parity and release readiness remain unvalidated.
 
-## 6. Required correction units
+Next proposed Design unit, inactive until Main authorization: expand shared tokens/primitives; consume them across pages; recompose Home, relational Lists and Catalogue; split/recompose Purchase; recompose History and resolve double-click; then validate expanded/compact screenshots, Windows workflow and accessibility.
 
-1. correct nickname uniqueness to active-only semantics without losing archive history;
-2. implement BULK price-per-unit input and explicit half-up line-total derivation;
-3. expose exact code/identity lookup in Catalogue presentation;
-4. introduce shared adaptive Product-details route/pane/sheet;
-5. complete typed failure mapping;
-6. decide save destination and native share adapter;
-7. add remaining History selection conveniences.
+Recovery: Architecture §21; Decision Log Event 21; checkpoint `09_DESIGN_STATE.md`; C/F/I and post-Codex J.
 
-## 7. Evidence limits
-
-Repository truth: handwritten source at `e37cb700feeca4001cc7835b584c46bb81926af3`.
-
-Reported evidence: 39 Flutter tests, clean analysis, Windows release build/bounded launch, migration/reopen tests and five Python regressions. Android, native share, complete manual/accessibility behavior, injected migration failure and release acceptance are not established.
-
-## 8. Recovery pointers
-
-- Canonical: `design/01_ARCHITECTURE.md`, section 21.
-- History: `design/03_DECISION_LOG.md`, Event 19.
-- Checkpoint: `design/09_DESIGN_STATE.md`, Cycle 09 segment.
-- Evidence: C/F/I and post-Codex `J_MAIN_STAGE.md`.
-
-
----
-
-<!-- TEMPORAL_MARKER:C09-S02-ENTRY-2026-07-14 -->
-> Temporal boundary — Cycle 09 Sprint 02 begins here. Content above is the reviewed pre-Sprint-02 baseline and retains its existing authority and semantic role. Content below belongs to Sprint 02 investigation, current-UI archival evidence, aesthetic reconciliation, staging, implementation, and later closure. This marker alone authorizes no source change, semantic promotion, or methodology revision.
