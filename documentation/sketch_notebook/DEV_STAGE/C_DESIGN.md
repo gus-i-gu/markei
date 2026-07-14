@@ -1,213 +1,225 @@
-<!-- TEMPORAL_MARKER:C09-S02-ENTRY-2026-07-14 -->
-> Sprint 02 Design stage. Replaces prior active C cache; earlier Design history remains in permanent observational files. This report is investigative, not Codex authority.
+<!-- TEMPORAL_MARKER:C10-ENTRY-2026-07-14 -->
+> Cycle 10 Design investigation. Replaces the prior active C cache; permanent Design memory retains Cycle 09 history.
 
-# C_DESIGN — Cycle 09 Sprint 02 Design Investigation
+# C_DESIGN — Cycle 10 Synchronization Architecture Investigation
 
 Sequence: FLX-INV-02
-Role: Design lead [D]
-Branch/baseline: `intermid-cycle-recovery`, after `c67d573f1335ffd55c659a9ee795982ca72c2c32`
-Evidence: screenshots 6–10=current; mockups 1–5=target proposal; handwritten Flutter/source/tests; current I/J/checkpoints
-Writable surface: this file only
-Prohibited: source, schema, dependencies, permanent memory, D/E/F/J
-Evidence boundary: repository/static design investigation; no tests or runtime rerun
+Role: Design/Architecture [D]
+Branch/baseline: `intermid-cycle-recovery` / `0b3c8320069723ff94617bd6d83630684993c4f3`
+Authority: investigation and Main handoff only
+Writable surface: `DEV_STAGE/C_DESIGN.md`
+Evidence: methodology; 00/06/J; Design memory; handwritten Drift/repositories/tests; v1 fixtures; official Neon/PostgreSQL and candidate-runtime docs
+Prohibited: source/config/schema/dependencies/permanent memory/J/A/B; external resources; secrets; Cycle 11 UI
 
-## 1. Current topology and target
+## 1. Methodology retained
 
-Current: seed-color Material theme, standard AppBar, rail ≥720 px, bottom bar below, `IndexedStack`, long ListView/Column forms, standard fields/ListTiles/Cards, sparse hierarchy and rigid Rows. Screenshots add pale surfaces, unused desktop space, overflow and weak selection/action feedback.
+Project memory outranks chat memory. Design owns responsibility, trust, identity, migration and convergence analysis, not Operational validation or implementation authority. PRC-01 separates implemented, prototype-only, contradicted, prospective, deferred and unvalidated claims. Source/executable evidence may correct prose; generated Drift remains derived. C is staged evidence for Main, not canon or D/E/F.
 
-Target proposal: cream/white surfaces, dark-green primary, lavender secondary, stronger hierarchy/spacing, tables/cards, chips, explicit states, accessible selection, desktop panes and mobile cards/sheets. It is not accepted architecture.
-
-Preserve dependency direction:
+## 2. Current architecture inventory
 
 ```text
-presentation tokens/components/adaptive pages
-→ application ports/read models/typed results
-→ domain semantics
-← adapters
-→ handwritten Drift
+Flutter presentation
+→ application commands/query ports/read models
+→ independent Dart domain
+← local Drift adapters
+→ handwritten schema v4 / app-private SQLite
 ```
 
-Widgets never consume Drift rows.
+Usable now:
 
-## 2. Visual-system alternatives
+- `Devices(id, accountId, nextSequence, createdAt)`;
+- immutable `SyncEvents`: EventId, AccountId, DeviceId, DeviceSequence, type, payload version/JSON, occurrence, content hash;
+- unique `(accountId, deviceId, deviceSequence)`;
+- `PendingEvents(eventId, state, enqueuedAt)` outbox membership;
+- `SyncState(accountId, nullable accountCursor, updatedAt)`;
+- atomic Purchase + Items + Event + PendingEvent transaction;
+- file-reopen persistence, sequence continuity and rollback tests;
+- shallow `purchase.registered`/aggregate protocol examples.
 
-| Alternative | Fidelity | Maintenance/test/responsive/accessibility | Migration/risk | Decision |
-| --- | --- | --- | --- | --- |
-| Expanded ThemeData + page-local widgets | medium | duplicated page rules; inconsistent states | cheap start; drift/oversized pages | reject as final |
-| Markei tokens + reusable components | high | central semantics, widget/golden testing, no dependency | moderate incremental extraction | recommend |
-| Tokens + components + adaptive compositions + packages | highest potential | good only if packages stay behind adapters | dependency/license/platform risk | conditional |
+Handwritten `local_database.dart` and repository transactions are authority. `local_database.g.dart` is derived.
 
-Use Flutter SDK first. Do not add a UI framework. Consider `intl` only if locale/date formatting cannot remain small and deterministic; consider native share separately. Reject table/layout packages until SDK widgets fail a named requirement.
+## 3. Prototype-only and contradictions
 
-## 3. Proposed token model
+- `local-account` is not authenticated identity.
+- Device bootstrap scans only 20 Account Devices and selects the earliest UUID v4; it does not identify this installation.
+- One app-private database can contain historical Devices, but has no singleton installation metadata pointing to exactly one current Device.
+- PendingEvent has no attempts, next-attempt, lease, terminal rejection or acknowledged cursor.
+- SyncState has one cursor, but no inbox/applied-event ledger.
+- Event envelope can upload immutable facts, but alone cannot safely deduplicate crash-replayed downloads.
+- v1 protocol examples are descriptive and shall not control newer payload versions without reconciliation.
+- EventId identifies the immutable event; reusing it as a request/retry identity cannot distinguish one batch attempt from its events.
+- current Account/Product/reference codes were designed locally; server allocation/convergence is unresolved.
+- local outbox preparation is not authentication, upload, download, acknowledgement or convergence.
+
+Must migrate before networking: authenticated Account mapping; installation→current Device invariant; inbox/applied-event state; durable outbox attempt/result fields or companion table; cursor/apply transaction; protocol fixtures/version rules. Do not retrofit these through generated code.
+
+## 4. Proposed topology and trust boundaries
 
 ```text
-colors: canvas cream; surface white; secondary lavender; primary dark green;
-        semantic storage/success, shortage/warning, market/due, error,
-        unavailable/disabled; all contrast-tested
-type: display 32/40; title 24/32; section 18/24; body 14/20; label 12/16
-space: 4, 8, 12, 16, 24, 32, 48
-radius: 8 controls/chips; 12 cards; 16 panels
-surface: border-first; subtle shadow only for elevated/selectable content
-icons: Material icons, 20 inline / 24 navigation; icon+label for critical actions
-heights: 40 compact, 48 standard controls, 56 touch/navigation minimum
-breakpoints: compact <600; medium 600–1023; expanded ≥1024
-adaptation: expanded table/pane → medium wrapped table/card → compact cards/sheet
-states: explicit selected, hover, focus-visible, pressed, disabled, error
+Flutter + authoritative local Drift
+↕ authenticated HTTPS, versioned contracts
+controlled application API
+↕ least-privilege server role
+Neon-hosted PostgreSQL coordination store
 ```
 
-Main must freeze exact colors, contrast, density and dark-mode scope.
+Flutter never receives database owner/migration/Neon API credentials and never connects to Postgres. Client bearer/session material belongs in platform-secure storage when selected. API verifies token, resolves immutable Account, authorizes Device, validates schema/hash/sequence, performs idempotent append/cursor transaction, filters downloads, records acknowledgement and returns typed outcomes. Neon/Postgres owns durable constraints, transactions and indexes, not product meaning.
 
-## 4. Reusable component architecture
+Provider environments should be isolated. Neon branches are copy-on-write and may support development/test/temporary environments; databases belong to branches. Runtime and migration roles must be distinct and least-privilege. RLS is defense in depth only, never a substitute for API authorization. Official evidence: Neon branching/databases/roles/pooling docs; PostgreSQL 18 row security, INSERT/ON CONFLICT and transaction-isolation docs.
 
-Presentation-only `lib/app/design/`: `MarkeiTokens`, Theme extension, spacing/type helpers.
-Presentation-only `lib/app/widgets/`:
+## 5. Account, installation and Device alternatives
 
-- `MarkeiAdaptiveShell`, desktop sidebar/rail, compact navigation;
-- `MarkeiPageHeader`, toolbar, section/surface card;
-- summary/stat card, filter bar/filter sheet;
-- responsive data view: desktop table + mobile card list;
-- status chip; loading/empty/error/unavailable panels;
-- selection toolbar; Product row/card; Purchase review table;
-- reference selector showing visible ID + nickname;
-- typed failure banner;
-- local date/time fields;
-- currency/amount/unit-price fields.
-
-Components accept immutable application read models/callbacks. Pages own transient selection/controllers; application owns query/command contracts; domain owns validation/calculation; adapters own persistence/platform IO.
-
-Likely paths: new `lib/app/design/*`, `lib/app/widgets/*`; refactor `markei_app.dart` and pages incrementally. Tests: `test/app/design_system_test.dart`, component widget tests, existing `markei_app_test.dart`.
-
-## 5. Interaction contracts
-
-| Context | Tap/click | Double-click desktop | Explicit/keyboard | Details |
-| --- | --- | --- | --- | --- |
-| Catalogue browse | select row only | primary selection confirmation only when picker context exists | Select button, Enter/Space | separate Details button |
-| Purchase picker | select Product | confirm selection; never add Item | Select/Enter | separate Details |
-| History | toggle selection + reveal detail | toggle/confirm selection only | checkbox, Space, toolbar | expand/detail action |
-
-Deterministic rule: double-click repeats the context’s primary selection action; it never opens details and never adds an Item. Details always uses its own action. Adding Item requires explicit Add/Save.
-
-Selected Product/Purchase IDs are transient page state. `IndexedStack`/shell preserves Purchase draft. Review is a state over the same draft; Back to edit retains values. Desktop may show list+detail pane; compact opens route/sheet and returns without changing selection.
-
-Tests: tap/double-click/keyboard equivalence, details isolation, selection persistence, review/back, navigation draft preservation, narrow/wide transitions.
-
-## 6. Purchase date/time
-
-| Alternative | Correctness/cost | Decision |
-| --- | --- | --- |
-| one UTC occurrence instant from editable local date/time | smallest; current schema compatible | recommend |
-| persist local date/time + offset/zone metadata | strongest historical civil-time evidence; schema/migration cost | defer |
-| current `now()` with cosmetic editors | misleading; ignores edits | reject |
-
-Keep `Purchases.occurrenceTime` UTC. Page initializes local date/time to now; date/time pickers edit one local `DateTime`; command receives `.toUtc()`. Review shows `dd/MM/yyyy` and `HH:mm`; History converts stored UTC to current local display.
-
-DST: reject nonexistent local times where detectable; document ambiguous repeated-hour limitation because no zone ID is stored. Tests freeze timezone/clock where feasible, verify local→UTC→display, date rollover, review/back, reopen. No schema migration.
-
-Paths: `purchase_page.dart`, optional application clock abstraction, register command/widget tests.
-
-## 7. Lists projection repair
-
-Current `LocalQueryRepository.productListProjection()` already begins with Products and left-joins Items/Purchases in one query. `personalCycleV1` requires two distinct local purchase dates; one valid Purchase therefore displays `Not enough history`. The read model currently omits latest occurrence, amount/unit, derived unit price, Store and Person, so fetched relations appear absent.
-
-Recommended state algebra:
-
-```text
-NoPurchaseHistory
-LearningHistory(observationCount, latest facts)
-IncompatibleHistory(reason, latest facts)
-AvailableCycle(...)
-ProjectionQueryFailure(AppFailure)
-```
-
-Bounded query:
-
-1. fetch all Account Products;
-2. one joined/batched observation query by Product with Purchase, Item, optional Store/Person;
-3. group in adapter; retain zero-history Products;
-4. choose latest deterministically by occurrenceTime then Purchase/Item ID;
-5. expose latest Purchase, amount/unit, line total and derived unit price;
-6. feed compatible distinct-day dates into pure cycle function;
-7. apply Storage/Shortage/Market filters only to available cycles; All shows every state.
-
-Avoid N+1. Optional Store/Person filters must be application parameters and account-scoped; Main must decide whether active in Sprint 02. No List/cache table.
-
-Paths: `application/product_lists.dart`, `local_query_repository.dart`, `lists_page.dart`.
-Tests: zero/one/two purchases; same-day observations; incompatible units/currencies; Product without Item; deterministic latest; filters; query failure; query-count/bounded SQL; responsive row contents.
-
-## 8. Person and Payment Method visible IDs
-
-| Option | Schema/migration | Readability/privacy/archive | Decision |
+| Alternative | Cost/security/offline | Rollback/evidence | Recommendation |
 | --- | --- | --- | --- |
-| shortened UUID | none | opaque, collision/display/privacy risk | reject as durable UI ID |
-| immutable generated visible code | columns + account uniqueness + backfill | readable, stable in History/export; archive-safe | recommend |
-| user-defined code | columns + collision/correction UX | meaningful but higher support cost | reject for Sprint 02 |
-| nickname only | none | ambiguous; fails ID+nickname requirement | reject |
+| Auth account + server-enrolled Device; local singleton InstallationMetadata references Device | local migration + enrollment API; clear revocation/history | additive tables; prove reinstall, restore, concurrent bootstrap, revocation | recommend, high |
+| derive Device from hardware/app installation | low schema; unstable/privacy/platform risk | hard to repair; rejected | reject |
+| choose any historical UUID Device on startup | no migration; forgery/sequence collision | current heuristic only | reject |
 
-Recommend typed codes (`P-0001`, `PM-0001` or Main-approved format), immutable and Account-scoped unique; opaque UUID remains FK. Optional/local-only behavior unchanged. Archive never reuses a code. Exports/History use `code — nickname`; Settings may copy but not edit code.
+InstallationId is local app-instance metadata, not DeviceId. Device is server-enrolled event origin; historical/revoked Devices remain addressable. Reinstall/data clear creates or recovers identity only through an explicit pairing policy. Authentication provider and pairing UX remain Main decisions.
 
-Schema unit: add nullable-then-backfilled visible code columns, unique indexes, deterministic v3 fixture backfill, then require in new writes. This is separate from UI restyle and active-only nickname correction. Main may defer the schema unit; do not expose UUID as a substitute.
+## 6. Event, SubmissionId, sequence and cursor
 
-## 9. BULK pricing
+Recommended identities:
 
-Contract:
+- EventId: immutable UUID, globally deduplicates one domain event.
+- SubmissionId: UUID per upload request/batch attempt; repeated HTTP retry reuses it and receives the same stored response. New batching attempt uses a new SubmissionId while EventIds remain stable.
+- DeviceSequence: monotonic per enrolled Device; server unique key enforces it.
+- ServerCursor: opaque, monotonically allocated per Account when an event is accepted.
+- Inbox key: `(accountId, eventId)` plus applied cursor/result.
+- Device acknowledgement: greatest contiguous applied cursor, not “last downloaded”.
+
+Sequence policy alternatives:
+
+1. require exact next sequence; detects gaps but can block after lost local state;
+2. accept any greater sequence; easier recovery, weaker gap evidence;
+3. accept exact next with explicit server-authorized recovery/reset epoch.
+
+Recommend 3 prospectively, medium confidence; Main must freeze recovery semantics. Event hash mismatch for the same EventId is terminal tampering/collision, never duplicate success.
+
+## 7. First synchronized vertical slice
+
+Recommend one append-only `purchase.registered` aggregate only:
 
 ```text
-normalized amount microunits
-× price minor units per canonical KG/L/UNIT
-÷ 1,000,000
-→ line total minor units, half-up
+Device A registers offline
+→ local facts + immutable outbox event commit
+→ authenticated batch upload
+→ API validates Account/Device/version/hash and appends idempotently
+→ assigns Account cursor
+→ Device B downloads after cursor
+→ inbox insert + Purchase/Product/Store/reference apply + cursor advance in one Drift transaction
+→ rebuild/invalidate Lists from synchronized facts
+→ B acknowledges contiguous cursor
 ```
 
-Positive amount; unit compatible with measurement kind; comma/dot input normalized; price has currency minor-unit precision; COUNT remains integral under current domain.
+Exclude edits/deletes, Settings mutation, reference management, Product merge, Analytics, Household and background/realtime sync. Minimum UI is observable sync state/retry/error only; Cycle 11 owns polish.
 
-Half-up integer formula for nonnegative inputs:
-`(amountMicros * pricePerUnitMinor + 500000) ~/ 1000000`.
+The event payload must contain stable IDs and complete immutable fact data needed to apply without querying another client. Server must not manufacture Product identity. Collision between same stable ID and different content is a typed conflict requiring quarantine/manual policy.
 
-Presentation labels price as `BRL per kg/L/un`, previews derived total, and review shows amount, unit price reference and authoritative line total. Persist existing amount/unit + line total only; do not add competing unit-price truth. History derives unit price. Existing rows remain compatible; no migration.
+## 8. Server schema and API responsibility outline
 
-Paths: domain/application pure calculator (not widget), `purchase_page.dart`, review/read models. Tests: kg/g/L/ml/un conversions, comma/dot, half boundary, zero/negative/overflow, review/back/edit, persisted total.
+Logical server units, not accepted physical DDL:
 
-## 10. Incremental materialization
+- Accounts and AuthSubjects mapping;
+- Devices with Account, status, enrollment/revocation and optional key/credential reference;
+- Events with EventId, Account, Device, sequence, cursor, type/version, occurrence, payload, hash, received time;
+- Submissions with SubmissionId, Account, Device, request hash and stored response;
+- DeviceAcknowledgements with Account/Device/contiguous cursor;
+- schema migration ledger; optional rejection/quarantine record.
 
-Recommend horizontal foundation followed by vertical page slices:
+Required constraints/indexes: EventId unique; Account+Device+sequence unique; Account+cursor unique; SubmissionId scoped unique; Account+cursor download index; Device status lookup; FK Account isolation. Every event append, sequence check, cursor allocation and submission result commits atomically.
 
-1. tokens/theme + adaptive shell; app remains runnable;
-2. shared states/components; old pages may consume them gradually;
-3. Purchase date/time, selection, BULK pricing and review;
-4. Catalogue selection/details;
-5. Lists read model/query/UI;
-6. History + Settings visible-reference presentation;
-7. responsive/accessibility/Windows/Android validation.
+API surface candidate: enroll/pair Device; upload event batch; download after opaque cursor with limit; acknowledge cursor; inspect/revoke current Device. Responses return stable code, title/explanation, operation/field, retryability and outcome: applied, duplicate-equivalent, rejected-not-applied, unknown/retry-safe, auth-required, device-revoked, cursor-expired or protocol-upgrade-required.
 
-Compatibility seams: keep existing application ports until each page contract is ready; wrappers render old read models; no schema dependency for 1–5 except optional visible-reference codes; every checkpoint passes analysis/tests and preserves draft/navigation.
+## 9. API runtime alternatives
 
-Reject one broad UI rewrite: failure attribution, screenshot comparison and rollback become unsafe. Pure page-by-page without shared foundation is also rejected because styles/states drift.
+| Alternative | Responsibility/cost | Security/recovery/evidence | Position |
+| --- | --- | --- | --- |
+| TypeScript Node + Fastify-style schema routes | explicit long-lived API, strong route/schema/testing seams; moderate ops | prove host, auth middleware, transactions, connection/pooling limits | favored investigation, medium |
+| TypeScript Hono on selected serverless runtime | small portable HTTP layer; runtime coupling/cold starts | prove driver/runtime limits, transaction behavior and observability | retain |
+| provider-specific data API/direct RLS client | less custom API, but moves trust/contracts toward client/database | conflicts with controlled-API boundary | reject for first slice |
 
-## 11. Decision matrix / authority envelope
+No framework/host/ORM/migration tool is selected. Compare primary docs and a local contract harness before Main freezes D/E/F.
 
-| Unit | Source/tests | Schema/deps | Invariant | Stop condition |
-| --- | --- | --- | --- | --- |
-| tokens/shell | app/design, widgets, `markei_app.dart`; widget/golden/a11y | none | destination/draft preserved | overflow, contrast, route regression |
-| Purchase | page + domain calc/tests | none | UTC fact; one price truth | rounding/time ambiguity unresolved |
-| Catalogue | page/query ports/tests | none | select ≠ details ≠ add | shortcut conflates actions |
-| Lists | product_lists/query/page/tests | none | all Products; no N+1/cache | zero-history lost/query failure hidden |
-| visible refs | domain/app/repo/settings/history/export + migration tests | schema-bearing | UUID FK ≠ visible code; archive-safe | collision/backfill/reopen unproved |
-| validation | app tests/platform checks | package only if approved | accessible equivalents | Android/Windows blocker unclassified |
+## 10. Upload/download, retention and convergence alternatives
 
-## 12. Main decisions unresolved
+Inbox:
 
-1. exact token colors, contrast, dark mode and density;
-2. navigation grouping and breakpoint values;
-3. SDK-only versus `intl`; native-share remains separate;
-4. double-click primary action in browse-only Catalogue;
-5. adaptive details route/sheet/pane breakpoints;
-6. DST repeated-hour limitation acceptance;
-7. Lists Store/Person filters and compatible-observation rules;
-8. visible reference code format and whether schema unit enters Sprint 02;
-9. BULK price input precision/range and half-up contract;
-10. golden-test policy and screenshot acceptance sizes;
-11. horizontal-foundation + vertical-slices sequence approval;
-12. exact D/E/F unit boundaries, writable paths, rollback and platform gates.
+- ledger of applied EventIds + cursor is recommended; high confidence;
+- cursor-only is rejected because a crash/reorder/replay can reapply an event.
 
-State: investigation complete; C replaced; Codex inactive; no source/schema/dependency/permanent-memory change.
+Acknowledgement:
+
+- per-Device greatest contiguous cursor recommended;
+- “last seen” cursor rejected because gaps become invisible.
+
+Retention:
+
+1. retain immutable event log until account deletion: simplest recovery, greatest privacy/storage cost;
+2. snapshots + bounded event window after all eligible Devices acknowledge: lower retention, requires snapshot/bootstrap/expiry proof;
+3. fixed TTL regardless of Devices: simple, can strand offline Devices.
+
+Recommend investigate 2, low/medium confidence; duration and eligibility remain Main/human decisions. Expired cursor must return a typed rebootstrap requirement, never silently skip facts. Account deletion requires authentication/reconfirmation, revocation, bounded purge workflow and auditable status without logging payloads.
+
+Convergence:
+
+- append-only Purchase: same EventId must converge identically; different Purchase IDs coexist;
+- Product stable-ID/content collision: quarantine/conflict, no automatic merge;
+- visible-code/exact-identity collision across Devices: deterministic typed conflict policy remains unresolved;
+- Store/reference creation and later edits are deferred from slice one;
+- derived Lists are invalidated/rebuilt locally after apply and are never synchronized as authority.
+
+## 11. Crash safety and unknown outcomes
+
+Upload timeout after server commit is unknown locally: retry same SubmissionId/EventIds; server returns stored equivalent result. Download apply must transactionally insert inbox records, apply facts and advance cursor; crash before commit replays safely. Acknowledgement occurs only after commit. Invalid payload/version is quarantined or rejected without cursor advancement locally. Corrupt local queue/inbox requires explicit recovery/export evidence, not database reset.
+
+Synchronization is not backup. Export remains a user-controlled artifact. Neon recovery protects service data but does not replace portable local backup/restore policy.
+
+## 12. Threat model
+
+| Threat | Required boundary |
+| --- | --- |
+| privileged credentials in client | prohibit; API-only DB access, secret scanning |
+| token theft/replay | short-lived tokens, rotation/revocation, TLS, audience/issuer checks |
+| cross-Account access | server-derived Account, scoped queries/constraints; optional RLS |
+| forged Device/Event | enrollment authorization, Device status, UUID/hash/sequence validation |
+| sequence/cursor manipulation | server-owned cursor; transactional next/epoch policy |
+| duplicate/reordered delivery | Event uniqueness, inbox ledger, contiguous acknowledgements |
+| payload tampering/version mismatch | canonical hash, schema/type/version validation, size limits |
+| unsafe logs/telemetry | identifiers/status only; no tokens, credentials or purchase payloads |
+| over-retention | explicit eligibility/window/deletion policy |
+| migration privilege escalation | separate migration/runtime roles; audited one-way migrations |
+| compromised/revoked Device | deny uploads/enrollment renewal; preserve historical attribution |
+
+Rate limiting, request-size/batch limits and generic external auth errors are API responsibilities.
+
+## 13. Manual Configuration Gates
+
+- MCG-01: human creates/selects isolated Neon project/branch/database; records non-secret identifiers, region/version, runtime vs migration roles, least privileges, pooling decision and teardown. No schema yet.
+- MCG-02: human configures candidate API runtime, TLS endpoint and secret variables outside repo; proves health + DB connectivity with runtime role and migration path separately.
+- MCG-03: human provisions minimum test Account/auth subject and enrolls two controlled Devices; proves token storage/revocation without permanent secrets in fixtures/docs.
+- MCG-04: human prepares Device A/B databases, deterministic fixtures, cleanup/retention observation and teardown; no production data.
+
+Each gate pauses broad refactoring, records owner/evidence/rollback, and never commits values.
+
+## 14. Migration and rollback boundaries
+
+Local schema units must be independent: InstallationMetadata/current Device; outbox attempt/result; inbox/applied ledger; cursor/ack metadata. Each needs v4 fixture, backfill, failure/reopen/no-reset and generated-code reconciliation. Preserve historical Devices/events and the Python database.
+
+Server migrations are forward, versioned and run by migration role; runtime role cannot DDL. Deploy schema/API compatibility before client activation. Rollback is disable sync and keep local-first writes/outbox; never downgrade by deleting local facts. Provider branch/reset is environment recovery, not application migration rollback.
+
+## 15. Unresolved Main decisions
+
+1. authentication provider, Account recovery and Device pairing/reinstall policy;
+2. API framework/runtime/host, Postgres driver and migration tool;
+3. Neon project/branch/database/role layout per environment;
+4. exact InstallationMetadata and local inbox/outbox schema units;
+5. SubmissionId response-retention rule and sequence recovery/epoch policy;
+6. canonical payload/schema/hash rules and size/batch limits;
+7. Product/code/exact-identity collision and quarantine UX policy;
+8. acknowledgement eligibility, retention duration, snapshot/rebootstrap policy;
+9. RLS adoption and migration/runtime privileges;
+10. export-only versus local backup/restore;
+11. MCG evidence and Windows/Android/two-device acceptance matrix.
+
+Exit: investigation complete; first slice recommended; implementation/provider mutation inactive; Main must reconcile A/B/C before D/E/F.
