@@ -1,88 +1,137 @@
-<!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
-> Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above this marker belongs to Cycle 08 or earlier reviewed project history. Content below belongs to Intermid Cycle Recovery and later reconciliation.
-
-
----
-
-# F_DSN_STAGE — Product-Reference-Preserving Edit
+# F_DSN_STAGE — Cycle 09 Architecture and Materialization Contract
 
 > Sequence: FLX-ORD-01 — Ordinary Sequence
-> Status: CONTROLLING with D_OPS_STAGE.md and E_DDC_STAGE.md
-> Authority: Main Chat
-> Codex report destination: DEV_STAGE/I_DSN_CODEX.md
+> Unit: C09-U02
+> Status: ACTIVE — CODEX IMPLEMENTATION AUTHORIZED WITH D/E
+> Report: replace `DEV_STAGE/I_DSN_CODEX.md` with a ≤250-line C09 report
 
-## Authorized source unit
+## 1. Dependency direction
 
-Modify only the smallest necessary subset of:
-
-```text
-clients/markei_flutter/lib/app/pages/purchase_page.dart
-clients/markei_flutter/test/app/markei_app_test.dart
-```
-
-Additional source paths require a stop and Main clarification.
-
-## Required invariant
-
-When a staged line enters edit mode, edit state must retain:
-
-- the line key;
-- the original `ProductReference`;
-- the original Product label.
-
-Saving the edit must rebuild only the Item values from the editable controls and
-must reuse the retained reference and label. It must not route through new
-Product creation, similarity checks, the current Product dropdown selection, or
-a newly constructed Product draft.
-
-Both `ExistingProductReference` and `NewProductReference` must remain
-preservable. Saving or removing the edited line must clear all associated edit
-state coherently.
-
-## Preferred shape
-
-Keep the correction presentation-local and reversible. A small retained
-`_DraftLine`, reference/label edit state, or equivalent explicit edit model is
-acceptable. Prefer one clear save-edit path over conditional reconstruction
-from visible Product controls.
-
-Do not change application contracts, domain identity types, Drift tables,
-migration logic, repository transaction boundaries, composition, or navigation.
-
-## Regression contract
-
-Focused coverage must exercise the public widget behavior:
-
-1. make an existing Product available;
-2. select and stage it;
-3. edit the staged line;
-4. change at least one Item value;
-5. save through the edit action;
-6. register;
-7. verify the persisted/registered Item uses the same Product ID;
-8. verify Product count/identity did not duplicate.
-
-Retain the existing six focused scenarios.
-
-## Report
-
-Append the Design result to:
+Preserve:
 
 ```text
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+Flutter presentation
+→ application commands/query/export ports
+→ independent Dart domain
+← local repository/export/share adapters
+→ Drift v3 / app-private SQLite
 ```
 
-Describe the chosen edit-state ownership, invariant evidence, changed paths, and
-any deviation. I is evidence, not canon.
+Widgets must not receive Drift rows or raw SQLite exceptions. Generated Drift code is
+derived; change handwritten schema/migration authority and regenerate. Keep composition
+explicit and Python/PySide6/database isolated.
 
-## Stop conditions
+## 2. Authorized surfaces
 
-Stop before mutation or further expansion if the correction appears to require:
+Codex may modify the smallest coherent subset under:
 
-- schema or migration change;
-- Product merge/correction semantics;
-- Store identity work;
-- durable submission identity;
-- persisted drafts;
-- synchronization architecture;
-- changes outside the authorized source paths.
+```text
+clients/markei_flutter/lib/app/
+clients/markei_flutter/lib/application/
+clients/markei_flutter/lib/domain/
+clients/markei_flutter/lib/infrastructure/local/
+clients/markei_flutter/test/
+clients/markei_flutter/pubspec.yaml
+clients/markei_flutter/pubspec.lock
+clients/markei_flutter/android/
+clients/markei_flutter/windows/
+```
+
+It may regenerate existing Drift artifacts and add tests/fixtures within established test
+structure. Android/Windows edits are limited to dependency-required save/share integration.
+New Flutter dependencies are limited to PDF generation, explicit file save and OS share
+capabilities; inspect maintenance, license and SDK/platform support first.
+
+## 3. Application contracts
+
+Add typed contracts/read models for:
+
+- destination registry and static Home descriptors;
+- exact Product lookup by code and identifying draft;
+- immutable Product detail by ProductId;
+- typed application failures/results;
+- Person/Payment Method list/create/rename/archive/reactivate;
+- optional reference fields in registration command/result/history;
+- versioned PersonalCycleResult and ProductListProjection;
+- selected-Purchase Export DTO graph;
+- CSV encoding, PDF rendering, save/share outcomes.
+
+Presentation owns draft state, selected destination, History selected-ID set and temporary
+filters. Domain/application owns identity, validation, lifecycle, projections and results.
+
+## 4. Schema v3
+
+Add dedicated Account-owned People and PaymentMethods with UUID, nickname,
+normalizedNickname, active/archive state and timestamps. Add nullable Person/PaymentMethod
+FKs to Purchases, nullable packageCount for BULK Items, and typed Account preference with
+shortageThresholdDays default 5.
+
+References use restrictive/no-action history-preserving behavior. Archive hides ordinary
+selection but retains History/export resolution. Backfill optional refs null. Do not store
+payment credentials. Do not physically delete referenced rows.
+
+Introduce Product normalization version 3:
+
+- PACKAGED key: normalized name/brand/mode + canonical package quantity/unit;
+- BULK key: normalized name/brand/mode, excluding package facts/dimension;
+- visible Product code remains separately Account-scoped unique;
+- deterministically backfill legacy null codes from immutable Product IDs, collision-safe;
+- preflight v2 rows and stop/report exact-key collisions; never auto-merge or rewrite Items.
+
+Build a sequential v2→v3 migration with ledger update, transactional failure, fresh-create,
+representative fixture, reopen and no-silent-reset tests.
+
+## 5. Quantity and money
+
+One presentation parser accepts comma/point and yields locale-neutral fixed decimals.
+Domain remains MASS→KG, VOLUME→L, COUNT→UNIT at scale 1e6. Reject fractional COUNT and
+ambiguous mixed separators.
+
+PACKAGED requires positive package count. BULK package count is null/not applicable.
+BULK accepts amount and price per canonical unit; calculate line total in integer minor
+units with documented half-up rounding. Do not persist a second competing price truth.
+
+## 6. Pages and adaptive behavior
+
+- Home is startup index 0; card content is static configuration.
+- Use typed destinations; preserve `IndexedStack` state where useful.
+- Catalogue owns Product list/search/create; shared Product detail route adapts to compact
+  full route and wide pane/sheet.
+- Purchase uses optional reference selectors and mode-specific quantity controls.
+- Settings manages People, Payment Methods and shortage threshold.
+- Analytics/Household are disabled; Guide/Docs bounded static pages.
+- Explicit action/tap/keyboard opens details; desktop double-click is convenience only.
+
+## 7. Lists v1
+
+Create a targeted observation query returning Product display/code and ordered Purchase
+Item dates/amount/price without per-row N+1 queries. Pure Dart implements J's
+`personal-cycle-v1`, explicit unavailable reasons, four views and approximate total.
+Do not store cycle/status/cache. Registration and threshold changes invalidate projections.
+Measure realistic fixtures before adding indexes; report any justified index separately.
+
+## 8. History and export/share
+
+History owns transient `Set<PurchaseId>`. Checkboxes/tap/keyboard and clear/select-all are
+primary. Use explicit double-click only on pointer platforms.
+
+Export DTO: Purchase ID/time, Store, optional reference labels, currency/total and ordered
+Items with Product code/name/brand, quantities and totals. CSV is UTF-8, deterministic,
+properly quoted and one row per Item with repeated Purchase columns. PDF groups selected
+Purchases. Renderer, file creation and share adapters are separate. Handle cancellation,
+cleanup and failure; never upload. Move to Analytics/edit/delete remain disabled.
+
+## 9. Architectural stop conditions
+
+Stop before broadening if implementation requires Store redesign, Product merge/correction,
+SubmissionId, persisted drafts, projection cache, error DB, sync/API, registered-Purchase
+mutation, generic settings ownership, or changes outside the authorized tree except reports.
+
+Stop on unresolved migration collisions, loss of atomic registration, loss of historical
+references, unsupported share dependencies, or unbounded query design.
+
+## 10. I report
+
+Replace I with a concise architecture report: chosen structures, schema/migration design,
+dependency choices, changed paths, invariants/tests, deviations, remaining risks and exact
+stop conditions encountered. Evidence is not permanent promotion. Maximum 250 lines.

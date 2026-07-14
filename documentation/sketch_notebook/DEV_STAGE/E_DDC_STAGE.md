@@ -1,48 +1,114 @@
-<!-- TEMPORAL_MARKER:INTERMID-CYCLE-RECOVERY-ENTRY-2026-07-14 -->
-> Temporal boundary — Intermid Cycle Recovery begins here (2026-07-14). Content above this marker belongs to Cycle 08 or earlier reviewed project history. Content below belongs to Intermid Cycle Recovery and later reconciliation.
-
-
----
-
-# E_DDC_STAGE — Semantic Guardrails for Edit Correction
+# E_DDC_STAGE — Cycle 09 Semantic and Product-Language Contract
 
 > Sequence: FLX-ORD-01 — Ordinary Sequence
-> Status: CONTROLLING with D_OPS_STAGE.md and F_DSN_STAGE.md
-> Authority: Main Chat
-> Codex report destination: DEV_STAGE/H_DDC_CODEX.md
+> Unit: C09-U02
+> Status: ACTIVE — CONTROLLING WITH D/F
+> Report: replace `DEV_STAGE/H_DDC_CODEX.md` with a ≤250-line C09 report
 
-## Objective
+## 1. Core distinctions
 
-Preserve the implemented distinction between Product identity and editable
-Purchase Item values while Codex materializes the bounded correction.
+Implementation and tests must preserve:
 
-## Required semantic behavior
+- Product UUID ≠ visible Product code ≠ exact identification set;
+- Product identification ≠ retry idempotency;
+- exact match/collision ≠ similar Product;
+- Product facts ≠ Purchase Item facts;
+- draft Item ≠ registered read-only Purchase Item;
+- package quantity ≠ packages bought ≠ amount bought;
+- amount bought ≠ BULK price per unit ≠ line total;
+- Purchase facts ≠ personal Lists estimates;
+- local Payment Method nickname ≠ payment credential;
+- project evidence ≠ learner maturity.
 
-- A Product reference identifies which Product the staged Item concerns.
-- Quantity, unit, package count, and line total are editable Item values.
-- Editing those values must not imply Product creation, replacement, similarity
-  resolution, or identity change.
-- A stable list key is not evidence of preserved Product identity.
-- A passing regression is project evidence only; it is not learner-maturity
-  evidence.
+Never auto-merge Products. `Create anyway` is available only for advisory similarity,
+never exact code/identity collision.
 
-Existing user-facing language may be adjusted only if required to make the edit
-action truthful and unambiguous. Do not introduce claims of synchronization,
-backup, durable idempotency, or production acceptance.
+## 2. Required visible vocabulary
 
-## Report
-
-Append a concise evidence note to:
+Navigation:
 
 ```text
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+Home · Lists · Purchase · History · Catalogue
+Analytics (PIN) · Household (PIN) · Guide · Documentation · Settings
 ```
 
-Record the vocabulary or behavior touched and the conceptual distinction proved
-by the regression.
+Use `Catalogue` for the destination and `Product` for the entity. Settings collection is
+`People`; Purchase field is `Person`. Use `Payment Methods` / `Payment Method`, `Nickname`,
+`Not assigned`, `Active`, `Archived`, and `Nickname (archived)` in History where needed.
 
-## Prohibitions
+Optional helper:
 
-Do not update KANBAN status, create canonical concepts, promote Didactic memory,
-rewrite lessons, change methodology, or expand into Store/schema/synchronization
-teaching. H is evidence, not canon.
+> People and Payment Methods are optional labels stored locally on this device. A Payment
+> Method stores no card number, bank detail or payment credential.
+
+Units are `kg`, `g`, `L`, `ml`, `un`. Explain comma/point input with `1,5` and `1.5`.
+PACKAGED uses Package quantity and Packages bought. BULK uses Amount bought and Price per
+unit; do not show Packages bought for BULK.
+
+## 3. Home truth boundary
+
+Cards: Recent updates, Scheduled updates, What Markei is for, Mid-term perspectives, How
+Markei works, For developers. Copy may be polished but must state only:
+
+- one evolving Flutter codebase for desktop/mobile;
+- local offline-first storage and normal use without network;
+- local use currently sends no user data or usage analytics to the developer;
+- Lists/comparisons are derived from user-registered history;
+- sync, Analytics, Household, public distribution and GitHub link are future/unavailable.
+
+Do not claim platform parity, backup, synchronization, measured inventory or release date.
+
+## 4. Lists language
+
+- Storage: estimated to remain available from personal Purchase history.
+- Shortage: approaching estimated next-Purchase time.
+- Market: estimated personal Purchase cycle has passed.
+- All: all Products, including unavailable estimates.
+- Not enough history: no reliable cycle yet.
+
+Show algorithm/version only in details/help, not as ordinary jargon. Always pair expected
+dates/totals with `Estimate`, `Approximate`, or `Based on your history`.
+
+## 5. Product lookup and details
+
+Visible prompts must distinguish:
+
+- `Product code` — exact code lookup;
+- `Product details` — exact identifying fields;
+- `This Product already exists. Use the existing Product.`;
+- `This Product code is already used...`;
+- `A similar Product was found. Compare the details...`;
+- `More than one Product matches...` only when ambiguity is real.
+
+Technical UUIDs, normalization keys, Drift rows and raw exceptions stay hidden.
+
+## 6. Error/recovery contract
+
+Every user-facing failure answers what happened, responsible field/operation, safe next
+action, and whether the operation is known not applied, known applied, or unknown.
+
+Required distinctions include invalid unit/decimal/quantity, missing identity field,
+code collision, exact Product exists, ambiguous lookup, missing Store, persistence failure
+and unknown Purchase outcome. Known rollback says the Purchase was not registered and the
+draft remains. Unknown outcome tells the user to keep the draft and check History before
+retrying. Never expose raw database exceptions.
+
+## 7. History/export language
+
+Selection is accessible; double-click is only a shortcut. Actions:
+
+- `Move to Analytics` — disabled/planned;
+- `Export CSV` — active;
+- `Share list (PDF)` — active only when generation/save/share succeeded;
+- `Edit` and `Delete` — disabled/not supported.
+
+Export copy must state destination/cancellation/failure truthfully and never imply upload.
+
+## 8. Evidence and H report
+
+Codex may change UI copy/tests needed for this contract. It must not update KANBAN maturity,
+promote permanent Didactic memory, invent final learning evidence or claim platform
+acceptance from widget tests.
+
+Replace H with a concise report of vocabulary changed, conceptual invariants exercised,
+tests supporting them, unresolved copy, and evidence limits. Maximum 250 lines.
