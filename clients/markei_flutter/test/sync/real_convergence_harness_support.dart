@@ -182,6 +182,44 @@ Future<ApiProcess> startLabApi(
   );
 }
 
+Future<Map<String, Object?>> runRecoveryLab(
+  Directory repo,
+  String accountId,
+  String deviceId,
+  String runtimePassword,
+  String action, {
+  Map<String, String> environment = const {},
+}) async {
+  final npm = Platform.isWindows ? 'npm.cmd' : 'npm';
+  final result = await Process.run(
+    npm,
+    ['run', 'lab:recovery', '--', action],
+    workingDirectory: '${repo.path}/services/markei_sync_api',
+    environment: {
+      'MARKEI_SYNC_DATABASE_URL':
+          'postgres://markei_migrator:$runtimePassword@127.0.0.1:55432/markei_sync_lab',
+      'MARKEI_SYNC_LAB_ACCOUNT_ID': accountId,
+      'MARKEI_SYNC_LAB_DEVICE_ID': deviceId,
+      'MARKEI_SYNC_LAB_MIN_RETENTION_MS': '1',
+      'MARKEI_SYNC_LAB_RECENT_CONTACT_MS': '60000',
+      'MARKEI_SYNC_LAB_CHUNK_BYTES': '256',
+      ...environment,
+    },
+  );
+  if (result.exitCode != 0) {
+    throw StateError('recovery lab failed: ${result.stderr}');
+  }
+  final lines = (result.stdout as String)
+      .trim()
+      .split('\n')
+      .where((line) => line.trim().startsWith('{'))
+      .toList(growable: false);
+  if (lines.isEmpty) {
+    throw StateError('recovery lab produced no JSON: ${result.stdout}');
+  }
+  return jsonDecode(lines.last) as Map<String, Object?>;
+}
+
 final class ApiProcess {
   const ApiProcess(this.process, this.uri);
   final Process process;

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://markei.local/contracts/shared_beta/recovery_v1/recovery_snapshot.schema.json",
+  "title": "Markei recovery snapshot format 1 manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "accountId",
+    "snapshotId",
+    "formatVersion",
+    "coveredThroughCursor",
+    "compatibleEventTypes",
+    "compatibleSchemaVersion",
+    "chunks",
+    "totalBytes",
+    "totalHash",
+    "factCounts"
+  ],
+  "properties": {
+    "accountId": { "type": "string", "format": "uuid" },
+    "snapshotId": { "type": "string", "format": "uuid" },
+    "formatVersion": { "const": 1 },
+    "coveredThroughCursor": { "type": "string", "pattern": "^c10b:[1-9][0-9]*$" },
+    "compatibleEventTypes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["eventType", "payloadVersion"],
+        "properties": {
+          "eventType": { "const": "purchase.registered" },
+          "payloadVersion": { "const": 3 }
+        }
+      },
+      "minItems": 1
+    },
+    "compatibleSchemaVersion": { "const": 6 },
+    "chunks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["index", "length", "hash"],
+        "properties": {
+          "index": { "type": "integer", "minimum": 0 },
+          "length": { "type": "integer", "minimum": 1 },
+          "hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    },
+    "totalBytes": { "type": "integer", "minimum": 1 },
+    "totalHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "factCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accounts", "stores", "products", "people", "paymentMethods", "purchases", "purchaseItems"],
+      "properties": {
+        "accounts": { "type": "integer", "minimum": 1 },
+        "stores": { "type": "integer", "minimum": 0 },
+        "products": { "type": "integer", "minimum": 0 },
+        "people": { "type": "integer", "minimum": 0 },
+        "paymentMethods": { "type": "integer", "minimum": 0 },
+        "purchases": { "type": "integer", "minimum": 0 },
+        "purchaseItems": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

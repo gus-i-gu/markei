@@ -6,7 +6,7 @@ import 'package:markei/infrastructure/local/local_database.dart';
 
 void main() {
   test(
-    'migrates v1 database to v5 local references and sync ownership',
+    'migrates v1 database to v6 local references sync and recovery progress',
     () async {
       final temp = await Directory.systemTemp.createTemp('markei_migration_');
       addTearDown(() => temp.delete(recursive: true));
@@ -17,7 +17,7 @@ void main() {
       );
       addTearDown(migratingDb.close);
 
-      expect(migratingDb.schemaVersion, 5);
+      expect(migratingDb.schemaVersion, 6);
       final products = await migratingDb.select(migratingDb.products).get();
       final ledger = await migratingDb
           .select(migratingDb.migrationLedger)
@@ -30,8 +30,8 @@ void main() {
       expect(products.single.exactIdentityKey, contains('|v3|'));
       expect(products.single.displayName, 'arroz branco');
       expect(ledger.last.fromVersion, 1);
-      expect(ledger.last.toVersion, 5);
-      expect(ledger.last.migrationId, 'v4-to-v5-sync-submissions-inbox');
+      expect(ledger.last.toVersion, 6);
+      expect(ledger.last.migrationId, 'v5-to-v6-recovery-progress');
       expect(
         await migratingDb.select(migratingDb.installationMetadata).get(),
         isEmpty,
@@ -39,6 +39,14 @@ void main() {
       expect(await migratingDb.select(migratingDb.people).get(), isEmpty);
       expect(
         await migratingDb.select(migratingDb.paymentMethods).get(),
+        isEmpty,
+      );
+      expect(
+        await migratingDb.select(migratingDb.recoverySessions).get(),
+        isEmpty,
+      );
+      expect(
+        await migratingDb.select(migratingDb.recoveryChunks).get(),
         isEmpty,
       );
       await migratingDb.close();
@@ -50,21 +58,23 @@ void main() {
   );
 
   test(
-    'fresh v5 database creates reference, preference and sync tables',
+    'fresh v6 database creates reference, sync and recovery tables',
     () async {
       final db = LocalDatabase.memory();
       addTearDown(db.close);
 
-      expect(db.schemaVersion, 5);
+      expect(db.schemaVersion, 6);
       expect(await db.select(db.people).get(), isEmpty);
       expect(await db.select(db.paymentMethods).get(), isEmpty);
       expect(await db.select(db.accountPreferences).get(), isEmpty);
       expect(await db.select(db.syncSubmissions).get(), isEmpty);
       expect(await db.select(db.syncInbox).get(), isEmpty);
+      expect(await db.select(db.recoverySessions).get(), isEmpty);
+      expect(await db.select(db.recoveryChunks).get(), isEmpty);
     },
   );
 
-  test('migrates file-backed v2 database to v5 and reopens', () async {
+  test('migrates file-backed v2 database to v6 and reopens', () async {
     final temp = await Directory.systemTemp.createTemp('markei_migration_v2_');
     addTearDown(() => temp.delete(recursive: true));
     final file = File('${temp.path}/markei.sqlite');
@@ -80,7 +90,7 @@ void main() {
     expect(products.single.normalizationVersion, 3);
     expect(products.single.exactIdentityKey, contains('|v3|'));
     expect(items.single.packageCount, 1);
-    expect(ledger.last.migrationId, 'v4-to-v5-sync-submissions-inbox');
+    expect(ledger.last.migrationId, 'v5-to-v6-recovery-progress');
     expect(
       await migratingDb.select(migratingDb.installationMetadata).get(),
       hasLength(1),

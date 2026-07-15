@@ -7710,6 +7710,1019 @@ class SyncInboxCompanion extends UpdateCompanion<SyncInboxData> {
   }
 }
 
+class $RecoverySessionsTable extends RecoverySessions
+    with TableInfo<$RecoverySessionsTable, RecoverySession> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RecoverySessionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _snapshotIdMeta = const VerificationMeta(
+    'snapshotId',
+  );
+  @override
+  late final GeneratedColumn<String> snapshotId = GeneratedColumn<String>(
+    'snapshot_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _phaseMeta = const VerificationMeta('phase');
+  @override
+  late final GeneratedColumn<String> phase = GeneratedColumn<String>(
+    'phase',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _formatVersionMeta = const VerificationMeta(
+    'formatVersion',
+  );
+  @override
+  late final GeneratedColumn<int> formatVersion = GeneratedColumn<int>(
+    'format_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _manifestHashMeta = const VerificationMeta(
+    'manifestHash',
+  );
+  @override
+  late final GeneratedColumn<String> manifestHash = GeneratedColumn<String>(
+    'manifest_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _coveredThroughCursorMeta =
+      const VerificationMeta('coveredThroughCursor');
+  @override
+  late final GeneratedColumn<String> coveredThroughCursor =
+      GeneratedColumn<String>(
+        'covered_through_cursor',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _expiresAtMeta = const VerificationMeta(
+    'expiresAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> expiresAt = GeneratedColumn<DateTime>(
+    'expires_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    accountId,
+    snapshotId,
+    phase,
+    formatVersion,
+    manifestHash,
+    coveredThroughCursor,
+    expiresAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'recovery_sessions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RecoverySession> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_accountIdMeta);
+    }
+    if (data.containsKey('snapshot_id')) {
+      context.handle(
+        _snapshotIdMeta,
+        snapshotId.isAcceptableOrUnknown(data['snapshot_id']!, _snapshotIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_snapshotIdMeta);
+    }
+    if (data.containsKey('phase')) {
+      context.handle(
+        _phaseMeta,
+        phase.isAcceptableOrUnknown(data['phase']!, _phaseMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_phaseMeta);
+    }
+    if (data.containsKey('format_version')) {
+      context.handle(
+        _formatVersionMeta,
+        formatVersion.isAcceptableOrUnknown(
+          data['format_version']!,
+          _formatVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_formatVersionMeta);
+    }
+    if (data.containsKey('manifest_hash')) {
+      context.handle(
+        _manifestHashMeta,
+        manifestHash.isAcceptableOrUnknown(
+          data['manifest_hash']!,
+          _manifestHashMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_manifestHashMeta);
+    }
+    if (data.containsKey('covered_through_cursor')) {
+      context.handle(
+        _coveredThroughCursorMeta,
+        coveredThroughCursor.isAcceptableOrUnknown(
+          data['covered_through_cursor']!,
+          _coveredThroughCursorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_coveredThroughCursorMeta);
+    }
+    if (data.containsKey('expires_at')) {
+      context.handle(
+        _expiresAtMeta,
+        expiresAt.isAcceptableOrUnknown(data['expires_at']!, _expiresAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_expiresAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  RecoverySession map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RecoverySession(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      )!,
+      snapshotId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}snapshot_id'],
+      )!,
+      phase: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phase'],
+      )!,
+      formatVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}format_version'],
+      )!,
+      manifestHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}manifest_hash'],
+      )!,
+      coveredThroughCursor: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}covered_through_cursor'],
+      )!,
+      expiresAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}expires_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $RecoverySessionsTable createAlias(String alias) {
+    return $RecoverySessionsTable(attachedDatabase, alias);
+  }
+}
+
+class RecoverySession extends DataClass implements Insertable<RecoverySession> {
+  final String id;
+  final String accountId;
+  final String snapshotId;
+  final String phase;
+  final int formatVersion;
+  final String manifestHash;
+  final String coveredThroughCursor;
+  final DateTime expiresAt;
+  final DateTime updatedAt;
+  const RecoverySession({
+    required this.id,
+    required this.accountId,
+    required this.snapshotId,
+    required this.phase,
+    required this.formatVersion,
+    required this.manifestHash,
+    required this.coveredThroughCursor,
+    required this.expiresAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['account_id'] = Variable<String>(accountId);
+    map['snapshot_id'] = Variable<String>(snapshotId);
+    map['phase'] = Variable<String>(phase);
+    map['format_version'] = Variable<int>(formatVersion);
+    map['manifest_hash'] = Variable<String>(manifestHash);
+    map['covered_through_cursor'] = Variable<String>(coveredThroughCursor);
+    map['expires_at'] = Variable<DateTime>(expiresAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  RecoverySessionsCompanion toCompanion(bool nullToAbsent) {
+    return RecoverySessionsCompanion(
+      id: Value(id),
+      accountId: Value(accountId),
+      snapshotId: Value(snapshotId),
+      phase: Value(phase),
+      formatVersion: Value(formatVersion),
+      manifestHash: Value(manifestHash),
+      coveredThroughCursor: Value(coveredThroughCursor),
+      expiresAt: Value(expiresAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory RecoverySession.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RecoverySession(
+      id: serializer.fromJson<String>(json['id']),
+      accountId: serializer.fromJson<String>(json['accountId']),
+      snapshotId: serializer.fromJson<String>(json['snapshotId']),
+      phase: serializer.fromJson<String>(json['phase']),
+      formatVersion: serializer.fromJson<int>(json['formatVersion']),
+      manifestHash: serializer.fromJson<String>(json['manifestHash']),
+      coveredThroughCursor: serializer.fromJson<String>(
+        json['coveredThroughCursor'],
+      ),
+      expiresAt: serializer.fromJson<DateTime>(json['expiresAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'accountId': serializer.toJson<String>(accountId),
+      'snapshotId': serializer.toJson<String>(snapshotId),
+      'phase': serializer.toJson<String>(phase),
+      'formatVersion': serializer.toJson<int>(formatVersion),
+      'manifestHash': serializer.toJson<String>(manifestHash),
+      'coveredThroughCursor': serializer.toJson<String>(coveredThroughCursor),
+      'expiresAt': serializer.toJson<DateTime>(expiresAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  RecoverySession copyWith({
+    String? id,
+    String? accountId,
+    String? snapshotId,
+    String? phase,
+    int? formatVersion,
+    String? manifestHash,
+    String? coveredThroughCursor,
+    DateTime? expiresAt,
+    DateTime? updatedAt,
+  }) => RecoverySession(
+    id: id ?? this.id,
+    accountId: accountId ?? this.accountId,
+    snapshotId: snapshotId ?? this.snapshotId,
+    phase: phase ?? this.phase,
+    formatVersion: formatVersion ?? this.formatVersion,
+    manifestHash: manifestHash ?? this.manifestHash,
+    coveredThroughCursor: coveredThroughCursor ?? this.coveredThroughCursor,
+    expiresAt: expiresAt ?? this.expiresAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  RecoverySession copyWithCompanion(RecoverySessionsCompanion data) {
+    return RecoverySession(
+      id: data.id.present ? data.id.value : this.id,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      snapshotId: data.snapshotId.present
+          ? data.snapshotId.value
+          : this.snapshotId,
+      phase: data.phase.present ? data.phase.value : this.phase,
+      formatVersion: data.formatVersion.present
+          ? data.formatVersion.value
+          : this.formatVersion,
+      manifestHash: data.manifestHash.present
+          ? data.manifestHash.value
+          : this.manifestHash,
+      coveredThroughCursor: data.coveredThroughCursor.present
+          ? data.coveredThroughCursor.value
+          : this.coveredThroughCursor,
+      expiresAt: data.expiresAt.present ? data.expiresAt.value : this.expiresAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecoverySession(')
+          ..write('id: $id, ')
+          ..write('accountId: $accountId, ')
+          ..write('snapshotId: $snapshotId, ')
+          ..write('phase: $phase, ')
+          ..write('formatVersion: $formatVersion, ')
+          ..write('manifestHash: $manifestHash, ')
+          ..write('coveredThroughCursor: $coveredThroughCursor, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    accountId,
+    snapshotId,
+    phase,
+    formatVersion,
+    manifestHash,
+    coveredThroughCursor,
+    expiresAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RecoverySession &&
+          other.id == this.id &&
+          other.accountId == this.accountId &&
+          other.snapshotId == this.snapshotId &&
+          other.phase == this.phase &&
+          other.formatVersion == this.formatVersion &&
+          other.manifestHash == this.manifestHash &&
+          other.coveredThroughCursor == this.coveredThroughCursor &&
+          other.expiresAt == this.expiresAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class RecoverySessionsCompanion extends UpdateCompanion<RecoverySession> {
+  final Value<String> id;
+  final Value<String> accountId;
+  final Value<String> snapshotId;
+  final Value<String> phase;
+  final Value<int> formatVersion;
+  final Value<String> manifestHash;
+  final Value<String> coveredThroughCursor;
+  final Value<DateTime> expiresAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const RecoverySessionsCompanion({
+    this.id = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.snapshotId = const Value.absent(),
+    this.phase = const Value.absent(),
+    this.formatVersion = const Value.absent(),
+    this.manifestHash = const Value.absent(),
+    this.coveredThroughCursor = const Value.absent(),
+    this.expiresAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RecoverySessionsCompanion.insert({
+    required String id,
+    required String accountId,
+    required String snapshotId,
+    required String phase,
+    required int formatVersion,
+    required String manifestHash,
+    required String coveredThroughCursor,
+    required DateTime expiresAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       accountId = Value(accountId),
+       snapshotId = Value(snapshotId),
+       phase = Value(phase),
+       formatVersion = Value(formatVersion),
+       manifestHash = Value(manifestHash),
+       coveredThroughCursor = Value(coveredThroughCursor),
+       expiresAt = Value(expiresAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<RecoverySession> custom({
+    Expression<String>? id,
+    Expression<String>? accountId,
+    Expression<String>? snapshotId,
+    Expression<String>? phase,
+    Expression<int>? formatVersion,
+    Expression<String>? manifestHash,
+    Expression<String>? coveredThroughCursor,
+    Expression<DateTime>? expiresAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (accountId != null) 'account_id': accountId,
+      if (snapshotId != null) 'snapshot_id': snapshotId,
+      if (phase != null) 'phase': phase,
+      if (formatVersion != null) 'format_version': formatVersion,
+      if (manifestHash != null) 'manifest_hash': manifestHash,
+      if (coveredThroughCursor != null)
+        'covered_through_cursor': coveredThroughCursor,
+      if (expiresAt != null) 'expires_at': expiresAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RecoverySessionsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? accountId,
+    Value<String>? snapshotId,
+    Value<String>? phase,
+    Value<int>? formatVersion,
+    Value<String>? manifestHash,
+    Value<String>? coveredThroughCursor,
+    Value<DateTime>? expiresAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return RecoverySessionsCompanion(
+      id: id ?? this.id,
+      accountId: accountId ?? this.accountId,
+      snapshotId: snapshotId ?? this.snapshotId,
+      phase: phase ?? this.phase,
+      formatVersion: formatVersion ?? this.formatVersion,
+      manifestHash: manifestHash ?? this.manifestHash,
+      coveredThroughCursor: coveredThroughCursor ?? this.coveredThroughCursor,
+      expiresAt: expiresAt ?? this.expiresAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (snapshotId.present) {
+      map['snapshot_id'] = Variable<String>(snapshotId.value);
+    }
+    if (phase.present) {
+      map['phase'] = Variable<String>(phase.value);
+    }
+    if (formatVersion.present) {
+      map['format_version'] = Variable<int>(formatVersion.value);
+    }
+    if (manifestHash.present) {
+      map['manifest_hash'] = Variable<String>(manifestHash.value);
+    }
+    if (coveredThroughCursor.present) {
+      map['covered_through_cursor'] = Variable<String>(
+        coveredThroughCursor.value,
+      );
+    }
+    if (expiresAt.present) {
+      map['expires_at'] = Variable<DateTime>(expiresAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecoverySessionsCompanion(')
+          ..write('id: $id, ')
+          ..write('accountId: $accountId, ')
+          ..write('snapshotId: $snapshotId, ')
+          ..write('phase: $phase, ')
+          ..write('formatVersion: $formatVersion, ')
+          ..write('manifestHash: $manifestHash, ')
+          ..write('coveredThroughCursor: $coveredThroughCursor, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $RecoveryChunksTable extends RecoveryChunks
+    with TableInfo<$RecoveryChunksTable, RecoveryChunk> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $RecoveryChunksTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _sessionIdMeta = const VerificationMeta(
+    'sessionId',
+  );
+  @override
+  late final GeneratedColumn<String> sessionId = GeneratedColumn<String>(
+    'session_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES recovery_sessions (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _chunkIndexMeta = const VerificationMeta(
+    'chunkIndex',
+  );
+  @override
+  late final GeneratedColumn<int> chunkIndex = GeneratedColumn<int>(
+    'chunk_index',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _byteLengthMeta = const VerificationMeta(
+    'byteLength',
+  );
+  @override
+  late final GeneratedColumn<int> byteLength = GeneratedColumn<int>(
+    'byte_length',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contentHashMeta = const VerificationMeta(
+    'contentHash',
+  );
+  @override
+  late final GeneratedColumn<String> contentHash = GeneratedColumn<String>(
+    'content_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bytesMeta = const VerificationMeta('bytes');
+  @override
+  late final GeneratedColumn<Uint8List> bytes = GeneratedColumn<Uint8List>(
+    'bytes',
+    aliasedName,
+    false,
+    type: DriftSqlType.blob,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _verifiedAtMeta = const VerificationMeta(
+    'verifiedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> verifiedAt = GeneratedColumn<DateTime>(
+    'verified_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    sessionId,
+    chunkIndex,
+    byteLength,
+    contentHash,
+    bytes,
+    verifiedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'recovery_chunks';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<RecoveryChunk> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('session_id')) {
+      context.handle(
+        _sessionIdMeta,
+        sessionId.isAcceptableOrUnknown(data['session_id']!, _sessionIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sessionIdMeta);
+    }
+    if (data.containsKey('chunk_index')) {
+      context.handle(
+        _chunkIndexMeta,
+        chunkIndex.isAcceptableOrUnknown(data['chunk_index']!, _chunkIndexMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_chunkIndexMeta);
+    }
+    if (data.containsKey('byte_length')) {
+      context.handle(
+        _byteLengthMeta,
+        byteLength.isAcceptableOrUnknown(data['byte_length']!, _byteLengthMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_byteLengthMeta);
+    }
+    if (data.containsKey('content_hash')) {
+      context.handle(
+        _contentHashMeta,
+        contentHash.isAcceptableOrUnknown(
+          data['content_hash']!,
+          _contentHashMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_contentHashMeta);
+    }
+    if (data.containsKey('bytes')) {
+      context.handle(
+        _bytesMeta,
+        bytes.isAcceptableOrUnknown(data['bytes']!, _bytesMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bytesMeta);
+    }
+    if (data.containsKey('verified_at')) {
+      context.handle(
+        _verifiedAtMeta,
+        verifiedAt.isAcceptableOrUnknown(data['verified_at']!, _verifiedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_verifiedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {sessionId, chunkIndex};
+  @override
+  RecoveryChunk map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return RecoveryChunk(
+      sessionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}session_id'],
+      )!,
+      chunkIndex: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}chunk_index'],
+      )!,
+      byteLength: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}byte_length'],
+      )!,
+      contentHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content_hash'],
+      )!,
+      bytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.blob,
+        data['${effectivePrefix}bytes'],
+      )!,
+      verifiedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}verified_at'],
+      )!,
+    );
+  }
+
+  @override
+  $RecoveryChunksTable createAlias(String alias) {
+    return $RecoveryChunksTable(attachedDatabase, alias);
+  }
+}
+
+class RecoveryChunk extends DataClass implements Insertable<RecoveryChunk> {
+  final String sessionId;
+  final int chunkIndex;
+  final int byteLength;
+  final String contentHash;
+  final Uint8List bytes;
+  final DateTime verifiedAt;
+  const RecoveryChunk({
+    required this.sessionId,
+    required this.chunkIndex,
+    required this.byteLength,
+    required this.contentHash,
+    required this.bytes,
+    required this.verifiedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['session_id'] = Variable<String>(sessionId);
+    map['chunk_index'] = Variable<int>(chunkIndex);
+    map['byte_length'] = Variable<int>(byteLength);
+    map['content_hash'] = Variable<String>(contentHash);
+    map['bytes'] = Variable<Uint8List>(bytes);
+    map['verified_at'] = Variable<DateTime>(verifiedAt);
+    return map;
+  }
+
+  RecoveryChunksCompanion toCompanion(bool nullToAbsent) {
+    return RecoveryChunksCompanion(
+      sessionId: Value(sessionId),
+      chunkIndex: Value(chunkIndex),
+      byteLength: Value(byteLength),
+      contentHash: Value(contentHash),
+      bytes: Value(bytes),
+      verifiedAt: Value(verifiedAt),
+    );
+  }
+
+  factory RecoveryChunk.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return RecoveryChunk(
+      sessionId: serializer.fromJson<String>(json['sessionId']),
+      chunkIndex: serializer.fromJson<int>(json['chunkIndex']),
+      byteLength: serializer.fromJson<int>(json['byteLength']),
+      contentHash: serializer.fromJson<String>(json['contentHash']),
+      bytes: serializer.fromJson<Uint8List>(json['bytes']),
+      verifiedAt: serializer.fromJson<DateTime>(json['verifiedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'sessionId': serializer.toJson<String>(sessionId),
+      'chunkIndex': serializer.toJson<int>(chunkIndex),
+      'byteLength': serializer.toJson<int>(byteLength),
+      'contentHash': serializer.toJson<String>(contentHash),
+      'bytes': serializer.toJson<Uint8List>(bytes),
+      'verifiedAt': serializer.toJson<DateTime>(verifiedAt),
+    };
+  }
+
+  RecoveryChunk copyWith({
+    String? sessionId,
+    int? chunkIndex,
+    int? byteLength,
+    String? contentHash,
+    Uint8List? bytes,
+    DateTime? verifiedAt,
+  }) => RecoveryChunk(
+    sessionId: sessionId ?? this.sessionId,
+    chunkIndex: chunkIndex ?? this.chunkIndex,
+    byteLength: byteLength ?? this.byteLength,
+    contentHash: contentHash ?? this.contentHash,
+    bytes: bytes ?? this.bytes,
+    verifiedAt: verifiedAt ?? this.verifiedAt,
+  );
+  RecoveryChunk copyWithCompanion(RecoveryChunksCompanion data) {
+    return RecoveryChunk(
+      sessionId: data.sessionId.present ? data.sessionId.value : this.sessionId,
+      chunkIndex: data.chunkIndex.present
+          ? data.chunkIndex.value
+          : this.chunkIndex,
+      byteLength: data.byteLength.present
+          ? data.byteLength.value
+          : this.byteLength,
+      contentHash: data.contentHash.present
+          ? data.contentHash.value
+          : this.contentHash,
+      bytes: data.bytes.present ? data.bytes.value : this.bytes,
+      verifiedAt: data.verifiedAt.present
+          ? data.verifiedAt.value
+          : this.verifiedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecoveryChunk(')
+          ..write('sessionId: $sessionId, ')
+          ..write('chunkIndex: $chunkIndex, ')
+          ..write('byteLength: $byteLength, ')
+          ..write('contentHash: $contentHash, ')
+          ..write('bytes: $bytes, ')
+          ..write('verifiedAt: $verifiedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    sessionId,
+    chunkIndex,
+    byteLength,
+    contentHash,
+    $driftBlobEquality.hash(bytes),
+    verifiedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is RecoveryChunk &&
+          other.sessionId == this.sessionId &&
+          other.chunkIndex == this.chunkIndex &&
+          other.byteLength == this.byteLength &&
+          other.contentHash == this.contentHash &&
+          $driftBlobEquality.equals(other.bytes, this.bytes) &&
+          other.verifiedAt == this.verifiedAt);
+}
+
+class RecoveryChunksCompanion extends UpdateCompanion<RecoveryChunk> {
+  final Value<String> sessionId;
+  final Value<int> chunkIndex;
+  final Value<int> byteLength;
+  final Value<String> contentHash;
+  final Value<Uint8List> bytes;
+  final Value<DateTime> verifiedAt;
+  final Value<int> rowid;
+  const RecoveryChunksCompanion({
+    this.sessionId = const Value.absent(),
+    this.chunkIndex = const Value.absent(),
+    this.byteLength = const Value.absent(),
+    this.contentHash = const Value.absent(),
+    this.bytes = const Value.absent(),
+    this.verifiedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  RecoveryChunksCompanion.insert({
+    required String sessionId,
+    required int chunkIndex,
+    required int byteLength,
+    required String contentHash,
+    required Uint8List bytes,
+    required DateTime verifiedAt,
+    this.rowid = const Value.absent(),
+  }) : sessionId = Value(sessionId),
+       chunkIndex = Value(chunkIndex),
+       byteLength = Value(byteLength),
+       contentHash = Value(contentHash),
+       bytes = Value(bytes),
+       verifiedAt = Value(verifiedAt);
+  static Insertable<RecoveryChunk> custom({
+    Expression<String>? sessionId,
+    Expression<int>? chunkIndex,
+    Expression<int>? byteLength,
+    Expression<String>? contentHash,
+    Expression<Uint8List>? bytes,
+    Expression<DateTime>? verifiedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (sessionId != null) 'session_id': sessionId,
+      if (chunkIndex != null) 'chunk_index': chunkIndex,
+      if (byteLength != null) 'byte_length': byteLength,
+      if (contentHash != null) 'content_hash': contentHash,
+      if (bytes != null) 'bytes': bytes,
+      if (verifiedAt != null) 'verified_at': verifiedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  RecoveryChunksCompanion copyWith({
+    Value<String>? sessionId,
+    Value<int>? chunkIndex,
+    Value<int>? byteLength,
+    Value<String>? contentHash,
+    Value<Uint8List>? bytes,
+    Value<DateTime>? verifiedAt,
+    Value<int>? rowid,
+  }) {
+    return RecoveryChunksCompanion(
+      sessionId: sessionId ?? this.sessionId,
+      chunkIndex: chunkIndex ?? this.chunkIndex,
+      byteLength: byteLength ?? this.byteLength,
+      contentHash: contentHash ?? this.contentHash,
+      bytes: bytes ?? this.bytes,
+      verifiedAt: verifiedAt ?? this.verifiedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (sessionId.present) {
+      map['session_id'] = Variable<String>(sessionId.value);
+    }
+    if (chunkIndex.present) {
+      map['chunk_index'] = Variable<int>(chunkIndex.value);
+    }
+    if (byteLength.present) {
+      map['byte_length'] = Variable<int>(byteLength.value);
+    }
+    if (contentHash.present) {
+      map['content_hash'] = Variable<String>(contentHash.value);
+    }
+    if (bytes.present) {
+      map['bytes'] = Variable<Uint8List>(bytes.value);
+    }
+    if (verifiedAt.present) {
+      map['verified_at'] = Variable<DateTime>(verifiedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RecoveryChunksCompanion(')
+          ..write('sessionId: $sessionId, ')
+          ..write('chunkIndex: $chunkIndex, ')
+          ..write('byteLength: $byteLength, ')
+          ..write('contentHash: $contentHash, ')
+          ..write('bytes: $bytes, ')
+          ..write('verifiedAt: $verifiedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MigrationLedgerTable extends MigrationLedger
     with TableInfo<$MigrationLedgerTable, MigrationLedgerData> {
   @override
@@ -8209,6 +9222,10 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $SyncSubmissionEventsTable syncSubmissionEvents =
       $SyncSubmissionEventsTable(this);
   late final $SyncInboxTable syncInbox = $SyncInboxTable(this);
+  late final $RecoverySessionsTable recoverySessions = $RecoverySessionsTable(
+    this,
+  );
+  late final $RecoveryChunksTable recoveryChunks = $RecoveryChunksTable(this);
   late final $MigrationLedgerTable migrationLedger = $MigrationLedgerTable(
     this,
   );
@@ -8233,6 +9250,8 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
     syncSubmissions,
     syncSubmissionEvents,
     syncInbox,
+    recoverySessions,
+    recoveryChunks,
     migrationLedger,
   ];
   @override
@@ -8285,6 +9304,13 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('sync_inbox', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'recovery_sessions',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('recovery_chunks', kind: UpdateKind.delete)],
     ),
   ]);
 }
@@ -16931,6 +17957,757 @@ typedef $$SyncInboxTableProcessedTableManager =
       SyncInboxData,
       PrefetchHooks Function({bool accountId})
     >;
+typedef $$RecoverySessionsTableCreateCompanionBuilder =
+    RecoverySessionsCompanion Function({
+      required String id,
+      required String accountId,
+      required String snapshotId,
+      required String phase,
+      required int formatVersion,
+      required String manifestHash,
+      required String coveredThroughCursor,
+      required DateTime expiresAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$RecoverySessionsTableUpdateCompanionBuilder =
+    RecoverySessionsCompanion Function({
+      Value<String> id,
+      Value<String> accountId,
+      Value<String> snapshotId,
+      Value<String> phase,
+      Value<int> formatVersion,
+      Value<String> manifestHash,
+      Value<String> coveredThroughCursor,
+      Value<DateTime> expiresAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$RecoverySessionsTableReferences
+    extends
+        BaseReferences<
+          _$LocalDatabase,
+          $RecoverySessionsTable,
+          RecoverySession
+        > {
+  $$RecoverySessionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static MultiTypedResultKey<$RecoveryChunksTable, List<RecoveryChunk>>
+  _recoveryChunksRefsTable(_$LocalDatabase db) => MultiTypedResultKey.fromTable(
+    db.recoveryChunks,
+    aliasName: 'recovery_sessions__id__recovery_chunks__session_id',
+  );
+
+  $$RecoveryChunksTableProcessedTableManager get recoveryChunksRefs {
+    final manager = $$RecoveryChunksTableTableManager(
+      $_db,
+      $_db.recoveryChunks,
+    ).filter((f) => f.sessionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_recoveryChunksRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$RecoverySessionsTableFilterComposer
+    extends Composer<_$LocalDatabase, $RecoverySessionsTable> {
+  $$RecoverySessionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get snapshotId => $composableBuilder(
+    column: $table.snapshotId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phase => $composableBuilder(
+    column: $table.phase,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get formatVersion => $composableBuilder(
+    column: $table.formatVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get manifestHash => $composableBuilder(
+    column: $table.manifestHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get coveredThroughCursor => $composableBuilder(
+    column: $table.coveredThroughCursor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> recoveryChunksRefs(
+    Expression<bool> Function($$RecoveryChunksTableFilterComposer f) f,
+  ) {
+    final $$RecoveryChunksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.recoveryChunks,
+      getReferencedColumn: (t) => t.sessionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RecoveryChunksTableFilterComposer(
+            $db: $db,
+            $table: $db.recoveryChunks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$RecoverySessionsTableOrderingComposer
+    extends Composer<_$LocalDatabase, $RecoverySessionsTable> {
+  $$RecoverySessionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get accountId => $composableBuilder(
+    column: $table.accountId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get snapshotId => $composableBuilder(
+    column: $table.snapshotId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phase => $composableBuilder(
+    column: $table.phase,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get formatVersion => $composableBuilder(
+    column: $table.formatVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get manifestHash => $composableBuilder(
+    column: $table.manifestHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get coveredThroughCursor => $composableBuilder(
+    column: $table.coveredThroughCursor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$RecoverySessionsTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $RecoverySessionsTable> {
+  $$RecoverySessionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get accountId =>
+      $composableBuilder(column: $table.accountId, builder: (column) => column);
+
+  GeneratedColumn<String> get snapshotId => $composableBuilder(
+    column: $table.snapshotId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get phase =>
+      $composableBuilder(column: $table.phase, builder: (column) => column);
+
+  GeneratedColumn<int> get formatVersion => $composableBuilder(
+    column: $table.formatVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get manifestHash => $composableBuilder(
+    column: $table.manifestHash,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get coveredThroughCursor => $composableBuilder(
+    column: $table.coveredThroughCursor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get expiresAt =>
+      $composableBuilder(column: $table.expiresAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  Expression<T> recoveryChunksRefs<T extends Object>(
+    Expression<T> Function($$RecoveryChunksTableAnnotationComposer a) f,
+  ) {
+    final $$RecoveryChunksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.recoveryChunks,
+      getReferencedColumn: (t) => t.sessionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RecoveryChunksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.recoveryChunks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$RecoverySessionsTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $RecoverySessionsTable,
+          RecoverySession,
+          $$RecoverySessionsTableFilterComposer,
+          $$RecoverySessionsTableOrderingComposer,
+          $$RecoverySessionsTableAnnotationComposer,
+          $$RecoverySessionsTableCreateCompanionBuilder,
+          $$RecoverySessionsTableUpdateCompanionBuilder,
+          (RecoverySession, $$RecoverySessionsTableReferences),
+          RecoverySession,
+          PrefetchHooks Function({bool recoveryChunksRefs})
+        > {
+  $$RecoverySessionsTableTableManager(
+    _$LocalDatabase db,
+    $RecoverySessionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RecoverySessionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RecoverySessionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RecoverySessionsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> accountId = const Value.absent(),
+                Value<String> snapshotId = const Value.absent(),
+                Value<String> phase = const Value.absent(),
+                Value<int> formatVersion = const Value.absent(),
+                Value<String> manifestHash = const Value.absent(),
+                Value<String> coveredThroughCursor = const Value.absent(),
+                Value<DateTime> expiresAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RecoverySessionsCompanion(
+                id: id,
+                accountId: accountId,
+                snapshotId: snapshotId,
+                phase: phase,
+                formatVersion: formatVersion,
+                manifestHash: manifestHash,
+                coveredThroughCursor: coveredThroughCursor,
+                expiresAt: expiresAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String accountId,
+                required String snapshotId,
+                required String phase,
+                required int formatVersion,
+                required String manifestHash,
+                required String coveredThroughCursor,
+                required DateTime expiresAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => RecoverySessionsCompanion.insert(
+                id: id,
+                accountId: accountId,
+                snapshotId: snapshotId,
+                phase: phase,
+                formatVersion: formatVersion,
+                manifestHash: manifestHash,
+                coveredThroughCursor: coveredThroughCursor,
+                expiresAt: expiresAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$RecoverySessionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({recoveryChunksRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (recoveryChunksRefs) db.recoveryChunks,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (recoveryChunksRefs)
+                    await $_getPrefetchedData<
+                      RecoverySession,
+                      $RecoverySessionsTable,
+                      RecoveryChunk
+                    >(
+                      currentTable: table,
+                      referencedTable: $$RecoverySessionsTableReferences
+                          ._recoveryChunksRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$RecoverySessionsTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).recoveryChunksRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.sessionId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$RecoverySessionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $RecoverySessionsTable,
+      RecoverySession,
+      $$RecoverySessionsTableFilterComposer,
+      $$RecoverySessionsTableOrderingComposer,
+      $$RecoverySessionsTableAnnotationComposer,
+      $$RecoverySessionsTableCreateCompanionBuilder,
+      $$RecoverySessionsTableUpdateCompanionBuilder,
+      (RecoverySession, $$RecoverySessionsTableReferences),
+      RecoverySession,
+      PrefetchHooks Function({bool recoveryChunksRefs})
+    >;
+typedef $$RecoveryChunksTableCreateCompanionBuilder =
+    RecoveryChunksCompanion Function({
+      required String sessionId,
+      required int chunkIndex,
+      required int byteLength,
+      required String contentHash,
+      required Uint8List bytes,
+      required DateTime verifiedAt,
+      Value<int> rowid,
+    });
+typedef $$RecoveryChunksTableUpdateCompanionBuilder =
+    RecoveryChunksCompanion Function({
+      Value<String> sessionId,
+      Value<int> chunkIndex,
+      Value<int> byteLength,
+      Value<String> contentHash,
+      Value<Uint8List> bytes,
+      Value<DateTime> verifiedAt,
+      Value<int> rowid,
+    });
+
+final class $$RecoveryChunksTableReferences
+    extends
+        BaseReferences<_$LocalDatabase, $RecoveryChunksTable, RecoveryChunk> {
+  $$RecoveryChunksTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $RecoverySessionsTable _sessionIdTable(_$LocalDatabase db) => db
+      .recoverySessions
+      .createAlias('recovery_chunks__session_id__recovery_sessions__id');
+
+  $$RecoverySessionsTableProcessedTableManager get sessionId {
+    final $_column = $_itemColumn<String>('session_id')!;
+
+    final manager = $$RecoverySessionsTableTableManager(
+      $_db,
+      $_db.recoverySessions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_sessionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$RecoveryChunksTableFilterComposer
+    extends Composer<_$LocalDatabase, $RecoveryChunksTable> {
+  $$RecoveryChunksTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get chunkIndex => $composableBuilder(
+    column: $table.chunkIndex,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get byteLength => $composableBuilder(
+    column: $table.byteLength,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get contentHash => $composableBuilder(
+    column: $table.contentHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<Uint8List> get bytes => $composableBuilder(
+    column: $table.bytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get verifiedAt => $composableBuilder(
+    column: $table.verifiedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$RecoverySessionsTableFilterComposer get sessionId {
+    final $$RecoverySessionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.recoverySessions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RecoverySessionsTableFilterComposer(
+            $db: $db,
+            $table: $db.recoverySessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RecoveryChunksTableOrderingComposer
+    extends Composer<_$LocalDatabase, $RecoveryChunksTable> {
+  $$RecoveryChunksTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get chunkIndex => $composableBuilder(
+    column: $table.chunkIndex,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get byteLength => $composableBuilder(
+    column: $table.byteLength,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get contentHash => $composableBuilder(
+    column: $table.contentHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<Uint8List> get bytes => $composableBuilder(
+    column: $table.bytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get verifiedAt => $composableBuilder(
+    column: $table.verifiedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$RecoverySessionsTableOrderingComposer get sessionId {
+    final $$RecoverySessionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.recoverySessions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RecoverySessionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.recoverySessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RecoveryChunksTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $RecoveryChunksTable> {
+  $$RecoveryChunksTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get chunkIndex => $composableBuilder(
+    column: $table.chunkIndex,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get byteLength => $composableBuilder(
+    column: $table.byteLength,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get contentHash => $composableBuilder(
+    column: $table.contentHash,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<Uint8List> get bytes =>
+      $composableBuilder(column: $table.bytes, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get verifiedAt => $composableBuilder(
+    column: $table.verifiedAt,
+    builder: (column) => column,
+  );
+
+  $$RecoverySessionsTableAnnotationComposer get sessionId {
+    final $$RecoverySessionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.sessionId,
+      referencedTable: $db.recoverySessions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$RecoverySessionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.recoverySessions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$RecoveryChunksTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $RecoveryChunksTable,
+          RecoveryChunk,
+          $$RecoveryChunksTableFilterComposer,
+          $$RecoveryChunksTableOrderingComposer,
+          $$RecoveryChunksTableAnnotationComposer,
+          $$RecoveryChunksTableCreateCompanionBuilder,
+          $$RecoveryChunksTableUpdateCompanionBuilder,
+          (RecoveryChunk, $$RecoveryChunksTableReferences),
+          RecoveryChunk,
+          PrefetchHooks Function({bool sessionId})
+        > {
+  $$RecoveryChunksTableTableManager(
+    _$LocalDatabase db,
+    $RecoveryChunksTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$RecoveryChunksTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$RecoveryChunksTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$RecoveryChunksTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> sessionId = const Value.absent(),
+                Value<int> chunkIndex = const Value.absent(),
+                Value<int> byteLength = const Value.absent(),
+                Value<String> contentHash = const Value.absent(),
+                Value<Uint8List> bytes = const Value.absent(),
+                Value<DateTime> verifiedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => RecoveryChunksCompanion(
+                sessionId: sessionId,
+                chunkIndex: chunkIndex,
+                byteLength: byteLength,
+                contentHash: contentHash,
+                bytes: bytes,
+                verifiedAt: verifiedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String sessionId,
+                required int chunkIndex,
+                required int byteLength,
+                required String contentHash,
+                required Uint8List bytes,
+                required DateTime verifiedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => RecoveryChunksCompanion.insert(
+                sessionId: sessionId,
+                chunkIndex: chunkIndex,
+                byteLength: byteLength,
+                contentHash: contentHash,
+                bytes: bytes,
+                verifiedAt: verifiedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$RecoveryChunksTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({sessionId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (sessionId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.sessionId,
+                                referencedTable: $$RecoveryChunksTableReferences
+                                    ._sessionIdTable(db),
+                                referencedColumn:
+                                    $$RecoveryChunksTableReferences
+                                        ._sessionIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$RecoveryChunksTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $RecoveryChunksTable,
+      RecoveryChunk,
+      $$RecoveryChunksTableFilterComposer,
+      $$RecoveryChunksTableOrderingComposer,
+      $$RecoveryChunksTableAnnotationComposer,
+      $$RecoveryChunksTableCreateCompanionBuilder,
+      $$RecoveryChunksTableUpdateCompanionBuilder,
+      (RecoveryChunk, $$RecoveryChunksTableReferences),
+      RecoveryChunk,
+      PrefetchHooks Function({bool sessionId})
+    >;
 typedef $$MigrationLedgerTableCreateCompanionBuilder =
     MigrationLedgerCompanion Function({
       Value<int> id,
@@ -17217,6 +18994,10 @@ class $LocalDatabaseManager {
       $$SyncSubmissionEventsTableTableManager(_db, _db.syncSubmissionEvents);
   $$SyncInboxTableTableManager get syncInbox =>
       $$SyncInboxTableTableManager(_db, _db.syncInbox);
+  $$RecoverySessionsTableTableManager get recoverySessions =>
+      $$RecoverySessionsTableTableManager(_db, _db.recoverySessions);
+  $$RecoveryChunksTableTableManager get recoveryChunks =>
+      $$RecoveryChunksTableTableManager(_db, _db.recoveryChunks);
   $$MigrationLedgerTableTableManager get migrationLedger =>
       $$MigrationLedgerTableTableManager(_db, _db.migrationLedger);
 }

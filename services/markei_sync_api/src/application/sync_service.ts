@@ -157,9 +157,45 @@ export async function downloadEvents(
   auth: AuthContext,
   after: string | undefined,
   limit: number,
-): Promise<DownloadPage> {
+): Promise<DownloadPage | ProtocolFailure> {
   const boundedLimit = Math.min(Math.max(limit || 25, 1), 100);
   const afterNumber = decodeCursor(after);
+  const device = await client.query(
+    "select status from devices where account_id=$1 and device_id=$2 and status='active'",
+    [auth.accountId, auth.deviceId],
+  );
+  if (!device.rowCount) {
+    return failure("device-revoked", "download-events", false, "sync-api");
+  }
+  const retentionTable = await client.query(
+    "select to_regclass('public.account_retention_state') as table_name",
+  );
+  const retention = retentionTable.rows[0]?.table_name
+    ? await client.query(
+        "select earliest_incremental_cursor from account_retention_state where account_id=$1",
+        [auth.accountId],
+      )
+    : { rowCount: 0, rows: [] };
+  const earliest = retention.rowCount
+    ? Number(retention.rows[0].earliest_incremental_cursor)
+    : 1;
+  if (afterNumber < earliest - 1) {
+    const snapshotTable = await client.query(
+      "select to_regclass('public.recovery_snapshots') as table_name",
+    );
+    const snapshot = snapshotTable.rows[0]?.table_name
+      ? await client.query(
+          "select snapshot_id from recovery_snapshots where account_id=$1 and state='available' and recovery_format_version=1 order by covered_through_cursor desc limit 1",
+          [auth.accountId],
+        )
+      : { rowCount: 0 };
+    return failure(
+      snapshot.rowCount ? "cursor-expired" : "recovery-unavailable",
+      "download-events",
+      Boolean(!snapshot.rowCount),
+      "sync-api",
+    );
+  }
   const rows = await client.query(
     `select event_id, account_id, device_id, device_sequence, server_cursor,
             event_type, payload_version, occurrence_time, payload, content_hash

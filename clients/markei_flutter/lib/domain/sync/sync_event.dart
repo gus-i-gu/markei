@@ -19,9 +19,24 @@ enum SyncStatusCode {
   conflict,
   authRequired,
   deviceRevoked,
+  deviceExpired,
   cursorExpired,
+  recoveryUnavailable,
+  fullRebootstrapRequired,
+  localChangesBlockRebootstrap,
   protocolUpgradeRequired,
   unknownOutcome,
+}
+
+enum RecoveryPhase {
+  fullRebootstrapRequired,
+  preparing,
+  downloading,
+  downloaded,
+  applying,
+  catchingUp,
+  recoveryCompleted,
+  recoveryInterrupted,
 }
 
 final class SyncEvent {

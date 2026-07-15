@@ -57,3 +57,95 @@ abstract interface class RemoteEventApplier {
   Future<SyncResult> applyPage(DownloadPage page);
   Future<String?> greatestContiguousAppliedCursor();
 }
+
+final class RecoveryManifest {
+  const RecoveryManifest({
+    required this.accountId,
+    required this.snapshotId,
+    required this.formatVersion,
+    required this.coveredThroughCursor,
+    required this.chunks,
+    required this.totalBytes,
+    required this.totalHash,
+    required this.manifestHash,
+  });
+
+  final String accountId;
+  final String snapshotId;
+  final int formatVersion;
+  final String coveredThroughCursor;
+  final List<RecoveryChunkDescriptor> chunks;
+  final int totalBytes;
+  final String totalHash;
+  final String manifestHash;
+}
+
+final class RecoveryChunkDescriptor {
+  const RecoveryChunkDescriptor({
+    required this.index,
+    required this.length,
+    required this.hash,
+  });
+
+  final int index;
+  final int length;
+  final String hash;
+}
+
+final class RecoveryChunk {
+  const RecoveryChunk({
+    required this.index,
+    required this.length,
+    required this.hash,
+    required this.bytes,
+  });
+
+  final int index;
+  final int length;
+  final String hash;
+  final List<int> bytes;
+}
+
+final class RecoverySession {
+  const RecoverySession({
+    required this.id,
+    required this.phase,
+    required this.manifest,
+  });
+
+  final String id;
+  final RecoveryPhase phase;
+  final RecoveryManifest manifest;
+}
+
+abstract interface class RecoveryTransport {
+  Future<RecoverySession> startRecovery({
+    required String recoverySessionId,
+    required String requestHash,
+  });
+  Future<RecoverySession> queryRecovery(String recoverySessionId);
+  Future<RecoveryChunk> downloadChunk(String recoverySessionId, int index);
+  Future<SyncResult> completeRecovery({
+    required String recoverySessionId,
+    required String snapshotId,
+    required String manifestHash,
+    required String committedCatchUpCursor,
+  });
+}
+
+abstract interface class RecoveryProgressRepository {
+  Future<void> saveSession(RecoverySession session);
+  Future<void> saveChunk(String sessionId, RecoveryChunk chunk);
+  Future<List<RecoveryChunk>> loadedChunks(String sessionId);
+}
+
+abstract interface class SnapshotFactApplier {
+  Future<SyncResult> applySnapshotFacts({
+    required RecoveryManifest manifest,
+    required List<RecoveryChunk> chunks,
+  });
+}
+
+abstract interface class LocalRecoveryGuard {
+  Future<SyncResult> ensureRebootstrapAllowed();
+}

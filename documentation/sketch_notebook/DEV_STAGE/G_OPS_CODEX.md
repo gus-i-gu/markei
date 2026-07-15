@@ -1,72 +1,137 @@
-# G_OPS_CODEX — C10-S01B Operational Evidence
+# G_OPS_CODEX — C10-S02 Operational Evidence
 
-Sequence: FLX-ORD-01
+Sequence: FLX-INV-02 -> Main D/E/F -> Codex materialization report
 Role: Codex materialization evidence
-Unit: C10-S01B Local Synchronization Convergence Completion
+Round or unit: C10-S02 disposable local retention, snapshot and rebootstrap proof
 Branch: `intermid-cycle-recovery`
-Baseline HEAD: `cb890dcdaf86cefa875e6984f20a71e20a912f60`
-Source stages: `J_MAIN_STAGE.md`, `D_OPS_STAGE.md`, `E_DDC_STAGE.md`, `F_DSN_STAGE.md`
-Terminal status: `C10-S01B_LOCAL_CONVERGENCE_PROVED`
+Baseline / inspected HEAD: `dee41af3a24bf85e4dcd7db40d3e1179bf0a7471`
+Authority: `J_MAIN_STAGE.md`, `D_OPS_STAGE.md`, `E_DDC_STAGE.md`, `F_DSN_STAGE.md`
+Evidence boundary: local-only repository, disposable Docker PostgreSQL 18 lab, Flutter/Drift, loopback Fastify, synthetic fixtures only
 
-## Changed Paths
+## Source stage files
 
-Modified:
-`clients/markei_flutter/lib/domain/sync/sync_event.dart`,
-`clients/markei_flutter/lib/infrastructure/local/local_purchase_repository.dart`,
-`clients/markei_flutter/lib/infrastructure/local/sync/local_sync_repositories.dart`,
-`clients/markei_flutter/pubspec.yaml`,
-`clients/markei_flutter/pubspec.lock`,
-`clients/markei_flutter/test/sync/local_sync_application_test.dart`,
-`clients/markei_flutter/test/sync/two_device_system_harness_test.dart`,
-`clients/markei_flutter/tool/sync_lab.dart`,
-`contracts/shared_beta/v3/fixtures/purchase_registered.valid.json`,
-`contracts/shared_beta/v3/purchase_registered.schema.json`,
-`services/markei_sync_api/package.json`,
-`services/markei_sync_api/src/application/sync_service.ts`,
-`services/markei_sync_api/src/http/app.ts`,
-`services/markei_sync_api/src/postgres/database.ts`.
+- `documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md`
+- `documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md`
+- `documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md`
+- `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`
 
-Created:
-`clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_event_applier.dart`,
-`clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_fact_writer.dart`,
-`clients/markei_flutter/lib/infrastructure/remote/http_sync_transport.dart`,
-`clients/markei_flutter/test/sync/real_convergence_harness_test.dart`,
-`infra/sync_lab/.gitignore`,
-`services/markei_sync_api/migrations/002_coordination_hardening.sql`,
-`services/markei_sync_api/src/domain/cursor.ts`,
-`services/markei_sync_api/src/lab.ts`.
+## Files changed
 
-Pre-existing untracked `.vscode/settings.json` and `documentation/NEON_DOC.md` were preserved and not staged.
+- `clients/markei_flutter/lib/application/sync/sync_ports.dart`
+- `clients/markei_flutter/lib/domain/sync/sync_event.dart`
+- `clients/markei_flutter/lib/infrastructure/local/local_database.dart`
+- `clients/markei_flutter/lib/infrastructure/local/local_database.g.dart`
+- `clients/markei_flutter/lib/infrastructure/local/sync/local_recovery_repositories.dart`
+- `clients/markei_flutter/lib/infrastructure/remote/http_sync_transport.dart`
+- `clients/markei_flutter/test/infrastructure/local_database_migration_test.dart`
+- `clients/markei_flutter/test/sync/real_convergence_harness_support.dart`
+- `clients/markei_flutter/test/sync/real_recovery_harness_test.dart`
+- `contracts/shared_beta/recovery_v1/README.md`
+- `contracts/shared_beta/recovery_v1/fixtures/recovery_manifest.valid.json`
+- `contracts/shared_beta/recovery_v1/recovery_snapshot.schema.json`
+- `services/markei_sync_api/package.json`
+- `services/markei_sync_api/migrations/003_retention_snapshot_recovery.sql`
+- `services/markei_sync_api/src/application/recovery_service.ts`
+- `services/markei_sync_api/src/application/retention_policy.ts`
+- `services/markei_sync_api/src/application/sync_service.ts`
+- `services/markei_sync_api/src/http/app.ts`
+- `services/markei_sync_api/src/lab.ts`
+- `services/markei_sync_api/src/recovery_lab.ts`
+- `services/markei_sync_api/test/protocol.test.ts`
 
-## Versions
+## Files created
 
-Dart `3.12.2`; Flutter `3.44.6`; Node `v24.18.0`; npm `11.16.0`; Docker Desktop engine `29.6.1`; PostgreSQL image `postgres:18`; Dart HTTP dependency `http 1.6.0`; Fastify `5.10.0`; `pg 8.16.3`; TypeScript `5.9.3`.
+- `contracts/shared_beta/recovery_v1/*`
+- `services/markei_sync_api/migrations/003_retention_snapshot_recovery.sql`
+- `services/markei_sync_api/src/application/recovery_service.ts`
+- `services/markei_sync_api/src/application/retention_policy.ts`
+- `services/markei_sync_api/src/recovery_lab.ts`
+- `clients/markei_flutter/lib/infrastructure/local/sync/local_recovery_repositories.dart`
+- `clients/markei_flutter/test/sync/real_recovery_harness_test.dart`
 
-## Validation
+## Files deleted
 
-Passed:
-`flutter pub get`; `dart run build_runner build --delete-conflicting-outputs`; `dart format --set-exit-if-changed .`; `flutter analyze`; `flutter test` (`52 passed, 1 lab-gated skipped`); `MARKEI_RUN_SYNC_LAB=1 flutter test test/sync/real_convergence_harness_test.dart` (`CONVERGED=true`); `npm run format:check`; `npm run lint`; `npm run typecheck`; `npm test` (`3 passed`); `npm audit --omit=dev` (`0 vulnerabilities`); `python -m unittest discover tests` (`5 passed`); `flutter build windows`; `flutter build apk --debug`; `git diff --check`; credential-pattern scan; `docker compose ps` after harness (`no running services`).
+- None.
 
-Drift regeneration wrote no schema-authority change. Windows build produced `build\windows\x64\runner\Release\markei.exe`; Android debug build produced `build\app\outputs\flutter-apk\app-debug.apk`.
+## Implementation summary
 
-## Migration And Isolation
+- Added recovery snapshot format 1 contracts and fixture hash parity while keeping `purchase.registered` payload version 3.
+- Added forward-only PostgreSQL migration `003_retention_snapshot_recovery.sql`; 001/002 were not edited.
+- Added explicit retention policy and clock injection; normal runtime has no cleanup route.
+- Added Device retention classification, snapshot build/publication, cleanup planning/execution and rebootstrap session services.
+- Added Fastify capabilities and rebootstrap routes.
+- Added lab-only `npm run lab:recovery` worker CLI for snapshot/cleanup; no Flutter endpoint performs physical cleanup.
+- Added additive Drift schema v6 recovery session/chunk progress and fresh-target snapshot apply adapters.
+- Added disposable recovery harness proving snapshot, cleanup, cursor expiry, interrupted/resumed chunk transfer, corrupt chunk rejection, catch-up, acknowledgement, reopen comparison and local-change blocking.
 
-`001_init.sql` was not edited. New forward-only `002_coordination_hardening.sql` adds composite Account/Device ownership FKs, download/replay/ack indexes, migration ledger row, revoked `PUBLIC` schema privileges, runtime grants, and RLS on Account-bearing coordination tables.
+## Commands run and results
 
-The real harness applied 001 then 002 on fresh disposable PostgreSQL 18, generated ignored lab credentials, seeded one synthetic Account and Devices A/B through the migrator role, then connected API child processes as `markei_runtime`.
+- `git fetch origin intermid-cycle-recovery`: passed.
+- `git merge-base --is-ancestor dee41af3a24bf85e4dcd7db40d3e1179bf0a7471 HEAD`: passed.
+- Baseline `flutter test test/sync/local_sync_application_test.dart test/sync/v3_contract_test.dart`: passed 6 tests.
+- Baseline `npm test`: passed 3 tests.
+- `dart run build_runner build --delete-conflicting-outputs`: passed; Drift output regenerated.
+- `npm run typecheck`: passed.
+- `flutter analyze`: passed.
+- Focused `flutter test test/sync/local_sync_application_test.dart test/sync/v3_contract_test.dart test/infrastructure/local_database_migration_test.dart`: passed 10 tests.
+- Lab `MARKEI_RUN_SYNC_LAB=1 flutter test test/sync/real_recovery_harness_test.dart`: passed 1 test; terminal diagnostic `RECOVERY_CONVERGED=true`.
+- `dart format --set-exit-if-changed lib test`: passed after formatting.
+- Full `flutter test`: passed 52 tests, 2 lab-gated tests skipped.
+- `npm run format:check`: passed.
+- `npm run lint`: passed.
+- `npm run typecheck`: passed.
+- `npm test`: passed 5 tests.
+- `npm audit --omit=dev`: passed, 0 vulnerabilities.
+- `python -m pytest`: failed, `No module named pytest`.
+- `python -m unittest discover -s tests`: passed 5 tests.
+- Disposable PostgreSQL migration/RLS/role probe: passed; 003 replayed idempotently, 5 new tables present, runtime RLS saw 1 scoped Device, runtime DDL denied, recovery worker Device revoke denied.
+- `flutter build windows --release`: passed, built `build\windows\x64\runner\Release\markei.exe`.
+- `flutter build apk --debug`: passed, built `build\app\outputs\flutter-apk\app-debug.apk`.
+- `git diff --check`: passed with line-ending warnings only.
+- Final `docker compose ps -a`: no sync lab containers.
+- Final `docker volume ls --filter name=markei_sync_lab_pg`: no sync lab volume.
 
-## Convergence Counts
+## Counts and ranges
 
-Harness topology: isolated Drift A/B files, loopback Fastify child process for A, disposable PostgreSQL 18, loopback Fastify child process for B, Flutter HTTP transport on both sides.
+- Recovery harness devices: A/B/C.
+- Server events created: 3 synthetic `purchase.registered` v3 events.
+- Snapshot cut: `c10b:2`.
+- Cleanup blocked before C lease expiry: deleted 0.
+- Cleanup after C lease expiry: deleted 2.
+- Events retained after cleanup: 1 later event.
+- Recovered fresh target facts after catch-up/reopen: 3 purchases.
+- Corrupt snapshot apply target facts: 0 purchases.
 
-Observed assertions: A registered one offline Purchase; timeout-after-commit persisted `unknown-outcome`; retry reused the same SubmissionId and replayed the stored server-accepted response; server `sync_events` count was `1`; B downloaded one event, applied one Store/Product/Purchase/Item set, replay ignored duplicate, emitted no outbound pending event, acknowledged one cursor; server `device_acknowledgements` count was `1`; reopened A/B each had one Purchase and one Item.
+## Instructions completed
 
-## Fault Evidence
+- Local-only retention, snapshot, cleanup, cursor-expiry and rebootstrap proof.
+- Synthetic fixtures only.
+- No Neon/Auth0/Render/provider access.
+- Cleanup disabled in normal HTTP composition.
+- Recovery report files replaced only after materialization.
 
-Covered by focused tests/harness: API unavailable while local registration continues; unknown upload outcome retry identity; duplicate inbox/event effect; complete remote Purchase application; unsafe max-cursor acknowledgement replaced by committed cursor; fixture-auth escape prevention; normal runtime auth verifier refusal; same fixture hash in Dart/TypeScript; timeout after server commit; disposable teardown.
+## Instructions skipped or excluded
 
-Not fully exhaustive beyond the implemented floor: serialization/deadlock exhaustion, every malformed/oversized schema branch, and per-table cross-Account DML probes are represented by constraints/RLS and harness path but not expanded into a full matrix.
+- `pytest` was unavailable on host; unittest discovery was used and passed.
+- Full runtime acceptance is local lab only; no provider behavior claimed.
+- Cycle 11 UI/UX work was not implemented.
 
-## Security And Teardown
+## Failures or blockers
 
-No Neon credentials were requested or used. No Neon resources, deployment, production authentication, telemetry, or payload logging were added. Fixture data is synthetic. Generated lab credentials, databases, volumes and build artifacts are ignored/untracked. Secret scan found no committed credential literals.
+- No terminal blocker remains for C10-S02 local proof.
+
+## Unresolved risks
+
+- Production retention durations, scheduler/worker hosting, object storage, provider backup integration, auth/enrollment, Device replacement and database swap remain deferred.
+- The lab snapshot builder folds the append-only v3 event slice; it is not a production normalized snapshot store.
+
+## Suggested functional follow-up
+
+- Main/functional chats should reconcile C10-S02 evidence before MCG-01/C10-S03.
+
+Terminal state:
+
+```text
+C10-S02_LOCAL_RECOVERY_PROVED
+MCG-01_EVIDENCE_NOT_RECONCILED
+```

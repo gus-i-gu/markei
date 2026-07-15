@@ -10,6 +10,7 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint .",
     "lab": "tsx src/lab.ts",
+    "lab:recovery": "tsx src/recovery_lab.ts",
     "typecheck": "tsc --noEmit",
     "test": "node --test --import tsx test/*.test.ts"
   },

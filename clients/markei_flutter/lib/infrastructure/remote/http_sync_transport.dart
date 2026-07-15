@@ -5,11 +5,12 @@ import 'package:http/http.dart' as http;
 
 import '../../application/sync/sync_ports.dart';
 import '../../domain/sync/sync_event.dart';
+import '../../domain/sync/canonical_json.dart';
 
 typedef SyncTokenSource = FutureOr<String> Function();
 typedef SyncCorrelationSource = String Function();
 
-final class HttpSyncTransport implements SyncTransport {
+final class HttpSyncTransport implements SyncTransport, RecoveryTransport {
   HttpSyncTransport({
     required this.client,
     required this.baseUri,
@@ -70,6 +71,9 @@ final class HttpSyncTransport implements SyncTransport {
     );
     final response = await _request(http.Request('GET', uri)).timeout(timeout);
     final body = await _decodeResponse(response);
+    if (body['code'] == 'cursor-expired') {
+      throw StateError('cursor-expired');
+    }
     final events = (body['events'] as List<Object?>? ?? [])
         .cast<Map<String, Object?>>()
         .map(
@@ -104,6 +108,90 @@ final class HttpSyncTransport implements SyncTransport {
       return const SyncResult(
         code: SyncStatusCode.duplicateIgnored,
         outcome: SyncOutcome.duplicateEquivalent,
+        retryable: false,
+      );
+    }
+    return _failure(response);
+  }
+
+  @override
+  Future<RecoverySession> startRecovery({
+    required String recoverySessionId,
+    required String requestHash,
+  }) async {
+    final response = await _sendJson('POST', '/v1/sync/rebootstrap', {
+      'recoverySessionId': recoverySessionId,
+      'requestHash': requestHash,
+      'supportedSnapshotFormats': [1],
+    });
+    if (response == null) {
+      throw StateError('recovery start outcome is unknown');
+    }
+    if (response['code'] != null) {
+      throw StateError(response['code']! as String);
+    }
+    return _recoverySession(response, recoverySessionId);
+  }
+
+  @override
+  Future<RecoverySession> queryRecovery(String recoverySessionId) async {
+    final uri = baseUri.replace(
+      path: _join('/v1/sync/rebootstrap/$recoverySessionId'),
+    );
+    final body = await _decodeResponse(
+      await _request(http.Request('GET', uri)).timeout(timeout),
+    );
+    if (body['code'] != null) {
+      throw StateError(body['code']! as String);
+    }
+    return _recoverySession(body, recoverySessionId);
+  }
+
+  @override
+  Future<RecoveryChunk> downloadChunk(
+    String recoverySessionId,
+    int index,
+  ) async {
+    final uri = baseUri.replace(
+      path: _join('/v1/sync/rebootstrap/$recoverySessionId/chunks/$index'),
+    );
+    final body = await _decodeResponse(
+      await _request(http.Request('GET', uri)).timeout(timeout),
+    );
+    if (body['code'] != null) {
+      throw StateError(body['code']! as String);
+    }
+    return RecoveryChunk(
+      index: body['index']! as int,
+      length: body['length']! as int,
+      hash: body['hash']! as String,
+      bytes: base64Decode(body['bytesBase64']! as String),
+    );
+  }
+
+  @override
+  Future<SyncResult> completeRecovery({
+    required String recoverySessionId,
+    required String snapshotId,
+    required String manifestHash,
+    required String committedCatchUpCursor,
+  }) async {
+    final response = await _sendJson(
+      'POST',
+      '/v1/sync/rebootstrap/$recoverySessionId/complete',
+      {
+        'snapshotId': snapshotId,
+        'manifestHash': manifestHash,
+        'committedCatchUpCursor': committedCatchUpCursor,
+      },
+    );
+    if (response == null) {
+      return _unknown();
+    }
+    if (response['status'] == 'recovery-completed') {
+      return const SyncResult(
+        code: SyncStatusCode.fullRebootstrapRequired,
+        outcome: SyncOutcome.applied,
         retryable: false,
       );
     }
@@ -158,8 +246,13 @@ final class HttpSyncTransport implements SyncTransport {
     final code = switch (body['code']) {
       'auth-required' => SyncStatusCode.authRequired,
       'device-revoked' => SyncStatusCode.deviceRevoked,
+      'device-expired' => SyncStatusCode.deviceExpired,
       'protocol-upgrade-required' => SyncStatusCode.protocolUpgradeRequired,
       'cursor-expired' => SyncStatusCode.cursorExpired,
+      'recovery-unavailable' => SyncStatusCode.recoveryUnavailable,
+      'full-rebootstrap-required' => SyncStatusCode.fullRebootstrapRequired,
+      'local-changes-block-rebootstrap' =>
+        SyncStatusCode.localChangesBlockRebootstrap,
       _ => SyncStatusCode.conflict,
     };
     return SyncResult(
@@ -181,4 +274,50 @@ final class HttpSyncTransport implements SyncTransport {
         : baseUri.path;
     return '$prefix$path';
   }
+
+  RecoverySession _recoverySession(
+    Map<String, Object?> body,
+    String fallbackId,
+  ) {
+    final manifest = _manifest(body['manifest']! as Map<String, Object?>);
+    return RecoverySession(
+      id: body['recoverySessionId'] as String? ?? fallbackId,
+      phase: _phase(body['phase'] as String? ?? 'downloading'),
+      manifest: manifest,
+    );
+  }
+
+  RecoveryManifest _manifest(Map<String, Object?> value) {
+    final chunks = (value['chunks']! as List<Object?>)
+        .cast<Map<String, Object?>>()
+        .map(
+          (chunk) => RecoveryChunkDescriptor(
+            index: chunk['index']! as int,
+            length: chunk['length']! as int,
+            hash: chunk['hash']! as String,
+          ),
+        )
+        .toList(growable: false);
+    return RecoveryManifest(
+      accountId: value['accountId']! as String,
+      snapshotId: value['snapshotId']! as String,
+      formatVersion: value['formatVersion']! as int,
+      coveredThroughCursor: value['coveredThroughCursor']! as String,
+      chunks: chunks,
+      totalBytes: value['totalBytes']! as int,
+      totalHash: value['totalHash']! as String,
+      manifestHash: canonicalUtf8Sha256(value),
+    );
+  }
+
+  RecoveryPhase _phase(String value) => switch (value) {
+    'full-rebootstrap-required' => RecoveryPhase.fullRebootstrapRequired,
+    'preparing' => RecoveryPhase.preparing,
+    'downloading' => RecoveryPhase.downloading,
+    'downloaded' => RecoveryPhase.downloaded,
+    'applying' => RecoveryPhase.applying,
+    'catching-up' => RecoveryPhase.catchingUp,
+    'recovery-completed' => RecoveryPhase.recoveryCompleted,
+    _ => RecoveryPhase.recoveryInterrupted,
+  };
 }

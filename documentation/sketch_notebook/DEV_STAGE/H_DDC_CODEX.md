@@ -1,38 +1,67 @@
-# H_DDC_CODEX — C10-S01B Didactic Evidence
+# H_DDC_CODEX — C10-S02 Semantic Evidence
 
-Sequence: FLX-ORD-01
-Role: Codex materialization evidence
-Source stages: `J_MAIN_STAGE.md`, `D_OPS_STAGE.md`, `E_DDC_STAGE.md`, `F_DSN_STAGE.md`
-Learner maturity: unchanged
+Sequence: FLX-INV-02 -> Main D/E/F -> Codex materialization report
+Role: Codex semantic/test evidence
+Round or unit: C10-S02 disposable local retention, snapshot and rebootstrap proof
+Branch: `intermid-cycle-recovery`
+Baseline / inspected HEAD: `dee41af3a24bf85e4dcd7db40d3e1179bf0a7471`
+Authority: `E_DDC_STAGE.md` plus J/D/F
+Evidence boundary: local implementation and tests only; learner maturity unchanged
 
-## Vocabulary Materialized
+## Vocabulary and statuses materialized
 
-Implemented status meanings include `saved-local`, `waiting-upload`, `uploading`, `server-accepted`, `download-received`, `downloaded-applied`, `duplicate-ignored`, `acknowledged`, `conflict`, `auth-required`, `device-revoked`, `cursor-expired`, `protocol-upgrade-required`, and `unknown-outcome`.
+- Preserved existing meanings for `saved-local`, `waiting-upload`, `server-accepted`, `downloaded-applied`, `duplicate-ignored`, `acknowledged`, `conflict`, `auth-required`, `unknown-outcome`.
+- Added typed recovery/status codes in Dart for `device-expired`, `recovery-unavailable`, `full-rebootstrap-required`, `local-changes-block-rebootstrap`.
+- Added recovery phases: `fullRebootstrapRequired`, `preparing`, `downloading`, `downloaded`, `applying`, `catchingUp`, `recoveryCompleted`, `recoveryInterrupted`.
+- Incremental download now checks retained floor before returning an empty page; old cursor returns typed failure when recovery exists.
+- Rebootstrap completion only returns applied after snapshot apply, catch-up cursor, acknowledgement and completion call in the harness.
 
-Outcome meanings remain `applied`, `duplicate-equivalent`, `not-applied`, and `unknown`. Server acceptance is treated only as server acceptance; peer application is proven separately by B download/apply and reopened fact comparison.
+## Named semantic tests and results
 
-## Named Tests
+- `v3 fixture hash matches TypeScript canonical serialization`: passed.
+- `recovery format 1 fixture hash is independent from v3 event payload`: passed.
+- `recovery routes are unavailable without explicit recovery composition`: passed.
+- `real_recovery_harness_test.dart`: passed with `RECOVERY_CONVERGED=true`.
+- Harness-equivalent semantic coverage:
+  - empty/old cursor distinction: old `c10b:0` after cleanup throws typed cursor-expiry path.
+  - snapshot download does not claim completion: progress saved as downloading before apply.
+  - corrupt snapshot leaves facts/cursor unchanged: corrupt target remained empty.
+  - interrupted recovery reuses same session: same session queried after first chunk.
+  - snapshot apply followed by incremental catch-up: `c10b:2` snapshot plus one later event.
+  - recovery completes after acknowledgement and reopen: C reopened with 3 purchases.
+  - pending local events block rebootstrap: `localChangesBlockRebootstrap`.
+  - server cleanup leaves local purchases unchanged: A retained 3 local purchases after server cleanup.
+  - revoked and expired are represented by distinct status concepts.
+  - snapshot is named recovery format 1, not provider backup.
 
-`local registration works when transport is absent`: local Purchase registration remains usable without API.
+## Diagnostics and privacy inspection
 
-`unknown outcome retries same submission`: retry uses the same SubmissionId/request hash after an unknown upload.
+- Diagnostics used operation/status codes, cursors, counts, chunk indexes, hashes and synthetic IDs.
+- No Product/Purchase payload logging was added.
+- No token, password, provider URL, signed URL, Auth0, Neon credential or snapshot byte logging was added.
+- Fixture connection strings/passwords appear only in lab tests/process environment construction.
 
-`duplicate event is applied once and can be acknowledged`: duplicate remote replay has no second Purchase effect and acknowledgement follows committed cursor.
+## Unsupported wording intentionally absent
 
-`two isolated Drift files converge through local replay harness`: local fact application uses complete v3 payloads, not inbox-only replay.
+- No UI claims of `recovered`, `restored` or `up-to-date` were added.
+- No claim that application snapshots are provider backups or user exports.
+- No production duration promise.
+- No claim that server acknowledgement means all Devices converged.
 
-`CONVERGED=true for HTTP/PostgreSQL backed local synchronization`: real loopback HTTP, Fastify child processes and disposable PostgreSQL prove the vertical slice.
+## No UI or learner promotion
 
-TypeScript tests retain normal-runtime fixture refusal and direct-test-only fixture auth construction.
+- No pages, widgets, navigation, dialogs, cards, progress UI, accessibility composition or analytics were changed.
+- Didactic KANBAN, glossary, concept map and lecture history were not modified.
+- Learner maturity remains unchanged.
 
-## Diagnostic Evidence
+## Deviations
 
-Minimal diagnostic output is limited to test names and the harness line `CONVERGED=true` when all assertions pass. No UI status page, dashboard, pairing screen, Device-management page, navigation change, native sharing, Analytics change, or Cycle 11 visual/accessibility work was added.
+- `python -m pytest` could not run because pytest is not installed; `python -m unittest discover -s tests` passed 5 tests.
+- The proof is local-only and synthetic; it does not prove production retention policy, hosted auth, Neon behavior or provider backup behavior.
 
-## Privacy And Logging
+Terminal state:
 
-No Purchase/Product/Store/Person/Payment payload logging was added. The HTTP transport does not log authorization headers, tokens, credential-bearing URLs or payloads. Lab credentials are generated during tests into ignored paths or in-memory environment variables. Secret scan found no committed credential literals.
-
-## Unchanged Surfaces
-
-Home, Lists, Purchase, History, Catalogue and Settings were not redesigned or polished. Learner maturity was not changed. Synchronization is not described as backup, export, restore, provider recovery or indefinite history.
+```text
+C10-S02_LOCAL_RECOVERY_PROVED
+MCG-01_EVIDENCE_NOT_RECONCILED
+```

@@ -1,45 +1,111 @@
-# I_DSN_CODEX — C10-S01B Design Evidence
+# I_DSN_CODEX — C10-S02 Design Evidence
 
-Sequence: FLX-ORD-01
-Role: Codex materialization evidence
-Source stages: `J_MAIN_STAGE.md`, `D_OPS_STAGE.md`, `E_DDC_STAGE.md`, `F_DSN_STAGE.md`
+Sequence: FLX-INV-02 -> Main D/E/F -> Codex materialization report
+Role: Codex design/architecture evidence
+Round or unit: C10-S02 disposable local retention, snapshot and rebootstrap proof
+Branch: `intermid-cycle-recovery`
+Baseline / inspected HEAD: `dee41af3a24bf85e4dcd7db40d3e1179bf0a7471`
+Authority: `F_DSN_STAGE.md` plus J/D/E
+Evidence boundary: architecture materialized locally; no production/provider boundary crossed
 
-## Dependency Direction
+## Dependency direction
 
-Flutter domain/application owns sync ports and typed results. Drift implements local outbox and remote apply. HTTP is isolated in `HttpSyncTransport`. The TypeScript API owns Fastify routes and `pg` transactions. PostgreSQL remains disposable loopback lab infrastructure. Flutter never connects directly to PostgreSQL, and normal app composition remains sync-disabled.
+Preserved:
 
-## Protocol, Hash And Cursor
+```text
+Flutter domain/application ports
+-> Drift + HTTP infrastructure
+-> authenticated Fastify application services
+-> PostgreSQL repositories/transactions
+-> lab-only SnapshotStore/cleanup worker CLI
+```
 
-Protocol event: `purchase.registered`, payload version `3`.
+Flutter does not connect to PostgreSQL and receives no storage credentials. Recovery logic did not enter pages/widgets.
 
-Payload now contains closed immutable Store, Product snapshots, Purchase, Items, quantity and Money facts; non-null Person/Payment IDs are rejected by the local remote applier until snapshots exist. The v3 schema recursively closes nested objects with `additionalProperties: false`.
+## Version and schema IDs
 
-Hashing rule: canonical UTF-8 JSON with recursively sorted object keys, SHA-256 lowercase hex over event content excluding `contentHash`. Dart and TypeScript parity is proven by the shared fixture hash `9c658e0666f9d8acf4f5bb599b2b351e96737d2828cc56f3ada43eda61025453`.
+- Event type/version: `purchase.registered` payload version 3, unchanged.
+- Cursor token: `c10b:<integer>`, unchanged.
+- Recovery snapshot format: 1.
+- Server migration: `003_retention_snapshot_recovery.sql`, forward-only; 001/002 unchanged.
+- Drift schema: v6, additive recovery session/chunk progress only.
 
-Cursor rule: origin is `c10b:0`; emitted cursors are versioned opaque tokens `c10b:<integer>`. Clients store/echo tokens and local application decodes only to verify contiguous page order.
+## Policy injection
 
-## Local Application
+- Added `RetentionPolicy` and `Clock`.
+- Lab composition injects conspicuous fixture values.
+- Normal API construction has no recovery/cleanup behavior unless explicitly composed.
+- Physical cleanup is only available through `src/recovery_lab.ts`, not through Fastify routes.
 
-`DriftRemoteEventApplier` validates Account, type/version, content hash and cursor continuity before mutation. `RemotePurchaseFactWriter` inserts or reuses equivalent Store/Product/Purchase/Item facts in one Drift transaction with inbox insertion and cursor advancement. Duplicate inbox identities with same hash are duplicate-equivalent; content conflicts stop without cursor advancement. No outbound SyncEvent/PendingEvent is created for remote apply.
+## Snapshot format and chunk rules
 
-`greatestContiguousAppliedCursor` now reads committed `sync_state.account_cursor`, not maximum inbox cursor.
+- Manifest includes AccountId, SnapshotId, format version, covered cursor, compatible event/schema versions, chunk descriptors, total byte/hash and deterministic fact counts.
+- Chunks are bounded by injected byte ceiling.
+- Hashes cover canonical UTF-8 facts and manifest/chunk bytes.
+- Snapshot excludes Devices, queues, acknowledgements, credentials, recovery sessions and UI state.
+- Lab builder folds accepted append-only `purchase.registered` v3 events into deterministic facts.
 
-## Server And Migration
+## Transaction and cleanup invariants
 
-`002_coordination_hardening.sql` adds Account/Device composite FKs, indexes, migration ledger entry, revoked `PUBLIC` privileges, least-privilege runtime grants and RLS policies. `001_init.sql` was unchanged.
+- Snapshot cut uses current Account high-water and publishes only after chunks are stored.
+- Cleanup recomputes minimum-age, eligible-Device acknowledgement and available snapshot floors.
+- Cleanup deletes only a bounded cursor prefix and advances earliest incremental cursor in the same transaction.
+- Harness proved lagging eligible Device blocks cleanup, lease expiry releases that block, old cursor expires, and later event remains.
 
-Upload, download and acknowledgement routes authenticate every call, retain explicit Account predicates, set transaction-local Account/Device context and run in bounded serializable retry for SQLSTATE `40001`/`40P01` only, at most three attempts.
+## API behavior
 
-Upload enforces exact next DeviceSequence, SubmissionId/request-hash replay, EventId/content-hash duplicate equivalence and Account-scoped event lookup. Download returns all Account events ordered by server cursor, including the requesting Device. Acknowledgement rejects cursors beyond the Account high-water mark and persists monotonic Device cursor without deletion semantics.
+- Added:
+  - `GET /v1/sync/capabilities`
+  - `POST /v1/sync/rebootstrap`
+  - `GET /v1/sync/rebootstrap/:sessionId`
+  - `GET /v1/sync/rebootstrap/:sessionId/chunks/:index`
+  - `POST /v1/sync/rebootstrap/:sessionId/complete`
+- Incremental download now returns typed expiry for cursors before retained availability.
+- Rebootstrap sessions are Account/Device/Snapshot bound and replayable by same identity/hash.
+- Chunk responses carry index, length, hash and base64 bytes; no database/storage credential is returned.
 
-## Fixture Auth Containment
+## RLS and role evidence
 
-Normal `main.ts` uses `RefusingAuthVerifier`. Fixture claims are only constructed by tests or `src/lab.ts`; the lab entrypoint requires explicit Account/Device environment claims and refuses non-loopback binding. No production authentication or Device enrollment was implemented.
+- Migration/RLS probe applied 001 -> 002 -> 003 twice.
+- `migration_ledger` contained `003_retention_snapshot_recovery`.
+- Five new recovery/retention tables existed.
+- Runtime role with transaction-local Account/Device context saw only one scoped Device.
+- Runtime DDL attempt was denied.
+- Recovery worker Device revoke/update-status attempt was denied.
 
-## System Topology
+## Drift v6 and recovery ports
 
-The decisive harness creates two isolated Drift files, starts disposable loopback PostgreSQL 18, applies migrations and seed data through migrator authority, starts separate loopback Fastify child processes with synthetic fixture claims for Device A and B, uploads through Flutter HTTP, simulates dropped response after server commit, retries same SubmissionId, downloads through Flutter HTTP, applies complete remote facts, acknowledges, reopens both Drift files and compares stable Purchase/Item facts.
+- Added recovery session/chunk progress tables.
+- Recovery progress AccountId is metadata, not an Account fact FK, so fresh-target download progress can exist before snapshot fact apply.
+- Added application ports for recovery transport, progress repository, local guard and snapshot fact applier.
+- Snapshot fact applier validates chunk ordering/length/hash/total hash and applies facts plus covered cursor atomically.
 
-## Deviations And Deferred Work
+## Fixture containment
 
-The implemented proof covers the decisive vertical slice and focused fault locks. It does not expand every requested malformed/oversized/cross-Account/deadlock failure into an exhaustive standalone matrix. It also does not add Person/Payment reference snapshots beyond rejecting bare non-null IDs. Neon, deployment, production authentication and later MCG gates were not started.
+- Synthetic Account and Device UUIDs only.
+- Disposable PostgreSQL 18 Docker volume removed after harness/probes.
+- Generated lab passwords were synthetic and not tracked.
+- `.vscode/` and local Neon notes remained untracked and unread.
+
+## Architectural deviations
+
+- Lab snapshot storage is PostgreSQL bytea chunks behind local service code; this is not a production storage decision.
+- The snapshot builder is scoped to the current append-only v3 purchase event slice.
+- Production database swap/replacement, Device replacement/enrollment and merge/export of unsafe local work remain unimplemented.
+
+## Deferred decisions
+
+- Production durations.
+- Scheduler/worker hosting.
+- Object storage/provider backup integration.
+- Hosted auth and Device enrollment.
+- Production database file swap.
+- Account deletion and broader retention policy.
+- Cycle 11 UI/UX representation.
+
+Terminal state:
+
+```text
+C10-S02_LOCAL_RECOVERY_PROVED
+MCG-01_EVIDENCE_NOT_RECONCILED
+```

@@ -273,6 +273,34 @@ class SyncInbox extends Table {
   ];
 }
 
+class RecoverySessions extends Table {
+  TextColumn get id => text()();
+  TextColumn get accountId => text()();
+  TextColumn get snapshotId => text()();
+  TextColumn get phase => text()();
+  IntColumn get formatVersion => integer()();
+  TextColumn get manifestHash => text()();
+  TextColumn get coveredThroughCursor => text()();
+  DateTimeColumn get expiresAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class RecoveryChunks extends Table {
+  TextColumn get sessionId =>
+      text().references(RecoverySessions, #id, onDelete: KeyAction.cascade)();
+  IntColumn get chunkIndex => integer()();
+  IntColumn get byteLength => integer()();
+  TextColumn get contentHash => text()();
+  BlobColumn get bytes => blob()();
+  DateTimeColumn get verifiedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {sessionId, chunkIndex};
+}
+
 class MigrationLedger extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get schemaName => text()();
@@ -301,6 +329,8 @@ class MigrationLedger extends Table {
     SyncSubmissions,
     SyncSubmissionEvents,
     SyncInbox,
+    RecoverySessions,
+    RecoveryChunks,
     MigrationLedger,
   ],
 )
@@ -323,7 +353,7 @@ class LocalDatabase extends _$LocalDatabase {
       LocalDatabase(NativeDatabase.createInBackground(file));
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -335,7 +365,7 @@ class LocalDatabase extends _$LocalDatabase {
           schemaVersion: schemaVersion,
           fromVersion: const Value(null),
           toVersion: Value(schemaVersion),
-          migrationId: const Value('create-v4'),
+          migrationId: const Value('create-v6'),
           appliedAt: DateTime.utc(2026, 7, 12),
         ),
       );
@@ -432,7 +462,21 @@ SELECT id, 5, strftime('%s','now') * 1000 FROM local_accounts
           ),
         );
       }
-      if (from > 5) {
+      if (from < 6) {
+        await migrator.createTable(recoverySessions);
+        await migrator.createTable(recoveryChunks);
+        await into(migrationLedger).insert(
+          MigrationLedgerCompanion.insert(
+            schemaName: 'shared_beta_local',
+            schemaVersion: to,
+            fromVersion: Value(from),
+            toVersion: const Value(6),
+            migrationId: const Value('v5-to-v6-recovery-progress'),
+            appliedAt: DateTime.now().toUtc(),
+          ),
+        );
+      }
+      if (from > 6) {
         throw UnsupportedError(
           'Unsupported local database migration $from to $to.',
         );
