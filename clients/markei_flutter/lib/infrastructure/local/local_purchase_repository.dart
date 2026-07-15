@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
@@ -12,6 +9,7 @@ import '../../domain/purchase/purchase.dart' as domain_purchase;
 import '../../domain/shared/ids.dart';
 import '../../domain/shared/quantity.dart' as domain_quantity;
 import '../../domain/store/store.dart' as domain_store;
+import '../../domain/sync/canonical_json.dart';
 import '../../domain/sync/sync_event.dart' as domain_sync;
 import 'local_database.dart';
 
@@ -156,12 +154,12 @@ class LocalPurchaseRepository implements PurchaseRegistrationRepository {
         deviceId: command.deviceId,
         deviceSequence: sequence,
         eventType: 'purchase.registered',
-        payloadVersion: 2,
+        payloadVersion: 3,
         occurrenceTime: command.occurrenceTime,
         purchase: purchase,
       );
-      final payload = jsonEncode(event.toJson());
-      final contentHash = sha256.convert(utf8.encode(payload)).toString();
+      final payload = canonicalJson(event.toJson());
+      final contentHash = event.contentHash;
 
       await _db
           .into(_db.syncEvents)

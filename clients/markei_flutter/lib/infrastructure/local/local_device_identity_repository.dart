@@ -25,21 +25,47 @@ class LocalDeviceIdentityRepository {
             mode: InsertMode.insertOrIgnore,
           );
 
-      final devices =
-          await (_db.select(_db.devices)
-                ..where((table) => table.accountId.equals(accountId.value))
-                ..orderBy([(table) => OrderingTerm.asc(table.createdAt)])
-                ..limit(20))
-              .get();
-      Device? existing;
-      for (final device in devices) {
-        if (_uuidV4Pattern.hasMatch(device.id)) {
-          existing = device;
-          break;
+      final metadata = await _db.select(_db.installationMetadata).get();
+      if (metadata.isNotEmpty) {
+        final current = metadata.single;
+        if (current.accountId != accountId.value) {
+          throw StateError('Current Installation belongs to another Account.');
         }
+        final device =
+            await (_db.select(_db.devices)..where(
+                  (table) =>
+                      table.id.equals(current.currentDeviceId) &
+                      table.accountId.equals(accountId.value),
+                ))
+                .getSingleOrNull();
+        if (device == null) {
+          throw StateError('Current Installation references a missing Device.');
+        }
+        return DeviceId(device.id);
       }
-      if (existing != null) {
-        return DeviceId(existing.id);
+
+      final devices = await (_db.select(
+        _db.devices,
+      )..where((table) => table.accountId.equals(accountId.value))).get();
+      final usable = devices
+          .where((device) => _uuidV4Pattern.hasMatch(device.id))
+          .toList(growable: false);
+      if (usable.length > 1) {
+        throw StateError('Ambiguous current Device; no Device was selected.');
+      }
+      if (usable.length == 1) {
+        await _db
+            .into(_db.installationMetadata)
+            .insert(
+              InstallationMetadataCompanion.insert(
+                id: 'current',
+                accountId: accountId.value,
+                currentDeviceId: usable.single.id,
+                createdAt: now,
+                updatedAt: now,
+              ),
+            );
+        return DeviceId(usable.single.id);
       }
 
       final deviceId = DeviceId(_uuid.v4());
@@ -51,6 +77,17 @@ class LocalDeviceIdentityRepository {
               accountId: accountId.value,
               nextSequence: 1,
               createdAt: now,
+            ),
+          );
+      await _db
+          .into(_db.installationMetadata)
+          .insert(
+            InstallationMetadataCompanion.insert(
+              id: 'current',
+              accountId: accountId.value,
+              currentDeviceId: deviceId.value,
+              createdAt: now,
+              updatedAt: now,
             ),
           );
       return deviceId;

@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:18
+    ports:
+      - "127.0.0.1:55432:5432"
+    environment:
+      POSTGRES_DB: markei_sync_lab
+      POSTGRES_USER: markei_migrator
+      POSTGRES_PASSWORD_FILE: /run/secrets/markei_migrator_password
+    secrets:
+      - markei_migrator_password
+    volumes:
+      - markei_sync_lab_pg:/var/lib/postgresql
+
+volumes:
+  markei_sync_lab_pg:
+
+secrets:
+  markei_migrator_password:
+    file: ./secrets/migrator_password.txt

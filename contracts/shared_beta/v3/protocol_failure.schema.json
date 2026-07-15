@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["code", "operation", "outcome", "retryable", "safeAction", "correlationId"],
+  "properties": {
+    "code": { "type": "string" },
+    "operation": { "type": "string" },
+    "field": { "type": "string" },
+    "eventId": { "type": "string" },
+    "submissionId": { "type": "string" },
+    "outcome": { "enum": ["applied", "duplicate-equivalent", "not-applied", "unknown"] },
+    "retryable": { "type": "boolean" },
+    "safeAction": { "type": "string" },
+    "correlationId": { "type": "string" }
+  }
+}

@@ -132,6 +132,41 @@ void main() {
     expect(rows.map((row) => row.id), contains('windows-device'));
     expect(rows, hasLength(2));
   });
+
+  test('ambiguous UUID devices fail without selecting earliest', () async {
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final now = DateTime.utc(2026, 7, 12);
+    await db
+        .into(db.localAccounts)
+        .insert(
+          LocalAccountsCompanion.insert(
+            id: accountId.value,
+            defaultCurrencyCode: 'BRL',
+            createdAt: now,
+          ),
+        );
+    for (final id in [
+      '22222222-2222-4222-8222-222222222222',
+      '33333333-3333-4333-8333-333333333333',
+    ]) {
+      await db
+          .into(db.devices)
+          .insert(
+            DevicesCompanion.insert(
+              id: id,
+              accountId: accountId.value,
+              nextSequence: 1,
+              createdAt: now,
+            ),
+          );
+    }
+
+    await expectLater(
+      LocalDeviceIdentityRepository(db).loadOrCreateDeviceId(accountId),
+      throwsA(isA<StateError>()),
+    );
+  });
 }
 
 RegisterPurchaseCommand _command(DeviceId deviceId, String productCode) {

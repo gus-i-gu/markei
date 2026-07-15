@@ -1,71 +1,99 @@
-# I_DSN_CODEX — Cycle 09 Sprint 02 Design Evidence
+# I_DSN_CODEX — C10-S01 Design Evidence
 
-> Sequence: FLX-ORD-01
-> Unit: C09-S02
-> Status: Architecture evidence only; not permanent Design memory
+Sequence: FLX-ORD-01
+Role: Codex materialization evidence
+Source stages: `J_MAIN_STAGE.md`, `D_OPS_STAGE.md`, `E_DDC_STAGE.md`, `F_DSN_STAGE.md`
 
-## Topology
+## Dependency Direction
 
-- Preserved Flutter layering: app widgets call application ports/read models; repositories adapt Drift; domain owns Product/Purchase/quantity rules.
-- Added SDK-first app design surface under `lib/app/design/` and reusable widgets under `lib/app/widgets/`.
-- `MarkeiComposition` remains the dependency composition root.
-- Generated Drift code remains derived from `local_database.dart`.
-- Python/PySide6 application and protected database topology were not intentionally changed.
+Implemented direction:
 
-## Schema v4
+```text
+Flutter domain/application sync ports
+← Drift local adapters
+← optional HTTP/API transport boundary
+TypeScript Fastify API
+→ pg transaction adapter
+→ disposable PostgreSQL 18 lab
+```
 
-- `Products.userProductCode` and `Products.normalizedUserProductCode` are database-level NOT NULL.
-- People have immutable account-scoped `visibleCode` with `@` prefix.
-- Payment Methods have immutable account-scoped `visibleCode` with `#` prefix.
-- Account preferences hold `nextPersonCode` and `nextPaymentMethodCode` counters.
-- Unique constraints enforce `(accountId, visibleCode)` for People and Payment Methods.
-- Product code uniqueness remains account-scoped through normalized Product code.
+Flutter does not connect to PostgreSQL. Domain/application sync code does not import Flutter widgets, Fastify, `pg`, Docker or Neon.
 
-## Migration Design
+## Protocol And Hashing
 
-- v1/v2 migrations add Product-code columns as transitional nullable columns only.
-- v4 rebuilds Products to enforce NOT NULL code columns.
-- v4 backfills only missing/blank Product codes with reserved deterministic `legacy:` codes.
-- v4 rebuilds People and Payment Methods to assign deterministic visible codes by account, creation time, and UUID.
-- v4 rebuilds AccountPreferences to seed next-code counters from archived and active rows.
-- Migration tests cover chained legacy paths and reopen.
+Protocol version: `purchase.registered` payload v3.
 
-## Application And Domain Design
+Canonical JSON rule: recursively sort object keys, encode UTF-8 JSON, hash SHA-256 lowercase hex over event content excluding `contentHash`. Dart and TypeScript parity is tested against `contracts/shared_beta/v3/fixtures/purchase_registered.valid.json`; final hash is `2c65e7beafe73f1df5b6d48cbeaeab945efb2847108c2bece82e4a7db41e1906`.
 
-- `purchase_occurrence.dart` owns exact date/time parsing and UTC conversion.
-- `bulk_pricing.dart` owns fixed-point BULK line-total calculation.
-- `LocalReference` owns `displayLabel` and archived history label composition.
-- Product-code reservation is enforced in `product_code.dart`.
-- Lists still uses the existing joined projection; zero-history language was refined.
-- Local repositories allocate reference codes inside a Drift transaction.
+## Local Schema
 
-## Presentation Design
+Local Drift schema: v5.
 
-- `markeiTheme()` defines cream/white surfaces, dark-green primary, and lavender secondary.
-- Compact navigation maps to Home / Lists / Purchase / History / More.
-- Expanded navigation keeps direct destination labels.
-- Purchase keeps date/time after Store and preserves draft controllers through Review/Back.
-- Product-code lookup fills immutable facts but leaves staging explicit.
-- Catalogue tap selects; View details and double-click open details.
-- History adds select-all and double-click details while keeping edit/delete disabled.
+Migration ID: `v4-to-v5-sync-submissions-inbox`.
 
-## Dependency Decisions
+Added logical units:
 
-- No new dependency was added.
-- Native share dependency was not adopted because dependency/platform validation was not completed safely in this pass.
-- Existing dependency audit was recorded with `flutter pub outdated`.
+- `installation_metadata`
+- `sync_submissions`
+- `sync_submission_events`
+- `sync_inbox`
 
-## Invariants
+Generated output: `clients/markei_flutter/lib/infrastructure/local/local_database.g.dart`.
 
-- No Product auto-merge.
-- No Product edit/merge/delete UI.
-- No registered Purchase edit/delete.
-- No authentication, cloud/API sync, Store redesign, Analytics implementation, Household implementation, dark mode, or production release expansion.
-- No database error-description table.
+Device ownership now uses singleton installation metadata. Multiple usable UUID Devices without metadata stop with typed migration/bootstrap failure; earliest-device silent selection was removed.
 
-## Deviations And Risks
+## Server Schema And Roles
 
-- Native OS PDF sharing remains deferred; deterministic PDF bytes and file save behavior remain.
-- UI foundation and target hierarchy improved but are not a complete mockup-level composition pass.
-- Android build/runtime/share evidence is host-blocked by missing Java.
-- Windows evidence is release build plus bounded smoke, not manual acceptance.
+Server migration: `services/markei_sync_api/migrations/001_init.sql`.
+
+Tables:
+
+- `accounts`
+- `devices`
+- `account_cursor_state`
+- `submissions`
+- `sync_events`
+- `device_acknowledgements`
+
+Role direction:
+
+- `markei_migrator` owns local disposable migration execution through the container.
+- `markei_runtime` receives DML grants only.
+
+Evidence:
+
+- runtime DDL probe failed with `permission denied for schema public`;
+- cross-Account `sync_events` insert failed under RLS.
+
+## Idempotency And Transactions
+
+Local:
+
+- bounded pending leasing;
+- durable Submission attempt state;
+- unknown outcome reuses same SubmissionId;
+- inbox duplicate same EventId/hash is equivalent;
+- cursor acknowledgement waits for committed inbox cursor.
+
+Server:
+
+- upload path checks SubmissionId/request hash, EventId/content hash, verified Account/Device, and exact DeviceSequence in a serializable transaction helper.
+- same SubmissionId/request hash returns stored response.
+- same identity with different hash returns typed terminal failure.
+
+## Auth Boundary
+
+`AuthVerifier` is an API port. `FixtureAuthVerifier` exists for direct test construction only. The normal runtime entrypoint uses `RefusingAuthVerifier` and requires a database URL; no production auth adapter or enrollment endpoint was implemented.
+
+## Architectural Deviations And Deferred Decisions
+
+Implemented proof is partial relative to the full D/E/F floor:
+
+- complete remote Purchase aggregate application from downloaded pages is not finished;
+- API integration tests do not yet exercise full upload/download/ack against Postgres;
+- serialization retry exhaustion and crash-matrix tests are not complete;
+- `tool/sync_lab.dart` cannot be run with plain `dart run` because this Flutter package imports `path_provider`/`dart:ui`; executable harness evidence lives in Flutter tests.
+
+This is not Neon, production authentication, deployment, retention, backup, UI/UX acceptance or release acceptance.
+
+WAITING_FOR_MCG_01

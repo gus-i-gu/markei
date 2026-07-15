@@ -44,8 +44,13 @@ void main() {
     final event = (await db.select(db.syncEvents).get()).single;
     final payload = jsonDecode(event.payloadJson) as Map<String, Object?>;
     expect(payload['eventType'], 'purchase.registered');
+    expect(payload['payloadVersion'], 3);
     expect(payload['deviceSequence'], 1);
-    expect(payload['purchase'], isA<Map<String, Object?>>());
+    expect(payload['contentHash'], event.contentHash);
+    expect(
+      (payload['payload']! as Map<String, Object?>)['purchase'],
+      isA<Map<String, Object?>>(),
+    );
   });
 
   test('invalid purchase item rolls back all aggregate writes', () async {

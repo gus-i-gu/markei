@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://markei.local/contracts/shared_beta/v3/purchase_registered.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eventId",
+    "accountId",
+    "deviceId",
+    "deviceSequence",
+    "eventType",
+    "payloadVersion",
+    "occurrenceTime",
+    "payload",
+    "contentHash"
+  ],
+  "properties": {
+    "eventId": { "type": "string", "format": "uuid" },
+    "accountId": { "type": "string", "format": "uuid" },
+    "deviceId": { "type": "string", "format": "uuid" },
+    "deviceSequence": { "type": "integer", "minimum": 1 },
+    "eventType": { "const": "purchase.registered" },
+    "payloadVersion": { "const": 3 },
+    "occurrenceTime": { "type": "string", "format": "date-time" },
+    "contentHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["purchase"],
+      "properties": {
+        "purchase": {
+          "type": "object",
+          "additionalProperties": true,
+          "required": ["id", "accountId", "store", "occurrenceTime", "currencyCode", "totalMinorUnits", "items"],
+          "properties": {
+            "id": { "type": "string", "format": "uuid" },
+            "accountId": { "type": "string", "format": "uuid" },
+            "store": { "type": "object" },
+            "personId": { "type": ["string", "null"] },
+            "paymentMethodId": { "type": ["string", "null"] },
+            "occurrenceTime": { "type": "string", "format": "date-time" },
+            "currencyCode": { "type": "string", "minLength": 3, "maxLength": 3 },
+            "totalMinorUnits": { "type": "integer", "minimum": 0 },
+            "items": { "type": "array", "minItems": 1, "maxItems": 25 }
+          }
+        }
+      }
+    }
+  }
+}

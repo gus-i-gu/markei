@@ -5826,6 +5826,1890 @@ class SyncStateCompanion extends UpdateCompanion<SyncStateData> {
   }
 }
 
+class $InstallationMetadataTable extends InstallationMetadata
+    with TableInfo<$InstallationMetadataTable, InstallationMetadataData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $InstallationMetadataTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES local_accounts (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _currentDeviceIdMeta = const VerificationMeta(
+    'currentDeviceId',
+  );
+  @override
+  late final GeneratedColumn<String> currentDeviceId = GeneratedColumn<String>(
+    'current_device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES devices (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    accountId,
+    currentDeviceId,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'installation_metadata';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<InstallationMetadataData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_accountIdMeta);
+    }
+    if (data.containsKey('current_device_id')) {
+      context.handle(
+        _currentDeviceIdMeta,
+        currentDeviceId.isAcceptableOrUnknown(
+          data['current_device_id']!,
+          _currentDeviceIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_currentDeviceIdMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  InstallationMetadataData map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return InstallationMetadataData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      )!,
+      currentDeviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}current_device_id'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $InstallationMetadataTable createAlias(String alias) {
+    return $InstallationMetadataTable(attachedDatabase, alias);
+  }
+}
+
+class InstallationMetadataData extends DataClass
+    implements Insertable<InstallationMetadataData> {
+  final String id;
+  final String accountId;
+  final String currentDeviceId;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const InstallationMetadataData({
+    required this.id,
+    required this.accountId,
+    required this.currentDeviceId,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['account_id'] = Variable<String>(accountId);
+    map['current_device_id'] = Variable<String>(currentDeviceId);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  InstallationMetadataCompanion toCompanion(bool nullToAbsent) {
+    return InstallationMetadataCompanion(
+      id: Value(id),
+      accountId: Value(accountId),
+      currentDeviceId: Value(currentDeviceId),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory InstallationMetadataData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return InstallationMetadataData(
+      id: serializer.fromJson<String>(json['id']),
+      accountId: serializer.fromJson<String>(json['accountId']),
+      currentDeviceId: serializer.fromJson<String>(json['currentDeviceId']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'accountId': serializer.toJson<String>(accountId),
+      'currentDeviceId': serializer.toJson<String>(currentDeviceId),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  InstallationMetadataData copyWith({
+    String? id,
+    String? accountId,
+    String? currentDeviceId,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => InstallationMetadataData(
+    id: id ?? this.id,
+    accountId: accountId ?? this.accountId,
+    currentDeviceId: currentDeviceId ?? this.currentDeviceId,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  InstallationMetadataData copyWithCompanion(
+    InstallationMetadataCompanion data,
+  ) {
+    return InstallationMetadataData(
+      id: data.id.present ? data.id.value : this.id,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      currentDeviceId: data.currentDeviceId.present
+          ? data.currentDeviceId.value
+          : this.currentDeviceId,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InstallationMetadataData(')
+          ..write('id: $id, ')
+          ..write('accountId: $accountId, ')
+          ..write('currentDeviceId: $currentDeviceId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, accountId, currentDeviceId, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is InstallationMetadataData &&
+          other.id == this.id &&
+          other.accountId == this.accountId &&
+          other.currentDeviceId == this.currentDeviceId &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class InstallationMetadataCompanion
+    extends UpdateCompanion<InstallationMetadataData> {
+  final Value<String> id;
+  final Value<String> accountId;
+  final Value<String> currentDeviceId;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const InstallationMetadataCompanion({
+    this.id = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.currentDeviceId = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  InstallationMetadataCompanion.insert({
+    required String id,
+    required String accountId,
+    required String currentDeviceId,
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       accountId = Value(accountId),
+       currentDeviceId = Value(currentDeviceId),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<InstallationMetadataData> custom({
+    Expression<String>? id,
+    Expression<String>? accountId,
+    Expression<String>? currentDeviceId,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (accountId != null) 'account_id': accountId,
+      if (currentDeviceId != null) 'current_device_id': currentDeviceId,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  InstallationMetadataCompanion copyWith({
+    Value<String>? id,
+    Value<String>? accountId,
+    Value<String>? currentDeviceId,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return InstallationMetadataCompanion(
+      id: id ?? this.id,
+      accountId: accountId ?? this.accountId,
+      currentDeviceId: currentDeviceId ?? this.currentDeviceId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (currentDeviceId.present) {
+      map['current_device_id'] = Variable<String>(currentDeviceId.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('InstallationMetadataCompanion(')
+          ..write('id: $id, ')
+          ..write('accountId: $accountId, ')
+          ..write('currentDeviceId: $currentDeviceId, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SyncSubmissionsTable extends SyncSubmissions
+    with TableInfo<$SyncSubmissionsTable, SyncSubmission> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncSubmissionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES local_accounts (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES devices (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _requestHashMeta = const VerificationMeta(
+    'requestHash',
+  );
+  @override
+  late final GeneratedColumn<String> requestHash = GeneratedColumn<String>(
+    'request_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _stateMeta = const VerificationMeta('state');
+  @override
+  late final GeneratedColumn<String> state = GeneratedColumn<String>(
+    'state',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _attemptCountMeta = const VerificationMeta(
+    'attemptCount',
+  );
+  @override
+  late final GeneratedColumn<int> attemptCount = GeneratedColumn<int>(
+    'attempt_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _nextAttemptAtMeta = const VerificationMeta(
+    'nextAttemptAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> nextAttemptAt =
+      GeneratedColumn<DateTime>(
+        'next_attempt_at',
+        aliasedName,
+        true,
+        type: DriftSqlType.dateTime,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _leaseUntilMeta = const VerificationMeta(
+    'leaseUntil',
+  );
+  @override
+  late final GeneratedColumn<DateTime> leaseUntil = GeneratedColumn<DateTime>(
+    'lease_until',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _outcomeMeta = const VerificationMeta(
+    'outcome',
+  );
+  @override
+  late final GeneratedColumn<String> outcome = GeneratedColumn<String>(
+    'outcome',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _responseCodeMeta = const VerificationMeta(
+    'responseCode',
+  );
+  @override
+  late final GeneratedColumn<String> responseCode = GeneratedColumn<String>(
+    'response_code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _errorCodeMeta = const VerificationMeta(
+    'errorCode',
+  );
+  @override
+  late final GeneratedColumn<String> errorCode = GeneratedColumn<String>(
+    'error_code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    accountId,
+    deviceId,
+    requestHash,
+    state,
+    attemptCount,
+    nextAttemptAt,
+    leaseUntil,
+    outcome,
+    responseCode,
+    errorCode,
+    createdAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_submissions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncSubmission> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_accountIdMeta);
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('request_hash')) {
+      context.handle(
+        _requestHashMeta,
+        requestHash.isAcceptableOrUnknown(
+          data['request_hash']!,
+          _requestHashMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_requestHashMeta);
+    }
+    if (data.containsKey('state')) {
+      context.handle(
+        _stateMeta,
+        state.isAcceptableOrUnknown(data['state']!, _stateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_stateMeta);
+    }
+    if (data.containsKey('attempt_count')) {
+      context.handle(
+        _attemptCountMeta,
+        attemptCount.isAcceptableOrUnknown(
+          data['attempt_count']!,
+          _attemptCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('next_attempt_at')) {
+      context.handle(
+        _nextAttemptAtMeta,
+        nextAttemptAt.isAcceptableOrUnknown(
+          data['next_attempt_at']!,
+          _nextAttemptAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('lease_until')) {
+      context.handle(
+        _leaseUntilMeta,
+        leaseUntil.isAcceptableOrUnknown(data['lease_until']!, _leaseUntilMeta),
+      );
+    }
+    if (data.containsKey('outcome')) {
+      context.handle(
+        _outcomeMeta,
+        outcome.isAcceptableOrUnknown(data['outcome']!, _outcomeMeta),
+      );
+    }
+    if (data.containsKey('response_code')) {
+      context.handle(
+        _responseCodeMeta,
+        responseCode.isAcceptableOrUnknown(
+          data['response_code']!,
+          _responseCodeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('error_code')) {
+      context.handle(
+        _errorCodeMeta,
+        errorCode.isAcceptableOrUnknown(data['error_code']!, _errorCodeMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SyncSubmission map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncSubmission(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      requestHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}request_hash'],
+      )!,
+      state: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}state'],
+      )!,
+      attemptCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempt_count'],
+      )!,
+      nextAttemptAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}next_attempt_at'],
+      ),
+      leaseUntil: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}lease_until'],
+      ),
+      outcome: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}outcome'],
+      ),
+      responseCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}response_code'],
+      ),
+      errorCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}error_code'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncSubmissionsTable createAlias(String alias) {
+    return $SyncSubmissionsTable(attachedDatabase, alias);
+  }
+}
+
+class SyncSubmission extends DataClass implements Insertable<SyncSubmission> {
+  final String id;
+  final String accountId;
+  final String deviceId;
+  final String requestHash;
+  final String state;
+  final int attemptCount;
+  final DateTime? nextAttemptAt;
+  final DateTime? leaseUntil;
+  final String? outcome;
+  final String? responseCode;
+  final String? errorCode;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const SyncSubmission({
+    required this.id,
+    required this.accountId,
+    required this.deviceId,
+    required this.requestHash,
+    required this.state,
+    required this.attemptCount,
+    this.nextAttemptAt,
+    this.leaseUntil,
+    this.outcome,
+    this.responseCode,
+    this.errorCode,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['account_id'] = Variable<String>(accountId);
+    map['device_id'] = Variable<String>(deviceId);
+    map['request_hash'] = Variable<String>(requestHash);
+    map['state'] = Variable<String>(state);
+    map['attempt_count'] = Variable<int>(attemptCount);
+    if (!nullToAbsent || nextAttemptAt != null) {
+      map['next_attempt_at'] = Variable<DateTime>(nextAttemptAt);
+    }
+    if (!nullToAbsent || leaseUntil != null) {
+      map['lease_until'] = Variable<DateTime>(leaseUntil);
+    }
+    if (!nullToAbsent || outcome != null) {
+      map['outcome'] = Variable<String>(outcome);
+    }
+    if (!nullToAbsent || responseCode != null) {
+      map['response_code'] = Variable<String>(responseCode);
+    }
+    if (!nullToAbsent || errorCode != null) {
+      map['error_code'] = Variable<String>(errorCode);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  SyncSubmissionsCompanion toCompanion(bool nullToAbsent) {
+    return SyncSubmissionsCompanion(
+      id: Value(id),
+      accountId: Value(accountId),
+      deviceId: Value(deviceId),
+      requestHash: Value(requestHash),
+      state: Value(state),
+      attemptCount: Value(attemptCount),
+      nextAttemptAt: nextAttemptAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextAttemptAt),
+      leaseUntil: leaseUntil == null && nullToAbsent
+          ? const Value.absent()
+          : Value(leaseUntil),
+      outcome: outcome == null && nullToAbsent
+          ? const Value.absent()
+          : Value(outcome),
+      responseCode: responseCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(responseCode),
+      errorCode: errorCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(errorCode),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory SyncSubmission.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncSubmission(
+      id: serializer.fromJson<String>(json['id']),
+      accountId: serializer.fromJson<String>(json['accountId']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      requestHash: serializer.fromJson<String>(json['requestHash']),
+      state: serializer.fromJson<String>(json['state']),
+      attemptCount: serializer.fromJson<int>(json['attemptCount']),
+      nextAttemptAt: serializer.fromJson<DateTime?>(json['nextAttemptAt']),
+      leaseUntil: serializer.fromJson<DateTime?>(json['leaseUntil']),
+      outcome: serializer.fromJson<String?>(json['outcome']),
+      responseCode: serializer.fromJson<String?>(json['responseCode']),
+      errorCode: serializer.fromJson<String?>(json['errorCode']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'accountId': serializer.toJson<String>(accountId),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'requestHash': serializer.toJson<String>(requestHash),
+      'state': serializer.toJson<String>(state),
+      'attemptCount': serializer.toJson<int>(attemptCount),
+      'nextAttemptAt': serializer.toJson<DateTime?>(nextAttemptAt),
+      'leaseUntil': serializer.toJson<DateTime?>(leaseUntil),
+      'outcome': serializer.toJson<String?>(outcome),
+      'responseCode': serializer.toJson<String?>(responseCode),
+      'errorCode': serializer.toJson<String?>(errorCode),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  SyncSubmission copyWith({
+    String? id,
+    String? accountId,
+    String? deviceId,
+    String? requestHash,
+    String? state,
+    int? attemptCount,
+    Value<DateTime?> nextAttemptAt = const Value.absent(),
+    Value<DateTime?> leaseUntil = const Value.absent(),
+    Value<String?> outcome = const Value.absent(),
+    Value<String?> responseCode = const Value.absent(),
+    Value<String?> errorCode = const Value.absent(),
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) => SyncSubmission(
+    id: id ?? this.id,
+    accountId: accountId ?? this.accountId,
+    deviceId: deviceId ?? this.deviceId,
+    requestHash: requestHash ?? this.requestHash,
+    state: state ?? this.state,
+    attemptCount: attemptCount ?? this.attemptCount,
+    nextAttemptAt: nextAttemptAt.present
+        ? nextAttemptAt.value
+        : this.nextAttemptAt,
+    leaseUntil: leaseUntil.present ? leaseUntil.value : this.leaseUntil,
+    outcome: outcome.present ? outcome.value : this.outcome,
+    responseCode: responseCode.present ? responseCode.value : this.responseCode,
+    errorCode: errorCode.present ? errorCode.value : this.errorCode,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  SyncSubmission copyWithCompanion(SyncSubmissionsCompanion data) {
+    return SyncSubmission(
+      id: data.id.present ? data.id.value : this.id,
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      requestHash: data.requestHash.present
+          ? data.requestHash.value
+          : this.requestHash,
+      state: data.state.present ? data.state.value : this.state,
+      attemptCount: data.attemptCount.present
+          ? data.attemptCount.value
+          : this.attemptCount,
+      nextAttemptAt: data.nextAttemptAt.present
+          ? data.nextAttemptAt.value
+          : this.nextAttemptAt,
+      leaseUntil: data.leaseUntil.present
+          ? data.leaseUntil.value
+          : this.leaseUntil,
+      outcome: data.outcome.present ? data.outcome.value : this.outcome,
+      responseCode: data.responseCode.present
+          ? data.responseCode.value
+          : this.responseCode,
+      errorCode: data.errorCode.present ? data.errorCode.value : this.errorCode,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncSubmission(')
+          ..write('id: $id, ')
+          ..write('accountId: $accountId, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('requestHash: $requestHash, ')
+          ..write('state: $state, ')
+          ..write('attemptCount: $attemptCount, ')
+          ..write('nextAttemptAt: $nextAttemptAt, ')
+          ..write('leaseUntil: $leaseUntil, ')
+          ..write('outcome: $outcome, ')
+          ..write('responseCode: $responseCode, ')
+          ..write('errorCode: $errorCode, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    accountId,
+    deviceId,
+    requestHash,
+    state,
+    attemptCount,
+    nextAttemptAt,
+    leaseUntil,
+    outcome,
+    responseCode,
+    errorCode,
+    createdAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncSubmission &&
+          other.id == this.id &&
+          other.accountId == this.accountId &&
+          other.deviceId == this.deviceId &&
+          other.requestHash == this.requestHash &&
+          other.state == this.state &&
+          other.attemptCount == this.attemptCount &&
+          other.nextAttemptAt == this.nextAttemptAt &&
+          other.leaseUntil == this.leaseUntil &&
+          other.outcome == this.outcome &&
+          other.responseCode == this.responseCode &&
+          other.errorCode == this.errorCode &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class SyncSubmissionsCompanion extends UpdateCompanion<SyncSubmission> {
+  final Value<String> id;
+  final Value<String> accountId;
+  final Value<String> deviceId;
+  final Value<String> requestHash;
+  final Value<String> state;
+  final Value<int> attemptCount;
+  final Value<DateTime?> nextAttemptAt;
+  final Value<DateTime?> leaseUntil;
+  final Value<String?> outcome;
+  final Value<String?> responseCode;
+  final Value<String?> errorCode;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const SyncSubmissionsCompanion({
+    this.id = const Value.absent(),
+    this.accountId = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.requestHash = const Value.absent(),
+    this.state = const Value.absent(),
+    this.attemptCount = const Value.absent(),
+    this.nextAttemptAt = const Value.absent(),
+    this.leaseUntil = const Value.absent(),
+    this.outcome = const Value.absent(),
+    this.responseCode = const Value.absent(),
+    this.errorCode = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SyncSubmissionsCompanion.insert({
+    required String id,
+    required String accountId,
+    required String deviceId,
+    required String requestHash,
+    required String state,
+    this.attemptCount = const Value.absent(),
+    this.nextAttemptAt = const Value.absent(),
+    this.leaseUntil = const Value.absent(),
+    this.outcome = const Value.absent(),
+    this.responseCode = const Value.absent(),
+    this.errorCode = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       accountId = Value(accountId),
+       deviceId = Value(deviceId),
+       requestHash = Value(requestHash),
+       state = Value(state),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<SyncSubmission> custom({
+    Expression<String>? id,
+    Expression<String>? accountId,
+    Expression<String>? deviceId,
+    Expression<String>? requestHash,
+    Expression<String>? state,
+    Expression<int>? attemptCount,
+    Expression<DateTime>? nextAttemptAt,
+    Expression<DateTime>? leaseUntil,
+    Expression<String>? outcome,
+    Expression<String>? responseCode,
+    Expression<String>? errorCode,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (accountId != null) 'account_id': accountId,
+      if (deviceId != null) 'device_id': deviceId,
+      if (requestHash != null) 'request_hash': requestHash,
+      if (state != null) 'state': state,
+      if (attemptCount != null) 'attempt_count': attemptCount,
+      if (nextAttemptAt != null) 'next_attempt_at': nextAttemptAt,
+      if (leaseUntil != null) 'lease_until': leaseUntil,
+      if (outcome != null) 'outcome': outcome,
+      if (responseCode != null) 'response_code': responseCode,
+      if (errorCode != null) 'error_code': errorCode,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SyncSubmissionsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? accountId,
+    Value<String>? deviceId,
+    Value<String>? requestHash,
+    Value<String>? state,
+    Value<int>? attemptCount,
+    Value<DateTime?>? nextAttemptAt,
+    Value<DateTime?>? leaseUntil,
+    Value<String?>? outcome,
+    Value<String?>? responseCode,
+    Value<String?>? errorCode,
+    Value<DateTime>? createdAt,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return SyncSubmissionsCompanion(
+      id: id ?? this.id,
+      accountId: accountId ?? this.accountId,
+      deviceId: deviceId ?? this.deviceId,
+      requestHash: requestHash ?? this.requestHash,
+      state: state ?? this.state,
+      attemptCount: attemptCount ?? this.attemptCount,
+      nextAttemptAt: nextAttemptAt ?? this.nextAttemptAt,
+      leaseUntil: leaseUntil ?? this.leaseUntil,
+      outcome: outcome ?? this.outcome,
+      responseCode: responseCode ?? this.responseCode,
+      errorCode: errorCode ?? this.errorCode,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (requestHash.present) {
+      map['request_hash'] = Variable<String>(requestHash.value);
+    }
+    if (state.present) {
+      map['state'] = Variable<String>(state.value);
+    }
+    if (attemptCount.present) {
+      map['attempt_count'] = Variable<int>(attemptCount.value);
+    }
+    if (nextAttemptAt.present) {
+      map['next_attempt_at'] = Variable<DateTime>(nextAttemptAt.value);
+    }
+    if (leaseUntil.present) {
+      map['lease_until'] = Variable<DateTime>(leaseUntil.value);
+    }
+    if (outcome.present) {
+      map['outcome'] = Variable<String>(outcome.value);
+    }
+    if (responseCode.present) {
+      map['response_code'] = Variable<String>(responseCode.value);
+    }
+    if (errorCode.present) {
+      map['error_code'] = Variable<String>(errorCode.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncSubmissionsCompanion(')
+          ..write('id: $id, ')
+          ..write('accountId: $accountId, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('requestHash: $requestHash, ')
+          ..write('state: $state, ')
+          ..write('attemptCount: $attemptCount, ')
+          ..write('nextAttemptAt: $nextAttemptAt, ')
+          ..write('leaseUntil: $leaseUntil, ')
+          ..write('outcome: $outcome, ')
+          ..write('responseCode: $responseCode, ')
+          ..write('errorCode: $errorCode, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SyncSubmissionEventsTable extends SyncSubmissionEvents
+    with TableInfo<$SyncSubmissionEventsTable, SyncSubmissionEvent> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncSubmissionEventsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _submissionIdMeta = const VerificationMeta(
+    'submissionId',
+  );
+  @override
+  late final GeneratedColumn<String> submissionId = GeneratedColumn<String>(
+    'submission_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES sync_submissions (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _eventIdMeta = const VerificationMeta(
+    'eventId',
+  );
+  @override
+  late final GeneratedColumn<String> eventId = GeneratedColumn<String>(
+    'event_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES sync_events (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _positionMeta = const VerificationMeta(
+    'position',
+  );
+  @override
+  late final GeneratedColumn<int> position = GeneratedColumn<int>(
+    'position',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [submissionId, eventId, position];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_submission_events';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncSubmissionEvent> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('submission_id')) {
+      context.handle(
+        _submissionIdMeta,
+        submissionId.isAcceptableOrUnknown(
+          data['submission_id']!,
+          _submissionIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_submissionIdMeta);
+    }
+    if (data.containsKey('event_id')) {
+      context.handle(
+        _eventIdMeta,
+        eventId.isAcceptableOrUnknown(data['event_id']!, _eventIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_eventIdMeta);
+    }
+    if (data.containsKey('position')) {
+      context.handle(
+        _positionMeta,
+        position.isAcceptableOrUnknown(data['position']!, _positionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_positionMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {submissionId, eventId};
+  @override
+  SyncSubmissionEvent map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncSubmissionEvent(
+      submissionId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}submission_id'],
+      )!,
+      eventId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}event_id'],
+      )!,
+      position: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}position'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncSubmissionEventsTable createAlias(String alias) {
+    return $SyncSubmissionEventsTable(attachedDatabase, alias);
+  }
+}
+
+class SyncSubmissionEvent extends DataClass
+    implements Insertable<SyncSubmissionEvent> {
+  final String submissionId;
+  final String eventId;
+  final int position;
+  const SyncSubmissionEvent({
+    required this.submissionId,
+    required this.eventId,
+    required this.position,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['submission_id'] = Variable<String>(submissionId);
+    map['event_id'] = Variable<String>(eventId);
+    map['position'] = Variable<int>(position);
+    return map;
+  }
+
+  SyncSubmissionEventsCompanion toCompanion(bool nullToAbsent) {
+    return SyncSubmissionEventsCompanion(
+      submissionId: Value(submissionId),
+      eventId: Value(eventId),
+      position: Value(position),
+    );
+  }
+
+  factory SyncSubmissionEvent.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncSubmissionEvent(
+      submissionId: serializer.fromJson<String>(json['submissionId']),
+      eventId: serializer.fromJson<String>(json['eventId']),
+      position: serializer.fromJson<int>(json['position']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'submissionId': serializer.toJson<String>(submissionId),
+      'eventId': serializer.toJson<String>(eventId),
+      'position': serializer.toJson<int>(position),
+    };
+  }
+
+  SyncSubmissionEvent copyWith({
+    String? submissionId,
+    String? eventId,
+    int? position,
+  }) => SyncSubmissionEvent(
+    submissionId: submissionId ?? this.submissionId,
+    eventId: eventId ?? this.eventId,
+    position: position ?? this.position,
+  );
+  SyncSubmissionEvent copyWithCompanion(SyncSubmissionEventsCompanion data) {
+    return SyncSubmissionEvent(
+      submissionId: data.submissionId.present
+          ? data.submissionId.value
+          : this.submissionId,
+      eventId: data.eventId.present ? data.eventId.value : this.eventId,
+      position: data.position.present ? data.position.value : this.position,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncSubmissionEvent(')
+          ..write('submissionId: $submissionId, ')
+          ..write('eventId: $eventId, ')
+          ..write('position: $position')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(submissionId, eventId, position);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncSubmissionEvent &&
+          other.submissionId == this.submissionId &&
+          other.eventId == this.eventId &&
+          other.position == this.position);
+}
+
+class SyncSubmissionEventsCompanion
+    extends UpdateCompanion<SyncSubmissionEvent> {
+  final Value<String> submissionId;
+  final Value<String> eventId;
+  final Value<int> position;
+  final Value<int> rowid;
+  const SyncSubmissionEventsCompanion({
+    this.submissionId = const Value.absent(),
+    this.eventId = const Value.absent(),
+    this.position = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SyncSubmissionEventsCompanion.insert({
+    required String submissionId,
+    required String eventId,
+    required int position,
+    this.rowid = const Value.absent(),
+  }) : submissionId = Value(submissionId),
+       eventId = Value(eventId),
+       position = Value(position);
+  static Insertable<SyncSubmissionEvent> custom({
+    Expression<String>? submissionId,
+    Expression<String>? eventId,
+    Expression<int>? position,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (submissionId != null) 'submission_id': submissionId,
+      if (eventId != null) 'event_id': eventId,
+      if (position != null) 'position': position,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SyncSubmissionEventsCompanion copyWith({
+    Value<String>? submissionId,
+    Value<String>? eventId,
+    Value<int>? position,
+    Value<int>? rowid,
+  }) {
+    return SyncSubmissionEventsCompanion(
+      submissionId: submissionId ?? this.submissionId,
+      eventId: eventId ?? this.eventId,
+      position: position ?? this.position,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (submissionId.present) {
+      map['submission_id'] = Variable<String>(submissionId.value);
+    }
+    if (eventId.present) {
+      map['event_id'] = Variable<String>(eventId.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<int>(position.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncSubmissionEventsCompanion(')
+          ..write('submissionId: $submissionId, ')
+          ..write('eventId: $eventId, ')
+          ..write('position: $position, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SyncInboxTable extends SyncInbox
+    with TableInfo<$SyncInboxTable, SyncInboxData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncInboxTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _accountIdMeta = const VerificationMeta(
+    'accountId',
+  );
+  @override
+  late final GeneratedColumn<String> accountId = GeneratedColumn<String>(
+    'account_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES local_accounts (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _eventIdMeta = const VerificationMeta(
+    'eventId',
+  );
+  @override
+  late final GeneratedColumn<String> eventId = GeneratedColumn<String>(
+    'event_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contentHashMeta = const VerificationMeta(
+    'contentHash',
+  );
+  @override
+  late final GeneratedColumn<String> contentHash = GeneratedColumn<String>(
+    'content_hash',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _serverCursorMeta = const VerificationMeta(
+    'serverCursor',
+  );
+  @override
+  late final GeneratedColumn<String> serverCursor = GeneratedColumn<String>(
+    'server_cursor',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _stateMeta = const VerificationMeta('state');
+  @override
+  late final GeneratedColumn<String> state = GeneratedColumn<String>(
+    'state',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _appliedAtMeta = const VerificationMeta(
+    'appliedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> appliedAt = GeneratedColumn<DateTime>(
+    'applied_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    accountId,
+    eventId,
+    contentHash,
+    serverCursor,
+    state,
+    appliedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_inbox';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncInboxData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('account_id')) {
+      context.handle(
+        _accountIdMeta,
+        accountId.isAcceptableOrUnknown(data['account_id']!, _accountIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_accountIdMeta);
+    }
+    if (data.containsKey('event_id')) {
+      context.handle(
+        _eventIdMeta,
+        eventId.isAcceptableOrUnknown(data['event_id']!, _eventIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_eventIdMeta);
+    }
+    if (data.containsKey('content_hash')) {
+      context.handle(
+        _contentHashMeta,
+        contentHash.isAcceptableOrUnknown(
+          data['content_hash']!,
+          _contentHashMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_contentHashMeta);
+    }
+    if (data.containsKey('server_cursor')) {
+      context.handle(
+        _serverCursorMeta,
+        serverCursor.isAcceptableOrUnknown(
+          data['server_cursor']!,
+          _serverCursorMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_serverCursorMeta);
+    }
+    if (data.containsKey('state')) {
+      context.handle(
+        _stateMeta,
+        state.isAcceptableOrUnknown(data['state']!, _stateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_stateMeta);
+    }
+    if (data.containsKey('applied_at')) {
+      context.handle(
+        _appliedAtMeta,
+        appliedAt.isAcceptableOrUnknown(data['applied_at']!, _appliedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {accountId, eventId};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {accountId, serverCursor},
+  ];
+  @override
+  SyncInboxData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncInboxData(
+      accountId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_id'],
+      )!,
+      eventId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}event_id'],
+      )!,
+      contentHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content_hash'],
+      )!,
+      serverCursor: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}server_cursor'],
+      )!,
+      state: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}state'],
+      )!,
+      appliedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}applied_at'],
+      ),
+    );
+  }
+
+  @override
+  $SyncInboxTable createAlias(String alias) {
+    return $SyncInboxTable(attachedDatabase, alias);
+  }
+}
+
+class SyncInboxData extends DataClass implements Insertable<SyncInboxData> {
+  final String accountId;
+  final String eventId;
+  final String contentHash;
+  final String serverCursor;
+  final String state;
+  final DateTime? appliedAt;
+  const SyncInboxData({
+    required this.accountId,
+    required this.eventId,
+    required this.contentHash,
+    required this.serverCursor,
+    required this.state,
+    this.appliedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['account_id'] = Variable<String>(accountId);
+    map['event_id'] = Variable<String>(eventId);
+    map['content_hash'] = Variable<String>(contentHash);
+    map['server_cursor'] = Variable<String>(serverCursor);
+    map['state'] = Variable<String>(state);
+    if (!nullToAbsent || appliedAt != null) {
+      map['applied_at'] = Variable<DateTime>(appliedAt);
+    }
+    return map;
+  }
+
+  SyncInboxCompanion toCompanion(bool nullToAbsent) {
+    return SyncInboxCompanion(
+      accountId: Value(accountId),
+      eventId: Value(eventId),
+      contentHash: Value(contentHash),
+      serverCursor: Value(serverCursor),
+      state: Value(state),
+      appliedAt: appliedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(appliedAt),
+    );
+  }
+
+  factory SyncInboxData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncInboxData(
+      accountId: serializer.fromJson<String>(json['accountId']),
+      eventId: serializer.fromJson<String>(json['eventId']),
+      contentHash: serializer.fromJson<String>(json['contentHash']),
+      serverCursor: serializer.fromJson<String>(json['serverCursor']),
+      state: serializer.fromJson<String>(json['state']),
+      appliedAt: serializer.fromJson<DateTime?>(json['appliedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'accountId': serializer.toJson<String>(accountId),
+      'eventId': serializer.toJson<String>(eventId),
+      'contentHash': serializer.toJson<String>(contentHash),
+      'serverCursor': serializer.toJson<String>(serverCursor),
+      'state': serializer.toJson<String>(state),
+      'appliedAt': serializer.toJson<DateTime?>(appliedAt),
+    };
+  }
+
+  SyncInboxData copyWith({
+    String? accountId,
+    String? eventId,
+    String? contentHash,
+    String? serverCursor,
+    String? state,
+    Value<DateTime?> appliedAt = const Value.absent(),
+  }) => SyncInboxData(
+    accountId: accountId ?? this.accountId,
+    eventId: eventId ?? this.eventId,
+    contentHash: contentHash ?? this.contentHash,
+    serverCursor: serverCursor ?? this.serverCursor,
+    state: state ?? this.state,
+    appliedAt: appliedAt.present ? appliedAt.value : this.appliedAt,
+  );
+  SyncInboxData copyWithCompanion(SyncInboxCompanion data) {
+    return SyncInboxData(
+      accountId: data.accountId.present ? data.accountId.value : this.accountId,
+      eventId: data.eventId.present ? data.eventId.value : this.eventId,
+      contentHash: data.contentHash.present
+          ? data.contentHash.value
+          : this.contentHash,
+      serverCursor: data.serverCursor.present
+          ? data.serverCursor.value
+          : this.serverCursor,
+      state: data.state.present ? data.state.value : this.state,
+      appliedAt: data.appliedAt.present ? data.appliedAt.value : this.appliedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncInboxData(')
+          ..write('accountId: $accountId, ')
+          ..write('eventId: $eventId, ')
+          ..write('contentHash: $contentHash, ')
+          ..write('serverCursor: $serverCursor, ')
+          ..write('state: $state, ')
+          ..write('appliedAt: $appliedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    accountId,
+    eventId,
+    contentHash,
+    serverCursor,
+    state,
+    appliedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncInboxData &&
+          other.accountId == this.accountId &&
+          other.eventId == this.eventId &&
+          other.contentHash == this.contentHash &&
+          other.serverCursor == this.serverCursor &&
+          other.state == this.state &&
+          other.appliedAt == this.appliedAt);
+}
+
+class SyncInboxCompanion extends UpdateCompanion<SyncInboxData> {
+  final Value<String> accountId;
+  final Value<String> eventId;
+  final Value<String> contentHash;
+  final Value<String> serverCursor;
+  final Value<String> state;
+  final Value<DateTime?> appliedAt;
+  final Value<int> rowid;
+  const SyncInboxCompanion({
+    this.accountId = const Value.absent(),
+    this.eventId = const Value.absent(),
+    this.contentHash = const Value.absent(),
+    this.serverCursor = const Value.absent(),
+    this.state = const Value.absent(),
+    this.appliedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SyncInboxCompanion.insert({
+    required String accountId,
+    required String eventId,
+    required String contentHash,
+    required String serverCursor,
+    required String state,
+    this.appliedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : accountId = Value(accountId),
+       eventId = Value(eventId),
+       contentHash = Value(contentHash),
+       serverCursor = Value(serverCursor),
+       state = Value(state);
+  static Insertable<SyncInboxData> custom({
+    Expression<String>? accountId,
+    Expression<String>? eventId,
+    Expression<String>? contentHash,
+    Expression<String>? serverCursor,
+    Expression<String>? state,
+    Expression<DateTime>? appliedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (accountId != null) 'account_id': accountId,
+      if (eventId != null) 'event_id': eventId,
+      if (contentHash != null) 'content_hash': contentHash,
+      if (serverCursor != null) 'server_cursor': serverCursor,
+      if (state != null) 'state': state,
+      if (appliedAt != null) 'applied_at': appliedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SyncInboxCompanion copyWith({
+    Value<String>? accountId,
+    Value<String>? eventId,
+    Value<String>? contentHash,
+    Value<String>? serverCursor,
+    Value<String>? state,
+    Value<DateTime?>? appliedAt,
+    Value<int>? rowid,
+  }) {
+    return SyncInboxCompanion(
+      accountId: accountId ?? this.accountId,
+      eventId: eventId ?? this.eventId,
+      contentHash: contentHash ?? this.contentHash,
+      serverCursor: serverCursor ?? this.serverCursor,
+      state: state ?? this.state,
+      appliedAt: appliedAt ?? this.appliedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (accountId.present) {
+      map['account_id'] = Variable<String>(accountId.value);
+    }
+    if (eventId.present) {
+      map['event_id'] = Variable<String>(eventId.value);
+    }
+    if (contentHash.present) {
+      map['content_hash'] = Variable<String>(contentHash.value);
+    }
+    if (serverCursor.present) {
+      map['server_cursor'] = Variable<String>(serverCursor.value);
+    }
+    if (state.present) {
+      map['state'] = Variable<String>(state.value);
+    }
+    if (appliedAt.present) {
+      map['applied_at'] = Variable<DateTime>(appliedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncInboxCompanion(')
+          ..write('accountId: $accountId, ')
+          ..write('eventId: $eventId, ')
+          ..write('contentHash: $contentHash, ')
+          ..write('serverCursor: $serverCursor, ')
+          ..write('state: $state, ')
+          ..write('appliedAt: $appliedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MigrationLedgerTable extends MigrationLedger
     with TableInfo<$MigrationLedgerTable, MigrationLedgerData> {
   @override
@@ -6317,6 +8201,14 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
   late final $SyncEventsTable syncEvents = $SyncEventsTable(this);
   late final $PendingEventsTable pendingEvents = $PendingEventsTable(this);
   late final $SyncStateTable syncState = $SyncStateTable(this);
+  late final $InstallationMetadataTable installationMetadata =
+      $InstallationMetadataTable(this);
+  late final $SyncSubmissionsTable syncSubmissions = $SyncSubmissionsTable(
+    this,
+  );
+  late final $SyncSubmissionEventsTable syncSubmissionEvents =
+      $SyncSubmissionEventsTable(this);
+  late final $SyncInboxTable syncInbox = $SyncInboxTable(this);
   late final $MigrationLedgerTable migrationLedger = $MigrationLedgerTable(
     this,
   );
@@ -6337,6 +8229,10 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
     syncEvents,
     pendingEvents,
     syncState,
+    installationMetadata,
+    syncSubmissions,
+    syncSubmissionEvents,
+    syncInbox,
     migrationLedger,
   ];
   @override
@@ -6368,6 +8264,27 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('sync_state', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'sync_submissions',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('sync_submission_events', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'sync_events',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('sync_submission_events', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'local_accounts',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('sync_inbox', kind: UpdateKind.delete)],
     ),
   ]);
 }
@@ -6559,6 +8476,70 @@ final class $$LocalAccountsTableReferences
     ).filter((f) => f.accountId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_syncStateRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $InstallationMetadataTable,
+    List<InstallationMetadataData>
+  >
+  _installationMetadataRefsTable(_$LocalDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.installationMetadata,
+        aliasName: 'local_accounts__id__installation_metadata__account_id',
+      );
+
+  $$InstallationMetadataTableProcessedTableManager
+  get installationMetadataRefs {
+    final manager = $$InstallationMetadataTableTableManager(
+      $_db,
+      $_db.installationMetadata,
+    ).filter((f) => f.accountId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _installationMetadataRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$SyncSubmissionsTable, List<SyncSubmission>>
+  _syncSubmissionsRefsTable(_$LocalDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.syncSubmissions,
+        aliasName: 'local_accounts__id__sync_submissions__account_id',
+      );
+
+  $$SyncSubmissionsTableProcessedTableManager get syncSubmissionsRefs {
+    final manager = $$SyncSubmissionsTableTableManager(
+      $_db,
+      $_db.syncSubmissions,
+    ).filter((f) => f.accountId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _syncSubmissionsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$SyncInboxTable, List<SyncInboxData>>
+  _syncInboxRefsTable(_$LocalDatabase db) => MultiTypedResultKey.fromTable(
+    db.syncInbox,
+    aliasName: 'local_accounts__id__sync_inbox__account_id',
+  );
+
+  $$SyncInboxTableProcessedTableManager get syncInboxRefs {
+    final manager = $$SyncInboxTableTableManager(
+      $_db,
+      $_db.syncInbox,
+    ).filter((f) => f.accountId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_syncInboxRefsTable($_db));
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -6805,6 +8786,81 @@ class $$LocalAccountsTableFilterComposer
           }) => $$SyncStateTableFilterComposer(
             $db: $db,
             $table: $db.syncState,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> installationMetadataRefs(
+    Expression<bool> Function($$InstallationMetadataTableFilterComposer f) f,
+  ) {
+    final $$InstallationMetadataTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.installationMetadata,
+      getReferencedColumn: (t) => t.accountId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InstallationMetadataTableFilterComposer(
+            $db: $db,
+            $table: $db.installationMetadata,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> syncSubmissionsRefs(
+    Expression<bool> Function($$SyncSubmissionsTableFilterComposer f) f,
+  ) {
+    final $$SyncSubmissionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.syncSubmissions,
+      getReferencedColumn: (t) => t.accountId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncSubmissionsTableFilterComposer(
+            $db: $db,
+            $table: $db.syncSubmissions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> syncInboxRefs(
+    Expression<bool> Function($$SyncInboxTableFilterComposer f) f,
+  ) {
+    final $$SyncInboxTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.syncInbox,
+      getReferencedColumn: (t) => t.accountId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncInboxTableFilterComposer(
+            $db: $db,
+            $table: $db.syncInbox,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7085,6 +9141,82 @@ class $$LocalAccountsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> installationMetadataRefs<T extends Object>(
+    Expression<T> Function($$InstallationMetadataTableAnnotationComposer a) f,
+  ) {
+    final $$InstallationMetadataTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.installationMetadata,
+          getReferencedColumn: (t) => t.accountId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$InstallationMetadataTableAnnotationComposer(
+                $db: $db,
+                $table: $db.installationMetadata,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> syncSubmissionsRefs<T extends Object>(
+    Expression<T> Function($$SyncSubmissionsTableAnnotationComposer a) f,
+  ) {
+    final $$SyncSubmissionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.syncSubmissions,
+      getReferencedColumn: (t) => t.accountId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncSubmissionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.syncSubmissions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> syncInboxRefs<T extends Object>(
+    Expression<T> Function($$SyncInboxTableAnnotationComposer a) f,
+  ) {
+    final $$SyncInboxTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.syncInbox,
+      getReferencedColumn: (t) => t.accountId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncInboxTableAnnotationComposer(
+            $db: $db,
+            $table: $db.syncInbox,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$LocalAccountsTableTableManager
@@ -7110,6 +9242,9 @@ class $$LocalAccountsTableTableManager
             bool purchasesRefs,
             bool syncEventsRefs,
             bool syncStateRefs,
+            bool installationMetadataRefs,
+            bool syncSubmissionsRefs,
+            bool syncInboxRefs,
           })
         > {
   $$LocalAccountsTableTableManager(
@@ -7168,6 +9303,9 @@ class $$LocalAccountsTableTableManager
                 purchasesRefs = false,
                 syncEventsRefs = false,
                 syncStateRefs = false,
+                installationMetadataRefs = false,
+                syncSubmissionsRefs = false,
+                syncInboxRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -7181,6 +9319,9 @@ class $$LocalAccountsTableTableManager
                     if (purchasesRefs) db.purchases,
                     if (syncEventsRefs) db.syncEvents,
                     if (syncStateRefs) db.syncState,
+                    if (installationMetadataRefs) db.installationMetadata,
+                    if (syncSubmissionsRefs) db.syncSubmissions,
+                    if (syncInboxRefs) db.syncInbox,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -7374,6 +9515,69 @@ class $$LocalAccountsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (installationMetadataRefs)
+                        await $_getPrefetchedData<
+                          LocalAccount,
+                          $LocalAccountsTable,
+                          InstallationMetadataData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$LocalAccountsTableReferences
+                              ._installationMetadataRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$LocalAccountsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).installationMetadataRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.accountId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (syncSubmissionsRefs)
+                        await $_getPrefetchedData<
+                          LocalAccount,
+                          $LocalAccountsTable,
+                          SyncSubmission
+                        >(
+                          currentTable: table,
+                          referencedTable: $$LocalAccountsTableReferences
+                              ._syncSubmissionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$LocalAccountsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).syncSubmissionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.accountId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (syncInboxRefs)
+                        await $_getPrefetchedData<
+                          LocalAccount,
+                          $LocalAccountsTable,
+                          SyncInboxData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$LocalAccountsTableReferences
+                              ._syncInboxRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$LocalAccountsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).syncInboxRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.accountId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -7404,6 +9608,9 @@ typedef $$LocalAccountsTableProcessedTableManager =
         bool purchasesRefs,
         bool syncEventsRefs,
         bool syncStateRefs,
+        bool installationMetadataRefs,
+        bool syncSubmissionsRefs,
+        bool syncInboxRefs,
       })
     >;
 typedef $$DevicesTableCreateCompanionBuilder =
@@ -7457,6 +9664,55 @@ final class $$DevicesTableReferences
     ).filter((f) => f.deviceId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_syncEventsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $InstallationMetadataTable,
+    List<InstallationMetadataData>
+  >
+  _installationMetadataRefsTable(_$LocalDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.installationMetadata,
+        aliasName: 'devices__id__installation_metadata__current_device_id',
+      );
+
+  $$InstallationMetadataTableProcessedTableManager
+  get installationMetadataRefs {
+    final manager =
+        $$InstallationMetadataTableTableManager(
+          $_db,
+          $_db.installationMetadata,
+        ).filter(
+          (f) => f.currentDeviceId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _installationMetadataRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$SyncSubmissionsTable, List<SyncSubmission>>
+  _syncSubmissionsRefsTable(_$LocalDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.syncSubmissions,
+        aliasName: 'devices__id__sync_submissions__device_id',
+      );
+
+  $$SyncSubmissionsTableProcessedTableManager get syncSubmissionsRefs {
+    final manager = $$SyncSubmissionsTableTableManager(
+      $_db,
+      $_db.syncSubmissions,
+    ).filter((f) => f.deviceId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _syncSubmissionsRefsTable($_db),
+    );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -7526,6 +9782,56 @@ class $$DevicesTableFilterComposer
           }) => $$SyncEventsTableFilterComposer(
             $db: $db,
             $table: $db.syncEvents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> installationMetadataRefs(
+    Expression<bool> Function($$InstallationMetadataTableFilterComposer f) f,
+  ) {
+    final $$InstallationMetadataTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.installationMetadata,
+      getReferencedColumn: (t) => t.currentDeviceId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$InstallationMetadataTableFilterComposer(
+            $db: $db,
+            $table: $db.installationMetadata,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> syncSubmissionsRefs(
+    Expression<bool> Function($$SyncSubmissionsTableFilterComposer f) f,
+  ) {
+    final $$SyncSubmissionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.syncSubmissions,
+      getReferencedColumn: (t) => t.deviceId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncSubmissionsTableFilterComposer(
+            $db: $db,
+            $table: $db.syncSubmissions,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -7651,6 +9957,57 @@ class $$DevicesTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> installationMetadataRefs<T extends Object>(
+    Expression<T> Function($$InstallationMetadataTableAnnotationComposer a) f,
+  ) {
+    final $$InstallationMetadataTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.installationMetadata,
+          getReferencedColumn: (t) => t.currentDeviceId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$InstallationMetadataTableAnnotationComposer(
+                $db: $db,
+                $table: $db.installationMetadata,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+
+  Expression<T> syncSubmissionsRefs<T extends Object>(
+    Expression<T> Function($$SyncSubmissionsTableAnnotationComposer a) f,
+  ) {
+    final $$SyncSubmissionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.syncSubmissions,
+      getReferencedColumn: (t) => t.deviceId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncSubmissionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.syncSubmissions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$DevicesTableTableManager
@@ -7666,7 +10023,12 @@ class $$DevicesTableTableManager
           $$DevicesTableUpdateCompanionBuilder,
           (Device, $$DevicesTableReferences),
           Device,
-          PrefetchHooks Function({bool accountId, bool syncEventsRefs})
+          PrefetchHooks Function({
+            bool accountId,
+            bool syncEventsRefs,
+            bool installationMetadataRefs,
+            bool syncSubmissionsRefs,
+          })
         > {
   $$DevicesTableTableManager(_$LocalDatabase db, $DevicesTable table)
     : super(
@@ -7715,62 +10077,121 @@ class $$DevicesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({accountId = false, syncEventsRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (syncEventsRefs) db.syncEvents],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (accountId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.accountId,
-                                referencedTable: $$DevicesTableReferences
-                                    ._accountIdTable(db),
-                                referencedColumn: $$DevicesTableReferences
-                                    ._accountIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({
+                accountId = false,
+                syncEventsRefs = false,
+                installationMetadataRefs = false,
+                syncSubmissionsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (syncEventsRefs) db.syncEvents,
+                    if (installationMetadataRefs) db.installationMetadata,
+                    if (syncSubmissionsRefs) db.syncSubmissions,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (accountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.accountId,
+                                    referencedTable: $$DevicesTableReferences
+                                        ._accountIdTable(db),
+                                    referencedColumn: $$DevicesTableReferences
+                                        ._accountIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (syncEventsRefs)
+                        await $_getPrefetchedData<
+                          Device,
+                          $DevicesTable,
+                          SyncEvent
+                        >(
+                          currentTable: table,
+                          referencedTable: $$DevicesTableReferences
+                              ._syncEventsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$DevicesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).syncEventsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.deviceId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (installationMetadataRefs)
+                        await $_getPrefetchedData<
+                          Device,
+                          $DevicesTable,
+                          InstallationMetadataData
+                        >(
+                          currentTable: table,
+                          referencedTable: $$DevicesTableReferences
+                              ._installationMetadataRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$DevicesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).installationMetadataRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.currentDeviceId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (syncSubmissionsRefs)
+                        await $_getPrefetchedData<
+                          Device,
+                          $DevicesTable,
+                          SyncSubmission
+                        >(
+                          currentTable: table,
+                          referencedTable: $$DevicesTableReferences
+                              ._syncSubmissionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$DevicesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).syncSubmissionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.deviceId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (syncEventsRefs)
-                    await $_getPrefetchedData<Device, $DevicesTable, SyncEvent>(
-                      currentTable: table,
-                      referencedTable: $$DevicesTableReferences
-                          ._syncEventsRefsTable(db),
-                      managerFromTypedResult: (p0) => $$DevicesTableReferences(
-                        db,
-                        table,
-                        p0,
-                      ).syncEventsRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.deviceId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -7787,7 +10208,12 @@ typedef $$DevicesTableProcessedTableManager =
       $$DevicesTableUpdateCompanionBuilder,
       (Device, $$DevicesTableReferences),
       Device,
-      PrefetchHooks Function({bool accountId, bool syncEventsRefs})
+      PrefetchHooks Function({
+        bool accountId,
+        bool syncEventsRefs,
+        bool installationMetadataRefs,
+        bool syncSubmissionsRefs,
+      })
     >;
 typedef $$ProductsTableCreateCompanionBuilder =
     ProductsCompanion Function({
@@ -11458,6 +13884,31 @@ final class $$SyncEventsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $SyncSubmissionEventsTable,
+    List<SyncSubmissionEvent>
+  >
+  _syncSubmissionEventsRefsTable(_$LocalDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.syncSubmissionEvents,
+        aliasName: 'sync_events__id__sync_submission_events__event_id',
+      );
+
+  $$SyncSubmissionEventsTableProcessedTableManager
+  get syncSubmissionEventsRefs {
+    final manager = $$SyncSubmissionEventsTableTableManager(
+      $_db,
+      $_db.syncSubmissionEvents,
+    ).filter((f) => f.eventId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _syncSubmissionEventsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$SyncEventsTableFilterComposer
@@ -11571,6 +14022,31 @@ class $$SyncEventsTableFilterComposer
           }) => $$PendingEventsTableFilterComposer(
             $db: $db,
             $table: $db.pendingEvents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> syncSubmissionEventsRefs(
+    Expression<bool> Function($$SyncSubmissionEventsTableFilterComposer f) f,
+  ) {
+    final $$SyncSubmissionEventsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.syncSubmissionEvents,
+      getReferencedColumn: (t) => t.eventId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncSubmissionEventsTableFilterComposer(
+            $db: $db,
+            $table: $db.syncSubmissionEvents,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -11790,6 +14266,32 @@ class $$SyncEventsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> syncSubmissionEventsRefs<T extends Object>(
+    Expression<T> Function($$SyncSubmissionEventsTableAnnotationComposer a) f,
+  ) {
+    final $$SyncSubmissionEventsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.syncSubmissionEvents,
+          getReferencedColumn: (t) => t.eventId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SyncSubmissionEventsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.syncSubmissionEvents,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$SyncEventsTableTableManager
@@ -11809,6 +14311,7 @@ class $$SyncEventsTableTableManager
             bool accountId,
             bool deviceId,
             bool pendingEventsRefs,
+            bool syncSubmissionEventsRefs,
           })
         > {
   $$SyncEventsTableTableManager(_$LocalDatabase db, $SyncEventsTable table)
@@ -11887,11 +14390,13 @@ class $$SyncEventsTableTableManager
                 accountId = false,
                 deviceId = false,
                 pendingEventsRefs = false,
+                syncSubmissionEventsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
                     if (pendingEventsRefs) db.pendingEvents,
+                    if (syncSubmissionEventsRefs) db.syncSubmissionEvents,
                   ],
                   addJoins:
                       <
@@ -11963,6 +14468,27 @@ class $$SyncEventsTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (syncSubmissionEventsRefs)
+                        await $_getPrefetchedData<
+                          SyncEvent,
+                          $SyncEventsTable,
+                          SyncSubmissionEvent
+                        >(
+                          currentTable: table,
+                          referencedTable: $$SyncEventsTableReferences
+                              ._syncSubmissionEventsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$SyncEventsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).syncSubmissionEventsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.eventId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -11987,6 +14513,7 @@ typedef $$SyncEventsTableProcessedTableManager =
         bool accountId,
         bool deviceId,
         bool pendingEventsRefs,
+        bool syncSubmissionEventsRefs,
       })
     >;
 typedef $$PendingEventsTableCreateCompanionBuilder =
@@ -12558,6 +15085,1852 @@ typedef $$SyncStateTableProcessedTableManager =
       SyncStateData,
       PrefetchHooks Function({bool accountId})
     >;
+typedef $$InstallationMetadataTableCreateCompanionBuilder =
+    InstallationMetadataCompanion Function({
+      required String id,
+      required String accountId,
+      required String currentDeviceId,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$InstallationMetadataTableUpdateCompanionBuilder =
+    InstallationMetadataCompanion Function({
+      Value<String> id,
+      Value<String> accountId,
+      Value<String> currentDeviceId,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$InstallationMetadataTableReferences
+    extends
+        BaseReferences<
+          _$LocalDatabase,
+          $InstallationMetadataTable,
+          InstallationMetadataData
+        > {
+  $$InstallationMetadataTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $LocalAccountsTable _accountIdTable(_$LocalDatabase db) => db
+      .localAccounts
+      .createAlias('installation_metadata__account_id__local_accounts__id');
+
+  $$LocalAccountsTableProcessedTableManager get accountId {
+    final $_column = $_itemColumn<String>('account_id')!;
+
+    final manager = $$LocalAccountsTableTableManager(
+      $_db,
+      $_db.localAccounts,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_accountIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $DevicesTable _currentDeviceIdTable(_$LocalDatabase db) => db.devices
+      .createAlias('installation_metadata__current_device_id__devices__id');
+
+  $$DevicesTableProcessedTableManager get currentDeviceId {
+    final $_column = $_itemColumn<String>('current_device_id')!;
+
+    final manager = $$DevicesTableTableManager(
+      $_db,
+      $_db.devices,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_currentDeviceIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$InstallationMetadataTableFilterComposer
+    extends Composer<_$LocalDatabase, $InstallationMetadataTable> {
+  $$InstallationMetadataTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$LocalAccountsTableFilterComposer get accountId {
+    final $$LocalAccountsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.localAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocalAccountsTableFilterComposer(
+            $db: $db,
+            $table: $db.localAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$DevicesTableFilterComposer get currentDeviceId {
+    final $$DevicesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.currentDeviceId,
+      referencedTable: $db.devices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DevicesTableFilterComposer(
+            $db: $db,
+            $table: $db.devices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$InstallationMetadataTableOrderingComposer
+    extends Composer<_$LocalDatabase, $InstallationMetadataTable> {
+  $$InstallationMetadataTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$LocalAccountsTableOrderingComposer get accountId {
+    final $$LocalAccountsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.localAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocalAccountsTableOrderingComposer(
+            $db: $db,
+            $table: $db.localAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$DevicesTableOrderingComposer get currentDeviceId {
+    final $$DevicesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.currentDeviceId,
+      referencedTable: $db.devices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DevicesTableOrderingComposer(
+            $db: $db,
+            $table: $db.devices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$InstallationMetadataTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $InstallationMetadataTable> {
+  $$InstallationMetadataTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$LocalAccountsTableAnnotationComposer get accountId {
+    final $$LocalAccountsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.localAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocalAccountsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.localAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$DevicesTableAnnotationComposer get currentDeviceId {
+    final $$DevicesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.currentDeviceId,
+      referencedTable: $db.devices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DevicesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.devices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$InstallationMetadataTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $InstallationMetadataTable,
+          InstallationMetadataData,
+          $$InstallationMetadataTableFilterComposer,
+          $$InstallationMetadataTableOrderingComposer,
+          $$InstallationMetadataTableAnnotationComposer,
+          $$InstallationMetadataTableCreateCompanionBuilder,
+          $$InstallationMetadataTableUpdateCompanionBuilder,
+          (InstallationMetadataData, $$InstallationMetadataTableReferences),
+          InstallationMetadataData,
+          PrefetchHooks Function({bool accountId, bool currentDeviceId})
+        > {
+  $$InstallationMetadataTableTableManager(
+    _$LocalDatabase db,
+    $InstallationMetadataTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$InstallationMetadataTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$InstallationMetadataTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$InstallationMetadataTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> accountId = const Value.absent(),
+                Value<String> currentDeviceId = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => InstallationMetadataCompanion(
+                id: id,
+                accountId: accountId,
+                currentDeviceId: currentDeviceId,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String accountId,
+                required String currentDeviceId,
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => InstallationMetadataCompanion.insert(
+                id: id,
+                accountId: accountId,
+                currentDeviceId: currentDeviceId,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$InstallationMetadataTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({accountId = false, currentDeviceId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (accountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.accountId,
+                                    referencedTable:
+                                        $$InstallationMetadataTableReferences
+                                            ._accountIdTable(db),
+                                    referencedColumn:
+                                        $$InstallationMetadataTableReferences
+                                            ._accountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (currentDeviceId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.currentDeviceId,
+                                    referencedTable:
+                                        $$InstallationMetadataTableReferences
+                                            ._currentDeviceIdTable(db),
+                                    referencedColumn:
+                                        $$InstallationMetadataTableReferences
+                                            ._currentDeviceIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$InstallationMetadataTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $InstallationMetadataTable,
+      InstallationMetadataData,
+      $$InstallationMetadataTableFilterComposer,
+      $$InstallationMetadataTableOrderingComposer,
+      $$InstallationMetadataTableAnnotationComposer,
+      $$InstallationMetadataTableCreateCompanionBuilder,
+      $$InstallationMetadataTableUpdateCompanionBuilder,
+      (InstallationMetadataData, $$InstallationMetadataTableReferences),
+      InstallationMetadataData,
+      PrefetchHooks Function({bool accountId, bool currentDeviceId})
+    >;
+typedef $$SyncSubmissionsTableCreateCompanionBuilder =
+    SyncSubmissionsCompanion Function({
+      required String id,
+      required String accountId,
+      required String deviceId,
+      required String requestHash,
+      required String state,
+      Value<int> attemptCount,
+      Value<DateTime?> nextAttemptAt,
+      Value<DateTime?> leaseUntil,
+      Value<String?> outcome,
+      Value<String?> responseCode,
+      Value<String?> errorCode,
+      required DateTime createdAt,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$SyncSubmissionsTableUpdateCompanionBuilder =
+    SyncSubmissionsCompanion Function({
+      Value<String> id,
+      Value<String> accountId,
+      Value<String> deviceId,
+      Value<String> requestHash,
+      Value<String> state,
+      Value<int> attemptCount,
+      Value<DateTime?> nextAttemptAt,
+      Value<DateTime?> leaseUntil,
+      Value<String?> outcome,
+      Value<String?> responseCode,
+      Value<String?> errorCode,
+      Value<DateTime> createdAt,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$SyncSubmissionsTableReferences
+    extends
+        BaseReferences<_$LocalDatabase, $SyncSubmissionsTable, SyncSubmission> {
+  $$SyncSubmissionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $LocalAccountsTable _accountIdTable(_$LocalDatabase db) => db
+      .localAccounts
+      .createAlias('sync_submissions__account_id__local_accounts__id');
+
+  $$LocalAccountsTableProcessedTableManager get accountId {
+    final $_column = $_itemColumn<String>('account_id')!;
+
+    final manager = $$LocalAccountsTableTableManager(
+      $_db,
+      $_db.localAccounts,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_accountIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $DevicesTable _deviceIdTable(_$LocalDatabase db) =>
+      db.devices.createAlias('sync_submissions__device_id__devices__id');
+
+  $$DevicesTableProcessedTableManager get deviceId {
+    final $_column = $_itemColumn<String>('device_id')!;
+
+    final manager = $$DevicesTableTableManager(
+      $_db,
+      $_db.devices,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_deviceIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $SyncSubmissionEventsTable,
+    List<SyncSubmissionEvent>
+  >
+  _syncSubmissionEventsRefsTable(_$LocalDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.syncSubmissionEvents,
+        aliasName:
+            'sync_submissions__id__sync_submission_events__submission_id',
+      );
+
+  $$SyncSubmissionEventsTableProcessedTableManager
+  get syncSubmissionEventsRefs {
+    final manager = $$SyncSubmissionEventsTableTableManager(
+      $_db,
+      $_db.syncSubmissionEvents,
+    ).filter((f) => f.submissionId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _syncSubmissionEventsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$SyncSubmissionsTableFilterComposer
+    extends Composer<_$LocalDatabase, $SyncSubmissionsTable> {
+  $$SyncSubmissionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get requestHash => $composableBuilder(
+    column: $table.requestHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get state => $composableBuilder(
+    column: $table.state,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get attemptCount => $composableBuilder(
+    column: $table.attemptCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get nextAttemptAt => $composableBuilder(
+    column: $table.nextAttemptAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get leaseUntil => $composableBuilder(
+    column: $table.leaseUntil,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get responseCode => $composableBuilder(
+    column: $table.responseCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get errorCode => $composableBuilder(
+    column: $table.errorCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$LocalAccountsTableFilterComposer get accountId {
+    final $$LocalAccountsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.localAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocalAccountsTableFilterComposer(
+            $db: $db,
+            $table: $db.localAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$DevicesTableFilterComposer get deviceId {
+    final $$DevicesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.deviceId,
+      referencedTable: $db.devices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DevicesTableFilterComposer(
+            $db: $db,
+            $table: $db.devices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> syncSubmissionEventsRefs(
+    Expression<bool> Function($$SyncSubmissionEventsTableFilterComposer f) f,
+  ) {
+    final $$SyncSubmissionEventsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.syncSubmissionEvents,
+      getReferencedColumn: (t) => t.submissionId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncSubmissionEventsTableFilterComposer(
+            $db: $db,
+            $table: $db.syncSubmissionEvents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$SyncSubmissionsTableOrderingComposer
+    extends Composer<_$LocalDatabase, $SyncSubmissionsTable> {
+  $$SyncSubmissionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get requestHash => $composableBuilder(
+    column: $table.requestHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get state => $composableBuilder(
+    column: $table.state,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get attemptCount => $composableBuilder(
+    column: $table.attemptCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get nextAttemptAt => $composableBuilder(
+    column: $table.nextAttemptAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get leaseUntil => $composableBuilder(
+    column: $table.leaseUntil,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get responseCode => $composableBuilder(
+    column: $table.responseCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get errorCode => $composableBuilder(
+    column: $table.errorCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$LocalAccountsTableOrderingComposer get accountId {
+    final $$LocalAccountsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.localAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocalAccountsTableOrderingComposer(
+            $db: $db,
+            $table: $db.localAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$DevicesTableOrderingComposer get deviceId {
+    final $$DevicesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.deviceId,
+      referencedTable: $db.devices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DevicesTableOrderingComposer(
+            $db: $db,
+            $table: $db.devices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SyncSubmissionsTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $SyncSubmissionsTable> {
+  $$SyncSubmissionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get requestHash => $composableBuilder(
+    column: $table.requestHash,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get state =>
+      $composableBuilder(column: $table.state, builder: (column) => column);
+
+  GeneratedColumn<int> get attemptCount => $composableBuilder(
+    column: $table.attemptCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get nextAttemptAt => $composableBuilder(
+    column: $table.nextAttemptAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get leaseUntil => $composableBuilder(
+    column: $table.leaseUntil,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get outcome =>
+      $composableBuilder(column: $table.outcome, builder: (column) => column);
+
+  GeneratedColumn<String> get responseCode => $composableBuilder(
+    column: $table.responseCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get errorCode =>
+      $composableBuilder(column: $table.errorCode, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$LocalAccountsTableAnnotationComposer get accountId {
+    final $$LocalAccountsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.localAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocalAccountsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.localAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$DevicesTableAnnotationComposer get deviceId {
+    final $$DevicesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.deviceId,
+      referencedTable: $db.devices,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$DevicesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.devices,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> syncSubmissionEventsRefs<T extends Object>(
+    Expression<T> Function($$SyncSubmissionEventsTableAnnotationComposer a) f,
+  ) {
+    final $$SyncSubmissionEventsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.syncSubmissionEvents,
+          getReferencedColumn: (t) => t.submissionId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SyncSubmissionEventsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.syncSubmissionEvents,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$SyncSubmissionsTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $SyncSubmissionsTable,
+          SyncSubmission,
+          $$SyncSubmissionsTableFilterComposer,
+          $$SyncSubmissionsTableOrderingComposer,
+          $$SyncSubmissionsTableAnnotationComposer,
+          $$SyncSubmissionsTableCreateCompanionBuilder,
+          $$SyncSubmissionsTableUpdateCompanionBuilder,
+          (SyncSubmission, $$SyncSubmissionsTableReferences),
+          SyncSubmission,
+          PrefetchHooks Function({
+            bool accountId,
+            bool deviceId,
+            bool syncSubmissionEventsRefs,
+          })
+        > {
+  $$SyncSubmissionsTableTableManager(
+    _$LocalDatabase db,
+    $SyncSubmissionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncSubmissionsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncSubmissionsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncSubmissionsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> accountId = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<String> requestHash = const Value.absent(),
+                Value<String> state = const Value.absent(),
+                Value<int> attemptCount = const Value.absent(),
+                Value<DateTime?> nextAttemptAt = const Value.absent(),
+                Value<DateTime?> leaseUntil = const Value.absent(),
+                Value<String?> outcome = const Value.absent(),
+                Value<String?> responseCode = const Value.absent(),
+                Value<String?> errorCode = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SyncSubmissionsCompanion(
+                id: id,
+                accountId: accountId,
+                deviceId: deviceId,
+                requestHash: requestHash,
+                state: state,
+                attemptCount: attemptCount,
+                nextAttemptAt: nextAttemptAt,
+                leaseUntil: leaseUntil,
+                outcome: outcome,
+                responseCode: responseCode,
+                errorCode: errorCode,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String accountId,
+                required String deviceId,
+                required String requestHash,
+                required String state,
+                Value<int> attemptCount = const Value.absent(),
+                Value<DateTime?> nextAttemptAt = const Value.absent(),
+                Value<DateTime?> leaseUntil = const Value.absent(),
+                Value<String?> outcome = const Value.absent(),
+                Value<String?> responseCode = const Value.absent(),
+                Value<String?> errorCode = const Value.absent(),
+                required DateTime createdAt,
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => SyncSubmissionsCompanion.insert(
+                id: id,
+                accountId: accountId,
+                deviceId: deviceId,
+                requestHash: requestHash,
+                state: state,
+                attemptCount: attemptCount,
+                nextAttemptAt: nextAttemptAt,
+                leaseUntil: leaseUntil,
+                outcome: outcome,
+                responseCode: responseCode,
+                errorCode: errorCode,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SyncSubmissionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                accountId = false,
+                deviceId = false,
+                syncSubmissionEventsRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (syncSubmissionEventsRefs) db.syncSubmissionEvents,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (accountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.accountId,
+                                    referencedTable:
+                                        $$SyncSubmissionsTableReferences
+                                            ._accountIdTable(db),
+                                    referencedColumn:
+                                        $$SyncSubmissionsTableReferences
+                                            ._accountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (deviceId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.deviceId,
+                                    referencedTable:
+                                        $$SyncSubmissionsTableReferences
+                                            ._deviceIdTable(db),
+                                    referencedColumn:
+                                        $$SyncSubmissionsTableReferences
+                                            ._deviceIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (syncSubmissionEventsRefs)
+                        await $_getPrefetchedData<
+                          SyncSubmission,
+                          $SyncSubmissionsTable,
+                          SyncSubmissionEvent
+                        >(
+                          currentTable: table,
+                          referencedTable: $$SyncSubmissionsTableReferences
+                              ._syncSubmissionEventsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$SyncSubmissionsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).syncSubmissionEventsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.submissionId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$SyncSubmissionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $SyncSubmissionsTable,
+      SyncSubmission,
+      $$SyncSubmissionsTableFilterComposer,
+      $$SyncSubmissionsTableOrderingComposer,
+      $$SyncSubmissionsTableAnnotationComposer,
+      $$SyncSubmissionsTableCreateCompanionBuilder,
+      $$SyncSubmissionsTableUpdateCompanionBuilder,
+      (SyncSubmission, $$SyncSubmissionsTableReferences),
+      SyncSubmission,
+      PrefetchHooks Function({
+        bool accountId,
+        bool deviceId,
+        bool syncSubmissionEventsRefs,
+      })
+    >;
+typedef $$SyncSubmissionEventsTableCreateCompanionBuilder =
+    SyncSubmissionEventsCompanion Function({
+      required String submissionId,
+      required String eventId,
+      required int position,
+      Value<int> rowid,
+    });
+typedef $$SyncSubmissionEventsTableUpdateCompanionBuilder =
+    SyncSubmissionEventsCompanion Function({
+      Value<String> submissionId,
+      Value<String> eventId,
+      Value<int> position,
+      Value<int> rowid,
+    });
+
+final class $$SyncSubmissionEventsTableReferences
+    extends
+        BaseReferences<
+          _$LocalDatabase,
+          $SyncSubmissionEventsTable,
+          SyncSubmissionEvent
+        > {
+  $$SyncSubmissionEventsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $SyncSubmissionsTable _submissionIdTable(_$LocalDatabase db) =>
+      db.syncSubmissions.createAlias(
+        'sync_submission_events__submission_id__sync_submissions__id',
+      );
+
+  $$SyncSubmissionsTableProcessedTableManager get submissionId {
+    final $_column = $_itemColumn<String>('submission_id')!;
+
+    final manager = $$SyncSubmissionsTableTableManager(
+      $_db,
+      $_db.syncSubmissions,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_submissionIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $SyncEventsTable _eventIdTable(_$LocalDatabase db) => db.syncEvents
+      .createAlias('sync_submission_events__event_id__sync_events__id');
+
+  $$SyncEventsTableProcessedTableManager get eventId {
+    final $_column = $_itemColumn<String>('event_id')!;
+
+    final manager = $$SyncEventsTableTableManager(
+      $_db,
+      $_db.syncEvents,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_eventIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$SyncSubmissionEventsTableFilterComposer
+    extends Composer<_$LocalDatabase, $SyncSubmissionEventsTable> {
+  $$SyncSubmissionEventsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$SyncSubmissionsTableFilterComposer get submissionId {
+    final $$SyncSubmissionsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.submissionId,
+      referencedTable: $db.syncSubmissions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncSubmissionsTableFilterComposer(
+            $db: $db,
+            $table: $db.syncSubmissions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$SyncEventsTableFilterComposer get eventId {
+    final $$SyncEventsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.syncEvents,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncEventsTableFilterComposer(
+            $db: $db,
+            $table: $db.syncEvents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SyncSubmissionEventsTableOrderingComposer
+    extends Composer<_$LocalDatabase, $SyncSubmissionEventsTable> {
+  $$SyncSubmissionEventsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get position => $composableBuilder(
+    column: $table.position,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$SyncSubmissionsTableOrderingComposer get submissionId {
+    final $$SyncSubmissionsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.submissionId,
+      referencedTable: $db.syncSubmissions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncSubmissionsTableOrderingComposer(
+            $db: $db,
+            $table: $db.syncSubmissions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$SyncEventsTableOrderingComposer get eventId {
+    final $$SyncEventsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.syncEvents,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncEventsTableOrderingComposer(
+            $db: $db,
+            $table: $db.syncEvents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SyncSubmissionEventsTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $SyncSubmissionEventsTable> {
+  $$SyncSubmissionEventsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get position =>
+      $composableBuilder(column: $table.position, builder: (column) => column);
+
+  $$SyncSubmissionsTableAnnotationComposer get submissionId {
+    final $$SyncSubmissionsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.submissionId,
+      referencedTable: $db.syncSubmissions,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncSubmissionsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.syncSubmissions,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$SyncEventsTableAnnotationComposer get eventId {
+    final $$SyncEventsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.eventId,
+      referencedTable: $db.syncEvents,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncEventsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.syncEvents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SyncSubmissionEventsTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $SyncSubmissionEventsTable,
+          SyncSubmissionEvent,
+          $$SyncSubmissionEventsTableFilterComposer,
+          $$SyncSubmissionEventsTableOrderingComposer,
+          $$SyncSubmissionEventsTableAnnotationComposer,
+          $$SyncSubmissionEventsTableCreateCompanionBuilder,
+          $$SyncSubmissionEventsTableUpdateCompanionBuilder,
+          (SyncSubmissionEvent, $$SyncSubmissionEventsTableReferences),
+          SyncSubmissionEvent,
+          PrefetchHooks Function({bool submissionId, bool eventId})
+        > {
+  $$SyncSubmissionEventsTableTableManager(
+    _$LocalDatabase db,
+    $SyncSubmissionEventsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncSubmissionEventsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncSubmissionEventsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$SyncSubmissionEventsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> submissionId = const Value.absent(),
+                Value<String> eventId = const Value.absent(),
+                Value<int> position = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SyncSubmissionEventsCompanion(
+                submissionId: submissionId,
+                eventId: eventId,
+                position: position,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String submissionId,
+                required String eventId,
+                required int position,
+                Value<int> rowid = const Value.absent(),
+              }) => SyncSubmissionEventsCompanion.insert(
+                submissionId: submissionId,
+                eventId: eventId,
+                position: position,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SyncSubmissionEventsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({submissionId = false, eventId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (submissionId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.submissionId,
+                                referencedTable:
+                                    $$SyncSubmissionEventsTableReferences
+                                        ._submissionIdTable(db),
+                                referencedColumn:
+                                    $$SyncSubmissionEventsTableReferences
+                                        ._submissionIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (eventId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.eventId,
+                                referencedTable:
+                                    $$SyncSubmissionEventsTableReferences
+                                        ._eventIdTable(db),
+                                referencedColumn:
+                                    $$SyncSubmissionEventsTableReferences
+                                        ._eventIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$SyncSubmissionEventsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $SyncSubmissionEventsTable,
+      SyncSubmissionEvent,
+      $$SyncSubmissionEventsTableFilterComposer,
+      $$SyncSubmissionEventsTableOrderingComposer,
+      $$SyncSubmissionEventsTableAnnotationComposer,
+      $$SyncSubmissionEventsTableCreateCompanionBuilder,
+      $$SyncSubmissionEventsTableUpdateCompanionBuilder,
+      (SyncSubmissionEvent, $$SyncSubmissionEventsTableReferences),
+      SyncSubmissionEvent,
+      PrefetchHooks Function({bool submissionId, bool eventId})
+    >;
+typedef $$SyncInboxTableCreateCompanionBuilder =
+    SyncInboxCompanion Function({
+      required String accountId,
+      required String eventId,
+      required String contentHash,
+      required String serverCursor,
+      required String state,
+      Value<DateTime?> appliedAt,
+      Value<int> rowid,
+    });
+typedef $$SyncInboxTableUpdateCompanionBuilder =
+    SyncInboxCompanion Function({
+      Value<String> accountId,
+      Value<String> eventId,
+      Value<String> contentHash,
+      Value<String> serverCursor,
+      Value<String> state,
+      Value<DateTime?> appliedAt,
+      Value<int> rowid,
+    });
+
+final class $$SyncInboxTableReferences
+    extends BaseReferences<_$LocalDatabase, $SyncInboxTable, SyncInboxData> {
+  $$SyncInboxTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $LocalAccountsTable _accountIdTable(_$LocalDatabase db) => db
+      .localAccounts
+      .createAlias('sync_inbox__account_id__local_accounts__id');
+
+  $$LocalAccountsTableProcessedTableManager get accountId {
+    final $_column = $_itemColumn<String>('account_id')!;
+
+    final manager = $$LocalAccountsTableTableManager(
+      $_db,
+      $_db.localAccounts,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_accountIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$SyncInboxTableFilterComposer
+    extends Composer<_$LocalDatabase, $SyncInboxTable> {
+  $$SyncInboxTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get eventId => $composableBuilder(
+    column: $table.eventId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get contentHash => $composableBuilder(
+    column: $table.contentHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get serverCursor => $composableBuilder(
+    column: $table.serverCursor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get state => $composableBuilder(
+    column: $table.state,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get appliedAt => $composableBuilder(
+    column: $table.appliedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$LocalAccountsTableFilterComposer get accountId {
+    final $$LocalAccountsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.localAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocalAccountsTableFilterComposer(
+            $db: $db,
+            $table: $db.localAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SyncInboxTableOrderingComposer
+    extends Composer<_$LocalDatabase, $SyncInboxTable> {
+  $$SyncInboxTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get eventId => $composableBuilder(
+    column: $table.eventId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get contentHash => $composableBuilder(
+    column: $table.contentHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get serverCursor => $composableBuilder(
+    column: $table.serverCursor,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get state => $composableBuilder(
+    column: $table.state,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get appliedAt => $composableBuilder(
+    column: $table.appliedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$LocalAccountsTableOrderingComposer get accountId {
+    final $$LocalAccountsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.localAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocalAccountsTableOrderingComposer(
+            $db: $db,
+            $table: $db.localAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SyncInboxTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $SyncInboxTable> {
+  $$SyncInboxTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get eventId =>
+      $composableBuilder(column: $table.eventId, builder: (column) => column);
+
+  GeneratedColumn<String> get contentHash => $composableBuilder(
+    column: $table.contentHash,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get serverCursor => $composableBuilder(
+    column: $table.serverCursor,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get state =>
+      $composableBuilder(column: $table.state, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get appliedAt =>
+      $composableBuilder(column: $table.appliedAt, builder: (column) => column);
+
+  $$LocalAccountsTableAnnotationComposer get accountId {
+    final $$LocalAccountsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.accountId,
+      referencedTable: $db.localAccounts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$LocalAccountsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.localAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SyncInboxTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $SyncInboxTable,
+          SyncInboxData,
+          $$SyncInboxTableFilterComposer,
+          $$SyncInboxTableOrderingComposer,
+          $$SyncInboxTableAnnotationComposer,
+          $$SyncInboxTableCreateCompanionBuilder,
+          $$SyncInboxTableUpdateCompanionBuilder,
+          (SyncInboxData, $$SyncInboxTableReferences),
+          SyncInboxData,
+          PrefetchHooks Function({bool accountId})
+        > {
+  $$SyncInboxTableTableManager(_$LocalDatabase db, $SyncInboxTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncInboxTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncInboxTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncInboxTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> accountId = const Value.absent(),
+                Value<String> eventId = const Value.absent(),
+                Value<String> contentHash = const Value.absent(),
+                Value<String> serverCursor = const Value.absent(),
+                Value<String> state = const Value.absent(),
+                Value<DateTime?> appliedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SyncInboxCompanion(
+                accountId: accountId,
+                eventId: eventId,
+                contentHash: contentHash,
+                serverCursor: serverCursor,
+                state: state,
+                appliedAt: appliedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String accountId,
+                required String eventId,
+                required String contentHash,
+                required String serverCursor,
+                required String state,
+                Value<DateTime?> appliedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SyncInboxCompanion.insert(
+                accountId: accountId,
+                eventId: eventId,
+                contentHash: contentHash,
+                serverCursor: serverCursor,
+                state: state,
+                appliedAt: appliedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SyncInboxTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({accountId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (accountId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.accountId,
+                                referencedTable: $$SyncInboxTableReferences
+                                    ._accountIdTable(db),
+                                referencedColumn: $$SyncInboxTableReferences
+                                    ._accountIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$SyncInboxTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $SyncInboxTable,
+      SyncInboxData,
+      $$SyncInboxTableFilterComposer,
+      $$SyncInboxTableOrderingComposer,
+      $$SyncInboxTableAnnotationComposer,
+      $$SyncInboxTableCreateCompanionBuilder,
+      $$SyncInboxTableUpdateCompanionBuilder,
+      (SyncInboxData, $$SyncInboxTableReferences),
+      SyncInboxData,
+      PrefetchHooks Function({bool accountId})
+    >;
 typedef $$MigrationLedgerTableCreateCompanionBuilder =
     MigrationLedgerCompanion Function({
       Value<int> id,
@@ -12836,6 +17209,14 @@ class $LocalDatabaseManager {
       $$PendingEventsTableTableManager(_db, _db.pendingEvents);
   $$SyncStateTableTableManager get syncState =>
       $$SyncStateTableTableManager(_db, _db.syncState);
+  $$InstallationMetadataTableTableManager get installationMetadata =>
+      $$InstallationMetadataTableTableManager(_db, _db.installationMetadata);
+  $$SyncSubmissionsTableTableManager get syncSubmissions =>
+      $$SyncSubmissionsTableTableManager(_db, _db.syncSubmissions);
+  $$SyncSubmissionEventsTableTableManager get syncSubmissionEvents =>
+      $$SyncSubmissionEventsTableTableManager(_db, _db.syncSubmissionEvents);
+  $$SyncInboxTableTableManager get syncInbox =>
+      $$SyncInboxTableTableManager(_db, _db.syncInbox);
   $$MigrationLedgerTableTableManager get migrationLedger =>
       $$MigrationLedgerTableTableManager(_db, _db.migrationLedger);
 }

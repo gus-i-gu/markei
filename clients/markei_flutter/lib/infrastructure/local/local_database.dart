@@ -210,6 +210,69 @@ class SyncState extends Table {
   Set<Column<Object>> get primaryKey => {accountId};
 }
 
+class InstallationMetadata extends Table {
+  TextColumn get id => text()();
+  TextColumn get accountId =>
+      text().references(LocalAccounts, #id, onDelete: KeyAction.restrict)();
+  TextColumn get currentDeviceId =>
+      text().references(Devices, #id, onDelete: KeyAction.restrict)();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class SyncSubmissions extends Table {
+  TextColumn get id => text()();
+  TextColumn get accountId =>
+      text().references(LocalAccounts, #id, onDelete: KeyAction.restrict)();
+  TextColumn get deviceId =>
+      text().references(Devices, #id, onDelete: KeyAction.restrict)();
+  TextColumn get requestHash => text()();
+  TextColumn get state => text()();
+  IntColumn get attemptCount => integer().withDefault(const Constant(0))();
+  DateTimeColumn get nextAttemptAt => dateTime().nullable()();
+  DateTimeColumn get leaseUntil => dateTime().nullable()();
+  TextColumn get outcome => text().nullable()();
+  TextColumn get responseCode => text().nullable()();
+  TextColumn get errorCode => text().nullable()();
+  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+class SyncSubmissionEvents extends Table {
+  TextColumn get submissionId =>
+      text().references(SyncSubmissions, #id, onDelete: KeyAction.cascade)();
+  TextColumn get eventId =>
+      text().references(SyncEvents, #id, onDelete: KeyAction.cascade)();
+  IntColumn get position => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {submissionId, eventId};
+}
+
+class SyncInbox extends Table {
+  TextColumn get accountId =>
+      text().references(LocalAccounts, #id, onDelete: KeyAction.cascade)();
+  TextColumn get eventId => text()();
+  TextColumn get contentHash => text()();
+  TextColumn get serverCursor => text()();
+  TextColumn get state => text()();
+  DateTimeColumn get appliedAt => dateTime().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {accountId, eventId};
+
+  @override
+  List<Set<Column<Object>>> get uniqueKeys => [
+    {accountId, serverCursor},
+  ];
+}
+
 class MigrationLedger extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get schemaName => text()();
@@ -234,6 +297,10 @@ class MigrationLedger extends Table {
     SyncEvents,
     PendingEvents,
     SyncState,
+    InstallationMetadata,
+    SyncSubmissions,
+    SyncSubmissionEvents,
+    SyncInbox,
     MigrationLedger,
   ],
 )
@@ -256,7 +323,7 @@ class LocalDatabase extends _$LocalDatabase {
       LocalDatabase(NativeDatabase.createInBackground(file));
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -348,7 +415,24 @@ SELECT id, 5, strftime('%s','now') * 1000 FROM local_accounts
           ),
         );
       }
-      if (from > 4) {
+      if (from < 5) {
+        await migrator.createTable(installationMetadata);
+        await migrator.createTable(syncSubmissions);
+        await migrator.createTable(syncSubmissionEvents);
+        await migrator.createTable(syncInbox);
+        await _backfillInstallationMetadata();
+        await into(migrationLedger).insert(
+          MigrationLedgerCompanion.insert(
+            schemaName: 'shared_beta_local',
+            schemaVersion: to,
+            fromVersion: Value(from),
+            toVersion: const Value(5),
+            migrationId: const Value('v4-to-v5-sync-submissions-inbox'),
+            appliedAt: DateTime.now().toUtc(),
+          ),
+        );
+      }
+      if (from > 5) {
         throw UnsupportedError(
           'Unsupported local database migration $from to $to.',
         );
@@ -405,6 +489,38 @@ SELECT id, 5, strftime('%s','now') * 1000 FROM local_accounts
     await _rebuildPaymentMethodsWithVisibleCodes();
     await _rebuildProductsWithNotNullCodes();
     await _rebuildAccountPreferencesWithCodeCounters();
+  }
+
+  Future<void> _backfillInstallationMetadata() async {
+    final accounts = await select(localAccounts).get();
+    final now = DateTime.now().toUtc();
+    for (final account in accounts) {
+      final deviceRows =
+          await (select(devices)
+                ..where((table) => table.accountId.equals(account.id))
+                ..orderBy([(table) => OrderingTerm.asc(table.createdAt)]))
+              .get();
+      final usable = deviceRows
+          .where((device) => _uuidV4Pattern.hasMatch(device.id))
+          .toList(growable: false);
+      if (usable.length > 1) {
+        throw StateError(
+          'Ambiguous current Device for Account ${account.id}; migration v5 stopped without reset.',
+        );
+      }
+      if (usable.length == 1) {
+        await into(installationMetadata).insert(
+          InstallationMetadataCompanion.insert(
+            id: 'current',
+            accountId: account.id,
+            currentDeviceId: usable.single.id,
+            createdAt: now,
+            updatedAt: now,
+          ),
+          mode: InsertMode.insertOrIgnore,
+        );
+      }
+    }
   }
 
   Future<void> _rebuildPeopleWithVisibleCodes() async {
@@ -688,3 +804,7 @@ FROM purchase_items_old
     ].join('|');
   }
 }
+
+final _uuidV4Pattern = RegExp(
+  r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+);

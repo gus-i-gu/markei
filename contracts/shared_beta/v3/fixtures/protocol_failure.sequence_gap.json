@@ -1,0 +1,9 @@
+{
+  "code": "sequence-gap",
+  "correlationId": "test-correlation",
+  "eventId": "33333333-3333-4333-8333-333333333333",
+  "operation": "upload-submission",
+  "outcome": "not-applied",
+  "retryable": false,
+  "safeAction": "retry only after preserving the original DeviceSequence evidence"
+}

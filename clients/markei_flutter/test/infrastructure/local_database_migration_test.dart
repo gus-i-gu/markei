@@ -6,7 +6,7 @@ import 'package:markei/infrastructure/local/local_database.dart';
 
 void main() {
   test(
-    'migrates v1 database to v4 local references and identity fields',
+    'migrates v1 database to v5 local references and sync ownership',
     () async {
       final temp = await Directory.systemTemp.createTemp('markei_migration_');
       addTearDown(() => temp.delete(recursive: true));
@@ -17,7 +17,7 @@ void main() {
       );
       addTearDown(migratingDb.close);
 
-      expect(migratingDb.schemaVersion, 4);
+      expect(migratingDb.schemaVersion, 5);
       final products = await migratingDb.select(migratingDb.products).get();
       final ledger = await migratingDb
           .select(migratingDb.migrationLedger)
@@ -30,10 +30,11 @@ void main() {
       expect(products.single.exactIdentityKey, contains('|v3|'));
       expect(products.single.displayName, 'arroz branco');
       expect(ledger.last.fromVersion, 1);
-      expect(ledger.last.toVersion, 4);
+      expect(ledger.last.toVersion, 5);
+      expect(ledger.last.migrationId, 'v4-to-v5-sync-submissions-inbox');
       expect(
-        ledger.last.migrationId,
-        'v3-to-v4-visible-codes-product-not-null',
+        await migratingDb.select(migratingDb.installationMetadata).get(),
+        isEmpty,
       );
       expect(await migratingDb.select(migratingDb.people).get(), isEmpty);
       expect(
@@ -48,17 +49,22 @@ void main() {
     },
   );
 
-  test('fresh v4 database creates reference and preference tables', () async {
-    final db = LocalDatabase.memory();
-    addTearDown(db.close);
+  test(
+    'fresh v5 database creates reference, preference and sync tables',
+    () async {
+      final db = LocalDatabase.memory();
+      addTearDown(db.close);
 
-    expect(db.schemaVersion, 4);
-    expect(await db.select(db.people).get(), isEmpty);
-    expect(await db.select(db.paymentMethods).get(), isEmpty);
-    expect(await db.select(db.accountPreferences).get(), isEmpty);
-  });
+      expect(db.schemaVersion, 5);
+      expect(await db.select(db.people).get(), isEmpty);
+      expect(await db.select(db.paymentMethods).get(), isEmpty);
+      expect(await db.select(db.accountPreferences).get(), isEmpty);
+      expect(await db.select(db.syncSubmissions).get(), isEmpty);
+      expect(await db.select(db.syncInbox).get(), isEmpty);
+    },
+  );
 
-  test('migrates file-backed v2 database to v4 and reopens', () async {
+  test('migrates file-backed v2 database to v5 and reopens', () async {
     final temp = await Directory.systemTemp.createTemp('markei_migration_v2_');
     addTearDown(() => temp.delete(recursive: true));
     final file = File('${temp.path}/markei.sqlite');
@@ -74,13 +80,48 @@ void main() {
     expect(products.single.normalizationVersion, 3);
     expect(products.single.exactIdentityKey, contains('|v3|'));
     expect(items.single.packageCount, 1);
-    expect(ledger.last.migrationId, 'v3-to-v4-visible-codes-product-not-null');
+    expect(ledger.last.migrationId, 'v4-to-v5-sync-submissions-inbox');
+    expect(
+      await migratingDb.select(migratingDb.installationMetadata).get(),
+      hasLength(1),
+    );
     await migratingDb.close();
 
     final reopened = LocalDatabase.file(file);
     addTearDown(reopened.close);
     expect(await reopened.select(reopened.purchases).get(), hasLength(1));
     expect(await reopened.select(reopened.people).get(), isEmpty);
+  });
+
+  test('v5 migration stops on ambiguous current Device without reset', () async {
+    final temp = await Directory.systemTemp.createTemp('markei_migration_bad_');
+    addTearDown(() => temp.delete(recursive: true));
+    final file = File('${temp.path}/markei.sqlite');
+
+    final migratingDb = LocalDatabase(
+      NativeDatabase.createInBackground(
+        file,
+        setup: (database) {
+          _createV2Database(database);
+          database.execute(
+            "INSERT INTO devices VALUES ('99999999-9999-4999-8999-999999999999', '11111111-1111-4111-8111-111111111111', 1, 1783857600001)",
+          );
+        },
+      ),
+    );
+    addTearDown(migratingDb.close);
+
+    await expectLater(
+      migratingDb.select(migratingDb.installationMetadata).get(),
+      throwsA(
+        predicate(
+          (Object error) =>
+              error.toString().contains('Ambiguous current Device'),
+        ),
+      ),
+    );
+
+    expect(file.existsSync(), isTrue);
   });
 }
 

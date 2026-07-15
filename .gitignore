@@ -1,0 +1,9 @@
+infra/sync_lab/secrets/
+infra/sync_lab/logs/
+infra/sync_lab/*.env
+infra/sync_lab/*.sqlite
+infra/sync_lab/*.db
+services/markei_sync_api/node_modules/
+services/markei_sync_api/dist/
+clients/markei_flutter/.dart_tool/
+clients/markei_flutter/build/
