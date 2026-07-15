@@ -1,221 +1,183 @@
-# D_OPS_STAGE — C10-S01 Execution and Evidence Contract
+# D_OPS_STAGE — C10-S01B Execution and Evidence Contract
 
 > Status: ACTIVE — CODEX IMPLEMENTATION AUTHORIZED WITH E/F
-> Unit: Disposable local `purchase.registered` synchronization proof
-> Reconciled baseline: `ad7107b602bd3820e8ef357491f57b1aab2ba632`
+> Unit: local HTTP/PostgreSQL/Drift convergence completion
+> Baseline: `1d5c0b6006831c62320d535ed3c99364d790a465`
 > Controlling synthesis: `[M]_STAGE/J_MAIN_STAGE.md`
-> Terminal gate: `WAITING_FOR_MCG_01`
+> External provider status: MCG-01 NOT STARTED
 
-## 1. Authority
+## 1. Authority and preflight
 
-Codex may modify repository source, contracts, tests, local lab configuration and G/H/I only as
-required by D/E/F. Codex may install/pin repository dependencies and run disposable local services.
-
-Codex may not create, configure or contact Neon, deploy an API, provision authentication, request
-human secrets, use ordinary user data, alter permanent notebook memory or consume Cycle 11 UI work.
-
-If D/E/F disagree, a schema migration risks reset/data loss, fixture auth could run outside tests,
-or a provider credential becomes necessary, stop before mutation and report to Main.
-
-## 2. Required preflight
+Codex may modify source, tests, shared contracts, dependency locks, disposable lab infrastructure
+and G/H/I only as required by J/D/E/F. It may run local Docker/PostgreSQL and loopback processes.
 
 Before editing:
 
-1. read root/Sketch Notebook AGENTS, INDEX and the full methodology boot;
-2. read J and D/E/F together;
-3. verify branch `intermid-cycle-recovery`, clean/understood status and required ancestry;
-4. inventory Flutter/Dart, Node/npm, container runtime, PostgreSQL client and Java/Android state;
-5. run available baseline Flutter analysis/tests and protected Python tests;
-6. inspect schema-v4 migration fixtures and back up any file fixture before migration tests;
-7. secret-scan tracked files and confirm no provider `.env` is present;
-8. record unavailable host capabilities without substituting live infrastructure.
+1. read root and notebook AGENTS, INDEX and the full canonical methodology route;
+2. read J and D/E/F together; A/B/C remain investigation evidence only;
+3. verify branch `intermid-cycle-recovery`, clean/understood status and baseline ancestry;
+4. preserve unrelated/untracked work; never stash, reset, clean, discard or force-push;
+5. inventory Flutter/Dart, Node/npm, Docker/Postgres client, Java/Android and Python;
+6. run available baseline analysis/tests and secret scan;
+7. inspect existing migration/test fixtures before mutation.
 
-Do not delete/stash/reset unrelated work. Do not modify the protected Python/PySide6 database.
+Stop before editing if D/E/F conflict, local data preservation is unclear or fixture auth could
+enter normal runtime. Never substitute Neon for a missing local tool.
 
-## 3. Checkpointed implementation order
+## 2. Checkpoint order
 
-### CP0 — Baseline and protocol inventory
+### CP0 — Baseline and defect locks
 
-- Record exact tool/dependency versions and available commands.
-- Reconcile `contracts/shared_beta/v2` with runtime JSON and define v3 ownership.
-- Add a concise lab README and ignored-artifact inventory.
-- Keep app runnable and all baseline tests green before schema work.
+- Add focused failing tests demonstrating current download/ack stubs, incomplete remote apply,
+  unsafe contiguous-cursor calculation and absent database-backed vertical slice.
+- Record exact dependency/tool versions and current test counts.
+- Keep local-only Purchase registration green.
 
-Gate: v2 behavior and current local database can be reproduced.
+Gate: failures target the reconciled defects rather than unrelated behavior.
 
-### CP1 — Executable v3 contracts
+### CP1 — Close executable contracts
 
-Create `contracts/shared_beta/v3/` with JSON Schema and deterministic examples for:
+- Close nested Store/Product/Purchase/Item/quantity/money/reference schemas recursively.
+- Include complete immutable Product snapshots and complete optional Person/Payment snapshots when
+  referenced; explicit null remains valid.
+- Bound strings, arrays, body/page bytes and unknown fields.
+- Define request/result schemas for upload, download, acknowledgement and typed failures.
+- Freeze versioned opaque cursor origin/encoding and page semantics from J/F.
+- Update valid/invalid fixtures and recompute Dart/TypeScript hashes together.
+- Prove both languages accept/reject the same fixtures.
 
-- `purchase.registered` event envelope/full aggregate;
-- upload Submission request/result;
-- download page/cursor;
-- acknowledgement request/result;
-- typed protocol failure.
+Gate: contract parity and hash parity pass before database/application work.
 
-Define canonical UTF-8 JSON hashing consistently in Dart and TypeScript. Fixtures must cover
-equivalent duplicate, ID/hash mismatch, sequence gap, invalid version, unknown field, size/batch
-limit and optional Person/Payment facts.
+### CP2 — Migration 002 and server services
 
-Gate: Dart and TypeScript validate the same fixtures and compute identical hashes.
+- Add `002_coordination_hardening.sql`; do not edit migration 001.
+- Add required composite FKs, indexes, checks, grants/revokes and Account RLS policies.
+- Separate lab role/bootstrap/seed responsibility from application runtime.
+- Implement transaction-local verified Account context plus explicit scoped predicates.
+- Implement bounded serializable/deadlock retry with deterministic injection.
+- Implement authenticated/bounded Postgres download and monotonic acknowledgement services.
+- Complete Fastify JSON-schema routes and typed exception/status mapping.
+- Add database-backed upload/download/ack route tests against migrated PostgreSQL.
 
-### CP2 — Local schema v5 and repositories
+Gate: two synthetic Accounts cannot read/write each other through API or runtime SQL; runtime DDL
+fails; upload→download→ack persists correctly.
 
-Add handwritten Drift schema/migration for:
+### CP3 — Complete local apply and HTTP transport
 
-- singleton InstallationMetadata/current Device;
-- durable SyncSubmissions/attempt results;
-- SubmissionEvents membership;
-- SyncInbox applied-event ledger;
-- cursor/apply bookkeeping and extended PendingEvent lifecycle where needed.
+- Implement a dedicated type-specific remote Purchase applier without outbound-event creation.
+- Validate Account, hash, version, ordered contiguous cursor and aggregate invariants before writes.
+- Reuse only semantically equivalent stable Store/Product/reference/Purchase facts.
+- Commit facts, Items, inbox and final page cursor atomically; roll back the entire page on error.
+- Replace maximum-cursor logic with proven contiguous-prefix semantics.
+- Requery Lists after commit; do not add authoritative List persistence.
+- Add a Dart HTTP adapter with injected client/base URI/token source and bounded timeouts/response.
+- Keep synchronization absent/disabled in default application composition.
 
-Backfill one deterministic valid UUID Device only when the existing single-installation state is
-unambiguous. Preserve all historical Devices/events. Ambiguous or absent valid Device states return
-a typed blocker; never create a replacement by silently discarding history.
+Gate: complete remote facts survive reopen; duplicate creates neither fact nor outbound echo;
+gap/conflict leaves facts/inbox/cursor unchanged.
 
-Add repository/application operations for:
+### CP4 — Explicit lab entrypoint and real vertical slice
 
-- load/create current installation idempotently under concurrency;
-- lease/read a bounded pending batch;
-- persist/retry the same SubmissionId after unknown outcome;
-- accept/reject stored Submission outcomes;
-- insert inbox + apply facts + advance cursor atomically;
-- acknowledge only greatest contiguous applied cursor;
-- release expired local leases safely.
+- Keep Compose PostgreSQL-only and loopback-bound.
+- Add deterministic migrator/bootstrap/seed/probe scripts with ignored generated credentials.
+- Add a loopback-only API lab entrypoint using fixture claims; normal runtime still refuses them.
+- Let the harness allocate the API port, start/stop the child process and clean temp Drift files.
+- Run the complete A→HTTP→Postgres→HTTP→B story in J.
+- Inject the first upload response loss after committed server state.
+- Assert same SubmissionId/hash retry, one server Event/cursor, one B Purchase aggregate, one inbox
+  effect, one durable B acknowledgement and equivalent reopened facts/Lists.
 
-Gate: fresh/v4→v5/reopen/failure/rollback/concurrency/crash-replay tests pass before HTTP work.
+Gate: `CONVERGED=true` is earned only by all assertions through real boundaries.
 
-### CP3 — Disposable local PostgreSQL/API
+### CP5 — Failure, isolation and crash matrix
 
-Create a bounded service under `services/markei_sync_api/` and lab infrastructure under
-`infra/sync_lab/`:
+Cover at minimum:
 
-- Node 24 LTS / TypeScript;
-- Fastify JSON-schema routes;
-- `pg` transactions;
-- forward-only SQL migrations;
-- pinned lockfile, lint/typecheck/test scripts;
-- loopback-bound Docker Compose PostgreSQL 18 lab;
-- generated ignored lab secrets, never committed/logged;
-- separate migration and runtime roles.
+- validation/version/body/batch/page limits;
+- wrong Account, unknown/revoked Device and missing DB context;
+- duplicate-equivalent versus identity/hash conflict;
+- sequence duplicate/gap/concurrency;
+- empty/multipage/gapped/reordered/duplicate download;
+- crash before/inside/after Drift transaction and after commit/before ack;
+- SQLSTATE 40001/40P01 retry and bounded exhaustion;
+- pool acquisition timeout and API unavailable;
+- SELECT/INSERT/UPDATE RLS denial for every Account-bearing runtime table;
+- migrations 001→002, fresh migration and failed migration cleanup.
 
-Implement health/readiness plus upload, download and acknowledgement endpoints from F. Test runtime
-DDL denial and Account isolation. Fixture authentication is injected only in tests; the normal
-server must refuse to start without a non-fixture AuthVerifier.
+Gate: typed retry/non-retry/unknown meaning matches E; no assertion is weakened to continue.
 
-Gate: local migrations, privilege probes, API unit/integration tests and deterministic teardown pass.
+### CP6 — Regression, reports and stop
 
-### CP4 — Flutter transport and synchronization engine
-
-Implement ports/adapters/use cases without page redesign:
-
-- authenticated SyncTransport interface;
-- HTTP adapter configurable only through explicit non-secret base URL plus injected token source;
-- upload pending batch with timeout-safe Submission retry;
-- download after cursor;
-- atomic apply/inbox/cursor transaction;
-- acknowledgement after commit;
-- typed results matching E;
-- synchronization disabled by default unless the composition receives an explicit adapter/config.
-
-Do not embed database URLs, provider tokens, fixture credentials or a production authentication
-implementation. Local-only app startup and Purchase registration must behave unchanged.
-
-Gate: fake-transport unit tests pass before cross-process lab testing.
-
-### CP5 — Full local vertical slice and failures
-
-Run two isolated Drift files against the disposable API/Postgres lab:
-
-1. A registers a deterministic offline Purchase.
-2. A uploads one v3 Event.
-3. Inject timeout after server commit and retry the same SubmissionId.
-4. Confirm equivalent stored response and one server Event.
-5. B downloads and atomically applies facts/cursor/inbox.
-6. Replay/reorder the Event and confirm no duplicate effect.
-7. B acknowledges its contiguous cursor.
-8. Reopen both local files and compare stable facts/derived Lists.
-9. Tear down only inventoried disposable resources.
-
-Run negative/failure cases named in J. Never log payloads.
-
-Gate: convergence passes or is reported as a blocking defect; do not weaken assertions to continue.
-
-### CP6 — Regression, evidence and stop
-
-Run, when available:
+Run actual repository commands, including when supported:
 
 ```text
 dart format --output=none --set-exit-if-changed lib test tool
+dart run build_runner build --delete-conflicting-outputs
 flutter analyze
 flutter test
-dart run build_runner build --delete-conflicting-outputs
 npm ci
 npm run format:check
 npm run lint
 npm run typecheck
 npm test
-docker compose ... up --wait
-docker compose ... down --volumes
+npm audit --omit=dev
+docker compose -f infra/sync_lab/compose.yaml up -d --wait
+PostgreSQL migration/constraint/grant/RLS probes
+real local convergence harness
 flutter build windows --release
 flutter build apk --debug
 python -m unittest discover tests
 git diff --check
+tracked/staged secret scan
+docker compose -f infra/sync_lab/compose.yaml down --volumes
 ```
 
-Use actual repository scripts in reports rather than copying placeholders. Do not run live Neon probes.
+Use exact working-directory/script variants in G. Always tear down inventoried processes,
+containers, volumes, temporary databases, ignored secrets and test files, even after failure.
 
-## 4. Failure-injection floor
+## 3. Evidence requirements
 
-Required tests:
+### G operational report
 
-- disconnect before request, mid-request and after server commit/before response;
-- same SubmissionId/Event/hash replay and ID/hash mismatch;
-- wrong Account, unknown/revoked Device and fixture-auth escape prevention;
-- DeviceSequence duplicate/gap and concurrent submissions;
-- invalid/unknown protocol version, malformed/oversized payload and batch overflow;
-- duplicate, reordered and cursor-gapped downloads;
-- crash after inbox insert, during fact apply, before cursor and after commit/before ack;
-- migration failure, v4 original reopen and no silent reset;
-- runtime DDL denial, RLS/cross-Account denial, serialization retry and pool exhaustion simulation;
-- local-only startup with API unavailable.
+Replace only `DEV_STAGE/G_OPS_CODEX.md` and include:
 
-Each failure must yield typed applied/not-applied/unknown state and safe retry/non-retry behavior.
+- baseline/final SHA and complete changed-path inventory;
+- dependency/tool versions and lockfile changes;
+- checkpoint commands/results and test counts;
+- migration 001→002/fresh/failure evidence;
+- API/Postgres integration results;
+- exact A/B/server Event, Purchase, inbox, cursor and acknowledgement counts;
+- timeout-after-commit and identical retry evidence;
+- fault/isolation/role/crash results;
+- Windows/Android/Python boundaries;
+- secret scan and teardown inventory;
+- explicit Neon/auth/deployment non-use;
+- deviations, blockers and one terminal status from J.
 
-## 5. Secrets, logs and artifacts
+H and I must satisfy E/F. Do not overwrite A/B/C, J, D/E/F, permanent memory or Main-root files.
 
-- Add `.gitignore` entries for generated lab env, databases, volumes, tokens and logs.
-- `.env.example` contains names/descriptions only, never working values.
-- Generate lab-only random credentials into an ignored file; bind published ports to loopback.
-- Logs may contain redacted Account/Device/Event/Submission IDs, cursor, code, count, duration and
-  content-hash prefix; never tokens, URLs with credentials, payload JSON or Purchase descriptions.
-- Secret-scan the staged diff before commit.
+## 4. Stop and rollback gates
 
-## 6. Human/manual stop points
+Stop on:
 
-Codex may ask the human only to start/approve an installed local container service or approve a
-missing local tool installation. Codex must not ask for Neon credentials.
+- cross-Account access or runtime DDL;
+- fixture auth outside explicit loopback lab composition;
+- secret, authorization header, connection URL or business payload in tracked/logged output;
+- cursor advance/ack without committed facts and inbox;
+- gap acknowledged as contiguous;
+- unknown retry creates a new SubmissionId or Event;
+- duplicate creates a second business effect or outbound echo;
+- migration rewrite/reset/data loss;
+- unbounded retry, pool wait, response, body, batch or page;
+- loss of local-only startup/registration;
+- need for live Neon or real authentication.
 
-After CP6, produce `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`, then stop. Include a
-sanitized MCG-01 checklist but perform none of it.
+Rollback boundary is explicit composition removal plus disposable lab teardown. Published migration
+001 remains immutable; server corrections are forward-only. Local Drift remains v5 and must never
+be reset. If the decisive CP4 gate fails, report partial rather than advancing MCG-01.
 
-## 7. G evidence requirements
+## 5. Publication
 
-G must report:
-
-- exact baseline/final SHA and complete changed-path inventory;
-- installed/pinned dependencies and licenses if relevant;
-- migrations and rollback/no-reset evidence;
-- commands with pass/fail/skip counts and host boundaries;
-- local two-Device event/cursor/fact counts;
-- fault-injection results;
-- secret-scan and disposable-resource teardown;
-- skipped live provider/auth/deployment actions;
-- remaining risks and terminal status `WAITING_FOR_MCG_01`.
-
-## 8. Exit criteria
-
-Successful exit requires executable local proof, preserved local-only behavior, green available
-regressions, no tracked secrets, no live provider use and G/H/I completed. A host-blocked local lab
-may exit only as partial with unit/static evidence and an explicit blocker; it may not claim protocol
-or convergence validation.
+Review the entire diff, confirm only authorized paths, no secrets/artifacts, and no unrelated
+cleanup. Commit implementation plus G/H/I as one bounded materialization commit unless a necessary
+safe checkpoint is explicitly reported. Push only `intermid-cycle-recovery`, never force-push.

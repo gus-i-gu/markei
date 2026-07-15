@@ -1,311 +1,220 @@
-# F_DSN_STAGE — C10-S01 Synchronization Architecture Contract
+# F_DSN_STAGE — C10-S01B Convergence Architecture Contract
 
 > Status: ACTIVE — CODEX IMPLEMENTATION AUTHORIZED WITH D/E
-> Scope: pre-Neon local protocol, persistence, API and dependency architecture
-> Live provider/auth/deployment: prohibited
+> Baseline: `1d5c0b6006831c62320d535ed3c99364d790a465`
+> Scope: complete disposable local protocol path and pre-Neon hardening
+> Live Neon, production auth and deployment: prohibited
 
-## 1. Required topology
-
-```text
-Flutter application
-→ synchronization application ports/use cases
-← local Drift adapters + HTTP transport adapter
-→ app-private SQLite v5
-
-HTTP transport
-→ controlled TypeScript API
-→ application transactions
-→ pg adapter
-→ disposable PostgreSQL 18 lab
-```
-
-Domain/application code must not depend on Flutter widgets, Drift, HTTP, Fastify, `pg`, Docker or
-Neon. Flutter never connects to PostgreSQL and never owns database migration credentials.
-
-## 2. Repository structure
-
-Preferred bounded structure; equivalent names require explanation in I:
+## 1. Required topology and dependencies
 
 ```text
-contracts/shared_beta/v3/
-  purchase_registered.schema.json
-  sync_submission.schema.json
-  sync_download_page.schema.json
-  sync_acknowledgement.schema.json
-  protocol_failure.schema.json
-  fixtures/
+explicit lab SyncCoordinator
+  → UploadPendingEvents → HttpSyncTransport
+  → DownloadAndApplyEvents → HttpSyncTransport → RemotePurchaseEventApplier
+  → AcknowledgeAppliedCursor → HttpSyncTransport
+  → two app-private Drift v5 files
 
-clients/markei_flutter/lib/domain/sync/
-clients/markei_flutter/lib/application/sync/
-clients/markei_flutter/lib/infrastructure/local/sync/
-clients/markei_flutter/lib/infrastructure/remote/
-clients/markei_flutter/test/sync/
-clients/markei_flutter/tool/sync_lab.dart
-
-services/markei_sync_api/
-  src/domain/
-  src/application/
-  src/http/
-  src/postgres/
-  migrations/
-  test/
-
-infra/sync_lab/
-  compose.yaml
-  scripts/
-  README.md
+HttpSyncTransport → loopback Fastify API child process
+Fastify routes → AuthVerifier → SyncApplicationService → PgSyncRepository
+PgSyncRepository → PostgreSQL-only Docker Compose lab
 ```
 
-Keep handwritten modules near 250 lines. Split migrations and route/transaction responsibilities.
-Generated Drift output is exempt and remains derived.
+Domain/application code must not import Flutter widgets, Drift, HTTP, Fastify, `pg`, Docker or
+Neon. Transport owns HTTP/JSON/timeouts only. API application services own authorization and use
+cases. PostgreSQL repositories own SQL. Drift adapters own local atomicity. Default app composition
+contains no active transport/coordinator and remains local-only.
 
-## 3. Executable v3 contract
+Keep handwritten files near 250 lines by splitting contract codecs, routes, services, repositories,
+transactions, lab orchestration and remote application. Generated Drift output is exempt.
 
-Canonical JSON must be UTF-8, deterministic and hashed with SHA-256 using one documented canonical
-serialization shared by Dart and TypeScript. Do not hash ordinary non-canonical `jsonEncode` output
-whose map ordering or numeric representation is ambiguous.
+## 2. Protocol-v3 closure
 
-Event envelope fields:
+Retain envelope identities and canonical hash rules:
 
 ```text
-eventId UUID
-accountId UUID
-deviceId UUID
-deviceSequence positive integer
-eventType = purchase.registered
-payloadVersion = 3
-occurrenceTime UTC RFC3339
-payload complete immutable Purchase aggregate
-contentHash lowercase SHA-256 hex of canonical content
+EventId: immutable domain event UUID
+SubmissionId: immutable logical upload-attempt group UUID
+DeviceSequence: exact monotonic Device order
+ServerCursor: opaque Account-stream position token
+contentHash/requestHash: lowercase SHA-256 over canonical UTF-8 JSON
 ```
 
-The Purchase payload includes stable Purchase/Store/Product/Item IDs, Product code and exact identity
-facts, quantity/unit/mode, currency/minor-unit totals, optional Person/Payment reference facts and
-timestamps required by the accepted aggregate. It excludes Lists projections, UI state, analytics,
-credentials, local file paths and mutable retry metadata.
+Close JSON Schema recursively with bounded strings/arrays and `additionalProperties: false`.
+Complete payload shapes:
 
-Upload Submission:
+- Purchase: ID, Account, occurrence, currency/minor totals, Store, Items, optional references;
+- Store: stable ID, Account and immutable display identity required by local schema;
+- Product snapshot per referenced Product: stable ID, Account, immutable code/exact identity/name,
+  brand/mode/measurement/package fields required by local schema;
+- Item: stable ID, Purchase/Product IDs, package count, normalized quantity and line total;
+- Person/Payment: explicit null or complete stable immutable reference snapshot.
 
-```text
-submissionId UUID
-deviceId UUID
-requestHash SHA-256
-events non-empty bounded array
-```
+Validate aggregate totals, IDs, currencies, quantity representations and references. Reject bare
+non-null foreign IDs, unknown versions/fields, empty submissions and oversized bodies/batches.
+Update deterministic fixtures and Dart/TypeScript hash parity in one change.
 
-AccountId is derived from verified auth context at the server. If retained in an event for hash/
-domain identity, it must equal that verified Account; it is never authorization by itself.
+## 3. Cursor and page contract
 
-Define explicit batch and payload byte limits in shared fixtures/config. Reject unknown protocol
-versions and unknown security-relevant fields.
+Define one documented versioned opaque token, for example base64url-encoded version plus cursor
+position with strict canonical decoding. A missing local cursor maps only to the canonical origin;
+responses then emit an explicit token. Clients store/echo tokens and never parse/arithmetic them.
 
-## 4. Local schema v5
+`GET /v1/sync/events`:
 
-Handwritten Drift authority must add or evolve these logical units:
+- authenticate Account/Device before query;
+- accept absent/origin/valid `after` and `limit` default 25, range 1..100;
+- return all Account events, including origin Device events, strictly ascending;
+- query `limit + 1` to determine continuation;
+- return page events plus `nextCursor`; empty page preserves `after`;
+- never disclose existence of another Account's cursor/event.
 
-### InstallationMetadata
+Local apply verifies token sequence through decoded page metadata supplied by the validated codec.
+Any gap/reorder invalidates the whole page. Duplicate-equivalent events may be skipped, but the
+committed cursor advances only once to the verified page end.
 
-- singleton key or uniqueness ensuring one current installation row;
-- InstallationId UUID v4;
-- AccountId FK;
-- currentDeviceId FK to Devices;
-- createdAt/updatedAt;
-- unique Account/current-installation invariant suitable for one app-private DB.
+## 4. API schemas and errors
 
-Bootstrap transaction:
+Register closed Fastify JSON schemas for every request, query, result and failure. Route handlers
+perform only HTTP/auth translation and call application services. Map validation 400, missing auth
+401, wrong/revoked Device 403, identity/sequence/cursor conflict 409, unsupported protocol 422,
+bounded resource exhaustion 503 and internal unknown 500 without exposing SQL/stack/payloads.
 
-1. load singleton metadata;
-2. if present, require referenced Account/Device and reuse it;
-3. if absent, inspect existing Devices;
-4. exactly one usable UUID Device for the provisional Account → backfill metadata;
-5. none → create Device + metadata atomically;
-6. multiple usable Devices without metadata → typed ambiguity; do not choose earliest.
+The typed body remains authoritative over status alone and follows E. Health routes reveal only
+live/ready and never schema, role or connection details.
 
-Preserve historical/non-current Devices and sequence ownership.
+## 5. Authentication boundary
 
-### SyncSubmissions
+`AuthVerifier` returns verified AccountId/DeviceId claims. Payload identity must match claims but is
+never authority. C10-S01B adds only an explicit lab adapter/entrypoint:
 
-- SubmissionId PK, AccountId, DeviceId;
-- requestHash, state, createdAt/updatedAt;
-- attemptCount, nextAttemptAt nullable, leaseUntil nullable;
-- outcome and response/error code nullable;
-- stable retry uses same row and request hash.
+- synthetic deterministic claims map to fixture aliases;
+- only direct lab/test construction may select it;
+- listener must be loopback;
+- normal `main.ts` continues to use a refusing verifier;
+- no environment flag in the normal entrypoint can enable fixture auth;
+- no production provider, enrollment/revocation endpoint or real credential format is selected.
 
-### SyncSubmissionEvents
+Test fixture provisioning uses migration/bootstrap-owned SQL, not runtime API permissions.
 
-- SubmissionId FK + EventId FK composite key;
-- deterministic membership/order;
-- no Event appears twice in one Submission.
+## 6. PostgreSQL migration 002
 
-### PendingEvents
+Do not edit `001_init.sql`. Add transactional `002_coordination_hardening.sql` and a migration
+ledger/checksum path. It must add or correct:
 
-Retain EventId ownership and lifecycle. It may gain acceptedAt/lastErrorCode, but Submission attempt
-facts belong to SyncSubmissions, not duplicated per Event. Valid transitions are explicit and tested.
+- composite FKs from submissions/events/acknowledgements to Account/Device;
+- Account FKs and indexes for `(account_id, server_cursor)`, Device sequence, Submission replay and
+  acknowledgement lookup;
+- positive/hash/type/version checks that belong in persistence;
+- revoked PUBLIC/default privileges;
+- least-privilege grants: runtime cannot DDL, manage roles or provision Accounts/Devices;
+- RLS on every Account-bearing runtime table with SELECT/INSERT/UPDATE policies as needed;
+- fail-closed behavior when transaction-local `markei.account_id`/Device context is absent.
 
-### SyncInbox
+The runtime still uses explicit Account/Device predicates. RLS is defense in depth, not a substitute
+for application authorization. If FORCE RLS conflicts with migration ownership, separate table
+owner/migrator and runtime identities rather than weakening isolation. Lab bootstrap may create
+roles; later Neon role creation remains human MCG-01 work.
 
-- AccountId + EventId PK/unique;
-- contentHash, serverCursor, state/appliedAt;
-- same ID/hash replay is equivalent;
-- same ID/different hash is terminal conflict.
+Migration tests apply 001→002 and fresh 001→002, inspect constraints/policies/grants and prove a
+failed 002 leaves no partial state. Corrections after application require 003, never editing 002.
 
-### SyncState
+## 7. Transaction runner and upload
 
-Cursor advances only in the same transaction that inserts inbox entries and applies all accepted
-facts for the contiguous page. Never advance past a rejected/gapped Event.
+The runner acquires a fresh client per attempt, begins serializable, sets transaction-local verified
+Account/Device context, executes the service and commits once. Retry only SQLSTATE `40001` and
+`40P01`, at most three total attempts with deterministic injected delay/jitter and one deadline.
+Never retry validation, auth, constraint collision, pool acquisition timeout or unknown commit as a
+new logical operation.
 
-## 5. Local application ports
+Upload preserves prior idempotency:
 
-Define framework-independent interfaces/results for:
+1. same SubmissionId/request hash → stored result;
+2. same SubmissionId/different hash → terminal conflict;
+3. validate complete batch before mutation;
+4. same EventId/hash → duplicate-equivalent;
+5. same EventId/different hash → terminal conflict;
+6. require exact next DeviceSequence;
+7. allocate Account cursor, append Events, advance sequence and store result atomically.
 
-- `CurrentInstallationRepository`;
-- `SyncOutboxRepository`;
-- `SyncInboxRepository` or one atomic `RemoteEventApplier`;
-- `SyncTransport.uploadSubmission`;
-- `SyncTransport.downloadAfter`;
-- `SyncTransport.acknowledge`;
-- `UploadPendingEvents`;
-- `DownloadAndApplyEvents`;
-- `AcknowledgeAppliedCursor`;
-- injected Clock/UUID/backoff policy where deterministic tests require them.
+All Event lookups remain Account-scoped even if Event UUIDs are globally unique.
 
-The HTTP adapter converts typed transport/protocol results but does not decide domain conflict or
-mutate Drift outside repositories. Synchronization is disabled by default in composition.
+## 8. Download and acknowledgement services
 
-## 6. Remote apply transaction
+Download uses verified claims, transaction-local context and cursor contract from section 3. It
+returns only stored immutable Events and bounded metadata.
 
-For each downloaded contiguous page, one Drift transaction must:
+Acknowledgement:
 
-1. validate Account, version, cursor order and hash;
-2. detect inbox duplicate/conflict;
-3. create/reuse Product, Store and optional reference facts only under stable-ID/content rules;
-4. insert Purchase and Items idempotently;
-5. insert applied inbox record;
-6. invalidate/rebuild relevant derived Lists state;
-7. advance Account cursor only after every Event in the accepted page applies.
+- authenticates matching active Device;
+- decodes the cursor for the verified Account;
+- rejects beyond the Account high-water mark;
+- upserts `greatest_contiguous_cursor = GREATEST(existing, supplied)`;
+- treats equal/lower replay as duplicate-equivalent;
+- does not imply all Devices acknowledged and triggers no deletion.
 
-Equivalent existing stable facts are reused. Same stable ID with differing immutable content yields
-typed conflict and no partial page commit. No automatic Product merge or visible-code reassignment.
+The server cannot independently prove local apply; the controlled system proof correlates B's
+atomic local commit with its following acknowledgement. Retention remains excluded.
 
-## 7. API boundaries
+## 9. Flutter HTTP transport
 
-Required routes:
+Add one narrowly pinned HTTP package and `infrastructure/remote` adapter implementing existing sync
+ports. Inject HTTP client, base URI, token source, timeouts and correlation source. Requirements:
 
-```text
-GET  /health/live
-GET  /health/ready
-POST /v1/sync/submissions
-GET  /v1/sync/events?after=<opaque>&limit=<bounded>
-POST /v1/sync/acknowledgements
-```
+- loopback URI only in lab composition; no provider/database URL in Flutter;
+- authorization only in headers; never persisted/logged;
+- request/connect/response deadlines and response byte cap;
+- content-type/status/schema validation before conversion;
+- typed mapping of refusal, timeout, malformed body and API failure;
+- no implicit retry inside adapter;
+- same Submission object reused after unknown upload outcome.
 
-Health responses reveal no secrets/schema internals. All sync routes require `AuthVerifier` output
-containing AccountId and authorized DeviceId. Payload Account/Device must match verified context.
+Extend ports only when needed to carry safe action/correlation/page metadata without leaking HTTP.
 
-Fixture auth:
+## 10. Remote Purchase application
 
-- exists only as an injected test adapter;
-- may use deterministic claims without real bearer tokens;
-- cannot be selected by normal CLI/environment configuration;
-- server entrypoint refuses startup without a non-fixture verifier;
-- integration tests may construct the app directly with fixture verifier and loopback listener.
+Implement a dedicated type-dispatched applier, not ordinary registration. Before mutation:
 
-No enrollment/revocation endpoint or production auth adapter is implemented in C10-S01. Test fixtures
-seed Accounts/Devices through migration-owned helpers.
+1. validate page Account, ordering/contiguity, event hash/type/version and aggregate invariants;
+2. classify inbox Event as absent, equivalent or conflicting;
+3. validate stable Store/Product/reference identities and visible-code uniqueness;
+4. require existing facts to be field-for-field equivalent.
 
-## 8. Server PostgreSQL model
+In one Drift transaction:
 
-Forward SQL migrations create logical tables:
+1. insert/reuse complete Store/Product/reference facts;
+2. insert/reuse Purchase and Items idempotently;
+3. insert applied inbox rows;
+4. advance account cursor once to page end.
 
-- `accounts`;
-- `devices` with Account, status, next expected sequence and timestamps;
-- `account_cursor_state` with next cursor;
-- `submissions` with request hash and stored JSON result;
-- `sync_events` with EventId, Account, Device, sequence, cursor, type/version, occurrence, JSONB
-  payload, content hash and received time;
-- `device_acknowledgements` with greatest contiguous cursor;
-- migration ledger owned by the migration tool.
+No outbound SyncEvent/PendingEvent is created. Any conflict/gap/error rolls back the whole page.
+No durable quarantine table/schema v6 is added. After commit, requery existing Lists projections;
+do not synchronize or persist them as authoritative facts.
 
-Required uniqueness/indexes:
+Greatest-contiguous acknowledgement derives from committed page/cursor state, never MAX(inbox).
 
-- EventId unique;
-- Account + Device + DeviceSequence unique;
-- Account + ServerCursor unique;
-- Account + Device + SubmissionId unique;
-- Account + ServerCursor download index;
-- Account + Device status lookup.
-
-Store UUIDs as UUID, cursor/sequence as BIGINT, hashes with exact length checks, payload as JSONB and
-timestamps as `timestamptz`. Add positive/bounded checks. Do not use floating currency values.
-
-## 9. Upload transaction and idempotency
-
-Within one serializable/retryable transaction:
-
-1. derive Account/Device from verified context and lock relevant Device/Account cursor state;
-2. look up SubmissionId;
-3. same SubmissionId/request hash → return stored response;
-4. same SubmissionId/different hash → terminal conflict;
-5. validate each Event schema/hash/Account/Device and exact next DeviceSequence;
-6. same EventId/hash already accepted → duplicate-equivalent result;
-7. same EventId/different hash → terminal conflict;
-8. allocate per-Account cursors and append new Events;
-9. update expected Device sequence;
-10. store complete Submission response;
-11. commit once.
-
-Retry the whole transaction after PostgreSQL serialization failure with bounded attempts. Do not
-return accepted before commit. A timeout after commit is recovered by the same SubmissionId.
-
-## 10. Download and acknowledgement
-
-Download returns Account-scoped Events strictly after the cursor, ascending, bounded and with next
-cursor metadata. Cursor is opaque to clients even if represented numerically in the lab.
-
-Acknowledgement accepts only a cursor that the Device can claim contiguously applied under the
-contract. Server stores monotonic max; lower/equal replay is equivalent. It does not mean all Devices
-acknowledged and does not trigger deletion in this unit.
-
-## 11. Authorization and database roles
-
-- Migration role owns DDL and is never used by runtime.
-- Runtime role has only required DML/sequence/function grants and cannot alter schema/roles.
-- API derives AccountId from AuthVerifier and uses Account-scoped transactions.
-- Implement/test RLS defense in depth on coordination tables where feasible; set Account context
-  transaction-locally and fail closed when absent.
-- RLS does not replace API authorization, constraints or tests.
-- Connections, tokens and passwords never enter tracked files or logs.
-
-## 12. Conflict and retention boundary
-
-First slice is append-only Purchase registration. Different Purchase IDs coexist. Same stable ID with
-different immutable content is quarantined/conflict. Settings, reference mutation, edits/deletes,
-Product merge and Store correction are excluded.
-
-No TTL/deletion/snapshot is implemented. Disposable lab teardown deletes only inventoried lab data.
-Live bounded retention requires a later accepted snapshot/rebootstrap and eligible-Device policy.
-
-## 13. Verification architecture
+## 11. Verification architecture
 
 Required layers:
 
-- shared v3 fixture validation and cross-language hash parity;
-- Dart domain/application unit tests;
-- Drift fresh/v4→v5/failure/reopen/concurrency/crash tests;
-- TypeScript domain/application/route tests;
-- PostgreSQL migration/constraint/role/RLS/concurrency tests;
-- API idempotency, isolation and typed failure integration tests;
-- two-file Drift + API/Postgres local system harness;
-- existing Flutter/Python regression suites.
+- shared closed-schema and cross-language hash fixtures;
+- Dart codec/transport/application unit tests;
+- Drift remote apply, atomicity, duplicate/conflict/reopen tests;
+- Fastify route/schema/auth tests;
+- real PostgreSQL 001→002/constraint/grant/RLS/transaction tests;
+- upload/download/ack API integration tests;
+- one system harness with two Drift files, real loopback API child and disposable PostgreSQL;
+- timeout-after-commit, retry, paging, crash, isolation and exhaustion injections;
+- existing Flutter/Python regressions and Windows/Android builds.
 
-Do not use mocks as the only evidence for transactions, constraints, migrations or cross-language
-protocol compatibility.
+Mocks/fakes cannot be the only evidence for SQL transactions, HTTP transport, cross-language
+contracts or convergence. The system harness owns all processes/resources and cleans them on fail.
 
-## 14. I evidence requirements
+## 12. I report, exclusions and exit
 
-Replace only `DEV_STAGE/I_DSN_CODEX.md`. Report final dependency direction, added modules, local/server
-schema and migration IDs, protocol version/hash rules, transaction/idempotency behavior, auth fixture
-containment, RLS/role evidence, deferred decisions, generated files and architectural deviations.
+Replace only `DEV_STAGE/I_DSN_CODEX.md`. Report final dependency direction, modules, contract/hash,
+migrations, policies/grants, route/service behavior, transaction retry, cursor, remote apply,
+fixture-auth containment, system topology, deviations and deferred decisions.
 
-Explicitly state that local proof is not Neon, production authentication, deployment, retention,
-backup, UI/UX or release acceptance.
+Do not contact Neon, deploy, select production auth/API host, implement retention/rebootstrap,
+background sync, edits/deletes, UI/UX or Analytics. Successful evidence prepares Main to activate
+MCG-01; it does not itself configure or validate Neon.
