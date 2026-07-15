@@ -102,6 +102,15 @@ type BoundedJwksOptions = {
   fetchJwks: typeof fetch;
 };
 
+type NormalizedRsaSigningJwk = {
+  kty: "RSA";
+  kid: string;
+  use: "sig";
+  alg: "RS256";
+  n: string;
+  e: string;
+};
+
 class BoundedJwksSource {
   private local: ReturnType<typeof createLocalJWKSet> | null = null;
   private freshUntil = 0;
@@ -125,8 +134,10 @@ class BoundedJwksSource {
   ) {
     const now = this.options.clock.now().getTime();
     const kid = typeof header?.kid === "string" ? header.kid : "";
+    let consumedRefresh = false;
     if (!this.local || now >= this.freshUntil) {
       await this.refresh();
+      consumedRefresh = true;
     }
     try {
       return await this.local!(header, token);
@@ -135,17 +146,19 @@ class BoundedJwksSource {
       if (kid && now < (this.negativeKidUntil.get(kid) ?? 0)) {
         throw error;
       }
-      const outcome = await this.refresh();
-      if (kid && outcome !== "changed") {
-        this.negativeKidUntil.set(
-          kid,
-          this.options.clock.now().getTime() +
-            this.options.unknownKidCooldownMs,
-        );
-      } else if (kid && this.hasKid(kid)) {
-        this.negativeKidUntil.delete(kid);
+      if (!consumedRefresh) {
+        await this.refresh();
+        consumedRefresh = true;
+        try {
+          return await this.local!(header, token);
+        } catch (retryError) {
+          if (!(retryError instanceof errors.JWKSNoMatchingKey)) {
+            throw retryError;
+          }
+        }
       }
-      return this.local!(header, token);
+      if (kid) this.installNegativeKid(kid);
+      throw error;
     }
   }
 
@@ -212,6 +225,13 @@ class BoundedJwksSource {
   private hasKid(kid: string) {
     return this.kids.has(kid);
   }
+
+  private installNegativeKid(kid: string) {
+    this.negativeKidUntil.set(
+      kid,
+      this.options.clock.now().getTime() + this.options.unknownKidCooldownMs,
+    );
+  }
 }
 
 function boundedUri(value: string, issuerValue: string): URL {
@@ -258,38 +278,82 @@ function validateJwks(value: unknown): { keys: JWK[] } {
   ) {
     throw new HostedAuthError("token-rejected");
   }
-  const seen = new Map<string, string>();
+  const seen = new Set<string>();
   const keys = (value as { keys: JWK[] }).keys;
   if (keys.length < 1 || keys.length > 16) {
     throw new HostedAuthError("token-rejected");
   }
+  const normalized: NormalizedRsaSigningJwk[] = [];
   for (const key of keys) {
     if (!key || typeof key !== "object") {
       throw new HostedAuthError("token-rejected");
     }
-    if (
-      typeof key.kid !== "string" ||
-      key.kid.length < 1 ||
-      key.kid.length > 128
-    ) {
+    const candidate = key as Record<string, unknown>;
+    if (PRIVATE_JWK_FIELDS.some((field) => field in candidate)) {
       throw new HostedAuthError("token-rejected");
     }
-    const fingerprint = JSON.stringify(key);
-    const previous = seen.get(key.kid);
-    if (previous !== undefined) {
+    const normalizedKey = normalizeRsaSigningKey(candidate);
+    if (seen.has(normalizedKey.kid)) {
       throw new HostedAuthError("token-rejected");
     }
-    seen.set(key.kid, fingerprint);
+    seen.add(normalizedKey.kid);
+    normalized.push(normalizedKey);
   }
-  return { keys };
+  normalized.sort((left, right) => left.kid.localeCompare(right.kid));
+  return { keys: normalized as JWK[] };
 }
 
 function keySetRevision(keys: JWK[]): string {
-  const normalized = keys
-    .map((key) => canonicalJson(key))
-    .sort()
-    .join("\n");
+  const normalized = keys.map((key) => canonicalJson(key)).join("\n");
   return createHash("sha256").update(normalized).digest("hex");
+}
+
+const PRIVATE_JWK_FIELDS = ["d", "p", "q", "dp", "dq", "qi", "oth"] as const;
+
+function normalizeRsaSigningKey(
+  key: Record<string, unknown>,
+): NormalizedRsaSigningJwk {
+  const normalized = {
+    kty: key.kty,
+    kid: key.kid,
+    use: key.use,
+    alg: key.alg,
+    n: key.n,
+    e: key.e,
+  };
+  if (
+    normalized.kty !== "RSA" ||
+    normalized.use !== "sig" ||
+    normalized.alg !== "RS256" ||
+    !boundedString(normalized.kid, 1, 128) ||
+    !boundedBase64Url(normalized.n, 1, 8192) ||
+    !boundedBase64Url(normalized.e, 1, 64)
+  ) {
+    throw new HostedAuthError("token-rejected");
+  }
+  return normalized as NormalizedRsaSigningJwk;
+}
+
+function boundedString(
+  value: unknown,
+  minLength: number,
+  maxLength: number,
+): value is string {
+  return (
+    typeof value === "string" &&
+    value.length >= minLength &&
+    value.length <= maxLength
+  );
+}
+
+function boundedBase64Url(
+  value: unknown,
+  minLength: number,
+  maxLength: number,
+): value is string {
+  return (
+    boundedString(value, minLength, maxLength) && /^[A-Za-z0-9_-]+$/.test(value)
+  );
 }
 
 function canonicalJson(value: unknown): string {

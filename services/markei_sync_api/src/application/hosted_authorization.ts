@@ -236,7 +236,7 @@ export class HostedIdentityService {
       return {
         contractVersion: 1,
         deviceId,
-        status: target.enrollmentState,
+        status: target.deviceStatus,
         generation: target.generation,
       };
     });

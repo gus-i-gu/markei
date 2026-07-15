@@ -508,7 +508,9 @@ export function buildApp(options: {
     });
   }
   options.registerUnclassifiedRouteForTest?.(app);
-  assertFastifyRouteInventory(actualRoutes, routes);
+  app.addHook("onReady", async () => {
+    assertFastifyRouteInventory(actualRoutes, routes);
+  });
 
   return app;
 }

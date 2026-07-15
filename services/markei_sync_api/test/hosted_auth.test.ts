@@ -222,6 +222,90 @@ test("Auth0JwtVerifier coalesces parallel refresh for one unknown key", async ()
   await fixture.close();
 });
 
+test("Auth0JwtVerifier performs one expired-cache refresh for an unknown kid", async () => {
+  const fixture = await jwtFixture();
+  let now = fixture.now;
+  let fetchCount = 0;
+  const verifier = newVerifier(fixture, {
+    clock: { now: () => now },
+    cacheMaxAgeMs: 1,
+    fetchJwks: async (input, init) => {
+      fetchCount++;
+      return fetch(input, init);
+    },
+  });
+  await verifier.verify(request(await fixture.token()));
+  fetchCount = 0;
+  now = new Date(fixture.now.getTime() + 2);
+
+  await assert.rejects(
+    verifier.verify(request(await fixture.token({ kid: "missing" }))),
+    HostedAuthError,
+  );
+
+  assert.equal(fetchCount, 1);
+  await fixture.close();
+});
+
+test("Auth0JwtVerifier cools down a miss after changed JWKS still lacks requested kid", async () => {
+  const fixture = await jwtFixture();
+  let now = fixture.now;
+  let fetchCount = 0;
+  const verifier = newVerifier(fixture, {
+    clock: { now: () => now },
+    cacheMaxAgeMs: 1,
+    unknownKidCooldownMs: 60000,
+    fetchJwks: async (input, init) => {
+      fetchCount++;
+      return fetch(input, init);
+    },
+  });
+  await verifier.verify(request(await fixture.token()));
+  await fixture.setJwksBody({
+    keys: [{ ...fixture.publicJwk, kid: "rotated" }],
+  });
+  fetchCount = 0;
+  now = new Date(fixture.now.getTime() + 2);
+
+  await assert.rejects(
+    verifier.verify(request(await fixture.token({ kid: "missing" }))),
+    HostedAuthError,
+  );
+  await assert.rejects(
+    verifier.verify(request(await fixture.token({ kid: "missing" }))),
+    HostedAuthError,
+  );
+
+  assert.equal(fetchCount, 1);
+  await fixture.close();
+});
+
+test("Auth0JwtVerifier ignores irrelevant JWK metadata and rejects private material", async () => {
+  const fixture = await jwtFixture();
+  let now = fixture.now;
+  const verifier = newVerifier(fixture, {
+    clock: { now: () => now },
+    cacheMaxAgeMs: 1,
+  });
+  await verifier.verify(request(await fixture.token()));
+  await fixture.setJwksBody({
+    keys: [{ ...fixture.publicJwk, provider_metadata: "ignored" }],
+  });
+  now = new Date(fixture.now.getTime() + 2);
+  assert.equal(
+    (await verifier.verify(request(await fixture.token()))).subject,
+    "auth0|subject",
+  );
+
+  const rejecting = newVerifier(fixture);
+  await fixture.setJwksBody({ keys: [{ ...fixture.publicJwk, d: "private" }] });
+  await assert.rejects(
+    rejecting.verify(request(await fixture.token())),
+    HostedAuthError,
+  );
+  await fixture.close();
+});
+
 test("protected route policy inventory covers hosted sync and recovery routes", () => {
   const operations = ROUTE_AUTHORIZATION_DESCRIPTORS.map(
     (policy) => policy.operation,
@@ -243,17 +327,40 @@ test("protected route policy inventory covers hosted sync and recovery routes", 
   ]);
 });
 
-test("actual route inventory rejects an injected unclassified route", () => {
-  assert.throws(
-    () =>
-      buildApp({
-        authorization: { kind: "disabled" },
-        registerUnclassifiedRouteForTest: (app) => {
-          app.get("/v1/unclassified", async () => ({ ok: true }));
-        },
-      }),
+test("actual route inventory rejects an injected unclassified route at readiness", async () => {
+  const app = buildApp({
+    authorization: { kind: "disabled" },
+    registerUnclassifiedRouteForTest: (instance) => {
+      instance.get("/v1/unclassified", async () => ({ ok: true }));
+    },
+  });
+  await assert.rejects(
+    Promise.resolve(app.ready()),
     /actual route authorization inventory mismatch/,
   );
+  await app.close();
+});
+
+test("actual route inventory rejects a late direct route at readiness", async () => {
+  const app = buildApp({ authorization: { kind: "disabled" } });
+  app.get("/v1/late", async () => ({ ok: true }));
+  await assert.rejects(
+    Promise.resolve(app.ready()),
+    /actual route authorization inventory mismatch/,
+  );
+  await app.close();
+});
+
+test("actual route inventory rejects an encapsulated plugin route at readiness", async () => {
+  const app = buildApp({ authorization: { kind: "disabled" } });
+  app.register(async (plugin) => {
+    plugin.get("/v1/plugin-extra", async () => ({ ok: true }));
+  });
+  await assert.rejects(
+    Promise.resolve(app.ready()),
+    /actual route authorization inventory mismatch/,
+  );
+  await app.close();
 });
 
 async function jwtFixture() {

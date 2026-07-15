@@ -70,6 +70,7 @@ void main() {
       final repository = DriftHostedIdentityRepository(db);
       final transport = _FakeEnrollmentTransport(
         result: const DeviceEnrollmentResult(
+          status: 'device-enrolled',
           installationId: '33333333-3333-4333-8333-333333333333',
           deviceId: '22222222-2222-4222-8222-222222222222',
           accountId: '11111111-1111-4111-8111-111111111111',
@@ -97,6 +98,39 @@ void main() {
       expect(replayed.status, 'duplicate-equivalent');
       expect(loaded?.serverDeviceId, '22222222-2222-4222-8222-222222222222');
       expect(loaded.toString().contains('synthetic-token'), isFalse);
+    },
+  );
+
+  test(
+    'coordinator preserves duplicate-equivalent as a distinct success',
+    () async {
+      final db = LocalDatabase.memory();
+      addTearDown(db.close);
+      final repository = DriftHostedIdentityRepository(db);
+      final coordinator = HostedEnrollmentCoordinator(
+        authenticationSession: LabAuthenticationSession(),
+        tokenSource: LabAccessTokenSource.accepted('synthetic-token'),
+        transport: _FakeEnrollmentTransport(
+          result: const DeviceEnrollmentResult(
+            status: 'duplicate-equivalent',
+            installationId: '33333333-3333-4333-8333-333333333333',
+            deviceId: '22222222-2222-4222-8222-222222222222',
+            accountId: '11111111-1111-4111-8111-111111111111',
+            generation: 1,
+          ),
+        ),
+        repository: repository,
+        now: () => DateTime.utc(2026, 7, 15),
+      );
+
+      final outcome = await coordinator.enroll(
+        environmentAlias: 'local-hosted',
+        command: _command(),
+      );
+      final loaded = await repository.load('local-hosted');
+
+      expect(outcome.status, 'duplicate-equivalent');
+      expect(loaded?.enrollmentState, 'duplicate-equivalent');
     },
   );
 
@@ -159,6 +193,39 @@ void main() {
       await outageDb.close();
     },
   );
+
+  test('replay persists known non-success outcomes over enrolling', () async {
+    for (final entry in [
+      (const DeviceEnrollmentTransportConflict(), 'conflict'),
+      (const DeviceEnrollmentTransportUnavailable(), 'service-unavailable'),
+      (const DeviceEnrollmentTransportUnknown(), 'unknown-outcome'),
+    ]) {
+      final db = LocalDatabase.memory();
+      final repository = DriftHostedIdentityRepository(db);
+      await repository.save(
+        HostedIdentityState(
+          environmentAlias: entry.$2,
+          installationId: '33333333-3333-4333-8333-333333333333',
+          enrollmentRequestId: '55555555-5555-4555-8555-555555555555',
+          enrollmentState: 'enrolling',
+          updatedAt: DateTime.utc(2026, 7, 15),
+        ),
+      );
+      final coordinator = HostedEnrollmentCoordinator(
+        authenticationSession: LabAuthenticationSession(),
+        tokenSource: LabAccessTokenSource.accepted('synthetic-token'),
+        transport: _FakeEnrollmentTransport(overrideResult: entry.$1),
+        repository: repository,
+        now: () => DateTime.utc(2026, 7, 15),
+      );
+
+      await coordinator.replay(environmentAlias: entry.$2);
+      final loaded = await repository.load(entry.$2);
+
+      expect(loaded?.enrollmentState, entry.$2);
+      await db.close();
+    }
+  });
 }
 
 DeviceEnrollmentCommand _command() => const DeviceEnrollmentCommand(
@@ -171,10 +238,15 @@ DeviceEnrollmentCommand _command() => const DeviceEnrollmentCommand(
 );
 
 final class _FakeEnrollmentTransport implements DeviceEnrollmentTransport {
-  _FakeEnrollmentTransport({this.result, this.unavailable = false});
+  _FakeEnrollmentTransport({
+    this.result,
+    this.unavailable = false,
+    this.overrideResult,
+  });
 
   final DeviceEnrollmentResult? result;
   final bool unavailable;
+  final DeviceEnrollmentTransportResult? overrideResult;
   String? lastCredential;
 
   @override
@@ -183,6 +255,8 @@ final class _FakeEnrollmentTransport implements DeviceEnrollmentTransport {
     String bearerCredential,
   ) async {
     lastCredential = bearerCredential;
+    final override = overrideResult;
+    if (override != null) return override;
     if (unavailable) return const DeviceEnrollmentTransportUnavailable();
     return DeviceEnrollmentTransportSuccess(result!);
   }
@@ -193,6 +267,8 @@ final class _FakeEnrollmentTransport implements DeviceEnrollmentTransport {
     String bearerCredential,
   ) async {
     lastCredential = bearerCredential;
+    final override = overrideResult;
+    if (override != null) return override;
     if (unavailable) return const DeviceEnrollmentTransportUnavailable();
     final value = result;
     if (value == null) return const DeviceEnrollmentTransportUnknown();

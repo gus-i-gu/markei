@@ -100,11 +100,14 @@ final class HostedEnrollmentCoordinator {
       );
     }
     if (result is DeviceEnrollmentTransportConflict) {
+      await _markExisting(state, 'conflict');
       return const HostedEnrollmentOutcome.notApplied('conflict');
     }
     if (result is DeviceEnrollmentTransportUnavailable) {
+      await _markExisting(state, 'service-unavailable');
       return const HostedEnrollmentOutcome.unknown('service-unavailable');
     }
+    await _markExisting(state, 'unknown-outcome');
     return const HostedEnrollmentOutcome.unknown('unknown-outcome');
   }
 
@@ -117,14 +120,16 @@ final class HostedEnrollmentCoordinator {
       environmentAlias: environmentAlias,
       installationId: result.installationId,
       enrollmentRequestId: enrollmentRequestId,
-      enrollmentState: 'device-enrolled',
+      enrollmentState: result.status,
       accountId: result.accountId,
       serverDeviceId: result.deviceId,
       generation: result.generation,
       updatedAt: _now(),
     );
     await _repository.save(completed);
-    return HostedEnrollmentOutcome.applied(completed);
+    return result.status == 'duplicate-equivalent'
+        ? HostedEnrollmentOutcome.duplicateEquivalent(completed)
+        : HostedEnrollmentOutcome.applied(completed);
   }
 
   Future<void> _mark(
@@ -138,6 +143,21 @@ final class HostedEnrollmentCoordinator {
         installationId: command.installationId,
         enrollmentRequestId: command.enrollmentRequestId,
         enrollmentState: state,
+        updatedAt: _now(),
+      ),
+    );
+  }
+
+  Future<void> _markExisting(HostedIdentityState state, String nextState) {
+    return _repository.save(
+      HostedIdentityState(
+        environmentAlias: state.environmentAlias,
+        installationId: state.installationId,
+        enrollmentRequestId: state.enrollmentRequestId,
+        enrollmentState: nextState,
+        accountId: state.accountId,
+        serverDeviceId: state.serverDeviceId,
+        generation: state.generation,
         updatedAt: _now(),
       ),
     );

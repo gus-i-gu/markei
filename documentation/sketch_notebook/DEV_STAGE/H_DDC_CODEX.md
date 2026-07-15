@@ -1,8 +1,8 @@
-# H_DDC_CODEX - C10-S03A-R3 Semantic Evidence
+# H_DDC_CODEX - C10-S03A-R3B Semantic Evidence
 
 Sequence: FLX-ORD-01 corrective Codex materialization
 Role: Codex semantic/test evidence
-Unit: C10-S03A-R3 local hosted-authorization correction and decisive proof
+Unit: C10-S03A-R3B local contract and decisive-proof completion
 Branch: `intermid-cycle-recovery`
 Authority: `E_DDC_STAGE.md` plus J/D/F
 Evidence boundary: local proof only; provider proof and learner-memory promotion excluded
@@ -10,50 +10,44 @@ Evidence boundary: local proof only; provider proof and learner-memory promotion
 ## Result
 
 ```text
-C10-S03A_R3_PARTIAL
+R3_LOCAL_SECURITY_PROVED=false
+C10-S03A_R3B_PARTIAL
 MCG-02_PROVIDER_PROOF_PENDING
 ```
 
-Exact blocker: full deterministic race/failure proof and real Flutter HTTP/file-backed hosted enrollment proof remain incomplete. The local aggregate is therefore false.
+Exact blocker: all source-level contradictions were narrowed, but decisive race, migration lifecycle, real Flutter HTTP/file-backed and aggregator producers are not complete.
 
-## Materialized Distinctions
+## Closed Semantics Materialized
 
-- `token-obtained != principal-verified`
-- `principal-verified != active-identity`
-- `active-identity != membership-confirmed`
-- `membership-confirmed != actor-device-authorized`
-- `actor-device-authorized != target-device-authorized`
-- `transaction-authorized != operation-committed`
-- `local-proof-passed != provider-proof-passed`
+- `deadline != inactivity-timeout`: body reads recompute remaining total attempt time before each read.
+- `owned-client != borrowed-client`: default attempts own and close their client; borrowed clients are not closed and are not used to claim cancellation.
+- `device-enrolled != duplicate-equivalent`: transport success carries the server success status.
+- `known-replay-outcome != enrolling`: replay conflict, unavailable and unknown outcomes overwrite stale `enrolling`.
+- `key-set-changed != requested-key-present`: a changed JWKS that still lacks the requested key installs negative cooldown.
+- `provider-metadata-changed != public-signing-key-changed`: semantic JWKS revision uses normalized public RSA signing material only.
+- `route-construction-snapshot != readiness-inventory`: inventory comparison now runs at Fastify readiness.
+- `Device-state != enrollment-state`: Device status endpoint projects the locked Device row status.
 
-Hosted code continues to treat JWT verification as an external principal only. Active identity, membership, actor Device, target policy and operation authority are separate states.
+## Named Semantic Tests
 
-## Scoped Revoke Semantics
+- Expired JWKS miss refreshes once.
+- Changed set still missing key installs cooldown.
+- Irrelevant JWK metadata does not break known-key verification.
+- Private JWK material is rejected.
+- Late direct route fails readiness.
+- Encapsulated plugin route fails readiness.
+- Injected unclassified route fails readiness.
+- Server `device-enrolled` maps to applied in existing coordinator flow.
+- Server `duplicate-equivalent` remains distinct and durable.
+- Replay conflict, service-unavailable and unknown-outcome replace stale `enrolling`.
 
-- Actor authorization is sourced from `x-markei-device-id` and active identity-owned enrollment.
-- Target authorization is sourced from the path and same-Account policy.
-- Owner may inspect or revoke a same-Account target Device.
-- Member may inspect or revoke only the actor Device.
-- Foreign and cross-Account targets remain bounded non-enumerating failures.
-- Active-to-revoked target transitions are atomic across enrollment and Device state.
-- Authorized repeat revoke of an already revoked target returns duplicate-equivalent.
-- After self-revoke commits, that actor is no longer active for later protected operations.
+## Privacy And Local-First Evidence
 
-## Named Semantic Evidence
-
-- Closed composition: hosted, fixture and disabled authorization branches are explicit construction states.
-- Hosted fallback denial: hosted protected operations cannot use fixture or precommitted authorization fallback.
-- Route inventory: Fastify actual registrations are compared to typed descriptors rather than to another hard-coded constant.
-- Unknown-key behavior: unchanged and stale-retained JWKS refreshes do not authorize unknown keys and establish bounded negative cooldown.
-- Closed Flutter outcomes: conflict, unavailable and unknown-outcome are not decoded as success.
-- Credential flow: one token is obtained per attempt, passed in memory to transport and never persisted by the new code.
-
-## Privacy And Local-First Behavior
-
-- Normal local registration and local-first Flutter composition were not changed.
-- Existing local event identities and pending outbox behavior are preserved by the coordinator failure paths.
-- No token, claims, JWKS body, provider URL, generated credential, connection string or fact payload was intentionally logged by the new code.
-- Public failures remain generic and bounded.
+- Access tokens remain method parameters and are not stored in `HostedIdentityState`.
+- Hosted enrollment failure paths do not alter local facts, purchases or sync cursors in the changed coordinator code.
+- Ordinary local registration and UI were not changed.
+- No token, claim, JWK body, provider URL, connection string, generated credential or fact payload was intentionally logged by new code.
+- Public failures remain closed and bounded.
 
 ## Unsupported Wording Absent
 
@@ -61,15 +55,14 @@ No report claims:
 
 ```text
 HOSTED_AUTH_READY=true
-Auth0 success
-Render success
-Neon acceptance
+Auth0 verified
+Neon accepted
+Render deployed
 MCG-02 complete
-provider proof passed
-production authentication ready
+production ready
 Cycle 10 closed
 ```
 
 ## Didactic Boundary
 
-No KANBAN, glossary, Concept Map, Lecture Register, permanent didactic memory, methodology, A/B/C or J file was modified. Learner maturity and Cycle 11 state remain unchanged.
+No KANBAN, glossary, Concept Map, Lecture Register, permanent didactic memory, methodology, A/B/C, J or D/E/F file was modified. Learner maturity and Cycle 11 UI state remain unchanged.

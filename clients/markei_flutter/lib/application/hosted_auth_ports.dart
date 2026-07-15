@@ -68,12 +68,14 @@ final class DeviceEnrollmentCommand {
 
 final class DeviceEnrollmentResult {
   const DeviceEnrollmentResult({
+    required this.status,
     required this.installationId,
     required this.deviceId,
     required this.accountId,
     required this.generation,
   });
 
+  final String status;
   final String installationId;
   final String deviceId;
   final String accountId;
