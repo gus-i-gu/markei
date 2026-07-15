@@ -1,236 +1,349 @@
-# J_MAIN_STAGE — C10-S03A-R3C Post-Codex Reconciliation
+# J_MAIN_STAGE — Cycle 10 MCG-02 R3D1 Reconciliation and R04 Selection
 
-> Sequence: FLX-ORD-01 Main reconciliation
-> Branch: `intermid-cycle-recovery`
-> Controlling D/E/F: `ecfea32c3d72d9a8de74893df7ad29929dcc5ee1`
-> Codex implementation: `00b3c090d25bd2f266ec65d358090a876efcd5d9`
-> Evidence: R3C G/H/I, Git delta and direct proof-source/test inspection
-> Date: 2026-07-15
-> Status: fail-closed proof scaffold accepted; decisive producers incomplete
+> Sequence: FLX-ORD-01
+> Reconciled implementation: 7ed037db586d4e257eaa88783bec2c146a409230
+> Prior materialization authority: b254b722014dd85871c03926789e6064d3635c88
+> Status: **R3D1 CONDITIONALLY ACCEPTED; R04 SELECTED**
+> Active next unit: **C10-MCG02-R04 — Authorization Barrier Matrix Completion**
+> Evidence boundary: local repository, loopback HTTP, synthetic identities, disposable PostgreSQL 18
 
 ## 1. Methodology retained
 
-Main recovered through:
+Main retains:
 
-```text
-INDEX → METHOD_FOUNDATIONS → FLUX → PROMOTION_RULES → CHAT_PROTOCOL
-```
+- J owns cross-domain reconciliation and next-unit selection.
+- D/E/F jointly own Codex materialization authority.
+- G/H/I are observational implementation evidence, not semantic promotion.
+- implementation, validation, provider acceptance and production readiness remain distinct;
+- evidence is accepted only within its named environment and scope;
+- private provider files and credentials remain outside Codex authority;
+- unresolved provider evidence cannot be converted into local proof.
 
-Retained:
+No permanent memory is promoted by this reconciliation.
 
-- G/H/I are observational evidence, not promotion.
-- Git owns exact ancestry and changed paths.
-- A producer existing is not a producer passing.
-- A named case may be accepted only when its implementation measures that exact meaning.
-- Synthetic aggregator fixtures prove aggregator logic, not system behavior.
-- Partial, contradicted, implemented, locally validated and provider-pending remain distinct.
-- New D/E/F authority is required for the next bounded unit.
+## 2. Evidence reconciled
 
-Round identity:
+R3D1 changed 15 bounded paths:
 
-```text
-R3C D/E/F authority           ecfea32
-R3C implementation/evidence   00b3c09
-R3C complete local proof       absent
-```
+- G/H/I;
+- ten proof producer, scenario and orchestration modules;
+- the local hosted harness;
+- the proof aggregate test.
 
-## 2. Ancestry and exact delta
+It did not change:
 
-Git proves:
+- dependencies or lockfiles;
+- migrations 001–006;
+- Drift schema v7;
+- production enrollment, JWT, authorization or route contracts;
+- A/B/C, J/D/E/F, methodology or permanent memory;
+- Auth0, Neon or Render resources.
 
-```text
-ecfea32 → 00b3c09
-```
+Reported validation included:
 
-Exactly nine paths changed:
+- TypeScript formatting, lint, typecheck, tests and build;
+- 34 server tests;
+- production dependency audit with zero reported vulnerabilities;
+- Flutter formatting, analysis, tests, Android debug build and Windows release build;
+- protected Python regressions;
+- disposable PostgreSQL 18 migration and authorization labs;
+- changed-path secret scan and final resource inventory.
 
-```text
-clients/markei_flutter/test/infrastructure/http_device_enrollment_transport_file_test.dart
-documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-services/markei_sync_api/src/hosted_local_harness.ts
-services/markei_sync_api/src/proof/aggregate.ts
-services/markei_sync_api/src/proof/migration_006_probe.ts
-services/markei_sync_api/src/proof/producer.ts
-services/markei_sync_api/test/proof_aggregate.test.ts
-```
+## 3. R3D1 accepted results
 
-No production protocol, dependency/lockfile, migration, Drift schema, methodology, permanent
-memory, A/B/C, J or D/E/F file changed. G left Final SHA pending; Git establishes `00b3c09`.
+The following claims are accepted as local validation at
+7ed037db586d4e257eaa88783bec2c146a409230:
 
-## 3. Codex result accepted
+~~~text
+PROOF_PIPELINE_INTEGRITY=true
+MIGRATION_006_LIFECYCLE_ACL=true
+ROUTE_INVENTORY_PRODUCER=true
+~~~
 
-G/H/I truthfully report:
+The proof record is now closed and versioned. It validates:
 
-```text
+- exact top-level and case fields;
+- exact producer and case inventories;
+- canonical derived blockers;
+- consistency between cases, blockers and producer pass state;
+- safe failure categories;
+- malformed, missing, duplicate and unknown-record rejection;
+- fail-closed aggregation.
+
+The orchestrator executes producers and validates their records. Synthetic all-pass records remain
+confined to aggregate unit tests.
+
+Migration 006 is accepted as locally validated for the reported fresh, upgrade, duplicate,
+failure-copy, ledger, catalog, ACL and readiness scenarios. The tracked migration files were not
+changed. Route inventory evidence is accepted as execution of real Fastify readiness scenarios.
+
+Most JWKS state-machine scenarios and the fixed static command results are accepted, subject to the
+three corrections below.
+
+## 4. Evidence corrections required before R04 acceptance
+
+Repository inspection found three narrow mismatches between case names and what their producers
+actually observe.
+
+### 4.1 Resource teardown
+
+The static producer runs a filtered docker inventory command but marks the case true from exit code
+alone. A successful command with non-empty output would still pass.
+
+R04 must require:
+
+~~~text
+command exits zero
+AND trimmed stdout is empty
+~~~
+
+G separately reports an empty final inventory, so R3D1 cleanup is not rejected. Only the producer
+case itself remains insufficient.
+
+### 4.2 JWKS irrelevant metadata
+
+The named case verifies that a known token still succeeds after metadata-only JWKS change. That does
+not directly demonstrate that the semantic key-set revision was preserved.
+
+R04 must measure the invariant through externally observable state-machine behavior, preferably:
+
+~~~text
+install unknown-kid negative cooldown
+→ refresh with metadata-only change
+→ repeat the same unknown kid
+→ prove no extra fetch occurred during the preserved cooldown
+~~~
+
+No production introspection API is authorized.
+
+### 4.3 Flutter token logging
+
+The Flutter producer maps one focused three-test command to
+token-not-persisted-or-logged=true. Those tests do not inspect logs and therefore do not establish
+the complete case.
+
+R04 must return that case to false with blocker not-yet-r05. The full proof belongs to R05.
+
+These corrections do not authorize the full Flutter gate.
+
+## 5. R3D1 completion classification
+
+Accepted:
+
+~~~text
+C10-S03A_R3D1_PROVED
 R3_LOCAL_SECURITY_PROVED=false
-C10-S03A_R3C_PARTIAL
+R3D2_AUTHORIZATION_PENDING
+R3D3_FLUTTER_PENDING
 MCG-02_PROVIDER_PROOF_PENDING
-```
+~~~
 
-The hosted-local producer remains:
+The historical R3D2 authorization unit is renamed for the active Main sequence as R04. The
+historical R3D3 Flutter unit becomes R05. This is a staging label change, not a protocol or source
+version change.
 
-```text
-AUTHORIZATION_RACE_MATRIX=partial
-ROUTE_AUTHORIZATION_INVENTORY=true
-LEAST_PRIVILEGE_HTTP=true
+## 6. R04 objective
+
+R04 must produce deterministic, case-addressable evidence for all 28 authorization cases already
+declared by producer schema version 1.
+
+It must use:
+
+- real local Fastify routes where the case is route-observable;
+- disposable PostgreSQL 18;
+- synthetic Accounts, identities and Devices;
+- deterministic transaction barriers rather than timing sleeps;
+- explicit before/after state snapshots for every denial;
+- the existing closed producer record and aggregate pipeline.
+
+R04 is proof-first. Production changes are allowed only when a preserved failing R04 scenario
+demonstrates a direct defect in an existing contract.
+
+## 7. Required authorization matrix
+
+R04 owns:
+
+1. membership-disabled-before-fence;
+2. membership-removed-before-fence;
+3. external-identity-disabled-before-mutation;
+4. actor-device-revoked-before-upload;
+5. actor-device-revoked-before-download;
+6. actor-device-revoked-before-acknowledgement;
+7. actor-device-revoked-before-capabilities;
+8. actor-device-revoked-before-rebootstrap-start;
+9. actor-device-revoked-before-rebootstrap-status;
+10. actor-device-revoked-before-rebootstrap-chunk;
+11. actor-device-revoked-before-rebootstrap-complete;
+12. actor-device-revoked-before-device-status;
+13. actor-device-revoked-before-device-revoke;
+14. owner-target-status;
+15. owner-target-revoke;
+16. member-self-status;
+17. member-self-revoke;
+18. foreign-target-denial;
+19. cross-account-target-denial;
+20. concurrent-target-revoke-one-transition-one-event;
+21. independent-repeat-revoke-duplicate-equivalent;
+22. self-revoked-actor-denied-later;
+23. equivalent-concurrent-enrollment;
+24. conflicting-enrollment-request-hash;
+25. response-loss-query-replay;
+26. process-restart-replay;
+27. serialization-retry-exhaustion-fails-closed;
+28. denied-no-state-advance.
+
+No case may pass merely because a test file or aggregate command passed. Each case must be tied to an
+executed scenario result.
+
+## 8. Authorization invariants
+
+The decisive invariants are:
+
+~~~text
+identity active
+AND Account membership active
+AND actor Device active
+AND requested Account matches membership
+AND target operation is permitted
+~~~
+
+They must be fenced inside the transaction that performs the protected mutation.
+
+A denied or exhausted request must not advance:
+
+- authoritative facts or events;
+- cursors or acknowledgements;
+- recovery sessions or chunk progress;
+- Device or enrollment state;
+- security-event state.
+
+Target Device rules remain:
+
+- owner may inspect or revoke an Account Device;
+- ordinary member may inspect or revoke only their own Device;
+- foreign and cross-Account targets are denied;
+- one state transition emits one security event;
+- equivalent replay is duplicate-equivalent;
+- conflicting request identity/hash fails closed.
+
+## 9. Deterministic barrier hypothesis
+
+R04 may add lab-only barrier hooks equivalent to:
+
+~~~text
+before identity/membership fence
+after membership lock
+before actor Device lock
+before target transition
+before protected mutation
+before commit
+~~~
+
+Hooks must:
+
+- be absent from hosted/public composition;
+- carry no provider or credential data;
+- use explicit release signals, not sleeps;
+- close and release in finally;
+- not weaken production transaction boundaries.
+
+## 10. Scenario requirements
+
+For every actor-revocation route, construct a valid request and any required recovery fixture before
+revoking the actor. The resulting 403 must be attributable to authorization, not malformed input or
+unavailable recovery state.
+
+Concurrency and unknown-outcome scenarios must prove:
+
+- concurrent revoke yields one transition and one event;
+- equivalent concurrent enrollment converges on one meaning;
+- response loss occurs after server commit but before client receipt;
+- replay with the same identity returns equivalent truth;
+- process-restart replay uses a new app/composition against persisted database state;
+- serialization retry exhaustion returns a bounded failure with no state advance.
+
+## 11. R04 checkpoints
+
+### CP0 — Correct proof meanings
+
+- teardown producer checks empty stdout;
+- metadata-only JWKS scenario measures revision/cooldown preservation;
+- Flutter token logging case returns to false and not-yet-r05;
+- regression tests prevent the three overclaims.
+
+### CP1 — Barrier and observer infrastructure
+
+- add deterministic lab-only barriers;
+- add Account-scoped before/after state observer;
+- prove hooks are absent from normal hosted composition.
+
+### CP2 — Identity, membership and actor fencing
+
+- complete cases 1–13;
+- assert exact denial and no state advance.
+
+### CP3 — Target authorization
+
+- complete cases 14–22;
+- prove self/owner/foreign/cross-Account behavior and one-event transition.
+
+### CP4 — Enrollment, replay and exhaustion
+
+- complete cases 23–28;
+- prove equivalent/conflicting concurrency, unknown outcomes, restart and retry exhaustion.
+
+### CP5 — Producer and aggregate
+
+- authorization-race is true for all exact cases;
+- migration, corrected JWKS, route and static producers remain true;
+- Flutter remains a valid false producer only for R05 cases;
+- global aggregate remains false.
+
+## 12. Exclusions and stop rules
+
+R04 does not authorize:
+
+- Auth0, Neon, Render or public hosted access;
+- provider credentials or private helper files;
+- migration 007 or edits to migrations 001–006;
+- dependency or lockfile changes;
+- Drift v8;
+- production enrollment/auth redesign;
+- full Flutter hosted proof;
+- UI or Cycle 11 work;
+- MCG-03, MCG-04, production deployment or Cycle 10 closure;
+- permanent-memory promotion.
+
+Stop on a need for any excluded expansion and report the exact failing case.
+
+## 13. R04 terminal contract
+
+On complete R04 proof:
+
+~~~text
+PROOF_PIPELINE_INTEGRITY=true
+MIGRATION_006_LIFECYCLE_ACL=true
+JWKS_STATE_MACHINE_PRODUCER=true
+ROUTE_INVENTORY_PRODUCER=true
+STATIC_REGRESSION_PRODUCER=true
+AUTHORIZATION_RACE_PRODUCER=true
+FLUTTER_HTTP_FILE_BACKED_PRODUCER=false
 R3_LOCAL_SECURITY_PROVED=false
-```
+C10-MCG02-R04_AUTHORIZATION_PROVED
+R05_FLUTTER_PENDING
+MCG-02_PROVIDER_PROOF_PENDING
+~~~
 
-The migration probe exits nonzero and reports partial. No complete real aggregate was emitted. Main
-accepts this classification.
+If any decisive authorization case remains unproved:
 
-## 4. Progress accepted
-
-### 4.1 Proof inventory and aggregator scaffold
-
-`producer.ts` now owns six producer names and explicit case inventories. `aggregate.ts` rejects
-missing producers, duplicate producers, malformed records, mismatched case sets and false cases.
-Unit tests prove a synthetic complete set and several fail-closed inputs.
-
-Accepted state: implemented scaffold and focused tests. It is not yet a closed evidence contract or
-a real-producer orchestrator.
-
-### 4.2 Authorization producer scaffold
-
-The hosted-local harness emits a structured partial authorization producer. Four existing cases are
-marked passed and all unobserved cases become `missing-case-result`, keeping the producer false.
-
-Accepted state: truthful partial encoding. No deterministic barrier matrix or denied-no-state-
-advance observer was added.
-
-### 4.3 Migration-006 probe subset
-
-The new probe checks the existing disposable database for ledger identity/checksum, function shape,
-security mode/volatility/search path, qualified body, selected ACL denials and runtime DDL/role
-denial. It does not edit migrations and correctly exits partial.
-
-Accepted state: useful subset only.
-
-### 4.4 Real HTTP/file-backed Flutter subset
-
-The new Flutter test uses `LocalDatabase.file`, real local purchase/outbox repositories, real hosted
-identity persistence, the coordinator and `HttpDeviceEnrollmentTransport` against loopback
-`HttpServer`. Three focused tests pass for success/duplicate persistence, selected failure
-persistence and a body-delay deadline outcome.
-
-Accepted state: real package:http plus file-backed Drift subset. It is not the required full
-Fastify/PostgreSQL-backed producer and emits no producer record.
-
-## 5. Direct inspection corrections
-
-### 5.1 Aggregator contract is not closed
-
-`ProofProducerResult` declares `blockers`, but `parseRecord` neither validates it nor aggregation
-uses it. A record can contain stale blockers while otherwise passing. `record.passed` is only checked
-as a boolean; consistency with case truth and blocker emptiness is not enforced. CLI JSON parse
-failure is not translated into a safe structured blocker. Unknown/skipped/partial/unavailable
-representations lack complete named tests.
-
-The aggregate currently remains false because producers are missing, but the evidence contract is
-not yet sufficient for a future success claim.
-
-### 5.2 Migration case labels overclaim checks
-
-The case `owner-security-definer-stable-search-path` queries security-definer, volatility and config,
-but never queries `proowner`. It therefore does not prove owner. `runtime-execute-ready-only` proves
-the readiness call works, while other selected denials are separate; it does not enumerate all
-runtime function execute privileges. These booleans must be split or the queries expanded before
-the producer can pass.
-
-### 5.3 Flutter test names exceed observed evidence
-
-The slow-body fixture writes one partial body, stalls, then finishes. It proves a total-deadline
-outcome during a body stall, not repeated slow progress. It does not instrument/assert owned-client
-closure. The suite also lacks stalled headers, redirect/oversize, response-loss query/replay,
-borrowed-client preservation, late-mutation fencing, local registration during API outage and a
-machine-readable producer. It uses raw Dart `HttpServer`, not Fastify/PostgreSQL.
-
-H's phrase “absolute deadline closes an owned request” is therefore stronger than the test.
-
-### 5.4 Remaining producers are not wired
-
-JWKS, route-inventory and static-regression case inventories exist, but real machine-readable
-producer records are not generated. No orchestrator collects actual records and invokes the
-aggregator.
-
-## 6. Reported validation
-
-Accepted within scope:
-
-- TypeScript format/lint/typecheck/build passed;
-- 30 TypeScript tests passed;
-- production dependency audit reported zero vulnerabilities;
-- focused Flutter file-backed test passed three tests;
-- complete Flutter suite passed 61 tests with two existing lab-gated skips;
-- Flutter analysis, Android debug and Windows release builds passed;
-- five protected Python regressions passed;
-- `git diff --check` passed;
-- no provider/private helper access occurred.
-
-Builds remain build evidence. Two skipped lab gates cannot satisfy local proof.
-
-## 7. PRC-01 reconciliation
-
-| Claim | State |
-| --- | --- |
-| versioned proof/case inventory | implemented |
-| fail-closed aggregator scaffold | implemented; focused subset validated |
-| closed producer/aggregator integrity | contradicted/incomplete |
-| authorization producer | truthful partial scaffold |
-| deterministic authorization matrix | absent |
-| migration-006 metadata/ACL subset | locally validated subset |
-| migration owner/lifecycle proof | incomplete; owner case overclaimed |
-| real HTTP + file-backed Drift subset | locally validated subset |
-| full Fastify/PostgreSQL Flutter producer | absent |
-| real JWKS/route/static producer records | absent |
-| complete real aggregation | absent |
-| provider proof | not performed/unauthorized |
-
-## 8. Main decision and sequence split
-
-Main accepts `00b3c09` as fail-closed proof infrastructure progress and rejects R3C completion.
-Repeating all four broad producers in one unit has twice produced partial evidence. The remaining
-work is therefore split:
-
-```text
-R3D1 — Evidence Contract and Migration Lifecycle Completion
-R3D2 — Authorization Barrier Matrix Completion
-R3D3 — Full Flutter Hosted Gate and Real Aggregation
-```
-
-Only R3D1 is activated by the next D/E/F. It must:
-
-1. close producer/aggregator schema integrity;
-2. generate real JWKS, route and static producer records from named evidence;
-3. complete the migration-006 lifecycle/ACL producer;
-4. run the real aggregate and prove it remains false only because authorization and Flutter
-   producers are intentionally incomplete.
-
-R3D1 does not authorize completing authorization or Flutter cases, which remain R3D2/R3D3.
-
-## 9. Boundaries
-
-No migration edit/007, dependency/lockfile change, Drift schema change, provider access, UI work,
-permanent promotion or unrelated refactor is authorized. Private files remain unread:
-
-```text
-.vscode/settings.json
-documentation/NEON_DOC.md
-documentation/NEON_SESSION.ps1
-```
-
-## 10. Terminal status
-
-```text
-C10-S03A_R3C_PARTIAL_ACCEPTED
-C10-S03A_R3D1_RESTAGING_REQUIRED
-PROOF_PIPELINE_INTEGRITY=false
-MIGRATION_006_LIFECYCLE_ACL=false
+~~~text
+C10-MCG02-R04_PARTIAL
+AUTHORIZATION_RACE_PRODUCER=false
 R3_LOCAL_SECURITY_PROVED=false
-MCG-02_PROVIDER_PROOF_NOT_AUTHORIZED
-```
+~~~
 
-Confidence is high for Git inventory, producer incompleteness and the direct aggregator/migration/
-Flutter findings.
+## 14. Forward boundary
+
+R05 will own the complete Flutter HTTP/file-backed matrix and the final local aggregate. Manual
+Auth0/Neon/Render proof remains a separate human/provider gate after local proof. Neither is active
+inside R04.
