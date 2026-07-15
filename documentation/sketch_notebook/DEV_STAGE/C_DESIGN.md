@@ -1,280 +1,280 @@
-# C_DESIGN — Cycle 10 Retention, Snapshot and Recovery Investigation
+# C_DESIGN — C10-S03 Hosted Development Authentication and Synchronization Proof
 
 > Sequence: FLX-INV-02 investigative/speculative round
 > Role: Design/Architecture [D]
-> Branch / inspected HEAD: `intermid-cycle-recovery` / `36b7b22b20e3b308b7b800514f6828a91ea49fcd`
+> Branch / inspected HEAD: `intermid-cycle-recovery` / `de1319dc05e1f04ba84b6cfd681f5b72a4568f88`
 > Authority: investigation and Main handoff only
 > Writable surface: `documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md`
 > Status: PROVISIONAL — NOT AUTHORIZED FOR CODEX OR PROVIDER MUTATION
 
 ## 1. Methodology retained
 
-The full route `INDEX → METHOD_FOUNDATIONS → FLUX → PROMOTION_RULES → CHAT_PROTOCOL`
-was read after both AGENTS files. Design may analyze ownership, invariants, topology, security and
-alternatives. Under PRC-01, repository structure is implemented evidence only within its inspected
-boundary; tests validate only named behavior; provider documentation does not approve a Markei
-policy. Every conclusion below remains candidate, proposed or provisional. Only C may be replaced.
-No source, migration, permanent memory, Main stage, report, Neon resource or secret may change.
+The full `INDEX → METHOD_FOUNDATIONS → FLUX → PROMOTION_RULES → CHAT_PROTOCOL`
+route was read after both AGENTS files. Design may investigate trust, identity, responsibility,
+dependency, schema, transaction and hosting boundaries. PRC-01 keeps repository facts, passing
+tests, provider guarantees, human observations, inferences and proposals distinct. C is staging,
+not canon or implementation authority. Only C may change; source, migrations, permanent memory,
+J/A/B/D–I, Main continuity and providers remain protected. Flutter→ports→HTTP/Drift→API→PostgreSQL
+dependency direction and the stop rules remain controlling.
 
-## 2. Current architecture and round delta
-
-Accepted C10-S01B path:
+## 2. Current architecture and missing hosted invariants
 
 ```text
-Drift A → injected HttpSyncTransport → authenticated Fastify API
-→ serializable PostgreSQL transaction → Account event stream
-→ Fastify/API → HttpSyncTransport → atomic Drift B Purchase apply → acknowledgement
+Flutter local-first facts/outbox/recovery
+→ injected HttpSyncTransport with bearer token source
+→ Fastify AuthVerifier port
+→ verified AuthContext(AccountId, DeviceId)
+→ serializable transaction + transaction-local RLS context
+→ PostgreSQL sync/recovery tables (migrations 001–003)
 ```
 
-Implemented: append-only `purchase.registered` v3; closed immutable Purchase/Product/Store/Item
-facts; Account-scoped ordered cursor; per-Device monotonic acknowledgement; bounded transaction
-retry; RLS and explicit Account predicates; atomic facts/inbox/cursor apply; replay equivalence.
+Implemented locally: immutable v3 Purchase synchronization, recovery format 1, Device rows with
+active/revoked status and leases, RLS, bounded transaction retries and local convergence/rebootstrap
+harnesses. `FixtureAuthVerifier` is lab-only; normal `main.ts` uses `RefusingAuthVerifier`, requires
+one database URL and binds `127.0.0.1`. Flutter’s default composition remains local-only and still
+uses `local-account`; no Auth0 SDK/composition is present. Android ID is `com.gusigu.markei`;
+Windows executable metadata remains prototype-like and supplies no security identity.
 
-Newly confirmed missing: an earliest available cursor, Device lease/last-seen semantics, snapshot
-identity or payload, cleanup watermark/ledger, resumable rebootstrap, local recovery session,
-Account deletion state and protocol compatibility registry. Current `cursor-expired` is used when an
-acknowledgement exceeds high-water; it does not yet mean an incremental cursor was retained away.
-Lists remain rebuildable projections and must not enter an authoritative snapshot.
+Missing invariants: verified external issuer+subject maps to one internal identity; identity has an
+active Account membership; requested Device is enrolled to that Account and installation; every
+sync/recovery transaction derives Account/Device only after authorization; enrollment/revocation
+is auditable and idempotent; hosted startup fails closed; runtime and migration credentials remain
+separate; membership removal invalidates active synchronization/recovery without relying on token
+expiry alone.
 
-## 3. Required invariants
+## 3. Alternative A — token subject directly maps to Account and Device
 
-1. Events and snapshots are immutable, Account-scoped and authorized from verified claims.
-2. `highWaterCursor` is the greatest committed Account event cursor.
-3. A complete snapshot declares exactly one `coveredThroughCursor ≤ highWaterCursor`.
-4. `earliestIncrementalCursor` is the first retained event cursor; every earlier missing event is
-   covered by one durable, compatible, integrity-verified snapshot.
-5. Cleanup may delete cursor `x` only when a durable snapshot covers `x`, policy permits deletion,
-   and no protected active Device requires incremental delivery of `x`.
-6. Device acknowledgement is evidence of one Device’s committed facts, not snapshot durability.
-7. Rebootstrap never destroys unsent local Events; it preserves and later replays them with their
-   original EventId, DeviceSequence, SubmissionId semantics and content hash.
-8. Snapshot apply plus cursor installation is atomic, or restartable through an inactive staging
-   database; acknowledgement occurs only after snapshot commit and post-snapshot catch-up.
-9. Provider backup/PITR recovers infrastructure state; an application snapshot restores protocol
-   facts to a client. Neither substitutes for the other.
+**Model:** `auth_bindings(issuer, subject, account_id, device_id, status)` unique on issuer+subject.
+Token selects the only Account and Device; no membership or enrollment resource.
 
-## 4. Alternative A — slowest active Device blocks retention
+- API/Flutter: Flutter sends only access token; server resolves the fixed binding. Reinstall needs
+  administrative rebinding because Device identity cannot vary safely.
+- Transaction/RLS: resolver loads binding before `inTransaction`; sets Account/Device context.
+- Protection: simple cross-Account scope and no forged Device body, but one human identity cannot
+  naturally own multiple Devices/Accounts; Device revocation risks revoking the person binding.
+- Replay/recovery: existing submission/recovery identities work, but replacement semantics are
+  ambiguous and retention leases become tied to identity rather than installation.
+- Migration/operations: one table and narrow repository; lowest cost. Tests cover issuer+subject
+  collision, disabled binding, wrong issuer and context. Rollback restores refusing verifier.
+- Privacy/security: minimal records, but over-couples authentication subject with Device lifecycle
+  and makes future household/account selection expensive. Confidence: low for Markei.
 
-**Model.** Extend Account stream state with high-water and cleanup watermark; Device rows gain
-status, last-seen and acknowledgement. Delete only through the minimum acknowledgement of all
-non-revoked Devices. No snapshots are required for ordinary recovery.
+## 4. Alternative B — external identity + membership + client-supplied Device
 
-- Server/API: authenticate Device, renew lease, expose retention floor, serialize cleanup against
-  upload/ack; dormant Devices remain blockers unless Main revokes them.
-- Drift: incremental download only; existing atomic page apply remains sufficient.
-- Races/transactions: cleanup locks Account retention state and recomputes the minimum; an ack or
-  new Device enrollment concurrent with cleanup must serialize. Never trust a supplied ack beyond
-  server high-water.
-- Failure/recovery: crash-safe batched deletion with ledger; no rebootstrap path if a Device is
-  mistakenly excluded. Revocation is security-significant and irreversible without enrollment.
-- Cost/security: lowest migration and payload complexity; unbounded storage under one abandoned
-  active Device, denial-of-retention by stale enrollment, and privacy exposure from long history.
-- Tests: slow Device, ack regression, concurrent ack/cleanup, revoke during cleanup, worker retry.
-- Rollback: stop cleanup worker; retained events remain valid. Confidence: medium technically, low
-  as the long-term policy because it cannot guarantee bounded growth.
+**Model:** `external_identities`, `account_memberships`, existing `devices`; client includes DeviceId
+on enrollment/sync and server checks membership plus `(AccountId, DeviceId)` ownership.
 
-## 5. Alternative B — fixed TTL plus periodic Account snapshots
+- API/Flutter: token resolves identity; client selects Account and supplies persisted DeviceId.
+  Existing Device is accepted only if bound to that Account. Enrollment may insert it once.
+- Server: separates authentication from authorization; route preflight resolves membership and
+  Device before transaction. Account choice is explicit or omitted when exactly one membership.
+- Reinstall/replacement: new client-generated DeviceId requires enrollment; old Device remains
+  revocable/expirable. Client-generated UUID is identity, never proof of ownership.
+- RLS/replay: verified Account/Device context plus explicit predicates; enrollment uses an
+  idempotency key and uniqueness on Account+Device. Forged IDs fail without enumeration detail.
+- Cost/tests: moderate migration and API surface; test two identities/two Accounts, forged Device,
+  membership disable, replay and races. Rollback disables hosted composition and retains rows.
+- Risk: a copied stable DeviceId plus valid member token can attempt to impersonate another
+  installation unless enrollment has stronger installation binding. Confidence: medium.
 
-**Model.** Events expire strictly by age. Periodic complete snapshots cover a cursor; expired
-Devices receive `cursor-expired` and rebootstrap from the newest compatible snapshot.
+## 5. Alternative C — identity + membership + server-mediated installation enrollment
 
-- Server tables: Account stream state; immutable snapshot manifest/chunks; cleanup jobs; no Device
-  lease needed for deletion. Snapshot payload may be PostgreSQL bytes or object storage.
-- API/Drift: manifest/chunk/rebootstrap endpoints and a local staging database; snapshot then catch
-  up from covered cursor. Derived Lists rebuild after activation.
-- Consistency: generate under one stable PostgreSQL snapshot and capture high-water from the same
-  view; publication is a separate atomic metadata transition from `building` to `available`.
-- Races: fixed TTL can delete events before a failed snapshot becomes durable unless cleanup checks
-  coverage. Large Account generation and transfer may exceed transaction, compute or mobile limits.
-- Failure/recovery: resumable chunks and verified manifest; local activation must be atomic. Unsent
-  local facts can collide with authoritative snapshot identities and require quarantine/replay.
-- Cost/security: predictable relay storage but continuous snapshot work, payload-leakage surface,
-  object lifecycle/key complexity and forced rebootstrap even for recently dormant Devices.
-- Tests: boundary-time deletion, concurrent uploads, corrupt/reordered chunks, obsolete manifest,
-  interrupted activation, unknown completion, cross-Account object access.
-- Rollback: suspend TTL cleanup and retain latest valid snapshot. Migration/operations high.
-  Confidence: medium; strict TTL is too brittle without Device-awareness and minimum grace.
+**Model:** external identity and membership are separate; Flutter installation holds a stable
+random `InstallationId`; server idempotently creates or returns a Device binding under an authorized
+membership. DeviceId remains server-owned protocol identity, not hardware fingerprint.
 
-## 6. Alternative C — hybrid minimum TTL, Device lease and snapshot coverage
+- Tables: issuer+subject identity; membership with role/status; installation enrollment keyed by
+  Account+InstallationId with Device FK/status/generation; enrollment attempts/idempotency result;
+  revocation audit. Existing sync/recovery Device tables remain authoritative.
+- API/Flutter: Flutter authenticates, chooses an allowed Account, submits InstallationId plus
+  EnrollmentRequestId, persists returned DeviceId, and then sends DeviceId through transport.
+  Native app contains public Auth0 domain/client ID/API audience as required configuration, never a
+  client secret, management token, database URL or signing key.
+- Server: validates JWT first, resolves identity/membership second, enrolls/authorizes Device third,
+  then opens Account transaction. Invitation/pairing may be an additional gate but is not selected.
+- Reinstall: loss of InstallationId produces a new enrollment/Device; silent replacement of an
+  active Device is forbidden. Authorized revocation ends sync/rebootstrap and lease eligibility.
+- Replay/RLS: same request hash returns stored Device; different hash conflicts. All existing route
+  contexts come from the resolved authorization object, never Account/Device request authority.
+- Cost/security: highest migration/state-machine cost but clean multi-Device, retention and
+  rebootstrap ownership. Tests and rollback remain bounded. Confidence: high architecturally;
+  invitation/replacement policy remains unresolved.
 
-**Model.** Events receive a minimum retention age. Devices are `active`, `dormant` or `revoked`
-according to an explicit lease policy. Cleanup floor is bounded by active Device acknowledgements,
-minimum age and an available compatible snapshot. Dormant eligible Devices rebootstrap; revoked
-Devices cannot bootstrap.
+**Recommendation:** C. It preserves the existing installation-held stable identity direction while
+keeping Auth0 subject, Account membership, Device and installation as distinct identities.
 
-- Server: high-water/earliest cursor, Device lease and status, immutable manifests/chunks, cleanup
-  ledger and recovery sessions. API owns authorization, lease renewal and typed lifecycle results.
-- Drift: recovery session metadata, downloaded chunk ledger, staging database, preserved outbox and
-  quarantine. Existing authoritative tables are replaced only after full verification/catch-up.
-- Transactions: snapshot consistency and publication are separate; cleanup locks Account stream
-  state, selects a valid snapshot and computes a monotonic deletion watermark. Deletion is batched,
-  restartable and never advances earliest availability before committed deletion.
-- Races: lease expiry during sync uses lease state captured by cleanup transaction; new uploads land
-  after snapshot cursor and remain retained; Account deletion dominates publication/transfer.
-- Cost/security: bounded growth with offline tolerance and explicit recovery, at the price of the
-  largest state machine and a policy-sensitive dormant boundary.
-- Tests: combined A/B tests plus lease edge times, snapshot compatibility, cleanup watermark
-  monotonicity, reinstall/replacement and account-deletion races.
-- Rollback: disable cleanup and snapshot scheduling; keep manifests/events; local-only composition
-  remains unchanged. Migration cost high but forward-only and compartmentalized.
-- Recommendation: C, high architectural confidence; retention durations and lease periods remain
-  low-confidence policy decisions requiring Main and observed product usage.
+## 6. Proposed forward-only data model
 
-## 7. Proposed server and storage model
+Prefer `004_hosted_identity_enrollment.sql`; never edit 001–003.
 
-| Structure | Owner | Key invariants |
-| --- | --- | --- |
-| `account_stream_state` | PostgreSQL | Account PK; next/high-water; earliest cursor; current snapshot |
-| `device_sync_state` | PostgreSQL | Account+Device; status; ack; lease/last-seen; generation |
-| `snapshots` | PostgreSQL metadata | SnapshotId; Account; state; format/schema/protocol; covered cursor; total hash/size |
-| `snapshot_chunks` | PostgreSQL metadata | ordered index, size/hash, storage key; no public URL |
-| payload chunks | object storage preferred after comparison | encrypted service-side; immutable; Account-prefixed opaque keys |
-| `cleanup_runs` | PostgreSQL | planned/committed watermark, policy version, snapshot, attempts |
-| `rebootstrap_sessions` | PostgreSQL | Device-bound, snapshot-bound, expiry, completion and catch-up cursor |
-| recovery session/chunks | local Drift | inactive state, manifest, chunk hashes, progress, prior outbox inventory |
-
-Small synthetic fixtures may keep chunks in PostgreSQL for the second local implementation. Do not
-infer that production payloads belong there. Object storage avoids large database rows but adds
-durability, authorization, encryption, lifecycle and egress dependencies. Flutter receives bytes
-through the API or narrowly scoped short-lived download authorization; never PostgreSQL/object
-storage credentials. Whether even signed URLs are permitted remains a Main security decision.
-
-Snapshot content is a canonical, deterministic serialization of complete Account-owned Store,
-Product, Person, Payment Method, Purchase and Item facts supported by the snapshot schema. It is not
-event compaction and contains no pending queue, acknowledgement, inbox, Device secret, UI state or
-Lists projection. Future edits/deletes require tombstones and snapshot semantics before cleanup can
-cover them; current append-only scope must not invent those rules.
-
-## 8. Snapshot creation and cleanup
-
-Recommended trigger: threshold-driven (`events/bytes since last snapshot`) with an on-demand
-administrative/test trigger and a maximum-age backstop; do not depend solely on wall-clock cron.
-
-1. Start `SERIALIZABLE READ ONLY DEFERRABLE` or suitable stable-view transaction; read Account
-   high-water and all authoritative facts from that same view.
-2. Produce deterministic chunks outside the request path, each independently hashed; hash the
-   ordered manifest including Account, SnapshotId, covered cursor, schema/protocol, chunks and size.
-3. Durably write all chunks; verify read-after-write and total hash; atomically publish manifest as
-   `available`. A failed build remains unavailable and cannot authorize cleanup.
-4. Cleanup transaction locks Account stream state, rechecks snapshot availability/compatibility,
-   active leases/acks and minimum age, records a proposed watermark, deletes a bounded batch, then
-   advances earliest cursor and ledger together. Retry is idempotent by CleanupRunId.
-
-PostgreSQL 18 documentation inspected 2026-07-15 guarantees that Repeatable Read sees a stable view
-and that Serializable may require whole-transaction retry; `SERIALIZABLE READ ONLY DEFERRABLE` can
-wait for a snapshot safe from serialization anomalies. This supports, but does not select, the
-snapshot transaction design: https://www.postgresql.org/docs/current/transaction-iso.html
-
-## 9. API contract hypothesis
-
-- `GET /v1/sync/capabilities`: protocol/snapshot formats, high-water, earliest incremental cursor,
-  current compatible SnapshotId, retention-policy version and Device lifecycle status.
-- `GET /v1/sync/events?after&limit`: success includes earliest/high-water; if `after` precedes the
-  floor, typed `cursor-expired` includes no facts and points to a recovery capability, not a raw key.
-- `POST /v1/sync/rebootstrap`: idempotency key + Device; returns session and immutable manifest.
-- `GET /v1/sync/rebootstrap/{session}/chunks/{index}`: bounded range/chunk response with index,
-  length/hash and retry-safe ETag; reordered/truncated content fails locally.
-- `POST /v1/sync/rebootstrap/{session}/complete`: reports verified SnapshotId/hash and committed
-  catch-up cursor; replay returns stored result. It does not advance ack by assertion alone.
-- existing acknowledgement remains monotonic and is sent only after snapshot activation and all
-  events through the declared catch-up cursor commit locally.
-- Device status endpoint returns active/dormant/revoked/replacement-required; it never enrolls or
-  replaces a Device without a separately authorized production identity flow.
-
-Unknown transfer outcome retries the same session/chunk/idempotency identity. Unknown completion
-queries session status before retry. Obsolete snapshot, schema downgrade, revoked Device, hash
-mismatch and Account deletion are terminal or require a new authorized session, never silent merge.
-
-## 10. Local rebootstrap algorithm
-
-1. Freeze sync orchestration, inventory original local database and durable unsent outbox; never
-   mark unsent events accepted.
-2. Download/verify manifest and chunks into resumable local recovery state.
-3. Build a new inactive Drift database using normal fact invariants; verify Account, identity,
-   totals, snapshot hash/schema and covered cursor; rebuild Lists.
-4. Download/apply events `(coveredThrough, serverHighWater]` into the inactive database.
-5. Reconcile preserved unsent events: equivalent server fact/event is satisfied; absent event is
-   replayed with original identities after activation; same stable identity with different content
-   is quarantined and blocks automatic activation/replay.
-6. Atomically switch an installation pointer to the verified database where the platform supports
-   it; otherwise close, rename with recoverable journal, reopen and retain the prior database until
-   success. In-place table deletion/merge is not recommended.
-7. Acknowledge only the committed catch-up cursor. Crashes before switch resume staging; during
-   switch recover from journal; after switch resume ack without rebuilding.
-
-Initial bootstrap is the same pipeline with no prior facts/outbox. Reinstall creates/replaces a
-Device only through future enrollment. A revoked Device is denied; it cannot self-replace. Dormant
-recovery requires still-valid authentication plus server lifecycle authorization.
-
-## 11. Threat model and controls
-
-| Threat | Required boundary |
+| Structure | Candidate invariants |
 | --- | --- |
-| cross-Account snapshot/session | verified Account+Device on every metadata/chunk query; RLS and opaque keys |
-| forged/obsolete manifest | server-issued immutable metadata; total hash; newest compatible/non-revoked session |
-| truncation/reordering | per-chunk length/hash/index plus ordered manifest hash |
-| schema downgrade | explicit minimum supported versions; reject lower/incompatible formats |
-| premature cleanup | only published durable snapshot authorizes deletion; locked, audited watermark |
-| malicious ack advancement | reject beyond Account high-water and beyond server-observed recovery completion |
-| revoked/replacement abuse | enrollment authority separate from sync token; revoked sessions invalidated |
-| payload/URL leakage | TLS; encryption at rest; short-lived authorization; no payloads, tokens or signed URLs in logs |
-| cleanup privilege escalation | separate worker role limited to snapshot/cleanup procedures; no enrollment/account authority |
-| account deletion race | deleting state blocks new sessions/publication, revokes access, then applies future tombstone policy |
+| `external_identities` | IdentityId PK; issuer+subject unique; status; no email as identity key |
+| `account_memberships` | Account+Identity unique; active/disabled/removed; role; timestamps/version |
+| `device_enrollments` | Account+Installation unique; Device FK; enrolled/revoked/replaced; generation |
+| `enrollment_requests` | Account+Identity+RequestId; request hash; stored result; expiry |
+| `device_security_events` | append-only enrollment/revocation actor, target, reason code, correlation/time |
 
-Application snapshots may contain the complete purchase history and therefore expand privacy impact.
-Client-side/end-to-end encryption is not silently proposed because key recovery, multi-Device key
-distribution and server-side snapshot generation are unresolved. Service-managed encryption plus
-strict authorization is the bounded hypothesis for local/provider exploration only.
+Issuer and subject must be stored exactly as validated strings with bounded lengths; uniqueness is
+the pair, preventing cross-issuer subject collision. Membership owns Account access. Enrollment
+owns installation→Device association. Existing `devices` continues to own Device sequence, status,
+lease and synchronization FK relationships. Do not reuse Account, Person or Device rows as external
+identity records. Email/profile claims are optional presentation data and not authorization truth.
 
-## 12. Provider facts and MCG-01 dependencies
+Migration 004 should add composite FKs, indexes and checks; revoke defaults; grant hosted runtime
+only resolver/enrollment operations; enable RLS on every Account-bearing new table. Identity lookup
+requires a narrowly scoped pre-Account repository because Account is not known yet; it returns
+candidate internal identity only. Membership selection then yields the Account. The Account-scoped
+transaction sets `markei.account_id` and `markei.device_id` locally and retains explicit predicates.
+Database owner/migrator must not be the runtime role; RLS remains defense in depth, not the resolver.
 
-Official sources inspected 2026-07-15:
+## 7. Authentication and authorization boundary
 
-- Neon branches are copy-on-write isolated states and may have expiration; restore availability is
-  bounded by plan/configured restore window. Therefore branch/PITR is operational recovery, not a
-  client snapshot contract: https://neon.com/docs/introduction/branching
-- Neon documents pooled and direct connections; web apps generally use pooled connections while
-  migrations and operations relying on session behavior may require direct connections. MCG-01
-  must test transaction-local RLS/context with the selected endpoint:
-  https://neon.com/docs/connect/connection-pooling
-- Neon supports `pg_cron`, but jobs run only while compute is active and setup changes endpoint
-  settings/restarts compute. An external worker remains necessary unless sanitized MCG-01 proves an
-  always-active compatible arrangement: https://neon.com/docs/extensions/pg_cron
+`Auth0JwtVerifier` implements `AuthVerifier` but should initially return `VerifiedExternalIdentity`
+rather than the current final `AuthContext`; an `AuthorizationService` produces Account/Device
+context after database checks. If changing the port is too disruptive, add an orchestrating
+`RequestAuthorizer` and keep JWT verification a narrower dependency.
 
-MCG-01 must report only sanitized facts: development-branch availability/expiry, PostgreSQL
-version, storage/compute/restore-window constraints, pg_cron or external-worker requirement, role
-capabilities, pooled/direct behavior and connection limits. These affect scheduling and deployment,
-not the logical cleanup/snapshot invariants. No secret or provider mutation is authorized here.
+Verifier requirements: accept bearer access token only; pin configured HTTPS issuer, API audience
+and asymmetric algorithm (proposed RS256); validate signature, issuer, audience, expiration and
+not-before with small explicit clock skew; reject missing/duplicate/malformed headers and oversized
+tokens. Select keys by `kid` from issuer-bound JWKS; cache with bounded lifetime, coalesce refreshes,
+refresh once on an unknown key, honor timeouts/response bounds, and fail closed on substitution,
+outage without an unexpired cached key, or algorithm mismatch. Never decode-and-trust claims.
 
-## 13. Second implementation and migration boundary
+Auth0’s official documentation inspected 2026-07-15 guarantees that an API must reject an invalid
+access token, validate its intended audience and required scope; Auth0 exposes tenant JWKS and key
+rotation can yield multiple keys. Exact cache duration/clock skew are proposals, not guarantees:
+https://auth0.com/docs/secure/tokens/access-tokens/validate-access-tokens and
+https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-key-sets
 
-Split into two units.
+## 8. Versioned API contract hypothesis
 
-**R1 policy-contract unit:** Main freezes lease states/times, minimum retention rule, snapshot
-format/content, cursor-expired semantics, storage abstraction, local replacement strategy and
-unsupported identity behavior; add deterministic contracts/fixtures only after authorization.
+- `GET /v1/identity`: verified external identity status and memberships as opaque Account choices;
+  for a single active membership the response may mark a default, but client cannot invent one.
+- `POST /v1/devices/enroll`: `contractVersion`, AccountId, InstallationId, EnrollmentRequestId,
+  request hash, platform/app identifier metadata; returns DeviceId, status/generation and replay
+  result. Same identity/hash is equivalent; mismatch conflicts.
+- `GET /v1/devices/enrollments/{requestId}`: resolves unknown outcome without creating a Device.
+- `GET /v1/devices/{deviceId}/status`: active/revoked/replacement-required plus recovery eligibility;
+  foreign IDs return the same non-enumerating denial as absent IDs.
+- `POST /v1/devices/{deviceId}/revoke`: deferred unless Main selects self-revocation authority;
+  must require role/step-up or another explicit authorization and append audit evidence.
+- Every sync/recovery route: token→identity→membership→Device authorization. Typed failures:
+  `auth-required`, `token-invalid`, `membership-required`, `membership-disabled`,
+  `device-not-enrolled`, `device-revoked`, `account-selection-required`, `rate-limited`.
+- `/health/live`: process/event-loop only, no auth/provider/database metadata. `/health/ready`:
+  generic ready/not-ready after configuration, pool and verifier/JWKS prerequisites; never issuer,
+  audience, database host, branch, role, key ID or exception detail.
 
-**R2 local materialization unit:** forward-only `003_retention_snapshot_recovery.sql` leaving
-001/002 untouched; synthetic in-PostgreSQL chunks behind a storage port; deterministic snapshot at
-a consistent cursor; coverage-gated deletion; expired third Device; resumable third isolated Drift
-rebootstrap; preserved/quarantined unsent event; catch-up, ack, reopen and fact comparison; inject
-interruption, corruption, cross-Account, revoked Device and premature-cleanup failures. Stop before
-production auth, object storage or Neon mutation unless separately authorized.
+401 is authentication failure; authorization denial is 403 without Account/Device enumeration.
+Enrollment validation is 400/409; dependency outage is bounded 503 with safe retry. Unknown
+enrollment outcome queries the same EnrollmentRequestId. Synchronization retains original Event,
+Submission and RecoverySession identities across retry.
 
-Rollback is disable workers/endpoints, retain events/snapshots and remove explicit sync composition;
-server schema corrections remain forward-only. Never reset local Drift or edit 001/002.
+## 9. Hosted Fastify composition
 
-## 14. Main decisions and exit readiness
+Add a production entrypoint/composition distinct from lab entrypoints:
 
-Main must reconcile: lease duration/status transition authority; minimum TTL and snapshot trigger;
-PostgreSQL versus object-storage production payload; manifest signing/encryption; Account snapshot
-content and future tombstones; signed-URL policy; local database activation mechanism per platform;
-unsent identity-collision UX; Device replacement/enrollment; Account deletion dominance; protocol
-support window; worker deployment; MCG-01 sanitized constraints; whether R1/R2 are separately gated.
+```text
+validated HostedConfig
+→ Auth0JwtVerifier(JWKS client, clock, bounds)
+→ Identity/Membership/Enrollment repositories
+→ pooled Neon runtime Database
+→ existing Sync + Recovery route services
+→ Fastify listen(0.0.0.0, PORT)
+```
 
-Performance improvement: the problem is reduced to one recommended hybrid topology, two bounded
-implementation units and explicit provider-dependent decisions. Evidence still missing: MCG-01,
-snapshot-size measurements, platform-safe database swap evidence, product offline-duration policy
-and production identity/enrollment. Exit toward implementation is **not ready** until Main freezes
-R1. This document is speculative staging, not accepted architecture, implementation authority,
-retention policy, backup policy or permission to configure Neon.
+Configuration parsing fails before listening if database URL, issuer, audience, public service
+origin, timeouts, pool bounds or PORT are absent/invalid. Secret values never appear in errors.
+Issuer/audience/Auth0 domain are not secrets, but server validation values remain authoritative;
+Flutter may receive the public domain, native client ID and API audience through build-time public
+configuration. No native client secret exists. Auth0 management credentials, if later needed for
+administration, remain server-only and are not required for token verification.
+
+Render officially requires a web service to bind `0.0.0.0` and recommends its `PORT`; HTTPS is
+terminated by the hosted service boundary. This is a guaranteed platform fact inspected 2026-07-15,
+not evidence of a Markei deployment: https://render.com/docs/web-services
+
+Register graceful shutdown: stop accepting requests, bound the drain interval, close Fastify and
+`pg.Pool`, then exit; signals and exact timeout require a Render/local lifecycle test. Readiness must
+fail during startup/drain and when the database cannot execute a minimal non-secret probe. JWKS
+temporary outage may remain ready only while a valid cached key set exists—proposal, not provider fact.
+
+Use Neon’s pooled runtime connection for hosted request traffic and a direct migrator connection for
+forward-only migration 004. Neon documents pooling through PgBouncer and recommends pooled
+connections for web apps while migrations commonly use direct connections; inspect/tested 2026-07-15:
+https://neon.com/docs/connect/connection-pooling. Transaction-local `set_config(..., true)` must be
+proved through the selected pooled endpoint. PostgreSQL RLS applies policies per command, while
+owners and roles with `BYPASSRLS` can bypass unless forced; runtime must own neither tables nor that
+attribute: https://www.postgresql.org/docs/current/ddl-rowsecurity.html
+
+## 10. Threat model and required controls
+
+| Threat | Boundary |
+| --- | --- |
+| forged/wrong issuer/audience/algorithm/time | strict JWT/JWKS validation; pinned issuer/audience/algorithm/clock |
+| JWKS substitution/outage/stale key | HTTPS issuer-bound URL; bounded cache/timeout; unknown-key refresh once; fail closed |
+| token/log leakage | never log Authorization, JWT claims, JWKS payload, query tokens or provider URLs |
+| subject collision | unique issuer+subject; internal opaque IdentityId |
+| Account enumeration | membership-derived choices; uniform foreign/absent denial and bounded responses |
+| forged Device/enrollment replay | membership check, Installation binding, request hash and stored idempotent result |
+| unauthorized replacement/revoked reuse | no implicit replacement; generation/status/audit; route-wide authorization |
+| malicious acknowledgement | existing high-water/Device checks after membership and enrollment authorization |
+| runtime escalation | least-privilege runtime, RLS, explicit predicates; no DDL/worker/enrollment-admin powers |
+| migrator/env leakage | separate direct credential; secret store only; sanitized startup/errors/build logs |
+| partial migration | transactional 004, ledger/checksum and fresh/001→004 probes; no runtime auto-migration |
+| branch expiry/provider unknown | hosted proof stops; do not recreate against another branch silently |
+| membership removal race | lock/recheck membership+Device inside transaction before mutations; revoke sessions |
+| enrollment abuse | per-identity/IP bounded rate limit, request/body bounds and audit without raw identifiers |
+
+Account deletion must first enter a denying state, block enrollment/sync/rebootstrap, invalidate
+memberships/sessions and then follow the future deletion/tombstone policy. Authentication success
+never overrides deletion, revoked Device or expired recovery state.
+
+## 11. Tests, migration and rollback
+
+Local tests before providers: deterministic RSA key/JWKS fixtures; wrong issuer/audience/algorithm/
+expiry/not-before/kid; cache/rotation/outage/timeout; identity collision; membership selection and
+disable/remove; enrollment replay/hash mismatch/race/rate limit; reinstall/new installation;
+revocation across upload/download/ack/capabilities/rebootstrap; two Accounts and enumeration; RLS
+matrix through pooled-compatible connections; graceful startup/shutdown/pool close; fail-fast
+configuration; health redaction; 001→004/fresh/failed migration and runtime DDL denial.
+
+Rollback boundary: deploy the prior refusing/local-only composition, disable hosted service, keep
+004 data inert, and migrate forward for corrections. Never roll back by editing 001–004, resetting
+Drift, deleting identity mappings or force-pushing. Provider proof rollback is Render service
+disable, Auth0 test application/API disable and Neon development branch teardown under human control.
+
+## 12. Recommended bounded sequence and authority split
+
+**Codex unit C10-S03A:** closed auth/authorization/enrollment contracts; forward-only 004; local
+RSA/JWKS fixtures; Auth0 verifier; identity/membership/enrollment repositories; route-wide
+authorization; hosted-safe entrypoint; local pooled-composition tests; secret-safe configuration
+documentation. Stop with normal Flutter still local-only and no provider calls.
+
+**Human MCG-02 / evidence unit C10-S03B:** after Main reconciles S03A, configure an isolated Auth0
+native application/API, apply 004 to the authorized Neon development branch with direct migrator,
+configure Render secret environment, deploy explicit commit, then return sanitized evidence only:
+provider aliases, region/version, public non-secret origins/identifiers where approved, commit and
+migration hashes, timestamps, request/status matrix and teardown state. Never return tokens,
+passwords, connection URLs, management credentials, environment dumps or raw subjects.
+
+Codex implementation and MCG-02 must be separate materialization/evidence units. Local correctness
+must precede provider mutation; hosted observations cannot silently rewrite architecture.
+
+## 13. Main decisions and speculative exit
+
+Main must decide: Alternative C; Account selection UX/single-membership default; whether membership
+alone permits enrollment or invitation/pairing is required; InstallationId generation/storage and
+reinstall rules; who may revoke/replace Devices; external-identity provisioning source; roles/scopes;
+public Auth0 configuration delivery; JWKS cache/skew/timeouts; rate limits; Render service plan/
+region/health/drain policy; Neon branch lifetime and pooled/direct evidence; membership removal and
+Account deletion races; retention lease renewal after authorization; MCG-02 exact manual scope.
+
+Performance improvement: one recommended trust chain, one additive migration boundary and two
+separate implementation/provider units are now explicit. Evidence still missing: sanitized MCG-01,
+Auth0/Render project observations, pooled Neon RLS probe, native callback configuration, installation
+secure-storage behavior and human enrollment/revocation policy. Exit to implementation is not ready
+until Main freezes C10-S03A. This document is speculative staging—not accepted architecture,
+authentication policy, provider approval, implementation authority or permission to inspect secrets.
