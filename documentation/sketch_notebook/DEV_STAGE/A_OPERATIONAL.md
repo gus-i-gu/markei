@@ -1,166 +1,300 @@
-<!-- TEMPORAL_MARKER:C10-ENTRY-2026-07-14 -->
-# A_OPERATIONAL — Cycle 10 Inter-Device Coordination
+<!-- TEMPORAL_MARKER:C10-S01B-INVESTIGATION-2026-07-14 -->
+# A_OPERATIONAL — C10-S01B Local Synchronization Convergence Completion
 
-Sequence: FLX-INV-02
-Role: Operational [O]
-Branch: `intermid-cycle-recovery`
-Required ancestor: `0b3c8320069723ff94617bd6d83630684993c4f3`
-Evidence date: 2026-07-14
-Authority: investigation and A staging only; no source, provider, configuration or permanent-memory mutation.
+Sequence: FLX-INV-02  
+Role: Operational [O]  
+Branch: `intermid-cycle-recovery`  
+Inspected HEAD: `1af8137e3f7db2d5ee3ecdf3796ae62808e0717c`  
+Required ancestor: `1af8137e3f7db2d5ee3ecdf3796ae62808e0717c`  
+Evidence date: 2026-07-14  
+Authority: candidate/proposed/provisional Operational staging only; no source, provider, permanent-memory or methodology mutation.
 
-## 1. Retained methodology and baseline
+## 1. Methodology retained
 
-Loaded INDEX, both AGENTS files, METHOD_FOUNDATIONS, FLUX, PROMOTION_RULES and CHAT_PROTOCOL in canonical order. Project memory precedes source; source/executable evidence corrects prose; PRC-01 separates implemented, proposed, contradicted, deferred and unvalidated. Operational owns execution, environment, failure, validation, recovery, cost and stop analysis. A is evidence for Main, not canon or D/E/F. PROMPT_COLLECTION was not used.
+Loaded root `AGENTS.md`, `INDEX.md`, notebook `AGENTS.md`, `METHOD_FOUNDATIONS.md`, `FLUX.md`, `PROMOTION_RULES.md` and `CHAT_PROTOCOL.md` in the full canonical route. Retained:
 
-The required commit is the merge base. The inspected branch was two commits ahead, zero behind, with only B/C staging changes; A had no overlap. Connector-only evidence cannot establish local worktree/tool versions.
+- Operational owns execution boundaries, dependencies, commands, validation, failure handling, rollback and stop gates.
+- `A_OPERATIONAL.md` is a functional stage, not canon or materialization authority.
+- PRC-01 keeps candidate, proposed, provisional, implemented and validated distinct.
+- Code existence requires repository inspection; synchronization requires real upload/download/convergence evidence.
+- G/H/I are observational evidence and cannot promote themselves.
+- Only this A stage may change in this round; unrelated and untracked work, including `.vscode/`, must remain untouched.
+- Live Neon cannot substitute for disposable local proof.
 
-Inspected: 00, 06, Cycle 10 J, Operational memory, Cycle 10 B/C, Drift schema/repositories/composition/pubspec/tests, protocol fixtures and older API planning. Official Neon branching/databases/roles/pooling/pricing, PostgreSQL 18 RLS/INSERT/isolation, and Node releases were inspected 2026-07-14.
+Repository comparison reported the required commit and branch as identical. No divergence was observed through the GitHub repository view. Connector inspection cannot establish a local worktree status, unresolved local conflicts or host process state; publication therefore relies on branch/blob concurrency checks rather than a local checkout.
 
-## 2. Current facts and provider constraints
+## 2. Inspected source and evidence
 
-Implemented locally:
+Controlling notebook evidence:
 
-- schema v4 app-private Drift/SQLite;
-- provisional `local-account`;
-- durable UUID Devices and monotonic per-Device sequence;
-- immutable SyncEvent envelope and unique Account/Device/sequence;
-- PendingEvent state/enqueued time and one nullable Account cursor;
-- atomic Purchase + Items + SyncEvent + PendingEvent;
-- rollback, reopen, sequence/envelope and migration tests.
+- `[M]_STAGE/J_MAIN_STAGE.md`
+- `DEV_STAGE/D_OPS_STAGE.md`, `E_DDC_STAGE.md`, `F_DSN_STAGE.md`
+- `DEV_STAGE/G_OPS_CODEX.md`, `H_DDC_CODEX.md`, `I_DSN_CODEX.md`
+- prior `DEV_STAGE/A_OPERATIONAL.md`
 
-Absent: authenticated Account; installation→current Device invariant; enrollment/revocation; SubmissionId; durable attempts/lease/backoff/result; inbox/applied ledger; transactional remote apply/cursor; API/server schema; upload/download/ack/retention; conflict quarantine; convergence; two-device evidence. Connectivity proves none of them.
+Implementation evidence inspected directly or through the materialization commit:
 
-Current official facts:
+- `services/markei_sync_api/src/http/app.ts`
+- `services/markei_sync_api/src/application/sync_service.ts`
+- `services/markei_sync_api/src/application/auth.ts`
+- `services/markei_sync_api/src/postgres/database.ts`
+- `services/markei_sync_api/migrations/001_init.sql`
+- `infra/sync_lab/**`
+- `contracts/shared_beta/v3/**`
+- `clients/markei_flutter/lib/application/sync/**`
+- `clients/markei_flutter/lib/infrastructure/local/sync/local_sync_repositories.dart`
+- Drift schema v5, identity and Purchase repository changes
+- `clients/markei_flutter/tool/sync_lab.dart`
+- `clients/markei_flutter/test/sync/**`
+- repository scripts, lockfiles and ignore rules reported in G/H/I.
 
-- Neon branches are isolated copy-on-write clones and may expire; databases/roles belong to branches.
-- SQL-created roles can receive selective grants; Neon offers no ordinary Postgres superuser.
-- PgBouncer accepts many clients, but active transactions remain compute/pool bounded.
-- Advertised Free limits include 100 CU-hours/project/month, 0.5 GB/project, up to 2 CU, scale-to-zero, and a six-hour or 1 GB-change restore window. Recheck at MCG-01.
-- PostgreSQL 18 `ON CONFLICT` depends on matching uniqueness; serializable aborts require whole-transaction retry.
-- Node 24 is LTS; runtime/framework remains a Main decision.
+## 3. Exact current execution boundary
 
-## 3. Dependencies and disposable lab
+### Implemented and evidenced
 
-Candidate lab, only after D/E/F:
+- Protocol-v3 identities, status/failure vocabulary and Dart/TypeScript canonical-hash parity exist.
+- Drift schema v5 contains installation metadata, durable submissions, submission membership and inbox records.
+- Installation→current Device selection is explicit; ambiguous migration stops without silent reset.
+- Local Purchase registration still commits Purchase, SyncEvent and PendingEvent atomically.
+- Outbox leasing creates a durable SubmissionId/request hash and reuses an `unknown` submission.
+- Upload-result persistence maps accepted, duplicate, unknown and failed outcomes into durable local state.
+- PostgreSQL migration creates Accounts, Devices, cursor state, Submissions, Events and acknowledgements.
+- Upload service checks authenticated Device identity, Account/Event identity, content hash, exact sequence, duplicate Event and duplicate Submission behavior within one database transaction.
+- Runtime DDL denial and one cross-Account RLS insertion denial were probed locally.
+- Existing static/unit/local tests, Flutter builds and PostgreSQL migration probes passed as recorded by G.
 
-- pinned Flutter/Dart/Drift;
-- Docker Desktop or Podman;
-- disposable PostgreSQL matching selected Neon major version;
-- candidate Node 24 LTS + TypeScript API; framework, driver and migration tool undecided;
-- contract validator/test runner and controllable HTTP fault transport;
-- Android JDK/SDK/emulator under separate host authority.
+### Stubbed, direct-replay or partial
 
-Record lock/config changes, licenses, graph, install and rollback commands. Prefer repository-local/container tools. Flutter never receives Neon/database-owner credentials.
+- `GET /v1/sync/events` returns an empty page with `nextCursor: null`; it performs no authentication, query, limit enforcement or PostgreSQL read.
+- `POST /v1/sync/acknowledgements` returns a fixed duplicate-like status; it performs no authentication, monotonic check or database write.
+- No Flutter HTTP `SyncTransport` adapter connects application use cases to the Fastify API.
+- The two-Device harness replays a page directly into Drift; it does not execute HTTP→API→PostgreSQL→API→Drift.
+- `DriftRemoteEventApplier` records inbox and cursor state but does not materialize the remote immutable Purchase aggregate, Product, Store, People/payment references or derived-list invalidation.
+- `greatestContiguousAppliedCursor()` selects the highest applied cursor, not a proven contiguous prefix; a gap can be acknowledged incorrectly.
+- Upload is not covered by a database-backed HTTP integration test against a running migrated PostgreSQL instance.
+- Timeout-after-server-commit is represented locally as an unknown-outcome retry, not proven across process/network boundaries.
+- PostgreSQL serialization retry, pool exhaustion, crash phases and full Account-isolation paths are absent or partial.
+- Normal API runtime intentionally refuses fixture authentication, but no bounded loopback lab entrypoint injects fixture auth for an executable cross-process story.
 
-Command families after selection:
+Operational classification: C10-S01 is implemented as a strong scaffold and locally validated in bounded layers; C10-S01B convergence remains provisional and incomplete.
+
+## 4. Shortest safe second-implementation scope
+
+The minimum safe materialization should add only the missing vertical path and its proof:
+
+1. Complete PostgreSQL-backed download and acknowledgement services.
+2. Add authenticated Fastify schemas/routes for bounded download and monotonic acknowledgement.
+3. Add a loopback-only fixture-auth lab entrypoint and deterministic Account/two-Device seeding.
+4. Add a Flutter HTTP `SyncTransport` adapter with typed timeout/HTTP/protocol mapping.
+5. Complete remote `purchase.registered` aggregate application in one Drift transaction with inbox and cursor.
+6. Replace highest-cursor acknowledgement with contiguous-prefix calculation.
+7. Add one cross-process system harness using two isolated Drift files, API and disposable PostgreSQL.
+8. Add targeted failure injection and database-backed integration tests.
+9. Correct migration/role/RLS defects discovered by those tests; do not configure Neon.
+
+Do not add production auth, background scheduling, edits/deletes, snapshots, retention, deployment or UI redesign.
+
+## 5. Proposed checkpoint sequence
+
+### CP1 — Server read/ack correctness
+
+- Implement `downloadAfter(auth, after, limit)` ordered by `server_cursor`, scoped to Account, excluding or including origin events only by an explicit Main decision.
+- Enforce integer/opaque cursor parsing, positive bounded limit and deterministic `nextCursor` semantics.
+- Implement acknowledgement upsert as monotonic maximum for the authenticated Account/Device.
+- Reject acknowledgement beyond the greatest existing Account cursor and unknown/revoked Device.
+
+Exit: database-backed route tests prove upload→download→ack for two fixture Devices.
+
+### CP2 — Local complete apply
+
+- Decode only `purchase.registered` payload v3.
+- Validate Account, event type/version, aggregate identifiers and content hash before mutation.
+- Reuse existing local Purchase registration/application primitives where possible, but suppress creation of a new outbound event when applying remote facts.
+- Insert Product/Store/reference facts idempotently under the collision policy.
+- Commit fact application, inbox record and cursor advancement atomically.
+- Recompute or invalidate derived Lists after commit.
+
+Exit: remote Purchase facts and Lists survive reopen; duplicate replay creates no duplicate facts or outbound event.
+
+### CP3 — HTTP transport and lab entrypoint
+
+- Implement `HttpSyncTransport` using one pinned Dart HTTP client already approved or newly pinned narrowly.
+- Map connection refusal, timeout-before-response and malformed response to `unknownOutcome` only where server commit is unknowable.
+- Add test-only loopback fixture auth selected by an explicit lab environment flag; default/deployable runtime must continue to refuse fixture auth.
+- Start API as a host Node process against Compose PostgreSQL for easiest process kill, response delay and socket fault injection.
+
+Exit: Flutter use cases execute through real HTTP without direct replay.
+
+### CP4 — Cross-process convergence proof
+
+- Create two isolated Drift files with one Account and distinct Devices.
+- A registers offline, uploads, receives an injected timeout after server commit, retries the same SubmissionId and receives the stored result.
+- B downloads bounded pages, atomically applies the Purchase, acknowledges contiguous cursor, and both clients reopen.
+- Compare immutable Purchase/Product/Store/reference facts and derived Lists deterministically.
+
+Exit: complete HTTP→API→PostgreSQL→API→Drift convergence passes.
+
+### CP5 — Resilience and pre-Neon hardening
+
+- Add serialization transaction retry with bounded attempts and jitter-free deterministic test control.
+- Cover pool acquisition timeout/exhaustion and API unavailability.
+- Expand RLS/constraint probes for select/update/insert and wrong Account/Device paths.
+- Re-run migration from empty database and verify runtime role cannot DDL or bypass Account scope.
+
+Exit: C10-S01B local evidence green; MCG-01 remains a separate human gate.
+
+## 6. Executable local convergence story
+
+Recommended topology:
 
 ```text
-git status --short --branch
-git merge-base --is-ancestor <required> HEAD
-flutter pub get
-dart format --output=none --set-exit-if-changed lib test
-flutter analyze && flutter test
-dart run build_runner build --delete-conflicting-outputs
-<container> compose up --wait / down --volumes
-<package-manager> install-frozen / lint / typecheck / test
-<migration-tool> status / apply / verify
+Docker Compose: PostgreSQL 18 only
+Host process: Node 24 Fastify API on 127.0.0.1
+Host test process: Flutter/Dart system harness
+Local data: two temporary Drift files
+Auth: deterministic loopback-only fixture verifier
+```
+
+PostgreSQL-only Compose is the shortest safe choice for C10-S01B because API restart, kill, delay and timeout-after-commit injection are simpler and faster from the host test runner. Adding the API to Compose may be reconsidered for CI parity after the local proof; it is not required to establish convergence.
+
+Proposed orchestration:
+
+```text
+docker compose -f infra/sync_lab/compose.yaml up -d --wait
+npm --prefix services/markei_sync_api run migrate:lab
+npm --prefix services/markei_sync_api run seed:lab
+npm --prefix services/markei_sync_api run start:lab
+flutter test test/sync/http_postgres_two_device_system_test.dart
+npm --prefix services/markei_sync_api run probe:privileges
+npm --prefix services/markei_sync_api run probe:isolation
+docker compose -f infra/sync_lab/compose.yaml down --volumes
+```
+
+Script names are proposed and must match the eventual package scripts. The harness should own API-process teardown and temporary Drift deletion even after failure.
+
+## 7. Fixture and fault-injection matrix
+
+| Case | Injection | Required evidence |
+| --- | --- | --- |
+| Account/two Devices | deterministic SQL seed; no production auth | authenticated A/B accepted; wrong Account denied |
+| committed upload timeout | commit transaction, delay/drop response once | same SubmissionId retry returns stored result; one Event/cursor |
+| repeated SubmissionId | same ID/hash then changed hash | equivalent stored result; terminal hash conflict |
+| sequence gap | submit expected+1 | typed rejection; no Event/cursor/submission mutation |
+| duplicate/reordered download | repeat and reverse page items | one fact/inbox; contiguous cursor does not skip gap |
+| crash before apply | throw before transaction | no inbox/fact/cursor mutation |
+| crash during apply | throw inside transaction after partial writes | full rollback; retry succeeds |
+| crash after apply | terminate after commit before ack | reopen retains facts/inbox; ack resumes safely |
+| serialization failure | force SQLSTATE 40001 once | whole transaction retries with bounded count |
+| pool exhaustion | hold all pool clients past acquire timeout | typed retryable service-unavailable; no unsafe duplicate |
+| unavailable API | stop/refuse loopback connection | local registration remains; submission stays retryable |
+| revoked/unknown Device | mutate fixture state | upload/download/ack denied without data disclosure |
+| Account isolation | select/insert/update under wrong session Account | zero rows or policy denial for every path |
+
+## 8. Migration corrections before Neon
+
+Likely required corrections, provisional until integration tests run:
+
+- Add foreign keys from `submissions`, `sync_events` and `device_acknowledgements` to `(account_id, device_id)` and Accounts where missing.
+- Add explicit checks for supported `event_type`, `payload_version`, non-empty batches and bounded payload sizes at the API/schema boundary.
+- Enable/force RLS, or otherwise prove equivalent scoped access, on every Account-owned runtime table, not only `sync_events`.
+- Ensure runtime role cannot mutate Accounts/Devices enrollment state unless a dedicated administrative path is intended.
+- Add indexes for `(account_id, server_cursor)` download and acknowledgement validation.
+- Use forward-only migration ledger/checksum and transactionally fail on partial migration.
+- Avoid role creation inside provider migrations where the migration role cannot create roles; separate bootstrap grants from schema migration for Neon portability.
+- Set transaction-local Account identity before every scoped query and reset it through transaction completion.
+- Configure statement, lock and pool-acquisition timeouts explicitly in the lab.
+
+No destructive rewrite or downgrade is permitted. Disposable server databases may be recreated; local Drift facts must not be reset.
+
+## 9. Smallest validation command matrix
+
+```text
+git diff --check
+flutter analyze
+flutter test test/sync test/infrastructure/local_database_migration_test.dart \
+  test/infrastructure/local_device_identity_repository_test.dart \
+  test/local_purchase_repository_test.dart
+npm --prefix services/markei_sync_api run format:check
+npm --prefix services/markei_sync_api run lint
+npm --prefix services/markei_sync_api run typecheck
+npm --prefix services/markei_sync_api test
+npm --prefix services/markei_sync_api run test:postgres
+npm --prefix services/markei_sync_api run test:system
+npm audit --prefix services/markei_sync_api --omit=dev
+python -m unittest discover tests
 flutter build windows --release
 flutter build apk --debug
-python -m unittest discover tests
-git diff --check
+docker compose -f infra/sync_lab/compose.yaml down --volumes
 ```
 
-Placeholders are not execution authority.
+Full repository validation remains appropriate before publication; the focused matrix should run first for rapid checkpoints.
 
-## 4. Ten-phase map
+## 10. Rollback and stop gates
 
-| Phase | Output/evidence | Stop boundary |
-| --- | --- | --- |
-| 1 Baseline/threat | pinned versions, data inventory, trust map, secret scan | unknown personal data/credential |
-| 2 Account/Device | installation metadata, enrollment/revoke/reinstall fixtures | auth/pairing/current Device unresolved |
-| 3 Outbox/inbox | SubmissionId, retry state, applied ledger, atomic apply/cursor | no network before crash replay passes |
-| 4 API/Postgres | schemas, local migrations, least-privilege probes | runtime role can DDL/cross-Account |
-| 5 Transfer/ack | bounded batches, stored duplicate result, retention simulation | deletion can strand eligible Device |
-| 6 Conflict/retry | duplicate/reorder/gap/timeout/hash/revocation/concurrency | quarantine; never reset local facts |
-| 7 Recovery/export | v1/v2/v3 migration failure/reopen, export integrity | restore copy; sync is not backup |
-| 8 Measure/extract | fixed fixture timings, behavior-preserving extraction | no unmeasured optimization/restyle |
-| 9 Platforms | Windows/Android plus local01/local02 lifecycle/convergence | classify host gaps separately |
-| 10 Promote/close | G/H/I, permanent promotion, 00/05/06, teardown | no unclassified skipped gate |
+Rollback checkpoints:
 
-## 5. Failure-injection floor
+- API routes can be disabled while local-only operation remains functional.
+- HTTP transport remains opt-in/injected; default application composition stays local-only until acceptance.
+- Server lab is disposable and removed with volumes.
+- Local schema corrections are additive; representative copies are preserved before migration tests.
+- Unknown submissions and PendingEvents remain durable through process failure.
 
-- upload disconnect before request, mid-body and after server commit/before response; retry same SubmissionId/EventIds;
-- equivalent duplicate succeeds identically; same ID/different hash is terminal conflict;
-- duplicated/reordered/gapped/invalid-version/oversized downloads;
-- crash after inbox insert, during apply, before cursor, and after commit/before ack;
-- wrong Account, revoked Device, runtime-role DDL, pool exhaustion, serialization and rate/size failures;
-- invalid fixture, constraint collision and interrupted local/server migration;
-- offline/never-ack/revoked Device, expired cursor and rebootstrap;
-- A offline Purchase → upload → B apply → duplicate → both reopen and compare facts/Lists.
+Stop immediately on:
 
-Pass requires atomic durable state, typed outcome and safe retry/non-retry. Logs contain IDs/status/timing/counts, never secrets or payloads.
+- branch divergence, conflicting A-stage update or unexpected changed path;
+- secret or payload leakage;
+- runtime role DDL or cross-Account access;
+- cursor advancement without committed fact/inbox application;
+- acknowledgement over a gap;
+- retry using a new SubmissionId after unknown outcome;
+- duplicate creating a second fact/event/cursor;
+- local migration reset/data loss;
+- fixture auth reachable outside loopback test mode;
+- unbounded retry, pool wait, batch size, memory or cost;
+- loss of local-only startup and Purchase registration.
 
-## 6. Manual Configuration Gates
+## 11. C10-S01B versus MCG-01
 
-### MCG-01 Neon
+C10-S01B completion requires only disposable local evidence:
 
-Codex: migration templates, privilege probe, sanitized checklist. Human: isolated project, expiring/dev branch, database, region/version, migration owner and SQL-created runtime role; confirm limits/teardown. Secret names: `NEON_DATABASE_URL_MIGRATION`, `NEON_DATABASE_URL_RUNTIME`. Probe: migration applies; runtime DML succeeds but DDL/cross-Account fails. Record only aliases, region/version, role names, timestamps, migration hash and redacted results. Stop on wrong environment, broad role, visible URL, billing surprise or production data. Return by revoking credentials/deleting disposable branch and using local harness.
+- real database-backed upload/download/ack routes;
+- complete remote Purchase apply;
+- Flutter HTTP transport;
+- timeout-after-commit idempotency;
+- two-Device cross-process convergence and reopen;
+- bounded serialization/pool/unavailable-service behavior;
+- comprehensive Account-isolation and migration-role probes;
+- clean teardown and preserved local-only fallback.
 
-### MCG-02 API/TLS
+MCG-01 begins only after those gates pass. MCG-01 concerns isolated Neon branch/database selection, role creation, provider-compatible migration, limits/cost review, secret storage and redacted acceptance evidence. A live provider is not part of C10-S01B and cannot repair missing local proof.
 
-Codex: health/readiness, environment schema, local auth/DB fakes, redaction tests. Human: runtime/host, TLS, secret injection, identities and network policy. Names: `API_BASE_URL`, `DATABASE_URL_RUNTIME`, `DATABASE_URL_MIGRATION`, `AUTH_ISSUER`, `AUTH_AUDIENCE`, `AUTH_JWKS_URL`. Probe: TLS health; unauthenticated data denied; authenticated disposable transaction; no migration endpoint. Record runtime/version, region, approved hostname, status/deployment ID and redacted logs. Stop on plaintext, leaked secret, runtime owner or auth bypass. Return by disabling deployment/revoking secrets/local harness.
+## 12. Unresolved Main decisions
 
-### MCG-03 Account/Devices
+- Whether a downloading Device receives its own events or the API filters by origin Device.
+- Exact bounded download page size and payload/body limits.
+- Cursor wire representation and response semantics when a page is empty.
+- Collision behavior for stable Product/Store/reference facts beyond exact-equivalent reuse.
+- Whether remote apply should call a dedicated no-outbox repository method or a shared aggregate writer with an explicit origin mode.
+- Whether API-in-Compose is required later for CI after host-process proof.
+- Whether migration bootstrap owns role creation or MCG-01 human provisioning owns it.
+- Exact retry counts/timeouts and which protocol failures map to retryable unknown outcome.
+- Scope of RLS versus mandatory server-scoped SQL on all Account-owned tables.
 
-Codex: deterministic Account/installation/Device fixtures and revoke contract. Human: one disposable auth subject and two controlled Device enrollments. Names: `TEST_ACCOUNT_SUBJECT`, `TEST_DEVICE_A_ENROLLMENT`, `TEST_DEVICE_B_ENROLLMENT`. Probe Account isolation, revoked/unknown denial and selected reinstall result. Record hashed IDs/state transitions/results. Stop on cross-Account access, personal identity or reusable material. Return by revoke/delete and local fixtures.
+## 13. Confidence and evidence boundaries
 
-### MCG-04 local01/local02
+- **High confidence:** download and acknowledgement endpoints are placeholders; source inspection is direct.
+- **High confidence:** no Flutter HTTP transport and no complete Purchase application are present in the inspected implementation/materialization inventory.
+- **High confidence:** current two-Device proof is local direct replay, not cross-process convergence; G states this explicitly.
+- **High confidence:** current contiguous acknowledgement calculation is unsafe under gaps because it selects the greatest applied cursor.
+- **Medium-high confidence:** PostgreSQL-only Compose plus host API is the shortest fault-injectable topology; this is an Operational hypothesis, not accepted architecture.
+- **Medium confidence:** listed migration corrections are required before Neon; final set depends on database-backed route/isolation tests.
+- **Low/unknown confidence:** host-specific process commands and tool availability after commit; GitHub inspection cannot execute the local lab.
 
-Codex: isolated app-data roots, deterministic fixtures, fault schedule, comparison and teardown manifest. Human: controlled instances and confirmation that ordinary data is excluded. Name: `MARKEI_TEST_PROFILE` plus prior API/auth names. Probe offline A→upload→B apply→ack→duplicate→restart/hash comparison and bounded retention observation. Record commit, fixture hash, platforms, counts, outcomes/timing and sanitized screenshots. Stop on ordinary data, divergence, silent cursor skip, payload logs, cost or cleanup uncertainty. Return: disable sync, preserve diagnostics/local facts as required, revoke identities and delete only inventoried disposable resources.
+## 14. Recommended second implementation
 
-## 7. Validation matrix
-
-| Layer | Required evidence |
-| --- | --- |
-| Contract | valid/invalid fixtures; canonical JSON/hash; version/size/unknown fields |
-| Local DB | fresh+v1/v2/v3 migration; failure rollback/reopen; outbox/inbox/cursor atomicity |
-| API | auth isolation; validation; duplicate submission; typed rejection/unknown |
-| Postgres | migration, constraints, runtime privilege, concurrent append/retry |
-| Protocol | offline, duplicate, reorder, gap, interruption, ack, expiry/rebootstrap |
-| Recovery/export | deterministic export; selected round-trip; no sync-as-backup |
-| Performance | fixed-volume queue/download/query measurements |
-| Windows | release/manual workflow, loss/retry, reopen and local-only fallback |
-| Android | doctor/build/install/launch, secure storage, Back/rotation/lifecycle/offline retry |
-| Two Device | bidirectional append-only Purchase convergence, replay and teardown |
-| Privacy | secret scan, sanitized logs/docs, retention/deletion, no analytics payloads |
-
-## 8. Costs, cleanup, rollback and stops
-
-Recheck Neon compute/storage/restore/branch/pooling limits and API-host egress/function/auth limits at each MCG. Scale-to-zero latency and pool queue timeout can distort tests.
-
-Inventory containers/volumes, DB copies, profiles, deployments, Neon resources, auth subjects/Devices, logs and artifacts. Never delete ordinary data, an SDK root, unrelated emulator or provider project without ownership.
-
-Stop broad refactoring until Main freezes auth/enrollment, first payload, IDs/cursors, retention/rebootstrap, runtime/driver/migration tool, local/server schema/roles, export boundary and platform matrix. Stop on secret exposure, cross-Account access, partial transaction, silent reset, unsafe retry, divergence, unbounded cost or loss of local-only fallback.
-
-Rollback is additive and checkpointed: disable sync adapter; preserve local writes/outbox; revert one dependency/schema/API unit; restore representative DB copy; never destructively downgrade facts.
-
-## 9. Main decisions and first slice
-
-Main must select: auth and recovery; pairing/reinstall/revoke; InstallationId/current Device; EventId/SubmissionId/sequence epoch/cursor/inbox/ack; runtime/host/driver/migrations; Neon layout and optional RLS; canonical `purchase.registered` payload/hash/limits/collision; retention/snapshot/rebootstrap/deletion; export-only versus backup/restore; available Windows/Android/two-device gates; whether MCG-01 waits for local green evidence.
-
-Recommended first slice:
+Authorize one bounded C10-S01B materialization containing CP1–CP5 only. Treat CP4 cross-process convergence as the decisive acceptance gate. Keep sync disabled by default and preserve local-only operation. On green evidence, write G/H/I and return to Main with status:
 
 ```text
-no provider
-→ deterministic purchase.registered fixtures
-→ disposable local PostgreSQL + API transaction
-→ additive installation/outbox-attempt/inbox schema
-→ A offline register
-→ upload duplicate/timeout retry
-→ B atomic download/apply/cursor
-→ acknowledgement
-→ restart fact/hash comparison
-→ teardown
+C10-S01B_LOCAL_CONVERGENCE_PROVED
+MCG-01_NOT_STARTED
 ```
-
-Only after green local proof should Main authorize MCG-01. The last runnable checkpoint remains local-first with synchronization disabled.
