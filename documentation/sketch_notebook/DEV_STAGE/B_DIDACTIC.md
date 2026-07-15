@@ -1,12 +1,11 @@
-<!-- TEMPORAL_MARKER:C10-S01B-DIDACTIC-INVESTIGATION-2026-07-14 -->
+<!-- TEMPORAL_MARKER:C10-RETENTION-RECOVERY-DIDACTIC-INVESTIGATION-2026-07-15 -->
 
-# B_DIDACTIC — C10-S01B Local Synchronization Convergence Completion
+# B_DIDACTIC — Cycle 10 Retention and Recovery Semantics
 
 > Sequence: FLX-INV-02
 > Role: Didactic/UX Chat [A]
-> Round or unit: C10-S01B
 > Branch: `intermid-cycle-recovery`
-> Baseline / inspected HEAD: `1af8137e3f7db2d5ee3ecdf3796ae62808e0717c`
+> Baseline / inspected HEAD: `36b7b22b20e3b308b7b800514f6828a91ea49fcd`
 > Authority: Didactic/UX investigation only
 > Writable surface: this file only
 > Knowledge state: candidate / proposed / provisional
@@ -15,259 +14,294 @@
 
 ## 1. Methodology retained
 
-The complete route `INDEX → METHOD_FOUNDATIONS → FLUX → PROMOTION_RULES → CHAT_PROTOCOL` was loaded directly after both Agent Contracts.
+The complete route `INDEX → METHOD_FOUNDATIONS → FLUX → PROMOTION_RULES → CHAT_PROTOCOL` remains controlling after both Agent Contracts.
 
 Retained constraints:
 
-- Didactic observes project behavior as learning and semantic meaning;
-- this functional stage is provisional and cannot become canon by repetition;
-- implementation evidence proves only the named repository behavior;
-- passing tests do not prove wider runtime, provider, release or learner acceptance;
-- source evidence must not advance KANBAN status without learner explanation, prediction or transfer evidence;
-- no lecture-history event is authorized;
+- Didactic authority owns learning meaning, terminology and misconception prevention;
+- this functional stage may propose language but cannot select architecture or policy;
+- repository, test and provider evidence prove only their named project boundary;
+- implementation success cannot manufacture learner explanation, prediction, transfer or mastery;
+- candidate, proposed, provisional, accepted, implemented, validated, blocked and deferred remain distinct;
+- no KANBAN transition or lecture-history entry is authorized;
 - only `DEV_STAGE/B_DIDACTIC.md` may be replaced;
-- source, tests, permanent Didactic memory, Main stages and other domain stages remain untouched;
-- Cycle 11 presentation work is outside this unit.
+- source, permanent Didactic memory, Main stages and every other stage remain untouched;
+- Cycle 11 owns polished visual and interaction composition.
 
-PRC-01 distinctions remain controlling: declared, implemented, executable, validated, blocked and deferred are not interchangeable.
+This report is explicitly speculative. It defines semantic obligations for later Main reconciliation and materialization; it does not describe implemented retention UI or an accepted recovery policy.
 
-## 2. Inspected semantic evidence
+## 2. Controlling evidence boundary
 
-The inspected contracts and implementation establish:
-
-- `SyncEvent` carries one complete Purchase payload, stable event identity, Account, Device, DeviceSequence, version and content hash;
-- local Purchase registration can create a durable local Purchase, immutable event and pending outbox fact;
-- an outbox lease creates or reuses a `SubmissionId` and moves pending rows to an uploading state;
-- an unknown upload outcome can preserve the same Submission identity for retry;
-- upload-result persistence can record accepted, unknown or failed local submission state;
-- the API protocol declares typed outcome, retryability, safe action and correlation identity;
-- the local inbox detects same EventId/same hash as duplicate-equivalent and different hash as conflict;
-- inbox insertion and cursor recording occur in one local transaction;
-- the API/PostgreSQL layer has server acceptance, sequence and isolation foundations;
-- fixture authentication is limited to direct tests; normal runtime has no production AuthVerifier;
-- the two-device harness directly invokes local abstractions and does not prove HTTP/PostgreSQL transfer;
-- local remote apply records inbox and cursor evidence but does not reconstruct Product, Store and Purchase facts;
-- acknowledgement is represented by a port and test ordering rule, but is not materially exercised through a complete runtime route;
-- download is represented by contracts and route vocabulary, but no complete Device A → API/PostgreSQL → Device B fact path is proven.
-
-Therefore C10-S01 produced synchronization foundations, not complete convergence.
-
-## 3. Implemented versus merely declared vocabulary
-
-| Term | Current evidence | Truthful interpretation |
-| --- | --- | --- |
-| saved locally | implemented and directly tested | Purchase and event facts committed in one local database |
-| queued / waiting upload | implemented and directly tested | durable pending outbox fact exists |
-| uploading | implemented as local lease/state transition | an attempt has been prepared; transport success is not implied |
-| server accepted | implemented on local/API result paths; server foundations tested | the server accepted a Submission; no peer application follows from this |
-| waiting peer | enum/proposed vocabulary | no material peer-progress observation currently earns this state |
-| downloaded | contract/route vocabulary; incomplete executable path | a page may be represented, but real HTTP retrieval is not established |
-| facts applied | stubbed for the Purchase aggregate | inbox/cursor is written; Product/Store/Purchase reconstruction is absent |
-| acknowledged | port/schema/proposed behavior | no complete client-to-server acknowledgement proof exists |
-| duplicate ignored | executable local inbox behavior | the same EventId and content hash causes no second inbox effect |
-| conflict | executable local hash mismatch behavior; broader policy proposed | one typed mismatch is detected; entity reconciliation is unresolved |
-| converged | proposed acceptance state only | cannot be claimed at the inspected HEAD |
-| synchronized | prohibited current product claim | foundations do not establish peer equality, backup or recovery |
-
-`downloaded-applied` is currently too strong for aggregate semantics. Until Purchase facts are reconstructed, diagnostics should distinguish `download received` from `facts applied`.
-
-## 4. Synchronization state/evidence matrix
-
-| State or capability | Classification | Evidence boundary | Missing completion evidence |
-| --- | --- | --- | --- |
-| local Purchase save | implemented | Drift repository tests | none within local-save scope |
-| immutable local event | implemented | repository inspection and tests | none within event-creation scope |
-| pending outbox | implemented | Drift tests | none within queue scope |
-| Submission identity | implemented | local repository and retry test | real timeout-after-server-commit replay |
-| uploading state | executable but indirectly tested | lease transition | live transport observation |
-| server acceptance | executable but indirectly integrated | API tests and PostgreSQL probes | Flutter HTTP upload against running API |
-| stored replay result | implemented server concept | API-side tests | end-to-end uncertain retry |
-| download route | stubbed / thin | route and port declarations | real server page returned to Device B |
-| inbox deduplication | implemented | local tests | cross-process duplicate delivery |
-| cursor advancement | implemented locally | transaction test | ordered server page and invalid-order rejection |
-| complete Purchase apply | stubbed | payload exists; aggregate apply absent | Product, Store, references and Purchase reconstructed |
-| acknowledgement | proposed / partially executable | port and ordering test | HTTP request, durable server ack and replay behavior |
-| production authentication | externally blocked | fixture escape prevention | selected provider and production verifier |
-| revoked Device handling | proposed / server vocabulary | failure contracts | production identity and revocation lifecycle |
-| cross-process two-device harness | stubbed | local abstraction harness only | HTTP/PostgreSQL path with isolated Drift files |
-| deterministic convergence | proposed | expected comparison criteria | reopened A/B fact and projection equality |
-| MCG-01 | externally blocked | local provider-free evidence only | human Neon setup and reconciled redacted probe |
-| MCG-02 | deferred behind MCG-01 | runtime prerequisites documented | deployable API and production auth boundary |
-| Cycle 11 sync presentation | deferred | explicitly outside scope | Main-authorized UX unit |
-
-## 5. Typed failures and safe-action hypotheses
-
-Minimum diagnostics should be neutral, structured and non-visual. Each result should expose:
+Main accepts one decisive local convergence story:
 
 ```text
-operation
-code
-outcome: applied | duplicate-equivalent | not-applied | unknown
-retryable: true | false
-safeAction
-correlationId
-optional eventId / submissionId / field
+Drift A → Flutter HTTP → Fastify/PostgreSQL → Flutter HTTP → Drift B
 ```
 
-Provisional failure meanings:
+The proved story includes complete Purchase aggregate application, duplicate-equivalent replay, acknowledgement by Device B and deterministic reopen evidence.
 
-| Situation | Outcome | Retry | Safe action |
-| --- | --- | --- | --- |
-| timeout after request, commit unknown | unknown | yes | retry the same SubmissionId and identical request hash |
-| same SubmissionId and same hash replayed | duplicate-equivalent | no | accept the stored result; do not create a new Submission |
-| same SubmissionId with different hash | not-applied | no | stop and preserve local facts; report submission conflict |
-| same EventId and same hash delivered twice | duplicate-equivalent | no | ignore the second effect and continue cursor processing |
-| same EventId with different hash | not-applied | no | quarantine/stop; never overwrite automatically |
-| cursor order invalid or gap observed | not-applied | policy-dependent | stop page application; retain previous cursor and request valid replay |
-| remote Product/Store/Purchase collision | not-applied | no automatic retry | preserve both evidence sets and require a typed Main-approved policy |
-| authentication unavailable | not-applied | after credentials restored | keep local work; require production authentication before transfer |
-| Device revoked | not-applied | no automatic retry | stop network mutation; preserve local data and require re-enrolment policy |
-| server unavailable before acceptance | not-applied | yes | keep queued facts and retry later |
-| server outcome unavailable after timeout | unknown | yes | verify by replaying the identical Submission, not by creating a replacement |
-| unsupported protocol version | not-applied | no | require a compatible client/server version |
+It does not establish:
 
-No diagnostic may recommend deleting local facts, resetting the database, changing identity or issuing a new event merely to escape uncertainty.
+- live Neon behavior;
+- production authentication or Device enrollment;
+- a supported offline duration;
+- event deletion or acknowledgement expiry;
+- application snapshots;
+- full rebootstrap;
+- account deletion semantics;
+- provider-backup restoration;
+- future recovery after a long disconnection.
 
-## 6. Truthful convergence criteria
+Therefore `synchronized` may describe the named completed convergence fixture, but `recoverable`, `backed up`, `restorable` and `safe forever` remain unearned claims.
 
-A complete Purchase is converged only when named evidence proves all of the following:
+## 3. Vocabulary map
 
-1. Device A commits the Purchase and its immutable event locally.
-2. A uploads through the real Flutter transport to the running API.
-3. PostgreSQL accepts the Submission atomically with Event, sequence and cursor state.
-4. An unknown timeout is replayed with the same SubmissionId and returns the stored equivalent result.
-5. Device B downloads the Event through the real HTTP route after its prior cursor.
-6. B validates identity, version, hash and cursor order.
-7. B atomically records inbox evidence, reconstructs Product, Store, references and Purchase facts, and advances its cursor.
-8. A duplicate delivery causes no second Purchase or projection effect.
-9. B sends the greatest contiguous applied cursor through the acknowledgement route.
-10. The server durably records that Device acknowledgement.
-11. Both clients close and reopen without losing the accepted facts.
-12. Stable Purchase facts compare deterministically across A and B.
-13. Rebuildable Lists derived from those facts compare under the same deterministic fixture.
+| Term | Provisional truthful meaning | Must not imply |
+| --- | --- | --- |
+| Local fact | Product/Purchase fact committed in one installation’s Drift database | a server or peer copy exists |
+| Coordination copy | Event, cursor, acknowledgement or snapshot data held for synchronization | authoritative local history or analytics |
+| Event history | Ordered immutable changes available after a cursor | a complete current account image |
+| Application snapshot | Markei-defined complete-enough fact image for rebuilding a Device | Neon backup, raw database dump or universal restore |
+| Provider backup | Provider-controlled PostgreSQL recovery mechanism | restore of one user, Device or local Drift file |
+| Acknowledgement | One Device reported a contiguous locally applied cursor | backup, permanence or all-Device agreement |
+| Synchronized | Named eligible Devices reached the stated fact/cursor condition | independently recoverable after server cleanup |
+| Recoverable | A tested route can rebuild required application facts under stated conditions | merely synchronized once |
+| Incremental catch-up | Apply retained events after a known cursor | full replacement of local state |
+| Full rebootstrap | Rebuild from a trusted application snapshot, then catch up incrementally | automatic conflict-free merge |
+| Cursor expired | Required events after this cursor are no longer available incrementally | local Purchase history was deleted |
+| No new events | Server has no events after a valid current cursor | cursor is valid without proof |
+| Supported offline window | Period during which the selected policy promises incremental or snapshot recovery | indefinite offline safety |
+| Device inactive | Device has not connected within a policy interval | revoked or unauthorized |
+| Device revoked | Server authorization for the Device has been withdrawn | remote erasure of its local files |
+| Device replacement | Enroll a new installation/Device identity | restoration of the same Device identity |
+| Recovery started | A recovery plan or transfer began | facts are usable or complete |
+| Recovery completed | Snapshot applied, required catch-up applied and terminal checks passed | every future recovery is guaranteed |
+| Server cleanup | Coordination records removed under policy | deletion of local Purchase history |
+| Unknown outcome | Request may have committed but response is absent | retry with a new identity is safe |
 
-Server acceptance alone proves step 3, not convergence. Inbox insertion plus cursor movement without Purchase reconstruction proves bookkeeping, not fact application.
+## 4. User-state matrix
 
-## 7. Minimum neutral functional diagnostics
+Cycle classification: `diagnostic` means Cycle 10 may require typed/plain-text evidence; `visual` means Cycle 11 owns presentation.
 
-Cycle 10 tests need machine-readable or plain-text output only:
+| State | Technical trigger | Known / unknown | Safe action | Avoid | Owner |
+| --- | --- | --- | --- | --- | --- |
+| Up to date on this Device | valid cursor reached current server high-water mark after committed apply | known for this Device and scope; other Devices unknown | none; retain timestamp/scope | `Everything is safe everywhere` | diagnostic now; visual C11 |
+| Changes waiting to upload | durable pending Event exists | safe locally; server acceptance unknown | keep app data; retry normally | `Synced` | diagnostic now; visual C11 |
+| Accepted by server | Submission/Event atomically committed or replayed equivalent | server copy known; peer application unknown | allow peer catch-up | `Backed up` | diagnostic now; visual C11 |
+| Waiting for another Device | server accepted and named eligible peer acknowledgement is behind | origin/server state known; peer availability unknown | connect peer within policy window | `Almost finished everywhere` | policy-dependent; visual C11 |
+| Device outside supported window | last valid contact exceeds accepted policy interval | long absence known; incremental recoverability may be unknown | prepare eligibility/recovery check | `Your data expired` | diagnostic after policy; visual C11 |
+| Incremental history available | cursor is valid and all required later events remain retained | catch-up path known; final success unknown | download/apply pages | `Recovery complete` | diagnostic C10 |
+| Full refresh required | typed cursor expiry or missing-history result | incremental route unavailable; snapshot viability may be unknown | stop incremental apply and request rebootstrap | `Local data is gone` | diagnostic C10; visual C11 |
+| Refresh being prepared | server accepted snapshot/rebootstrap request or generation lease | work started; artifact completeness unknown | wait/retry same recovery identity | `Restoring` | diagnostic C10 |
+| Snapshot downloading | bounded snapshot bytes are transferring | transfer progress known; validity/application unknown | continue or resume safely | `Data restored` | diagnostic C10; visual C11 |
+| Snapshot downloaded, not applied | complete artifact received and validated but local transaction not committed | artifact available; local facts unchanged | apply through protected transaction | `Device recovered` | diagnostic C10 |
+| Snapshot applied, catch-up pending | snapshot facts/cursor committed; newer events remain | base state known; current state not reached | incremental catch-up | `Up to date` | diagnostic C10 |
+| Recovery completed | snapshot/apply/catch-up/reopen checks all pass | named Device recovered to named high-water mark | resume normal sync | `Permanent backup complete` | diagnostic C10; visual C11 |
+| Recovery interrupted safely | interruption occurred before terminal completion with resumable identity/checkpoint | committed phase known; completion unknown | retry/resume same recovery identity | `Failed and rolled back` unless proven | diagnostic C10 |
+| Local unsent changes block replacement | pending/uploading/unknown local Events exist before destructive rebootstrap | unsent local work exists; server equivalence unknown | upload/reconcile/export before replacement | `Reset now` | diagnostic C10; visual C11 |
+| Credentials expired | verifier rejects expired/missing credential | local facts remain; server access unavailable | renew authentication | `Offline` or `data lost` | diagnostic C10; visual C11 |
+| Device revoked | verified Device is inactive by authorization policy | network mutation denied; local erasure not implied | preserve local facts; follow re-enrollment/replacement policy | `Device deleted` | diagnostic C10; visual C11 |
+| Cursor expired | server can prove requested incremental position is outside retained coverage | incremental gap known; snapshot recovery unknown until checked | require explicit full-rebootstrap route | `No updates` | diagnostic C10 |
+| Server retention elapsed | named events/snapshots crossed deletion eligibility and were removed | coordination copies gone; local copies may survive | use remaining accepted recovery route | `Purchases deleted everywhere` | policy text C10; visual C11 |
+| Account deletion pending | deletion accepted but defined cleanup phases incomplete | request recorded; each storage boundary may differ | show scopes and expected terminal evidence | `Deleted` | diagnostic contract C10; visual C11 |
+| Account deletion completed | accepted deletion checks passed for defined application/server scopes | defined server copies removed; offline local copies may remain | explain residual local-device responsibility | `Erased from every Device` | diagnostic contract C10; visual C11 |
+| Unknown outcome | response absent after possibly committed operation | commit status unknown | replay same idempotency identity and payload | `Try again as new` | diagnostic C10 |
 
-- fixture/device aliases, never personal labels;
-- operation and typed code;
-- SubmissionId/EventId aliases or redacted suffixes;
-- cursor before/after;
-- event counts, applied counts and duplicate counts;
-- Purchase fact comparison pass/fail;
-- acknowledgement cursor and server-recorded value;
-- correlation ID and elapsed timing;
-- retry identity equality;
-- database reopen comparison;
-- explicit `CONVERGED=false|true` based on the full criteria.
+## 5. Privacy and expectation language
 
-Do not log Purchase payloads, Product names, Store names, credentials, tokens, connection strings or raw authorization headers.
+Provisional explanation:
 
-## 8. Privacy and secret-handling language
+`Markei keeps Product and Purchase facts in each installation’s local database. When synchronization is enabled, the service may temporarily retain coordination events, acknowledgements and application snapshots so an authorized Device can catch up after being offline. The exact retention period and recovery coverage must be stated by the accepted policy. Server cleanup does not by itself delete Purchase history already stored on a Device.`
 
-Truthful developer-facing wording:
+Required distinctions:
 
-`Neon is a managed PostgreSQL provider used only behind the Markei API. Flutter must never receive a database connection string or privileged database role. Connection strings, tokens and provider URLs belong only in local or deployment secret storage. Git, notebook files, chat, screenshots, test fixtures and ordinary logs may contain redacted aliases and pass/fail evidence, never secret values.`
+- coordination data survives while an eligible Device is offline because delivery cannot occur while that Device is absent;
+- bounded retention is protocol operation, not developer analytics;
+- absence of analytics does not mean absence of synchronization data;
+- a snapshot should contain only the immutable Markei facts and protocol metadata required to rebuild the supported application state;
+- snapshot content must exclude credentials, authorization headers, provider secrets and unrelated telemetry;
+- server copies may remain only for the accepted duration, eligibility and deletion rules;
+- after the supported window, incremental history may be unavailable and full rebootstrap may be required;
+- local history survives server cleanup unless the local Device separately deletes it;
+- synchronization does not replace export because export is a user-readable artifact;
+- synchronization does not replace backup because it may propagate mistakes and obey bounded retention;
+- account deletion may require staged deletion across application rows, snapshots, events and provider backup cycles;
+- provider backup schedules and expiry are infrastructure facts, not immediate application-level deletion guarantees;
+- logs may contain operation code, outcome, retryability, correlation ID, redacted aliases, cursor ranges, counts, timings and hashes;
+- logs must not contain Purchase/Product/Store/Person/Payment facts, tokens, passwords, connection strings or raw snapshot bodies.
 
-Additional boundaries:
+## 6. Misconception register
 
-- provider configuration is coordination infrastructure, not user analytics;
-- absence of analytics does not mean no synchronization payload reaches the API/database;
-- relay persistence is not a backup guarantee;
-- provider backups are not a Markei restore contract until explicitly designed and tested;
-- Account isolation must derive from verified server identity, not payload AccountId;
-- fixture authentication is synthetic test evidence and must never be described as production sign-in;
-- provider region, role names, migration hash and timestamps may be reported only when non-secret.
+| Misconception | Required correction |
+| --- | --- |
+| `Acknowledged means backed up forever` | acknowledgement proves one Device reported a committed cursor under one policy |
+| `No downloaded events means current` | current requires a valid cursor/high-water comparison, not an empty response alone |
+| `Cursor expired means local data deleted` | expiry concerns missing server history for incremental catch-up |
+| `Rebootstrap merges everything automatically` | replacement/merge behavior needs explicit conflict and unsent-change rules |
+| `Server cleanup deletes every Device purchase` | cleanup removes server coordination copies, not autonomous local databases |
+| `Neon backup restores one user’s local state` | provider backup restores provider storage; Markei needs its own scoped snapshot/rebuild contract |
+| `One successful sync proves future recovery` | one convergence fixture does not validate retention expiry or rebootstrap |
+| `Revoking a Device erases its copies` | revocation stops authorization; remote local erasure is a separate, generally unprovable operation |
+| `Snapshot downloaded means recovery complete` | validation, atomic apply, incremental catch-up and reopen evidence remain |
+| `Inactive means revoked` | inactivity is time-based observation; revocation is an authorization decision |
+| `Replacement restores the same Device` | a new installation normally needs a new Device identity and explicit history policy |
 
-## 9. MCG-01 and MCG-02 learning prerequisites
+## 7. Policy alternatives
 
-Before MCG-01, the developer must understand:
+### A. Fixed retention window
 
-- Neon project/branch/database/role versus Git branch and Markei Account;
-- migration role versus least-privilege runtime role;
-- server-only connection strings and redacted evidence;
-- provider limits, expiry, cost and teardown ownership;
-- why a successful connection is not authorization or convergence;
-- why no secret is needed in Flutter, Git or notebook memory.
+User expectation: events remain available for a stated number of days.
 
-Before MCG-02, the developer must additionally understand:
+Likely misunderstanding: any Device reconnecting before the date is guaranteed to recover, even if snapshots, failures or account state differ.
 
-- client/API/database trust boundaries;
-- production AuthVerifier responsibility;
-- runtime secret injection versus public API endpoint configuration;
-- TLS, deployment identity and migration separation;
-- Account/Device authorization and revocation;
-- retry identity, unknown outcome and idempotent replay;
-- download/apply/ack order and the evidence required to call a Purchase converged.
+Recovery promise: incremental catch-up only while the required cursor range remains retained; afterward recovery is unavailable unless another mechanism exists.
 
-Configuration success remains project evidence. It does not change learner maturity.
+Language risk: `kept for 30 days` may sound like backup or deletion from local Devices after day 30.
 
-## 10. Misconceptions and misleading claims to avoid
+### B. Active-Device lease
 
-- `server accepted` means neither peer-applied nor synchronized;
-- `downloaded` means neither valid nor committed;
-- inbox/cursor bookkeeping alone is not Purchase application;
-- acknowledgement is not universal delivery;
-- one Device acknowledgement is not all-Device convergence;
-- synchronization is not backup, restore, export or disaster recovery;
-- queued data is not uploaded data;
-- retry is not creation of a new business event;
-- duplicate-equivalent is not conflict;
-- a Device UUID is not a credential or hardware fingerprint;
-- fixture authentication is not production authentication;
-- a local two-file harness is not a cross-process protocol proof;
-- a server cursor is not a Device sequence or Purchase time;
-- relay retention is not indefinite history;
-- Neon availability is not Markei availability or recoverability;
-- `all devices`, `everywhere`, `always delivered`, `fully backed up`, `recoverable` and `never lost` are prohibited without separate guarantees.
+User expectation: Devices that periodically renew eligibility remain covered.
+
+Likely misunderstanding: `active` means currently online, trusted forever or user-visible usage activity.
+
+Recovery promise: coordination copies are retained according to eligible Device acknowledgements/leases; expired Devices require re-enrollment or rebootstrap.
+
+Language risk: hidden lease expiry can feel like unexplained data loss unless the supported window and consequences are explicit.
+
+### C. Hybrid retention plus snapshot coverage
+
+User expectation: recent events support incremental catch-up; a current application snapshot supports full refresh after the event window.
+
+Likely misunderstanding: snapshot means provider backup, automatic merge or complete historical archive.
+
+Recovery promise: valid cursor → incremental catch-up; expired cursor → protected snapshot replacement followed by incremental catch-up, subject to unsent-change checks.
+
+Language risk: `full refresh` may be heard as destructive reset, and `snapshot available` may be heard as recovery completed.
+
+## 8. Preferred semantic hypothesis
+
+Provisional recommendation: **hybrid bounded event retention plus application snapshots and explicit active-Device eligibility**.
+
+Confidence: medium.
+
+Reasons:
+
+- fixed events alone eventually strand long-offline Devices;
+- leases alone do not provide a reconstruction artifact;
+- the hybrid model can state two honest routes: incremental catch-up or full rebootstrap;
+- it allows server cleanup without promising permanent event history;
+- it can protect local unsent work before replacement;
+- it separates Markei application recovery from Neon provider backup.
+
+This is not canonical. Main must still select durations, snapshot ownership, eligibility, deletion and conflict rules.
+
+## 9. Second implementation semantic contract
+
+Codex tests should minimally materialize:
+
+1. a typed `cursor-expired` or semantically equivalent response distinct from an empty valid page;
+2. an explicit `full-rebootstrap-required` result with `not-applied` outcome and safe action;
+3. a snapshot/recovery identity reusable after interruption;
+4. phase-specific progress: `preparing`, `downloading`, `downloaded`, `applying`, `catching-up`, `completed`;
+5. no phase before terminal verification may emit `recovered` or `up-to-date`;
+6. interruption-safe retry that resumes or replays the same recovery identity;
+7. atomic snapshot apply with cursor and fact integrity evidence;
+8. incremental catch-up after snapshot cursor before completion;
+9. reopen comparison before `recovery-completed`;
+10. protection that blocks destructive replacement when pending, uploading or unknown local submissions exist;
+11. typed revoked, expired-credential, account-deleting and unknown-outcome diagnostics;
+12. privacy-safe codes, counts, cursors, correlation IDs and redacted hashes only;
+13. no polished synchronization page, progress component, Device manager or Cycle 11 composition.
+
+Suggested evidence-specific tests:
+
+- `empty valid page is not cursor expired`;
+- `expired cursor requires full rebootstrap`;
+- `snapshot download does not claim recovery complete`;
+- `snapshot apply is followed by incremental catch-up`;
+- `interrupted recovery reuses recovery identity`;
+- `pending local events block destructive replacement`;
+- `server cleanup leaves existing local purchases unchanged`;
+- `provider backup is not used as an application snapshot`.
+
+## 10. MCG-01 learning boundary
+
+During MCG-01 the developer must distinguish:
+
+- Neon branch: provider environment lineage/compute-storage branch;
+- database: named PostgreSQL database inside the selected provider branch;
+- provider backup: infrastructure recovery mechanism for provider storage;
+- application snapshot: Markei-defined fact package for one synchronization recovery contract;
+- migration role: privileged schema-change identity;
+- runtime role: least-privilege API data-access identity;
+- branch expiry: provider lifecycle behavior;
+- event retention: Markei application policy;
+- secret evidence: the actual credential or credential-bearing URL, which must never be requested;
+- sanitized evidence: aliases, region/version, role names, migration hash, timestamps and pass/fail results.
+
+Successful provider setup is project evidence only. It does not prove learner mastery, retention correctness, application recovery or production readiness.
 
 ## 11. Cycle 10 / Cycle 11 boundary
 
-C10-S01B may stabilize contracts, typed failures, test timelines and minimum diagnostics needed to prove functional truth.
+Cycle 10 owns:
 
-It must not design pages, status dashboards, pairing or enrolment flows, navigation, banners, cards, icons, animations, visual polish, accessibility redesign, native sharing or Analytics.
+- typed states and failure distinctions;
+- recovery phase truth conditions;
+- safe-action contracts;
+- privacy-safe diagnostics;
+- tests preventing premature completion claims;
+- plain-text policy wording required to interpret functional behavior.
 
-Questions of placement, wording hierarchy, interaction timing, visual severity, progress display and user-controlled retry presentation belong to Cycle 11 after the underlying states become truthful.
+Cycle 11 owns:
+
+- page placement and navigation;
+- cards, banners, dialogs, icons, progress bars and history views;
+- retry controls and Device-management presentation;
+- wording hierarchy, severity and timing;
+- visual/accessibility composition and broader synchronization polish.
+
+Cycle 10 must not postpone semantic truth to Cycle 11. Cycle 11 must not visually imply guarantees absent from Cycle 10 contracts.
 
 ## 12. Unresolved Main decisions
 
-1. Exact invalid cursor-order and gap policy.
-2. Entity-specific collision policy for Product, Store, references and Purchase.
-3. Whether acknowledgement means persisted local apply, projection rebuild, or another boundary.
-4. Which Devices count toward any future account-level convergence statement.
-5. Device revocation, re-enrolment and historical acknowledgement eligibility.
-6. Production AuthVerifier/provider selection and credential lifecycle.
-7. Retention, cursor expiry, rebootstrap, snapshots and account deletion.
-8. Exact safe action for terminal remote-fact conflict.
-9. Whether derived Lists comparison is required inside MCG-01 or a later gate.
-10. The exact Main acceptance evidence separating MCG-01 from MCG-02.
+1. Fixed event-retention duration and its start/refresh trigger.
+2. Whether Device eligibility uses acknowledgement, lease, explicit enrollment state or a combination.
+3. Snapshot creation trigger, frequency, version, scope and encryption boundary.
+4. Which immutable facts and tombstones a snapshot contains.
+5. Whether snapshots are per Account, per protocol version or per Device eligibility class.
+6. Snapshot expiry and the terminal state when both event and snapshot coverage are gone.
+7. Exact protection/merge behavior for local unsent changes before rebootstrap.
+8. Whether replacement creates a new Device identity and how historical acknowledgements are treated.
+9. Revocation, inactive-Device and lost-Device semantics.
+10. Account-deletion phases, provider-backup lag and residual offline local copies.
+11. Which Devices count toward `waiting-peer`, `synchronized` or account-level recovery statements.
+12. MCG-01 evidence required before provider-backed retention tests.
+13. Whether local adversarial expiry/rebootstrap tests precede MCG-02.
+14. Final user-facing supported offline window and recovery promise.
 
 ## 13. Disposition
 
 ```text
-implemented:
-  local save, event/outbox, Submission identity, local retry preservation,
-  server acceptance foundations, local inbox deduplication and cursor bookkeeping
+accepted project evidence:
+  bounded local HTTP/PostgreSQL convergence for one complete Purchase fixture
 
-executable but indirectly tested:
-  API/PostgreSQL acceptance components and some typed failure behavior
-
-stubbed:
-  real download, complete Purchase aggregate apply, acknowledgement and
-  cross-process two-device convergence harness
+implemented retention/recovery policy:
+  none accepted by this investigation
 
 proposed:
-  typed safe actions, minimum neutral diagnostics and full convergence criteria
+  truthful vocabulary, state matrix, hybrid retention/snapshot hypothesis,
+  privacy language and second-implementation semantic test contract
 
-externally blocked:
-  production authentication and MCG-01 Neon evidence
+blocked / unresolved:
+  duration, Device eligibility, snapshots, rebootstrap, account deletion,
+  provider-backup relationship and unsent-change reconciliation
 
-deferred:
-  MCG-02 deployment work and all Cycle 11 presentation/UX refinement
+Cycle 11 deferred:
+  polished pages, visual progress, Device management and broader UX composition
 
 learner maturity:
-  unchanged; no KANBAN transition and no lecture-history entry authorized
+  unchanged; no KANBAN transition and no lecture-history event
+
+speculative status:
+  explicit; all policy and wording recommendations await Main reconciliation
 ```
