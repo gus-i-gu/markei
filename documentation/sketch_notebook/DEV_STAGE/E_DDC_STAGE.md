@@ -1,104 +1,236 @@
-# E_DDC_STAGE — C10-S03A-R3D1 Semantic Materialization Authority
+# E_DDC_STAGE — C10-MCG02-R04 Semantic Materialization Authority
 
 > Sequence: FLX-ORD-01
-> Controlling reconciliation: `190e9df78c285179d57a2b728b5cf07ecdd7aadb`
+> Controlling reconciliation: fd73da6fddf3cc308655c41e0640b045d710d983
 > Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
-> Boundary: evidence integrity and migration semantics
+> Unit: truthful authorization and race vocabulary
 
-## 1. Purpose
+## 1. Governing distinction
 
-R3D1 makes proof claims correspond exactly to observed evidence. It does not complete global local
-security and must not upgrade a partial authorization/Flutter record to pass.
+Use this semantic chain exactly:
 
-## 2. Required distinctions
+~~~text
+case declared
+≠ case executed
+≠ case passed
+≠ producer passed
+≠ R04 passed
+≠ local security proved
+≠ provider accepted
+≠ production ready
+~~~
 
-```text
-case-name-present != case-measured
-producer-record-created != producer-valid
-producer-valid != producer-passed
-synthetic-complete-fixture != real-producer-success
-body-stall-timeout != repeated-slow-progress-deadline
-unavailable-result != owned-resource-closure-observed
-security-definer-checked != function-owner-checked
-readiness-call-allowed != all-other-runtime-execute-denied
-migration-present != lifecycle-proved
-R3D1-proved != R3-local-security-proved
-local-proof != provider-proof
-```
+R04 may prove the authorization producer. It must not claim the full local-security, provider or
+Cycle 10 gate.
 
-## 3. Closed producer meaning
+## 2. Corrected evidence meanings
 
-A producer is passed only when:
+The following meanings are mandatory:
 
-- its schema and producer identity are exact;
-- its required cases and results exactly match the canonical inventory;
-- every case was executed and is true;
-- every false case has one safe deterministic blocker;
-- the top-level blocker list exactly represents false cases;
-- `passed` is consistent with case truth and blockers;
-- no unknown field/case/result is present.
+- resource-teardown means the inventory command succeeded and found zero matching resources;
+- irrelevant-metadata-preserves-revision means externally observed state-machine behavior proves
+  metadata-only change did not reset the semantic negative-key revision/cooldown;
+- token-not-persisted-or-logged remains unproved until R05 explicitly checks persistence and logs;
+- a producer command exit does not replace case-addressable scenario evidence;
+- one focused test command cannot silently prove unrelated cases;
+- one successful token verification does not expose internal revision identity.
 
-Skipped, partial, unavailable, host-unvalidated and not-yet-implemented are false evidence states,
-not missing text and not success.
+## 3. Authorization vocabulary
 
-## 4. Real versus synthetic evidence
+- external identity: verified issuer/subject identity mapped to Markei state;
+- membership: explicit Account relationship and role;
+- actor Device: Device making the protected request;
+- target Device: Device inspected or revoked;
+- fence: transactional recheck and lock before protected mutation;
+- barrier: test-only deterministic pause used to order concurrent actions;
+- protected mutation: facts, events, cursor, acknowledgement, recovery, Device, enrollment or
+  security-event state change;
+- denied-no-state-advance: exact protected state is unchanged after denial;
+- one transition: active to revoked happens at most once;
+- duplicate-equivalent: repeated same meaning returns an equivalent existing result;
+- conflicting request: same idempotency identity with different canonical request hash;
+- unknown outcome: server result may have committed while the client did not receive it;
+- restart replay: replay through a new app/composition over persisted server state;
+- retry exhaustion: bounded serialization/deadlock retries are consumed and the request fails closed.
 
-`allPassed` fixtures may validate aggregator logic only. They cannot appear in a real proof record.
-JWKS and route booleans come from executed named scenarios. Static booleans come from the exact
-commands their case names represent. Migration booleans come from isolated database scenarios and
-catalog/ACL observations.
+## 4. Identity and membership semantics
 
-The R3D1 aggregate is correctly false because authorization and Flutter remain intentionally
-partial. It is valid only when all six records are real, structurally valid, and every other producer
-passes.
+Protected work requires all of:
 
-## 5. Migration meanings
+~~~text
+external identity active
+membership exists and active
+membership Account matches request
+actor Device exists, belongs to the Account and is active
+operation permitted for the membership role
+~~~
 
-- **Fresh**: pristine database receives 001–006 in order.
-- **Upgrade**: a usable 001–005 database receives only 006 afterward.
-- **Duplicate**: repeating 006 preserves one correct ledger identity and compatible objects.
-- **Failure rollback**: injected failure in a disposable copy leaves none of that transaction's
-  ledger/function/ACL changes.
-- **Owner**: `proowner` resolves to the expected migration identity; security mode is separate.
-- **Runtime-ready-only**: runtime may call the narrow readiness capability while selected general
-  history, DDL, role and unintended function capabilities remain denied.
-- **Shadow resistant**: attacker-controlled temp/public names cannot change the qualified result.
-- **Tampered/absent ledger**: readiness cannot return true.
+These are transaction-time invariants. Pre-transaction authentication or previously loaded claims
+do not substitute for the fence.
 
-Canonical migration source remains byte-identical.
+When identity or membership changes before the fence:
 
-## 6. Correction of prior wording
+- protected work is denied;
+- no protected state advances;
+- the result must be attributable to authorization rather than malformed input.
 
-The existing Flutter test proves a body-delay deadline outcome, not yet repeated slow progress or
-instrumented client closure. The existing migration probe proves security-definer/volatility/search
-path but not owner. G/H/I must correct these earlier overstatements.
+## 5. Actor Device semantics
 
-## 7. Terminal vocabulary
+When the actor Device is revoked before a protected operation reaches its fence:
 
-R3D1 success:
+- upload is denied;
+- download is denied;
+- acknowledgement is denied;
+- capabilities is denied;
+- rebootstrap start/status/chunk/complete are denied;
+- Device status and revoke operations are denied.
 
-```text
-PROOF_PIPELINE_INTEGRITY=true
-MIGRATION_006_LIFECYCLE_ACL=true
-C10-S03A_R3D1_PROVED
-R3_LOCAL_SECURITY_PROVED=false
-R3D2_AUTHORIZATION_PENDING
-R3D3_FLUTTER_PENDING
-MCG-02_PROVIDER_PROOF_PENDING
-```
+Each case must call the real applicable route with otherwise-valid state. Missing recovery fixtures
+or invalid bodies cannot stand in for Device denial.
 
-R3D1 incomplete:
+## 6. Target Device semantics
 
-```text
-C10-S03A_R3D1_PARTIAL
-R3_LOCAL_SECURITY_PROVED=false
-```
+For an active membership:
 
-Never claim hosted readiness, provider acceptance, MCG-02 completion, production readiness or Cycle
-10 closure.
+- an owner may inspect and revoke an Account Device;
+- an ordinary member may inspect and revoke only their own Device;
+- another member's Device is foreign to the actor and denied;
+- a Device belonging to another Account is denied without disclosure;
+- self-revocation immediately prevents later protected actions.
 
-## 8. Privacy and learning boundary
+Use the existing closed API errors. Do not add detailed error text that reveals whether a foreign
+target exists.
 
-Producer records/logs contain no tokens, claims, JWK bodies, credentials, URLs, passwords, source
-payloads or private paths. No UI, KANBAN, glossary, learner maturity or permanent memory changes are
-authorized. G/H/I remain observational evidence.
+## 7. Concurrency and idempotency semantics
+
+Concurrent target revocation must mean:
+
+~~~text
+two authorized attempts
+→ one active-to-revoked transition
+→ one security event
+→ equivalent final Device truth
+~~~
+
+Independent later replay of the same semantic revocation is duplicate-equivalent, not a second
+transition.
+
+Equivalent concurrent enrollment means both requests carry the same canonical installation and
+request meaning. It does not mean two unrelated Device identities are merged.
+
+Conflicting enrollment means the same request identity carries a different canonical hash. It must
+fail closed and preserve the first accepted truth.
+
+## 8. Unknown outcome semantics
+
+Response-loss evidence requires:
+
+1. server transaction commits;
+2. response delivery is intentionally suppressed;
+3. client classifies the result as unknown, not failed-before-submit;
+4. query or same-identity replay returns the committed result;
+5. no duplicate Device, enrollment or security event appears.
+
+Restart replay requires a new app/composition. Reusing the same in-memory service instance is not a
+restart.
+
+## 9. Retry exhaustion semantics
+
+Serialization/deadlock exhaustion must use controlled conflict injection and the real bounded retry
+policy.
+
+Passing means:
+
+- every allowed retry is observed;
+- no unbounded loop occurs;
+- final result is a safe failure;
+- no protected state advances.
+
+A mock that simply throws before transaction entry does not prove retry exhaustion.
+
+## 10. Case-level evidence rule
+
+Every case result must be tied to:
+
+- scenario name;
+- setup state;
+- deterministic interleaving or direct action;
+- observed response/result;
+- exact state comparison;
+- safe blocker on failure.
+
+The producer may summarize those booleans, but G must retain enough named evidence to audit their
+meaning.
+
+## 11. Required semantic tests
+
+Name or preserve focused tests covering:
+
+- teardown rejects non-empty successful inventory;
+- metadata-only refresh preserves unknown-kid cooldown/fetch count;
+- Flutter token logging case stays deferred;
+- each identity/membership fence denial;
+- each actor Device route denial;
+- owner and member target rules;
+- foreign and cross-Account nondisclosure;
+- concurrent revoke one-transition/one-event;
+- equivalent and conflicting enrollment concurrency;
+- response-loss query/replay;
+- process-restart replay;
+- retry exhaustion;
+- denial no-state-advance across every protected state family;
+- barrier hooks absent from normal hosted composition.
+
+## 12. Allowed completion wording
+
+On complete R04:
+
+~~~text
+Authorization barrier matrix proved locally.
+Authorization producer passed all 28 declared cases.
+Flutter and provider proof remain pending.
+R3 local security is not yet proved.
+~~~
+
+Do not write:
+
+~~~text
+HOSTED_AUTH_READY=true
+Auth0 verified
+Neon accepted
+Render deployed
+MCG-02 complete
+production ready
+Cycle 10 closed
+~~~
+
+## 13. Privacy and diagnostics
+
+Proof output may include:
+
+- safe case IDs;
+- boolean outcomes;
+- safe blocker categories;
+- aggregate counts;
+- synthetic opaque aliases.
+
+It must not include:
+
+- JWTs, claims or JWK bodies;
+- passwords, URLs or provider identifiers;
+- Account facts or payloads;
+- connection strings;
+- private paths.
+
+No new telemetry is authorized.
+
+## 14. Didactic boundary
+
+Do not change:
+
+- permanent didactic memory;
+- KANBAN, glossary, Concept Map or Lecture Register;
+- learner maturity;
+- Cycle 11 UI semantics.
+
+H reports only meanings materialized and meanings deliberately deferred.
