@@ -1,300 +1,393 @@
-<!-- TEMPORAL_MARKER:C10-S01B-INVESTIGATION-2026-07-14 -->
-# A_OPERATIONAL — C10-S01B Local Synchronization Convergence Completion
+<!-- TEMPORAL_MARKER:C10-RETENTION-RECOVERY-INVESTIGATION-2026-07-15 -->
+# A_OPERATIONAL — Cycle 10 Retention and Recovery Policy Investigation
 
 Sequence: FLX-INV-02  
 Role: Operational [O]  
 Branch: `intermid-cycle-recovery`  
-Inspected HEAD: `1af8137e3f7db2d5ee3ecdf3796ae62808e0717c`  
-Required ancestor: `1af8137e3f7db2d5ee3ecdf3796ae62808e0717c`  
-Evidence date: 2026-07-14  
-Authority: candidate/proposed/provisional Operational staging only; no source, provider, permanent-memory or methodology mutation.
+Inspected HEAD: `36b7b22b20e3b308b7b800514f6828a91ea49fcd`  
+Required ancestor: `36b7b22b20e3b308b7b800514f6828a91ea49fcd`  
+Evidence date: 2026-07-15  
+Authority: candidate/proposed/provisional Operational staging only; no policy acceptance, source materialization, provider mutation or secret inspection.
 
 ## 1. Methodology retained
 
-Loaded root `AGENTS.md`, `INDEX.md`, notebook `AGENTS.md`, `METHOD_FOUNDATIONS.md`, `FLUX.md`, `PROMOTION_RULES.md` and `CHAT_PROTOCOL.md` in the full canonical route. Retained:
+Loaded root `AGENTS.md`, `INDEX.md`, notebook `AGENTS.md`, `METHOD_FOUNDATIONS.md`, `FLUX.md`, `PROMOTION_RULES.md` and `CHAT_PROTOCOL.md` in the complete canonical route. Retained:
 
-- Operational owns execution boundaries, dependencies, commands, validation, failure handling, rollback and stop gates.
-- `A_OPERATIONAL.md` is a functional stage, not canon or materialization authority.
-- PRC-01 keeps candidate, proposed, provisional, implemented and validated distinct.
-- Code existence requires repository inspection; synchronization requires real upload/download/convergence evidence.
-- G/H/I are observational evidence and cannot promote themselves.
-- Only this A stage may change in this round; unrelated and untracked work, including `.vscode/`, must remain untouched.
-- Live Neon cannot substitute for disposable local proof.
+- Operational owns execution boundaries, jobs, validation, failure handling, rollback, cost drivers and stop gates.
+- `A_OPERATIONAL.md` is a functional stage for Main reconciliation, not canon or Codex authority.
+- PRC-01 keeps candidate, proposed, provisional, accepted, implemented and validated distinct.
+- Provider connectivity does not prove authorization, retention, recovery, backup or production readiness.
+- G/H/I are observational evidence; J is Main synthesis; permanent-domain promotion requires a later reconciliation.
+- Only this A stage may change. Secrets, connection strings and provider-bearing files are excluded.
 
-Repository comparison reported the required commit and branch as identical. No divergence was observed through the GitHub repository view. Connector inspection cannot establish a local worktree status, unresolved local conflicts or host process state; publication therefore relies on branch/blob concurrency checks rather than a local checkout.
+GitHub comparison reported the required commit and branch as identical before investigation. Connector evidence cannot inspect a local worktree or execute local commands; branch/blob concurrency is the available publication guard.
 
-## 2. Inspected source and evidence
+## 2. Evidence inspected
 
-Controlling notebook evidence:
+Notebook and Operational memory:
 
-- `[M]_STAGE/J_MAIN_STAGE.md`
-- `DEV_STAGE/D_OPS_STAGE.md`, `E_DDC_STAGE.md`, `F_DSN_STAGE.md`
-- `DEV_STAGE/G_OPS_CODEX.md`, `H_DDC_CODEX.md`, `I_DSN_CODEX.md`
-- prior `DEV_STAGE/A_OPERATIONAL.md`
+- `[M]_STAGE/J_MAIN_STAGE.md`.
+- `DEV_STAGE/D_OPS_STAGE.md`, `E_DDC_STAGE.md`, `F_DSN_STAGE.md`.
+- `DEV_STAGE/G_OPS_CODEX.md`, `H_DDC_CODEX.md`, `I_DSN_CODEX.md`.
+- `operational/10_OPERATIONAL_STATE.md`.
+- relevant `04_TODO.md`, `11_OPERATIONAL_RECORD.md`, `12_OPERATIONAL_MODEL.md`.
 
-Implementation evidence inspected directly or through the materialization commit:
+Implementation boundary:
 
-- `services/markei_sync_api/src/http/app.ts`
-- `services/markei_sync_api/src/application/sync_service.ts`
-- `services/markei_sync_api/src/application/auth.ts`
-- `services/markei_sync_api/src/postgres/database.ts`
-- `services/markei_sync_api/migrations/001_init.sql`
-- `infra/sync_lab/**`
-- `contracts/shared_beta/v3/**`
-- `clients/markei_flutter/lib/application/sync/**`
-- `clients/markei_flutter/lib/infrastructure/local/sync/local_sync_repositories.dart`
-- Drift schema v5, identity and Purchase repository changes
-- `clients/markei_flutter/tool/sync_lab.dart`
-- `clients/markei_flutter/test/sync/**`
-- repository scripts, lockfiles and ignore rules reported in G/H/I.
+- server migrations `001_init.sql` and `002_coordination_hardening.sql`;
+- API upload, ordered download, acknowledgement and serializable transaction code;
+- Account/Device RLS and runtime grants;
+- Drift outbox, inbox, cursor and remote Purchase application;
+- HTTP transport, real convergence harness and focused tests.
 
-## 3. Exact current execution boundary
+Official platform documentation consulted 2026-07-15:
 
-### Implemented and evidenced
+- Neon Branching, last updated 2026-02-15;
+- Neon Plans and restore-window documentation as displayed 2026-07-15;
+- Neon `pg_cron` extension documentation as displayed 2026-07-15;
+- PostgreSQL 18 transaction isolation, explicit locking, partitioning and PITR documentation.
 
-- Protocol-v3 identities, status/failure vocabulary and Dart/TypeScript canonical-hash parity exist.
-- Drift schema v5 contains installation metadata, durable submissions, submission membership and inbox records.
-- Installation→current Device selection is explicit; ambiguous migration stops without silent reset.
-- Local Purchase registration still commits Purchase, SyncEvent and PendingEvent atomically.
-- Outbox leasing creates a durable SubmissionId/request hash and reuses an `unknown` submission.
-- Upload-result persistence maps accepted, duplicate, unknown and failed outcomes into durable local state.
-- PostgreSQL migration creates Accounts, Devices, cursor state, Submissions, Events and acknowledgements.
-- Upload service checks authenticated Device identity, Account/Event identity, content hash, exact sequence, duplicate Event and duplicate Submission behavior within one database transaction.
-- Runtime DDL denial and one cross-Account RLS insertion denial were probed locally.
-- Existing static/unit/local tests, Flutter builds and PostgreSQL migration probes passed as recorded by G.
+Provider guarantees are limited to documented branch, restore-window, plan and extension behavior. Current MCG-01 project facts remain human-supplied and unreconciled.
 
-### Stubbed, direct-replay or partial
+## 3. Present implementation versus missing behavior
 
-- `GET /v1/sync/events` returns an empty page with `nextCursor: null`; it performs no authentication, query, limit enforcement or PostgreSQL read.
-- `POST /v1/sync/acknowledgements` returns a fixed duplicate-like status; it performs no authentication, monotonic check or database write.
-- No Flutter HTTP `SyncTransport` adapter connects application use cases to the Fastify API.
-- The two-Device harness replays a page directly into Drift; it does not execute HTTP→API→PostgreSQL→API→Drift.
-- `DriftRemoteEventApplier` records inbox and cursor state but does not materialize the remote immutable Purchase aggregate, Product, Store, People/payment references or derived-list invalidation.
-- `greatestContiguousAppliedCursor()` selects the highest applied cursor, not a proven contiguous prefix; a gap can be acknowledged incorrectly.
-- Upload is not covered by a database-backed HTTP integration test against a running migrated PostgreSQL instance.
-- Timeout-after-server-commit is represented locally as an unknown-outcome retry, not proven across process/network boundaries.
-- PostgreSQL serialization retry, pool exhaustion, crash phases and full Account-isolation paths are absent or partial.
-- Normal API runtime intentionally refuses fixture authentication, but no bounded loopback lab entrypoint injects fixture auth for an executable cross-process story.
+Accepted local evidence establishes:
 
-Operational classification: C10-S01 is implemented as a strong scaffold and locally validated in bounded layers; C10-S01B convergence remains provisional and incomplete.
+- complete HTTP→API→PostgreSQL→API→Drift convergence for one append-only Purchase event;
+- ordered Account cursor allocation and bounded download;
+- per-Device monotonic acknowledgement;
+- durable duplicate Submission/Event handling;
+- atomic remote fact/inbox/cursor apply;
+- bounded serializable/deadlock retry;
+- migration 002 Account/Device constraints, indexes, grants and RLS.
 
-## 4. Shortest safe second-implementation scope
+Not implemented or accepted:
 
-The minimum safe materialization should add only the missing vertical path and its proof:
+- retention duration or cleanup watermark;
+- Device lease, dormancy, expiry, replacement or deletion lifecycle;
+- Account snapshot format, creation, validation or storage;
+- snapshot cut and event-retention relationship;
+- initial bootstrap or expired-cursor rebootstrap;
+- cursor-expired protocol response;
+- cleanup scheduler, locking, retries or metrics;
+- account deletion/erasure workflow;
+- tombstones for future mutable facts;
+- provider-backed retention or restore exercise.
 
-1. Complete PostgreSQL-backed download and acknowledgement services.
-2. Add authenticated Fastify schemas/routes for bounded download and monotonic acknowledgement.
-3. Add a loopback-only fixture-auth lab entrypoint and deterministic Account/two-Device seeding.
-4. Add a Flutter HTTP `SyncTransport` adapter with typed timeout/HTTP/protocol mapping.
-5. Complete remote `purchase.registered` aggregate application in one Drift transaction with inbox and cursor.
-6. Replace highest-cursor acknowledgement with contiguous-prefix calculation.
-7. Add one cross-process system harness using two isolated Drift files, API and disposable PostgreSQL.
-8. Add targeted failure injection and database-backed integration tests.
-9. Correct migration/role/RLS defects discovered by those tests; do not configure Neon.
+Current acknowledgements are evidence of one Device’s applied prefix only. They do not establish that every Device is current, that an unresponsive Device should retain eligibility indefinitely, or that old events may be deleted.
 
-Do not add production auth, background scheduling, edits/deletes, snapshots, retention, deployment or UI redesign.
+## 4. Challenged starting hypothesis
 
-## 5. Proposed checkpoint sequence
+The proposed append-only stream + per-Device acknowledgement + consistent snapshots is operationally credible, but incomplete without a Device eligibility lease and explicit rebootstrap contract.
 
-### CP1 — Server read/ack correctness
+Required corrections:
 
-- Implement `downloadAfter(auth, after, limit)` ordered by `server_cursor`, scoped to Account, excluding or including origin events only by an explicit Main decision.
-- Enforce integer/opaque cursor parsing, positive bounded limit and deterministic `nextCursor` semantics.
-- Implement acknowledgement upsert as monotonic maximum for the authenticated Account/Device.
-- Reject acknowledgement beyond the greatest existing Account cursor and unknown/revoked Device.
+- acknowledgement cannot be the sole cleanup gate because a lost Device can pin storage forever;
+- TTL cannot be the sole gate because an offline eligible Device can be stranded;
+- a snapshot is useful only if its cut cursor is transactionally consistent and all events after the cut remain available;
+- expired cursors must receive a typed `cursor-expired` response containing safe bootstrap metadata, never an empty page;
+- provider PITR restores database history but does not reconstruct a Device’s local apply state or replace application snapshots;
+- revoked/deleted Devices must not block cleanup; dormant Devices require bounded eligibility.
 
-Exit: database-backed route tests prove upload→download→ack for two fixture Devices.
+## 5. Operational alternatives
 
-### CP2 — Local complete apply
+### Alternative A — acknowledgement-gated retention with maximum Device lease
 
-- Decode only `purchase.registered` payload v3.
-- Validate Account, event type/version, aggregate identifiers and content hash before mutation.
-- Reuse existing local Purchase registration/application primitives where possible, but suppress creation of a new outbound event when applying remote facts.
-- Insert Product/Store/reference facts idempotently under the collision policy.
-- Commit fact application, inbox record and cursor advancement atomically.
-- Recompute or invalidate derived Lists after commit.
+Policy:
 
-Exit: remote Purchase facts and Lists survive reopen; duplicate replay creates no duplicate facts or outbound event.
+- retain events until every eligible Device acknowledges them;
+- Device eligibility expires after a bounded renewable lease;
+- cleanup watermark is the minimum acknowledgement across active/dormant-but-eligible Devices.
 
-### CP3 — HTTP transport and lab entrypoint
+Jobs/infrastructure: Device lease sweeper, acknowledgement watermark calculator, cleanup worker, lifecycle audit.
 
-- Implement `HttpSyncTransport` using one pinned Dart HTTP client already approved or newly pinned narrowly.
-- Map connection refusal, timeout-before-response and malformed response to `unknownOutcome` only where server commit is unknowable.
-- Add test-only loopback fixture auth selected by an explicit lab environment flag; default/deployable runtime must continue to refuse fixture auth.
-- Start API as a host Node process against Compose PostgreSQL for easiest process kill, response delay and socket fault injection.
+Storage behavior: efficient for healthy Devices; one eligible inactive Device pins all newer history until lease expiry.
 
-Exit: Flutter use cases execute through real HTTP without direct replay.
+Offline behavior: supported through lease duration; expiry forces rebootstrap but no snapshot mechanism is inherently provided.
 
-### CP4 — Cross-process convergence proof
+Failure modes: lease misclassification can strand a legitimate Device; absent snapshots make rebootstrap expensive or impossible after deletion.
 
-- Create two isolated Drift files with one Account and distinct Devices.
-- A registers offline, uploads, receives an injected timeout after server commit, retries the same SubmissionId and receives the stored result.
-- B downloads bounded pages, atomically applies the Purchase, acknowledges contiguous cursor, and both clients reopen.
-- Compare immutable Purchase/Product/Store/reference facts and derived Lists deterministically.
+Complexity/privacy: moderate; lifecycle metadata reveals last-contact timing but no payload is required.
 
-Exit: complete HTTP→API→PostgreSQL→API→Drift convergence passes.
+Testability: good locally with synthetic clocks and acknowledgements.
 
-### CP5 — Resilience and pre-Neon hardening
+Rollback: stop cleanup, extend leases, preserve events. Deleted history cannot be recovered from this policy alone.
 
-- Add serialization transaction retry with bounded attempts and jitter-free deterministic test control.
-- Cover pool acquisition timeout/exhaustion and API unavailability.
-- Expand RLS/constraint probes for select/update/insert and wrong Account/Device paths.
-- Re-run migration from empty database and verify runtime role cannot DDL or bypass Account scope.
+Cost drivers: event bytes, indexes, retained history, cleanup scans and compute wakeups.
 
-Exit: C10-S01B local evidence green; MCG-01 remains a separate human gate.
+Confidence: medium-low as a complete policy; missing safe rebootstrap.
 
-## 6. Executable local convergence story
+### Alternative B — fixed TTL plus periodic snapshots
 
-Recommended topology:
+Policy:
+
+- retain events for a fixed interval regardless of Device acknowledgement;
+- periodically create Account snapshots;
+- expired Devices rebootstrap from the latest valid snapshot plus later events.
+
+Jobs/infrastructure: snapshot builder, validator, replacement/expiry worker, TTL cleanup, bootstrap endpoint.
+
+Storage behavior: predictable upper bound proportional to event rate × TTL plus snapshot generations.
+
+Offline behavior: incremental sync only within TTL; older Devices rebootstrap.
+
+Failure modes: cleanup can strand Devices if no validated snapshot covers the deletion boundary; fixed TTL ignores Device state and low-activity Accounts.
+
+Complexity/privacy: moderate-high; snapshots duplicate Account facts and increase exposure surface.
+
+Testability: strong with deterministic cut and clock fixtures.
+
+Rollback: pause deletion and retain previous validated snapshot generation. Already-deleted events require snapshot or database restore.
+
+Cost drivers: snapshot size/frequency, event TTL, validation reads, transfer and compute.
+
+Confidence: medium; predictable but insufficiently eligibility-aware.
+
+### Alternative C — hybrid minimum TTL, Device lease and snapshot coverage
+
+Policy:
+
+- retain every event for at least a minimum TTL;
+- eligible Device acknowledgements may delay cleanup beyond that minimum;
+- Device eligibility is bounded by a renewable lease;
+- deletion requires a validated Account snapshot with cut cursor at or beyond the proposed cleanup boundary;
+- retain snapshot cut and every event after that cut;
+- expired Device cursors require rebootstrap.
+
+Jobs/infrastructure: lifecycle sweeper, snapshot builder/validator, cleanup planner, cleanup executor, bootstrap endpoint and audit metrics.
+
+Storage behavior: bounded by minimum TTL, event rate, maximum lease delay and snapshot generations; safer than pure TTL and less permanently pinned than pure acknowledgement gating.
+
+Offline behavior: incremental within retained range; rebootstrap after lease/cursor expiry.
+
+Failure modes: snapshot validation bug, incorrect eligible-Device set, cleanup racing new events, or premature snapshot replacement.
+
+Complexity/privacy: highest, but metadata can remain payload-free and snapshots can stay inside Account-scoped database storage.
+
+Testability: highest because every safety predicate is explicit.
+
+Rollback: disable cleanup, extend leases, retain two validated snapshot generations and restore prior migration checkpoint.
+
+Cost drivers: event volume, snapshot amplification, indexes, periodic compute, transfer and restore-window storage.
+
+Confidence: medium-high as the preferred hypothesis; durations and provider scheduling remain unresolved.
+
+## 6. Preferred provisional policy
+
+Recommend Alternative C for Main consideration.
+
+Proposed invariants:
+
+1. `active`: recently authenticated and lease-valid; acknowledgement participates in cleanup.
+2. `dormant`: lease-valid but outside recent-contact threshold; still blocks cleanup until lease expiry.
+3. `expired`: lease ended; no longer blocks cleanup and must rebootstrap.
+4. `revoked`: authorization denied immediately; never blocks cleanup.
+5. `deleted`: server Device metadata erased or minimized after audit boundary; never blocks cleanup.
+
+Account cleanup boundary:
 
 ```text
-Docker Compose: PostgreSQL 18 only
-Host process: Node 24 Fastify API on 127.0.0.1
-Host test process: Flutter/Dart system harness
-Local data: two temporary Drift files
-Auth: deterministic loopback-only fixture verifier
+eligible_ack_floor = minimum ack of active + dormant eligible Devices
+snapshot_cut = cursor of newest fully validated snapshot
+minimum_ttl_floor = oldest cursor still protected by minimum age
+safe_delete_through = minimum(eligible_ack_floor, snapshot_cut, minimum_ttl_floor)
 ```
 
-PostgreSQL-only Compose is the shortest safe choice for C10-S01B because API restart, kill, delay and timeout-after-commit injection are simpler and faster from the host test runner. Adding the API to Compose may be reconsidered for CI parity after the local proof; it is not required to establish convergence.
+The formula is conceptual: implementation must represent “delete only events old enough, acknowledged by every eligible Device, and covered by a validated snapshot.” Empty eligible sets still require snapshot coverage and minimum TTL.
 
-Proposed orchestration:
+No exact duration is proposed yet. Minimum and maximum offline support are policy decisions constrained by user expectations, event growth, snapshot transfer size and provider limits. An initial local fixture should test multiple synthetic periods rather than encode a production promise.
+
+## 7. Snapshot and rebootstrap state machine
+
+Snapshot states:
 
 ```text
-docker compose -f infra/sync_lab/compose.yaml up -d --wait
-npm --prefix services/markei_sync_api run migrate:lab
-npm --prefix services/markei_sync_api run seed:lab
-npm --prefix services/markei_sync_api run start:lab
-flutter test test/sync/http_postgres_two_device_system_test.dart
-npm --prefix services/markei_sync_api run probe:privileges
-npm --prefix services/markei_sync_api run probe:isolation
-docker compose -f infra/sync_lab/compose.yaml down --volumes
+building → validating → active → superseded → expired
+              ↓
+            failed
 ```
 
-Script names are proposed and must match the eventual package scripts. The harness should own API-process teardown and temporary Drift deletion even after failure.
+Creation requirements:
 
-## 7. Fixture and fault-injection matrix
+- acquire one Account-scoped coordination lock;
+- select a cut cursor under a consistent transaction snapshot;
+- materialize complete immutable Account facts through that cut;
+- store protocol/schema versions, cut cursor, content hash, counts and creation time;
+- validate reconstruction against source counts/hashes before activation;
+- keep the prior active snapshot until the replacement is validated.
+
+Catch-up rule: events committed after the cut remain in the event stream and are downloaded after snapshot application.
+
+Bootstrap states:
+
+```text
+no-local-state | cursor-expired
+→ request bootstrap manifest
+→ download snapshot resumably
+→ verify hash/version/counts
+→ apply into isolated local transaction or replacement database
+→ persist snapshot cut cursor
+→ download events after cut
+→ acknowledge contiguous cursor
+→ reopen and compare
+```
+
+Interrupted download resumes or restarts without mutating authoritative local facts. Interrupted apply leaves the prior local database usable; activation occurs only after complete validation.
+
+## 8. Cleanup runbook
+
+1. Select one Account with `FOR UPDATE SKIP LOCKED` or an equivalent bounded job claim.
+2. Acquire Account advisory/row lock; never hold a global cleanup lock.
+3. Recompute Device eligibility and acknowledgement floor inside the transaction.
+4. Verify one active validated snapshot and its cut/version/hash.
+5. Compute candidate deletion boundary from age, eligible acknowledgements and snapshot coverage.
+6. Delete in bounded cursor batches; record only Account alias/hash, cursor range, counts, duration and outcome.
+7. Commit; retry serialization/deadlock failures with bounded attempts.
+8. Re-read high-water and snapshot metadata; alert on invariant drift.
+9. Preserve at least the active and immediately previous validated snapshot generation until a later safe replacement checkpoint.
+
+Scheduling is unresolved. `pg_cron` may be available, but an external worker is preferable for explicit deployment ownership, retries, observability and portability unless MCG-01 proves a supported scheduler and Main accepts database-owned jobs.
+
+## 9. Recovery and erasure runbooks
+
+Device loss/reinstall:
+
+- revoke old Device separately from creating replacement Device;
+- replacement receives new Device identity and sequence epoch;
+- never reuse old Device credentials or infer continuity from installation name;
+- bootstrap replacement from snapshot plus later events.
+
+Account deletion:
+
+- stop new authorization and event acceptance;
+- mark deletion requested with idempotent operation identity;
+- revoke Devices;
+- delete snapshots, events, submissions, acknowledgements and Account facts in a verified order;
+- record only non-payload deletion evidence permitted by policy;
+- verify zero Account rows through runtime and administrative probes;
+- provider backup/PITR residual lifetime must be disclosed separately because logical deletion does not instantly rewrite historical backups.
+
+Future edits/deletes:
+
+- tombstone/deletion event semantics are required before mutable synchronization;
+- snapshot compaction must preserve deletion outcomes so removed facts do not reappear after rebootstrap;
+- no tombstone TTL should be chosen before Device lease and snapshot coverage are accepted.
+
+## 10. Failure-injection matrix
 
 | Case | Injection | Required evidence |
 | --- | --- | --- |
-| Account/two Devices | deterministic SQL seed; no production auth | authenticated A/B accepted; wrong Account denied |
-| committed upload timeout | commit transaction, delay/drop response once | same SubmissionId retry returns stored result; one Event/cursor |
-| repeated SubmissionId | same ID/hash then changed hash | equivalent stored result; terminal hash conflict |
-| sequence gap | submit expected+1 | typed rejection; no Event/cursor/submission mutation |
-| duplicate/reordered download | repeat and reverse page items | one fact/inbox; contiguous cursor does not skip gap |
-| crash before apply | throw before transaction | no inbox/fact/cursor mutation |
-| crash during apply | throw inside transaction after partial writes | full rollback; retry succeeds |
-| crash after apply | terminate after commit before ack | reopen retains facts/inbox; ack resumes safely |
-| serialization failure | force SQLSTATE 40001 once | whole transaction retries with bounded count |
-| pool exhaustion | hold all pool clients past acquire timeout | typed retryable service-unavailable; no unsafe duplicate |
-| unavailable API | stop/refuse loopback connection | local registration remains; submission stays retryable |
-| revoked/unknown Device | mutate fixture state | upload/download/ack denied without data disclosure |
-| Account isolation | select/insert/update under wrong session Account | zero rows or policy denial for every path |
+| stale active Device | freeze contact and ack clocks | blocks cleanup until lease expiry |
+| expired Device | advance synthetic clock | stops blocking; incremental request returns `cursor-expired` |
+| snapshot race | append events during build | cut remains consistent; later events retained |
+| invalid snapshot | corrupt hash/count/version | never activates; no cleanup boundary advances |
+| interrupted build | kill worker mid-write | partial snapshot remains non-active and reclaimable |
+| interrupted download | drop chunks/restart client | resumable/restartable; local facts unchanged |
+| interrupted apply | throw before activation | prior local database remains usable |
+| cleanup race | concurrent append/ack/revoke | bounded lock/serializable retry preserves invariants |
+| duplicate job | two workers claim Account | one effective cleanup; idempotent audit result |
+| old protocol | snapshot/event version unsupported | typed upgrade/rebootstrap stop, no silent skip |
+| lost Device | revoke then reconnect | authorization denied; no cleanup pin |
+| account erase | fail each deletion phase | idempotent resume; no cross-Account deletion |
+| PITR exercise | restore disposable branch/time | database state recoverable; local Device state not claimed recovered |
 
-## 8. Migration corrections before Neon
+## 11. MCG-01 sanitized dependencies
 
-Likely required corrections, provisional until integration tests run:
+Before Main chooses durations or provider-backed jobs, receive only:
 
-- Add foreign keys from `submissions`, `sync_events` and `device_acknowledgements` to `(account_id, device_id)` and Accounts where missing.
-- Add explicit checks for supported `event_type`, `payload_version`, non-empty batches and bounded payload sizes at the API/schema boundary.
-- Enable/force RLS, or otherwise prove equivalent scoped access, on every Account-owned runtime table, not only `sync_events`.
-- Ensure runtime role cannot mutate Accounts/Devices enrollment state unless a dedicated administrative path is intended.
-- Add indexes for `(account_id, server_cursor)` download and acknowledgement validation.
-- Use forward-only migration ledger/checksum and transactionally fail on partial migration.
-- Avoid role creation inside provider migrations where the migration role cannot create roles; separate bootstrap grants from schema migration for Neon portability.
-- Set transaction-local Account identity before every scoped query and reset it through transaction completion.
-- Configure statement, lock and pool-acquisition timeouts explicitly in the lab.
+- development branch alias/availability and whether it has explicit expiry;
+- region and PostgreSQL major version;
+- plan branch, storage, compute and monitoring limits;
+- restore-window/PITR and manual snapshot availability;
+- migration-role and runtime-role capabilities, including extension creation limits;
+- whether `pg_cron` or another scheduler is supported and who owns it;
+- scale-to-zero/compute wake implications for scheduled work;
+- teardown owner and expected deletion date.
 
-No destructive rewrite or downgrade is permitted. Disposable server databases may be recreated; local Drift facts must not be reset.
+Official Neon documentation currently states branches are isolated copy-on-write clones, may have expiration dates, and have plan-dependent restore windows and storage/compute limits. These are platform capabilities, not evidence that the current MCG-01 environment possesses or correctly configures them.
 
-## 9. Smallest validation command matrix
+## 12. Proposed C10-S02/C10-S03 implementation slice
 
-```text
-git diff --check
-flutter analyze
-flutter test test/sync test/infrastructure/local_database_migration_test.dart \
-  test/infrastructure/local_device_identity_repository_test.dart \
-  test/local_purchase_repository_test.dart
-npm --prefix services/markei_sync_api run format:check
-npm --prefix services/markei_sync_api run lint
-npm --prefix services/markei_sync_api run typecheck
-npm --prefix services/markei_sync_api test
-npm --prefix services/markei_sync_api run test:postgres
-npm --prefix services/markei_sync_api run test:system
-npm audit --prefix services/markei_sync_api --omit=dev
-python -m unittest discover tests
-flutter build windows --release
-flutter build apk --debug
-docker compose -f infra/sync_lab/compose.yaml down --volumes
-```
+### C10-S02 — disposable retention/snapshot proof
 
-Full repository validation remains appropriate before publication; the focused matrix should run first for rapid checkpoints.
+- forward-only local PostgreSQL migration for Device lifecycle, snapshot metadata/data and cleanup-job claims;
+- protocol additions for bootstrap manifest, snapshot transfer and typed cursor expiry;
+- synthetic Accounts with 0, 1, 2 and many Devices and high event volume;
+- deterministic clock and event-size fixtures;
+- snapshot build/validate/replace proof;
+- expired-cursor rebootstrap into a fresh Drift file;
+- cleanup safety proof across active, dormant, expired and revoked Devices;
+- failure matrix above, including concurrent append and interrupted jobs;
+- no Neon, production auth, deployment or ordinary user data.
 
-## 10. Rollback and stop gates
+Rollback checkpoint: cleanup disabled by default; migration additive; events preserved; previous snapshot retained; local-only app remains available.
 
-Rollback checkpoints:
+### C10-S03 — bounded provider probe after Main reconciliation
 
-- API routes can be disabled while local-only operation remains functional.
-- HTTP transport remains opt-in/injected; default application composition stays local-only until acceptance.
-- Server lab is disposable and removed with volumes.
-- Local schema corrections are additive; representative copies are preserved before migration tests.
-- Unknown submissions and PendingEvents remain durable through process failure.
+Only after MCG-01 is accepted:
 
-Stop immediately on:
+- apply accepted migration to disposable development branch;
+- seed synthetic payload-free test data;
+- run role, scheduler, snapshot, cleanup, quota/latency and teardown probes;
+- perform one disposable restore/PITR exercise if plan permits;
+- return sanitized aliases, versions, hashes, counts, timings and pass/fail only.
 
-- branch divergence, conflicting A-stage update or unexpected changed path;
-- secret or payload leakage;
-- runtime role DDL or cross-Account access;
-- cursor advancement without committed fact/inbox application;
-- acknowledgement over a gap;
-- retry using a new SubmissionId after unknown outcome;
-- duplicate creating a second fact/event/cursor;
-- local migration reset/data loss;
-- fixture auth reachable outside loopback test mode;
-- unbounded retry, pool wait, batch size, memory or cost;
-- loss of local-only startup and Purchase registration.
-
-## 11. C10-S01B versus MCG-01
-
-C10-S01B completion requires only disposable local evidence:
-
-- real database-backed upload/download/ack routes;
-- complete remote Purchase apply;
-- Flutter HTTP transport;
-- timeout-after-commit idempotency;
-- two-Device cross-process convergence and reopen;
-- bounded serialization/pool/unavailable-service behavior;
-- comprehensive Account-isolation and migration-role probes;
-- clean teardown and preserved local-only fallback.
-
-MCG-01 begins only after those gates pass. MCG-01 concerns isolated Neon branch/database selection, role creation, provider-compatible migration, limits/cost review, secret storage and redacted acceptance evidence. A live provider is not part of C10-S01B and cannot repair missing local proof.
-
-## 12. Unresolved Main decisions
-
-- Whether a downloading Device receives its own events or the API filters by origin Device.
-- Exact bounded download page size and payload/body limits.
-- Cursor wire representation and response semantics when a page is empty.
-- Collision behavior for stable Product/Store/reference facts beyond exact-equivalent reuse.
-- Whether remote apply should call a dedicated no-outbox repository method or a shared aggregate writer with an explicit origin mode.
-- Whether API-in-Compose is required later for CI after host-process proof.
-- Whether migration bootstrap owns role creation or MCG-01 human provisioning owns it.
-- Exact retry counts/timeouts and which protocol failures map to retryable unknown outcome.
-- Scope of RLS versus mandatory server-scoped SQL on all Account-owned tables.
-
-## 13. Confidence and evidence boundaries
-
-- **High confidence:** download and acknowledgement endpoints are placeholders; source inspection is direct.
-- **High confidence:** no Flutter HTTP transport and no complete Purchase application are present in the inspected implementation/materialization inventory.
-- **High confidence:** current two-Device proof is local direct replay, not cross-process convergence; G states this explicitly.
-- **High confidence:** current contiguous acknowledgement calculation is unsafe under gaps because it selects the greatest applied cursor.
-- **Medium-high confidence:** PostgreSQL-only Compose plus host API is the shortest fault-injectable topology; this is an Operational hypothesis, not accepted architecture.
-- **Medium confidence:** listed migration corrections are required before Neon; final set depends on database-backed route/isolation tests.
-- **Low/unknown confidence:** host-specific process commands and tool availability after commit; GitHub inspection cannot execute the local lab.
-
-## 14. Recommended second implementation
-
-Authorize one bounded C10-S01B materialization containing CP1–CP5 only. Treat CP4 cross-process convergence as the decisive acceptance gate. Keep sync disabled by default and preserve local-only operation. On green evidence, write G/H/I and return to Main with status:
+Exact Codex stop point:
 
 ```text
-C10-S01B_LOCAL_CONVERGENCE_PROVED
-MCG-01_NOT_STARTED
+local retention/snapshot/rebootstrap matrix green
+→ G/H/I written
+→ cleanup remains disabled by default
+→ no provider mutation unless new D/E/F explicitly authorizes accepted MCG-01 probe
+→ stop for Main reconciliation
 ```
+
+## 13. Metrics, cost and observability
+
+Payload-free metrics:
+
+- event rows/bytes by Account bucket;
+- oldest/newest retained cursor age;
+- eligible Device counts by lifecycle state;
+- acknowledgement lag in cursor count/time;
+- snapshot bytes, build/validation duration and cut lag;
+- cleanup candidate/deleted row counts and duration;
+- bootstrap bytes/duration/retry count;
+- serialization/deadlock/job retry counts;
+- cursor-expired responses and rebootstrap outcomes.
+
+Approximate cost drivers only: retained event and snapshot bytes, index amplification, restore-history storage, compute wakeups, snapshot/cleanup scans, branch count, network transfer and monitoring retention. No exact price should be copied into policy; recheck the active plan at acceptance.
+
+## 14. Stop conditions and unresolved Main decisions
+
+Stop before provider-backed implementation on:
+
+- incomplete or contradictory MCG-01 evidence;
+- any credential, URL or payload exposure;
+- no validated snapshot covering proposed deletion;
+- cleanup capable of deleting newer-than-cut or unacknowledged eligible history;
+- cursor expiry represented as empty success;
+- rebootstrap not atomic/restartable;
+- unknown Device lifecycle or lease durations presented as accepted;
+- scheduler ownership, retries or teardown undefined;
+- migration incompatible with current protocol/schema;
+- account erasure unable to distinguish live rows from provider backup retention;
+- ordinary user data entering fixtures.
+
+Main must decide:
+
+- minimum TTL, Device lease and maximum supported incremental-offline duration;
+- dormancy renewal and user-visible Device lifecycle semantics;
+- snapshot representation, generation count, compression and size ceiling;
+- internal database versus external object storage;
+- bootstrap replacement versus merge behavior;
+- scheduler ownership and frequency;
+- cleanup batch and lock strategy;
+- provider restore exercise requirement;
+- account deletion evidence and backup-residual disclosure;
+- protocol-version compatibility window;
+- whether C10-S02 and C10-S03 remain separate units.
+
+## 15. Explicit status
+
+Everything in this stage beyond the accepted C10-S01B implementation boundary is investigative and speculative. Alternative C is the preferred Operational hypothesis with medium-high confidence, not an accepted retention policy, implementation instruction, provider configuration or production-readiness claim. Main reconciliation is required before D/E/F or Codex authority exists.
