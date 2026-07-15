@@ -1,239 +1,253 @@
-# E_DDC_STAGE — C10-S03A Semantic Materialization Authority
+# E_DDC_STAGE — C10-S03A-R1 Semantic Authority
 
-> Sequence: FLX-INV-02 → Main D/E/F activation
-> Unit: hosted authentication, membership and Device authorization semantics
-> Authority: controlling semantic/test contract for Codex, jointly with D/F
+> Unit: transaction-safe local hosted-authentication correction
+> Baseline: `d411e4ee92d5977984913b9bba21cc9aa1c37bbf`
+> Joint authority: D/E/F
 > Learner maturity: unchanged
+> Provider acceptance: not authorized
 
-## 1. Evidence boundary
+## 1. Controlling correction
 
-C10-S03A may prove a production-shaped authentication and authorization composition only through
-synthetic local JWT/JWKS, disposable PostgreSQL and opt-in lab clients. It cannot claim:
+The earlier G/H/I wording overstated local readiness. An identity, membership or Device check that
+committed before the protected operation is not authorization for that later operation.
 
-- a real Auth0 login succeeded;
-- Render or Neon accepted the application;
-- Android/Windows callbacks work against the provider;
-- hosted development synchronization is complete;
-- production readiness, backup, universal delivery or every Device being current.
+Use this exact rule:
 
-MCG-01 is accepted only as sanitized provider-preparation evidence. MCG-02 remains pending.
-Repository work does not change KANBAN status, learner maturity or lecture history.
+> A Device is authorized only for one named operation, inside the database transaction that
+> commits or rejects that operation.
 
-## 2. Required identity distinctions
+Starting status remains:
 
-| Term | Exact C10-S03A meaning | Must not imply |
+```text
+C10-S03A_CONTRADICTED_STOP
+MCG-02_HOSTED_PROOF_NOT_PERFORMED
+```
+
+## 2. Identity distinctions
+
+| Term | Meaning | Does not mean |
 | --- | --- | --- |
-| `signed-in` | external authorization flow returned a credential to a client | Markei API accepted it |
-| `token-obtained` | client possesses an API access-token candidate | token is valid/current |
-| `token-accepted` | API verified signature, issuer, audience and time contract | membership exists |
-| `external-identity` | exact verified issuer+subject mapped to opaque Markei identity | Account, Person or Device |
-| `membership-confirmed` | identity has exactly one active Markei Account membership | Device is enrolled |
-| `account-selection-required` | more than one active membership exists and no selection is accepted | authentication failed |
-| `enrollment-required` | membership exists but Installation has no active Device binding | sync is permitted |
-| `device-enrolled` | idempotent enrollment committed or replayed one Device result | permanent authorization |
-| `device-authorized` | active membership and Device permit the current operation | request committed |
-| `request-accepted` | named operation committed or replayed equivalent server result | another Device applied it |
-| `facts-synchronized` | named facts completed accepted upload/download/apply boundary | provider backup/all-Device equality |
-| `acknowledged` | one Device committed a contiguous cursor acknowledgement | universal convergence |
-| `device-revoked` | server authorization is withdrawn for future hosted operations | local facts were erased |
-| `device-expired` | retention lease/eligibility ended under policy | explicit revocation occurred |
-| `unknown-outcome` | request may have committed but response is absent | creating a new identity is safe |
-| `hosted-auth-ready` | complete local S03A harness passed with production composition | MCG-02/provider proof passed |
+| Auth0 tenant | provider workspace/configuration boundary | Markei Account |
+| external user | person authenticated by a provider | Account, Person fact or Device |
+| access-token candidate | credential bytes held by a client | valid or authorized request |
+| external principal | verified issuer+subject | AccountId or DeviceId |
+| external identity | opaque Markei mapping for a principal | active membership |
+| Markei Account | application data/authorization boundary | database login |
+| membership | identity-to-Account authorization relation | Device enrollment |
+| InstallationId | stable local app-installation identifier | secret or authorization proof |
+| DeviceId | server-owned synchronization actor | hardware identifier or Auth0 object |
+| database role | migrator/runtime PostgreSQL login | Markei user or Account |
 
-Existing `saved-local`, `waiting-upload`, `server-accepted`, `downloaded-applied`,
-`duplicate-ignored`, `acknowledged`, `cursor-expired`, recovery phases and outcomes remain unchanged.
+Two Markei Accounts in tests are PostgreSQL rows. They have no passwords. Database passwords
+belong only to the disposable migrator/runtime test roles or later human-managed provider roles.
 
-## 3. Required states
+## 3. Required vocabulary
 
-Use typed states equivalent to:
+Use the narrowest accurate state:
 
 ```text
 locally-available
-authentication-unavailable
+authentication-required
 authenticating
 authentication-cancelled
-signed-in
 token-obtained
-token-accepted
-token-invalid
+token-rejected
+principal-verified
 membership-required
 membership-disabled
-membership-confirmed
 account-selection-required
+membership-confirmed
 enrollment-required
 enrolling
 device-enrolled
-device-authorized
 device-revoked
 device-expired
-synchronization-permitted
-synchronization-denied
+operation-authorizing
+device-authorized-for-transaction
+operation-committed
+operation-denied
 service-unavailable
 unknown-outcome
-hosted-auth-ready
+local-security-proof-passed
+provider-proof-pending
+hosted-proof-passed
 ```
 
-Do not use `authenticated` alone where the evidence is only external sign-in or token possession.
+Do not use bare `authenticated` when only token possession or provider sign-in is known.
 
-## 4. Outcome and safe-action rules
+Do not use bare `device-authorized` outside the transaction and named-operation boundary.
 
-Every operation preserves one outcome:
+## 4. State progression
+
+The normal conceptual flow is:
 
 ```text
-applied | duplicate-equivalent | not-applied | unknown
+locally-available
+→ authentication-required
+→ authenticating
+→ token-obtained
+→ principal-verified
+→ membership-confirmed
+→ enrollment-required (first installation only)
+→ device-enrolled
+→ operation-authorizing
+→ device-authorized-for-transaction
+→ operation-committed
 ```
 
-Required mappings:
+These are application/test states, not values a human enters into Auth0, Neon or Render.
 
-| Condition | Outcome | Retry/safe action |
+Provider signup alone does not create a Markei Account, membership or Device. For the local lab,
+controlled setup provisions synthetic Account/membership rows and the enrollment API creates the
+Device. Production Account signup/invitation remains a Main decision outside R1.
+
+## 5. Outcome contract
+
+Every operation reports one outcome:
+
+```text
+applied
+duplicate-equivalent
+not-applied
+unknown
+```
+
+| Condition | Outcome | Safe action |
 | --- | --- | --- |
-| missing/malformed/expired/unverifiable token | `not-applied` | reacquire credential; preserve local queue |
-| wrong issuer/audience/algorithm | `not-applied` | stop and correct environment; do not change facts |
-| JWKS temporarily unavailable before verification | `not-applied` | retry same operation after bounded delay |
-| no membership | `not-applied` | request controlled membership provisioning |
-| multiple memberships | `not-applied` | stop with `account-selection-required`; no guessed Account |
-| enrollment needed | `not-applied` | use explicit enrollment identity |
-| equivalent enrollment replay | `duplicate-equivalent` | reuse returned DeviceId |
-| enrollment identity with different hash | `not-applied` | conflict; preserve evidence |
-| timeout after possible enrollment commit | `unknown` | query/replay same EnrollmentRequestId |
-| active Device authorized | no completion claim yet | execute named operation |
-| revoked/expired Device | `not-applied` | preserve local facts; stop hosted mutation |
-| equivalent revocation replay | `duplicate-equivalent` | retain revoked state |
-| API unavailable before send | `not-applied` | retain local pending work |
-| timeout after possible sync commit | `unknown` | replay/query original SubmissionId |
-| local S03A terminal checklist passes | `applied` evidence | emit `HOSTED_AUTH_READY=true` only |
+| missing/malformed/unverifiable token | not-applied | reacquire credential; preserve local work |
+| valid principal, no membership | not-applied | request membership/provisioning |
+| multiple memberships without selection | not-applied | select Account in a later authorized flow |
+| no active Device binding | not-applied | run idempotent enrollment |
+| disabled/removed membership | not-applied | stop hosted operation |
+| unknown/revoked Device | not-applied | stop; do not silently enroll a replacement |
+| enrollment replay, same hash | duplicate-equivalent | reuse recorded Device/result |
+| enrollment replay, different hash | not-applied | surface conflict |
+| response lost after possible commit | unknown | query/replay same identity; never invent another |
+| API unavailable | not-applied/unknown by phase | preserve local facts and queue |
+| committed protected operation | applied | report only that named operation |
 
-Authentication cancellation is non-destructive and creates no membership, Device or sync fact.
+## 6. Transaction semantics
 
-## 5. HTTP versus domain meaning
+`device-authorized-for-transaction` requires all of the following in one transaction:
 
-- `401` expresses missing or invalid API authentication.
-- `403` expresses authenticated but unauthorized membership/role/Device state.
-- `409` expresses identity/hash collision or forbidden state transition.
-- `429` expresses bounded attempt policy; do not claim provider throttling.
-- `503` expresses dependency/service unavailability and never Device revocation.
+- exact verified principal input;
+- active external identity;
+- active Account membership;
+- Account ownership of the requested resource;
+- active Installation/Device enrollment when required;
+- active Device status;
+- protected operation commit.
 
-HTTP is transport evidence, not sufficient user language. Foreign and absent Account/Device
-resources must produce the same privacy-preserving denial shape. No response reveals whether an
-unrelated identity, membership, Device, snapshot or recovery session exists.
-
-## 6. Enrollment and revocation semantics
-
-Enrollment:
-
-- requires a verified token and one active membership;
-- binds one stable local InstallationId to one server Device under the Account;
-- treats InstallationId as identifier, never credential or hardware fingerprint;
-- stores and replays one result for the same EnrollmentRequestId/hash;
-- never silently replaces an existing active Device;
-- preserves local facts and pending work on failure.
-
-Reinstall without the persisted InstallationId is a new installation. It does not inherit old
-Device sequence, acknowledgement, inbox, outbox, recovery session or authorization.
-
-Revocation:
-
-- denies future hosted sync/recovery after transaction recheck;
-- does not sign the external identity out globally;
-- does not delete Account membership unless separately changed;
-- does not remotely erase the local Drift database;
-- does not authorize replacement/reactivation;
-- removes the Device from retention eligibility according to existing policy semantics.
-
-## 7. Local-first and credential behavior
-
-During authentication, JWKS, API or database outage:
-
-- local registration remains available when Drift is healthy;
-- facts remain `saved-local` or `waiting-upload`;
-- EventId and SubmissionId remain stable;
-- no hosted state is fabricated;
-- after authorization recovery, retry uses the existing identity;
-- session expiry never means local changes were lost;
-- logout clears hosted credential state but does not delete local Account facts.
-
-The Flutter authentication SDK is hidden behind application ports. Tests use fakes. Public Auth0
-domain, Native ClientId and API audience are configuration, not secrets; access/refresh/ID tokens,
-authorization codes and PKCE verifiers are credentials and must never be logged or committed.
-
-## 8. Diagnostics and privacy
-
-Permitted neutral diagnostics:
+Revocation/removal races must have a serializable explanation:
 
 ```text
-platform-class
-operation
-typed-code
-outcome
-safe-action
-HTTP class
-token-validation stage without claims
-membership/enrollment/Device state
-redacted correlation alias
-cursor range
-counts and timings
-HOSTED_AUTH_READY=true|false
+operation commits before revocation/removal
+OR
+revocation/removal commits first and operation is denied
 ```
 
-Forbidden:
+There must be no successful operation authorized by stale committed state.
 
-- access, refresh or ID token;
-- Authorization header, authorization code or PKCE verifier;
-- raw issuer subject, email/profile claim or full Device/Account identifier;
-- database URL, password, provider credential, private key or JWKS body;
-- Product/Purchase/Store/Person/Payment facts or snapshot bytes;
-- provider hostname/tenant identifier in committed test output where unnecessary.
+## 7. JWT/JWKS semantics
 
-Health responses contain only generic liveness/readiness.
+- `token-obtained` is client state only.
+- `principal-verified` requires signature, issuer, audience, algorithm and time checks.
+- Unknown key, unavailable key source or malformed/oversized key response does not become an
+  accepted principal.
+- A cached valid key may support a bounded outage only under the frozen cache policy.
+- Key refresh failure remains a generic authentication failure to clients.
+- Never distinguish signature/key/provider internals in public errors.
+- Never log a token, claims, JWKS body, subject, provider URL or credential.
 
-## 9. Required semantic tests
+## 8. Account and Device isolation
 
-Name and prove behavior equivalent to:
+- Account A identity cannot read or mutate Account B.
+- A request-supplied AccountId is a selector to validate, not authority.
+- A request-supplied DeviceId is an identifier to validate, not authority.
+- One external identity may later have multiple memberships, but R1 must not silently select one.
+- Two installations for one membership become two Devices through explicit enrollment.
+- Device revocation withdraws future hosted authorization; it does not erase local facts.
+- Lost InstallationId does not authorize reusing an old Device automatically.
 
-- `signed in does not mean token accepted`;
-- `token accepted does not mean membership confirmed`;
-- `membership confirmed does not mean Device enrolled`;
-- `exactly one active membership derives Account authority`;
-- `multiple memberships require explicit Account selection`;
-- `equivalent enrollment replay returns the same Device`;
-- `conflicting enrollment replay creates no Device`;
-- `unknown enrollment outcome queries the same identity`;
-- `revoked Device differs from expired Device`;
-- `revocation does not erase local facts`;
-- `foreign and absent Device have the same denial shape`;
-- `membership removal blocks an in-flight mutation`;
-- `JWKS outage never becomes fixture authentication`;
-- `authentication cancellation creates no hosted state`;
-- `token expiry preserves pending local events`;
-- `API outage preserves local registration and SubmissionId`;
-- `hosted auth ready is not provider proof`;
-- `server acceptance remains distinct from peer application`;
-- `application snapshot remains distinct from provider backup`.
+## 9. Flutter/local-first semantics
 
-## 10. Neutral lab boundary
+- Local registration remains available without authentication or API availability.
+- Hosted enrollment is opt-in during R1.
+- Pending local events retain their original local Device/event identity.
+- Enrollment does not silently rewrite or reassign pending work.
+- Cancellation returns to a truthful local state.
+- Service unavailable preserves local facts, queued work and durable enrollment progress.
+- Lab success must not be presented as Auth0 callback or hosted-provider success.
 
-The opt-in Flutter hosted-auth lab may expose only enough neutral control to initiate login later,
-logout, enroll/query status and run a named sync probe. It must not become a product page or claim
-completion before evidence. No cards, banners, navigation redesign, Device list/manager, account
-picker, visual severity, accessibility redesign, Analytics or polished retry presentation.
+## 10. Failure presentation and privacy
 
-Cycle 11 owns all product-facing authentication, Account selection, enrollment/revocation,
-synchronization progress and recovery presentation.
+Public failures remain closed and neutral. They may expose:
 
-## 11. H report requirements
+```text
+code
+operation
+outcome
+retryable
+safeAction
+correlationId
+```
 
-H must record:
+They must not expose:
 
-- vocabulary/states actually materialized;
-- named semantic tests and results;
-- typed HTTP/domain mapping;
-- neutral diagnostics and privacy/logging inspection;
-- unsupported completion wording intentionally absent;
-- local-first behavior preserved;
-- no Cycle 11 UI/UX or Analytics;
-- KANBAN, learner maturity and lecture history unchanged;
-- local proof versus MCG-02 boundary;
-- deviations and unresolved semantic decisions.
+```text
+token or claims
+issuer/subject
+JWKS response or key data
+provider/database URL
+membership existence across Accounts
+SQL/constraint detail
+Purchase or snapshot payload
+```
 
-Required terminal wording is exactly one J state. No report may claim real Auth0, Neon, Render,
-Android callback, Windows callback or hosted development acceptance from C10-S03A.
+Cross-Account, unknown identity and foreign Device failures must not become enumeration oracles.
+
+## 11. Required semantic tests
+
+Name tests that prove:
+
+- token possession is not membership;
+- membership is not Device enrollment;
+- enrollment is not perpetual authorization;
+- authorization is transaction/named-operation scoped;
+- stale authorization cannot cross a committed transaction;
+- removal/revocation races have deterministic outcomes;
+- cross-Account requests reveal no foreign existence;
+- equivalent enrollment replay reuses one result;
+- conflicting replay is rejected without mutation;
+- response loss preserves unknown-outcome semantics;
+- local work survives authentication cancellation and API outage;
+- local proof never claims provider proof.
+
+## 12. Prohibited completion language
+
+Until a later Main reconciliation accepts R1, do not claim:
+
+```text
+hosted-auth-ready
+Auth0 configured and working
+Render deployment accepted
+Neon hosted synchronization accepted
+MCG-02 complete
+production authentication ready
+Cycle 10 closed
+```
+
+On decisive local success, only this pair is allowed:
+
+```text
+C10-S03A_R1_LOCAL_SECURITY_PROVED
+MCG-02_PROVIDER_PROOF_PENDING
+```
+
+## 13. Didactic and UI boundary
+
+- No KANBAN maturity change follows from code/test evidence.
+- Do not modify glossary, Concept Map or lecture history during materialization.
+- No Cycle 11 navigation, account-selection, Device-management or polished retry UX.
+- Minimal typed lab diagnostics are allowed.
+- Actual Auth0 callback/login observations belong to later human MCG-02 evidence.

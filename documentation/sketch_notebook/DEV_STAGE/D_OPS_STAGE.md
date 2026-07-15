@@ -1,469 +1,370 @@
-# D_OPS_STAGE — C10-S03A Operational Materialization Authority
+# D_OPS_STAGE — C10-S03A-R1 Corrective Operational Authority
 
-> Sequence: FLX-INV-02 → Main D/E/F activation
-> Unit: local hosted-authentication readiness
-> Baseline: `75ce8a10fd9e143ff421252796405b3d4a12cb2c`
-> Authority: controlling Operational contract for Codex, jointly with E/F
+> Sequence: human-authorized direct Main restaging after J reconciliation
+> Unit: transaction-safe local hosted-authentication correction
+> Baseline: `d411e4ee92d5977984913b9bba21cc9aa1c37bbf`
+> Joint authority: D/E/F
 > Provider authority: none
+> Target size: compact; ordinary files remain below 600 lines
 
-## 1. Objective and terminal boundary
+## 1. Method and evidence boundary
 
-Materialize a disposable local proof that the production-shaped Markei composition can:
+This unit corrects the contradicted C10-S03A result recorded by J. The human explicitly requested
+direct D/E/F restaging; the otherwise prescribed A/B/C corrective refresh is therefore omitted and
+recorded as a bounded methodology deviation. Scope comes only from:
+
+- permanent Operational, Didactic and Design Cycle 10 checkpoints;
+- `[M]_STAGE/J_MAIN_STAGE.md` at or after `75fbba6`;
+- the prior G/H/I C10-S03A reports;
+- repository truth at the baseline above.
+
+Do not reinterpret the previous terminal claim as accepted. Starting state:
 
 ```text
-verify Auth0-compatible access tokens
-→ resolve explicit Account membership
-→ enroll/authorize one installation Device
-→ run existing sync and recovery routes
-→ revoke and deny a Device
-→ compile and start through a hosted-safe entrypoint
+C10-S03A_CONTRADICTED_STOP
+MCG-02_HOSTED_PROOF_NOT_PERFORMED
 ```
 
-Complete only when the decisive harness emits:
+## 2. Objective and terminal status
+
+Correct and prove locally:
 
 ```text
-HOSTED_AUTH_READY=true
+bounded JWT/JWKS verification
+→ transaction-scoped membership and Device authorization
+→ protected sync/recovery operation in the same transaction
+→ separate migrator/runtime database authorities
+→ two-Account isolation and concurrency failures
+→ provider-neutral Flutter enrollment lab
 ```
 
-and Codex reports:
+Success reports exactly:
 
 ```text
-C10-S03A_LOCAL_HOSTED_AUTH_READY
+C10-S03A_R1_LOCAL_SECURITY_PROVED
 MCG-02_PROVIDER_PROOF_PENDING
 ```
 
-No Auth0, Render or Neon connection is allowed. A missing local decisive gate reports
-`C10-S03A_PARTIAL` with the exact blocker.
-
-## 2. Baseline controls
-
-- Preserve event payload v3, opaque `c10b:*` cursors, recovery format 1 and Drift v6 facts.
-- Preserve migrations 001–003 byte-for-byte.
-- Preserve local-only operation and every existing C10-S01B/S02 test.
-- Preserve fixture authentication only in tests and explicit loopback lab entrypoints.
-- Never make fixture authentication selectable by hosted environment variables.
-- Use synthetic identities, Accounts, Devices, keys and facts only.
-- No production retention policy, live cleanup, object storage, UI redesign or Analytics.
-- Keep ordinary handwritten source near 250 lines; split by responsibility. Generated code may
-  exceed the ordinary boundary.
-
-## 3. CP1 — Closed contracts and configuration
-
-Implement closed, bounded TypeScript and Dart contracts for:
-
-- verified external identity (`issuer`, `subject`, token metadata needed for authorization only);
-- membership resolution and exactly-one-active-membership outcome;
-- Device enrollment start/result/status;
-- Device authorization and revocation;
-- typed authentication/authorization failures;
-- hosted configuration validation;
-- neutral hosted-proof diagnostics.
-
-Required server environment names:
+Any missing decisive gate reports:
 
 ```text
-NODE_ENV
-PORT
-MARKEI_SYNC_DATABASE_URL
-MARKEI_AUTH_ISSUER
-MARKEI_AUTH_AUDIENCE
-MARKEI_AUTH_JWKS_URI
-MARKEI_PUBLIC_ORIGIN
-MARKEI_LOG_LEVEL
+C10-S03A_R1_PARTIAL
 ```
 
-`MARKEI_AUTH_JWKS_URI` may be omitted only when derived safely from the pinned issuer. Hosted
-configuration must reject:
+with the exact blocker. Do not emit `HOSTED_AUTH_READY=true` or claim provider readiness.
 
-- non-HTTPS issuer/JWKS/public origin outside explicit loopback test composition;
-- invalid or unbounded PORT;
-- empty audience;
-- credential-bearing origin/issuer/JWKS URLs;
-- malformed database URL;
-- unknown environment mode;
-- any migrator-specific variable supplied to the web composition.
+## 3. Non-negotiable provider and secret boundary
 
-Errors name the invalid variable but never echo its value. Add a variable-name-only `.env.example`
-only if consistent with repository conventions; it must contain no usable value or hostname.
+- Do not access Auth0, Neon, Render or any public hosted service.
+- Do not request, inspect or use provider credentials.
+- Do not read `.vscode/`, `NEON_DOC.md`, `NEON_SESSION.ps1`, `.env` or user-private helpers.
+- Do not place a Neon hostname, tenant, audience, client ID, token, password or URL in source,
+  tests, reports, logs or commands.
+- Use disposable PostgreSQL and generated local RSA/JWKS fixtures only.
+- Database passwords belong to database roles, not Markei Accounts.
+- Two test Markei Accounts are ordinary synthetic rows and require no passwords.
+- Hosted configuration may expose variable names only.
+- Keep loopback services bound to loopback and tear them down.
+- No provider migration, deployment, user provisioning or manual UI action is authorized.
 
-Success evidence:
+## 4. Baseline controls
 
-- valid synthetic config loads;
-- each missing/malformed variable fails before listen;
-- fixture fallback is impossible;
-- configuration/log snapshots contain no values classified as secrets.
+- Preserve migrations 001–004 byte-for-byte unless a schema correction is unavoidable.
+- If schema correction is required, add forward-only migration 005; never edit 001–004.
+- Preserve event payload v3, opaque `c10b:*` cursor and recovery format 1.
+- Preserve Drift v7 facts, outbox, inbox, cursor and recovery state.
+- Preserve ordinary local-first Flutter composition.
+- Preserve fixture authentication only in tests and explicit loopback labs.
+- Preserve C10-S01B and C10-S02 synchronization/recovery behavior.
+- Do not add Account signup, invitation, account-selection UI or Device-management UI.
+- Do not begin Cycle 11 UI/UX, Analytics, background sync or production retention work.
 
-## 4. CP2 — Forward-only PostgreSQL migration 004
-
-Create:
+Before editing, Codex must confirm:
 
 ```text
-services/markei_sync_api/migrations/004_hosted_identity_enrollment.sql
+current branch and HEAD
+required baseline is an ancestor
+working tree scope
+existing migration hashes
+existing G/H/I contradiction
 ```
 
-Do not edit 001–003. Use existing naming, ledger and role conventions.
+Stop on divergence, overlapping user changes, secret-bearing files or contradictory D/E/F.
 
-Implement structures equivalent to:
+## 5. CP1 — Transaction-scoped authorization
 
-### External identity
-
-- opaque IdentityId;
-- bounded exact issuer and subject;
-- unique `(issuer, subject)`;
-- status `active|disabled`;
-- creation/update timestamps;
-- no email/profile claim as identity authority.
-
-### Account membership
-
-- AccountId + IdentityId ownership;
-- role `owner|member`;
-- status `active|disabled|removed`;
-- unique active relationship and bounded timestamps/version;
-- no Auth0 role claim as database authority.
-
-### Device enrollment
-
-- AccountId + stable InstallationId unique binding;
-- DeviceId composite FK to existing Account-scoped Device;
-- state `active|revoked|replaced` with generation/timestamps;
-- no implicit replacement or reactivation.
-
-### Enrollment request
-
-- EnrollmentRequestId bound to Account+Identity+Installation;
-- canonical request hash;
-- stored Device result and state;
-- explicit expiry/created/completed timestamps;
-- same identity/hash replay and different-hash conflict.
-
-### Security event
-
-- append-only synthetic-safe codes for membership/enrollment/revocation outcomes;
-- actor identity, Account, optional Device, correlation alias and timestamp;
-- no bearer token, email, raw claims, payload or provider credential.
-
-Required migration properties:
-
-- composite ownership FKs and indexes;
-- bounded checks and monotonic states;
-- least-privilege runtime grants;
-- RLS on every Account-bearing new table;
-- explicit Account/identity predicates;
-- runtime can resolve membership, enroll its installation and read status;
-- owner/member revocation rules remain application-authorized and transaction-checked;
-- runtime cannot create memberships, alter identity status, perform DDL or cross Accounts;
-- migration ledger records 004 exactly once;
-- migration failure rolls back schema and ledger together.
-
-Validate:
-
-1. fresh 001→002→003→004;
-2. existing 001→003 then 004;
-3. repeated runner/ledger behavior;
-4. deliberate mid-migration failure rollback on disposable copy;
-5. runtime DDL and membership-provision denial;
-6. per-table RLS isolation and no-context fail-closed behavior;
-7. pooled-compatible transaction-local identity/Account/Device context;
-8. migrator/runtime role separation.
-
-## 5. CP3 — JWT/JWKS verification
-
-Implement a production `Auth0JwtVerifier` behind a narrow verification port.
-
-Required behavior:
-
-- accept exactly one `Authorization: Bearer <access-token>` header;
-- bound header/token/JWK response sizes;
-- pin configured issuer, audience and `RS256`;
-- validate signature, issuer, audience, `exp` and `nbf`;
-- use an injected Clock and explicit small skew;
-- select key by `kid` from issuer-bound HTTPS JWKS;
-- bounded connect/request timeout and cache lifetime;
-- coalesce concurrent refreshes;
-- refresh once for unknown `kid`, then fail closed;
-- continue through temporary JWKS outage only with a still-valid cached key capable of verifying;
-- map failures to typed privacy-safe errors;
-- never return raw token or full claims beyond the verifier boundary.
-
-Use local generated RSA key/JWKS fixtures served from loopback. Never call Auth0 in tests.
-
-Required cases:
-
-- valid token;
-- missing/duplicate/malformed bearer header;
-- oversized token;
-- invalid signature;
-- wrong issuer/audience/algorithm;
-- expired/not-yet-valid token;
-- absent/malformed `sub`;
-- absent/unknown `kid`;
-- key rotation;
-- cached-key success during bounded outage;
-- outage with no valid key;
-- timeout, malformed and oversized JWKS;
-- concurrent unknown-key refresh does not stampede.
-
-## 6. CP4 — Identity, membership and authorization
-
-Split external verification from Markei authorization. The verifier must not fabricate AuthContext.
-
-Required trust path:
-
-1. verify token into ExternalPrincipal;
-2. resolve exact issuer+subject to active ExternalIdentity;
-3. resolve active memberships;
-4. zero membership → `membership-required`;
-5. more than one → `account-selection-required`;
-6. exactly one → derive AccountId;
-7. enrollment routes may proceed without an existing Device;
-8. protected routes resolve Installation/Device binding and active existing Device;
-9. only then create AccountId+DeviceId AuthContext;
-10. recheck membership and Device inside the mutation transaction.
-
-Do not accept AccountId or DeviceId from token claims. A body/header DeviceId may be treated only
-as a requested identifier and must equal the database-authorized binding.
-
-Apply authorization to every existing route:
-
-- submission upload;
-- incremental download;
-- acknowledgement;
-- capabilities;
-- rebootstrap start/status/chunk/complete.
-
-Keep explicit SQL predicates and transaction-local RLS context. Test membership disable/removal and
-Device revocation racing an in-flight request; the mutation must fail or serialize before commit.
-
-## 7. CP5 — Enrollment and revocation routes
-
-Implement bounded versioned routes equivalent to:
+The existing flow authorizes in one committed transaction and mutates in another. Replace that
+trust boundary with a transaction-scoped operation contract equivalent to:
 
 ```text
-GET  /v1/identity
-POST /v1/devices/enroll
-GET  /v1/devices/enrollments/:requestId
-GET  /v1/devices/:deviceId/status
-POST /v1/devices/:deviceId/revoke
+verifyBearerToken(request) -> ExternalPrincipal
+
+database.inTransaction(tx =>
+  authorizeOperation(tx, principal, requestedAccount, requestedDevice)
+  -> TransactionAuthorizedContext
+
+  performProtectedOperation(tx, authorizedContext, request)
+)
 ```
 
-Enrollment request includes:
+Requirements:
 
-- contract version;
-- stable UUIDv4 InstallationId;
-- UUID EnrollmentRequestId;
-- platform class `android|windows|test`;
-- bounded app identifier/version metadata;
-- canonical request hash derived server-side from closed fields.
+- JWT verification may occur before the database transaction.
+- AccountId is never accepted from token claims.
+- DeviceId is never accepted as authority merely because it appears in a request.
+- Resolve exact issuer+subject to active external identity inside the operation transaction.
+- Resolve or select the requested active Account membership inside that transaction.
+- Recheck active enrollment and Device status inside that transaction.
+- Lock membership/enrollment/Device rows, or use an equally explicit concurrency control that
+  prevents a revoke/remove operation from committing without a deterministic ordering.
+- Perform the protected database operation through the same transaction object.
+- Do not commit authorization and later pass a trusted context into another transaction.
+- Do not allow services to open hidden nested transactions.
+- Preserve RLS/account context and explicit Account predicates.
+- Deny disabled/removed membership, unknown/revoked Device and mismatched Installation/Device.
+- An authorization failure must cause no operation mutation or acknowledgement advancement.
 
-Rules:
-
-- active owner/member may enroll its own installation;
-- server allocates DeviceId and initial Device state;
-- one active Account+Installation binding;
-- equivalent replay returns same Device result;
-- hash mismatch conflicts;
-- query resolves unknown outcome without creating another Device;
-- concurrent equivalent enrollment creates one Device;
-- expired/failed request cannot be silently reused;
-- bounded per-principal enrollment attempt policy returns `rate-limited` without enumeration.
-
-Revocation rules:
-
-- owner may revoke a Device in the same Account;
-- member may revoke only its currently authorized Device;
-- same revocation replay is equivalent;
-- foreign/unknown target returns the same denial;
-- revoked Device immediately fails sync/recovery and no longer constrains retention eligibility;
-- no endpoint reactivates, replaces or deletes Device/local facts.
-
-## 8. CP6 — Hosted-safe Fastify entrypoint
-
-Create a production entrypoint and composition distinct from `lab.ts` and `recovery_lab.ts`.
-
-It must:
-
-- load HostedConfig before allocating network resources;
-- construct pooled `pg.Pool` with bounded size/timeouts;
-- construct JWT verifier, repositories, authorization and existing sync/recovery composition;
-- include no FixtureAuthVerifier import or selection path;
-- bind `0.0.0.0` and `PORT`;
-- use generic structured logs with redaction or keep logging disabled if safer;
-- close Fastify and pool on SIGTERM/SIGINT;
-- fail non-zero on invalid startup;
-- expose minimal `/health/live` and generic `/health/ready`;
-- refuse readiness if required migration 004 is absent or DB probe fails;
-- never run migrations automatically.
-
-Package scripts must provide:
+Apply the invariant to every protected hosted path, including:
 
 ```text
-npm run build
-npm start
-npm run test:hosted-local
+event upload
+event download
+acknowledgement
+capabilities/retention metadata where Account scoped
+rebootstrap start/status/chunk/complete
+Device status
+Device revocation
 ```
 
-Compile to ignored output. `npm start` must run compiled JavaScript using production dependencies;
-it must not require `tsx`, TypeScript or other devDependencies.
+Enrollment may begin without a Device but must transactionally recheck identity and membership.
+Revocation must transactionally verify actor authority and target Account ownership.
 
-Production-start smoke must prove:
+Add a route inventory test so a newly added protected route cannot silently omit the guard.
 
-- invalid config fails before listen;
-- valid synthetic local config listens;
-- liveness reveals no provider/database details;
-- readiness changes generically with database availability;
-- signal shutdown releases port and pool;
-- lab environment variables cannot switch hosted auth to fixtures.
+## 6. CP2 — Bounded JWT/JWKS verification
 
-## 9. CP7 — Drift v7 and Flutter ports
+Preserve `jose` and pin `RS256`, issuer and audience. Materialize an explicit bounded JWKS
+retrieval boundary, or an equivalent adapter that proves all limits before untrusted bytes reach
+the verifier.
 
-Add an additive Drift v7 migration only as needed for:
-
-- stable UUIDv4 InstallationId independent from DeviceId;
-- current hosted enrollment request/result/status metadata;
-- public hosted environment alias if protocol state requires it.
-
-Preserve all v6 facts, Device sequences, outbox, submissions, inbox, cursors and recovery progress.
-Migration must never reset or reassign existing Device/Event identities. If an old installation lacks
-InstallationId, generate one once during application logic after migration and persist atomically.
-
-Add application ports equivalent to:
-
-- `ExternalAuthenticationSession` — acquire/renew/logout credential without exposing SDK types;
-- `AccessTokenSource` — return current API access token;
-- `DeviceEnrollmentTransport` — identity/enroll/query/status/revoke;
-- `HostedIdentityRepository` — durable InstallationId and enrollment result;
-- `HostedSyncGuard` — prevent hosted sync until membership and Device are authorized.
-
-Add an opt-in development hosted-auth lab composition. It may use a neutral lab-only surface to:
-
-- start Auth0 Universal Login later in C10-S03B;
-- display only typed states and sanitized aliases;
-- enroll/query one installation;
-- invoke existing synchronization ports;
-- logout without deleting local facts.
-
-No production page/navigation/dialog/banner/Device manager or visual polish. Normal composition
-remains local-only unless an explicit development build flag and complete public configuration are
-present. Native clients contain no client secret.
-
-Tests use fake authentication/session adapters. Provider SDK calls must not occur in ordinary unit
-tests or C10-S03A decisive proof. Add platform runner configuration only where the official SDK
-requires it and verify no secret is embedded.
-
-## 10. CP8 — Decisive local hosted-composition harness
-
-Extend the disposable PostgreSQL 18 lab with a loopback RSA/JWKS issuer and production composition.
-Do not call application services directly as a substitute for HTTP authorization.
-
-Required story:
-
-1. apply 001→004 and seed two Accounts plus synthetic identities/memberships through migrator
-   fixtures;
-2. Principal A valid token resolves exactly one Account;
-3. Installation A enrolls; identical retry returns the same Device;
-4. conflicting enrollment request is denied;
-5. Installation B enrolls separately under the same Account;
-6. A uploads a complete synthetic Purchase through HTTP;
-7. B downloads, atomically applies and acknowledges it;
-8. restart API/JWKS and prove identity continuity and idempotent retry;
-9. owner A revokes B; B is denied upload/download/ack/recovery while local facts remain;
-10. wrong-Account principal and forged Device cannot observe or mutate rows;
-11. Auth/JWKS outage leaves local registration and pending submission available;
-12. restored authorization reuses the same submission identity and converges;
-13. health, logs and diagnostics remain sanitized;
-14. close/reopen local databases and compare named facts;
-15. emit `HOSTED_AUTH_READY=true`;
-16. tear down keys, databases, containers, volumes, ports and generated artifacts.
-
-Required fault floor:
-
-- all CP3 token/JWKS cases;
-- no/disabled/multiple membership;
-- unknown, revoked, expired and mismatched Device;
-- cross-Account identity, Device, event, acknowledgement, snapshot and session;
-- enrollment replay/hash mismatch/concurrency/expiry/rate limit;
-- revocation replay and authorization race;
-- timeout after committed submission/enrollment;
-- API/JWKS/database unavailable;
-- pool exhaustion and bounded serialization retry;
-- malformed/oversized body and response;
-- runtime DDL/membership-provision denial;
-- RLS no-context and per-table cross-Account denial;
-- process interruption/startup/shutdown;
-- v6→v7 migration/reopen/failure/no-reset;
-- existing retention/recovery regression.
-
-## 11. CP9 — Validation matrix
-
-Run all applicable checks and record exact commands/results/counts:
-
-### TypeScript/API
+Configuration must include bounded, validated values for:
 
 ```text
-npm ci
-npm run format:check
-npm run lint
-npm run typecheck
-npm test
-npm run build
-npm run test:hosted-local
-npm audit --omit=dev
-production dependency install/start smoke
+token byte ceiling
+JWKS response byte ceiling
+JWKS request timeout
+cache maximum age
+refresh cooldown
+maximum redirects (prefer zero)
 ```
 
-### Flutter
+Never log bearer tokens, claims, JWKS bodies, provider URLs or configuration values.
+
+Required named cases:
 
 ```text
-dart run build_runner build --delete-conflicting-outputs
-dart format --set-exit-if-changed lib test
-flutter analyze
-flutter test
-flutter build windows --release
-flutter build apk --debug
+valid RS256 token
+missing authorization header
+duplicate authorization values
+wrong/malformed scheme
+empty/malformed token
+oversized token
+invalid signature
+wrong issuer
+wrong audience
+wrong algorithm
+expired token
+not-yet-valid token
+missing/oversized subject
+missing kid
+unknown kid
+known-key cache hit
+key rotation and bounded refresh
+JWKS timeout
+JWKS unavailable with valid cached key
+JWKS unavailable without usable key
+malformed JWKS JSON
+oversized JWKS response
+duplicate/conflicting key identifiers
+redirect refusal
+parallel unknown-kid refresh coalescing
+refresh failure and later bounded retry
 ```
 
-Run platform builds only when host-supported and report exclusions precisely. A build is not real
-Auth0 callback/runtime acceptance.
+Use deterministic time and generated local keys. Tests must not rely on the public network.
 
-### Protected and repository checks
+## 7. CP3 — Separate database authorities
+
+The decisive harness must use two distinct disposable PostgreSQL login roles and connections:
 
 ```text
-python -m unittest discover -s tests
-git diff --check
-tracked and staged secret scan
-disposable resource/port/process teardown
+lab_migrator_url
+  migrations, migration ledger and controlled synthetic provisioning only
+
+lab_runtime_url
+  Fastify pool and application transactions only
 ```
 
-Do not install missing protected-project dependencies merely to improve a report unless already
-authorized by repository conventions.
+Requirements:
 
-## 12. Security and file discipline
+- Generate disposable credentials inside the harness; never reuse Neon values.
+- Apply 001→002→003→004, and 005 only if created, through the migrator.
+- Seed synthetic external identities, Accounts and memberships through controlled setup authority.
+- Close or isolate migrator access before starting the hosted HTTP service.
+- Start Fastify using only the runtime pool.
+- Do not expose migrator variables to the hosted composition.
+- Runtime must be denied DDL, role administration, migration-ledger mutation, membership
+  provisioning and worker-only cleanup/snapshot actions.
+- Runtime must succeed for authorized HTTP operations under explicit transaction context.
+- RLS/no-context and cross-Account probes must fail closed.
 
-- Never log tokens, authorization codes, PKCE verifiers, raw claims, emails, database URLs,
-  passwords, keys, provider hostnames, Purchase facts or snapshot bytes.
-- Do not commit generated RSA private keys, databases, tokens, `.env`, compiled output or logs.
-- Bind all disposable services to loopback.
-- Keep identifiers synthetic and fixtures conspicuous.
-- Do not modify permanent documentation, methodology, J/D/E/F, 00/05/06 or unrelated files.
-- Do not edit protected Python/PySide6 application or database.
-- Preserve `.vscode/` and untracked provider material without reading it.
+Record role names as synthetic aliases only. Never record passwords or database URLs.
 
-## 13. G report requirements
+## 8. CP4 — Decisive two-Account/race harness
 
-Replace G/H/I only after implementation. G must include:
+Use two synthetic Markei Accounts and at least two external principals:
 
-- baseline and final SHA;
-- complete Git-derived changed-path inventory including G/H/I;
-- dependency, migration, Drift and contract versions;
-- exact validation commands/results/counts and host exclusions;
-- JWT/JWKS, identity, membership, enrollment, revocation and denial matrix counts;
-- migration/RLS/role and v6→v7 evidence;
-- hosted start/shutdown and health evidence;
-- two-installation HTTP convergence counts/cursors;
+```text
+Account A: identity A, installations A1 and A2
+Account B: identity B, installation B1
+```
+
+These are rows in disposable PostgreSQL, not Auth0 tenants or administrator accounts.
+
+Prove over real loopback HTTP:
+
+1. Valid identity A resolves only Account A.
+2. Valid identity B resolves only Account B.
+3. A cannot request B membership, Device, events, cursor, snapshot or recovery session.
+4. B cannot request A resources.
+5. Installation A1 enrollment succeeds.
+6. Equivalent enrollment replay returns the same Device/result.
+7. Same request identity with a different hash returns conflict without mutation.
+8. Concurrent equivalent enrollment produces one committed Device binding.
+9. Concurrent conflicting enrollment has one deterministic winner/outcome.
+10. Installation A2 enrolls as a distinct Device in Account A.
+11. Authorized upload/download/acknowledgement succeeds under runtime identity.
+12. Membership disable/remove before operation denies it.
+13. Membership remove racing an operation has a serializable outcome: either the authorized
+    operation commits before removal or removal commits first and the operation is denied.
+14. Device/enrollment revocation before operation denies it.
+15. Revocation racing an operation has the same deterministic ordering rule.
+16. Revoked Device cannot use synchronization or recovery routes.
+17. Restart preserves enrollment idempotency and revocation state.
+18. Unknown outcomes are safely queryable/replayable where the existing contract permits.
+19. No denied request advances cursor, acknowledgement, sequence or recovery state.
+20. Existing local facts remain available when the API is unavailable.
+
+Use barriers/hooks at defined transaction points rather than timing sleeps for race tests.
+
+## 9. CP5 — Provider-neutral Flutter lab boundary
+
+Complete only the missing application/infrastructure seam required for local proof:
+
+- an opt-in lab `ExternalAuthenticationSession`;
+- an opt-in lab `AccessTokenSource`;
+- a bounded HTTP `DeviceEnrollmentTransport`;
+- a coordinator using `HostedIdentityRepository` and `HostedSyncGuard`;
+- durable enrollment request/progress/result across reopen;
+- equivalent replay after response loss;
+- conflict, cancellation, unavailable service and rejected credential handling;
+- no reassignment of pending local events to a new server Device;
+- ordinary local composition remains independent and functional.
+
+The lab may use generated local tokens and loopback HTTP. It must not add:
+
+```text
+Auth0 SDK dependency or invocation
+real callback/protocol registration
+provider tenant/client identifiers
+native client secret
+production token storage
+account-selection or Device-management UI
+polished Cycle 11 presentation
+```
+
+If the existing ports cannot support safe orchestration, change them minimally and test the
+dependency direction. Do not broaden into production sign-up.
+
+## 10. CP6 — Regression and validation floor
+
+Run and record exact commands/results for:
+
+- TypeScript formatting, lint, typecheck and full tests;
+- focused JWT/JWKS and transaction-race tests;
+- decisive local hosted harness using distinct migrator/runtime identities;
+- migrations fresh 001→004/005, incremental, failure rollback and ledger checks;
+- per-table RLS and privilege probes;
+- Drift regeneration only if schema declarations changed;
+- Dart formatting, Flutter analysis and complete Flutter tests;
+- provider-neutral Flutter lab tests including restart and API unavailable;
+- existing recovery/convergence harness;
+- Android debug build when host-supported;
+- Windows release build when host-supported;
+- protected Python regressions;
+- `npm audit --omit=dev` with environment noted;
+- `git diff --check`;
+- tracked/staged secret scan;
+- disposable-resource teardown verification.
+
+Host-blocked work remains `host-unvalidated`; it does not become product failure or success.
+
+Decisive diagnostic:
+
+```text
+LOCAL_TRANSACTION_AUTHORIZATION=true
+LEAST_PRIVILEGE_HTTP=true
+TWO_ACCOUNT_ISOLATION=true
+JWKS_FAILURE_FLOOR=true
+FLUTTER_HOSTED_LAB=true
+```
+
+## 11. G/H/I evidence contract
+
+Replace only the existing G/H/I reports after implementation.
+
+G records:
+
+- baseline/final SHA and complete changed-path inventory;
+- dependency and migration versions/hashes;
+- exact validation commands, results, counts and exclusions;
+- route inventory and authorization/race cases;
+- JWT/JWKS case counts;
+- migrator/runtime role and denial evidence without credentials;
+- Account/identity/installation/Device counts and cross-Account denials;
+- Flutter lab/reopen evidence;
 - secret scan and teardown;
-- confirmation no Auth0/Neon/Render/provider credential or mutation occurred;
-- deviations, unresolved risks and one J terminal state.
+- confirmation no provider was accessed.
 
-Commit implementation and G/H/I as one bounded commit unless a safe intermediate source-only
-checkpoint is necessary. Push only `intermid-cycle-recovery`; never force-push.
+H records:
+
+- exact semantic states from E;
+- transaction-scoped authorization wording;
+- named failure mappings and safe actions;
+- local-first/privacy behavior;
+- unsupported readiness wording intentionally absent;
+- no learner maturity or Cycle 11 promotion.
+
+I records:
+
+- final dependency direction and transaction ownership;
+- JWT/JWKS boundary and limits;
+- migrations/Drift/protocol versions;
+- role separation and RLS responsibilities;
+- enrollment/revocation idempotency and concurrency behavior;
+- Flutter lab containment;
+- deviations and provider/manual deferrals.
+
+## 12. File, commit and stop discipline
+
+- Modify only files required by this corrective unit plus G/H/I.
+- Keep permanent documentation, methodology, J and A/B/C unchanged.
+- Keep migrations 001–004 immutable; add 005 only with explicit necessity recorded.
+- Preserve unrelated and untracked user files.
+- Do not stash, reset, clean, force-push or overwrite provider helpers.
+- Review the complete diff and secret scan before commit.
+- Commit one bounded C10-S03A-R1 unit; push only the intended branch, never force.
+- Report final SHA and exact changed paths.
+
+Stop before any Auth0, Neon or Render action. Successful local proof authorizes only a new Main
+reconciliation; it does not itself activate MCG-02.
