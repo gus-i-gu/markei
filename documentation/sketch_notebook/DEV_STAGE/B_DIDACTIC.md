@@ -1,11 +1,12 @@
-<!-- TEMPORAL_MARKER:C10-RETENTION-RECOVERY-DIDACTIC-INVESTIGATION-2026-07-15 -->
+<!-- TEMPORAL_MARKER:C10-S03-DIDACTIC-INVESTIGATION-2026-07-15 -->
 
-# B_DIDACTIC — Cycle 10 Retention and Recovery Semantics
+# B_DIDACTIC — C10-S03 Hosted Authentication and Synchronization Semantics
 
 > Sequence: FLX-INV-02
 > Role: Didactic/UX Chat [A]
+> Unit: C10-S03 — Hosted Development Authentication and Synchronization Proof
 > Branch: `intermid-cycle-recovery`
-> Baseline / inspected HEAD: `36b7b22b20e3b308b7b800514f6828a91ea49fcd`
+> Baseline / inspected HEAD: `de1319dc05e1f04ba84b6cfd681f5b72a4568f88`
 > Authority: Didactic/UX investigation only
 > Writable surface: this file only
 > Knowledge state: candidate / proposed / provisional
@@ -18,290 +19,277 @@ The complete route `INDEX → METHOD_FOUNDATIONS → FLUX → PROMOTION_RULES �
 
 Retained constraints:
 
-- Didactic authority owns learning meaning, terminology and misconception prevention;
-- this functional stage may propose language but cannot select architecture or policy;
+- Didactic authority owns semantic truth, learner-facing distinctions and misconception prevention;
+- this functional stage may propose vocabulary and evidence requirements but cannot select architecture, provider policy or UI composition;
+- PRC-01 keeps candidate, proposed, provisional, accepted, implemented, validated, blocked and deferred distinct;
 - repository, test and provider evidence prove only their named project boundary;
-- implementation success cannot manufacture learner explanation, prediction, transfer or mastery;
-- candidate, proposed, provisional, accepted, implemented, validated, blocked and deferred remain distinct;
-- no KANBAN transition or lecture-history entry is authorized;
+- successful configuration, login or synchronization cannot manufacture learner explanation, prediction, transfer or mastery;
+- no KANBAN maturity transition or lecture-history entry is authorized;
 - only `DEV_STAGE/B_DIDACTIC.md` may be replaced;
-- source, permanent Didactic memory, Main stages and every other stage remain untouched;
-- Cycle 11 owns polished visual and interaction composition.
+- source, tests, permanent Didactic memory, Main stages and every other stage remain untouched;
+- Cycle 11 owns polished authentication, Device-management and synchronization presentation.
 
-This report is explicitly speculative. It defines semantic obligations for later Main reconciliation and materialization; it does not describe implemented retention UI or an accepted recovery policy.
+This report is explicitly speculative. It defines semantic obligations for later Main reconciliation and Codex materialization; it does not describe implemented hosted authentication or accepted production UX.
 
-## 2. Controlling evidence boundary
+## 2. Current semantic evidence
 
-Main accepts one decisive local convergence story:
+Accepted project evidence establishes:
 
-```text
-Drift A → Flutter HTTP → Fastify/PostgreSQL → Flutter HTTP → Drift B
-```
+- local Purchase registration remains usable without a hosted service;
+- synthetic lab authentication can exercise local convergence and recovery mechanisms;
+- complete local convergence and one bounded local rebootstrap story have been proved through Drift, HTTP, Fastify and disposable PostgreSQL;
+- server acceptance, peer application, Device acknowledgement, convergence and recovery remain distinct states;
+- typed `auth-required`, `device-revoked`, `cursor-expired`, `unknown-outcome` and recovery vocabulary already exist in the protocol boundary;
+- local pending, uploading or unknown work is protected from destructive rebootstrap;
+- no production AuthVerifier, Account-membership service, Device-enrollment flow or hosted synchronization composition is accepted;
+- Auth0 and Render preparation alone proves neither login success nor API authorization nor hosted convergence;
+- MCG-01 manual configuration remains active but unreconciled as complete.
 
-The proved story includes complete Purchase aggregate application, duplicate-equivalent replay, acknowledgement by Device B and deterministic reopen evidence.
+Provider-dependent terminology retained from official Auth0 documentation:
 
-It does not establish:
+- Universal Login is an authorization-server-hosted login flow used to authenticate an external identity;
+- an access token is intended for a named API and must be validated by that API;
+- failed JWT, issuer, audience or required-permission validation makes the token invalid and the request must be rejected;
+- tokens should carry minimal non-sensitive claims, use expiration and travel only over HTTPS.
 
-- live Neon behavior;
-- production authentication or Device enrollment;
-- a supported offline duration;
-- event deletion or acknowledgement expiry;
-- application snapshots;
-- full rebootstrap;
-- account deletion semantics;
-- provider-backup restoration;
-- future recovery after a long disconnection.
+Markei domain language begins only after provider authentication. An Auth0 `sub` claim identifies the external provider subject under its issuer; it is not itself a Markei AccountId, membership record, installation identity or DeviceId.
 
-Therefore `synchronized` may describe the named completed convergence fixture, but `recoverable`, `backed up`, `restorable` and `safe forever` remain unearned claims.
-
-## 3. Vocabulary map
+## 3. Authentication and authorization vocabulary
 
 | Term | Provisional truthful meaning | Must not imply |
 | --- | --- | --- |
-| Local fact | Product/Purchase fact committed in one installation’s Drift database | a server or peer copy exists |
-| Coordination copy | Event, cursor, acknowledgement or snapshot data held for synchronization | authoritative local history or analytics |
-| Event history | Ordered immutable changes available after a cursor | a complete current account image |
-| Application snapshot | Markei-defined complete-enough fact image for rebuilding a Device | Neon backup, raw database dump or universal restore |
-| Provider backup | Provider-controlled PostgreSQL recovery mechanism | restore of one user, Device or local Drift file |
-| Acknowledgement | One Device reported a contiguous locally applied cursor | backup, permanence or all-Device agreement |
-| Synchronized | Named eligible Devices reached the stated fact/cursor condition | independently recoverable after server cleanup |
-| Recoverable | A tested route can rebuild required application facts under stated conditions | merely synchronized once |
-| Incremental catch-up | Apply retained events after a known cursor | full replacement of local state |
-| Full rebootstrap | Rebuild from a trusted application snapshot, then catch up incrementally | automatic conflict-free merge |
-| Cursor expired | Required events after this cursor are no longer available incrementally | local Purchase history was deleted |
-| No new events | Server has no events after a valid current cursor | cursor is valid without proof |
-| Supported offline window | Period during which the selected policy promises incremental or snapshot recovery | indefinite offline safety |
-| Device inactive | Device has not connected within a policy interval | revoked or unauthorized |
-| Device revoked | Server authorization for the Device has been withdrawn | remote erasure of its local files |
-| Device replacement | Enroll a new installation/Device identity | restoration of the same Device identity |
-| Recovery started | A recovery plan or transfer began | facts are usable or complete |
-| Recovery completed | Snapshot applied, required catch-up applied and terminal checks passed | every future recovery is guaranteed |
-| Server cleanup | Coordination records removed under policy | deletion of local Purchase history |
-| Unknown outcome | Request may have committed but response is absent | retry with a new identity is safe |
+| Signed in | external provider login completed and credentials were returned to the client | Markei API accepted the token |
+| Token obtained | client possesses an access token intended for a configured audience | token is valid, current or sufficient |
+| Token accepted | API validated signature, issuer, audience, expiry and required token contract | Account membership exists |
+| External subject | provider-scoped identity claim such as issuer + subject | Markei AccountId, Person or Device |
+| Membership confirmed | server resolved the accepted subject to an active Markei Account membership | Device is enrolled or authorized |
+| Enrollment required | membership exists but this installation has no accepted Device registration | synchronization is permitted |
+| Device enrolled | server created or replayed an equivalent Device enrollment for this installation | Device is permanently authorized |
+| Device authorized | accepted token, membership and active Device jointly permit this operation | request or facts were accepted |
+| Request accepted | named API operation committed or replayed equivalent result | facts reached another Device |
+| Facts synchronized | named facts were accepted, downloaded and applied through the stated scope | backup, restore or all-Device equality |
+| Acknowledged | this Device reported a contiguous committed cursor | universal convergence or permanence |
+| Converged | named eligible fixtures match under the accepted terminal checks | production readiness or future recovery |
+| Authentication unavailable | no usable external credential can currently be acquired or renewed | local database is unavailable |
+| Device expired | lifecycle/retention eligibility ended under policy | authorization was explicitly revoked |
+| Device revoked | server withdrew Device authorization | local facts were remotely erased |
+| Unknown outcome | request may have committed but response is absent | creating a new identity is safe |
 
-## 4. User-state matrix
+## 4. State/evidence matrix
 
-Cycle classification: `diagnostic` means Cycle 10 may require typed/plain-text evidence; `visual` means Cycle 11 owns presentation.
-
-| State | Technical trigger | Known / unknown | Safe action | Avoid | Owner |
+| State | Observable evidence | May claim | Must not claim | Safe next action | Privacy constraint |
 | --- | --- | --- | --- | --- | --- |
-| Up to date on this Device | valid cursor reached current server high-water mark after committed apply | known for this Device and scope; other Devices unknown | none; retain timestamp/scope | `Everything is safe everywhere` | diagnostic now; visual C11 |
-| Changes waiting to upload | durable pending Event exists | safe locally; server acceptance unknown | keep app data; retry normally | `Synced` | diagnostic now; visual C11 |
-| Accepted by server | Submission/Event atomically committed or replayed equivalent | server copy known; peer application unknown | allow peer catch-up | `Backed up` | diagnostic now; visual C11 |
-| Waiting for another Device | server accepted and named eligible peer acknowledgement is behind | origin/server state known; peer availability unknown | connect peer within policy window | `Almost finished everywhere` | policy-dependent; visual C11 |
-| Device outside supported window | last valid contact exceeds accepted policy interval | long absence known; incremental recoverability may be unknown | prepare eligibility/recovery check | `Your data expired` | diagnostic after policy; visual C11 |
-| Incremental history available | cursor is valid and all required later events remain retained | catch-up path known; final success unknown | download/apply pages | `Recovery complete` | diagnostic C10 |
-| Full refresh required | typed cursor expiry or missing-history result | incremental route unavailable; snapshot viability may be unknown | stop incremental apply and request rebootstrap | `Local data is gone` | diagnostic C10; visual C11 |
-| Refresh being prepared | server accepted snapshot/rebootstrap request or generation lease | work started; artifact completeness unknown | wait/retry same recovery identity | `Restoring` | diagnostic C10 |
-| Snapshot downloading | bounded snapshot bytes are transferring | transfer progress known; validity/application unknown | continue or resume safely | `Data restored` | diagnostic C10; visual C11 |
-| Snapshot downloaded, not applied | complete artifact received and validated but local transaction not committed | artifact available; local facts unchanged | apply through protected transaction | `Device recovered` | diagnostic C10 |
-| Snapshot applied, catch-up pending | snapshot facts/cursor committed; newer events remain | base state known; current state not reached | incremental catch-up | `Up to date` | diagnostic C10 |
-| Recovery completed | snapshot/apply/catch-up/reopen checks all pass | named Device recovered to named high-water mark | resume normal sync | `Permanent backup complete` | diagnostic C10; visual C11 |
-| Recovery interrupted safely | interruption occurred before terminal completion with resumable identity/checkpoint | committed phase known; completion unknown | retry/resume same recovery identity | `Failed and rolled back` unless proven | diagnostic C10 |
-| Local unsent changes block replacement | pending/uploading/unknown local Events exist before destructive rebootstrap | unsent local work exists; server equivalence unknown | upload/reconcile/export before replacement | `Reset now` | diagnostic C10; visual C11 |
-| Credentials expired | verifier rejects expired/missing credential | local facts remain; server access unavailable | renew authentication | `Offline` or `data lost` | diagnostic C10; visual C11 |
-| Device revoked | verified Device is inactive by authorization policy | network mutation denied; local erasure not implied | preserve local facts; follow re-enrollment/replacement policy | `Device deleted` | diagnostic C10; visual C11 |
-| Cursor expired | server can prove requested incremental position is outside retained coverage | incremental gap known; snapshot recovery unknown until checked | require explicit full-rebootstrap route | `No updates` | diagnostic C10 |
-| Server retention elapsed | named events/snapshots crossed deletion eligibility and were removed | coordination copies gone; local copies may survive | use remaining accepted recovery route | `Purchases deleted everywhere` | policy text C10; visual C11 |
-| Account deletion pending | deletion accepted but defined cleanup phases incomplete | request recorded; each storage boundary may differ | show scopes and expected terminal evidence | `Deleted` | diagnostic contract C10; visual C11 |
-| Account deletion completed | accepted deletion checks passed for defined application/server scopes | defined server copies removed; offline local copies may remain | explain residual local-device responsibility | `Erased from every Device` | diagnostic contract C10; visual C11 |
-| Unknown outcome | response absent after possibly committed operation | commit status unknown | replay same idempotency identity and payload | `Try again as new` | diagnostic C10 |
+| Locally available | local database opens and Purchase transaction succeeds | local work is saved on this installation | signed in, uploaded or synchronized | continue locally; queue transfer when configured | no token required for local save |
+| Authentication unavailable | login cannot start/finish or usable credential cannot be acquired | hosted access is unavailable; local work remains | Account deleted or data lost | retry login later or continue locally | log provider code/correlation only |
+| Authenticating | system browser/provider flow began and no terminal callback exists | authentication is in progress | signed in or token obtained | wait, cancel safely or restart a fresh provider flow | never log authorization URL query secrets/code |
+| Authenticated externally | provider flow returned credentials | external identity authentication completed | Markei membership or Device authorization | submit access token to the Markei API | do not expose token or full claims |
+| Membership confirmed | API validated token and resolved active subject→Account membership | this external identity belongs to the named Markei Account boundary | Device enrolled or sync permitted | check/enroll installation Device | log Account alias, not raw subject/email |
+| Enrollment required | active membership exists; Device record absent | this installation needs enrollment | authentication failed | perform idempotent enrollment | do not reveal other Device existence |
+| Device enrolled | enrollment request committed or replayed equivalent Device result | installation has a stable Markei Device identity | every operation is authorized forever | re-check active status per request | DeviceId is identifier, not credential |
+| Device revoked | accepted identity/membership but Device status denies access | hosted mutation is denied for this Device | local copies were erased | preserve local facts; follow replacement/re-enrollment policy | avoid exposing revocation reason to unrelated subjects |
+| Synchronization permitted | token, membership, active Device and operation scope all pass | this request may enter sync processing | request was accepted or facts converged | execute idempotent operation | authorization header never logged |
+| Synchronization denied | API rejects authentication/authorization/domain gate | hosted operation was not permitted | local facts are invalid or deleted | act on typed safeAction; keep local work | return minimum denial detail |
+| Hosted proof completed | real development Auth0 token, hosted API/database and two isolated clients pass terminal assertions | named hosted development fixture completed | production ready, universally synchronized or backed up | preserve sanitized evidence and teardown | aliases/counts/timings only |
+| Unknown outcome | timeout/interruption after possible commit | final server result is unknown | failed or safe to create replacement request | query/replay same idempotency identity | correlation and redacted identity only |
 
-## 5. Privacy and expectation language
+## 5. Typed failure and safe-action hypothesis
+
+| Situation | HTTP hypothesis | Typed meaning | Safe action |
+| --- | --- | --- | --- |
+| missing, malformed, expired or unverifiable token | 401 | `auth-required` / `invalid-token` | reacquire credential; preserve local queue |
+| wrong issuer or audience | 401 | `token-not-for-api` | stop; correct environment/configuration, not user facts |
+| accepted token lacks required API permission | 403 | `insufficient-permission` | obtain authorized grant or contact Account owner |
+| subject has no active Markei membership | 403 or privacy-preserving 404 by Main policy | `membership-required` | request/join membership through an authorized route |
+| Device unknown on protected sync endpoint | 403/404 without existence oracle | `enrollment-required` | use the explicit enrollment route |
+| Device revoked or expired | 403 | `device-revoked` / `device-expired` | stop mutation; preserve local data; use accepted replacement policy |
+| verified Account differs from requested resource scope | 404 for resource lookup; 403 for explicit cross-Account operation | `not-found-or-not-authorized` | do not retry with guessed identifiers |
+| equivalent enrollment replay | 200/201 equivalent stored result | `duplicate-equivalent` | reuse returned Device identity |
+| same enrollment idempotency key with different installation proof/content | 409 | `enrollment-conflict` | stop; do not overwrite or create competing Device silently |
+| request domain identity/hash collision | 409 | `conflict` | preserve both evidence sets; require typed resolution |
+| hosted API unavailable before acceptance | 503 | `service-unavailable`, not applied | retain local pending work and retry later |
+| timeout after possible commit | transport/504 with unknown local classification | `unknown-outcome` | replay/query same Submission or enrollment identity |
+
+HTTP codes are transport semantics, not complete user language. Main must select one consistent anti-enumeration policy. Responses must not reveal whether an unrelated Account, Device, membership or snapshot exists.
+
+## 6. Login cancellation and session expiry
+
+Login cancellation or browser interruption means no completed provider callback was accepted by Markei. It must not create Account membership, Device enrollment or a failed synchronization fact. Local registration continues unchanged.
+
+A cancelled flow may be described diagnostically as `authentication-cancelled`; it should be non-destructive and normally retryable through a new provider authorization flow. A previously unknown API operation remains governed by its original idempotency identity and must not be confused with login cancellation.
+
+When an access token expires while local work is pending:
+
+1. keep local Purchase/Event/outbox facts unchanged;
+2. stop new hosted mutation before sending an invalid credential;
+3. renew or reacquire authentication;
+4. re-resolve membership and Device authorization;
+5. continue with the same pending Event and existing Submission identity where applicable.
+
+`Session expired` must not mean `changes lost`, `signed out of local data` or `Device revoked`.
+
+## 7. Device enrollment, replacement and revocation
+
+Provisional enrollment contract:
+
+- external authentication identifies the provider subject;
+- Markei membership maps that subject to an Account role;
+- installation metadata creates or reuses one Device through an idempotent enrollment operation;
+- successful replay returns the same Device result;
+- differing content under the same enrollment identity is a conflict;
+- enrollment credentials/proofs must never be reused as DeviceId or displayed as an identifier.
+
+Revocation withdraws server authorization for future hosted operations. It does not erase the local Drift database, revoke the external Auth0 identity globally, delete the Account, or prove that all cached tokens have disappeared. The API must deny revoked Devices even when the external token remains otherwise valid.
+
+Reinstall/replacement should normally create a new installation and Device identity. Recovery from an application snapshot reconstructs Account facts; it does not restore the old Device identity, outbox, inbox, acknowledgement or credential state. Local unsent work on the old installation requires an explicit preservation/export/reconciliation policy before replacement.
+
+## 8. Local-first outage behavior
+
+During Auth0, browser, DNS, Render/API or hosted-database outages:
+
+- local registration remains available when the local database is healthy;
+- new events remain `saved-local`/`waiting-upload`;
+- no hosted state may be fabricated;
+- retries preserve EventId, SubmissionId and enrollment/recovery identity as applicable;
+- authentication failure is not server unavailability;
+- server unavailability is not Device revocation;
+- an empty or failed hosted response is not proof of current synchronization.
+
+Android and Windows must use the same Markei semantic states and terminal evidence. Platform-specific browser callbacks, secure storage and lifecycle behavior may differ operationally, but `signed in`, `authorized`, `accepted`, `acknowledged` and `converged` cannot change meaning by platform.
+
+## 9. Privacy and logging language
 
 Provisional explanation:
 
-`Markei keeps Product and Purchase facts in each installation’s local database. When synchronization is enabled, the service may temporarily retain coordination events, acknowledgements and application snapshots so an authorized Device can catch up after being offline. The exact retention period and recovery coverage must be stated by the accepted policy. Server cleanup does not by itself delete Purchase history already stored on a Device.`
+`Auth0 authenticates an external identity and issues an access token for the Markei API. Markei validates that token, resolves Account membership and separately authorizes an enrolled Device. Tokens are credentials; AccountId and DeviceId are Markei identifiers. Synchronization sends only the facts and protocol metadata required by the accepted contract.`
 
-Required distinctions:
+Permitted diagnostics:
 
-- coordination data survives while an eligible Device is offline because delivery cannot occur while that Device is absent;
-- bounded retention is protocol operation, not developer analytics;
-- absence of analytics does not mean absence of synchronization data;
-- a snapshot should contain only the immutable Markei facts and protocol metadata required to rebuild the supported application state;
-- snapshot content must exclude credentials, authorization headers, provider secrets and unrelated telemetry;
-- server copies may remain only for the accepted duration, eligibility and deletion rules;
-- after the supported window, incremental history may be unavailable and full rebootstrap may be required;
-- local history survives server cleanup unless the local Device separately deletes it;
-- synchronization does not replace export because export is a user-readable artifact;
-- synchronization does not replace backup because it may propagate mistakes and obey bounded retention;
-- account deletion may require staged deletion across application rows, snapshots, events and provider backup cycles;
-- provider backup schedules and expiry are infrastructure facts, not immediate application-level deletion guarantees;
-- logs may contain operation code, outcome, retryability, correlation ID, redacted aliases, cursor ranges, counts, timings and hashes;
-- logs must not contain Purchase/Product/Store/Person/Payment facts, tokens, passwords, connection strings or raw snapshot bodies.
+- platform alias, operation, typed code, outcome and safe action;
+- issuer/audience configuration aliases or hashes, never secret-bearing values;
+- correlation ID and redacted subject/Account/Device suffixes;
+- membership/enrollment status, HTTP class and token validation stage;
+- cursor ranges, counts, timings and convergence/recovery pass/fail.
 
-## 6. Misconception register
+Forbidden diagnostics:
 
-| Misconception | Required correction |
-| --- | --- |
-| `Acknowledged means backed up forever` | acknowledgement proves one Device reported a committed cursor under one policy |
-| `No downloaded events means current` | current requires a valid cursor/high-water comparison, not an empty response alone |
-| `Cursor expired means local data deleted` | expiry concerns missing server history for incremental catch-up |
-| `Rebootstrap merges everything automatically` | replacement/merge behavior needs explicit conflict and unsent-change rules |
-| `Server cleanup deletes every Device purchase` | cleanup removes server coordination copies, not autonomous local databases |
-| `Neon backup restores one user’s local state` | provider backup restores provider storage; Markei needs its own scoped snapshot/rebuild contract |
-| `One successful sync proves future recovery` | one convergence fixture does not validate retention expiry or rebootstrap |
-| `Revoking a Device erases its copies` | revocation stops authorization; remote local erasure is a separate, generally unprovable operation |
-| `Snapshot downloaded means recovery complete` | validation, atomic apply, incremental catch-up and reopen evidence remain |
-| `Inactive means revoked` | inactivity is time-based observation; revocation is an authorization decision |
-| `Replacement restores the same Device` | a new installation normally needs a new Device identity and explicit history policy |
+- access, ID or refresh tokens;
+- authorization codes, PKCE verifier, raw authorization headers or browser callback URLs;
+- client secrets, database URLs or provider credentials;
+- full external subject, email or ordinary user profile claims;
+- Purchase/Product/Store/Person/Payment facts or snapshot bodies;
+- messages that reveal unrelated Account, membership or Device existence.
 
-## 7. Policy alternatives
+## 10. Minimum neutral hosted-proof diagnostics
 
-### A. Fixed retention window
-
-User expectation: events remain available for a stated number of days.
-
-Likely misunderstanding: any Device reconnecting before the date is guaranteed to recover, even if snapshots, failures or account state differ.
-
-Recovery promise: incremental catch-up only while the required cursor range remains retained; afterward recovery is unavailable unless another mechanism exists.
-
-Language risk: `kept for 30 days` may sound like backup or deletion from local Devices after day 30.
-
-### B. Active-Device lease
-
-User expectation: Devices that periodically renew eligibility remain covered.
-
-Likely misunderstanding: `active` means currently online, trusted forever or user-visible usage activity.
-
-Recovery promise: coordination copies are retained according to eligible Device acknowledgements/leases; expired Devices require re-enrollment or rebootstrap.
-
-Language risk: hidden lease expiry can feel like unexplained data loss unless the supported window and consequences are explicit.
-
-### C. Hybrid retention plus snapshot coverage
-
-User expectation: recent events support incremental catch-up; a current application snapshot supports full refresh after the event window.
-
-Likely misunderstanding: snapshot means provider backup, automatic merge or complete historical archive.
-
-Recovery promise: valid cursor → incremental catch-up; expired cursor → protected snapshot replacement followed by incremental catch-up, subject to unsent-change checks.
-
-Language risk: `full refresh` may be heard as destructive reset, and `snapshot available` may be heard as recovery completed.
-
-## 8. Preferred semantic hypothesis
-
-Provisional recommendation: **hybrid bounded event retention plus application snapshots and explicit active-Device eligibility**.
-
-Confidence: medium.
-
-Reasons:
-
-- fixed events alone eventually strand long-offline Devices;
-- leases alone do not provide a reconstruction artifact;
-- the hybrid model can state two honest routes: incremental catch-up or full rebootstrap;
-- it allows server cleanup without promising permanent event history;
-- it can protect local unsent work before replacement;
-- it separates Markei application recovery from Neon provider backup.
-
-This is not canonical. Main must still select durations, snapshot ownership, eligibility, deletion and conflict rules.
-
-## 9. Second implementation semantic contract
-
-Codex tests should minimally materialize:
-
-1. a typed `cursor-expired` or semantically equivalent response distinct from an empty valid page;
-2. an explicit `full-rebootstrap-required` result with `not-applied` outcome and safe action;
-3. a snapshot/recovery identity reusable after interruption;
-4. phase-specific progress: `preparing`, `downloading`, `downloaded`, `applying`, `catching-up`, `completed`;
-5. no phase before terminal verification may emit `recovered` or `up-to-date`;
-6. interruption-safe retry that resumes or replays the same recovery identity;
-7. atomic snapshot apply with cursor and fact integrity evidence;
-8. incremental catch-up after snapshot cursor before completion;
-9. reopen comparison before `recovery-completed`;
-10. protection that blocks destructive replacement when pending, uploading or unknown local submissions exist;
-11. typed revoked, expired-credential, account-deleting and unknown-outcome diagnostics;
-12. privacy-safe codes, counts, cursors, correlation IDs and redacted hashes only;
-13. no polished synchronization page, progress component, Device manager or Cycle 11 composition.
-
-Suggested evidence-specific tests:
-
-- `empty valid page is not cursor expired`;
-- `expired cursor requires full rebootstrap`;
-- `snapshot download does not claim recovery complete`;
-- `snapshot apply is followed by incremental catch-up`;
-- `interrupted recovery reuses recovery identity`;
-- `pending local events block destructive replacement`;
-- `server cleanup leaves existing local purchases unchanged`;
-- `provider backup is not used as an application snapshot`.
-
-## 10. MCG-01 learning boundary
-
-During MCG-01 the developer must distinguish:
-
-- Neon branch: provider environment lineage/compute-storage branch;
-- database: named PostgreSQL database inside the selected provider branch;
-- provider backup: infrastructure recovery mechanism for provider storage;
-- application snapshot: Markei-defined fact package for one synchronization recovery contract;
-- migration role: privileged schema-change identity;
-- runtime role: least-privilege API data-access identity;
-- branch expiry: provider lifecycle behavior;
-- event retention: Markei application policy;
-- secret evidence: the actual credential or credential-bearing URL, which must never be requested;
-- sanitized evidence: aliases, region/version, role names, migration hash, timestamps and pass/fail results.
-
-Successful provider setup is project evidence only. It does not prove learner mastery, retention correctness, application recovery or production readiness.
-
-## 11. Cycle 10 / Cycle 11 boundary
-
-Cycle 10 owns:
-
-- typed states and failure distinctions;
-- recovery phase truth conditions;
-- safe-action contracts;
-- privacy-safe diagnostics;
-- tests preventing premature completion claims;
-- plain-text policy wording required to interpret functional behavior.
-
-Cycle 11 owns:
-
-- page placement and navigation;
-- cards, banners, dialogs, icons, progress bars and history views;
-- retry controls and Device-management presentation;
-- wording hierarchy, severity and timing;
-- visual/accessibility composition and broader synchronization polish.
-
-Cycle 10 must not postpone semantic truth to Cycle 11. Cycle 11 must not visually imply guarantees absent from Cycle 10 contracts.
-
-## 12. Unresolved Main decisions
-
-1. Fixed event-retention duration and its start/refresh trigger.
-2. Whether Device eligibility uses acknowledgement, lease, explicit enrollment state or a combination.
-3. Snapshot creation trigger, frequency, version, scope and encryption boundary.
-4. Which immutable facts and tombstones a snapshot contains.
-5. Whether snapshots are per Account, per protocol version or per Device eligibility class.
-6. Snapshot expiry and the terminal state when both event and snapshot coverage are gone.
-7. Exact protection/merge behavior for local unsent changes before rebootstrap.
-8. Whether replacement creates a new Device identity and how historical acknowledgements are treated.
-9. Revocation, inactive-Device and lost-Device semantics.
-10. Account-deletion phases, provider-backup lag and residual offline local copies.
-11. Which Devices count toward `waiting-peer`, `synchronized` or account-level recovery statements.
-12. MCG-01 evidence required before provider-backed retention tests.
-13. Whether local adversarial expiry/rebootstrap tests precede MCG-02.
-14. Final user-facing supported offline window and recovery promise.
-
-## 13. Disposition
+Cycle 10 system tests need plain-text or machine-readable evidence only:
 
 ```text
-accepted project evidence:
-  bounded local HTTP/PostgreSQL convergence for one complete Purchase fixture
+platform=android|windows
+login=cancelled|credential-returned
+token-validation=accepted|rejected:<stage>
+membership=confirmed|absent
+device=enrollment-required|enrolled|revoked|expired
+operation=<typed operation>
+http-class=<status>
+outcome=applied|duplicate-equivalent|not-applied|unknown
+safe-action=<typed action>
+submission/enrollment/recovery identity reused=true|false
+cursor-before=<alias> cursor-after=<alias>
+local-pending-count=<n>
+HOSTED_PROOF=false|true
+correlation=<redacted alias>
+```
 
-implemented retention/recovery policy:
-  none accepted by this investigation
+`HOSTED_PROOF=true` requires a real development provider login/token, API-side token validation, membership resolution, idempotent Device enrollment, hosted database synchronization/recovery assertions, Android and Windows semantic parity within the tested boundary, reopen evidence and sanitized teardown/reporting. Preparation screenshots or provider dashboards are insufficient.
+
+## 11. Misleading claims to avoid
+
+- `signed in` does not mean token accepted by the Markei API;
+- `token obtained` does not mean membership confirmed;
+- Auth0 subject is not AccountId, Person or DeviceId;
+- membership confirmed does not mean Device enrolled;
+- Device enrolled does not mean every request is authorized forever;
+- request accepted does not mean another Device applied it;
+- acknowledged does not mean all Devices are current;
+- hosted development proof does not mean production ready;
+- one Android proof does not establish Windows behavior, or vice versa;
+- one successful sync does not prove long-offline recovery;
+- revocation does not remotely erase local facts;
+- synchronization is not permanent backup, provider restore or export;
+- `all Devices`, `universally synchronized`, `permanently backed up`, `restored` and `production ready` remain prohibited without separate accepted evidence.
+
+## 12. Cycle 10 / Cycle 11 boundary
+
+Cycle 10 may define contracts, typed failures, state transitions, system-test names and neutral diagnostics required to prove authentication and hosted synchronization truth.
+
+Cycle 10 must not create or redesign login pages, dialogs, banners, Device lists, membership invitations, enrollment prompts, progress components, retry controls, navigation, visual severity, accessibility composition or Analytics.
+
+Auth0 Universal Login itself is provider-hosted presentation. Markei’s placement, explanation, cancellation treatment, Device lifecycle presentation and synchronization history remain Cycle 11 work after the underlying states are implemented and accepted.
+
+## 13. MCG-02 semantic acceptance criteria
+
+MCG-02 may close semantically only when named evidence proves:
+
+1. separate development Auth0 and hosted API/database configuration is active without secret disclosure;
+2. Android and Windows can begin and complete the supported external login flow, with cancellation tested safely;
+3. the API validates token signature, issuer, audience, expiry and required permission/scope;
+4. wrong issuer/audience and expired/malformed tokens return privacy-safe typed authentication failure;
+5. accepted external subject resolves to an explicit active Markei Account membership;
+6. AccountId authority comes from server resolution, never an unverified payload claim;
+7. a new installation receives one idempotently enrolled Device identity;
+8. equivalent enrollment replay returns the same result and conflicting replay is rejected;
+9. unknown/revoked/expired Devices are denied independently of external token validity;
+10. cross-Account operations are denied without existence leakage;
+11. local registration continues through Auth0/API outage and pending work resumes after authorization restoration;
+12. one real hosted upload/download/apply/acknowledgement story reaches its terminal evidence;
+13. one hosted recovery or explicit retained local-recovery boundary is exercised as authorized by Main;
+14. logs and reports pass a credential/token/user-fact secret-pattern inspection;
+15. ordinary application composition cannot use synthetic fixture authentication;
+16. `HOSTED_PROOF=true` is mechanically tied to the complete checklist, not provider preparation.
+
+This closes only a hosted development proof. Production identity operations, release readiness, broad multi-Device guarantees and polished UX remain outside the claim.
+
+## 14. Unresolved Main decisions
+
+1. Auth0 tenant/application/API separation and exact issuer/audience/permission contract.
+2. Universal Login configuration and supported Android/Windows callback/logout behavior.
+3. Access-token lifetime, refresh/offline-access policy and secure credential storage per platform.
+4. Markei membership creation, invitation, role and removal model.
+5. Whether absent membership returns privacy-preserving 403 or 404.
+6. Device enrollment proof, idempotency identity and installation-binding fields.
+7. Device credential lifecycle, rotation, expiry, revocation and replacement policy.
+8. Whether a revoked Device may still read/export local facts and how replacement is authorized.
+9. Anti-enumeration policy for Accounts, memberships, Devices and recovery resources.
+10. Hosted API/Render deployment identity, availability boundary and secret injection.
+11. Exact Android/Windows semantic and operational acceptance matrix.
+12. Recovery behavior for reinstalled/replaced Devices and local unsent changes.
+13. Which Devices count toward `waiting-peer`, account-level convergence or recovery claims.
+14. Exact MCG-01 evidence required before provider-backed migration and MCG-02 execution.
+15. Whether C10-S03 includes hosted recovery or only hosted authentication plus synchronization.
+16. Teardown, test-user/token cleanup and provider residual-data evidence.
+
+## 15. Disposition
+
+```text
+accepted project predecessor:
+  local convergence and local retention/rebootstrap mechanisms within named labs
+
+implemented hosted authentication/membership/enrollment:
+  none accepted at this investigation baseline
 
 proposed:
-  truthful vocabulary, state matrix, hybrid retention/snapshot hypothesis,
-  privacy language and second-implementation semantic test contract
+  provider/Markei vocabulary separation, state matrix, typed failures,
+  idempotent enrollment semantics, privacy rules and MCG-02 evidence floor
 
-blocked / unresolved:
-  duration, Device eligibility, snapshots, rebootstrap, account deletion,
-  provider-backup relationship and unsent-change reconciliation
+blocked / externally dependent:
+  reconciled MCG-01 evidence, Auth0/Render configuration and hosted secrets
 
-Cycle 11 deferred:
-  polished pages, visual progress, Device management and broader UX composition
+deferred:
+  production identity operations, broad recovery guarantees and all Cycle 11 presentation
 
 learner maturity:
-  unchanged; no KANBAN transition and no lecture-history event
+  unchanged; no KANBAN transition or lecture-history event
 
-speculative status:
-  explicit; all policy and wording recommendations await Main reconciliation
+status:
+  SPECULATIVE DIDACTIC INVESTIGATION — NOT MAIN AUTHORITY
 ```
