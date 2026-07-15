@@ -1,107 +1,109 @@
-# I_DSN_CODEX - C10-S03A Design Evidence
+# I_DSN_CODEX - C10-S03A-R1 Design Evidence
 
-Sequence: FLX-INV-02 -> Main J/D/E/F -> Codex materialization report
+Sequence: FLX-ORD-01 corrective Codex materialization
 Role: Codex design/architecture evidence
-Round or unit: C10-S03A local hosted-authentication readiness
+Unit: C10-S03A-R1 local security correction
 Branch: `intermid-cycle-recovery`
-Baseline SHA: `7bf3bc1c7acf5d4077cedc42ea2162a1bba99e35`
 Authority: `F_DSN_STAGE.md` plus J/D/E
-Evidence boundary: local architecture materialized; provider proof deferred
+Evidence boundary: local architecture only; provider proof deferred
 
-## Dependency direction
+## Transaction ownership
+
+Protected hosted sync/recovery routes now use:
 
 ```text
-Flutter hosted-auth ports
--> Drift hosted identity repository
--> HTTP enrollment/sync transport boundary
--> Fastify hosted composition
--> JWT/JWKS verifier and authorization service
--> PostgreSQL 18 migration/RLS/transactions
+JWT/JWKS verification
+-> ExternalPrincipal
+-> HostedAuthVerifier.authorizeOperation(...)
+-> serializable database transaction
+-> identity/membership resolution
+-> enrollment/Device recheck
+-> protected operation callback using the same PoolClient
 ```
 
-Provider SDKs, platform callbacks, tokens and public Auth0 config remain outside the domain model.
+The route callback no longer receives a trusted authorization context from a previously committed hosted-auth transaction. Fixture auth remains supported only through the non-hosted fallback path used by existing direct tests.
 
-## Migration 004
+## JWT/JWKS boundary
 
-- Added `external_identities`, `account_memberships`, `device_enrollments`, `device_enrollment_requests` and `device_security_events`.
-- Identity authority is exact bounded issuer+subject; email/profile claims are not authority.
-- Runtime role can select identity/membership and mutate enrollment/device rows only through granted tables.
-- RLS is enabled on every new Account-bearing table.
-- Membership lookup uses transaction-local identity context; Account-bearing operations use transaction-local Account context.
-- Runtime DDL and runtime membership provisioning were denied in probes.
-- Migration ledger records `004_hosted_identity_enrollment`.
+`Auth0JwtVerifier` still delegates cryptography to `jose`, but now uses an explicit bounded JWKS source:
 
-## Drift v7
+- RS256 precheck;
+- required `kid`;
+- issuer and audience pinning;
+- token byte ceiling;
+- JWKS response byte ceiling;
+- request timeout;
+- cache maximum age;
+- refresh cooldown;
+- redirect refusal;
+- duplicate/conflicting key ID rejection;
+- coalesced parallel refresh.
 
-- Added `hosted_auth_states` for environment alias, stable InstallationId, enrollment request/progress/result, AccountId, server DeviceId and generation.
-- Existing v6 facts, local Device sequence, outbox, inbox, cursor, recovery sessions and chunks remain intact.
-- Migration tests cover v1/v2 to v7, fresh v7, reopen, and no-reset behavior.
+Provider URLs, tokens, claims and JWKS bodies are not logged by new code.
 
-## JWT/JWKS rules
+## Migration, Drift and protocol versions
 
-- Maintained library: `jose` 6.1.3.
-- Verification pins issuer, audience and RS256.
-- Bearer token is singular and size-bounded.
-- Subject is bounded and required.
-- JWKS is issuer-bound through configured/derived URI with timeout, cache max age and cooldown.
-- Hosted verifier never logs token, claims or JWKS body.
+- PostgreSQL migrations 001-004 unchanged.
+- No migration 005 added.
+- Drift schema remains v7.
+- Event payload v3 preserved.
+- `c10b:*` cursor format preserved.
+- Recovery snapshot format 1 preserved.
+- Hosted identity/enrollment contract remains v1.
 
-## Identity and Device invariants
+## Runtime and migrator boundary
 
-- Access token produces only `ExternalPrincipal`.
-- AccountId is resolved from active external identity plus exactly one active Account membership.
-- DeviceId is never derived from token claims.
-- Enrollment may proceed without existing Device.
-- Protected sync/recovery routes require active Installation/Device binding.
-- Membership, enrollment and Device state are rechecked in route transactions.
-
-## Enrollment and revocation
-
-- `GET /v1/identity`
-- `POST /v1/devices/enroll`
-- `GET /v1/devices/enrollments/:requestId`
-- `GET /v1/devices/:deviceId/status`
-- `POST /v1/devices/:deviceId/revoke`
-
-Enrollment is idempotent by Account, Identity and EnrollmentRequestId plus canonical request hash. Revocation is atomic across enrollment state, Device status and append-only security event.
-
-## Hosted entrypoint
-
-- `src/hosted.ts` validates config before listening.
-- Uses bounded `pg.Pool`.
-- Uses `Auth0JwtVerifier`, `HostedIdentityService` and `HostedAuthVerifier`.
-- Imports no fixture verifier.
-- Binds `0.0.0.0` with `PORT`.
-- Runs no migrations automatically and accepts no migrator credential.
-- Handles SIGTERM/SIGINT by closing Fastify and pool.
-- Health endpoints are sanitized; ready checks migration ledger generically.
-
-## Flutter SDK containment
-
-- Added ports: `ExternalAuthenticationSession`, `AccessTokenSource`, `DeviceEnrollmentTransport`, `HostedIdentityRepository`, `HostedSyncGuard`.
-- Added local repository for hosted state only.
-- No Auth0 SDK invocation, callback handling, native secret, management credential, database URL, signing key or token storage was added.
-
-## Decisive topology and threats
-
-- Local RSA/JWKS fixture generated in memory.
-- Loopback JWKS and Fastify used real HTTP.
-- Disposable PostgreSQL 18 used real migrations and SQL probes.
-- Harness proved identity resolution, enrollment replay/conflict, two Devices, upload/download/ack, revocation denial and generic health.
-- SQL probes proved RLS no-context fail-closed, Account-context visibility, DDL denial and membership-provision denial.
-
-## Deferred provider/Main decisions
-
-- Auth0 live Universal Login/callback.
-- Neon runtime/migrator credential split.
-- Render deployment.
-- Provider JWKS outage and production cache tuning.
-- Full account-selection UI and Device management UI.
-- MCG-02 provider proof.
-
-Terminal state:
+The hosted-local harness now separates:
 
 ```text
-C10-S03A_LOCAL_HOSTED_AUTH_READY
+LAB_MIGRATOR_URL
+LAB_RUNTIME_URL
+```
+
+The migrator applies migrations and synthetic provisioning, then is closed before the HTTP service starts. Fastify receives only the runtime pool. Runtime HTTP path passed local proof for enrollment, sync, acknowledgement, cross-Account denial and revocation denial.
+
+The disposable migrator role required local `CREATEROLE` because migration 003 creates `markei_recovery_worker`. Runtime was not granted role administration or DDL.
+
+## Account, Device and route inventory
+
+- Synthetic Account count: 2.
+- Synthetic external identity count: 2.
+- Installation count: 3.
+- Device count: 3.
+- Protected route policy count: 8.
+- Cross-Account denial cases exercised by harness: 1.
+- Revoked Device denial cases exercised by harness: 1.
+- Enrollment conflict cases exercised by harness/tests: 1.
+
+## Flutter lab containment
+
+Added provider-neutral lab composition pieces only:
+
+- `LabAuthenticationSession`
+- `LabAccessTokenSource`
+- `HttpDeviceEnrollmentTransport`
+- `HostedEnrollmentCoordinator`
+- `DriftHostedIdentityRepository`
+- `DriftHostedSyncGuard`
+
+No provider SDK, callback registration, provider identifier, native secret, production token storage, Account-selection UI or Device-management UI was added.
+
+## Deviations and deferrals
+
+R1 remains partial because the complete CP4 race matrix is not represented by named barrier/hook tests. Current design relies on serializable transactions plus enrollment/Device row locks; membership read/write race proof still needs explicit barrier-level validation before Main can accept full local-security proof.
+
+Deferred:
+
+- Auth0, Neon and Render proof;
+- production Account creation/invitations;
+- provider JWKS tuning;
+- Account-selection and Device-management UI;
+- MCG-03/04;
+- Cycle 10 closure.
+
+Terminal design result:
+
+```text
+C10-S03A_R1_PARTIAL
 MCG-02_PROVIDER_PROOF_PENDING
 ```

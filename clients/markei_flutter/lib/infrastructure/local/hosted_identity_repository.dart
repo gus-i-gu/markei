@@ -45,3 +45,22 @@ final class DriftHostedIdentityRepository implements HostedIdentityRepository {
         );
   }
 }
+
+final class DriftHostedSyncGuard implements HostedSyncGuard {
+  DriftHostedSyncGuard(this._repository);
+
+  final HostedIdentityRepository _repository;
+
+  @override
+  Future<HostedSyncDecision> evaluate(String environmentAlias) async {
+    final state = await _repository.load(environmentAlias);
+    final deviceId = state?.serverDeviceId;
+    if (state == null || deviceId == null) {
+      return const HostedSyncDecision.blocked('enrollment-required');
+    }
+    if (state.enrollmentState == 'device-revoked') {
+      return const HostedSyncDecision.blocked('device-revoked');
+    }
+    return HostedSyncDecision.allowed(deviceId);
+  }
+}

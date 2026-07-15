@@ -103,3 +103,11 @@ final class HostedSyncDecision {
   final String? deviceId;
   final String? blockedReason;
 }
+
+final class DeviceEnrollmentConflict implements Exception {
+  const DeviceEnrollmentConflict();
+}
+
+final class DeviceEnrollmentUnavailable implements Exception {
+  const DeviceEnrollmentUnavailable();
+}

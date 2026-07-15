@@ -17,6 +17,51 @@ import {
   type RecoveryComposition,
 } from "../application/recovery_service.js";
 import { inTransaction, type Database } from "../postgres/database.js";
+import type { AuthContext } from "../domain/protocol.js";
+import type { PoolClient } from "pg";
+
+type TransactionScopedAuth = AuthVerifier & {
+  authorizeOperation<T>(
+    request: Parameters<AuthVerifier["verify"]>[0],
+    operation: string,
+    action: (client: PoolClient, auth: AuthContext) => Promise<T>,
+  ): Promise<T>;
+};
+
+export const PROTECTED_ROUTE_POLICIES = [
+  {
+    method: "POST",
+    path: "/v1/sync/submissions",
+    operation: "upload-submission",
+  },
+  { method: "GET", path: "/v1/sync/events", operation: "download-events" },
+  {
+    method: "POST",
+    path: "/v1/sync/acknowledgements",
+    operation: "acknowledgement",
+  },
+  { method: "GET", path: "/v1/sync/capabilities", operation: "capabilities" },
+  {
+    method: "POST",
+    path: "/v1/sync/rebootstrap",
+    operation: "start-rebootstrap",
+  },
+  {
+    method: "GET",
+    path: "/v1/sync/rebootstrap/:sessionId",
+    operation: "query-rebootstrap",
+  },
+  {
+    method: "GET",
+    path: "/v1/sync/rebootstrap/:sessionId/chunks/:index",
+    operation: "download-rebootstrap-chunk",
+  },
+  {
+    method: "POST",
+    path: "/v1/sync/rebootstrap/:sessionId/complete",
+    operation: "complete-rebootstrap",
+  },
+] as const;
 
 export function buildApp(options: {
   auth: AuthVerifier;
@@ -85,9 +130,13 @@ export function buildApp(options: {
         correlationId: request.id,
       });
     }
-    const auth = await options.auth.verify(request);
-    const result = await inTransaction(options.database, auth, (client) =>
-      acceptSubmission(client, auth, request.body as never, request.id),
+    const result = await protectedOperation(
+      options.database,
+      options.auth,
+      request,
+      "upload-submission",
+      (client, auth) =>
+        acceptSubmission(client, auth, request.body as never, request.id),
     );
     return reply.send(result);
   });
@@ -103,10 +152,14 @@ export function buildApp(options: {
         correlationId: request.id,
       });
     }
-    const auth = await options.auth.verify(request);
     const query = request.query as { after?: string; limit?: string };
-    const result = await inTransaction(options.database, auth, (client) =>
-      downloadEvents(client, auth, query.after, Number(query.limit ?? 25)),
+    const result = await protectedOperation(
+      options.database,
+      options.auth,
+      request,
+      "download-events",
+      (client, auth) =>
+        downloadEvents(client, auth, query.after, Number(query.limit ?? 25)),
     );
     return reply.send(result);
   });
@@ -122,10 +175,14 @@ export function buildApp(options: {
         correlationId: request.id,
       });
     }
-    const auth = await options.auth.verify(request);
     const body = request.body as { greatestContiguousCursor: string };
-    const result = await inTransaction(options.database, auth, (client) =>
-      acknowledgeCursor(client, auth, body.greatestContiguousCursor),
+    const result = await protectedOperation(
+      options.database,
+      options.auth,
+      request,
+      "acknowledgement",
+      (client, auth) =>
+        acknowledgeCursor(client, auth, body.greatestContiguousCursor),
     );
     return reply.send(result);
   });
@@ -134,9 +191,12 @@ export function buildApp(options: {
     if (!options.database || !options.recovery) {
       return reply.code(503).send(unavailable("capabilities", request.id));
     }
-    const auth = await options.auth.verify(request);
-    const result = await inTransaction(options.database, auth, (client) =>
-      getCapabilities(client, auth, options.recovery!),
+    const result = await protectedOperation(
+      options.database,
+      options.auth,
+      request,
+      "capabilities",
+      (client, auth) => getCapabilities(client, auth, options.recovery!),
     );
     return reply.send(result);
   });
@@ -145,9 +205,18 @@ export function buildApp(options: {
     if (!options.database || !options.recovery) {
       return reply.code(503).send(unavailable("start-rebootstrap", request.id));
     }
-    const auth = await options.auth.verify(request);
-    const result = await inTransaction(options.database, auth, (client) =>
-      startRebootstrap(client, auth, request.body as never, options.recovery!),
+    const result = await protectedOperation(
+      options.database,
+      options.auth,
+      request,
+      "start-rebootstrap",
+      (client, auth) =>
+        startRebootstrap(
+          client,
+          auth,
+          request.body as never,
+          options.recovery!,
+        ),
     );
     return reply.send(result);
   });
@@ -156,10 +225,14 @@ export function buildApp(options: {
     if (!options.database || !options.recovery) {
       return reply.code(503).send(unavailable("query-rebootstrap", request.id));
     }
-    const auth = await options.auth.verify(request);
     const params = request.params as { sessionId: string };
-    const result = await inTransaction(options.database, auth, (client) =>
-      getRebootstrapStatus(client, auth, params.sessionId, options.recovery!),
+    const result = await protectedOperation(
+      options.database,
+      options.auth,
+      request,
+      "query-rebootstrap",
+      (client, auth) =>
+        getRebootstrapStatus(client, auth, params.sessionId, options.recovery!),
     );
     return reply.send(result);
   });
@@ -172,16 +245,20 @@ export function buildApp(options: {
           .code(503)
           .send(unavailable("download-rebootstrap-chunk", request.id));
       }
-      const auth = await options.auth.verify(request);
       const params = request.params as { sessionId: string; index: string };
-      const result = await inTransaction(options.database, auth, (client) =>
-        getRebootstrapChunk(
-          client,
-          auth,
-          params.sessionId,
-          Number(params.index),
-          options.recovery!,
-        ),
+      const result = await protectedOperation(
+        options.database,
+        options.auth,
+        request,
+        "download-rebootstrap-chunk",
+        (client, auth) =>
+          getRebootstrapChunk(
+            client,
+            auth,
+            params.sessionId,
+            Number(params.index),
+            options.recovery!,
+          ),
       );
       return reply.send(result);
     },
@@ -195,22 +272,44 @@ export function buildApp(options: {
           .code(503)
           .send(unavailable("complete-rebootstrap", request.id));
       }
-      const auth = await options.auth.verify(request);
       const params = request.params as { sessionId: string };
       const body = request.body as Record<string, unknown>;
-      const result = await inTransaction(options.database, auth, (client) =>
-        completeRebootstrap(
-          client,
-          auth,
-          { ...body, recoverySessionId: params.sessionId } as never,
-          options.recovery!,
-        ),
+      const result = await protectedOperation(
+        options.database,
+        options.auth,
+        request,
+        "complete-rebootstrap",
+        (client, auth) =>
+          completeRebootstrap(
+            client,
+            auth,
+            { ...body, recoverySessionId: params.sessionId } as never,
+            options.recovery!,
+          ),
       );
       return reply.send(result);
     },
   );
 
   return app;
+}
+
+async function protectedOperation<T>(
+  database: Database,
+  authVerifier: AuthVerifier,
+  request: Parameters<AuthVerifier["verify"]>[0],
+  operation: string,
+  action: (client: PoolClient, auth: AuthContext) => Promise<T>,
+): Promise<T> {
+  if ("authorizeOperation" in authVerifier) {
+    return (authVerifier as TransactionScopedAuth).authorizeOperation(
+      request,
+      operation,
+      action,
+    );
+  }
+  const auth = await authVerifier.verify(request);
+  return inTransaction(database, auth, (client) => action(client, auth));
 }
 
 function unavailable(operation: string, correlationId: string) {

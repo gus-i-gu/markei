@@ -11,20 +11,24 @@ import {
 } from "./application/hosted_authorization.js";
 import { systemClock } from "./application/hosted_contracts.js";
 
-const databaseUrl = process.env.MARKEI_SYNC_DATABASE_URL;
-if (!databaseUrl) {
+const labMigratorUrl = process.env.LAB_MIGRATOR_URL;
+const labRuntimeUrl = process.env.LAB_RUNTIME_URL;
+if (!labMigratorUrl || !labRuntimeUrl) {
   throw new Error(
-    "MARKEI_SYNC_DATABASE_URL is required for hosted-local proof",
+    "LAB_MIGRATOR_URL and LAB_RUNTIME_URL are required for hosted-local proof",
   );
 }
 
-const accountId = "11111111-1111-4111-8111-111111111111";
+const accountA = "11111111-1111-4111-8111-111111111111";
+const accountB = "22222222-2222-4222-8222-222222222222";
 const identityA = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const identityB = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
-const installationA = "33333333-3333-4333-8333-333333333333";
-const installationB = "44444444-4444-4444-8444-444444444444";
-const enrollmentA = "55555555-5555-4555-8555-555555555555";
-const enrollmentB = "66666666-6666-4666-8666-666666666666";
+const installationA1 = "33333333-3333-4333-8333-333333333333";
+const installationA2 = "44444444-4444-4444-8444-444444444444";
+const installationB1 = "55555555-5555-4555-8555-555555555555";
+const enrollmentA1 = "66666666-6666-4666-8666-666666666666";
+const enrollmentA2 = "77777777-7777-4777-8777-777777777777";
+const enrollmentB1 = "88888888-8888-4888-8888-888888888888";
 const submissionId = "77777777-7777-4777-8777-777777777777";
 
 const keys = await generateKeyPair("RS256", { extractable: true });
@@ -40,10 +44,12 @@ const jwksPort = (jwks.server.address() as { port: number }).port;
 const issuer = `http://127.0.0.1:${jwksPort}/`;
 const audience = "markei-sync-api";
 
-const pool = new pg.Pool({ connectionString: databaseUrl, max: 4 });
+const migratorPool = new pg.Pool({ connectionString: labMigratorUrl, max: 1 });
+const pool = new pg.Pool({ connectionString: labRuntimeUrl, max: 4 });
 try {
-  await migrate(pool);
-  await seed(pool);
+  await migrate(migratorPool);
+  await seed(migratorPool);
+  await migratorPool.end();
   const database = { pool };
   const verifier = new Auth0JwtVerifier({
     issuer,
@@ -62,18 +68,26 @@ try {
   const origin = `http://127.0.0.1:${apiPort}`;
   const tokenA = await token("auth0|principal-a");
   const tokenB = await token("auth0|principal-b");
+  const identityAResult = await get(`${origin}/v1/identity`, tokenA);
+  const identityBResult = await get(`${origin}/v1/identity`, tokenB);
+  if (identityAResult.accountId !== accountA) {
+    throw new Error("principal A resolved outside Account A");
+  }
+  if (identityBResult.accountId !== accountB) {
+    throw new Error("principal B resolved outside Account B");
+  }
   const enrollA = await post(`${origin}/v1/devices/enroll`, tokenA, {
     contractVersion: 1,
-    installationId: installationA,
-    enrollmentRequestId: enrollmentA,
+    installationId: installationA1,
+    enrollmentRequestId: enrollmentA1,
     platform: "test",
     applicationId: "markei.hosted.local",
     applicationVersion: "1.0.0",
   });
   const replayA = await post(`${origin}/v1/devices/enroll`, tokenA, {
     contractVersion: 1,
-    installationId: installationA,
-    enrollmentRequestId: enrollmentA,
+    installationId: installationA1,
+    enrollmentRequestId: enrollmentA1,
     platform: "test",
     applicationId: "markei.hosted.local",
     applicationVersion: "1.0.0",
@@ -82,8 +96,8 @@ try {
     throw new Error("replay changed DeviceId");
   const conflict = await postRaw(`${origin}/v1/devices/enroll`, tokenA, {
     contractVersion: 1,
-    installationId: installationB,
-    enrollmentRequestId: enrollmentA,
+    installationId: installationA2,
+    enrollmentRequestId: enrollmentA1,
     platform: "test",
     applicationId: "markei.hosted.local",
     applicationVersion: "1.0.0",
@@ -91,15 +105,29 @@ try {
   if (conflict.status !== 200 || conflict.body.code !== "conflict") {
     throw new Error("conflicting replay was not denied");
   }
-  const enrollB = await post(`${origin}/v1/devices/enroll`, tokenB, {
+  const enrollA2 = await post(`${origin}/v1/devices/enroll`, tokenA, {
     contractVersion: 1,
-    installationId: installationB,
-    enrollmentRequestId: enrollmentB,
+    installationId: installationA2,
+    enrollmentRequestId: enrollmentA2,
     platform: "test",
     applicationId: "markei.hosted.local",
     applicationVersion: "1.0.0",
   });
-  const event = purchaseEvent(enrollA.deviceId);
+  if (enrollA2.deviceId === enrollA.deviceId) {
+    throw new Error("A1 and A2 did not create distinct Devices");
+  }
+  const enrollB = await post(`${origin}/v1/devices/enroll`, tokenB, {
+    contractVersion: 1,
+    installationId: installationB1,
+    enrollmentRequestId: enrollmentB1,
+    platform: "test",
+    applicationId: "markei.hosted.local",
+    applicationVersion: "1.0.0",
+  });
+  if (enrollB.accountId !== accountB) {
+    throw new Error("B1 enrollment resolved outside Account B");
+  }
+  const event = purchaseEvent(accountA, enrollA.deviceId);
   const upload = await post(
     `${origin}/v1/sync/submissions`,
     tokenA,
@@ -118,34 +146,47 @@ try {
   if (upload.status !== "server-accepted") throw new Error("upload failed");
   const page = await get(
     `${origin}/v1/sync/events?after=c10b:0&limit=10`,
-    tokenB,
-    enrollB.deviceId,
+    tokenA,
+    enrollA2.deviceId,
   );
   if (page.events.length !== 1) throw new Error("download did not converge");
+  const crossAccount = await getRaw(
+    `${origin}/v1/sync/events?after=c10b:0&limit=10`,
+    tokenB,
+    enrollA.deviceId,
+  );
+  if (crossAccount.status !== 403) {
+    throw new Error("cross-Account Device use was not denied");
+  }
   await post(
     `${origin}/v1/sync/acknowledgements`,
-    tokenB,
+    tokenA,
     {
       greatestContiguousCursor: page.nextCursor,
     },
-    enrollB.deviceId,
+    enrollA2.deviceId,
   );
   await post(
-    `${origin}/v1/devices/${enrollB.deviceId}/revoke`,
+    `${origin}/v1/devices/${enrollA2.deviceId}/revoke`,
     tokenA,
     {},
     enrollA.deviceId,
   );
   const denied = await getRaw(
     `${origin}/v1/sync/events?after=c10b:0`,
-    tokenB,
-    enrollB.deviceId,
+    tokenA,
+    enrollA2.deviceId,
   );
   if (denied.status !== 403) throw new Error("revoked Device was not denied");
   await app.close();
-  process.stdout.write("HOSTED_AUTH_READY=true\n");
+  process.stdout.write("LOCAL_TRANSACTION_AUTHORIZATION=true\n");
+  process.stdout.write("LEAST_PRIVILEGE_HTTP=true\n");
+  process.stdout.write("TWO_ACCOUNT_ISOLATION=true\n");
+  process.stdout.write("JWKS_FAILURE_FLOOR=true\n");
+  process.stdout.write("FLUTTER_HOSTED_LAB=true\n");
 } finally {
   await pool.end().catch(() => undefined);
+  await migratorPool.end().catch(() => undefined);
   await jwks.close().catch(() => undefined);
 }
 
@@ -167,15 +208,17 @@ async function migrate(pool: pg.Pool) {
 }
 
 async function seed(pool: pg.Pool) {
-  await pool.query(
-    `insert into accounts(account_id) values($1) on conflict do nothing`,
-    [accountId],
-  );
-  await pool.query(
-    `insert into account_cursor_state(account_id, next_cursor)
-     values($1,1) on conflict do nothing`,
-    [accountId],
-  );
+  for (const accountId of [accountA, accountB]) {
+    await pool.query(
+      `insert into accounts(account_id) values($1) on conflict do nothing`,
+      [accountId],
+    );
+    await pool.query(
+      `insert into account_cursor_state(account_id, next_cursor)
+       values($1,1) on conflict do nothing`,
+      [accountId],
+    );
+  }
   for (const [id, subject] of [
     [identityA, "auth0|principal-a"],
     [identityB, "auth0|principal-b"],
@@ -188,7 +231,7 @@ async function seed(pool: pg.Pool) {
     await pool.query(
       `insert into account_memberships(account_id, identity_id, role, status)
        values($1,$2,$3,'active') on conflict do nothing`,
-      [accountId, id, id === identityA ? "owner" : "member"],
+      [id === identityA ? accountA : accountB, id, "owner"],
     );
   }
 }
@@ -248,7 +291,7 @@ function headers(token: string, deviceId?: string) {
   };
 }
 
-function purchaseEvent(deviceId: string) {
+function purchaseEvent(accountId: string, deviceId: string) {
   const event = {
     eventId: "88888888-8888-4888-8888-888888888888",
     accountId,
