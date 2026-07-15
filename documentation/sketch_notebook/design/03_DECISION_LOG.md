@@ -1135,3 +1135,39 @@ Source corrected stale schema-v3, nullable-Product-code and unimplemented-BULK s
 
 Pending Main authority, Design recommends one bounded schema-free visual-convergence unit: expand tokens/primitives; adopt them page-by-page; recompose Home, relational Lists and Catalogue; split/recompose Purchase; recompose History and freeze double-click semantics; validate expanded/compact screenshots, Windows workflow and accessibility. No implementation is activated by this event.
 
+---
+
+# Event 22 — 2026-07-15 — Cycle 10 Recovered Local/Provider Boundary
+
+## Context and decision
+
+Cycle 10 materialized local synchronization, recovery, hosted-identity persistence and a provider-free authentication composition. Main at `75fbba66` accepted bounded local facts but contradicted C10-S03A hosted readiness. Design therefore preserves the offline-first port/adaptor direction; separates external identity, membership, InstallationId and DeviceId; separates direct migrator from pooled-intended runtime authority; and treats provider dashboards as preparation until real hosted proof is reconciled.
+
+The required hosted invariant is that membership, enrollment and Device state are checked within the same transaction as each protected operation. The implementation did not establish that invariant route-wide, so `C10-S03A_LOCAL_HOSTED_AUTH_READY` is rejected.
+
+## Alternatives considered
+
+- Direct subject-to-Account/Device binding: rejected because it collapses authentication, membership and Device lifecycle.
+- Local JWT/JWKS and loopback tests as hosted acceptance: rejected because no provider or deployed least-privilege path was exercised.
+- Provider identifiers or credentials in permanent memory: rejected; sanitized roles and evidence boundaries suffice.
+
+## PRC-01 classification and evidence
+
+- Promote: forward-only migration 004 with migrations 001–003 unchanged; additive Drift v7; fixture-auth containment; distinct identity/membership/installation/Device concepts; fail-closed local hosted configuration.
+- Promote with boundary: sanitized MCG-01 Neon development capability—PostgreSQL 18.4, disposable database, TLS, direct migrator, pooled-intended runtime, rollback, CRUD and DDL denial.
+- Checkpoint only: MCG-02 Auth0/Render dashboard preparation and public native-client/no-secret boundary.
+- Reject/contradicted: hosted readiness and route-wide transaction-time authorization.
+- Retain in staging: provider behavior, production acceptance and Cycle 10 closure.
+
+Evidence: A/B/C; controlling D/E/F; G/H/I; source, migration and tests at `d345f580`; Main reconciliation and recovered human evidence at `75fbba66`. Generated Drift is derived evidence.
+
+## Consequences, rollback and status
+
+Migration 004 and Drift v7 may remain inert while hosted composition is disabled; local facts and queues remain valid. Provider preparation may be abandoned without changing domain facts. Corrective implementation requires new Main D/E/F and reconciliation; historical migrations and the contradiction must not be erased.
+
+Confidence is high for materialized local boundaries and medium-high for sanitized MCG-01 evidence. Provider behavior remains partial and unproved.
+
+```text
+C10-S03A_CONTRADICTED_STOP
+MCG-02_HOSTED_PROOF_NOT_PERFORMED
+```

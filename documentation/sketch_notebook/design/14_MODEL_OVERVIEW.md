@@ -238,3 +238,43 @@ Next proposed Design unit, inactive until Main authorization: expand shared toke
 
 Recovery: Architecture §21; Decision Log Event 21; checkpoint `09_DESIGN_STATE.md`; C/F/I and post-Codex J.
 
+---
+
+<!-- TEMPORAL_MARKER:C10-RECOVERED-PROMOTION-2026-07-15 -->
+# Cycle 10 Synchronization and Hosted-Identity Model
+
+```text
+external issuer + subject
+→ ExternalIdentity
+→ AccountMembership(status, role)
+→ Account
+
+InstallationId + enrollment request identity
+→ DeviceEnrollment(state, generation)
+→ server DeviceId
+→ Account-scoped synchronization authority
+```
+
+An external subject authenticates; it is not an Account or Device. Membership authorizes Account participation. InstallationId is client-held installation identity; DeviceId is server synchronization identity. Idempotent enrollment binds them without deriving Device identity from hardware, token subject or application ID. Revocation withdraws future hosted authority without erasing local facts.
+
+| Owner | Responsibility |
+| --- | --- |
+| Flutter application | neutral authentication/enrollment ports and synchronization orchestration |
+| Drift v7 | InstallationId, enrollment request/result and hosted-state continuity |
+| HTTP/Auth adapters | token acquisition and typed transport; no embedded secret |
+| Fastify | principal verification, membership/Device authorization and protocol routing |
+| PostgreSQL | external identity, membership, enrollment, Account scope, audit and constraints |
+| Direct migrator | forward-only schema and fixture provisioning |
+| Pooled-intended runtime | least-privilege application transactions |
+| Auth0/Render/Neon | provisional infrastructure; acceptance pending |
+
+Current gap: membership, enrollment and Device state were not proved to be rechecked and locked inside the same transaction as every protected operation. The model is materialized locally but is not hosted-ready.
+
+```text
+MCG-01: sanitized development capability
+MCG-02: provider-dashboard preparation partial
+C10-S03A_CONTRADICTED_STOP
+MCG-02_HOSTED_PROOF_NOT_PERFORMED
+```
+
+Provider token shapes, tenant/application identifiers, callbacks, URLs, credentials and secrets remain outside the domain model and permanent memory.

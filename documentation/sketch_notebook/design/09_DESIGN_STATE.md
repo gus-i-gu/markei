@@ -221,3 +221,36 @@ No source implementation is active from this checkpoint. Fresh D/E/F authority i
 
 Recovery: Architecture §21; Decision Log Event 21; Model Overview current Cycle 09 segment; C/F/I and post-Codex J.
 
+---
+
+<!-- TEMPORAL_MARKER:C10-RECOVERED-PROMOTION-2026-07-15 -->
+# Cycle 10 Recovered Design Checkpoint
+
+## Materialized locally
+
+- Offline-first Flutter application ports with Drift and HTTP adapters.
+- Protocol v3 append-only `purchase.registered` convergence and recovery format 1 local proofs.
+- PostgreSQL migrations 001–003 preserved; forward-only migration 004 adds identity, membership and enrollment structures.
+- Drift schema v7 adds hosted state without resetting facts, queues, cursors or recovery state.
+- Server JWT-verifier abstraction, RS256-shaped local fixtures, fail-closed hosted configuration and fixture-auth exclusion.
+- External subject, Account membership, InstallationId and DeviceId remain distinct.
+
+## Evidence states
+
+MCG-01 is accepted only as sanitized development capability: disposable Neon development database, PostgreSQL 18.4, TLS, direct migrator, pooled-intended runtime, rollback, runtime CRUD and runtime DDL denial. Migration 003/004 application, pooled RLS, backup/PITR, deployment and production behavior remain unproved.
+
+MCG-02 is partial dashboard preparation: public Android/Windows Native Applications, custom API/audience preparation and Render service-form preparation. No provider identifier or secret is retained here.
+
+## Contradicted and unresolved
+
+- Transaction-time membership/enrollment/Device reauthorization is not established inside every protected operation transaction.
+- The decisive least-privilege, adversarial and cross-Account hosted topology is incomplete.
+- Real Auth0 login/token acceptance, Neon migration/runtime, Render deployment and hosted synchronization were not performed.
+- Hosted readiness, provider acceptance, MCG-03/04, Cycle 10 closure and learner maturity are not promoted.
+
+```text
+C10-S03A_CONTRADICTED_STOP
+MCG-02_HOSTED_PROOF_NOT_PERFORMED
+```
+
+Next valid route: Main-authorized C10-S03A-R1 correction and reconciliation before any provider activity. Recovery: Architecture §22; Decision Log Event 22; Model Overview Cycle 10 section; J at `75fbba66`.

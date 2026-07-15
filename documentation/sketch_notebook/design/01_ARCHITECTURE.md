@@ -728,3 +728,38 @@ Deterministic CSV/PDF bytes and temporary-file save behavior remain non-mutating
 Automated evidence supports schema/migration and focused Flutter contracts. Android runtime, native sharing, complete manual accessibility, target-image parity, Windows workflow acceptance and release readiness remain unvalidated.
 
 Pending Main authorization, the next schema-free Design unit is: expand tokens/primitives; make pages consume them; recompose Home, Lists and Catalogue; split/recompose Purchase; recompose History and resolve double-click; then compare expanded/compact screenshots and validate Windows/accessibility. This direction is prospective, not implementation authority.
+
+---
+
+<!-- TEMPORAL_MARKER:C10-RECOVERED-PROMOTION-2026-07-15 -->
+# 22. Cycle 10 Local Synchronization and Provider Boundary
+
+## 22.1 Durable topology
+
+```text
+Flutter presentation
+→ application synchronization/authentication ports
+→ domain facts and typed protocol contracts
+← Drift and HTTP infrastructure adapters
+→ Fastify authentication/authorization boundary
+→ PostgreSQL runtime transactions
+```
+
+Flutter owns no PostgreSQL credential, signing key, Auth0 management credential or native-client secret. Fastify verifies an external principal before Account-scoped work; PostgreSQL owns persistence and constraints. Fixture authentication is confined to tests and local lab composition and is absent from the hosted entrypoint.
+
+The provider-free implementation keeps external subject, Account membership, InstallationId and server DeviceId separate. Forward-only migration 004 adds external identities, memberships, Device enrollments, idempotent enrollment requests and audit state without modifying migrations 001–003. Drift schema v7 adds local hosted-identity/enrollment state while preserving facts, queues, cursors and recovery state.
+
+## 22.2 Authority and evidence boundaries
+
+Direct migrator access owns schema materialization and fixture provisioning. A separately constrained, pooled-intended runtime identity owns application transactions only. MCG-01 manually demonstrated this separation in a disposable Neon development environment, including TLS, rollback, runtime CRUD and runtime DDL denial. It did not prove migration 003/004 application, pooled RLS, deployment or production behavior.
+
+JWT verification remains behind a server port. The local implementation pins RS256 and validates configured issuer, audience and key selection; Markei owns membership, Account selection, enrollment and revocation meaning. However, source reconciliation did not establish that membership, enrollment and Device authority are rechecked inside the same transaction as every protected sync/recovery operation. Hosted-readiness promotion is therefore rejected.
+
+Auth0 and Render dashboard preparation is partial evidence only. Separate Android/Windows public Native Applications, a custom API/audience and a Render service form were prepared without an authorized native secret. No Render deployment, Neon migration, real login/token acceptance, enrollment or hosted synchronization proof occurred.
+
+Manual provider observations become durable only through sanitized evidence, explicit exclusions, Main PRC-01 reconciliation and domain-owned promotion. Tenant/application identifiers, callbacks, fingerprints, hostnames, URLs, credentials and tokens stay outside permanent memory.
+
+```text
+C10-S03A_CONTRADICTED_STOP
+MCG-02_HOSTED_PROOF_NOT_PERFORMED
+```
