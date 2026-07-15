@@ -1,8 +1,8 @@
-# I_DSN_CODEX - C10-S03A-R3B Design Evidence
+# I_DSN_CODEX - C10-S03A-R3C Design Evidence
 
 Sequence: FLX-ORD-01 corrective Codex materialization
 Role: Codex design/architecture evidence
-Unit: C10-S03A-R3B local contract and decisive-proof completion
+Unit: C10-S03A-R3C decisive local proof completion
 Branch: `intermid-cycle-recovery`
 Authority: `F_DSN_STAGE.md` plus J/D/E
 Evidence boundary: local architecture only; provider proof deferred
@@ -11,11 +11,11 @@ Evidence boundary: local architecture only; provider proof deferred
 
 ```text
 R3_LOCAL_SECURITY_PROVED=false
-C10-S03A_R3B_PARTIAL
+C10-S03A_R3C_PARTIAL
 MCG-02_PROVIDER_PROOF_PENDING
 ```
 
-Exact blocker: the bounded contract corrections are implemented and locally tested, but decisive proof architecture remains incomplete.
+Exact blocker: proof architecture now fails closed, but decisive producer coverage is incomplete.
 
 ## Dependency Direction
 
@@ -23,57 +23,46 @@ Retained:
 
 - `jose` owns JWT/JWK cryptography.
 - Markei JWT adapter owns issuer/audience policy, bounded JWKS retrieval, normalized key revision and cooldowns.
+- Fastify owns route lifecycle; Markei owns typed descriptors and inventory proof.
+- PostgreSQL owns migrations, transactions, locks, ACLs and RLS context.
 - `package:http` owns raw HTTP mechanics.
-- Markei transport owns attempt deadline, client ownership, byte ceiling and closed outcome translation.
+- Markei Flutter transport owns attempt deadline, byte ceiling, redirect refusal and closed outcome translation.
 - Drift v7 owns durable local hosted identity state.
-- Fastify owns route lifecycle; Markei app builder owns typed route policy and readiness equality.
-- PostgreSQL owns migrations, transactions, locks and RLS context.
 
 No dependency, lockfile, migration or Drift schema change was made.
 
-## HTTP Client Ownership And Deadline
+## Proof Architecture Added
 
-`HttpDeviceEnrollmentTransport` now defaults to per-attempt owned clients through a factory. Each attempt captures one deadline and closes the owned client in `finally`. A borrowed client may still be supplied for tests/composition and is never closed by transport. Body consumption uses `StreamIterator.moveNext().timeout(remaining)` so each read is bounded by the same absolute deadline instead of a renewable inactivity timeout.
+`services/markei_sync_api/src/proof/producer.ts` defines the required producer and case inventory. Producers are explicit, versioned and case-addressable.
 
-The remaining unproved part is real loopback slow-trickle/cancellation evidence against the actual HTTP stack and file-backed Drift.
+`services/markei_sync_api/src/proof/aggregate.ts` validates producer schema, exact case sets, duplicates, unknown producers, unknown cases, skipped/partial/false cases and missing producers before emitting success.
 
-## Enrollment Result Model
+`services/markei_sync_api/test/proof_aggregate.test.ts` proves the aggregator accepts complete synthetic evidence and rejects incomplete or malformed evidence. This is infrastructure proof only; it does not substitute for real producer execution.
 
-`DeviceEnrollmentResult` carries the server success status. The coordinator persists `device-enrolled` and `duplicate-equivalent` distinctly and maps them to `applied` and duplicate-equivalent outcomes. Replay conflict, unavailable and unknown results are persisted through existing Drift v7 state strings without schema change.
+## Migration-006 Evidence Architecture
 
-## JWKS State Machine
+`services/markei_sync_api/src/proof/migration_006_probe.ts` connects to disposable migrator/runtime pools supplied by lab environment variables and checks the already migrated local database. It intentionally does not edit migrations 001-006.
 
-JWKS lookup now uses one refresh budget per lookup. Expired-cache refresh consumes that budget. If the requested key remains absent, the per-key negative cooldown is installed even when the semantic key set changed. Normalization rejects private material and unsupported keys, then hashes only:
+The probe currently covers function shape, security-definer metadata, fixed search path, SQL-body safety, ACLs and runtime denials. It does not yet orchestrate fresh/upgrade/duplicate/failure-copy/shadowing/tamper lifecycle matrices, so it correctly exits partial.
 
-```text
-kty, kid, use, alg, n, e
-```
+## Authorization/Race Evidence Architecture
 
-This prevents provider metadata from becoming semantic rotation.
+The hosted-local harness now emits a structured `authorization-race` producer. Existing route inventory and least-privilege diagnostics remain separate from the race matrix. Missing cases are represented as false with `missing-case-result`, preserving the E distinction between observed subset and decisive matrix completion.
 
-## Fastify Readiness Inventory
+The remaining design gap is a barrier-driven matrix that snapshots facts/events, cursors/acknowledgements, recovery state, Device/enrollment rows and security-event counts before and after every denied/losing path.
 
-Route capture remains rooted in `onRoute`. Exact inventory comparison now runs in `onReady`, after direct and encapsulated registrations materialize and before ready/listen/inject proceeds. Health routes and automatic HEAD are the only normalization exceptions. Tests cover valid inventory and three invalid readiness cases.
+## Flutter HTTP/File-Backed Evidence
 
-## Device Status Projection
+The new Flutter test uses:
 
-`HostedIdentityService.deviceStatus()` now returns `target.deviceStatus`, not `target.enrollmentState`. `replaced` remains internal to enrollment workflow and cannot be emitted as public Device status by this endpoint.
+- temporary `LocalDatabase.file`
+- real `LocalPurchaseRepository` to create authoritative local facts and one pending outbox event
+- real `DriftHostedIdentityRepository`
+- real `HostedEnrollmentCoordinator`
+- real `HttpDeviceEnrollmentTransport`
+- loopback `HttpServer`
 
-## Proof Architecture Status
-
-Completed local producer subsets:
-
-- TypeScript/JWT/route: 27 passing tests.
-- Flutter unit: 58 passing tests, 2 lab-gated skips.
-- Hosted-local: route inventory true, least privilege true, authorization race matrix partial, aggregate false.
-- Static/build: server format/lint/typecheck/build, audit, Flutter analysis/builds and Python regressions passed.
-
-Missing decisive producers:
-
-- full authorization/race matrix with deterministic barriers and state snapshots;
-- full migration-006 lifecycle/ACL/shadowing/tamper proof without migration edits;
-- real Flutter HTTP/file-backed Drift lab against loopback Fastify;
-- aggregator that validates exact producer schemas/cases and emits success only when every case is true.
+It proves success/replay distinction, closed failure persistence, outbox/fact preservation across close/reopen and a slow-body absolute-deadline case. It does not yet prove the full R3C Fastify/PostgreSQL-backed gate or every timeout/redirect/ownership variant.
 
 ## Versions Retained
 
@@ -83,6 +72,6 @@ Missing decisive producers:
 - Recovery snapshot format 1 unchanged.
 - Hosted enrollment contract v1 unchanged.
 - Drift schema v7 unchanged.
-- JWT algorithm RS256 retained.
+- Existing dependency and lockfile versions unchanged.
 
 Provider proof, MCG-03, MCG-04 and Cycle 10 closure were not started.

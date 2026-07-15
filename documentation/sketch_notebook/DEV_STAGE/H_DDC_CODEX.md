@@ -1,8 +1,8 @@
-# H_DDC_CODEX - C10-S03A-R3B Semantic Evidence
+# H_DDC_CODEX - C10-S03A-R3C Semantic Evidence
 
 Sequence: FLX-ORD-01 corrective Codex materialization
 Role: Codex semantic/test evidence
-Unit: C10-S03A-R3B local contract and decisive-proof completion
+Unit: C10-S03A-R3C decisive local proof completion
 Branch: `intermid-cycle-recovery`
 Authority: `E_DDC_STAGE.md` plus J/D/F
 Evidence boundary: local proof only; provider proof and learner-memory promotion excluded
@@ -11,43 +11,39 @@ Evidence boundary: local proof only; provider proof and learner-memory promotion
 
 ```text
 R3_LOCAL_SECURITY_PROVED=false
-C10-S03A_R3B_PARTIAL
+C10-S03A_R3C_PARTIAL
 MCG-02_PROVIDER_PROOF_PENDING
 ```
 
-Exact blocker: all source-level contradictions were narrowed, but decisive race, migration lifecycle, real Flutter HTTP/file-backed and aggregator producers are not complete.
+Exact blocker: the new evidence machinery is fail-closed and reports missing decisive cases rather than promoting partial local proof to readiness.
 
-## Closed Semantics Materialized
+## Semantics Materialized
 
-- `deadline != inactivity-timeout`: body reads recompute remaining total attempt time before each read.
-- `owned-client != borrowed-client`: default attempts own and close their client; borrowed clients are not closed and are not used to claim cancellation.
-- `device-enrolled != duplicate-equivalent`: transport success carries the server success status.
-- `known-replay-outcome != enrolling`: replay conflict, unavailable and unknown outcomes overwrite stale `enrolling`.
-- `key-set-changed != requested-key-present`: a changed JWKS that still lacks the requested key installs negative cooldown.
-- `provider-metadata-changed != public-signing-key-changed`: semantic JWKS revision uses normalized public RSA signing material only.
-- `route-construction-snapshot != readiness-inventory`: inventory comparison now runs at Fastify readiness.
-- `Device-state != enrollment-state`: Device status endpoint projects the locked Device row status.
+- `implemented != validated`: source additions are reported separately from producer pass/fail.
+- `producer-present != producer-complete`: producer records must contain the exact required case set.
+- `process-exit-zero != proof-success`: aggregation inspects producer schema and case truth values.
+- `route-inventory-passed != authorization-race-passed`: hosted-local route/least-privilege successes do not satisfy the missing race matrix.
+- `migration-subset-proved != migration-lifecycle-proved`: ACL and function checks do not satisfy fresh/upgrade/rollback/shadowing/tamper proof.
+- `real HTTP/file-backed test != full Fastify/PostgreSQL Flutter gate`: the focused Flutter proof improves evidence but remains below the full R3C decisive gate.
+- `device-enrolled != duplicate-equivalent`: the real HTTP/file-backed test preserves applied and duplicate replay as distinct outcomes.
+- `service-unavailable/malformed/conflict != enrolling`: failure outcomes are persisted over transient `enrolling`.
 
 ## Named Semantic Tests
 
-- Expired JWKS miss refreshes once.
-- Changed set still missing key installs cooldown.
-- Irrelevant JWK metadata does not break known-key verification.
-- Private JWK material is rejected.
-- Late direct route fails readiness.
-- Encapsulated plugin route fails readiness.
-- Injected unclassified route fails readiness.
-- Server `device-enrolled` maps to applied in existing coordinator flow.
-- Server `duplicate-equivalent` remains distinct and durable.
-- Replay conflict, service-unavailable and unknown-outcome replace stale `enrolling`.
+- Proof aggregator accepts a complete producer set.
+- Proof aggregator rejects missing, duplicate, malformed and false inputs.
+- Proof aggregator rejects unknown or incomplete case sets.
+- Real HTTP transport preserves file-backed enrollment and local outbox.
+- Real HTTP failures persist closed non-success outcomes without facts loss.
+- Absolute deadline closes an owned request against slow body trickle.
 
 ## Privacy And Local-First Evidence
 
-- Access tokens remain method parameters and are not stored in `HostedIdentityState`.
-- Hosted enrollment failure paths do not alter local facts, purchases or sync cursors in the changed coordinator code.
-- Ordinary local registration and UI were not changed.
+- The Flutter proof passes the bearer credential in memory only; it is asserted through the server observation and not persisted in `HostedIdentityState`.
+- File-backed local purchases and pending outbox rows remain present after hosted enrollment success and closed failure paths.
+- Temporary HTTP servers and Drift files are lab/test-only.
 - No token, claim, JWK body, provider URL, connection string, generated credential or fact payload was intentionally logged by new code.
-- Public failures remain closed and bounded.
+- Ordinary local registration, local-first facts, pending outbox behavior and UI were not changed.
 
 ## Unsupported Wording Absent
 

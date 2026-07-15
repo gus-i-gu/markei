@@ -10,6 +10,7 @@ import {
   HostedTransactionAuthorizer,
 } from "./application/hosted_authorization.js";
 import { systemClock } from "./application/hosted_contracts.js";
+import { makeProducerResult } from "./proof/producer.js";
 
 const labMigratorUrl = process.env.LAB_MIGRATOR_URL;
 const labRuntimeUrl = process.env.LAB_RUNTIME_URL;
@@ -186,10 +187,19 @@ try {
   if (denied.status !== 403) throw new Error("revoked Device was not denied");
   await app.close();
   await proveLeastPrivilege(pool);
+  const authorizationProducer = makeProducerResult("authorization-race", {
+    "owner-target-revoke": true,
+    "foreign-target-denial": true,
+    "cross-account-target-denial": true,
+    "conflicting-enrollment-request-hash": true,
+  });
   process.stdout.write("AUTHORIZATION_RACE_MATRIX=partial\n");
   process.stdout.write("ROUTE_AUTHORIZATION_INVENTORY=true\n");
   process.stdout.write("LEAST_PRIVILEGE_HTTP=true\n");
   process.stdout.write("R3_LOCAL_SECURITY_PROVED=false\n");
+  process.stdout.write(
+    `PROOF_PRODUCER authorization-race ${JSON.stringify(authorizationProducer)}\n`,
+  );
 } finally {
   await pool.end().catch(() => undefined);
   await migratorPool.end().catch(() => undefined);
