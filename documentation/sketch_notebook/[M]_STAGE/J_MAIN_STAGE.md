@@ -1,317 +1,169 @@
-# J_MAIN_STAGE — Cycle 10 MCG-02 R04 Partial Reconciliation
+# J_MAIN_STAGE — Cycle 10 R04C01 Vertical-Slice Coordination
 
 > Sequence: FLX-ORD-01
-> Reconciliation marker: C10-MCG02-R04B_20260717T133814Z
-> Staged at UTC: 2026-07-17T13:38:14Z
-> Staged at America/Sao_Paulo: 2026-07-17T10:38:14-03:00
-> Reconciled implementation: 42e4a8375ed8c51765b0a440b2130a31a098c36c
-> Controlling R04 authority: cb177621db82cde6be6d658c58daef590e5b9548
-> Prior reconciliation: fd73da6fddf3cc308655c41e0640b045d710d983
-> Status: **R04 PARTIAL ACCEPTED; R04B CONTINUATION SELECTED**
-> Active next unit: **C10-MCG02-R04B — Authorization Lab Completion**
+> Authority marker: C10-MCG02-R04C01_20260717T143908Z
+> Staged at UTC: 2026-07-17T14:39:08Z
+> Staged at America/Sao_Paulo: 2026-07-17T11:39:08-03:00
+> Reconciled implementation: fab9357224cd6e4fb532f02e0c1e33f161a4e615
+> Prior authority: 22467716ae9ba0fb93ee775781c7177db88320fc
+> Status: **R04B PARTIAL ACCEPTED; R04C01 SELECTED**
+> Active unit: **R04C01 — Reusable Authorization Proof Vertical Slice**
 
-## 1. Methodology retained
+## 1. Reconciliation
 
-Main retains:
+R04B proved Docker/PostgreSQL availability and added an inert barrier interface, phase names, several
+reach points and containment tests. Git later published that partial work as fab9357.
 
-- J reconciles cross-domain evidence and selects the next unit.
-- D/E/F jointly provide Codex materialization authority.
-- G/H/I are observational reports and cannot promote themselves.
-- Git owns ancestry, final commit identity and exact changed paths.
-- implementation, local validation, provider acceptance and production readiness remain distinct;
-- a named proof case passes only when its exact scenario executed;
-- environmental inability is not product failure or proof success;
-- partial work must remain fail-closed.
+R04B did not add:
 
-No permanent project memory is promoted by this staging operation.
+- an active lab barrier controller;
+- participant-aware reach/release coordination;
+- an Account state observer;
+- case-addressable authorization scenarios;
+- producer completion or R04 aggregation.
 
-## 2. Temporal and Git reconciliation
+Source inspection also found:
 
-The R04 implementation began from:
+- enrollment reaches before-protected-mutation after earlier durable writes;
+- before-commit is a generic database callback without operation/participant context.
 
-~~~text
-cb177621db82cde6be6d658c58daef590e5b9548
-~~~
-
-Git proves one direct implementation commit:
+Therefore:
 
 ~~~text
-cb17762
-→ 42e4a8375ed8c51765b0a440b2130a31a098c36c
-~~~
-
-Commit time:
-
-~~~text
-2026-07-17T10:34:13-03:00
-~~~
-
-G/H/I correctly carry the authority and implementation start/end markers, but report:
-
-~~~text
-Final commit SHA: pending before commit
-No commit was created
-~~~
-
-Those statements were true at report-authoring time and are now superseded by Git. The final
-materialized commit is 42e4a83. This is report chronology drift, not source contradiction.
-
-## 3. Exact R04 delta
-
-Twelve paths changed:
-
-- G/H/I;
-- hosted_local_harness.ts;
-- authorization_producer.ts;
-- flutter_producer.ts;
-- jwks_producer.ts;
-- r3d1_orchestrator.ts;
-- static_regression_producer.ts;
-- new static_regression_support.ts;
-- hosted_auth.test.ts;
-- proof_aggregate.test.ts.
-
-No migration, dependency, lockfile, Drift schema, UI, provider configuration, methodology,
-permanent memory, A/B/C, J or D/E/F path changed.
-
-The commit passes Git diff whitespace validation.
-
-## 4. Accepted R04 progress
-
-The following narrow corrections are accepted as implemented:
-
-### 4.1 Teardown meaning
-
-The static teardown predicate now requires:
-
-~~~text
-exit code = 0
-AND trimmed resource inventory is empty
-~~~
-
-A focused regression proves that successful non-empty output fails.
-
-### 4.2 JWKS metadata meaning
-
-The metadata-only JWKS scenario now:
-
-- installs an unknown-kid cooldown;
-- changes only irrelevant provider metadata;
-- retries the same unknown kid;
-- proves fetch count does not advance.
-
-The matching focused server test passed. Production JWKS internals remain opaque.
-
-### 4.3 Flutter evidence correction
-
-token-not-persisted-or-logged is returned to false with blocker not-yet-r05. The current focused
-Flutter suite is no longer used to overclaim that meaning.
-
-### 4.4 Fail-closed wrappers
-
-The authorization wrapper reports true only when the parsed authorization producer record passes.
-The orchestration rule now requires authorization true, Flutter false only for R05 blockers and the
-global aggregate false.
-
-These are accepted as implemented orchestration changes. The R04 orchestrator itself did not run.
-
-### 4.5 Focused validation
-
-Reported local evidence:
-
-- npm typecheck passed;
-- 36 server tests passed;
-- format initially found two touched files, then passed after formatting;
-- lint passed;
-- corrected JWKS producer passed;
-- Flutter producer emitted the expected structurally valid false record.
-
-## 5. R04 success conflict
-
-R04 is not successful.
-
-The authorization producer stopped before PostgreSQL startup because the Docker Desktop Linux engine
-was unavailable. Therefore:
-
-- none of the 28 R04 authorization scenarios executed;
-- no authorization before/after state snapshot exists;
-- no deterministic barrier evidence exists;
-- no concurrency, replay, restart or retry-exhaustion count exists;
-- final disposable-resource inventory could not be queried;
-- migration, route, static and R04 aggregate producers did not run in this round;
-- broad Flutter and repository validation did not run after the blocker.
-
-The correct terminal classification remains:
-
-~~~text
-C10-MCG02-R04_PARTIAL
+C10-MCG02-R04B_PARTIAL
 AUTHORIZATION_RACE_PRODUCER=false
 R3_LOCAL_SECURITY_PROVED=false
 ~~~
 
-## 6. Source-inspection conflict
+## 2. Strategy correction
 
-The Docker failure is not the only remaining gate.
-
-Direct source inspection shows:
-
-- no authorization barrier port or phase controller was added;
-- no Account-scoped state observer was added;
-- transaction fence ordering was not instrumented for deterministic races;
-- the hosted harness still emits true for only four previously observed cases:
-  - owner-target-revoke;
-  - foreign-target-denial;
-  - cross-account-target-denial;
-  - conflicting-enrollment-request-hash;
-- every other declared authorization case still receives not-yet-r04.
-
-Consequently, merely restarting Docker and rerunning the current producer cannot complete R04.
-R04B must first materialize the missing scenario architecture and then run it with PostgreSQL
-available.
-
-## 7. Accepted versus pending classification
-
-Accepted locally:
+The previous unit was too broad. R04 is now decomposed into independently successful slices:
 
 ~~~text
-R04_EVIDENCE_CORRECTIONS_IMPLEMENTED=true
-JWKS_METADATA_COOLDOWN_FOCUSED_TEST=true
-TEARDOWN_EMPTY_INVENTORY_FOCUSED_TEST=true
-FLUTTER_LOGGING_OVERCLAIM_REMOVED=true
-AUTHORIZATION_WRAPPER_FAILS_CLOSED=true
+R04C01  proof infrastructure + one membership-denial slice
+R04C02  identity, membership and actor-Device route matrix
+R04C03  target Device and enrollment concurrency
+R04C04  response loss, restart, retry exhaustion and final R04 aggregate
+R05      complete Flutter HTTP/file-backed proof and global local aggregate
+MCG-02   human/provider Auth0 + Neon + Render proof
+Promotion and Main Cycle 10 closure
 ~~~
 
-Not validated in this round:
+Only R04C01 is active.
+
+## 3. R04C01 objective
+
+Build reusable proof infrastructure and prove one complete scenario:
 
 ~~~text
+working deterministic barrier controller
++ corrected transaction phase placement
++ canonical Account state observer
++ membership-disabled-before-fence upload denial
+~~~
+
+The authorization producer remains false after this unit. That is expected and does not make
+R04C01 partial.
+
+## 4. Reusable infrastructure
+
+R04C01 selects:
+
+- a participant-aware lab barrier controller;
+- context-aware transaction lifecycle signaling;
+- canonical payload-free Account snapshots;
+- a reusable arrange/snapshot/pause/intervene/release/compare scenario runner;
+- deterministic cleanup and safe ScenarioResult output.
+
+Later R04 and recovery/synchronization assays should add scenarios to these mechanisms rather than
+rebuild them.
+
+## 5. Phase corrections
+
+Required meanings:
+
+| Phase | Placement |
+| --- | --- |
+| before-identity-membership-fence | inside transaction, before current identity/membership resolution |
+| after-membership-lock | only after relevant identity/membership rows are actually locked |
+| before-actor-device-lock | immediately before actor Device FOR UPDATE |
+| before-target-transition | after authorization/locks, immediately before transition |
+| before-protected-mutation | immediately before the first durable write |
+| before-commit | after writes and before COMMIT, with operation/participant context |
+
+R04C01 must correct enrollment placement and remove or replace context-free before-commit behavior.
+
+## 6. Representative scenario
+
+Use membership-disabled-before-fence on a valid upload:
+
+1. seed an active identity, membership and Device;
+2. prepare a valid purchase submission;
+3. capture Account state;
+4. pause upload before membership resolution;
+5. disable membership from a control transaction;
+6. commit the control transition;
+7. release upload;
+8. require typed 403 authorization denial;
+9. capture Account state again;
+10. prove protected synchronization state did not advance.
+
+The membership status transition itself is expected. Facts, submissions, events, cursors,
+acknowledgements, recovery state, Devices and security-event state must otherwise remain unchanged.
+
+## 7. R04C01 terminal
+
+Success:
+
+~~~text
+R04C01_BARRIER_CONTROLLER=true
+R04C01_ACCOUNT_OBSERVER=true
+R04C01_MEMBERSHIP_DENIAL_SLICE=true
 AUTHORIZATION_RACE_PRODUCER=false
-R04_AUTHORIZATION_MATRIX=false
-R3_LOCAL_SECURITY_PROVED=false
-MCG-02_PROVIDER_PROOF_PENDING
+R04_REMAINING_CASES_PENDING
+C10-MCG02-R04C01_PROVED
 ~~~
 
-## 8. R04B selected objective
+Do not mark denied-no-state-advance globally true. It remains pending until the wider matrix covers
+all required state families.
 
-R04B completes the same authorization unit. It is not a new feature round and does not advance to
-R05.
+## 8. Validation boundary
 
-Required result:
+R04C01 validates:
 
-~~~text
-deterministic barriers
-+ Account-scoped state observer
-+ 28 executed authorization scenarios
-+ corrected producer set
-+ R04 fail-closed aggregate
-~~~
+- Docker/PostgreSQL preflight;
+- barrier controller lifecycle and timeout tests;
+- phase-placement tests;
+- Account snapshot canonicalization;
+- real Fastify/PostgreSQL representative scenario;
+- complete server format/lint/typecheck/tests/build;
+- diff, secret and teardown checks.
 
-## 9. Environmental preflight
+Full Flutter builds, all proof producers and global aggregation return in R04C04/R05 unless a shared
+contract changed.
 
-Before any R04B source mutation, Codex must prove:
+## 9. Scope boundary
 
-1. Docker client can reach the Linux engine;
-2. postgres:18-alpine can start on loopback;
-3. pg_isready succeeds;
-4. the disposable container can be removed;
-5. final filtered inventory is empty.
+R04C01 excludes:
 
-If preflight fails, stop without another implementation commit and report:
+- the other 27 authorization cases;
+- provider access or credentials;
+- migrations, dependencies, lockfiles and Drift changes;
+- Flutter R05 work;
+- UI, MCG-03, MCG-04, deployment and permanent promotion.
 
-~~~text
-C10-MCG02-R04B_ENVIRONMENT_BLOCKED
-AUTHORIZATION_RACE_PRODUCER=false
-~~~
+Production correction requires a retained failing vertical-slice test and must remain narrow.
 
-The human may start or repair Docker Desktop, but Codex must not change host configuration.
+## 10. Forward coordination
 
-## 10. Required R04B architecture
+After R04C01 reconciliation:
 
-R04B must add lab-only:
+- R04C02 reuses the controller/observer for identity, membership and actor Device cases;
+- R04C03 reuses them for target and enrollment concurrency;
+- R04C04 adds response-loss/restart/retry evidence and runs the full authorization aggregate;
+- R05 proves the complete Flutter transport/file-backed boundary;
+- human MCG-02 proves provider configuration;
+- functional domains promote accepted evidence;
+- Main closes Cycle 10 only after all named gates reconcile.
 
-- explicit transaction barriers;
-- a canonical Account state observer;
-- valid route fixtures for every protected operation;
-- deterministic concurrent identity, membership and Device transitions;
-- response-loss injection after server commit;
-- new-process/application replay over persisted PostgreSQL;
-- controlled serialization retry exhaustion;
-- exact case-to-scenario production.
-
-No sleep may determine race ordering.
-
-Production source may change only after a preserved failing scenario proves a direct contract defect.
-
-## 11. Authorization matrix retained
-
-All 28 schema-version-1 authorization cases remain required. They cover:
-
-- identity and membership fences;
-- actor Device revocation before every protected route;
-- owner/member/foreign/cross-Account target rules;
-- concurrent and repeated revocation;
-- equivalent and conflicting enrollment;
-- response-loss and restart replay;
-- serialization exhaustion;
-- denied-no-state-advance.
-
-The four previously observed cases must be re-expressed through the same case-addressable R04B
-scenario system; prior broad harness success alone is insufficient for the final producer.
-
-## 12. R04B aggregation
-
-R04B acceptance requires:
-
-- migration producer true;
-- corrected JWKS producer true;
-- route producer true;
-- corrected static producer true;
-- authorization producer true for all exact cases;
-- Flutter producer valid and false only for not-yet-r05;
-- proof-pipeline integrity true;
-- global R3 local security false.
-
-Unexpected missing, malformed, skipped, partial or unavailable evidence fails R04B.
-
-## 13. Exclusions
-
-R04B does not authorize:
-
-- Auth0, Neon, Render or public provider access;
-- private provider helper access;
-- dependency or lockfile changes;
-- migration 007 or edits to migrations 001–006;
-- Drift v8;
-- full Flutter R05 work;
-- UI or Cycle 11 work;
-- MCG-03, MCG-04, deployment, permanent promotion or Cycle 10 closure.
-
-## 14. Terminal contract
-
-On complete R04B proof:
-
-~~~text
-PROOF_PIPELINE_INTEGRITY=true
-MIGRATION_006_LIFECYCLE_ACL=true
-JWKS_STATE_MACHINE_PRODUCER=true
-ROUTE_INVENTORY_PRODUCER=true
-STATIC_REGRESSION_PRODUCER=true
-AUTHORIZATION_RACE_PRODUCER=true
-FLUTTER_HTTP_FILE_BACKED_PRODUCER=false
-R3_LOCAL_SECURITY_PROVED=false
-C10-MCG02-R04_AUTHORIZATION_PROVED
-R05_FLUTTER_PENDING
-MCG-02_PROVIDER_PROOF_PENDING
-~~~
-
-Otherwise report the exact environmental or scenario blockers and keep R04 open.
-
-## 15. Cycle 10 forward boundary
-
-After R04B reconciliation:
-
-1. R05 completes Flutter HTTP/file-backed proof and final local aggregation.
-2. Human/provider MCG-02 proves Auth0, Neon and Render integration.
-3. Domain promotion records accepted Cycle 10 evidence.
-4. Main closes Cycle 10 only when local and provider gates are reconciled.
-
-R05 is not active until R04B succeeds and Main reconciles its G/H/I.
+No later unit is automatically authorized by R04C01 completion.
