@@ -1,31 +1,32 @@
-# H_DDC_CODEX — R04C02 Semantic Evidence
+# H_DDC_CODEX — R04C04 Didactic Evidence
 
-Authority marker: C10-MCG02-R04C02_20260717T151546Z
-Controlling staging SHA: f1fe19135ba47c652cd2575d7256a74f871f78bb
-Controlling D/E/F authority SHA: f1fe19135ba47c652cd2575d7256a74f871f78bb
-Baseline implementation SHA: 40e0a7097fef7f8a7abfe172cc867b670dfec196
-Actual implementation start UTC/local: 2026-07-17T15:28:19.9012372Z / 2026-07-17T12:28:19.9500907-03:00
-Actual implementation end UTC/local: 2026-07-17T15:42:54.4630188Z / 2026-07-17T12:42:54.4929972-03:00
-Implementation tree SHA: pending before commit
-Final commit status: pending before commit
-Evidence environment: local loopback proof, Docker PostgreSQL 18.4, synthetic identities/JWKS only
-Result classification: core matrix checkpoint passed; full authorization producer pending R04C04
+- Authority marker: C10-MCG02-R04C04_20260717T154951Z
+- Controlling staging SHA: 8311829e0317a559f740f4ff1772c004561b21b5
+- Baseline SHA: 8311829e0317a559f740f4ff1772c004561b21b5
+- Actual implementation window: 2026-07-17T15:57:00Z to 2026-07-17T16:17:12Z
+- Implementation tree before report replacement: 3cd366421042a00b68177358f13d07b4351cac3e
+- Final commit status: pending before commit.
+- Evidence environment: local loopback proof with disposable PostgreSQL 18 and synthetic identities.
+- Result classification: authorization proof complete; Flutter/provider readiness intentionally absent.
 
 ## Meanings Materialized
 
-- CP-A proves current identity/membership and actor-Device database authority are rechecked inside real route transactions before protected work.
-- CP-B proves target authorization boundaries: owner Account scope, member self-scope, foreign/cross-Account denial, revoke idempotency, concurrent one-transition/one-event truth, and self-revoked actor denial.
-- CP-C proves hosted enrollment contract v1 concurrency for equivalent requests and fail-closed conflicting canonical request hashes.
-- The authorization producer remains false because R04C04 cases are deliberately false: response-loss replay, process-restart replay, serialization retry exhaustion, and global denied-no-state-advance.
+- Authorization proof means producer-local server proof for the 28 declared race/replay/retry cases only.
+- Barrier evidence means deterministic lab coordination around transaction phases; it does not replace the production authorization fence.
+- Valid denial means the real Fastify route received an otherwise valid request and returned the existing typed failure after a committed authority transition.
+- No-state-advance means protected Account synchronization, recovery, Device, enrollment and security-event families did not advance for denied or retry-exhausted work.
+- Duplicate-equivalent means later equivalent revoke/enrollment work observed the same durable truth without a second transition/event.
+- Unknown outcome means the committed enrollment result was recovered by query/replay after suppressing the successful response delivery.
 
-## Evidence Distinctions
+## Named Tests And Producers
 
-All 24 true cases came from structured ScenarioResults invoked by the hosted local harness and producer path. They were not inherited from broad command success, test prose, or prior observational records.
+- Focused test updated: `R04C04 checkpoint summary requires all authorization cases`.
+- Authorization producer now has 28 true cases and empty blockers.
+- R04 orchestrator reports `PROOF_PIPELINE_INTEGRITY=true` while retaining `FLUTTER_HTTP_FILE_BACKED_PRODUCER=false`.
+- Flutter false cases remain exclusively `not-yet-r05`, including `token-not-persisted-or-logged`.
 
-Denied routes used valid synthetic tokens, identities, memberships, Devices, request bodies, recovery snapshots, sessions, and chunks before the authority transition. Malformed input and recovery-unavailable responses were not accepted as authorization proof.
+## Privacy And Boundaries
 
-## Privacy And Unsupported Claims
+No JWTs, claims, passwords, fact payloads, provider credentials, Auth0, Neon, Render, or private helper files were used. Reports do not claim full Flutter proof, provider acceptance, production readiness, MCG-02 completion, or Cycle 10 closure.
 
-Observer evidence remains payload-free and credential-free. JWTs, claims, provider credentials, passwords, fact payloads, and connection strings were not reported.
-
-R04C02 does not claim complete R04 authorization, complete Flutter proof, R3 local security, provider acceptance, production readiness, MCG-02 completion, or Cycle 10 closure. Learner maturity and permanent memory were unchanged.
+Learner maturity and permanent memory were unchanged.

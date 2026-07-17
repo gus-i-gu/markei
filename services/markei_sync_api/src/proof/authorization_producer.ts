@@ -1,15 +1,24 @@
 import { spawn } from "node:child_process";
 import pg from "pg";
 
-const containerName = "markei-c10-mcg02-r04c02-auth-pg";
-const port = 55442;
+const containerName = "markei-c10-mcg02-r04c04-auth-pg";
+const port = 55444;
 const adminUrl = `postgres://postgres@127.0.0.1:${port}/postgres`;
-const dbName = "markei_r04c02_auth";
+const dbName = "markei_r04c04_auth";
 
 try {
   await startContainer();
   await provision();
   const output = await runHarness();
+  for (const outputLine of output.split(/\r?\n/u)) {
+    if (
+      outputLine.startsWith("AUTHORIZATION_CASE ") ||
+      outputLine.startsWith("R04C04_COMPLETE=") ||
+      outputLine.startsWith("AUTHORIZATION_CASES_")
+    ) {
+      process.stdout.write(`${outputLine}\n`);
+    }
+  }
   const line = output
     .split(/\r?\n/u)
     .find((item) => item.startsWith("PROOF_PRODUCER authorization-race "));
@@ -23,11 +32,21 @@ try {
   );
   if (record.passed !== true) process.exitCode = 1;
 } catch (error) {
+  const message = error instanceof Error ? error.message : "unknown";
+  process.stdout.write(`AUTHORIZATION_RACE_ERROR=${safeDiagnostic(message)}\n`);
   process.stdout.write(`AUTHORIZATION_RACE_BLOCKER=${blockerFor(error)}\n`);
   process.stdout.write("AUTHORIZATION_RACE_PRODUCER=false\n");
   process.exitCode = 1;
 } finally {
   await run("docker", ["rm", "-f", containerName], [0, 1]).catch(() => 1);
+}
+
+function safeDiagnostic(message: string) {
+  return message
+    .replace(/postgres:\/\/[^\s]+/gu, "postgres://redacted")
+    .replace(/[^a-zA-Z0-9 .:_-]/gu, "")
+    .split(/\r?\n/u)[0]
+    .slice(0, 240);
 }
 
 function blockerFor(error: unknown) {
@@ -75,7 +94,34 @@ async function startContainer() {
   throw new Error("postgres unavailable");
 }
 
+async function waitForSql() {
+  for (let attempt = 0; attempt < 30; attempt++) {
+    if (
+      (await run(
+        "docker",
+        [
+          "exec",
+          containerName,
+          "psql",
+          "-U",
+          "postgres",
+          "-d",
+          "postgres",
+          "-c",
+          "select 1",
+        ],
+        [0, 1],
+      )) === 0
+    ) {
+      return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  throw new Error("postgres unavailable");
+}
+
 async function provision() {
+  await waitForSql();
   const admin = new pg.Pool({ connectionString: adminUrl, max: 1 });
   try {
     await admin.query("create role markei_runtime");

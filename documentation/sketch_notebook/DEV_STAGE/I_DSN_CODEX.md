@@ -1,38 +1,34 @@
-# I_DSN_CODEX — R04C02 Design Evidence
+# I_DSN_CODEX — R04C04 Design Evidence
 
-Authority marker: C10-MCG02-R04C02_20260717T151546Z
-Controlling staging SHA: f1fe19135ba47c652cd2575d7256a74f871f78bb
-Controlling D/E/F authority SHA: f1fe19135ba47c652cd2575d7256a74f871f78bb
-Baseline implementation SHA: 40e0a7097fef7f8a7abfe172cc867b670dfec196
-Actual implementation start UTC/local: 2026-07-17T15:28:19.9012372Z / 2026-07-17T12:28:19.9500907-03:00
-Actual implementation end UTC/local: 2026-07-17T15:42:54.4630188Z / 2026-07-17T12:42:54.4929972-03:00
-Implementation tree SHA: pending before commit
-Final commit status: pending before commit
-Evidence environment: services/markei_sync_api, loopback Fastify/JWKS, disposable Docker PostgreSQL 18.4
-Result classification: R04C02 core authorization matrix implemented
+- Authority marker: C10-MCG02-R04C04_20260717T154951Z
+- Controlling staging SHA: 8311829e0317a559f740f4ff1772c004561b21b5
+- Baseline SHA: 8311829e0317a559f740f4ff1772c004561b21b5
+- Actual implementation window: 2026-07-17T15:57:00Z to 2026-07-17T16:17:12Z
+- Implementation tree before report replacement: 3cd366421042a00b68177358f13d07b4351cac3e
+- Final commit status: pending before commit.
+- Evidence environment: local Node/Fastify proof harness, Docker PostgreSQL 18, synthetic JWKS.
+- Result classification: R04 authorization design proof complete; R05/provider boundaries retained.
 
 ## Architecture
 
-- R04C02 reuses R04C01 `AuthorizationBarrierController`, no-op production barrier composition, and canonical Account observer.
-- Scenario functions now cover cases 2-24 and return structured `ScenarioResult` records consumed directly by `makeProducerResult`.
-- The hosted local harness executes case 1 plus cases 2-24, prints case evidence lines, and emits producer schema v1 with exact 28-case inventory.
-- The authorization producer owns R04C02 container prefix `markei-c10-mcg02-r04c02-auth-pg`.
+- Dependency direction remains production-to-inert barrier and proof-to-lab controller; no public barrier route was added.
+- R04C04 added a closed `authorization_case_sets.ts` boundary for the R04C04 cases and denied-no-state-advance source set.
+- Existing scenario facade now executes response-loss replay, process-restart replay, serialization retry exhaustion and derived denial aggregation after R04C01/R04C02 results.
+- Response-loss and restart proofs use real hosted enrollment and enrollment-status routes with durable PostgreSQL state as the replay authority.
+- Retry exhaustion uses the existing bounded transaction wrapper and a lab-only `beforeCommit` SQLSTATE 40001 injection after protected writes.
+- Authorization producer now waits for a real SQL round trip after `pg_isready`, preventing transient PostgreSQL startup termination before provisioning.
 
-## Production Deviation
+## Retained Contracts
 
-Retained failing scenario: `actor-device-revoked-before-device-status` timed out waiting for `before-actor-device-lock`, proving Device management routes lacked that lab phase before their actor/target lock helper.
+- Migrations 001-006 unchanged.
+- Producer schema version 1 and exact 28 authorization case IDs retained.
+- Hosted enrollment contract v1, JWT RS256, recovery format 1, cursor family and event payload v3 retained.
+- No dependency, lockfile, Drift, Flutter, UI, methodology, A/B/C, J or D/E/F changes.
 
-Narrow correction: `HostedIdentityService.deviceStatus` and `HostedIdentityService.revoke` now call `barrier.reach("before-actor-device-lock", transactionContext)` immediately before `authorizeActorAndTargetDevice`. Authorization rules, locks, schema versions, route contracts, and producer schema were unchanged.
+## Production Deviations
 
-## Scenario Mechanics
+No production authorization, locking, retry, Account scoping or route contract was weakened. The only operational correction was producer-lab readiness tightening for disposable PostgreSQL setup.
 
-- CP-A actor cases register and pre-release prerequisite identity/membership phases, then pause at actor Device lock.
-- Recovery route cases build valid snapshot/session/chunk fixtures before revocation.
-- CP-B target cases use real route calls for status/revoke and inspect transition/event counts.
-- CP-C enrollment cases use contract v1 request identity/hash behavior and assert Device/result counts.
+## Aggregate
 
-## Retained Versions
-
-Retained unchanged: migrations 001-006, event payload v3, cursor `c10b:*`, recovery snapshot format 1, hosted enrollment contract v1, Drift schema v7, JWT RS256, producer schema version 1, dependencies, and lockfiles.
-
-Deferred: R04C04 response-loss/restart/retry/global aggregate, R05 Flutter proof, provider proof, deployment, and Cycle 10 closure.
+R04 orchestrator acceptance now requires authorization true, all other server producers true, Flutter structurally valid and false only for `not-yet-r05`, and global security false due to R05/provider deferral.

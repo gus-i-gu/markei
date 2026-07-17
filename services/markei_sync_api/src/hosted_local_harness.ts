@@ -6,6 +6,7 @@ import {
   coreCheckpointSummary,
   membershipSliceIds,
   runR04C02CoreAuthorizationScenarios,
+  runR04C04CompletionScenarios,
   runMembershipDisabledBeforeFenceScenario,
 } from "./proof/authorization_slice_scenarios.js";
 import { makeProducerResult } from "./proof/producer.js";
@@ -32,45 +33,60 @@ try {
     audience: jwks.audience,
     token: jwks.token,
   });
+  const r04c02Scenarios = await runR04C02CoreAuthorizationScenarios({
+    migratorPool,
+    runtimePool,
+    issuer: jwks.issuer,
+    audience: jwks.audience,
+    token: jwks.token,
+  });
   const scenarios = [
     r04c01,
-    ...(await runR04C02CoreAuthorizationScenarios({
-      migratorPool,
-      runtimePool,
-      issuer: jwks.issuer,
-      audience: jwks.audience,
-      token: jwks.token,
-    })),
+    ...r04c02Scenarios,
+    ...(await runR04C04CompletionScenarios(
+      {
+        migratorPool,
+        runtimePool,
+        issuer: jwks.issuer,
+        audience: jwks.audience,
+        token: jwks.token,
+      },
+      [r04c01, ...r04c02Scenarios],
+    )),
   ];
   const summary = coreCheckpointSummary(scenarios);
   const authorizationProducer = makeProducerResult(
     "authorization-race",
     authorizationCaseMapFromResults(scenarios),
-    "pending-r04c04",
+    "authorization-proof-complete",
   );
   process.stdout.write(
     `R04C01_CASE membership-disabled-before-fence=${r04c01.passed ? "true" : "false"} status=${r04c01.responseStatus ?? "none"} code=${r04c01.responseCode ?? "none"}\n`,
   );
   for (const scenario of scenarios) {
     process.stdout.write(
-      `R04C02_CASE ${scenario.caseId}=${scenario.passed ? "true" : "false"} status=${scenario.responseStatus ?? "none"} code=${scenario.responseCode ?? "none"}\n`,
+      `AUTHORIZATION_CASE ${scenario.caseId}=${scenario.passed ? "true" : "false"} status=${scenario.responseStatus ?? "none"} code=${scenario.responseCode ?? "none"} state=${scenario.stateInvariant === true ? "true" : "false"} blocker=${scenario.blocker ?? "none"}\n`,
     );
   }
   process.stdout.write(`R04C02_CP_A=${summary.cpA ? "true" : "false"}\n`);
   process.stdout.write(`R04C02_CP_B=${summary.cpB ? "true" : "false"}\n`);
   process.stdout.write(`R04C02_CP_C=${summary.cpC ? "true" : "false"}\n`);
+  process.stdout.write(
+    `R04C04_COMPLETE=${summary.r04c04 ? "true" : "false"}\n`,
+  );
   process.stdout.write(`AUTHORIZATION_CASES_TRUE=${summary.trueCount}\n`);
   process.stdout.write(`AUTHORIZATION_CASES_PENDING=${summary.pendingCount}\n`);
   process.stdout.write(
     `R04C01_MEMBERSHIP_DENIAL_SLICE=${r04c01.passed ? "true" : "false"}\n`,
   );
-  process.stdout.write("AUTHORIZATION_RACE_MATRIX=partial\n");
-  process.stdout.write("AUTHORIZATION_RACE_PRODUCER=false\n");
+  process.stdout.write(
+    `AUTHORIZATION_RACE_PRODUCER=${authorizationProducer.passed ? "true" : "false"}\n`,
+  );
   process.stdout.write("R3_LOCAL_SECURITY_PROVED=false\n");
   process.stdout.write(
     `PROOF_PRODUCER authorization-race ${JSON.stringify(authorizationProducer)}\n`,
   );
-  if (!summary.cpA || !summary.cpB || !summary.cpC) process.exitCode = 1;
+  if (!authorizationProducer.passed) process.exitCode = 1;
 } finally {
   await runtimePool.end().catch(() => undefined);
   await migratorPool.end().catch(() => undefined);
@@ -108,8 +124,8 @@ async function seed(pool: pg.Pool, issuer: string) {
   );
   await pool.query(
     `insert into external_identities(identity_id, issuer, subject, status)
-     values($1,$2,$3,'active') on conflict do nothing`,
-    [membershipSliceIds.identity, issuer, "auth0|principal-a"],
+     values($1,$2,'auth0|principal-a','active') on conflict do nothing`,
+    [membershipSliceIds.identity, issuer],
   );
   await pool.query(
     `insert into account_memberships(account_id, identity_id, role, status)

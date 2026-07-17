@@ -203,17 +203,19 @@ test("R04C01 producer marks only the measured case true and remains false", () =
   assert.equal(producer.passed, false);
 });
 
-test("R04C02 checkpoint summary requires all core cases and leaves four pending", () => {
+test("R04C04 checkpoint summary requires all authorization cases", () => {
   const results: ScenarioResult[] = coreCaseIds.map((caseId) => ({
     caseId,
     passed: true,
+    stateInvariant: true,
   }));
   const summary = coreCheckpointSummary(results);
   assert.equal(summary.cpA, true);
   assert.equal(summary.cpB, true);
   assert.equal(summary.cpC, true);
-  assert.equal(summary.trueCount, 24);
-  assert.equal(summary.pendingCount, 4);
+  assert.equal(summary.r04c04, true);
+  assert.equal(summary.trueCount, 28);
+  assert.equal(summary.pendingCount, 0);
 });
 
 function snapshot(

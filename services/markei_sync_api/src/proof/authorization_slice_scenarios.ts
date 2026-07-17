@@ -20,6 +20,12 @@ import {
   stableJson,
 } from "./account_state_observer.js";
 import { AuthorizationBarrierController } from "./authorization_barrier_controller.js";
+import {
+  deniedNoStateAdvanceSourceCases,
+  r04c04CaseIds,
+} from "./authorization_case_sets.js";
+
+export { r04c04CaseIds } from "./authorization_case_sets.js";
 
 export type ScenarioResult = {
   caseId: string;
@@ -51,13 +57,6 @@ export const membershipSliceIds = {
   store: "12121212-1212-4212-8212-121212121212",
 } as const;
 
-const pendingR04C04Cases = new Set([
-  "response-loss-query-replay",
-  "process-restart-replay",
-  "serialization-retry-exhaustion-fails-closed",
-  "denied-no-state-advance",
-]);
-
 export const coreCaseIds = [
   "membership-disabled-before-fence",
   "membership-removed-before-fence",
@@ -83,9 +82,11 @@ export const coreCaseIds = [
   "self-revoked-actor-denied-later",
   "equivalent-concurrent-enrollment",
   "conflicting-enrollment-request-hash",
+  ...r04c04CaseIds,
 ] as const;
 
 export type CoreCaseId = (typeof coreCaseIds)[number];
+type R04C04CaseId = (typeof r04c04CaseIds)[number];
 
 type ScenarioOptions = {
   migratorPool: pg.Pool;
@@ -235,9 +236,14 @@ export async function runMembershipDisabledBeforeFenceScenario(options: {
       caseId: scenario,
       passed,
       blocker: passed ? undefined : "membership-denial-slice-failed",
+      operation: "upload-submission",
+      route: "POST /v1/sync/submissions",
+      participant,
+      phase: "before-identity-membership-fence",
       responseStatus: response.status,
       responseCode:
         typeof response.body.code === "string" ? response.body.code : undefined,
+      stateInvariant: protectedUnchanged,
       before: stableJson(before),
       after: stableJson(after),
     };
@@ -319,8 +325,10 @@ export function authorizationCaseMapFromResults(results: ScenarioResult[]) {
       ? true
       : { passed: false, blocker: result.blocker ?? "case-failed" };
   }
-  for (const caseId of pendingR04C04Cases) {
-    byCase[caseId] = { passed: false, blocker: "pending-r04c04" };
+  for (const caseId of coreCaseIds) {
+    if (!Object.hasOwn(byCase, caseId)) {
+      byCase[caseId] = { passed: false, blocker: "missing-scenario-result" };
+    }
   }
   return byCase;
 }
@@ -351,9 +359,34 @@ export function coreCheckpointSummary(results: ScenarioResult[]) {
       "equivalent-concurrent-enrollment",
       "conflicting-enrollment-request-hash",
     ].every((caseId) => passed.has(caseId)),
+    r04c04: r04c04CaseIds.every((caseId) => passed.has(caseId)),
     trueCount: coreCaseIds.filter((caseId) => passed.has(caseId)).length,
-    pendingCount: pendingR04C04Cases.size,
+    pendingCount: coreCaseIds.filter((caseId) => !passed.has(caseId)).length,
   };
+}
+
+export async function runR04C04CompletionScenarios(
+  options: ScenarioOptions,
+  priorResults: ScenarioResult[],
+): Promise<ScenarioResult[]> {
+  const results: ScenarioResult[] = [];
+  results.push(
+    await runTracked("response-loss-query-replay", () =>
+      runResponseLossReplayScenario(options),
+    ),
+  );
+  results.push(
+    await runTracked("process-restart-replay", () =>
+      runProcessRestartReplayScenario(options),
+    ),
+  );
+  results.push(
+    await runTracked("serialization-retry-exhaustion-fails-closed", () =>
+      runSerializationRetryExhaustionScenario(options),
+    ),
+  );
+  results.push(deriveDeniedNoStateAdvance([...priorResults, ...results]));
+  return results;
 }
 
 async function runMembershipRemovedBeforeFenceScenario(
@@ -1012,6 +1045,237 @@ async function runConflictingEnrollmentScenario(
   }
 }
 
+async function runResponseLossReplayScenario(
+  options: ScenarioOptions,
+): Promise<ScenarioResult> {
+  const caseId: R04C04CaseId = "response-loss-query-replay";
+  await resetAndSeed(options.migratorPool, options.issuer, caseId);
+  const env = await startScenarioEnvironment(options, []);
+  try {
+    const token = await options.token(subjectFor(caseId, "owner"));
+    const requestId = ids(caseId, "response-loss-request");
+    const body = enrollmentBody(
+      ids(caseId, "response-loss-install"),
+      requestId,
+    );
+    const committed = await postRaw(
+      `${env.origin}/v1/devices/enroll`,
+      token,
+      body,
+    );
+    const replay = await http(
+      "GET",
+      `${env.origin}/v1/devices/enrollments/${requestId}`,
+      token,
+    );
+    const deviceCountValue = await countRows(
+      options.migratorPool,
+      "devices",
+      caseId,
+    );
+    const requestCount = await countRows(
+      options.migratorPool,
+      "device_enrollment_requests",
+      caseId,
+    );
+    const eventCount = await securityEventCount(
+      options.migratorPool,
+      caseId,
+      "device-enrolled",
+    );
+    const invariant =
+      committed.status === 200 &&
+      replay.status === 200 &&
+      committed.body.deviceId === replay.body.deviceId &&
+      committed.body.status === replay.body.status &&
+      deviceCountValue === 1 &&
+      requestCount === 1 &&
+      eventCount === 1;
+    return {
+      caseId,
+      passed: invariant,
+      blocker: invariant ? undefined : "response-loss-replay-failed",
+      operation: "query-enrollment",
+      route: "GET /v1/devices/enrollments/:requestId",
+      participant: "client-replay",
+      responseStatus: replay.status,
+      responseCode:
+        typeof replay.body.code === "string" ? replay.body.code : undefined,
+      stateInvariant: invariant,
+      transitionCount: 1,
+      eventCount,
+      enrollmentResultCount: requestCount,
+      deviceCount: deviceCountValue,
+    };
+  } finally {
+    await env.close();
+  }
+}
+
+async function runProcessRestartReplayScenario(
+  options: ScenarioOptions,
+): Promise<ScenarioResult> {
+  const caseId: R04C04CaseId = "process-restart-replay";
+  await resetAndSeed(options.migratorPool, options.issuer, caseId);
+  const token = await options.token(subjectFor(caseId, "owner"));
+  const requestId = ids(caseId, "restart-request");
+  const body = enrollmentBody(ids(caseId, "restart-install"), requestId);
+  const envA = await startScenarioEnvironment(options, []);
+  let committed: { status: number; body: Record<string, unknown> };
+  try {
+    committed = await postRaw(`${envA.origin}/v1/devices/enroll`, token, body);
+  } finally {
+    await envA.close();
+  }
+  const envB = await startScenarioEnvironment(options, []);
+  try {
+    const replay = await http(
+      "GET",
+      `${envB.origin}/v1/devices/enrollments/${requestId}`,
+      token,
+    );
+    const deviceCountValue = await countRows(
+      options.migratorPool,
+      "devices",
+      caseId,
+    );
+    const requestCount = await countRows(
+      options.migratorPool,
+      "device_enrollment_requests",
+      caseId,
+    );
+    const eventCount = await securityEventCount(
+      options.migratorPool,
+      caseId,
+      "device-enrolled",
+    );
+    const invariant =
+      committed.status === 200 &&
+      replay.status === 200 &&
+      committed.body.deviceId === replay.body.deviceId &&
+      deviceCountValue === 1 &&
+      requestCount === 1 &&
+      eventCount === 1;
+    return {
+      caseId,
+      passed: invariant,
+      blocker: invariant ? undefined : "process-restart-replay-failed",
+      operation: "query-enrollment",
+      route: "GET /v1/devices/enrollments/:requestId",
+      participant: "composition-b",
+      responseStatus: replay.status,
+      responseCode:
+        typeof replay.body.code === "string" ? replay.body.code : undefined,
+      stateInvariant: invariant,
+      transitionCount: 1,
+      eventCount,
+      enrollmentResultCount: requestCount,
+      deviceCount: deviceCountValue,
+    };
+  } finally {
+    await envB.close();
+  }
+}
+
+async function runSerializationRetryExhaustionScenario(
+  options: ScenarioOptions,
+): Promise<ScenarioResult> {
+  const caseId: R04C04CaseId = "serialization-retry-exhaustion-fails-closed";
+  await resetAndSeed(options.migratorPool, options.issuer, caseId);
+  let inject = false;
+  let attempts = 0;
+  const env = await startScenarioEnvironment(options, [], async (context) => {
+    if (!inject || context.operation !== "upload-submission") return;
+    attempts += 1;
+    throw Object.assign(new Error("r04c04 serialization conflict"), {
+      code: "40001",
+    });
+  });
+  try {
+    const token = await options.token(subjectFor(caseId, "owner"));
+    const enrollment = await enrollDevice(
+      env.origin,
+      token,
+      ids(caseId, "retry-install"),
+      ids(caseId, "retry-enroll"),
+    );
+    const before = await observeAccountState(
+      options.migratorPool,
+      accountId(caseId),
+    );
+    inject = true;
+    const response = await postRaw(
+      `${env.origin}/v1/sync/submissions`,
+      token,
+      uploadBodyFor(caseId, String(enrollment.deviceId)),
+      String(enrollment.deviceId),
+    );
+    const after = await observeAccountState(
+      options.migratorPool,
+      accountId(caseId),
+    );
+    const unchanged = stableJson(before) === stableJson(after);
+    const invariant =
+      attempts === 3 &&
+      response.status === 500 &&
+      response.body.code === "service-unavailable" &&
+      unchanged;
+    return {
+      caseId,
+      passed: invariant,
+      blocker: invariant ? undefined : "retry-exhaustion-failed",
+      operation: "upload-submission",
+      route: "POST /v1/sync/submissions",
+      participant: "retrying-upload",
+      phase: "before-commit",
+      responseStatus: response.status,
+      responseCode:
+        typeof response.body.code === "string" ? response.body.code : undefined,
+      stateInvariant: unchanged,
+      transitionCount: attempts,
+      eventCount: 0,
+      before: stableJson(before),
+      after: stableJson(after),
+    };
+  } finally {
+    await env.close();
+  }
+}
+
+function deriveDeniedNoStateAdvance(results: ScenarioResult[]): ScenarioResult {
+  const caseId: R04C04CaseId = "denied-no-state-advance";
+  const failures: string[] = [];
+  for (const sourceCaseId of deniedNoStateAdvanceSourceCases) {
+    const matches = results.filter((result) => result.caseId === sourceCaseId);
+    const result = matches[0];
+    if (matches.length !== 1 || !result) {
+      failures.push(`${sourceCaseId}:missing-or-duplicate`);
+      continue;
+    }
+    const statusOk =
+      sourceCaseId === "serialization-retry-exhaustion-fails-closed"
+        ? result.responseStatus === 500
+        : result.responseStatus === 403;
+    if (!result.passed || result.stateInvariant !== true || !statusOk) {
+      failures.push(`${sourceCaseId}:not-fail-closed`);
+    }
+  }
+  const passed = failures.length === 0;
+  return {
+    caseId,
+    passed,
+    blocker: passed ? undefined : failures.join(","),
+    operation: "aggregate-denied-state",
+    route: "ScenarioResult closed denial set",
+    participant: "authorization-producer",
+    responseStatus: passed ? 200 : 500,
+    responseCode: passed ? undefined : "denial-derivation-failed",
+    stateInvariant: passed,
+    transitionCount: deniedNoStateAdvanceSourceCases.length,
+    eventCount: 0,
+  };
+}
+
 export async function createSyntheticJwks() {
   const keys = await generateKeyPair("RS256", { extractable: true });
   const publicJwk = await exportJWK(keys.publicKey);
@@ -1133,20 +1397,23 @@ function actorRoutes(): ActorRoute[] {
 async function startScenarioEnvironment(
   options: ScenarioOptions,
   keys: ConstructorParameters<typeof AuthorizationBarrierController>[0],
+  beforeCommit?: Database["beforeCommit"],
 ): Promise<ScenarioEnvironment & { close: () => Promise<void> }> {
   const barrier = new AuthorizationBarrierController(keys, 10000);
   const database: Database = {
     pool: options.runtimePool,
-    beforeCommit: (context) =>
-      barrier.reach("before-commit", {
-        operation: context.operation,
-        scenario: context.scenario,
-        participant: context.participant,
-        accountId: context.accountId,
-        identityId: context.identityId,
-        actorDeviceId: context.actorDeviceId,
-        targetDeviceId: context.targetDeviceId,
-      }),
+    beforeCommit:
+      beforeCommit ??
+      ((context) =>
+        barrier.reach("before-commit", {
+          operation: context.operation,
+          scenario: context.scenario,
+          participant: context.participant,
+          accountId: context.accountId,
+          identityId: context.identityId,
+          actorDeviceId: context.actorDeviceId,
+          targetDeviceId: context.targetDeviceId,
+        })),
   };
   const verifier = new Auth0JwtVerifier({
     issuer: options.issuer,
