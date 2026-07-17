@@ -1,139 +1,126 @@
-# F_DSN_STAGE — R04C04 Authorization Completion Design Authority
+# F_DSN_STAGE — R05 Flutter HTTP/File-Backed Design Authority
 
 > Sequence: FLX-ORD-01
-> Authority marker: C10-MCG02-R04C04_20260717T154951Z
-> Required ancestry: 4f8c1567521ffb7deb93541a3af7f4a713986058
+> Authority marker: C10-MCG02-R05_20260717T162323Z
+> Required ancestry: bddccba29e208ad423d9adfc95b99ed969ade71e
 > Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
 
 ## 1. Selected topology
 
 ~~~text
-modular scenario facade
-├─ authority/actor scenarios
-├─ target/enrollment scenarios
-└─ replay/restart/retry scenarios
-        ↓
-real Fastify + PostgreSQL compositions
-        ↓
-ScenarioResult[28]
-        ↓
-authorization producer true
-        ↓
-R04 orchestrator accepts server producers
-        ↓
-Flutter remains explicitly deferred
+file-backed Drift + pending local outbox
+→ HostedEnrollmentCoordinator
+→ ephemeral AccessTokenSource
+→ real HttpDeviceEnrollmentTransport
+→ loopback hosted Fastify + PostgreSQL
+→ typed outcome persisted in Drift
+→ close/reopen comparison
+→ 16-case Flutter producer
+→ final six-producer local aggregate
 ~~~
 
-Production modules must not depend on proof modules.
+Application ports remain independent of HTTP, Drift and provider SDKs.
 
-## 2. Scenario decomposition
+## 2. Transport ownership
 
-Split the 1,669-line module into cohesive modules with a compact compatibility facade. Keep shared
-types/case sets free of infrastructure ownership. Put environment lifecycle and fixture builders in
-dedicated helpers. Keep scenario-family modules near the ordinary handwritten limit where practical.
+`HttpDeviceEnrollmentTransport` owns one absolute attempt deadline across send, headers and complete
+bounded body consumption. It rejects redirects, malformed JSON, oversized bodies and unexpected
+contract fields. Expected network/timeout/cancellation failures become closed transport outcomes;
+programming errors remain visible.
 
-The refactor must preserve exported behavior used by tests, harness and producer. First rerun the
-existing 24 cases unchanged; only then add R04C04 behavior.
+Owned request/client resources are cancelled or closed on every terminal path. A borrowed client is
+never closed by the transport and remains usable after timeout. Late completions cannot reach the
+coordinator as successful results after the deadline.
 
-## 3. Response-loss seam
+Use the pinned `http` API. Do not change dependencies unless Main separately reconciles a proven API
+gap.
 
-Inject loss at the lab HTTP delivery boundary after the application transaction commits. The seam
-may suppress or replace delivery to the caller, but must not alter database commit behavior, stored
-result or production route contracts. It remains test-only and unreachable from hosted composition.
-
-Recovery uses the existing authenticated enrollment-status/replay contract and durable request ID,
-hash and stored result.
-
-## 4. Restart topology
+## 3. Unknown-outcome state machine
 
 ~~~text
-composition A commits request
-→ response delivery suppressed
-→ close A and its app/pools/JWKS/in-memory state
-→ composition B opens same PostgreSQL database
-→ same identity/request query or replay
-→ equivalent durable result, no duplicate state
+persist request identity
+→ send enrollment
+→ server commits
+→ response delivery lost
+→ persist unknown-outcome, no Device truth
+→ obtain fresh ephemeral token
+→ query same enrollment request ID
+→ persist committed Device/account/generation
 ~~~
 
-Composition B must not receive any cache or object from A other than database coordinates and safe
-fixture configuration.
+Do not generate a new request ID after an unknown outcome. Query/replay is idempotent and durable;
+the same PostgreSQL truth must survive server composition restart where exercised by R04.
 
-## 5. Retry-exhaustion seam
+## 4. Drift invariants
 
-Use a lab-injected transaction lifecycle hook carrying operation, scenario, participant and attempt.
-It must be absent/inert in normal composition. At the before-commit boundary, execute a PostgreSQL
-operation that returns retryable SQLSTATE `40001` or `40P01` for each allowed attempt.
+Hosted identity state is protocol state, not authoritative Purchase facts. Across every R05 case:
 
-The existing wrapper remains bounded. Each failed attempt rolls back its writes. After exhaustion,
-the observer must match the pre-request protected state. Do not add public controls or global
-cross-talk between concurrent operations.
+- existing Purchases and facts remain unchanged;
+- pending outbox events remain present unless normal sync explicitly commits them;
+- conflict/unavailable/malformed/timeout do not install a server Device ID;
+- unknown outcome retains installation and enrollment request identity;
+- successful replay installs one equivalent server identity;
+- close/reopen returns the same committed local state;
+- no reset or replacement of the Drift file occurs.
 
-## 6. No-state derivation
+## 5. Real and deterministic fixtures
 
-Maintain a closed denial-case set separate from positive cases. Derive
-`denied-no-state-advance=true` only when every denial ScenarioResult is present, passed, has the
-expected typed denial and reports `stateInvariant=true`. Include retry exhaustion as fail-closed
-state evidence without calling it an authorization 403.
+The decisive happy/unknown/replay path uses loopback Fastify, disposable PostgreSQL 18, synthetic
+RS256/JWKS and the real Flutter HTTP adapter. Dart loopback servers/clients may deterministically
+exercise header stall, trickle, redirect, oversize, cancellation and ownership edges.
 
-The derived case itself must be inserted into the exact 28-case map; it cannot be hard-coded true.
+Fixture authentication remains local-only and structurally absent from hosted production roots.
 
-## 7. Producer and aggregate
+## 6. Token design
 
-Authorization flow:
+The token source returns an ephemeral credential for a single request. Neither coordinator state,
+Drift tables, transport results nor logs retain it. Tests may compare a credential in transient
+memory but must never print it. Token proof scans durable file content/rows and captured redacted
+diagnostics.
 
-~~~text
-28 executed results
-→ exact ordered case map
-→ makeProducerResult
-→ passed=true, blockers=[]
-~~~
+No production Auth0 SDK, callback handler, client secret or login UI is selected.
 
-R04 orchestration retains six closed producers. It succeeds only when migration, JWKS, route,
-static and authorization producers are true; Flutter is valid and false only for `not-yet-r05`;
-aggregate false is explained only by that deferral; pipeline integrity is true.
+## 7. Case producer
 
-Do not relax parser, blocker, case-set or aggregation checks.
+Define one closed Dart/proof result per existing producer case. The TypeScript producer consumes a
+machine-readable record, validates exact case set/order and calls `makeProducerResult`.
 
-## 8. Durable invariants
+Do not infer multiple case truths from one test process exit. Safe blocker categories are required
+for every false case.
 
-Response-loss/restart cases require:
+## 8. Final aggregation
 
-- one Device and active enrollment;
-- one enrollment request identity/hash/stored result;
-- one corresponding security event;
-- equivalent recovered response;
-- no extra state after replay/restart.
+Preserve the R04 orchestrator as an authorization-era diagnostic. Add or adapt a final local
+orchestrator that requires all six producer records true and `aggregateProofResults(...).passed`
+true before emitting `R3_LOCAL_SECURITY_PROVED=true`.
 
-Retry exhaustion requires exact bounded attempts and zero durable protected mutations.
+No special deferred blocker remains after R05. Missing/malformed/duplicate producer output fails
+closed.
 
-## 9. Resource ownership
+## 9. Local-first availability
 
-The top-level proof owner closes in `finally`:
+Hosted enrollment/sync unavailability cannot block `RegisterPurchase`. The local transaction commits
+facts and its pending event first; remote work remains retryable. R05 does not add UI or automatic
+background policy.
 
-- both application compositions;
-- JWKS servers and generated keys;
-- runtime/migrator/control pools;
-- barriers and transaction hooks;
-- disposable files;
-- PostgreSQL containers.
+## 10. Resource ownership
 
-Teardown success means command exit zero and empty exact filtered inventory.
+One lab owner closes Flutter test processes, Fastify/JWKS, PostgreSQL pools/container, HTTP clients,
+temporary Drift files and captured logs in `finally`. Teardown requires successful cleanup and empty
+exact filtered inventory.
 
-## 10. Retained versions and scope
+## 11. Retained versions
 
-Retain migrations 001–006, event v3, cursor `c10b:*`, recovery format 1, enrollment contract v1,
-Drift v7, JWT RS256, producer schema v1, current dependencies and lockfile.
+Retain migrations 001–006, Drift v7, enrollment contract v1, event v3, cursor `c10b:*`, recovery
+format 1, JWT RS256, producer schema v1 and current dependencies/lockfiles.
 
-No migration, protocol, dependency, Flutter, provider or UI change is selected.
+No schema or protocol increment is selected.
 
-## 11. Rollback and report
+## 12. Rollback and report
 
-R04C04 is one bounded rollback unit. Mechanical module splitting must remain reviewable separately
-from behavioral additions within the diff. Narrow production deviations require retained failing
-tests and explicit I reporting.
+R05 is one bounded rollback unit. Production changes require retained failing cases. I reports final
+dependency direction, timeout/cancellation design, client ownership, unknown-outcome transitions,
+Drift invariants, token boundary, fixture containment, producer/aggregate architecture, versions,
+resources and deviations.
 
-I must record module boundaries, dependency direction, response-loss seam, restart ownership,
-retry hook/SQLSTATE/attempt count, denial derivation, producer/aggregate truth, retained versions,
-resources and every deviation.
-
-Do not claim R05, provider proof, MCG-02 completion or Cycle 10 closure.
+Do not claim provider proof, deployment, MCG-02 completion or Cycle 10 closure.

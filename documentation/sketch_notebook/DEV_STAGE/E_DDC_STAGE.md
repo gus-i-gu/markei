@@ -1,58 +1,54 @@
-# E_DDC_STAGE — R04C04 Semantic Materialization Authority
+# E_DDC_STAGE — R05 Semantic Materialization Authority
 
 > Sequence: FLX-ORD-01
-> Authority marker: C10-MCG02-R04C04_20260717T154951Z
-> Required ancestry: 4f8c1567521ffb7deb93541a3af7f4a713986058
+> Authority marker: C10-MCG02-R05_20260717T162323Z
+> Required ancestry: bddccba29e208ad423d9adfc95b99ed969ade71e
 > Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
 
 ## 1. Evidence boundary
 
 ~~~text
-28 authorization cases proved
-+ R04 server proof pipeline accepted
-≠ Flutter R05 proved
-≠ provider MCG-02 proved
-≠ Cycle 10 closed
+local Flutter HTTP/file-backed proof
++ all local producers true
+≠ Auth0/Neon/Render provider proof
+≠ production readiness
+≠ Cycle 10 closure
 ~~~
 
-R04C04 success completes the local server authorization phase only.
+## 2. Closed outcome meanings
 
-## 2. Meanings
+- applied: hosted enrollment is committed and installed locally;
+- duplicate-equivalent: the same durable truth already exists, distinct from a new application;
+- conflict: known not applied under the submitted identity/hash; local facts/outbox survive;
+- unavailable: service could not provide a usable result; local work survives;
+- unknown-outcome: the request may have committed, so Flutter preserves its request identity and
+  queries/replays instead of inventing success or resubmitting a new identity;
+- fail closed: malformed, oversized, redirected or late responses cannot install Device truth;
+- absolute deadline: one bound covers send, headers and complete body, not each gap separately;
+- ephemeral token: used for one request but absent from durable storage, logs and retained outcomes.
 
-- response loss: the transaction committed, but its successful HTTP result was not delivered;
-- query replay: an authenticated status query recovers committed truth using durable request identity;
-- process restart: a new application composition reconstructs truth from the same PostgreSQL state;
-- retry exhaustion: every bounded transaction attempt receives a retryable database conflict and
-  rolls back before the wrapper returns a typed failure;
-- denied no-state-advance: every authorization denial leaves prohibited protected state unchanged;
-- proof-pipeline integrity: closed producers and aggregation agree, with only the explicitly deferred
-  Flutter producer false.
+## 3. Evidence requirements
 
-## 3. Required distinctions
-
-Response loss is not transaction rollback. Restart is not reusing an in-memory service/cache.
-Retry exhaustion is not a generic exception before work. No-state-advance is derived from executed
-denial results, not one representative scenario or a manually set boolean.
+Every producer case is individually executed. One focused test exit cannot stand for several cases.
+File-backed evidence must preserve Purchases, facts and pending outbox through failures, timeout,
+unknown outcome, close/reopen and API unavailability.
 
 ## 4. Completion wording
 
 Allowed:
 
 ~~~text
-R04 server authorization proof passed all 28 cases.
-Flutter R05 and human/provider MCG-02 proof remain pending.
+R05 local Flutter HTTP/file-backed proof passed all 16 cases.
+Human/provider MCG-02 proof and Cycle 10 promotion remain pending.
 ~~~
 
-Forbidden claims include full local security, production readiness, provider acceptance, deployment,
+Do not claim provider acceptance, deployment, platform runtime acceptance, production readiness,
 MCG-02 completion or Cycle 10 closure.
 
-## 5. Privacy
+## 5. Privacy and didactic boundary
 
-Reports may include case IDs, safe synthetic IDs, response classes, attempt/transition/event counts,
-producer booleans and safe blockers. Exclude JWTs, claims, keys, passwords, provider URLs,
-connection strings and fact payloads.
-
-## 6. Didactic boundary
+Reports may contain case IDs, safe counts, durations and booleans. They must not contain bearer
+tokens, claims, passwords, connection strings, provider URLs or fact payloads.
 
 Do not change permanent didactic memory, learner maturity, KANBAN, glossary, Concept Map or Lecture
-Register. H records only the meanings demonstrated by executed R04C04 evidence.
+Register. H reports only executed meanings.

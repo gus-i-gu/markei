@@ -1,175 +1,163 @@
-# D_OPS_STAGE — R04C04 Authorization Completion Authority
+# D_OPS_STAGE — R05 Flutter HTTP/File-Backed Proof Authority
 
 > Sequence: FLX-ORD-01
-> Authority marker: C10-MCG02-R04C04_20260717T154951Z
-> Required ancestry: 4f8c1567521ffb7deb93541a3af7f4a713986058
-> Controlling R04C02 authority: f1fe19135ba47c652cd2575d7256a74f871f78bb
+> Authority marker: C10-MCG02-R05_20260717T162323Z
+> Required ancestry: bddccba29e208ad423d9adfc95b99ed969ade71e
 > Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
 
 ## 1. Objective
 
-Complete server-side R04 authorization proof:
+Complete all 16 `flutter-http-file-backed` cases with case-addressable evidence, then run a final
+local aggregate in which all six producers pass.
 
-~~~text
-split oversized scenario module
-→ response-loss replay
-→ process-restart replay
-→ serialization retry exhaustion
-→ global denial no-state-advance
-→ authorization producer true
-→ R04 aggregate accepted with Flutter deferred
-~~~
+R05 proves the local Flutter HTTP/file-backed boundary. It does not contact or accept Auth0, Neon,
+Render or production deployment.
 
-R05 and provider proof remain excluded.
-
-## 2. Safety and environment gate
+## 2. Safety and preflight
 
 Confirm branch, fast-forward-only state, required ancestry and clean/non-overlapping worktree.
-Preserve private/unrelated files without reading them.
+Preserve unrelated/private files without reading them.
 
-Before mutation prove Docker/PostgreSQL 18 start, readiness, query, removal and empty exact filtered
-inventory on loopback. Stop without mutation if unavailable; do not configure host software.
+Before mutation verify:
 
-## 3. CP-0 — structural recovery correction
+- Flutter/Dart toolchain and package resolution;
+- Docker/PostgreSQL 18 loopback start, readiness, query, removal and empty inventory;
+- supported host build targets without installing/reconfiguring host software.
 
-`authorization_slice_scenarios.ts` is 1,669 lines. Split it by responsibility before new behavior:
+Stop before mutation when the decisive Flutter or Docker/PostgreSQL environment is unavailable.
 
-- result/case types and case sets;
-- shared fixture/environment/HTTP/database helpers;
-- membership and actor-Device scenarios;
-- target/revoke/enrollment scenarios;
-- replay/restart/retry scenarios;
-- a compact public facade/orchestrator.
+## 3. Decisive topology
 
-Keep ordinary handwritten modules near 250 lines where practical. Avoid a replacement monolith.
+Use real `HttpDeviceEnrollmentTransport`, `HostedEnrollmentCoordinator`, file-backed `LocalDatabase`,
+pending local Purchase/outbox state and a loopback hosted Fastify/PostgreSQL fixture with synthetic
+RS256 identity. Deterministic Dart HTTP fixtures may supplement edge cases, but cannot replace the
+real hosted path for enrollment, unknown outcome and replay.
 
-CP-0 must be behavior-preserving:
+No provider credentials, public endpoint or fixture authentication may escape this local proof.
 
-- no case IDs or producer schema change;
-- existing 24 cases rerun and remain true;
-- format/lint/typecheck/tests pass before CP-1;
-- imports remain one-way from scenario modules to production, never production to proof.
+## 4. Closed producer evidence
 
-## 4. CP-1 — response loss and process restart
+Replace the current broad focused-test mapping with one executed result per exact case ID. Dart/test
+or lab code must emit closed machine-readable results that the TypeScript producer validates and
+maps directly. Do not mark several cases true from one command exit.
 
-Execute `response-loss-query-replay`:
+Each result includes case ID, pass/fail, safe blocker and only the counts/state needed by that case.
 
-1. arrange valid identity, membership and enrollment request;
-2. allow the real enrollment transaction to commit;
-3. suppress only delivery of the successful response at a lab transport seam;
-4. query the existing enrollment-status route with the same authenticated identity/request ID;
-5. require the committed equivalent result and one durable Device/enrollment/security event truth.
+## 5. Persistence and outcome cases
 
-Execute `process-restart-replay`:
+Execute:
 
-1. commit through composition A and suppress delivery after commit;
-2. close composition A, its pools/JWKS/app and all in-memory state;
-3. open composition B over the same PostgreSQL database;
-4. replay/query the same request identity and hash;
-5. require the same durable result with no duplicate Device, enrollment or security event.
+- device-enrolled-applied;
+- duplicate-equivalent-distinct;
+- conflict-persists-facts-outbox;
+- unavailable-persists-facts-outbox;
+- close-reopen-preserves-state;
+- local-registration-while-api-unavailable.
 
-Loss must occur after commit. Do not simulate this by throwing inside the transaction or by keeping
-an in-memory result cache.
+For every case, preserve existing Purchases and pending outbox events. Conflict and unavailable must
+not install a server Device identity. Close/reopen uses the same Drift file and proves hosted state,
+facts and outbox truth survive.
 
-## 5. CP-2 — serialization retry exhaustion
+Local Purchase registration must remain successful while the hosted API is unavailable.
 
-Execute `serialization-retry-exhaustion-fails-closed` through the real bounded transaction wrapper.
+## 6. Response and deadline cases
 
-Use deterministic lab-only conflict injection that produces PostgreSQL retryable SQLSTATE `40001`
-or `40P01` after protected writes but before commit for every allowed attempt. Record exact attempt
-count, bounded completion and final typed failure. All attempts must roll back; Account observation
-must show no submission, event, cursor, acknowledgement, recovery, Device, enrollment or security
-event advance.
+Execute:
 
-Do not use sleeps, an unbounded loop, raised retry limits, or a generic pre-transaction exception.
-Any transaction hook must be context-aware, injected, inert by default and inaccessible publicly.
+- malformed-oversized-redirect-fail-closed;
+- normal-response-before-deadline;
+- stalled-headers-timeout;
+- slow-trickle-total-deadline;
+- owned-client-closed-on-timeout;
+- borrowed-client-preserved;
+- late-response-no-durable-mutation.
 
-## 6. CP-3 — global denial invariant and producer
+One absolute deadline covers connection/send, headers and the complete bounded body. A slow trickle
+must not renew the deadline. Redirects are not followed. Malformed or oversized responses fail
+closed. Expected transport failures become application-owned outcomes; programming errors remain
+visible.
 
-Derive `denied-no-state-advance` from executed ScenarioResults, not a hard-coded boolean.
+An internally owned client/request must be cancelled or closed after timeout. A borrowed client must
+remain usable. A late result after the deadline cannot mutate Drift identity, facts or outbox state.
 
-Maintain an explicit closed list of authorization-denial scenarios. Every listed denial must have:
+## 7. Unknown-outcome recovery
 
-- expected typed authorization response;
-- `stateInvariant=true` for prohibited protected state;
-- no missing/duplicate case result.
+Execute:
 
-Include serialization exhaustion in the fail-closed/no-state proof. Positive target/enrollment/replay
-cases are not denial cases and must not be mislabeled.
+- response-loss-unknown-outcome;
+- query-replay-same-request-id.
 
-Then rerun all 28 authorization cases. All must be true and the authorization producer must pass.
+Suppress delivery only after the hosted enrollment transaction commits. Flutter must persist
+`unknown-outcome` with the original enrollment request ID and no invented Device truth. Query/replay
+uses the same request ID and an ephemeral fresh token, recovers the committed result and converges
+without duplicate Device/enrollment/security-event state.
 
-## 7. R04 aggregate
+## 8. Token boundary
 
-Run the existing R04 orchestrator and require:
+Execute `token-not-persisted-or-logged`.
 
-- migration-006-lifecycle-acl true;
-- jwks-state-machine true;
-- route-inventory true;
-- static-regression true;
-- authorization-race true;
-- Flutter producer valid and false only for `not-yet-r05`;
-- aggregate false only because Flutter is deferred;
-- proof-pipeline integrity true.
+Bearer credentials may exist only in transient request construction. Prove the exact token is absent
+from the Drift file/database values, application logs/diagnostics, failure text and retained result
+objects. Do not print the token to prove equality; use safe in-memory comparison/redaction evidence.
 
-Do not change aggregation rules merely to obtain success.
+No Auth0 SDK or production login UI is authorized in R05.
 
-## 8. Evidence rules
+## 9. Producer and final aggregate
 
-Each remaining case returns a structured ScenarioResult with exact case ID, operation, response,
-state invariant, attempt/result/event counts and safe blocker. Producer truth consumes scenario
-results directly. No test prose parsing, inherited truth or broad command-exit substitution.
+`flutter-http-file-backed` must contain all 16 true results and no blockers.
 
-## 9. Production correction rule
+Add or update a final local orchestrator without weakening the accepted R04 gate. It must consume
+closed records for migration, JWKS, route inventory, authorization, Flutter and static regression.
+All six producers and the aggregate must be true before `R3_LOCAL_SECURITY_PROVED=true`.
 
-Proof first. Production code changes require a retained failing scenario, must be narrow and
-version-preserving, and must be identified in I. Do not weaken authorization, locking, retries,
-Account scoping or idempotency.
+Missing, malformed, duplicate or stale output fails closed.
 
-## 10. Validation
+## 10. Production correction rule
 
-Record exact commands/results:
+Proof first. Change Flutter application/transport code only after a named case fails; retain that
+test, keep the correction narrow and version-preserving, and report it in I. No UI redesign.
 
-- environment preflight;
-- CP-0 24-case regression before new cases;
-- focused replay/restart/retry/denial tests;
-- all 28 authorization scenarios and producer;
-- all six proof producers and R04 orchestrator;
-- server format, lint, typecheck, full tests and build;
-- npm audit `--omit=dev`;
+## 11. Validation
+
+Run and record:
+
+- focused case-addressable Flutter proof;
+- complete Flutter format, analysis and tests;
+- Android debug and Windows release builds when host-supported;
+- all six producers and final aggregate;
+- complete server format/lint/typecheck/tests/build and audit;
+- protected Python regressions;
+- Drift close/reopen and no-reset evidence;
 - migrations 001–006 hashes;
-- git diff check and tracked/staged secret scan;
-- empty final exact Docker inventory.
+- `git diff --check`, tracked/staged secret scan and exact teardown inventory.
 
-Flutter producer execution is required by the R04 orchestrator, but no Flutter implementation change
-is authorized. Record host build exclusions truthfully.
+Build success is not runtime/platform acceptance. Record unsupported host checks as exclusions.
 
-## 11. Scope
+## 12. Scope
 
-Allowed: proof scenario decomposition, lab-only injected seams, narrowly required transaction code,
-producer/orchestrator tests, and G/H/I.
+Allowed: Flutter hosted ports/coordinator/HTTP transport, focused file-backed proof, local lab fixture,
+Flutter producer/final aggregator, narrow tests and G/H/I.
 
-Forbidden: providers/credentials; migration/dependency/lockfile changes; Drift/Flutter/UI work;
-public debug controls; methodology/permanent memory; A/B/C/J/D/E/F; R05/MCG-03/04.
+Forbidden: providers/credentials; migrations/dependency/lockfile changes unless an existing pinned API
+is demonstrably insufficient and Main stops/reconciles first; production deployment; UI; permanent
+memory/methodology; A/B/C/J/D/E/F; scenario pruning; MCG-03/04.
 
-## 12. Reports and terminal
+## 13. Reports and terminal
 
-Replace only G/H/I. Record module split, all four cases, attempt/count evidence, producer/aggregate
-outputs, exact paths, deviations, validation, teardown, and final metadata resolution boundary.
+Replace only G/H/I. Report all 16 cases, Drift/fact/outbox invariants, deadline/client behavior,
+token scan, producer/aggregate results, builds/exclusions, paths, deviations and teardown.
 
 Success terminal:
 
 ~~~text
-R04C04_RESPONSE_LOSS_REPLAY=true
-R04C04_PROCESS_RESTART_REPLAY=true
-R04C04_RETRY_EXHAUSTION=true
-R04C04_DENIED_NO_STATE_ADVANCE=true
-AUTHORIZATION_CASES_TRUE=28
+FLUTTER_HTTP_FILE_BACKED_CASES_TRUE=16
+FLUTTER_HTTP_FILE_BACKED_PRODUCER=true
 AUTHORIZATION_RACE_PRODUCER=true
 PROOF_PIPELINE_INTEGRITY=true
-C10-MCG02-R04_AUTHORIZATION_PROVED
-R05_FLUTTER_PENDING
+R3_LOCAL_SECURITY_PROVED=true
+C10-MCG02-R05_FLUTTER_PROVED
 MCG-02_PROVIDER_PROOF_PENDING
+CYCLE_10_PRUNING_AND_PROMOTION_PENDING
 ~~~
 
-Otherwise report `C10-MCG02-R04C04_PARTIAL` with exact false cases. Do not begin R05.
+Otherwise report `C10-MCG02-R05_PARTIAL` with exact false cases. Do not access providers.

@@ -353,3 +353,77 @@ provider configuration, production deployment, full MCG-02 or Cycle 10 closure.
 
 D/E/F carrying marker `C10-MCG02-R04C04_20260717T154951Z` are the only active Codex authority.
 R05, providers, permanent promotion, MCG-03/04 and Cycle 10 closure remain unauthorized.
+
+---
+
+## 21. Append-only reconciliation — R04C04 result
+
+> Reconciliation marker: C10-MCG02-R05_20260717T162323Z
+> Reconciled at UTC: 2026-07-17T16:23:23Z
+> Reconciled at America/Sao_Paulo: 2026-07-17T13:23:23-03:00
+> Reconciled implementation: bddccba29e208ad423d9adfc95b99ed969ade71e
+> Implementation tree: f626606216343af641c9fe7b57c9e6bad448c960
+> Controlling R04C04 authority: 8311829e0317a559f740f4ff1772c004561b21b5
+> Current status: **R04 VALIDATED; R05 SELECTED**
+
+R04C04 completed the behavioral proof:
+
+- response-loss query replay recovered one committed enrollment result;
+- process-restart replay recovered the same PostgreSQL truth in a new composition;
+- retry exhaustion recorded three bounded attempts and zero durable protected advance;
+- denied-no-state-advance was derived from a closed executed denial set;
+- all 28 authorization cases and the authorization producer passed;
+- the R04 orchestrator reported proof-pipeline integrity true with Flutter false only for R05.
+
+Codex recorded Docker/PostgreSQL 18.4 execution, clean teardown, all server checks and producer runs.
+Main independently reran format, lint, typecheck, 46/46 server tests, build and audit. Docker was not
+available in Main's environment, so real producer/orchestrator execution remains Codex's recorded
+environment-scoped evidence.
+
+Accepted behavioral terminal:
+
+~~~text
+R04C04_RESPONSE_LOSS_REPLAY=true
+R04C04_PROCESS_RESTART_REPLAY=true
+R04C04_RETRY_EXHAUSTION=true
+R04C04_DENIED_NO_STATE_ADVANCE=true
+AUTHORIZATION_CASES_TRUE=28
+AUTHORIZATION_RACE_PRODUCER=true
+PROOF_PIPELINE_INTEGRITY=true
+C10-MCG02-R04_AUTHORIZATION_PROVED
+~~~
+
+## 22. Structural observation and disposition
+
+`authorization_slice_scenarios.ts` grew to 1,936 lines. Length alone is not drift or a failed gate:
+the module still compiles, passes its tests and produces the required closed evidence. Main therefore
+does not insert a mandatory mid-phase solely to reduce line count.
+
+The scenario-module split is recorded as Cycle 10 pruning work. It should occur after the decisive
+R05 proof, when the complete proof topology can be reorganized without repeatedly moving an active
+boundary. This disposition supersedes the unmaterialized CP-0 preference without weakening R04's
+behavioral result.
+
+## 23. Current phase scheme
+
+~~~text
+R04      server authorization behavior and aggregate                    VALIDATED
+R05      Flutter HTTP/file-backed proof + global local aggregate         ACTIVE
+MCG-02   human Auth0 + Neon + Render proof                               PENDING
+Pruning, promotion and Main Cycle 10 closure                             PENDING
+~~~
+
+## 24. R05 acceptance boundary
+
+R05 must make all 16 `flutter-http-file-backed` cases true through real Flutter transport,
+file-backed Drift and loopback hosted API evidence. It must preserve local facts/outbox across every
+failure and unknown outcome, prove one absolute request deadline and client ownership, and prove
+that bearer tokens are ephemeral and absent from durable state/log output.
+
+After the Flutter producer passes, the global aggregator must accept all six producers and report
+`R3_LOCAL_SECURITY_PROVED=true`. Provider acceptance remains a separate human MCG-02 gate.
+
+## 25. Forward authority
+
+D/E/F carrying marker `C10-MCG02-R05_20260717T162323Z` are the only active Codex authority.
+Providers, deployment, pruning/promotion, MCG-03/04 and Cycle 10 closure remain unauthorized.
