@@ -1,166 +1,139 @@
-# F_DSN_STAGE — R04C02 Core Authorization Matrix Design Authority
+# F_DSN_STAGE — R04C04 Authorization Completion Design Authority
 
 > Sequence: FLX-ORD-01
-> Authority marker: C10-MCG02-R04C02_20260717T151546Z
-> Required ancestry: 40e0a7097fef7f8a7abfe172cc867b670dfec196
+> Authority marker: C10-MCG02-R04C04_20260717T154951Z
+> Required ancestry: 4f8c1567521ffb7deb93541a3af7f4a713986058
 > Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
 
 ## 1. Selected topology
 
 ~~~text
-case fixture
-→ real loopback Fastify route
-→ production authorization transaction
-↔ R04C01 participant-aware barrier
-→ committed authority/target/enrollment intervention
-→ typed result
-→ R04C01 Account observer
-→ ScenarioResult
-→ exact case map
+modular scenario facade
+├─ authority/actor scenarios
+├─ target/enrollment scenarios
+└─ replay/restart/retry scenarios
+        ↓
+real Fastify + PostgreSQL compositions
+        ↓
+ScenarioResult[28]
+        ↓
+authorization producer true
+        ↓
+R04 orchestrator accepts server producers
+        ↓
+Flutter remains explicitly deferred
 ~~~
 
-Production depends only on the inert barrier interface. Proof modules depend on production modules.
-No public route or environment variable may expose the barrier.
+Production modules must not depend on proof modules.
 
-## 2. Reuse boundary
+## 2. Scenario decomposition
 
-Extend, do not replace:
+Split the 1,669-line module into cohesive modules with a compact compatibility facade. Keep shared
+types/case sets free of infrastructure ownership. Put environment lifecycle and fixture builders in
+dedicated helpers. Keep scenario-family modules near the ordinary handwritten limit where practical.
 
-- `AuthorizationBarrierController`;
-- canonical Account observer;
-- synthetic JWKS/identity/Account/Device arrangement;
-- safe scenario result and producer mapping;
-- finally-owned app/pool/server/container cleanup.
+The refactor must preserve exported behavior used by tests, harness and producer. First rerun the
+existing 24 cases unchanged; only then add R04C04 behavior.
 
-Extract shared fixture helpers where needed. Avoid a single oversized scenario function and avoid
-duplicating whole database setup per case when safe reset/isolated Account fixtures suffice.
+## 3. Response-loss seam
 
-## 3. Transaction race design
+Inject loss at the lab HTTP delivery boundary after the application transaction commits. The seam
+may suppress or replace delivery to the caller, but must not alter database commit behavior, stored
+result or production route contracts. It remains test-only and unreachable from hosted composition.
 
-Use the narrowest existing phase:
+Recovery uses the existing authenticated enrollment-status/replay contract and durable request ID,
+hash and stored result.
 
-- membership removed: before identity/membership fence;
-- external identity disabled: after membership lock or before first protected mutation, with a
-  subsequent in-transaction authority recheck sufficient to observe the committed disable;
-- actor Device revoked: before actor Device lock;
-- target revoke concurrency: before target transition;
-- enrollment concurrency: before protected mutation/commit as appropriate.
-
-If current code cannot observe a required committed transition, first retain the failing scenario,
-then make the narrowest transaction-fence correction. Do not add sleeps or weaken locks.
-
-## 4. Valid route fixtures
-
-Every actor-revocation case begins with valid JWT, active identity/member/actor Device and valid
-route-specific input.
-
-For recovery routes, seed a compatible available snapshot and Device-bound rebootstrap session with
-valid requested chunk/state. The expected response after release must be an authorization denial,
-not cursor expiry, recovery unavailable, validation failure or not-found caused by bad setup.
-
-## 5. Target authorization model
-
-Use the existing role model:
-
-- owner: may inspect/revoke Account Devices;
-- member: may inspect/revoke self only;
-- foreign identity/Device: denied;
-- other Account: denied without target disclosure.
-
-Target queries and transitions remain Account-scoped and locked. Cross-Account truth must not leak
-through different status, body or mutation behavior.
-
-## 6. Revoke concurrency model
-
-Equivalent required sequence:
+## 4. Restart topology
 
 ~~~text
-authorize and lock actor/target
-→ if active, one active-to-revoked transition
-→ one device-revoked security event
-→ commit
-→ concurrent/later equivalent request returns duplicate-equivalent
+composition A commits request
+→ response delivery suppressed
+→ close A and its app/pools/JWKS/in-memory state
+→ composition B opens same PostgreSQL database
+→ same identity/request query or replay
+→ equivalent durable result, no duplicate state
 ~~~
 
-Assert exact durable counts through the committed-view observer. A second transition or security
-event fails the case. After self-revoke, the same actor must fail a later protected route.
+Composition B must not receive any cache or object from A other than database coordinates and safe
+fixture configuration.
 
-## 7. Enrollment concurrency model
+## 5. Retry-exhaustion seam
 
-Retain enrollment contract v1, enrollment request identity, installation identity and canonical
-request hash.
+Use a lab-injected transaction lifecycle hook carrying operation, scenario, participant and attempt.
+It must be absent/inert in normal composition. At the before-commit boundary, execute a PostgreSQL
+operation that returns retryable SQLSTATE `40001` or `40P01` for each allowed attempt.
 
-- equivalent concurrent requests converge on one Device, one active enrollment and equivalent
-  stored result;
-- same enrollment request ID plus different hash returns conflict and preserves the first result;
-- no extra Device, enrollment or security event may be created.
+The existing wrapper remains bounded. Each failed attempt rolls back its writes. After exhaustion,
+the observer must match the pre-request protected state. Do not add public controls or global
+cross-talk between concurrent operations.
 
-Do not solve races with an in-memory cache; PostgreSQL remains the durable authority.
+## 6. No-state derivation
 
-## 8. Observer assertions
+Maintain a closed denial-case set separate from positive cases. Derive
+`denied-no-state-advance=true` only when every denial ScenarioResult is present, passed, has the
+expected typed denial and reports `stateInvariant=true`. Include retry exhaustion as fail-closed
+state evidence without calling it an authorization 403.
 
-Extend comparison helpers only as needed for:
+The derived case itself must be inserted into the exact 28-case map; it cannot be hard-coded true.
 
-- exact unchanged protected state;
-- expected authority transition plus otherwise unchanged state;
-- one Device transition and one event;
-- duplicate-equivalent no-new-state;
-- one enrollment/result convergence;
-- conflicting-hash preservation.
+## 7. Producer and aggregate
 
-Snapshots remain payload-free, canonical, sorted and taken from a separate committed-view
-connection. Do not log entire before/after snapshots in ordinary output.
-
-## 9. Scenario and producer architecture
-
-Each scenario returns a closed result with case ID, pass/fail, safe blocker, response class and
-invariant counts. The authorization producer consumes these results directly.
-
-At R04C02 success:
+Authorization flow:
 
 ~~~text
-cases 1–24 = true
-cases 25–28 = false / pending-r04c04
-producer passed = false
+28 executed results
+→ exact ordered case map
+→ makeProducerResult
+→ passed=true, blockers=[]
 ~~~
 
-The validated case 1 may be rerun as part of the producer; do not hard-code it true without executed
-scenario output in the current producer run.
+R04 orchestration retains six closed producers. It succeeds only when migration, JWKS, route,
+static and authorization producers are true; Flutter is valid and false only for `not-yet-r05`;
+aggregate false is explained only by that deferral; pipeline integrity is true.
 
-## 10. Resource and retry boundaries
+Do not relax parser, blocker, case-set or aggregation checks.
 
-Use deterministic barrier timeouts and bounded test deadlines. Every server, pool, waiter and
-container is owned by one harness and closed in `finally`. Exact filtered Docker inventory must be
-empty after success or failure.
+## 8. Durable invariants
 
-Serialization retry exhaustion and post-commit response loss are R04C04 and must not be added here.
+Response-loss/restart cases require:
 
-## 11. Retained versions
+- one Device and active enrollment;
+- one enrollment request identity/hash/stored result;
+- one corresponding security event;
+- equivalent recovered response;
+- no extra state after replay/restart.
+
+Retry exhaustion requires exact bounded attempts and zero durable protected mutations.
+
+## 9. Resource ownership
+
+The top-level proof owner closes in `finally`:
+
+- both application compositions;
+- JWKS servers and generated keys;
+- runtime/migrator/control pools;
+- barriers and transaction hooks;
+- disposable files;
+- PostgreSQL containers.
+
+Teardown success means command exit zero and empty exact filtered inventory.
+
+## 10. Retained versions and scope
 
 Retain migrations 001–006, event v3, cursor `c10b:*`, recovery format 1, enrollment contract v1,
-Drift v7, JWT RS256, producer schema v1 and current dependencies/lockfile.
+Drift v7, JWT RS256, producer schema v1, current dependencies and lockfile.
 
-No migration, protocol or dependency change is selected.
+No migration, protocol, dependency, Flutter, provider or UI change is selected.
 
-## 12. Validation and rollback
+## 11. Rollback and report
 
-Validate focused scenarios, full server suite/build, authorization producer shape, migration hashes,
-audit, diff, secret scan and teardown. R04C02 is one rollback boundary; narrow production fixes must
-remain individually visible in I with their retained failing tests.
+R04C04 is one bounded rollback unit. Mechanical module splitting must remain reviewable separately
+from behavioral additions within the diff. Narrow production deviations require retained failing
+tests and explicit I reporting.
 
-## 13. Required design report
+I must record module boundaries, dependency direction, response-loss seam, restart ownership,
+retry hook/SQLSTATE/attempt count, denial derivation, producer/aggregate truth, retained versions,
+resources and every deviation.
 
-I must record:
-
-- final dependency direction;
-- shared fixture/scenario decomposition;
-- phase used by every race family;
-- valid recovery-route fixture strategy;
-- target/role rules;
-- exact transition/event/enrollment invariants;
-- producer truth and four deferrals;
-- resource ownership;
-- retained versions;
-- every production deviation and unresolved issue.
-
-Do not claim R04C04, R05, provider or Cycle 10 completion.
+Do not claim R05, provider proof, MCG-02 completion or Cycle 10 closure.

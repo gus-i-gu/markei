@@ -1,184 +1,175 @@
-# D_OPS_STAGE — R04C02 Core Authorization Matrix Authority
+# D_OPS_STAGE — R04C04 Authorization Completion Authority
 
 > Sequence: FLX-ORD-01
-> Authority marker: C10-MCG02-R04C02_20260717T151546Z
-> Required ancestry: 40e0a7097fef7f8a7abfe172cc867b670dfec196
-> Reconciled R04C01 J: 2d85523952a3606ec80a3769817cb4ad8e647cb9
-> R04C01 D/E/F: 2f7272a8cacaa790ccfaad6c0c7523eede336460
+> Authority marker: C10-MCG02-R04C04_20260717T154951Z
+> Required ancestry: 4f8c1567521ffb7deb93541a3af7f4a713986058
+> Controlling R04C02 authority: f1fe19135ba47c652cd2575d7256a74f871f78bb
 > Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
 
 ## 1. Objective
 
-Reuse the validated R04C01 proof infrastructure to execute authorization cases 2–24. Retain case 1
-as executed truth and leave the four R04C04 cases pending.
+Complete server-side R04 authorization proof:
 
-This unit merges the former identity/actor and target/enrollment phases because they now share a
-working controller, observer and scenario topology. Do not implement R04C04.
+~~~text
+split oversized scenario module
+→ response-loss replay
+→ process-restart replay
+→ serialization retry exhaustion
+→ global denial no-state-advance
+→ authorization producer true
+→ R04 aggregate accepted with Flutter deferred
+~~~
 
-## 2. Repository and environment gate
+R05 and provider proof remain excluded.
 
-Before mutation:
+## 2. Safety and environment gate
 
-1. confirm branch `intermid-cycle-recovery`, fast-forward only and clean/non-overlapping state;
-2. confirm `40e0a70` is an ancestor of HEAD;
-3. preserve private/unrelated files without reading them;
-4. run Docker client/server, loopback PostgreSQL 18 readiness/query/removal/empty-inventory preflight.
+Confirm branch, fast-forward-only state, required ancestry and clean/non-overlapping worktree.
+Preserve private/unrelated files without reading them.
 
-Stop before source mutation if Docker/PostgreSQL fails. Do not install or reconfigure host software.
+Before mutation prove Docker/PostgreSQL 18 start, readiness, query, removal and empty exact filtered
+inventory on loopback. Stop without mutation if unavailable; do not configure host software.
 
-## 3. Accepted R04C01 baseline
+## 3. CP-0 — structural recovery correction
 
-Preserve:
+`authorization_slice_scenarios.ts` is 1,669 lines. Split it by responsibility before new behavior:
 
-- participant-aware barrier lifecycle and no-op production composition;
-- corrected barrier phase placement;
-- payload-free canonical Account observer;
-- real membership-disabled-before-fence scenario;
-- producer schema v1 and exact 28-case inventory.
+- result/case types and case sets;
+- shared fixture/environment/HTTP/database helpers;
+- membership and actor-Device scenarios;
+- target/revoke/enrollment scenarios;
+- replay/restart/retry scenarios;
+- a compact public facade/orchestrator.
 
-Do not rewrite this infrastructure unless a retained focused test demonstrates a defect.
+Keep ordinary handwritten modules near 250 lines where practical. Avoid a replacement monolith.
 
-## 4. CP-A — identity, membership and actor Device
+CP-0 must be behavior-preserving:
 
-Execute these cases through real loopback Fastify routes and PostgreSQL transactions:
+- no case IDs or producer schema change;
+- existing 24 cases rerun and remain true;
+- format/lint/typecheck/tests pass before CP-1;
+- imports remain one-way from scenario modules to production, never production to proof.
 
-1. membership-removed-before-fence;
-2. external-identity-disabled-before-mutation;
-3. actor-device-revoked-before-upload;
-4. actor-device-revoked-before-download;
-5. actor-device-revoked-before-acknowledgement;
-6. actor-device-revoked-before-capabilities;
-7. actor-device-revoked-before-rebootstrap-start;
-8. actor-device-revoked-before-rebootstrap-status;
-9. actor-device-revoked-before-rebootstrap-chunk;
-10. actor-device-revoked-before-rebootstrap-complete;
-11. actor-device-revoked-before-device-status;
-12. actor-device-revoked-before-device-revoke.
+## 4. CP-1 — response loss and process restart
 
-Each request must be otherwise valid before the authority transition. Recovery routes require valid
-snapshot/session/chunk fixtures so authorization—not recovery availability—determines the response.
+Execute `response-loss-query-replay`:
 
-Use deterministic barriers, commit the control transition, release, require the existing typed 403,
-and compare Account state. No sleeps may establish order.
+1. arrange valid identity, membership and enrollment request;
+2. allow the real enrollment transaction to commit;
+3. suppress only delivery of the successful response at a lab transport seam;
+4. query the existing enrollment-status route with the same authenticated identity/request ID;
+5. require the committed equivalent result and one durable Device/enrollment/security event truth.
 
-## 5. CP-B — target authorization and revoke behavior
+Execute `process-restart-replay`:
 
-Execute:
+1. commit through composition A and suppress delivery after commit;
+2. close composition A, its pools/JWKS/app and all in-memory state;
+3. open composition B over the same PostgreSQL database;
+4. replay/query the same request identity and hash;
+5. require the same durable result with no duplicate Device, enrollment or security event.
 
-1. owner-target-status;
-2. owner-target-revoke;
-3. member-self-status;
-4. member-self-revoke;
-5. foreign-target-denial;
-6. cross-account-target-denial;
-7. concurrent-target-revoke-one-transition-one-event;
-8. independent-repeat-revoke-duplicate-equivalent;
-9. self-revoked-actor-denied-later.
+Loss must occur after commit. Do not simulate this by throwing inside the transaction or by keeping
+an in-memory result cache.
 
-Required invariants:
+## 5. CP-2 — serialization retry exhaustion
 
-- owner may manage an Account Device;
-- ordinary member may manage only their own Device;
-- foreign/cross-Account targets fail without disclosure;
-- concurrent revoke yields one active-to-revoked transition and one security event;
-- later equivalent revoke returns duplicate-equivalent without another event;
-- a self-revoked actor is denied subsequent protected work.
+Execute `serialization-retry-exhaustion-fails-closed` through the real bounded transaction wrapper.
 
-## 6. CP-C — enrollment concurrency
+Use deterministic lab-only conflict injection that produces PostgreSQL retryable SQLSTATE `40001`
+or `40P01` after protected writes but before commit for every allowed attempt. Record exact attempt
+count, bounded completion and final typed failure. All attempts must roll back; Account observation
+must show no submission, event, cursor, acknowledgement, recovery, Device, enrollment or security
+event advance.
 
-Execute:
+Do not use sleeps, an unbounded loop, raised retry limits, or a generic pre-transaction exception.
+Any transaction hook must be context-aware, injected, inert by default and inaccessible publicly.
 
-1. equivalent-concurrent-enrollment;
-2. conflicting-enrollment-request-hash.
+## 6. CP-3 — global denial invariant and producer
 
-Equivalent requests must converge on one Device/durable result. Same request identity with a
-different canonical hash must fail closed and preserve the first committed truth. Use enrollment
-contract v1; do not create a new protocol.
+Derive `denied-no-state-advance` from executed ScenarioResults, not a hard-coded boolean.
 
-## 7. Case evidence rules
+Maintain an explicit closed list of authorization-denial scenarios. Every listed denial must have:
 
-Every true value must come from an executed `ScenarioResult` containing:
+- expected typed authorization response;
+- `stateInvariant=true` for prohibited protected state;
+- no missing/duplicate case result.
 
-- exact case ID;
-- route/operation and participant;
-- barrier phase when applicable;
-- response status/code;
-- before/after invariant result;
-- transition/event/result counts where applicable;
-- safe blocker when false.
+Include serialization exhaustion in the fail-closed/no-state proof. Positive target/enrollment/replay
+cases are not denial cases and must not be mislabeled.
 
-Do not inherit truth from an older broad observation, parse test prose, or mark a case true from
-command exit alone. Tests and the producer should call the same scenario functions where practical.
+Then rerun all 28 authorization cases. All must be true and the authorization producer must pass.
 
-## 8. Checkpoint discipline
+## 7. R04 aggregate
 
-Implement and validate CP-A, then CP-B, then CP-C. If one checkpoint fails:
+Run the existing R04 orchestrator and require:
 
-- keep its exact false cases and safe blockers;
-- do not begin unrelated production redesign;
-- do not mark later cases true without execution;
-- report R04C02 partial.
+- migration-006-lifecycle-acl true;
+- jwks-state-machine true;
+- route-inventory true;
+- static-regression true;
+- authorization-race true;
+- Flutter producer valid and false only for `not-yet-r05`;
+- aggregate false only because Flutter is deferred;
+- proof-pipeline integrity true.
 
-One final commit is preferred. Safe intermediate commits are allowed only on the same branch and
-must still reconcile into one bounded R04C02 report.
+Do not change aggregation rules merely to obtain success.
+
+## 8. Evidence rules
+
+Each remaining case returns a structured ScenarioResult with exact case ID, operation, response,
+state invariant, attempt/result/event counts and safe blocker. Producer truth consumes scenario
+results directly. No test prose parsing, inherited truth or broad command-exit substitution.
 
 ## 9. Production correction rule
 
-Proof first. Production code may change only when a scenario first fails and remains as a regression
-test. Corrections must be narrow, version-preserving and listed in I. Do not weaken transaction
-fences or authorization to make tests pass.
+Proof first. Production code changes require a retained failing scenario, must be narrow and
+version-preserving, and must be identified in I. Do not weaken authorization, locking, retries,
+Account scoping or idempotency.
 
-## 10. Producer contract
+## 10. Validation
 
-After success:
+Record exact commands/results:
 
-- cases 1–24 are true;
-- response-loss-query-replay is false with `pending-r04c04`;
-- process-restart-replay is false with `pending-r04c04`;
-- serialization-retry-exhaustion-fails-closed is false with `pending-r04c04`;
-- denied-no-state-advance is false with `pending-r04c04`;
-- `AUTHORIZATION_RACE_PRODUCER=false` remains expected.
-
-Do not change the case inventory or producer schema.
-
-## 11. Validation
-
-Run and record:
-
-- Docker/PostgreSQL preflight and exact final inventory;
-- focused CP-A/B/C scenario tests;
-- format, lint, typecheck, full server tests and build;
-- authorization producer showing exactly 24 true and four pending cases;
+- environment preflight;
+- CP-0 24-case regression before new cases;
+- focused replay/restart/retry/denial tests;
+- all 28 authorization scenarios and producer;
+- all six proof producers and R04 orchestrator;
+- server format, lint, typecheck, full tests and build;
 - npm audit `--omit=dev`;
-- migrations 001–006 hash comparison;
-- `git diff --check`;
-- tracked/staged secret scan.
+- migrations 001–006 hashes;
+- git diff check and tracked/staged secret scan;
+- empty final exact Docker inventory.
 
-Full Flutter/platform/global aggregation is deferred because no mobile contract should change.
+Flutter producer execution is required by the R04 orchestrator, but no Flutter implementation change
+is authorized. Record host build exclusions truthfully.
 
-## 12. Scope
+## 11. Scope
 
-Allowed: server authorization/scenario/proof/test files and G/H/I.
+Allowed: proof scenario decomposition, lab-only injected seams, narrowly required transaction code,
+producer/orchestrator tests, and G/H/I.
 
-Forbidden: providers or credentials; migrations/dependencies/lockfiles; Drift/Flutter/UI; public
-barrier controls; methodology/permanent memory; A/B/C/J/D/E/F; R04C04/R05/MCG-03/MCG-04.
+Forbidden: providers/credentials; migration/dependency/lockfile changes; Drift/Flutter/UI work;
+public debug controls; methodology/permanent memory; A/B/C/J/D/E/F; R05/MCG-03/04.
 
-## 13. Reports and terminal
+## 12. Reports and terminal
 
-Replace only G/H/I. Resolve final tree and commit metadata accurately; if the commit SHA cannot be
-known while authoring, say it will be resolved by Main without repeating the wrong authority SHA.
+Replace only G/H/I. Record module split, all four cases, attempt/count evidence, producer/aggregate
+outputs, exact paths, deviations, validation, teardown, and final metadata resolution boundary.
 
 Success terminal:
 
 ~~~text
-R04C02_CP_A=true
-R04C02_CP_B=true
-R04C02_CP_C=true
-AUTHORIZATION_CASES_TRUE=24
-AUTHORIZATION_CASES_PENDING=4
-AUTHORIZATION_RACE_PRODUCER=false
-R04C04_PENDING
-C10-MCG02-R04C02_CORE_MATRIX_PROVED
+R04C04_RESPONSE_LOSS_REPLAY=true
+R04C04_PROCESS_RESTART_REPLAY=true
+R04C04_RETRY_EXHAUSTION=true
+R04C04_DENIED_NO_STATE_ADVANCE=true
+AUTHORIZATION_CASES_TRUE=28
+AUTHORIZATION_RACE_PRODUCER=true
+PROOF_PIPELINE_INTEGRITY=true
+C10-MCG02-R04_AUTHORIZATION_PROVED
+R05_FLUTTER_PENDING
+MCG-02_PROVIDER_PROOF_PENDING
 ~~~
 
-Otherwise report `C10-MCG02-R04C02_PARTIAL` with exact false cases. Do not begin R04C04.
+Otherwise report `C10-MCG02-R04C04_PARTIAL` with exact false cases. Do not begin R05.

@@ -267,3 +267,89 @@ matrix checkpoint, not local-security or provider completion.
 
 D/E/F carrying marker `C10-MCG02-R04C02_20260717T151546Z` are the only active Codex authority.
 R04C04, R05, provider mutation, permanent promotion and Cycle 10 closure remain unauthorized.
+
+---
+
+## 16. Append-only reconciliation — R04C02 result
+
+> Reconciliation marker: C10-MCG02-R04C04_20260717T154951Z
+> Reconciled at UTC: 2026-07-17T15:49:51Z
+> Reconciled at America/Sao_Paulo: 2026-07-17T12:49:51-03:00
+> Reconciled implementation: 4f8c1567521ffb7deb93541a3af7f4a713986058
+> Implementation tree: a56f28f2e807ff5e4385aa2aeaa7cd67117c3521
+> Controlling R04C02 authority: f1fe19135ba47c652cd2575d7256a74f871f78bb
+> Current status: **R04C02 VALIDATED; R04C04 SELECTED**
+
+R04C02 is accepted as validated local evidence within its declared boundary.
+
+Evidence reconciled:
+
+- the implementation is a direct child of the controlling staging commit;
+- all 24 core cases are produced from structured scenario results;
+- actor-denial cases use real protected routes and valid route-specific fixtures;
+- target authorization, one-transition/one-event revoke truth and enrollment convergence are
+  represented by committed scenario code;
+- one retained failing Device-management scenario justified a narrow barrier-placement correction;
+- Codex recorded CP-A/B/C passing, 46 server tests, build, audit and clean teardown;
+- Main independently reran format, lint, typecheck, 46/46 tests, build and production audit;
+- `git diff --check` passed and only authorized server/proof/report paths changed.
+
+Main could not rerun Docker in the reconciliation environment. The committed scenarios and recorded
+Windows/Docker/PostgreSQL 18.4 execution remain the environment-scoped database evidence.
+
+Accepted terminal:
+
+~~~text
+R04C02_CP_A=true
+R04C02_CP_B=true
+R04C02_CP_C=true
+AUTHORIZATION_CASES_TRUE=24
+AUTHORIZATION_CASES_PENDING=4
+AUTHORIZATION_RACE_PRODUCER=false
+R04C04_PENDING
+C10-MCG02-R04C02_CORE_MATRIX_PROVED
+~~~
+
+## 17. Reconciliation qualifications
+
+G/H/I again left implementation tree and commit fields pending. Git resolves them above. Future
+reports must distinguish authoring-time pending metadata from Main-resolved final metadata.
+
+`authorization_slice_scenarios.ts` grew to 1,669 lines. This does not invalidate R04C02, but it is a
+recovery and maintenance liability. R04C04 must split scenario infrastructure by responsibility
+before adding its three mechanisms. The refactor must preserve behavior and pass the existing 24
+cases before new case work begins.
+
+## 18. Current phase scheme
+
+~~~text
+R04C01  reusable proof infrastructure + first denial slice               VALIDATED
+R04C02  identity/member/actor/target/enrollment core matrix (24 cases)    VALIDATED
+R04C04  response loss + restart + retry exhaustion + R04 aggregate        ACTIVE
+R05      Flutter HTTP/file-backed proof + global local aggregate           PENDING
+MCG-02   human Auth0 + Neon + Render proof                                 PENDING
+Promotion and Main Cycle 10 closure                                        PENDING
+~~~
+
+R04C04 has four ordered checkpoints:
+
+~~~text
+CP-0  split oversized scenario module without semantic change
+CP-1  response-loss query replay and process-restart replay
+CP-2  deterministic serialization retry exhaustion with no state advance
+CP-3  derive global denied-no-state-advance and run final R04 aggregation
+~~~
+
+## 19. R04C04 acceptance boundary
+
+R04C04 must make the remaining four authorization cases true from executed evidence, then make the
+authorization producer true. The R04 orchestrator must accept migration, JWKS, route, static and
+authorization producers as true while Flutter remains validly false only for `not-yet-r05`.
+
+Success proves the server-side R04 authorization boundary. It does not prove Flutter transport,
+provider configuration, production deployment, full MCG-02 or Cycle 10 closure.
+
+## 20. Forward authority
+
+D/E/F carrying marker `C10-MCG02-R04C04_20260717T154951Z` are the only active Codex authority.
+R05, providers, permanent promotion, MCG-03/04 and Cycle 10 closure remain unauthorized.
