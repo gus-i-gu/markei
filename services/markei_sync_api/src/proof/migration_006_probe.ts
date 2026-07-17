@@ -277,8 +277,36 @@ async function startContainer() {
         ["exec", containerName, "pg_isready", "-U", "postgres"],
         [0, 1],
       )) === 0
-    )
+    ) {
+      await waitForSql();
       return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  throw new Error("postgres unavailable");
+}
+
+async function waitForSql() {
+  for (let attempt = 0; attempt < 30; attempt++) {
+    if (
+      (await run(
+        "docker",
+        [
+          "exec",
+          containerName,
+          "psql",
+          "-U",
+          "postgres",
+          "-d",
+          "postgres",
+          "-c",
+          "select 1",
+        ],
+        [0, 1],
+      )) === 0
+    ) {
+      return;
+    }
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
   throw new Error("postgres unavailable");

@@ -1,32 +1,27 @@
-# H_DDC_CODEX — R04C04 Didactic Evidence
+# H_DDC_CODEX — R05 Didactic Evidence
 
-- Authority marker: C10-MCG02-R04C04_20260717T154951Z
-- Controlling staging SHA: 8311829e0317a559f740f4ff1772c004561b21b5
-- Baseline SHA: 8311829e0317a559f740f4ff1772c004561b21b5
-- Actual implementation window: 2026-07-17T15:57:00Z to 2026-07-17T16:17:12Z
-- Implementation tree before report replacement: 3cd366421042a00b68177358f13d07b4351cac3e
+- Authority marker: C10-MCG02-R05_20260717T162323Z
+- Controlling staging SHA: a24000be31582b6b704ee825919ebff3e84bbd2f
+- Baseline SHA: a24000be31582b6b704ee825919ebff3e84bbd2f
+- Actual implementation window: 2026-07-17T16:23:23Z to 2026-07-17T16:56:50Z
+- Implementation tree before report replacement: a04661cc5aca35050c69286605a71bbcfb635ba5
 - Final commit status: pending before commit.
-- Evidence environment: local loopback proof with disposable PostgreSQL 18 and synthetic identities.
-- Result classification: authorization proof complete; Flutter/provider readiness intentionally absent.
+- Evidence environment: local Flutter file-backed proof, loopback hosted API, disposable PostgreSQL 18, synthetic RS256 tokens.
+- Result classification: local Flutter proof complete; provider proof pending.
 
 ## Meanings Materialized
 
-- Authorization proof means producer-local server proof for the 28 declared race/replay/retry cases only.
-- Barrier evidence means deterministic lab coordination around transaction phases; it does not replace the production authorization fence.
-- Valid denial means the real Fastify route received an otherwise valid request and returned the existing typed failure after a committed authority transition.
-- No-state-advance means protected Account synchronization, recovery, Device, enrollment and security-event families did not advance for denied or retry-exhausted work.
-- Duplicate-equivalent means later equivalent revoke/enrollment work observed the same durable truth without a second transition/event.
-- Unknown outcome means the committed enrollment result was recovered by query/replay after suppressing the successful response delivery.
+- Closed outcome means every Flutter producer case emitted one exact case-addressed record, not inherited command-exit truth.
+- Unknown outcome means Flutter preserved installation and enrollment request identity without inventing Device truth after a committed hosted transaction.
+- Query replay means the same request ID and a fresh ephemeral token recovered the committed equivalent result.
+- Absolute deadline means one timeout covers send, response headers and complete bounded body; slow trickle does not renew the deadline.
+- Local-first availability means RegisterPurchase remains file-backed and succeeds while hosted enrollment is unavailable.
+- Token boundary means bearer credentials exist only while constructing the HTTP request and are absent from Drift file bytes, retained state and retained outcomes.
 
-## Named Tests And Producers
+## Completion Wording
 
-- Focused test updated: `R04C04 checkpoint summary requires all authorization cases`.
-- Authorization producer now has 28 true cases and empty blockers.
-- R04 orchestrator reports `PROOF_PIPELINE_INTEGRITY=true` while retaining `FLUTTER_HTTP_FILE_BACKED_PRODUCER=false`.
-- Flutter false cases remain exclusively `not-yet-r05`, including `token-not-persisted-or-logged`.
+Allowed claim: R05 local Flutter HTTP/file-backed proof passed all 16 cases and final local aggregate passed all six producers.
 
-## Privacy And Boundaries
+Intentionally absent: Auth0 acceptance, Neon acceptance, Render acceptance, deployment, production readiness, MCG-02 completion, Cycle 10 closure, pruning completion or permanent promotion.
 
-No JWTs, claims, passwords, fact payloads, provider credentials, Auth0, Neon, Render, or private helper files were used. Reports do not claim full Flutter proof, provider acceptance, production readiness, MCG-02 completion, or Cycle 10 closure.
-
-Learner maturity and permanent memory were unchanged.
+No bearer token, claims, passwords, connection strings, provider URLs or fact payloads are included in this report. Learner maturity and permanent didactic memory were unchanged.

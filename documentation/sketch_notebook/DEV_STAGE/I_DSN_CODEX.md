@@ -1,34 +1,33 @@
-# I_DSN_CODEX — R04C04 Design Evidence
+# I_DSN_CODEX — R05 Design Evidence
 
-- Authority marker: C10-MCG02-R04C04_20260717T154951Z
-- Controlling staging SHA: 8311829e0317a559f740f4ff1772c004561b21b5
-- Baseline SHA: 8311829e0317a559f740f4ff1772c004561b21b5
-- Actual implementation window: 2026-07-17T15:57:00Z to 2026-07-17T16:17:12Z
-- Implementation tree before report replacement: 3cd366421042a00b68177358f13d07b4351cac3e
+- Authority marker: C10-MCG02-R05_20260717T162323Z
+- Controlling staging SHA: a24000be31582b6b704ee825919ebff3e84bbd2f
+- Baseline SHA: a24000be31582b6b704ee825919ebff3e84bbd2f
+- Actual implementation window: 2026-07-17T16:23:23Z to 2026-07-17T16:56:50Z
+- Implementation tree before report replacement: a04661cc5aca35050c69286605a71bbcfb635ba5
 - Final commit status: pending before commit.
-- Evidence environment: local Node/Fastify proof harness, Docker PostgreSQL 18, synthetic JWKS.
-- Result classification: R04 authorization design proof complete; R05/provider boundaries retained.
+- Evidence environment: local Flutter proof, file-backed Drift, loopback Fastify/JWKS, PostgreSQL 18.
+- Result classification: R05 final local aggregate complete; provider boundary retained.
 
 ## Architecture
 
-- Dependency direction remains production-to-inert barrier and proof-to-lab controller; no public barrier route was added.
-- R04C04 added a closed `authorization_case_sets.ts` boundary for the R04C04 cases and denied-no-state-advance source set.
-- Existing scenario facade now executes response-loss replay, process-restart replay, serialization retry exhaustion and derived denial aggregation after R04C01/R04C02 results.
-- Response-loss and restart proofs use real hosted enrollment and enrollment-status routes with durable PostgreSQL state as the replay authority.
-- Retry exhaustion uses the existing bounded transaction wrapper and a lab-only `beforeCommit` SQLSTATE 40001 injection after protected writes.
-- Authorization producer now waits for a real SQL round trip after `pg_isready`, preventing transient PostgreSQL startup termination before provisioning.
+- Dependency direction remains Flutter application ports -> coordinator -> transport/repository implementations; no provider SDK was added.
+- `flutter_http_file_backed_proof_test.dart` owns file-backed Drift fixtures, local deterministic HTTP edges and closed `R05_CASE` evidence.
+- `flutter_producer.ts` owns the loopback hosted Fastify/JWKS/PostgreSQL fixture, passes synthetic origin/tokens through environment variables, validates exact case records and emits `makeProducerResult`.
+- `r3_local_orchestrator.ts` is the final aggregate entrypoint requiring all six producers true and `aggregateProofResults(...).passed=true`.
+- The previous R04 orchestrator remains as an authorization-era diagnostic and was not weakened.
 
-## Retained Contracts
+## Transport And State Design
 
-- Migrations 001-006 unchanged.
-- Producer schema version 1 and exact 28 authorization case IDs retained.
-- Hosted enrollment contract v1, JWT RS256, recovery format 1, cursor family and event payload v3 retained.
-- No dependency, lockfile, Drift, Flutter, UI, methodology, A/B/C, J or D/E/F changes.
+- Existing `HttpDeviceEnrollmentTransport` provides absolute request deadline, redirect refusal, bounded response body handling, owned-client closure and borrowed-client preservation.
+- The proof uses a lab-only wrapper that lets the real transport commit enrollment and then returns unknown, proving Flutter persistence and replay behavior without throwing inside the hosted transaction.
+- Drift invariants checked: purchases, sync events and pending outbox survive conflict, unavailable, malformed, timeout, response loss, close/reopen and local registration while remote is unavailable.
+- Token proof scans Drift file bytes and retained state/outcome text; producer diagnostics redact bearer-shaped text.
 
-## Production Deviations
+## Retained Versions And Deviations
 
-No production authorization, locking, retry, Account scoping or route contract was weakened. The only operational correction was producer-lab readiness tightening for disposable PostgreSQL setup.
+Retained: migrations 001-006, Drift schema v7, enrollment contract v1, event v3, cursor `c10b:*`, recovery format 1, JWT RS256, producer schema v1, dependencies and lockfiles.
 
-## Aggregate
+Production deviation: none to Flutter transport/coordinator contracts. Lab-only correction: migration producer now waits for a real SQL `select 1` after `pg_isready`, matching the R04C04 authorization-producer readiness hardening.
 
-R04 orchestrator acceptance now requires authorization true, all other server producers true, Flutter structurally valid and false only for `not-yet-r05`, and global security false due to R05/provider deferral.
+No Auth0, Neon, Render, UI redesign, deployment, permanent memory, methodology or staging authority changes were made.
