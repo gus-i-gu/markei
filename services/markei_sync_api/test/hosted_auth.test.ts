@@ -7,6 +7,7 @@ import { parseHostedConfig } from "../src/application/hosted_config.js";
 import { Auth0JwtVerifier } from "../src/application/jwt_verifier.js";
 import { HostedAuthError } from "../src/application/hosted_contracts.js";
 import { buildApp, ROUTE_AUTHORIZATION_DESCRIPTORS } from "../src/http/app.js";
+import { noopAuthorizationBarrier } from "../src/application/authorization_barrier.js";
 
 test("hosted config requires closed production keys without values", () => {
   assert.throws(
@@ -45,6 +46,16 @@ test("hosted config requires closed production keys without values", () => {
 test("hosted production entrypoint has no fixture-auth import", () => {
   const source = readFileSync("src/hosted.ts", "utf8");
   assert.equal(source.includes("FixtureAuthVerifier"), false);
+  assert.equal(source.includes("AuthorizationBarrier"), false);
+});
+
+test("normal hosted composition uses the inert authorization barrier", async () => {
+  let reached = false;
+  await noopAuthorizationBarrier.reach("before-protected-mutation", {
+    operation: "structural-test",
+  });
+  reached = true;
+  assert.equal(reached, true);
 });
 
 test("Auth0JwtVerifier accepts RS256 access token and rejects wrong audience", async () => {

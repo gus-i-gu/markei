@@ -3,6 +3,7 @@ import type { AuthContext } from "../domain/protocol.js";
 
 export type Database = {
   pool: pg.Pool;
+  beforeCommit?: () => Promise<void>;
 };
 
 export async function inTransaction<T>(
@@ -33,6 +34,7 @@ export async function inTransactionWithContext<T>(
         context.identityId ?? "",
       ]);
       const result = await action(client);
+      await database.beforeCommit?.();
       await client.query("commit");
       return result;
     } catch (error) {

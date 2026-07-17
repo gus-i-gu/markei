@@ -1,42 +1,44 @@
-# H_DDC_CODEX - C10-MCG02-R04 Partial Semantic Evidence
+# H_DDC_CODEX - C10-MCG02-R04B Partial Semantic Evidence
 
-Authority marker: C10-MCG02-R04_20260717T130804Z
-Controlling J SHA: fd73da6fddf3cc308655c41e0640b045d710d983
-Controlling D/E/F commit SHA: cb177621db82cde6be6d658c58daef590e5b9548
-Baseline remote SHA: cb177621db82cde6be6d658c58daef590e5b9548
-Actual implementation start UTC/local: 2026-07-17T13:19:36.6430880Z / 2026-07-17T10:19:38.0330606-03:00
-Actual implementation end UTC/local: 2026-07-17T13:28:17.2098489Z / 2026-07-17T10:28:21.5013124-03:00
-Final commit SHA: pending before commit
-Evidence environment: Windows PowerShell, Node server workspace, Docker Desktop Linux engine unavailable
-Result classification: C10-MCG02-R04_PARTIAL
+Authority marker: C10-MCG02-R04B_20260717T133814Z
+Controlling J SHA: 0765255c07e3381f74cd9b4e90bc2f9ddd3b13dc
+Controlling D/E/F commit SHA: 22467716ae9ba0fb93ee775781c7177db88320fc
+Baseline remote SHA: 22467716ae9ba0fb93ee775781c7177db88320fc
+Actual implementation start UTC/local: 2026-07-17T14:07:03.8882432Z / 2026-07-17T11:07:03.9099962-03:00
+Actual implementation end UTC/local: 2026-07-17T14:18:14.3066132Z / 2026-07-17T11:18:15.8255067-03:00
+Implementation tree SHA: not created; worktree remains uncommitted
+Final commit status: not committed or pushed
+Evidence environment: Windows PowerShell; Docker Desktop desktop-linux; PostgreSQL 18.4 disposable preflight; Node server workspace
+Result classification: C10-MCG02-R04B_PARTIAL
 
 ## Meanings Materialized
 
-- `resource-teardown` now means command exit code zero plus empty trimmed disposable-resource inventory.
-- `irrelevant-metadata-preserves-revision` now means externally observable unknown-kid cooldown preservation across metadata-only JWK refresh, with no extra fetch before cooldown expiry.
-- `token-not-persisted-or-logged` is not proved in R04 and remains `false` with blocker `not-yet-r05`.
-- `authorization-race` cannot pass unless the authorization producer record itself passes.
-- R04 orchestration now distinguishes authorization producer completion from global R3 local security completion.
+- Environment availability was distinguished from authorization proof: Docker/PostgreSQL preflight passed, but case execution remains incomplete.
+- Barrier versus fence separation was started: the barrier is a lab/application synchronization port; the fence remains transaction-time database authority.
+- Normal hosted composition remains inert by default; the production entrypoint does not import the barrier.
+- Existing R04 corrections remain preserved: teardown empty inventory, JWKS metadata cooldown behavior, Flutter `not-yet-r05`, authorization wrapper fail-closed behavior.
 
-## Semantic Tests
+## Named Semantic Tests
 
-- `static teardown rejects successful non-empty disposable inventory`: passed.
-- `Auth0JwtVerifier preserves unknown kid cooldown across irrelevant JWK metadata`: passed.
-- Flutter producer structural mapping: observed false with only `not-yet-r05` blockers.
+- `normal hosted composition uses the inert authorization barrier`: passed.
+- `hosted production entrypoint has no fixture-auth import`: extended to check no `AuthorizationBarrier` import; passed.
+- Full server test suite: 37 passing tests.
 
-## Deferred Meanings
+## Meanings Not Yet Materialized
 
-The 28-case authorization matrix was not semantically proved. No denied-no-state-advance, one-transition, one-event, duplicate-equivalent, unknown-outcome, restart replay, or retry-exhaustion meaning was validated because the PostgreSQL lab did not start.
+R04B has not yet validated:
 
-The following claims remain intentionally absent:
+- valid denial for identity/membership/Device changes at a deterministic barrier;
+- Account-scoped no-state-advance for every protected state family;
+- one-transition and one-security-event concurrent revoke;
+- duplicate-equivalent repeated revoke;
+- equivalent and conflicting enrollment concurrency as final scenario evidence;
+- unknown-outcome response loss;
+- restart replay through a new composition;
+- bounded serialization retry exhaustion.
 
-- complete Flutter proof;
-- complete R3 local security;
-- Auth0 acceptance;
-- Neon acceptance;
-- Render deployment;
-- MCG-02 completion;
-- production readiness;
-- Cycle 10 closure.
+The four broad-harness true cases are still not final R04B semantic proof because D/E/F require them to be re-executed through the same case-addressable scenario system.
 
-Learner maturity and permanent didactic memory were unchanged.
+Unsupported readiness wording remains absent: no Auth0, Neon, Render, production readiness, MCG-02 completion, local security completion, Cycle 10 closure, or Flutter R05 completion is claimed.
+
+Privacy/logging evidence: no JWTs, claims, JWK bodies, passwords, connection strings, provider IDs or fact payloads were added to reports. Learner maturity and permanent memory were unchanged.

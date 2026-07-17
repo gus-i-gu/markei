@@ -11,6 +11,10 @@ import {
   type Database,
 } from "../postgres/database.js";
 import {
+  noopAuthorizationBarrier,
+  type AuthorizationBarrier,
+} from "./authorization_barrier.js";
+import {
   HostedAuthError,
   type Clock,
   type DeviceEnrollmentResult,
@@ -25,6 +29,7 @@ export class HostedTransactionAuthorizer {
   constructor(
     private readonly database: Database,
     private readonly verifier: PrincipalVerifier,
+    private readonly barrier: AuthorizationBarrier = noopAuthorizationBarrier,
   ) {}
 
   async authorizeOperation<T>(
@@ -36,10 +41,26 @@ export class HostedTransactionAuthorizer {
     const deviceId = requestedDeviceId(request);
     if (!deviceId) throw new HostedAuthError("device-enrollment-required", 403);
     return inTransactionWithContext(this.database, {}, async (client) => {
+      await this.barrier.reach("before-identity-membership-fence", {
+        operation,
+        actorDeviceId: deviceId,
+      });
       const membership = await resolveOneMembership(client, principal);
+      await this.barrier.reach("after-membership-lock", {
+        operation,
+        accountId: membership.accountId,
+        identityId: membership.identityId,
+        actorDeviceId: deviceId,
+      });
       await setAccount(client, membership.accountId);
       await setIdentity(client, membership.identityId);
       await setDevice(client, deviceId);
+      await this.barrier.reach("before-actor-device-lock", {
+        operation,
+        accountId: membership.accountId,
+        identityId: membership.identityId,
+        actorDeviceId: deviceId,
+      });
       const device = await client.query(
         `select e.state as enrollment_state, d.status as device_status
            from device_enrollments e
@@ -62,6 +83,12 @@ export class HostedTransactionAuthorizer {
       await client.query("select set_config('markei.operation', $1, true)", [
         operation,
       ]);
+      await this.barrier.reach("before-protected-mutation", {
+        operation,
+        accountId: membership.accountId,
+        identityId: membership.identityId,
+        actorDeviceId: deviceId,
+      });
       return action(client, auth);
     });
   }
@@ -72,6 +99,7 @@ export class HostedIdentityService {
     private readonly database: Database,
     private readonly verifier: PrincipalVerifier,
     private readonly clock: Clock,
+    private readonly barrier: AuthorizationBarrier = noopAuthorizationBarrier,
   ) {}
 
   async identity(request: FastifyRequest): Promise<IdentityResult> {
@@ -105,7 +133,15 @@ export class HostedIdentityService {
     validateEnrollment(body);
     const principal = await this.verifier.verify(request);
     return inTransactionWithContext(this.database, {}, async (client) => {
+      await this.barrier.reach("before-identity-membership-fence", {
+        operation: "enroll-device",
+      });
       const membership = await resolveOneMembership(client, principal);
+      await this.barrier.reach("after-membership-lock", {
+        operation: "enroll-device",
+        accountId: membership.accountId,
+        identityId: membership.identityId,
+      });
       await setAccount(client, membership.accountId);
       const hash = canonicalHash(body);
       const existing = await client.query(
@@ -174,6 +210,12 @@ export class HostedIdentityService {
         deviceId,
         generation,
       };
+      await this.barrier.reach("before-protected-mutation", {
+        operation: "enroll-device",
+        accountId: membership.accountId,
+        identityId: membership.identityId,
+        actorDeviceId: deviceId,
+      });
       await client.query(
         `insert into device_enrollment_requests(
            account_id, identity_id, enrollment_request_id, installation_id,
@@ -202,6 +244,9 @@ export class HostedIdentityService {
   ): Promise<DeviceEnrollmentResult | ProtocolFailure> {
     const principal = await this.verifier.verify(request);
     return inTransactionWithContext(this.database, {}, async (client) => {
+      await this.barrier.reach("before-identity-membership-fence", {
+        operation: "query-enrollment",
+      });
       const membership = await resolveOneMembership(client, principal);
       await setAccount(client, membership.accountId);
       const row = await client.query(
@@ -219,6 +264,10 @@ export class HostedIdentityService {
   async deviceStatus(request: FastifyRequest, deviceId: string) {
     const principal = await this.verifier.verify(request);
     return inTransactionWithContext(this.database, {}, async (client) => {
+      await this.barrier.reach("before-identity-membership-fence", {
+        operation: "device-status",
+        targetDeviceId: deviceId,
+      });
       const membership = await resolveOneMembership(client, principal);
       const actorDeviceId = requestedDeviceId(request);
       if (!actorDeviceId)
@@ -227,6 +276,13 @@ export class HostedIdentityService {
       await setIdentity(client, membership.identityId);
       await setDevice(client, actorDeviceId);
       await setOperation(client, "device-management");
+      await this.barrier.reach("before-target-transition", {
+        operation: "device-status",
+        accountId: membership.accountId,
+        identityId: membership.identityId,
+        actorDeviceId,
+        targetDeviceId: deviceId,
+      });
       const target = await authorizeActorAndTargetDevice(
         client,
         membership,
@@ -245,6 +301,10 @@ export class HostedIdentityService {
   async revoke(request: FastifyRequest, deviceId: string) {
     const principal = await this.verifier.verify(request);
     return inTransactionWithContext(this.database, {}, async (client) => {
+      await this.barrier.reach("before-identity-membership-fence", {
+        operation: "device-revoke",
+        targetDeviceId: deviceId,
+      });
       const membership = await resolveOneMembership(client, principal);
       const actorDeviceId = requestedDeviceId(request);
       if (!actorDeviceId)
@@ -253,6 +313,13 @@ export class HostedIdentityService {
       await setIdentity(client, membership.identityId);
       await setDevice(client, actorDeviceId);
       await setOperation(client, "device-management");
+      await this.barrier.reach("before-target-transition", {
+        operation: "device-revoke",
+        accountId: membership.accountId,
+        identityId: membership.identityId,
+        actorDeviceId,
+        targetDeviceId: deviceId,
+      });
       const target = await authorizeActorAndTargetDevice(
         client,
         membership,
