@@ -167,3 +167,103 @@ After R04C01 reconciliation:
 - Main closes Cycle 10 only after all named gates reconcile.
 
 No later unit is automatically authorized by R04C01 completion.
+
+---
+
+## 11. Append-only reconciliation — R04C01 result
+
+> Reconciliation marker: C10-MCG02-R04C02_20260717T151546Z
+> Reconciled at UTC: 2026-07-17T15:15:46Z
+> Reconciled at America/Sao_Paulo: 2026-07-17T12:15:46-03:00
+> Reconciled implementation: 40e0a7097fef7f8a7abfe172cc867b670dfec196
+> Implementation tree: 0740d1038f3b3e3b783dc8d9f1cebeff83571bc4
+> Controlling R04C01 J: 2d85523952a3606ec80a3769817cb4ad8e647cb9
+> Controlling R04C01 D/E/F: 2f7272a8cacaa790ccfaad6c0c7523eede336460
+> Current status: **R04C01 VALIDATED; R04C02 SELECTED**
+
+R04C01 is accepted as validated local evidence within its declared boundary.
+
+Evidence reconciled:
+
+- the remote implementation is a direct child of the controlling D/E/F commit;
+- the participant-aware controller, Account observer and reusable scenario runner exist;
+- enrollment protected-mutation and target-transition placement were corrected;
+- the real upload scenario records a typed 403 after a committed membership disable;
+- protected Account synchronization state remains unchanged except for the expected membership
+  transition;
+- Codex recorded 8 focused tests and 45 total server tests passing;
+- Main independently reran format, lint, typecheck, all 45 server tests, build and production audit;
+- `git diff --check` passed and the commit changed only the authorized server/proof/report paths.
+
+Main could not independently rerun Docker because Docker is unavailable in the reconciliation
+environment. The committed scenario and the recorded Windows/Docker PostgreSQL 18.4 run remain the
+environment-scoped evidence for the real database case.
+
+R04C01 terminal accepted:
+
+~~~text
+R04C01_BARRIER_CONTROLLER=true
+R04C01_ACCOUNT_OBSERVER=true
+R04C01_MEMBERSHIP_DENIAL_SLICE=true
+AUTHORIZATION_RACE_PRODUCER=false
+R04_REMAINING_CASES_PENDING
+C10-MCG02-R04C01_PROVED
+~~~
+
+## 12. Evidence corrections retained
+
+G/H/I contain two report-header defects:
+
+1. their controlling D/E/F SHA repeats the J SHA; the correct D/E/F SHA is `2f7272a8...`;
+2. their implementation tree and final commit fields remained `pending`; Git resolves them to tree
+   `0740d103...` and commit `40e0a70...`.
+
+These are observational metadata corrections. They do not invalidate the executed tests or source
+evidence. Codex must resolve commit/tree fields accurately in the next G/H/I reports.
+
+## 13. Phase-scheme revision
+
+The earlier forward scheme is preserved above as history. Current coordination merges the former
+R04C02 and R04C03 because R04C01 proved their shared controller, observer, fixture and scenario
+foundation. R04C04 remains separate because transport loss, process restart and deterministic retry
+exhaustion require materially different mechanisms.
+
+Current scheme:
+
+~~~text
+R04C01  reusable proof infrastructure + membership-disabled slice       VALIDATED
+R04C02  core authorization matrix: identity/member/actor/target/enroll  ACTIVE
+R04C04  response loss + restart + retry exhaustion + final R04 aggregate PENDING
+R05      Flutter HTTP/file-backed proof + global local aggregate          PENDING
+MCG-02   human Auth0 + Neon + Render proof                                PENDING
+Promotion and Main Cycle 10 closure                                       PENDING
+~~~
+
+R04C02 uses three internal checkpoints:
+
+~~~text
+CP-A  identity, membership and actor-Device race cases
+CP-B  target authorization, revoke concurrency and later actor denial
+CP-C  equivalent/conflicting enrollment concurrency
+~~~
+
+The unit may be one commit, but each checkpoint must produce case-addressable results before the
+next begins. A failed checkpoint remains diagnosable and cannot be converted into inherited truth.
+
+## 14. R04C02 acceptance boundary
+
+R04C02 must execute cases 2–24 of the existing authorization producer while retaining the validated
+case 1. It may then report 24 true cases and exactly four pending cases:
+
+- response-loss-query-replay;
+- process-restart-replay;
+- serialization-retry-exhaustion-fails-closed;
+- denied-no-state-advance.
+
+`AUTHORIZATION_RACE_PRODUCER` remains false until R04C04. R04C02 success is therefore a bounded
+matrix checkpoint, not local-security or provider completion.
+
+## 15. Forward authority
+
+D/E/F carrying marker `C10-MCG02-R04C02_20260717T151546Z` are the only active Codex authority.
+R04C04, R05, provider mutation, permanent promotion and Cycle 10 closure remain unauthorized.

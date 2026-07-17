@@ -1,134 +1,166 @@
-# F_DSN_STAGE — R04C01 Design Materialization Authority
+# F_DSN_STAGE — R04C02 Core Authorization Matrix Design Authority
 
 > Sequence: FLX-ORD-01
-> Authority marker: C10-MCG02-R04C01_20260717T143908Z
-> Controlling reconciliation: 2d85523952a3606ec80a3769817cb4ad8e647cb9
+> Authority marker: C10-MCG02-R04C02_20260717T151546Z
+> Required ancestry: 40e0a7097fef7f8a7abfe172cc867b670dfec196
 > Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
 
 ## 1. Selected topology
 
 ~~~text
-valid upload fixture
-→ production Fastify route
-→ authorization transaction
-↔ participant-aware lab barrier
-→ control membership transition
-→ typed denial
-→ Account snapshot comparison
+case fixture
+→ real loopback Fastify route
+→ production authorization transaction
+↔ R04C01 participant-aware barrier
+→ committed authority/target/enrollment intervention
+→ typed result
+→ R04C01 Account observer
 → ScenarioResult
+→ exact case map
 ~~~
 
-Production depends only on a small inert-by-default interface. Proof infrastructure depends on
-production components, never the reverse.
+Production depends only on the inert barrier interface. Proof modules depend on production modules.
+No public route or environment variable may expose the barrier.
 
-## 2. Barrier contract
+## 2. Reuse boundary
 
-The active lab controller belongs in test/proof infrastructure. It needs equivalent operations:
+Extend, do not replace:
+
+- `AuthorizationBarrierController`;
+- canonical Account observer;
+- synthetic JWKS/identity/Account/Device arrangement;
+- safe scenario result and producer mapping;
+- finally-owned app/pool/server/container cleanup.
+
+Extract shared fixture helpers where needed. Avoid a single oversized scenario function and avoid
+duplicating whole database setup per case when safe reset/isolated Account fixtures suffice.
+
+## 3. Transaction race design
+
+Use the narrowest existing phase:
+
+- membership removed: before identity/membership fence;
+- external identity disabled: after membership lock or before first protected mutation, with a
+  subsequent in-transaction authority recheck sufficient to observe the committed disable;
+- actor Device revoked: before actor Device lock;
+- target revoke concurrency: before target transition;
+- enrollment concurrency: before protected mutation/commit as appropriate.
+
+If current code cannot observe a required committed transition, first retain the failing scenario,
+then make the narrowest transaction-fence correction. Do not add sleeps or weaken locks.
+
+## 4. Valid route fixtures
+
+Every actor-revocation case begins with valid JWT, active identity/member/actor Device and valid
+route-specific input.
+
+For recovery routes, seed a compatible available snapshot and Device-bound rebootstrap session with
+valid requested chunk/state. The expected response after release must be an authorization denial,
+not cursor expiry, recovery unavailable, validation failure or not-found caused by bad setup.
+
+## 5. Target authorization model
+
+Use the existing role model:
+
+- owner: may inspect/revoke Account Devices;
+- member: may inspect/revoke self only;
+- foreign identity/Device: denied;
+- other Account: denied without target disclosure.
+
+Target queries and transitions remain Account-scoped and locked. Cross-Account truth must not leak
+through different status, body or mutation behavior.
+
+## 6. Revoke concurrency model
+
+Equivalent required sequence:
 
 ~~~text
-reach(phase, context)
-waitUntilReached(scenario, participant, phase)
-release(scenario, participant, phase)
-close()
+authorize and lock actor/target
+→ if active, one active-to-revoked transition
+→ one device-revoked security event
+→ commit
+→ concurrent/later equivalent request returns duplicate-equivalent
 ~~~
 
-Context must distinguish concurrent participants using safe request/scenario identity. Each waiter
-has a bounded timeout. Close rejects/releases outstanding waiters and prevents reuse.
+Assert exact durable counts through the committed-view observer. A second transition or security
+event fails the case. After self-revoke, the same actor must fail a later protected route.
 
-The production default remains noop. No HTTP route or environment variable exposes the controller.
+## 7. Enrollment concurrency model
 
-## 3. Phase placement
+Retain enrollment contract v1, enrollment request identity, installation identity and canonical
+request hash.
 
-| Phase | Required position |
-| --- | --- |
-| before-identity-membership-fence | transaction open, before current identity/membership query |
-| after-membership-lock | after verified locking query |
-| before-actor-device-lock | directly before actor Device locking query |
-| before-target-transition | after authorization/locks, before transition write |
-| before-protected-mutation | before operation's first durable write |
-| before-commit | after writes, before COMMIT, with participant context |
+- equivalent concurrent requests converge on one Device, one active enrollment and equivalent
+  stored result;
+- same enrollment request ID plus different hash returns conflict and preserves the first result;
+- no extra Device, enrollment or security event may be created.
 
-Enrollment currently violates protected-mutation meaning and must be corrected.
+Do not solve races with an in-memory cache; PostgreSQL remains the durable authority.
 
-The current Database beforeCommit seam must become operation/participant-aware or be replaced by a
-transaction-lifecycle interface. Avoid global cross-talk between concurrent operations.
+## 8. Observer assertions
 
-## 4. Membership locking
+Extend comparison helpers only as needed for:
 
-Verify that resolveOneMembership actually locks the relevant identity/membership rows before
-after-membership-lock is emitted. If it does not, use a correct locking query or correct the phase
-name/placement. Do not claim a lock that did not occur.
+- exact unchanged protected state;
+- expected authority transition plus otherwise unchanged state;
+- one Device transition and one event;
+- duplicate-equivalent no-new-state;
+- one enrollment/result convergence;
+- conflicting-hash preservation.
 
-## 5. Observer contract
+Snapshots remain payload-free, canonical, sorted and taken from a separate committed-view
+connection. Do not log entire before/after snapshots in ordinary output.
 
-The observer is test-only and uses a separate committed-view connection. Its snapshot contains
-sorted safe representations of:
+## 9. Scenario and producer architecture
 
-- submissions/events/high-water;
-- acknowledgements;
-- recovery sessions/chunks;
-- Devices;
-- enrollment request/hash/result;
-- security events.
+Each scenario returns a closed result with case ID, pass/fail, safe blocker, response class and
+invariant counts. The authorization producer consumes these results directly.
 
-It excludes bodies, facts, JWTs and credentials. Comparison accepts an explicit expected membership
-transition while requiring all protected state to remain equal.
+At R04C02 success:
 
-## 6. Scenario runner
+~~~text
+cases 1–24 = true
+cases 25–28 = false / pending-r04c04
+producer passed = false
+~~~
 
-The reusable runner owns:
+The validated case 1 may be rerun as part of the producer; do not hard-code it true without executed
+scenario output in the current producer run.
 
-- scenario/participant keys;
-- fixture arrangement;
-- before/after snapshots;
-- barrier wait/release;
-- control transaction;
-- response capture;
-- cleanup;
-- safe ScenarioResult.
+## 10. Resource and retry boundaries
 
-It must use explicit ordering, not sleeps. Scenario functions should be callable by focused tests and
-later producers.
+Use deterministic barrier timeouts and bounded test deadlines. Every server, pool, waiter and
+container is owned by one harness and closed in `finally`. Exact filtered Docker inventory must be
+empty after success or failure.
 
-## 7. Vertical-slice route
+Serialization retry exhaustion and post-commit response loss are R04C04 and must not be added here.
 
-Use the real upload route with:
+## 11. Retained versions
 
-- generated local RS256 identity fixture;
-- active Account membership;
-- enrolled active Device;
-- valid purchase.registered v3 submission;
-- disposable PostgreSQL 18;
-- loopback Fastify.
+Retain migrations 001–006, event v3, cursor `c10b:*`, recovery format 1, enrollment contract v1,
+Drift v7, JWT RS256, producer schema v1 and current dependencies/lockfile.
 
-Disable membership through a control connection while upload waits before membership resolution.
-Expect existing 403 semantics and no protected state advance.
+No migration, protocol or dependency change is selected.
 
-## 8. Producer behavior
+## 12. Validation and rollback
 
-After the scenario:
+Validate focused scenarios, full server suite/build, authorization producer shape, migration hashes,
+audit, diff, secret scan and teardown. R04C02 is one rollback boundary; narrow production fixes must
+remain individually visible in I with their retained failing tests.
 
-- membership-disabled-before-fence may become true;
-- the other unimplemented cases remain false with safe pending blockers;
-- denied-no-state-advance remains false;
-- authorization-race remains false.
+## 13. Required design report
 
-Do not alter schema version or case inventory.
+I must record:
 
-## 9. Resource model
+- final dependency direction;
+- shared fixture/scenario decomposition;
+- phase used by every race family;
+- valid recovery-route fixture strategy;
+- target/role rules;
+- exact transition/event/enrollment invariants;
+- producer truth and four deferrals;
+- resource ownership;
+- retained versions;
+- every production deviation and unresolved issue.
 
-The lab owns PostgreSQL container/database/roles, Fastify/JWKS servers, pools, waiters and temporary
-files. Close all in finally and prove empty exact filtered inventory.
-
-## 10. Versions and scope
-
-Retain migrations 001–006, event v3, cursor c10b:*, recovery format 1, enrollment contract v1,
-Drift v7, JWT RS256, producer schema v1 and current dependencies.
-
-No provider, migration, dependency, lockfile, Flutter, UI or permanent-memory work is authorized.
-
-## 11. Rollback and report
-
-R04C01 is one bounded commit. Production corrections require a retained failing test. I must report
-final dependency direction, exact phase placement, controller lifecycle, observer schema,
-representative sequence, resource ownership, retained versions and deviations.
+Do not claim R04C04, R05, provider or Cycle 10 completion.
