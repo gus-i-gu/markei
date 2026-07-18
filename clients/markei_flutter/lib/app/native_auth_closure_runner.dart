@@ -2,17 +2,20 @@
 
 import '../application/hosted_auth_ports.dart';
 import '../application/hosted_enrollment_coordinator.dart';
+import '../application/hosted_sync_coordinator.dart';
 
 final class NativeAuthClosureRunner {
   NativeAuthClosureRunner({
     required ExternalAuthenticationSession authenticationSession,
     required HostedEnrollmentCoordinator enrollmentCoordinator,
     required String environmentAlias,
-    required DeviceEnrollmentCommand Function() commandFactory,
+    required Future<DeviceEnrollmentCommand> Function() commandFactory,
+    required HostedSyncCoordinator hostedSyncCoordinator,
   }) : _authenticationSession = authenticationSession,
        _enrollmentCoordinator = enrollmentCoordinator,
        _environmentAlias = environmentAlias,
        _commandFactory = commandFactory,
+       _hostedSyncCoordinator = hostedSyncCoordinator,
        _unavailable = false;
 
   const NativeAuthClosureRunner.unavailable()
@@ -20,12 +23,14 @@ final class NativeAuthClosureRunner {
       _enrollmentCoordinator = null,
       _environmentAlias = '',
       _commandFactory = null,
+      _hostedSyncCoordinator = null,
       _unavailable = true;
 
   final ExternalAuthenticationSession? _authenticationSession;
   final HostedEnrollmentCoordinator? _enrollmentCoordinator;
   final String _environmentAlias;
-  final DeviceEnrollmentCommand Function()? _commandFactory;
+  final Future<DeviceEnrollmentCommand> Function()? _commandFactory;
+  final HostedSyncCoordinator? _hostedSyncCoordinator;
   final bool _unavailable;
 
   Future<NativeClosureStatus> status() async {
@@ -50,7 +55,7 @@ final class NativeAuthClosureRunner {
     }
     final outcome = await _enrollmentCoordinator!.enroll(
       environmentAlias: _environmentAlias,
-      command: _commandFactory!(),
+      command: await _commandFactory!(),
     );
     return NativeClosureStatus(_outcomeName(outcome));
   }
@@ -69,13 +74,8 @@ final class NativeAuthClosureRunner {
     if (_unavailable) {
       return const NativeClosureStatus('configuration-missing');
     }
-    final outcome = await _enrollmentCoordinator!.replay(
-      environmentAlias: _environmentAlias,
-    );
-    if (outcome.state?.serverDeviceId != null) {
-      return const NativeClosureStatus('hosted-sync-available');
-    }
-    return NativeClosureStatus(_outcomeName(outcome));
+    final outcome = await _hostedSyncCoordinator!.run(_environmentAlias);
+    return NativeClosureStatus(outcome.state);
   }
 
   Future<NativeClosureStatus> logout() async {
@@ -102,8 +102,8 @@ final class NativeAuthClosureRunner {
     return switch (outcome.status) {
       'applied' => 'device-enrolled',
       'duplicate-equivalent' => 'device-enrolled',
-      'unknown' => 'hosted-sync-unavailable',
-      _ => outcome.reason ?? 'hosted-sync-unavailable',
+      'unknown' => 'sync-interrupted',
+      _ => outcome.reason ?? 'sync-unavailable',
     };
   }
 }

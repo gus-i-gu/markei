@@ -1,63 +1,63 @@
-# G_OPS_CODEX — MCG-02 Native Closure Operational Evidence
+# G_OPS_CODEX - Native Closure R1 Operational Evidence
 
-- Authority marker: C10-MCG02-NATIVE-CLOSURE_20260718T140335Z
-- Required provider-foundation ancestor: ade6e2c1f19ae3ebf318457d7ef76ac8dbe3bcae
-- Resolved staging authority: 6fffad609bb83523d467a849e2d91f3c668af721 (`STAGING_COMMIT_SHA` in prompt was a placeholder; J/D/E/F identify this active native-closure staging).
-- Baseline remote/local SHA: 6fffad609bb83523d467a849e2d91f3c668af721
-- Actual implementation start: after branch/methodology/provider-boundary boot on 2026-07-18 local session; exact pre-command timestamp was not independently persisted before first shell command.
-- Evidence timestamp: 2026-07-18T11:44:14.5496765-03:00
-- Implementation tree before reports: d1f48239d213af5449736612544fc23afe99d7fb
-- Final commit status: pending before commit.
-- Evidence environment: Windows host, Flutter 3.44.6, Dart 3.12.2, Android SDK available, Windows symlink support disabled.
-- Result classification: native Auth0 composition ready locally; decisive provider proof pending.
+- Authority marker: C10-MCG02-NATIVE-CLOSURE-R1_20260718T145121Z
+- Required implementation ancestor: 214df17
+- Required staging authority: e59d919ecb776597b13615137cd23413dae42c36
+- Baseline local/remote SHA after fast-forward: e59d919ecb776597b13615137cd23413dae42c36
+- Actual implementation evidence window: 2026-07-18 local Codex session
+- Evidence timestamp: 2026-07-18T12:22:41.1552140-03:00 / 2026-07-18T15:22:41.1573995Z
+- Final commit SHA: not self-embedded in this report; Codex final terminal response records the actual commit after publication.
+- Evidence environment: Windows 10.0.26200.8875, Flutter 3.44.6, Dart 3.12.2, Docker Desktop 29.6.1 Linux engine, PostgreSQL 18.4 disposable preflight.
+- Result classification: executable native closure correction complete locally; provider proof pending.
 
 ## Changed Paths
 
-- `clients/markei_flutter/pubspec.yaml`
-- `clients/markei_flutter/pubspec.lock`
-- `clients/markei_flutter/android/app/build.gradle.kts`
-- `clients/markei_flutter/android/gradle.properties`
-- `clients/markei_flutter/lib/application/hosted_auth_ports.dart`
+Implementation:
+
+- `clients/markei_flutter/lib/app/markei_app.dart`
 - `clients/markei_flutter/lib/app/markei_composition.dart`
 - `clients/markei_flutter/lib/app/native_auth_closure_runner.dart`
-- `clients/markei_flutter/lib/infrastructure/auth/auth0_native_authentication.dart`
-- `clients/markei_flutter/lib/infrastructure/auth/native_auth_config.dart`
+- `clients/markei_flutter/lib/app/pages/native_closure_page.dart`
+- `clients/markei_flutter/lib/application/hosted_sync_coordinator.dart`
+- `clients/markei_flutter/lib/application/stable_device_enrollment_command_factory.dart`
+
+Tests:
+
+- `clients/markei_flutter/test/app/native_closure_surface_test.dart`
 - `clients/markei_flutter/test/infrastructure/native_auth_composition_test.dart`
-- `clients/markei_flutter/windows/flutter/generated_plugin_registrant.cc`
-- `clients/markei_flutter/windows/flutter/generated_plugins.cmake`
-- `clients/markei_flutter/windows/runner/main.cpp`
-- G/H/I reports.
+- `clients/markei_flutter/test/infrastructure/native_closure_sync_path_test.dart`
+
+Reports:
+
+- `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
+- `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
+- `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
 
 Preserved without reading: `.vscode/`, `documentation/NEON_*`, `.env*`, and the pre-existing untracked provider-looking file `Enter only the POOLED Neon hostname`.
 
-## Dependency And Platform Evidence
+## Evidence
 
-- Pinned `auth0_flutter: 2.4.0`.
-- Official SDK evidence: Flutter 3.24.0+, Android API 21+, Windows 10+; repository has Flutter 3.44.6 and Dart 3.12.2.
-- Android application ID verified and preserved as `com.gusigu.markei`.
-- Android manifest placeholders derive callback/logout from Gradle property `MARKEI_AUTH0_DOMAIN` with inert placeholder fallback; no tenant value committed.
-- Windows uses SDK-required `auth0flutter://callback` and runner plumbing for startup URI capture, current-user named pipe forwarding, single-instance routing and callback prefix validation.
-- Android debug build required `kotlin.incremental=false` because Kotlin incremental cache failed across `H:` repo and `C:` pub cache roots.
+- Docker preflight: `docker version --format '{{json .}}'` passed with client/server present and server OS `linux`; disposable `postgres:18-alpine` container `markei-native-r1-pg-20260718-1` accepted `pg_isready`; `SELECT version();` returned PostgreSQL 18.4; container was removed; filtered inventory was empty. Process note: this gate was executed after initial source edits in the resumed session, not before mutation.
+- Flutter devices: Windows desktop and Edge web detected; Android build target available through Gradle build, no Android device attached.
+- Real sync path: `HostedSyncCoordinator` invokes existing `UploadPendingEvents`, `DownloadAndApplyEvents`, `AcknowledgeAppliedCursor`, `HttpSyncTransport`, `DriftSyncOutboxRepository`, and `DriftRemoteEventApplier`. `hostedSyncProbe()` no longer calls enrollment replay.
+- Stable identity: `StableDeviceEnrollmentCommandFactory` reuses stored installation and enrollment request ids until resolution and across Drift file reopen.
+- Closure surface: absent by default; shown only when `MARKEI_NATIVE_CLOSURE_SURFACE` is true and native configuration is ready; displays semantic state names only.
 
-## Tests And Validation
+## Validation
 
-- `flutter pub get`: passed; lock updated for exact Auth0 SDK.
-- `flutter pub get --enforce-lockfile`: passed.
-- `dart format --set-exit-if-changed lib test`: passed.
-- `flutter analyze`: passed, no issues.
-- `flutter test test/infrastructure/native_auth_composition_test.dart`: 10 passed.
-- `flutter test`: 72 passed, 2 skipped; existing Drift debug warnings only.
-- `flutter build apk --debug`: passed, built `build\app\outputs\flutter-apk\app-debug.apk`; SDK emitted a future KGP migration warning.
-- `flutter build windows --release`: host-excluded; Flutter reported Windows plugin builds require symlink support and Developer Mode is disabled. Host configuration was not changed.
+- `flutter pub get --enforce-lockfile`: passed; 19 newer incompatible package versions reported, lock unchanged.
+- `dart format --set-exit-if-changed lib test`: passed; 80 files checked, 0 changed.
+- `flutter analyze`: passed; no issues.
+- `flutter test test/infrastructure/native_auth_composition_test.dart`: passed; 14 tests.
+- `flutter test test/app/native_closure_surface_test.dart`: passed; 2 tests.
+- `flutter test test/infrastructure/native_closure_sync_path_test.dart`: passed; 1 test; Drift emitted existing multi-database debug warnings while separate file-backed databases were open.
+- `flutter test`: passed; 79 tests, 2 existing lab skips.
+- `flutter build apk --debug`: passed; built `build\app\outputs\flutter-apk\app-debug.apk`; Flutter emitted the existing future KGP migration warning for `auth0_flutter`.
+- `flutter build windows --release`: host-excluded; Flutter reported plugin builds require symlink support and Developer Mode is disabled. Host configuration was not changed.
+- Server checks: excluded because no server, migration or shared API contract changed.
+- Protected Python regressions: excluded because no Python path changed.
 - `git diff --check`: passed.
-- Protected-path check for A/B/C, J, D/E/F, methodology and permanent domain folders: no changes.
-- Tracked/untracked changed-path secret scan: no private-key, API-key, bearer literal, client-secret, password or database URL hits.
-- Final `docker ps -a --filter name=markei-c10 --format "{{.Names}}"`: empty.
+- Secret scan: no tracked/staged hits for private-key, API-key, bearer literal, client-secret, password, database URL or token material.
+- Final Docker inventory: `docker ps -a --filter name=markei-native-r1 --format '{{.Names}}'` returned empty output.
 
-Server validation and protected Python regressions were excluded because no server, migration, shared API contract or Python path changed.
-
-## Completed / Deferred
-
-Completed: native typed configuration, Auth0 SDK adapter, ephemeral token lifecycle, Android callback composition, Windows callback routing, local closure runner and deterministic tests.
-
-Deferred: human Auth0 login, Neon/Render hosted convergence, provider acceptance, permanent promotion, Cycle 10 closure, MCG-03 and MCG-04.
+No Auth0, Neon, Render, provider credential or public provider operation was performed.

@@ -1,40 +1,47 @@
-# H_DDC_CODEX — MCG-02 Native Closure Didactic Evidence
+# H_DDC_CODEX - Native Closure R1 Didactic Evidence
 
-- Authority marker: C10-MCG02-NATIVE-CLOSURE_20260718T140335Z
-- Baseline SHA: 6fffad609bb83523d467a849e2d91f3c668af721
-- Implementation tree before reports: d1f48239d213af5449736612544fc23afe99d7fb
-- Final commit status: pending before commit.
-- Evidence environment: local Flutter/Android/Windows composition tests; no provider operation.
-- Result classification: native client composition readiness, not provider acceptance.
+- Authority marker: C10-MCG02-NATIVE-CLOSURE-R1_20260718T145121Z
+- Baseline SHA: e59d919ecb776597b13615137cd23413dae42c36
+- Final commit SHA: reported after commit by Codex terminal response, not self-embedded.
+- Evidence environment: local Flutter tests, Android debug build, Windows host exclusion, no provider operation.
+- Result classification: executable local closure readiness; decisive provider proof remains pending.
 
-## States And Meanings
+## Meanings
 
-Materialized states:
+Materialized closure states:
 
+- `closure-disabled`
 - `configuration-missing`
-- `configuration-invalid`
 - `signed-out`
-- `signing-in`
-- `sign-in-cancelled`
 - `authenticated`
-- `token-expired`
-- `authentication-rejected`
-- `provider-unavailable`
+- `authentication-required`
+- `device-enrollment-required`
 - `device-enrolled`
-- `hosted-sync-available`
-- `hosted-sync-unavailable`
+- `sync-running`
+- `sync-no-new-events`
+- `sync-completed`
+- `sync-interrupted`
+- `sync-unavailable`
+- `device-revoked`
 - `signed-out-cleared`
 
-Semantic tests distinguish cancellation from provider failure, token rejection from signed-out state, expiry from durable authentication, and local closure readiness from real Auth0 acceptance.
+`device-enrolled` means Device enrollment or replay is complete. It is not synchronization.
 
-## Privacy Evidence
+`sync-completed` means the hosted sync coordinator ran the existing upload/download/apply/ack path and reached a committed/acknowledged local action. `sync-no-new-events` is distinct and means the path ran without a pending upload or downloaded remote event. `sync-interrupted` and `sync-unavailable` preserve local facts and pending work.
 
-Bearer credentials remain process-memory values inside `NativeAuth0Authentication`. The adapter rejects an ID token used as the API bearer credential, clears credentials on logout/expiry/rejection, and exposes only `AccessTokenResult` to hosted transports. The focused test proves the synthetic token is absent from Drift file bytes and retained diagnostics.
+## Semantic Tests
 
-The closure runner exposes only semantic state names. It does not display tokens, claims, subjects, emails, Account IDs, Device IDs, provider IDs, connection details or fact payloads.
+- Closure surface absent by default.
+- Closure surface requires explicit development flag plus valid native configuration.
+- Runner sequence exposes sign-in, Device enrollment/query, real sync and logout as semantic states.
+- Enrollment success alone cannot produce sync success.
+- Real upload/download/apply/ack services are invoked.
+- Loopback HTTP/file-backed Drift facts converge and persist after reopen.
+- No-new-events is distinct from interruption.
+- Token lifecycle tests from the accepted Auth0 adapter remain passing: exact API audience, ID-token substitution rejection, cancellation/rejection/outage/expiry/logout mapping, cold restart token absence and token absence from Drift bytes/diagnostics.
 
 ## Boundaries
 
-Allowed claim: local native Auth0 composition is ready for human Android/Windows provider proof.
+The surface displays only semantic states. It does not expose tokens, claims, subjects, emails, provider ids, Account ids, Device ids, connection strings or fact payloads.
 
-Intentionally absent: real Android Auth0 login acceptance, real Windows Auth0 login acceptance, Neon/Render hosted convergence, MCG-02 completion, production readiness, Cycle 10 closure, Cycle 11 UX or learner maturity changes.
+No Cycle 11 UX, learner maturity, permanent documentation, provider readiness or production acceptance wording was added. Human Android/Windows Auth0 login, Render/Neon hosted convergence and final MCG-02 provider proof remain pending.

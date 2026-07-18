@@ -1,43 +1,37 @@
-# I_DSN_CODEX — MCG-02 Native Closure Design Evidence
+# I_DSN_CODEX - Native Closure R1 Design Evidence
 
-- Authority marker: C10-MCG02-NATIVE-CLOSURE_20260718T140335Z
-- Baseline SHA: 6fffad609bb83523d467a849e2d91f3c668af721
-- Implementation tree before reports: d1f48239d213af5449736612544fc23afe99d7fb
-- Final commit status: pending before commit.
-- Evidence environment: official Auth0 Flutter SDK 2.4.0, Flutter 3.44.6, Dart 3.12.2, Android debug build, Windows runner source integration.
-- Result classification: architecture and local composition proof complete; provider proof pending.
+- Authority marker: C10-MCG02-NATIVE-CLOSURE-R1_20260718T145121Z
+- Baseline SHA: e59d919ecb776597b13615137cd23413dae42c36
+- Final commit SHA: reported after commit by Codex terminal response, not self-embedded.
+- Evidence environment: Flutter 3.44.6, Dart 3.12.2, Auth0 Flutter 2.4.0 retained, loopback HTTP/file-backed Drift proof, Android debug build, Windows symlink host exclusion.
+- Result classification: native closure correction locally executable; provider proof pending.
 
 ## Dependency Direction
 
-Flutter composition now follows:
+The corrected path is:
 
-`MarkeiComposition -> NativeAuthClosureRunner -> HostedEnrollmentCoordinator -> ExternalAuthenticationSession / AccessTokenSource -> NativeAuth0Authentication -> auth0_flutter SDK`.
+`NativeClosurePage -> NativeAuthClosureRunner -> ExternalAuthenticationSession / HostedEnrollmentCoordinator / HostedSyncCoordinator`.
 
-Auth0 SDK types remain isolated in infrastructure. Domain models and Drift do not depend on Auth0. Lab authentication remains in test/loopback proof code and is not selected by absent native configuration.
+`HostedSyncCoordinator` composes existing synchronization use cases:
 
-## Configuration And Callbacks
+`UploadPendingEvents -> SyncTransport`, `DownloadAndApplyEvents -> SyncTransport + RemoteEventApplier`, and `AcknowledgeAppliedCursor -> SyncTransport + RemoteEventApplier`.
 
-`NativeAuthConfiguration` validates non-secret compile-time inputs:
+Infrastructure remains below application ports: `HttpSyncTransport`, `HttpDeviceEnrollmentTransport`, Drift repositories and `NativeAuth0Authentication`. Auth0 SDK types remain infrastructure-only. Lab authentication remains test/loopback-only and is not selected by production composition.
 
-- Auth0 domain;
-- Android or Windows public client ID;
-- exact API audience;
-- hosted HTTPS origin.
+## Closure Surface
 
-Missing or malformed values produce a fail-closed unavailable configuration. Android callback evidence derives from `https://<domain>/android/com.gusigu.markei/callback`; Windows callback evidence uses the SDK-required `auth0flutter://callback`.
+The development surface is a single neutral page added to navigation only when `MARKEI_NATIVE_CLOSURE_SURFACE` is true and `NativeAuthConfiguration` is ready. The flag defaults false. With the flag off, the existing product navigation and local registration behavior remain unchanged.
 
-Android Gradle placeholders are property-driven and have inert non-provider defaults. Windows runner integration captures startup protocol URIs, forwards second-instance callbacks through a current-user pipe, validates the fixed callback prefix and writes only accepted callbacks to `PLUGIN_STARTUP_URL`.
+The page can invoke status, sign in, enroll/query Device, real hosted sync and logout. It displays state strings only and no credentials, provider identifiers, Account/Device identifiers, connection details or synchronization payloads.
 
-## Token Lifecycle
+## Stable Identity
 
-The SDK adapter uses Authorization Code + PKCE through platform web authentication and requests the configured API audience. Android disables SDK credential-manager storage for web auth and supplies an in-memory credentials manager. Windows credentials are already SDK-returned and manually held only in process memory.
+`StableDeviceEnrollmentCommandFactory` reads `HostedIdentityRepository` before constructing enrollment commands. Existing installation id and unresolved enrollment request id are reused across retries and Drift reopen. Fresh ids are generated only when no durable hosted state exists. There is no automatic external identity, Account membership or Device provisioning.
 
-Access tokens are rejected when expired, absent or equal to the ID token. Logout, rejection and expiry clear retained credentials. Provider/SDK exceptions are mapped to safe semantic states without logging raw exception content.
+## Sync Correction
 
-## Deviations And Residuals
+`hostedSyncProbe()` no longer calls enrollment replay. It delegates to `HostedSyncCoordinator`, which checks authentication, evaluates enrolled Device guard state, uploads pending outbox entries, downloads after the committed cursor, applies remote events atomically through Drift, then acknowledges only after local cursor application.
 
-Production deviation: Android `kotlin.incremental=false` was added because the Auth0 plugin Kotlin compile failed when incremental caches crossed the `H:` repository and `C:` pub-cache roots. This is build-tool containment, not authorization or provider behavior.
+Production deviation for R1: none beyond the accepted native-composition baseline. Migrations 001-006, server authorization, Drift schema/reset behavior, Auth0/Neon/Render resources, dependency versions, lockfiles and permanent methodology/domain memory were unchanged.
 
-Windows residual: release build was not host-supported because Flutter plugin builds require symlink support and Developer Mode is disabled on this Windows host. Runner source integration and Dart semantics are materialized, but real Windows binary/provider acceptance remains human/provider proof.
-
-Retained: migrations 001-006, server authorization semantics, Drift schema/reset behavior, Auth0/Neon/Render resources, automatic provisioning boundary, Device replacement boundary, permanent memory and methodology.
+Residual boundary: Windows release binary remains host-excluded until Developer Mode or symlink support is available. No provider login, provider mutation, deployment, permanent promotion, Cycle 10 closure, MCG-03 or MCG-04 was performed.

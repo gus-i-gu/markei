@@ -5,6 +5,7 @@ import 'markei_composition.dart';
 import 'pages/home_page.dart';
 import 'pages/history_page.dart';
 import 'pages/lists_page.dart';
+import 'pages/native_closure_page.dart';
 import 'pages/products_page.dart';
 import 'pages/purchase_page.dart';
 import 'pages/settings_page.dart';
@@ -24,23 +25,28 @@ class _MarkeiAppState extends State<MarkeiApp> {
 
   static const _compactIndexes = [0, 1, 2, 4];
 
-  static const _destinations = <_MarkeiDestination>[
-    _MarkeiDestination(label: 'Home', icon: Icons.home),
-    _MarkeiDestination(label: 'Lists', icon: Icons.checklist),
-    _MarkeiDestination(label: 'Purchase', icon: Icons.add_shopping_cart),
-    _MarkeiDestination(icon: Icons.inventory_2, label: 'Catalogue'),
-    _MarkeiDestination(icon: Icons.history, label: 'History'),
-    _MarkeiDestination(
+  List<_MarkeiDestination> get _destinations => [
+    const _MarkeiDestination(label: 'Home', icon: Icons.home),
+    const _MarkeiDestination(label: 'Lists', icon: Icons.checklist),
+    const _MarkeiDestination(label: 'Purchase', icon: Icons.add_shopping_cart),
+    const _MarkeiDestination(icon: Icons.inventory_2, label: 'Catalogue'),
+    const _MarkeiDestination(icon: Icons.history, label: 'History'),
+    const _MarkeiDestination(
       icon: Icons.analytics_outlined,
       label: 'Analytics (PIN)',
     ),
-    _MarkeiDestination(icon: Icons.groups_outlined, label: 'Household (PIN)'),
-    _MarkeiDestination(icon: Icons.help_outline, label: 'Guide'),
-    _MarkeiDestination(
+    const _MarkeiDestination(
+      icon: Icons.groups_outlined,
+      label: 'Household (PIN)',
+    ),
+    const _MarkeiDestination(icon: Icons.help_outline, label: 'Guide'),
+    const _MarkeiDestination(
       icon: Icons.description_outlined,
       label: 'Documentation',
     ),
-    _MarkeiDestination(icon: Icons.settings, label: 'Settings'),
+    const _MarkeiDestination(icon: Icons.settings, label: 'Settings'),
+    if (widget.composition.nativeClosureSurfaceEnabled)
+      const _MarkeiDestination(icon: Icons.vpn_key_outlined, label: 'Closure'),
   ];
 
   @override
@@ -96,7 +102,10 @@ class _MarkeiAppState extends State<MarkeiApp> {
               preferences: widget.composition.preferences,
               onChanged: () => setState(() => _refreshSignal++),
             ),
+            if (widget.composition.nativeClosureSurfaceEnabled)
+              NativeClosurePage(runner: widget.composition.nativeClosureRunner),
           ];
+          final destinations = _destinations;
 
           final content = SafeArea(
             child: IndexedStack(index: _selectedIndex, children: pages),
@@ -113,7 +122,7 @@ class _MarkeiAppState extends State<MarkeiApp> {
                         onDestinationSelected: _selectDestination,
                         labelType: NavigationRailLabelType.all,
                         destinations: [
-                          for (final destination in _destinations)
+                          for (final destination in destinations)
                             NavigationRailDestination(
                               icon: Icon(destination.icon),
                               label: Text(destination.label),

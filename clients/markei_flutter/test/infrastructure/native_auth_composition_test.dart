@@ -1,10 +1,16 @@
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:markei/app/native_auth_closure_runner.dart';
 import 'package:markei/application/hosted_auth_ports.dart';
 import 'package:markei/application/hosted_enrollment_coordinator.dart';
+import 'package:markei/application/hosted_sync_coordinator.dart';
+import 'package:markei/application/stable_device_enrollment_command_factory.dart';
+import 'package:markei/application/sync/sync_ports.dart';
+import 'package:markei/application/sync/sync_use_cases.dart';
+import 'package:markei/domain/sync/sync_event.dart';
 import 'package:markei/infrastructure/auth/auth0_native_authentication.dart';
 import 'package:markei/infrastructure/auth/native_auth_config.dart';
 import 'package:markei/infrastructure/local/hosted_identity_repository.dart';
@@ -255,13 +261,201 @@ void main() {
         now: () => DateTime.utc(2026, 7, 18),
       ),
       environmentAlias: 'native',
-      commandFactory: _command,
+      commandFactory: () async => _command(),
+      hostedSyncCoordinator: HostedSyncCoordinator(
+        authenticationSession: LabAuthenticationSession(),
+        syncGuard: _MemorySyncGuard.allowing(),
+        applier: _MemoryApplier(cursor: 'c10b:1'),
+        uploadPendingEvents: UploadPendingEvents(
+          _EmptyOutbox(),
+          _RecordingSyncTransport(downloadEvents: const []),
+        ),
+        downloadAndApplyEvents: DownloadAndApplyEvents(
+          _RecordingSyncTransport(downloadEvents: const []),
+          _MemoryApplier(cursor: 'c10b:1'),
+        ),
+        acknowledgeAppliedCursor: AcknowledgeAppliedCursor(
+          _RecordingSyncTransport(downloadEvents: const []),
+          _MemoryApplier(cursor: 'c10b:1'),
+        ),
+      ),
     );
 
     expect((await runner.status()).state, 'authenticated');
     expect((await runner.enrollOrQueryDevice()).state, 'device-enrolled');
-    expect((await runner.hostedSyncProbe()).state, 'hosted-sync-available');
+    expect((await runner.hostedSyncProbe()).state, 'sync-completed');
     expect((await runner.logout()).state, 'signed-out-cleared');
+  });
+
+  test('enrollment success alone cannot produce sync success', () async {
+    final runner = NativeAuthClosureRunner(
+      authenticationSession: LabAuthenticationSession(),
+      enrollmentCoordinator: HostedEnrollmentCoordinator(
+        authenticationSession: LabAuthenticationSession(),
+        tokenSource: LabAccessTokenSource.accepted('synthetic-token'),
+        transport: _FakeEnrollmentTransport(
+          result: const DeviceEnrollmentResult(
+            status: 'device-enrolled',
+            installationId: '33333333-3333-4333-8333-333333333333',
+            deviceId: '22222222-2222-4222-8222-222222222222',
+            accountId: '11111111-1111-4111-8111-111111111111',
+            generation: 1,
+          ),
+        ),
+        repository: _MemoryHostedIdentityRepository(),
+        now: () => DateTime.utc(2026, 7, 18),
+      ),
+      environmentAlias: 'native',
+      commandFactory: () async => _command(),
+      hostedSyncCoordinator: HostedSyncCoordinator(
+        authenticationSession: LabAuthenticationSession(),
+        syncGuard: _MemorySyncGuard.blocked('enrollment-required'),
+        applier: _MemoryApplier(),
+        uploadPendingEvents: UploadPendingEvents(
+          _EmptyOutbox(),
+          _RecordingSyncTransport(downloadEvents: const []),
+        ),
+        downloadAndApplyEvents: DownloadAndApplyEvents(
+          _RecordingSyncTransport(downloadEvents: const []),
+          _MemoryApplier(),
+        ),
+        acknowledgeAppliedCursor: AcknowledgeAppliedCursor(
+          _RecordingSyncTransport(downloadEvents: const []),
+          _MemoryApplier(),
+        ),
+      ),
+    );
+
+    expect((await runner.enrollOrQueryDevice()).state, 'device-enrolled');
+    expect(
+      (await runner.hostedSyncProbe()).state,
+      'device-enrollment-required',
+    );
+  });
+
+  test(
+    'hosted sync coordinator invokes upload, download, apply and ack',
+    () async {
+      final transport = _RecordingSyncTransport(
+        downloadEvents: [
+          DownloadedEvent(event: _syncEvent(), serverCursor: 'c10b:1'),
+        ],
+      );
+      final applier = _MemoryApplier();
+      final coordinator = HostedSyncCoordinator(
+        authenticationSession: LabAuthenticationSession(),
+        syncGuard: _MemorySyncGuard.allowing(),
+        applier: applier,
+        uploadPendingEvents: UploadPendingEvents(_OneOutbox(), transport),
+        downloadAndApplyEvents: DownloadAndApplyEvents(transport, applier),
+        acknowledgeAppliedCursor: AcknowledgeAppliedCursor(transport, applier),
+      );
+
+      expect((await coordinator.run('native')).state, 'sync-completed');
+      expect(transport.uploadCount, 1);
+      expect(transport.downloadCount, 1);
+      expect(transport.acknowledgeCount, 1);
+      expect(applier.applyCount, 1);
+    },
+  );
+
+  test('hosted sync distinguishes no new events from interruption', () async {
+    final noNewApplier = _MemoryApplier();
+    final noNew = HostedSyncCoordinator(
+      authenticationSession: LabAuthenticationSession(),
+      syncGuard: _MemorySyncGuard.allowing(),
+      applier: noNewApplier,
+      uploadPendingEvents: UploadPendingEvents(
+        _EmptyOutbox(),
+        _RecordingSyncTransport(downloadEvents: const []),
+      ),
+      downloadAndApplyEvents: DownloadAndApplyEvents(
+        _RecordingSyncTransport(downloadEvents: const []),
+        noNewApplier,
+      ),
+      acknowledgeAppliedCursor: AcknowledgeAppliedCursor(
+        _RecordingSyncTransport(downloadEvents: const []),
+        noNewApplier,
+      ),
+    );
+    final interrupted = HostedSyncCoordinator(
+      authenticationSession: LabAuthenticationSession(),
+      syncGuard: _MemorySyncGuard.allowing(),
+      applier: _MemoryApplier(),
+      uploadPendingEvents: UploadPendingEvents(
+        _OneOutbox(),
+        _RecordingSyncTransport(
+          uploadResult: const SyncResult(
+            code: SyncStatusCode.unknownOutcome,
+            outcome: SyncOutcome.unknown,
+            retryable: true,
+          ),
+          downloadEvents: const [],
+        ),
+      ),
+      downloadAndApplyEvents: DownloadAndApplyEvents(
+        _RecordingSyncTransport(downloadEvents: const []),
+        _MemoryApplier(),
+      ),
+      acknowledgeAppliedCursor: AcknowledgeAppliedCursor(
+        _RecordingSyncTransport(downloadEvents: const []),
+        _MemoryApplier(),
+      ),
+    );
+
+    expect((await noNew.run('native')).state, 'sync-no-new-events');
+    expect((await interrupted.run('native')).state, 'sync-interrupted');
+  });
+
+  test('stable enrollment identity survives retry and restart', () async {
+    final dbFile = File(
+      '${(await Directory.systemTemp.createTemp('markei-stable-id-')).path}/local.sqlite',
+    );
+    final db = LocalDatabase.file(dbFile);
+    addTearDown(db.close);
+    addTearDown(() => dbFile.parent.delete(recursive: true));
+    final repository = DriftHostedIdentityRepository(db);
+    final ids = ['install-a', 'request-a', 'install-b', 'request-b'].iterator;
+    final factory = StableDeviceEnrollmentCommandFactory(
+      repository: repository,
+      environmentAlias: 'native',
+      idFactory: () {
+        ids.moveNext();
+        return ids.current;
+      },
+      platform: 'windows',
+      applicationId: 'markei.windows',
+      applicationVersion: '1.0.0',
+    );
+
+    final first = await factory();
+    await repository.save(
+      HostedIdentityState(
+        environmentAlias: 'native',
+        installationId: first.installationId,
+        enrollmentRequestId: first.enrollmentRequestId,
+        enrollmentState: 'unknown-outcome',
+        updatedAt: DateTime.utc(2026, 7, 18),
+      ),
+    );
+    final retry = await factory();
+    await db.close();
+    final reopened = LocalDatabase.file(dbFile);
+    addTearDown(reopened.close);
+    final restarted = StableDeviceEnrollmentCommandFactory(
+      repository: DriftHostedIdentityRepository(reopened),
+      environmentAlias: 'native',
+      idFactory: () => 'unexpected-new-id',
+      platform: 'windows',
+      applicationId: 'markei.windows',
+      applicationVersion: '1.0.0',
+    );
+    final afterRestart = await restarted();
+
+    expect(retry.installationId, first.installationId);
+    expect(retry.enrollmentRequestId, first.enrollmentRequestId);
+    expect(afterRestart.installationId, first.installationId);
+    expect(afterRestart.enrollmentRequestId, first.enrollmentRequestId);
   });
 
   test(
@@ -405,4 +599,143 @@ final class _MemoryHostedIdentityRepository
   Future<void> save(HostedIdentityState state) async {
     _state = state;
   }
+}
+
+final class _MemorySyncGuard implements HostedSyncGuard {
+  const _MemorySyncGuard._(this._decision);
+
+  const _MemorySyncGuard.allowing()
+    : this._(
+        const HostedSyncDecision.allowed(
+          '22222222-2222-4222-8222-222222222222',
+        ),
+      );
+
+  _MemorySyncGuard.blocked(String reason)
+    : this._(HostedSyncDecision.blocked(reason));
+
+  final HostedSyncDecision _decision;
+
+  @override
+  Future<HostedSyncDecision> evaluate(String environmentAlias) async =>
+      _decision;
+}
+
+final class _EmptyOutbox implements SyncOutboxRepository {
+  @override
+  Future<SyncUploadSubmission?> leasePending({required int limit}) async =>
+      null;
+
+  @override
+  Future<void> persistUploadResult(String submissionId, SyncResult result) {
+    throw UnimplementedError();
+  }
+}
+
+final class _OneOutbox implements SyncOutboxRepository {
+  String? persistedCode;
+
+  @override
+  Future<SyncUploadSubmission?> leasePending({required int limit}) async =>
+      const SyncUploadSubmission(
+        id: 'submission-1',
+        deviceId: '22222222-2222-4222-8222-222222222222',
+        requestHash: 'hash-1',
+        events: [],
+      );
+
+  @override
+  Future<void> persistUploadResult(
+    String submissionId,
+    SyncResult result,
+  ) async {
+    persistedCode = result.code.name;
+  }
+}
+
+final class _MemoryApplier implements RemoteEventApplier {
+  _MemoryApplier({this.cursor});
+
+  String? cursor;
+  int applyCount = 0;
+
+  @override
+  Future<SyncResult> applyPage(DownloadPage page) async {
+    applyCount++;
+    if (page.events.isEmpty) {
+      return const SyncResult(
+        code: SyncStatusCode.downloadReceived,
+        outcome: SyncOutcome.duplicateEquivalent,
+        retryable: false,
+      );
+    }
+    cursor = page.nextCursor ?? page.events.last.serverCursor;
+    return const SyncResult(
+      code: SyncStatusCode.downloadedApplied,
+      outcome: SyncOutcome.applied,
+      retryable: false,
+    );
+  }
+
+  @override
+  Future<String?> greatestContiguousAppliedCursor() async => cursor;
+}
+
+final class _RecordingSyncTransport implements SyncTransport {
+  _RecordingSyncTransport({
+    required this.downloadEvents,
+    this.uploadResult = const SyncResult(
+      code: SyncStatusCode.serverAccepted,
+      outcome: SyncOutcome.applied,
+      retryable: false,
+    ),
+  });
+
+  final List<DownloadedEvent> downloadEvents;
+  final SyncResult uploadResult;
+  int uploadCount = 0;
+  int downloadCount = 0;
+  int acknowledgeCount = 0;
+
+  @override
+  Future<SyncResult> uploadSubmission(SyncUploadSubmission submission) async {
+    uploadCount++;
+    return uploadResult;
+  }
+
+  @override
+  Future<DownloadPage> downloadAfter(
+    String? cursor, {
+    required int limit,
+  }) async {
+    downloadCount++;
+    return DownloadPage(
+      nextCursor: 'c10b:${downloadEvents.length}',
+      events: downloadEvents,
+    );
+  }
+
+  @override
+  Future<SyncResult> acknowledge(String greatestContiguousCursor) async {
+    acknowledgeCount++;
+    return const SyncResult(
+      code: SyncStatusCode.acknowledged,
+      outcome: SyncOutcome.applied,
+      retryable: false,
+    );
+  }
+}
+
+Map<String, Object?> _syncEvent() {
+  final content = <String, Object?>{
+    'eventId': 'event-1',
+    'accountId': '11111111-1111-4111-8111-111111111111',
+    'deviceId': '22222222-2222-4222-8222-222222222222',
+    'deviceSequence': 1,
+    'eventType': 'purchase.registered',
+    'payloadVersion': 3,
+    'occurrenceTime': DateTime.utc(2026, 7, 18).toIso8601String(),
+    'payload': <String, Object?>{},
+  };
+  return {...content, 'contentHash': base64Encode(utf8.encode('safe-hash'))};
 }
