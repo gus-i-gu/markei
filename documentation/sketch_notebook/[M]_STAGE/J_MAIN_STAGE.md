@@ -604,3 +604,64 @@ reconcile that sanitized evidence before MCG-02 or Cycle 10 can close.
 D/E/F carrying marker `C10-MCG02-NATIVE-CLOSURE_20260718T140335Z` are the only active Codex
 authority. Provider mutation, database migration, automatic user provisioning, permanent promotion,
 Cycle 10 closure and MCG-03/04 remain unauthorized.
+
+---
+
+## 35. Append-only reconciliation — native composition result
+
+> Reconciliation marker: C10-MCG02-NATIVE-CLOSURE-R1_20260718T145121Z
+> Reconciled at UTC: 2026-07-18T14:51:21Z
+> Reconciled at America/Sao_Paulo: 2026-07-18T11:51:21-03:00
+> Reconciled implementation: 214df17b
+> Controlling authority: 6fffad609bb83523d467a849e2d91f3c668af721
+> Current status: **NATIVE AUTH COMPOSITION ACCEPTED; CLOSURE HARNESS CORRECTION REQUIRED**
+
+Main accepts the following implementation evidence:
+
+- Auth0 Flutter 2.4.0 is pinned behind infrastructure adapters;
+- typed compile-time configuration fails closed without committed provider values;
+- Authorization Code + PKCE requests the exact configured API audience;
+- access tokens remain process-memory bounded and clear on logout, expiry or rejection;
+- ID-token substitution is rejected and lab authentication is not selected by production
+  composition;
+- Android callback composition and debug build passed;
+- 10 focused tests and the complete 72-test Flutter suite passed with two existing skips;
+- analysis, formatting, dependency lock and secret checks passed;
+- migrations, server authorization, Drift schema and provider resources were unchanged.
+
+Main could not independently rerun Flutter because the reconciliation environment has no Flutter
+toolchain. This is an environment exclusion, not contrary evidence.
+
+## 36. Material gaps
+
+The implementation does not yet satisfy the closure harness required by section 33:
+
+1. `NativeAuthClosureRunner` is composed and tested but has no development-only app entry point;
+   a human cannot initiate the required sequence from Android or Windows.
+2. `hostedSyncProbe()` calls Device-enrollment replay and returns `hosted-sync-available` when a
+   server Device exists. It does not upload/download events, apply them, acknowledge them or compare
+   Account facts; its name and success state therefore overclaim the executed behavior.
+3. Windows runner code exists, but no Windows release binary was built because Developer Mode and
+   symlink support were unavailable on the Codex host.
+4. G/H/I still say final commit status pending; later reports must record the actual final SHA.
+
+These are bounded closure deficiencies, not a rejection of the Auth0 adapter. MCG-02 remains open,
+and MCG-03 remains inactive.
+
+## 37. Revised phase scheme
+
+~~~text
+R05 local Flutter/global proof                                      VALIDATED
+MCG-02 provider foundation                                          VALIDATED
+MCG-02 native Auth0 adapter and Android composition                  VALIDATED
+MCG-02 executable native closure surface + real sync path           ACTIVE
+MCG-02 human Android/Windows/two-Device hosted acceptance            PENDING
+Cycle 10 promotion/closure                                          PENDING
+MCG-03 / MCG-04 definition                                          INACTIVE
+~~~
+
+## 38. Forward authority
+
+D/E/F carrying marker `C10-MCG02-NATIVE-CLOSURE-R1_20260718T145121Z` are the only active Codex
+authority. The unit must correct the observable closure path without changing the accepted Auth0,
+server, database or synchronization contracts. Real provider operation remains human-controlled.
