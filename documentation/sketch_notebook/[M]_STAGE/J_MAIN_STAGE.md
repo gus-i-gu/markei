@@ -734,3 +734,47 @@ current permanent memory rather than assuming its scope.
 
 D/E/F carrying marker `C10-MCG02-DECISIVE-PROVIDER_20260718T152829Z` are the active human evidence
 contract. They authorize no Codex source mutation and no production deployment.
+
+---
+
+## 43. Provider-proof preflight contradiction
+
+> Reconciliation marker: C10-MCG02-HOSTED-IDENTITY-BINDING_20260718T155856Z
+> Reconciled at UTC: 2026-07-18T15:58:56Z
+> Reconciled at America/Sao_Paulo: 2026-07-18T12:58:56-03:00
+> Inspected implementation: df904fb
+> Current status: **PROVIDER PROOF BLOCKED; HOSTED IDENTITY BINDING CORRECTION ACTIVE**
+
+Main's preflight found that the production composition still registers purchases under local-only
+Account/Device aliases while enrollment returns PostgreSQL Account and server Device UUIDs. The
+server correctly rejects uploaded events whose embedded AccountId or DeviceId differs from the
+authorized hosted context. The existing loopback proof manually aligned fixture identifiers and
+therefore did not expose this production mismatch.
+
+The unscoped local outbox may also lease older local-only pending events during hosted sync, and the
+remote applier chooses an arbitrary non-null Account cursor. Human provider proof would therefore be
+predictably unsafe or fail closed even though native login/enrollment could pass.
+
+## 44. Selected correction
+
+After enrollment, a restart may select the stored hosted AccountId and server DeviceId as the active
+composition identity for new hosted facts. Existing local-only facts/events remain immutable under
+their original local Account and are never rewritten or uploaded. Hosted outbox, cursor, inbox and
+applier operations must be explicitly scoped to the active hosted Account/Device.
+
+The first process that completes enrollment must report `hosted-restart-required`; it must not sync
+with the pre-enrollment local composition. After restart and verified binding, new synthetic hosted
+purchases may synchronize. This is a development-proof binding, not general Account migration or
+automatic merge.
+
+## 45. Revised projection
+
+~~~text
+MCG-02 local native closure                                          VALIDATED
+MCG-02 hosted Account/Device binding and scoped sync                 ACTIVE
+MCG-02 decisive human provider proof                                BLOCKED BY ACTIVE UNIT
+Cycle 10 closure / MCG-03                                            INACTIVE
+~~~
+
+D/E/F carrying marker `C10-MCG02-HOSTED-IDENTITY-BINDING_20260718T155856Z` supersede the human
+provider contract until Codex returns corrected G/H/I evidence.
