@@ -1,105 +1,78 @@
-# D_OPS_STAGE — MCG-02 Decisive Provider Acceptance
+# D_OPS_STAGE — Hosted Account/Device Binding Correction
 
-> Sequence: FLX-ORD-01
-> Authority marker: C10-MCG02-DECISIVE-PROVIDER_20260718T152829Z
-> Required ancestor: df904fb
-> Status: **ACTIVE HUMAN EVIDENCE CONTRACT; NO CODEX SOURCE MUTATION**
+> Authority marker: C10-MCG02-HOSTED-IDENTITY-BINDING_20260718T155856Z
+> Required ancestor: 0b219602fe6eb4dc7976cea3a7d2d00fce930500
+> Status: **ACTIVE BOUNDED CODEX AUTHORITY**
 
 ## Objective
 
-Execute the flagged Markei closure surface on Android and Windows through the configured disposable
-Auth0, Render and Neon environment. Prove two native Devices authenticate, enroll and converge one
-synthetic Account without copying tokens or losing local work.
+Bind post-enrollment Flutter composition to the stored hosted AccountId and server DeviceId, and
+scope every hosted synchronization repository to that binding. Preserve all existing local-only
+facts/outbox entries without rewriting, discarding or uploading them.
 
-## Safety boundary
+## Required behavior
 
-- Use only the development Auth0 tenant, Render service and Neon child branch/database.
-- Keep every provider value, token, subject, UUID, hostname, URL and credential outside Git/chat.
-- Do not use the production Neon branch or ordinary personal purchase data.
-- Do not change source, migrations, provider architecture or production traffic.
-- Codex may diagnose sanitized output only; it must not receive private values or operate consoles.
+1. Before enrollment, retain the existing local-only Account/Device composition.
+2. Enrollment stores hosted AccountId, server DeviceId and installation state as today.
+3. The enrolling process returns `hosted-restart-required` before any hosted sync.
+4. On restart, validate the stored binding and select its AccountId/server DeviceId for new purchase
+   registration and hosted sync.
+5. Reject malformed/incomplete/revoked bindings and fall back to safe local-only behavior.
+6. Scope hosted outbox leasing and unknown-submission replay by hosted AccountId and DeviceId.
+7. Scope download cursor, inbox validation, fact application and acknowledgement to the hosted
+   AccountId; reject any downloaded cross-Account event.
+8. Leave pending local-only events untouched and visible to their original local Account.
 
-## Gate 1 — Platform readiness
+## Invariants
 
-- Pull `df904fb` with fast-forward-only behavior and confirm a clean tracked tree.
-- Enable Windows Developer Mode/symlink support, then build the Windows release binary.
-- Build/install Android debug on an emulator or controlled device.
-- Supply non-secret Auth0 domain/client/audience/origin values only through private compile-time
-  launch configuration; enable `MARKEI_NATIVE_CLOSURE_SURFACE=true`.
-- Ensure Android Gradle callback domain and Dart Auth0 domain are identical.
-- Confirm the Closure destination is absent without the flag and present with valid configuration.
+- Never mutate IDs or hashes inside an existing immutable event.
+- Never relabel existing local facts as hosted facts.
+- Never upload a local-only event through a hosted binding.
+- Never select the first arbitrary cursor from a multi-Account Drift database.
+- New hosted events embed exactly the stored hosted AccountId/server DeviceId.
+- Device sequence begins and advances under the hosted local Device row consistently with server
+  enrollment state.
+- Logout does not delete local facts or silently erase the hosted binding.
+- Revocation blocks hosted sync without corrupting local state.
 
-## Gate 2 — Controlled identity and membership
+## Tests
 
-- Create/use one synthetic Auth0 development user.
-- Complete native login on the first client without copying the access token.
-- Obtain the issuer/subject privately and map it to one synthetic Account through the controlled
-  migrator procedure already authorized by migrations 004–006.
-- Never derive AccountId or DeviceId from Auth0 claims.
-- Record only aliases and row counts in evidence.
+Add decisive tests for:
 
-## Gate 3 — Two native Devices
+- pre-enrollment local registration remains local-only;
+- enrollment requires restart before hosted sync;
+- restart selects stored hosted AccountId/server DeviceId;
+- a new post-binding event exactly matches the hosted IDs;
+- older local-only pending events are not leased or changed;
+- hosted pending events upload successfully through the real loopback server authorization shape;
+- scoped cursor/ack uses only the hosted Account;
+- cross-Account download is rejected without mutation;
+- incomplete, malformed and revoked binding fail closed;
+- two isolated databases bind the same hosted Account with distinct server Device IDs and converge;
+- close/reopen preserves each binding and authoritative facts.
 
-For Android, then Windows:
+Use file-backed Drift and real existing HTTP/upload/download/apply/ack services. Do not weaken the
+server, rewrite hashes or make fixtures bypass identity validation.
 
-1. Sign in through the system browser and return through the configured callback.
-2. Confirm semantic state `authenticated`.
-3. Enroll/query the installation through the application route.
-4. Confirm `device-enrolled` and a distinct Device row for each installation.
-5. Retry the same enrollment and confirm idempotent equivalent outcome.
-6. Confirm no token, subject or UUID appears in the app surface or logs.
+## Boundaries and validation
 
-## Gate 4 — Hosted convergence
+No migration, server authorization, Auth0/Neon/Render resource, Drift schema/reset, automatic
+membership, product UX, permanent memory or MCG-03 change is authorized. Prefer additive scoped
+constructors/ports over global behavior changes; retain existing local lab tests.
 
-- Register one synthetic purchase locally on Device A and run Sync.
-- Require `sync-completed` or truthful `sync-no-new-events` after a subsequent run.
-- Run Sync on Device B and confirm the same authoritative purchase facts appear after commit.
-- Register a second synthetic purchase on B, sync B then A, and compare facts again.
-- Close/reopen both clients and confirm facts, cursor and resolved outbox state persist.
-- Verify acknowledgements advance only after local application commits.
-
-## Gate 5 — Selected denials and continuity
-
-Prove sanitized outcomes for:
-
-- no bearer token -> 401/authentication-required;
-- unknown external identity -> denied with no protected advance;
-- unknown Device before enrollment -> device-enrollment-required;
-- revoked Device -> device-revoked and no protected advance;
-- cross-Account Device/membership mismatch -> denied;
-- Render unavailable -> local purchase registration and pending outbox remain available;
-- logout -> signed-out-cleared and hosted actions require authentication again.
-
-Wrong issuer/audience/expiry cryptographic cases may retain the already accepted closed server tests;
-do not manufacture or paste tokens merely to repeat them manually.
-
-## Gate 6 — Evidence and cleanup
-
-Return a sanitized evidence block containing:
-
-- date, Git SHA and platform/build pass/fail;
-- native login/callback/logout pass/fail per platform;
-- identity/membership/Device row counts only;
-- named sync and denial outcomes;
-- fact/outbox/cursor/ack counts or opaque ranges;
-- Render health/status classes and log secret scan;
-- local continuity and reopen result;
-- remaining synthetic resources and cleanup owner.
-
-Do not return screenshots or output containing provider identifiers or private values. Remove
-synthetic facts/mappings/Devices after Main accepts the proof, or record their bounded retention.
+Run formatting, analysis, focused/full Flutter tests, Android debug and Windows release when
+host-supported, affected server tests, `git diff --check` and secret scan. Replace G/H/I with actual
+paths, commands, counts, identity-scope evidence and exclusions. Commit/push one bounded unit.
 
 Success terminal:
 
 ~~~text
-MCG-02_ANDROID_NATIVE_PROVIDER=true
-MCG-02_WINDOWS_NATIVE_PROVIDER=true
-MCG-02_TWO_DEVICE_ENROLLMENT=true
-MCG-02_HOSTED_CONVERGENCE=true
-MCG-02_PROVIDER_DENIALS=true
-MCG-02_LOCAL_CONTINUITY=true
-MCG-02_DECISIVE_PROVIDER_PROOF_COMPLETE
+MCG-02_HOSTED_IDENTITY_BINDING=true
+MCG-02_HOSTED_OUTBOX_SCOPED=true
+MCG-02_HOSTED_CURSOR_APPLIER_SCOPED=true
+MCG-02_LOCAL_ONLY_EVENTS_PRESERVED=true
+MCG-02_TWO_DEVICE_BINDING_CONVERGED=true
+MCG-02_DECISIVE_PROVIDER_PROOF_READY
 ~~~
 
-Otherwise report `MCG-02_DECISIVE_PROVIDER_PROOF_PARTIAL` with the exact gate and sanitized error.
-Main must reconcile the result before promotion, Cycle 10 closure or MCG-03.
+Otherwise report `MCG-02_HOSTED_IDENTITY_BINDING_PARTIAL`. Do not execute provider proof or MCG-03.
