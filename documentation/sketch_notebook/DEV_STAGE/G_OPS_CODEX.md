@@ -10,6 +10,7 @@
 ## Changed Paths
 
 - `clients/markei_flutter/windows/runner/CMakeLists.txt`
+- `clients/markei_flutter/windows/runner/copy_runtime_dependencies.cmake`
 - `clients/markei_flutter/test/infrastructure/windows_runtime_packaging_contract_test.dart`
 - `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
 - `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
@@ -28,17 +29,20 @@ Preserved without reading or staging:
 - `git merge-base --is-ancestor a892c2628df7425124be0e64db66697b7b572b4d HEAD`: passed.
 - `flutter clean`: exit 0, but reported `build` could not be fully removed because a file handle was open; later inspection found a stale Release `markei.exe` process.
 - `flutter pub get --enforce-lockfile`: passed; `auth0_flutter` remained pinned at 2.4.0.
-- `dart format --set-exit-if-changed lib test`: passed, 82 files checked, 0 changed after initial formatting of the new test.
+- `dart format --set-exit-if-changed lib test`: passed, 82 files checked, 0 changed after formatting the updated test.
 - `flutter analyze`: passed, no issues.
 - `flutter test test/infrastructure/windows_runtime_packaging_contract_test.dart test/infrastructure/windows_runner_callback_contract_test.dart test/infrastructure/native_auth_composition_test.dart test/app/native_closure_surface_test.dart`: passed, 28 tests.
+- `flutter test test/infrastructure/windows_runtime_packaging_contract_test.dart test/infrastructure/windows_runner_callback_contract_test.dart`: passed, 9 tests after the recursive helper correction.
 - `flutter test`: passed, 91 tests and 2 existing skips.
-- `flutter build windows --debug` with non-secret closure/Auth0/hosted defines and PATH stripped of vcpkg runtime `bin` entries: passed, built `build\windows\x64\runner\Debug\markei.exe`.
-- `flutter build windows --release` with the same defines and PATH/toolchain environment: first attempt failed with `LNK1104` because stale PID 20280 locked `build\windows\x64\runner\Release\markei.exe`; after stopping that build-output process, the retry passed and built `build\windows\x64\runner\Release\markei.exe`.
+- `flutter build windows --debug` after warning-free `flutter clean` with non-secret closure/Auth0/hosted defines and PATH stripped of vcpkg runtime `bin` entries: passed, built `build\windows\x64\runner\Debug\markei.exe`.
+- `flutter build windows --release` after the same clean restore/build environment: passed, built `build\windows\x64\runner\Release\markei.exe`.
 - Direct launch validation under PATH stripped of vcpkg runtime `bin` entries: Debug responding `True`, Release responding `True`.
 - Sanitized secondary callback launch under PATH stripped of vcpkg runtime `bin` entries: Debug secondary exited cleanly, Release secondary exited cleanly; no missing-DLL dialog was observed.
 - `git diff --check`: passed.
 
 Builds retained the existing vcpkg Boost CMP0167 developer warning from the pinned dependency path.
+An intermediate direct-only `TARGET_RUNTIME_DLLS` implementation built but produced an incomplete
+clean Release inventory; it was replaced with the tracked recursive helper before final validation.
 
 ## Runtime Inventories
 
@@ -47,11 +51,18 @@ Debug runner DLLs:
 - `auth0_flutter_plugin.dll`
 - `boost_container-vc143-mt-gd-x64-1_91.dll`
 - `boost_date_time-vc143-mt-gd-x64-1_91.dll`
+- `brotlicommon.dll`
+- `brotlidec.dll`
+- `brotlienc.dll`
 - `cpprest_2_10d.dll`
 - `dartjni.dll`
 - `flutter_windows.dll`
+- `legacy.dll`
+- `libcrypto-3-x64.dll`
+- `libssl-3-x64.dll`
 - `sqlite3_flutter_libs_plugin.dll`
 - `sqlite3.dll`
+- `zd.dll`
 
 Release runner DLLs:
 

@@ -23,7 +23,7 @@ Reserved and not claimed:
 
 ## Semantic Tests
 
-- Packaging contract test proves the tracked CMake contract uses executable target runtime metadata, copies to the target output directory, expands runtime dependency lists and fails configuration clearly when CMake lacks the required metadata feature.
+- Packaging contract test proves the tracked CMake contract uses executable target runtime metadata, target runtime directories and a recursive helper script that fails clearly when runtime dependency closure is unresolved.
 - Packaging contract test proves no hard-coded vcpkg path, drive path, username, build directory, Debug/Release directory or one-DLL model entered the tracked runner CMake contract.
 - Packaging contract test proves generated Windows build outputs, DLLs and EXEs are not tracked in the Flutter client path.
 - Callback contract tests remain passing and preserve exact callback prefix, bounded forwarding, current-user pipe security, SDK lock usage and no callback logging.

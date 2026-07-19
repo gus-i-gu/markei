@@ -39,15 +39,20 @@ target_include_directories(${BINARY_NAME} PRIVATE "${CMAKE_SOURCE_DIR}")
 # Run the Flutter tool portions of the build. This must not be removed.
 add_dependencies(${BINARY_NAME} flutter_assemble)
 
-if(CMAKE_VERSION VERSION_LESS 3.21)
+if(CMAKE_VERSION VERSION_LESS 3.27)
   message(FATAL_ERROR
-    "Markei Windows runtime packaging requires CMake 3.21 or newer "
-    "for target-level runtime dependency deployment.")
+    "Markei Windows runtime packaging requires CMake 3.27 or newer "
+    "for target-level runtime dependency closure deployment.")
 endif()
 
 add_custom_command(TARGET ${BINARY_NAME} POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    $<TARGET_RUNTIME_DLLS:${BINARY_NAME}>
-    $<TARGET_FILE_DIR:${BINARY_NAME}>
-  COMMAND_EXPAND_LISTS
-  COMMENT "Copying Windows runtime dependency closure")
+  COMMAND ${CMAKE_COMMAND}
+    "-DRUNTIME_TARGET_FILE=$<TARGET_FILE:${BINARY_NAME}>"
+    "-DRUNTIME_TARGET_DIR=$<TARGET_FILE_DIR:${BINARY_NAME}>"
+    "-DRUNTIME_BINARY_DIR=${CMAKE_BINARY_DIR}"
+    "-DRUNTIME_FLUTTER_LIBRARY=${FLUTTER_LIBRARY}"
+    "-DRUNTIME_DIRECT_DEPS=$<JOIN:$<TARGET_RUNTIME_DLLS:${BINARY_NAME}>,|>"
+    "-DRUNTIME_DIRECT_DIRS=$<JOIN:$<TARGET_RUNTIME_DLL_DIRS:${BINARY_NAME}>,|>"
+    -P "${CMAKE_CURRENT_SOURCE_DIR}/copy_runtime_dependencies.cmake"
+  COMMENT "Copying Windows runtime dependency closure"
+  VERBATIM)

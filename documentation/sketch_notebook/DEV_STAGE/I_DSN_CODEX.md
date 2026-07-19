@@ -9,18 +9,23 @@
 
 The final deployment direction is:
 
-`pinned auth0_flutter/cpprestsdk imported targets -> runner executable link closure -> CMake TARGET_RUNTIME_DLLS -> post-build copy_if_different -> configuration-specific runner directory`.
+`pinned auth0_flutter/cpprestsdk imported targets -> runner executable link closure -> CMake TARGET_RUNTIME_DLLS/TARGET_RUNTIME_DLL_DIRS -> post-build recursive helper -> configuration-specific runner directory`.
 
 The post-build command is attached in `windows/runner/CMakeLists.txt`, the same CMake directory
 that creates `${BINARY_NAME}`. This placement satisfies CMake's `add_custom_command(TARGET ...)`
 directory rule while still allowing generated plugin linkage to contribute to the executable's
-runtime dependency closure at generation/build time.
+runtime dependency closure at generation/build time. The tracked helper
+`windows/runner/copy_runtime_dependencies.cmake` copies direct target DLLs, copies DLLs from
+target-derived non-build runtime directories and then runs CMake runtime dependency verification
+against the runner directory.
 
 ## Configuration Selection
 
 The implementation does not select Debug or Release paths manually. CMake evaluates
-`$<TARGET_RUNTIME_DLLS:${BINARY_NAME}>` for the active configuration and copies those resolved DLLs
-to `$<TARGET_FILE_DIR:${BINARY_NAME}>`.
+`$<TARGET_RUNTIME_DLLS:${BINARY_NAME}>` and
+`$<TARGET_RUNTIME_DLL_DIRS:${BINARY_NAME}>` for the active configuration. The helper excludes
+generated build-output directories as search roots and uses the remaining target-derived runtime
+directories for configuration-correct native dependency closure.
 
 Observed outputs confirm configuration separation:
 
@@ -32,7 +37,7 @@ Observed outputs confirm configuration separation:
 
 - The executable directory owns the deployable runtime closure.
 - Runtime dependencies come from CMake target/imported-target metadata rather than PATH or manual copy.
-- CMake versions older than 3.21 fail during configuration with a Markei-specific message because target runtime metadata is unavailable.
+- CMake versions older than 3.27 fail during configuration with a Markei-specific message because the required target runtime metadata is unavailable.
 - No username, drive letter, vcpkg root, generated build directory, configuration directory or single DLL name is encoded in tracked source.
 - DLLs, vcpkg packages, native caches and generated build outputs remain untracked.
 
@@ -48,6 +53,7 @@ responsible for OAuth transaction state, PKCE and code exchange.
 Rollback removes only:
 
 - the post-build runtime deployment block in `clients/markei_flutter/windows/runner/CMakeLists.txt`;
+- the helper script in `clients/markei_flutter/windows/runner/copy_runtime_dependencies.cmake`;
 - the packaging contract test in `clients/markei_flutter/test/infrastructure/windows_runtime_packaging_contract_test.dart`;
 - these G/H/I reports.
 
