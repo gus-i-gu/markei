@@ -10,6 +10,8 @@
 #include "flutter_window.h"
 #include "utils.h"
 
+#include "../flutter/ephemeral/.plugin_symlinks/auth0_flutter/windows/plugin_startup_url_lock.h"
+
 const wchar_t* kSingleInstanceMutex = L"markei_auth0flutter_single_instance";
 const wchar_t* kRedirectPipeName = L"\\\\.\\pipe\\markei_auth0flutter";
 const wchar_t* kCallbackPrefix = L"auth0flutter://callback";
@@ -53,6 +55,13 @@ static bool IsAuth0Callback(const std::wstring& value) {
   const size_t prefix_length = wcslen(kCallbackPrefix);
   return value.size() >= prefix_length &&
          value.compare(0, prefix_length, kCallbackPrefix) == 0;
+}
+
+static void SetPluginStartupUrl(const wchar_t* value) {
+  auth0_flutter::WriteLockGuard write_lock(auth0_flutter::GetPluginUrlRwLock());
+  if (write_lock.IsValid()) {
+    SetEnvironmentVariableW(L"PLUGIN_STARTUP_URL", value);
+  }
 }
 
 static void BringExistingWindowToFront() {
@@ -115,7 +124,7 @@ static void StartCallbackPipeServer() {
           buffer[read / sizeof(wchar_t)] = L'\0';
           std::wstring callback(buffer);
           if (IsAuth0Callback(callback)) {
-            SetEnvironmentVariableW(L"PLUGIN_STARTUP_URL", callback.c_str());
+            SetPluginStartupUrl(callback.c_str());
             BringExistingWindowToFront();
           }
         }
@@ -160,11 +169,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
     return 0;
   }
 
-  SetEnvironmentVariableW(
-      L"PLUGIN_STARTUP_URL",
-      (!startup_uri.empty() && IsAuth0Callback(startup_uri))
-          ? startup_uri.c_str()
-          : L"");
+  SetPluginStartupUrl((!startup_uri.empty() && IsAuth0Callback(startup_uri))
+                          ? startup_uri.c_str()
+                          : L"");
   StartCallbackPipeServer();
 
   flutter::DartProject project(L"data");

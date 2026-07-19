@@ -93,7 +93,7 @@ final class NativeAuthClosureRunner {
       SignInCancelled() => 'sign-in-cancelled',
       SignedIn() => 'authenticated',
       TokenExpired() => 'token-expired',
-      AuthenticationRejected() => 'authentication-rejected',
+      AuthenticationRejected(:final code) => code,
       ProviderUnavailable() => 'provider-unavailable',
     };
   }

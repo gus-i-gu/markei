@@ -1,63 +1,67 @@
-# G_OPS_CODEX - Native Closure R1 Operational Evidence
+# G_OPS_CODEX - Windows Native Authentication Callback Evidence
 
-- Authority marker: C10-MCG02-NATIVE-CLOSURE-R1_20260718T145121Z
-- Required implementation ancestor: 214df17
-- Required staging authority: e59d919ecb776597b13615137cd23413dae42c36
-- Baseline local/remote SHA after fast-forward: e59d919ecb776597b13615137cd23413dae42c36
-- Actual implementation evidence window: 2026-07-18 local Codex session
-- Evidence timestamp: 2026-07-18T12:22:41.1552140-03:00 / 2026-07-18T15:22:41.1573995Z
-- Final commit SHA: not self-embedded in this report; Codex final terminal response records the actual commit after publication.
-- Evidence environment: Windows 10.0.26200.8875, Flutter 3.44.6, Dart 3.12.2, Docker Desktop 29.6.1 Linux engine, PostgreSQL 18.4 disposable preflight.
-- Result classification: executable native closure correction complete locally; provider proof pending.
+- Authority marker: C10-MCG02-WINDOWS-AUTH-CALLBACK_20260719T011836Z
+- Baseline SHA after fast-forward: fc4af17c766f39715fe909b9fbda587e1bb7b881
+- Required ancestor retained: 65ae6a7dac349db0512d604c940d01a6f500d1a4
+- Final commit SHA: reported by Codex terminal response after commit publication.
+- Evidence environment: Windows host, Flutter/Dart local toolchain, Auth0 Flutter 2.4.0 pinned.
+- Result classification: local Windows callback handoff and credential diagnostic correction ready for provider retest.
 
 ## Changed Paths
 
-Implementation:
-
-- `clients/markei_flutter/lib/app/markei_app.dart`
-- `clients/markei_flutter/lib/app/markei_composition.dart`
+- `clients/markei_flutter/windows/runner/main.cpp`
+- `clients/markei_flutter/lib/infrastructure/auth/auth0_native_authentication.dart`
 - `clients/markei_flutter/lib/app/native_auth_closure_runner.dart`
-- `clients/markei_flutter/lib/app/pages/native_closure_page.dart`
-- `clients/markei_flutter/lib/application/hosted_sync_coordinator.dart`
-- `clients/markei_flutter/lib/application/stable_device_enrollment_command_factory.dart`
-
-Tests:
-
-- `clients/markei_flutter/test/app/native_closure_surface_test.dart`
 - `clients/markei_flutter/test/infrastructure/native_auth_composition_test.dart`
-- `clients/markei_flutter/test/infrastructure/native_closure_sync_path_test.dart`
-
-Reports:
-
+- `clients/markei_flutter/test/infrastructure/windows_runner_callback_contract_test.dart`
 - `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
 - `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
 - `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
 
-Preserved without reading: `.vscode/`, `documentation/NEON_*`, `.env*`, and the pre-existing untracked provider-looking file `Enter only the POOLED Neon hostname`.
+Preserved without reading or staging:
+
+- `Enter only the POOLED Neon hostname`
+- `clients/markei_flutter/Exact Auth0 API audience`
+- `clients/markei_flutter/Windows Native Application Client ID`
+
+## Commands and Results
+
+- `git fetch origin intermid-cycle-recovery`: passed.
+- `git pull --ff-only origin intermid-cycle-recovery`: fast-forwarded to `fc4af17c766f39715fe909b9fbda587e1bb7b881`.
+- `git merge-base --is-ancestor 65ae6a7dac349db0512d604c940d01a6f500d1a4 HEAD`: passed.
+- `dart format --set-exit-if-changed lib test windows/runner/main.cpp`: failed because Dart formatter cannot parse C++; two Dart files were formatted before failure.
+- `dart format --set-exit-if-changed lib test`: passed, 81 files checked, 0 changed.
+- `flutter test test/infrastructure/native_auth_composition_test.dart`: passed, 17 tests.
+- `flutter test test/infrastructure/windows_runner_callback_contract_test.dart`: passed, 4 tests.
+- `flutter test test/app/native_closure_surface_test.dart`: passed, 2 tests.
+- `flutter analyze`: passed, no issues.
+- `flutter test`: passed, 86 tests and 2 existing skips.
+- `flutter build windows --release`: passed, built `build\windows\x64\runner\Release\markei.exe`; retained existing Boost/CMake policy warning.
+- `flutter build apk --debug`: passed, built `build\app\outputs\flutter-apk\app-debug.apk`; retained existing KGP plugin warning for `auth0_flutter`.
+- `git diff --check`: passed.
+
+One initial parallel focused Flutter run produced a startup-lock/read-only cleanup failure for
+`native_auth_composition_test.dart`; the test passed when rerun serially.
 
 ## Evidence
 
-- Docker preflight: `docker version --format '{{json .}}'` passed with client/server present and server OS `linux`; disposable `postgres:18-alpine` container `markei-native-r1-pg-20260718-1` accepted `pg_isready`; `SELECT version();` returned PostgreSQL 18.4; container was removed; filtered inventory was empty. Process note: this gate was executed after initial source edits in the resumed session, not before mutation.
-- Flutter devices: Windows desktop and Edge web detected; Android build target available through Gradle build, no Android device attached.
-- Real sync path: `HostedSyncCoordinator` invokes existing `UploadPendingEvents`, `DownloadAndApplyEvents`, `AcknowledgeAppliedCursor`, `HttpSyncTransport`, `DriftSyncOutboxRepository`, and `DriftRemoteEventApplier`. `hostedSyncProbe()` no longer calls enrollment replay.
-- Stable identity: `StableDeviceEnrollmentCommandFactory` reuses stored installation and enrollment request ids until resolution and across Drift file reopen.
-- Closure surface: absent by default; shown only when `MARKEI_NATIVE_CLOSURE_SURFACE` is true and native configuration is ready; displays semantic state names only.
+- Runner now uses the Auth0 Flutter 2.4.0 `plugin_startup_url_lock.h` write lock when changing
+  `PLUGIN_STARTUP_URL`, matching the pinned SDK's polling lock contract.
+- Runner keeps exact `auth0flutter://callback` prefix validation, current-user SID pipe security,
+  bounded 2048 wchar pipe reads and no callback logging.
+- Closed diagnostics now distinguish callback, code-exchange, missing-token, expired-token,
+  confused-token, provider-unavailable and unknown rejection outcomes.
+- `authenticated` is returned only after SDK credentials contain non-empty, distinct and unexpired
+  access and ID tokens.
+- Closure UI now surfaces exact neutral authentication states instead of collapsing all rejections
+  into `authentication-rejected`.
 
-## Validation
+## Exclusions
 
-- `flutter pub get --enforce-lockfile`: passed; 19 newer incompatible package versions reported, lock unchanged.
-- `dart format --set-exit-if-changed lib test`: passed; 80 files checked, 0 changed.
-- `flutter analyze`: passed; no issues.
-- `flutter test test/infrastructure/native_auth_composition_test.dart`: passed; 14 tests.
-- `flutter test test/app/native_closure_surface_test.dart`: passed; 2 tests.
-- `flutter test test/infrastructure/native_closure_sync_path_test.dart`: passed; 1 test; Drift emitted existing multi-database debug warnings while separate file-backed databases were open.
-- `flutter test`: passed; 79 tests, 2 existing lab skips.
-- `flutter build apk --debug`: passed; built `build\app\outputs\flutter-apk\app-debug.apk`; Flutter emitted the existing future KGP migration warning for `auth0_flutter`.
-- `flutter build windows --release`: host-excluded; Flutter reported plugin builds require symlink support and Developer Mode is disabled. Host configuration was not changed.
-- Server checks: excluded because no server, migration or shared API contract changed.
-- Protected Python regressions: excluded because no Python path changed.
-- `git diff --check`: passed.
-- Secret scan: no tracked/staged hits for private-key, API-key, bearer literal, client-secret, password, database URL or token material.
-- Final Docker inventory: `docker ps -a --filter name=markei-native-r1 --format '{{.Names}}'` returned empty output.
+No Auth0, Neon, Render, provider credential, registry, Device enrollment, hosted synchronization,
+migration, Drift schema, server authorization, dependency upgrade, installer, permanent memory,
+methodology, MCG-03 or MCG-04 operation was performed.
 
-No Auth0, Neon, Render, provider credential or public provider operation was performed.
+Human evidence retained: Windows release build, protocol dispatch, Auth0 signup/email
+verification/login and provider configuration are accepted; native credential acceptance still
+requires provider retest after this correction.

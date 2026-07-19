@@ -29,9 +29,12 @@ final class NativeAuth0Authentication
   Future<ExternalAuthenticationState> currentState() async {
     final credentials = _credentials;
     if (credentials == null) return const SignedOut();
-    if (!_usable(credentials)) {
+    final rejection = _credentialRejection(credentials);
+    if (rejection != null) {
       _credentials = null;
-      return const TokenExpired();
+      return rejection == 'token-expired'
+          ? const TokenExpired()
+          : AuthenticationRejected(rejection);
     }
     return const SignedIn();
   }
@@ -46,13 +49,12 @@ final class NativeAuth0Authentication
         platform: _configuration.platform,
         windowsCallbackUrl: _configuration.windowsCallback,
       );
-      if (!_usable(credentials)) {
+      final rejection = _credentialRejection(credentials);
+      if (rejection != null) {
         _credentials = null;
-        return const TokenExpired();
-      }
-      if (credentials.accessToken == credentials.idToken) {
-        _credentials = null;
-        return const AuthenticationRejected('id-token-rejected');
+        return rejection == 'token-expired'
+            ? const TokenExpired()
+            : AuthenticationRejected(rejection);
       }
       _credentials = credentials;
       return const SignedIn();
@@ -61,7 +63,7 @@ final class NativeAuth0Authentication
       return const SignInCancelled();
     } on NativeAuthRejected catch (error) {
       _credentials = null;
-      return AuthenticationRejected(error.code);
+      return AuthenticationRejected(_closedDiagnosticCode(error.code));
     } on NativeAuthUnavailable {
       _credentials = null;
       return const ProviderUnavailable();
@@ -85,23 +87,27 @@ final class NativeAuth0Authentication
     if (credentials == null) {
       return const AccessTokenResult.rejected('signed-out');
     }
-    if (!_usable(credentials)) {
+    final rejection = _credentialRejection(credentials);
+    if (rejection != null) {
       _credentials = null;
-      return const AccessTokenResult.rejected('token-expired');
-    }
-    if (credentials.accessToken == credentials.idToken) {
-      _credentials = null;
-      return const AccessTokenResult.rejected('id-token-rejected');
+      return AccessTokenResult.rejected(rejection);
     }
     return AccessTokenResult.accepted(credentials.accessToken);
   }
 
-  bool _usable(NativeAuthCredentials credentials) =>
-      credentials.accessToken.isNotEmpty &&
-      credentials.idToken.isNotEmpty &&
-      credentials.expiresAt.isAfter(
-        _now().toUtc().add(const Duration(seconds: 5)),
-      );
+  String? _credentialRejection(NativeAuthCredentials credentials) {
+    if (credentials.accessToken.isEmpty) return 'access-token-missing';
+    if (credentials.idToken.isEmpty) return 'id-token-missing';
+    if (credentials.accessToken == credentials.idToken) {
+      return 'token-confusion-rejected';
+    }
+    if (!credentials.expiresAt.isAfter(
+      _now().toUtc().add(const Duration(seconds: 5)),
+    )) {
+      return 'token-expired';
+    }
+    return null;
+  }
 }
 
 abstract interface class NativeAuth0Client {
@@ -152,13 +158,13 @@ final class SdkNativeAuth0Client implements NativeAuth0Client {
     } on WebAuthenticationException catch (error) {
       if (error.isUserCancelledException) throw const NativeAuthCancelled();
       if (error.isRetryable) throw const NativeAuthUnavailable();
-      throw NativeAuthRejected(_safeCode(error.code));
+      throw NativeAuthRejected(_closedDiagnosticCode(error.code));
     } on ApiException catch (error) {
       if (error.isCanceled) throw const NativeAuthCancelled();
       if (error.isRetryable || error.isBrowserAppNotAvailable) {
         throw const NativeAuthUnavailable();
       }
-      throw NativeAuthRejected(_safeCode(error.code));
+      throw NativeAuthRejected(_closedDiagnosticCode(error.code));
     } catch (error) {
       if (kDebugMode) {
         debugPrint('native-auth-provider-unavailable');
@@ -195,14 +201,34 @@ final class SdkNativeAuth0Client implements NativeAuth0Client {
     NativeAuthPlatform.windows => _configuration.windowsCallback,
     NativeAuthPlatform.unsupported => 'platform-unsupported',
   };
+}
 
-  static String _safeCode(String code) {
-    final normalized = code.toLowerCase().replaceAll(
-      RegExp(r'[^a-z0-9-]'),
-      '-',
-    );
-    return normalized.isEmpty ? 'authentication-rejected' : normalized;
-  }
+String _closedDiagnosticCode(String code) {
+  final normalized = code.toLowerCase().replaceAll(RegExp(r'[^a-z0-9-]'), '-');
+  return switch (normalized) {
+    'timeout' || 'callback-not-received' => 'callback-not-received',
+    'state-mismatch' ||
+    'invalid-state' ||
+    'invalid-callback' ||
+    'callback-state-rejected' => 'callback-state-rejected',
+    'invalid-request' ||
+    'invalid-grant' ||
+    'access-denied' ||
+    'unauthorized' ||
+    'authorization-code-exchange-rejected' =>
+      'authorization-code-exchange-rejected',
+    'access-token-missing' => 'access-token-missing',
+    'id-token-missing' => 'id-token-missing',
+    'token-expired' => 'token-expired',
+    'id-token-rejected' ||
+    'token-confusion' ||
+    'token-confusion-rejected' => 'token-confusion-rejected',
+    'provider-unavailable' ||
+    'network-error' ||
+    'server-error' ||
+    'temporarily-unavailable' => 'provider-unavailable',
+    _ => 'authentication-rejected-unknown',
+  };
 }
 
 final class NativeAuthCredentials {

@@ -149,6 +149,61 @@ void main() {
       expect((await auth.accessToken()).errorCode, 'signed-out');
     });
 
+    test('accepts only non-empty distinct unexpired SDK credentials', () async {
+      final valid = _auth(
+        _FakeNativeAuth0Client(
+          credentials: _credentials(
+            accessToken: 'api-token',
+            idToken: 'id-token',
+          ),
+        ),
+      );
+      expect(await valid.signIn(), isA<SignedIn>());
+      expect((await valid.accessToken()).accessToken, 'api-token');
+
+      final missingAccess = await _auth(
+        _FakeNativeAuth0Client(
+          credentials: _credentials(accessToken: '', idToken: 'id-token'),
+        ),
+      ).signIn();
+      expect(
+        (missingAccess as AuthenticationRejected).code,
+        'access-token-missing',
+      );
+
+      final missingId = await _auth(
+        _FakeNativeAuth0Client(
+          credentials: _credentials(accessToken: 'api-token', idToken: ''),
+        ),
+      ).signIn();
+      expect((missingId as AuthenticationRejected).code, 'id-token-missing');
+
+      final confused = await _auth(
+        _FakeNativeAuth0Client(
+          credentials: _credentials(
+            accessToken: 'same-token',
+            idToken: 'same-token',
+          ),
+        ),
+      ).signIn();
+      expect(
+        (confused as AuthenticationRejected).code,
+        'token-confusion-rejected',
+      );
+
+      final expired = await _auth(
+        _FakeNativeAuth0Client(
+          credentials: _credentials(
+            accessToken: 'api-token',
+            idToken: 'id-token',
+            expiresAt: DateTime.utc(2026, 7, 18, 12),
+          ),
+        ),
+        now: () => DateTime.utc(2026, 7, 18, 12, 1),
+      ).signIn();
+      expect(expired, isA<TokenExpired>());
+    });
+
     test('maps cancellation, rejection, outage, expiry and logout', () async {
       expect(
         await _auth(_FakeNativeAuth0Client(cancel: true)).signIn(),
@@ -189,6 +244,34 @@ void main() {
       expect(client.logoutCount, 1);
       expect(await auth.currentState(), isA<SignedOut>());
     });
+
+    test(
+      'maps provider exceptions through a closed diagnostic allowlist',
+      () async {
+        final cases = {
+          'timeout': 'callback-not-received',
+          'state_mismatch': 'callback-state-rejected',
+          'invalid_callback': 'callback-state-rejected',
+          'invalid_grant': 'authorization-code-exchange-rejected',
+          'access_denied': 'authorization-code-exchange-rejected',
+          'server_error': 'provider-unavailable',
+          'authorization-code-with-secret': 'authentication-rejected-unknown',
+          'https://tenant.example.auth0.com/callback?code=secret&state=secret':
+              'authentication-rejected-unknown',
+        };
+
+        for (final entry in cases.entries) {
+          final state = await _auth(
+            _FakeNativeAuth0Client(rejectCode: entry.key),
+          ).signIn();
+          expect(
+            (state as AuthenticationRejected).code,
+            entry.value,
+            reason: entry.key,
+          );
+        }
+      },
+    );
 
     test('cold restart cannot recover in-memory credentials', () async {
       final first = _auth(
@@ -285,6 +368,51 @@ void main() {
     expect((await runner.enrollOrQueryDevice()).state, 'device-enrolled');
     expect((await runner.hostedSyncProbe()).state, 'sync-completed');
     expect((await runner.logout()).state, 'signed-out-cleared');
+  });
+
+  test('closure runner reports exact authentication diagnostics', () async {
+    final runner = NativeAuthClosureRunner(
+      authenticationSession: _RejectingAuthenticationSession(
+        const AuthenticationRejected('callback-not-received'),
+      ),
+      enrollmentCoordinator: HostedEnrollmentCoordinator(
+        authenticationSession: LabAuthenticationSession(),
+        tokenSource: LabAccessTokenSource.accepted('synthetic-token'),
+        transport: _FakeEnrollmentTransport(
+          result: const DeviceEnrollmentResult(
+            status: 'device-enrolled',
+            installationId: '33333333-3333-4333-8333-333333333333',
+            deviceId: '22222222-2222-4222-8222-222222222222',
+            accountId: '11111111-1111-4111-8111-111111111111',
+            generation: 1,
+          ),
+        ),
+        repository: _MemoryHostedIdentityRepository(),
+        now: () => DateTime.utc(2026, 7, 18),
+      ),
+      environmentAlias: 'native',
+      commandFactory: () async => _command(),
+      hostedSyncCoordinator: HostedSyncCoordinator(
+        authenticationSession: LabAuthenticationSession(),
+        syncGuard: _MemorySyncGuard.allowing(),
+        applier: _MemoryApplier(),
+        uploadPendingEvents: UploadPendingEvents(
+          _EmptyOutbox(),
+          _RecordingSyncTransport(downloadEvents: const []),
+        ),
+        downloadAndApplyEvents: DownloadAndApplyEvents(
+          _RecordingSyncTransport(downloadEvents: const []),
+          _MemoryApplier(),
+        ),
+        acknowledgeAppliedCursor: AcknowledgeAppliedCursor(
+          _RecordingSyncTransport(downloadEvents: const []),
+          _MemoryApplier(),
+        ),
+      ),
+    );
+
+    expect((await runner.status()).state, 'signed-out');
+    expect((await runner.signIn()).state, 'callback-not-received');
   });
 
   test('enrollment success alone cannot produce sync success', () async {
@@ -564,6 +692,22 @@ final class _FakeNativeAuth0Client implements NativeAuth0Client {
   }) async {
     logoutCount++;
   }
+}
+
+final class _RejectingAuthenticationSession
+    implements ExternalAuthenticationSession {
+  const _RejectingAuthenticationSession(this.rejection);
+
+  final ExternalAuthenticationState rejection;
+
+  @override
+  Future<ExternalAuthenticationState> currentState() async => const SignedOut();
+
+  @override
+  Future<ExternalAuthenticationState> signIn() async => rejection;
+
+  @override
+  Future<void> logout() async {}
 }
 
 final class _FakeEnrollmentTransport implements DeviceEnrollmentTransport {

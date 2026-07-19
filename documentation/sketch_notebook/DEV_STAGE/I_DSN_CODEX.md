@@ -1,37 +1,51 @@
-# I_DSN_CODEX - Native Closure R1 Design Evidence
+# I_DSN_CODEX - Windows Callback and Credential Design Evidence
 
-- Authority marker: C10-MCG02-NATIVE-CLOSURE-R1_20260718T145121Z
-- Baseline SHA: e59d919ecb776597b13615137cd23413dae42c36
-- Final commit SHA: reported after commit by Codex terminal response, not self-embedded.
-- Evidence environment: Flutter 3.44.6, Dart 3.12.2, Auth0 Flutter 2.4.0 retained, loopback HTTP/file-backed Drift proof, Android debug build, Windows symlink host exclusion.
-- Result classification: native closure correction locally executable; provider proof pending.
+- Authority marker: C10-MCG02-WINDOWS-AUTH-CALLBACK_20260719T011836Z
+- Baseline SHA after fast-forward: fc4af17c766f39715fe909b9fbda587e1bb7b881
+- Final commit SHA: reported by Codex terminal response after commit publication.
+- Dependency decision: `auth0_flutter` remains pinned at 2.4.0; no dependency update was needed.
 
-## Dependency Direction
+## Callback and Credential Flow
 
-The corrected path is:
+The corrected boundary is:
 
-`NativeClosurePage -> NativeAuthClosureRunner -> ExternalAuthenticationSession / HostedEnrollmentCoordinator / HostedSyncCoordinator`.
+`Auth0 browser -> auth0flutter protocol activation -> secondary runner -> current-user named pipe -> primary runner -> PLUGIN_STARTUP_URL under SDK lock -> Auth0 SDK polling transaction -> code exchange -> defensive credential checks -> ExternalAuthenticationSession`.
 
-`HostedSyncCoordinator` composes existing synchronization use cases:
+The runner still owns OS activation and bounded forwarding. The Auth0 SDK still owns OAuth state,
+PKCE, code exchange and token construction. The Markei adapter owns closed diagnostic mapping and
+defensive credential acceptance.
 
-`UploadPendingEvents -> SyncTransport`, `DownloadAndApplyEvents -> SyncTransport + RemoteEventApplier`, and `AcknowledgeAppliedCursor -> SyncTransport + RemoteEventApplier`.
+## Runner / Plugin Boundary
 
-Infrastructure remains below application ports: `HttpSyncTransport`, `HttpDeviceEnrollmentTransport`, Drift repositories and `NativeAuth0Authentication`. Auth0 SDK types remain infrastructure-only. Lab authentication remains test/loopback-only and is not selected by production composition.
+The pinned Auth0 Flutter 2.4.0 reference runner includes `plugin_startup_url_lock.h` and writes
+`PLUGIN_STARTUP_URL` under `auth0_flutter::WriteLockGuard`. Markei now does the same for first
+startup callbacks and forwarded secondary-instance callbacks.
 
-## Closure Surface
+Retained security invariants:
 
-The development surface is a single neutral page added to navigation only when `MARKEI_NATIVE_CLOSURE_SURFACE` is true and `NativeAuthConfiguration` is ready. The flag defaults false. With the flag off, the existing product navigation and local registration behavior remain unchanged.
+- exact `auth0flutter://callback` prefix;
+- single-instance mutex;
+- named pipe forwarding;
+- current-user SID pipe security;
+- bounded string framing and null termination;
+- no callback data logs;
+- wrong-prefix inputs ignored before SDK handoff.
 
-The page can invoke status, sign in, enroll/query Device, real hosted sync and logout. It displays state strings only and no credentials, provider identifiers, Account/Device identifiers, connection details or synchronization payloads.
+## Safe Diagnostic Mapping
 
-## Stable Identity
+Provider and SDK failures are normalized to a closed set before reaching application state.
+Credential validation is defensive only: access and ID tokens must be present, distinct and beyond
+the safety margin. No JWT body parsing is used as a substitute for hosted issuer, audience,
+signature or authorization verification.
 
-`StableDeviceEnrollmentCommandFactory` reads `HostedIdentityRepository` before constructing enrollment commands. Existing installation id and unresolved enrollment request id are reused across retries and Drift reopen. Fresh ids are generated only when no durable hosted state exists. There is no automatic external identity, Account membership or Device provisioning.
+## Deviations and Deferred Work
 
-## Sync Correction
+The test proof for Windows protocol activation is source-level and build-level; a real provider
+runtime retest remains required. Duplicate/stale/cross-transaction callback rejection is delegated
+to the SDK transaction state and covered locally by the runner's single write path and closed state
+mapping, not by a live OS protocol test.
 
-`hostedSyncProbe()` no longer calls enrollment replay. It delegates to `HostedSyncCoordinator`, which checks authentication, evaluates enrolled Device guard state, uploads pending outbox entries, downloads after the committed cursor, applies remote events atomically through Drift, then acknowledges only after local cursor application.
-
-Production deviation for R1: none beyond the accepted native-composition baseline. Migrations 001-006, server authorization, Drift schema/reset behavior, Auth0/Neon/Render resources, dependency versions, lockfiles and permanent methodology/domain memory were unchanged.
-
-Residual boundary: Windows release binary remains host-excluded until Developer Mode or symlink support is available. No provider login, provider mutation, deployment, permanent promotion, Cycle 10 closure, MCG-03 or MCG-04 was performed.
+Deferred work remains unchanged: hosted Account/Device binding and scoped synchronization resume
+only after provider retest reaches `authenticated`; production installer protocol registration,
+intermediary HTTPS callback flow, dependency upgrades, persistent secure sessions, MCG-03 and Cycle
+10 closure are outside this correction.
