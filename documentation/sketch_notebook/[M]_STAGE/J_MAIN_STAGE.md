@@ -843,3 +843,44 @@ Cycle 10 closure / MCG-03                                            INACTIVE
 D/E/F carrying marker `C10-MCG02-WINDOWS-AUTH-CALLBACK_20260719T011836Z` are the only active Codex
 authority. They supersede the hosted-binding D/E/F for execution order without rejecting that
 design. Success reopens the hosted-binding unit; it does not close MCG-02.
+
+---
+
+## 49. Append-only reconciliation — authenticated Windows provider proof
+
+> Reconciliation marker: C10-MCG02-WINDOWS-RUNTIME-PACKAGING_20260719T155742Z
+> Reconciled at UTC: 2026-07-19T15:57:42Z
+> Reconciled at America/Sao_Paulo: 2026-07-19T12:57:42-03:00
+> Inspected implementation: 1922ffc38b9a7b24cf49143e9fae726f9f8349db
+> Current status: **AUTHENTICATION VALIDATED; REPRODUCIBLE RUNTIME PACKAGING ACTIVE**
+
+Sanitized human evidence after `1922ffc` confirms Windows release build, closure-surface launch,
+Auth0 signup/login, protocol callback consumption, authorization-code exchange, credential
+acceptance, stable authenticated status, logout and re-sign-in. No token, callback, identity or
+provider secret is retained in staging.
+
+The decisive diagnostic was runtime deployment. Direct/session-assisted launch could find vcpkg
+libraries through a temporary PATH, while the browser-launched callback process reported missing
+`cpprest_2_10.dll`. Copying the vcpkg release runtime DLLs beside `markei.exe` made authentication,
+logout and re-sign-in pass. The source authentication correction is therefore accepted; the manual
+copy is not an acceptable distributable result.
+
+## 50. Selected closure step 1
+
+Codex must make Windows Debug and Release outputs carry their configuration-correct runtime closure
+after `flutter clean`, without PATH mutation, manual copies, committed binaries or machine-specific
+paths. Clean direct and callback-process launch are distinct gates. Real Auth0 login remains a
+subsequent human retest after the packaging correction is published.
+
+~~~text
+Windows callback and credential correction                         VALIDATED
+Windows runtime packaging closure step 1                            ACTIVE
+Clean human provider authentication retest                          BLOCKED NEXT
+Hosted Account/Device binding and scoped synchronization            DEFERRED
+Decisive two-Device convergence / MCG-02 closure                     PENDING
+MCG-03                                                               INACTIVE
+~~~
+
+D/E/F carrying marker `C10-MCG02-WINDOWS-RUNTIME-PACKAGING_20260719T155742Z` are the only active
+Codex authority. Success authorizes a clean human authentication retest; it does not authorize
+Enroll, Sync, provider mutation, MCG-02 closure or MCG-03.

@@ -1,27 +1,21 @@
-# E_DDC_STAGE — Windows Authentication State Semantics
+# E_DDC_STAGE — Windows Packaging Closure Semantics
 
-> Authority marker: C10-MCG02-WINDOWS-AUTH-CALLBACK_20260719T011836Z
+> Authority marker: C10-MCG02-WINDOWS-RUNTIME-PACKAGING_20260719T155742Z
 > Status: **ACTIVE SEMANTIC AUTHORITY**
 
-Auth0 `successful login` means the provider verified the user. It does not prove callback delivery,
-code exchange, usable client credentials, Device enrollment or synchronization. Markei may say
-`authenticated` only after the waiting transaction returns non-empty, distinct and unexpired
-access and ID tokens.
+The human proof establishes `authenticated`, stable status, successful logout and successful
+re-sign-in. It does not establish distributable Windows readiness because authentication required a
+manual runtime-DLL copy.
 
-Materialize neutral closed states equivalent to:
+Use these distinctions:
 
-- `callback-not-received`
-- `callback-state-rejected`
-- `authorization-code-exchange-rejected`
-- `access-token-missing`
-- `id-token-missing`
-- `token-expired`
-- `token-confusion-rejected`
-- `provider-unavailable`
-- `authentication-rejected-unknown`
-- `authenticated`
+- `authentication-validated` — provider login, callback, exchange and credentials passed;
+- `runtime-dependency-missing` — the process cannot load a required packaged library;
+- `runtime-package-ready` — a clean configuration-aware build carries its runtime closure;
+- `clean-provider-retest-required` — packaging is locally proved but the provider path must be
+  repeated without PATH/manual-copy assistance;
+- `clean-provider-retest-passed` — reserved for later sanitized human evidence.
 
-Cancellation and user consent rejection remain intentional outcomes, not outages. Diagnostics must
-not surface raw provider text or identity/security material. Successful correction wording is
-limited to local callback/credential readiness and `provider-retest-required`; Device enrollment,
-hosted convergence, MCG-02 closure and MCG-03 remain unclaimed.
+A direct launch is not callback-launch proof. A copied DLL workaround is diagnostic evidence, not a
+release result. This unit may claim packaging correction only; it may not claim Device enrollment,
+hosted synchronization, MCG-02 closure or MCG-03 activation.

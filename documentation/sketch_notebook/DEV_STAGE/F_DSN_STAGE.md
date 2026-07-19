@@ -1,42 +1,32 @@
-# F_DSN_STAGE — Windows Callback and Credential Design
+# F_DSN_STAGE — Windows Runtime Closure Design
 
-> Authority marker: C10-MCG02-WINDOWS-AUTH-CALLBACK_20260719T011836Z
+> Authority marker: C10-MCG02-WINDOWS-RUNTIME-PACKAGING_20260719T155742Z
 > Status: **ACTIVE DESIGN AUTHORITY**
 
 ## Selected boundary
 
 ~~~text
-Auth0 browser transaction
--> auth0flutter protocol activation
--> secondary runner process
--> current-user named pipe
--> primary runner process
--> pinned Auth0 SDK waiting transaction
--> code exchange
--> defensive credential checks
--> ExternalAuthenticationSession
+pinned auth0_flutter/cpprestsdk targets
+-> configuration-aware CMake runtime dependency discovery
+-> post-build runner deployment
+-> self-contained Debug or Release directory
+-> direct launch and protocol callback launch
 ~~~
 
-The native runner owns OS activation and bounded forwarding. The pinned SDK owns OAuth transaction
-state and code exchange. `NativeAuth0Authentication` adapts SDK outcomes into closed application
-states. `NativeAuthClosureRunner` and the development page expose only neutral semantic evidence.
+The executable directory, not an interactive shell PATH, owns the deployable runtime closure. CMake
+must derive dependencies from imported/linked targets or an equivalent reproducible target-level
+mechanism. Debug and Release artifacts remain configuration-correct.
 
 ## Invariants
 
-- One callback belongs to one active transaction and is consumed at most once.
-- Wrong prefix/scheme, stale, duplicate, oversized or unsolicited callback input fails closed.
-- Pipe access remains restricted to the current user; callback data is never logged.
-- Tokens remain process-memory bounded and disappear on rejection, expiry, logout and restart.
-- Access and ID tokens are non-empty and distinct before `authenticated`.
-- Client inspection does not replace hosted issuer/audience/signature/authorization verification.
-- Provider login success remains distinct from client authentication success.
+- no absolute developer-machine path enters tracked source or produced authority;
+- no DLL or vcpkg checkout is committed;
+- Release never packages debug-suffixed libraries;
+- missing runtime dependencies fail during build/validation rather than after browser callback;
+- callback and token handling remain unchanged and secret-free;
+- generated artifacts remain outside Git and are reproducible after `flutter clean`;
+- the solution remains compatible with the repository-pinned dependency versions.
 
-## Deferred design
-
-The hosted Account/Device binding and scoped synchronization model previously staged remains the
-next unit after successful provider retest. Production installer protocol registration, an
-intermediary HTTPS callback, dependency upgrades, secure persistent sessions and general Account
-migration remain outside this correction.
-
-Rollback restores the accepted native adapter while retaining provider configuration and all local
-facts; it must not weaken callback validation or expose raw errors.
+The earlier hosted Account/Device binding design remains deferred until a clean provider retest
+passes. Rollback removes only runtime deployment changes and retains the accepted authentication
+correction and all local facts.
