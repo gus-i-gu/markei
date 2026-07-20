@@ -1,81 +1,72 @@
-# D_OPS_STAGE — Hosted Account/Device Binding and Scoped Sync
+# D_OPS_STAGE — Decisive Two-Device Provider Proof
 
-> Authority marker: C10-MCG02-HOSTED-BINDING-R2_20260720T131954Z
-> Required ancestor: 4382c09c038e41c1dc269141d40c31c258516b61
-> Status: **ACTIVE BOUNDED CODEX AUTHORITY**
+> Authority marker: C10-MCG02-PROVIDER-CONVERGENCE_20260720T175006Z
+> Required ancestor: e762b64be2a00b43735c3bcb40b8d349afcb0dd3
+> Status: **ACTIVE HUMAN-OPERATED PROVIDER EVIDENCE AUTHORITY**
 
 ## Accepted evidence
 
-Windows runtime packaging is automatically proved at `734c559`: clean Debug/Release builds and
-direct/sanitized callback launches passed without vcpkg PATH assistance or manual DLL copying. A
-fresh human Auth0 retest from that exact artifact has not been reconciled and remains pending. It is
-not a prerequisite for this local-only correction and must not be claimed or performed by Codex.
+- Hosted binding/scoped sync at `e762b64` passed 93 Flutter tests, 46 API tests, Android and
+  Windows builds, file-backed proof and disposable Docker/PostgreSQL two-Device convergence.
+- Windows native authentication, callback, authenticated status, logout and re-sign-in passed.
+- Android build, install, Auth0 callback and authenticated status passed after supplying the same
+  sanitized Auth0 domain to Dart and Gradle. The earlier browser `Not found` and debug-service
+  tunnel failure are resolved diagnostics, not provider convergence evidence.
 
 ## Objective
 
-Bind a restarted Flutter composition to the durable hosted AccountId and server DeviceId returned by
-enrollment, and scope every hosted synchronization operation to that binding. Existing local-only
-facts, immutable events and pending work must remain unchanged and must never enter the hosted lane.
+Prove one synthetic hosted Account converges through Auth0, Render and Neon across Windows Device A
+and Android Device B, while authorization, revocation, outage continuity, token ephemerality and
+local-only preservation fail closed.
 
-## Required implementation
+## Ordered gates
 
-1. Keep the pre-enrollment composition local-only.
-2. Validate a stored binding before activation: environment, completed/active enrollment state,
-   AccountId, server DeviceId, installation identity and positive generation must be complete and
-   syntactically valid. Invalid, incomplete, revoked or expired state fails closed to local-only and
-   cannot authorize hosted sync.
-3. Successful enrollment persists the binding and returns `hosted-restart-required`; the same
-   process must not sync using its pre-enrollment local composition.
-4. On restart, select the hosted AccountId/server DeviceId for new registration and hosted sync.
-   Ensure the corresponding local Account/Device identity rows exist without rewriting old rows.
-5. Add explicit AccountId and DeviceId scope to hosted outbox leasing and unknown-submission replay.
-   Mixed, local-only or foreign pending events must not be selected or mutated.
-6. Scope inbox validation, cursor lookup/update, fact application and acknowledgement to the hosted
-   AccountId. Reject cross-Account pages atomically and preserve cursor/facts/inbox on rejection.
-7. Keep unscoped adapters only where existing isolated local-lab compatibility requires them;
-   production/native hosted composition must use scoped forms.
-8. Preserve authentication, callback, packaging, server authorization, migration and schema behavior.
+1. Confirm the tested branch contains `e762b64`; Render is live/ready and unauthenticated identity
+   returns 401; scan logs for secret/payload leakage.
+2. Authenticate the synthetic identity and query its hosted identity state.
+3. Using only the controlled migrator procedure, create/activate exactly one external identity and
+   one Account membership when absent. Do not improvise SQL or derive Account/Device IDs from Auth0.
+4. Enroll Windows as Device A. Require `hosted-restart-required`; do not sync in that process.
+5. Fully restart Windows, re-authenticate if required, and require an active hosted binding.
+6. Register synthetic purchase A on Windows; sync twice and prove acceptance then idempotence.
+7. Enroll Android as distinct Device B. Require restart before sync, then active hosted binding.
+8. Sync Android to receive A; register/sync purchase B; sync Windows to receive B.
+9. Close/reopen both applications and compare authoritative hosted facts. Local-only facts and
+   pending work must remain local and unchanged.
+10. Revoke Device B through the controlled development procedure; require typed denial with no
+    Device-B cursor, acknowledgement, event or fact advance; Device A remains operational.
+11. Make only the development API temporarily unavailable using the least destructive approved
+    method; register purchase C locally, prove pending continuity, restore service and converge once.
+12. Logout on both clients; protected actions require authentication and no usable access token is
+    recovered after close/reopen.
+13. Collect only sanitized counts, state names, HTTP statuses, deployment SHA, pass/fail outcomes and
+    redacted errors; scan Render logs and inventory remaining synthetic resources.
 
-## Decisive proof
+## Stop rules
 
-Use file-backed Drift and the real loopback HTTP/server authorization path to prove:
-
-- pre-enrollment registration remains local-only;
-- enrollment completion blocks sync with `hosted-restart-required`;
-- close/reopen activates the exact stored hosted Account/Device binding;
-- the first new hosted event embeds those exact IDs and has a valid unchanged v3 hash;
-- older local-only pending events are not leased, relabeled or changed;
-- hosted upload/download/apply/ack succeeds only for the bound Account/Device;
-- unknown replay cannot cross the binding;
-- cross-Account download fails without fact, inbox or cursor mutation;
-- malformed, incomplete, revoked and expired bindings fail closed;
-- two isolated databases bind one hosted Account to distinct server Devices, converge, close and
-  reopen with equal authoritative hosted facts;
-- API unavailability preserves local registration and pending hosted work.
-
-## Decisive validation
-
-Run Drift generation only if required by source changes, Dart format check, Flutter analysis, focused
-and complete Flutter tests, affected API tests, Android debug and Windows release when host-supported,
-`git diff --check`, changed-path inventory and tracked/staged secret/binary scans. Record exact
-commands, counts and exclusions in replacement G/H/I.
+Stop before further mutation on ambiguous/duplicate membership, cross-Account data, unexpected
+provider activity, wrong deployment ancestry, migration/checksum drift, secret exposure, missing
+restart boundary, local-only event selection or any untyped state advance after denial. Preserve
+local databases and provider evidence without committing them.
 
 ## Boundaries
 
-No real Auth0 login, provider enrollment/sync, Auth0/Render/Neon mutation, migration, Drift schema
-change/reset, dependency upgrade, server authorization weakening, automatic Account migration,
-product UI redesign, permanent documentation, MCG-03 or MCG-04 is authorized. Never read private
-provider files. Replace only G/H/I and publish one bounded implementation commit.
+This is development-provider acceptance only. No source, migration, dependency, schema, production
+branch, permanent documentation, MCG-03 or MCG-04 change is authorized. Codex may perform read-only
+redacted diagnosis but must not receive credentials/tokens or operate Auth0, Render or Neon. G/H/I
+remain the `e762b64` implementation evidence and are not replaced by this human procedure.
 
-Success terminal:
+Success terminal after every gate passes:
 
 ~~~text
-MCG-02_HOSTED_IDENTITY_BINDING=true
-MCG-02_HOSTED_OUTBOX_SCOPED=true
-MCG-02_HOSTED_CURSOR_APPLIER_SCOPED=true
-MCG-02_LOCAL_ONLY_EVENTS_PRESERVED=true
-MCG-02_TWO_DEVICE_BINDING_CONVERGED=true
-MCG-02_DECISIVE_PROVIDER_PROOF_READY
+MCG-02_NATIVE_CLIENT_AUTH=true
+MCG-02_WINDOWS_DEVICE_ENROLLED=true
+MCG-02_ANDROID_DEVICE_ENROLLED=true
+MCG-02_TWO_DEVICE_PROVIDER_CONVERGENCE=true
+MCG-02_REVOCATION_DENIAL=true
+MCG-02_PROVIDER_OUTAGE_CONTINUITY=true
+MCG-02_EPHEMERAL_TOKEN_CLEARING=true
+MCG-02_PROVIDER_PROOF_COMPLETE
 ~~~
 
-Otherwise report `MCG-02_HOSTED_IDENTITY_BINDING_PARTIAL` with the exact blocker.
+Otherwise report `MCG-02_PROVIDER_PROOF_PARTIAL` with the exact failed gate and evidence boundary.

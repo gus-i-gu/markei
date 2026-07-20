@@ -1,21 +1,20 @@
-# E_DDC_STAGE — Hosted Binding Semantics
+# E_DDC_STAGE — Provider Convergence Semantics
 
-> Authority marker: C10-MCG02-HOSTED-BINDING-R2_20260720T131954Z
-> Status: **ACTIVE SEMANTIC AUTHORITY**
+> Authority marker: C10-MCG02-PROVIDER-CONVERGENCE_20260720T175006Z
+> Status: **ACTIVE HUMAN-EVIDENCE SEMANTIC AUTHORITY**
 
-## Required distinctions
+Retain these distinctions:
 
-- `local-only-identity` — offline Account/Device identity whose facts remain local;
-- `hosted-binding-recorded` — enrollment returned and durably stored hosted IDs;
-- `hosted-restart-required` — binding was stored, but the current composition is still local-only;
-- `hosted-binding-active` — a restarted composition validated and selected the hosted IDs;
-- `local-only-pending` — old local work preserved outside hosted leasing;
-- `hosted-sync-ready` — local binding/scoping proof passed, not provider convergence;
-- `binding-invalid` / `binding-revoked` / `binding-expired` — fail-closed states;
-- `cross-account-rejected` — foreign data caused no fact, inbox or cursor mutation.
+- `native-authenticated` — provider callback and usable ephemeral credentials passed;
+- `membership-active` — one explicit external identity maps to one active Account membership;
+- `hosted-restart-required` — enrollment is durable but the current composition cannot sync;
+- `hosted-binding-active` — restart selected the hosted Account/server Device;
+- `provider-sync-completed` — one bound Device completed hosted upload/download/acknowledgement;
+- `provider-converged` — both restarted Devices reopen with equal authoritative hosted facts;
+- `device-revoked` — revoked Device is denied without hosted state advance;
+- `provider-unavailable-local-pending` — local registration survives API unavailability;
+- `signed-out` — protected operations require new authentication and no token is recovered.
 
-Enrollment is not synchronization. Recording a binding is not activation. Activation affects only
-new hosted facts; it is not migration, merge, relabeling or recovery of old local facts.
-
-No phase may call the user synchronized, converged or provider-validated before controlled human
-proof. The fresh clean Auth0 retest remains `provider-retest-pending`. MCG-03 remains inactive.
+Authentication is not membership, enrollment is not activation, one-Device sync is not convergence,
+and Render/Neon row presence is not local reopen proof. Local-only history is neither failed nor
+hosted. No success wording may close MCG-02 until every D gate is evidenced. MCG-03 remains inactive.

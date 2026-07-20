@@ -973,3 +973,71 @@ D/E/F carrying marker `C10-MCG02-HOSTED-BINDING-R2_20260720T131954Z` are synchro
 only active Codex authority. They authorize source changes and local decisive tests only. They do
 not authorize Auth0 login, Enroll/Query/Sync against Render/Neon, provider mutation, migration,
 production deployment, permanent-memory promotion, MCG-02 closure, MCG-03 or MCG-04.
+
+---
+
+## 55. Append-only reconciliation — hosted binding and native authentication
+
+> Reconciliation marker: C10-MCG02-PROVIDER-CONVERGENCE_20260720T175006Z
+> Reconciled at UTC: 2026-07-20T17:50:06Z
+> Reconciled at America/Sao_Paulo: 2026-07-20T14:50:06-03:00
+> Implementation: e762b64be2a00b43735c3bcb40b8d349afcb0dd3
+> Sequence handoff: e088888d72c543000fb425d76d75a47b16962893
+> Status: **LOCAL HOSTED BINDING VALIDATED; NATIVE AUTH VALIDATED; PROVIDER CONVERGENCE ACTIVE**
+
+### Claim: hosted Account/Device binding is locally validated
+
+Prior state: active local implementation unit. Evidence: G/H/I at `e762b64` record 93 Flutter
+tests with two expected lab skips, 46 API tests, Android debug and Windows release builds, nine
+focused hosted tests, file-backed restart/scoping evidence and disposable Docker/PostgreSQL
+`CONVERGED=true`. The implementation selects a validated binding after restart, scopes hosted
+outbox/replay/cursor/applier/acknowledgement, rejects cross-Account pages atomically and preserves
+local-only pending work. Resulting state: accepted local/provider-ready implementation, not provider
+acceptance.
+
+### Claim: Windows and Android native authentication are human-validated
+
+Prior state: Windows validated; Android pending. Sanitized human evidence now confirms Android
+emulator build/install, Auth0 allowlist correction, provider login, callback return and authenticated
+state. The earlier callback `Not found` resulted from supplying the Auth0 domain to Dart but not the
+Android Gradle manifest placeholder; setting the process-local
+`ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN`, rebuilding and using the exact callback resolved it. A
+separate Flutter debug-service WebSocket failure was bypassed by the release proof and is not an
+authentication failure. Resulting state: native authentication validated on both clients within the
+development provider boundary.
+
+## 56. Selected decisive provider unit
+
+Main now authorizes one human-operated development-provider sequence:
+
+~~~text
+explicit synthetic identity membership
+-> Windows Device A enrollment and restart
+-> purchase A hosted sync
+-> Android Device B enrollment and restart
+-> bidirectional A/B convergence and reopen
+-> Device B revocation denial
+-> development API outage continuity and recovery
+-> logout/token ephemerality
+-> sanitized Neon counts and Render log scan
+~~~
+
+The provider proof must stop on ambiguous identity mapping, missing restart boundary, cross-Account
+data, local-only event selection, unexpected provider activity or secret exposure. Codex receives no
+credentials and may diagnose only redacted evidence.
+
+## 57. Revised projection and authority
+
+~~~text
+MCG-02 local synchronization, recovery and authorization             VALIDATED
+MCG-02 hosted binding and scoped synchronization                     VALIDATED LOCAL
+MCG-02 Windows and Android native authentication                     VALIDATED HUMAN
+MCG-02 two-Device provider convergence and negative proof            ACTIVE
+MCG-02 permanent-domain promotion and closure                        PENDING
+MCG-03 / MCG-04                                                       INACTIVE
+~~~
+
+D/E/F carrying marker `C10-MCG02-PROVIDER-CONVERGENCE_20260720T175006Z` are the active human
+evidence contract. They authorize only the named development-provider operations and sanitized
+evidence capture. No source change, migration, production mutation, permanent promotion, MCG-02
+closure, MCG-03 or MCG-04 is authorized by this transition.
