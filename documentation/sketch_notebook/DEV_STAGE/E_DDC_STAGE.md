@@ -1,16 +1,24 @@
-# E_DDC_STAGE — Purchase Phase Diagnostic Semantics
+# E_DDC_STAGE — Drift v8 Repair Semantics
 
-> Authority marker: C10-MCG02-PURCHASE-TRANSACTION-DIAGNOSTIC_20260720T205714Z
-> Status: **ACTIVE CODEX SEMANTIC AUTHORITY**
+> Authority marker: C10-MCG02-DRIFT-V8-FK-REPAIR_20260720T221440Z
+> Status: **ACTIVE CODEX DIDACTIC AUTHORITY**
 
-- `purchase-registration-<phase>-failed` — unexpected failure before commit at one closed phase;
-- `purchase-registration-not-applied` — rollback confirmed; retry only after correction;
-- `purchase-registration-unknown` — commit boundary cannot be established; check History first;
-- `purchase-registered-locally` — Purchase/event/outbox committed atomically;
-- `draft-preserved-in-memory` — current process retains staged input; restart persistence is absent;
-- `binding-preserved` — hosted Account/server Device state was not changed by failure.
+## Truthful states
 
-Phase feedback names only the operation boundary and recovery action. It must not expose exception
-text or data. Absence from History after the reported failure validates `not-applied`, not
-`unknown`. Fixture success does not override contradictory human evidence; provider sync and MCG-02
-closure remain unclaimed.
+- `local-database-upgrade-required`: an older supported database must upgrade before use.
+- `local-database-upgrade-completed`: schema v8 committed and passed integrity validation.
+- `local-database-upgrade-failed`: upgrade did not commit; do not claim facts were repaired.
+- `purchase-registration-insert-purchase-failed`: retained bounded diagnostic for a transaction that
+  did not apply.
+- `registered-locally`: allowed only after Purchase, Items, event and outbox commit atomically.
+
+Migration success is not synchronization, backup, hosted convergence or MCG-02 closure. A repaired
+database retains the same Account, Device binding, facts, cursor and queued work; it does not create
+a new identity or silently discard local data.
+
+Production diagnostics must not expose SQL, exceptions, paths, identifiers, payloads, credentials
+or provider configuration. Tests may inspect disposable schema metadata and in-memory causes.
+
+Required semantic evidence names the migrated version, preservation assertions, foreign-key check,
+reopen result and atomic registration result. No wording may claim the human database is corrected
+until a separate human build/retest opens and upgrades it successfully.

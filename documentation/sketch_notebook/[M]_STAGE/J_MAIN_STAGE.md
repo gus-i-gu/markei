@@ -847,3 +847,39 @@ MCG-03 / MCG-04                                                     INACTIVE
 D/E/F carrying `C10-MCG02-PURCHASE-TRANSACTION-DIAGNOSTIC_20260720T205714Z` are the only active
 Codex authority. If the cause cannot be reproduced safely, Codex may materialize diagnostics and
 report partial; it must not guess a data rewrite or claim the transaction corrected.
+
+---
+
+## 64. Append-only reconciliation — malformed migrated foreign keys reproduced
+
+> Reconciliation marker: C10-MCG02-DRIFT-V8-FK-REPAIR_20260720T221440Z
+> Reconciled at UTC: 2026-07-20T22:14:40Z
+> Diagnostic evidence: 00c78e85c19f4acdc5554fb695c181af10616bc0
+> Status: **ROOT CAUSE REPRODUCED; FORWARD REPAIR ACTIVE**
+
+G/H/I at `00c78e8` reproduce the human symptom in a file-backed v2-to-v7 hosted lifecycle and
+localize the first failure to `insert-purchase`. SQLite metadata shows migrated `purchases` foreign
+keys still naming dropped `people_old` and `payment_methods_old`, and `purchase_items` still naming
+dropped `products_old`. Registration is not applied: existing History, events, outbox, cursor,
+Device sequence and hosted binding remain unchanged. Safe phase diagnostics and all ordinary tests
+and supported builds pass.
+
+The diagnostic result is accepted as partial, not promoted as a correction. Main now authorizes a
+forward-only Drift schema v8 repair for installed v7 databases. It must rebuild the affected tables,
+preserve all valid rows and synchronization/identity state, pass foreign-key validation, survive
+reopen, and register one atomic Purchase through the production path. Editing the human database,
+resetting it, or manually deleting facts is forbidden.
+
+## 65. Revised projection
+
+~~~text
+MCG-02 Store creation and explicit selection                        VALIDATED LOCAL + HUMAN
+MCG-02 transaction root cause                                      REPRODUCED LOCAL
+MCG-02 Drift v8 foreign-key repair                                 ACTIVE CORRECTION
+MCG-02 human v8 upgrade + Purchase A hosted sync                   PAUSED FOR RETEST
+MCG-02 Android Device B / convergence / closure                    PAUSED
+MCG-03 / MCG-04                                                     INACTIVE
+~~~
+
+D/E/F carrying `C10-MCG02-DRIFT-V8-FK-REPAIR_20260720T221440Z` are the only active Codex authority.
+Provider access and human proof resume only after the disposable v8 migration gate passes.
