@@ -52,6 +52,7 @@ void main() {
 
     await tester.tap(find.text('Purchase'));
     await _pumpReady(tester);
+    await _selectStore(tester, 'Mercado Central');
     await _stageItem(
       tester,
       code: 'ARROZ-001',
@@ -126,6 +127,7 @@ void main() {
 
     await tester.tap(find.text('Purchase'));
     await _pumpReady(tester);
+    await _selectStore(tester, 'Mercado Central');
     await _enterVisibleText(
       tester,
       find.byKey(const Key('item.lineTotal')),
@@ -469,11 +471,342 @@ void main() {
     await _enterPurchaseMoment(tester);
     await _tapVisible(tester, find.byKey(const Key('purchase.review')));
     await _pumpReady(tester);
+
+    expect(find.textContaining('store-selection-required'), findsOneWidget);
+    expect(find.byKey(const Key('purchase.line.1')), findsOneWidget);
+  });
+
+  testWidgets('no implicit Store selection after load', (tester) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    await queries.createStore(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      'Mercado Central',
+    );
+    final composition = _composition(
+      db: db,
+      queries: queries,
+      registration: LocalPurchaseRepository(db),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+    await _pumpReady(tester);
+
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+
+    expect(find.text('Select Store'), findsOneWidget);
+    expect(find.text('Selected Store: Mercado Central'), findsNothing);
+  });
+
+  testWidgets('explicit selection with one Store', (tester) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    await queries.createStore(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      'Mercado Central',
+    );
+    final composition = _composition(
+      db: db,
+      queries: queries,
+      registration: LocalPurchaseRepository(db),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+    await _pumpReady(tester);
+
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+    await _selectStore(tester, 'Mercado Central');
+
+    expect(find.text('Selected Store: Mercado Central'), findsOneWidget);
+  });
+
+  testWidgets('selection uses stable StoreId', (tester) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    await queries.createStore(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      'Mercado A',
+    );
+    await queries.createStore(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      'Mercado B',
+    );
+    final composition = _composition(
+      db: db,
+      queries: queries,
+      registration: LocalPurchaseRepository(db),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+    await _pumpReady(tester);
+
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+    await _selectStore(tester, 'Mercado B');
+
+    await tester.tap(find.text('Catalogue'));
+    await _pumpReady(tester);
+    await _createProductInCatalogue(tester, code: 'ARROZ-REFRESH');
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+
+    expect(find.text('Selected Store: Mercado B'), findsOneWidget);
+    expect(find.text('Selected Store: Mercado A'), findsNothing);
+  });
+
+  testWidgets('selection survives Store-list object reconstruction', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    await queries.createStore(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      'Mercado Central',
+    );
+    final composition = _composition(
+      db: db,
+      queries: queries,
+      registration: LocalPurchaseRepository(db),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+    await _pumpReady(tester);
+
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+    await _selectStore(tester, 'Mercado Central');
+
+    await tester.tap(find.text('Catalogue'));
+    await _pumpReady(tester);
+    await _createProductInCatalogue(tester, code: 'FEIJAO-REFRESH');
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+
+    expect(find.text('Selected Store: Mercado Central'), findsOneWidget);
+  });
+
+  testWidgets('selection survives Catalogue navigation and refresh', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    await queries.createStore(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      'Mercado Central',
+    );
+    final composition = _composition(
+      db: db,
+      queries: queries,
+      registration: LocalPurchaseRepository(db),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+    await _pumpReady(tester);
+
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+    await _selectStore(tester, 'Mercado Central');
+
+    await tester.tap(find.text('Catalogue'));
+    await _pumpReady(tester);
+    await _createStoreInCatalogue(tester, 'Mercado Novo');
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+
+    expect(find.text('Selected Store: Mercado Central'), findsOneWidget);
+  });
+
+  testWidgets('deleted or missing selected Store clears safely', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    await queries.createStore(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      'Mercado Central',
+    );
+    final composition = _composition(
+      db: db,
+      queries: queries,
+      registration: LocalPurchaseRepository(db),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+    await _pumpReady(tester);
+
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+    await _selectStore(tester, 'Mercado Central');
+
+    await db.delete(db.stores).go();
+    await tester.tap(find.text('Catalogue'));
+    await _pumpReady(tester);
+    await _createProductInCatalogue(tester, code: 'CAFE-REFRESH');
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+
+    expect(find.textContaining('store-selection-invalidated'), findsOneWidget);
+    expect(find.text('Selected Store: Mercado Central'), findsNothing);
+  });
+
+  testWidgets('cross-Account Store cannot be selected', (tester) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    await queries.createStore(
+      const AccountId('99999999-9999-4999-8999-999999999999'),
+      'Foreign Store',
+    );
+    final composition = _composition(
+      db: db,
+      queries: queries,
+      registration: LocalPurchaseRepository(db),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+    await _pumpReady(tester);
+
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+
+    expect(find.byKey(const Key('purchase.store.required')), findsOneWidget);
+    expect(find.text('Foreign Store'), findsNothing);
+  });
+
+  testWidgets('Store selected plus no Item reports item-required', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    await queries.createStore(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      'Mercado Central',
+    );
+    final composition = _composition(
+      db: db,
+      queries: queries,
+      registration: LocalPurchaseRepository(db),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+    await _pumpReady(tester);
+
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+    await _selectStore(tester, 'Mercado Central');
+    await _tapVisible(tester, find.byKey(const Key('purchase.review')));
+    await _pumpReady(tester);
+
+    expect(find.textContaining('item-required'), findsOneWidget);
+    expect(find.textContaining('store-selection-required'), findsNothing);
+  });
+
+  testWidgets('complete Catalogue-create-to-Purchase-register flow', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    await queries.createProduct(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      const ProductDraft(
+        userCode: 'ARROZ-001',
+        name: 'Arroz Branco',
+        brand: 'Marca A',
+        mode: ProductMode.packaged,
+        measurementKind: MeasurementKind.mass,
+        packageAmount: '1',
+        packageUnit: 'kg',
+      ),
+    );
+    final composition = _composition(
+      db: db,
+      queries: queries,
+      registration: LocalPurchaseRepository(db),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+    await _pumpReady(tester);
+
+    await tester.tap(find.text('Catalogue'));
+    await _pumpReady(tester);
+    await _createStoreInCatalogue(tester, 'Provider Proof Store');
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+    expect(find.text('Select Store'), findsOneWidget);
+    await _selectStore(tester, 'Provider Proof Store');
+    await tester.tap(find.text('Catalogue'));
+    await _pumpReady(tester);
+    await _createStoreInCatalogue(tester, 'Refresh Store');
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+    expect(find.text('Selected Store: Provider Proof Store'), findsOneWidget);
+
+    await _stageExistingProduct(tester, 'ARROZ-001 · Arroz Branco');
+    await _enterPurchaseMoment(tester);
+    await _tapVisible(tester, find.byKey(const Key('purchase.review')));
+    await _pumpReady(tester);
     await _tapVisible(tester, find.byKey(const Key('purchase.register')));
     await _pumpReady(tester);
 
-    expect(find.textContaining('Create a Store in Catalogue'), findsOneWidget);
-    expect(find.byKey(const Key('purchase.line.1')), findsOneWidget);
+    expect(find.text('Purchase registered locally.'), findsOneWidget);
+    expect(await db.select(db.purchases).get(), hasLength(1));
+    expect(await db.select(db.syncEvents).get(), hasLength(1));
+    expect(await db.select(db.pendingEvents).get(), hasLength(1));
   });
 
   testWidgets('registration failure preserves the staged draft', (
@@ -711,6 +1044,7 @@ Future<void> _registerSingleItemPurchase(
   required String name,
   required String total,
 }) async {
+  await _selectStore(tester, 'Mercado Central');
   await _stageItem(tester, code: code, name: name, total: total);
   await _enterPurchaseMoment(tester);
   await _tapVisible(tester, find.byKey(const Key('purchase.review')));
@@ -720,6 +1054,7 @@ Future<void> _registerSingleItemPurchase(
 }
 
 Future<void> _registerAttempt(WidgetTester tester) async {
+  await _selectStore(tester, 'Mercado Central');
   await _stageItem(
     tester,
     code: 'ARROZ-001',
@@ -730,6 +1065,66 @@ Future<void> _registerAttempt(WidgetTester tester) async {
   await _tapVisible(tester, find.byKey(const Key('purchase.review')));
   await _pumpReady(tester);
   await _tapVisible(tester, find.byKey(const Key('purchase.register')));
+  await _pumpReady(tester);
+}
+
+Future<void> _selectStore(WidgetTester tester, String displayName) async {
+  await _tapVisible(tester, find.byKey(const Key('purchase.store.select')));
+  await _pumpReady(tester);
+  await tester.tap(find.text(displayName).last);
+  await _pumpReady(tester);
+}
+
+Future<void> _stageExistingProduct(
+  WidgetTester tester,
+  String productLabel,
+) async {
+  await _enterVisibleText(
+    tester,
+    find.byKey(const Key('item.lineTotal')),
+    '12.99',
+  );
+  await _tapVisible(tester, find.byKey(const Key('purchase.product.select')));
+  await _pumpReady(tester);
+  await tester.tap(find.text(productLabel).last);
+  await _pumpReady(tester);
+  await _tapVisible(tester, find.byKey(const Key('product.useSelected')));
+  await _pumpReady(tester);
+}
+
+Future<void> _createStoreInCatalogue(
+  WidgetTester tester,
+  String displayName,
+) async {
+  await _enterVisibleText(
+    tester,
+    find.byKey(const Key('stores.create.name')),
+    displayName,
+  );
+  await _tapVisible(tester, find.byKey(const Key('stores.create')));
+  await _pumpReady(tester);
+}
+
+Future<void> _createProductInCatalogue(
+  WidgetTester tester, {
+  required String code,
+}) async {
+  await _enterVisibleText(
+    tester,
+    find.byKey(const Key('products.create.code')),
+    code,
+  );
+  await _enterVisibleText(
+    tester,
+    find.byKey(const Key('products.create.name')),
+    'Produto Refresh',
+  );
+  await _enterVisibleText(
+    tester,
+    find.byKey(const Key('products.create.brand')),
+    'Marca A',
+  );
+  await _tapVisible(tester, find.byKey(const Key('products.createAnyway')));
   await _pumpReady(tester);
 }
 

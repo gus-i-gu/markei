@@ -1,83 +1,69 @@
-# G_OPS_CODEX - Hosted Purchase Registration Correction Evidence
+# G_OPS_CODEX - Explicit Purchase Store Selection Evidence
 
-- Authority marker: C10-MCG02-HOSTED-PURCHASE-CORRECTION_20260720T193745Z
+- Authority marker: C10-MCG02-STORE-SELECTION-CORRECTION_20260720T201904Z
 - Branch: intermid-cycle-recovery
-- Baseline HEAD before correction: be0462a7de79de706420dbbeb9686f01579baed6
-- Final commit SHA: resolved after commit; Codex terminal response reports it.
+- Baseline HEAD before correction: f37dfb49502756a21c6de02fc1a8c662311b1e6a
+- Final commit SHA: self-referential Git SHA is reported in the Codex terminal response.
 - Provider access: none. No Auth0, Render, Neon, provider credential, token, connection string, real Enroll, Query or Sync endpoint was accessed.
 
 ## Changed Paths
 
-- `clients/markei_flutter/lib/app/markei_app.dart`
-- `clients/markei_flutter/lib/app/pages/products_page.dart`
 - `clients/markei_flutter/lib/app/pages/purchase_page.dart`
-- `clients/markei_flutter/lib/application/catalogue_queries.dart`
-- `clients/markei_flutter/lib/infrastructure/local/local_purchase_repository.dart`
-- `clients/markei_flutter/lib/infrastructure/local/local_query_repository.dart`
 - `clients/markei_flutter/test/app/markei_app_test.dart`
-- `clients/markei_flutter/test/catalogue_store_repository_test.dart`
-- `clients/markei_flutter/test/local_purchase_repository_test.dart`
 - `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
 - `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
 - `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
 
-Preserved untracked files:
+Preserved untracked private files:
 
 - `clients/markei_flutter/Exact Auth0 API audience`
 - `clients/markei_flutter/Windows Native Application Client ID`
+
+## Reproduction and Diagnosis
+
+Before the source fix, Codex added `no implicit Store selection after load` and ran:
+
+- `flutter test test/app/markei_app_test.dart --name "no implicit Store selection after load"`: failed, 0/1 tests passed. The assertion for visible `Select Store` failed because Purchase had already selected the first Store after catalogue load.
+
+Proven cause: Purchase state stored a `Store` object and `_loadCatalogue()` silently assigned `stores.first` whenever there was no prior selected Store. The blocked human flow was therefore not proven to be hosted registration, Product staging, IndexedStack navigation, or server/provider authorization. The local UI/application cause was implicit first-row selection plus object-instance-based selection state across refreshed Store lists.
 
 ## Commands and Results
 
 - `git branch --show-current`: `intermid-cycle-recovery`.
 - `git fetch origin`: passed.
 - `git pull --ff-only`: passed; already up to date.
-- `git merge-base --is-ancestor a3d2c782584054fdd53a71a90aab0d8ead78e12f HEAD`: passed.
+- `git merge-base --is-ancestor f37dfb49502756a21c6de02fc1a8c662311b1e6a HEAD`: passed.
+- `git merge-base --is-ancestor bf78a3908ad05b3e7a0decc197fa2f99970059f1 HEAD`: passed.
 - `git status --short --branch`: clean tracked state before editing; two private untracked provider-note files preserved.
 - Methodology and stage boot reads completed for root `AGENTS.md`, `INDEX.md`, notebook `AGENTS.md`, `METHOD_FOUNDATIONS.md`, `FLUX.md`, `PROMOTION_RULES.md`, `CHAT_PROTOCOL.md`, current J/D/E/F and latest G/H/I.
-- `dart format ...`: passed during implementation.
-- Focused Store/Purchase tests: `flutter test test/catalogue_store_repository_test.dart test/local_purchase_repository_test.dart test/app/markei_app_test.dart`: passed, 26 tests.
+- `dart format lib/app/pages/purchase_page.dart test/app/markei_app_test.dart`: passed, 2 files, 0 changed.
+- `flutter test test/app/markei_app_test.dart --name "no implicit Store selection after load"` after fix: passed, 1 test.
+- `flutter test test/app/markei_app_test.dart`: passed, 20 tests.
+- `flutter test test/catalogue_store_repository_test.dart test/local_purchase_repository_test.dart`: passed, 15 tests.
 - `flutter analyze`: passed, no issues.
-- `flutter test`: passed, 106 tests and 2 existing disposable lab skips.
+- `flutter test`: passed, 115 tests and 2 existing disposable lab skips; retained existing Drift multi-database debug warnings in sync tests.
 - `dart format --set-exit-if-changed lib test`: passed, 83 files, 0 changed.
 - `flutter build apk --debug`: passed; built `build\app\outputs\flutter-apk\app-debug.apk`; retained existing Auth0 Flutter Kotlin Gradle Plugin warning.
-- `flutter build windows --release`: passed; built `build\windows\x64\runner\Release\markei.exe`; retained existing Boost CMP0167 developer warning.
-- Focused app rerun after diagnostic fixture correction: `flutter test test/app/markei_app_test.dart`: passed, 11 tests.
+- `flutter build windows --release`: first two attempts failed at MSBuild/CMake install with no source compile error. The generated CMake install command then passed directly, and a final `flutter build windows --release` passed; built `build\windows\x64\runner\Release\markei.exe`; retained existing Boost CMP0167 developer warning.
 - `git diff --check`: passed.
-- `git diff --name-only`: listed only changed Flutter source/test paths before G/H/I replacement.
-- Diff secret scan: no real provider secret matches. One synthetic diagnostic fixture initially contained secret-shaped words and was corrected before final scan.
-- Tracked binary/generated scan: found pre-existing tracked desktop/package binaries under `app/database`, `build/Markei`, and `dist/`; no Flutter build output, APK, Windows runner output, database, provider artifact or new binary is tracked by this unit.
+- `git diff --name-only`: listed only the two Flutter source/test paths before G/H/I replacement.
+- Diff secret scan: no matches for credential assignments, connection strings, provider URLs, API keys, or authorization header values.
+- Tracked binary/generated scan: found only pre-existing tracked desktop/package binaries under `app/database`, `build/Markei`, and `dist/`; no changed binary, APK, database, provider artifact or generated credential file is part of this unit.
 
-No Drift schema or generated source changed. No TypeScript/API test was required because no shared server contract changed.
-
-## Failure Reproduced and Diagnosed
-
-The deterministic local reproduction boundary is the hosted-bound Purchase registration path with:
-
-- hosted Account fixture `11111111-1111-4111-8111-111111111111`;
-- hosted server Device fixture `22222222-2222-4222-8222-222222222222`;
-- active `provider-native` binding state;
-- existing packaged Product `ARROZ-001`;
-- existing Store `Mercado Central`;
-- one Purchase registration and one `purchase.registered` payload-version-3 pending event.
-
-The correction identifies the local failure class as an Account-scoped catalogue relationship problem, not a provider or server authorization failure: Purchase registration could still attempt Store creation inline while Catalogue had no independent hosted Store surface, and production diagnostics collapsed typed failures into a generic message. Registration also used upsert semantics for local Account and SyncState rows, which could rewrite existing hosted/cursor state during purchase registration.
+No Drift schema or generated source changed. No TypeScript/API regression was required because no shared server contract, API, event version or authorization path changed.
 
 ## Counts and Evidence
 
-- Hosted-bound successful registration produced exactly 1 Purchase, 1 SyncEvent, and 1 PendingEvent.
-- `purchase.registered` payload version remained 3 and the stored content hash revalidated from canonical JSON.
-- Rollback test using a missing same-Account Store preserved 0 Stores, 0 Purchases, 0 PurchaseItems, 0 SyncEvents, 0 PendingEvents, and 0 Devices from the failed transaction.
-- Close/reopen file-backed Drift preserved 1 Store, 1 Purchase, 1 SyncEvent, 1 PendingEvent, the active hosted binding, and Device sequence `2`.
-- Local-only purchase registration still succeeded with 1 Purchase, 1 SyncEvent, and 1 PendingEvent.
-- UI tests prove staged draft lines remain after typed and unexpected registration failures.
+- `complete Catalogue-create-to-Purchase-register flow` created 1 Purchase, 1 SyncEvent, and 1 PendingEvent.
+- Existing repository tests preserved local-only and hosted-bound registration, payload-version-3 event creation, exactly one pending outbox row, rollback with zero partial mutation, and close/reopen preservation.
+- Device sequence, hosted binding, local-only facts, immutable events, content hashes, outbox rows and existing local history were not rewritten by this UI/application correction.
 
 ## Exclusions
 
-- No provider resources were accessed or mutated.
-- No PostgreSQL migration, Drift migration, generated Drift source, dependency, server authorization, event payload version, navigation architecture, Analytics, PIN, Settings, deployment, permanent documentation, MCG-03 or MCG-04 work was performed.
+No provider resource was accessed or mutated. No migration, Drift schema, dependency, API, event payload, server authorization, sync protocol, navigation architecture, Analytics, PIN, Settings, deployment, permanent documentation, MCG-03 or MCG-04 work was performed.
 
 ## Terminal
 
 ~~~text
-C10_MCG02_HOSTED_PURCHASE_REGISTRATION_CORRECTED
+C10_MCG02_STORE_SELECTION_CORRECTED
 ~~~

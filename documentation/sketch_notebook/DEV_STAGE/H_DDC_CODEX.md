@@ -1,46 +1,43 @@
-# H_DDC_CODEX - Store and Purchase Correction Semantics
+# H_DDC_CODEX - Explicit Store Selection Semantics
 
-- Authority marker: C10-MCG02-HOSTED-PURCHASE-CORRECTION_20260720T193745Z
-- Baseline HEAD before correction: be0462a7de79de706420dbbeb9686f01579baed6
-- Final commit SHA: resolved after commit; Codex terminal response reports it.
-- Evidence boundary: local Flutter/Dart source, file-backed Drift tests, widget tests, Android/Windows local builds. No provider operation.
+- Authority marker: C10-MCG02-STORE-SELECTION-CORRECTION_20260720T201904Z
+- Baseline HEAD before correction: f37dfb49502756a21c6de02fc1a8c662311b1e6a
+- Final commit SHA: self-referential Git SHA is reported in the Codex terminal response.
+- Evidence boundary: local Flutter source, widget tests, repository regressions, local Android/Windows builds. No provider operation.
 
 ## Materialized Vocabulary
 
-- `store-created`: materialized by `CatalogueQueryRepository.createStore()` and the Catalogue Stores section. A Store is durably available to the active Account.
-- `store-required`: materialized by Purchase UI when no Store exists; the user is told to create a Store in Catalogue before registering.
-- `purchase-registered-locally`: retained as the success message for local Purchase registration and not used as hosted sync completion.
-- `purchase-registration-not-applied`: represented by typed `AppFailure` outcomes where the transaction rolls back and the in-memory draft remains.
-- `purchase-registration-unknown`: materialized as the stable unexpected-error code; the UI tells the user to keep the draft and check History before retrying.
-- `provider-sync-completed`: not introduced or claimed by this correction.
+- `store-available`: a Store appears in the active Account-scoped list; this no longer selects it.
+- `store-selection-required`: no Store ID has been deliberately selected.
+- `store-selected`: the visible Store name resolves to one stable same-Account Store ID.
+- `store-selection-invalidated`: the selected ID disappeared from the refreshed active Account list and no fallback was inferred.
+- `item-required`: a Store is selected but no Purchase Item is staged.
+- `purchase-registered-locally`: selected Store and staged Items committed atomically to local Drift.
 
-## UI and Draft Semantics
+## UI Semantics
 
-Catalogue now presents Stores as a section separate from Products. Store creation trims names, rejects empty names, and deterministically reuses exact same-Account duplicates. Cross-Account Stores are not listed.
+Purchase now starts with a visible `Select Store` placeholder whenever Stores are available but no Store has been selected. It does not silently select the first Store, including when only one Store exists. After explicit choice, it shows `Selected Store: <name>` and never exposes Store UUIDs.
 
-Purchase now selects an existing Store only. Inline Store creation was removed from Purchase to avoid ambiguous registration-time catalogue mutation. If no Store exists, Purchase gives the truthful instruction to create one in Catalogue. Existing in-memory staged Items remain in the `IndexedStack` flow while navigating between Purchase and Catalogue; no durable draft persistence is claimed.
+Refresh and IndexedStack navigation preserve selection only by Store ID. If the selected Store is missing from the refreshed Account-scoped list, the selection clears and the UI reports `store-selection-invalidated`. If a valid Store is selected and no Item is staged, the UI reports only `item-required`, not a missing Store.
 
-Typed `AppFailure` is caught separately and displayed through code, field-aware user message, outcome, recovery and draft-preservation wording. Unexpected errors display only `purchase-registration-unknown` and generic recovery. Production UI does not display exception text, SQL, paths, UUIDs, provider credentials, payload facts or stack traces.
+Draft preservation semantics from the prior correction remain: staged in-memory Items remain available after typed or unexpected registration failures. This unit does not claim durable Purchase draft persistence.
 
-## Named Semantic Tests
+## Named Tests
 
-- `Catalogue creates a Store for the active Account`
-- `empty Store name is rejected`
-- `same-Account duplicate Store creation reuses the existing Store`
-- `cross-Account Store visibility is denied`
-- `Purchase requires an existing Store`
-- `registration failure preserves the staged draft`
-- `typed AppFailure produces sanitized UI diagnostics`
-- `unexpected failure produces a stable generic code and logs no provider credentials or facts`
-- `local-only purchase registration still succeeds`
-- `hosted-bound Purchase A registration succeeds`
-- `registration creates exactly one event and one pending outbox record`
-- `transaction rollback leaves no partial Store/Purchase/Event mutation`
-- `reopening the database preserves Store, Purchase, event, outbox, binding, and device sequence`
+- `no implicit Store selection after load`
+- `explicit selection with one Store`
+- `selection uses stable StoreId`
+- `selection survives Store-list object reconstruction`
+- `selection survives Catalogue navigation and refresh`
+- `deleted or missing selected Store clears safely`
+- `cross-Account Store cannot be selected`
+- `Store selected plus no Item reports item-required`
+- `complete Catalogue-create-to-Purchase-register flow`
+- Existing retained tests: `Purchase requires an existing Store`, `registration failure preserves the staged draft`, `typed AppFailure produces sanitized UI diagnostics`, `unexpected failure produces a stable generic code and logs no provider credentials or facts`, local-only and hosted-bound repository registration, rollback, event/outbox counts, and close/reopen persistence.
 
 ## Wording Guard
 
-No source, test or report claims provider convergence, provider synchronization completion, MCG-02 closure, MCG-03 activation or MCG-04 activation. This is a local corrective implementation and validation boundary only.
+No source, test or report claims provider convergence, provider synchronization completion, MCG-02 closure, MCG-03 activation or MCG-04 activation. This is a local corrective selection and registration-readiness boundary only.
 
 ## Exclusions
 

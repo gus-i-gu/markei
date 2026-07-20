@@ -1,56 +1,49 @@
-# I_DSN_CODEX - Hosted Purchase Correction Design Evidence
+# I_DSN_CODEX - Explicit Store Selection Design Evidence
 
-- Authority marker: C10-MCG02-HOSTED-PURCHASE-CORRECTION_20260720T193745Z
-- Baseline HEAD before correction: be0462a7de79de706420dbbeb9686f01579baed6
-- Final commit SHA: resolved after commit; Codex terminal response reports it.
+- Authority marker: C10-MCG02-STORE-SELECTION-CORRECTION_20260720T201904Z
+- Baseline HEAD before correction: f37dfb49502756a21c6de02fc1a8c662311b1e6a
+- Final commit SHA: self-referential Git SHA is reported in the Codex terminal response.
 
 ## Dependency Direction
 
 The correction preserves the selected boundary:
 
-`Catalogue UI -> CatalogueQueryRepository Store port -> LocalQueryRepository -> existing stores table`
+`Purchase UI -> selected Store ID -> Account-scoped CatalogueQueryRepository Store list -> ExistingStoreReference -> LocalPurchaseRepository transaction`
 
-`Purchase UI -> ExistingStoreReference -> LocalPurchaseRepository transaction -> Purchase + Items + purchase.registered v3 + PendingEvent`
+Widgets still depend on application ports. Drift operations remain in infrastructure. No domain object, event payload contract, server API, server authorization path, sync protocol or schema version changed.
 
-Widgets still depend on application ports. Drift operations remain in infrastructure. No domain object, event payload contract, server API, server authorization path or schema version was changed.
+## Selection State Model
 
-## Repository and Transaction Correction
+Purchase now stores `String? _selectedStoreId` as the stable selection value. The display name and command reference are resolved from the current Account-scoped `List<Store>`. A null ID renders `Select Store`; a resolved ID renders `Selected Store: <name>`; an unresolved ID clears and reports `store-selection-invalidated`.
 
-`CatalogueQueryRepository` now exposes `createStore(AccountId, displayName)`. `LocalQueryRepository` implements it through a transaction that:
+The previous implementation stored `Store? _selectedStore` and assigned `stores.first` after load when no previous selection existed. Tests reproduced that this erased the distinction between Store availability and Store selection. The final implementation removes first-row fallback and no longer treats a reconstructed Store object as authoritative selection.
 
-- trims and validates the Store name;
-- ensures the Account with insert-ignore semantics;
-- reuses an exact same-Account duplicate deterministically;
-- inserts a new Store only for the active Account.
+## Account Boundary
 
-`LocalPurchaseRepository` now ensures local Account and SyncState rows with insert-ignore semantics instead of upsert rewrite. This preserves existing hosted Account rows and existing cursor state during purchase registration. Device identity remains insert-ignore. Registration remains one transaction.
+The only selectable IDs come from `widget.catalogueQueries.listStores(widget.accountId)`. `_storeReference()` resolves the selected ID against that active list and produces `ExistingStoreReference` only for a matching Store. Foreign or stale Store IDs cannot become command references through the UI.
 
-## Store Account Scope
+## Refresh Behavior
 
-Store listing was already Account-scoped and remains so. Store creation scopes duplicate lookup and insertion by the active Account. Cross-Account Store visibility is denied by repository tests and no UI path exposes foreign Stores.
+`didUpdateWidget` still reloads catalogue data when the app refresh signal changes. A valid selected ID is retained across Catalogue navigation, Product/Store refreshes and reconstructed Store objects. If the Store disappears, selection is cleared with deterministic feedback and no new Store is inferred.
 
-## Hosted Registration Invariant
+## Registration Invariants
 
-After restart, the hosted composition still supplies the hosted AccountId and server DeviceId. Hosted-bound Purchase A registration now succeeds using an existing same-Account Store and Product. The resulting `purchase.registered` event embeds:
+Registration remains delegated to `LocalPurchaseRepository` and still uses only `ExistingStoreReference` from Purchase UI. The prior `bf78a39` invariants are preserved by retained repository tests:
 
-- AccountId `11111111-1111-4111-8111-111111111111`;
-- DeviceId `22222222-2222-4222-8222-222222222222`;
-- payload version `3`.
+- same hosted AccountId and server DeviceId after restart;
+- existing same-Account Store and Product;
+- one atomic Purchase;
+- exactly one `purchase.registered` payload-version-3 SyncEvent;
+- exactly one PendingEvent;
+- one Device sequence advance on success;
+- no partial mutation or sequence advance on rollback;
+- local-only registration remains functional;
+- hosted binding/enrollment state remains unchanged.
 
-No local-only event is relabeled or translated.
+## Transaction Boundaries
 
-## Event and Outbox Invariants
+This unit does not add transaction code. It prevents invalid UI command construction before the repository boundary and preserves repository atomicity. Failure feedback differentiates Store selection from Item staging before registration starts; typed and unexpected repository failures still preserve the staged draft.
 
-Success creates exactly one immutable SyncEvent and one PendingEvent. The event content hash revalidates from canonical JSON. Rollback leaves no partial Store, Purchase, PurchaseItem, SyncEvent, PendingEvent or Device sequence mutation from the failed transaction. Close/reopen preserves Store, Purchase, event, pending outbox row, active binding and next Device sequence.
+## Deviations and Deferrals
 
-## UI Boundary
-
-Catalogue gained a minimal Stores section. Purchase removed inline Store creation and reloads Catalogue data when the app refresh signal changes, preserving staged in-memory Items while navigating through the existing `IndexedStack`. Navigation architecture, visual language, Analytics, PIN pages, Settings and unrelated pages were not redesigned.
-
-## Compatibility Choices
-
-`NewStoreReference` remains in the application command type and repository implementation for existing isolated tests and compatibility. Production Purchase UI now uses only `ExistingStoreReference`. Inline NewStore handling became duplicate-aware but is no longer the intended user path.
-
-## Deviations and Residual Risks
-
-No schema migration was needed. The exact provider-side Purchase A retry remains a human/provider gate after this local correction is published. This unit does not prove provider convergence, Device B enrollment, revocation denial, API outage recovery, logout token ephemerality, permanent promotion, MCG-02 closure, MCG-03 or MCG-04.
+No schema migration was needed. No durable draft storage, Store edit/archive UX, broader Catalogue redesign, provider synchronization proof, MCG-02 closure, MCG-03 or MCG-04 work was attempted.

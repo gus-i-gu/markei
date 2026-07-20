@@ -58,7 +58,7 @@ class _PurchasePageState extends State<PurchasePage> {
   List<LocalReference> _paymentMethods = const [];
   List<ProductSimilarityWarning> _warnings = const [];
   Product? _selectedProduct;
-  Store? _selectedStore;
+  String? _selectedStoreId;
   LocalReference? _selectedPerson;
   LocalReference? _selectedPaymentMethod;
   bool _loading = true;
@@ -129,23 +129,26 @@ class _PurchasePageState extends State<PurchasePage> {
       if (!mounted) {
         return;
       }
-      final previousStoreId = _selectedStore?.id.value;
-      final matchingStores = previousStoreId == null
-          ? const <Store>[]
-          : stores
-                .where((store) => store.id.value == previousStoreId)
-                .toList(growable: false);
-      final selectedStore = previousStoreId == null
-          ? (stores.isEmpty ? null : stores.first)
-          : (matchingStores.isEmpty ? null : matchingStores.first);
+      final previousStoreId = _selectedStoreId;
+      final selectedStoreStillAvailable =
+          previousStoreId != null &&
+          stores.any((store) => store.id.value == previousStoreId);
+      final selectedStoreInvalidated =
+          previousStoreId != null && !selectedStoreStillAvailable;
       setState(() {
         _products = products;
         _stores = stores;
         _people = people;
         _paymentMethods = paymentMethods;
-        _selectedStore = selectedStore;
+        if (selectedStoreInvalidated) {
+          _selectedStoreId = null;
+        }
         _loading = false;
-        if (clearFeedback) {
+        if (selectedStoreInvalidated) {
+          _feedback = _PurchaseFeedback.error(
+            'store-selection-invalidated: Selected Store is no longer available for this account. Choose a Store again.',
+          );
+        } else if (clearFeedback) {
           _feedback = null;
         }
       });
@@ -399,6 +402,19 @@ class _PurchasePageState extends State<PurchasePage> {
     if (_submitting) {
       return;
     }
+    final storeValidation = _validateStoreSelection();
+    if (storeValidation != null) {
+      setState(() => _feedback = _PurchaseFeedback.error(storeValidation));
+      return;
+    }
+    if (_lines.isEmpty) {
+      setState(() {
+        _feedback = _PurchaseFeedback.error(
+          'item-required: Stage at least one Item.',
+        );
+      });
+      return;
+    }
     final storeReference = _storeReference();
     DateTime occurrenceTime;
     try {
@@ -411,16 +427,6 @@ class _PurchasePageState extends State<PurchasePage> {
     } on FormatException catch (error) {
       setState(() {
         _feedback = _PurchaseFeedback.error(error.message);
-      });
-      return;
-    }
-    if (storeReference == null || _lines.isEmpty) {
-      setState(() {
-        _feedback = _PurchaseFeedback.error(
-          storeReference == null
-              ? 'Create a Store in Catalogue, then choose it for this purchase.'
-              : 'Stage at least one Item.',
-        );
       });
       return;
     }
@@ -478,11 +484,53 @@ class _PurchasePageState extends State<PurchasePage> {
   }
 
   StoreReference? _storeReference() {
-    final selected = _selectedStore;
+    final selected = _selectedStore();
     if (selected != null) {
       return ExistingStoreReference(selected.id);
     }
     return null;
+  }
+
+  Store? _selectedStore() {
+    final selectedId = _selectedStoreId;
+    if (selectedId == null) {
+      return null;
+    }
+    for (final store in _stores) {
+      if (store.id.value == selectedId) {
+        return store;
+      }
+    }
+    return null;
+  }
+
+  String? _validateStoreSelection() {
+    final selectedId = _selectedStoreId;
+    if (selectedId == null) {
+      return 'store-selection-required: Select a Store for this purchase.';
+    }
+    if (_selectedStore() == null) {
+      _selectedStoreId = null;
+      return 'store-selection-invalidated: Selected Store is no longer available for this account. Choose a Store again.';
+    }
+    return null;
+  }
+
+  void _reviewPurchase() {
+    final storeValidation = _validateStoreSelection();
+    if (storeValidation != null) {
+      setState(() => _feedback = _PurchaseFeedback.error(storeValidation));
+      return;
+    }
+    if (_lines.isEmpty) {
+      setState(() {
+        _feedback = _PurchaseFeedback.error(
+          'item-required: Stage at least one Item.',
+        );
+      });
+      return;
+    }
+    setState(() => _reviewing = true);
   }
 
   ProductDraft _productDraft() {
@@ -580,9 +628,7 @@ class _PurchasePageState extends State<PurchasePage> {
                 ),
               OutlinedButton(
                 key: const Key('purchase.review'),
-                onPressed: _lines.isEmpty
-                    ? null
-                    : () => setState(() => _reviewing = true),
+                onPressed: _submitting ? null : _reviewPurchase,
                 child: const Text('Review purchase'),
               ),
             ],
@@ -612,9 +658,7 @@ class _PurchasePageState extends State<PurchasePage> {
             ),
             FilledButton(
               key: const Key('purchase.register'),
-              onPressed: _reviewing && _lines.isNotEmpty && !_submitting
-                  ? _registerPurchase
-                  : null,
+              onPressed: _reviewing && !_submitting ? _registerPurchase : null,
               child: Text(_submitting ? 'Registering...' : 'Register purchase'),
             ),
           ],
@@ -687,6 +731,7 @@ class _PurchasePageState extends State<PurchasePage> {
   }
 
   Widget _storeSection() {
+    final selectedStore = _selectedStore();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -697,15 +742,29 @@ class _PurchasePageState extends State<PurchasePage> {
             key: Key('purchase.store.required'),
           )
         else
-          DropdownButton<Store>(
+          DropdownButton<String>(
             key: const Key('purchase.store.select'),
-            value: _selectedStore,
+            value: selectedStore == null ? null : _selectedStoreId,
+            hint: const Text('Select Store'),
             isExpanded: true,
             items: [
               for (final store in _stores)
-                DropdownMenuItem(value: store, child: Text(store.displayName)),
+                DropdownMenuItem(
+                  value: store.id.value,
+                  child: Text(store.displayName),
+                ),
             ],
-            onChanged: (value) => setState(() => _selectedStore = value),
+            onChanged: (value) => setState(() {
+              _selectedStoreId = value;
+              _feedback = value == null
+                  ? null
+                  : _PurchaseFeedback.success('store-selected');
+            }),
+          ),
+        if (selectedStore != null)
+          Text(
+            'Selected Store: ${selectedStore.displayName}',
+            key: const Key('purchase.store.selected'),
           ),
         Row(
           children: [
