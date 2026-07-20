@@ -1,20 +1,18 @@
-# E_DDC_STAGE — Provider Convergence Semantics
+# E_DDC_STAGE — Store and Purchase Correction Semantics
 
-> Authority marker: C10-MCG02-PROVIDER-CONVERGENCE_20260720T175006Z
-> Status: **ACTIVE HUMAN-EVIDENCE SEMANTIC AUTHORITY**
+> Authority marker: C10-MCG02-HOSTED-PURCHASE-CORRECTION_20260720T193745Z
+> Status: **ACTIVE CODEX SEMANTIC AUTHORITY**
 
 Retain these distinctions:
 
-- `native-authenticated` — provider callback and usable ephemeral credentials passed;
-- `membership-active` — one explicit external identity maps to one active Account membership;
-- `hosted-restart-required` — enrollment is durable but the current composition cannot sync;
-- `hosted-binding-active` — restart selected the hosted Account/server Device;
-- `provider-sync-completed` — one bound Device completed hosted upload/download/acknowledgement;
-- `provider-converged` — both restarted Devices reopen with equal authoritative hosted facts;
-- `device-revoked` — revoked Device is denied without hosted state advance;
-- `provider-unavailable-local-pending` — local registration survives API unavailability;
-- `signed-out` — protected operations require new authentication and no token is recovered.
+- `store-created` — one Store is durably available to the active Account;
+- `store-required` — Purchase cannot register until an existing Store is selected;
+- `purchase-registered-locally` — Purchase and one pending event committed atomically;
+- `purchase-registration-not-applied` — transaction rolled back and in-memory draft remains;
+- `purchase-registration-unknown` — unexpected failure; do not claim registration or discard draft;
+- `provider-sync-completed` — later hosted upload/download/acknowledgement completed.
 
-Authentication is not membership, enrollment is not activation, one-Device sync is not convergence,
-and Render/Neon row presence is not local reopen proof. Local-only history is neither failed nor
-hosted. No success wording may close MCG-02 until every D gate is evidenced. MCG-03 remains inactive.
+Catalogue must present Stores separately from Products. Empty or cross-Account Store selection is
+invalid. Production UI may expose stable code, field and recovery but never exception text, SQL,
+paths, UUIDs, tokens, credentials, payloads or stack traces. Local registration is not hosted sync,
+and this correction does not close MCG-02 or activate MCG-03.

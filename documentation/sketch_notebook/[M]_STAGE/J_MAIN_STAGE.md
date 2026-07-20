@@ -1041,3 +1041,41 @@ D/E/F carrying marker `C10-MCG02-PROVIDER-CONVERGENCE_20260720T175006Z` are the 
 evidence contract. They authorize only the named development-provider operations and sanitized
 evidence capture. No source change, migration, production mutation, permanent promotion, MCG-02
 closure, MCG-03 or MCG-04 is authorized by this transition.
+
+---
+
+## 58. Append-only interruption — hosted Purchase registration correction
+
+> Reconciliation marker: C10-MCG02-HOSTED-PURCHASE-CORRECTION_20260720T193745Z
+> Reconciled at UTC: 2026-07-20T19:37:45Z
+> Authority baseline: a3d2c782584054fdd53a71a90aab0d8ead78e12f
+> Status: **BOUNDED CODEX CORRECTION ACTIVE; PROVIDER CONVERGENCE PAUSED**
+
+Human evidence advanced the provider sequence through exact Auth0-subject correction, active owner
+membership, Windows Device A enrollment and the required restart boundary. The restarted client
+then failed to register synthetic Purchase A locally. Drift rolled the transaction back and the UI
+preserved the in-memory draft, but `PurchasePage` suppressed the underlying exception behind a
+generic message. Catalogue exposes Product management while Store creation exists only as an
+implicit Purchase field. This blocks the first hosted event and therefore every later convergence
+claim.
+
+Main selects one local-only correction: reproduce and fix hosted-bound Purchase registration,
+surface bounded typed diagnostics, and add explicit Account-scoped Store creation as a Catalogue
+section separate from Products. Purchase registration must select an existing Store and remain
+atomic. Existing enrollment, binding, local-only facts, payload v3 and provider configuration are
+preserved.
+
+## 59. Revised phase projection
+
+~~~text
+MCG-02 native authentication and Windows Device A enrollment        VALIDATED HUMAN
+MCG-02 hosted Purchase A local registration                         BLOCKED / CORRECTION ACTIVE
+MCG-02 Android Device B and two-Device convergence                  PAUSED
+MCG-02 provider negative proof and closure                          PENDING
+MCG-03 / MCG-04                                                     INACTIVE
+~~~
+
+D/E/F carrying `C10-MCG02-HOSTED-PURCHASE-CORRECTION_20260720T193745Z` are the only active Codex
+authority. They authorize source, focused tests and G/H/I evidence for this correction only. They
+do not authorize provider access, migration, deployment, permanent promotion, MCG-02 closure,
+MCG-03 or MCG-04.

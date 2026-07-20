@@ -1,38 +1,35 @@
-# F_DSN_STAGE — Decisive Provider-Proof Design
+# F_DSN_STAGE — Hosted Purchase Correction Design
 
-> Authority marker: C10-MCG02-PROVIDER-CONVERGENCE_20260720T175006Z
-> Status: **ACTIVE HUMAN-EVIDENCE DESIGN AUTHORITY**
+> Authority marker: C10-MCG02-HOSTED-PURCHASE-CORRECTION_20260720T193745Z
+> Status: **ACTIVE CODEX DESIGN AUTHORITY**
 
-## Selected topology
+## Selected boundary
 
 ~~~text
-Auth0 synthetic identity
-  -> explicit Neon Account membership
-  -> Windows installation / Device A
-  -> restart-bound hosted lane
-  -> Render HTTPS / Neon Account stream
-  -> Android installation / Device B
-  -> restart-bound hosted lane
+Catalogue Store UI
+  -> Store application/repository port
+  -> existing Account-scoped Drift stores table
+
+Purchase UI -> existing Store reference -> LocalPurchaseRepository transaction
+  -> Purchase + Items + purchase.registered v3 + pending outbox
 ~~~
 
-The proof observes the production adapters already materialized at `e762b64`. It does not introduce
-a new data model. Auth0 subject remains external identity; AccountId and DeviceId remain server-owned
-UUIDs; each installation receives a distinct Device; both Devices share one explicit Account.
+No new server table, API route, event version or Drift migration is expected. A migration requires
+new Main reconciliation if concrete evidence proves it unavoidable.
 
 ## Invariants
 
-- private build inputs remain outside Git and are supplied separately to Dart and Android Gradle;
-- Account membership exists before enrollment and is never inferred from token claims;
-- enrollment completion cannot reuse the pre-enrollment composition;
-- only post-restart hosted events enter the Account stream;
-- local-only facts/events retain identity and never upload through hosted credentials;
-- repeated upload/download/enrollment is duplicate-equivalent or no-new-events;
-- revoke/outage/logout failure paths preserve local facts and do not advance forbidden state;
-- evidence contains counts and states, never credentials, subjects, IDs, URLs with secrets or facts.
+- Store creation and listing use the active Account only;
+- Purchase references an existing same-Account Store;
+- hosted Account/server Device selected after restart remain the event envelope identities;
+- registration is atomic and advances Device sequence exactly once on success, never on rollback;
+- success creates exactly one immutable event and one pending outbox row;
+- local-only facts, hosted binding and enrollment state remain unchanged;
+- UI depends on application ports; Drift stays in infrastructure;
+- diagnostics are closed, typed and non-secret.
 
-## Rollback and cleanup
+## Rollback and deferrals
 
-Provider proof may revoke synthetic Devices, disable synthetic membership and remove residual
-synthetic facts only through separately authorized cleanup after evidence capture. It must not delete
-the development project/branch or production data. Failure stops at the affected gate and preserves
-diagnostic state. No source rollback is implied by provider configuration failure.
+Failure preserves the prior database and in-memory draft. Source rollback is the bounded correction
+commit; no provider rollback is involved. Durable draft storage, full Store editing/archive UX,
+provider mutation, deployment, permanent promotion and MCG-03/04 remain deferred.
