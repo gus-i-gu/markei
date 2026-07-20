@@ -1,66 +1,92 @@
-# I_DSN_CODEX - Persistent Transaction Diagnostic Design Evidence
+# I_DSN_CODEX - Drift v8 Repair Design Evidence
 
-- Authority marker: C10-MCG02-PURCHASE-TRANSACTION-DIAGNOSTIC_20260720T205714Z
-- Baseline HEAD before diagnostic: 3bad6f819776094a0e621231c2bee3d4a252a1ff
-- Final commit SHA: self-referential Git SHA is reported in the Codex terminal response.
+- Sequence: FLX-ORD-01
+- Role: Codex design evidence report
+- Unit: C10-MCG02-DRIFT-V8-FK-REPAIR_20260720T221440Z
+- Baseline HEAD: e9f355c61b76975e99f511e3201e6e815c25f7f1
+- Final commit SHA: reported in the terminal response after commit creation.
 
-## Transaction Boundary
+## Migration Direction
 
-The Purchase registration path remains:
+The final migration direction is forward-only:
 
-`PurchasePage -> RegisterPurchaseCommand -> LocalPurchaseRepository -> one Drift transaction -> typed AppFailure or committed Purchase/event/outbox`
+~~~text
+supported v1/v2/v3/v4/v5/v6/v7 local Drift database -> schema v8
+fresh database -> schema v8
+already migrated v8 -> no rewrite
+~~~
 
-`LocalPurchaseRepository` now holds the current closed phase inside the transaction. Typed domain/application failures rethrow unchanged. Unexpected infrastructure failures are converted to `AppFailure` with a phase-specific code and `FailureOutcome.notApplied`, causing Drift to roll back the transaction.
+Historical migration meanings are preserved. Existing databases are not reset.
 
-## Precise Root Cause
+## Rebuilt Tables
 
-The migrated lifecycle fixture reproduced the first failing phase at `insert-purchase`. Schema inspection of the disposable file-backed database showed that the production v2-to-v7 migration leaves foreign keys in migrated tables pointing at dropped temporary tables:
+Schema v8 rebuilds only:
 
-- `purchases.payment_method_id -> payment_methods_old.id`;
-- `purchases.person_id -> people_old.id`;
-- `purchase_items.product_id -> products_old.id`.
+- `purchases`
+- `purchase_items`
 
-The new Purchase insert fails before item insertion, sequence allocation, event serialization, event insertion or outbox insertion. This explains a local registration failure with no Purchase in History.
+The rebuilt constraints are:
 
-## Corrected Invariant
+- `purchases.id` primary key
+- `purchases.account_id -> local_accounts.id ON DELETE RESTRICT`
+- `purchases.store_id -> stores.id ON DELETE RESTRICT`
+- `purchases.person_id -> people.id ON DELETE RESTRICT`
+- `purchases.payment_method_id -> payment_methods.id ON DELETE RESTRICT`
+- `purchase_items.id` primary key
+- `purchase_items.purchase_id -> purchases.id ON DELETE CASCADE`
+- `purchase_items.product_id -> products.id ON DELETE RESTRICT`
+- `currency_code` length check on both rebuilt tables
+- current column nullability and timestamp/value columns preserved exactly by copy.
 
-The corrected invariant in this bounded unit is diagnostic and transactional:
+No PostgreSQL schema, wire contract, provider composition, authorization rule, UI surface or event version changed.
 
-- every unexpected failure maps to the first closed phase;
-- the failure is reported as not applied;
-- no SQL, exception text, path, identifier, payload or credential reaches production UI;
-- original cause remains test-only in memory;
-- rollback preserves existing facts, cursor, binding, event/outbox rows and Device sequence.
+## Transaction and Rollback Boundary
 
-The data/schema invariant itself is not corrected because that requires schema repair or migration authority.
+The v8 repair:
 
-## Migrated Lifecycle Fixture
+1. captures purchase/item counts;
+2. disables SQLite FK enforcement for table rebuild mechanics;
+3. opens one Drift transaction;
+4. renames `purchase_items` and `purchases` to v8 temporary tables;
+5. creates current tables;
+6. copies all columns exactly once;
+7. drops temporary tables;
+8. validates row counts, `_old` metadata absence, FK targets and `PRAGMA foreign_key_check`;
+9. restores FK enforcement in `finally`;
+10. validates again after restoration.
 
-The fixture starts from supported historical schema v2, migrates through `LocalDatabase` to v7, then applies hosted identity through `DriftHostedIdentityRepository`. It includes:
+Injected validation failure rolls back the transaction. The disposable source can reopen and then repair successfully.
 
-- pre-existing cursor;
-- pre-existing local Device sequence;
-- local-only pending event;
-- previously synchronized hosted-device event;
-- hosted binding applied after local facts already exist;
-- Store and Product present before hosted binding;
-- close/reopen before registration and close/reopen after failure.
+## Preservation Invariants
 
-## Account/Device/Fact Preservation
+The migration preserves:
 
-After failed registration, the fixture verifies:
+- Accounts and Devices;
+- Stores, Products, People and Payment Methods;
+- Purchases and Purchase Items;
+- sync events and pending outbox rows;
+- cursor and acknowledgement state;
+- Device sequence;
+- recovery progress;
+- migration ledger;
+- hosted identity and Account/Device binding.
 
-- one pre-existing Purchase remains visible in History;
-- no second Purchase is inserted;
-- event and outbox counts remain unchanged;
-- SyncState cursor is unchanged;
-- hosted server Device sequence is unchanged;
-- hosted binding remains persisted.
+No valid user fact is relabeled, discarded, merged, guessed or synthesized.
 
-No local facts are relabeled, no hosted binding is rewritten, and no local-only event is translated.
+## Production Purchase Boundary
 
-## Deviations and Deferrals
+The post-repair production path remains:
 
-No schema repair was attempted. D/E/F prohibit a Drift schema migration and explicitly require stopping for Main restaging when the cause needs one. The next authorized unit should decide how to repair existing v7 databases with malformed temporary-table foreign keys and how to validate a successful human retest afterward.
+~~~text
+PurchasePage -> RegisterPurchaseCommand -> LocalPurchaseRepository
+             -> one Drift transaction
+             -> Purchase + Items + v3 event + pending outbox
+~~~
 
-Provider synchronization proof, durable drafts, broader telemetry, MCG-02 closure, MCG-03 and MCG-04 remain deferred.
+The migrated hosted test proves that after v8 repair and reopen, this boundary creates one new Purchase, one Item, one v3 event and one pending outbox row, advances Device sequence from 2 to 3, leaves the cursor unchanged and remains visible in History after close/reopen.
+
+## Deviations and Unresolved Decisions
+
+- Drift generation produced no semantic generated-file diff; line-ending-only churn was restored.
+- Platform builds are build evidence only, not runtime/provider acceptance.
+- Human database correction remains unproven until a separate human retest opens and upgrades the installed database.

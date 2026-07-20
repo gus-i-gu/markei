@@ -1,36 +1,37 @@
-# H_DDC_CODEX - Purchase Transaction Diagnostic Semantics
+# H_DDC_CODEX - Drift v8 Repair Semantics
 
-- Authority marker: C10-MCG02-PURCHASE-TRANSACTION-DIAGNOSTIC_20260720T205714Z
-- Baseline HEAD before diagnostic: 3bad6f819776094a0e621231c2bee3d4a252a1ff
-- Final commit SHA: self-referential Git SHA is reported in the Codex terminal response.
-- Evidence boundary: local Flutter source, file-backed migration fixture, repository/widget tests, local Android/Windows builds. No provider or private database operation.
+- Sequence: FLX-ORD-01
+- Role: Codex didactic evidence report
+- Unit: C10-MCG02-DRIFT-V8-FK-REPAIR_20260720T221440Z
+- Baseline HEAD: e9f355c61b76975e99f511e3201e6e815c25f7f1
+- Final commit SHA: reported in the terminal response after commit creation.
 
-## Materialized Diagnostics
+## Materialized Semantics
 
-- `purchase-registration-<phase>-failed`: materialized for unexpected repository failures before commit.
-- `purchase-registration-insert-purchase-failed`: reproduced from the migrated file-backed fixture.
-- `purchase-registration-not-applied`: represented by `FailureOutcome.notApplied` and verified by unchanged History/Purchase/event/outbox/sequence counts.
-- `purchase-registration-unknown`: retained for UI-level unexpected failures outside typed repository diagnostics.
-- `draft-preserved-in-memory`: retained by existing widget tests for typed and unexpected registration failures.
-- `binding-preserved`: verified in the migrated lifecycle by applying hosted binding before the failing registration and preserving persisted identity state.
+- `local-database-upgrade-required`: retained for supported older local databases before open completes.
+- `local-database-upgrade-completed`: now means schema v8 committed and passed row-count, schema-reference, FK-target and `PRAGMA foreign_key_check` validation.
+- `local-database-upgrade-failed`: if v8 copy or validation fails, the upgrade does not commit and the database is not accepted as repaired.
+- `registered-locally`: still means Purchase, Items, event and outbox committed atomically in the production repository transaction.
+- `purchase-registration-insert-purchase-failed`: retained as bounded diagnostic wording for the earlier v7 defect and future unrelated insert failures.
 
-## User-Visible Semantics
+## Local Registration Semantics
 
-Production UI receives an `AppFailure` code and existing bounded recovery wording. It does not display SQL text, raw exception messages, stack traces, filesystem paths, Account/Device/Store/Product/Purchase identifiers, payload facts, credentials or provider configuration.
+After repair, the migrated hosted fixture registers through `LocalPurchaseRepository` rather than direct event injection. The successful local registration creates exactly one new Purchase, one new Purchase Item, one `purchase.registered` v3 event and one pending outbox row. Device sequence advances monotonically and the download cursor remains unchanged before synchronization.
 
-The original exception is retained only in `AppFailure.debugCause` for in-memory test assertions. `AppFailure.userMessage` and `toString()` do not render that cause.
+Migration success is not synchronization, provider convergence, backup, production acceptance, MCG-02 closure, MCG-03 activation or MCG-04 activation.
 
-## History Semantics
+## Named Semantic Tests
 
-The migrated fixture proves that absence from History after this phase failure means `not-applied`: after the registration attempt, History still contains exactly the one pre-existing Purchase and no new Purchase/event/outbox row appears.
+- `repairs malformed v7 purchase foreign keys and reopens`
+- `migrates file-backed v2 database to v8 and reopens`
+- `fresh v8 database creates local, recovery and hosted auth tables`
+- `v8 repair failure rolls back and source remains reopenable`
+- `reopening an already migrated v8 database does not rewrite rows`
+- `migrated hosted lifecycle repairs v8 foreign keys and registers purchase`
+- Retained tests for local-only registration, hosted-bound registration, exactly one event/outbox, transaction rollback, close/reopen preservation, Store selection, draft preservation and phase diagnostics.
 
-This unit intentionally does not use wording that implies a hidden successful commit, provider synchronization, convergence, MCG-02 closure, MCG-03 activation or MCG-04 activation.
+## Wording Boundaries
 
-## Named Tests
+Unsupported synchronization or closure wording is intentionally absent. No wording claims that the human database is corrected. Human correction still requires a separate human build/retest that opens and upgrades the real installed database successfully.
 
-- `migrated hosted lifecycle reports insert-purchase phase and preserves state`
-- Retained focused tests: local-only registration, hosted-bound registration, exactly one event/outbox on success, rollback without partial mutation, close/reopen preservation, Store selection and draft-preservation widget tests, and local database migration tests.
-
-## Partial Boundary
-
-The semantic correction is diagnostic, not a completed transaction repair. The reproduced root cause needs a schema repair/restaging, which is outside the current D/E/F authority.
+No production diagnostic exposes SQL, exception text, stack traces, local paths, Account/Device identifiers, payload facts, credentials or provider configuration.

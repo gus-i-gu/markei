@@ -7,6 +7,8 @@ import 'package:path_provider/path_provider.dart';
 
 part 'local_database.g.dart';
 
+typedef DriftV8RepairHook = Future<void> Function(String phase);
+
 class LocalAccounts extends Table {
   TextColumn get id => text()();
   TextColumn get defaultCurrencyCode => text().withLength(min: 3, max: 3)();
@@ -350,7 +352,9 @@ class MigrationLedger extends Table {
   ],
 )
 class LocalDatabase extends _$LocalDatabase {
-  LocalDatabase(super.e);
+  LocalDatabase(super.e, {this.v8RepairHook});
+
+  final DriftV8RepairHook? v8RepairHook;
 
   factory LocalDatabase.appPrivate() {
     return LocalDatabase(
@@ -368,7 +372,7 @@ class LocalDatabase extends _$LocalDatabase {
       LocalDatabase(NativeDatabase.createInBackground(file));
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -380,7 +384,7 @@ class LocalDatabase extends _$LocalDatabase {
           schemaVersion: schemaVersion,
           fromVersion: const Value(null),
           toVersion: Value(schemaVersion),
-          migrationId: const Value('create-v7'),
+          migrationId: const Value('create-v8'),
           appliedAt: DateTime.utc(2026, 7, 12),
         ),
       );
@@ -504,7 +508,20 @@ SELECT id, 5, strftime('%s','now') * 1000 FROM local_accounts
           ),
         );
       }
-      if (from > 7) {
+      if (from < 8) {
+        await _repairV8PurchaseForeignKeys();
+        await into(migrationLedger).insert(
+          MigrationLedgerCompanion.insert(
+            schemaName: 'shared_beta_local',
+            schemaVersion: to,
+            fromVersion: Value(from),
+            toVersion: const Value(8),
+            migrationId: const Value('v7-to-v8-purchase-fk-repair'),
+            appliedAt: DateTime.now().toUtc(),
+          ),
+        );
+      }
+      if (from > 8) {
         throw UnsupportedError(
           'Unsupported local database migration $from to $to.',
         );
@@ -561,6 +578,159 @@ SELECT id, 5, strftime('%s','now') * 1000 FROM local_accounts
     await _rebuildPaymentMethodsWithVisibleCodes();
     await _rebuildProductsWithNotNullCodes();
     await _rebuildAccountPreferencesWithCodeCounters();
+  }
+
+  Future<void> _repairV8PurchaseForeignKeys() async {
+    await _callV8RepairHook('before-repair');
+    final before = await _v8PurchaseCounts();
+    await customStatement('PRAGMA foreign_keys = OFF');
+    try {
+      await transaction(() async {
+        await _callV8RepairHook('before-copy');
+        await customStatement(
+          'ALTER TABLE purchase_items RENAME TO purchase_items_v8_old',
+        );
+        await customStatement(
+          'ALTER TABLE purchases RENAME TO purchases_v8_old',
+        );
+        await customStatement(_v8PurchasesSql);
+        await customStatement(_v8PurchaseItemsSql);
+        await customStatement('''
+INSERT INTO purchases(
+  id,
+  account_id,
+  store_id,
+  person_id,
+  payment_method_id,
+  occurrence_time,
+  currency_code,
+  total_minor_units,
+  created_at
+)
+SELECT
+  id,
+  account_id,
+  store_id,
+  person_id,
+  payment_method_id,
+  occurrence_time,
+  currency_code,
+  total_minor_units,
+  created_at
+FROM purchases_v8_old
+''');
+        await customStatement('''
+INSERT INTO purchase_items(
+  id,
+  purchase_id,
+  product_id,
+  package_count,
+  measurement_kind,
+  purchased_amount,
+  purchased_unit,
+  currency_code,
+  line_total_minor_units
+)
+SELECT
+  id,
+  purchase_id,
+  product_id,
+  package_count,
+  measurement_kind,
+  purchased_amount,
+  purchased_unit,
+  currency_code,
+  line_total_minor_units
+FROM purchase_items_v8_old
+''');
+        await customStatement('DROP TABLE purchase_items_v8_old');
+        await customStatement('DROP TABLE purchases_v8_old');
+        await _callV8RepairHook('before-validation');
+        await _validateV8PurchaseRepair(before);
+        await _callV8RepairHook('after-validation');
+      });
+    } finally {
+      await customStatement('PRAGMA foreign_keys = ON');
+    }
+    await _validateV8PurchaseRepair(before);
+  }
+
+  Future<Map<String, int>> _v8PurchaseCounts() async {
+    final rows = await customSelect('''
+SELECT 'purchases' AS name, COUNT(*) AS row_count FROM purchases
+UNION ALL
+SELECT 'purchase_items' AS name, COUNT(*) AS row_count FROM purchase_items
+''').get();
+    return {
+      for (final row in rows)
+        row.data['name'] as String: row.data['row_count'] as int,
+    };
+  }
+
+  Future<void> _validateV8PurchaseRepair(Map<String, int> expected) async {
+    final after = await _v8PurchaseCounts();
+    for (final entry in expected.entries) {
+      if (after[entry.key] != entry.value) {
+        throw StateError(
+          'v8 repair row count mismatch for ${entry.key}: '
+          '${entry.value} -> ${after[entry.key]}',
+        );
+      }
+    }
+    final oldReferences = await customSelect(
+      "SELECT type, name, sql FROM sqlite_schema WHERE instr(sql, '_old') > 0",
+    ).get();
+    if (oldReferences.isNotEmpty) {
+      throw StateError(
+        'v8 repair left _old schema references: '
+        '${oldReferences.map((row) => '${row.data['type']}:${row.data['name']}').join(', ')}',
+      );
+    }
+    final foreignKeyFailures = await customSelect(
+      'PRAGMA foreign_key_check',
+    ).get();
+    if (foreignKeyFailures.isNotEmpty) {
+      throw StateError('v8 repair failed foreign key validation');
+    }
+    await _expectForeignKeys(
+      table: 'purchases',
+      expected: {
+        'account_id': 'local_accounts',
+        'store_id': 'stores',
+        'person_id': 'people',
+        'payment_method_id': 'payment_methods',
+      },
+    );
+    await _expectForeignKeys(
+      table: 'purchase_items',
+      expected: {'purchase_id': 'purchases', 'product_id': 'products'},
+    );
+  }
+
+  Future<void> _expectForeignKeys({
+    required String table,
+    required Map<String, String> expected,
+  }) async {
+    final rows = await customSelect('PRAGMA foreign_key_list($table)').get();
+    final found = {
+      for (final row in rows)
+        row.data['from'] as String: row.data['table'] as String,
+    };
+    for (final entry in expected.entries) {
+      if (found[entry.key] != entry.value) {
+        throw StateError(
+          'v8 repair foreign key mismatch for $table.${entry.key}: '
+          'expected ${entry.value}, found ${found[entry.key]}',
+        );
+      }
+    }
+  }
+
+  Future<void> _callV8RepairHook(String phase) async {
+    final hook = v8RepairHook;
+    if (hook != null) {
+      await hook(phase);
+    }
   }
 
   Future<void> _backfillInstallationMetadata() async {
@@ -880,3 +1050,31 @@ FROM purchase_items_old
 final _uuidV4Pattern = RegExp(
   r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
 );
+
+const _v8PurchasesSql = '''
+CREATE TABLE purchases (
+  id TEXT NOT NULL PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES local_accounts(id) ON DELETE RESTRICT,
+  store_id TEXT NOT NULL REFERENCES stores(id) ON DELETE RESTRICT,
+  person_id TEXT REFERENCES people(id) ON DELETE RESTRICT,
+  payment_method_id TEXT REFERENCES payment_methods(id) ON DELETE RESTRICT,
+  occurrence_time INTEGER NOT NULL,
+  currency_code TEXT NOT NULL CHECK(length(currency_code) >= 3 AND length(currency_code) <= 3),
+  total_minor_units INTEGER NOT NULL,
+  created_at INTEGER NOT NULL
+)
+''';
+
+const _v8PurchaseItemsSql = '''
+CREATE TABLE purchase_items (
+  id TEXT NOT NULL PRIMARY KEY,
+  purchase_id TEXT NOT NULL REFERENCES purchases(id) ON DELETE CASCADE,
+  product_id TEXT NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
+  package_count INTEGER,
+  measurement_kind TEXT NOT NULL,
+  purchased_amount TEXT NOT NULL,
+  purchased_unit TEXT NOT NULL,
+  currency_code TEXT NOT NULL CHECK(length(currency_code) >= 3 AND length(currency_code) <= 3),
+  line_total_minor_units INTEGER NOT NULL
+)
+''';

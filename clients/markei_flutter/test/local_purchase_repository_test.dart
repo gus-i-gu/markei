@@ -292,7 +292,7 @@ void main() {
   );
 
   test(
-    'migrated hosted lifecycle reports insert-purchase phase and preserves state',
+    'migrated hosted lifecycle repairs v8 foreign keys and registers purchase',
     () async {
       final temp = await Directory.systemTemp.createTemp(
         'markei_migrated_purchase_',
@@ -323,45 +323,72 @@ void main() {
         final queries = LocalQueryRepository(reopenedDb);
         final stores = await queries.listStores(accountId);
         final products = await queries.listProducts(accountId);
+        final beforePurchases = await reopenedDb
+            .select(reopenedDb.purchases)
+            .get();
+        final beforeItems = await reopenedDb
+            .select(reopenedDb.purchaseItems)
+            .get();
+        final beforeEvents = await reopenedDb
+            .select(reopenedDb.syncEvents)
+            .get();
+        final beforePending = await reopenedDb
+            .select(reopenedDb.pendingEvents)
+            .get();
+        final beforeSyncState = await reopenedDb
+            .select(reopenedDb.syncState)
+            .get();
+        final beforeDevice = await (reopenedDb.select(
+          reopenedDb.devices,
+        )..where((table) => table.id.equals(serverDeviceId.value))).getSingle();
 
-        await expectLater(
-          LocalPurchaseRepository(reopenedDb).registerPurchase(
-            _existingCommand(
-              accountId: accountId,
-              deviceId: serverDeviceId,
-              storeId: stores.single.id,
-              productId: products.single.id,
-            ),
-          ),
-          throwsA(
-            isA<AppFailure>()
-                .having(
-                  (failure) => failure.code,
-                  'code',
-                  'purchase-registration-insert-purchase-failed',
-                )
-                .having(
-                  (failure) => failure.outcome,
-                  'outcome',
-                  FailureOutcome.notApplied,
-                )
-                .having(
-                  (failure) => failure.debugCause,
-                  'debugCause',
-                  isNotNull,
-                )
-                .having(
-                  (failure) => failure.userMessage,
-                  'userMessage',
-                  allOf(
-                    isNot(contains('people_old')),
-                    isNot(contains('payment_methods_old')),
-                    isNot(contains('11111111-1111')),
-                    isNot(contains('22222222-2222')),
-                    isNot(contains('C:')),
-                  ),
-                ),
-          ),
+        final result = await LocalPurchaseRepository(reopenedDb)
+            .registerPurchase(
+              _existingCommand(
+                accountId: accountId,
+                deviceId: serverDeviceId,
+                storeId: stores.single.id,
+                productId: products.single.id,
+              ),
+            );
+        final afterPurchases = await reopenedDb
+            .select(reopenedDb.purchases)
+            .get();
+        final afterItems = await reopenedDb
+            .select(reopenedDb.purchaseItems)
+            .get();
+        final afterEvents = await reopenedDb
+            .select(reopenedDb.syncEvents)
+            .get();
+        final afterPending = await reopenedDb
+            .select(reopenedDb.pendingEvents)
+            .get();
+        final afterSyncState = await reopenedDb
+            .select(reopenedDb.syncState)
+            .get();
+        final afterDevice = await (reopenedDb.select(
+          reopenedDb.devices,
+        )..where((table) => table.id.equals(serverDeviceId.value))).getSingle();
+        final registeredEvent = afterEvents.singleWhere(
+          (event) => !beforeEvents.any((before) => before.id == event.id),
+        );
+
+        expect(await _schemaReferencesOldTables(reopenedDb), isEmpty);
+        expect(await _foreignKeyCheckRows(reopenedDb), isEmpty);
+        expect(afterPurchases, hasLength(beforePurchases.length + 1));
+        expect(afterItems, hasLength(beforeItems.length + 1));
+        expect(afterEvents, hasLength(beforeEvents.length + 1));
+        expect(afterPending, hasLength(beforePending.length + 1));
+        expect(registeredEvent.eventType, 'purchase.registered');
+        expect(registeredEvent.payloadVersion, 3);
+        expect(result.deviceSequence, beforeDevice.nextSequence);
+        expect(
+          afterDevice.nextSequence,
+          greaterThan(beforeDevice.nextSequence),
+        );
+        expect(
+          afterSyncState.single.accountCursor,
+          beforeSyncState.single.accountCursor,
         );
       } finally {
         await reopenedDb.close();
@@ -380,12 +407,12 @@ void main() {
         verifiedDb.devices,
       )..where((table) => table.id.equals(serverDeviceId.value))).getSingle();
 
-      expect(history, hasLength(1));
-      expect(purchases, hasLength(1));
-      expect(events, hasLength(2));
-      expect(pending, hasLength(2));
+      expect(history, hasLength(2));
+      expect(purchases, hasLength(2));
+      expect(events, hasLength(3));
+      expect(pending, hasLength(3));
       expect(syncState.single.accountCursor, 'cursor-before-hosted-purchase');
-      expect(device.nextSequence, 1);
+      expect(device.nextSequence, 3);
     },
   );
 
@@ -465,6 +492,24 @@ void main() {
     expect(fixture['deviceSequence'], 1);
     expect(fixture['queueState'], 'pending');
   });
+}
+
+Future<List<Map<String, Object?>>> _schemaReferencesOldTables(
+  LocalDatabase db,
+) async {
+  final rows = await db
+      .customSelect(
+        "SELECT type, name, sql FROM sqlite_schema WHERE instr(sql, '_old') > 0",
+      )
+      .get();
+  return rows.map((row) => row.data).toList(growable: false);
+}
+
+Future<List<Map<String, Object?>>> _foreignKeyCheckRows(
+  LocalDatabase db,
+) async {
+  final rows = await db.customSelect('PRAGMA foreign_key_check').get();
+  return rows.map((row) => row.data).toList(growable: false);
 }
 
 RegisterPurchaseCommand _command(
@@ -697,6 +742,9 @@ CREATE TABLE migration_ledger (
   );
   database.execute(
     "INSERT INTO devices VALUES ('local-device-legacy', '11111111-1111-4111-8111-111111111111', 3, 1783857600000)",
+  );
+  database.execute(
+    "INSERT INTO devices VALUES ('22222222-2222-4222-8222-222222222222', '11111111-1111-4111-8111-111111111111', 2, 1783857600000)",
   );
   database.execute(
     "INSERT INTO stores VALUES ('33333333-3333-4333-8333-333333333333', '11111111-1111-4111-8111-111111111111', 'Provider Proof Store', 1783857600000)",
