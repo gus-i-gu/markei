@@ -992,3 +992,53 @@ MCG-03 / MCG-04                                                   INACTIVE
 
 D/E/F carrying `C10-MCG02-WINDOWS-RECOVERY-RETEST_20260721T014246Z` are validation authority only.
 Codex source mutation is paused until the human evidence is reconciled.
+
+---
+
+## 72. Append-only reconciliation — protected Sync omits enrolled Device header
+
+> Reconciliation marker: C10-MCG02-HOSTED-DEVICE-HEADER-CORRECTION_20260721T124452Z
+> Reconciled at UTC: 2026-07-21T12:44:52Z
+> Reconciled at America/Sao_Paulo: 2026-07-21T09:44:52-03:00
+> Baseline inspected: cee414ffd4501e86d2d221f8fe02876716510692
+> Human evidence: sanitized Windows local aggregates + Neon/Render configuration checks
+> Status: **WINDOWS RETEST BOUNDED FAILURE; HEADER CORRECTION ACTIVE**
+
+The preserved Windows retry retained immutable sequences `1,2` but terminated
+`failed/notApplied/conflict` with protocol code `device-enrollment-required`. Neon remained at zero
+submissions/events/acknowledgements and expected sequence `1`, proving rejection before hosted
+application. The second Device is irrelevant to this failure.
+
+Read-only provider checks rule out the previously considered configuration causes: hosted
+migrations and checksums are present, the Device/enrollment/identity/membership chain is active,
+the runtime role has required function grants, Render uses `markei_runtime`, and live/readiness
+health succeeds.
+
+Source inspection establishes the concrete defect. The hosted authorization fence requires
+`x-markei-device-id` on every protected route. Production `HttpSyncTransport` sends bearer token,
+correlation and content headers but never the Device header. Enrollment/status uses a separate
+transport, so the UI can truthfully report `device-enrolled` while Sync is rejected before reading
+the submission body. Existing native-closure fixtures did not enforce the production header
+contract and therefore allowed this incompatibility through local proof.
+
+Main selects a narrow transport-contract correction: scope `HttpSyncTransport` to the active
+`serverDeviceId`, inject that header on upload/download/acknowledgement/all recovery requests, and
+strengthen fixtures to reject missing or wrong Device headers. Event, outbox, enrollment, database
+and provider state must remain unchanged.
+
+## 73. Revised projection
+
+~~~text
+MCG-02 ordered upload + recovery orchestration                    PROVED DISPOSABLE HTTP
+MCG-02 Windows provider upload                                    BOUNDED FAILURE / NO SERVER WRITE
+MCG-02 hosted protected-request Device header                     ACTIVE CORRECTION
+MCG-02 rebuilt Windows retry                                      PAUSED
+MCG-02 Android Device B + two-Device convergence                  PAUSED
+MCG-02 closure                                                    PENDING
+MCG-03 / MCG-04                                                   INACTIVE
+~~~
+
+D/E/F carrying `C10-MCG02-HOSTED-DEVICE-HEADER-CORRECTION_20260721T124452Z` are the only active
+Codex authority. They authorize the scoped client/fixture correction, validation and G/H/I only.
+Provider access, deployment, human database edits, Device reenrollment, Device B work, permanent
+promotion and further Sync attempts remain unauthorized.

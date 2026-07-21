@@ -1,17 +1,28 @@
-# E_DDC_STAGE — Windows Recovery Retest Semantics
+# E_DDC_STAGE — Hosted Device Header Semantics
 
-> Authority marker: C10-MCG02-WINDOWS-RECOVERY-RETEST_20260721T014246Z
-> Status: **ACTIVE HUMAN VALIDATION AUTHORITY; CODEX MUTATION PAUSED**
+> Authority marker: C10-MCG02-HOSTED-DEVICE-HEADER-CORRECTION_20260721T124452Z
+> Status: **ACTIVE CODEX MATERIALIZATION AUTHORITY**
 
-## Truthful outcomes
+## Required semantic distinctions
 
-- `authenticated` plus `device-enrolled`: authorization prerequisites pass.
-- `sync-completed`: confirmed synchronization phases completed.
-- `sync-no-new-events`: valid only after the first recovery/upload was already confirmed.
-- `sync-interrupted`: outcome may be unknown; do not create another identity or edit local state.
-- `sync-unavailable`: bounded failure; inspect evidence before another attempt.
-- preserved History: server cleanup/recovery does not remove local Purchase history.
+- `authenticated` proves a usable Auth0 access token; it does not prove Device authorization.
+- `device-enrolled` proves the active identity has an enrollment binding; it does not prove every
+  later protected request carries that Device identity.
+- `x-markei-device-id` identifies the active enrolled server Device to the hosted authorization
+  fence. It is not the local installation ID, Account ID, token subject or submission Device field.
+- `device-enrollment-required` in this incident means the protected request lacked the header; it
+  does not mean a second Device is required or the existing enrollment row is absent.
+- repeated submission membership for sequences `1,2` preserves retry history; it is not duplicate
+  fact creation.
 
-Build success and disposable lab proof are not human provider acceptance. Provider acceptance needs
-the named Windows observation plus sanitized Neon and Render evidence. Evidence must contain counts,
-states and commit SHA only—never tokens, credentials, IDs, payloads or connection strings.
+## User-visible behavior
+
+The correction must not introduce a new UI flow or expose Device identifiers. Existing bounded
+states remain authoritative: definite server rejection maps to `sync-unavailable`; unknown
+transport outcome maps to `sync-interrupted`; success requires confirmed upload/download phases.
+
+Tests and G/H/I may expose header presence, semantic mismatch states and aggregate counts only.
+They must not expose raw Device IDs, tokens, Auth0 subjects, connection strings, payloads or hashes.
+
+Provider success is not claimed by local materialization. A rebuilt Windows release and one later
+human-controlled provider retry remain separately required.

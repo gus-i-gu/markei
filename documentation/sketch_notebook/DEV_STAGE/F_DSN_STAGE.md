@@ -1,33 +1,42 @@
-# F_DSN_STAGE — Windows Recovery Retest Boundary
+# F_DSN_STAGE — Hosted Device Header Design Boundary
 
-> Authority marker: C10-MCG02-WINDOWS-RECOVERY-RETEST_20260721T014246Z
-> Required ancestor: 82db09dbb56883ec00b309c1444df8197337947c
-> Status: **ACTIVE HUMAN VALIDATION AUTHORITY; CODEX MUTATION PAUSED**
+> Authority marker: C10-MCG02-HOSTED-DEVICE-HEADER-CORRECTION_20260721T124452Z
+> Required ancestor: cee414ffd4501e86d2d221f8fe02876716510692
+> Status: **ACTIVE CODEX MATERIALIZATION AUTHORITY**
 
-## Validated implementation boundary
+## Selected dependency path
 
 ~~~text
-Native Closure Sync
-  -> HostedSyncCoordinator
-  -> scoped failed/notApplied recovery
-  -> canonical immutable upload 1,2
-  -> Render API / Neon transaction
-  -> download + acknowledgement
-  -> durable local accepted state
+active HostedIdentityBinding.serverDeviceId
+  -> production composition
+  -> HttpSyncTransport required Device identity
+  -> x-markei-device-id on every protected request
+  -> Render transaction-scoped authorization
+  -> enrolled Neon Device
 ~~~
 
-The provider retest validates this existing dependency path; it must not redesign it. The local
-database remains authoritative for preserved local History and immutable queued events. Neon
-evidence confirms only accepted hosted state for the scoped Account/Device.
+The body `submission.deviceId` remains immutable event/submission content. The header is the
+request authorization context. They must agree semantically, but one must not be substituted for
+the other implicitly inside upload because download, acknowledgement and recovery have no upload
+submission body.
 
-## Acceptance invariants
+## Invariants
 
-1. Local facts and event identities remain unchanged through recovery.
-2. The old failed attempt becomes superseded; one retry becomes accepted.
-3. The server accepts sequences `1,2` exactly once and expects `3` afterward.
-4. Reopen/repeat produces no second submission or duplicated fact.
-5. Acknowledgement follows committed upload/download application.
-6. Six older local-only Device events remain outside the hosted Device scope.
-7. No source/provider/database mutation is authorized by this validation stage.
+1. One transport instance is scoped to one active hosted Device binding.
+2. All protected methods use the same scoped header injection path.
+3. Authorization, correlation, content negotiation and timeout behavior remain unchanged.
+4. The header is not persisted as a new fact and is never logged or displayed.
+5. Missing binding fails during composition or before transport, not as an anonymous protected
+   request.
+6. Existing event identity, sequence, hashing, outbox recovery and server transaction semantics
+   remain unchanged.
+7. Test fixtures enforce the production authorization contract instead of accepting a weaker one.
 
-If any invariant cannot be established with sanitized evidence, record partial and return to Main.
+## Exclusions
+
+No migration, enrollment redesign, provider mutation, Device B work, local database repair,
+sequence renumbering, broad transport abstraction, UI redesign, deployment, permanent promotion,
+MCG-03 or MCG-04 is authorized.
+
+The later provider retest must reuse the preserved Windows binding and failed sequences `1,2` after
+building the corrected release. It is not part of Codex materialization.

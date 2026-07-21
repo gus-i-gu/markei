@@ -1,48 +1,74 @@
-# D_OPS_STAGE — Windows Recovery Provider Retest
+# D_OPS_STAGE — Hosted Device Header Correction
 
-> Authority marker: C10-MCG02-WINDOWS-RECOVERY-RETEST_20260721T014246Z
-> Required ancestor: 82db09dbb56883ec00b309c1444df8197337947c
-> Status: **ACTIVE HUMAN VALIDATION AUTHORITY; CODEX MUTATION PAUSED**
+> Authority marker: C10-MCG02-HOSTED-DEVICE-HEADER-CORRECTION_20260721T124452Z
+> Required ancestor: cee414ffd4501e86d2d221f8fe02876716510692
+> Status: **ACTIVE CODEX MATERIALIZATION AUTHORITY**
 
-## Accepted evidence
+## Reconciled evidence
 
-`82db09d` wires scoped failed/notApplied discovery through the production coordinator. A reopened
-file-backed v8 fixture using the real coordinator and HTTP/PostgreSQL lab recovers the legacy
-attempt, transmits immutable sequences `1,2`, advances the server to `3`, preserves unrelated local
-events, and remains idempotent. Reported validation passes: 133 Flutter tests, 46 API tests, lab
-proof, Android debug build and Windows release build.
+The preserved Windows retest produced a definite `failed/notApplied` response with protocol code
+`device-enrollment-required`. The local retry retained the two immutable hosted events in canonical
+sequence `1,2`. Sanitized Neon evidence remained at zero submissions, zero events, zero
+acknowledgements and Device expectation `1`; therefore no server application or partial commit
+occurred.
 
-## Objective
+Provider/schema checks established:
 
-Validate that the preserved human Windows database follows the proved path against the development
-Render/Neon environment. This phase gathers sanitized evidence only; it authorizes no source,
-database, provider configuration or identity mutation.
+- migrations `002` through `006` are recorded with the expected hosted checksums;
+- one Device, enrollment, external identity and membership chain is active;
+- `markei_runtime` can execute the hosted readiness and membership-authorization functions;
+- Render's private `DATABASE_URL` uses the `markei_runtime` role;
+- Render live and ready endpoints return success.
 
-## Sequence
+Source inspection identifies the concrete contract defect: hosted protected routes require
+`x-markei-device-id`, while `HttpSyncTransport` does not send it. Enrollment/status uses a separate
+transport and can therefore pass while Sync is rejected before the submission body is applied.
 
-1. Close Markei and copy the local database to a private backup outside Git.
-2. Fast-forward the local branch to `82db09d`; keep private define files untracked.
-3. Build Windows release with the previously validated Auth0 audience/domain/client and Render
-   origin defines. Do not print or commit private values.
-4. Launch from the release directory; confirm Status `authenticated` and Query `device-enrolled`.
-5. Confirm History still contains the two local Purchases exactly once.
-6. Press Sync once and wait for a terminal state. Expected: `sync-completed` or
-   `sync-no-new-events`; `sync-unavailable`/`sync-interrupted` is not acceptance.
-7. Reopen Markei, repeat Status/Query/History, press Sync again, and prove no duplication.
-8. Using sanitized Neon queries, verify the scoped Device expectation advanced `1 -> 3`, exactly
-   two purchase events exist for that Device, one accepted submission exists, and acknowledgement
-   did not advance beyond committed application state.
-9. Verify Render health remains live/ready, no startup failure appears, and logs contain no tokens,
-   credentials, connection strings or fact payloads.
+## Authorized correction
+
+1. Require one active hosted server Device ID when constructing the production
+   `HttpSyncTransport`.
+2. Send `x-markei-device-id` on every protected Sync and recovery request made by that transport:
+   upload, download, acknowledgement, recovery start/query/chunk/completion.
+3. Wire the value from `activeBinding.serverDeviceId`; fail closed if production hosted Sync is
+   composed without an active binding.
+4. Add focused transport tests proving the header is present and stable on all protected methods.
+5. Strengthen the native-closure hosted fixture so missing or wrong Device headers are rejected
+   with `device-enrollment-required`; retain a failing regression before accepting the fix.
+6. Preserve the existing failed Windows submission and immutable sequences `1,2`; do not add an
+   automatic data rewrite or provider workaround.
+
+Codex may adjust constructors and test fixtures directly affected by the new required argument.
+Do not broaden into enrollment redesign, token diagnostics, migrations, UI work or logging of
+identifiers.
+
+## Validation
+
+Run at minimum:
+
+- Dart format on changed Dart files;
+- focused `HttpSyncTransport` and native-closure tests;
+- recovery/orchestration and real convergence tests, with lab-only cases guarded normally;
+- `flutter analyze` and full `flutter test`;
+- server format, lint, typecheck, tests and build if a server fixture/source changes;
+- Windows release and Android debug builds;
+- `git diff --check`, secret scan and changed-path review.
+
+G/H/I must report exact changed paths, focused assertions, full counts, build results, deviations
+and the final commit/tree metadata available at reporting time.
 
 ## Stop rules
 
-Stop without retry loops or manual database edits on authentication loss, Device mismatch,
-`sync-interrupted`, `sync-unavailable`, unexpected counts, duplicate History or provider errors.
-Do not reenroll, renumber events, alter Neon rows, rotate identities, or begin Android convergence.
+Stop on dirty overlap, contradictory Device identities, required schema change, provider access,
+secret exposure, inability to retain a failing missing-header regression, or unrelated test failure.
+Do not access Neon/Auth0/Render, edit a human database, reenroll a Device, deploy, or perform another
+provider Sync attempt.
 
-Pass terminal:
+Success terminal:
 
 ~~~text
-MCG02_WINDOWS_RECOVERY_UPLOAD_VALIDATED=true
+HOSTED_DEVICE_HEADER_ALL_PROTECTED_ROUTES=true
+HOSTED_FIXTURE_REJECTS_MISSING_OR_WRONG_DEVICE=true
+WINDOWS_PROVIDER_RETEST_PENDING
+C10_MCG02_HOSTED_DEVICE_HEADER_CORRECTED
 ~~~
