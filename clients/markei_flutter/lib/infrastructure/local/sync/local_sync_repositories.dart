@@ -6,7 +6,7 @@ import 'package:uuid/uuid.dart';
 import '../../../application/sync/sync_ports.dart';
 import '../../../domain/shared/ids.dart';
 import '../../../domain/sync/canonical_json.dart';
-import '../../../domain/sync/sync_event.dart' show SyncStatusCode;
+import '../../../domain/sync/sync_event.dart' show SyncOutcome, SyncStatusCode;
 import '../local_database.dart';
 
 final class DriftSyncOutboxRepository implements SyncOutboxRepository {
@@ -50,11 +50,15 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
               ),
             ])
             ..where(pendingPredicate)
+            ..orderBy([
+              OrderingTerm.asc(_db.syncEvents.deviceSequence),
+              OrderingTerm.asc(_db.syncEvents.id),
+            ])
             ..limit(limit);
-      final pending = (await pendingQuery.get())
-          .map((row) => row.readTable(_db.pendingEvents))
+      final events = (await pendingQuery.get())
+          .map((row) => row.readTable(_db.syncEvents))
           .toList(growable: false);
-      if (pending.isEmpty) {
+      if (events.isEmpty) {
         Expression<bool> unknownPredicate = _db.syncSubmissions.state.equals(
           'unknown',
         );
@@ -87,9 +91,7 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
         final orderedRows = [
           for (final member in members) rowsById[member.eventId],
         ].nonNulls.toList(growable: false);
-        if (!_sameScopedIdentity(orderedRows)) {
-          return null;
-        }
+        _preflightOrThrow(orderedRows);
         return SyncUploadSubmission(
           id: unknown.id,
           deviceId: unknown.deviceId,
@@ -99,13 +101,8 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
               .toList(growable: false),
         );
       }
-      final eventIds = pending.map((row) => row.eventId).toList();
-      final events = await (_db.select(
-        _db.syncEvents,
-      )..where((table) => table.id.isIn(eventIds))).get();
-      if (!_sameScopedIdentity(events)) {
-        return null;
-      }
+      _preflightOrThrow(events);
+      final eventIds = events.map((row) => row.id).toList(growable: false);
       final leaseDeviceId = events.first.deviceId;
       final submissionId = _uuid.v4();
       final eventJson = events
@@ -183,6 +180,7 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
           state: Value(state),
           outcome: Value(result.outcome.name),
           responseCode: Value(result.code.name),
+          errorCode: Value(result.protocolCode),
           updatedAt: Value(DateTime.now().toUtc()),
         ),
       );
@@ -197,6 +195,107 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
     });
   }
 
+  @override
+  Future<SyncResult> recoverFailedNotApplied(String submissionId) {
+    return _db.transaction(() async {
+      final now = DateTime.now().toUtc();
+      final submission = await (_db.select(
+        _db.syncSubmissions,
+      )..where((table) => table.id.equals(submissionId))).getSingleOrNull();
+      if (submission == null ||
+          submission.state != 'failed' ||
+          submission.outcome != SyncOutcome.notApplied.name) {
+        return _recoveryBlocked();
+      }
+      if (_accountId != null &&
+          (submission.accountId != _accountId ||
+              submission.deviceId != _deviceId)) {
+        return _recoveryBlocked();
+      }
+      final members =
+          await (_db.select(_db.syncSubmissionEvents)
+                ..where((table) => table.submissionId.equals(submissionId))
+                ..orderBy([(table) => OrderingTerm.asc(table.position)]))
+              .get();
+      if (members.isEmpty) return _recoveryBlocked();
+      final rows =
+          await (_db.select(_db.syncEvents)..where(
+                (table) =>
+                    table.id.isIn(members.map((member) => member.eventId)),
+              ))
+              .get();
+      final rowsById = {for (final row in rows) row.id: row};
+      final orderedRows = [
+        for (final member in members) rowsById[member.eventId],
+      ].nonNulls.toList(growable: false);
+      if (orderedRows.length != members.length ||
+          !_preflightValid(orderedRows, requireCanonicalOrder: false)) {
+        return _recoveryBlocked();
+      }
+      final canonicalRows = [...orderedRows]
+        ..sort((a, b) {
+          final sequence = a.deviceSequence.compareTo(b.deviceSequence);
+          return sequence != 0 ? sequence : a.id.compareTo(b.id);
+        });
+      if (!_preflightValid(canonicalRows)) return _recoveryBlocked();
+      final memberIds = canonicalRows.map((row) => row.id).toSet();
+      final states = await (_db.select(
+        _db.pendingEvents,
+      )..where((table) => table.eventId.isIn(memberIds))).get();
+      if (states.length != memberIds.length ||
+          states.any((row) => row.state == 'accepted')) {
+        return _recoveryBlocked();
+      }
+      if (states.any((row) => row.state == 'pending')) {
+        return const SyncResult(
+          code: SyncStatusCode.waitingUpload,
+          outcome: SyncOutcome.notApplied,
+          retryable: true,
+          protocolCode: 'failed-recovery-available',
+        );
+      }
+      final activeMembers =
+          await (_db.select(_db.syncSubmissionEvents).join([
+                innerJoin(
+                  _db.syncSubmissions,
+                  _db.syncSubmissions.id.equalsExp(
+                    _db.syncSubmissionEvents.submissionId,
+                  ),
+                ),
+              ])..where(
+                _db.syncSubmissionEvents.eventId.isIn(memberIds) &
+                    (_db.syncSubmissions.state.equals('uploading') |
+                        _db.syncSubmissions.state.equals('unknown')),
+              ))
+              .get();
+      if (activeMembers.isNotEmpty) return _recoveryBlocked();
+      await (_db.update(
+        _db.syncSubmissions,
+      )..where((table) => table.id.equals(submissionId))).write(
+        SyncSubmissionsCompanion(
+          state: const Value('superseded'),
+          updatedAt: Value(now),
+        ),
+      );
+      for (final row in canonicalRows) {
+        await (_db.update(
+          _db.pendingEvents,
+        )..where((table) => table.eventId.equals(row.id))).write(
+          PendingEventsCompanion(
+            state: const Value('pending'),
+            enqueuedAt: Value(now),
+          ),
+        );
+      }
+      return const SyncResult(
+        code: SyncStatusCode.waitingUpload,
+        outcome: SyncOutcome.notApplied,
+        retryable: true,
+        protocolCode: 'failed-recovery-available',
+      );
+    });
+  }
+
   bool _sameScopedIdentity(List<SyncEvent> events) {
     if (events.isEmpty) return false;
     final accountId = _accountId;
@@ -206,4 +305,61 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
       (event) => event.accountId == accountId && event.deviceId == deviceId,
     );
   }
+
+  void _preflightOrThrow(List<SyncEvent> events) {
+    if (!_preflightValid(events)) {
+      throw const SyncBatchPreflightException(
+        SyncResult(
+          code: SyncStatusCode.localBatchInvalid,
+          outcome: SyncOutcome.notApplied,
+          retryable: false,
+          protocolCode: 'local-batch-invalid',
+        ),
+      );
+    }
+  }
+
+  bool _preflightValid(
+    List<SyncEvent> events, {
+    bool requireCanonicalOrder = true,
+  }) {
+    if (!_sameScopedIdentity(events)) return false;
+    final eventIds = <String>{};
+    final sequences = <int>{};
+    final accountId = events.first.accountId;
+    final deviceId = events.first.deviceId;
+    var previousSequence = events.first.deviceSequence - 1;
+    for (final event in events) {
+      if (event.accountId != accountId || event.deviceId != deviceId) {
+        return false;
+      }
+      if (!eventIds.add(event.id) || !sequences.add(event.deviceSequence)) {
+        return false;
+      }
+      if (requireCanonicalOrder &&
+          event.deviceSequence != previousSequence + 1) {
+        return false;
+      }
+      final payload = jsonDecode(event.payloadJson) as Map<String, Object?>;
+      final eventContent = Map<String, Object?>.from(payload)
+        ..remove('contentHash');
+      if (payload['eventId'] != event.id ||
+          payload['accountId'] != event.accountId ||
+          payload['deviceId'] != event.deviceId ||
+          payload['deviceSequence'] != event.deviceSequence ||
+          payload['contentHash'] != event.contentHash ||
+          canonicalUtf8Sha256(eventContent) != event.contentHash) {
+        return false;
+      }
+      previousSequence = event.deviceSequence;
+    }
+    return true;
+  }
+
+  SyncResult _recoveryBlocked() => const SyncResult(
+    code: SyncStatusCode.failedRecoveryBlocked,
+    outcome: SyncOutcome.notApplied,
+    retryable: false,
+    protocolCode: 'failed-recovery-blocked',
+  );
 }

@@ -7,7 +7,12 @@ final class UploadPendingEvents {
   final SyncTransport transport;
 
   Future<SyncResult?> call({int limit = 25}) async {
-    final submission = await outbox.leasePending(limit: limit);
+    final SyncUploadSubmission? submission;
+    try {
+      submission = await outbox.leasePending(limit: limit);
+    } on SyncBatchPreflightException catch (failure) {
+      return failure.result;
+    }
     if (submission == null) {
       return null;
     }

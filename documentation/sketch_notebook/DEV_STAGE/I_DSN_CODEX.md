@@ -1,92 +1,67 @@
-# I_DSN_CODEX - Drift v8 Repair Design Evidence
+# I_DSN_CODEX — Ordered Outbox Recovery Design
 
-- Sequence: FLX-ORD-01
-- Role: Codex design evidence report
-- Unit: C10-MCG02-DRIFT-V8-FK-REPAIR_20260720T221440Z
-- Baseline HEAD: e9f355c61b76975e99f511e3201e6e815c25f7f1
-- Final commit SHA: reported in the terminal response after commit creation.
+> Unit: C10-MCG02-ORDERED-OUTBOX-RECOVERY_20260721T000323Z
+> Result: C10_MCG02_ORDERED_OUTBOX_RECOVERY_PROVED
 
-## Migration Direction
+## Final dependency direction
 
-The final migration direction is forward-only:
+Immutable local `sync_events` remain the source of upload truth. The dependency direction is:
 
 ~~~text
-supported v1/v2/v3/v4/v5/v6/v7 local Drift database -> schema v8
-fresh database -> schema v8
-already migrated v8 -> no rewrite
+pending_events
+  -> sync_events ordered by device_sequence asc, id asc
+  -> preflight
+  -> sync_submissions + sync_submission_events positions
+  -> HTTP transport
+  -> persisted result
 ~~~
 
-Historical migration meanings are preserved. Existing databases are not reset.
+No Drift or PostgreSQL migration was added. Drift schema remains v8.
 
-## Rebuilt Tables
+## Ordering and hydration invariant
 
-Schema v8 rebuilds only:
-
-- `purchases`
-- `purchase_items`
-
-The rebuilt constraints are:
-
-- `purchases.id` primary key
-- `purchases.account_id -> local_accounts.id ON DELETE RESTRICT`
-- `purchases.store_id -> stores.id ON DELETE RESTRICT`
-- `purchases.person_id -> people.id ON DELETE RESTRICT`
-- `purchases.payment_method_id -> payment_methods.id ON DELETE RESTRICT`
-- `purchase_items.id` primary key
-- `purchase_items.purchase_id -> purchases.id ON DELETE CASCADE`
-- `purchase_items.product_id -> products.id ON DELETE RESTRICT`
-- `currency_code` length check on both rebuilt tables
-- current column nullability and timestamp/value columns preserved exactly by copy.
-
-No PostgreSQL schema, wire contract, provider composition, authorization rule, UI surface or event version changed.
-
-## Transaction and Rollback Boundary
-
-The v8 repair:
-
-1. captures purchase/item counts;
-2. disables SQLite FK enforcement for table rebuild mechanics;
-3. opens one Drift transaction;
-4. renames `purchase_items` and `purchases` to v8 temporary tables;
-5. creates current tables;
-6. copies all columns exactly once;
-7. drops temporary tables;
-8. validates row counts, `_old` metadata absence, FK targets and `PRAGMA foreign_key_check`;
-9. restores FK enforcement in `finally`;
-10. validates again after restoration.
-
-Injected validation failure rolls back the transaction. The disposable source can reopen and then repair successfully.
-
-## Preservation Invariants
-
-The migration preserves:
-
-- Accounts and Devices;
-- Stores, Products, People and Payment Methods;
-- Purchases and Purchase Items;
-- sync events and pending outbox rows;
-- cursor and acknowledgement state;
-- Device sequence;
-- recovery progress;
-- migration ledger;
-- hosted identity and Account/Device binding.
-
-No valid user fact is relabeled, discarded, merged, guessed or synthesized.
-
-## Production Purchase Boundary
-
-The post-repair production path remains:
+Pending selection now joins `pending_events` to `sync_events` and applies:
 
 ~~~text
-PurchasePage -> RegisterPurchaseCommand -> LocalPurchaseRepository
-             -> one Drift transaction
-             -> Purchase + Items + v3 event + pending outbox
+ORDER BY sync_events.device_sequence ASC, sync_events.id ASC
 ~~~
 
-The migrated hosted test proves that after v8 repair and reopen, this boundary creates one new Purchase, one Item, one v3 event and one pending outbox row, advances Device sequence from 2 to 3, leaves the cursor unchanged and remains visible in History after close/reopen.
+Fresh submissions use those ordered rows directly; they no longer rehydrate pending event IDs through unordered `WHERE id IN (...)`. Unknown-outcome retry still hydrates through membership, then reconstructs rows by ordered `sync_submission_events.position`.
 
-## Deviations and Unresolved Decisions
+Submission membership positions and transport serialization both follow the same canonical order.
 
-- Drift generation produced no semantic generated-file diff; line-ending-only churn was restored.
-- Platform builds are build evidence only, not runtime/provider acceptance.
-- Human database correction remains unproven until a separate human retest opens and upgrades the installed database.
+## Batch preflight
+
+Before any fresh lease mutation or unknown retry transport, the repository requires:
+
+- non-empty batch;
+- one Account and one Device;
+- scoped Account/Device match when repository is scoped;
+- unique event IDs;
+- unique Device sequences;
+- strictly contiguous ascending Device sequence;
+- payload identity fields match the immutable row;
+- stored content hash matches the canonical payload hash.
+
+Failure throws a local preflight exception that `UploadPendingEvents` converts to `SyncStatusCode.localBatchInvalid`. No submission is created and no transport call is made.
+
+## Failed-attempt recovery representation
+
+The existing `sync_submissions.state` text field represents safe retirement without a migration:
+
+- admitted: `state=failed` and `outcome=notApplied`;
+- retired evidence: old submission updated to `state=superseded`;
+- members: same immutable events requeued to `pending`;
+- retry: next normal lease creates at most one new ordered submission.
+
+Recovery blocks unknown, uploading, accepted, malformed, cross-scope, non-contiguous, accepted-member, or active-equivalent work. Repeated recovery returns a bounded blocker after retirement; if members are already pending before leasing, recovery returns the same available state.
+
+## Idempotency and immutable-event guarantees
+
+Unknown upload outcomes continue to retry the same submission identity/hash. Definitely not-applied failed recovery creates a new submission only through the canonical lease path and never changes EventId, AccountId, DeviceId, Device sequence, payload, payload version, occurrence time, or content hash.
+
+The HTTP proof confirmed reversed `[2,1]` is rejected, production `[1,2]` is accepted atomically, server expectation advances `1 -> 3`, and replay of the same accepted identity/hash leaves server event and submission counts unchanged.
+
+## Deviations and unresolved decisions
+
+No unresolved implementation decisions remain for this unit. Human/provider acceptance is intentionally not claimed; it requires the separate human retest authorized after this disposable proof.

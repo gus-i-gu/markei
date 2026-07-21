@@ -9,6 +9,7 @@ import 'package:markei/domain/purchase/purchase.dart';
 import 'package:markei/domain/shared/ids.dart';
 import 'package:markei/domain/shared/money.dart';
 import 'package:markei/domain/shared/quantity.dart';
+import 'package:markei/domain/sync/canonical_json.dart';
 import 'package:markei/infrastructure/local/local_database.dart';
 import 'package:markei/infrastructure/remote/http_sync_transport.dart';
 
@@ -145,6 +146,26 @@ Future<int> labCount(Directory lab, String table) async {
   return int.parse((result.stdout as String).trim());
 }
 
+Future<int> labInt(Directory lab, String sql) async {
+  final result = await Process.run('docker', [
+    'compose',
+    'exec',
+    '-T',
+    'postgres',
+    'psql',
+    '-U',
+    'markei_migrator',
+    '-d',
+    'markei_sync_lab',
+    '-t',
+    '-A',
+    '-c',
+    sql,
+  ], workingDirectory: lab.path);
+  if (result.exitCode != 0) throw StateError('psql failed: ${result.stderr}');
+  return int.parse((result.stdout as String).trim());
+}
+
 Future<void> labDocker(Directory lab, List<String> args) async {
   final result = await Process.run('docker', args, workingDirectory: lab.path);
   if (result.exitCode != 0) throw StateError('docker failed: ${result.stderr}');
@@ -250,4 +271,67 @@ final class CommitDropClient extends http.BaseClient {
     }
     return response;
   }
+}
+
+String orderedProofEventId(int sequence) => switch (sequence) {
+  1 => '00000000-0000-4000-8000-999999999999',
+  2 => '00000000-0000-4000-8000-000000000002',
+  _ => '00000000-0000-4000-8000-${sequence.toString().padLeft(12, '0')}',
+};
+
+Map<String, Object?> orderedProofEvent({
+  required int sequence,
+  required String accountId,
+  required String deviceId,
+}) {
+  final content = <String, Object?>{
+    'eventId': orderedProofEventId(sequence),
+    'accountId': accountId,
+    'deviceId': deviceId,
+    'deviceSequence': sequence,
+    'eventType': 'purchase.registered',
+    'payloadVersion': 3,
+    'occurrenceTime': DateTime.utc(2026, 7, 21, 12, sequence).toIso8601String(),
+    'payload': <String, Object?>{
+      'purchase': <String, Object?>{'id': 'ordered-proof-purchase-$sequence'},
+      'productSnapshots': <Object?>[],
+    },
+  };
+  return {...content, 'contentHash': canonicalUtf8Sha256(content)};
+}
+
+Future<void> insertOrderedProofEvent(
+  LocalDatabase db,
+  Map<String, Object?> event,
+) async {
+  final now = DateTime.utc(
+    2026,
+    7,
+    21,
+  ).add(Duration(milliseconds: event['deviceSequence']! as int));
+  await db
+      .into(db.syncEvents)
+      .insert(
+        SyncEventsCompanion.insert(
+          id: event['eventId']! as String,
+          accountId: event['accountId']! as String,
+          deviceId: event['deviceId']! as String,
+          deviceSequence: event['deviceSequence']! as int,
+          eventType: event['eventType']! as String,
+          payloadVersion: event['payloadVersion']! as int,
+          occurrenceTime: DateTime.parse(event['occurrenceTime']! as String),
+          payloadJson: jsonEncode(event),
+          contentHash: event['contentHash']! as String,
+          createdAt: now,
+        ),
+      );
+  await db
+      .into(db.pendingEvents)
+      .insert(
+        PendingEventsCompanion.insert(
+          eventId: event['eventId']! as String,
+          state: 'pending',
+          enqueuedAt: now,
+        ),
+      );
 }

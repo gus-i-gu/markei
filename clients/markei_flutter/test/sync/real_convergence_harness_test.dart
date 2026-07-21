@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markei/application/sync/sync_ports.dart';
 import 'package:http/http.dart' as http;
 import 'package:markei/domain/shared/ids.dart';
+import 'package:markei/domain/sync/canonical_json.dart';
 import 'package:markei/domain/sync/sync_event.dart';
 import 'package:markei/infrastructure/local/local_database.dart';
 import 'package:markei/infrastructure/local/local_device_identity_repository.dart';
@@ -155,6 +157,130 @@ void main() {
         hasLength(1),
       );
       stdout.writeln('CONVERGED=true');
+    },
+    timeout: const Timeout(Duration(minutes: 4)),
+  );
+
+  test(
+    'ORDERED_OUTBOX_HTTP_PROOF=true for two-event hosted upload',
+    () async {
+      if (Platform.environment['MARKEI_RUN_SYNC_LAB'] != '1') {
+        markTestSkipped('Set MARKEI_RUN_SYNC_LAB=1 to run disposable lab.');
+        return;
+      }
+      final repo = Directory.current.parent.parent;
+      final lab = Directory('${repo.path}/infra/sync_lab');
+      await Directory('${lab.path}/secrets').create(recursive: true);
+      await File(
+        '${lab.path}/secrets/migrator_password.txt',
+      ).writeAsString('migrator-${DateTime.now().microsecondsSinceEpoch}');
+      final temp = await Directory.systemTemp.createTemp(
+        'markei_ordered_outbox_',
+      );
+      addTearDown(() => temp.delete(recursive: true));
+      await labDocker(lab, ['compose', 'down', '--volumes']);
+      addTearDown(() => labDocker(lab, ['compose', 'down', '--volumes']));
+      await labDocker(lab, ['compose', 'up', '-d']);
+      await waitForPostgres(lab);
+      await labPsql(
+        lab,
+        File(
+          '${repo.path}/services/markei_sync_api/migrations/001_init.sql',
+        ).readAsStringSync(),
+      );
+      await labPsql(
+        lab,
+        File(
+          '${repo.path}/services/markei_sync_api/migrations/002_coordination_hardening.sql',
+        ).readAsStringSync(),
+      );
+
+      final account = const AccountId('11111111-1111-4111-8111-111111111111');
+      const device = DeviceId('22222222-2222-4222-8222-222222222222');
+      final db = LocalDatabase.file(File('${temp.path}/local.sqlite'));
+      addTearDown(db.close);
+      await seedLocalDevice(db, account, device);
+      final seq2 = orderedProofEvent(
+        sequence: 2,
+        accountId: account.value,
+        deviceId: device.value,
+      );
+      final seq1 = orderedProofEvent(
+        sequence: 1,
+        accountId: account.value,
+        deviceId: device.value,
+      );
+      await insertOrderedProofEvent(db, seq2);
+      await insertOrderedProofEvent(db, seq1);
+      final runtimePassword =
+          'runtime-${DateTime.now().microsecondsSinceEpoch}';
+      await labPsql(lab, """
+        alter role markei_runtime login password '$runtimePassword';
+        insert into accounts(account_id) values('${account.value}');
+        insert into account_cursor_state(account_id, next_cursor) values('${account.value}', 1);
+        insert into devices(account_id, device_id, status, next_expected_sequence)
+          values('${account.value}', '${device.value}', 'active', 1);
+      """);
+      expect(
+        await labInt(
+          lab,
+          "select next_expected_sequence from devices where account_id='${account.value}' and device_id='${device.value}'",
+        ),
+        1,
+      );
+      final api = await startLabApi(
+        repo,
+        account.value,
+        device.value,
+        runtimePassword,
+      );
+      addTearDown(api.close);
+      final transport = labTransport(api.uri, http.Client());
+
+      final reversedEvents = [seq2, seq1];
+      final reversedId = '11111111-2222-4333-8444-555555555555';
+      final reversed = SyncUploadSubmission(
+        id: reversedId,
+        deviceId: device.value,
+        requestHash: canonicalUtf8Sha256({
+          'deviceId': device.value,
+          'events': reversedEvents,
+          'submissionId': reversedId,
+        }),
+        events: reversedEvents,
+      );
+      final rejected = await transport.uploadSubmission(reversed);
+      expect(rejected.code, SyncStatusCode.sequenceGap);
+      expect(await labCount(lab, 'sync_events'), 0);
+      expect(await labCount(lab, 'submissions'), 0);
+
+      final outbox = DriftSyncOutboxRepository.scoped(
+        db,
+        accountId: account,
+        deviceId: device,
+      );
+      final submission = await outbox.leasePending(limit: 25);
+      expect(
+        submission!.events.map((event) => event['deviceSequence']).toList(),
+        [1, 2],
+      );
+      final accepted = await transport.uploadSubmission(submission);
+      await outbox.persistUploadResult(submission.id, accepted);
+      expect(accepted.code, SyncStatusCode.serverAccepted);
+      expect(await labCount(lab, 'sync_events'), 2);
+      expect(await labCount(lab, 'submissions'), 1);
+      expect(
+        await labInt(
+          lab,
+          "select next_expected_sequence from devices where account_id='${account.value}' and device_id='${device.value}'",
+        ),
+        3,
+      );
+      final replay = await transport.uploadSubmission(submission);
+      expect(replay.code, SyncStatusCode.serverAccepted);
+      expect(await labCount(lab, 'sync_events'), 2);
+      expect(await labCount(lab, 'submissions'), 1);
+      stdout.writeln('ORDERED_OUTBOX_HTTP_PROOF=true sequences=1,2');
     },
     timeout: const Timeout(Duration(minutes: 4)),
   );

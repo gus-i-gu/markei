@@ -780,6 +780,11 @@ final class _EmptyOutbox implements SyncOutboxRepository {
   Future<void> persistUploadResult(String submissionId, SyncResult result) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<SyncResult> recoverFailedNotApplied(String submissionId) {
+    throw UnimplementedError();
+  }
 }
 
 final class _OneOutbox implements SyncOutboxRepository {
@@ -800,6 +805,11 @@ final class _OneOutbox implements SyncOutboxRepository {
     SyncResult result,
   ) async {
     persistedCode = result.code.name;
+  }
+
+  @override
+  Future<SyncResult> recoverFailedNotApplied(String submissionId) {
+    throw UnimplementedError();
   }
 }
 

@@ -21,11 +21,19 @@ final class SyncResult {
     required this.code,
     required this.outcome,
     required this.retryable,
+    this.protocolCode,
   });
 
   final SyncStatusCode code;
   final SyncOutcome outcome;
   final bool retryable;
+  final String? protocolCode;
+}
+
+final class SyncBatchPreflightException implements Exception {
+  const SyncBatchPreflightException(this.result);
+
+  final SyncResult result;
 }
 
 final class DownloadedEvent {
@@ -51,6 +59,7 @@ abstract interface class SyncTransport {
 abstract interface class SyncOutboxRepository {
   Future<SyncUploadSubmission?> leasePending({required int limit});
   Future<void> persistUploadResult(String submissionId, SyncResult result);
+  Future<SyncResult> recoverFailedNotApplied(String submissionId);
 }
 
 abstract interface class RemoteEventApplier {

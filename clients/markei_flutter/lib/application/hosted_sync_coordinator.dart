@@ -80,6 +80,11 @@ final class HostedSyncCoordinator {
       SyncStatusCode.deviceExpired => const HostedSyncOutcome.deviceRevoked(),
       SyncStatusCode.unknownOutcome => const HostedSyncOutcome.interrupted(),
       SyncStatusCode.conflict ||
+      SyncStatusCode.sequenceGap ||
+      SyncStatusCode.wrongAccount ||
+      SyncStatusCode.hashMismatch ||
+      SyncStatusCode.localBatchInvalid ||
+      SyncStatusCode.failedRecoveryBlocked ||
       SyncStatusCode.cursorExpired ||
       SyncStatusCode.recoveryUnavailable ||
       SyncStatusCode.fullRebootstrapRequired ||

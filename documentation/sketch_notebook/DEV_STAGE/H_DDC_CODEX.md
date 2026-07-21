@@ -1,37 +1,46 @@
-# H_DDC_CODEX - Drift v8 Repair Semantics
+# H_DDC_CODEX — Ordered Outbox Recovery Semantics
 
-- Sequence: FLX-ORD-01
-- Role: Codex didactic evidence report
-- Unit: C10-MCG02-DRIFT-V8-FK-REPAIR_20260720T221440Z
-- Baseline HEAD: e9f355c61b76975e99f511e3201e6e815c25f7f1
-- Final commit SHA: reported in the terminal response after commit creation.
+> Unit: C10-MCG02-ORDERED-OUTBOX-RECOVERY_20260721T000323Z
+> Result: C10_MCG02_ORDERED_OUTBOX_RECOVERY_PROVED
 
-## Materialized Semantics
+## Materialized states
 
-- `local-database-upgrade-required`: retained for supported older local databases before open completes.
-- `local-database-upgrade-completed`: now means schema v8 committed and passed row-count, schema-reference, FK-target and `PRAGMA foreign_key_check` validation.
-- `local-database-upgrade-failed`: if v8 copy or validation fails, the upgrade does not commit and the database is not accepted as repaired.
-- `registered-locally`: still means Purchase, Items, event and outbox committed atomically in the production repository transaction.
-- `purchase-registration-insert-purchase-failed`: retained as bounded diagnostic wording for the earlier v7 defect and future unrelated insert failures.
+- `waiting-upload`: pending events remain eligible and unleased.
+- `uploading`: one active submission owns the event membership.
+- `server-accepted`: accepted upload marks submission and member pending rows accepted.
+- `duplicate-ignored`: equivalent accepted upload marks local rows accepted.
+- `upload-outcome-unknown`: same submission identity/hash is retried; no new identity is created.
+- `sequence-gap`: recognized server not-applied code, preserved distinctly.
+- `wrong-account`: recognized server not-applied code, preserved distinctly.
+- `hash-mismatch`: recognized server not-applied code, preserved distinctly.
+- `failed-not-applied`: stored failed submission with `outcome=notApplied`.
+- `failed-recovery-available`: explicit recovery requeues structurally valid immutable members.
+- `failed-recovery-blocked`: unsafe or already retired recovery returns a bounded blocker.
+- `sync-completed`: unchanged coordinator completion semantics.
 
-## Local Registration Semantics
+`protocol-upgrade-required`, `full-rebootstrap-required`, and closure wording were not added or changed for this unit. The correction does not claim human/provider closure; human correction still requires a separate retest.
 
-After repair, the migrated hosted fixture registers through `LocalPurchaseRepository` rather than direct event injection. The successful local registration creates exactly one new Purchase, one new Purchase Item, one `purchase.registered` v3 event and one pending outbox row. Device sequence advances monotonically and the download cursor remains unchanged before synchronization.
+## Semantic tests
 
-Migration success is not synchronization, provider convergence, backup, production acceptance, MCG-02 closure, MCG-03 activation or MCG-04 activation.
+- `file-backed outbox canonicalizes reversed physical event order`
+- `file-backed outbox preflight blocks non-contiguous batches`
+- `file-backed failed notApplied recovery requeues one ordered retry`
+- `file-backed recovery blocks unknown outcomes`
+- `HTTP upload preserves recognized not-applied protocol codes`
+- `ORDERED_OUTBOX_HTTP_PROOF=true for two-event hosted upload`
+- Existing local registration, unknown retry, hosted binding, native closure, recovery, migration, Purchase, and local-first tests remained passing.
 
-## Named Semantic Tests
+## Failure-code behavior
 
-- `repairs malformed v7 purchase foreign keys and reopens`
-- `migrates file-backed v2 database to v8 and reopens`
-- `fresh v8 database creates local, recovery and hosted auth tables`
-- `v8 repair failure rolls back and source remains reopenable`
-- `reopening an already migrated v8 database does not rewrite rows`
-- `migrated hosted lifecycle repairs v8 foreign keys and registers purchase`
-- Retained tests for local-only registration, hosted-bound registration, exactly one event/outbox, transaction rollback, close/reopen preservation, Store selection, draft preservation and phase diagnostics.
+Flutter now maps protocol codes as follows:
 
-## Wording Boundaries
+- `sequence-gap` -> `SyncStatusCode.sequenceGap`
+- `wrong-account` -> `SyncStatusCode.wrongAccount`
+- `hash-mismatch` -> `SyncStatusCode.hashMismatch`
+- unknown server codes -> `SyncStatusCode.conflict`
 
-Unsupported synchronization or closure wording is intentionally absent. No wording claims that the human database is corrected. Human correction still requires a separate human build/retest that opens and upgrades the real installed database successfully.
+Persisted submission evidence stores the typed local status in `response_code` and the bounded protocol string in `error_code`. User-facing coordinator behavior remains bounded: recognized not-applied codes block as `sync-unavailable`; unknown transport outcomes remain `sync-interrupted`.
 
-No production diagnostic exposes SQL, exception text, stack traces, local paths, Account/Device identifiers, payload facts, credentials or provider configuration.
+## Privacy evidence
+
+Diagnostics and tests assert only semantic codes, counts, and sequence order. No production diagnostic exposes event IDs, Account IDs, Device IDs, hashes, payloads, SQL, tokens, provider configuration, or private database contents.

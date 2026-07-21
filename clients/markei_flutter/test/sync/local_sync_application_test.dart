@@ -1,6 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:drift/drift.dart' hide isNull;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 import 'package:markei/application/register_purchase.dart';
 import 'package:markei/application/sync/sync_ports.dart';
 import 'package:markei/application/sync/sync_use_cases.dart';
@@ -9,12 +12,14 @@ import 'package:markei/domain/purchase/purchase.dart';
 import 'package:markei/domain/shared/ids.dart';
 import 'package:markei/domain/shared/money.dart';
 import 'package:markei/domain/shared/quantity.dart';
+import 'package:markei/domain/sync/canonical_json.dart';
 import 'package:markei/domain/sync/sync_event.dart';
 import 'package:markei/infrastructure/local/local_database.dart';
 import 'package:markei/infrastructure/local/local_device_identity_repository.dart';
 import 'package:markei/infrastructure/local/local_purchase_repository.dart';
 import 'package:markei/infrastructure/local/sync/local_sync_repositories.dart';
 import 'package:markei/infrastructure/local/sync/remote_purchase_event_applier.dart';
+import 'package:markei/infrastructure/remote/http_sync_transport.dart';
 
 void main() {
   test('local registration works when transport is absent', () async {
@@ -98,6 +103,174 @@ void main() {
 
     expect(transport.acknowledged, '2');
   });
+
+  test(
+    'file-backed outbox canonicalizes reversed physical event order',
+    () async {
+      final fixture = await _fileBackedOutboxFixture();
+      final db = fixture.db;
+      addTearDown(fixture.close);
+      final account = const AccountId('11111111-1111-4111-8111-111111111111');
+      const device = DeviceId('22222222-2222-4222-8222-222222222222');
+      final seq2 = _eventPayload(sequence: 2, eventId: _eventId(2));
+      final seq1 = _eventPayload(sequence: 1, eventId: _eventId(1));
+      await _insertRawEvent(db, seq2);
+      await _insertRawEvent(db, seq1);
+
+      expect(await _legacyUnorderedLeaseSequences(db), [2, 1]);
+
+      final outbox = DriftSyncOutboxRepository.scoped(
+        db,
+        accountId: account,
+        deviceId: device,
+      );
+      final submission = await outbox.leasePending(limit: 25);
+
+      expect(
+        submission!.events.map((event) => event['deviceSequence']).toList(),
+        [1, 2],
+      );
+      final members =
+          await (db.select(db.syncSubmissionEvents)
+                ..where((table) => table.submissionId.equals(submission.id))
+                ..orderBy([(table) => OrderingTerm.asc(table.position)]))
+              .get();
+      expect(members.map((member) => member.eventId).toList(), [
+        _eventId(1),
+        _eventId(2),
+      ]);
+    },
+  );
+
+  test('file-backed outbox preflight blocks non-contiguous batches', () async {
+    final fixture = await _fileBackedOutboxFixture();
+    final db = fixture.db;
+    addTearDown(fixture.close);
+    await _insertRawEvent(db, _eventPayload(sequence: 1, eventId: _eventId(1)));
+    await _insertRawEvent(db, _eventPayload(sequence: 3, eventId: _eventId(3)));
+    final transport = _RecordingUploadTransport();
+    final upload = UploadPendingEvents(
+      DriftSyncOutboxRepository(db),
+      transport,
+    );
+
+    final result = await upload();
+
+    expect(result!.code, SyncStatusCode.localBatchInvalid);
+    expect(result.protocolCode, 'local-batch-invalid');
+    expect(transport.uploadCount, 0);
+    expect(await db.select(db.syncSubmissions).get(), isEmpty);
+    expect(
+      (await db.select(db.pendingEvents).get()).map((row) => row.state),
+      everyElement('pending'),
+    );
+  });
+
+  test(
+    'file-backed failed notApplied recovery requeues one ordered retry',
+    () async {
+      final fixture = await _fileBackedOutboxFixture();
+      final db = fixture.db;
+      addTearDown(fixture.close);
+      final seq2 = _eventPayload(sequence: 2, eventId: _eventId(2));
+      final seq1 = _eventPayload(sequence: 1, eventId: _eventId(1));
+      await _insertRawEvent(db, seq2, state: 'failed');
+      await _insertRawEvent(db, seq1, state: 'failed');
+      await _insertFailedSubmission(db, 'failed-submission', [
+        _eventId(2),
+        _eventId(1),
+      ]);
+      final outbox = DriftSyncOutboxRepository(db);
+
+      final recovered = await outbox.recoverFailedNotApplied(
+        'failed-submission',
+      );
+
+      expect(recovered.code, SyncStatusCode.waitingUpload);
+      var failed = await (db.select(
+        db.syncSubmissions,
+      )..where((table) => table.id.equals('failed-submission'))).getSingle();
+      expect(failed.state, 'superseded');
+      await db.close();
+      final reopened = LocalDatabase.file(fixture.file);
+      fixture.db = reopened;
+      final retry = await DriftSyncOutboxRepository(
+        reopened,
+      ).leasePending(limit: 25);
+      expect(retry!.events.map((event) => event['deviceSequence']).toList(), [
+        1,
+        2,
+      ]);
+      expect(retry.id, isNot('failed-submission'));
+      expect(
+        await DriftSyncOutboxRepository(
+          reopened,
+        ).recoverFailedNotApplied('failed-submission'),
+        isA<SyncResult>().having(
+          (result) => result.code,
+          'code',
+          SyncStatusCode.failedRecoveryBlocked,
+        ),
+      );
+    },
+  );
+
+  test('file-backed recovery blocks unknown outcomes', () async {
+    final fixture = await _fileBackedOutboxFixture();
+    final db = fixture.db;
+    addTearDown(fixture.close);
+    await _insertRawEvent(
+      db,
+      _eventPayload(sequence: 1, eventId: _eventId(1)),
+      state: 'unknown',
+    );
+    await _insertFailedSubmission(
+      db,
+      'unknown-submission',
+      [_eventId(1)],
+      state: 'unknown',
+      outcome: SyncOutcome.unknown.name,
+    );
+
+    final result = await DriftSyncOutboxRepository(
+      db,
+    ).recoverFailedNotApplied('unknown-submission');
+
+    expect(result.code, SyncStatusCode.failedRecoveryBlocked);
+    expect((await db.select(db.pendingEvents).getSingle()).state, 'unknown');
+  });
+
+  test('HTTP upload preserves recognized not-applied protocol codes', () async {
+    final cases = {
+      'sequence-gap': SyncStatusCode.sequenceGap,
+      'wrong-account': SyncStatusCode.wrongAccount,
+      'hash-mismatch': SyncStatusCode.hashMismatch,
+      'future-code': SyncStatusCode.conflict,
+    };
+    for (final entry in cases.entries) {
+      final server = await _protocolFailureServer(entry.key);
+      addTearDown(server.close);
+      final transport = HttpSyncTransport(
+        client: http.Client(),
+        baseUri: Uri.parse('http://127.0.0.1:${server.port}'),
+        tokenSource: () => 'fixture-token',
+        correlationSource: () => 'fixture-correlation',
+      );
+
+      final result = await transport.uploadSubmission(
+        const SyncUploadSubmission(
+          id: 'submission-1',
+          deviceId: '22222222-2222-4222-8222-222222222222',
+          requestHash: 'request-hash',
+          events: [],
+        ),
+      );
+
+      expect(result.code, entry.value, reason: entry.key);
+      expect(result.protocolCode, entry.key, reason: entry.key);
+      expect(result.outcome, SyncOutcome.notApplied);
+    }
+  });
 }
 
 RegisterPurchaseCommand _command(DeviceId deviceId, String productCode) {
@@ -171,4 +344,213 @@ final class _RecordingTransport implements SyncTransport {
   Future<SyncResult> uploadSubmission(SyncUploadSubmission submission) {
     throw UnimplementedError();
   }
+}
+
+final class _RecordingUploadTransport implements SyncTransport {
+  int uploadCount = 0;
+
+  @override
+  Future<SyncResult> acknowledge(String greatestContiguousCursor) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DownloadPage> downloadAfter(String? cursor, {required int limit}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<SyncResult> uploadSubmission(SyncUploadSubmission submission) async {
+    uploadCount++;
+    return const SyncResult(
+      code: SyncStatusCode.serverAccepted,
+      outcome: SyncOutcome.applied,
+      retryable: false,
+    );
+  }
+}
+
+final class _FileBackedOutboxFixture {
+  _FileBackedOutboxFixture(this.directory, this.file, this.db);
+
+  final Directory directory;
+  final File file;
+  LocalDatabase db;
+
+  Future<void> close() async {
+    await db.close();
+    await directory.delete(recursive: true);
+  }
+}
+
+Future<_FileBackedOutboxFixture> _fileBackedOutboxFixture() async {
+  final directory = await Directory.systemTemp.createTemp('markei-outbox-');
+  final file = File('${directory.path}/local.sqlite');
+  final db = LocalDatabase.file(file);
+  final now = DateTime.utc(2026, 7, 21);
+  await db
+      .into(db.localAccounts)
+      .insert(
+        LocalAccountsCompanion.insert(
+          id: '11111111-1111-4111-8111-111111111111',
+          defaultCurrencyCode: 'BRL',
+          createdAt: now,
+        ),
+      );
+  await db
+      .into(db.devices)
+      .insert(
+        DevicesCompanion.insert(
+          id: '22222222-2222-4222-8222-222222222222',
+          accountId: '11111111-1111-4111-8111-111111111111',
+          nextSequence: 1,
+          createdAt: now,
+        ),
+      );
+  return _FileBackedOutboxFixture(directory, file, db);
+}
+
+Future<void> _insertRawEvent(
+  LocalDatabase db,
+  Map<String, Object?> event, {
+  String state = 'pending',
+}) async {
+  final now = DateTime.utc(
+    2026,
+    7,
+    21,
+  ).add(Duration(milliseconds: event['deviceSequence']! as int));
+  await db
+      .into(db.syncEvents)
+      .insert(
+        SyncEventsCompanion.insert(
+          id: event['eventId']! as String,
+          accountId: event['accountId']! as String,
+          deviceId: event['deviceId']! as String,
+          deviceSequence: event['deviceSequence']! as int,
+          eventType: event['eventType']! as String,
+          payloadVersion: event['payloadVersion']! as int,
+          occurrenceTime: DateTime.parse(event['occurrenceTime']! as String),
+          payloadJson: jsonEncode(event),
+          contentHash: event['contentHash']! as String,
+          createdAt: now,
+        ),
+      );
+  await db
+      .into(db.pendingEvents)
+      .insert(
+        PendingEventsCompanion.insert(
+          eventId: event['eventId']! as String,
+          state: state,
+          enqueuedAt: now,
+        ),
+      );
+}
+
+Future<void> _insertFailedSubmission(
+  LocalDatabase db,
+  String submissionId,
+  List<String> eventIds, {
+  String state = 'failed',
+  String outcome = 'notApplied',
+}) async {
+  final now = DateTime.utc(2026, 7, 21, 1);
+  await db
+      .into(db.syncSubmissions)
+      .insert(
+        SyncSubmissionsCompanion.insert(
+          id: submissionId,
+          accountId: '11111111-1111-4111-8111-111111111111',
+          deviceId: '22222222-2222-4222-8222-222222222222',
+          requestHash: 'legacy-request-hash',
+          state: state,
+          outcome: Value(outcome),
+          responseCode: const Value('conflict'),
+          attemptCount: const Value(1),
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
+  for (var i = 0; i < eventIds.length; i++) {
+    await db
+        .into(db.syncSubmissionEvents)
+        .insert(
+          SyncSubmissionEventsCompanion.insert(
+            submissionId: submissionId,
+            eventId: eventIds[i],
+            position: i,
+          ),
+        );
+  }
+}
+
+Future<List<int>> _legacyUnorderedLeaseSequences(LocalDatabase db) async {
+  final pendingQuery =
+      db.select(db.pendingEvents).join([
+          innerJoin(
+            db.syncEvents,
+            db.syncEvents.id.equalsExp(db.pendingEvents.eventId),
+          ),
+        ])
+        ..where(db.pendingEvents.state.equals('pending'))
+        ..limit(25);
+  final pending = (await pendingQuery.get())
+      .map((row) => row.readTable(db.pendingEvents))
+      .toList(growable: false);
+  final events =
+      await (db.select(db.syncEvents)..where(
+            (table) => table.id.isIn(
+              pending.map((row) => row.eventId).toList(growable: false),
+            ),
+          ))
+          .get();
+  return events.map((event) => event.deviceSequence).toList(growable: false);
+}
+
+String _eventId(int sequence) => switch (sequence) {
+  1 => '00000000-0000-4000-8000-999999999999',
+  2 => '00000000-0000-4000-8000-000000000002',
+  3 => '00000000-0000-4000-8000-000000000003',
+  _ => '00000000-0000-4000-8000-${sequence.toString().padLeft(12, '0')}',
+};
+
+Map<String, Object?> _eventPayload({
+  required int sequence,
+  required String eventId,
+}) {
+  final content = <String, Object?>{
+    'eventId': eventId,
+    'accountId': '11111111-1111-4111-8111-111111111111',
+    'deviceId': '22222222-2222-4222-8222-222222222222',
+    'deviceSequence': sequence,
+    'eventType': 'purchase.registered',
+    'payloadVersion': 3,
+    'occurrenceTime': DateTime.utc(2026, 7, 21, 12, sequence).toIso8601String(),
+    'payload': <String, Object?>{
+      'purchase': <String, Object?>{'id': 'purchase-$sequence'},
+      'productSnapshots': <Object?>[],
+    },
+  };
+  return {...content, 'contentHash': canonicalUtf8Sha256(content)};
+}
+
+Future<HttpServer> _protocolFailureServer(String code) async {
+  final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+  server.listen((request) async {
+    await request.drain<void>();
+    request.response.statusCode = HttpStatus.conflict;
+    request.response.headers.contentType = ContentType.json;
+    request.response.write(
+      jsonEncode({
+        'code': code,
+        'operation': 'upload-submission',
+        'outcome': 'not-applied',
+        'retryable': false,
+        'safeAction': 'stop and preserve evidence',
+        'correlationId': 'fixture-correlation',
+      }),
+    );
+    await request.response.close();
+  });
+  return server;
 }

@@ -247,6 +247,9 @@ final class HttpSyncTransport implements SyncTransport, RecoveryTransport {
       'auth-required' => SyncStatusCode.authRequired,
       'device-revoked' => SyncStatusCode.deviceRevoked,
       'device-expired' => SyncStatusCode.deviceExpired,
+      'sequence-gap' => SyncStatusCode.sequenceGap,
+      'wrong-account' => SyncStatusCode.wrongAccount,
+      'hash-mismatch' => SyncStatusCode.hashMismatch,
       'protocol-upgrade-required' => SyncStatusCode.protocolUpgradeRequired,
       'cursor-expired' => SyncStatusCode.cursorExpired,
       'recovery-unavailable' => SyncStatusCode.recoveryUnavailable,
@@ -259,6 +262,7 @@ final class HttpSyncTransport implements SyncTransport, RecoveryTransport {
       code: code,
       outcome: SyncOutcome.notApplied,
       retryable: body['retryable'] == true,
+      protocolCode: body['code'] as String?,
     );
   }
 
