@@ -958,3 +958,37 @@ MCG-03 / MCG-04                                                   INACTIVE
 
 D/E/F carrying `C10-MCG02-RECOVERY-ORCHESTRATION_20260721T003303Z` are the only active Codex
 authority. Provider retest resumes only after the production coordinator proof passes.
+
+---
+
+## 70. Append-only reconciliation — production recovery orchestration proved
+
+> Reconciliation marker: C10-MCG02-WINDOWS-RECOVERY-RETEST_20260721T014246Z
+> Reconciled at UTC: 2026-07-21T01:42:46Z
+> Implementation evidence: 82db09dbb56883ec00b309c1444df8197337947c
+> Status: **LOCAL/DISPOSABLE PROOF ACCEPTED; WINDOWS PROVIDER RETEST ACTIVE**
+
+G/H/I and source inspection accept the recovery-orchestration unit. Production composition now
+orders authentication and Device guards before scoped recovery, canonical upload, download and
+acknowledgement. Candidate discovery and recovery occur transactionally; zero candidates is a
+no-op, one safe candidate recovers, and ambiguity or invalid structure fails closed.
+
+The human-equivalent file-backed v8 proof closes/reopens, discovers the failed attempt without a
+supplied ID, supersedes it, uploads immutable sequences `1,2` through real HTTP/PostgreSQL, advances
+the server to `3`, preserves unrelated local-only work, and produces no duplicate on repeat. The
+reported full regression and supported build matrix passes. Main accepts implementation validation
+within that environment and now authorizes the preserved Windows provider retest.
+
+## 71. Revised projection
+
+~~~text
+MCG-02 ordered upload + production recovery                       PROVED DISPOSABLE HTTP
+MCG-02 preserved Windows recovery/upload                          ACTIVE HUMAN RETEST
+MCG-02 Android Device B + two-Device convergence                  PAUSED
+MCG-02 revocation/offline/logout/log evidence                     PAUSED
+MCG-02 closure reconciliation                                     PENDING
+MCG-03 / MCG-04                                                   INACTIVE
+~~~
+
+D/E/F carrying `C10-MCG02-WINDOWS-RECOVERY-RETEST_20260721T014246Z` are validation authority only.
+Codex source mutation is paused until the human evidence is reconciled.

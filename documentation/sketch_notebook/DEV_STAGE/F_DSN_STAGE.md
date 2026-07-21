@@ -1,41 +1,33 @@
-# F_DSN_STAGE — Recovery Orchestration Design
+# F_DSN_STAGE — Windows Recovery Retest Boundary
 
-> Authority marker: C10-MCG02-RECOVERY-ORCHESTRATION_20260721T003303Z
-> Required ancestor: bbb5922b8afa5ab85646c34b9cd08e0c24fcf48a
-> Status: **ACTIVE CODEX DESIGN AUTHORITY**
+> Authority marker: C10-MCG02-WINDOWS-RECOVERY-RETEST_20260721T014246Z
+> Required ancestor: 82db09dbb56883ec00b309c1444df8197337947c
+> Status: **ACTIVE HUMAN VALIDATION AUTHORITY; CODEX MUTATION PAUSED**
 
-## Selected dependency direction
+## Validated implementation boundary
 
 ~~~text
-HostedSyncCoordinator
-  -> RecoverFailedNotApplied use case
-  -> SyncOutboxRepository scoped candidate discovery + recovery
-  -> UploadPendingEvents
-  -> existing HTTP transport
+Native Closure Sync
+  -> HostedSyncCoordinator
+  -> scoped failed/notApplied recovery
+  -> canonical immutable upload 1,2
+  -> Render API / Neon transaction
+  -> download + acknowledgement
+  -> durable local accepted state
 ~~~
 
-The application layer owns orchestration; Drift owns selection and atomic state transition; the UI
-only requests Sync and receives a bounded outcome. Infrastructure details and submission IDs must
-not cross into presentation.
+The provider retest validates this existing dependency path; it must not redesign it. The local
+database remains authoritative for preserved local History and immutable queued events. Neon
+evidence confirms only accepted hosted state for the scoped Account/Device.
 
-## Invariants
+## Acceptance invariants
 
-1. Candidate discovery is restricted to the active Account and Device.
-2. Zero candidates is ordinary progress; exactly one eligible candidate may recover; ambiguity
-   fails closed.
-3. Discovery plus recovery is transactionally revalidated so concurrent calls cannot both recover.
-4. Recovery retains the old submission as superseded and reuses immutable events through the
-   canonical ordered lease from `bbb5922`.
-5. Unknown/uploading/accepted or structurally invalid attempts never enter this path.
-6. Coordinator ordering is authentication/binding check, recovery check, upload, download,
-   acknowledgement. Existing offline/local-first behavior remains independent.
-7. No schema change is authorized. If current state cannot satisfy concurrency and ambiguity rules,
-   report partial rather than weakening them.
+1. Local facts and event identities remain unchanged through recovery.
+2. The old failed attempt becomes superseded; one retry becomes accepted.
+3. The server accepts sequences `1,2` exactly once and expects `3` afterward.
+4. Reopen/repeat produces no second submission or duplicated fact.
+5. Acknowledgement follows committed upload/download application.
+6. Six older local-only Device events remain outside the hosted Device scope.
+7. No source/provider/database mutation is authorized by this validation stage.
 
-## Decisive proof
-
-A file-backed database is seeded with the human-equivalent state: one failed/notApplied submission,
-two immutable events whose stored membership order is reversed, local next sequence `3`, and a
-server expecting `1`. After close/reopen, one production coordinator call recovers and sends `1,2`;
-the server stores two events, one accepted submission and expects `3`. Repeated calls do not
-duplicate state. Negative fixtures prove blocked and ambiguous states remain unchanged.
+If any invariant cannot be established with sanitized evidence, record partial and return to Main.

@@ -1,22 +1,17 @@
-# E_DDC_STAGE — Recovery Orchestration Semantics
+# E_DDC_STAGE — Windows Recovery Retest Semantics
 
-> Authority marker: C10-MCG02-RECOVERY-ORCHESTRATION_20260721T003303Z
-> Status: **ACTIVE CODEX DIDACTIC AUTHORITY**
+> Authority marker: C10-MCG02-WINDOWS-RECOVERY-RETEST_20260721T014246Z
+> Status: **ACTIVE HUMAN VALIDATION AUTHORITY; CODEX MUTATION PAUSED**
 
-## Closed semantics
+## Truthful outcomes
 
-- `no-recoverable-failure`: proceed with ordinary upload.
-- `failed-recovery-available`: one safe not-applied attempt was requeued; proceed once.
-- `failed-recovery-blocked`: evidence is unsafe, ambiguous or ineligible; do not upload it.
-- `upload-outcome-unknown`: preserve the same submission identity; do not use failed recovery.
-- `server-accepted`: exact immutable events committed remotely.
-- `sync-completed`: recovery, upload, download and acknowledgement completed as applicable.
+- `authenticated` plus `device-enrolled`: authorization prerequisites pass.
+- `sync-completed`: confirmed synchronization phases completed.
+- `sync-no-new-events`: valid only after the first recovery/upload was already confirmed.
+- `sync-interrupted`: outcome may be unknown; do not create another identity or edit local state.
+- `sync-unavailable`: bounded failure; inspect evidence before another attempt.
+- preserved History: server cleanup/recovery does not remove local Purchase history.
 
-Recovery is an internal safety transition, not a request for the user to paste a submission ID or
-edit a database. `Sync` may trigger it only within the authenticated Account/Device binding.
-
-Production diagnostics remain bounded (`sync-unavailable` or `sync-interrupted`) and expose no
-submission/event identifiers, payloads, hashes, SQL, credentials or provider configuration.
-
-Required semantic tests cover no candidate, one eligible candidate, multiple/ambiguous candidates,
-blocked outcomes, reopen, repeat/concurrent invocation, interruption and successful accepted upload.
+Build success and disposable lab proof are not human provider acceptance. Provider acceptance needs
+the named Windows observation plus sanitized Neon and Render evidence. Evidence must contain counts,
+states and commit SHA only—never tokens, credentials, IDs, payloads or connection strings.
