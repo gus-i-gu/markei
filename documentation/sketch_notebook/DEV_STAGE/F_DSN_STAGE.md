@@ -1,81 +1,49 @@
-# F_DSN_STAGE — Closure Diagnostic Architecture
+# F_DSN_STAGE — Unknown Recovery Architecture
 
 > Sequence: FLX-ORD-01
-> Authority marker: C10-MCG02-CLOSURE-DIAGNOSTICS_20260721
+> Authority marker: C10-MCG02-UNKNOWN-RECOVERY_20260721
 > Status: **ACTIVE CODEX DESIGN AUTHORITY**
 
-## Selected structure
+## Selected boundary
 
 ~~~text
-NativeClosurePage
-  -> NativeAuthClosureRunner (commands)
-  -> ClosureDiagnosticsQuery (read-only snapshots)
-       -> DriftClosureDiagnosticsRepository
-            -> local Device / SyncState / PendingEvent / SyncEvent / SyncAttempt tables
-
-Sync action
-  -> HostedSyncCoordinator
-  -> bounded attempt recorder
-  -> existing guard / outbox / transport / applier
+Closure confirmation
+  -> unknown-recovery preflight/query
+  -> HostedSyncCoordinator recovery path
+  -> existing outbox leases exact unknown submission
+  -> existing authenticated HTTP transport
+  -> existing result persistence
+  -> attempt ledger + refreshed diagnostic snapshot
 ~~~
 
-The widget renders immutable diagnostic view models and owns only loading/expansion state. It must
-not depend on Drift rows. The query repository performs Account/environment scoping, ordering,
-counting, bounding and identifier redaction before data reaches presentation.
-
-## Durable attempt model
-
-If no equivalent table exists, add a local-only `sync_attempts` table with an opaque local ID,
-Account/environment scope, started/completed timestamps, bounded phase, stable result code, outcome
-class and sanitized recovery code. Fields containing raw remote data are prohibited.
-
-Attempt persistence must not participate in the Purchase/event/outbox transaction or change its
-atomicity. Failure to write diagnostics must not relabel a successful/failed Sync result, but should
-produce safe local logging/test evidence. An attempt begins immediately before coordinator work and
-is finalized once for every returned or caught terminal path.
-
-## Snapshot model
-
-One snapshot contains:
-
-~~~text
-auth/enrollment/readiness summary
-current Device summary + next local sequence
-queue counts by durable state
-last locally recorded successful completion
-recentAttempts[0..20]
-recentActionableEvents[0..20]
-devices[] scoped to active Account/environment
-snapshot timestamp
-~~~
-
-Ordering is deterministic: newest timestamp first with local ID as tie-breaker. Short fingerprints
-are presentation-safe derivatives, not persisted replacement identities.
-
-## UI composition
-
-Keep Closure as its own navigation destination. Use vertically stacked responsive cards:
-
-1. `Sync overview` — auth, enrollment, readiness, last result/success and recovery guidance.
-2. `Local queue` — pending/uploading/failed/unknown counts and next Device sequence.
-3. `Recent sync attempts` — bounded retrospective timeline/table with explicit empty state.
-4. `Devices` — current/enrolled local Device summaries with redacted identity.
-5. `Actionable events` — bounded pending/failed/unknown rows.
-6. `Closure actions` — existing command buttons plus Refresh and guarded history clearing.
-
-Use a table on wide Windows layouts and stacked rows/cards on narrow layouts. Developer sections may
-be collapsed initially, but their summaries must make pending/failed/unknown conditions visible.
+The outbox/submission tables remain authoritative for retry identity. The widget receives a
+sanitized eligibility view model and invokes an application command; it does not query or mutate
+Drift. Recovery must reuse existing protocol idempotency rather than create a parallel repair model.
 
 ## Invariants
 
-- refresh is local and read-only;
-- diagnostics never mutate queue state or trigger transport;
-- stable codes survive restart; raw exceptions do not;
-- attempt history is observational and does not replace queue truth;
-- Account/environment boundaries prevent cross-scope diagnostic leakage;
-- clearing attempt history cannot alter synchronization state;
-- existing authentication, enrollment, Query, Sync and Logout behavior remains unchanged;
-- no provider-side status is inferred from absent local evidence.
+- exactly one scoped unknown submission is recoverable at a time;
+- submission ID, request hash, member order, event IDs, Device sequences and payload facts are
+  immutable across retry;
+- unknown-to-unknown is non-destructive and remains retryable;
+- accepted/duplicate-equivalent converges the original rows;
+- no preflight or confirmation path allocates a sequence or changes queue state;
+- ordinary Sync cannot silently bypass an ineligible unknown submission;
+- diagnostic recording cannot change the synchronization result;
+- no direct database repair is exposed.
 
-No server schema, API route, event payload, authentication protocol, remote telemetry, Settings merge
-or general navigation redesign is authorized.
+Codex must inspect whether the current ordinary Sync path already retries the exact unknown
+submission. If so, factor/reuse it and add the guarded Closure command plus evidence; do not rewrite
+working synchronization logic merely to create a new abstraction.
+
+## Windows completion
+
+Protocol registration and callback forwarding are two halves of one boundary. Retain the runner's
+strict callback-prefix validation and current-user single-instance forwarding. Add repository-owned
+registration/installation support without embedding tenant configuration or authorization data.
+
+The desktop navigation container must own vertical overflow. Pages and destination ordering remain
+unchanged; the rail becomes scrollable/responsive while retaining selection semantics.
+
+No hosted schema/API change, local schema reset, new event contract, provider telemetry, Settings
+merge or general shell redesign is authorized.

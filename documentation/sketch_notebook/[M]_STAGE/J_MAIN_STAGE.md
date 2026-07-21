@@ -1,86 +1,65 @@
-# J_MAIN_STAGE — Closure Diagnostics Coordination
+# J_MAIN_STAGE — Unknown-Outbox Recovery Coordination
 
 > Sequence: FLX-ORD-01
-> Authority marker: C10-MCG02-CLOSURE-DIAGNOSTICS_20260721
-> Required ancestor: `bf78a3908ad05b3e7a0decc197fa2f99970059f1`
-> Status: **CLOSURE DIAGNOSTICS SELECTED; CODEX D/E/F ACTIVE**
-> Active unit: **Local user/dev diagnostic and synchronization retrospective**
+> Authority marker: C10-MCG02-UNKNOWN-RECOVERY_20260721
+> Required ancestor: `301ea19b216f46a2d0375b9e52a3cbb27d8de998`
+> Status: **RUNTIME DIAGNOSTICS ACCEPTED; UNKNOWN RECOVERY D/E/F ACTIVE**
 
-## 1. Human observation and provider boundary
+## 1. Reconciliation result
 
-The native Closure surface successfully supported Sign in and enrollment, but it exposes only one
-transient status string. It does not show pending events, interrupted/failed events, Device sequence
-or retrospective attempts.
-
-The controlled external inspection established:
+Closure diagnostics are implemented, repository-validated and manually verified on the upgraded
+Windows database. Two consecutive refreshes showed the same sanitized state and the second refresh
+performed no Sync, authentication flow or mutation.
 
 ~~~text
-client TLS                         TLS 1.3
-hosted Device rows                1 active
-Neon submissions/events/sequence  0 / 0 / 1
-Render live/ready                 200 / 200
-request/status for attempted Sync unavailable in retained free-plan logs
+authenticated / device-enrolled
+unknown-work-needs-review
+pending 0 / uploading 0 / failed 0 / unknown 2
+unknown Device sequences 1 and 2
+next local Device sequence 3
+no locally recorded attempt history
 ~~~
 
-This proves the attempted Sync did not commit hosted data. It does not identify the failing local or
-transport phase. No second real Sync is authorized by this stage.
+The latest bounded hosted observation remains `submissions 0 / events 0 / next sequence 1`. This is
+consistent with a retryable first submission but does not by itself authorize queue mutation or
+prove the exact local submission shape.
+
+Manual verification also exposed two separate product defects: Windows lacked installed
+`auth0flutter://` protocol registration, and the desktop navigation rail overflowed at the tested
+height. Manual current-user registration enabled sign-in; it is evidence of the missing packaging
+step, not the permanent solution.
 
 ## 2. Decision
 
-The proposal is accepted with a precision correction: Closure will provide complete coverage of
-locally observable diagnostic state, not claim a provider-wide “full error scan.” Closure remains
-separate from Settings.
+The next bounded unit is selected:
 
-The implementation must add:
+`C10-MCG02-UNKNOWN-RECOVERY`
 
-- a user-facing readiness and recovery overview;
-- durable sanitized history for future user-initiated Sync attempts;
-- current queue counts and bounded actionable-event rows;
-- redacted enrolled-device summaries and next local sequence;
-- a developer retrospective with stable phases/codes/timestamps;
-- read-only refresh and narrowly scoped history clearing.
+It must prove and preserve exact idempotent retry identity, expose one guarded Closure recovery
+action, fail closed on malformed/ambiguous state, package Windows callback registration, and remove
+desktop navigation overflow. A provider retry remains prohibited during Codex materialization.
 
-It must not fabricate the already-observed attempt in a new ledger. That attempt predates durable
-client instrumentation and remains external evidence only.
+## 3. Authority
 
-## 3. Controlling authority
+Only current D/E/F bearing `C10-MCG02-UNKNOWN-RECOVERY_20260721` authorize implementation. Current
+G/H/I are accepted prior-unit evidence and must be replaced by Codex. Permanent domain promotion is
+deferred until implementation reports and controlled runtime/provider verification return.
 
-Codex materialization authority is exclusively:
+## 4. Acceptance sequence
 
-- `DEV_STAGE/D_OPS_STAGE.md`
-- `DEV_STAGE/E_DDC_STAGE.md`
-- `DEV_STAGE/F_DSN_STAGE.md`
+1. Codex proves repository invariants and materializes the bounded unit.
+2. Main reconciles new G/H/I and exact commit/tree evidence.
+3. Human updates the Windows checkout and verifies protocol registration, navigation and the local
+   recovery preflight without executing recovery.
+4. Main authorizes at most one controlled unknown-submission retry.
+5. Human captures sanitized Closure before/after evidence plus hosted `submissions/events/next`
+   counts.
+6. Convergence is accepted only if local and hosted evidence agree; otherwise Sync remains blocked
+   and the stable outcome determines the next unit.
 
-Current G/H/I are prior implementation evidence and must be replaced after materialization. They do
-not authorize source changes.
+## 5. Current prohibition
 
-## 4. Acceptance outcome
+Until step 4, do not press Sync or recovery; Query, Enroll, Clear diagnostic history, direct database
+editing, new purchase creation and provider mutation are outside the verification path.
 
-The unit succeeds when the feature-gated native Closure page can truthfully answer, across restart:
-
-~~~text
-Am I authenticated and enrolled?
-Is local synchronization ready?
-What local work is pending, uploading, failed or unknown?
-What is the current Device's next local sequence?
-What happened in the most recent recorded attempts?
-Which safe next action is recommended?
-~~~
-
-All answers must remain Account/environment scoped, sanitized and locally evidenced.
-
-Terminal:
-
-~~~text
-C10_MCG02_CLOSURE_DIAGNOSTICS_IMPLEMENTED
-~~~
-
-## 5. Exclusions and forward path
-
-This unit does not retry provider Sync, inspect or mutate Auth0/Render/Neon, prove provider
-convergence, merge Closure/Settings, add remote telemetry/export, start multi-Device convergence,
-begin MCG-03/04 or promote permanent domain memory.
-
-After Codex returns G/H/I, Main reconciles the implementation and validation. Only then should the
-human run a controlled local Closure inspection and decide whether the pending sequence-1 event is
-safe to retry under the newly observable diagnostics.
+Success terminal: `C10_MCG02_UNKNOWN_RECOVERY_IMPLEMENTED`

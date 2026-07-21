@@ -1,96 +1,93 @@
-# D_OPS_STAGE — Closure Diagnostics and Sync Retrospective
+# D_OPS_STAGE — Unknown-Outbox Recovery and Windows Closure Completion
 
 > Sequence: FLX-ORD-01
-> Authority marker: C10-MCG02-CLOSURE-DIAGNOSTICS_20260721
-> Required ancestor: `bf78a3908ad05b3e7a0decc197fa2f99970059f1`
+> Authority marker: C10-MCG02-UNKNOWN-RECOVERY_20260721
+> Required ancestor: `301ea19b216f46a2d0375b9e52a3cbb27d8de998`
 > Status: **ACTIVE CODEX MATERIALIZATION AUTHORITY**
 
-## Objective
+## Accepted evidence
 
-Turn the existing feature-gated Closure page into a sanitized user and developer diagnostic surface
-that makes authentication, enrollment, local queue, Device sequence and recent synchronization
-attempts observable without merging Closure into Settings.
-
-Provider evidence immediately preceding this stage is bounded to:
+The Closure-diagnostics implementation passed repository validation and manual Windows verification:
 
 ~~~text
-authentication: initially signed out; interactive sign-in succeeded
-enrollment: confirmed; one active hosted Device
-client TLS: TLS 1.3
-Neon after the attempted Sync: submissions 0 / events 0 / next sequence 1
-Render health: live 200 / ready 200
-Render request/status evidence for the attempt: unavailable
-current UI: only one transient action/result string
+authentication                  authenticated
+enrollment                      device-enrolled
+readiness                       unknown-work-needs-review
+pending/uploading/failed        0 / 0 / 0
+unknown                         2 (Device sequences 1 and 2)
+next local Device sequence      3
+recent recorded attempts        empty (the interrupted attempt predates the ledger)
+second diagnostic refresh       local-only and non-mutating
+last provider observation       submissions 0 / events 0 / next expected sequence 1
 ~~~
 
-The `0 / 0 / 1` provider result proves no hosted commit. It does not prove which pre-transaction
-client or transport phase failed.
+The Windows client also required manual current-user registration of `auth0flutter://` before the
+browser callback returned to Markei. With Closure visible, the navigation rail overflowed by about
+90 pixels at one tested window height.
+
+These observations validate Closure diagnostics. They do not validate synchronization convergence
+or authorize an uncontrolled retry.
 
 ## Required materialization
 
-1. Add a read-only Closure diagnostic query/application port backed by the active local Drift
-   database. Do not let widgets query Drift directly.
-2. Add a durable, local-only sync-attempt ledger if no equivalent durable source exists. Record one
-   row per user-initiated Sync run with start/end timestamps, terminal stable status code, bounded
-   phase, outcome class and sanitized recovery code. Never store tokens, Auth0 subjects, raw HTTP
-   bodies, SQL, stack traces, connection data, payload JSON or exception messages.
-3. Instrument the hosted sync coordinator/runner at stable boundaries so interrupted, unavailable,
-   blocked, completed and no-new-events outcomes become retrospective evidence. Preserve current
-   synchronization behavior and transaction semantics.
-4. Present a User diagnostics section containing:
-   - authentication state;
-   - enrollment state;
-   - overall sync readiness/last outcome;
-   - pending, uploading, failed and unknown queue counts;
-   - next local Device sequence;
-   - last successful synchronization time when evidence exists;
-   - concise recovery guidance.
-5. Present a Developer diagnostics section containing:
-   - the most recent 20 sync attempts, newest first;
-   - timestamp, duration when known, phase, stable result code and outcome;
-   - a sanitized enrolled-device list using local aliases/short fingerprints rather than full UUIDs;
-   - per-device status, local next sequence and whether it is the current Device;
-   - queue-state counts and a bounded list of the most recent 20 pending/failed/unknown events using
-     short event fingerprints, event type, sequence, state and timestamps only.
-6. Provide explicit `Refresh diagnostics` and clear visual empty states. Refresh after every Closure
-   action and when the page is opened. Do not initiate Sync during refresh.
-7. Keep Status, Sign in, Enroll, Query, Sync and Logout actions. Disable only conflicting actions
-   while an action runs; do not clear prior diagnostics while running.
-8. Add a user-confirmed `Clear diagnostic history` action that deletes only the local attempt ledger.
-   It must not delete events, queue rows, Devices, purchases, bindings, credentials or sync cursors.
-9. Use stable keys and widget semantics for all summary values and history collections.
-10. If a Drift schema change is required, add the next forward migration, regenerate Drift output and
-    prove upgrade from the immediately preceding schema without destructive reset.
+1. Trace and document the exact persisted relationship among the two `unknown` pending-event rows,
+   their submission row, submission membership/order, request hash and Device sequence. Do not
+   print payloads or complete identifiers.
+2. Preserve the existing idempotency invariant: an unknown submission may be retried only as the
+   exact same submission identity, request hash, ordered event membership and event content. Never
+   allocate a replacement submission or skip/resequence its events.
+3. Add an explicit, user-confirmed Closure recovery action for eligible unknown work. It must:
+   - require authenticated, active enrollment and one scoped unknown submission;
+   - show a sanitized preflight summary and warn that hosted outcome is unresolved;
+   - reuse the normal coordinator/transport and the exact persisted submission;
+   - create one durable diagnostic attempt record;
+   - disable conflicting actions while running;
+   - refresh diagnostics after the terminal outcome.
+4. Fail closed with stable guidance when unknown state is malformed, cross-scope, has missing or
+   mismatched members, is non-contiguous, has multiple competing unknown submissions, or cannot
+   prove exact retry identity. Do not mutate the queue in those cases.
+5. Preserve response semantics:
+   - accepted or duplicate-equivalent may transition the original submission/events to accepted;
+   - another unknown result remains unknown and preserves the same retry identity;
+   - stable not-applied results follow the existing failed/recovery representation;
+   - sequence/hash/account/device conflicts remain blocked and visible.
+6. Package/register the Windows `auth0flutter` callback protocol through a repository-owned,
+   current-user-scoped development/install mechanism appropriate to Flutter Windows. Registration
+   must quote the executable and `%1`, require no administrator rights, contain no credentials, and
+   be testable. Keep the existing single-instance callback forwarding and validation.
+7. Make desktop navigation vertically responsive/scrollable so all destinations, including
+   Closure, remain reachable without RenderFlex overflow at supported Windows heights. Preserve
+   compact navigation behavior and destination/index alignment.
+8. Update developer-facing Windows run/setup guidance with the verified vcpkg discovery variables
+   and Closure feature flag, using placeholders only.
 
 ## Validation
 
-- repository tests for sanitized snapshot queries, ordering, 20-row bounds and Account scoping;
-- coordinator/runner tests for each recorded terminal outcome and interrupted attempts;
-- widget tests for signed-out, enrolled, empty, pending, failed/unknown and populated-history states;
-- a migration-upgrade test if schema version changes;
-- regression proof that diagnostic refresh performs no network request and no synchronization;
-- regression proof that clearing history preserves queue, Device, binding and cursor state;
-- `dart format --set-exit-if-changed lib test`;
-- `flutter analyze` and complete `flutter test`;
-- supported Windows release and Android debug builds;
+- repository snapshot test for the real shape: one unknown submission containing sequences 1–2,
+  local next sequence 3, and exact same-submission retry;
+- accepted, duplicate-equivalent, repeated-unknown, stable-not-applied, conflict and malformed-state
+  tests with queue/submission invariants checked after each outcome;
+- proof that confirmation cancellation and failed preflight make no transport call and no mutation;
+- proof that exactly one attempt ledger entry is finalized per recovery invocation;
+- widget tests for recovery visibility, sanitized confirmation, busy state and guidance;
+- Windows protocol-registration contract test plus callback-forwarding regression;
+- navigation tests at representative short and tall desktop heights, with no overflow exceptions;
+- complete formatting, analysis, Flutter tests, Android debug build and Windows release build;
 - `git diff --check`, exact changed-path review and tracked/staged secret scan.
 
 ## Boundaries and stop rules
 
-Do not access Auth0, Render or Neon; deploy; retry the real Sync; alter server/API/event contracts;
-change synchronization decisions; merge Closure with Settings; redesign unrelated pages; expose raw
-identifiers or secrets; add telemetry; export diagnostics; promote permanent notebook memory; or
-start MCG-03/04. Preserve unrelated and untracked files and existing user databases.
+Do not access or mutate Auth0, Render or Neon; deploy; execute the real recovery; edit the user's
+database; reset/reclassify unknown rows directly; change event identity/content/order; introduce a
+new server endpoint unless existing protocol behavior makes safe recovery impossible; merge Closure
+with Settings; expose payloads, tokens, full identifiers or raw exceptions; start MCG-03/04; or
+update permanent notebook memory.
 
-If retrospective history cannot be populated for actions that predate this implementation, say
-`No locally recorded attempt history` rather than reconstructing or inventing an attempt.
+If exact retry identity cannot be proven from persisted local state and existing server semantics,
+stop with the precise gap rather than creating a destructive repair.
 
 Replace G/H/I with evidence, commit and push one bounded implementation without force.
 
-Success terminal:
+Success terminal: `C10_MCG02_UNKNOWN_RECOVERY_IMPLEMENTED`
 
-~~~text
-C10_MCG02_CLOSURE_DIAGNOSTICS_IMPLEMENTED
-~~~
-
-Otherwise report `C10_MCG02_CLOSURE_DIAGNOSTICS_PARTIAL` and the exact blocker.
+Otherwise: `C10_MCG02_UNKNOWN_RECOVERY_PARTIAL` with the exact blocker.
