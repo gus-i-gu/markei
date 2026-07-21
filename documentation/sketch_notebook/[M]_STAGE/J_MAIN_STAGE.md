@@ -2,7 +2,7 @@
 
 > Sequence: FLX-ORD-01
 > Authority marker: C10-MCG02-TRANSPORT-OBSERVABILITY_20260721
-> Required ancestor: `f8557105ad478c85c82b99b6b60b371d2cb9ddd8`
+> Required ancestor: `362de195a6aaf9522f7dd2258a29920ce9e3a6f1`
 > Status: **TRANSPORT OBSERVABILITY D/E/F ACTIVE; SYNC BLOCKED**
 
 ## 1. Reconciled runtime evidence
