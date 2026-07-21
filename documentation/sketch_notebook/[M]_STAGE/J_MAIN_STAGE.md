@@ -924,3 +924,37 @@ MCG-03 / MCG-04                                                   INACTIVE
 
 D/E/F carrying `C10-MCG02-ORDERED-OUTBOX-RECOVERY_20260721T000323Z` are the only active Codex
 authority. Human/provider retest resumes only after the disposable ordered-upload recovery proof.
+
+---
+
+## 68. Append-only reconciliation — ordered upload proved; production recovery unwired
+
+> Reconciliation marker: C10-MCG02-RECOVERY-ORCHESTRATION_20260721T003303Z
+> Reconciled at UTC: 2026-07-21T00:33:03Z
+> Implementation evidence: bbb5922b8afa5ab85646c34b9cd08e0c24fcf48a
+> Status: **ORDERED UPLOAD PROVED; RECOVERY ORCHESTRATION ACTIVE**
+
+G/H/I and source inspection accept the ordered-outbox correction. A deterministic file-backed test
+reproduces reversed hydration, canonical leasing transmits `1,2`, the real HTTP/PostgreSQL proof
+advances the server from `1` to `3`, replay is idempotent, recognized failure codes remain typed,
+and all reported Flutter/API tests and supported platform builds pass.
+
+The unit is implemented and locally validated, but human recovery is not yet executable through the
+product path. `recoverFailedNotApplied(submissionId)` has repository tests but no production caller;
+the application coordinator cannot discover or recover the existing failed Windows attempt. Main
+therefore withholds provider retest and authorizes one narrow orchestration-wiring unit.
+
+## 69. Revised projection
+
+~~~text
+MCG-02 Drift v8 repair                                            VALIDATED HUMAN
+MCG-02 canonical hosted upload                                    PROVED DISPOSABLE HTTP
+MCG-02 failed-attempt repository recovery                         PROVED LOCAL
+MCG-02 production recovery orchestration                          ACTIVE
+MCG-02 Windows provider upload retest                             PAUSED
+MCG-02 Android convergence and closure                            PAUSED
+MCG-03 / MCG-04                                                   INACTIVE
+~~~
+
+D/E/F carrying `C10-MCG02-RECOVERY-ORCHESTRATION_20260721T003303Z` are the only active Codex
+authority. Provider retest resumes only after the production coordinator proof passes.
