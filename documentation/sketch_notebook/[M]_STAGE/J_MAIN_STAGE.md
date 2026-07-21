@@ -883,3 +883,44 @@ MCG-03 / MCG-04                                                     INACTIVE
 
 D/E/F carrying `C10-MCG02-DRIFT-V8-FK-REPAIR_20260720T221440Z` are the only active Codex authority.
 Provider access and human proof resume only after the disposable v8 migration gate passes.
+
+---
+
+## 66. Append-only reconciliation — hosted outbox rejected before application
+
+> Reconciliation marker: C10-MCG02-ORDERED-OUTBOX-RECOVERY_20260721T000323Z
+> Reconciled at UTC: 2026-07-21T00:03:23Z
+> Implementation evidence: 7e65d310260deeec7391915e5d3546a35b8dadb2
+> Human evidence: sanitized Windows local aggregates + Neon aggregates
+> Status: **V8 VALIDATED HUMAN; ORDERED OUTBOX RECOVERY ACTIVE**
+
+The human Windows database opened at schema v8, preserved History and locally committed two hosted
+Purchases. Its hosted Device owns two immutable, hash-valid, Account/Device-valid events at
+contiguous sequences `1,2` and local next sequence `3`. Six older local-only Device events remain
+correctly outside hosted scope. Neon contains one active enrolled Device expecting sequence `1` and
+zero submissions/events/acknowledgements. The local attempt is `failed/notApplied/conflict`.
+
+Provider health, authentication and enrollment pass. Repository inspection shows pending selection
+and subsequent event hydration do not define Device-sequence order, while the server validates each
+event against the next expected sequence and Flutter collapses unrecognized failures—including
+`sequence-gap`—to generic conflict. Reversed batch order explains all current evidence but remains a
+high-confidence hypothesis until a deterministic test reproduces it.
+
+Main authorizes one local-first correction: explicit canonical outbox ordering, contiguous-batch
+preflight, preservation of bounded server failure codes, and a one-time explicit recovery path for
+definitely-not-applied legacy failed submissions. Immutable events, sequences, human databases and
+provider rows must not be edited.
+
+## 67. Revised projection
+
+~~~text
+MCG-02 Drift v8 local repair                                      PROVED LOCAL + VALIDATED HUMAN
+MCG-02 Purchase A local commit                                    VALIDATED HUMAN
+MCG-02 hosted upload                                              BLOCKED / ORDERED RECOVERY ACTIVE
+MCG-02 Android Device B / two-Device convergence                  PAUSED
+MCG-02 closure                                                    PENDING
+MCG-03 / MCG-04                                                   INACTIVE
+~~~
+
+D/E/F carrying `C10-MCG02-ORDERED-OUTBOX-RECOVERY_20260721T000323Z` are the only active Codex
+authority. Human/provider retest resumes only after the disposable ordered-upload recovery proof.

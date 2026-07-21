@@ -1,52 +1,58 @@
-# F_DSN_STAGE — Drift v8 Foreign-Key Repair Design
+# F_DSN_STAGE — Ordered Outbox Recovery Design
 
-> Authority marker: C10-MCG02-DRIFT-V8-FK-REPAIR_20260720T221440Z
-> Required ancestor: 00c78e85c19f4acdc5554fb695c181af10616bc0
+> Authority marker: C10-MCG02-ORDERED-OUTBOX-RECOVERY_20260721T000323Z
+> Required ancestor: 7e65d310260deeec7391915e5d3546a35b8dadb2
 > Status: **ACTIVE CODEX DESIGN AUTHORITY**
 
-## Selected design
-
-Schema v8 is an additive repair boundary for already-installed v7 databases. It rebuilds malformed
-tables from their valid rows into tables generated from the current Drift declarations; it does not
-edit an installed database manually or reinterpret user facts.
-
-Target relationship boundary:
+## Selected boundary
 
 ~~~text
-purchases.person_id          -> people.id
-purchases.payment_method_id  -> payment_methods.id
-purchase_items.purchase_id   -> purchases.id
-purchase_items.product_id    -> products.id
+immutable SyncEvents
+  -> Account/Device-scoped pending lease
+  -> ORDER BY device_sequence ASC, stable event tie-breaker
+  -> ordered hydration/membership
+  -> contiguous-batch preflight
+  -> one idempotent Submission
+  -> HTTP response code preserved
+  -> accepted / duplicate / unknown / typed not-applied
 ~~~
 
-All other declared Account-scoped and deletion constraints remain those of the authoritative Drift
-schema. The implementation must derive the complete table/index shape from repository evidence,
-not treat the four lines above as an exhaustive SQL definition.
+SQL result order is never an implicit protocol rule. Ordering must be explicit at selection and
+preserved after hydration. A batch is valid only when every event has one Account, one Device,
+unique identity and strictly contiguous increasing Device sequence.
 
-## Migration invariants
+## Recovery boundary
 
-1. Every valid source row is copied exactly once; counts and representative values match.
-2. No resulting table/index/foreign key names an `_old` table.
-3. `PRAGMA foreign_key_check` is empty before the v8 commit is accepted.
-4. Migration failure produces no half-rebuilt schema and the disposable source remains reopenable.
-5. Existing hosted identity, Account/Device mapping, cursor, sequence, events and outbox survive.
-6. Opening v8 again is idempotent and performs no further data rewrite.
-7. A post-repair Purchase uses the unchanged atomic application boundary:
+The existing human attempt was recorded locally as `failed`, `notApplied`, `conflict`; Neon has no
+matching submission or event and still expects sequence `1`. Production code cannot assume those
+manual observations for every user. Implement a general bounded recovery seam that:
 
-~~~text
-PurchasePage -> RegisterPurchaseCommand -> LocalPurchaseRepository
-             -> one Drift transaction -> Purchase + Items + v3 event + outbox
-~~~
+1. admits only stored `failed/notApplied` attempts;
+2. revalidates immutable members and canonical order;
+3. excludes unknown/uploading/accepted and malformed work;
+4. records the old attempt as retired/superseded without deleting evidence;
+5. returns members to one recoverable ordered submission path at most once;
+6. survives close/reopen without duplicate active work;
+7. leaves a new typed not-applied failure terminal if the server rejects again.
 
-Generated Drift output may change only as required by schema v8 regeneration. No PostgreSQL schema,
-wire contract, provider composition or UI surface is part of this unit.
+Choose the smallest representation supported by current tables. No schema migration is authorized.
+If existing fields cannot express safe retirement/recovery, stop for Main rather than overload a
+state ambiguously.
 
-## Test architecture
+## Failure-code boundary
 
-Use disposable file-backed fixtures, including a deliberately reproduced malformed v7 schema from
-the supported historical migration path. Test v7 -> v8 directly, v2 -> v8 transitively, fresh v8,
-injected failure/rollback, close/reopen and production-path Purchase registration. Fresh in-memory
-success alone is insufficient.
+The TypeScript server already returns bounded protocol codes. Flutter must preserve recognized
+`sequence-gap`, `wrong-account`, and `hash-mismatch` codes in `SyncStatusCode`, persisted submission
+evidence and coordinator outcomes. Unknown codes remain generic conflict; response bodies, hashes
+and identifiers remain private.
 
-If the repair would require dropping invalid user rows, guessing missing parents or changing
-deletion semantics, stop and report the exact policy decision to Main.
+## Proof architecture
+
+Use a disposable local Drift database plus the real HTTP transport and disposable API/PostgreSQL
+composition where available. The decisive positive fixture inserts/hydrates two events in reversed
+physical order but transmits `1,2`; server expectation advances `1 -> 3`; replay is equivalent. The
+negative matrix covers gaps, duplicates, cross-scope, bad hashes, timeout/unknown, interruption and
+legacy failed recovery. Fresh one-event success is insufficient.
+
+No event rewriting, schema migration, provider mutation or manual human-database operation belongs
+to this unit.
