@@ -5,6 +5,8 @@ import 'package:drift/drift.dart' hide isNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:markei/application/register_purchase.dart';
+import 'package:markei/application/hosted_auth_ports.dart';
+import 'package:markei/application/hosted_sync_coordinator.dart';
 import 'package:markei/application/sync/sync_ports.dart';
 import 'package:markei/application/sync/sync_use_cases.dart';
 import 'package:markei/domain/catalogue/product.dart';
@@ -186,7 +188,7 @@ void main() {
         'failed-submission',
       );
 
-      expect(recovered.code, SyncStatusCode.waitingUpload);
+      expect(recovered.code, SyncStatusCode.failedRecoveryAvailable);
       var failed = await (db.select(
         db.syncSubmissions,
       )..where((table) => table.id.equals('failed-submission'))).getSingle();
@@ -211,6 +213,315 @@ void main() {
           'code',
           SyncStatusCode.failedRecoveryBlocked,
         ),
+      );
+    },
+  );
+
+  test('scoped recovery discovery reports no candidate as no-op', () async {
+    final fixture = await _fileBackedOutboxFixture();
+    final db = fixture.db;
+    addTearDown(fixture.close);
+    final result = await DriftSyncOutboxRepository.scoped(
+      db,
+      accountId: _accountId(),
+      deviceId: _deviceId(),
+    ).recoverOneFailedNotApplied();
+
+    expect(result.code, SyncStatusCode.noRecoverableFailure);
+    expect(result.protocolCode, 'no-recoverable-failure');
+  });
+
+  test('scoped recovery discovery blocks ambiguous candidates', () async {
+    final fixture = await _fileBackedOutboxFixture();
+    final db = fixture.db;
+    addTearDown(fixture.close);
+    await _insertRawEvent(
+      db,
+      _eventPayload(sequence: 1, eventId: _eventId(1)),
+      state: 'failed',
+    );
+    await _insertFailedSubmission(db, 'failed-a', [_eventId(1)]);
+    await _insertRawEvent(
+      db,
+      _eventPayload(sequence: 2, eventId: _eventId(2)),
+      state: 'failed',
+    );
+    await _insertFailedSubmission(db, 'failed-b', [_eventId(2)]);
+
+    final result = await DriftSyncOutboxRepository.scoped(
+      db,
+      accountId: _accountId(),
+      deviceId: _deviceId(),
+    ).recoverOneFailedNotApplied();
+
+    expect(result.code, SyncStatusCode.failedRecoveryBlocked);
+    expect(
+      (await db.select(db.syncSubmissions).get()).map((row) => row.state),
+      everyElement('failed'),
+    );
+  });
+
+  test('scoped recovery discovery blocks malformed failed candidate', () async {
+    final fixture = await _fileBackedOutboxFixture();
+    final db = fixture.db;
+    addTearDown(fixture.close);
+    await _insertRawEvent(
+      db,
+      _eventPayload(sequence: 1, eventId: _eventId(1)),
+      state: 'failed',
+    );
+    await _insertFailedSubmission(db, 'failed-gap', [_eventId(1)]);
+    await (db.update(db.syncEvents)
+          ..where((table) => table.id.equals(_eventId(1))))
+        .write(const SyncEventsCompanion(deviceSequence: Value(3)));
+
+    final result = await DriftSyncOutboxRepository.scoped(
+      db,
+      accountId: _accountId(),
+      deviceId: _deviceId(),
+    ).recoverOneFailedNotApplied();
+
+    expect(result.code, SyncStatusCode.failedRecoveryBlocked);
+    expect((await db.select(db.pendingEvents).getSingle()).state, 'failed');
+  });
+
+  test('scoped recovery ignores non-failed-notApplied states', () async {
+    final fixture = await _fileBackedOutboxFixture();
+    final db = fixture.db;
+    addTearDown(fixture.close);
+    await _insertRawEvent(
+      db,
+      _eventPayload(sequence: 1, eventId: _eventId(1)),
+      state: 'unknown',
+    );
+    await _insertFailedSubmission(
+      db,
+      'unknown-submission',
+      [_eventId(1)],
+      state: 'unknown',
+      outcome: SyncOutcome.unknown.name,
+    );
+    final result = await DriftSyncOutboxRepository.scoped(
+      db,
+      accountId: _accountId(),
+      deviceId: _deviceId(),
+    ).recoverOneFailedNotApplied();
+
+    expect(result.code, SyncStatusCode.noRecoverableFailure);
+    expect((await db.select(db.pendingEvents).getSingle()).state, 'unknown');
+  });
+
+  test('scoped recovery blocks missing membership and hash mismatch', () async {
+    final missing = await _fileBackedOutboxFixture();
+    addTearDown(missing.close);
+    await _insertFailedSubmission(missing.db, 'missing-membership', []);
+    expect(
+      (await DriftSyncOutboxRepository.scoped(
+        missing.db,
+        accountId: _accountId(),
+        deviceId: _deviceId(),
+      ).recoverOneFailedNotApplied()).code,
+      SyncStatusCode.failedRecoveryBlocked,
+    );
+
+    final mismatch = await _fileBackedOutboxFixture();
+    addTearDown(mismatch.close);
+    await _insertRawEvent(
+      mismatch.db,
+      _eventPayload(sequence: 1, eventId: _eventId(1)),
+      state: 'failed',
+    );
+    await (mismatch.db.update(mismatch.db.syncEvents)
+          ..where((table) => table.id.equals(_eventId(1))))
+        .write(const SyncEventsCompanion(contentHash: Value('bad-hash')));
+    await _insertFailedSubmission(mismatch.db, 'hash-mismatch', [_eventId(1)]);
+    expect(
+      (await DriftSyncOutboxRepository.scoped(
+        mismatch.db,
+        accountId: _accountId(),
+        deviceId: _deviceId(),
+      ).recoverOneFailedNotApplied()).code,
+      SyncStatusCode.failedRecoveryBlocked,
+    );
+  });
+
+  test(
+    'scoped recovery leaves cross-device failed attempts untouched',
+    () async {
+      final fixture = await _fileBackedOutboxFixture();
+      final db = fixture.db;
+      addTearDown(fixture.close);
+      const otherDevice = DeviceId('33333333-3333-4333-8333-333333333333');
+      await db
+          .into(db.devices)
+          .insert(
+            DevicesCompanion.insert(
+              id: otherDevice.value,
+              accountId: _accountId().value,
+              nextSequence: 1,
+              createdAt: DateTime.utc(2026, 7, 21),
+            ),
+          );
+      final event = _eventPayload(sequence: 1, eventId: _eventId(1));
+      await _insertRawEvent(db, {
+        ...event,
+        'deviceId': otherDevice.value,
+      }, state: 'failed');
+      await db
+          .into(db.syncSubmissions)
+          .insert(
+            SyncSubmissionsCompanion.insert(
+              id: 'other-device-failed',
+              accountId: _accountId().value,
+              deviceId: otherDevice.value,
+              requestHash: 'legacy-request-hash',
+              state: 'failed',
+              outcome: const Value('notApplied'),
+              responseCode: const Value('conflict'),
+              attemptCount: const Value(1),
+              createdAt: DateTime.utc(2026, 7, 21, 1),
+              updatedAt: DateTime.utc(2026, 7, 21, 1),
+            ),
+          );
+
+      final result = await DriftSyncOutboxRepository.scoped(
+        db,
+        accountId: _accountId(),
+        deviceId: _deviceId(),
+      ).recoverOneFailedNotApplied();
+
+      expect(result.code, SyncStatusCode.noRecoverableFailure);
+      expect((await db.select(db.syncSubmissions).getSingle()).state, 'failed');
+    },
+  );
+
+  test(
+    'coordinator discovers failed recovery and uploads canonically',
+    () async {
+      final fixture = await _fileBackedOutboxFixture();
+      final db = fixture.db;
+      addTearDown(fixture.close);
+      await _insertRawEvent(
+        db,
+        _eventPayload(sequence: 2, eventId: _eventId(2)),
+        state: 'failed',
+      );
+      await _insertRawEvent(
+        db,
+        _eventPayload(sequence: 1, eventId: _eventId(1)),
+        state: 'failed',
+      );
+      await _insertFailedSubmission(db, 'legacy-failed', [
+        _eventId(2),
+        _eventId(1),
+      ]);
+      await db.close();
+      final reopened = LocalDatabase.file(fixture.file);
+      fixture.db = reopened;
+      final outbox = DriftSyncOutboxRepository.scoped(
+        reopened,
+        accountId: _accountId(),
+        deviceId: _deviceId(),
+      );
+      final transport = _RecordingUploadTransport();
+      final coordinator = HostedSyncCoordinator(
+        authenticationSession: const _SignedInSession(),
+        syncGuard: const _AllowedGuard(),
+        applier: _MemoryApplier(),
+        recoverFailedNotApplied: RecoverFailedNotApplied(outbox),
+        uploadPendingEvents: UploadPendingEvents(outbox, transport),
+        downloadAndApplyEvents: DownloadAndApplyEvents(
+          _DownloadOnlyTransport(),
+          _MemoryApplier(),
+        ),
+        acknowledgeAppliedCursor: AcknowledgeAppliedCursor(
+          _RecordingTransport(),
+          _MemoryApplier(),
+        ),
+      );
+
+      expect((await coordinator.run('native')).state, 'sync-completed');
+      expect(transport.uploadCount, 1);
+      expect(transport.uploadedSequences.single, [1, 2]);
+      expect(
+        (await reopened.select(reopened.syncSubmissions).get()).where(
+          (row) => row.state == 'superseded',
+        ),
+        hasLength(1),
+      );
+
+      expect((await coordinator.run('native')).state, 'sync-completed');
+      expect(transport.uploadCount, 1);
+    },
+  );
+
+  test('concurrent scoped recovery creates one pending recovery', () async {
+    final fixture = await _fileBackedOutboxFixture();
+    final db = fixture.db;
+    addTearDown(fixture.close);
+    await _insertRawEvent(
+      db,
+      _eventPayload(sequence: 1, eventId: _eventId(1)),
+      state: 'failed',
+    );
+    await _insertFailedSubmission(db, 'failed-submission', [_eventId(1)]);
+    final outbox = DriftSyncOutboxRepository.scoped(
+      db,
+      accountId: _accountId(),
+      deviceId: _deviceId(),
+    );
+
+    final results = await Future.wait([
+      outbox.recoverOneFailedNotApplied(),
+      outbox.recoverOneFailedNotApplied(),
+    ]);
+
+    expect(
+      results.where(
+        (result) => result.code == SyncStatusCode.failedRecoveryAvailable,
+      ),
+      hasLength(1),
+    );
+    expect((await db.select(db.pendingEvents).getSingle()).state, 'pending');
+    expect(
+      (await db.select(db.syncSubmissions).get()).where(
+        (row) => row.state == 'superseded',
+      ),
+      hasLength(1),
+    );
+  });
+
+  test(
+    'unknown upload after recovery preserves same retry submission',
+    () async {
+      final fixture = await _fileBackedOutboxFixture();
+      final db = fixture.db;
+      addTearDown(fixture.close);
+      await _insertRawEvent(
+        db,
+        _eventPayload(sequence: 1, eventId: _eventId(1)),
+        state: 'failed',
+      );
+      await _insertFailedSubmission(db, 'failed-submission', [_eventId(1)]);
+      final outbox = DriftSyncOutboxRepository.scoped(
+        db,
+        accountId: _accountId(),
+        deviceId: _deviceId(),
+      );
+      await outbox.recoverOneFailedNotApplied();
+      final upload = UploadPendingEvents(outbox, _UnknownUploadTransport());
+
+      final result = await upload();
+      final retry = await outbox.leasePending(limit: 25);
+
+      expect(result!.code, SyncStatusCode.unknownOutcome);
+      expect(retry!.id, isNot('failed-submission'));
+      expect(retry.requestHash, isNotEmpty);
+      expect(
+        (await db.select(db.syncSubmissions).get()).where(
+          (row) => row.state == 'unknown',
+        ),
+        hasLength(1),
       );
     },
   );
@@ -348,6 +659,7 @@ final class _RecordingTransport implements SyncTransport {
 
 final class _RecordingUploadTransport implements SyncTransport {
   int uploadCount = 0;
+  final uploadedSequences = <List<int>>[];
 
   @override
   Future<SyncResult> acknowledge(String greatestContiguousCursor) {
@@ -362,12 +674,79 @@ final class _RecordingUploadTransport implements SyncTransport {
   @override
   Future<SyncResult> uploadSubmission(SyncUploadSubmission submission) async {
     uploadCount++;
+    uploadedSequences.add(
+      submission.events
+          .map((event) => event['deviceSequence']! as int)
+          .toList(growable: false),
+    );
     return const SyncResult(
       code: SyncStatusCode.serverAccepted,
       outcome: SyncOutcome.applied,
       retryable: false,
     );
   }
+}
+
+final class _UnknownUploadTransport implements SyncTransport {
+  @override
+  Future<SyncResult> acknowledge(String greatestContiguousCursor) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DownloadPage> downloadAfter(String? cursor, {required int limit}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<SyncResult> uploadSubmission(SyncUploadSubmission submission) async {
+    return const SyncResult(
+      code: SyncStatusCode.unknownOutcome,
+      outcome: SyncOutcome.unknown,
+      retryable: true,
+    );
+  }
+}
+
+final class _DownloadOnlyTransport implements SyncTransport {
+  @override
+  Future<SyncResult> acknowledge(String greatestContiguousCursor) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DownloadPage> downloadAfter(
+    String? cursor, {
+    required int limit,
+  }) async {
+    return const DownloadPage(nextCursor: 'c10b:0', events: []);
+  }
+
+  @override
+  Future<SyncResult> uploadSubmission(SyncUploadSubmission submission) {
+    throw UnimplementedError();
+  }
+}
+
+final class _SignedInSession implements ExternalAuthenticationSession {
+  const _SignedInSession();
+
+  @override
+  Future<ExternalAuthenticationState> currentState() async => const SignedIn();
+
+  @override
+  Future<void> logout() async {}
+
+  @override
+  Future<ExternalAuthenticationState> signIn() async => const SignedIn();
+}
+
+final class _AllowedGuard implements HostedSyncGuard {
+  const _AllowedGuard();
+
+  @override
+  Future<HostedSyncDecision> evaluate(String environmentAlias) async =>
+      const HostedSyncDecision.allowed('22222222-2222-4222-8222-222222222222');
 }
 
 final class _FileBackedOutboxFixture {
@@ -409,6 +788,11 @@ Future<_FileBackedOutboxFixture> _fileBackedOutboxFixture() async {
       );
   return _FileBackedOutboxFixture(directory, file, db);
 }
+
+AccountId _accountId() =>
+    const AccountId('11111111-1111-4111-8111-111111111111');
+
+DeviceId _deviceId() => const DeviceId('22222222-2222-4222-8222-222222222222');
 
 Future<void> _insertRawEvent(
   LocalDatabase db,

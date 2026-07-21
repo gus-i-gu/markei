@@ -302,8 +302,9 @@ Map<String, Object?> orderedProofEvent({
 
 Future<void> insertOrderedProofEvent(
   LocalDatabase db,
-  Map<String, Object?> event,
-) async {
+  Map<String, Object?> event, {
+  String state = 'pending',
+}) async {
   final now = DateTime.utc(
     2026,
     7,
@@ -330,8 +331,43 @@ Future<void> insertOrderedProofEvent(
       .insert(
         PendingEventsCompanion.insert(
           eventId: event['eventId']! as String,
-          state: 'pending',
+          state: state,
           enqueuedAt: now,
         ),
       );
+}
+
+Future<void> insertLegacyFailedSubmission(
+  LocalDatabase db,
+  String submissionId,
+  List<String> eventIds,
+) async {
+  final now = DateTime.utc(2026, 7, 21, 1);
+  await db
+      .into(db.syncSubmissions)
+      .insert(
+        SyncSubmissionsCompanion.insert(
+          id: submissionId,
+          accountId: '11111111-1111-4111-8111-111111111111',
+          deviceId: '22222222-2222-4222-8222-222222222222',
+          requestHash: 'legacy-failed-request-hash',
+          state: 'failed',
+          attemptCount: const Value(1),
+          outcome: const Value('notApplied'),
+          responseCode: const Value('conflict'),
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
+  for (var i = 0; i < eventIds.length; i++) {
+    await db
+        .into(db.syncSubmissionEvents)
+        .insert(
+          SyncSubmissionEventsCompanion.insert(
+            submissionId: submissionId,
+            eventId: eventIds[i],
+            position: i,
+          ),
+        );
+  }
 }

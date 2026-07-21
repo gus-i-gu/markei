@@ -8,6 +8,8 @@ enum SyncOutcome { applied, duplicateEquivalent, notApplied, unknown }
 
 enum SyncStatusCode {
   savedLocal,
+  noRecoverableFailure,
+  failedRecoveryAvailable,
   waitingUpload,
   uploading,
   serverAccepted,

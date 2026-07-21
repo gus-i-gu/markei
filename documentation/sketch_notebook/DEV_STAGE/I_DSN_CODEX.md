@@ -1,67 +1,87 @@
-# I_DSN_CODEX — Ordered Outbox Recovery Design
+# I_DSN_CODEX - Recovery Orchestration Design
 
-> Unit: C10-MCG02-ORDERED-OUTBOX-RECOVERY_20260721T000323Z
-> Result: C10_MCG02_ORDERED_OUTBOX_RECOVERY_PROVED
+> Unit: C10-MCG02-RECOVERY-ORCHESTRATION_20260721T003303Z
+> Result: C10_MCG02_RECOVERY_ORCHESTRATION_PROVED
 
-## Final dependency direction
+## Final Dependency Direction
 
-Immutable local `sync_events` remain the source of upload truth. The dependency direction is:
+Recovery orchestration follows the existing application dependency direction:
 
-~~~text
-pending_events
-  -> sync_events ordered by device_sequence asc, id asc
-  -> preflight
-  -> sync_submissions + sync_submission_events positions
-  -> HTTP transport
-  -> persisted result
-~~~
+```text
+HostedSyncCoordinator
+  -> RecoverFailedNotApplied use case
+  -> SyncOutboxRepository port
+  -> DriftSyncOutboxRepository adapter
+  -> existing UploadPendingEvents use case
+  -> HttpSyncTransport
+```
 
-No Drift or PostgreSQL migration was added. Drift schema remains v8.
+The coordinator depends on a closed application use case, not on Drift queries or submission IDs. Presentation still depends only on the existing Sync action.
 
-## Ordering and hydration invariant
+## Port And Use-Case Responsibilities
 
-Pending selection now joins `pending_events` to `sync_events` and applies:
+`SyncOutboxRepository.recoverOneFailedNotApplied()` is the scoped storage operation. It requires the repository to be bound to one Account and one Device, deterministically inspects failed/notApplied candidates, revalidates structure transactionally, and returns only closed `SyncResult` values.
 
-~~~text
-ORDER BY sync_events.device_sequence ASC, sync_events.id ASC
-~~~
+`RecoverFailedNotApplied` is the focused application use case. It delegates all storage mechanics to the outbox repository and gives the coordinator a single orchestration step with no infrastructure identifiers.
 
-Fresh submissions use those ordered rows directly; they no longer rehydrate pending event IDs through unordered `WHERE id IN (...)`. Unknown-outcome retry still hydrates through membership, then reconstructs rows by ordered `sync_submission_events.position`.
+## Coordinator Ordering
 
-Submission membership positions and transport serialization both follow the same canonical order.
+`HostedSyncCoordinator.run` now orders work as:
 
-## Batch preflight
+1. authentication/session confirmation;
+2. Account/Device binding confirmation through the existing guard;
+3. Device enrollment/allowed check through the existing guard;
+4. scoped failed/notApplied discovery and recovery;
+5. existing upload path once;
+6. existing download path;
+7. existing acknowledgement path.
 
-Before any fresh lease mutation or unknown retry transport, the repository requires:
+Recovery does not run before authentication, binding, or Device checks. Recovery does not bypass `UploadPendingEvents` or `HttpSyncTransport`.
 
-- non-empty batch;
-- one Account and one Device;
-- scoped Account/Device match when repository is scoped;
-- unique event IDs;
-- unique Device sequences;
-- strictly contiguous ascending Device sequence;
-- payload identity fields match the immutable row;
-- stored content hash matches the canonical payload hash.
+## Transactional Discovery And Recovery Boundary
 
-Failure throws a local preflight exception that `UploadPendingEvents` converts to `SyncStatusCode.localBatchInvalid`. No submission is created and no transport call is made.
+The Drift adapter performs candidate discovery and state transition in one transaction. It admits only submissions with `state=failed` and `outcome=notApplied` for the scoped Account/Device.
 
-## Failed-attempt recovery representation
+For each candidate it validates:
 
-The existing `sync_submissions.state` text field represents safe retirement without a migration:
+- non-empty membership;
+- exactly one Account and one Device matching scope;
+- immutable event rows exist;
+- pending rows exist and are not accepted;
+- event IDs are unique;
+- Device sequences are unique and strictly contiguous;
+- payload identity fields match stored event identity;
+- canonical payload hash matches stored content hash;
+- no active equivalent retry already exists.
 
-- admitted: `state=failed` and `outcome=notApplied`;
-- retired evidence: old submission updated to `state=superseded`;
-- members: same immutable events requeued to `pending`;
-- retry: next normal lease creates at most one new ordered submission.
+Exactly one valid candidate is recovered. Multiple valid candidates are ambiguous and fail closed. Invalid candidate structure fails closed without upload.
 
-Recovery blocks unknown, uploading, accepted, malformed, cross-scope, non-contiguous, accepted-member, or active-equivalent work. Repeated recovery returns a bounded blocker after retirement; if members are already pending before leasing, recovery returns the same available state.
+## Recovery Representation And Idempotency
 
-## Idempotency and immutable-event guarantees
+No schema migration was required. Existing state fields express the durable recovery boundary:
 
-Unknown upload outcomes continue to retry the same submission identity/hash. Definitely not-applied failed recovery creates a new submission only through the canonical lease path and never changes EventId, AccountId, DeviceId, Device sequence, payload, payload version, occurrence time, or content hash.
+- old failed attempt: retained as `state=superseded`;
+- member pending rows: returned to `state=pending`;
+- retry submission: created only by the existing ordered lease path;
+- unknown retry: retains the same retry submission identity/hash.
 
-The HTTP proof confirmed reversed `[2,1]` is rejected, production `[1,2]` is accepted atomically, server expectation advances `1 -> 3`, and replay of the same accepted identity/hash leaves server event and submission counts unchanged.
+Concurrent recovery calls are serialized by the transaction and conditional update. Repeated Sync after recovery finds no second eligible failed attempt. Close/reopen after recovery leaves either one pending retry path before upload or one accepted result after upload. An accepted upload cannot return to failed recovery because accepted member rows are rejected by candidate validation.
 
-## Deviations and unresolved decisions
+## Immutable-Event Guarantees
 
-No unresolved implementation decisions remain for this unit. Human/provider acceptance is intentionally not claimed; it requires the separate human retest authorized after this disposable proof.
+Recovery never modifies:
+
+- EventId;
+- AccountId;
+- DeviceId;
+- Device sequence;
+- payload;
+- payload version;
+- occurrence time;
+- content hash.
+
+The recovered events are reused through the ordered lease invariant from `bbb5922`: ascending Device sequence with stable event identity tie-breaker, then membership position and transport serialization in that same order.
+
+## Deviations And Blockers
+
+No deviations or unresolved blockers remain for this unit. Provider/runtime acceptance against the human database is intentionally outside this commit and requires a separate authorized retest.

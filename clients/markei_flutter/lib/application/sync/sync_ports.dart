@@ -60,6 +60,7 @@ abstract interface class SyncOutboxRepository {
   Future<SyncUploadSubmission?> leasePending({required int limit});
   Future<void> persistUploadResult(String submissionId, SyncResult result);
   Future<SyncResult> recoverFailedNotApplied(String submissionId);
+  Future<SyncResult> recoverOneFailedNotApplied();
 }
 
 abstract interface class RemoteEventApplier {

@@ -175,6 +175,7 @@ final class MarkeiComposition {
             ? const BlockedHostedSyncGuard('hosted-restart-required')
             : DriftHostedSyncGuard(repository),
         applier: remoteApplier,
+        recoverFailedNotApplied: RecoverFailedNotApplied(syncOutbox),
         uploadPendingEvents: UploadPendingEvents(syncOutbox, syncTransport),
         downloadAndApplyEvents: DownloadAndApplyEvents(
           syncTransport,

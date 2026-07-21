@@ -22,6 +22,14 @@ final class UploadPendingEvents {
   }
 }
 
+final class RecoverFailedNotApplied {
+  const RecoverFailedNotApplied(this.outbox);
+
+  final SyncOutboxRepository outbox;
+
+  Future<SyncResult> call() => outbox.recoverOneFailedNotApplied();
+}
+
 final class DownloadAndApplyEvents {
   const DownloadAndApplyEvents(this.transport, this.applier);
 

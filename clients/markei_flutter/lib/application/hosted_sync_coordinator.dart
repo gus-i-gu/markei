@@ -10,6 +10,7 @@ final class HostedSyncCoordinator {
     required this._authenticationSession,
     required this._syncGuard,
     required this._applier,
+    required this.recoverFailedNotApplied,
     required this._uploadPendingEvents,
     required this._downloadAndApplyEvents,
     required this._acknowledgeAppliedCursor,
@@ -18,6 +19,7 @@ final class HostedSyncCoordinator {
   final ExternalAuthenticationSession _authenticationSession;
   final HostedSyncGuard _syncGuard;
   final RemoteEventApplier _applier;
+  final RecoverFailedNotApplied recoverFailedNotApplied;
   final UploadPendingEvents _uploadPendingEvents;
   final DownloadAndApplyEvents _downloadAndApplyEvents;
   final AcknowledgeAppliedCursor _acknowledgeAppliedCursor;
@@ -37,6 +39,10 @@ final class HostedSyncCoordinator {
     }
 
     try {
+      final recovery = await recoverFailedNotApplied();
+      final recoveryBlocker = _blockedBy(recovery);
+      if (recoveryBlocker != null) return recoveryBlocker;
+
       final upload = await _uploadPendingEvents();
       final uploadBlocker = _blockedBy(upload);
       if (uploadBlocker != null) return uploadBlocker;
@@ -79,6 +85,8 @@ final class HostedSyncCoordinator {
       SyncStatusCode.deviceRevoked ||
       SyncStatusCode.deviceExpired => const HostedSyncOutcome.deviceRevoked(),
       SyncStatusCode.unknownOutcome => const HostedSyncOutcome.interrupted(),
+      SyncStatusCode.noRecoverableFailure ||
+      SyncStatusCode.failedRecoveryAvailable => null,
       SyncStatusCode.conflict ||
       SyncStatusCode.sequenceGap ||
       SyncStatusCode.wrongAccount ||

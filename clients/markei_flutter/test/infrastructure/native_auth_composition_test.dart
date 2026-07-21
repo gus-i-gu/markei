@@ -349,6 +349,7 @@ void main() {
         authenticationSession: LabAuthenticationSession(),
         syncGuard: _MemorySyncGuard.allowing(),
         applier: _MemoryApplier(cursor: 'c10b:1'),
+        recoverFailedNotApplied: RecoverFailedNotApplied(_EmptyOutbox()),
         uploadPendingEvents: UploadPendingEvents(
           _EmptyOutbox(),
           _RecordingSyncTransport(downloadEvents: const []),
@@ -399,6 +400,7 @@ void main() {
         authenticationSession: LabAuthenticationSession(),
         syncGuard: _MemorySyncGuard.allowing(),
         applier: _MemoryApplier(),
+        recoverFailedNotApplied: RecoverFailedNotApplied(_EmptyOutbox()),
         uploadPendingEvents: UploadPendingEvents(
           _EmptyOutbox(),
           _RecordingSyncTransport(downloadEvents: const []),
@@ -442,6 +444,7 @@ void main() {
         authenticationSession: LabAuthenticationSession(),
         syncGuard: _MemorySyncGuard.blocked('enrollment-required'),
         applier: _MemoryApplier(),
+        recoverFailedNotApplied: RecoverFailedNotApplied(_EmptyOutbox()),
         uploadPendingEvents: UploadPendingEvents(
           _EmptyOutbox(),
           _RecordingSyncTransport(downloadEvents: const []),
@@ -480,6 +483,7 @@ void main() {
         authenticationSession: LabAuthenticationSession(),
         syncGuard: _MemorySyncGuard.allowing(),
         applier: applier,
+        recoverFailedNotApplied: RecoverFailedNotApplied(_OneOutbox()),
         uploadPendingEvents: UploadPendingEvents(_OneOutbox(), transport),
         downloadAndApplyEvents: DownloadAndApplyEvents(transport, applier),
         acknowledgeAppliedCursor: AcknowledgeAppliedCursor(transport, applier),
@@ -499,6 +503,7 @@ void main() {
       authenticationSession: LabAuthenticationSession(),
       syncGuard: _MemorySyncGuard.allowing(),
       applier: noNewApplier,
+      recoverFailedNotApplied: RecoverFailedNotApplied(_EmptyOutbox()),
       uploadPendingEvents: UploadPendingEvents(
         _EmptyOutbox(),
         _RecordingSyncTransport(downloadEvents: const []),
@@ -516,6 +521,7 @@ void main() {
       authenticationSession: LabAuthenticationSession(),
       syncGuard: _MemorySyncGuard.allowing(),
       applier: _MemoryApplier(),
+      recoverFailedNotApplied: RecoverFailedNotApplied(_OneOutbox()),
       uploadPendingEvents: UploadPendingEvents(
         _OneOutbox(),
         _RecordingSyncTransport(
@@ -785,6 +791,14 @@ final class _EmptyOutbox implements SyncOutboxRepository {
   Future<SyncResult> recoverFailedNotApplied(String submissionId) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<SyncResult> recoverOneFailedNotApplied() async => const SyncResult(
+    code: SyncStatusCode.noRecoverableFailure,
+    outcome: SyncOutcome.notApplied,
+    retryable: false,
+    protocolCode: 'no-recoverable-failure',
+  );
 }
 
 final class _OneOutbox implements SyncOutboxRepository {
@@ -811,6 +825,14 @@ final class _OneOutbox implements SyncOutboxRepository {
   Future<SyncResult> recoverFailedNotApplied(String submissionId) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<SyncResult> recoverOneFailedNotApplied() async => const SyncResult(
+    code: SyncStatusCode.noRecoverableFailure,
+    outcome: SyncOutcome.notApplied,
+    retryable: false,
+    protocolCode: 'no-recoverable-failure',
+  );
 }
 
 final class _MemoryApplier implements RemoteEventApplier {

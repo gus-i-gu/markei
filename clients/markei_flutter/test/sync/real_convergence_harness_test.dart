@@ -1,7 +1,11 @@
 import 'dart:io';
 
+import 'package:drift/drift.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markei/application/hosted_auth_ports.dart';
+import 'package:markei/application/hosted_sync_coordinator.dart';
 import 'package:markei/application/sync/sync_ports.dart';
+import 'package:markei/application/sync/sync_use_cases.dart';
 import 'package:http/http.dart' as http;
 import 'package:markei/domain/shared/ids.dart';
 import 'package:markei/domain/sync/canonical_json.dart';
@@ -284,4 +288,176 @@ void main() {
     },
     timeout: const Timeout(Duration(minutes: 4)),
   );
+
+  test(
+    'RECOVERY_ORCHESTRATION_HTTP_PROOF=true for coordinator recovery upload',
+    () async {
+      if (Platform.environment['MARKEI_RUN_SYNC_LAB'] != '1') {
+        markTestSkipped('Set MARKEI_RUN_SYNC_LAB=1 to run disposable lab.');
+        return;
+      }
+      final repo = Directory.current.parent.parent;
+      final lab = Directory('${repo.path}/infra/sync_lab');
+      await Directory('${lab.path}/secrets').create(recursive: true);
+      await File(
+        '${lab.path}/secrets/migrator_password.txt',
+      ).writeAsString('migrator-${DateTime.now().microsecondsSinceEpoch}');
+      final temp = await Directory.systemTemp.createTemp(
+        'markei_recovery_orchestration_',
+      );
+      addTearDown(() => temp.delete(recursive: true));
+      await labDocker(lab, ['compose', 'down', '--volumes']);
+      addTearDown(() => labDocker(lab, ['compose', 'down', '--volumes']));
+      await labDocker(lab, ['compose', 'up', '-d']);
+      await waitForPostgres(lab);
+      await labPsql(
+        lab,
+        File(
+          '${repo.path}/services/markei_sync_api/migrations/001_init.sql',
+        ).readAsStringSync(),
+      );
+      await labPsql(
+        lab,
+        File(
+          '${repo.path}/services/markei_sync_api/migrations/002_coordination_hardening.sql',
+        ).readAsStringSync(),
+      );
+
+      final account = const AccountId('11111111-1111-4111-8111-111111111111');
+      const device = DeviceId('22222222-2222-4222-8222-222222222222');
+      const localOnlyDevice = DeviceId('bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb');
+      var db = LocalDatabase.file(File('${temp.path}/local.sqlite'));
+      addTearDown(() async {
+        await db.close();
+      });
+      await seedLocalDevice(db, account, device);
+      await seedLocalDevice(db, account, localOnlyDevice);
+      await LocalPurchaseRepository(
+        db,
+      ).registerPurchase(fixturePurchaseCommand(device));
+      await LocalPurchaseRepository(
+        db,
+      ).registerPurchase(fixturePurchaseCommand(device));
+      final hostedEvents =
+          await (db.select(db.syncEvents)
+                ..where((table) => table.deviceId.equals(device.value))
+                ..orderBy([(table) => OrderingTerm.asc(table.deviceSequence)]))
+              .get();
+      final seq1 = hostedEvents[0];
+      final seq2 = hostedEvents[1];
+      await (db.update(db.pendingEvents)
+            ..where((table) => table.eventId.isIn([seq1.id, seq2.id])))
+          .write(const PendingEventsCompanion(state: Value('failed')));
+      await insertLegacyFailedSubmission(db, 'legacy-failed-submission', [
+        seq2.id,
+        seq1.id,
+      ]);
+      await LocalPurchaseRepository(
+        db,
+      ).registerPurchase(fixturePurchaseCommand(localOnlyDevice));
+      final localOnlyEvent =
+          await (db.select(
+                db.syncEvents,
+              )..where((table) => table.deviceId.equals(localOnlyDevice.value)))
+              .getSingle();
+      await db.close();
+      db = LocalDatabase.file(File('${temp.path}/local.sqlite'));
+
+      final runtimePassword =
+          'runtime-${DateTime.now().microsecondsSinceEpoch}';
+      await labPsql(lab, """
+        alter role markei_runtime login password '$runtimePassword';
+        insert into accounts(account_id) values('${account.value}');
+        insert into account_cursor_state(account_id, next_cursor) values('${account.value}', 1);
+        insert into devices(account_id, device_id, status, next_expected_sequence)
+          values('${account.value}', '${device.value}', 'active', 1);
+      """);
+      expect(
+        await labInt(
+          lab,
+          "select next_expected_sequence from devices where account_id='${account.value}' and device_id='${device.value}'",
+        ),
+        1,
+      );
+      final api = await startLabApi(
+        repo,
+        account.value,
+        device.value,
+        runtimePassword,
+      );
+      addTearDown(api.close);
+      final transport = labTransport(api.uri, http.Client());
+      final outbox = DriftSyncOutboxRepository.scoped(
+        db,
+        accountId: account,
+        deviceId: device,
+      );
+      final applier = DriftRemoteEventApplier.scoped(db, accountId: account);
+      final coordinator = HostedSyncCoordinator(
+        authenticationSession: const _SignedInSession(),
+        syncGuard: const _AllowedGuard(),
+        applier: applier,
+        recoverFailedNotApplied: RecoverFailedNotApplied(outbox),
+        uploadPendingEvents: UploadPendingEvents(outbox, transport),
+        downloadAndApplyEvents: DownloadAndApplyEvents(transport, applier),
+        acknowledgeAppliedCursor: AcknowledgeAppliedCursor(transport, applier),
+      );
+
+      expect((await coordinator.run('native')).state, 'sync-completed');
+      expect(await labCount(lab, 'sync_events'), 2);
+      expect(await labCount(lab, 'submissions'), 1);
+      expect(
+        await labInt(
+          lab,
+          "select next_expected_sequence from devices where account_id='${account.value}' and device_id='${device.value}'",
+        ),
+        3,
+      );
+      expect(
+        (await db.select(db.syncSubmissions).get()).where(
+          (row) => row.state == 'superseded',
+        ),
+        hasLength(1),
+      );
+      expect(
+        (await db.select(db.pendingEvents).get()).where(
+          (row) => row.state == 'accepted',
+        ),
+        hasLength(2),
+      );
+      expect(
+        (await db.select(db.pendingEvents).get())
+            .where((row) => row.state == 'pending')
+            .map((row) => row.eventId),
+        [localOnlyEvent.id],
+      );
+
+      expect((await coordinator.run('native')).state, 'sync-completed');
+      expect(await labCount(lab, 'sync_events'), 2);
+      expect(await labCount(lab, 'submissions'), 1);
+      stdout.writeln('RECOVERY_ORCHESTRATION_HTTP_PROOF=true sequences=1,2');
+    },
+    timeout: const Timeout(Duration(minutes: 4)),
+  );
+}
+
+final class _SignedInSession implements ExternalAuthenticationSession {
+  const _SignedInSession();
+
+  @override
+  Future<ExternalAuthenticationState> currentState() async => const SignedIn();
+
+  @override
+  Future<void> logout() async {}
+
+  @override
+  Future<ExternalAuthenticationState> signIn() async => const SignedIn();
+}
+
+final class _AllowedGuard implements HostedSyncGuard {
+  const _AllowedGuard();
+
+  @override
+  Future<HostedSyncDecision> evaluate(String environmentAlias) async =>
+      const HostedSyncDecision.allowed('22222222-2222-4222-8222-222222222222');
 }

@@ -72,12 +72,17 @@ void main() {
         tokenSource: () => 'synthetic-access-token',
         correlationSource: () => 'native-closure-test',
       );
-      final outbox = DriftSyncOutboxRepository(local);
-      final applier = DriftRemoteEventApplier(local);
+      final outbox = DriftSyncOutboxRepository.scoped(
+        local,
+        accountId: account,
+        deviceId: localDevice,
+      );
+      final applier = DriftRemoteEventApplier.scoped(local, accountId: account);
       final coordinator = HostedSyncCoordinator(
         authenticationSession: LabAuthenticationSession(),
         syncGuard: DriftHostedSyncGuard(DriftHostedIdentityRepository(local)),
         applier: applier,
+        recoverFailedNotApplied: RecoverFailedNotApplied(outbox),
         uploadPendingEvents: UploadPendingEvents(outbox, transport),
         downloadAndApplyEvents: DownloadAndApplyEvents(transport, applier),
         acknowledgeAppliedCursor: AcknowledgeAppliedCursor(transport, applier),

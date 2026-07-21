@@ -198,101 +198,63 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
   @override
   Future<SyncResult> recoverFailedNotApplied(String submissionId) {
     return _db.transaction(() async {
-      final now = DateTime.now().toUtc();
       final submission = await (_db.select(
         _db.syncSubmissions,
       )..where((table) => table.id.equals(submissionId))).getSingleOrNull();
       if (submission == null ||
           submission.state != 'failed' ||
           submission.outcome != SyncOutcome.notApplied.name) {
-        return _recoveryBlocked();
+        return _failedRecoveryBlocked();
       }
       if (_accountId != null &&
           (submission.accountId != _accountId ||
               submission.deviceId != _deviceId)) {
-        return _recoveryBlocked();
+        return _failedRecoveryBlocked();
       }
-      final members =
-          await (_db.select(_db.syncSubmissionEvents)
-                ..where((table) => table.submissionId.equals(submissionId))
-                ..orderBy([(table) => OrderingTerm.asc(table.position)]))
+      final candidate = await _recoverableCandidate(submission);
+      if (candidate == null) return _failedRecoveryBlocked();
+      return _recoverCandidate(candidate);
+    });
+  }
+
+  @override
+  Future<SyncResult> recoverOneFailedNotApplied() {
+    return _db.transaction(() async {
+      final accountId = _accountId;
+      final deviceId = _deviceId;
+      if (accountId == null || deviceId == null) {
+        return _failedRecoveryBlocked();
+      }
+      final submissions =
+          await (_db.select(_db.syncSubmissions)
+                ..where(
+                  (table) =>
+                      table.accountId.equals(accountId) &
+                      table.deviceId.equals(deviceId) &
+                      table.state.equals('failed') &
+                      table.outcome.equals(SyncOutcome.notApplied.name),
+                )
+                ..orderBy([
+                  (table) => OrderingTerm.asc(table.createdAt),
+                  (table) => OrderingTerm.asc(table.id),
+                ]))
               .get();
-      if (members.isEmpty) return _recoveryBlocked();
-      final rows =
-          await (_db.select(_db.syncEvents)..where(
-                (table) =>
-                    table.id.isIn(members.map((member) => member.eventId)),
-              ))
-              .get();
-      final rowsById = {for (final row in rows) row.id: row};
-      final orderedRows = [
-        for (final member in members) rowsById[member.eventId],
-      ].nonNulls.toList(growable: false);
-      if (orderedRows.length != members.length ||
-          !_preflightValid(orderedRows, requireCanonicalOrder: false)) {
-        return _recoveryBlocked();
-      }
-      final canonicalRows = [...orderedRows]
-        ..sort((a, b) {
-          final sequence = a.deviceSequence.compareTo(b.deviceSequence);
-          return sequence != 0 ? sequence : a.id.compareTo(b.id);
-        });
-      if (!_preflightValid(canonicalRows)) return _recoveryBlocked();
-      final memberIds = canonicalRows.map((row) => row.id).toSet();
-      final states = await (_db.select(
-        _db.pendingEvents,
-      )..where((table) => table.eventId.isIn(memberIds))).get();
-      if (states.length != memberIds.length ||
-          states.any((row) => row.state == 'accepted')) {
-        return _recoveryBlocked();
-      }
-      if (states.any((row) => row.state == 'pending')) {
+      if (submissions.isEmpty) {
         return const SyncResult(
-          code: SyncStatusCode.waitingUpload,
+          code: SyncStatusCode.noRecoverableFailure,
           outcome: SyncOutcome.notApplied,
-          retryable: true,
-          protocolCode: 'failed-recovery-available',
+          retryable: false,
+          protocolCode: 'no-recoverable-failure',
         );
       }
-      final activeMembers =
-          await (_db.select(_db.syncSubmissionEvents).join([
-                innerJoin(
-                  _db.syncSubmissions,
-                  _db.syncSubmissions.id.equalsExp(
-                    _db.syncSubmissionEvents.submissionId,
-                  ),
-                ),
-              ])..where(
-                _db.syncSubmissionEvents.eventId.isIn(memberIds) &
-                    (_db.syncSubmissions.state.equals('uploading') |
-                        _db.syncSubmissions.state.equals('unknown')),
-              ))
-              .get();
-      if (activeMembers.isNotEmpty) return _recoveryBlocked();
-      await (_db.update(
-        _db.syncSubmissions,
-      )..where((table) => table.id.equals(submissionId))).write(
-        SyncSubmissionsCompanion(
-          state: const Value('superseded'),
-          updatedAt: Value(now),
-        ),
-      );
-      for (final row in canonicalRows) {
-        await (_db.update(
-          _db.pendingEvents,
-        )..where((table) => table.eventId.equals(row.id))).write(
-          PendingEventsCompanion(
-            state: const Value('pending'),
-            enqueuedAt: Value(now),
-          ),
-        );
+      final candidates = <_RecoverableFailedSubmission>[];
+      for (final submission in submissions) {
+        final candidate = await _recoverableCandidate(submission);
+        if (candidate == null) return _failedRecoveryBlocked();
+        candidates.add(candidate);
       }
-      return const SyncResult(
-        code: SyncStatusCode.waitingUpload,
-        outcome: SyncOutcome.notApplied,
-        retryable: true,
-        protocolCode: 'failed-recovery-available',
-      );
+      if (candidates.length != 1) return _failedRecoveryBlocked();
+      return _recoverCandidate(candidates.single);
     });
   }
 
@@ -356,10 +318,119 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
     return true;
   }
 
-  SyncResult _recoveryBlocked() => const SyncResult(
+  Future<_RecoverableFailedSubmission?> _recoverableCandidate(
+    SyncSubmission submission,
+  ) async {
+    final members =
+        await (_db.select(_db.syncSubmissionEvents)
+              ..where((table) => table.submissionId.equals(submission.id))
+              ..orderBy([(table) => OrderingTerm.asc(table.position)]))
+            .get();
+    if (members.isEmpty) return null;
+    final rows =
+        await (_db.select(_db.syncEvents)..where(
+              (table) => table.id.isIn(members.map((member) => member.eventId)),
+            ))
+            .get();
+    final rowsById = {for (final row in rows) row.id: row};
+    final orderedRows = [
+      for (final member in members) rowsById[member.eventId],
+    ].nonNulls.toList(growable: false);
+    if (orderedRows.length != members.length ||
+        !_preflightValid(orderedRows, requireCanonicalOrder: false)) {
+      return null;
+    }
+    final canonicalRows = [...orderedRows]
+      ..sort((a, b) {
+        final sequence = a.deviceSequence.compareTo(b.deviceSequence);
+        return sequence != 0 ? sequence : a.id.compareTo(b.id);
+      });
+    if (!_preflightValid(canonicalRows)) return null;
+    final memberIds = canonicalRows.map((row) => row.id).toSet();
+    final states = await (_db.select(
+      _db.pendingEvents,
+    )..where((table) => table.eventId.isIn(memberIds))).get();
+    if (states.length != memberIds.length ||
+        states.any((row) => row.state == 'accepted')) {
+      return null;
+    }
+    final activeMembers =
+        await (_db.select(_db.syncSubmissionEvents).join([
+              innerJoin(
+                _db.syncSubmissions,
+                _db.syncSubmissions.id.equalsExp(
+                  _db.syncSubmissionEvents.submissionId,
+                ),
+              ),
+            ])..where(
+              _db.syncSubmissionEvents.eventId.isIn(memberIds) &
+                  _db.syncSubmissions.id.isNotValue(submission.id) &
+                  (_db.syncSubmissions.state.equals('uploading') |
+                      _db.syncSubmissions.state.equals('unknown')),
+            ))
+            .get();
+    if (activeMembers.isNotEmpty) return null;
+    return _RecoverableFailedSubmission(
+      submission: submission,
+      canonicalRows: canonicalRows,
+      alreadyPending: states.any((row) => row.state == 'pending'),
+    );
+  }
+
+  Future<SyncResult> _recoverCandidate(
+    _RecoverableFailedSubmission candidate,
+  ) async {
+    final now = DateTime.now().toUtc();
+    final retiredSubmission = SyncSubmissionsCompanion(
+      state: const Value('superseded'),
+      updatedAt: Value(now),
+    );
+    final changed =
+        await (_db.update(_db.syncSubmissions)..where(
+              (table) =>
+                  table.id.equals(candidate.submission.id) &
+                  table.state.equals('failed') &
+                  table.outcome.equals(SyncOutcome.notApplied.name),
+            ))
+            .write(retiredSubmission);
+    if (changed != 1) return _failedRecoveryBlocked();
+    if (candidate.alreadyPending) return _failedRecoveryAvailable();
+    for (final row in candidate.canonicalRows) {
+      await (_db.update(
+        _db.pendingEvents,
+      )..where((table) => table.eventId.equals(row.id))).write(
+        PendingEventsCompanion(
+          state: const Value('pending'),
+          enqueuedAt: Value(now),
+        ),
+      );
+    }
+    return _failedRecoveryAvailable();
+  }
+
+  SyncResult _failedRecoveryAvailable() => const SyncResult(
+    code: SyncStatusCode.failedRecoveryAvailable,
+    outcome: SyncOutcome.notApplied,
+    retryable: true,
+    protocolCode: 'failed-recovery-available',
+  );
+
+  SyncResult _failedRecoveryBlocked() => const SyncResult(
     code: SyncStatusCode.failedRecoveryBlocked,
     outcome: SyncOutcome.notApplied,
     retryable: false,
     protocolCode: 'failed-recovery-blocked',
   );
+}
+
+final class _RecoverableFailedSubmission {
+  const _RecoverableFailedSubmission({
+    required this.submission,
+    required this.canonicalRows,
+    required this.alreadyPending,
+  });
+
+  final SyncSubmission submission;
+  final List<SyncEvent> canonicalRows;
+  final bool alreadyPending;
 }
