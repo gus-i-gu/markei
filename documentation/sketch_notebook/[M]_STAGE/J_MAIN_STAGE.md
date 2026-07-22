@@ -326,3 +326,174 @@ GCM02_OPEN
 PROVIDER_MIGRATION_DEPLOYMENT_UNAUTHORIZED
 REAL_SYNC_RETRY_UNAUTHORIZED
 ```
+
+---
+
+## Append-only reconciliation entry — 2026-07-22 — account cursor provisioning materialized locally
+
+> Sequence: FLX-ORD-01 Main reconciliation after Codex materialization
+> Materialization commit: `fe8976d8e7d9806dcb578994601eef7b76a174b2`
+> Parent / controlling staging: `bca5800007453d3bef9f7178c1f534069550a0df`
+> Inputs: `DEV_STAGE/G_OPS_CODEX.md`, `DEV_STAGE/H_DDC_CODEX.md`,
+> `DEV_STAGE/I_DSN_CODEX.md`, implementation diff and named validation evidence
+> Status: **LOCAL REPAIR ACCEPTED; PROVIDER STATE UNCHANGED; `sync-unknown` STILL UNRESOLVED**
+
+### Materialized result accepted within its evidence boundary
+
+Main accepts that `fe8976d8` materializes the bounded local unit:
+
+```text
+C10-MCG02-ACCOUNT-CURSOR-PROVISIONING-REPAIR_20260722
+```
+
+The implementation adds forward-only migration `007_account_cursor_provisioning`, identified by
+checksum `c10-mcg02-account-cursor-provisioning-v1`. Migration 007:
+
+1. backfills only missing `account_cursor_state` rows;
+2. derives missing `next_cursor` as `max(sync_events.server_cursor) + 1`, or 1 when no events exist;
+3. preserves every existing cursor row and value;
+4. installs an `AFTER INSERT` Account trigger so Account and cursor state commit or roll back together;
+5. revokes runtime cursor INSERT and DELETE while preserving scoped SELECT/UPDATE under RLS;
+6. adds `public.markei_hosted_runtime_ready_v2()` for the exact 006+007 ledger contract;
+7. changes new API readiness to v2 only, while retaining readiness-v1 for old-binary rollback;
+8. retains the sanitized HTTP 503 `service-unavailable` / `not-applied` path when cursor state is still
+   absent.
+
+The trigger function was locally validated as migrator-owned, `SECURITY DEFINER`, fixed to
+`pg_catalog, public`, fully qualified, non-dynamic and directly non-callable by PUBLIC/runtime.
+Enrollment, re-enrollment, first Sync, Flutter and provider scripts do not acquire cursor-repair
+responsibility.
+
+### Validation reconciliation
+
+The following claims are **validated locally** at `fe8976d8`:
+
+- the dedicated migration-007 PostgreSQL producer passed 29/29 cases, including failing-first 006,
+  fresh/upgrade, backfill/high-water, existing-row preservation, mixed Accounts, concurrency,
+  rollback, trigger security, ACL/RLS, readiness and first protected submission;
+- API format, lint, typecheck, build and 53/53 tests passed;
+- hosted-local authorization passed 28 cases with zero pending;
+- Flutter formatting, analysis and 178 tests passed with four lab-gated skips;
+- opt-in disposable convergence passed 3/3 and recovery passed 1/1;
+- Windows release and Android debug builds passed with only recorded upstream warnings;
+- protected Python `unittest` regressions passed 5/5;
+- production dependency audit passed with zero vulnerabilities after a bounded lockfile-only
+  transitive `fast-uri` patch.
+
+The following evidence remains qualified:
+
+- `pytest` was host-unavailable because pytest was not installed; the protected `unittest` suite did
+  run and pass;
+- aggregate `r3_local_orchestrator` was not wholly green because the existing Flutter producer
+  reported `query-replay-same-request-id:case-failed`, although direct Flutter, convergence and
+  recovery suites passed;
+- this contradiction does not invalidate the cursor-provisioning proofs, but it prevents Main from
+  describing the complete aggregate recovery matrix as passed and must be resolved or explicitly
+  bounded before provider mutation.
+
+No Neon migration, Render deployment, Auth0 change, enrollment, real Sync, human database mutation or
+unresolved-submission retry occurred. Therefore production Account provisioning, readiness-v2 and
+protected Sync remain **provisional/provider-unvalidated**.
+
+### PRC-01 disposition
+
+```text
+Claim: migration 007 and readiness-v2 exist
+State: implemented
+Evidence: repository inspection at fe8976d8
+
+Claim: migration 007 enforces Account/cursor provisioning and repairs historical gaps
+State: validated locally
+Evidence: disposable PostgreSQL 29/29 producer and focused protocol/authorization proofs
+
+Claim: complete aggregate local recovery matrix is green
+State: contradicted / unresolved evidence composition
+Evidence: aggregate Flutter producer query-replay-same-request-id case failed while direct suites passed
+
+Claim: Neon contains migration 007 and the hosted Account has cursor state
+State: not performed / provider-unvalidated
+
+Claim: Render runs readiness-v2 code
+State: not performed / provider-unvalidated
+
+Claim: the preserved sync-unknown submission has a known terminal result
+State: unresolved
+```
+
+No permanent-domain promotion is performed by this J append. G/H/I remain observational inputs for
+the next Operational, Didactic and Design FLX-PRM-04 runs.
+
+### Check route toward `sync-unknown` resolution
+
+The next sequence is evidence-gated and must not collapse deployment readiness into Sync acceptance:
+
+#### Gate 1 — close the aggregate local contradiction
+
+1. Reproduce `query-replay-same-request-id:case-failed` through the aggregate producer.
+2. Compare its inputs/environment with the directly passing convergence and recovery suites.
+3. Correct an orchestration/fixture defect if present, or record why the aggregate case is outside the
+   migration-007 claim boundary.
+4. Require a green aggregate result or a new Main-accepted explicit evidence boundary before any
+   provider mutation.
+
+#### Gate 2 — provider migration authorization and preflight
+
+1. Capture a fresh sanitized, read-only six-table baseline and migration-ledger/readiness-v1 state.
+2. Confirm the preserved unknown submission identity and human local queue remain unchanged; do not
+   transmit it.
+3. Confirm exact migration-007 file identity/checksum and migrator/runtime role separation.
+4. Authorize a single provider-migration window separately from deployment and Sync.
+
+#### Gate 3 — apply 007 before deploying the new API
+
+1. Apply migration 007 using the migrator identity in one transaction.
+2. Verify the exact 006+007 ledger identities/checksums.
+3. Verify readiness-v2 exists, is PUBLIC-denied and runtime-callable.
+4. Verify the hosted Account has exactly one cursor row with the expected high-water-derived value.
+5. Verify runtime cursor INSERT/DELETE and DDL remain denied while scoped SELECT/UPDATE remain allowed.
+6. Stop on any mismatch; do not deploy or retry Sync.
+
+Applying 007 first preserves rollback compatibility because the old API retains readiness-v1 support;
+deploying the new API before 007 would intentionally make readiness-v2 fail closed.
+
+#### Gate 4 — deploy and correlate the corrected API
+
+1. Deploy commit `fe8976d8` or a reconciled descendant without provider-secret changes.
+2. Correlate `/health/live` and `/health/ready` to one new deployment fingerprint.
+3. Require live HTTP 200 and ready HTTP 200 backed by readiness-v2.
+4. Capture a second sanitized six-table baseline; require no unexpected submissions, events,
+   acknowledgements, Devices or cursor advancement.
+
+#### Gate 5 — one exact-identity resolution attempt
+
+Only after Gates 1–4 pass may Main authorize one retry of the preserved submission with the same
+request identity and immutable event identities/content hashes.
+
+Interpret the result conservatively:
+
+- accepted or same-identity replay with matching server evidence: correlate response, submissions,
+  events, acknowledgements and cursor advancement, then classify `sync-unknown` as resolved;
+- HTTP 503 `not-applied`: do not repeat; investigate the provisioning/readiness invariant;
+- identity/hash conflict: do not rewrite or retry under a new identity; reconcile local and server
+  evidence;
+- timeout, disconnect or missing trustworthy terminal response: the outcome remains unknown; capture
+  the provider baseline before considering any further action;
+- any unexpected count or cursor movement: stop and reconcile before another Sync operation.
+
+`sync-unknown` is resolved only when the exact preserved request has a correlated terminal result and
+the six-table provider state proves either one accepted/replayed application or a trustworthy
+not-applied result. Deployment success, readiness-v2 HTTP 200 or cursor-row presence alone is not Sync
+resolution.
+
+### Current terminals
+
+```text
+C10_MCG02_ACCOUNT_CURSOR_PROVISIONING_REPAIR_MATERIALIZED_LOCAL_FE8976D8
+C10_MCG02_CURSOR_STATE_INVARIANT_VALIDATED_LOCAL
+R3_AGGREGATE_QUERY_REPLAY_EVIDENCE_UNRESOLVED
+PROVIDER_MIGRATION_007_NOT_PERFORMED
+RENDER_FE8976D8_NOT_DEPLOYED
+SYNC_UNKNOWN_UNRESOLVED
+REAL_SYNC_RETRY_UNAUTHORIZED
+GCM02_OPEN
+```
