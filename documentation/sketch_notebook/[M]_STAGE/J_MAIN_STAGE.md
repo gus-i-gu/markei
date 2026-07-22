@@ -230,3 +230,99 @@ C10_MCG02_ACCOUNT_CURSOR_PROVISIONING_REPAIR_PROVISIONAL
 GCM02_OPEN
 REAL_SYNC_RETRY_UNAUTHORIZED
 ```
+
+## Append-only reconciliation entry — 2026-07-22 — cursor provisioning mechanism frozen
+
+> Sequence: FLX-ORD-01 Main decision after bounded repository inventory
+> Remote checkpoint: `80935f1c312484d0819e119553a11691ec2216b4`
+> Inputs: current A/B/C reconciliation, migrations 001–006, hosted enrollment, Sync service, local
+> harnesses and migration-006 readiness proof
+> Status: **D/E/F ACTIVE FOR LOCAL MATERIALIZATION; PROVIDER AND REAL SYNC BLOCKED**
+
+### Remote and methodological track record
+
+The A/B/C/J staging checkpoint was published on `intermid-cycle-recovery` as `80935f1c`. It contains
+only functional/Main staging and leaves permanent domain memory unchanged. The branch lineage now
+retained for this decision is:
+
+```text
+5b364216  transport observability
+-> 22261751  submission-500 diagnosis authority
+-> 75dc7bed  missing-state reproduction and fail-closed correction
+-> 80935f1c  A/B/C/J cursor-lifecycle reconciliation
+```
+
+### Read-only ownership inventory accepted
+
+Main accepts the following repository facts at `80935f1c`:
+
+- migrations 001–006 create separate `accounts` and `account_cursor_state` tables but do not enforce
+  total Account participation in cursor state;
+- `account_cursor_state.account_id` is unique and references Accounts, so at most one row exists but
+  zero remains representable;
+- migration 002 removes runtime Account insertion but leaves direct runtime cursor insertion granted;
+- hosted enrollment requires an existing identity/membership/Account and creates Device/enrollment
+  state without cursor initialization;
+- successful local harnesses and producers manually insert Account and cursor state separately;
+- no production Account-provisioning service exists whose exclusive use can be proved;
+- `markei_hosted_runtime_ready()` proves migration 006 only and cannot reject this provisioning gap.
+
+These facts resolve the earlier mechanism question. An exclusive provisioning procedure would require
+inventing and enforcing a new application boundary across all current direct Account insertions. A
+database trigger is the narrower enforceable invariant and protects future trusted Account creation
+regardless of orchestration path.
+
+### Frozen implementation decision
+
+Main activates:
+
+```text
+C10-MCG02-ACCOUNT-CURSOR-PROVISIONING-REPAIR_20260722
+```
+
+through current D/E/F.
+
+The selected physical design is additive migration `007_account_cursor_provisioning` with checksum
+`c10-mcg02-account-cursor-provisioning-v1`. It must:
+
+1. backfill only missing cursor rows from `max(server_cursor) + 1`, or 1 with no events;
+2. preserve every existing cursor row without update or reset;
+3. install an Account `AFTER INSERT` trigger that creates cursor state in the same transaction;
+4. revoke runtime cursor insertion while retaining required scoped select/update;
+5. add `public.markei_hosted_runtime_ready_v2()` for the exact 006+007 contract;
+6. update new API code to use readiness-v2 while preserving the 006 function for rollback;
+7. retain Sync's missing-state HTTP 503 as defense in depth.
+
+Enrollment repair, first-Sync lazy initialization, re-enrollment and ad hoc provider SQL remain
+rejected. Migration 007 is locally authorized for Codex materialization and disposable proof only; it
+is not authorized for Neon application or deployment.
+
+### Required next evidence and continuation gate
+
+Codex must produce G/H/I after failing-first and passing fresh/upgrade/backfill/preservation/
+concurrency/rollback/ACL/RLS/readiness proof. Main must reconcile that evidence before any provider
+action.
+
+If local materialization passes, the later provider sequence remains separately gated:
+
+```text
+reconcile G/H/I
+-> authorize migration/deployment order
+-> apply 007 with migrator
+-> verify readiness-v2 and Account cursor invariant read-only
+-> deploy corrected API/client as authorized
+-> run one harmless health-correlation check
+-> capture fresh six-table baseline
+-> authorize at most one exact-identity unresolved retry
+```
+
+Current terminals:
+
+```text
+A_B_C_RECONCILIATION_PUBLISHED_80935F1C
+C10_MCG02_SUBMISSION_500_CAUSE_CORRECTED_LOCAL
+C10_MCG02_ACCOUNT_CURSOR_PROVISIONING_REPAIR_AUTHORIZED_LOCAL
+GCM02_OPEN
+PROVIDER_MIGRATION_DEPLOYMENT_UNAUTHORIZED
+REAL_SYNC_RETRY_UNAUTHORIZED
+```

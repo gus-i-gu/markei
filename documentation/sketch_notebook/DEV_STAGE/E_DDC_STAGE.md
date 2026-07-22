@@ -1,77 +1,83 @@
-# E_DDC_STAGE — Server Failure and Client Evidence Semantics
+# E_DDC_STAGE — Account Lifecycle Invariant Semantics
 
-> Unit: C10-MCG02-SUBMISSION-500-DIAGNOSIS_20260722
+> Unit: C10-MCG02-ACCOUNT-CURSOR-PROVISIONING-REPAIR_20260722
 > Sequence: FLX-ORD-01
 > Authority: Main Chat
-> Status: READY FOR MATERIALIZATION
+> Status: READY FOR LOCAL MATERIALIZATION
 
 ## 1. Learning objective
 
-Replace the remaining ambiguous `provider-evidence-unavailable` explanation with a truthful model of
-two related but distinct observations:
+Materialize and explain the distinction:
 
 ```text
-server produced a final response
-!= client observed that response within its deadline
+table permits a cursor row
+!= every Account receives one
+!= runtime may repair one
 ```
 
-For the controlled retry, Render observed a protected request and returned `500`; Closure observed no
-headers before its boundary. The server outcome is therefore known from correlated external evidence,
-while the historical client row must remain an honest record of what that client invocation observed.
+The cursor row is an Account lifecycle invariant. Account provisioning creates it; enrollment verifies
+or consumes the Account; Sync advances it. A fail-closed 503 remains defensive behavior for corrupted
+or incomplete state, not the normal initialization path.
 
-## 2. Required distinctions
+## 2. Required vocabulary
 
-Code, UI guidance, tests and H must distinguish:
+Use these bounded meanings consistently in code comments, tests and H:
 
-- **transport reached server:** correlated request ingress exists;
-- **authentication accepted:** hosted authentication completed successfully;
-- **operation validation started/completed:** request shape and operation checks are distinct from
-  authentication and persistence;
-- **transaction started:** database work actually began;
-- **transaction committed or rolled back:** durable effect is evidenced;
-- **server failure:** the service returned a non-success response;
-- **client timeout:** the client did not observe the response before its deadline;
-- **unknown application outcome:** neither available client nor correlated server/database evidence
-  determines whether application occurred.
+- **Account provisioning invariant:** every committed Account has exactly one cursor-state row before
+  it is externally usable.
+- **atomic creation:** Account and initial cursor state commit or roll back together.
+- **historical backfill:** a forward-only migration adds only missing derived state for pre-existing
+  Accounts; it does not reinterpret or reset established state.
+- **cursor high-water:** the greatest already assigned `server_cursor`; a missing row resumes at
+  high-water + 1, or 1 when no cursor was ever assigned.
+- **preservation:** an existing `next_cursor` value is authoritative and must not be reset, decreased
+  or recomputed by repair.
+- **defense in depth:** Sync still rejects missing state as `service-unavailable/not-applied` even
+  after normal provisioning makes the state mandatory.
+- **exact readiness:** the new server accepts a database only when the precise 007 contract is
+  installed; generic liveness and 006 readiness are insufficient.
 
-A server `500` with unchanged database is not a successful Sync and is not merely a connectivity
-failure. A historical client timeout must not be rewritten retroactively, even when later Render and
-Neon evidence permits Main to classify the wider incident more precisely.
+## 3. Required distinctions
 
-## 3. Stable bounded vocabulary
+Tests and reports must preserve:
 
-Prefer existing vocabulary where it remains accurate. Add the smallest stable codes needed to name:
+```text
+backfill applied locally
+!= migration deployed to Neon
+!= hosted Account repaired
+!= protected Sync succeeded
+!= GCM02 closed
+```
 
-- unexpected server failure;
-- validation rejection;
-- authorization rejection;
-- transaction failure/rollback when actually known;
-- client response deadline exceeded;
-- sanitized internal failure class for operators.
+Likewise:
 
-Do not expose raw exceptions, stack traces, SQL, bodies, tokens, origins or identifiers. Do not teach
-that HTTP `500` reveals its own cause; the cause requires local reproduction or bounded server-stage
-evidence.
+- a trigger enforces future creation but does not alone repair history;
+- a backfill repairs history but does not alone prevent recurrence;
+- enrollment success proves Device/enrollment state, not Account cursor readiness;
+- HTTP 503 proves a bounded not-applied failure, not successful repair;
+- readiness proves required database capability, not end-to-end Sync acceptance.
 
-## 4. User-facing behavior
+## 4. User/operator semantics
 
-Closure should explain only evidence available to that invocation. It may say that no response was
-observed before the deadline, but it must not claim that Render was not reached or that nothing was
-applied. A newly observed `500` must be shown as a hosted/server rejection or failure with bounded
-guidance, not collapsed into provider absence.
+This unit does not authorize a new user-facing retry or provider instruction. Existing Closure history
+and unknown event identity remain unchanged. No UI should claim that cursor repair has occurred until
+deployment and provider verification are separately evidenced.
 
-The guidance must discourage repeated attempts and preserve the exact-identity recovery rule. Busy,
-failure and disabled states must remain keyboard reachable, readable without color, and usable at the
-supported Windows sizes.
+If application wording changes only because readiness-v2 is introduced, keep it bounded to
+`not-ready`/`service-unavailable`; do not expose migration names, SQL, provider topology, identifiers or
+internal exception details.
 
-## 5. Didactic evidence required in H
+## 5. Named semantic evidence for H
 
-Report:
+H must report:
 
-- the locally reproduced cause, or explicitly that it remains unresolved;
-- the final stage/result vocabulary and observable evidence for each term;
-- how server failure differs from client timeout and unknown application outcome;
-- why unchanged Neon counts prove no durable write for this attempt but not the internal cause;
-- how the historical attempt is preserved;
-- synthetic test examples only;
-- residual ambiguity and the next safe human check.
+- the pre-007 representable invalid state;
+- why Account provisioning—not enrollment or first Sync—owns initialization;
+- the exact backfill rule and existing-row preservation rule;
+- the trigger's atomic commit/rollback meaning;
+- runtime privilege reduction;
+- 006 readiness versus 007 exact readiness;
+- the difference between local validation, later deployment, provider verification and real Sync;
+- synthetic examples only and no learner-maturity inference.
+
+No permanent Didactic files or KANBAN statuses are authorized in this unit.
