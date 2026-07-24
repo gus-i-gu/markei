@@ -876,3 +876,532 @@ RENDER_BRANCH_CHANGE_NOT_AUTHORIZED
 REAL_SYNC_RETRY_UNAUTHORIZED
 GCM02_OPEN
 ```
+
+## 2026-07-23 — Hosted pre-Sync gate closure and controlled-Sync planning boundary
+
+### Sequence identity
+
+```text
+Sequence: post-Gate-02 hosted deployment verification
+Cycle: 10
+Phase: GCM-02 closure recovery
+Active branch: cycle10-intermid-grimoire
+Authorized revision: baaa3231c0b8f9b1af2c2aff80255e883309ca74
+Previous observed Render revision: 5b36421
+Provider database: markei_sync_dev
+Evidence date: 2026-07-23
+Human authority: explicit
+Mutation boundary: one Render deployment; no Sync request
+```
+
+### Purpose
+
+This sequence verified that the reconciled Cycle 10 branch could become the active Render branch, that its intended revision could be deployed exactly once, and that the hosted service could satisfy its live and ready contracts without changing the inspected Neon coordination state.
+
+The sequence also completed the direct runtime-role readiness-v2 proof that remained pending after migration 007.
+
+No controlled Sync request was performed. Migration 007 was not reapplied. No Neon schema, role, Auth0, hosted identity, or Render environment-variable change was performed during this gate.
+
+### 1. Local Git alignment — PASS
+
+The Windows checkout was clean and exactly aligned with the remote branch before deployment:
+
+```text
+Repository: gus-i-gu/markei
+Branch: cycle10-intermid-grimoire
+Local HEAD: baaa3231c0b8f9b1af2c2aff80255e883309ca74
+Remote HEAD: baaa3231c0b8f9b1af2c2aff80255e883309ca74
+Local/remote divergence: 0 / 0
+Working tree: clean
+```
+
+This established an unambiguous application revision for the hosted gate.
+
+### 2. Direct runtime-role readiness-v2 proof — PASS
+
+A direct read-only connection was opened using the restricted runtime role.
+
+Observed evidence:
+
+```text
+Role: markei_runtime
+Database: markei_sync_dev
+TLS: active
+Protocol: TLS 1.3
+Cipher: TLS_AES_256_GCM_SHA384
+Readiness function: public.markei_hosted_runtime_ready_v2()
+Readiness result: true
+Transaction: read only
+Terminal: ROLLBACK
+```
+
+The proof establishes that the runtime identity could reach the intended development database and execute the readiness-v2 contract.
+
+It does not by itself prove application Sync, token validity, device identity resolution, or event convergence.
+
+### 3. Pre-deployment provider baseline — PASS
+
+A sanitized aggregate baseline was captured through the migrator inspection role inside a read-only transaction.
+
+| Measure                               | Before deployment |
+| ------------------------------------- | ----------------: |
+| Accounts                              |                 1 |
+| Devices                               |                 1 |
+| Account cursor states                 |                 1 |
+| Submissions                           |                 0 |
+| Sync events                           |                 0 |
+| Device acknowledgements               |                 0 |
+| Sum of next cursors                   |                 1 |
+| Sum of device next-expected sequences |                 1 |
+
+The transaction ended with `ROLLBACK`.
+
+The evidence contains no account ID, device ID, credential, token, connection string, event payload, or submission content.
+
+The state is consistent with one previously provisioned account/device fixture and no submitted or synchronized application event.
+
+### 4. Render revision comparison — PASS
+
+The previous observed Render deployment was:
+
+```text
+Revision: 5b36421
+Description: Implement transport observability diagnostics
+Started: 2026-07-21 21:15 local dashboard time
+Live: 2026-07-21 21:16 local dashboard time
+Trigger: manual dashboard deployment
+```
+
+The intended revision for the new gate was:
+
+```text
+baaa3231c0b8f9b1af2c2aff80255e883309ca74
+```
+
+The intended revision differed from the previously hosted revision and belonged to the reconciled `cycle10-intermid-grimoire` branch.
+
+The newest commit primarily reconciled documentation and GRIMOIRE structure while inheriting the hosted application implementation from its ancestry. Deploying the exact revision nevertheless established one reproducible Git fingerprint for subsequent evidence.
+
+### 5. Render branch establishment — PASS
+
+The Render development service was configured to follow:
+
+```text
+Repository: gus-i-gu/markei
+Branch: cycle10-intermid-grimoire
+Service type: Node web service
+Instance class: free development instance
+Auto-deploy during gate: off
+```
+
+No Render environment variable, secret, build command, start command, Neon coordinate, or Auth0 setting was changed during branch establishment.
+
+### 6. Single authorized deployment — PASS
+
+Exactly one deployment of the authorized revision was observed for this gate:
+
+```text
+Revision: baaa3231c0b8f9b1af2c2aff80255e883309ca74
+Short revision: baaa323
+Description: Reconcile Cycle 10 GRIMOIRE interface
+Trigger: manual dashboard deployment
+Started: 2026-07-23 20:18 local dashboard time
+Final state: live
+Unexpected second deployment: none observed
+```
+
+Build and startup evidence:
+
+```text
+Node.js: 24.14.1
+Build command: npm ci --include=dev && npm run build
+Packages installed: 208
+Packages audited by npm install: 209
+TypeScript compilation: PASS
+Build upload: PASS
+Runtime command: npm start
+Hosted entry point: node dist/src/hosted.js
+Startup marker: MARKEI_HOSTED_SYNC_READY
+Render terminal: live
+```
+
+The service became publicly available after successful compilation, artifact upload, startup, and readiness probing.
+
+Render’s initial platform probes included undefined-root `HEAD /` and `GET /` requests returning 404. These were unclassified root-route requests and did not contradict the designated health contracts.
+
+### 7. Hosted HTTP health verification — PASS
+
+The deployed service was queried through its public development origin.
+
+| Endpoint        | Status | Sanitized response   |
+| --------------- | -----: | -------------------- |
+| `/health/live`  |    200 | `{"status":"live"}`  |
+| `/health/ready` |    200 | `{"status":"ready"}` |
+
+Render logs independently recorded `/health/ready` requests with:
+
+```text
+Route class: /health/ready
+Operation: health-ready
+Method: GET
+Status: 200
+Elapsed band: below 250 ms
+```
+
+The application logs used short correlation fingerprints and did not expose raw credentials or identity material.
+
+### 8. Post-deployment provider immobility — PASS
+
+After deployment and public health verification, the exact pre-deployment aggregate inspection was repeated through the migrator role in a read-only transaction.
+
+Observed post-deployment state:
+
+| Measure                               | Before | After | Difference |
+| ------------------------------------- | -----: | ----: | ---------: |
+| Accounts                              |      1 |     1 |          0 |
+| Devices                               |      1 |     1 |          0 |
+| Account cursor states                 |      1 |     1 |          0 |
+| Submissions                           |      0 |     0 |          0 |
+| Sync events                           |      0 |     0 |          0 |
+| Device acknowledgements               |      0 |     0 |          0 |
+| Sum of next cursors                   |      1 |     1 |          0 |
+| Sum of device next-expected sequences |      1 |     1 |          0 |
+
+Connection and transaction evidence:
+
+```text
+Role: markei_migrator
+Database: markei_sync_dev
+TLS: active
+Protocol: TLS 1.3
+Transaction: read only
+Terminal: ROLLBACK
+```
+
+All eight values exactly matched the pre-deployment baseline.
+
+Within the inspected coordination boundary, branch retargeting, deployment, startup, Render readiness probes, and explicit public health requests produced no observable provider mutation.
+
+This evidence does not claim that no unobserved provider metric changed. It proves immobility only for the eight inspected database aggregates.
+
+### 9. Deployment singularity — PASS
+
+The Render event history showed one deployment of `baaa323` during this gate:
+
+```text
+Watched branch: cycle10-intermid-grimoire
+Authorized revision: baaa3231c0b8f9b1af2c2aff80255e883309ca74
+Deployment count for this gate: 1
+Final state: live
+Unexpected later deployment: no
+```
+
+The earlier `5b36421` deployment belongs to the preceding 2026-07-21 observability round and is not a duplicate deployment of the present revision.
+
+### 10. Hosted pre-Sync gate conclusion — PASS
+
+```text
+LOCAL_GIT_ALIGNMENT_PASS
+RUNTIME_ROLE_DIRECT_READINESS_V2_PASS
+PRE_DEPLOYMENT_PROVIDER_BASELINE_CAPTURED
+RENDER_REVISION_COMPARISON_PASS
+RENDER_WATCHED_BRANCH_ESTABLISHED
+SINGLE_AUTHORIZED_DEPLOYMENT_PASS
+HOSTED_LIVENESS_HTTP_200
+HOSTED_READINESS_HTTP_200
+POST_DEPLOYMENT_PROVIDER_IMMOBILITY_PASS
+HOSTED_PRE_SYNC_GATE_CLOSED
+```
+
+Preserved constraints:
+
+```text
+Migration 007 reapplied: NO
+Sync request performed: NO
+Application event intentionally submitted: NO
+Neon schema edited: NO
+Neon roles edited: NO
+Auth0 configuration edited: NO
+Render environment variables edited: NO
+Provider aggregate difference: NONE
+Controlled Sync authorization: PENDING SEPARATE REVIEW
+```
+
+### 11. Dependency-audit observation — OPEN / NOT YET DIAGNOSED
+
+Render’s dependency installation reported:
+
+```text
+One high-severity vulnerability
+```
+
+This is an npm install-time advisory observation. It did not prevent compilation or deployment, but it must not be classified as a clean dependency-security result.
+
+The first local follow-up command was executed from the repository root:
+
+```text
+npm audit
+```
+
+That directory has no npm lockfile. npm therefore returned:
+
+```text
+Code: ENOLOCK
+Meaning: audit requires an existing lockfile
+```
+
+The generated `npm-audit-cycle10.json` contains only the `ENOLOCK` error. It is not a vulnerability report and provides no affected package, installed version, dependency path, exploitability, or remediation range.
+
+Repository inspection locates the actual Node package and lockfile at:
+
+```text
+services/markei_sync_api/package.json
+services/markei_sync_api/package-lock.json
+```
+
+Current classification:
+
+```text
+Render npm advisory observation: OPEN
+Local vulnerability diagnosis: NOT YET PERFORMED
+Local audit failure cause: WRONG WORKING DIRECTORY / LOCKFILE ABSENT THERE
+Dependency remediation authorized: NO
+npm audit fix authorized: NO
+npm audit fix --force authorized: NO
+```
+
+The root-level JSON artifact should remain outside the repository. A corrected read-only audit must be run from `services/markei_sync_api` before selecting any dependency change.
+
+The dependency observation is tracked separately from the hosted pre-Sync gate because it did not invalidate Git alignment, runtime readiness, deployment identity, health behavior, or provider immobility. Its actual runtime relevance remains unknown until the corrected audit is interpreted.
+
+### Dependency-audit remediation — PASS
+
+The hosted installation had reported one high-severity advisory affecting `find-my-way <=9.6.0`.
+
+Dependency inspection established:
+
+```text
+Dependency: find-my-way
+Installed before remediation: 9.6.0
+Dependency type: transitive production dependency
+Introduced by: fastify 5.10.0
+Dependency path: @markei/sync-api → fastify → find-my-way
+Advisory: GHSA-c96f-x56v-gq3h
+Advisory class: HTTP/2 denial of service
+Evidence of rogue installation or repository intrusion: NONE
+
+find-my-way: 9.6.0 → 9.7.0
+package.json changed: NO
+Force or major-version remediation used: NO
+
+npm ls find-my-way: 9.7.0
+npm audit: 0 vulnerabilities
+format:check: PASS
+lint: PASS
+typecheck: PASS
+tests: 53 passed, 0 failed
+build: PASS
+```
+
+### PRC-01 classification
+
+```text
+Claim: direct runtime readiness-v2 is available
+Source: runtime-role read-only provider inspection
+Current state: validated
+Evidence: markei_hosted_runtime_ready_v2() returned true
+Evidence boundary: markei_runtime against markei_sync_dev
+Does not prove: authenticated Sync or event convergence
+Semantic owner: Operational
+Result: accepted within the named boundary
+
+Claim: baaa323 was successfully hosted
+Source: Render deployment event and runtime logs
+Current state: validated
+Evidence: build pass, startup marker, live terminal
+Evidence boundary: Render development/free service
+Does not prove: production acceptance
+Semantic owner: Operational
+Result: accepted within the development-host boundary
+
+Claim: the hosted service was live and ready
+Source: explicit HTTP requests and Render readiness logs
+Current state: validated
+Evidence: /health/live 200 and /health/ready 200
+Does not prove: Sync success
+Semantic owner: Operational
+Result: accepted
+
+Claim: the deployment mutated no inspected coordination state
+Source: matched pre/post read-only aggregate inspections
+Current state: validated
+Evidence: all eight inspected values unchanged
+Evidence boundary: named Neon tables and aggregate fields
+Does not prove: universal provider immobility outside inspected measures
+Semantic owner: Operational
+Result: accepted within the inspected boundary
+
+Claim: exactly one baaa323 deployment occurred during this gate
+Source: Render event history
+Current state: validated
+Evidence: one manually triggered baaa323 deployment; earlier 5b36421 event belongs to a different round
+Semantic owner: Operational
+Result: accepted
+
+Claim: the Node dependency tree contains a confirmed exploitable high-severity vulnerability
+Source: Render npm install warning
+Current state: candidate / unresolved
+Evidence: aggregate advisory count only
+Contradiction: local npm audit did not run against a lockfile
+Semantic owner: Operational dependency evidence
+Result: remain open pending corrected package-root audit
+
+Claim: the ENOLOCK JSON is a dependency vulnerability report
+Source: root-level local npm audit attempt
+Current state: contradicted
+Evidence: JSON contains only the ENOLOCK error
+Result: rejected; do not preserve it as audit evidence
+
+Claim: one controlled Sync request is now authorized
+Source: hosted pre-Sync gate result
+Current state: proposed
+Evidence: prerequisite deployment and immobility gate passed
+Missing evidence: exact identity, token, sequence, endpoint, expected mutation, and containment plan
+Result: not yet authorized
+```
+
+Claim: the reported dependency vulnerability was safely remediated
+Source: dependency explanation, lockfile resolution, npm audit, and API validation
+State: validated
+Evidence boundary: services/markei_sync_api dependency tree
+Result: accepted
+
+Claim: find-my-way represented an unauthorized or rogue dependency
+State: contradicted
+Evidence: normal Fastify dependency path recorded by npm
+Result: rejected
+
+### 12. Controlled exact-identity Sync attempt — PLANNING STARTED / EXECUTION HELD
+
+The next sequence is a single bounded authenticated Sync experiment. Passing the hosted pre-Sync gate makes planning appropriate but does not automatically authorize execution.
+
+Planning must resolve five evidence groups before a request is sent.
+
+#### 12.1 Identity binding
+
+Establish, without recording raw secrets:
+
+```text
+Auth0 issuer expected by the hosted API
+Auth0 audience expected by the hosted API
+Token subject fingerprint or sanitized comparison method
+Token expiry and not-before validity
+Fixture account mapped to the authenticated subject
+Fixture device enrolled under that same account
+Device active/revoked state
+```
+
+A raw access token, client secret, password, complete connection string, account UUID, or device UUID must not be copied into J.
+
+#### 12.2 Request contract
+
+Resolve from the committed implementation:
+
+```text
+Exact public endpoint
+HTTP method
+Required authorization header shape
+Required request body schema
+Operation name/version
+Supported event type
+Idempotency or submission identifier requirements
+Expected success status and response schema
+```
+
+The procedure must be derived from the deployed `baaa323` source contract rather than reconstructed from memory.
+
+#### 12.3 Sequence and cursor preconditions
+
+Capture a sanitized read-only baseline immediately before the request:
+
+```text
+Account next cursor
+Device next expected sequence
+Submission count
+Sync-event count
+Acknowledgement count
+Device enrollment state
+Account/device relationship valid
+```
+
+The current aggregate baseline indicates cursor `1` and device sequence `1`, but exact-identity readiness must be checked at execution time.
+
+#### 12.4 Expected single transition
+
+Before authorization, specify exactly which values may change after one valid request.
+
+The expected transition must identify:
+
+```text
+Expected submission count delta
+Expected sync-event count delta
+Expected acknowledgement behavior
+Expected account-cursor delta
+Expected device-sequence delta
+Expected HTTP response
+Expected correlated terminal log events
+Expected local application effect, if any
+```
+
+Any mutation outside that allowlist is a stop condition.
+
+#### 12.5 Containment and stop rules
+
+The first request is limited to one attempt.
+
+Do not automatically retry on:
+
+```text
+401 or 403 identity rejection
+409 sequence or replay conflict
+unexpected 4xx response
+5xx response
+timeout with uncertain provider outcome
+missing terminal correlation
+unexpected provider-state delta
+```
+
+A timeout or lost response does not prove that the provider remained unchanged. Inspect correlated logs and provider state before deciding whether the request was accepted.
+
+No cleanup, deletion, sequence correction, fixture recreation, second submission, credential rotation, or migration is authorized merely because the attempt fails.
+
+#### 12.6 Planned evidence order
+
+```text
+1. Complete corrected read-only npm audit diagnosis.
+2. Inspect the deployed Sync route and authentication contract.
+3. Verify sanitized Auth0 issuer/audience and token claim compatibility.
+4. Verify exact fixture account/device binding read-only.
+5. Capture exact pre-attempt provider baseline.
+6. Define the one allowed state transition.
+7. Review the assembled evidence and authorize or reject one request.
+8. If authorized, send exactly one controlled request.
+9. Capture HTTP result and correlated hosted logs.
+10. Capture exact post-attempt provider state.
+11. Compare expected and observed transitions.
+12. Reconcile GCM-02 closure state and determine Cycle 11 readiness.
+```
+
+Current terminals:
+
+```text
+HOSTED_PRE_SYNC_GATE_PASS
+RENDER_ACTIVE_BRANCH_CYCLE10_INTERMID_GRIMOIRE
+RENDER_REVISION_BAAA323_LIVE
+PROVIDER_IMMOBILITY_PASS
+DEPENDENCY_AUDIT_DIAGNOSIS_OPEN
+CONTROLLED_SYNC_PLAN_INCOMPLETE
+CONTROLLED_SYNC_REQUEST_UNAUTHORIZED
+MIGRATION_007_DO_NOT_RERUN
+GCM02_OPEN
+```
