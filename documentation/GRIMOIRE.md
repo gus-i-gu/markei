@@ -134,7 +134,7 @@ one exact local operation:
 | Neon role password | Masked `Read-Host -AsSecureString` prompt |
 | Device UUID | Local prompt only for `verify-device` |
 | Migration authorization | Exact `APPLY-ONCE` phrase after dashboard target confirmation |
-| Auth0 access token | Session-only masked handling in a separately reviewed procedure; no active index command yet |
+| Auth0 access token | Session-only masked prompt in `GRM-AUTH-02`; obtain only a fresh user token for the configured audience |
 
 The launcher temporarily exposes a role password to the Docker child through
 `PGPASSWORD`, removes the container after the command, zeroes the BSTR, and
@@ -247,6 +247,7 @@ migration 007 must not be reapplied.
 | Neon branch uncertainty | Stop and verify the dashboard branch |
 | Render origin/branch mismatch | Stop before deployment or Sync |
 | Auth0 metadata mismatch | Stop before using a token |
+| Auth0 binding mismatch | Stop before Sync; do not retry automatically or change provider state |
 | Health response mismatch | Stop before authenticated requests |
 
 ## 13. Maintenance and validation rule
@@ -801,6 +802,158 @@ No token or client secret is requested.
 
 Issuer match, configured audience coordinate, `Algorithm=RS256`, and at least
 one matching signing key. This does not prove a real token was issued.
+
+### `GRM-AUTH-02` — Verify exact Auth0 account/Device binding
+
+#### 01 — Canonical command/query
+
+- Canonical procedure: `G_SCRIPTS.md` → `GS-AUTH-02`
+- Hosting path: `documentation/G_SCRIPTS.md`
+- Coordinate source: `documentation/NS_COORDINATES.md`
+- Read-only hosted routes: `GET /v1/identity` and
+  `GET /v1/devices/{deviceId}/status`
+
+#### Copy-paste-ready body
+
+```powershell
+$ProcedureId = "GS-AUTH-02"
+$CataloguePath = Resolve-Path ".\documentation\G_SCRIPTS.md"
+$Catalogue = Get-Content -LiteralPath $CataloguePath -Raw
+
+$HeadingPattern = '(?ms)^### `' +
+    [regex]::Escape($ProcedureId) +
+    '`[^\r\n]*\r?\n(?<Section>.*?)(?=^### `GS-|\z)'
+$SectionMatch = [regex]::Match($Catalogue, $HeadingPattern)
+
+if (-not $SectionMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' was not found in $CataloguePath."
+}
+
+$FencePattern =
+    '(?ms)^```powershell[ \t]*\r?\n(?<Code>.*?)^```[ \t]*\r?
+#### 01 — Canonical command/query
+
+- Canonical procedure: `G_SCRIPTS.md` → `GS-BUILD-01`
+- Hosting path: `documentation/G_SCRIPTS.md`
+- Package root: `services/markei_sync_api`
+
+#### Copy-paste-ready body
+
+```powershell
+Push-Location ".\services\markei_sync_api"
+try {
+    npm ci --include=dev
+    if ($LASTEXITCODE -ne 0) { throw "npm ci failed." }
+    npm run format:check
+    if ($LASTEXITCODE -ne 0) { throw "format:check failed." }
+    npm run lint
+    if ($LASTEXITCODE -ne 0) { throw "lint failed." }
+    npm run typecheck
+    if ($LASTEXITCODE -ne 0) { throw "typecheck failed." }
+    npm test
+    if ($LASTEXITCODE -ne 0) { throw "tests failed." }
+    npm run build
+    if ($LASTEXITCODE -ne 0) { throw "build failed." }
+}
+finally {
+    Pop-Location
+}
+```
+
+#### What this does
+
+Installs the exact lockfile dependency tree, checks formatting/lint/types,
+runs all API tests, and compiles the hosted service.
+
+#### Variables required
+
+No manual variable; Node.js 24 and npm registry access.
+
+#### Expected output or result
+
+Every command exits `0`; currently expected suite is 53 passing tests and zero
+failures, followed by a successful TypeScript build.
+
+### `GRM-BUILD-02` — Validate Flutter clients
+
+#### 01 — Canonical command/query
+
+- Canonical procedure: `G_SCRIPTS.md` → `GS-BUILD-02`
+- Hosting path: `documentation/G_SCRIPTS.md`
+- Project root: repository root
+
+#### Copy-paste-ready body
+
+```powershell
+flutter pub get
+if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
+flutter analyze
+if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
+flutter test
+if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
+flutter build windows --release
+if ($LASTEXITCODE -ne 0) { throw "Windows release build failed." }
+flutter build apk --debug
+if ($LASTEXITCODE -ne 0) { throw "Android debug build failed." }
+```
+
+#### What this does
+
+Resolves Flutter dependencies, analyzes/tests the client, then builds Windows
+release and Android debug artifacts.
+
+#### Variables required
+
+No manual variable; configured Flutter/Windows/Android toolchains.
+
+#### Expected output or result
+
+Dependency resolution, analysis, tests, Windows release build, and Android
+debug build all exit `0`.
+
+$FenceMatch = [regex]::Match(
+    $SectionMatch.Groups["Section"].Value,
+    $FencePattern
+)
+
+if (-not $FenceMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' has no PowerShell body."
+}
+
+& ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
+```
+
+#### What this does
+
+Loads the canonical `GS-AUTH-02` procedure, accepts one fresh Auth0 user access
+token and the already enrolled Device UUID through masked local prompts,
+validates token compatibility, and performs only the two authenticated `GET`
+requests. The deployed API proves that the token maps to an active membership
+and that the exact Device is active and authorized under that membership.
+
+It does not enroll, revoke, submit Sync data, retry a request, change Auth0,
+change Neon, or persist the entered values.
+
+#### Variables required
+
+- one fresh **user** access token issued by the configured Auth0 tenant for
+  `Auth0Audience`;
+- the UUID of the already enrolled Markei Device.
+
+Both are entered only in masked terminal prompts. No Auth0 client secret,
+Management API token, Render token, Neon password, or dashboard mutation is
+required. Do not use an Auth0 dashboard test/M2M token: it does not represent
+the fixture user's membership.
+
+#### Expected output or result
+
+All claim booleans `True`; `IdentityStatus=200`; `DeviceStatus=200`;
+`TokenAccepted=True`; `ExactDeviceBinding=True`; and
+`BindingClass=exact-binding-confirmed`.
+
+Stop on any token-claim mismatch, `401`, `403`, non-`200` response, expired
+token, wrong Device UUID, network ambiguity, redirect, or unsanitized output.
+Do not proceed to Sync and do not retry automatically.
 
 ### `GRM-BUILD-01` — Validate Sync API
 
