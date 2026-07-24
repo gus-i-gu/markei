@@ -448,6 +448,346 @@ if (-not $IssuerMatches -or
 This verifies public provider metadata and the configured audience coordinate.
 It does not prove that a real token was issued for that audience.
 
+### `GS-AUTH-02` — Verify exact hosted Auth0 binding
+
+This read-only procedure validates one fresh Auth0 user access token against
+the committed issuer, audience, and RS256 contract, then asks the deployed API
+to authorize the token's membership and one exact enrolled Device. It never
+prints the token, subject, Device UUID, authorization header, or response
+bodies.
+
+```powershell
+$NsPath = Resolve-Path ".\documentation\NS_COORDINATES.md"
+$NsText = Get-Content -LiteralPath $NsPath -Raw
+
+function Get-NsCoordinate {
+    param([Parameter(Mandatory)] [string]$Name)
+    $Match = [regex]::Match(
+        $NsText,
+        "(?m)^$([regex]::Escape($Name)):\s*(.+?)\s*$"
+    )
+    if (-not $Match.Success) {
+        throw "Missing '$Name' in $NsPath."
+    }
+    $Value = $Match.Groups[1].Value.Trim()
+    if ($Value -match '^<[^>]+>
+### `GS-BUILD-01` — Sync API validation
+
+```powershell
+Push-Location ".\services\markei_sync_api"
+try {
+    npm ci --include=dev
+    if ($LASTEXITCODE -ne 0) { throw "npm ci failed." }
+    npm run format:check
+    if ($LASTEXITCODE -ne 0) { throw "format:check failed." }
+    npm run lint
+    if ($LASTEXITCODE -ne 0) { throw "lint failed." }
+    npm run typecheck
+    if ($LASTEXITCODE -ne 0) { throw "typecheck failed." }
+    npm test
+    if ($LASTEXITCODE -ne 0) { throw "tests failed." }
+    npm run build
+    if ($LASTEXITCODE -ne 0) { throw "build failed." }
+}
+finally {
+    Pop-Location
+}
+```
+
+### `GS-BUILD-02` — Flutter validation
+
+```powershell
+flutter pub get
+if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
+flutter analyze
+if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
+flutter test
+if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
+flutter build windows --release
+if ($LASTEXITCODE -ne 0) { throw "Windows release build failed." }
+flutter build apk --debug
+if ($LASTEXITCODE -ne 0) { throw "Android debug build failed." }
+```
+
+## 6. Historical diagnostics and mutation record
+
+These procedures are retained for traceability and are excluded from the
+active `GRIMOIRE_INDEX`.
+
+### `GS-NEON-H01` — Gate 02 preflight diagnostic
+
+Canonical SQL block: `NEON_ACTION.sql` → `NA-02` /
+`gate02-preflight`.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action gate02-preflight
+```
+
+Gate 02 is closed; current inspection should use `GS-NEON-04`.
+
+### `GS-MIG-H01` — Migration 007 apply command; do not rerun
+
+Migration 007 was applied successfully on 2026-07-23 with file SHA-256:
+
+```text
+89AB11302F8B860C52AA1C74FBFEDF6A4DB3A0EE62FE7CB715B20B74AEF99AC6
+```
+
+The command below is append-oriented evidence only:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action apply-migration `
+  -MigrationPath ".\services\markei_sync_api\migrations\007_account_cursor_provisioning.sql"
+```
+
+Do not copy or execute it during ordinary recovery. Use `GS-NEON-04` or
+`GS-NEON-05` for read-only verification.
+
+## 7. Stop conditions
+
+Stop before mutation if:
+
+- the target branch may be production;
+- the selected identity is not the intended role;
+- any non-secret coordinate remains unknown or disagrees with its provider;
+- a password, token, complete connection URL, or real identity UUID would be
+  written to Git, chat, Markdown, SQL, screenshots, or shell history;
+- migration prerequisites or checksums disagree;
+- migration 007 is already present or its outcome is uncertain;
+- the migration file is dirty or untracked;
+- GitHub advanced, the local/remote SHAs diverge, or the worktree overlaps;
+- another deployment is active or the watched Render branch is uncertain;
+- a health, readiness, identity, or provider baseline differs from the
+  procedure's expected boundary.
+
+After an unclear migration result, use only read-only postflight and ledger
+checks. Never reconstruct or partially rerun a migration by hand.
+) {
+        throw "Replace the '$Name' placeholder in $NsPath."
+    }
+    return $Value
+}
+
+function ConvertFrom-Base64UrlJson {
+    param([Parameter(Mandatory)] [string]$Segment)
+    $Base64 = $Segment.Replace("-", "+").Replace("_", "/")
+    switch ($Base64.Length % 4) {
+        0 { }
+        2 { $Base64 += "==" }
+        3 { $Base64 += "=" }
+        default { throw "JWT contains invalid base64url." }
+    }
+    try {
+        $Json = [Text.Encoding]::UTF8.GetString(
+            [Convert]::FromBase64String($Base64)
+        )
+        return $Json | ConvertFrom-Json
+    }
+    catch {
+        throw "JWT header or payload is not valid encoded JSON."
+    }
+}
+
+function Invoke-SanitizedGet {
+    param(
+        [Parameter(Mandatory)] [uri]$Uri,
+        [Parameter(Mandatory)] [hashtable]$Headers,
+        [Parameter(Mandatory)] [string]$Label
+    )
+    try {
+        return Invoke-WebRequest `
+            -UseBasicParsing `
+            -Uri $Uri `
+            -Method Get `
+            -Headers $Headers `
+            -MaximumRedirection 0
+    }
+    catch {
+        $Status = $null
+        if ($null -ne $_.Exception.Response) {
+            $Status = [int]$_.Exception.Response.StatusCode
+        }
+        if ($null -ne $Status) {
+            throw "$Label rejected the request with HTTP $Status."
+        }
+        throw "$Label could not be verified."
+    }
+}
+
+$Origin = (Get-NsCoordinate "RenderPublicOrigin").TrimEnd("/")
+$IdentityPath = Get-NsCoordinate "RenderIdentityPath"
+$Issuer = (Get-NsCoordinate "Auth0Issuer").TrimEnd("/")
+$Audience = Get-NsCoordinate "Auth0Audience"
+$Algorithm = Get-NsCoordinate "Auth0Algorithm"
+$DeviceHeaderName = Get-NsCoordinate "DeviceHeaderName"
+
+$OriginUri = $null
+if (-not [uri]::TryCreate(
+        $Origin,
+        [UriKind]::Absolute,
+        [ref]$OriginUri
+    ) -or
+    $OriginUri.Scheme -ne "https" -or
+    -not [string]::IsNullOrEmpty($OriginUri.UserInfo) -or
+    -not [string]::IsNullOrEmpty($OriginUri.Query) -or
+    -not [string]::IsNullOrEmpty($OriginUri.Fragment)) {
+    throw "RenderPublicOrigin must be a secret-free HTTPS origin."
+}
+
+$TokenSecure = Read-Host `
+    "Paste a fresh Auth0 USER access token (masked; session only)" `
+    -AsSecureString
+$DeviceSecure = Read-Host `
+    "Paste the enrolled Device UUID (masked; session only)" `
+    -AsSecureString
+
+$TokenBstr = [IntPtr]::Zero
+$DeviceBstr = [IntPtr]::Zero
+$AccessToken = $null
+$DeviceId = $null
+$AuthorizationHeaders = $null
+$DeviceHeaders = $null
+
+try {
+    $TokenBstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR(
+        $TokenSecure
+    )
+    $AccessToken = [Runtime.InteropServices.Marshal]::PtrToStringBSTR(
+        $TokenBstr
+    ).Trim()
+    $DeviceBstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR(
+        $DeviceSecure
+    )
+    $DeviceId = [Runtime.InteropServices.Marshal]::PtrToStringBSTR(
+        $DeviceBstr
+    ).Trim()
+
+    if ([string]::IsNullOrWhiteSpace($AccessToken) -or
+        $AccessToken.StartsWith("Bearer ", [StringComparison]::OrdinalIgnoreCase)) {
+        throw "Enter only the raw access token, without the Bearer prefix."
+    }
+
+    $ParsedDeviceId = [guid]::Empty
+    if (-not [guid]::TryParse($DeviceId, [ref]$ParsedDeviceId) -or
+        $ParsedDeviceId -eq [guid]::Empty) {
+        throw "The locally entered Device identifier is not a valid UUID."
+    }
+
+    $Parts = $AccessToken.Split(".")
+    if ($Parts.Count -ne 3) {
+        throw "The access token is not a three-part JWT."
+    }
+
+    $Header = ConvertFrom-Base64UrlJson $Parts[0]
+    $Claims = ConvertFrom-Base64UrlJson $Parts[1]
+    $IssuerMatches = (
+        $Claims.iss -is [string] -and
+        $Claims.iss.TrimEnd("/") -eq $Issuer
+    )
+    $AudienceMatches = (@($Claims.aud) -contains $Audience)
+    $AlgorithmMatches = (
+        $Header.alg -eq $Algorithm -and
+        $Algorithm -eq "RS256"
+    )
+    $SubjectPresent = (
+        $Claims.sub -is [string] -and
+        -not [string]::IsNullOrWhiteSpace($Claims.sub)
+    )
+
+    $Now = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+    $ExpiryValid = (
+        $null -ne $Claims.exp -and
+        [long]$Claims.exp -gt $Now
+    )
+    $NotBeforeValid = (
+        $null -eq $Claims.nbf -or
+        [long]$Claims.nbf -le $Now
+    )
+    $TimeWindowValid = $ExpiryValid -and $NotBeforeValid
+
+    if (-not $IssuerMatches -or
+        -not $AudienceMatches -or
+        -not $AlgorithmMatches -or
+        -not $SubjectPresent -or
+        -not $TimeWindowValid) {
+        throw "The token claims do not match the hosted Auth0 contract."
+    }
+
+    $OriginBase = [uri]($Origin + "/")
+    $IdentityUri = [uri]::new(
+        $OriginBase,
+        $IdentityPath.TrimStart([char]"/")
+    )
+    $DeviceStatusUri = [uri]::new(
+        $OriginBase,
+        "v1/devices/$DeviceId/status"
+    )
+
+    $AuthorizationHeaders = @{
+        Authorization = "Bearer $AccessToken"
+    }
+    $IdentityResponse = Invoke-SanitizedGet `
+        -Uri $IdentityUri `
+        -Headers $AuthorizationHeaders `
+        -Label "Hosted identity endpoint"
+
+    $DeviceHeaders = $AuthorizationHeaders.Clone()
+    $DeviceHeaders[$DeviceHeaderName] = $DeviceId
+    $DeviceResponse = Invoke-SanitizedGet `
+        -Uri $DeviceStatusUri `
+        -Headers $DeviceHeaders `
+        -Label "Hosted Device status endpoint"
+
+    if ([int]$IdentityResponse.StatusCode -ne 200 -or
+        [int]$DeviceResponse.StatusCode -ne 200) {
+        throw "Hosted identity binding did not return the required statuses."
+    }
+
+    [pscustomobject]@{
+        IssuerMatches = $IssuerMatches
+        AudienceMatches = $AudienceMatches
+        AlgorithmMatches = $AlgorithmMatches
+        SubjectPresent = $SubjectPresent
+        TimeWindowValid = $TimeWindowValid
+        IdentityStatus = [int]$IdentityResponse.StatusCode
+        DeviceStatus = [int]$DeviceResponse.StatusCode
+        TokenAccepted = $true
+        ExactDeviceBinding = $true
+        BindingClass = "exact-binding-confirmed"
+    }
+}
+finally {
+    if ($null -ne $DeviceHeaders) {
+        $DeviceHeaders.Clear()
+    }
+    if ($null -ne $AuthorizationHeaders) {
+        $AuthorizationHeaders.Clear()
+    }
+    $AccessToken = $null
+    $DeviceId = $null
+    if ($TokenBstr -ne [IntPtr]::Zero) {
+        [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($TokenBstr)
+    }
+    if ($DeviceBstr -ne [IntPtr]::Zero) {
+        [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($DeviceBstr)
+    }
+    Remove-Variable TokenSecure, DeviceSecure -ErrorAction SilentlyContinue
+}
+```
+
+The local JWT read is only a compatibility precheck. The hosted API performs
+the cryptographic signature, issuer, audience, expiry, membership, enrollment,
+and Device authorization decisions. HTTP `200` from both read-only endpoints
+therefore confirms the exact binding without sending a Sync submission.
+
 ## 5. Build and regression checks
 
 ### `GS-BUILD-01` — Sync API validation
