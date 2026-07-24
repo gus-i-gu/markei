@@ -38,7 +38,7 @@ Run this helper as a script with -File or .\documentation\NEON_CHECK.ps1.
 }
 
 if ([string]::IsNullOrWhiteSpace($ConfigPath)) {
-    $ConfigPath = Join-Path $ScriptDirectory "NEON_CRED.md"
+    $ConfigPath = Join-Path $ScriptDirectory "NS_COORDINATES.md"
 }
 if ([string]::IsNullOrWhiteSpace($ActionPath)) {
     $ActionPath = Join-Path $ScriptDirectory "NEON_ACTION.sql"
@@ -134,15 +134,25 @@ if ([string]::IsNullOrWhiteSpace($Action)) {
 
 $ConfigContent = Get-Content -LiteralPath $ConfigPath -Raw
 $ExpectedEnvironment = Read-ConfigValue $ConfigContent "Environment"
+$NeonBranchAlias = Read-ConfigValue $ConfigContent "BranchAlias"
 $NeonHost = Read-ConfigValue $ConfigContent "Host"
 $NeonPort = Read-ConfigValue $ConfigContent "Port"
 $NeonDatabase = Read-ConfigValue $ConfigContent "Database"
-$RoleKey = switch ($Role) {
-    "runtime" { "RuntimeUser" }
-    "migrator" { "MigratorUser" }
-    "dbowner" { "DbOwnerUser" }
+$PostgreSQLVersion = Read-ConfigValue $ConfigContent "PostgreSQLVersion"
+$SslMode = Read-ConfigValue $ConfigContent "SslMode"
+$ChannelBindingMode = Read-ConfigValue $ConfigContent "ChannelBindingMode"
+$RuntimeUser = Read-ConfigValue $ConfigContent "RuntimeUser"
+$MigratorUser = Read-ConfigValue $ConfigContent "MigratorUser"
+$DbOwnerUser = Read-ConfigValue $ConfigContent "DbOwnerUser"
+$CurrentMigrationId = Read-ConfigValue $ConfigContent "CurrentMigrationId"
+$CurrentMigrationLedgerChecksum = Read-ConfigValue `
+    $ConfigContent `
+    "CurrentMigrationLedgerChecksum"
+$DatabaseUser = switch ($Role) {
+    "runtime" { $RuntimeUser }
+    "migrator" { $MigratorUser }
+    "dbowner" { $DbOwnerUser }
 }
-$DatabaseUser = Read-ConfigValue $ConfigContent $RoleKey
 
 if ($ExpectedEnvironment -ne "development") {
     throw "This helper is locked to Environment: development."
@@ -153,10 +163,34 @@ if ($NeonHost -notmatch '^ep-[a-z0-9.-]+\.neon\.tech$') {
 if ($NeonPort -notmatch '^\d{1,5}$') {
     throw "Port must be numeric."
 }
+if ($PostgreSQLVersion -ne "18") {
+    throw "This proven helper is pinned to PostgreSQLVersion: 18."
+}
+if ($SslMode -ne "require" -or $ChannelBindingMode -ne "require") {
+    throw "SslMode and ChannelBindingMode must both be 'require'."
+}
 if ($NeonDatabase -notmatch '^[A-Za-z_][A-Za-z0-9_-]*$' -or
-    $DatabaseUser -notmatch '^[A-Za-z_][A-Za-z0-9_-]*$') {
+    $RuntimeUser -notmatch '^[A-Za-z_][A-Za-z0-9_-]*$' -or
+    $MigratorUser -notmatch '^[A-Za-z_][A-Za-z0-9_-]*$' -or
+    $DbOwnerUser -notmatch '^[A-Za-z_][A-Za-z0-9_-]*$') {
     throw "Database or role name contains unexpected characters."
 }
+if ($CurrentMigrationId -notmatch '^[A-Za-z0-9_-]+$' -or
+    $CurrentMigrationLedgerChecksum -notmatch '^[A-Za-z0-9_-]+$') {
+    throw "Migration ID or ledger checksum contains unexpected characters."
+}
+$PostgresImage = "postgres:${PostgreSQLVersion}-alpine"
+
+Write-Host @"
+Selected non-secret target:
+  environment = $ExpectedEnvironment
+  branch      = $NeonBranchAlias
+  database    = $NeonDatabase
+  role        = $DatabaseUser
+"@
+Write-Host `
+    "The launcher cannot independently prove the Neon branch alias." `
+    -ForegroundColor Yellow
 
 $MigratorOnly = @("gate02-preflight", "gate02-postflight", "apply-migration")
 if ($Action -in $MigratorOnly -and $Role -ne "migrator") {
@@ -220,14 +254,18 @@ if ($Action -eq "apply-migration") {
     }
 }
 
-$PsqlVariables = @()
+$PsqlVariables = @(
+    "-v", "runtime_user=$RuntimeUser",
+    "-v", "current_migration_id=$CurrentMigrationId",
+    "-v", "current_migration_checksum=$CurrentMigrationLedgerChecksum"
+)
 if ($Action -eq "verify-device") {
     $DeviceInput = (Read-Host "Device UUID (kept local)").Trim()
     $ParsedDeviceId = [guid]::Empty
     if (-not [guid]::TryParse($DeviceInput, [ref]$ParsedDeviceId)) {
         throw "Device UUID is invalid."
     }
-    $PsqlVariables = @("-v", "device_id=$($ParsedDeviceId.ToString())")
+    $PsqlVariables += @("-v", "device_id=$($ParsedDeviceId.ToString())")
 }
 
 $SecurePassword = Read-Host `
@@ -249,8 +287,8 @@ try {
     $env:PGDATABASE = $NeonDatabase
     $env:PGUSER = $DatabaseUser
     $env:PGPASSWORD = $PlainPassword
-    $env:PGSSLMODE = "require"
-    $env:PGCHANNELBINDING = "require"
+    $env:PGSSLMODE = $SslMode
+    $env:PGCHANNELBINDING = $ChannelBindingMode
 
     $DockerEnvironment = @(
         "--env", "PGHOST", "--env", "PGPORT", "--env", "PGDATABASE",
@@ -262,12 +300,12 @@ try {
     $PsqlBase = @("psql", "-X", "-v", "ON_ERROR_STOP=1")
 
     # Identity is verified by SQL. Client-side TLS and channel binding are
-    # enforced by libpq through PGSSLMODE=require and
-    # PGCHANNELBINDING=require. If either requirement cannot be satisfied,
-    # psql exits unsuccessfully before this probe can return.
+    # enforced by the values loaded from NS_COORDINATES.md. The launcher
+    # accepts only `require` for both. If either requirement cannot be
+    # satisfied, psql exits unsuccessfully before this probe can return.
     $ProbeSql = "SELECT current_user, current_database();"
     $ProbeOutput = $ProbeSql | & docker @DockerNonInteractive `
-        "postgres:18-alpine" @PsqlBase "-Atq"
+        $PostgresImage @PsqlBase "-Atq"
     if ($LASTEXITCODE -ne 0) {
         throw "Connection preflight failed."
     }
@@ -306,40 +344,35 @@ Received:
 
     if ($Action -eq "shell") {
         Write-Host "Opening psql. Use \q to exit."
-        & docker @DockerInteractive "postgres:18-alpine" @PsqlBase
+        & docker @DockerInteractive $PostgresImage @PsqlBase
     }
     elseif ($Action -eq "apply-migration") {
         Write-Host "Migration: $ResolvedMigration"
         Write-Host `
             "SHA256: $((Get-FileHash $ResolvedMigration -Algorithm SHA256).Hash)"
-        $Confirmation = Read-Host `
-            "Type APPLY-ONCE after confirming the Neon development branch"
+        Write-Host @"
+Confirm in Neon before authorizing:
+  environment = $ExpectedEnvironment
+  branch      = $NeonBranchAlias
+  database    = $NeonDatabase
+"@
+        $Confirmation = Read-Host "Type APPLY-ONCE after dashboard confirmation"
         if ($Confirmation -cne "APPLY-ONCE") {
             throw "Migration cancelled."
         }
         Get-Content -LiteralPath $ResolvedMigration -Raw |
             & docker @DockerNonInteractive `
-                "postgres:18-alpine" @PsqlBase
-    }
-    elseif ($Action -eq "connection") {
-        $ConnectionSql = @"
-BEGIN TRANSACTION READ ONLY;
-SELECT
-    current_user AS connected_role,
-    current_database() AS connected_database,
-    current_setting('transaction_read_only') AS transaction_read_only;
-ROLLBACK;
-"@
-        $ConnectionSql | & docker @DockerNonInteractive `
-            "postgres:18-alpine" @PsqlBase
-        Write-Host `
-            "Client TLS/channel binding: active (enforced by libpq)"
+                $PostgresImage @PsqlBase
     }
     else {
         $ActionContent = Get-Content -LiteralPath $ActionPath -Raw
         $Sql = Get-ActionSql $ActionContent $Action
         $Sql | & docker @DockerNonInteractive `
-            "postgres:18-alpine" @PsqlBase @PsqlVariables
+            $PostgresImage @PsqlBase @PsqlVariables
+        if ($Action -eq "connection") {
+            Write-Host `
+                "Client TLS/channel binding: active (enforced by libpq)"
+        }
     }
     if ($LASTEXITCODE -ne 0) {
         throw "Neon action '$Action' failed. Do not retry a migration blindly."

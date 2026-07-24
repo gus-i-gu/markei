@@ -1405,3 +1405,375 @@ CONTROLLED_SYNC_REQUEST_UNAUTHORIZED
 MIGRATION_007_DO_NOT_RERUN
 GCM02_OPEN
 ```
+
+## Append-only reconciliation entry — 2026-07-23 — Neo-Grimoire indexed coordinate-system redesign
+
+### Sprint identity
+
+```text
+Sequence: FLX-ORD-01 direct human-authorized documentation materialization
+Cycle: 10
+Phase: GCM-02 closure support / Step 12 preparation
+Branch: cycle10-intermid-grimoire
+Baseline HEAD: 1106dbea6a6d6b309d306d2f5a7911240b84bc2e
+Immediate parent: f1851ca
+Baseline commit: Neo-Grimoire system for Human Supervised Execution1.3
+Human authority: explicit
+Materialization scope: canonical GRIMOIRE five-file interface
+Evidence boundary: isolated local checkout and static structural validation
+Provider mutation authority: none
+Persistence status: human replacement, diff review, commit, and push pending
+```
+
+The baseline ambiguity is resolved as follows:
+
+```text
+1106dbea6a6d6b309d306d2f5a7911240b84bc2e
+    current branch HEAD / Execution1.3
+
+f1851ca
+    immediate parent / Execution1.2
+```
+
+### Objective
+
+The sprint restructures the existing human-supervised execution system without
+adding unrelated provider operations.
+
+The intended active interface remains five files:
+
+```text
+documentation/GRIMOIRE.md
+documentation/GENERAL_SCRIPTS.md
+documentation/NS_COORDINATES.md
+documentation/NEON_CHECK.ps1
+documentation/NEON_ACTION.sql
+```
+
+The responsibilities are now separated as:
+
+```text
+GRIMOIRE.md
+    human-facing architecture, safety rules, usage model, and concise index
+
+GENERAL_SCRIPTS.md
+    canonical expanded commands, queries, validation procedures, and evidence
+    expectations
+
+NS_COORDINATES.md
+    repository-safe non-secret coordinates, lifecycle classifications, and
+    verification sources
+
+NEON_CHECK.ps1
+    Windows launcher, coordinate parser, role/action dispatcher, secure runtime
+    input, target guards, and Docker psql execution
+
+NEON_ACTION.sql
+    SQL-only indexed read-only action catalogue
+```
+
+### Naming reconciliation
+
+Commit `1106dbe` had already renamed:
+
+```text
+documentation/NEON_CRED.md
+→ documentation/NS_COORDINATES.md
+```
+
+The rename-only state left active GRIMOIRE commands and the launcher capable of
+referring to the superseded filename. The present materialization reconciles the
+live interface:
+
+- `NEON_CHECK.ps1` now defaults to `NS_COORDINATES.md`;
+- active GRIMOIRE and GENERAL_SCRIPTS command bodies pass
+  `-ConfigPath ".\documentation\NS_COORDINATES.md"`;
+- hosted and Git procedures load public values from `NS_COORDINATES.md`;
+- no active execution route requires `documentation/NEON_CRED.md`;
+- `NEON_ACTION.sql` remains the canonical singular filename.
+
+Historical references to `NEON_CRED.md` remain valid observational evidence in
+earlier J entries, Git history, and the migration explanation inside the active
+documentation. They are not stale executable paths and must not be erased merely
+to make a global text search return zero results.
+
+### Materialized system
+
+#### GRIMOIRE
+
+`GRIMOIRE.md` now defines:
+
+- the canonical five-file architecture;
+- the coordinate and secret boundaries;
+- the runtime-input model;
+- Neon launcher and role behavior;
+- SQL action architecture;
+- migration and do-not-rerun boundaries;
+- Gate 02’s proven checkpoint;
+- failure classifications;
+- interface-maintenance rules;
+- the stable `GRIMOIRE_INDEX` landline.
+
+The final index contains 16 `GRM-*` blocks. Every active block contains:
+
+```text
+GRM identifier and functionality name
+01 — canonical command/query and hosting path
+Copy-paste-ready body
+What this does
+Variables required
+Expected output or result
+```
+
+Only the fenced copy-paste body is machine input. Its stable non-secret values
+are loaded from `NS_COORDINATES.md`; manually supplied values are restricted to
+runtime role selection, masked passwords, locally entered UUIDs, or an explicit
+authorization phrase where the canonical procedure requires one.
+
+#### GENERAL_SCRIPTS
+
+`GENERAL_SCRIPTS.md` now contains 18 canonical `GS-*` procedures.
+
+The active GRIMOIRE blocks map to 16 corresponding procedures. Two additional
+procedures remain historical or deliberately non-indexed:
+
+```text
+GS-NEON-H01
+GS-MIG-H01
+```
+
+The historical migration procedure preserves auditability but does not restore
+migration 007 to the active GRIMOIRE index.
+
+The Git, Render-health, Auth0-metadata, Windows-build, and Android-build
+procedures fetch their public coordinates from `NS_COORDINATES.md` and reject
+required placeholders instead of silently inventing values.
+
+#### NS_COORDINATES
+
+`NS_COORDINATES.md` is explicitly a coordinate allowlist, not a credential
+store.
+
+It now contains 60 unique machine-readable coordinate keys covering:
+
+```text
+repository and source
+Render development service
+Auth0 public development configuration
+Neon development target
+Markei hosted API contract
+provider migration state
+```
+
+All 11 keys from the former `NEON_CRED.md` were retained by name and without
+semantic loss:
+
+```text
+Environment
+ProjectAlias
+BranchAlias
+Region
+PostgreSQLVersion
+Host
+Port
+Database
+RuntimeUser
+MigratorUser
+DbOwnerUser
+```
+
+The file also records:
+
+- where each coordinate must be verified;
+- whether it is stable, mutable, rotatable, or ephemeral;
+- which values remain optional until a procedure consumes them;
+- which values must never be committed;
+- when the coordinate set was last reviewed.
+
+No password, token, client secret, API key, private key, complete connection
+string, identity-bound UUID, authorization header, cookie, or raw environment
+dump was migrated into the file.
+
+The direct Neon hostname, database name, and role names remain non-secret.
+Together they expose development topology, so they are retained under the
+existing mitigated-risk decision and should not be redistributed
+unnecessarily.
+
+#### NEON_ACTION
+
+`NEON_ACTION.sql` now contains eight indexed `NA-*` action blocks:
+
+```text
+NA-01  connection
+NA-02  gate02-preflight
+NA-03  gate02-postflight
+NA-04  migration-ledger
+NA-05  runtime-privileges
+NA-06  schema-inventory
+NA-07  list-devices-sanitized
+NA-08  verify-device
+```
+
+The file remains SQL-only. Explanations are SQL comments, while extraction
+continues to use the exact parser contract:
+
+```sql
+-- ACTION: action-name
+...
+-- END ACTION
+```
+
+Routine actions remain read-only and terminate through `ROLLBACK`.
+
+#### NEON_CHECK
+
+`NEON_CHECK.ps1` now:
+
+- resolves `NS_COORDINATES.md` by default;
+- loads the required Neon and migration coordinates dynamically;
+- rejects unresolved required placeholders;
+- remains locked to the development environment;
+- requires the direct Neon hostname;
+- requires PostgreSQL 18;
+- requires TLS and channel binding;
+- separates runtime, migrator, and database-owner roles;
+- prompts for passwords through masked terminal input;
+- requests a device UUID only for the exact action that requires it;
+- forwards non-secret action variables through `psql`;
+- preserves the tracked, clean, repository-contained migration guard;
+- preserves the exact `APPLY-ONCE` mutation confirmation;
+- clears PostgreSQL environment variables and temporary plaintext password
+  material in `finally`.
+
+Migration 007 remains applied-once historical evidence. This update does not
+authorize or perform its reapplication.
+
+### Validation record
+
+Static validation returned:
+
+```text
+GRIMOIRE blocks:                         16
+Canonical GENERAL_SCRIPTS procedures:   18
+NEON_ACTION indexed actions:              8
+NS_COORDINATES unique keys:              60
+Original coordinate keys retained:     11/11
+Active GRM → GS cross-references:        PASS
+Executable bodies with placeholders:       0
+Active stale executable NEON_CRED paths:   0
+Canonical NS_COORDINATES default:        PASS
+Secret-pattern scan:                     PASS
+SQL action parsing:                    8/8 PASS
+git diff --check:                        PASS
+```
+
+All eight SQL action bodies parsed as PostgreSQL after substituting the
+non-secret `psql` variables supplied by the launcher.
+
+The validation boundary is static and structural. The Linux materialization
+environment did not repeat:
+
+- Windows PowerShell execution;
+- Docker Desktop execution;
+- Neon connections or queries;
+- Render requests or configuration;
+- Auth0 requests or token acquisition;
+- Windows or Android builds;
+- a Sync submission.
+
+No provider state, deployment, credential, migration, or application source was
+changed by this documentation sprint.
+
+### PRC-01 classification
+
+```text
+Claim: the redesigned five-file GRIMOIRE interface exists
+Source: local repository diff against 1106dbea
+Current state: implemented and statically validated
+Evidence: five modified active-interface files, index counts, cross-reference
+          checks, parser checks, and git diff --check
+Evidence boundary: isolated local checkout
+Semantic owner: operational execution documentation
+Target role: active human-supervised execution interface
+History disposition: prior Execution1.3 state retained in Git and J
+Result: accepted as a materialization candidate pending human diff review and
+        Git persistence
+```
+
+```text
+Claim: NEON_CRED.md remains the active coordinate filename
+Source: pre-reconciliation live references
+Current state: contradicted
+Evidence: canonical file is NS_COORDINATES.md; launcher default and active
+          command bodies now use NS_COORDINATES.md
+Semantic owner: canonical five-file interface
+History disposition: historical NEON_CRED.md references preserved as evidence
+Result: rejected as a live path; retained only as historical naming
+```
+
+```text
+Claim: the coordinate file contains authentication secrets
+Source: inspected NS_COORDINATES content and scoped secret-pattern scan
+Current state: contradicted within the inspected five-file boundary
+Evidence: only non-secret coordinates, identifiers, route names, public
+          metadata, role names, and migration identifiers were found
+Evidence boundary: inspected repository files; no claim about external secret
+                   stores
+Semantic owner: coordinate safety contract
+Result: rejected
+```
+
+```text
+Claim: every GRIMOIRE procedure is runtime-validated on Windows and providers
+Source: static materialization validation
+Current state: host-unvalidated for this sprint
+Evidence: structural and parser validation passed; Windows/provider execution
+          was not repeated
+Semantic owner: operational runtime evidence
+Result: remain host-unvalidated until the applicable procedures are executed in
+        the intended Windows/provider environment
+```
+
+```text
+Claim: this redesign authorizes migration, deployment, credential changes, or
+       one controlled Sync request
+Source: documentation materialization
+Current state: contradicted
+Evidence: no provider action was included in the authorized scope
+Result: rejected; existing provider and Step 12 stop boundaries remain active
+```
+
+### Continuation boundary
+
+The immediate continuation is:
+
+1. replace the five local files with the reviewed candidate versions;
+2. append this record to J;
+3. run the naming and diff integrity guard;
+4. inspect the complete six-file diff;
+5. persist the batch only after human acceptance;
+6. collect and independently verify the remaining non-secret coordinates;
+7. fill `NS_COORDINATES.md` without adding secrets;
+8. resume Cycle 10 GCM-02 closure and Step 12 from the read-only preparation
+   boundary.
+
+Step 12’s authenticated Sync mutation remains held. No request is authorized
+until identity, token flow, exact device/account binding, canonical request
+generation, expected state transition, and stop conditions are fully resolved.
+
+Current terminals:
+
+```text
+NEO_GRIMOIRE_FIVE_FILE_REDESIGN_IMPLEMENTED_LOCALLY
+ACTIVE_COORDINATE_FILENAME_NS_COORDINATES
+STALE_LIVE_NEON_CRED_EXECUTION_PATHS_REMOVED
+HISTORICAL_NEON_CRED_REFERENCES_PRESERVED
+ORIGINAL_COORDINATE_KEYS_RETAINED_11_OF_11
+STATIC_INTERFACE_VALIDATION_PASS
+WINDOWS_AND_PROVIDER_RUNTIME_NOT_REEXECUTED
+HUMAN_DIFF_REVIEW_AND_GIT_PERSISTENCE_PENDING
+NS_COORDINATE_COLLECTION_NEXT
+MIGRATION_007_DO_NOT_RERUN
+CONTROLLED_SYNC_REQUEST_UNAUTHORIZED
+GCM02_OPEN
+```

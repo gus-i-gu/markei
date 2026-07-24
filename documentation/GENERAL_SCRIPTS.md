@@ -1,267 +1,547 @@
 # Markei General Scripts
 
-> User-facing command index. Short commands dispatch to reviewed scripts.
+> Canonical executable catalogue for the human-supervised GRIMOIRE interface.
 > Repository: `gus-i-gu/markei`; branch: `cycle10-intermid-grimoire`.
 
-## 0. Execution model
+## 0. Execution contract
 
 ```text
-User
-→ minimal command copied from this file
-→ proven implementation in NEON_CHECK.ps1 / NEON_ACTION.sql
-→ masked credential or local coordinate request only when required
-→ sanitized result
+GRIMOIRE_INDEX block
+→ canonical GS-* procedure in this file
+→ NS_COORDINATES.md supplies non-secret values
+→ terminal requests only the remaining role/UUID/secret input
+→ reviewed PowerShell or SQL performs the operation
+→ sanitized result returns to the operator
 ```
 
-Keep these files together:
+Keep this active five-file set together:
 
 ```text
-GENERAL_SCRIPTS.md
-GRIMOIRE.md
-NEON_CHECK.ps1
-NEON_ACTION.sql
-NEON_CRED.md
+documentation/GRIMOIRE.md
+documentation/GENERAL_SCRIPTS.md
+documentation/NS_COORDINATES.md
+documentation/NEON_CHECK.ps1
+documentation/NEON_ACTION.sql
 ```
 
-The root files are the active, collectively versioned interface. The
-Windows-proven launcher and corrected SQL catalogue were promoted from the
-former model layer; `NEON_CRED.md` supplies only non-secret coordinates.
+Run PowerShell commands from the repository root. Copy only complete fenced
+code bodies. Do not replace values already supplied by `NS_COORDINATES.md`.
 
-Run commands from the repository root. The canonical Windows launcher form is
-process-scoped and does not persistently alter PowerShell execution policy:
+The canonical Neon launcher form is process-scoped and does not permanently
+alter PowerShell execution policy:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
   -File ".\documentation\NEON_CHECK.ps1" `
-  -ConfigPath ".\documentation\NEON_CRED.md" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role <runtime|migrator|dbowner> `
   -Action <action>
 ```
 
-## Pre-5 — Neon terminal and checks
+Passwords are requested through `Read-Host -AsSecureString`, converted only
+for the current process/container call, and cleared in `finally`.
 
-Requirements: Windows PowerShell, Docker Desktop running, and PostgreSQL
-`postgres:18-alpine` image access. Local `psql` is not required.
+## 1. Neon terminal and read-only actions
 
-### Interactive terminal
+Requirements: Windows PowerShell, Docker Desktop running, access to the
+`postgres:18-alpine` image, and verified non-secret Neon coordinates. Local
+`psql` is not required.
+
+### `GS-NEON-00` — Guided role/action launcher
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
   -File ".\documentation\NEON_CHECK.ps1" `
-  -ConfigPath ".\documentation\NEON_CRED.md" `
-  -Role migrator `
-  -Action shell
+  -ConfigPath ".\documentation\NS_COORDINATES.md"
 ```
 
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
-  -ConfigPath ".\documentation\NEON_CRED.md" `
-  -Role runtime `
-  -Action shell
-```
+The terminal requests the role number, action number, and selected role
+password. An action-specific UUID or confirmation is requested only when
+required.
 
-The script reads the selected username from `NEON_CRED.md` and asks for its
-password in a masked prompt. Exit psql with `\q`.
+### `GS-NEON-01` — Migrator connection proof
 
-### Sanitized connection proof
+Canonical SQL block: `NEON_ACTION.sql` → `NA-01` / `connection`.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
   -File ".\documentation\NEON_CHECK.ps1" `
-  -ConfigPath ".\documentation\NEON_CRED.md" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action connection
 ```
 
-### Gate 02 preflight action — retained read-only diagnostic
+### `GS-NEON-02` — Open migrator psql
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
   -File ".\documentation\NEON_CHECK.ps1" `
-  -ConfigPath ".\documentation\NEON_CRED.md" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action shell
+```
+
+Exit `psql` with `\q`.
+
+### `GS-NEON-03` — Open runtime psql
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role runtime `
+  -Action shell
+```
+
+Exit `psql` with `\q`.
+
+### `GS-NEON-04` — Gate 02 postflight
+
+Canonical SQL block: `NEON_ACTION.sql` → `NA-03` /
+`gate02-postflight`.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action gate02-postflight
+```
+
+Required current result:
+
+- migration `007_account_cursor_provisioning` exists with checksum
+  `c10-mcg02-account-cursor-provisioning-v1`;
+- readiness-v2 is true;
+- provisioning function exists and trigger count is `1`;
+- missing/orphan cursor-state counts are `0`;
+- runtime `SELECT=true`, `INSERT=false`, `DELETE=false`;
+- runtime can update only `next_cursor`;
+- runtime can execute readiness-v2 but not provisioning;
+- transaction ends with `ROLLBACK`; action ends with `PASS`.
+
+### `GS-NEON-05` — Migration ledger
+
+Canonical SQL block: `NEON_ACTION.sql` → `NA-04` /
+`migration-ledger`.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action migration-ledger
+```
+
+### `GS-NEON-06` — Schema and RLS inventory
+
+Canonical SQL block: `NEON_ACTION.sql` → `NA-06` /
+`schema-inventory`.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action schema-inventory
+```
+
+### `GS-NEON-07` — Runtime privilege inventory
+
+Canonical SQL block: `NEON_ACTION.sql` → `NA-05` /
+`runtime-privileges`.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action runtime-privileges
+```
+
+### `GS-NEON-08` — Sanitized device inventory
+
+Canonical SQL block: `NEON_ACTION.sql` → `NA-07` /
+`list-devices-sanitized`.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action list-devices-sanitized
+```
+
+### `GS-NEON-09` — Verify one device's counters
+
+Canonical SQL block: `NEON_ACTION.sql` → `NA-08` / `verify-device`.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action verify-device
+```
+
+The terminal requests the device UUID locally. It is passed as a `psql`
+variable, not written to any repository file.
+
+### `GS-NEON-10` — Runtime readiness-v2 query
+
+Run only inside the runtime `psql` opened by `GS-NEON-03`:
+
+```sql
+BEGIN TRANSACTION READ ONLY;
+SELECT
+    current_user AS connected_role,
+    current_database() AS connected_database,
+    public.markei_hosted_runtime_ready_v2() AS ready;
+ROLLBACK;
+```
+
+Expected: `markei_runtime`, `markei_sync_dev`, `ready = t`, and `ROLLBACK`.
+
+## 2. Git alignment
+
+### `GS-GIT-01` — Verify exact branch/remote alignment
+
+This procedure reads `RepositoryBranch` from `NS_COORDINATES.md`, requires a
+clean worktree, and stops on branch or SHA divergence.
+
+```powershell
+$NsPath = Resolve-Path ".\documentation\NS_COORDINATES.md"
+$NsText = Get-Content -LiteralPath $NsPath -Raw
+
+function Get-NsCoordinate {
+    param([Parameter(Mandatory)] [string]$Name)
+    $Match = [regex]::Match(
+        $NsText,
+        "(?m)^$([regex]::Escape($Name)):\s*(.+?)\s*$"
+    )
+    if (-not $Match.Success) {
+        throw "Missing '$Name' in $NsPath."
+    }
+    $Value = $Match.Groups[1].Value.Trim()
+    if ($Value -match '^<[^>]+>$') {
+        throw "Replace the '$Name' placeholder in $NsPath."
+    }
+    return $Value
+}
+
+$ExpectedBranch = Get-NsCoordinate "RepositoryBranch"
+$CurrentBranch = (& git branch --show-current).Trim()
+if ($LASTEXITCODE -ne 0 -or $CurrentBranch -ne $ExpectedBranch) {
+    throw "Expected branch '$ExpectedBranch'; found '$CurrentBranch'."
+}
+
+$Dirty = @(& git status --porcelain)
+if ($LASTEXITCODE -ne 0 -or $Dirty.Count -ne 0) {
+    throw "Working tree is not clean."
+}
+
+& git fetch --prune origin
+if ($LASTEXITCODE -ne 0) {
+    throw "git fetch failed."
+}
+
+$LocalSha = (& git rev-parse HEAD).Trim()
+$RemoteSha = (& git rev-parse "origin/$ExpectedBranch").Trim()
+$Divergence = ((& git rev-list --left-right --count `
+    "origin/$ExpectedBranch...HEAD").Trim() -split '\s+')
+
+if ($LASTEXITCODE -ne 0 -or
+    $Divergence.Count -ne 2 -or
+    $Divergence[0] -ne "0" -or
+    $Divergence[1] -ne "0" -or
+    $LocalSha -ne $RemoteSha) {
+    throw "Local and remote branch state diverged."
+}
+
+[pscustomobject]@{
+    Branch = $CurrentBranch
+    LocalHead = $LocalSha
+    RemoteHead = $RemoteSha
+    Behind = [int]$Divergence[0]
+    Ahead = [int]$Divergence[1]
+    Worktree = "clean"
+}
+```
+
+## 3. Render public health
+
+### `GS-HOST-01` — Verify live and ready contracts
+
+This procedure reads the public origin and route paths from
+`NS_COORDINATES.md`. It rejects placeholders, non-HTTPS origins, embedded
+credentials, query strings, fragments, redirects, non-200 responses, and
+unexpected response classes.
+
+```powershell
+$NsPath = Resolve-Path ".\documentation\NS_COORDINATES.md"
+$NsText = Get-Content -LiteralPath $NsPath -Raw
+
+function Get-NsCoordinate {
+    param([Parameter(Mandatory)] [string]$Name)
+    $Match = [regex]::Match(
+        $NsText,
+        "(?m)^$([regex]::Escape($Name)):\s*(.+?)\s*$"
+    )
+    if (-not $Match.Success) {
+        throw "Missing '$Name' in $NsPath."
+    }
+    $Value = $Match.Groups[1].Value.Trim()
+    if ($Value -match '^<[^>]+>$') {
+        throw "Replace the '$Name' placeholder in $NsPath."
+    }
+    return $Value
+}
+
+$Origin = (Get-NsCoordinate "RenderPublicOrigin").TrimEnd("/")
+$LivePath = Get-NsCoordinate "RenderLivePath"
+$ReadyPath = Get-NsCoordinate "RenderReadyPath"
+
+$OriginUri = $null
+if (-not [uri]::TryCreate(
+        $Origin,
+        [UriKind]::Absolute,
+        [ref]$OriginUri
+    ) -or
+    $OriginUri.Scheme -ne "https" -or
+    -not [string]::IsNullOrEmpty($OriginUri.UserInfo) -or
+    -not [string]::IsNullOrEmpty($OriginUri.Query) -or
+    -not [string]::IsNullOrEmpty($OriginUri.Fragment)) {
+    throw "RenderPublicOrigin must be a secret-free HTTPS origin."
+}
+
+$OriginBase = [uri]($Origin + "/")
+$LiveUri = [uri]::new(
+    $OriginBase,
+    $LivePath.TrimStart([char]"/")
+).AbsoluteUri
+$ReadyUri = [uri]::new(
+    $OriginBase,
+    $ReadyPath.TrimStart([char]"/")
+).AbsoluteUri
+
+$LiveResponse = Invoke-WebRequest `
+    -UseBasicParsing `
+    -Uri $LiveUri `
+    -Method Get `
+    -MaximumRedirection 0
+$ReadyResponse = Invoke-WebRequest `
+    -UseBasicParsing `
+    -Uri $ReadyUri `
+    -Method Get `
+    -MaximumRedirection 0
+
+$LiveBody = $LiveResponse.Content | ConvertFrom-Json
+$ReadyBody = $ReadyResponse.Content | ConvertFrom-Json
+if ([int]$LiveResponse.StatusCode -ne 200 -or
+    [int]$ReadyResponse.StatusCode -ne 200 -or
+    $LiveBody.status -ne "live" -or
+    $ReadyBody.status -ne "ready") {
+    throw "Hosted health contract did not pass."
+}
+
+[pscustomobject]@{
+    Origin = $Origin
+    LiveStatus = [int]$LiveResponse.StatusCode
+    LiveClass = $LiveBody.status
+    ReadyStatus = [int]$ReadyResponse.StatusCode
+    ReadyClass = $ReadyBody.status
+}
+```
+
+## 4. Auth0 public metadata
+
+### `GS-AUTH-01` — Verify OIDC discovery and RS256 JWKS
+
+This procedure reads only public Auth0 coordinates. It never requests or
+prints an access token or client secret.
+
+```powershell
+$NsPath = Resolve-Path ".\documentation\NS_COORDINATES.md"
+$NsText = Get-Content -LiteralPath $NsPath -Raw
+
+function Get-NsCoordinate {
+    param([Parameter(Mandatory)] [string]$Name)
+    $Match = [regex]::Match(
+        $NsText,
+        "(?m)^$([regex]::Escape($Name)):\s*(.+?)\s*$"
+    )
+    if (-not $Match.Success) {
+        throw "Missing '$Name' in $NsPath."
+    }
+    $Value = $Match.Groups[1].Value.Trim()
+    if ($Value -match '^<[^>]+>$') {
+        throw "Replace the '$Name' placeholder in $NsPath."
+    }
+    return $Value
+}
+
+$Issuer = (Get-NsCoordinate "Auth0Issuer").TrimEnd("/")
+$Audience = Get-NsCoordinate "Auth0Audience"
+$Algorithm = Get-NsCoordinate "Auth0Algorithm"
+$DiscoveryPath = Get-NsCoordinate "Auth0DiscoveryPath"
+$JwksPath = Get-NsCoordinate "Auth0JwksPath"
+
+$IssuerUri = $null
+if (-not [uri]::TryCreate(
+        $Issuer,
+        [UriKind]::Absolute,
+        [ref]$IssuerUri
+    ) -or
+    $IssuerUri.Scheme -ne "https" -or
+    -not [string]::IsNullOrEmpty($IssuerUri.UserInfo) -or
+    -not [string]::IsNullOrEmpty($IssuerUri.Query) -or
+    -not [string]::IsNullOrEmpty($IssuerUri.Fragment)) {
+    throw "Auth0Issuer must be a secret-free HTTPS URL."
+}
+
+$IssuerBase = [uri]($Issuer + "/")
+$DiscoveryUri = [uri]::new(
+    $IssuerBase,
+    $DiscoveryPath.TrimStart([char]"/")
+).AbsoluteUri
+$JwksUri = [uri]::new(
+    $IssuerBase,
+    $JwksPath.TrimStart([char]"/")
+).AbsoluteUri
+
+$Discovery = Invoke-RestMethod -Method Get -Uri $DiscoveryUri
+$Jwks = Invoke-RestMethod -Method Get -Uri $JwksUri
+
+$IssuerMatches = (
+    $Discovery.issuer.TrimEnd("/") -eq $Issuer
+)
+$DiscoveryJwksMatches = (
+    $Discovery.jwks_uri.TrimEnd("/") -eq $JwksUri.TrimEnd("/")
+)
+$MatchingKeys = @($Jwks.keys | Where-Object {
+    $_.kty -eq "RSA" -and
+    $_.use -eq "sig" -and
+    $_.alg -eq $Algorithm
+})
+
+if (-not $IssuerMatches -or
+    -not $DiscoveryJwksMatches -or
+    $Algorithm -ne "RS256" -or
+    $MatchingKeys.Count -lt 1) {
+    throw "Auth0 public metadata contract did not pass."
+}
+
+[pscustomobject]@{
+    Issuer = $Issuer
+    AudienceCoordinate = $Audience
+    IssuerMatches = $IssuerMatches
+    DiscoveryJwksMatches = $DiscoveryJwksMatches
+    Algorithm = $Algorithm
+    MatchingSigningKeys = $MatchingKeys.Count
+}
+```
+
+This verifies public provider metadata and the configured audience coordinate.
+It does not prove that a real token was issued for that audience.
+
+## 5. Build and regression checks
+
+### `GS-BUILD-01` — Sync API validation
+
+```powershell
+Push-Location ".\services\markei_sync_api"
+try {
+    npm ci --include=dev
+    if ($LASTEXITCODE -ne 0) { throw "npm ci failed." }
+    npm run format:check
+    if ($LASTEXITCODE -ne 0) { throw "format:check failed." }
+    npm run lint
+    if ($LASTEXITCODE -ne 0) { throw "lint failed." }
+    npm run typecheck
+    if ($LASTEXITCODE -ne 0) { throw "typecheck failed." }
+    npm test
+    if ($LASTEXITCODE -ne 0) { throw "tests failed." }
+    npm run build
+    if ($LASTEXITCODE -ne 0) { throw "build failed." }
+}
+finally {
+    Pop-Location
+}
+```
+
+### `GS-BUILD-02` — Flutter validation
+
+```powershell
+flutter pub get
+if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
+flutter analyze
+if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
+flutter test
+if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
+flutter build windows --release
+if ($LASTEXITCODE -ne 0) { throw "Windows release build failed." }
+flutter build apk --debug
+if ($LASTEXITCODE -ne 0) { throw "Android debug build failed." }
+```
+
+## 6. Historical diagnostics and mutation record
+
+These procedures are retained for traceability and are excluded from the
+active `GRIMOIRE_INDEX`.
+
+### `GS-NEON-H01` — Gate 02 preflight diagnostic
+
+Canonical SQL block: `NEON_ACTION.sql` → `NA-02` /
+`gate02-preflight`.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action gate02-preflight
 ```
 
-Before migration 007, this action established:
+Gate 02 is closed; current inspection should use `GS-NEON-04`.
 
-- migration 006 exists with checksum
-  `c10-s03a-r3-hosted-authorization-v1`;
-- migration 007 is absent;
-- readiness-v2 and provisioning objects are absent;
-- the missing cursor-state count is recorded.
+### `GS-MIG-H01` — Migration 007 apply command; do not rerun
 
-Gate 02 is now closed. If run again, the same read-only action should instead
-show both migrations 006 and 007 plus the installed provisioning objects. Use
-`gate02-postflight` for the authoritative current checkpoint.
+Migration 007 was applied successfully on 2026-07-23 with file SHA-256:
 
-### Applied migration 007 — historical command; do not rerun
+```text
+89AB11302F8B860C52AA1C74FBFEDF6A4DB3A0EE62FE7CB715B20B74AEF99AC6
+```
 
-Migration 007 was applied successfully on 2026-07-23 with SHA-256
-`89AB11302F8B860C52AA1C74FBFEDF6A4DB3A0EE62FE7CB715B20B74AEF99AC6`.
-The following command is retained only as append-oriented operational history:
-
-Run from the repository root, adjusting only the helper path if these files are
-stored elsewhere:
+The command below is append-oriented evidence only:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
   -File ".\documentation\NEON_CHECK.ps1" `
-  -ConfigPath ".\documentation\NEON_CRED.md" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action apply-migration `
   -MigrationPath ".\services\markei_sync_api\migrations\007_account_cursor_provisioning.sql"
 ```
 
-Do not copy or execute this command during ordinary recovery. Use
-`gate02-postflight` or `migration-ledger` for read-only verification.
+Do not copy or execute it during ordinary recovery. Use `GS-NEON-04` or
+`GS-NEON-05` for read-only verification.
 
-### Gate 02 postflight
+## 7. Stop conditions
 
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
-  -ConfigPath ".\documentation\NEON_CRED.md" `
-  -Role migrator `
-  -Action gate02-postflight
-```
+Stop before mutation if:
 
-Required:
+- the target branch may be production;
+- the selected identity is not the intended role;
+- any non-secret coordinate remains unknown or disagrees with its provider;
+- a password, token, complete connection URL, or real identity UUID would be
+  written to Git, chat, Markdown, SQL, screenshots, or shell history;
+- migration prerequisites or checksums disagree;
+- migration 007 is already present or its outcome is uncertain;
+- the migration file is dirty or untracked;
+- GitHub advanced, the local/remote SHAs diverge, or the worktree overlaps;
+- another deployment is active or the watched Render branch is uncertain;
+- a health, readiness, identity, or provider baseline differs from the
+  procedure's expected boundary.
 
-- one migration-007 ledger row with checksum
-  `c10-mcg02-account-cursor-provisioning-v1`;
-- readiness-v2 is true;
-- provisioning function exists and trigger count is `1`;
-- missing and orphan cursor-state counts are `0`;
-- runtime `SELECT=true`, `INSERT=false`, `DELETE=false`;
-- runtime can update only `next_cursor`;
-- runtime can execute readiness-v2 but not provisioning.
-
-### Runtime readiness proof
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
-  -ConfigPath ".\documentation\NEON_CRED.md" `
-  -Role runtime `
-  -Action shell
-```
-
-Then:
-
-```sql
-SELECT current_user, current_database(),
-       public.markei_hosted_runtime_ready_v2() AS ready;
-```
-
-## 1. Other Neon actions
-
-```powershell
-.\documentation\NEON_CHECK.ps1 -Role migrator -Action migration-ledger
-.\documentation\NEON_CHECK.ps1 -Role migrator -Action schema-inventory
-.\documentation\NEON_CHECK.ps1 -Role migrator -Action runtime-privileges
-.\documentation\NEON_CHECK.ps1 -Role migrator -Action list-devices-sanitized
-.\documentation\NEON_CHECK.ps1 -Role migrator -Action verify-device
-```
-
-Running without arguments opens role and action menus:
-
-```powershell
-.\documentation\NEON_CHECK.ps1
-```
-
-## 2. Git alignment
-
-```powershell
-git fetch --prune origin
-git status --short --branch
-git rev-parse HEAD
-git rev-parse origin/cycle10-intermid-grimoire
-git rev-list --left-right --count origin/cycle10-intermid-grimoire...HEAD
-```
-
-`0 0` means local and remote agree. Record full SHAs. Stop on divergence or a
-dirty overlap.
-
-## 3. Render deployment checks
-
-Before deployment:
-
-- migration postflight passed;
-- GitHub branch head is the authorized full SHA;
-- Render watches the correct repository and branch;
-- no deployment is active;
-- auto-deploy state is known.
-
-With auto-deploy off, trigger exactly one **Deploy latest commit** only after
-confirming “latest” equals the authorized SHA.
-
-Health check:
-
-```powershell
-$Origin = Read-Host "Render public origin"
-$Origin = $Origin.TrimEnd("/")
-$Live = Invoke-WebRequest -Uri "$Origin/health/live" -Method Get `
-  -MaximumRedirection 0 -SkipHttpErrorCheck
-$Ready = Invoke-WebRequest -Uri "$Origin/health/ready" -Method Get `
-  -MaximumRedirection 0 -SkipHttpErrorCheck
-[pscustomobject]@{
-  LiveStatus = [int]$Live.StatusCode
-  ReadyStatus = [int]$Ready.StatusCode
-  LiveClass = $Live.Content
-  ReadyClass = $Ready.Content
-}
-```
-
-## 4. Auth0 public checks
-
-```powershell
-$Issuer = (Read-Host "Auth0 issuer").TrimEnd("/")
-$Discovery = Invoke-RestMethod "$Issuer/.well-known/openid-configuration"
-$Jwks = Invoke-RestMethod "$Issuer/.well-known/jwks.json"
-[pscustomobject]@{
-  IssuerMatches = ($Discovery.issuer.TrimEnd("/") -eq $Issuer)
-  JwksKeys = @($Jwks.keys).Count
-  HasRs256Key = @($Jwks.keys | Where-Object {
-    $_.kty -eq "RSA" -and $_.use -eq "sig" -and $_.alg -eq "RS256"
-  }).Count -gt 0
-}
-```
-
-This checks public metadata only. Never print access tokens or client secrets.
-
-## 5. Build checks
-
-Sync API:
-
-```powershell
-Push-Location services\markei_sync_api
-npm ci --include=dev
-npm run format:check
-npm run lint
-npm run typecheck
-npm test
-npm run build
-Pop-Location
-```
-
-Flutter:
-
-```powershell
-flutter pub get
-flutter analyze
-flutter test
-flutter build windows --release
-flutter build apk --debug
-```
-
-## 6. Stop conditions
-
-Stop before mutation if the target branch may be production, the role is not
-`markei_migrator`, prerequisites/checksums disagree, migration 007 already
-exists unexpectedly, the migration file is dirty, GitHub advanced, another
-deployment is active, or any command would disclose a secret.
-
-After an unclear migration result, run read-only postflight/ledger checks.
-Never reconstruct or partially rerun the migration by hand.
+After an unclear migration result, use only read-only postflight and ledger
+checks. Never reconstruct or partially rerun a migration by hand.
