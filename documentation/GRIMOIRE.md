@@ -966,26 +966,33 @@ failures, followed by a successful TypeScript build.
 - Canonical procedure: `G_SCRIPTS.md` → `GS-BUILD-02`
 - Hosting path: `documentation/G_SCRIPTS.md`
 - Project root: repository root
+- Package root: `clients/markei_flutter`
 
 #### Copy-paste-ready body
 
 ```powershell
-flutter pub get
-if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
-flutter analyze
-if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
-flutter test
-if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
-flutter build windows --release
-if ($LASTEXITCODE -ne 0) { throw "Windows release build failed." }
-flutter build apk --debug
-if ($LASTEXITCODE -ne 0) { throw "Android debug build failed." }
+Push-Location ".\clients\markei_flutter"
+try {
+    flutter pub get
+    if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
+    flutter analyze
+    if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
+    flutter test
+    if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
+    flutter build windows --release
+    if ($LASTEXITCODE -ne 0) { throw "Windows release build failed." }
+    flutter build apk --debug
+    if ($LASTEXITCODE -ne 0) { throw "Android debug build failed." }
+}
+finally {
+    Pop-Location
+}
 ```
 
 #### What this does
 
-Resolves Flutter dependencies, analyzes/tests the client, then builds Windows
-release and Android debug artifacts.
+Enters the actual Flutter package, resolves dependencies, analyzes/tests the
+client, then builds Windows release and Android debug artifacts.
 
 #### Variables required
 
@@ -995,3 +1002,53 @@ No manual variable; configured Flutter/Windows/Android toolchains.
 
 Dependency resolution, analysis, tests, Windows release build, and Android
 debug build all exit `0`.
+
+### `GRM-BUILD-03` — Run the Windows Closure client
+
+#### 01 — Canonical command/query
+
+- Canonical procedure: `G_SCRIPTS.md` → `GS-BUILD-03`
+- Hosting path: `documentation/G_SCRIPTS.md`
+- Project root: repository root
+- Package root: `clients/markei_flutter`
+
+Use the full `GS-BUILD-03` block after a clean checkout, native-toolchain
+change, or CMake failure. Once that procedure has successfully provisioned,
+built, and registered the callback, use this concise recurring run:
+
+```powershell
+$FlutterDefines = @(
+    "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
+    "--dart-define=MARKEI_AUTH0_DOMAIN=$Auth0Domain"
+    "--dart-define=MARKEI_AUTH0_AUDIENCE=$Auth0Audience"
+    "--dart-define=MARKEI_AUTH0_WINDOWS_CLIENT_ID=$WindowsClientId"
+    "--dart-define=MARKEI_HOSTED_HTTPS_ORIGIN=$HostedOrigin"
+)
+
+Push-Location ".\clients\markei_flutter"
+try {
+    flutter run -d windows @FlutterDefines
+    if ($LASTEXITCODE -ne 0) { throw "Flutter Windows run failed." }
+}
+finally {
+    Pop-Location
+}
+```
+
+#### What this does
+
+Runs the diagnostic Windows client with the native Closure surface and the
+current session's private Auth0/hosted-origin configuration. It performs no
+automatic Enroll, Query, Retry, or Sync action.
+
+#### Variables required
+
+`$Auth0Domain`, `$Auth0Audience`, `$WindowsClientId`, and `$HostedOrigin`
+must already exist in the current PowerShell session. The values remain outside
+Git and must not be pasted into chat or Markdown.
+
+#### Expected output or result
+
+Flutter identifies the Windows device, builds the client, opens Markei, and
+keeps the terminal attached for diagnostics. For Gate 12.6b, open the Retry
+preflight, record only its sanitized fields, and select Cancel.
