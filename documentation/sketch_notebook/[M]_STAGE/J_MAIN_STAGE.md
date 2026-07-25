@@ -3,7 +3,7 @@
 > Sequence: FLX-PRM-04 evidence reconciliation and bounded FLX-ORD-01 continuation
 > Authority marker: C10-GCM02-SINGLE-SYNC-PREFLIGHT_20260725
 > Repository checkpoint: `c76734e32f70702978f5c7a543c1f0ef3c63c521`
-> Status: **12.4 PASS; 12.5 NEXT; HUMAN AUTHORIZATION PENDING; SYNC HELD**
+> Status: **12.5 PASS; 12.6 NEXT; HUMAN AUTHORIZATION PENDING; SYNC HELD**
 
 ## 1. Overall staging reconciliation
 
@@ -13,8 +13,16 @@ Account/Device binding have subsequently been exercised through the reviewed GRI
 The Windows release build also passed after restoring the terminal-local native toolchain
 coordinates; no source change was required for that repair.
 
-The completed evidence narrows the remaining GCM-02 route to one controlled request experiment. It
-does not itself authorize that experiment. The governing order is:
+The read-only provider baseline is now accepted. Runtime readiness-v2 passed through the runtime
+identity; sanitized Device inventory found one active Device at sequence 1; exact Device inspection
+found zero submissions, zero Sync events and next expected sequence 1; and `GRM-NEON-11` captured
+one atomic six-table/cursor/fingerprint snapshot. That snapshot found one Account, one active Device,
+one Account cursor-state row, zero submissions, zero Sync events, zero Device acknowledgements, no
+missing or orphan cursor state, Account next cursor 1, hosted high-water 0, Device next sequence 1,
+Device high-water 0, both consistency predicates true and no replay fingerprints.
+
+This closes 12.5 within the accepted operator evidence boundary. It does not authorize a Sync
+operation. The remaining GCM-02 route is:
 
 ```text
 provider and identity prerequisites
@@ -38,8 +46,8 @@ the final authorized request or a later check specifically requires a fresh toke
 | 12.2 Auth0 public metadata | **PASS** | issuer, audience, RS256 algorithm, subject presence and token time window all matched |
 | 12.3 Git, API and deployed-revision alignment | **PASS at inspected checkpoint** | operator evidence reported identical local/remote revision, clean worktree, corrected build/audit, deployed-revision match and repeated host readiness; re-check if branch or deployment changes |
 | 12.4 Exact Account/Device/token binding | **PASS** | `GS-AUTH-02`: identity 200, Device 200, token accepted and `exact-binding-confirmed` |
-| 12.5 Read-only provider baseline | **NEXT** | exact pre-request six-table/cursor counters and correlation fingerprints are not yet captured in this reconciliation |
-| 12.6 Define permitted single transition | **PENDING** | must be derived from the accepted 12.5 baseline; no mutation yet |
+| 12.5 Read-only provider baseline | **PASS** | runtime readiness, sanitized/exact Device checks and atomic `GRM-NEON-11` snapshot agree: `1/1/1/0/0/0`, cursor `1`, hosted high-water `0`, Device sequence `1`, both consistency predicates true and replay fingerprints absent |
+| 12.6 Define permitted single transition | **NEXT** | identify the exact eligible local submission and event range, resolve one coordinator action versus one HTTP request, then freeze the immutable allowlist; no mutation yet |
 | 12.7 Human authorization | **PENDING** | eligible only after 12.5, 12.6 and Main evidence review |
 | 12.8 Exactly one Sync request | **HELD** | no automatic retry; no second request |
 | 12.9 Post-request comparison | **HELD** | requires HTTP result, correlated Render logs and exact post-request counters |
@@ -57,7 +65,7 @@ must be repeated if either Git or Render changes before 12.7.
 | Runtime readiness-v2 and Render live/ready are usable | Validated at the inspected provider/deployment checkpoint |
 | Auth0 public token contract is correct | Validated with one real user access token; token value was not persisted |
 | Token subject, fixture Account and active Device belong together | Validated by `GS-AUTH-02` as `exact-binding-confirmed` |
-| The exact pre-request provider state is frozen | Not yet accepted; 12.5 remains active |
+| The exact pre-request provider state is frozen | Accepted from the coherent 12.5a–d read-only evidence; any later movement invalidates this baseline |
 | The only permitted database transition is defined | Not yet accepted; 12.6 remains pending |
 | A Sync request is authorized | Rejected until explicit 12.7 human authorization |
 | Deployment/readiness/authentication success proves Sync success | Rejected |
@@ -82,28 +90,60 @@ time window. Any uncertain HTTP result remains unknown until provider counters a
 
 ## 5. Decided route to 12.7
 
-### 12.5 — freeze the exact read-only provider baseline
+### 12.5 — exact read-only provider baseline accepted
 
-1. Keep Markei closed or paused so no background action can change the baseline.
-2. Re-run `GRM-NEON-10` through the runtime identity and require readiness-v2 success.
-3. Run sanitized `GRM-NEON-08` Device inventory.
-4. Run `GRM-NEON-09` for the exact fixture Device UUID, entered only at the masked local prompt.
-5. Capture the exact read-only pre-request counters required by the canonical GRIMOIRE procedure:
-   Accounts, Devices, cursor state, submissions, Sync events and acknowledgements, plus the relevant
-   cursor/high-water and request-correlation fingerprints.
-6. Stop on any unexpected row, duplicate active Device, missing cursor row, identity mismatch,
-   readiness failure or unexplained movement.
+The accepted sequence is:
+
+1. `GRM-NEON-03/10`: runtime role, `markei_sync_dev`, readiness-v2 `t`;
+2. `GRM-NEON-08`: one active Device, next expected sequence 1;
+3. `GRM-NEON-09`: exact Device submissions 0, Sync events 0, next expected sequence 1;
+4. `GRM-NEON-11`: atomic `REPEATABLE READ, READ ONLY` six-table/cursor/fingerprint snapshot;
+5. exact Device guard 1; global and fixture counts `1/1/1/0/0/0`; no missing/orphan cursor state;
+6. Account cursor/high-water `1/0` and Device sequence/high-water `1/0`, both consistent;
+7. submission/request and event/content fingerprint counts 0 with `[none]` endpoints.
+
+Any later provider movement, Device change or coordinate change invalidates this checkpoint and
+requires a fresh `GRM-NEON-11` snapshot before authorization.
 
 ### 12.6 — define the one permitted transition
 
-From the accepted baseline, state one allowlist before any request. It must name:
+12.6 is definition and verification only. It performs no provider request.
 
-- the single permitted endpoint and exact fixture identity;
-- the immutable request/event identities and hashes to be reused;
-- the maximum allowed increments for submissions, Sync events and acknowledgements;
-- the exact permitted cursor movement;
-- every table/count that must remain unchanged;
-- allowed terminal HTTP/result classes and the stop rule for timeout, conflict, 503 or ambiguity.
+1. Keep Markei closed until the local inspection begins. Do not select ordinary `Sync`, Enroll,
+   Query, clear diagnostic history, repair, resequence or create new local events.
+2. Open the already reconciled Windows client and refresh Native Closure diagnostics without
+   triggering Sync.
+3. Invoke only the unresolved-submission preflight surface. If the confirmation dialog appears,
+   record only its sanitized submission fingerprint, event count, first/last Device sequence and
+   next local Device sequence, then select **Cancel**. Do not select **Retry**.
+4. Require exactly one eligible unresolved submission, authenticated exact Device binding, an
+   isolated queue, contiguous event positions, immutable request-hash recomputation, contiguous
+   Device sequences beginning at hosted next expected sequence 1 and no competing pending,
+   uploading or failed work. Any blocked or ambiguous preflight stops 12.6.
+5. Resolve the operation boundary explicitly. The current Retry UI calls the full hosted coordinator:
+   upload submission, download events and possibly acknowledge the greatest applied cursor. It is
+   therefore not equivalent to one HTTP request. Before 12.7, Main and the human must choose either:
+   one full, bounded Retry UI action with every possible endpoint and transition allowlisted; or one
+   isolated `POST /v1/sync/submissions` executed by a separately reviewed mechanism. No hybrid or
+   implicit interpretation is accepted.
+6. Freeze the immutable request allowlist locally without exposing raw identifiers, token, payload or
+   full hashes. It must bind the exact Account, Device, submission ID/request hash, ordered event
+   IDs/content hashes, event count and Device-sequence range.
+7. Derive the successful provider delta from event count `N`: Accounts `+0`, Devices `+0`,
+   cursor-state rows `+0`, submissions `+1`, Sync events `+N`, Account next cursor `+N`, hosted
+   high-water `+N`, Device next expected sequence `+N`; acknowledgements remain `+0` for an isolated
+   upload or are separately bounded only if the full coordinator action is authorized.
+8. Freeze the duplicate-equivalent delta separately: all six table counts, cursors and Device sequence
+   remain unchanged, and stored request/event fingerprints must match the immutable local values.
+9. Freeze rejection and unknown-outcome rules. Authentication, Device, sequence, account or hash
+   rejection permits zero provider movement. HTTP 503, timeout, disconnect, missing response headers,
+   `5xx`, malformed response or any ambiguous terminal result permits no second request; proceed only
+   to logs and a fresh read-only provider snapshot.
+10. Freeze capture order: pre-request Git/deployment/host recheck if changed; fresh session-only token;
+    pre-request `GRM-NEON-11`; one operation; terminal result and correlation fingerprint; matching
+    Render log window; immediate post-request `GRM-NEON-11`; allowlist comparison.
+11. Write the resulting exact transition matrix and operation boundary into J. Only then can Main
+    assemble 12.1–12.6 and present 12.7.
 
 The allowlist is a prediction, not evidence. It must not be revised after observing the request merely
 to fit the outcome.
@@ -131,8 +171,8 @@ If and only if 12.7 is granted:
 ```text
 GCM02_SINGLE_SYNC_PREFLIGHT_ACTIVE
 AUTH0_EXACT_BINDING_PASS
-READ_ONLY_PROVIDER_BASELINE_NEXT
-PERMITTED_TRANSITION_DEFINITION_PENDING
+READ_ONLY_PROVIDER_BASELINE_PASS
+PERMITTED_TRANSITION_DEFINITION_NEXT
 HUMAN_AUTHORIZATION_PENDING
 REAL_SYNC_REQUEST_HELD
 NO_AUTOMATIC_RETRY
@@ -825,4 +865,58 @@ GCM02_12_5_READ_ONLY_PROVIDER_BASELINE_NEXT
 GCM02_12_6_TRANSITION_ALLOWLIST_PENDING
 GCM02_12_7_HUMAN_AUTHORIZATION_PENDING
 REAL_SYNC_REQUEST_HELD
+```
+
+## 2026-07-25 — Gate 12.5 atomic provider baseline closure
+
+### Accepted read-only evidence
+
+The human-operated sequence completed the reconciled 12.5 route against the
+development target without authorizing or performing Sync:
+
+```text
+GRM-NEON-03/10 runtime readiness-v2: PASS
+GRM-NEON-08 sanitized Device inventory: one active Device, sequence 1
+GRM-NEON-09 exact Device counters: submissions 0, events 0, sequence 1
+GRM-NEON-11 exact Device guard: 1
+GRM-NEON-11 six-table counts: 1 / 1 / 1 / 0 / 0 / 0
+missing Account cursor state: 0
+orphan cursor-state rows: 0
+Account next cursor / hosted high-water: 1 / 0
+Account cursor consistency: true
+Device next sequence / Device high-water: 1 / 0
+Device sequence consistency: true
+submission/request fingerprints: none
+event/content fingerprints: none
+transaction class: repeatable-read, read-only
+```
+
+The four observations agree at their stated checkpoints. No provider row,
+cursor, Device state, replay fingerprint or identity conflict was observed.
+The fixture UUID, Account identity, credentials, access token, payloads and
+full hashes were not persisted in J.
+
+### Reconciled consequence
+
+Gate 12.5 is closed. Gate 12.6 is now the sole active planning gate. It must
+first prove that the Windows local store exposes exactly one eligible immutable
+unresolved submission and record only its sanitized fingerprint, event count
+and Device-sequence range. Opening that preflight is not authorization to
+confirm Retry.
+
+Repository inspection also corrects an ambiguity in the phrase “one Sync
+request”: the current Retry confirmation calls the hosted coordinator, which
+can issue a submission upload, an event download and an acknowledgement.
+Therefore 12.6 must explicitly select and allowlist either one complete bounded
+coordinator action or one isolated submission POST before 12.7 can be
+presented. The distinction may not be decided after observing an outcome.
+
+```text
+GCM02_12_5_READ_ONLY_PROVIDER_BASELINE_PASS
+GCM02_12_6_TRANSITION_ALLOWLIST_NEXT
+LOCAL_UNRESOLVED_SUBMISSION_PREFLIGHT_REQUIRED
+ONE_COORDINATOR_ACTION_VS_ONE_HTTP_REQUEST_UNRESOLVED
+GCM02_12_7_HUMAN_AUTHORIZATION_PENDING
+REAL_SYNC_REQUEST_HELD
+NO_AUTOMATIC_RETRY
 ```
