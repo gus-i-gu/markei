@@ -1003,16 +1003,19 @@ No manual variable; configured Flutter/Windows/Android toolchains.
 Dependency resolution, analysis, tests, Windows release build, and Android
 debug build all exit `0`.
 
-### `GRM-BUILD-03` — Run the Windows Closure client
+### `GRM-FLUTTER-WIN` — Build and run the Windows Closure client
 
 #### 01 — Canonical command/query
 
-- Canonical procedure: `G_SCRIPTS.md` → `GS-BUILD-03`
+- Canonical procedure: `G_SCRIPTS.md` → `GS-FLUTTER-WIN`
 - Hosting path: `documentation/G_SCRIPTS.md`
 - Project root: repository root
 - Package root: `clients/markei_flutter`
 
-Use the full `GS-BUILD-03` block after a clean checkout, native-toolchain
+Historical identifier `GRM-BUILD-03` resolves to this block. Use
+`GRM-FLUTTER-WIN` in new instructions.
+
+Use the full `GS-FLUTTER-WIN` block after a clean checkout, native-toolchain
 change, or CMake failure. Once that procedure has successfully provisioned,
 built, and registered the callback, use this concise recurring run:
 
@@ -1052,3 +1055,101 @@ Git and must not be pasted into chat or Markdown.
 Flutter identifies the Windows device, builds the client, opens Markei, and
 keeps the terminal attached for diagnostics. For Gate 12.6b, open the Retry
 preflight, record only its sanitized fields, and select Cancel.
+
+### `GRM-FLUTTER-AND` — Build and run the Android Closure client
+
+#### 01 — Canonical command/query
+
+- Canonical procedure: `G_SCRIPTS.md` → `GS-FLUTTER-AND`
+- Hosting path: `documentation/G_SCRIPTS.md`
+- Project root: repository root
+- Package root: `clients/markei_flutter`
+
+Use the full `GS-FLUTTER-AND` block after a clean checkout, Android toolchain
+change, device-selection failure, or clean-build requirement. Once that
+procedure passes, use this concise recurring run:
+
+#### Copy-paste-ready body
+
+```powershell
+$ConfigurationReady = [ordered]@{
+    Auth0Domain   = -not [string]::IsNullOrWhiteSpace($Auth0Domain)
+    Auth0Audience = -not [string]::IsNullOrWhiteSpace($Auth0Audience)
+    AndroidClient = -not [string]::IsNullOrWhiteSpace($AndroidClientId)
+    HostedOrigin  = -not [string]::IsNullOrWhiteSpace($HostedOrigin)
+}
+[pscustomobject]$ConfigurationReady
+if ($ConfigurationReady.Values -contains $false) {
+    throw "One or more private Android Closure variables are missing from this session."
+}
+
+$FlutterDevices = @(
+    (& flutter devices --machine 2>&1 | Out-String) |
+        ConvertFrom-Json
+)
+$AndroidDevices = @(
+    $FlutterDevices | Where-Object {
+        $_.targetPlatform -match "^android" -and $_.isSupported -eq $true
+    }
+)
+
+if (-not [string]::IsNullOrWhiteSpace($AndroidDeviceId)) {
+    $AndroidDevices = @(
+        $AndroidDevices | Where-Object { $_.id -eq $AndroidDeviceId }
+    )
+}
+if ($AndroidDevices.Count -ne 1) {
+    $AndroidDevices |
+        Select-Object name, id, targetPlatform, sdk |
+        Format-Table -AutoSize
+    throw "Connect exactly one supported Android target, or set AndroidDeviceId to one displayed id."
+}
+$SelectedAndroidDeviceId = $AndroidDevices[0].id
+
+$FlutterDefines = @(
+    "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
+    "--dart-define=MARKEI_AUTH0_DOMAIN=$Auth0Domain"
+    "--dart-define=MARKEI_AUTH0_AUDIENCE=$Auth0Audience"
+    "--dart-define=MARKEI_AUTH0_ANDROID_CLIENT_ID=$AndroidClientId"
+    "--dart-define=MARKEI_HOSTED_HTTPS_ORIGIN=$HostedOrigin"
+)
+
+$PreviousGradleAuth0Domain = $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN
+$env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN = $Auth0Domain
+
+Push-Location ".\clients\markei_flutter"
+try {
+    flutter run --debug -d $SelectedAndroidDeviceId @FlutterDefines
+    if ($LASTEXITCODE -ne 0) { throw "Flutter Android run failed." }
+}
+finally {
+    Pop-Location
+    if ($null -eq $PreviousGradleAuth0Domain) {
+        Remove-Item Env:\ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN `
+            -ErrorAction SilentlyContinue
+    }
+    else {
+        $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN = `
+            $PreviousGradleAuth0Domain
+    }
+}
+```
+
+#### What this does
+
+Selects exactly one connected supported Android target, supplies the native
+Closure and Android Auth0 configuration for this process, builds the debug
+client as needed, installs it, launches Markei, and keeps the terminal attached.
+It performs no automatic Enroll, Query, Retry, or Sync action.
+
+#### Variables required
+
+`$Auth0Domain`, `$Auth0Audience`, `$AndroidClientId`, and `$HostedOrigin` must
+already exist in the current PowerShell session. `$AndroidDeviceId` is optional
+when exactly one supported Android device or emulator is connected. Values
+remain outside Git and must not be pasted into chat or Markdown.
+
+#### Expected output or result
+
+Flutter resolves exactly one Android target, builds and installs the client,
+opens Markei, and keeps the terminal attached for diagnostics.

@@ -767,11 +767,14 @@ finally {
 }
 ```
 
-### `GS-BUILD-03` — Prepare, build, register, and run Windows Closure
+### `GS-FLUTTER-WIN` — Prepare, build, register, and run Windows Closure
 
 Run from the repository root after the four private Closure variables have been
 loaded into the current PowerShell session. The procedure prints only readiness
 booleans, never their values.
+
+Historical identifier `GS-BUILD-03` resolves to this procedure. Use
+`GS-FLUTTER-WIN` in new instructions.
 
 ```powershell
 $RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
@@ -917,6 +920,153 @@ the private input surface without printing values, cleans, validates, builds,
 registers the per-user `auth0flutter` callback, and launches the resulting
 release executable. Launching the client does not authorize Enroll, Query,
 Retry, or Sync; those remain separate human actions.
+
+### `GS-FLUTTER-AND` — Prepare, build, install, and run Android Closure
+
+Run from the repository root after the four private Android Closure variables
+have been loaded into the current PowerShell session. Connect and unlock one
+Android device with USB debugging already authorized, or start one emulator.
+The procedure prints only readiness booleans and Flutter's public device
+metadata, never configuration values.
+
+```powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+$ClientRoot = Join-Path $RepositoryRoot "clients\markei_flutter"
+if (-not (Test-Path (Join-Path $ClientRoot "pubspec.yaml"))) {
+    throw "Flutter client not found at $ClientRoot."
+}
+
+flutter doctor -v
+
+$ConfigurationReady = [ordered]@{
+    Auth0Domain   = -not [string]::IsNullOrWhiteSpace($Auth0Domain)
+    Auth0Audience = -not [string]::IsNullOrWhiteSpace($Auth0Audience)
+    AndroidClient = -not [string]::IsNullOrWhiteSpace($AndroidClientId)
+    HostedOrigin  = -not [string]::IsNullOrWhiteSpace($HostedOrigin)
+}
+[pscustomobject]$ConfigurationReady
+
+if ($ConfigurationReady.Values -contains $false) {
+    throw "One or more private Android Closure variables are missing from this session."
+}
+
+$FlutterDevicesJson = (& flutter devices --machine 2>&1 | Out-String)
+if ($LASTEXITCODE -ne 0) {
+    throw "Could not inspect Flutter devices."
+}
+
+try {
+    $FlutterDevices = @($FlutterDevicesJson | ConvertFrom-Json)
+}
+catch {
+    throw "Flutter returned an unreadable device inventory."
+}
+
+$AndroidDevices = @(
+    $FlutterDevices | Where-Object {
+        $_.targetPlatform -match "^android" -and $_.isSupported -eq $true
+    }
+)
+
+$SelectedAndroidDevice = $null
+if (-not [string]::IsNullOrWhiteSpace($AndroidDeviceId)) {
+    $SelectedAndroidDevice = @(
+        $AndroidDevices | Where-Object { $_.id -eq $AndroidDeviceId }
+    )
+    if ($SelectedAndroidDevice.Count -ne 1) {
+        throw "AndroidDeviceId does not resolve to exactly one supported connected device."
+    }
+    $SelectedAndroidDevice = $SelectedAndroidDevice[0]
+}
+elseif ($AndroidDevices.Count -eq 1) {
+    $SelectedAndroidDevice = $AndroidDevices[0]
+}
+elseif ($AndroidDevices.Count -eq 0) {
+    throw "No supported Android device or emulator is connected."
+}
+else {
+    $AndroidDevices |
+        Select-Object name, id, targetPlatform, sdk |
+        Format-Table -AutoSize
+    throw "Multiple Android devices are connected. Set AndroidDeviceId to one displayed id and rerun."
+}
+
+$SelectedAndroidDevice |
+    Select-Object name, id, targetPlatform, sdk |
+    Format-List
+$SelectedAndroidDeviceId = $SelectedAndroidDevice.id
+
+$FlutterDefines = @(
+    "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
+    "--dart-define=MARKEI_AUTH0_DOMAIN=$Auth0Domain"
+    "--dart-define=MARKEI_AUTH0_AUDIENCE=$Auth0Audience"
+    "--dart-define=MARKEI_AUTH0_ANDROID_CLIENT_ID=$AndroidClientId"
+    "--dart-define=MARKEI_HOSTED_HTTPS_ORIGIN=$HostedOrigin"
+)
+
+$PreviousGradleAuth0Domain = $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN
+$env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN = $Auth0Domain
+
+Push-Location $ClientRoot
+try {
+    flutter clean
+    if ($LASTEXITCODE -ne 0) { throw "flutter clean failed." }
+
+    flutter pub get
+    if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
+
+    flutter analyze
+    if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
+
+    flutter test
+    if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
+
+    flutter build apk --debug @FlutterDefines
+    if ($LASTEXITCODE -ne 0) {
+        throw "Android Closure debug build failed."
+    }
+
+    $AndroidArtifact = Join-Path $PWD `
+        "build\app\outputs\flutter-apk\app-debug.apk"
+    if (-not (Test-Path $AndroidArtifact)) {
+        throw "app-debug.apk was not found at $AndroidArtifact."
+    }
+
+    Write-Host "Android debug artifact created at:"
+    Write-Host $AndroidArtifact
+    Write-Host "Launching Markei on the selected Android device."
+
+    flutter run --debug -d $SelectedAndroidDeviceId @FlutterDefines
+    if ($LASTEXITCODE -ne 0) {
+        throw "Flutter Android run failed."
+    }
+}
+finally {
+    Pop-Location
+    if ($null -eq $PreviousGradleAuth0Domain) {
+        Remove-Item Env:\ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN `
+            -ErrorAction SilentlyContinue
+    }
+    else {
+        $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN = `
+            $PreviousGradleAuth0Domain
+    }
+}
+```
+
+This is the full Android recovery path. It verifies the configuration surface,
+requires exactly one selected supported Android target, forwards the Auth0
+domain to the Android manifest without writing it to the repository, cleans,
+validates, builds the debug APK, verifies the artifact, and launches the app
+with the Closure Dart definitions. The Auth0 Android application must already
+allow the callback/logout URI derived from package
+`com.gusigu.markei`; this procedure does not modify Auth0. Launching the client
+does not authorize Enroll, Query, Retry, or Sync.
 
 ## 6. Historical diagnostics and mutation record
 
