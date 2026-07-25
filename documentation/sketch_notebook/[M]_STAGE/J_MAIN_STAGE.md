@@ -1,112 +1,141 @@
-# J_MAIN_STAGE — Protected Submission Cursor-State Reconciliation
+# J_MAIN_STAGE — GCM-02 Single-Sync Authorization Reconciliation
 
-> Sequence: FLX-ORD-01 post-materialization reconciliation
-> Authority marker: C10-MCG02-SUBMISSION-500-DIAGNOSIS_20260722
-> Materialization commit: `75dc7bed0789d693af93abb3ed15e107fd77433a`
-> Status: **LOCAL CAUSE CORRECTED; HOSTED CURSOR-STATE PREREQUISITE UNRESOLVED; REAL SYNC BLOCKED**
+> Sequence: FLX-PRM-04 evidence reconciliation and bounded FLX-ORD-01 continuation
+> Authority marker: C10-GCM02-SINGLE-SYNC-PREFLIGHT_20260725
+> Repository checkpoint: `c76734e32f70702978f5c7a543c1f0ef3c63c521`
+> Status: **12.4 PASS; 12.5 NEXT; HUMAN AUTHORIZATION PENDING; SYNC HELD**
 
-## 1. Reconciled result
+## 1. Overall staging reconciliation
 
-Codex reproduced the protected-submission failure locally with synthetic identity and disposable
-database fixtures. The proved project-owned cause was an absent `account_cursor_state` row for an
-otherwise valid Account/Device. `acceptSubmission` updated zero cursor rows and then dereferenced the
-missing returned row, producing the provider-observed HTTP `500` before any synchronization fact was
-committed.
+Migration 007 is already applied once and its provider postflight is accepted in the append-only
+history below. Runtime readiness, Render live/ready behavior, a real Auth0 user token and exact
+Account/Device binding have subsequently been exercised through the reviewed GRIMOIRE procedures.
+The Windows release build also passed after restoring the terminal-local native toolchain
+coordinates; no source change was required for that repair.
 
-Commit `75dc7be` materialized a bounded fail-closed correction:
+The completed evidence narrows the remaining GCM-02 route to one controlled request experiment. It
+does not itself authorize that experiment. The governing order is:
 
-- a zero-row cursor update returns `service-unavailable`, `upload-submission`, `not-applied`;
-- hosted protocol failures are mapped through the existing HTTP result mapper;
-- `service-unavailable` maps to HTTP `503` and remains distinct in Flutter;
-- Closure treats the observed response as Sync unavailable rather than an unknown transport outcome;
-- unexpected server exceptions no longer emit `request-failed` with a misleading successful status;
-- no client deadline extension or database migration was introduced.
+```text
+provider and identity prerequisites
+-> exact read-only pre-request baseline
+-> one permitted-transition definition
+-> assembled evidence review
+-> explicit human authorization
+-> exactly one Sync request with no automatic retry
+-> HTTP/log/provider-state correlation
+-> GCM-02 reconciliation
+```
 
-The correction makes the failure safe, classified and observable. It does not initialize or repair the
-missing hosted cursor-state row.
+The difficult Auth0 token collection does not need to be repeated unless the token expires before
+the final authorized request or a later check specifically requires a fresh token.
 
-## 2. PRC-01 classification
+## 2. Current gate ledger
 
-| Claim | Classification and boundary |
+| Gate | Reconciled status | Evidence boundary |
+| --- | --- | --- |
+| 12.1 Render live/ready | **PASS** | `GS-HOST-01` returned live and ready HTTP 200 for the reconciled deployment |
+| 12.2 Auth0 public metadata | **PASS** | issuer, audience, RS256 algorithm, subject presence and token time window all matched |
+| 12.3 Git, API and deployed-revision alignment | **PASS at inspected checkpoint** | operator evidence reported identical local/remote revision, clean worktree, corrected build/audit, deployed-revision match and repeated host readiness; re-check if branch or deployment changes |
+| 12.4 Exact Account/Device/token binding | **PASS** | `GS-AUTH-02`: identity 200, Device 200, token accepted and `exact-binding-confirmed` |
+| 12.5 Read-only provider baseline | **NEXT** | exact pre-request six-table/cursor counters and correlation fingerprints are not yet captured in this reconciliation |
+| 12.6 Define permitted single transition | **PENDING** | must be derived from the accepted 12.5 baseline; no mutation yet |
+| 12.7 Human authorization | **PENDING** | eligible only after 12.5, 12.6 and Main evidence review |
+| 12.8 Exactly one Sync request | **HELD** | no automatic retry; no second request |
+| 12.9 Post-request comparison | **HELD** | requires HTTP result, correlated Render logs and exact post-request counters |
+| 12.10 GCM-02 reconciliation | **HELD** | requires allowlist comparison and trustworthy terminal classification |
+
+The 12.3 pass is checkpoint-scoped. Documentation-only commits after the inspected deployment do not
+silently prove a new deployment match; `GRM-GIT-01`, deployed-revision comparison and `GS-HOST-01`
+must be repeated if either Git or Render changes before 12.7.
+
+## 3. PRC-01 classification
+
+| Claim | Resulting state and boundary |
 | --- | --- |
-| Missing Account cursor state locally reproduces the protected `500` | Validated with synthetic regression evidence |
-| The historical provider failure is consistent with that reproduced path | Accepted diagnosis by correlated shape; provider internals were not inspected |
-| Zero-row cursor handling is corrected | Implemented and locally validated at `75dc7be` |
-| Misleading `request-failed status 200` is corrected | Implemented and locally validated |
-| Flutter preserves an observed `service-unavailable` result | Implemented and locally validated |
-| The historical client timeout should be rewritten | Rejected; preserve client-observed history |
-| The hosted cursor-state prerequisite now exists | Rejected; last sanitized Neon baseline showed zero rows |
-| Deploying `75dc7be` alone will make Sync succeed | Rejected; the same missing prerequisite should yield bounded HTTP `503` |
-| MCG-02 or provider Sync is closed | Rejected; no post-correction hosted proof exists |
-| Events 1–2 may be replaced, resequenced or retried now | Rejected |
+| Migration 007 is applied once and Account cursor provisioning is present | Validated by prior migrator postflight; do not reapply |
+| Runtime readiness-v2 and Render live/ready are usable | Validated at the inspected provider/deployment checkpoint |
+| Auth0 public token contract is correct | Validated with one real user access token; token value was not persisted |
+| Token subject, fixture Account and active Device belong together | Validated by `GS-AUTH-02` as `exact-binding-confirmed` |
+| The exact pre-request provider state is frozen | Not yet accepted; 12.5 remains active |
+| The only permitted database transition is defined | Not yet accepted; 12.6 remains pending |
+| A Sync request is authorized | Rejected until explicit 12.7 human authorization |
+| Deployment/readiness/authentication success proves Sync success | Rejected |
+| An automatic retry is permissible after timeout or ambiguity | Rejected |
+| GCM-02 is closed | Rejected |
 
-## 3. Validation accepted
+## 4. Preserved safety boundary
 
-Accepted local evidence reported in G/H/I:
+Until 12.7 is explicitly granted:
 
-- failing-before/passing-after protected-submission regression;
-- API format, lint, typecheck, build and all 51 tests passed;
-- Flutter formatting and analysis passed;
-- Flutter suite passed: 178 tests with four lab-gated skips;
-- disposable convergence and recovery harnesses passed when explicitly enabled;
-- Windows release and Android debug builds passed;
-- protected Python release-configuration regressions passed through `unittest`;
-- migrations 001–006 remained unchanged;
-- no provider, credential, human database or human unresolved submission was accessed.
+- do not select or invoke Sync;
+- do not enroll, re-enroll, Query, repair, resequence or rewrite local events;
+- do not mutate Neon, Auth0 or Render configuration;
+- do not reapply migration 007;
+- do not paste or commit the Auth0 token or fixture Device UUID;
+- do not infer a provider transition from logs, health or readiness alone;
+- stop if local/remote Git alignment, deployed revision, fixture identity or provider counters differ
+  from the accepted checkpoint.
 
-`pytest` itself was unavailable, but the owned five-test Python module passed with the standard-library
-runner. Existing Drift, Kotlin and Boost/CMake warnings remain non-blocking observational evidence.
+Any token used for the eventual request must remain session-only and fresh enough for its complete
+time window. Any uncertain HTTP result remains unknown until provider counters and logs correlate it.
 
-## 4. Preserved boundary
+## 5. Decided route to 12.7
 
-The following remain unchanged:
+### 12.5 — freeze the exact read-only provider baseline
 
-- local events 1–2 remain `Unknown` with their exact identities and ordering;
-- next local Device sequence remains 3;
-- last provider baseline remains Account 1, Device 1 and zero cursor/submission/event/acknowledgement rows;
-- no hosted commit or duplication is evidenced;
-- JWT/JWKS, enrollment authorization, RLS, runtime/migrator separation and migrations 001–006 are preserved;
-- real Sync, unresolved retry, re-enrollment, local-data mutation and provider-data mutation remain blocked.
+1. Keep Markei closed or paused so no background action can change the baseline.
+2. Re-run `GRM-NEON-10` through the runtime identity and require readiness-v2 success.
+3. Run sanitized `GRM-NEON-08` Device inventory.
+4. Run `GRM-NEON-09` for the exact fixture Device UUID, entered only at the masked local prompt.
+5. Capture the exact read-only pre-request counters required by the canonical GRIMOIRE procedure:
+   Accounts, Devices, cursor state, submissions, Sync events and acknowledgements, plus the relevant
+   cursor/high-water and request-correlation fingerprints.
+6. Stop on any unexpected row, duplicate active Device, missing cursor row, identity mismatch,
+   readiness failure or unexplained movement.
 
-## 5. Reconciliation consequence
+### 12.6 — define the one permitted transition
 
-The materialization terminal is accepted only in its stated sense:
+From the accepted baseline, state one allowlist before any request. It must name:
+
+- the single permitted endpoint and exact fixture identity;
+- the immutable request/event identities and hashes to be reused;
+- the maximum allowed increments for submissions, Sync events and acknowledgements;
+- the exact permitted cursor movement;
+- every table/count that must remain unchanged;
+- allowed terminal HTTP/result classes and the stop rule for timeout, conflict, 503 or ambiguity.
+
+The allowlist is a prediction, not evidence. It must not be revised after observing the request merely
+to fit the outcome.
+
+### Evidence review and 12.7 — explicit human authorization
+
+Main reviews 12.1–12.6 as one packet. If every checkpoint is coherent, present the exact request,
+baseline, allowlist, capture plan and stop conditions to the human. Only an explicit authorization
+given after that review activates 12.8. Silence, earlier permission, successful login or successful
+health checks do not count.
+
+## 6. Post-authorization route
+
+If and only if 12.7 is granted:
+
+1. obtain or retain one valid real Auth0 user access token without persisting it;
+2. send exactly one Sync request with automatic retry disabled;
+3. capture the terminal HTTP result and sanitized correlation fingerprint;
+4. capture the corresponding Render log window;
+5. immediately repeat the exact read-only provider counters;
+6. compare every observed transition against the predeclared allowlist;
+7. stop on any ambiguity or mismatch and perform no second request;
+8. reconcile GCM-02 only from the correlated HTTP, log and provider-state evidence.
 
 ```text
-C10_MCG02_SUBMISSION_500_CAUSE_CORRECTED
-```
-
-This is not a hosted-readiness terminal. Before another provider retry, Main must resolve the missing
-cursor-state lifecycle:
-
-```text
-Account creation/provisioning
-  -> account_cursor_state(account_id, next_cursor = 1)
-  -> enrollment and protected authorization
-  -> first exact-identity submission
-```
-
-Current source fixtures and harnesses explicitly seed the cursor row, while the protected enrollment
-path creates Device/enrollment records without visibly owning Account cursor initialization. The human
-provider baseline therefore exposes a provisioning-policy gap, not merely a transient request error.
-
-## 6. Next authorized sequence
-
-1. Run FLX-PRM-04 in Operational, Didactic and Design chats so G/H/I are absorbed into their permanent
-   domain memory and checkpoints.
-2. Main reconciles those domain updates and stages one bounded cursor-state initialization/repair unit.
-3. That unit must decide and test the canonical owner of cursor initialization, including fresh Account,
-   existing Account missing state, concurrency, idempotency, transaction, RLS and least-privilege behavior.
-4. Only after local materialization and reconciliation may `75dc7be` plus the cursor-state correction be
-   deployed to Render.
-5. After deployment: run one harmless health correlation and obtain a fresh sanitized Neon baseline.
-6. Authorize at most one exact-identity retry only if the cursor-state row is proved present and all
-   other counts remain consistent.
-
-Until a new D/E/F authority marker exists, no further implementation or provider mutation is authorized.
-
-```text
-C10_MCG02_CURSOR_STATE_PREREQUISITE_UNRESOLVED
+GCM02_SINGLE_SYNC_PREFLIGHT_ACTIVE
+AUTH0_EXACT_BINDING_PASS
+READ_ONLY_PROVIDER_BASELINE_NEXT
+PERMITTED_TRANSITION_DEFINITION_PENDING
+HUMAN_AUTHORIZATION_PENDING
+REAL_SYNC_REQUEST_HELD
+NO_AUTOMATIC_RETRY
 ```
 
 ---
@@ -746,3 +775,54 @@ The next bounded operation is a direct runtime-role connection and
 HEAD and Render deployment revision, deploy only an explicitly authorized
 reconciled revision, and require live/ready HTTP 200 evidence before any
 controlled Sync attempt.
+
+## 2026-07-25 — Render/Auth0 preflight and exact binding progress
+
+### Accepted progress
+
+The human-operated closure sequence advanced through the non-mutating host and
+identity gates:
+
+```text
+Windows release build: PASS
+Render live: HTTP 200
+Render ready: HTTP 200
+Auth0 issuer: match
+Auth0 audience: match
+Auth0 algorithm: RS256 match
+Auth0 subject: present
+Auth0 time window: valid
+hosted identity endpoint: HTTP 200
+exact Device endpoint: HTTP 200
+token accepted: true
+exact Device binding: true
+binding class: exact-binding-confirmed
+```
+
+The native Windows build initially failed because a refreshed PowerShell
+session no longer exposed the already required vcpkg/`cpprestsdk` and Visual
+Studio tool locations. Restoring those session-local coordinates and
+regenerating the build output produced a successful build without a source
+change. The Auth0 access token was inspected from the paused debugger,
+submitted only through a masked session prompt and was not pasted into chat or
+committed. The fixture Device UUID was likewise entered only through the
+masked local prompt.
+
+### Reconciled consequence
+
+These observations close the public-metadata and exact-binding gates within
+their inspected checkpoint. They do not constitute a Sync attempt and do not
+authorize one. The current restart point is the exact read-only provider
+baseline, followed by the predeclared single-transition allowlist and a new
+human authorization boundary.
+
+```text
+GCM02_12_1_RENDER_READY_PASS
+GCM02_12_2_AUTH0_PUBLIC_METADATA_PASS
+GCM02_12_3_ALIGNMENT_PASS_AT_INSPECTED_CHECKPOINT
+GCM02_12_4_EXACT_BINDING_PASS
+GCM02_12_5_READ_ONLY_PROVIDER_BASELINE_NEXT
+GCM02_12_6_TRANSITION_ALLOWLIST_PENDING
+GCM02_12_7_HUMAN_AUTHORIZATION_PENDING
+REAL_SYNC_REQUEST_HELD
+```
