@@ -498,6 +498,1152 @@ REAL_SYNC_RETRY_UNAUTHORIZED
 GCM02_OPEN
 ```
 
+## 2026-07-25 — Cycle 10 complete Main reseeding panorama and Gate 12.6 restart boundary
+
+### 1. Purpose and evidence boundary
+
+This append-only entry is a full Main-chat continuity surface for resuming Cycle
+10 after conversation turnover. It preserves all earlier J material and
+reconciles four distinct sources without pretending that they are one branch:
+
+```text
+human-directed current restart point
+    Gate 12.5 accepted; Gate 12.6 next
+
+cycle10-intermid-grimoire
+    current human-execution interface and platform procedures
+
+intermid-cycle-recovery
+    later Main reconciliation of Gates 12.4 and 12.5
+
+current implementation source
+    executable behavior and validation boundary
+```
+
+Evidence classes used in this record:
+
+```text
+validated
+    direct repository or named execution evidence passed within a stated
+    boundary
+
+human-operated accepted evidence
+    sanitized terminal/provider observations accepted by Main but not
+    reproduced by this documentation-only materialization
+
+source-observed
+    behavior or structure directly present in the inspected source
+
+historical
+    true of an earlier checkpoint but not sufficient to establish the current
+    provider or deployment state
+
+provisional
+    candidate future direction requiring Main selection and new authority
+
+unavailable
+    evidence not present or not safely reproducible in this materialization
+```
+
+This entry does not authorize Sync, Retry, Enroll, Query, migration,
+deployment, credential rotation, provider mutation, cleanup, Device
+revocation, retention execution, rebootstrap or Cycle 11 implementation.
+
+### 2. Exact repository and branch topology
+
+The requested reseeding baseline was:
+
+```text
+repository: gus-i-gu/markei
+branch: cycle10-intermid-grimoire
+local SHA: 7c1f5856e995eb945ddc6ceed314e8e4c8193536
+remote SHA: 7c1f5856e995eb945ddc6ceed314e8e4c8193536
+divergence: 0 / 0
+worktree before reseeding edit: clean
+```
+
+The branch was verified to be exactly at that SHA before this entry was
+written.
+
+The two active continuity branches diverge after:
+
+```text
+merge base: c76734e32f70702978f5c7a543c1f0ef3c63c521
+
+cycle10-intermid-grimoire
+    contains the redesigned canonical GRIMOIRE interface, verified
+    coordinates, Auth0/Render/Neon procedures, GRM-NEON-11, and symmetric
+    Flutter Windows/Android build-and-run procedures
+
+intermid-cycle-recovery
+    contains two later J-only reconciliations:
+    caca3bb — GCM-02 authorization preflight reconciliation
+    861444a — Gate 12.5 closure reconciliation
+```
+
+At inspection time the branch-distance relation was:
+
+```text
+intermid-cycle-recovery-only commits: 2
+cycle10-intermid-grimoire-only commits: 14
+```
+
+This reseeding entry imports the accepted meaning of the two J reconciliations
+into the GRIMOIRE branch without merging the branches, moving implementation
+history, or erasing the split. A later branch-integration decision remains a
+separate Git/Main responsibility.
+
+### 3. Mandatory methodology boot for the successor Main Chat
+
+The successor Main Chat must begin at:
+
+```text
+AGENTS.md
+documentation/sketch_notebook/INDEX.md
+```
+
+Then perform the full canonical methodology boot in this exact order:
+
+```text
+documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
+documentation/sketch_notebook/methodology/FLUX.md
+documentation/sketch_notebook/methodology/PROMOTION_RULES.md
+documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
+```
+
+Consult completely when role or vocabulary boundaries require them:
+
+```text
+documentation/sketch_notebook/methodology/CHAT_BEHAVIOUR.md
+documentation/sketch_notebook/methodology/METHOD_GLOSSARY.md
+```
+
+The retained governing rules are:
+
+- the Sketch Notebook is the authoritative project-memory layer;
+- Main coordinates synthesis and authority but does not collapse domain
+  ownership;
+- A/B/C are functional investigation stages;
+- D/E/F are synchronized materialization authority;
+- G/H/I are observational Codex reports;
+- J is Main reconciliation and continuity, not a replacement for permanent
+  domain memory;
+- semantic promotion and physical materialization are different operations;
+- PRC-01 classification must preserve evidence boundaries;
+- append-only history is corrected through a later entry, never silent
+  deletion or rewriting;
+- hierarchical recovery uses the least expensive sufficient source;
+- source inspection is required when implementation truth or drift is at
+  issue;
+- provider action requires explicit human authority and must stop on
+  ambiguity, target mismatch, dirty overlap, divergence or secret exposure.
+
+### 4. Naming reconciliation
+
+Project conversation sometimes says `GCM`, while staged repository authority
+normally uses `MCG`. Preserve both as aliases but prefer the repository's
+canonical `MCG-*` identifiers in new stage files.
+
+The current active provider-closure unit is:
+
+```text
+Cycle 10
+MCG-02 / user-facing GCM-02
+controlled exact-identity hosted Sync resolution
+Gate 12 sequence
+```
+
+Do not reinterpret the `12.x` numbers as twelve separate MCGs. They are gates
+inside the current MCG-02 closure sequence.
+
+### 5. Cycle 10 panorama — completed implementation track
+
+Cycle 10 expanded substantially beyond its original local-consolidation
+charter. The accepted source history establishes the following implementation
+progress.
+
+#### 5.1 Local synchronization foundation
+
+The Flutter client gained an offline-first synchronization model with:
+
+- immutable append-only Sync events;
+- protocol v3 `purchase.registered` events;
+- Device sequence allocation;
+- outbox submission grouping;
+- canonical JSON and deterministic content/request hashing;
+- Account/Device-scoped local state;
+- download/apply and acknowledgement paths;
+- idempotent event application;
+- two-Device disposable local convergence and recovery harnesses.
+
+The local source continues to protect legacy local-only purchase history from
+automatic upload. Hosted events and local-only history are distinct evidence
+and lifecycle classes.
+
+#### 5.2 Retention, snapshot and recovery groundwork
+
+The API and contracts include:
+
+- retention-state policy structures;
+- recovery snapshot and chunk schemas;
+- capability discovery;
+- rebootstrap start, query, chunk download and completion routes;
+- cursor-expiry and recovery-unavailable classifications;
+- local proof/harness infrastructure for recovery behavior.
+
+These source capabilities are implemented and locally exercised within named
+tests. They do not prove a hosted retention worker, scheduled cleanup,
+production backup/PITR, provider snapshot materialization or real rebootstrap
+acceptance.
+
+#### 5.3 Hosted authentication and authorization
+
+The hosted service includes:
+
+- Auth0/OIDC issuer and audience configuration;
+- RS256/JWKS verification;
+- external identity and Account-membership resolution;
+- Device enrollment, replay/query, status and revocation routes;
+- transaction-scoped authorization barriers;
+- Account/Device binding through the authenticated principal;
+- RLS-context and least-privilege database separation;
+- fail-closed route inventory and authorization case sets;
+- sanitized request lifecycle/correlation logging.
+
+The Flutter client includes native Auth0 composition for Windows and Android,
+session-only token use, stable hosted Device binding and a Native Closure
+surface.
+
+#### 5.4 Native Closure and diagnostic recovery
+
+The Native Closure surface provides:
+
+```text
+Status
+Sign in
+Enroll
+Query
+Check hosted connection
+Sync
+Logout
+Refresh diagnostics
+Retry unresolved submission
+Clear diagnostic history
+```
+
+The guarded unresolved-submission preflight is source-observed to require:
+
+- authenticated state;
+- active hosted Account/Device binding;
+- the current local Device and Account match;
+- no competing pending, uploading or failed queue rows;
+- exactly one unresolved submission;
+- at least one member event;
+- contiguous member positions;
+- matching immutable event rows;
+- all selected pending-event rows still classified `unknown`;
+- valid Account/Device/event relationships;
+- contiguous Device sequences;
+- a recomputed canonical request hash equal to the stored request hash;
+- next local Device sequence equal to the last event sequence plus one.
+
+When eligible, the dialog displays only:
+
+```text
+short submission fingerprint
+first Device sequence
+last Device sequence
+next local Device sequence
+```
+
+Selecting `Cancel` does not start Sync. Selecting `Retry` calls the complete
+hosted coordinator.
+
+#### 5.5 Unknown-outcome and transport observability
+
+Cycle 10 introduced:
+
+- durable local Sync-attempt records;
+- typed outcome classes;
+- correlation fingerprints;
+- bounded elapsed/status/response metadata;
+- unknown submission preservation;
+- guarded exact-identity retry;
+- sanitized `service-unavailable`, `not-applied`, interrupted and blocked
+  classifications;
+- a rule that timeout or lost response does not imply provider immobility.
+
+The preserved unknown submission must never be replaced with a newly invented
+SubmissionId, event identity, hash, Device identity or sequence merely to make
+a retry succeed.
+
+#### 5.6 Account cursor provisioning repair
+
+The protected submission failure was traced to an Account existing without
+`account_cursor_state`.
+
+Migration 007 establishes:
+
+```text
+migration: 007_account_cursor_provisioning
+database AFTER INSERT trigger on accounts
+exactly one cursor-state row per new Account
+backfill only for missing historical rows
+next_cursor = hosted high-water + 1
+existing cursor rows preserved
+runtime cursor INSERT/DELETE revoked
+runtime scoped SELECT/UPDATE retained
+readiness-v2 exact migration capability
+old readiness retained for bounded rollback compatibility
+```
+
+The missing-row protected submission path remains fail-closed defense in
+depth. Enrollment and first Sync do not lazily repair Account provisioning.
+
+Migration 007 was later applied once to the development Neon target and
+postflight-validated. It must not be reapplied.
+
+#### 5.7 Hosted service and provider preparation
+
+Human-operated accepted evidence later established:
+
+- the corrected service revision was deployed to the Render development
+  service;
+- `/health/live` returned HTTP 200/live;
+- `/health/ready` returned HTTP 200/ready;
+- runtime readiness-v2 returned true;
+- provider state remained unchanged across the deployment checkpoint;
+- public Auth0 issuer/audience/RS256 metadata matched;
+- an authenticated fixture principal resolved to an active membership;
+- the exact enrolled Device binding returned HTTP 200 and
+  `exact-binding-confirmed`;
+- the access token and UUID remained masked/session-local.
+
+This is development-provider evidence. It is not production authorization or
+public-release acceptance.
+
+#### 5.8 Current validation record retained
+
+The last complete account-cursor materialization report recorded:
+
+```text
+API format/lint/typecheck/build: PASS
+API tests: 53 / 53
+production dependency audit: 0 vulnerabilities after bounded lockfile repair
+migration-007 disposable PostgreSQL probe: 29 / 29
+hosted local authorization cases: 28 true / 0 pending
+Flutter format/analyze: PASS
+Flutter tests: 178 passed / 4 lab-gated skips
+real convergence harness: 3 / 3
+real recovery harness: 1 / 1
+Windows release build: PASS
+Android debug build: PASS
+protected Python unittest suite: 5 / 5
+```
+
+The aggregate R3 local orchestrator retained one historical Flutter-producer
+failure (`query-replay-same-request-id`) while the direct Flutter suite and
+opt-in convergence/recovery harnesses passed. Do not silently classify that
+aggregate observation as resolved without a new correlated run.
+
+Later Windows and Android GRIMOIRE execution procedures were added for the
+human host. Their addition is documentation/tooling evidence; a later run must
+be classified separately from the earlier source-validation suite.
+
+### 6. Current source-code map
+
+The repository scan at the reseeding baseline covered 578 tracked paths and
+approximately 98,000 lines across the principal text/source formats. Generated
+binaries, packaged desktop artifacts and historical archives were inventoried
+but are not current Flutter/API authority.
+
+#### 6.1 Flutter client
+
+Primary roots:
+
+```text
+clients/markei_flutter/lib/app
+clients/markei_flutter/lib/application
+clients/markei_flutter/lib/domain
+clients/markei_flutter/lib/infrastructure
+clients/markei_flutter/test
+clients/markei_flutter/tool
+clients/markei_flutter/windows
+clients/markei_flutter/android
+```
+
+Gate 12.6 source authorities:
+
+```text
+lib/app/pages/native_closure_page.dart
+    confirmation dialog and Cancel/Retry boundary
+
+lib/app/native_auth_closure_runner.dart
+    retry preflight, attempt ledger and coordinator invocation
+
+lib/infrastructure/local/closure_diagnostics_repository.dart
+    exact unresolved-submission eligibility and sanitized fingerprint
+
+lib/application/hosted_sync_coordinator.dart
+    recover → upload → download/apply → acknowledge order
+
+lib/infrastructure/remote/http_sync_transport.dart
+    protected HTTP routes, timeout behavior and Device header
+
+lib/application/sync/sync_use_cases.dart
+lib/infrastructure/local/sync/local_sync_repositories.dart
+lib/infrastructure/local/sync/local_recovery_repositories.dart
+    local outbox/inbox/recovery materialization
+
+lib/infrastructure/local/local_database.dart
+    Drift schema and local persistence
+```
+
+#### 6.2 Hosted Sync API
+
+Primary roots:
+
+```text
+services/markei_sync_api/src/application
+services/markei_sync_api/src/domain
+services/markei_sync_api/src/http
+services/markei_sync_api/src/postgres
+services/markei_sync_api/src/proof
+services/markei_sync_api/test
+services/markei_sync_api/migrations
+```
+
+The hosted route inventory includes:
+
+```text
+GET  /health/live
+GET  /health/ready
+GET  /v1/identity
+POST /v1/devices/enroll
+GET  /v1/devices/enrollments/:requestId
+GET  /v1/devices/:deviceId/status
+POST /v1/devices/:deviceId/revoke
+POST /v1/sync/submissions
+GET  /v1/sync/events
+POST /v1/sync/acknowledgements
+GET  /v1/sync/capabilities
+POST /v1/sync/rebootstrap
+GET  /v1/sync/rebootstrap/:sessionId
+GET  /v1/sync/rebootstrap/:sessionId/chunks/:index
+POST /v1/sync/rebootstrap/:sessionId/complete
+```
+
+Gate 12.6 server authorities:
+
+```text
+src/http/app.ts
+    route/auth inventory, lifecycle correlation and transaction boundary
+
+src/application/sync_service.ts
+    submission identity/hash/sequence checks, cursor allocation, event insert,
+    Device advancement, stored idempotent result, download and acknowledgement
+
+src/application/hosted_authorization.ts
+src/application/authorization_barrier.ts
+src/application/jwt_verifier.ts
+    identity, Device and transaction authorization
+
+src/postgres/database.ts
+    pooled database/transaction execution
+
+migrations/001_init.sql through 007_account_cursor_provisioning.sql
+    forward database history
+```
+
+#### 6.3 Shared contracts
+
+Protocol authority is divided across:
+
+```text
+contracts/shared_beta/v1
+contracts/shared_beta/v2
+contracts/shared_beta/v3
+contracts/shared_beta/recovery_v1
+```
+
+The active hosted purchase event is `purchase.registered` payload version 3.
+Older contracts remain history/compatibility evidence and must not be
+silently rewritten.
+
+### 7. GRIMOIRE execution system
+
+The active canonical human-supervised interface is the five-file root set:
+
+```text
+documentation/GRIMOIRE.md
+documentation/G_SCRIPTS.md
+documentation/NS_COORDINATES.md
+documentation/NEON_CHECK.ps1
+documentation/NEON_ACTION.sql
+```
+
+Responsibility split:
+
+```text
+GRIMOIRE.md
+    concise human index, safety contract and procedure entrypoints
+
+G_SCRIPTS.md
+    canonical expanded commands and expected evidence
+
+NS_COORDINATES.md
+    non-secret development coordinates only
+
+NEON_CHECK.ps1
+    role/action dispatcher, masked password input, Docker PostgreSQL client,
+    direct target guard, TLS/channel-binding enforcement and action extraction
+
+NEON_ACTION.sql
+    indexed SQL actions, predominantly read-only and rollback-terminated
+```
+
+Retired live interfaces:
+
+```text
+documentation/GENERAL_SCRIPTS.md
+documentation/NEON_CRED.md
+documentation/models/NEON_CHECK.ps1
+documentation/models/NEON_ACTION.sql
+documentation/models/NEON_CRED.md
+```
+
+Historical references to retired names remain valid history. They must not be
+used as current execution paths.
+
+#### 7.1 Current relevant GRIMOIRE procedures
+
+```text
+GRM-GIT-01
+    exact branch, SHA, divergence and clean-tree alignment
+
+GRM-HOST-01
+    Render live/ready contract
+
+GRM-AUTH-01
+    public OIDC discovery/JWKS/RS256 contract
+
+GRM-AUTH-02
+    masked exact Account/Device binding through read-only hosted GETs
+
+GRM-NEON-03
+    open runtime Docker-backed psql
+
+GRM-NEON-08
+    sanitized Device inventory
+
+GRM-NEON-09
+    exact Device submission/event/sequence counters
+
+GRM-NEON-10
+    readiness-v2 SQL pasted inside GRM-NEON-03
+
+GRM-NEON-11
+    atomic repeatable-read provider baseline
+
+GRM-BUILD-01
+    Sync API dependency, static, test and build validation
+
+GRM-BUILD-02
+    Flutter dependency, analysis, test, Windows and Android builds
+
+GRM-FLUTTER-WIN
+    full Windows native preparation/build/callback registration/run plus
+    concise recurring run
+
+GRM-FLUTTER-AND
+    full Android preparation/build/install/run plus concise recurring run
+```
+
+`GRM-NEON-10` is only a SQL query hosted by the already-open runtime session.
+It does not start Docker or `psql`.
+
+`GRM-NEON-11` maps:
+
+```text
+GRM-NEON-11
+→ GS-NEON-11
+→ NA-09
+→ NEON_CHECK.ps1 -Action provider-baseline
+```
+
+It retrieves a fresh snapshot and prints it. It does not persist a report.
+
+#### 7.2 Coordinate freshness warning
+
+`NS_COORDINATES.md` records the intended development Neon branch with an
+expiration date of 2026-07-27. The successor Main must revalidate that branch
+in the provider dashboard before any Gate 12.7 authorization or later
+provider operation. Do not recreate, extend, rename or substitute a branch
+merely because a coordinate is stale.
+
+The coordinate file records public/non-secret operational values and no
+credential. Nevertheless, do not copy its complete topology into chat.
+
+### 8. Gate ledger at conversation handoff
+
+The accepted GCM-02 Gate 12 state is:
+
+| Gate | Status | Accepted boundary |
+| --- | --- | --- |
+| 12.1 Render live/ready | PASS | development service returned live/ready |
+| 12.2 Auth0 public metadata | PASS | issuer/audience/RS256 compatibility |
+| 12.3 Git/API/deployment alignment | PASS at inspected checkpoint | freshness must be rechecked if changed |
+| 12.4 Account/Device/token binding | PASS | exact-binding-confirmed |
+| 12.5 read-only provider baseline | PASS | coherent atomic pre-request baseline |
+| 12.6 permitted transition definition | NEXT / IN PROGRESS | local preflight still required |
+| 12.7 explicit human authorization | PENDING | no authorization granted |
+| 12.8 one controlled coordinator action | HELD | do not Retry or Sync |
+| 12.9 post-operation comparison | HELD | depends on 12.8 |
+| 12.10 GCM-02 reconciliation | HELD | depends on correlated terminal evidence |
+
+#### 8.1 Accepted Gate 12.5 baseline
+
+Human-operated read-only evidence established:
+
+```text
+runtime readiness-v2: true
+sanitized active Device count: 1
+exact fixture Device match: 1
+
+accounts: 1
+devices: 1
+account_cursor_state: 1
+submissions: 0
+sync_events: 0
+device_acknowledgements: 0
+
+missing cursor-state rows: 0
+orphan cursor-state rows: 0
+
+Account next cursor: 1
+hosted high-water: 0
+Account cursor consistency: true
+
+Device next expected sequence: 1
+Device high-water: 0
+Device sequence consistency: true
+
+submission/request fingerprints: none
+event/content fingerprints: none
+transaction class: repeatable-read, read-only
+```
+
+These observations reconcile cleanly and establish the pre-request provider
+baseline. They do not prove that the local unresolved submission is eligible
+or authorize its transmission.
+
+### 9. Exact restart point — Gate 12.6
+
+The successor Main must not restart from 12.1, rerun completed mutation gates,
+reapply migration 007, enroll a new Device or send a diagnostic Sync.
+
+The immediate next action is only:
+
+```text
+Gate 12.6b
+open the Windows Native Closure unresolved-submission preflight
+record its sanitized fields
+select Cancel
+return the sanitized result to Main
+```
+
+#### 9.1 Gate 12.6a — activity freeze
+
+Already adopted and still active:
+
+- keep ordinary `Sync` untouched;
+- do not confirm `Retry unresolved submission`;
+- do not Enroll, Query, revoke, repair, resequence or create a new event;
+- do not clear diagnostic history;
+- do not change Auth0, Render or Neon;
+- do not reapply migration 007;
+- do not create a replacement submission;
+- do not automatically retry any network operation;
+- keep Markei closed except for the bounded preflight inspection;
+- keep tokens, UUIDs, hashes, payloads and passwords outside chat and Git.
+
+#### 9.2 Gate 12.6b — local preflight
+
+Run the proven Windows Closure client using the current canonical
+`GRM-FLUTTER-WIN` procedure or its concise recurring run only after its private
+session variables are loaded outside Git.
+
+Then:
+
+1. open `Native Closure`;
+2. refresh diagnostics;
+3. confirm authentication remains active;
+4. select `Retry unresolved submission`;
+5. if the eligible confirmation dialog appears, record only:
+
+```text
+submission fingerprint
+first Device sequence
+last Device sequence
+next local Device sequence
+```
+
+6. derive:
+
+```text
+event count N = last sequence - first sequence + 1
+```
+
+7. select `Cancel`;
+8. return the sanitized values and `Action: Cancelled`.
+
+Do not select the dialog's `Retry` button. That would begin Gate 12.8 before
+Gate 12.7 authorization.
+
+Blocked states include:
+
+```text
+configuration-missing
+unknown-retry-authentication-required
+unknown-retry-device-enrollment-required
+unknown-retry-queue-not-isolated
+unknown-retry-no-unresolved-submission
+unknown-retry-ambiguous-unresolved-submission
+unknown-retry-state-invalid
+```
+
+Any blocked state leaves Gate 12.6 open. Main must reconcile the exact
+sanitized state rather than inventing repair steps.
+
+#### 9.3 Gate 12.6c — eligibility reconciliation
+
+An eligible dialog is source-backed evidence that the local preflight passed
+its internal checks at that instant. Main must compare:
+
+```text
+first local Device sequence
+    = hosted next expected Device sequence from the fresh baseline
+
+next local Device sequence
+    = last local event sequence + 1
+
+event count
+    = last sequence - first sequence + 1
+```
+
+Current provider baseline requires the first local sequence to be `1`.
+
+The short submission fingerprint is correlation evidence only. It is not a
+replacement for the immutable local SubmissionId or request hash.
+
+#### 9.4 Gate 12.6d — operation boundary
+
+Source inspection proves:
+
+```text
+one Retry confirmation
+≠ one HTTP request
+```
+
+The complete coordinator order is:
+
+```text
+recover failed not-applied work
+→ upload pending/unresolved submission
+→ download and apply events
+→ acknowledge greatest contiguous applied cursor when available
+```
+
+The corresponding HTTP surface may include:
+
+```text
+POST /v1/sync/submissions
+GET  /v1/sync/events
+POST /v1/sync/acknowledgements
+```
+
+The recommended 12.6 boundary is:
+
+> exactly one human-confirmed `Retry unresolved submission` coordinator action,
+> with no second confirmation and no automatic retry, while allowlisting the
+> upload, download and conditional acknowledgement operations that the current
+> coordinator may perform.
+
+This recommendation is not yet authorization. Main must freeze it after the
+preflight returns and before presenting 12.7.
+
+An isolated raw submission POST is not currently the preferred route because
+it would require a separate safe mechanism to recover and transmit the exact
+immutable stored request outside the reviewed client workflow.
+
+#### 9.5 Gate 12.6e — successful transition allowlist
+
+After preflight returns event count `N`, freeze this successful provider
+transition:
+
+| Provider measure | Accepted baseline | Only allowed success result |
+| --- | ---: | ---: |
+| Accounts | 1 | 1 |
+| Devices | 1 | 1 |
+| Cursor-state rows | 1 | 1 |
+| Submissions | 0 | 1 |
+| Sync events | 0 | `N` |
+| Device acknowledgements | 0 | `0` or `1`, resolved from coordinator behavior before 12.7 |
+| Account next cursor | 1 | `1 + N` |
+| Hosted high-water | 0 | `N` |
+| Device next sequence | 1 | `1 + N` |
+| Missing cursor-state rows | 0 | 0 |
+| Orphan cursor-state rows | 0 | 0 |
+
+The expected acknowledgement requires careful pre-12.7 classification. The
+coordinator uploads, then downloads/applies, then acknowledges a greatest
+contiguous cursor when one exists. With a successful upload and download of
+the newly hosted event range, one acknowledgement row is the likely successful
+full-coordinator result; `0` must not remain casually allowed if source/local
+cursor evidence makes acknowledgement mandatory. Main must resolve this before
+authorization.
+
+No Account, Device, membership, enrollment, schema, migration, retention,
+recovery or unrelated fixture change is permitted.
+
+#### 9.6 Gate 12.6f — non-success outcomes
+
+Duplicate-equivalent:
+
+- provider counts and cursor/high-water values may remain unchanged;
+- any existing submission/event fingerprint must match the immutable request;
+- do not issue a second action.
+
+Rejected/not-applied:
+
+- authentication, authorization, Device, Account, hash or sequence rejection
+  permits zero provider movement;
+- preserve the local unresolved state and evidence;
+- do not change identity or create a replacement request.
+
+Unknown:
+
+- timeout, connection loss, missing response, malformed response, `5xx`,
+  absent terminal log correlation or ambiguous local terminal state;
+- do not retry;
+- capture sanitized client classification, correlation fingerprint, Render
+  lifecycle logs and a fresh atomic provider baseline;
+- provider immobility may not be inferred from the missing response.
+
+Unexpected mutation:
+
+- any delta outside the frozen allowlist is an immediate stop;
+- do not clean up, delete, resequence or compensate before Main reconciliation.
+
+#### 9.7 Gate 12.6g — freshness packet
+
+After local preflight passes and before 12.7:
+
+1. run `GRM-GIT-01`;
+2. verify the expected source branch and exact remote SHA;
+3. verify the current Render deployment revision;
+4. run `GRM-HOST-01`;
+5. revalidate the intended Neon development branch in the dashboard;
+6. run `GRM-NEON-11` again immediately before authorization;
+7. require the same baseline and no new fingerprints;
+8. obtain a fresh user token only if the current session is expired;
+9. do not press Retry.
+
+If the repository, deployment, provider target or baseline changed, return to
+reconciliation. Do not carry the prior allowlist across unexplained drift.
+
+#### 9.8 Gate 12.6h — packet required for 12.7
+
+The complete packet must contain:
+
+- Gates 12.1–12.5 accepted status;
+- exact current Git and deployment fingerprints;
+- sanitized eligible submission fingerprint;
+- event count and Device sequence range;
+- exact coordinator-action boundary;
+- upload/download/acknowledgement request inventory;
+- success transition matrix using `N`;
+- duplicate, rejection, unknown and unexpected-mutation rules;
+- fresh hosted health result;
+- fresh atomic provider baseline;
+- Neon branch freshness;
+- capture order for client result, HTTP status/class, correlation logs and
+  post-operation provider baseline;
+- explicit no-second-action rule.
+
+### 10. Gate 12.7 — human authorization
+
+Only after 12.6 is complete, Main must present one exact proposed operation.
+
+Authorization language must identify:
+
+```text
+the single eligible local submission by sanitized fingerprint
+the Device sequence range and event count
+the one complete coordinator action
+the possible HTTP operations
+the accepted pre-state
+the only allowed post-state
+the stop rules
+the no-second-action rule
+the evidence-capture order
+```
+
+Anything other than explicit human approval for that exact packet is no
+authorization. Earlier approval for builds, login, provider inspection,
+migration 007 or binding checks does not authorize Retry.
+
+### 11. Gates 12.8–12.10
+
+#### 11.1 Gate 12.8 — one controlled operation
+
+If and only if 12.7 explicitly authorizes:
+
+1. keep all monitoring/evidence surfaces ready;
+2. confirm Retry exactly once;
+3. do not press ordinary Sync;
+4. do not issue a second confirmation;
+5. capture the client terminal classification;
+6. capture sanitized HTTP/result class and correlation fingerprint;
+7. capture correlated Render lifecycle logs;
+8. stop immediately on ambiguity.
+
+#### 11.2 Gate 12.9 — post-operation comparison
+
+After the operation, run a fresh `GRM-NEON-11` snapshot and compare every
+allowlisted measure.
+
+Classify:
+
+```text
+expected success
+duplicate-equivalent
+rejected/not-applied
+unknown
+unexpected mutation
+```
+
+Do not decide from the client UI alone. Correlate client result, server logs
+and provider state.
+
+#### 11.3 Gate 12.10 — GCM-02 reconciliation
+
+Main closes GCM-02 only when the exact operation has a trustworthy correlated
+terminal result and every provider delta is explained.
+
+Closure then requires:
+
+- append-only J reconciliation;
+- PRC-01 classification;
+- updated A/B/C as needed;
+- promotion into current Operational, Didactic and Design memory by the owning
+  roles;
+- explicit handling of the stale permanent checkpoints;
+- exact deferred-risk inventory;
+- a decision on branch integration;
+- no silent staging deletion.
+
+If the result remains unknown or the allowlist is violated, GCM-02 remains
+open and the next unit must be a narrowly bounded diagnosis—not another Sync.
+
+### 12. What remains of Cycle 10
+
+Cycle 10 is not closed merely by the first successful hosted submission.
+
+Required remaining control flow:
+
+```text
+finish Gates 12.6–12.10
+→ reconcile and close or narrowly correct GCM-02
+→ define GCM-03 from remaining accepted gaps
+→ reconcile GCM-03
+→ define GCM-04 from the final external/operational gaps
+→ reconcile GCM-04
+→ perform Cycle 10 closure and permanent-memory promotion
+```
+
+The permanent domain checkpoints are materially behind the current J/source
+state. They still describe earlier provider preparation and must not be used
+alone to conclude that the current hosted gates are absent. Their staleness is
+an explicit reconciliation task after the current closure evidence stabilizes.
+
+### 13. Expected GCM-03 boundary
+
+GCM-03 is not yet defined or authorized. Main must define it only after
+GCM-02 closes.
+
+Likely evidence candidates, not commitments:
+
+- enroll and restart a second native client/Device;
+- prove two-Device hosted download/upload convergence;
+- prove local-only history remains local;
+- prove repeated full Sync is idempotent;
+- reconcile Windows and Android platform behavior;
+- validate Device distinction without exposing identifiers.
+
+Recommended selection rule:
+
+```text
+if GCM-02 proves one exact Windows hosted coordinator action
+then GCM-03 should probably prove bounded second-Device hosted convergence
+without adding retention, revocation and outage scope to the same unit
+```
+
+Before activation Main must:
+
+1. inspect the GCM-02 terminal evidence;
+2. inspect permanent memory and the current source;
+3. request A/B/C investigation if alternatives remain;
+4. write a new J reconciliation;
+5. issue synchronized D/E/F authority;
+6. obtain human authorization for any provider mutation;
+7. require new G/H/I evidence.
+
+### 14. Expected GCM-04 boundary
+
+GCM-04 is also undefined and inactive.
+
+Likely final-acceptance candidates, not commitments:
+
+- Device revocation denial with no unauthorized provider movement;
+- provider outage continuity and exact-once recovery;
+- logout and ephemeral token clearing on both clients;
+- retention/snapshot/rebootstrap provider integration;
+- hosted operations, recovery/rollback and cleanup boundaries;
+- final cross-platform/provider acceptance inventory.
+
+Main should keep GCM-04 narrow enough to yield a decisive terminal. A sensible
+shape may be:
+
+```text
+GCM-04A authorization/revocation and credential-lifecycle acceptance
+or
+GCM-04B outage/recovery/retention acceptance
+```
+
+But splitting, selecting or renaming that work requires a new Main decision.
+This entry does not activate either candidate.
+
+### 15. Cycle 10 closure requirements
+
+After GCM-02, GCM-03 and GCM-04 are individually reconciled:
+
+1. promote accepted Operational evidence;
+2. promote accepted Didactic vocabulary and evidence distinctions;
+3. promote accepted Design boundaries and decisions;
+4. refresh `00_PROJECT_STATE.md`;
+5. refresh `05_SESSION_LOG.md`;
+6. replace the preparatory Cycle 10 frame in `06_SESSION_SCHEME.md` with an
+   evidence-backed closure/forward checkpoint;
+7. reconcile and compact A/B/C/D/E/F/G/H/I only through the methodology's
+   promotion/pruning rules;
+8. preserve all J `Legacy_Progress`;
+9. inventory migrations 001–007 and protocol/recovery versions;
+10. inventory development provider resources and their lifecycle;
+11. verify no secret, UUID, token, password, complete connection string or
+    private payload entered Git;
+12. verify generated binaries/databases/archives are intentionally tracked or
+    intentionally excluded;
+13. separate development proof from production acceptance;
+14. record rollback, recovery, expiry and deletion boundaries;
+15. resolve or preserve the branch split explicitly;
+16. record every deferred Cycle 11 UI/UX/Analytics item;
+17. run final relevant API, Flutter, platform, database and protected Python
+    validation;
+18. write final append-only J reconciliation;
+19. establish the clean Cycle 11 baseline;
+20. begin no Cycle 11 materialization before that terminal.
+
+### 16. PRC-01 classifications for this reseed
+
+```text
+Claim: cycle10-intermid-grimoire is exactly at 7c1f585 before reseeding
+Source: local/remote Git comparison
+State: validated
+Result: accepted
+```
+
+```text
+Claim: Gate 12.5 is closed
+Source: human-operated sanitized GRM-NEON-03/08/09/10/11 evidence and
+        intermid-cycle-recovery J reconciliation 861444a
+State: validated within the development read-only provider boundary
+Does not prove: local retry eligibility or Sync success
+Result: accepted
+```
+
+```text
+Claim: the current GRIMOIRE branch already contained the 12.5 J closure
+Source: branch comparison
+State: contradicted before this reseeding entry
+Evidence: closure existed on the sibling branch
+Result: corrected by append-only provenance import, not by history rewrite
+```
+
+```text
+Claim: pressing Retry sends exactly one HTTP request
+Source: Flutter coordinator and transport source
+State: contradicted
+Evidence: one coordinator action can upload, download and acknowledge
+Result: reject; freeze the complete action boundary before authorization
+```
+
+```text
+Claim: opening and cancelling the eligible Retry dialog mutates provider state
+Source: UI/runner source and widget tests
+State: contradicted within the inspected implementation
+Result: reject; Cancel is the required Gate 12.6b action
+```
+
+```text
+Claim: GCM-03 and GCM-04 objectives are already authoritative
+Source: current staging and Cycle sequence
+State: contradicted
+Result: retain only provisional candidate expectations
+```
+
+```text
+Claim: Cycle 10 is closed
+Source: gate ledger
+State: contradicted
+Evidence: 12.6–12.10, GCM-03, GCM-04 and final promotion remain
+Result: reject
+```
+
+### 17. Current terminals and one-line continuation
+
+```text
+METHODOLOGY_FULL_BOOT_REQUIRED_FOR_SUCCESSOR_MAIN
+CYCLE10_INTERMID_GRIMOIRE_BASELINE_7C1F585_VERIFIED
+BRANCH_SPLIT_PRESERVED_AND_DOCUMENTED
+CURRENT_GRIMOIRE_FIVE_FILE_INTERFACE_ACTIVE
+GRM_FLUTTER_WIN_ACTIVE
+GRM_FLUTTER_AND_ACTIVE
+MIGRATION_007_APPLIED_ONCE_DO_NOT_RERUN
+GCM02_12_1_RENDER_READY_PASS
+GCM02_12_2_AUTH0_METADATA_PASS
+GCM02_12_3_ALIGNMENT_PASS_AT_INSPECTED_CHECKPOINT
+GCM02_12_4_EXACT_BINDING_PASS
+GCM02_12_5_PROVIDER_BASELINE_PASS
+GCM02_12_6A_ACTIVITY_FREEZE_ACTIVE
+GCM02_12_6B_WINDOWS_RETRY_PREFLIGHT_CANCEL_NEXT
+GCM02_12_7_HUMAN_AUTHORIZATION_PENDING
+GCM02_12_8_CONTROLLED_OPERATION_HELD
+GCM02_12_9_POST_OPERATION_COMPARISON_HELD
+GCM02_12_10_RECONCILIATION_HELD
+NO_AUTOMATIC_RETRY
+GCM03_UNDEFINED_AND_INACTIVE
+GCM04_UNDEFINED_AND_INACTIVE
+CYCLE10_OPEN
+```
+
+Immediate continuation:
+
+> Run the proven Windows Closure client, open `Retry unresolved submission`,
+> record only the sanitized preflight fingerprint and sequence values, select
+> `Cancel`, and return that evidence for Gate 12.6 reconciliation. Do not press
+> Retry or ordinary Sync.
+
 
 ---
 
