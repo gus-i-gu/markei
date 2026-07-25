@@ -1,174 +1,157 @@
-# D_OPS_STAGE — Account Cursor Provisioning Repair
+# D_OPS_STAGE — Gate 12.6 Copied-Database Reconciliation
 
-> Unit: C10-MCG02-ACCOUNT-CURSOR-PROVISIONING-REPAIR_20260722
-> Sequence: FLX-ORD-01
-> Authority: Main Chat
-> Baseline: `80935f1c312484d0819e119553a11691ec2216b4`
-> Status: READY FOR LOCAL MATERIALIZATION; PROVIDER ACTION BLOCKED
+Sequence: FLX-PRM-04 — Promotion/Reconciliation
+Role: Codex Operational materialization authority
+Round or unit: C10-GCM02-GATE-12.6-COPIED-DATABASE-RECONCILIATION
+Branch: `cycle10-intermid-grimoire`
+Pre-stage remote baseline: `49534b2029ecc56441cc00a5ad8b5a1a29ddbb38`
+Authority: Main Chat, under explicit human request
+Writable surfaces: `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`;
+`documentation/G_SCRIPTS.md` and `documentation/GRIMOIRE.md` only if a second
+sanitized copied-database correlation procedure is proven necessary
+Evidence boundary: repository source/history plus the sanitized human-executed
+Gate 12.6 copied-database output preserved in J
 
-## 1. Accepted boundary
+## 1. Accepted evidence
 
-Commit `75dc7bed0789d693af93abb3ed15e107fd77433a` locally reproduced the protected
-submission failure and corrected it to a sanitized HTTP 503 `service-unavailable` /
-`not-applied`. It did not create the missing `account_cursor_state` row.
+Treat the following as human-observed, sanitized, copied-database evidence:
 
-Repository inventory at `80935f1c312484d0819e119553a11691ec2216b4` establishes:
+- Markei was closed and no relevant Flutter process blocked the copy;
+- exactly one `markei_shared_beta.sqlite` candidate was found;
+- the copy was size- and hash-verified without printing hash values;
+- the live database was not queried;
+- `PRAGMA quick_check` returned `ok`;
+- all six expected local Sync tables were present;
+- submission classes were:
+  - one `failed / notApplied / conflict / service-unavailable`;
+  - one `superseded / notApplied / conflict / null`;
+  - one `superseded / notApplied / conflict /
+    device-enrollment-required`;
+- each submission contained two members at positions `0–1`, sequences `1–2`,
+  and one event-state kind;
+- the active failed submission's two events were `failed`;
+- device `next_sequence` values were `2`, `3`, and `6`, one device each;
+- pending-event summary was two `failed` events at sequences `1–2` and six
+  `pending` events at sequences `1–5`;
+- the latest Sync attempt was
+  `sync-unavailable / provider-evidence-unavailable`, with no HTTP status or
+  response headers;
+- Retry, Sync, and provider action were not selected.
 
-- `accounts` and `account_cursor_state` are separate tables under migrations 001–006;
-- the foreign key and cursor-state primary key permit zero or one cursor row per Account;
-- runtime cannot insert Accounts after migration 002, but retains an unnecessary direct cursor-state
-  insert grant;
-- enrollment resolves a pre-existing membership/Account and creates Device/enrollment state only;
-- every successful local harness manually seeds both Account and cursor state;
-- there is no production Account-provisioning service whose exclusivity can currently be proved;
-- a 006-only database reports ready through `markei_hosted_runtime_ready()` even though this invariant
-  is not enforced.
+Do not restate database paths, identifiers, event IDs, submission IDs, payloads,
+purchase data, complete hashes, tokens, URLs, or secrets.
 
-Main therefore selects a database-enforced Account provisioning invariant. Enrollment and first Sync
-must consume or verify the invariant; neither may create or repair it.
+## 2. Required source and history proof
 
-## 2. Operational objective
+Inspect at minimum:
 
-Add one forward-only migration after 006 that:
+- `clients/markei_flutter/lib/infrastructure/remote/http_sync_transport.dart`;
+- `clients/markei_flutter/lib/infrastructure/local/sync/local_sync_repositories.dart`;
+- `clients/markei_flutter/lib/application/hosted_sync_coordinator.dart`;
+- `clients/markei_flutter/lib/domain/sync/sync_event.dart`;
+- relevant tests and Git history for the `service-unavailable` mapping.
 
-1. records exact migration identity/checksum transactionally;
-2. backfills only missing `account_cursor_state` rows;
-3. derives a missing row's `next_cursor` as `max(sync_events.server_cursor) + 1`, or `1` when the
-   Account has no events;
-4. preserves every existing cursor row byte-for-byte, including values above observed high-water;
-5. installs an Account-insert trigger that creates `(account_id, 1)` after each future Account insert
-   within the same transaction;
-6. makes trigger execution safe through qualified objects, fixed safe search path, controlled owner,
-   no dynamic SQL and no exposed callable capability;
-7. revokes runtime `INSERT` on `account_cursor_state` while preserving only the already-required
-   select/update behavior;
-8. adds a new no-argument exact hosted-readiness function for the 007 contract and updates the API to
-   use it, while retaining the 006 function for rollback compatibility;
-9. fails closed when the new readiness function is absent or false.
+Establish with commit/date evidence that:
 
-Provisional migration identity to materialize exactly:
+1. current source maps protocol `service-unavailable` to
+   `SyncStatusCode.serviceUnavailable`;
+2. `persistUploadResult` stores the enum name in `response_code` and the
+   protocol body code in `error_code`;
+3. before commit `75dc7bed0789d693af93abb3ed15e107fd77433a`, the fallback mapped this
+   protocol code to `SyncStatusCode.conflict`;
+4. the copied database was last modified before that corrective commit;
+5. therefore `conflict / service-unavailable` is a historically coherent
+   legacy representation, not evidence that the current mapper still behaves
+   that way.
 
-```text
-007_account_cursor_provisioning
-checksum: c10-mcg02-account-cursor-provisioning-v1
-readiness function: public.markei_hosted_runtime_ready_v2()
-```
+Keep time-zone and filesystem timestamp limitations explicit. Do not claim that
+the file timestamp alone proves which executable produced every row.
 
-Do not edit migrations 001–006.
+## 3. Gate 12.6 classification
 
-## 3. Required failing-first evidence
+Update G to classify:
 
-Before implementing the migration, add a disposable-PostgreSQL regression that proves the 006 state
-allows all of the following defects:
+- copied-database procedure: `PASS`;
+- SQLite integrity and expected-schema proof: `PASS`;
+- active queue class: exactly one `failed / notApplied` submission owning two
+  failed events at sequences `1–2`;
+- unknown-submission Retry eligibility: rejected for the copied state;
+- earlier provisional Conclusion C: superseded;
+- legacy response representation: explained by source history, subject to the
+  timestamp evidence boundary;
+- ordinary Sync: still unauthorized because coordinator order performs failed
+  recovery before upload and may also include unrelated pending work;
+- Gate 12.6 overall: open only for exact scope/correlation and transition-packet
+  completion, not for queue-classification uncertainty;
+- Gate 12.7: pending explicit human authorization.
 
-- an Account commits without cursor state;
-- an existing Account with no cursor row remains incomplete;
-- a 006 database can satisfy the old readiness function;
-- runtime retains direct cursor-state insertion capability.
+## 4. Exact remaining evidence question
 
-Then prove the correction against fresh and upgrade paths.
+Determine whether the existing sanitized output is sufficient to prove all of:
 
-## 4. Required migration and concurrency matrix
+- which anonymized device scope owns the failed submission;
+- that scope's `next_sequence`;
+- how the six pending events divide across anonymized device scopes;
+- whether failed recovery would requeue exactly the two failed events;
+- which pending events the subsequent upload would include;
+- whether request identity/hash reuse can be proven without exposing them;
+- whether acknowledgement behavior is relevant to the single proposed action.
 
-The local producer must cover:
+If source plus current evidence cannot prove these points, add one canonical
+follow-up copied-database procedure pair:
 
-- fresh 001→007 application;
-- upgrade 001→006→007 with no Accounts;
-- upgrade with an Account missing cursor state and no events → `next_cursor = 1`;
-- upgrade with missing cursor state and existing cursors/events → `max(server_cursor) + 1`;
-- upgrade with an existing cursor row → exact value preserved;
-- mixed complete/incomplete Accounts → only missing rows inserted;
-- duplicate 007 application → one ledger row, no reset and no duplicate state;
-- concurrent Account insertion/transaction behavior → no committed Account without exactly one
-  cursor row;
-- Account insert rollback → neither Account nor cursor row remains;
-- injected migration failure → ledger, backfill, trigger, grants and readiness-v2 changes roll back;
-- first protected submission after provisioning allocates the expected cursor monotonically;
-- missing-row 503 behavior remains as defense in depth and is not removed.
+- `GS-SQLITE-04` in `G_SCRIPTS.md`;
+- `GRM-SQLITE-04` loader/index entry in `GRIMOIRE.md`.
 
-Use deterministic transactions/barriers where concurrency matters; do not use timing sleeps as proof.
+The procedure must:
 
-## 5. ACL, RLS and catalog proof
+- query only the already verified copy in
+  `markei-gate-12-6-current`;
+- open SQLite read-only;
+- begin with `PRAGMA query_only=ON`;
+- emit only ranks, counts, booleans, enum/status values, sequence ranges,
+  positions, and truncated non-reversible equality fingerprints if strictly
+  necessary;
+- never emit IDs, payloads, purchase content, paths, complete hashes, tokens,
+  URLs, or secrets;
+- perform no cleanup;
+- return the terminal to repository root;
+- stop on ambiguity or missing schema;
+- include `PRAGMA quick_check`.
 
-Prove:
+Do not add the procedure if the existing evidence is sufficient. Explain the
+decision in G either way.
 
-- migration/trigger/readiness ownership is the migrator identity;
-- trigger function is security-definer only if required for the selected enforcement, with fixed
-  `pg_catalog, public` search path and fully qualified relations;
-- `PUBLIC` and runtime cannot invoke the trigger function directly;
-- runtime cannot insert Accounts or cursor rows, cannot delete cursor rows, cannot read the migration
-  ledger, cannot create schema objects and cannot manage roles;
-- runtime can still select and update the Account-scoped cursor under the established transaction
-  context and RLS policy;
-- object shadowing cannot change readiness or trigger targets;
-- the new readiness function exposes only the exact 006+007 contract and returns a scalar boolean;
-- a new binary on a 006-only database reports not-ready;
-- the existing 006 readiness capability remains available only for rollback compatibility and is not
-  used by the new application.
+## 5. Validation
 
-No grant may broaden runtime authority.
+For documentation-only reconciliation:
 
-## 6. Required repository adaptations
+- run Markdown formatting/checks used by the repository;
+- run `git diff --check`;
+- verify no secret or identifier-shaped values were added;
+- verify G/H/I contain consistent gate terminals.
 
-Update all explicit migration lists and local proof producers to include 007. Fixtures that create
-Accounts should rely on the trigger rather than manually hiding the invariant, except where a test
-deliberately constructs pre-007 or corrupt/missing-state history. Keep those exceptions named and
-isolated.
+If `GS/GRM-SQLITE-04` is added:
 
-Expected bounded surface:
+- parse all PowerShell bodies;
+- verify every GRM index/loader maps to its GS body;
+- execute the SQL against a disposable fixture reproducing zero, one, and
+  multiple-device cases;
+- prove output contains only allowlisted field classes;
+- do not query any user database in Codex.
 
-```text
-services/markei_sync_api/migrations/007_account_cursor_provisioning.sql
-services/markei_sync_api/src/http/app.ts
-services/markei_sync_api/src/hosted_local_harness.ts
-services/markei_sync_api/src/proof/*migration/account provisioning producers as needed
-services/markei_sync_api/test/*focused readiness/protocol tests as needed
-services/markei_sync_api/package.json only if a named proof script is required
-documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-```
-
-Broader edits require an evidenced dependency and must be reported.
-
-## 7. Validation floor
-
-Run and report:
-
-- failing-before/passing-after provisioning regression;
-- full migration 007 fresh/upgrade/backfill/preserve/duplicate/rollback/concurrency/ACL/RLS/readiness
-  producer;
-- focused protected-submission and missing-state 503 regressions;
-- hosted local authorization/convergence/recovery producers affected by migration sequencing;
-- API format check, lint, typecheck, complete tests and build;
-- npm audit under the repository's established policy;
-- Dart format, Flutter analysis and complete tests if any shared contract changes or as the final
-  regression floor;
-- disposable Sync convergence and recovery harnesses;
-- Windows release and Android debug builds when supported;
-- protected Python checks;
-- `git diff --check`, changed-path review and secret-safe scan.
-
-Provider deployment, provider SQL and a real retry are not validation for this local unit.
-
-## 8. Prohibitions and stops
+## 6. Stops and prohibitions
 
 Do not:
 
-- contact, configure or mutate Auth0, Render or Neon;
-- deploy migration 007 or application changes;
-- execute ordinary Sync or retry the preserved unresolved submission;
-- modify human local data, events 1–2, sequence 3 or enrollment state;
-- repair cursor state in enrollment or first Sync;
-- reset, decrease or recompute an existing cursor row;
-- edit migrations 001–006;
-- weaken RLS, runtime/migrator separation, JWT/JWKS, route inventory or exact retry identity;
-- edit permanent notebook memory or begin MCG-03/04 or Cycle 11.
+- modify Flutter, API, migration, or test source;
+- query, copy, upload, delete, repair, or clean the user's database;
+- run Retry, ordinary Sync, or any provider operation;
+- contact Render, Neon, or Auth0;
+- rotate or inspect secrets;
+- assert Gate 12.7 authorization;
+- close GCM-02;
+- define GCM-03 or GCM-04 as authoritative work.
 
-Stop on inability to prove atomic Account+cursor creation, ambiguous high-water derivation, privilege
-broadening, non-transactional backfill, destructive repair, nondeterministic concurrency evidence,
-provider dependency or unrelated dirty overlap.
-
-Success terminal:
-
-`C10_MCG02_ACCOUNT_CURSOR_PROVISIONING_REPAIR_MATERIALIZED_LOCAL`
+Stop on dirty overlap, branch divergence, contradictory evidence, unsafe output,
+or inability to isolate the exact recovery/upload scope.

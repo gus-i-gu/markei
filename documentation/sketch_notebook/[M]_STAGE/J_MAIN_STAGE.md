@@ -2923,3 +2923,189 @@ MIGRATION_007_DO_NOT_RERUN
 CONTROLLED_SYNC_REQUEST_UNAUTHORIZED
 GCM02_OPEN
 ```
+
+## Append-only reconciliation entry — 2026-07-25 — Gate 12.6 copied-database classification
+
+### Sequence identity
+
+```text
+Sequence: FLX-PRM-04 — Promotion/Reconciliation
+Role: Main Chat
+Round: C10-GCM02-GATE-12.6-COPIED-DATABASE-RECONCILIATION
+Branch: cycle10-intermid-grimoire
+Inspected remote baseline: 49534b2029ecc56441cc00a5ad8b5a1a29ddbb38
+Authority: human-requested Main reconciliation and next-Codex staging
+Evidence boundary: sanitized user-transcribed Windows/SQLite output,
+                   repository source, and Git history
+```
+
+### Accepted copied-database observation
+
+The human operator first aligned the Windows checkout to
+`49534b2029ecc56441cc00a5ad8b5a1a29ddbb38`. Markei was closed. The canonical
+`GS-SQLITE-02` procedure then:
+
+- found exactly one local `markei_shared_beta.sqlite` candidate;
+- observed no WAL/SHM sidecars;
+- created the fixed-name Gate 12.6 working copy;
+- verified equal source/copy sizes and hashes without printing hash values;
+- did not query the live database;
+- returned the terminal to repository root.
+
+The canonical `GS-SQLITE-03` procedure queried only that copy in read-only
+mode. It observed:
+
+```text
+Expected Sync tables:                    6/6 present
+SQLite quick_check:                      ok
+Active failed submissions:               1
+Active failed outcome:                   notApplied
+Active response/error representation:    conflict / service-unavailable
+Active submission members:               2
+Active member sequence range:            1–2
+Active member positions:                 0–1
+Active member event state:               failed
+Superseded submissions:                  2
+Each superseded member count/range:       2 / 1–2
+Device next_sequence distribution:        2, 3, 6
+Failed pending-event rows:                2 / sequences 1–2
+Pending pending-event rows:               6 / sequences 1–5
+Latest ordinary Sync result:              sync-unavailable
+Latest recovery classification:           provider-evidence-unavailable
+Latest HTTP status/headers:                absent / absent
+Live database queried:                    false
+Retry selected:                           false
+Sync selected:                            false
+Provider action performed:                false
+```
+
+This evidence contains no database path, account/device/submission/event ID,
+payload, purchase content, token, URL, complete hash, or provider secret.
+
+### Repository and history reconciliation
+
+Current source proves:
+
+1. `HttpSyncTransport._failure` now maps protocol
+   `service-unavailable` to `SyncStatusCode.serviceUnavailable`;
+2. `LocalSyncRepository.persistUploadResult` stores `result.code.name` in
+   `response_code` and the protocol body code in `error_code`;
+3. the fallback branch maps unrecognized protocol codes to
+   `SyncStatusCode.conflict`;
+4. commit `75dc7bed0789d693af93abb3ed15e107fd77433a`, authored
+   2026-07-22 11:54:56 -0300, introduced the explicit
+   `service-unavailable -> serviceUnavailable` mapping;
+5. the copied database reports a last-modified time of
+   2026-07-22 10:08:29 in the human's Windows locale, earlier than that commit.
+
+The observed `conflict / service-unavailable` pair is therefore historically
+coherent with the pre-fix fallback mapper: the client retained the precise
+protocol code in `error_code` while persisting the fallback client enum name in
+`response_code`. This is strong source-history evidence for a legacy
+representation. It is not proof that every row was written by a uniquely
+identified executable, because filesystem timestamps and Git author time do
+not provide row-level provenance.
+
+### Gate conclusion
+
+PRC-01 classification:
+
+```text
+Claim: the copied database is structurally readable and internally healthy
+Prior state: unavailable
+Evidence: verified copy procedure, six-table presence, PRAGMA quick_check=ok
+Evidence boundary: sanitized human-observed output; no Codex/user live-DB read
+Contradiction: none
+Semantic owner: GCM-02 operational evidence
+Target role: Gate 12.6 copied-database subprocedure
+Resulting state: accepted PASS
+History disposition: diagnostic uncertainty superseded
+```
+
+```text
+Claim: the current queue contains an unknown submission eligible for unknown Retry
+Prior state: provisional possibility
+Evidence: one active submission is failed/notApplied; no unknown class emitted
+Evidence boundary: copied database at the preserved snapshot
+Contradiction: earlier screenshot/procedure language implied unresolved unknown
+Semantic owner: local Sync recovery classification
+Target role: Gate 12.6 eligibility
+Resulting state: rejected; unknown-retry path is inapplicable
+History disposition: earlier provisional Conclusion C superseded
+```
+
+```text
+Claim: exactly one failed/notApplied recovery candidate exists
+Prior state: provisional
+Evidence: active class and two-member failed lineage at sequences 1–2
+Evidence boundary: sanitized grouping; exact device/account correlation omitted
+Contradiction: none
+Semantic owner: failed-recovery eligibility
+Target role: Gate 12.6 transition definition
+Resulting state: accepted as queue classification; exact scoped transition pending
+History disposition: retain pre-probe diagnosis as observational history
+```
+
+```text
+Claim: conflict/service-unavailable contradicts current mapping
+Prior state: unresolved semantic anomaly
+Evidence: source mapping, persistence fields, Git introduction commit, file time
+Evidence boundary: source/history and file-level time; no row-level provenance
+Contradiction: apparent current-source mismatch
+Semantic owner: client protocol persistence history
+Target role: Gate 12.6 evidence interpretation
+Resulting state: explained as historically coherent legacy representation
+History disposition: preserve boundary; do not rewrite the database
+```
+
+```text
+Claim: the successful copied-database probe authorizes ordinary Sync
+Prior state: unauthorized
+Evidence: coordinator performs failed recovery before upload, download and ack;
+          six other pending rows are present
+Evidence boundary: current source plus copied grouping
+Contradiction: none
+Semantic owner: Gate 12.7 human authorization
+Target role: mutation boundary
+Resulting state: rejected; ordinary Sync remains unauthorized
+History disposition: stop boundary retained
+```
+
+Gate 12.6 no longer waits on queue-classification evidence. It remains open
+only because the sanitized output does not yet correlate the failed submission
+to an anonymized device scope, that scope's `next_sequence`, or the distribution
+of the six other pending events. Those facts determine whether the coordinator's
+recovery-then-upload path can be described as one exact bounded transition.
+
+### Next materialization round
+
+D/E/F are replaced with one bounded evidence-reconciliation round:
+
+```text
+D: classify copied evidence; prove legacy mapping history; decide whether one
+   additional sanitized copied-database correlation procedure is necessary
+E: stabilize evidence vocabulary and prevent PASS/authorization conflation
+F: trace failed recovery -> upload -> download -> acknowledgement and prepare
+   a Gate 12.7 packet skeleton with every unproven field marked PENDING
+```
+
+The round may update G/H/I. It may add only `GS/GRM-SQLITE-04` if exact
+device-scoped correlation cannot be established from current evidence. It may
+not modify application source, query a user database, perform provider action,
+authorize Gate 12.7, or close GCM-02.
+
+### Current terminals
+
+```text
+GATE_12_6_COPIED_DATABASE_PROBE_PASS
+FAILED_NOT_APPLIED_CLASS_CONFIRMED
+UNKNOWN_RETRY_INAPPLICABLE
+LEGACY_CONFLICT_SERVICE_UNAVAILABLE_EXPLAINED_WITH_BOUNDARY
+EXACT_DEVICE_SCOPED_TRANSITION_CORRELATION_PENDING
+GATE_12_6_OPEN
+GATE_12_7_PENDING
+RETRY_UNAUTHORIZED
+ORDINARY_SYNC_UNAUTHORIZED
+PROVIDER_ACTION_UNAUTHORIZED
+GCM02_OPEN
+```

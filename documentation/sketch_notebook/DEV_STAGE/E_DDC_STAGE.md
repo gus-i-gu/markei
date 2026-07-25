@@ -1,83 +1,78 @@
-# E_DDC_STAGE — Account Lifecycle Invariant Semantics
+# E_DDC_STAGE — Gate 12.6 Evidence Semantics
 
-> Unit: C10-MCG02-ACCOUNT-CURSOR-PROVISIONING-REPAIR_20260722
-> Sequence: FLX-ORD-01
-> Authority: Main Chat
-> Status: READY FOR LOCAL MATERIALIZATION
+Sequence: FLX-PRM-04 — Promotion/Reconciliation
+Role: Codex Didactic materialization authority
+Round or unit: C10-GCM02-GATE-12.6-COPIED-DATABASE-RECONCILIATION
+Branch: `cycle10-intermid-grimoire`
+Authority: Main Chat, under explicit human request
+Writable surface: `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
+Evidence boundary: sanitized copied-database observation, repository source,
+and Git history
 
-## 1. Learning objective
+## 1. Required distinctions
 
-Materialize and explain the distinction:
+Update H so future readers can distinguish:
+
+- a database file from the separate SQLite CLI;
+- a live database from a verified copied database;
+- copied-database integrity from Sync correctness;
+- `response_code` as a persisted client enum name from `error_code` as a
+  persisted protocol-body code;
+- a current mapping from a legacy persisted representation;
+- `failed / notApplied` recovery from unknown-outcome Retry;
+- failed recovery from the upload that follows it in ordinary coordinator
+  order;
+- a successful read-only diagnosis from authorization to mutate;
+- a passed subprocedure from a closed Gate 12.6;
+- a complete Gate 12.6 packet from explicit Gate 12.7 human approval.
+
+## 2. Accepted wording
+
+Use the following semantic conclusions:
+
+- the copied state contains no unknown submission candidate;
+- the unknown-retry route is inapplicable to that state;
+- exactly one failed/notApplied candidate is visible, but the exact
+  device-scoped recovery/upload boundary still requires correlation;
+- `conflict / service-unavailable` is compatible with the pre-fix fallback
+  mapper because current explicit mapping entered in commit
+  `75dc7bed0789d693af93abb3ed15e107fd77433a`;
+- timestamp ordering supports historical coherence but does not uniquely prove
+  row provenance;
+- ordinary Sync is not a read-only check and remains unauthorized.
+
+## 3. PRC-01 vocabulary
+
+Classify claims as:
+
+- **human-observed:** terminal output copied by the user;
+- **repository-proven:** current source or Git history directly establishes it;
+- **inferred:** multiple evidence classes support it but do not uniquely prove
+  it;
+- **unavailable:** the sanitized evidence intentionally omits the value;
+- **prohibited:** obtaining the value would cross the current authority
+  boundary;
+- **superseded:** an earlier provisional classification has been replaced by
+  stronger evidence.
+
+Do not convert human-observed terminal output into repository-executed evidence.
+
+## 4. Gate terminals for H
+
+End H consistently with:
 
 ```text
-table permits a cursor row
-!= every Account receives one
-!= runtime may repair one
+COPIED_DATABASE_PROBE_PASS
+FAILED_NOT_APPLIED_CLASS_CONFIRMED
+UNKNOWN_RETRY_INAPPLICABLE
+LEGACY_RESPONSE_REPRESENTATION_EXPLAINED_WITH_BOUNDARY
+EXACT_DEVICE_SCOPED_TRANSITION_CORRELATION_PENDING
+GATE_12_6_OPEN
+GATE_12_7_PENDING
+RETRY_UNAUTHORIZED
+ORDINARY_SYNC_UNAUTHORIZED
+PROVIDER_ACTION_UNAUTHORIZED
+GCM02_OPEN
 ```
 
-The cursor row is an Account lifecycle invariant. Account provisioning creates it; enrollment verifies
-or consumes the Account; Sync advances it. A fail-closed 503 remains defensive behavior for corrupted
-or incomplete state, not the normal initialization path.
-
-## 2. Required vocabulary
-
-Use these bounded meanings consistently in code comments, tests and H:
-
-- **Account provisioning invariant:** every committed Account has exactly one cursor-state row before
-  it is externally usable.
-- **atomic creation:** Account and initial cursor state commit or roll back together.
-- **historical backfill:** a forward-only migration adds only missing derived state for pre-existing
-  Accounts; it does not reinterpret or reset established state.
-- **cursor high-water:** the greatest already assigned `server_cursor`; a missing row resumes at
-  high-water + 1, or 1 when no cursor was ever assigned.
-- **preservation:** an existing `next_cursor` value is authoritative and must not be reset, decreased
-  or recomputed by repair.
-- **defense in depth:** Sync still rejects missing state as `service-unavailable/not-applied` even
-  after normal provisioning makes the state mandatory.
-- **exact readiness:** the new server accepts a database only when the precise 007 contract is
-  installed; generic liveness and 006 readiness are insufficient.
-
-## 3. Required distinctions
-
-Tests and reports must preserve:
-
-```text
-backfill applied locally
-!= migration deployed to Neon
-!= hosted Account repaired
-!= protected Sync succeeded
-!= GCM02 closed
-```
-
-Likewise:
-
-- a trigger enforces future creation but does not alone repair history;
-- a backfill repairs history but does not alone prevent recurrence;
-- enrollment success proves Device/enrollment state, not Account cursor readiness;
-- HTTP 503 proves a bounded not-applied failure, not successful repair;
-- readiness proves required database capability, not end-to-end Sync acceptance.
-
-## 4. User/operator semantics
-
-This unit does not authorize a new user-facing retry or provider instruction. Existing Closure history
-and unknown event identity remain unchanged. No UI should claim that cursor repair has occurred until
-deployment and provider verification are separately evidenced.
-
-If application wording changes only because readiness-v2 is introduced, keep it bounded to
-`not-ready`/`service-unavailable`; do not expose migration names, SQL, provider topology, identifiers or
-internal exception details.
-
-## 5. Named semantic evidence for H
-
-H must report:
-
-- the pre-007 representable invalid state;
-- why Account provisioning—not enrollment or first Sync—owns initialization;
-- the exact backfill rule and existing-row preservation rule;
-- the trigger's atomic commit/rollback meaning;
-- runtime privilege reduction;
-- 006 readiness versus 007 exact readiness;
-- the difference between local validation, later deployment, provider verification and real Sync;
-- synthetic examples only and no learner-maturity inference.
-
-No permanent Didactic files or KANBAN statuses are authorized in this unit.
+No permanent didactic promotion is authorized in this round.
