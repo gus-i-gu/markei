@@ -769,9 +769,9 @@ finally {
 
 ### `GS-FLUTTER-WIN` — Prepare, build, register, and run Windows Closure
 
-Run from the repository root after the four private Closure variables have been
-loaded into the current PowerShell session. The procedure prints only readiness
-booleans, never their values.
+Run from anywhere inside the repository. The procedure loads the four public
+Closure coordinates from `documentation/NS_COORDINATES.md` into the current
+PowerShell scope and prints only readiness booleans, never their values.
 
 Historical identifier `GS-BUILD-03` resolves to this procedure. Use
 `GS-FLUTTER-WIN` in new instructions.
@@ -787,6 +787,34 @@ $ClientRoot = Join-Path $RepositoryRoot "clients\markei_flutter"
 if (-not (Test-Path (Join-Path $ClientRoot "pubspec.yaml"))) {
     throw "Flutter client not found at $ClientRoot."
 }
+
+$NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
+if (-not (Test-Path -LiteralPath $NsPath -PathType Leaf)) {
+    throw "Coordinate file not found at $NsPath."
+}
+$NsText = Get-Content -LiteralPath $NsPath -Raw
+
+function Get-NsCoordinate {
+    param([Parameter(Mandatory)] [string]$Name)
+    $CoordinateMatches = [regex]::Matches(
+        $NsText,
+        "(?m)^$([regex]::Escape($Name)):\s*(.*?)\s*$"
+    )
+    if ($CoordinateMatches.Count -ne 1) {
+        throw "Expected exactly one '$Name' coordinate in $NsPath."
+    }
+    $Value = $CoordinateMatches[0].Groups[1].Value.Trim()
+    if ([string]::IsNullOrWhiteSpace($Value) -or
+        $Value -match '^<[^>]+>$') {
+        throw "Replace the '$Name' placeholder in $NsPath."
+    }
+    return $Value
+}
+
+$Auth0Domain = Get-NsCoordinate "Auth0TenantDomain"
+$Auth0Audience = Get-NsCoordinate "Auth0Audience"
+$WindowsClientId = Get-NsCoordinate "Auth0WindowsClientId"
+$HostedOrigin = Get-NsCoordinate "RenderPublicOrigin"
 
 flutter config --enable-windows-desktop
 if ($LASTEXITCODE -ne 0) {
@@ -859,7 +887,7 @@ $ConfigurationReady = [ordered]@{
 [pscustomobject]$ConfigurationReady
 
 if ($ConfigurationReady.Values -contains $false) {
-    throw "One or more private Closure variables are missing from this session."
+    throw "One or more Windows Closure coordinates could not be loaded."
 }
 
 $RequiredClosureSurfaceDefine = "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
@@ -920,21 +948,21 @@ finally {
 ```
 
 This is the full recovery path. It verifies the Windows device, provisions
-`vcpkg`/`cpprestsdk` only when absent, exposes the native CMake paths, checks
-the private input surface without printing values, cleans, validates, builds,
-registers the per-user `auth0flutter` callback, and launches the resulting
-release executable with the mandatory Closure Dart definition. If the
+`vcpkg`/`cpprestsdk` only when absent, exposes the native CMake paths, loads
+the public Closure coordinates without printing values, cleans, validates,
+builds, registers the per-user `auth0flutter` callback, and launches the
+resulting release executable with the mandatory Closure Dart definition. If the
 `Closure` destination is absent after launch, this procedure has not passed and
 no Gate action may continue. Launching the client does not authorize Enroll,
 Query, Retry, or Sync; those remain separate human actions.
 
 ### `GS-FLUTTER-AND` — Prepare, build, install, and run Android Closure
 
-Run from the repository root after the four private Android Closure variables
-have been loaded into the current PowerShell session. Connect and unlock one
-Android device with USB debugging already authorized, or start one emulator.
-The procedure prints only readiness booleans and Flutter's public device
-metadata, never configuration values.
+Run from anywhere inside the repository. The procedure loads the four public
+Android Closure coordinates from `documentation/NS_COORDINATES.md`. Connect
+and unlock one Android device with USB debugging already authorized, or start
+one emulator. The procedure prints only readiness booleans and Flutter's
+public device metadata, never configuration values.
 
 ```powershell
 $RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
@@ -948,6 +976,34 @@ if (-not (Test-Path (Join-Path $ClientRoot "pubspec.yaml"))) {
     throw "Flutter client not found at $ClientRoot."
 }
 
+$NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
+if (-not (Test-Path -LiteralPath $NsPath -PathType Leaf)) {
+    throw "Coordinate file not found at $NsPath."
+}
+$NsText = Get-Content -LiteralPath $NsPath -Raw
+
+function Get-NsCoordinate {
+    param([Parameter(Mandatory)] [string]$Name)
+    $CoordinateMatches = [regex]::Matches(
+        $NsText,
+        "(?m)^$([regex]::Escape($Name)):\s*(.*?)\s*$"
+    )
+    if ($CoordinateMatches.Count -ne 1) {
+        throw "Expected exactly one '$Name' coordinate in $NsPath."
+    }
+    $Value = $CoordinateMatches[0].Groups[1].Value.Trim()
+    if ([string]::IsNullOrWhiteSpace($Value) -or
+        $Value -match '^<[^>]+>$') {
+        throw "Replace the '$Name' placeholder in $NsPath."
+    }
+    return $Value
+}
+
+$Auth0Domain = Get-NsCoordinate "Auth0TenantDomain"
+$Auth0Audience = Get-NsCoordinate "Auth0Audience"
+$AndroidClientId = Get-NsCoordinate "Auth0AndroidClientId"
+$HostedOrigin = Get-NsCoordinate "RenderPublicOrigin"
+
 flutter doctor -v
 
 $ConfigurationReady = [ordered]@{
@@ -959,7 +1015,7 @@ $ConfigurationReady = [ordered]@{
 [pscustomobject]$ConfigurationReady
 
 if ($ConfigurationReady.Values -contains $false) {
-    throw "One or more private Android Closure variables are missing from this session."
+    throw "One or more Android Closure coordinates could not be loaded."
 }
 
 $FlutterDevicesJson = (& flutter devices --machine 2>&1 | Out-String)
@@ -1071,13 +1127,13 @@ finally {
 }
 ```
 
-This is the full Android recovery path. It verifies the configuration surface,
-requires exactly one selected supported Android target, forwards the Auth0
-domain to the Android manifest without writing it to the repository, cleans,
-validates, builds the debug APK, verifies the artifact, and launches the app
-with the mandatory Closure Dart definition. If the `Closure` destination is
-absent after launch, this procedure has not passed and no Gate action may
-continue. The Auth0 Android application must already
+This is the full Android recovery path. It loads and verifies the public
+coordinate surface, requires exactly one selected supported Android target,
+forwards the Auth0 domain to the Android manifest without writing it elsewhere,
+cleans, validates, builds the debug APK, verifies the artifact, and launches
+the app with the mandatory Closure Dart definition. If the `Closure`
+destination is absent after launch, this procedure has not passed and no Gate
+action may continue. The Auth0 Android application must already
 allow the callback/logout URI derived from package
 `com.gusigu.markei`; this procedure does not modify Auth0. Launching the client
 does not authorize Enroll, Query, Retry, or Sync.

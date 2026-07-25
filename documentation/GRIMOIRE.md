@@ -1017,9 +1017,44 @@ Historical identifier `GRM-BUILD-03` resolves to this block. Use
 
 Use the full `GS-FLUTTER-WIN` block after a clean checkout, native-toolchain
 change, or CMake failure. Once that procedure has successfully provisioned,
-built, and registered the callback, use this concise recurring run:
+built, and registered the callback, use this concise recurring run from
+anywhere inside the repository:
 
 ```powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+$NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
+if (-not (Test-Path -LiteralPath $NsPath -PathType Leaf)) {
+    throw "Coordinate file not found at $NsPath."
+}
+$NsText = Get-Content -LiteralPath $NsPath -Raw
+
+function Get-NsCoordinate {
+    param([Parameter(Mandatory)] [string]$Name)
+    $CoordinateMatches = [regex]::Matches(
+        $NsText,
+        "(?m)^$([regex]::Escape($Name)):\s*(.*?)\s*$"
+    )
+    if ($CoordinateMatches.Count -ne 1) {
+        throw "Expected exactly one '$Name' coordinate in $NsPath."
+    }
+    $Value = $CoordinateMatches[0].Groups[1].Value.Trim()
+    if ([string]::IsNullOrWhiteSpace($Value) -or
+        $Value -match '^<[^>]+>$') {
+        throw "Replace the '$Name' placeholder in $NsPath."
+    }
+    return $Value
+}
+
+$Auth0Domain = Get-NsCoordinate "Auth0TenantDomain"
+$Auth0Audience = Get-NsCoordinate "Auth0Audience"
+$WindowsClientId = Get-NsCoordinate "Auth0WindowsClientId"
+$HostedOrigin = Get-NsCoordinate "RenderPublicOrigin"
+
 $ConfigurationReady = [ordered]@{
     Auth0Domain   = -not [string]::IsNullOrWhiteSpace($Auth0Domain)
     Auth0Audience = -not [string]::IsNullOrWhiteSpace($Auth0Audience)
@@ -1028,7 +1063,7 @@ $ConfigurationReady = [ordered]@{
 }
 [pscustomobject]$ConfigurationReady
 if ($ConfigurationReady.Values -contains $false) {
-    throw "One or more private Windows Closure variables are missing from this session."
+    throw "One or more Windows Closure coordinates could not be loaded."
 }
 
 $RequiredClosureSurfaceDefine = "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
@@ -1043,7 +1078,7 @@ if ($FlutterDefines -notcontains $RequiredClosureSurfaceDefine) {
     throw "Windows Closure UI define is missing; refusing to run."
 }
 
-Push-Location ".\clients\markei_flutter"
+Push-Location (Join-Path $RepositoryRoot "clients\markei_flutter")
 try {
     Write-Host "Required UI destination: Closure."
     flutter run -d windows @FlutterDefines
@@ -1056,15 +1091,15 @@ finally {
 
 #### What this does
 
-Runs the diagnostic Windows client with the native Closure surface and the
-current session's private Auth0/hosted-origin configuration. It performs no
-automatic Enroll, Query, Retry, or Sync action.
+Loads the public Auth0/hosted-origin configuration from `NS_COORDINATES.md`,
+then runs the diagnostic Windows client with the native Closure surface. It
+performs no automatic Enroll, Query, Retry, or Sync action.
 
 #### Variables required
 
-`$Auth0Domain`, `$Auth0Audience`, `$WindowsClientId`, and `$HostedOrigin`
-must already exist in the current PowerShell session. The values remain outside
-Git and must not be pasted into chat or Markdown.
+No manual configuration input. The command requires exactly one non-placeholder
+value for `Auth0TenantDomain`, `Auth0Audience`, `Auth0WindowsClientId`, and
+`RenderPublicOrigin` in `documentation/NS_COORDINATES.md`.
 
 #### Expected output or result
 
@@ -1085,11 +1120,46 @@ only its sanitized fields, and select Cancel.
 
 Use the full `GS-FLUTTER-AND` block after a clean checkout, Android toolchain
 change, device-selection failure, or clean-build requirement. Once that
-procedure passes, use this concise recurring run:
+procedure passes, use this concise recurring run from anywhere inside the
+repository:
 
 #### Copy-paste-ready body
 
 ```powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+$NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
+if (-not (Test-Path -LiteralPath $NsPath -PathType Leaf)) {
+    throw "Coordinate file not found at $NsPath."
+}
+$NsText = Get-Content -LiteralPath $NsPath -Raw
+
+function Get-NsCoordinate {
+    param([Parameter(Mandatory)] [string]$Name)
+    $CoordinateMatches = [regex]::Matches(
+        $NsText,
+        "(?m)^$([regex]::Escape($Name)):\s*(.*?)\s*$"
+    )
+    if ($CoordinateMatches.Count -ne 1) {
+        throw "Expected exactly one '$Name' coordinate in $NsPath."
+    }
+    $Value = $CoordinateMatches[0].Groups[1].Value.Trim()
+    if ([string]::IsNullOrWhiteSpace($Value) -or
+        $Value -match '^<[^>]+>$') {
+        throw "Replace the '$Name' placeholder in $NsPath."
+    }
+    return $Value
+}
+
+$Auth0Domain = Get-NsCoordinate "Auth0TenantDomain"
+$Auth0Audience = Get-NsCoordinate "Auth0Audience"
+$AndroidClientId = Get-NsCoordinate "Auth0AndroidClientId"
+$HostedOrigin = Get-NsCoordinate "RenderPublicOrigin"
+
 $ConfigurationReady = [ordered]@{
     Auth0Domain   = -not [string]::IsNullOrWhiteSpace($Auth0Domain)
     Auth0Audience = -not [string]::IsNullOrWhiteSpace($Auth0Audience)
@@ -1098,7 +1168,7 @@ $ConfigurationReady = [ordered]@{
 }
 [pscustomobject]$ConfigurationReady
 if ($ConfigurationReady.Values -contains $false) {
-    throw "One or more private Android Closure variables are missing from this session."
+    throw "One or more Android Closure coordinates could not be loaded."
 }
 
 $FlutterDevices = @(
@@ -1139,7 +1209,7 @@ if ($FlutterDefines -notcontains $RequiredClosureSurfaceDefine) {
 $PreviousGradleAuth0Domain = $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN
 $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN = $Auth0Domain
 
-Push-Location ".\clients\markei_flutter"
+Push-Location (Join-Path $RepositoryRoot "clients\markei_flutter")
 try {
     Write-Host "Required UI destination: Closure."
     flutter run --debug -d $SelectedAndroidDeviceId @FlutterDefines
@@ -1160,17 +1230,18 @@ finally {
 
 #### What this does
 
-Selects exactly one connected supported Android target, supplies the native
-Closure and Android Auth0 configuration for this process, builds the debug
-client as needed, installs it, launches Markei, and keeps the terminal attached.
-It performs no automatic Enroll, Query, Retry, or Sync action.
+Loads the public Closure configuration from `NS_COORDINATES.md`, selects
+exactly one connected supported Android target, supplies that configuration
+for this process, builds the debug client as needed, installs it, launches
+Markei, and keeps the terminal attached. It performs no automatic Enroll,
+Query, Retry, or Sync action.
 
 #### Variables required
 
-`$Auth0Domain`, `$Auth0Audience`, `$AndroidClientId`, and `$HostedOrigin` must
-already exist in the current PowerShell session. `$AndroidDeviceId` is optional
-when exactly one supported Android device or emulator is connected. Values
-remain outside Git and must not be pasted into chat or Markdown.
+No manual configuration input. The command requires exactly one non-placeholder
+value for `Auth0TenantDomain`, `Auth0Audience`, `Auth0AndroidClientId`, and
+`RenderPublicOrigin` in `documentation/NS_COORDINATES.md`. `$AndroidDeviceId`
+is optional when exactly one supported Android device or emulator is connected.
 
 #### Expected output or result
 
