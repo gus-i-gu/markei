@@ -576,6 +576,7 @@ try {
             (Test-Path -LiteralPath $_ -PathType Container)
         } |
         Select-Object -Unique
+    $SearchRoots = @($SearchRoots)
     if ($SearchRoots.Count -eq 0) {
         throw "No Windows application-data search roots are available."
     }
@@ -605,6 +606,7 @@ try {
         "$LiveDatabase-wal"
         "$LiveDatabase-shm"
     ) | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf }
+    $Sidecars = @($Sidecars)
     if ($Sidecars.Count -ne 0) {
         throw "A SQLite WAL/SHM sidecar remains. Keep Markei closed and stop."
     }
