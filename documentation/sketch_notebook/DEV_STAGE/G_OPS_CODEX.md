@@ -1,161 +1,187 @@
-# G_OPS_CODEX - Gate 12.6 Recovery Classification Diagnosis
+# G_OPS_CODEX - Gate 12.6 Copied-Database Reconciliation
 
-Sequence: FLX-INV-02 diagnostic report
-Role: Codex
-Round or unit: C10-GCM02-GATE-12.6-RECOVERY-CLASSIFICATION
+Sequence: FLX-PRM-04 - Promotion/Reconciliation
+Role: Codex operational report
+Round or unit: C10-GCM02-GATE-12.6-COPIED-DATABASE-RECONCILIATION
 Branch: cycle10-intermid-grimoire
-Baseline / inspected HEAD: b2221c065306fd3ac71381e325333d44dbe7ec92
-Authority: human instruction authorizes diagnosis and G/H/I replacement only
-Writable surfaces: G_OPS_CODEX.md, H_DDC_CODEX.md, I_DSN_CODEX.md
-Evidence boundary: repository-proven, test-validated, human-observed, inferred, provisional and unavailable claims are kept separate
+Required baseline: 7a59bc8b2db4016bd42ca89df0cf2286cd64b755
+Inspected HEAD: 8ee181954a99faddaff8f8517646dc2c6cbc1130
+Evidence boundary: G/H/I report observed evidence only; no semantic promotion,
+Retry, ordinary Sync, provider action, source correction, database access, or
+GCM-02 closure was authorized.
 
-## Baseline
+## Repository Safety
 
+- repository-proven: `git fetch origin cycle10-intermid-grimoire` completed.
 - repository-proven: branch is `cycle10-intermid-grimoire`.
-- repository-proven: inspected HEAD is exactly `b2221c065306fd3ac71381e325333d44dbe7ec92`.
-- repository-proven: required ancestors `1579711f21f7bc9cfac940dda7d7f436161122a4` and `1d2a342be17b8df237ec469110187aca117f55ac` are ancestors of HEAD.
-- repository-proven: `git rev-list --left-right --count HEAD...origin/cycle10-intermid-grimoire` returned `0 0`.
-- repository-proven: worktree was clean before diagnosis.
+- repository-proven: inspected HEAD is
+  `8ee181954a99faddaff8f8517646dc2c6cbc1130`, a descendant of required
+  baseline `7a59bc8b2db4016bd42ca89df0cf2286cd64b755`.
+- repository-proven: `git rev-list --left-right --count
+HEAD...origin/cycle10-intermid-grimoire` returned `0 0`.
+- repository-proven: the worktree was clean before materialization.
 
 ## Inputs Read
 
-- repository-proven: read `AGENTS.md`, `documentation/sketch_notebook/INDEX.md`, `documentation/sketch_notebook/AGENTS.md`, `METHOD_FOUNDATIONS.md`, `FLUX.md`, `PROMOTION_RULES.md`, and `CHAT_PROTOCOL.md`.
-- repository-proven: read D/E/F and prior G/H/I as historical Account Cursor Provisioning Repair context only.
-- repository-proven: searched Dart, TypeScript, SQL, GRIMOIRE, A/B/C and J references for retry, failed, unknown, transport, readiness and recovery terms.
-- human-observed: accepted sanitized screenshot evidence exactly as supplied by Main/human; no local database, provider, Auth0, Render or Neon evidence was fetched.
+- repository-proven: read `AGENTS.md`,
+  `documentation/sketch_notebook/INDEX.md`,
+  `documentation/sketch_notebook/AGENTS.md`,
+  `METHOD_FOUNDATIONS.md`, `FLUX.md`, `PROMOTION_RULES.md`, and
+  `CHAT_PROTOCOL.md`.
+- repository-proven: read active `D_OPS_STAGE.md`, `E_DDC_STAGE.md`, and
+  `F_DSN_STAGE.md`.
+- repository-proven: read the newest Gate 12.6 reconciliation entry in
+  `J_MAIN_STAGE.md` as append-only Main synthesis authority.
+- repository-proven: inspected prior G/H/I, `documentation/G_SCRIPTS.md`,
+  `documentation/GRIMOIRE.md`, current Sync source, relevant tests, and Git
+  history.
 
-## Source Route
+## Copied-Database Evidence Reconciled
 
-- repository-proven: `NativeClosurePage._confirmRetryUnresolved` calls `runner.unknownRetryPreflight()` before opening a dialog. If `eligible == false`, it refreshes diagnostics, sets `_state` to `preflight.state`, and returns without `showDialog`.
-- repository-proven: `DriftClosureDiagnosticsRepository.unknownSubmissionRetryPreflight` blocks before unknown-submission lookup when current-device queue counts have any pending, uploading or failed rows. The returned state is `unknown-retry-queue-not-isolated`.
-- repository-proven: `snapshot()` computes local queue counts from `pending_events` joined to `sync_events`; `failed-work-needs-review` is returned when failed count is greater than zero and unknown count is not greater than zero.
-- repository-proven: `UploadPendingEvents.call()` leases an existing unknown submission or new pending batch, calls `transport.uploadSubmission`, then persists the result.
-- repository-proven: `persistUploadResult` stores `accepted` for `serverAccepted` and `duplicateIgnored`, `unknown` for `unknownOutcome`, and `failed` for every other `SyncStatusCode`; it writes that same state to all member `pending_events`.
-- repository-proven: `HttpSyncTransport._sendJson` maps `TimeoutException` and `http.ClientException` to null; upload then returns `unknownOutcome` / `unknown`.
-- repository-proven: a parsed protocol failure body maps through `_failure` to `notApplied`; `service-unavailable` becomes `SyncStatusCode.serviceUnavailable`, outcome `notApplied`, protocol code `service-unavailable`.
-- repository-proven: API `acceptSubmission` returns `service-unavailable` / `upload-submission` / `not-applied` when `account_cursor_state` update affects zero rows. `sendHostedResult` returns HTTP 503 for `service-unavailable`.
-- repository-proven: `NativeAuthClosureRunner.hostedSyncProbe` records only coordinator-level terminal state. `sync-unavailable` maps to outcomeClass `unavailable`, phase `sync`, recoveryCode `provider-evidence-unavailable`.
+- human-observed: GS-SQLITE-02 found exactly one local database candidate,
+  verified a copied database by size/hash without printing hashes, observed no
+  sidecars, did not query the live database, and returned to repository root.
+- human-observed: GS-SQLITE-03 observed six expected Sync tables,
+  `PRAGMA quick_check=ok`, one active failed submission with outcome
+  `notApplied`, response/error representation
+  `conflict / service-unavailable`, two members at positions `0-1` and
+  sequences `1-2`, member event state `failed`, two superseded submissions with
+  the same two-member range, device `next_sequence` distribution `2`, `3`, `6`,
+  two failed events at sequences `1-2`, six pending events at sequences `1-5`,
+  and latest ordinary Sync diagnostics
+  `sync-unavailable / provider-evidence-unavailable` with absent HTTP
+  status/headers.
+- human-observed: Retry, ordinary Sync, and provider action were not selected
+  during the copied-database observation.
+- repository-proven: no Codex command queried, copied, repaired, uploaded, or
+  cleaned any user database.
 
-## State-Transition Table
+## Source And History Findings
 
-| Evidence class | Transport/API result | Local submission state | Local event state | Notes |
-| --- | --- | --- | --- | --- |
-| repository-proven | `serverAccepted` | `accepted` | `accepted` | Applied success. |
-| repository-proven | `duplicateIgnored` | `accepted` | `accepted` | Duplicate-equivalent treated as accepted locally. |
-| repository-proven | `unknownOutcome` | `unknown` | `unknown` | Timeout/client exception/no trusted upload response preserves exact submission. |
-| repository-proven | `sequenceGap`, `wrongAccount`, `hashMismatch`, `serviceUnavailable`, other non-unknown codes | `failed` | `failed` | Outcome commonly `notApplied`; exact response fields are stored on `sync_submissions`. |
+- repository-proven: current `HttpSyncTransport._failure` maps protocol
+  `service-unavailable` to `SyncStatusCode.serviceUnavailable`.
+- repository-proven: current `DriftSyncOutboxRepository.persistUploadResult`
+  stores `result.code.name` in `sync_submissions.response_code` and
+  `result.protocolCode` in `sync_submissions.error_code`.
+- repository-proven: before commit
+  `75dc7bed0789d693af93abb3ed15e107fd77433a`, protocol
+  `service-unavailable` had no explicit switch arm and therefore reached
+  `_ => SyncStatusCode.conflict`; the same path preserved `body['code']` as
+  `protocolCode`.
+- repository-proven: commit
+  `75dc7bed0789d693af93abb3ed15e107fd77433a` was authored
+  `2026-07-22 11:54:56 -0300` and added the explicit mapping.
+- human-observed: the copied database last-modified time was reported as
+  `2026-07-22 10:08:29` in the human's Windows locale, before that commit.
+- inferred: `conflict / service-unavailable` is historically coherent with the
+  legacy mapper and does not prove current-source behavior drift.
+- unavailable: timestamp ordering does not prove row-level executable
+  provenance for every copied row.
 
-## Unknown Retry vs Failed Recovery
+## Queue And Recovery Classification
 
-- repository-proven: unknown retry is exact-submission retry. It requires authentication, current hosted binding, matching Account/Device, no pending/uploading/failed work, exactly one unknown submission, contiguous membership, pending row state `unknown`, valid event payload hashes, matching request hash, and `device.nextSequence == lastDeviceSequence + 1`.
-- repository-proven: failed/not-applied recovery is a separate mechanism. `recoverOneFailedNotApplied` scopes to exactly one failed/notApplied candidate for current Account/Device, validates membership and event hashes, supersedes the old failed submission, and requeues member events as pending.
-- repository-proven: ordinary `HostedSyncCoordinator.run` automatically calls `recoverFailedNotApplied()` before `uploadPendingEvents()`, then download, then acknowledgement.
-- inferred: ordinary Sync can transmit the preserved failed/notApplied workload without an explicit Retry-dialog confirmation, because the coordinator recovery step can requeue it and the same coordinator invocation then uploads pending events.
+- human-observed/repository-proven: copied-database procedure PASS and SQLite
+  integrity/schema PASS are accepted as copied-database evidence, not provider
+  evidence.
+- human-observed: exactly one active failed/notApplied two-event lineage is
+  confirmed for queue classification.
+- repository-proven: unknown Retry is inapplicable because the copied state has
+  no unknown candidate and the Closure preflight blocks when failed work is
+  present.
+- superseded: the earlier insufficient-evidence classification is replaced for
+  queue class by copied-database evidence.
+- repository-proven/inferred: Gate 12.6 remains open only for exact
+  device-scoped transition correlation.
+- repository-proven/inferred: ordinary Sync remains unauthorized because
+  `HostedSyncCoordinator.run` performs failed recovery, then upload, then
+  download, then acknowledgement in one compound operation.
 
-## Answers
+## Remaining Evidence Gap
 
-1. repository-proven: failed > 0 prevents the unknown retry dialog because preflight checks queue counts before unknown-submission lookup and returns `unknown-retry-queue-not-isolated`.
-2. repository-proven: `UploadPendingEvents.call` -> `SyncTransport.uploadSubmission` -> `DriftSyncOutboxRepository.persistUploadResult` changes a submission and its member events to failed for any non-accepted and non-unknown result code.
-3. repository-proven: accepted is `serverAccepted` or `duplicateIgnored`; unknown is `unknownOutcome`; failed is every other code persisted by `persistUploadResult`.
-4. repository-proven/provisional: a request with no observed HTTP status or headers in `HttpSyncTransport` cannot be conclusively stored as notApplied by that transport path; timeout/client exception maps to unknown. A notApplied store requires a decoded protocol failure or a different local state path. The screenshot alone does not show the owning submission response fields.
-5. repository-proven: `sync-unavailable/provider-evidence-unavailable` in Closure diagnostics is a later runner/coordinator-level projection recorded in `sync_attempts`, not by itself the original submission response. It may summarize an underlying failed recovery, serviceUnavailable upload, local exception, or other unavailable coordinator stop.
-6. human-observed plus inferred: screenshots alone prove the UI displayed failed event count 2, unknown count 0, last sync unavailable and no HTTP status/headers for the displayed attempt. They do not prove the owning submission is `notApplied`.
-7. repository-proven/inferred: identical UI counts can exist under multiple DB states: one failed submission owning two events, two failed submissions owning one event each, superseded history plus one active failed candidate, or failed events with malformed/missing membership. The UI count does not expose ownership cardinality.
-8. repository-proven: `recoverOneFailedNotApplied` enforces current Account/Device scope, exactly one recoverable candidate, non-empty and valid membership, canonical sequence ordering, valid event content hashes, no accepted member events, and no other active uploading/unknown member submission. It does not explicitly require the old submission ID to be reused; it supersedes it. It validates event content hash, not request-hash equality for failed legacy rows. It does not itself require sequences specifically 1-2 or next local sequence 3, and it does not check unrelated pending/uploading work outside the candidate.
-9. repository-proven/inferred: ordinary Sync can recover and transmit failed/notApplied work because coordinator order is recovery then upload. Ordinary Sync must remain prohibited while Gate 12.6 freeze is active because it can perform a mutation without the unknown-retry confirmation dialog.
-10. provisional: Gate 12.6 unknown-retry procedure is semantically wrong for a queue that is genuinely failed/notApplied. The queue classification itself remains unproven from screenshot evidence because the exact submission outcome/response fields were not read.
-11. inferred: minimum additional evidence is a sanitized copied-database read-only probe of `sync_submissions`, `sync_submission_events`, `pending_events`, `sync_events`, `devices`, and latest `sync_attempts`; provider logs are needed only if local state cannot prove whether an observed protocol failure existed.
-12. provisional: source correction is currently unauthorized and not proven required. A UI/procedure correction may be advisable if copied local evidence confirms failed/notApplied, but implementation remains outside this diagnostic authority.
+- unavailable from GS-SQLITE-03: the anonymized device scope owning the failed
+  submission.
+- unavailable from GS-SQLITE-03: that scope's `next_sequence`.
+- unavailable from GS-SQLITE-03: how the six other pending events divide
+  across anonymized device scopes.
+- unavailable from GS-SQLITE-03: which events the next upload would include
+  after failed recovery.
+- unavailable from GS-SQLITE-03: whether request-hash equality/reuse can be
+  verified safely without exposing complete hashes or IDs.
+- inferred: because these facts cannot be derived from aggregate counts or
+  current source alone, `GS-SQLITE-04` and `GRM-SQLITE-04` were necessary and
+  were materialized.
 
-## Diagnosis
+## State Machine Summary
 
-Conclusion C: mixed or insufficient evidence requiring one additional read-only local observation before selecting recovery path. Confidence: high that source explains the blocked UI state; medium that the correct next route is failed/notApplied recovery; unavailable for the actual owning submission outcome in the human database.
+| Step                                                          | Evidence class    | Boundary                      | Effect                                                                            |
+| ------------------------------------------------------------- | ----------------- | ----------------------------- | --------------------------------------------------------------------------------- |
+| `HostedSyncCoordinator.run` calls `recoverFailedNotApplied()` | repository-proven | local read/mutation           | starts failed recovery before upload                                              |
+| `recoverOneFailedNotApplied` finds one scoped candidate       | repository-proven | local read                    | requires current Account/Device and exactly one recoverable failed/notApplied row |
+| `_recoverCandidate` supersedes failed submission              | repository-proven | local mutation                | old failed submission state becomes `superseded`                                  |
+| candidate events become/remain pending                        | repository-proven | local mutation/no-op          | failed member events are requeued unless already pending                          |
+| `uploadPendingEvents` leases pending rows                     | repository-proven | local mutation plus transport | creates a new upload submission for pending events in scope                       |
+| download and acknowledgement follow                           | repository-proven | provider/local                | only reached if recovery and upload do not block                                  |
 
-If the copied local probe shows exactly one failed/notApplied submission owning events 1-2 with `response_code=serviceUnavailable` and `error_code=service-unavailable`, then conclusion A becomes supported: correct failed/not-applied classification with stale/inappropriate unknown-retry Gate 12.6 procedure. If it shows failed state without a protocol failure or with response fields inconsistent with observed transport evidence, conclusion B or D must be considered.
+## Commands And Results
 
-## Proposed Sanitized Copied-Database Probe
-
-State: proposed, unexecuted, requires Main and human authorization.
-
-Contract:
-- copy the database first; never query the live database;
-- open the copy read-only where supported;
-- begin a read-only transaction where supported;
-- return only counts, states, outcomes, response codes, error codes, sequence ranges, membership counts and short fingerprints;
-- never return payload_json, tokens, complete UUIDs, complete hashes, receipt contents, purchase contents or private configuration.
-
-Probe outline:
-
-```sql
-BEGIN;
-SELECT state, outcome, response_code, error_code, COUNT(*) FROM sync_submissions GROUP BY state, outcome, response_code, error_code;
-SELECT s.state, s.outcome, s.response_code, s.error_code,
-       COUNT(se.event_id) AS member_count,
-       MIN(e.device_sequence) AS first_sequence,
-       MAX(e.device_sequence) AS last_sequence,
-       COUNT(DISTINCT pe.state) AS pending_state_kinds,
-       MIN(pe.state) AS min_event_state,
-       MAX(pe.state) AS max_event_state,
-       substr(hex(sha256(s.id)), 1, 8) AS submission_fp
-FROM sync_submissions s
-LEFT JOIN sync_submission_events se ON se.submission_id = s.id
-LEFT JOIN sync_events e ON e.id = se.event_id
-LEFT JOIN pending_events pe ON pe.event_id = e.id
-GROUP BY s.id, s.state, s.outcome, s.response_code, s.error_code
-ORDER BY s.created_at, s.id;
-SELECT d.next_sequence, COUNT(*) FROM devices d GROUP BY d.next_sequence;
-SELECT operation_kind, result_code, outcome_class, phase, recovery_code,
-       http_status IS NOT NULL AS has_http_status,
-       response_headers_received,
-       elapsed_band
-FROM sync_attempts
-ORDER BY started_at DESC, id DESC
-LIMIT 5;
-ROLLBACK;
-```
-
-Expected interpretations:
-- exactly one failed/notApplied submission, member_count 2, sequences 1-2, event state failed, Device next_sequence 3, serviceUnavailable/service-unavailable response fields: supports A.
-- unknown submission/event rows exist or response_code `unknownOutcome`: supports unknown retry path, contradicts current UI screenshot or indicates target/database drift.
-- failed rows without notApplied/protocol response, malformed membership, multiple candidates, sequence gaps, or missing membership: supports C/D and blocks recovery.
-- sync attempts only show coordinator `sync-unavailable` without submission response fields: insufficient for A/B; bounded provider logs may be needed.
-
-## Provider Evidence Boundary
-
-- unavailable: no Render logs, Neon queries, Auth0 data, provider deployment state, or protected Sync response was obtained in this revision.
-- inferred: a bounded future Render log correlation window may be useful only if local copied-database response fields cannot distinguish protocol response from absent-response transport. It should expose only timestamp band, route class, status, result code, correlation fingerprint and no identifiers/secrets.
-
-## Commands and Validation
-
-- `git status --short --branch`: clean branch tracking origin.
-- `git rev-parse HEAD`: `b2221c065306fd3ac71381e325333d44dbe7ec92`.
 - `git fetch origin cycle10-intermid-grimoire`: succeeded.
-- `git merge-base --is-ancestor ... HEAD` for both required commits: succeeded.
-- `git rev-list --left-right --count HEAD...origin/cycle10-intermid-grimoire`: `0 0`.
-- `flutter test test/infrastructure/closure_diagnostics_repository_test.dart`: passed 7/7.
-- `flutter test test/sync/local_sync_application_test.dart`: passed 25/25 with Drift multiple-database debug warnings.
-- `flutter test test/app/native_closure_diagnostics_test.dart`: passed 14/14.
-- `flutter test test/infrastructure/http_sync_transport_device_header_test.dart`: passed 2/2.
-- `flutter test test/infrastructure/http_hosted_connection_check_test.dart`: passed 7/7.
-- `flutter test test/infrastructure/native_auth_composition_test.dart`: passed 17/17.
-- `flutter test test/infrastructure/native_closure_sync_path_test.dart`: passed 3/3 with Drift debug warnings.
-- `npm test -- --runInBand test/protocol.test.ts`: project script ran API test glob; passed 53/53.
+- `git branch --show-current`: `cycle10-intermid-grimoire`.
+- `git rev-parse HEAD`: `8ee181954a99faddaff8f8517646dc2c6cbc1130`.
+- `git merge-base --is-ancestor
+7a59bc8b2db4016bd42ca89df0cf2286cd64b755 HEAD`: succeeded.
+- `git rev-list --left-right --count
+HEAD...origin/cycle10-intermid-grimoire`: `0 0`.
+- `flutter test test/infrastructure/closure_diagnostics_repository_test.dart
+test/app/native_closure_diagnostics_test.dart
+test/sync/local_sync_application_test.dart
+test/infrastructure/http_sync_transport_device_header_test.dart`: passed
+  before report materialization, with existing Drift multiple-database debug
+  warnings.
+- `flutter test test/infrastructure/native_closure_sync_path_test.dart
+test/infrastructure/native_auth_composition_test.dart
+test/sync/real_convergence_harness_test.dart
+test/sync/two_device_system_harness_test.dart`: passed before report
+  materialization; three lab-gated tests skipped unless `MARKEI_RUN_SYNC_LAB=1`.
+- `npm exec prettier -- --check` for the edited Markdown paths: first attempt
+  used an incorrect relative path and found no files; corrected path then
+  reported formatting changes were needed.
+- `npm exec prettier -- --write` for the five edited Markdown paths: completed
+  on authorized documentation files only.
+- corrected `npm exec prettier -- --check` for the five edited Markdown paths:
+  passed.
 - `dart format --set-exit-if-changed lib test`: passed, 93 files, 0 changed.
-- `flutter analyze`: passed, no issues.
-- `flutter test`: passed 178/178, 4 lab-gated skips, with existing Drift debug warnings.
+- `flutter analyze`: passed, no issues found.
+- `flutter test`: passed 178 tests, with 4 lab-gated skips and existing Drift
+  multiple-database debug warnings.
 - `npm run format:check`: passed.
 - `npm run lint`: passed.
 - `npm run typecheck`: passed.
+- `npm test`: passed 53 tests.
 - `npm run build`: passed.
 - `npm audit --omit=dev`: passed, 0 vulnerabilities.
-- `git diff --check`: passed before report edits.
+- PowerShell parser check for `GS-SQLITE-01` through `GS-SQLITE-04`: passed.
+- PowerShell parser check for `GRM-SQLITE-04`: passed.
+- GS/GRM SQLite index check for `01` through `04`: passed.
+- consistent G/H/I gate-terminal verification: passed.
+- disposable SQLite fixture validation for `GS-SQLITE-04`: zero-candidate
+  fail-closed count OK; one-device fixture OK; multi-device fixture OK; no
+  synthetic identifiers leaked in successful fixture output.
+- `git diff --check`: passed after documentation formatting.
 
 ## Gate State
 
-- Gate 12.6: BLOCKED/OPEN.
-- Gate 12.7: PENDING.
-- Retry authorization: NO.
-- ordinary Sync authorization: NO.
-- provider action authorization: NO.
-- corrective implementation authorization: NO.
-- terminal: C10_GCM02_GATE_12_6_RECOVERY_CLASSIFICATION_EVIDENCE_REQUIRED.
+```text
+COPIED_DATABASE_PROBE_PASS
+GATE_12_6_COPIED_DATABASE_PROBE_PASS
+FAILED_NOT_APPLIED_CLASS_CONFIRMED
+UNKNOWN_RETRY_INAPPLICABLE
+LEGACY_RESPONSE_REPRESENTATION_EXPLAINED_WITH_BOUNDARY
+LEGACY_CONFLICT_SERVICE_UNAVAILABLE_EXPLAINED_WITH_BOUNDARY
+EXACT_DEVICE_SCOPED_TRANSITION_CORRELATION_PENDING
+GATE_12_6_OPEN
+GATE_12_7_PENDING
+RETRY_UNAUTHORIZED
+ORDINARY_SYNC_UNAUTHORIZED
+PROVIDER_ACTION_UNAUTHORIZED
+GCM02_OPEN
+```

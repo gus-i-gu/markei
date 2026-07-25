@@ -994,6 +994,76 @@ that order, and Markei must remain closed.
 `ProviderActionPerformed=False`. Preserve the copy until Main interprets the
 sanitized output and explicitly authorizes cleanup.
 
+### `GRM-SQLITE-04` — Run the sanitized Gate 12.6 scope-correlation probe
+
+#### 01 — Canonical command/query
+
+- Canonical procedure: `G_SCRIPTS.md` → `GS-SQLITE-04`
+- Hosting path: `documentation/G_SCRIPTS.md`
+- Data boundary: the verified copy created by `GRM-SQLITE-02`
+
+#### Copy-paste-ready body
+
+````powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+Set-Location -LiteralPath $RepositoryRoot
+
+$ProcedureId = "GS-SQLITE-04"
+$CataloguePath = Join-Path $RepositoryRoot "documentation\G_SCRIPTS.md"
+$Catalogue = Get-Content -LiteralPath $CataloguePath -Raw
+$HeadingPattern = '(?ms)^### `' +
+    [regex]::Escape($ProcedureId) +
+    '`[^\r\n]*\r?\n(?<Section>.*?)(?=^### `GS-|\z)'
+$SectionMatch = [regex]::Match($Catalogue, $HeadingPattern)
+if (-not $SectionMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' was not found."
+}
+$FencePattern =
+    '(?ms)^```powershell[ \t]*\r?\n(?<Code>.*?)^```[ \t]*\r?$'
+$FenceMatch = [regex]::Match(
+    $SectionMatch.Groups["Section"].Value,
+    $FencePattern
+)
+if (-not $FenceMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' has no PowerShell body."
+}
+
+try {
+    & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+````
+
+#### What this does
+
+Opens only the verified temporary copy with SQLite `-readonly`, enables
+`query_only`, requires `quick_check=ok`, requires the scope-correlation schema,
+and stops unless exactly one failed/notApplied candidate exists. It prints only
+anonymized device ranks, status classes, counts, booleans, positions, sequence
+ranges, and bounded request-hash equality counts. It performs no Retry, Sync,
+provider operation, cleanup, database repair, or live-database query.
+
+#### Variables required
+
+No manual variable. `GRM-SQLITE-01`, `GRM-SQLITE-02`, and `GRM-SQLITE-03` must
+have passed in that order, and Markei must remain closed. Run this only when
+Main requests exact Gate 12.6 device-scoped transition correlation.
+
+#### Expected output or result
+
+`PROBE_0_SCOPE_SCHEMA` through `PROBE_4_LATEST_SYNC_ATTEMPT_CLASS`,
+`SQLiteQuickCheck=ok`, `LiveDatabaseQueried=False`, `RetrySelected=False`,
+`SyncSelected=False`, `ProviderActionPerformed=False`,
+`CleanupPerformed=False`, and `TerminalLocation=repository-root`. Preserve the
+copy until Main interprets the sanitized output and explicitly authorizes
+cleanup.
+
 ### `GRM-HOST-01` — Verify Render live and ready
 
 #### 01 — Canonical command/query

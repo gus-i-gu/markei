@@ -1,73 +1,156 @@
-# I_DSN_CODEX - Gate 12.6 Recovery Classification Design Findings
+# I_DSN_CODEX - Gate 12.6 Failed-Recovery Transition Boundary
 
-Sequence: FLX-INV-02 diagnostic report
-Role: Codex
-Evidence boundary: architecture diagnosis only; no implementation authority
+Sequence: FLX-PRM-04 - Promotion/Reconciliation
+Role: Codex design report
+Evidence boundary: architecture diagnosis only; no implementation, provider,
+database, Retry, ordinary Sync, or Gate 12.7 authorization is granted.
 
 ## Responsibility Boundaries
 
-- repository-proven: UI responsibility lives in `NativeClosurePage`: render diagnostics, request preflight, show confirmation only for eligible unknown retry, and avoid mutation on block/cancel.
-- repository-proven: diagnostics responsibility lives in `DriftClosureDiagnosticsRepository`: compute queue counts, readiness strings, recent attempts, device summaries, actionable events and unknown retry eligibility.
-- repository-proven: local Sync repository responsibility lives in `DriftSyncOutboxRepository`: lease pending/unknown work, persist upload results, validate submission-event membership, and recover failed/notApplied candidates.
-- repository-proven: coordinator responsibility lives in `HostedSyncCoordinator`: authenticate, guard enrollment, recover failed/notApplied, upload, download, apply and acknowledge.
-- repository-proven: transport responsibility lives in `HttpSyncTransport`: produce `unknownOutcome` when no trusted response exists, or preserve decoded protocol failures as notApplied result codes.
-- repository-proven: hosted API responsibility lives in `acceptSubmission` and route mapping: authorize protected operations, run transaction-scoped Sync, return protocol failures such as `service-unavailable`, and map them to HTTP status.
-- repository-proven: readiness responsibility is separate in `/health/live` and `/health/ready`; readiness does not exercise protected Sync routes.
+- repository-proven: UI responsibility is `NativeClosurePage`: render
+  diagnostics, run unknown-retry preflight, show confirmation only when
+  eligible, and avoid mutation on blocked preflight or cancel.
+- repository-proven: diagnostics responsibility is
+  `DriftClosureDiagnosticsRepository`: compute queue counts, readiness,
+  recent attempts, device summaries, actionable events, and unknown retry
+  eligibility.
+- repository-proven: local Sync repository responsibility is
+  `DriftSyncOutboxRepository`: lease pending/unknown work, persist upload
+  results, validate submission-event membership, and recover failed/notApplied
+  candidates.
+- repository-proven: coordinator responsibility is `HostedSyncCoordinator`:
+  authentication, guard, failed recovery, upload, download, acknowledgement,
+  and terminal projection.
+- repository-proven: transport responsibility is `HttpSyncTransport`: map
+  absent trusted upload response to `unknownOutcome`, and decoded protocol
+  failure bodies to notApplied result codes.
+- repository-proven: hosted API responsibility is protected Sync execution,
+  not public readiness. Readiness proves route availability, not submission
+  application.
 
-## State Machine Findings
+## State Machine
 
-- repository-proven: unknown retry and failed/notApplied recovery are intentionally distinct mechanisms.
-- repository-proven: unknown retry preserves immutable submission identity and retries the same unknown submission.
-- repository-proven: failed/notApplied recovery supersedes the failed submission and requeues validated member events as pending; the subsequent upload creates/uses a new pending submission path.
-- repository-proven: `recoverOneFailedNotApplied` blocks ambiguous candidates and malformed candidates.
-- repository-proven: ordinary Sync currently combines recovery and transmission in one coordinator operation.
-- inferred: because ordinary Sync recovers and then uploads, it crosses the Gate 12.6 freeze boundary even if the user never sees a retry confirmation dialog.
+| Phase                     | Evidence class    | Boundary                      | Precondition                                                                          | Post-state                                       | Six pending events                                                |
+| ------------------------- | ----------------- | ----------------------------- | ------------------------------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------------- |
+| Guarded coordinator entry | repository-proven | local/provider read           | authenticated, enrolled device                                                        | continue or blocked terminal                     | not touched                                                       |
+| Failed recovery call      | repository-proven | local transaction             | coordinator invokes `recoverFailedNotApplied()` before upload                         | no-op, available, or blocked                     | not uploaded yet                                                  |
+| Candidate validation      | repository-proven | local read                    | current Account/Device, failed state, `notApplied`, exactly one recoverable candidate | candidate accepted or blocked                    | unrelated pending not checked globally                            |
+| Submission supersession   | repository-proven | local mutation                | valid failed candidate still failed/notApplied                                        | failed submission becomes `superseded`           | not touched unless member rows                                    |
+| Event requeue             | repository-proven | local mutation/no-op          | member rows valid and not accepted                                                    | member events become/remain `pending`            | can join same-scope pending queue later                           |
+| Pending upload            | repository-proven | local mutation plus transport | recovery did not block; pending rows exist in scoped outbox                           | new uploading submission created and sent        | yes, if in same Account/Device scope and within lease order/limit |
+| Download                  | repository-proven | provider/local                | upload did not block                                                                  | remote events applied or unavailable/interrupted | independent after upload                                          |
+| Acknowledgement           | repository-proven | provider/local                | download did not block                                                                | cursor acknowledged or terminal blocker          | independent after download                                        |
 
-## Retry/Recovery Invariants
+Failure in recovery, upload, download, or acknowledgement stops later phases via
+`HostedSyncCoordinator._blockedBy` or exception handling.
 
-- repository-proven: unknown preflight requires no pending/uploading/failed work, exactly one unknown submission, contiguous positions, event rows matching current Account/Device, pending row state `unknown`, valid content hashes, request-hash equality, and next local sequence equal to last event sequence + 1.
-- repository-proven: failed recovery requires current Account/Device scope, failed state, `notApplied` outcome, one recoverable candidate, non-empty membership, valid event content hashes, canonical sequence order, no accepted member events, and no other active uploading/unknown submission for those events.
-- repository-proven: failed recovery does not expose a user-facing confirmation path in the Closure page. It is invoked by ordinary Sync through the coordinator.
-- repository-proven: failed recovery does not explicitly validate the stored request hash for historical failed rows, does not require exact old submission identity reuse, and does not alone assert sequences 1-2/next sequence 3.
+## Invariants And Findings
 
-## UI Fit for Observed State
+- repository-proven: unknown Retry and failed/notApplied recovery are
+  intentionally distinct branches.
+- repository-proven: unknown Retry requires no pending/uploading/failed work,
+  exactly one unknown submission, matching Account/Device, contiguous
+  membership, unknown member state, request-hash equality, and matching next
+  local sequence.
+- repository-proven: failed recovery requires current Account/Device, exactly
+  one recoverable failed/notApplied candidate, non-empty valid membership,
+  canonical event sequence, no accepted member events, and no other uploading or
+  unknown active submission for those member events.
+- repository-proven: failed recovery does not reuse the failed submission as
+  the next upload identity; after requeue, the pending path creates a new upload
+  submission and request hash.
+- repository-proven: ordinary Sync currently combines recovery and transmission.
+  The Closure UI exposes unknown Retry, not a separate failed-recovery-only
+  operator surface.
+- inferred: the UI does not expose the correct narrowly isolated recovery action
+  for the observed failed/notApplied state.
 
-- repository-proven: for failed=2 and unknown=0, unknown retry is not eligible and the blocked UI state is expected.
-- provisional: the UI does not expose a separate "recover failed not-applied work" action, so the only visible retry-named action is misleading for a failed/notApplied queue.
-- inferred: the Gate 12.6 procedure is likely stale if the real local database contains exactly one valid failed/notApplied candidate.
-- unavailable: without the copied local database probe, the actual candidate shape cannot be proven from screenshot evidence.
+## Implementation Drift And Observability
 
-## Drift and Missing Observability
-
-- provisional: Gate wording drift exists between an expected unknown unresolved submission and observed failed events/zero unknown.
-- unavailable: UI counts do not reveal whether there is one failed submission owning two events, multiple failed submissions, superseded history, malformed membership, or response-code details.
-- unavailable: Closure diagnostics expose latest coordinator result but not the owning submission's response/outcome fields.
-- inferred: adding a read-only diagnostic view for sanitized submission outcome/membership would reduce future ambiguity, but implementation is not authorized now.
+- inferred: Gate 12.6 wording drift exists because the observed queue is
+  failed/notApplied while the visible retry control targets unknown submissions.
+- unavailable: GS-SQLITE-03 does not identify the anonymized failed-candidate
+  device scope, that scope's next sequence, or pending-work distribution.
+- inferred: `GS-SQLITE-04` is the minimal no-mutation observability addition:
+  it can report anonymized ranks, counts, booleans, statuses, sequence ranges,
+  and safe equality counts from the preserved copied database.
+- prohibited: adding a source-level failed recovery preflight or UI action is
+  outside this round.
 
 ## Candidate Corrective Designs
 
-Ranked by safety and minimality:
-
-1. procedure-only correction: after copied local evidence confirms exactly one failed/notApplied candidate, Main authorizes a failed/notApplied recovery gate instead of unknown retry. No source change.
-2. UI wording correction: change the Closure action surface to distinguish unknown exact-submission retry from failed/notApplied recovery, with separate preflight/result states. Requires tests and explicit implementation authorization.
-3. diagnostics observability correction: add sanitized submission summary fields to Closure diagnostics: active failed/notApplied candidate count, member count, first/last sequence, next local sequence and response-code class. Requires privacy review and tests.
-4. recovery authorization correction: add an explicit confirmation path for failed/notApplied recovery so ordinary Sync is not the only UI path that can recover and transmit. Requires careful operation-boundary tests.
+1. Procedure-only: use GS-SQLITE-04 output to finish a Gate 12.7 authorization
+   packet without source changes. Safest and authorized as documentation only.
+2. UI wording: split "unknown exact retry" from "failed/notApplied recovery" in
+   Closure. Requires explicit implementation authority and widget tests.
+3. Diagnostics observability: add sanitized failed-candidate scope fields to
+   Closure diagnostics. Requires privacy review and tests.
+4. Operation split: add a failed-recovery-only confirmation path that cannot
+   immediately upload. Larger behavior change; requires state-machine tests.
 
 ## Tests Required Before Any Correction
 
-- unknown retry still blocks when failed > 0.
-- failed/notApplied preflight confirms exactly one candidate and blocks multiple/malformed candidates.
-- failed recovery confirmation cancellation is non-mutating.
-- failed recovery confirmation does not transmit unless explicitly confirmed.
-- ordinary Sync boundary remains explicit or is disabled during Gate freeze if that is the chosen design.
-- diagnostics expose only sanitized counts, short fingerprints and sequence ranges.
-- request-hash/membership/sequence-gap cases remain blocked.
-- readiness checks remain separate from protected Sync.
-- transport absent-response remains unknown, while observed protocol failure remains notApplied.
+- failed/notApplied preflight accepts exactly one candidate and blocks zero,
+  multiple, malformed, cross-scope, accepted-member, sequence-gap, and
+  hash/membership mismatch cases.
+- UI cancellation for failed recovery is non-mutating.
+- failed recovery without explicit upload does not transmit.
+- ordinary Sync boundary is either held during Gate freeze or explicitly
+  authorized by tests and operator evidence.
+- diagnostics emit only sanitized counts, ranks, booleans, short fingerprints,
+  and sequence ranges.
+- transport keeps absent-response outcomes unknown and decoded protocol failures
+  notApplied.
 
-## Boundaries Preserved
+## Gate 12.7 Authorization-Packet Skeleton
 
-- repository-proven: no source code, tests, migrations, GRIMOIRE, J, A/B/C, D/E/F, permanent domain memory, methodology or provider configuration was modified by this diagnosis.
-- unavailable: no user database was accessed, copied, queried, uploaded, edited or repaired.
-- unavailable: no Auth0, Render or Neon operation was performed.
-- conclusion: corrective implementation is currently unauthorized; Gate 12.7, Retry, ordinary Sync and provider action remain held.
+This skeleton is not authorization.
+
+```text
+Branch: cycle10-intermid-grimoire
+Source baseline: 8ee181954a99faddaff8f8517646dc2c6cbc1130
+Copied-database freshness: human-observed copy from GS-SQLITE-02/03; exact
+  scope correlation PENDING
+Candidate anonymized rank: PENDING
+Candidate hosted/current scope match: PENDING
+Candidate device next_sequence: PENDING
+Candidate submission state/outcome: failed/notApplied
+Candidate response/error representation: conflict/service-unavailable legacy
+Candidate event count: 2
+Candidate sequence range: 1-2
+Candidate member positions: 0-1
+Candidate member pre-state: failed
+Other pending-work counts by anonymized scope: PENDING
+First upload after recovery would include: PENDING
+Request identity/hash reuse/equality: PENDING
+Proposed phases: failed recovery -> upload -> download -> acknowledgement
+Expected local deltas: failed submission superseded; member events pending or
+  uploading after lease; exact deltas PENDING
+Expected provider deltas: PENDING
+Allowed terminal results: PENDING
+Mandatory stop results: PENDING
+Evidence-capture order: PENDING
+No-second-action rule: PENDING
+Retry authorization: NO
+ordinary Sync authorization: NO
+provider action authorization: NO
+GCM-02 closure authorization: NO
+```
+
+## Terminals
+
+```text
+COPIED_DATABASE_PROBE_PASS
+GATE_12_6_COPIED_DATABASE_PROBE_PASS
+FAILED_NOT_APPLIED_CLASS_CONFIRMED
+UNKNOWN_RETRY_INAPPLICABLE
+LEGACY_RESPONSE_REPRESENTATION_EXPLAINED_WITH_BOUNDARY
+LEGACY_CONFLICT_SERVICE_UNAVAILABLE_EXPLAINED_WITH_BOUNDARY
+EXACT_DEVICE_SCOPED_TRANSITION_CORRELATION_PENDING
+GATE_12_6_OPEN
+GATE_12_7_PENDING
+RETRY_UNAUTHORIZED
+ORDINARY_SYNC_UNAUTHORIZED
+PROVIDER_ACTION_UNAUTHORIZED
+GCM02_OPEN
+```

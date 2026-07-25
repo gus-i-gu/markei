@@ -1,59 +1,92 @@
-# H_DDC_CODEX - Gate 12.6 Recovery Classification Vocabulary
+# H_DDC_CODEX - Gate 12.6 Evidence Semantics
 
-Sequence: FLX-INV-02 diagnostic report
-Role: Codex
-Evidence boundary: observational report only; no semantic promotion or didactic memory edit
+Sequence: FLX-PRM-04 - Promotion/Reconciliation
+Role: Codex didactic report
+Evidence boundary: observational explanation only; no permanent didactic
+promotion or methodology edit is authorized.
 
-## Core Distinctions
+## Distinctions To Preserve
 
-- repository-proven: readiness health is not protected-operation success. `/health/live` means the API process answered; `/health/ready` means the readiness contract returned ready. Neither endpoint uploads a Sync submission or proves the preserved events were applied.
-- repository-proven: protected Sync success requires the guarded `/v1/sync/submissions` route, transaction authorization, server-side event acceptance, and local persistence of an accepted/duplicate-equivalent result.
-- repository-proven: `unknownOutcome` means the client transport did not obtain a trusted upload response. In the current transport, timeout and client exception map here, and the local submission/event rows remain `unknown`.
-- repository-proven: `notApplied` is a protocol outcome returned from a decoded failure body. When persisted by the local outbox, non-unknown/non-accepted result codes become failed local work.
-- repository-proven: `service-unavailable` is one notApplied protocol code. It can be returned by the API for missing Account cursor state, and the HTTP mapper sends it as 503.
-- repository-proven: `sync-unavailable` is a Closure/coordinator terminal state, not a direct submission outcome. It records the runner's projection after the coordinator stops on an unavailable condition.
-- repository-proven: `provider-evidence-unavailable` is recovery guidance for unavailable coordinator states. It does not prove the provider did or did not apply the original submission.
+- repository-proven: `markei_shared_beta.sqlite` is a database file; `sqlite3.exe`
+  is the separate CLI needed to inspect a copied database.
+- human-observed: the accepted evidence came from a verified copied database,
+  not from the live user database.
+- inferred: copied-database integrity proves the copied file is readable and
+  internally coherent for the inspected schema; it does not prove protected Sync
+  success or provider application.
+- repository-proven: `response_code` stores the local client enum name, while
+  `error_code` stores the protocol body code.
+- repository-proven/inferred: current mapping and legacy persisted
+  representation can differ without contradiction when the copied file predates
+  the mapping correction.
+- repository-proven: failed/notApplied recovery and unknown Retry are different
+  mechanisms. Unknown Retry reuses an unknown submission identity; failed
+  recovery supersedes a failed submission and requeues member events.
+- repository-proven: failed recovery is not the same as upload. Ordinary Sync
+  performs recovery first and then continues to upload, download, and
+  acknowledgement if no blocker occurs.
+- inferred: a PASS copied-database diagnosis is not authorization to mutate.
+  Gate 12.6 remains open, and Gate 12.7 still requires explicit human approval.
 
-## Preflight, Dialog, Transmission
+## Claim Classification
 
-- repository-proven: preflight is local eligibility checking before UI confirmation.
-- repository-proven: confirmation dialog appears only after eligible unknown retry preflight.
-- repository-proven: blocked preflight opens no dialog and starts no Sync attempt.
-- test-validated: widget tests prove blocked retry preflight is non-mutating and does not show the confirm button.
-- test-validated: cancellation after an eligible dialog does not start Sync.
-- inferred: pressing ordinary Sync is more powerful than opening the unknown retry dialog because ordinary Sync invokes failed/notApplied recovery before upload.
+- human-observed: the copied database shows one active
+  `failed / notApplied / conflict / service-unavailable` class and no unknown
+  class in the reported summary.
+- repository-proven: current source maps `service-unavailable` to
+  `serviceUnavailable`; prior source fell through to `conflict`.
+- inferred: the observed legacy representation is historically coherent, with
+  row-level executable provenance unavailable.
+- superseded: earlier Conclusion C for queue class is superseded by the copied
+  database summary.
+- unavailable: exact device scope, that scope's `next_sequence`, pending-work
+  distribution by scope, next-upload contents, and safe request-hash equality
+  are not present in the GS-SQLITE-03 transcript.
+- prohibited: Codex cannot obtain those values by querying the user database or
+  provider systems in this round.
 
-## Proven, Inferred, Provisional, Unavailable
+## Diagnostic Decision Tree
 
-- proven: failed event count > 0 blocks unknown retry preflight as `unknown-retry-queue-not-isolated`.
-- proven: notApplied upload results are persisted as failed local state; unknown upload results are persisted as unknown local state.
-- proven: hosted connection ready does not prove protected Sync completion.
-- inferred: the observed UI state is consistent with a failed/notApplied queue rather than an unknown queue.
-- provisional: if the copied database confirms one failed/notApplied submission owning events 1-2, Gate 12.6's unknown-retry procedure is stale for the current state.
-- unavailable: the screenshot alone does not expose `sync_submissions.outcome`, `response_code`, `error_code`, membership cardinality, request hash equality, or exact owning submission identity.
-- unavailable: provider logs/database evidence were not inspected and must not be inferred from local tests.
-
-## Decision Tree
-
-1. repository-proven: if local copied evidence shows exactly one failed/notApplied submission owning events 1-2, with valid membership and next local sequence 3, classify the queue as failed/notApplied and route Main to a failed-recovery authorization decision, not unknown retry.
-2. repository-proven/inferred: if local copied evidence shows `unknown` submission/event state and `unknownOutcome`, unknown retry remains the correct mechanism and the current screenshot/counts require drift reconciliation.
-3. provisional: if local copied evidence shows failed state without notApplied response evidence, malformed membership, multiple candidates, request/hash inconsistency, or sequence gaps, keep Gate 12.6 blocked and require further diagnosis.
-4. unavailable: if local state cannot explain whether a trusted protected Sync response was observed, request a bounded sanitized provider log correlation window.
-
-## Terminology for Main
-
-Main should preserve:
-- "human-observed screenshot evidence" for UI fields;
-- "repository-proven source behavior" for inspected code paths;
-- "test-validated local behavior" for named test results;
-- "coordinator-level projection" for `sync-unavailable`;
-- "protocol failure response" for decoded failure bodies such as `service-unavailable`;
-- "unknown transport outcome" for no trusted response before client classification;
-- "failed/notApplied recovery" for `recoverOneFailedNotApplied`;
-- "unknown exact-submission retry" for `unknownSubmissionRetryPreflight` and unknown submission reuse.
+1. If GS-SQLITE-04 reports exactly one failed/notApplied candidate on the
+   hosted/current anonymized scope, with member sequences `1-2`, positions
+   `0-1`, all member states failed, and no unexpected same-scope pending work,
+   Main can prepare a tightly bounded Gate 12.7 decision packet.
+2. If the candidate is on a non-hosted scope, has unexpected `next_sequence`,
+   malformed membership, same-scope pending work that would join the first
+   upload, or unsafe hash/identity ambiguity, Gate 12.6 remains open for
+   reconciliation.
+3. If the copied state contains unknown/uploading ambiguity or multiple failed
+   candidates, unknown Retry remains inapplicable and failed recovery cannot be
+   selected without further evidence.
+4. Provider logs are only relevant after local scope correlation, and only as
+   narrowly bounded read-only evidence; readiness checks do not substitute for
+   protected Sync evidence.
 
 ## Conceptual Ambiguity
 
-- provisional: the current UI exposes a button named `Retry unresolved submission`, but the observed state reports failed work, not unknown work. The label and Gate 12.6 wording can steer the operator toward an unknown-retry procedure that is not eligible for a failed/notApplied queue.
-- provisional: `sync-unavailable/provider-evidence-unavailable` can be misunderstood as the original submission result. It is safer to describe it as a later diagnostic/coordinator record unless local submission rows prove otherwise.
-- unavailable: no permanent didactic maturity is claimed; no KANBAN, glossary or concept-map update is authorized.
+- inferred: the UI label `Retry unresolved submission` can sound broader than
+  its implementation. In source it means exact unknown-submission retry, not
+  failed/notApplied recovery.
+- inferred: `sync-unavailable / provider-evidence-unavailable` is a later
+  diagnostic/coordinator projection. It should not be restated as the original
+  submission response unless local submission rows prove that link.
+- inferred: Gate wording should keep "copied-database PASS" separate from
+  "Gate 12.6 closed" and "Gate 12.7 authorized".
+
+## Terminal Vocabulary
+
+```text
+COPIED_DATABASE_PROBE_PASS
+GATE_12_6_COPIED_DATABASE_PROBE_PASS
+FAILED_NOT_APPLIED_CLASS_CONFIRMED
+UNKNOWN_RETRY_INAPPLICABLE
+LEGACY_RESPONSE_REPRESENTATION_EXPLAINED_WITH_BOUNDARY
+LEGACY_CONFLICT_SERVICE_UNAVAILABLE_EXPLAINED_WITH_BOUNDARY
+EXACT_DEVICE_SCOPED_TRANSITION_CORRELATION_PENDING
+GATE_12_6_OPEN
+GATE_12_7_PENDING
+RETRY_UNAUTHORIZED
+ORDINARY_SYNC_UNAUTHORIZED
+PROVIDER_ACTION_UNAUTHORIZED
+GCM02_OPEN
+```

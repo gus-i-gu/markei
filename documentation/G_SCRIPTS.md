@@ -425,11 +425,12 @@ The diagnostic sequence is:
 GS-SQLITE-01
 → GS-SQLITE-02
 → GS-SQLITE-03
+→ GS-SQLITE-04, only when Main requests exact device-scoped correlation
 ```
 
-Keep Markei closed throughout `GS-SQLITE-02` and `GS-SQLITE-03`. These
-procedures never press Enroll, Query, Retry, or Sync and never contact Auth0,
-Render, or Neon.
+Keep Markei closed throughout `GS-SQLITE-02`, `GS-SQLITE-03`, and
+`GS-SQLITE-04`. These procedures never press Enroll, Query, Retry, or Sync and
+never contact Auth0, Render, or Neon.
 
 ### `GS-SQLITE-01` — Verify the SQLite CLI
 
@@ -892,6 +893,497 @@ ROLLBACK;
     Write-Host "SyncSelected: False"
     Write-Host "ProviderActionPerformed: False"
     Write-Host "TerminalLocation: $RepositoryRoot"
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+```
+
+### `GS-SQLITE-04` - Run the sanitized Gate 12.6 scope-correlation probe
+
+This procedure opens only the fixed copied database created by
+`GS-SQLITE-02`, uses both SQLite `-readonly` and `PRAGMA query_only = ON`,
+requires `quick_check=ok`, and stops unless exactly one failed/notApplied
+candidate exists. It reports only anonymized device ranks, status classes,
+counts, booleans, sequence ranges, positions, and bounded hash-equality
+booleans needed to prepare a Gate 12.7 packet. It never selects identifiers,
+payloads, purchase content, private paths, URLs, tokens, connection strings,
+provider secrets, or complete hashes.
+
+```powershell
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+try {
+    Set-Location -LiteralPath $RepositoryRoot
+
+    function Resolve-MarkeiSqliteCli {
+        $PathCommand = Get-Command sqlite3.exe `
+            -CommandType Application `
+            -ErrorAction SilentlyContinue
+        if ($null -ne $PathCommand) {
+            return $PathCommand.Source
+        }
+
+        $Candidates = @()
+        if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+            $WinGetLink = Join-Path $env:LOCALAPPDATA `
+                "Microsoft\WinGet\Links\sqlite3.exe"
+            if (Test-Path -LiteralPath $WinGetLink -PathType Leaf) {
+                $Candidates += Get-Item -LiteralPath $WinGetLink
+            }
+            $PackageRoot = Join-Path $env:LOCALAPPDATA `
+                "Microsoft\WinGet\Packages"
+            if (Test-Path -LiteralPath $PackageRoot -PathType Container) {
+                $Candidates += Get-ChildItem `
+                    -LiteralPath $PackageRoot `
+                    -Directory `
+                    -Filter "SQLite.SQLite_*" `
+                    -ErrorAction SilentlyContinue |
+                    ForEach-Object {
+                        Get-ChildItem `
+                            -LiteralPath $_.FullName `
+                            -Filter "sqlite3.exe" `
+                            -File `
+                            -Recurse `
+                            -ErrorAction SilentlyContinue
+                    }
+            }
+        }
+        $Selected = @(
+            $Candidates |
+                Sort-Object LastWriteTime -Descending |
+                Select-Object -First 1
+        )
+        if ($Selected.Count -ne 1) {
+            throw "sqlite3.exe is unavailable. Run GS-SQLITE-01."
+        }
+        return $Selected[0].FullName
+    }
+
+    function Invoke-MarkeiSqliteText {
+        param([Parameter(Mandatory)] [string]$Sql)
+
+        $Output = $Sql |
+            & $SqliteCli -readonly $CopiedDatabase 2>&1
+        $ExitCode = $LASTEXITCODE
+        if ($ExitCode -ne 0) {
+            $Output
+            throw "The copied-database scope-correlation probe failed."
+        }
+        return ($Output | Out-String).Trim()
+    }
+
+    $SqliteCli = Resolve-MarkeiSqliteCli
+    $ProbeDirectory = Join-Path `
+        ([System.IO.Path]::GetTempPath()) `
+        "markei-gate-12-6-current"
+    $CopiedDatabase = Join-Path `
+        $ProbeDirectory `
+        "markei_gate_12_6_copy.sqlite"
+    if (-not (Test-Path -LiteralPath $CopiedDatabase -PathType Leaf)) {
+        throw "Verified Gate 12.6 copy not found. Run GS-SQLITE-02."
+    }
+
+    $QuickCheck = (
+        & $SqliteCli -readonly $CopiedDatabase "PRAGMA quick_check;" 2>&1 |
+            Out-String
+    ).Trim()
+    if ($LASTEXITCODE -ne 0 -or $QuickCheck -ne "ok") {
+        throw "Copied-database quick_check did not return exactly 'ok'."
+    }
+
+    $SchemaSql = @'
+PRAGMA query_only = ON;
+SELECT COUNT(*)
+FROM sqlite_master
+WHERE type = 'table'
+  AND name IN (
+    'sync_submissions',
+    'sync_submission_events',
+    'pending_events',
+    'sync_events',
+    'devices',
+    'sync_attempts',
+    'hosted_auth_states'
+  );
+'@
+    $SchemaCount = Invoke-MarkeiSqliteText -Sql $SchemaSql
+    if ($SchemaCount -ne "7") {
+        throw "Expected seven local diagnostic tables; stop before inference."
+    }
+
+    $CandidateCountSql = @'
+PRAGMA query_only = ON;
+SELECT COUNT(*)
+FROM sync_submissions
+WHERE state = 'failed'
+  AND outcome = 'notApplied';
+'@
+    $CandidateCount = Invoke-MarkeiSqliteText -Sql $CandidateCountSql
+    if ($CandidateCount -ne "1") {
+        [pscustomobject]@{
+            FailedNotAppliedCandidateCount = $CandidateCount
+            Terminal = "scope-correlation-ambiguous"
+        }
+        throw "Expected exactly one failed/notApplied candidate."
+    }
+
+    $ProbeSql = @'
+.bail on
+.headers on
+.mode column
+.nullvalue [null]
+PRAGMA query_only = ON;
+BEGIN;
+
+.print === PROBE_0_SCOPE_SCHEMA ===
+SELECT
+  1 AS quick_check_already_ok,
+  7 AS expected_table_count,
+  COUNT(*) AS observed_table_count
+FROM sqlite_master
+WHERE type = 'table'
+  AND name IN (
+    'sync_submissions',
+    'sync_submission_events',
+    'pending_events',
+    'sync_events',
+    'devices',
+    'sync_attempts',
+    'hosted_auth_states'
+  );
+
+.print === PROBE_1_DEVICE_SCOPES ===
+WITH device_scope AS (
+  SELECT
+    d.account_id,
+    d.id AS device_id,
+    d.next_sequence,
+    ROW_NUMBER() OVER (ORDER BY d.created_at, d.id) AS device_scope_rank
+  FROM devices AS d
+),
+hosted_scope AS (
+  SELECT
+    account_id,
+    server_device_id AS device_id,
+    MAX(enrollment_state) AS enrollment_state
+  FROM hosted_auth_states
+  WHERE server_device_id IS NOT NULL
+  GROUP BY account_id, server_device_id
+),
+event_counts AS (
+  SELECT
+    e.account_id,
+    e.device_id,
+    COUNT(*) AS event_count
+  FROM sync_events AS e
+  GROUP BY e.account_id, e.device_id
+),
+queue_counts AS (
+  SELECT
+    e.account_id,
+    e.device_id,
+    SUM(CASE WHEN pe.state = 'pending' THEN 1 ELSE 0 END) AS pending_count,
+    MIN(CASE WHEN pe.state = 'pending' THEN e.device_sequence END)
+      AS pending_first_sequence,
+    MAX(CASE WHEN pe.state = 'pending' THEN e.device_sequence END)
+      AS pending_last_sequence,
+    SUM(CASE WHEN pe.state = 'failed' THEN 1 ELSE 0 END) AS failed_count,
+    MIN(CASE WHEN pe.state = 'failed' THEN e.device_sequence END)
+      AS failed_first_sequence,
+    MAX(CASE WHEN pe.state = 'failed' THEN e.device_sequence END)
+      AS failed_last_sequence,
+    SUM(CASE WHEN pe.state = 'unknown' THEN 1 ELSE 0 END) AS unknown_count,
+    SUM(CASE WHEN pe.state = 'uploading' THEN 1 ELSE 0 END) AS uploading_count
+  FROM pending_events AS pe
+  JOIN sync_events AS e
+    ON e.id = pe.event_id
+  GROUP BY e.account_id, e.device_id
+)
+SELECT
+  ds.device_scope_rank,
+  CASE WHEN hs.device_id IS NULL THEN 0 ELSE 1 END AS is_hosted_scope,
+  COALESCE(hs.enrollment_state, '[none]') AS hosted_enrollment_state,
+  ds.next_sequence,
+  COALESCE(ec.event_count, 0) AS event_count,
+  COALESCE(qc.pending_count, 0) AS pending_count,
+  COALESCE(qc.pending_first_sequence, '[null]') AS pending_first_sequence,
+  COALESCE(qc.pending_last_sequence, '[null]') AS pending_last_sequence,
+  COALESCE(qc.failed_count, 0) AS failed_count,
+  COALESCE(qc.failed_first_sequence, '[null]') AS failed_first_sequence,
+  COALESCE(qc.failed_last_sequence, '[null]') AS failed_last_sequence,
+  COALESCE(qc.unknown_count, 0) AS unknown_count,
+  COALESCE(qc.uploading_count, 0) AS uploading_count
+FROM device_scope AS ds
+LEFT JOIN hosted_scope AS hs
+  ON hs.account_id = ds.account_id
+ AND hs.device_id = ds.device_id
+LEFT JOIN event_counts AS ec
+  ON ec.account_id = ds.account_id
+ AND ec.device_id = ds.device_id
+LEFT JOIN queue_counts AS qc
+  ON qc.account_id = ds.account_id
+ AND qc.device_id = ds.device_id
+ORDER BY ds.device_scope_rank;
+
+.print === PROBE_2_FAILED_CANDIDATE_SCOPE ===
+WITH device_scope AS (
+  SELECT
+    d.account_id,
+    d.id AS device_id,
+    d.next_sequence,
+    ROW_NUMBER() OVER (ORDER BY d.created_at, d.id) AS device_scope_rank
+  FROM devices AS d
+),
+hosted_scope AS (
+  SELECT
+    account_id,
+    server_device_id AS device_id
+  FROM hosted_auth_states
+  WHERE server_device_id IS NOT NULL
+  GROUP BY account_id, server_device_id
+),
+candidate AS (
+  SELECT *
+  FROM sync_submissions
+  WHERE state = 'failed'
+    AND outcome = 'notApplied'
+),
+members AS (
+  SELECT
+    c.id AS submission_id,
+    c.account_id,
+    c.device_id,
+    c.state,
+    c.outcome,
+    COALESCE(c.response_code, '[null]') AS response_code,
+    COALESCE(c.error_code, '[null]') AS error_code,
+    c.request_hash,
+    se.position,
+    e.id AS event_id,
+    e.device_sequence,
+    pe.state AS event_state
+  FROM candidate AS c
+  JOIN sync_submission_events AS se
+    ON se.submission_id = c.id
+  JOIN sync_events AS e
+    ON e.id = se.event_id
+  JOIN pending_events AS pe
+    ON pe.event_id = e.id
+),
+member_summary AS (
+  SELECT
+    submission_id,
+    account_id,
+    device_id,
+    state,
+    outcome,
+    response_code,
+    error_code,
+    request_hash,
+    COUNT(*) AS member_count,
+    MIN(position) AS first_position,
+    MAX(position) AS last_position,
+    CASE
+      WHEN COUNT(DISTINCT position) = COUNT(*)
+       AND MIN(position) = 0
+       AND MAX(position) = COUNT(*) - 1 THEN 1
+      ELSE 0
+    END AS positions_contiguous,
+    MIN(device_sequence) AS first_sequence,
+    MAX(device_sequence) AS last_sequence,
+    CASE
+      WHEN COUNT(DISTINCT device_sequence) = COUNT(*)
+       AND MAX(device_sequence) - MIN(device_sequence) + 1 = COUNT(*) THEN 1
+      ELSE 0
+    END AS sequences_contiguous,
+    COUNT(DISTINCT event_state) AS event_state_kinds,
+    MIN(event_state) AS min_event_state,
+    MAX(event_state) AS max_event_state,
+    SUM(CASE WHEN event_state = 'failed' THEN 1 ELSE 0 END)
+      AS failed_member_count
+  FROM members
+  GROUP BY
+    submission_id,
+    account_id,
+    device_id,
+    state,
+    outcome,
+    response_code,
+    error_code,
+    request_hash
+),
+same_hash AS (
+  SELECT
+    ms.submission_id,
+    SUM(
+      CASE
+        WHEN other.state = 'superseded'
+         AND other.request_hash = ms.request_hash THEN 1
+        ELSE 0
+      END
+    ) AS superseded_same_hash_count,
+    SUM(
+      CASE
+        WHEN other.state IN ('uploading', 'unknown')
+         AND other.request_hash = ms.request_hash THEN 1
+        ELSE 0
+      END
+    ) AS active_same_hash_count
+  FROM member_summary AS ms
+  LEFT JOIN sync_submissions AS other
+    ON other.id <> ms.submission_id
+  GROUP BY ms.submission_id
+)
+SELECT
+  ds.device_scope_rank AS candidate_device_scope_rank,
+  CASE WHEN hs.device_id IS NULL THEN 0 ELSE 1 END AS is_hosted_scope,
+  ds.next_sequence AS candidate_scope_next_sequence,
+  ms.state AS submission_state,
+  ms.outcome AS submission_outcome,
+  ms.response_code,
+  ms.error_code,
+  CASE WHEN length(ms.request_hash) = 64 THEN 1 ELSE 0 END
+    AS request_hash_shape_64_hex,
+  COALESCE(sh.superseded_same_hash_count, 0) AS superseded_same_hash_count,
+  COALESCE(sh.active_same_hash_count, 0) AS active_same_hash_count,
+  ms.member_count,
+  ms.first_position,
+  ms.last_position,
+  ms.positions_contiguous,
+  ms.first_sequence,
+  ms.last_sequence,
+  ms.sequences_contiguous,
+  ms.event_state_kinds,
+  ms.min_event_state,
+  ms.max_event_state,
+  ms.failed_member_count
+FROM member_summary AS ms
+JOIN device_scope AS ds
+  ON ds.account_id = ms.account_id
+ AND ds.device_id = ms.device_id
+LEFT JOIN hosted_scope AS hs
+  ON hs.account_id = ms.account_id
+ AND hs.device_id = ms.device_id
+LEFT JOIN same_hash AS sh
+  ON sh.submission_id = ms.submission_id;
+
+.print === PROBE_3_SIMULATED_UPLOAD_AFTER_RECOVERY ===
+WITH device_scope AS (
+  SELECT
+    d.account_id,
+    d.id AS device_id,
+    ROW_NUMBER() OVER (ORDER BY d.created_at, d.id) AS device_scope_rank
+  FROM devices AS d
+),
+candidate AS (
+  SELECT *
+  FROM sync_submissions
+  WHERE state = 'failed'
+    AND outcome = 'notApplied'
+),
+candidate_events AS (
+  SELECT
+    e.id AS event_id,
+    e.account_id,
+    e.device_id
+  FROM candidate AS c
+  JOIN sync_submission_events AS se
+    ON se.submission_id = c.id
+  JOIN sync_events AS e
+    ON e.id = se.event_id
+),
+simulated_queue AS (
+  SELECT
+    e.id AS event_id,
+    e.account_id,
+    e.device_id,
+    e.device_sequence,
+    CASE WHEN ce.event_id IS NULL THEN 0 ELSE 1 END AS is_candidate_event,
+    CASE WHEN pe.state = 'pending' THEN 1 ELSE 0 END AS already_pending
+  FROM sync_events AS e
+  JOIN pending_events AS pe
+    ON pe.event_id = e.id
+  LEFT JOIN candidate_events AS ce
+    ON ce.event_id = e.id
+  WHERE EXISTS (
+      SELECT 1
+      FROM candidate_events AS scope
+      WHERE scope.account_id = e.account_id
+        AND scope.device_id = e.device_id
+    )
+    AND (pe.state = 'pending' OR ce.event_id IS NOT NULL)
+),
+ordered_upload AS (
+  SELECT
+    sq.*,
+    ROW_NUMBER() OVER (
+      ORDER BY sq.device_sequence, sq.event_id
+    ) AS upload_position
+  FROM simulated_queue AS sq
+)
+SELECT
+  ds.device_scope_rank AS upload_device_scope_rank,
+  COUNT(*) AS simulated_upload_count_before_limit,
+  SUM(CASE WHEN upload_position <= 25 THEN 1 ELSE 0 END)
+    AS simulated_first_upload_count_limit_25,
+  SUM(CASE WHEN upload_position <= 25 THEN is_candidate_event ELSE 0 END)
+    AS candidate_events_in_first_upload,
+  MIN(CASE WHEN is_candidate_event = 1 THEN upload_position END)
+    AS first_candidate_upload_position,
+  MAX(CASE WHEN is_candidate_event = 1 THEN upload_position END)
+    AS last_candidate_upload_position,
+  MIN(CASE WHEN upload_position <= 25 THEN device_sequence END)
+    AS first_upload_sequence,
+  MAX(CASE WHEN upload_position <= 25 THEN device_sequence END)
+    AS last_upload_sequence,
+  SUM(already_pending) AS already_pending_in_scope_count,
+  SUM(CASE WHEN is_candidate_event = 0 THEN 1 ELSE 0 END)
+    AS other_pending_in_scope_count,
+  CASE
+    WHEN SUM(CASE WHEN is_candidate_event = 0 THEN 1 ELSE 0 END) = 0 THEN 1
+    ELSE 0
+  END AS first_upload_contains_only_candidate_events
+FROM ordered_upload AS ou
+JOIN device_scope AS ds
+  ON ds.account_id = ou.account_id
+ AND ds.device_id = ou.device_id
+GROUP BY ds.device_scope_rank;
+
+.print === PROBE_4_LATEST_SYNC_ATTEMPT_CLASS ===
+SELECT
+  COALESCE(operation_kind, '[null]') AS operation_kind,
+  result_code,
+  outcome_class,
+  phase,
+  COALESCE(recovery_code, '[null]') AS recovery_code,
+  CASE WHEN http_status IS NULL THEN 0 ELSE 1 END AS has_http_status,
+  response_headers_received,
+  COALESCE(elapsed_band, '[null]') AS elapsed_band
+FROM sync_attempts
+ORDER BY started_at DESC, id DESC
+LIMIT 1;
+
+ROLLBACK;
+'@
+
+    $ProbeOutput = Invoke-MarkeiSqliteText -Sql $ProbeSql
+    $ProbeOutput
+
+    Write-Host "SQLiteQuickCheck: ok"
+    Write-Host "LiveDatabaseQueried: False"
+    Write-Host "RetrySelected: False"
+    Write-Host "SyncSelected: False"
+    Write-Host "ProviderActionPerformed: False"
+    Write-Host "CleanupPerformed: False"
+    Write-Host "TerminalLocation: repository-root"
 }
 finally {
     Set-Location -LiteralPath $RepositoryRoot
