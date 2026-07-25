@@ -862,13 +862,17 @@ if ($ConfigurationReady.Values -contains $false) {
     throw "One or more private Closure variables are missing from this session."
 }
 
+$RequiredClosureSurfaceDefine = "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
 $FlutterDefines = @(
-    "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
+    $RequiredClosureSurfaceDefine
     "--dart-define=MARKEI_AUTH0_DOMAIN=$Auth0Domain"
     "--dart-define=MARKEI_AUTH0_AUDIENCE=$Auth0Audience"
     "--dart-define=MARKEI_AUTH0_WINDOWS_CLIENT_ID=$WindowsClientId"
     "--dart-define=MARKEI_HOSTED_HTTPS_ORIGIN=$HostedOrigin"
 )
+if ($FlutterDefines -notcontains $RequiredClosureSurfaceDefine) {
+    throw "Windows Closure UI define is missing; refusing to build or run."
+}
 
 Push-Location $ClientRoot
 try {
@@ -907,6 +911,7 @@ try {
     }
 
     Write-Host "Launching the freshly built Markei Windows Closure client."
+    Write-Host "Required UI destination: Closure."
     & $MarkeiExecutable
 }
 finally {
@@ -918,8 +923,10 @@ This is the full recovery path. It verifies the Windows device, provisions
 `vcpkg`/`cpprestsdk` only when absent, exposes the native CMake paths, checks
 the private input surface without printing values, cleans, validates, builds,
 registers the per-user `auth0flutter` callback, and launches the resulting
-release executable. Launching the client does not authorize Enroll, Query,
-Retry, or Sync; those remain separate human actions.
+release executable with the mandatory Closure Dart definition. If the
+`Closure` destination is absent after launch, this procedure has not passed and
+no Gate action may continue. Launching the client does not authorize Enroll,
+Query, Retry, or Sync; those remain separate human actions.
 
 ### `GS-FLUTTER-AND` — Prepare, build, install, and run Android Closure
 
@@ -1001,13 +1008,17 @@ $SelectedAndroidDevice |
     Format-List
 $SelectedAndroidDeviceId = $SelectedAndroidDevice.id
 
+$RequiredClosureSurfaceDefine = "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
 $FlutterDefines = @(
-    "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
+    $RequiredClosureSurfaceDefine
     "--dart-define=MARKEI_AUTH0_DOMAIN=$Auth0Domain"
     "--dart-define=MARKEI_AUTH0_AUDIENCE=$Auth0Audience"
     "--dart-define=MARKEI_AUTH0_ANDROID_CLIENT_ID=$AndroidClientId"
     "--dart-define=MARKEI_HOSTED_HTTPS_ORIGIN=$HostedOrigin"
 )
+if ($FlutterDefines -notcontains $RequiredClosureSurfaceDefine) {
+    throw "Android Closure UI define is missing; refusing to build or run."
+}
 
 $PreviousGradleAuth0Domain = $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN
 $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN = $Auth0Domain
@@ -1040,6 +1051,7 @@ try {
     Write-Host "Android debug artifact created at:"
     Write-Host $AndroidArtifact
     Write-Host "Launching Markei on the selected Android device."
+    Write-Host "Required UI destination: Closure."
 
     flutter run --debug -d $SelectedAndroidDeviceId @FlutterDefines
     if ($LASTEXITCODE -ne 0) {
@@ -1063,7 +1075,9 @@ This is the full Android recovery path. It verifies the configuration surface,
 requires exactly one selected supported Android target, forwards the Auth0
 domain to the Android manifest without writing it to the repository, cleans,
 validates, builds the debug APK, verifies the artifact, and launches the app
-with the Closure Dart definitions. The Auth0 Android application must already
+with the mandatory Closure Dart definition. If the `Closure` destination is
+absent after launch, this procedure has not passed and no Gate action may
+continue. The Auth0 Android application must already
 allow the callback/logout URI derived from package
 `com.gusigu.markei`; this procedure does not modify Auth0. Launching the client
 does not authorize Enroll, Query, Retry, or Sync.

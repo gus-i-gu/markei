@@ -1020,16 +1020,32 @@ change, or CMake failure. Once that procedure has successfully provisioned,
 built, and registered the callback, use this concise recurring run:
 
 ```powershell
+$ConfigurationReady = [ordered]@{
+    Auth0Domain   = -not [string]::IsNullOrWhiteSpace($Auth0Domain)
+    Auth0Audience = -not [string]::IsNullOrWhiteSpace($Auth0Audience)
+    WindowsClient = -not [string]::IsNullOrWhiteSpace($WindowsClientId)
+    HostedOrigin  = -not [string]::IsNullOrWhiteSpace($HostedOrigin)
+}
+[pscustomobject]$ConfigurationReady
+if ($ConfigurationReady.Values -contains $false) {
+    throw "One or more private Windows Closure variables are missing from this session."
+}
+
+$RequiredClosureSurfaceDefine = "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
 $FlutterDefines = @(
-    "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
+    $RequiredClosureSurfaceDefine
     "--dart-define=MARKEI_AUTH0_DOMAIN=$Auth0Domain"
     "--dart-define=MARKEI_AUTH0_AUDIENCE=$Auth0Audience"
     "--dart-define=MARKEI_AUTH0_WINDOWS_CLIENT_ID=$WindowsClientId"
     "--dart-define=MARKEI_HOSTED_HTTPS_ORIGIN=$HostedOrigin"
 )
+if ($FlutterDefines -notcontains $RequiredClosureSurfaceDefine) {
+    throw "Windows Closure UI define is missing; refusing to run."
+}
 
 Push-Location ".\clients\markei_flutter"
 try {
+    Write-Host "Required UI destination: Closure."
     flutter run -d windows @FlutterDefines
     if ($LASTEXITCODE -ne 0) { throw "Flutter Windows run failed." }
 }
@@ -1052,9 +1068,11 @@ Git and must not be pasted into chat or Markdown.
 
 #### Expected output or result
 
-Flutter identifies the Windows device, builds the client, opens Markei, and
-keeps the terminal attached for diagnostics. For Gate 12.6b, open the Retry
-preflight, record only its sanitized fields, and select Cancel.
+Flutter identifies the Windows device, builds the client with the mandatory
+Closure definition, opens Markei, and keeps the terminal attached for
+diagnostics. The `Closure` destination must be present; if it is absent, stop
+and treat this run as failed. For Gate 12.6b, open the Retry preflight, record
+only its sanitized fields, and select Cancel.
 
 ### `GRM-FLUTTER-AND` — Build and run the Android Closure client
 
@@ -1106,19 +1124,24 @@ if ($AndroidDevices.Count -ne 1) {
 }
 $SelectedAndroidDeviceId = $AndroidDevices[0].id
 
+$RequiredClosureSurfaceDefine = "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
 $FlutterDefines = @(
-    "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
+    $RequiredClosureSurfaceDefine
     "--dart-define=MARKEI_AUTH0_DOMAIN=$Auth0Domain"
     "--dart-define=MARKEI_AUTH0_AUDIENCE=$Auth0Audience"
     "--dart-define=MARKEI_AUTH0_ANDROID_CLIENT_ID=$AndroidClientId"
     "--dart-define=MARKEI_HOSTED_HTTPS_ORIGIN=$HostedOrigin"
 )
+if ($FlutterDefines -notcontains $RequiredClosureSurfaceDefine) {
+    throw "Android Closure UI define is missing; refusing to run."
+}
 
 $PreviousGradleAuth0Domain = $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN
 $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN = $Auth0Domain
 
 Push-Location ".\clients\markei_flutter"
 try {
+    Write-Host "Required UI destination: Closure."
     flutter run --debug -d $SelectedAndroidDeviceId @FlutterDefines
     if ($LASTEXITCODE -ne 0) { throw "Flutter Android run failed." }
 }
@@ -1152,4 +1175,5 @@ remain outside Git and must not be pasted into chat or Markdown.
 #### Expected output or result
 
 Flutter resolves exactly one Android target, builds and installs the client,
-opens Markei, and keeps the terminal attached for diagnostics.
+opens Markei, and keeps the terminal attached for diagnostics. The `Closure`
+destination must be present; if it is absent, stop and treat this run as failed.
