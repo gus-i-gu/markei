@@ -749,17 +749,174 @@ finally {
 ### `GS-BUILD-02` — Flutter validation
 
 ```powershell
-flutter pub get
-if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
-flutter analyze
-if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
-flutter test
-if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
-flutter build windows --release
-if ($LASTEXITCODE -ne 0) { throw "Windows release build failed." }
-flutter build apk --debug
-if ($LASTEXITCODE -ne 0) { throw "Android debug build failed." }
+Push-Location ".\clients\markei_flutter"
+try {
+    flutter pub get
+    if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
+    flutter analyze
+    if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
+    flutter test
+    if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
+    flutter build windows --release
+    if ($LASTEXITCODE -ne 0) { throw "Windows release build failed." }
+    flutter build apk --debug
+    if ($LASTEXITCODE -ne 0) { throw "Android debug build failed." }
+}
+finally {
+    Pop-Location
+}
 ```
+
+### `GS-BUILD-03` — Prepare, build, register, and run Windows Closure
+
+Run from the repository root after the four private Closure variables have been
+loaded into the current PowerShell session. The procedure prints only readiness
+booleans, never their values.
+
+```powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+$ClientRoot = Join-Path $RepositoryRoot "clients\markei_flutter"
+if (-not (Test-Path (Join-Path $ClientRoot "pubspec.yaml"))) {
+    throw "Flutter client not found at $ClientRoot."
+}
+
+flutter config --enable-windows-desktop
+if ($LASTEXITCODE -ne 0) {
+    throw "Could not enable Flutter Windows desktop support."
+}
+
+flutter doctor -v
+
+$WindowsDevices = (& flutter devices 2>&1 | Out-String)
+if ($LASTEXITCODE -ne 0) {
+    throw "Could not inspect Flutter devices."
+}
+Write-Host $WindowsDevices
+if ($WindowsDevices -notmatch "(?im)\bwindows\b") {
+    throw "Flutter does not currently expose a Windows desktop device."
+}
+
+$VcpkgRoot = "C:\vcpkg"
+if (-not (Test-Path "$VcpkgRoot\vcpkg.exe")) {
+    if (Test-Path $VcpkgRoot) {
+        throw "C:\vcpkg exists but is incomplete. Inspect it before continuing."
+    }
+
+    git clone https://github.com/microsoft/vcpkg.git $VcpkgRoot
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not download vcpkg."
+    }
+
+    & "$VcpkgRoot\bootstrap-vcpkg.bat" -disableMetrics
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not bootstrap vcpkg."
+    }
+}
+
+$CppRestDir = "$VcpkgRoot\installed\x64-windows\share\cpprestsdk"
+$CppRestConfig = Get-ChildItem $CppRestDir `
+    -Filter "*cpprestsdk*config.cmake" `
+    -File `
+    -ErrorAction SilentlyContinue
+
+if (-not $CppRestConfig) {
+    & "$VcpkgRoot\vcpkg.exe" install cpprestsdk:x64-windows
+    if ($LASTEXITCODE -ne 0) {
+        throw "cpprestsdk installation failed."
+    }
+
+    $CppRestConfig = Get-ChildItem $CppRestDir `
+        -Filter "*cpprestsdk*config.cmake" `
+        -File `
+        -ErrorAction SilentlyContinue
+}
+
+if (-not $CppRestConfig) {
+    throw "cpprestsdk CMake configuration was not found in $CppRestDir."
+}
+
+$env:VCPKG_ROOT = $VcpkgRoot
+$env:VCPKG_DEFAULT_TRIPLET = "x64-windows"
+$env:VCPKG_TARGET_TRIPLET = "x64-windows"
+$env:CMAKE_TOOLCHAIN_FILE = "$VcpkgRoot\scripts\buildsystems\vcpkg.cmake"
+$env:CMAKE_PREFIX_PATH = "$VcpkgRoot\installed\x64-windows"
+$env:cpprestsdk_DIR = $CppRestDir
+
+$ConfigurationReady = [ordered]@{
+    Auth0Domain   = -not [string]::IsNullOrWhiteSpace($Auth0Domain)
+    Auth0Audience = -not [string]::IsNullOrWhiteSpace($Auth0Audience)
+    WindowsClient = -not [string]::IsNullOrWhiteSpace($WindowsClientId)
+    HostedOrigin  = -not [string]::IsNullOrWhiteSpace($HostedOrigin)
+}
+[pscustomobject]$ConfigurationReady
+
+if ($ConfigurationReady.Values -contains $false) {
+    throw "One or more private Closure variables are missing from this session."
+}
+
+$FlutterDefines = @(
+    "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
+    "--dart-define=MARKEI_AUTH0_DOMAIN=$Auth0Domain"
+    "--dart-define=MARKEI_AUTH0_AUDIENCE=$Auth0Audience"
+    "--dart-define=MARKEI_AUTH0_WINDOWS_CLIENT_ID=$WindowsClientId"
+    "--dart-define=MARKEI_HOSTED_HTTPS_ORIGIN=$HostedOrigin"
+)
+
+Push-Location $ClientRoot
+try {
+    flutter clean
+    if ($LASTEXITCODE -ne 0) { throw "flutter clean failed." }
+
+    if (Test-Path ".\windows\flutter\ephemeral") {
+        Remove-Item ".\windows\flutter\ephemeral" -Recurse -Force
+    }
+
+    flutter pub get
+    if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
+
+    flutter analyze
+    if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
+
+    flutter test
+    if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
+
+    flutter build windows --release @FlutterDefines
+    if ($LASTEXITCODE -ne 0) {
+        throw "Windows Closure release build failed."
+    }
+
+    $MarkeiExecutable = Join-Path $PWD `
+        "build\windows\x64\runner\Release\markei.exe"
+    if (-not (Test-Path $MarkeiExecutable)) {
+        throw "markei.exe was not found at $MarkeiExecutable."
+    }
+
+    powershell.exe -NoProfile -ExecutionPolicy Bypass `
+      -File ".\tool\register_windows_auth0flutter_protocol.ps1" `
+      -ExecutablePath $MarkeiExecutable
+    if ($LASTEXITCODE -ne 0) {
+        throw "Auth0 Flutter callback registration failed."
+    }
+
+    Write-Host "Launching the freshly built Markei Windows Closure client."
+    & $MarkeiExecutable
+}
+finally {
+    Pop-Location
+}
+```
+
+This is the full recovery path. It verifies the Windows device, provisions
+`vcpkg`/`cpprestsdk` only when absent, exposes the native CMake paths, checks
+the private input surface without printing values, cleans, validates, builds,
+registers the per-user `auth0flutter` callback, and launches the resulting
+release executable. Launching the client does not authorize Enroll, Query,
+Retry, or Sync; those remain separate human actions.
 
 ## 6. Historical diagnostics and mutation record
 
