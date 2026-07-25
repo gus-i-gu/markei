@@ -132,7 +132,7 @@ one exact local operation:
 | --- | --- |
 | Neon role | Fixed by command or selected from the guided menu |
 | Neon role password | Masked `Read-Host -AsSecureString` prompt |
-| Device UUID | Local prompt only for `verify-device` |
+| Device UUID | Local prompt only for `verify-device` or `provider-baseline` |
 | Migration authorization | Exact `APPLY-ONCE` phrase after dashboard target confirmation |
 | Auth0 access token | Session-only masked prompt in `GRM-AUTH-02`; obtain only a fresh user token for the configured audience |
 
@@ -627,6 +627,45 @@ No additional variable after the runtime `psql` session is open.
 #### Expected output or result
 
 `markei_runtime`, `markei_sync_dev`, `ready = t`, and `ROLLBACK`.
+
+### `GRM-NEON-11` — Capture atomic provider baseline
+
+#### 01 — Canonical command/query
+
+- Canonical procedure: `G_SCRIPTS.md` → `GS-NEON-11`
+- Hosting path: `documentation/G_SCRIPTS.md`
+- SQL block: `documentation/NEON_ACTION.sql` → `NA-09`
+- Dispatcher action: `provider-baseline`
+
+#### Copy-paste-ready body
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action provider-baseline
+```
+
+#### What this does
+
+Captures Gate 12.5d in one repeatable, read-only provider snapshot: exact
+six-table counts, cursor-state integrity, fixture Account/Device sequence and
+high-water state, and sanitized replay fingerprints. It fails closed unless
+the locally supplied Device UUID identifies exactly one provider Device.
+
+#### Variables required
+
+Fixture Device UUID in the local prompt; current `markei_migrator` password in
+the masked prompt. Do not paste either value into chat, files, screenshots, or
+shell history.
+
+#### Expected output or result
+
+Exact Device guard `1`; coherent six-table global and fixture counts; zero
+missing/orphan cursor-state rows; Account and Device consistency `t`; expected
+pre-request fingerprint counts; explicit `ROLLBACK`; final action `PASS`.
+Any mismatch leaves Gate 12.5 open and keeps Sync unauthorized.
 
 ### `GRM-GIT-01` — Verify exact Git alignment
 

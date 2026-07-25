@@ -206,6 +206,39 @@ ROLLBACK;
 
 Expected: `markei_runtime`, `markei_sync_dev`, `ready = t`, and `ROLLBACK`.
 
+### `GS-NEON-11` — Capture the atomic provider baseline
+
+Canonical SQL block: `NEON_ACTION.sql` → `NA-09` /
+`provider-baseline`.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action provider-baseline
+```
+
+The terminal requests the exact fixture Device UUID locally and the current
+migrator password through masked prompts. The UUID is passed only as a `psql`
+variable. The action opens one `REPEATABLE READ`, read-only transaction and
+returns:
+
+- exact global counts for `accounts`, `devices`, `account_cursor_state`,
+  `submissions`, `sync_events`, and `device_acknowledgements`;
+- missing/orphan cursor-state counts;
+- fixture-account six-table counts and sanitized Device state;
+- Account cursor/hosted-high-water consistency;
+- Device sequence/high-water consistency;
+- truncated submission/request and event/content replay fingerprints;
+- explicit `ROLLBACK` and final launcher `PASS`.
+
+The action fails closed if the UUID does not identify exactly one provider
+Device. It returns no UUID, Account identifier, payload, stored result, full
+hash, password, or connection string. `PASS` proves successful read-only
+execution only; Gate 12.5 closes only after the values are reconciled against
+the accepted 12.5a–c evidence.
+
 ## 2. Git alignment
 
 ### `GS-GIT-01` — Verify exact branch/remote alignment

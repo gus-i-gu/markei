@@ -14,6 +14,7 @@
 -- NA-06  schema-inventory        Public tables and RLS policy inventory
 -- NA-07  list-devices-sanitized  Device-state aggregates without UUIDs
 -- NA-08  verify-device           Local UUID input; sanitized device counters
+-- NA-09  provider-baseline       Atomic six-table/cursor/fingerprint snapshot
 
 -- ============================================================================
 -- NA-01 | SANITIZED CONNECTION PROOF
@@ -242,5 +243,171 @@ WHERE device_id = :'device_id'::uuid;
 SELECT next_expected_sequence AS device_next_expected_sequence
 FROM public.devices
 WHERE device_id = :'device_id'::uuid;
+ROLLBACK;
+-- END ACTION
+
+-- ============================================================================
+-- NA-09 | ATOMIC PROVIDER BASELINE
+-- ACTION: provider-baseline
+-- Purpose: capture the exact pre-request state required by Gate 12.5d from one
+--          repeatable read-only snapshot. The selected Device UUID is used only
+--          as a local lookup key and is never returned.
+-- Manual variable: device_id, requested in the terminal and never stored here.
+-- Expected before the first authorized Sync submission: one exact fixture
+--          Device; six-table global and fixture-account counts; no missing or
+--          orphan cursor state; Device/account sequence consistency; sanitized
+--          replay fingerprints; terminal ROLLBACK.
+BEGIN TRANSACTION ISOLATION LEVEL REPEATABLE READ, READ ONLY;
+
+-- Fail closed if the locally supplied UUID does not identify exactly one
+-- provider Device. Division by zero makes psql stop before a misleading PASS.
+SELECT
+    count(*) AS fixture_device_matches,
+    1 / ((count(*) = 1)::integer) AS exact_device_guard
+FROM public.devices
+WHERE device_id = :'device_id'::uuid;
+
+-- Exact six-table global counters from the same transaction snapshot.
+SELECT
+    (SELECT count(*) FROM public.accounts) AS accounts_count,
+    (SELECT count(*) FROM public.devices) AS devices_count,
+    (SELECT count(*) FROM public.account_cursor_state)
+        AS account_cursor_state_count,
+    (SELECT count(*) FROM public.submissions) AS submissions_count,
+    (SELECT count(*) FROM public.sync_events) AS sync_events_count,
+    (SELECT count(*) FROM public.device_acknowledgements)
+        AS device_acknowledgements_count;
+
+-- Cursor-state integrity across the provider.
+SELECT
+    (
+        SELECT count(*)
+        FROM public.accounts AS a
+        LEFT JOIN public.account_cursor_state AS cs USING (account_id)
+        WHERE cs.account_id IS NULL
+    ) AS accounts_missing_cursor_state,
+    (
+        SELECT count(*)
+        FROM public.account_cursor_state AS cs
+        LEFT JOIN public.accounts AS a USING (account_id)
+        WHERE a.account_id IS NULL
+    ) AS orphan_cursor_state_rows;
+
+-- Fixture-account counters and immutable Device state without returning UUIDs.
+WITH fixture AS (
+    SELECT account_id, device_id, status, next_expected_sequence
+    FROM public.devices
+    WHERE device_id = :'device_id'::uuid
+)
+SELECT
+    (SELECT count(*) FROM public.accounts AS a
+        WHERE a.account_id = f.account_id) AS fixture_accounts_count,
+    (SELECT count(*) FROM public.devices AS d
+        WHERE d.account_id = f.account_id) AS fixture_account_devices_count,
+    (SELECT count(*) FROM public.account_cursor_state AS cs
+        WHERE cs.account_id = f.account_id)
+        AS fixture_account_cursor_state_count,
+    (SELECT count(*) FROM public.submissions AS s
+        WHERE s.account_id = f.account_id) AS fixture_submissions_count,
+    (SELECT count(*) FROM public.sync_events AS se
+        WHERE se.account_id = f.account_id) AS fixture_sync_events_count,
+    (SELECT count(*) FROM public.device_acknowledgements AS da
+        WHERE da.account_id = f.account_id)
+        AS fixture_device_acknowledgements_count,
+    f.status AS fixture_device_status,
+    f.next_expected_sequence AS fixture_device_next_expected_sequence
+FROM fixture AS f;
+
+-- Account cursor/high-water and Device sequence/high-water consistency.
+WITH fixture AS (
+    SELECT account_id, device_id, next_expected_sequence
+    FROM public.devices
+    WHERE device_id = :'device_id'::uuid
+),
+account_water AS (
+    SELECT
+        f.account_id,
+        cs.next_cursor,
+        coalesce(max(se.server_cursor), 0) AS hosted_high_water
+    FROM fixture AS f
+    JOIN public.account_cursor_state AS cs USING (account_id)
+    LEFT JOIN public.sync_events AS se USING (account_id)
+    GROUP BY f.account_id, cs.next_cursor
+),
+device_water AS (
+    SELECT
+        f.account_id,
+        f.device_id,
+        f.next_expected_sequence,
+        coalesce(max(se.device_sequence), 0) AS device_high_water
+    FROM fixture AS f
+    LEFT JOIN public.sync_events AS se
+      ON se.account_id = f.account_id
+     AND se.device_id = f.device_id
+    GROUP BY
+        f.account_id,
+        f.device_id,
+        f.next_expected_sequence
+)
+SELECT
+    aw.next_cursor AS account_next_cursor,
+    aw.hosted_high_water,
+    aw.next_cursor = aw.hosted_high_water + 1
+        AS account_cursor_consistent,
+    dw.next_expected_sequence AS device_next_expected_sequence,
+    dw.device_high_water,
+    dw.next_expected_sequence = dw.device_high_water + 1
+        AS device_sequence_consistent
+FROM account_water AS aw
+JOIN device_water AS dw USING (account_id);
+
+-- Sanitized persisted replay fingerprints. Prefixes support before/after
+-- correlation without returning UUIDs, payloads, stored results, or full
+-- hashes. Counts remain authoritative; any unexpected pre-request row stops
+-- Gate 12.5 reconciliation.
+WITH fixture AS (
+    SELECT account_id, device_id
+    FROM public.devices
+    WHERE device_id = :'device_id'::uuid
+)
+SELECT
+    count(*) AS fixture_submission_count,
+    count(DISTINCT s.request_hash) AS distinct_request_hashes,
+    coalesce(min(left(s.submission_id::text, 8)), '[none]')
+        AS first_submission_fingerprint,
+    coalesce(max(left(s.submission_id::text, 8)), '[none]')
+        AS last_submission_fingerprint,
+    coalesce(min(left(s.request_hash, 12)), '[none]')
+        AS first_request_hash_fingerprint,
+    coalesce(max(left(s.request_hash, 12)), '[none]')
+        AS last_request_hash_fingerprint
+FROM fixture AS f
+LEFT JOIN public.submissions AS s
+  ON s.account_id = f.account_id
+ AND s.device_id = f.device_id
+WHERE s.device_id IS NOT NULL;
+
+WITH fixture AS (
+    SELECT account_id, device_id
+    FROM public.devices
+    WHERE device_id = :'device_id'::uuid
+)
+SELECT
+    count(*) AS fixture_sync_event_count,
+    count(DISTINCT se.content_hash) AS distinct_content_hashes,
+    coalesce(min(left(se.event_id::text, 8)), '[none]')
+        AS first_event_fingerprint,
+    coalesce(max(left(se.event_id::text, 8)), '[none]')
+        AS last_event_fingerprint,
+    coalesce(min(left(se.content_hash, 12)), '[none]')
+        AS first_content_hash_fingerprint,
+    coalesce(max(left(se.content_hash, 12)), '[none]')
+        AS last_content_hash_fingerprint
+FROM fixture AS f
+LEFT JOIN public.sync_events AS se
+  ON se.account_id = f.account_id
+ AND se.device_id = f.device_id
+WHERE se.device_id IS NOT NULL;
+
 ROLLBACK;
 -- END ACTION

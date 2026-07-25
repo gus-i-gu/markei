@@ -8,6 +8,7 @@ param(
         "gate02-preflight",
         "gate02-postflight",
         "verify-device",
+        "provider-baseline",
         "list-devices-sanitized",
         "migration-ledger",
         "runtime-privileges",
@@ -120,6 +121,7 @@ $Actions = @(
     "gate02-preflight",
     "gate02-postflight",
     "verify-device",
+    "provider-baseline",
     "list-devices-sanitized",
     "migration-ledger",
     "runtime-privileges",
@@ -196,8 +198,9 @@ $MigratorOnly = @("gate02-preflight", "gate02-postflight", "apply-migration")
 if ($Action -in $MigratorOnly -and $Role -ne "migrator") {
     throw "Action '$Action' requires -Role migrator."
 }
-if ($Action -eq "verify-device" -and $Role -eq "runtime") {
-    throw "verify-device requires migrator or dbowner inspection access."
+if ($Action -in @("verify-device", "provider-baseline") -and
+    $Role -eq "runtime") {
+    throw "$Action requires migrator or dbowner inspection access."
 }
 
 $ResolvedMigration = $null
@@ -259,7 +262,7 @@ $PsqlVariables = @(
     "-v", "current_migration_id=$CurrentMigrationId",
     "-v", "current_migration_checksum=$CurrentMigrationLedgerChecksum"
 )
-if ($Action -eq "verify-device") {
+if ($Action -in @("verify-device", "provider-baseline")) {
     $DeviceInput = (Read-Host "Device UUID (kept local)").Trim()
     $ParsedDeviceId = [guid]::Empty
     if (-not [guid]::TryParse($DeviceInput, [ref]$ParsedDeviceId)) {
