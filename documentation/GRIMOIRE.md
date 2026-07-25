@@ -21,13 +21,13 @@ target confirmation and mutation authority.
 
 ## 2. Canonical five-file system
 
-| File | Responsibility |
-| --- | --- |
-| `documentation/GRIMOIRE.md` | System architecture, safety policy, usage guidance, and final concise execution index |
-| `documentation/G_SCRIPTS.md` | Canonical expanded `GS-*` procedures and validation sequences |
-| `documentation/NS_COORDINATES.md` | Strict allowlist of public/non-secret coordinates and lifecycle metadata |
-| `documentation/NEON_CHECK.ps1` | Windows-proven launcher: coordinate loading, menus, masked secret input, Docker `psql`, transport enforcement, preflight, and dispatch |
-| `documentation/NEON_ACTION.sql` | SQL-only indexed `NA-*` read-only action catalogue |
+| File                              | Responsibility                                                                                                                         |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `documentation/GRIMOIRE.md`       | System architecture, safety policy, usage guidance, and final concise execution index                                                  |
+| `documentation/G_SCRIPTS.md`      | Canonical expanded `GS-*` procedures and validation sequences                                                                          |
+| `documentation/NS_COORDINATES.md` | Strict allowlist of public/non-secret coordinates and lifecycle metadata                                                               |
+| `documentation/NEON_CHECK.ps1`    | Windows-proven launcher: coordinate loading, menus, masked secret input, Docker `psql`, transport enforcement, preflight, and dispatch |
+| `documentation/NEON_ACTION.sql`   | SQL-only indexed `NA-*` read-only action catalogue                                                                                     |
 
 `NEON_ACTION.sql` remains the canonical singular filename. Historical
 `NEON_ACTIONS.sql` wording does not create another interface.
@@ -40,11 +40,11 @@ the historical evidence; the live tree retains one executable owner.
 
 The three indexes serve different altitudes:
 
-| Index | Meaning |
-| --- | --- |
+| Index   | Meaning                                                   |
+| ------- | --------------------------------------------------------- |
 | `GRM-*` | Human-facing concise invocation block in `GRIMOIRE_INDEX` |
-| `GS-*` | Canonical expanded command/query in `G_SCRIPTS.md` |
-| `NA-*` | SQL-only action block in `NEON_ACTION.sql` |
+| `GS-*`  | Canonical expanded command/query in `G_SCRIPTS.md`        |
+| `NA-*`  | SQL-only action block in `NEON_ACTION.sql`                |
 
 Example:
 
@@ -128,13 +128,13 @@ API contract and migration coordinates
 The terminal requests only values that must not be persisted or that identify
 one exact local operation:
 
-| Runtime input | Acquisition |
-| --- | --- |
-| Neon role | Fixed by command or selected from the guided menu |
-| Neon role password | Masked `Read-Host -AsSecureString` prompt |
-| Device UUID | Local prompt only for `verify-device` or `provider-baseline` |
-| Migration authorization | Exact `APPLY-ONCE` phrase after dashboard target confirmation |
-| Auth0 access token | Session-only masked prompt in `GRM-AUTH-02`; obtain only a fresh user token for the configured audience |
+| Runtime input           | Acquisition                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------------- |
+| Neon role               | Fixed by command or selected from the guided menu                                                       |
+| Neon role password      | Masked `Read-Host -AsSecureString` prompt                                                               |
+| Device UUID             | Local prompt only for `verify-device` or `provider-baseline`                                            |
+| Migration authorization | Exact `APPLY-ONCE` phrase after dashboard target confirmation                                           |
+| Auth0 access token      | Session-only masked prompt in `GRM-AUTH-02`; obtain only a fresh user token for the configured audience |
 
 The launcher temporarily exposes a role password to the Docker child through
 `PGPASSWORD`, removes the container after the command, zeroes the BSTR, and
@@ -163,11 +163,11 @@ Neon before any mutation.
 
 ## 8. Role boundaries
 
-| Role | Routine purpose | Must not become |
-| --- | --- | --- |
-| `runtime` | Hosted API identity and least-privilege checks | Migration identity |
-| `migrator` | Migrations, ledger, catalogue, and provider inspection | Render runtime identity |
-| `dbowner` | Explicit owner-only recovery | Default operational role |
+| Role       | Routine purpose                                        | Must not become          |
+| ---------- | ------------------------------------------------------ | ------------------------ |
+| `runtime`  | Hosted API identity and least-privilege checks         | Migration identity       |
+| `migrator` | Migrations, ledger, catalogue, and provider inspection | Render runtime identity  |
+| `dbowner`  | Explicit owner-only recovery                           | Default operational role |
 
 Gate 02 and migration actions are locked to `migrator`.
 
@@ -234,21 +234,25 @@ migration 007 must not be reapplied.
 
 ## 12. Failure classifications
 
-| Failure | Meaning / next move |
-| --- | --- |
-| Docker unavailable | Start Docker Desktop; no provider call occurred |
-| Coordinate placeholder remains | Verify and fill only that non-secret value |
-| Authentication rejected | Confirm selected role and current rotated password |
-| Role/database mismatch | Stop; target coordinate or credential is wrong |
-| TLS/channel binding mismatch | Stop; do not open a shell or mutate |
-| PostgreSQL version mismatch | Stop; launcher proof is pinned to major 18 |
-| Migration dirty/untracked | Restore an exact committed migration |
-| Migration reports an error | Do not retry; inspect ledger/postflight read-only |
-| Neon branch uncertainty | Stop and verify the dashboard branch |
-| Render origin/branch mismatch | Stop before deployment or Sync |
-| Auth0 metadata mismatch | Stop before using a token |
-| Auth0 binding mismatch | Stop before Sync; do not retry automatically or change provider state |
-| Health response mismatch | Stop before authenticated requests |
+| Failure                        | Meaning / next move                                                    |
+| ------------------------------ | ---------------------------------------------------------------------- |
+| Docker unavailable             | Start Docker Desktop; no provider call occurred                        |
+| Coordinate placeholder remains | Verify and fill only that non-secret value                             |
+| Authentication rejected        | Confirm selected role and current rotated password                     |
+| Role/database mismatch         | Stop; target coordinate or credential is wrong                         |
+| TLS/channel binding mismatch   | Stop; do not open a shell or mutate                                    |
+| PostgreSQL version mismatch    | Stop; launcher proof is pinned to major 18                             |
+| Migration dirty/untracked      | Restore an exact committed migration                                   |
+| Migration reports an error     | Do not retry; inspect ledger/postflight read-only                      |
+| Neon branch uncertainty        | Stop and verify the dashboard branch                                   |
+| Render origin/branch mismatch  | Stop before deployment or Sync                                         |
+| Auth0 metadata mismatch        | Stop before using a token                                              |
+| Auth0 binding mismatch         | Stop before Sync; do not retry automatically or change provider state  |
+| Health response mismatch       | Stop before authenticated requests                                     |
+| SQLite CLI unavailable         | Install `SQLite.SQLite`, open fresh PowerShell, rerun CLI verification |
+| Multiple local databases       | Stop; do not guess which database represents the observed client       |
+| SQLite WAL/SHM sidecar present | Keep Markei closed; do not create a potentially incomplete raw copy    |
+| Copied-database check fails    | Stop; do not query the live database or perform recovery               |
 
 ## 13. Maintenance and validation rule
 
@@ -677,42 +681,49 @@ Any mismatch leaves Gate 12.5 open and keeps Sync unauthorized.
 
 #### Copy-paste-ready body
 
-```powershell
-$Ns = Get-Content ".\documentation\NS_COORDINATES.md" -Raw
-$Match = [regex]::Match($Ns, "(?m)^RepositoryBranch:\s*(.+?)\s*$")
-if (-not $Match.Success -or $Match.Groups[1].Value.Trim() -match '^<') {
-    throw "RepositoryBranch is missing or unresolved."
+````powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
 }
-$Branch = $Match.Groups[1].Value.Trim()
-if ((git branch --show-current) -ne $Branch) {
-    throw "Current branch does not match NS_COORDINATES.md."
+Set-Location -LiteralPath $RepositoryRoot
+
+$ProcedureId = "GS-GIT-01"
+$CataloguePath = Join-Path $RepositoryRoot "documentation\G_SCRIPTS.md"
+$Catalogue = Get-Content -LiteralPath $CataloguePath -Raw
+$HeadingPattern = '(?ms)^### `' +
+    [regex]::Escape($ProcedureId) +
+    '`[^\r\n]*\r?\n(?<Section>.*?)(?=^### `GS-|\z)'
+$SectionMatch = [regex]::Match($Catalogue, $HeadingPattern)
+if (-not $SectionMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' was not found."
 }
-if (@(git status --porcelain).Count -ne 0) {
-    throw "Working tree is not clean."
+$FencePattern =
+    '(?ms)^```powershell[ \t]*\r?\n(?<Code>.*?)^```[ \t]*\r?$'
+$FenceMatch = [regex]::Match(
+    $SectionMatch.Groups["Section"].Value,
+    $FencePattern
+)
+if (-not $FenceMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' has no PowerShell body."
 }
-git fetch --prune origin
-if ($LASTEXITCODE -ne 0) { throw "git fetch failed." }
-$Local = (git rev-parse HEAD).Trim()
-$Remote = (git rev-parse "origin/$Branch").Trim()
-$Counts = ((git rev-list --left-right --count `
-    "origin/$Branch...HEAD").Trim() -split '\s+')
-if ($Local -ne $Remote -or $Counts[0] -ne "0" -or $Counts[1] -ne "0") {
-    throw "Local and remote branch state diverged."
+
+try {
+    & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
 }
-[pscustomobject]@{
-    Branch = $Branch
-    LocalHead = $Local
-    RemoteHead = $Remote
-    Behind = [int]$Counts[0]
-    Ahead = [int]$Counts[1]
-    Worktree = "clean"
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
 }
-```
+````
 
 #### What this does
 
-Loads the expected branch from the coordinate file, requires a clean
-worktree, fetches `origin`, and compares full local/remote SHAs and divergence.
+Loads the canonical `GS-GIT-01` body, resolves the repository from any
+directory inside it, loads the expected branch from the coordinate file,
+requires a clean worktree, fetches `origin`, and compares full local/remote
+SHAs plus whitespace-normalized divergence. It returns the terminal to the
+repository root.
 
 #### Variables required
 
@@ -722,6 +733,266 @@ No manual variable; network access to `origin`.
 
 Expected branch, identical full SHAs, `Behind=0`, `Ahead=0`, and
 `Worktree=clean`; otherwise a stop error.
+
+### `GRM-GIT-02` — Fast-forward pull and verify exact Git alignment
+
+#### 01 — Canonical command/query
+
+- Canonical procedure: `G_SCRIPTS.md` → `GS-GIT-02`
+- Hosting path: `documentation/G_SCRIPTS.md`
+- Coordinate source: `documentation/NS_COORDINATES.md`
+
+#### Copy-paste-ready body
+
+````powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+Set-Location -LiteralPath $RepositoryRoot
+
+$ProcedureId = "GS-GIT-02"
+$CataloguePath = Join-Path $RepositoryRoot "documentation\G_SCRIPTS.md"
+$Catalogue = Get-Content -LiteralPath $CataloguePath -Raw
+$HeadingPattern = '(?ms)^### `' +
+    [regex]::Escape($ProcedureId) +
+    '`[^\r\n]*\r?\n(?<Section>.*?)(?=^### `GS-|\z)'
+$SectionMatch = [regex]::Match($Catalogue, $HeadingPattern)
+if (-not $SectionMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' was not found."
+}
+$FencePattern =
+    '(?ms)^```powershell[ \t]*\r?\n(?<Code>.*?)^```[ \t]*\r?$'
+$FenceMatch = [regex]::Match(
+    $SectionMatch.Groups["Section"].Value,
+    $FencePattern
+)
+if (-not $FenceMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' has no PowerShell body."
+}
+
+try {
+    & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+````
+
+#### What this does
+
+Loads `GS-GIT-02`, resolves the repository root, requires the configured
+branch and a clean worktree, fetches `origin`, performs only
+`git pull --ff-only`, verifies exact SHA/divergence alignment, and leaves the
+terminal at the repository root.
+
+#### Variables required
+
+No manual variable; network access to `origin`.
+
+#### Expected output or result
+
+Expected branch, identical full local/remote SHAs, `Behind=0`, `Ahead=0`,
+`Worktree=clean`, and `PullMode=ff-only`.
+
+### `GRM-SQLITE-01` — Verify the local SQLite CLI
+
+#### 01 — Canonical command/query
+
+- Canonical procedure: `G_SCRIPTS.md` → `GS-SQLITE-01`
+- Hosting path: `documentation/G_SCRIPTS.md`
+- Runtime host: Windows PowerShell
+
+#### Copy-paste-ready body
+
+````powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+Set-Location -LiteralPath $RepositoryRoot
+
+$ProcedureId = "GS-SQLITE-01"
+$CataloguePath = Join-Path $RepositoryRoot "documentation\G_SCRIPTS.md"
+$Catalogue = Get-Content -LiteralPath $CataloguePath -Raw
+$HeadingPattern = '(?ms)^### `' +
+    [regex]::Escape($ProcedureId) +
+    '`[^\r\n]*\r?\n(?<Section>.*?)(?=^### `GS-|\z)'
+$SectionMatch = [regex]::Match($Catalogue, $HeadingPattern)
+if (-not $SectionMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' was not found."
+}
+$FencePattern =
+    '(?ms)^```powershell[ \t]*\r?\n(?<Code>.*?)^```[ \t]*\r?$'
+$FenceMatch = [regex]::Match(
+    $SectionMatch.Groups["Section"].Value,
+    $FencePattern
+)
+if (-not $FenceMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' has no PowerShell body."
+}
+
+try {
+    & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+````
+
+#### What this does
+
+Checks `PATH`, WinGet's portable link, and the installed
+`SQLite.SQLite` package directory for `sqlite3.exe`, verifies that the selected
+binary returns a version, prints no executable path, and returns to the
+repository root.
+
+Finding `markei_shared_beta.sqlite` does not satisfy this check: that file is
+the database, while `sqlite3.exe` is the separate program used to inspect it.
+
+#### Variables required
+
+No manual variable. If the command reports the CLI unavailable, run the exact
+WinGet installation command printed by the procedure, open a fresh PowerShell
+terminal, and run `GRM-SQLITE-01` again.
+
+#### Expected output or result
+
+`SQLiteAvailable=True`, a discovery class and version,
+`InstallRequired=False`, and the repository root as terminal location.
+
+### `GRM-SQLITE-02` — Create the verified Gate 12.6 database copy
+
+#### 01 — Canonical command/query
+
+- Canonical procedure: `G_SCRIPTS.md` → `GS-SQLITE-02`
+- Hosting path: `documentation/G_SCRIPTS.md`
+- Data boundary: copied Windows application database only
+
+#### Copy-paste-ready body
+
+````powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+Set-Location -LiteralPath $RepositoryRoot
+
+$ProcedureId = "GS-SQLITE-02"
+$CataloguePath = Join-Path $RepositoryRoot "documentation\G_SCRIPTS.md"
+$Catalogue = Get-Content -LiteralPath $CataloguePath -Raw
+$HeadingPattern = '(?ms)^### `' +
+    [regex]::Escape($ProcedureId) +
+    '`[^\r\n]*\r?\n(?<Section>.*?)(?=^### `GS-|\z)'
+$SectionMatch = [regex]::Match($Catalogue, $HeadingPattern)
+if (-not $SectionMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' was not found."
+}
+$FencePattern =
+    '(?ms)^```powershell[ \t]*\r?\n(?<Code>.*?)^```[ \t]*\r?$'
+$FenceMatch = [regex]::Match(
+    $SectionMatch.Groups["Section"].Value,
+    $FencePattern
+)
+if (-not $FenceMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' has no PowerShell body."
+}
+
+try {
+    & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+````
+
+#### What this does
+
+Fails closed if Markei/Flutter/Dart is active or a SQLite sidecar remains,
+finds exactly one Markei database without printing its path, creates a
+fixed-name temporary copy, verifies size and SHA-256 equality without printing
+either hash, and returns to the repository root. It does not query the live
+database.
+
+#### Variables required
+
+No manual variable. Close Markei normally and stop its attached `flutter run`
+terminal before executing. `GRM-SQLITE-01` must already pass.
+
+#### Expected output or result
+
+One database candidate, no sidecars, `CopyCreated=True`,
+`SizeMatches=True`, `HashMatches=True`, `LiveDatabaseQueried=False`, and
+`ProbeDirectoryName=markei-gate-12-6-current`.
+
+### `GRM-SQLITE-03` — Run the sanitized Gate 12.6 classification probe
+
+#### 01 — Canonical command/query
+
+- Canonical procedure: `G_SCRIPTS.md` → `GS-SQLITE-03`
+- Hosting path: `documentation/G_SCRIPTS.md`
+- Data boundary: the verified copy created by `GRM-SQLITE-02`
+
+#### Copy-paste-ready body
+
+````powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+Set-Location -LiteralPath $RepositoryRoot
+
+$ProcedureId = "GS-SQLITE-03"
+$CataloguePath = Join-Path $RepositoryRoot "documentation\G_SCRIPTS.md"
+$Catalogue = Get-Content -LiteralPath $CataloguePath -Raw
+$HeadingPattern = '(?ms)^### `' +
+    [regex]::Escape($ProcedureId) +
+    '`[^\r\n]*\r?\n(?<Section>.*?)(?=^### `GS-|\z)'
+$SectionMatch = [regex]::Match($Catalogue, $HeadingPattern)
+if (-not $SectionMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' was not found."
+}
+$FencePattern =
+    '(?ms)^```powershell[ \t]*\r?\n(?<Code>.*?)^```[ \t]*\r?$'
+$FenceMatch = [regex]::Match(
+    $SectionMatch.Groups["Section"].Value,
+    $FencePattern
+)
+if (-not $FenceMatch.Success) {
+    throw "Canonical procedure '$ProcedureId' has no PowerShell body."
+}
+
+try {
+    & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+````
+
+#### What this does
+
+Opens only the verified temporary copy with SQLite `-readonly`, enables
+`query_only`, requires `quick_check=ok`, verifies the six required tables, and
+prints only sanitized submission classes, membership/sequence summaries,
+queue states, and recent attempt classifications. It performs no Retry, Sync,
+provider operation, database repair, or live-database query.
+
+#### Variables required
+
+No manual variable. `GRM-SQLITE-01` and `GRM-SQLITE-02` must have passed in
+that order, and Markei must remain closed.
+
+#### Expected output or result
+
+`PROBE_0` through `PROBE_5`, `SQLiteQuickCheck=ok`,
+`LiveDatabaseQueried=False`, `RetrySelected=False`, `SyncSelected=False`, and
+`ProviderActionPerformed=False`. Preserve the copy until Main interprets the
+sanitized output and explicitly authorizes cleanup.
 
 ### `GRM-HOST-01` — Verify Render live and ready
 
@@ -733,7 +1004,7 @@ Expected branch, identical full SHAs, `Behind=0`, `Ahead=0`, and
 
 #### Copy-paste-ready body
 
-```powershell
+````powershell
 $ProcedureId = "GS-HOST-01"
 $CataloguePath = Resolve-Path ".\documentation\G_SCRIPTS.md"
 $Catalogue = Get-Content -LiteralPath $CataloguePath -Raw
@@ -759,7 +1030,7 @@ if (-not $FenceMatch.Success) {
 }
 
 & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
-```
+````
 
 #### What this does
 
@@ -854,7 +1125,7 @@ one matching signing key. This does not prove a real token was issued.
 
 #### Copy-paste-ready body
 
-```powershell
+````powershell
 $ProcedureId = "GS-AUTH-02"
 $CataloguePath = Resolve-Path ".\documentation\G_SCRIPTS.md"
 $Catalogue = Get-Content -LiteralPath $CataloguePath -Raw
@@ -880,7 +1151,7 @@ if (-not $FenceMatch.Success) {
 }
 
 & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
-```
+````
 
 #### What this does
 

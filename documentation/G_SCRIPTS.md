@@ -24,12 +24,15 @@ documentation/NEON_CHECK.ps1
 documentation/NEON_ACTION.sql
 ```
 
-Run PowerShell commands from the repository root. `G_SCRIPTS.md` remains a
-Markdown catalogue; it is not renamed to `.ps1` and is not passed directly to
-PowerShell's `-File` parameter. A `GRIMOIRE_INDEX` block may load one exact
-reviewed `GS-*` heading and execute its fenced PowerShell body. When no indexed
-loader is provided, copy only a complete fenced code body. Do not replace
-values already supplied by `NS_COORDINATES.md`.
+Unless a procedure states otherwise, run PowerShell commands from anywhere
+inside the repository. Active self-navigating procedures resolve the repository
+root, enter the required package or data location, and return the terminal to
+the repository root in `finally`. `G_SCRIPTS.md` remains a Markdown catalogue;
+it is not renamed to `.ps1` and is not passed directly to PowerShell's `-File`
+parameter. A `GRIMOIRE_INDEX` block may load one exact reviewed `GS-*` heading
+and execute its fenced PowerShell body. When no indexed loader is provided,
+copy only a complete fenced code body. Do not replace values already supplied
+by `NS_COORDINATES.md`.
 
 The canonical Neon launcher form is process-scoped and does not permanently
 alter PowerShell execution policy:
@@ -244,68 +247,656 @@ the accepted 12.5a–c evidence.
 ### `GS-GIT-01` — Verify exact branch/remote alignment
 
 This procedure reads `RepositoryBranch` from `NS_COORDINATES.md`, requires a
-clean worktree, and stops on branch or SHA divergence.
+clean worktree, stops on branch or SHA divergence, and returns the terminal to
+the repository root. The divergence result is split on arbitrary whitespace so
+PowerShell cannot mistake Git's tab-separated `0 0` result for divergence.
 
 ```powershell
-$NsPath = Resolve-Path ".\documentation\NS_COORDINATES.md"
-$NsText = Get-Content -LiteralPath $NsPath -Raw
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
 
-function Get-NsCoordinate {
-    param([Parameter(Mandatory)] [string]$Name)
-    $Match = [regex]::Match(
-        $NsText,
-        "(?m)^$([regex]::Escape($Name)):\s*(.+?)\s*$"
-    )
-    if (-not $Match.Success) {
-        throw "Missing '$Name' in $NsPath."
-    }
-    $Value = $Match.Groups[1].Value.Trim()
-    if ($Value -match '^<[^>]+>$') {
-        throw "Replace the '$Name' placeholder in $NsPath."
-    }
-    return $Value
-}
-
-$ExpectedBranch = Get-NsCoordinate "RepositoryBranch"
-$CurrentBranch = (& git branch --show-current).Trim()
-if ($LASTEXITCODE -ne 0 -or $CurrentBranch -ne $ExpectedBranch) {
-    throw "Expected branch '$ExpectedBranch'; found '$CurrentBranch'."
-}
-
-$Dirty = @(& git status --porcelain)
-if ($LASTEXITCODE -ne 0 -or $Dirty.Count -ne 0) {
-    throw "Working tree is not clean."
-}
-
-& git fetch --prune origin
-if ($LASTEXITCODE -ne 0) {
-    throw "git fetch failed."
-}
-
-$LocalSha = (& git rev-parse HEAD).Trim()
-$RemoteSha = (& git rev-parse "origin/$ExpectedBranch").Trim()
-$Divergence = ((& git rev-list --left-right --count `
-    "origin/$ExpectedBranch...HEAD").Trim() -split '\s+')
-
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
 if ($LASTEXITCODE -ne 0 -or
-    $Divergence.Count -ne 2 -or
-    $Divergence[0] -ne "0" -or
-    $Divergence[1] -ne "0" -or
-    $LocalSha -ne $RemoteSha) {
-    throw "Local and remote branch state diverged."
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
 }
 
-[pscustomobject]@{
-    Branch = $CurrentBranch
-    LocalHead = $LocalSha
-    RemoteHead = $RemoteSha
-    Behind = [int]$Divergence[0]
-    Ahead = [int]$Divergence[1]
-    Worktree = "clean"
+try {
+    Set-Location -LiteralPath $RepositoryRoot
+    $NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
+    $NsText = Get-Content -LiteralPath $NsPath -Raw
+
+    function Get-NsCoordinate {
+        param([Parameter(Mandatory)] [string]$Name)
+        $Matches = [regex]::Matches(
+            $NsText,
+            "(?m)^$([regex]::Escape($Name)):\s*(.*?)\s*$"
+        )
+        if ($Matches.Count -ne 1) {
+            throw "Expected exactly one '$Name' coordinate in $NsPath."
+        }
+        $Value = $Matches[0].Groups[1].Value.Trim()
+        if ([string]::IsNullOrWhiteSpace($Value) -or
+            $Value -match '^<[^>]+>$') {
+            throw "Replace the '$Name' placeholder in $NsPath."
+        }
+        return $Value
+    }
+
+    $ExpectedBranch = Get-NsCoordinate "RepositoryBranch"
+    $CurrentBranch = (& git branch --show-current).Trim()
+    if ($LASTEXITCODE -ne 0 -or $CurrentBranch -ne $ExpectedBranch) {
+        throw "Expected branch '$ExpectedBranch'; found '$CurrentBranch'."
+    }
+
+    $Dirty = @(& git status --porcelain)
+    if ($LASTEXITCODE -ne 0 -or $Dirty.Count -ne 0) {
+        throw "Working tree is not clean."
+    }
+
+    & git fetch --prune origin
+    if ($LASTEXITCODE -ne 0) {
+        throw "git fetch failed."
+    }
+
+    $LocalSha = (& git rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0) { throw "Could not read local HEAD." }
+    $RemoteSha = (& git rev-parse "origin/$ExpectedBranch").Trim()
+    if ($LASTEXITCODE -ne 0) { throw "Could not read remote HEAD." }
+    $DivergenceRaw = (& git rev-list --left-right --count `
+        "origin/$ExpectedBranch...HEAD").Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not calculate branch divergence."
+    }
+    $Divergence = @($DivergenceRaw -split '\s+')
+
+    if ($Divergence.Count -ne 2 -or
+        $Divergence[0] -ne "0" -or
+        $Divergence[1] -ne "0" -or
+        $LocalSha -ne $RemoteSha) {
+        throw "Local and remote branch state diverged."
+    }
+
+    [pscustomobject]@{
+        Branch = $CurrentBranch
+        LocalHead = $LocalSha
+        RemoteHead = $RemoteSha
+        Behind = [int]$Divergence[0]
+        Ahead = [int]$Divergence[1]
+        Worktree = "clean"
+    }
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
 }
 ```
 
-## 3. Render public health
+### `GS-GIT-02` — Fast-forward pull and verify exact alignment
+
+This procedure reads `RepositoryBranch` from `NS_COORDINATES.md`, requires the
+correct branch and a clean worktree, fetches `origin`, performs only a
+fast-forward pull, and then applies the same exact SHA and whitespace-safe
+divergence checks as `GS-GIT-01`.
+
+```powershell
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+try {
+    Set-Location -LiteralPath $RepositoryRoot
+    $NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
+    $NsText = Get-Content -LiteralPath $NsPath -Raw
+    $BranchMatches = [regex]::Matches(
+        $NsText,
+        "(?m)^RepositoryBranch:\s*(.*?)\s*$"
+    )
+    if ($BranchMatches.Count -ne 1) {
+        throw "Expected exactly one RepositoryBranch coordinate."
+    }
+    $ExpectedBranch = $BranchMatches[0].Groups[1].Value.Trim()
+    if ([string]::IsNullOrWhiteSpace($ExpectedBranch) -or
+        $ExpectedBranch -match '^<[^>]+>$') {
+        throw "Replace the RepositoryBranch placeholder."
+    }
+
+    $CurrentBranch = (& git branch --show-current).Trim()
+    if ($LASTEXITCODE -ne 0 -or $CurrentBranch -ne $ExpectedBranch) {
+        throw "Expected branch '$ExpectedBranch'; found '$CurrentBranch'."
+    }
+    $Dirty = @(& git status --porcelain)
+    if ($LASTEXITCODE -ne 0 -or $Dirty.Count -ne 0) {
+        throw "Working tree is not clean."
+    }
+
+    & git fetch --prune origin
+    if ($LASTEXITCODE -ne 0) { throw "git fetch failed." }
+    & git pull --ff-only origin $ExpectedBranch
+    if ($LASTEXITCODE -ne 0) { throw "Fast-forward pull failed." }
+
+    $LocalSha = (& git rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0) { throw "Could not read local HEAD." }
+    $RemoteSha = (& git rev-parse "origin/$ExpectedBranch").Trim()
+    if ($LASTEXITCODE -ne 0) { throw "Could not read remote HEAD." }
+    $DivergenceRaw = (& git rev-list --left-right --count `
+        "origin/$ExpectedBranch...HEAD").Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not calculate branch divergence."
+    }
+    $Divergence = @($DivergenceRaw -split '\s+')
+
+    if ($Divergence.Count -ne 2 -or
+        $Divergence[0] -ne "0" -or
+        $Divergence[1] -ne "0" -or
+        $LocalSha -ne $RemoteSha) {
+        throw "Pull completed but exact alignment did not pass."
+    }
+
+    [pscustomobject]@{
+        Branch = $CurrentBranch
+        LocalHead = $LocalSha
+        RemoteHead = $RemoteSha
+        Behind = [int]$Divergence[0]
+        Ahead = [int]$Divergence[1]
+        Worktree = "clean"
+        PullMode = "ff-only"
+    }
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+```
+
+## 3. Local SQLite diagnostics
+
+These procedures operate only on the Windows application database used by the
+Flutter client. The database file and the SQLite command-line program are
+different objects: finding `markei_shared_beta.sqlite` does not prove that
+`sqlite3.exe` is installed or discoverable.
+
+The diagnostic sequence is:
+
+```text
+GS-SQLITE-01
+→ GS-SQLITE-02
+→ GS-SQLITE-03
+```
+
+Keep Markei closed throughout `GS-SQLITE-02` and `GS-SQLITE-03`. These
+procedures never press Enroll, Query, Retry, or Sync and never contact Auth0,
+Render, or Neon.
+
+### `GS-SQLITE-01` — Verify the SQLite CLI
+
+This procedure searches `PATH`, WinGet's portable-command link, and the local
+WinGet package directory. It prints no executable path. If the CLI is absent,
+install package `SQLite.SQLite`, open a fresh PowerShell terminal, and rerun
+this procedure.
+
+```powershell
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+try {
+    Set-Location -LiteralPath $RepositoryRoot
+
+    function Resolve-MarkeiSqliteCli {
+        $PathCommand = Get-Command sqlite3.exe `
+            -CommandType Application `
+            -ErrorAction SilentlyContinue
+        if ($null -ne $PathCommand) {
+            return [pscustomobject]@{
+                Source = $PathCommand.Source
+                Discovery = "PATH"
+            }
+        }
+
+        $Candidates = @()
+        if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+            $WinGetLink = Join-Path $env:LOCALAPPDATA `
+                "Microsoft\WinGet\Links\sqlite3.exe"
+            if (Test-Path -LiteralPath $WinGetLink -PathType Leaf) {
+                $Candidates += Get-Item -LiteralPath $WinGetLink
+            }
+
+            $PackageRoot = Join-Path $env:LOCALAPPDATA `
+                "Microsoft\WinGet\Packages"
+            if (Test-Path -LiteralPath $PackageRoot -PathType Container) {
+                $Candidates += Get-ChildItem `
+                    -LiteralPath $PackageRoot `
+                    -Directory `
+                    -Filter "SQLite.SQLite_*" `
+                    -ErrorAction SilentlyContinue |
+                    ForEach-Object {
+                        Get-ChildItem `
+                            -LiteralPath $_.FullName `
+                            -Filter "sqlite3.exe" `
+                            -File `
+                            -Recurse `
+                            -ErrorAction SilentlyContinue
+                    }
+            }
+        }
+
+        $Selected = @(
+            $Candidates |
+                Sort-Object LastWriteTime -Descending |
+                Select-Object -First 1
+        )
+        if ($Selected.Count -ne 1) {
+            throw @"
+sqlite3.exe is unavailable.
+Install it with:
+winget install --exact --id SQLite.SQLite --accept-package-agreements --accept-source-agreements
+Then open a fresh PowerShell terminal and rerun GS-SQLITE-01.
+"@
+        }
+        return [pscustomobject]@{
+            Source = $Selected[0].FullName
+            Discovery = "WinGet"
+        }
+    }
+
+    $Sqlite = Resolve-MarkeiSqliteCli
+    $VersionOutput = (& $Sqlite.Source --version 2>&1 | Out-String).Trim()
+    if ($LASTEXITCODE -ne 0 -or
+        [string]::IsNullOrWhiteSpace($VersionOutput)) {
+        throw "sqlite3.exe did not return a version."
+    }
+
+    [pscustomobject]@{
+        SQLiteAvailable = $true
+        Discovery = $Sqlite.Discovery
+        Version = ($VersionOutput -split '\s+')[0]
+        InstallRequired = $false
+        TerminalLocation = $RepositoryRoot
+    }
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+```
+
+### `GS-SQLITE-02` — Create and verify the Gate 12.6 copy
+
+This procedure fails if a Markei/Flutter/Dart process or SQLite sidecar is
+present, requires exactly one `markei_shared_beta.sqlite` below the current
+user's application-data roots, and creates one hash-verified copy in a fixed
+temporary probe directory. It does not open or query the live database and
+prints neither its private path nor either SHA-256 value.
+
+```powershell
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+try {
+    Set-Location -LiteralPath $RepositoryRoot
+
+    $ActiveProcesses = @(
+        Get-Process -ErrorAction SilentlyContinue |
+            Where-Object {
+                $_.ProcessName -in @(
+                    "markei",
+                    "markei_flutter",
+                    "flutter",
+                    "dart"
+                )
+            }
+    )
+    if ($ActiveProcesses.Count -ne 0) {
+        $ActiveProcesses |
+            Select-Object ProcessName, Id |
+            Format-Table -AutoSize
+        throw "Close Markei and its Flutter run terminal before copying."
+    }
+
+    $SearchRoots = @(
+        $env:APPDATA
+        $env:LOCALAPPDATA
+    ) |
+        Where-Object {
+            -not [string]::IsNullOrWhiteSpace($_) -and
+            (Test-Path -LiteralPath $_ -PathType Container)
+        } |
+        Select-Object -Unique
+    if ($SearchRoots.Count -eq 0) {
+        throw "No Windows application-data search roots are available."
+    }
+
+    $DatabaseCandidates = @(
+        foreach ($Root in $SearchRoots) {
+            Get-ChildItem `
+                -LiteralPath $Root `
+                -Filter "markei_shared_beta.sqlite" `
+                -File `
+                -Recurse `
+                -ErrorAction SilentlyContinue
+        }
+    ) |
+        Sort-Object FullName -Unique
+    $DatabaseCandidates = @($DatabaseCandidates)
+
+    if ($DatabaseCandidates.Count -ne 1) {
+        [pscustomobject]@{
+            DatabaseCandidateCount = $DatabaseCandidates.Count
+        }
+        throw "Expected exactly one Markei database; do not guess."
+    }
+
+    $LiveDatabase = $DatabaseCandidates[0].FullName
+    $Sidecars = @(
+        "$LiveDatabase-wal"
+        "$LiveDatabase-shm"
+    ) | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf }
+    if ($Sidecars.Count -ne 0) {
+        throw "A SQLite WAL/SHM sidecar remains. Keep Markei closed and stop."
+    }
+
+    $ProbeDirectory = Join-Path `
+        ([System.IO.Path]::GetTempPath()) `
+        "markei-gate-12-6-current"
+    if (Test-Path -LiteralPath $ProbeDirectory) {
+        throw @"
+The current Gate 12.6 probe directory already exists.
+Do not overwrite it. Preserve it for interpretation or remove it only after
+explicit cleanup authorization, then rerun GS-SQLITE-02.
+"@
+    }
+    New-Item `
+        -ItemType Directory `
+        -Path $ProbeDirectory `
+        -ErrorAction Stop |
+        Out-Null
+
+    $CopiedDatabase = Join-Path `
+        $ProbeDirectory `
+        "markei_gate_12_6_copy.sqlite"
+    Copy-Item `
+        -LiteralPath $LiveDatabase `
+        -Destination $CopiedDatabase `
+        -ErrorAction Stop
+
+    $SourceInfo = Get-Item -LiteralPath $LiveDatabase
+    $CopyInfo = Get-Item -LiteralPath $CopiedDatabase
+    $SourceHash = (
+        Get-FileHash -LiteralPath $LiveDatabase -Algorithm SHA256
+    ).Hash
+    $CopyHash = (
+        Get-FileHash -LiteralPath $CopiedDatabase -Algorithm SHA256
+    ).Hash
+    $SizeMatches = $SourceInfo.Length -eq $CopyInfo.Length
+    $HashMatches = $SourceHash -eq $CopyHash
+    if (-not $SizeMatches -or -not $HashMatches) {
+        throw "Database-copy verification failed."
+    }
+
+    [pscustomobject]@{
+        MarkeiClosed = $true
+        DatabaseCandidateCount = 1
+        DatabaseName = $DatabaseCandidates[0].Name
+        DatabaseSizeBytes = $DatabaseCandidates[0].Length
+        DatabaseModified = $DatabaseCandidates[0].LastWriteTime
+        SidecarCount = 0
+        CopyCreated = $true
+        SizeMatches = $SizeMatches
+        HashMatches = $HashMatches
+        HashValuesPrinted = $false
+        LiveDatabaseQueried = $false
+        ProbeDirectoryName = Split-Path $ProbeDirectory -Leaf
+        TerminalLocation = $RepositoryRoot
+    }
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+```
+
+### `GS-SQLITE-03` — Run the sanitized Gate 12.6 probe
+
+This procedure opens only the fixed copied database created by
+`GS-SQLITE-02`, uses both SQLite `-readonly` and `PRAGMA query_only = ON`,
+checks integrity and required schema, then reports sanitized state,
+classification, membership, sequence, and recent-attempt fields. It never
+selects identifiers, payloads, complete hashes, product/purchase content,
+provider configuration, tokens, URLs, or private paths.
+
+```powershell
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+try {
+    Set-Location -LiteralPath $RepositoryRoot
+
+    function Resolve-MarkeiSqliteCli {
+        $PathCommand = Get-Command sqlite3.exe `
+            -CommandType Application `
+            -ErrorAction SilentlyContinue
+        if ($null -ne $PathCommand) {
+            return $PathCommand.Source
+        }
+
+        $Candidates = @()
+        if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+            $WinGetLink = Join-Path $env:LOCALAPPDATA `
+                "Microsoft\WinGet\Links\sqlite3.exe"
+            if (Test-Path -LiteralPath $WinGetLink -PathType Leaf) {
+                $Candidates += Get-Item -LiteralPath $WinGetLink
+            }
+            $PackageRoot = Join-Path $env:LOCALAPPDATA `
+                "Microsoft\WinGet\Packages"
+            if (Test-Path -LiteralPath $PackageRoot -PathType Container) {
+                $Candidates += Get-ChildItem `
+                    -LiteralPath $PackageRoot `
+                    -Directory `
+                    -Filter "SQLite.SQLite_*" `
+                    -ErrorAction SilentlyContinue |
+                    ForEach-Object {
+                        Get-ChildItem `
+                            -LiteralPath $_.FullName `
+                            -Filter "sqlite3.exe" `
+                            -File `
+                            -Recurse `
+                            -ErrorAction SilentlyContinue
+                    }
+            }
+        }
+        $Selected = @(
+            $Candidates |
+                Sort-Object LastWriteTime -Descending |
+                Select-Object -First 1
+        )
+        if ($Selected.Count -ne 1) {
+            throw "sqlite3.exe is unavailable. Run GS-SQLITE-01."
+        }
+        return $Selected[0].FullName
+    }
+
+    $SqliteCli = Resolve-MarkeiSqliteCli
+    $ProbeDirectory = Join-Path `
+        ([System.IO.Path]::GetTempPath()) `
+        "markei-gate-12-6-current"
+    $CopiedDatabase = Join-Path `
+        $ProbeDirectory `
+        "markei_gate_12_6_copy.sqlite"
+    if (-not (Test-Path -LiteralPath $CopiedDatabase -PathType Leaf)) {
+        throw "Verified Gate 12.6 copy not found. Run GS-SQLITE-02."
+    }
+
+    $QuickCheck = (
+        & $SqliteCli -readonly $CopiedDatabase "PRAGMA quick_check;" 2>&1 |
+            Out-String
+    ).Trim()
+    if ($LASTEXITCODE -ne 0 -or $QuickCheck -ne "ok") {
+        throw "Copied-database quick_check did not return exactly 'ok'."
+    }
+
+    $ProbeSql = @'
+.bail on
+.headers on
+.mode column
+.nullvalue [null]
+PRAGMA query_only = ON;
+BEGIN;
+
+.print === PROBE_0_SCHEMA ===
+SELECT
+  SUM(name = 'sync_submissions')       AS sync_submissions,
+  SUM(name = 'sync_submission_events') AS sync_submission_events,
+  SUM(name = 'pending_events')         AS pending_events,
+  SUM(name = 'sync_events')            AS sync_events,
+  SUM(name = 'devices')                AS devices,
+  SUM(name = 'sync_attempts')           AS sync_attempts
+FROM sqlite_master
+WHERE type = 'table';
+
+.print === PROBE_1_SUBMISSION_CLASS_COUNTS ===
+SELECT
+  state,
+  COALESCE(outcome, '[null]')       AS outcome,
+  COALESCE(response_code, '[null]') AS response_code,
+  COALESCE(error_code, '[null]')    AS error_code,
+  COUNT(*)                          AS submission_count
+FROM sync_submissions
+GROUP BY state, outcome, response_code, error_code
+ORDER BY state, outcome, response_code, error_code;
+
+.print === PROBE_2_SUBMISSION_MEMBERSHIP ===
+WITH submission_summaries AS (
+  SELECT
+    s.id,
+    s.created_at,
+    s.state,
+    COALESCE(s.outcome, '[null]')       AS outcome,
+    COALESCE(s.response_code, '[null]') AS response_code,
+    COALESCE(s.error_code, '[null]')    AS error_code,
+    COUNT(se.event_id)                  AS member_count,
+    MIN(e.device_sequence)              AS first_sequence,
+    MAX(e.device_sequence)              AS last_sequence,
+    COUNT(DISTINCT pe.state)            AS event_state_kinds,
+    COALESCE(MIN(pe.state), '[null]')   AS min_event_state,
+    COALESCE(MAX(pe.state), '[null]')   AS max_event_state,
+    MIN(se.position)                    AS first_position,
+    MAX(se.position)                    AS last_position
+  FROM sync_submissions AS s
+  LEFT JOIN sync_submission_events AS se
+    ON se.submission_id = s.id
+  LEFT JOIN sync_events AS e
+    ON e.id = se.event_id
+  LEFT JOIN pending_events AS pe
+    ON pe.event_id = e.id
+  GROUP BY
+    s.id,
+    s.created_at,
+    s.state,
+    s.outcome,
+    s.response_code,
+    s.error_code
+),
+numbered AS (
+  SELECT
+    ROW_NUMBER() OVER (ORDER BY created_at, id) AS local_submission_number,
+    state,
+    outcome,
+    response_code,
+    error_code,
+    member_count,
+    first_sequence,
+    last_sequence,
+    event_state_kinds,
+    min_event_state,
+    max_event_state,
+    first_position,
+    last_position
+  FROM submission_summaries
+)
+SELECT *
+FROM numbered
+ORDER BY local_submission_number;
+
+.print === PROBE_3_DEVICE_SEQUENCE_SUMMARY ===
+SELECT
+  next_sequence,
+  COUNT(*) AS device_count
+FROM devices
+GROUP BY next_sequence
+ORDER BY next_sequence;
+
+.print === PROBE_4_PENDING_EVENT_SUMMARY ===
+SELECT
+  pe.state,
+  COUNT(*)               AS event_count,
+  MIN(e.device_sequence) AS first_sequence,
+  MAX(e.device_sequence) AS last_sequence
+FROM pending_events AS pe
+JOIN sync_events AS e
+  ON e.id = pe.event_id
+GROUP BY pe.state
+ORDER BY pe.state;
+
+.print === PROBE_5_RECENT_SYNC_ATTEMPTS ===
+SELECT
+  COALESCE(operation_kind, '[null]') AS operation_kind,
+  result_code,
+  outcome_class,
+  phase,
+  COALESCE(recovery_code, '[null]') AS recovery_code,
+  CASE
+    WHEN http_status IS NULL THEN 0
+    ELSE 1
+  END AS has_http_status,
+  response_headers_received,
+  COALESCE(elapsed_band, '[null]') AS elapsed_band
+FROM sync_attempts
+ORDER BY started_at DESC, id DESC
+LIMIT 5;
+
+ROLLBACK;
+'@
+
+    $ProbeOutput = $ProbeSql |
+        & $SqliteCli -readonly $CopiedDatabase 2>&1
+    $ProbeExitCode = $LASTEXITCODE
+    $ProbeOutput
+    if ($ProbeExitCode -ne 0) {
+        throw "The copied-database probe failed."
+    }
+
+    Write-Host "SQLiteQuickCheck: ok"
+    Write-Host "LiveDatabaseQueried: False"
+    Write-Host "RetrySelected: False"
+    Write-Host "SyncSelected: False"
+    Write-Host "ProviderActionPerformed: False"
+    Write-Host "TerminalLocation: $RepositoryRoot"
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+```
+
+## 4. Render public health
 
 ### `GS-HOST-01` — Verify live and ready contracts
 
@@ -390,7 +981,7 @@ if ([int]$LiveResponse.StatusCode -ne 200 -or
 }
 ```
 
-## 4. Auth0 public metadata
+## 5. Auth0 public metadata
 
 ### `GS-AUTH-01` — Verify OIDC discovery and RS256 JWKS
 
@@ -721,7 +1312,7 @@ the cryptographic signature, issuer, audience, expiry, membership, enrollment,
 and Device authorization decisions. HTTP `200` from both read-only endpoints
 therefore confirms the exact binding without sending a Sync submission.
 
-## 5. Build and regression checks
+## 6. Build and regression checks
 
 ### `GS-BUILD-01` — Sync API validation
 
@@ -1138,7 +1729,7 @@ allow the callback/logout URI derived from package
 `com.gusigu.markei`; this procedure does not modify Auth0. Launching the client
 does not authorize Enroll, Query, Retry, or Sync.
 
-## 6. Historical diagnostics and mutation record
+## 7. Historical diagnostics and mutation record
 
 These procedures are retained for traceability and are excluded from the
 active `GRIMOIRE_INDEX`.
@@ -1180,7 +1771,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 Do not copy or execute it during ordinary recovery. Use `GS-NEON-04` or
 `GS-NEON-05` for read-only verification.
 
-## 7. Stop conditions
+## 8. Stop conditions
 
 Stop before mutation if:
 
@@ -1195,7 +1786,13 @@ Stop before mutation if:
 - GitHub advanced, the local/remote SHAs diverge, or the worktree overlaps;
 - another deployment is active or the watched Render branch is uncertain;
 - a health, readiness, identity, or provider baseline differs from the
-  procedure's expected boundary.
+  procedure's expected boundary;
+- `sqlite3.exe` cannot be resolved and version-verified;
+- Markei, Flutter, or Dart remains active during local-database copying;
+- the local Markei database candidate count is not exactly one;
+- a SQLite WAL/SHM sidecar remains after Markei closes;
+- the verified temporary copy already exists, differs in size/hash, fails
+  `quick_check`, lacks a required table, or produces a probe error.
 
 After an unclear migration result, use only read-only postflight and ledger
 checks. Never reconstruct or partially rerun a migration by hand.
