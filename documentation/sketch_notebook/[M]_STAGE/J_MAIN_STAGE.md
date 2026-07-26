@@ -3003,3 +3003,306 @@ PROVIDER_ACTION=NOT_PERFORMED
 GATE_12_7=HELD_FOR_CORRECTIVE_RECONCILIATION
 GCM02=OPEN
 ```
+
+---
+
+## C10-GCM02-S12-ERR-02 — post-Codex source and host reconciliation
+
+Sequence: FLX-PRM-04 — Promotion/Reconciliation
+Role: Main Chat [M]
+Round or unit: C10-GCM02-S12-ERR-02-HOST-HANDOFF
+Branch: `cycle10-intermid-grimoire`
+Baseline / inspected HEAD: `17e37eb8b83eb77e56c6421e09cb5ad768dbbfd4`
+Authority: human-directed G/H/I reconciliation and next-step preparation
+Writable surfaces: `[M]_STAGE/J_MAIN_STAGE.md` only
+Evidence boundary: repository inspection at `17e37eb`; Codex G/H/I evidence at
+`512f690`; human-reported Windows/Android observations; no provider mutation,
+failed/notApplied execution, Render deployment, live Sync, Retry, Repair, or
+Enroll
+
+### 1. Repository sequence recovered
+
+The remote branch contains the complete corrective sequence:
+
+```text
+0636c54  Main reconciliation and six-gap decision
+d56c3a6  active D/E/F implementation packet
+512f690  Codex source materialization and replacement G/H/I
+baaccfa  Android AVD startup automation
+17e37eb  local Android AVD coordinate alignment
+```
+
+The C10-GCM02-S12-ERR-02 D/E/F packet was active and bounded. Codex
+materialized the six requested conformance corrections and replaced G/H/I.
+No further source-conformance unit is required before the Windows host
+validation and read-only failed/notApplied inspection.
+
+### 2. PRC-01 claim reconciliation
+
+Claim: ordinary Sync now records the complete required phase evidence.
+
+Prior state: partial; authentication and terminal summaries existed, but the
+ordinary Sync path lacked full child-phase evidence.
+
+Evidence: `G_OPS_CODEX.md` records the tested order authentication, binding,
+failed-recovery, upload lease/transport/provider/result-persistence, download
+transport/provider/local-apply, acknowledgement, and terminal.
+
+Evidence boundary: repository-proven and locally test-validated by Codex;
+Windows/provider end-to-end execution was not part of that validation.
+
+Contradiction: none remaining at source-conformance level.
+
+Semantic owner: Operational domain.
+
+Target role: accepted implemented and locally validated source behavior.
+
+Resulting state: `ORDINARY_SYNC_PHASE_DIAGNOSTICS=IMPLEMENTED`.
+
+History disposition: the earlier partial state remains historical provenance.
+
+Claim: one ordinary Sync owns a top-level operation identity with deterministic
+child correlation identities and ordinals.
+
+Prior state: parent/child semantics were requested but incomplete.
+
+Evidence: G/H/I and the source at `512f690` record one random top-level
+operation identity, deterministic child ordinals, scoped child correlation IDs,
+and persisted terminal causal summaries.
+
+Evidence boundary: repository-proven and locally test-validated.
+
+Contradiction: none remaining.
+
+Semantic owner: Design domain.
+
+Target role: accepted implemented relationship boundary.
+
+Resulting state: `PARENT_CHILD_CORRELATION=IMPLEMENTED`.
+
+History disposition: prior incomplete correlation is superseded, not erased.
+
+Claim: diagnostic persistence, public projection, and UI causal meaning now
+conform to the approved v1 diagnostic model.
+
+Prior state: the runtime registry existed, but schema envelope, API
+public/internal separation, reachable-code attribution, and causal UI meaning
+remained incomplete.
+
+Evidence: Drift schema v12 and migration ledger
+`v11-to-v12-diagnostic-envelope-v1`; shared typed diagnostic projections;
+fingerprinted public failures without internal exception/SQL/raw-identifier
+material; narrower reachable MKS attribution; trusted-response and
+result-persistence UI state; recent child timeline.
+
+Evidence boundary: repository-proven and locally test-validated. Migration 007
+was already applied in the earlier provider sequence and is not to be rerun;
+this reconciliation authorizes no migration.
+
+Contradiction: none remaining at source-conformance level.
+
+Semantic owner: Operational, Didactic, and Design domains by their respective
+perspectives.
+
+Target role: accepted implementation evidence pending later permanent-domain
+promotion.
+
+Resulting state:
+
+```text
+DIAGNOSTIC_ENVELOPE_V1=IMPLEMENTED
+PUBLIC_INTERNAL_DIAGNOSTIC_SPLIT=IMPLEMENTED
+REACHABLE_MKS_ATTRIBUTION=VALIDATED
+CAUSAL_DIAGNOSTIC_MEANING=IMPLEMENTED
+```
+
+History disposition: G/H/I remain observational evidence; this J entry is the
+Main reconciliation cache.
+
+Claim: the failed/notApplied interface is now sufficient for the next
+investigative inner-step.
+
+Prior state: the UI exposed unknown-outcome Retry but lacked a bounded
+failed/notApplied preflight.
+
+Evidence: the Closure UI exposes `Inspect failed/notApplied recovery`; its
+query is local, read-only, network-free, and distinct from unknown-outcome
+Retry. No failed/notApplied execution callback exists.
+
+Evidence boundary: repository-proven and locally test-validated; the human
+Windows inspection has not yet been returned at this baseline.
+
+Contradiction: none at source level.
+
+Semantic owner: Gate 12.7 authorization preparation.
+
+Target role: accepted read-only preflight; mutation remains absent and
+unauthorized.
+
+Resulting state:
+
+```text
+FAILED_NOT_APPLIED_PREFLIGHT=READ_ONLY
+FAILED_NOT_APPLIED_EXECUTION=ABSENT
+```
+
+History disposition: the earlier action-interface block is superseded by the
+implemented preflight, while the no-execution boundary remains active.
+
+### 3. Validation reconciliation
+
+Codex validation at `512f690`:
+
+```text
+FLUTTER_ANALYZE=PASS
+FLUTTER_TEST=184_PASS_4_LAB_GATED_SKIP
+API_FORMAT_LINT_TYPECHECK_BUILD=PASS
+API_TEST=58_PASS
+DIAGNOSTIC_GENERATION_CHECK=PASS
+```
+
+The user subsequently proved the Android development environment, AVD boot,
+Markei installation, and visible application launcher on the Android virtual
+device. This is accepted as human-observed Android build/install/run
+conformance for the present Cycle 10 platform boundary.
+
+The same trial exposed a narrow PowerShell 5.1 post-boot selection defect in
+`GS-FLUTTER-AND`: after the correct AVD became available, the parsed Flutter
+device inventory could yield `windows` as `$AndroidDeviceId`, causing
+`adb -s windows`. This does not retract the human-observed Android
+build/install/run result and does not block Gate 12.7, whose controlled client
+is Windows. It remains a bounded operational follow-up for later correction.
+
+No new application refactor or D/E/F implementation packet is activated by
+this reconciliation. If the generic launcher must later provide an entirely
+clean automated Android result, Main should stage a separate narrow
+PowerShell-procedure correction with its own Windows PowerShell 5.1 regression
+evidence. It must not be mixed into Gate 12.7 preparation.
+
+Fresh Windows Closure validation from the current remote source remains
+required. Earlier Windows success proves the host/toolchain baseline but does
+not replace a build/run of the C10-GCM02-S12-ERR-02 materialization.
+
+### 4. Exact next investigative inner-steps
+
+#### Inner-step 4 — align and prove the Windows checkout
+
+From the Windows repository:
+
+```powershell
+git switch cycle10-intermid-grimoire
+git pull --ff-only origin cycle10-intermid-grimoire
+git status --short
+git rev-parse HEAD
+git merge-base --is-ancestor 512f6903535ce53f325660850709ac4bb254a0dc HEAD
+```
+
+Required:
+
+```text
+HEAD=17e37eb8b83eb77e56c6421e09cb5ad768dbbfd4_OR_DESCENDANT
+WORKTREE=CLEAN
+512f690=ANCESTOR
+```
+
+Stop on divergence, merge conflict, dirty overlap, or failed ancestry.
+
+#### Inner-step 5 — build and open the current Windows Closure client
+
+Run the canonical command:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+    -File ".\documentation\NEON_CHECK.ps1" `
+    -Procedure "GS-FLUTTER-WIN"
+```
+
+Required evidence:
+
+```text
+FLUTTER_ANALYZE=PASS
+FLUTTER_TEST=PASS
+WINDOWS_RELEASE_BUILD=PASS
+AUTH0FLUTTER_PROTOCOL_REGISTRATION=PASS
+FRESH_WINDOWS_CLOSURE_CLIENT=OPEN
+CLOSURE_DESTINATION=VISIBLE
+```
+
+Do not select Enroll, Query, Sync, Retry, Repair, or Clear diagnostic history.
+
+#### Inner-step 6 — perform only the read-only candidate inspection
+
+Inside the freshly built Windows Closure client:
+
+1. Open `Closure`.
+2. Select only `Inspect failed/notApplied recovery`.
+3. Record only the sanitized fields displayed by the preflight:
+   eligibility/result state, diagnostic code and native code, operation and
+   correlation fingerprints, failed/notApplied candidate count, pending-event
+   count, sequence range, event count, retryability, and safe action.
+4. Do not select `Retry unknown-outcome submission`.
+5. Do not select Sync, Enroll, Query, Repair, or Clear diagnostic history.
+6. If any confirmation or execution control appears, choose Cancel/close and
+   stop.
+
+This inner-step must perform no provider contact and no local mutation beyond
+the diagnostic observation written by the read-only inspection path itself.
+It is not Gate 12.7 authorization and is not the controlled recovery.
+
+#### Inner-step 7 — return the sanitized preflight evidence
+
+Return:
+
+```text
+INSPECTION_ACTION=Inspect failed/notApplied recovery
+ELIGIBLE=<sanitized displayed value>
+DIAGNOSTIC_CODE=<sanitized displayed value>
+NATIVE_CODE=<sanitized displayed value>
+OPERATION_FINGERPRINT=<bounded fingerprint only>
+CORRELATION_FINGERPRINT=<bounded fingerprint only>
+FAILED_NOT_APPLIED_CANDIDATE_COUNT=<count>
+PENDING_EVENT_COUNT=<count>
+SEQUENCE_RANGE=<bounded range>
+EVENT_COUNT=<count>
+RETRYABLE=<boolean>
+SAFE_ACTION=<sanitized displayed value>
+PROVIDER_CONTACT=NO
+FAILED_NOT_APPLIED_EXECUTION=NO
+CANCELLED_WITHOUT_MUTATION=YES
+```
+
+Do not return tokens, connection strings, complete UUIDs, complete hashes,
+payloads, purchase content, private paths, or provider secrets.
+
+#### Inner-step 8 — prepare, but do not execute, Gate 12.7
+
+Main reconciles the returned preflight with fresh Git/Windows, Render health,
+Auth0 metadata, and Neon/provider baseline evidence. Only then may Main present
+one exact Gate 12.7 authorization packet containing the eligible transition,
+expected HTTP operations, evidence-capture order, stop classifications, and
+the no-second-action rule.
+
+Anything other than explicit human approval of that exact packet is no
+authorization. Steps 12.8–12.10 remain held. No recovery execution or provider
+contact is authorized by this J entry.
+
+### 5. Terminal state
+
+```text
+C10_GCM02_S12_ERR_02=SOURCE_ACCEPTED
+SIX_CORRECTIVE_GAPS=PASS
+ORDINARY_SYNC_PHASE_DIAGNOSTICS=IMPLEMENTED
+PARENT_CHILD_CORRELATION=IMPLEMENTED
+DIAGNOSTIC_ENVELOPE_V1=IMPLEMENTED
+PUBLIC_INTERNAL_DIAGNOSTIC_SPLIT=IMPLEMENTED
+REACHABLE_MKS_ATTRIBUTION=VALIDATED
+CAUSAL_DIAGNOSTIC_MEANING=IMPLEMENTED
+ANDROID_BUILD_INSTALL_RUN=HUMAN_OBSERVED_PASS
+GS_FLUTTER_AND_POST_BOOT_SELECTION=DEFERRED_NARROW_FOLLOW_UP
+WINDOWS_CURRENT_SOURCE_BUILD_RUN=PENDING
+FAILED_NOT_APPLIED_PREFLIGHT=READ_ONLY
+FAILED_NOT_APPLIED_EXECUTION=ABSENT
+PROVIDER_ACTION=NOT_PERFORMED
+GATE_12_7=HELD
+GCM02=OPEN
+```
