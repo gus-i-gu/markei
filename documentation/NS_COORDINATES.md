@@ -150,7 +150,7 @@ identifiers support read-only verification; they do not authorize reapplication.
 ### 2.7 Local Android validation target
 
 ```text
-AndroidAvdName: DEV-GMR
+AndroidAvdName: DEV-GRM
 ```
 
 `AndroidAvdName` identifies the stable local Android Virtual Device definition.
