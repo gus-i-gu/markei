@@ -1,143 +1,148 @@
-# E_DDC_STAGE — Ordinary-Sync declaration meaning
+# E_DDC_STAGE — Recovery and evidence-scope vocabulary
 
 Sequence: FLX-ORD-01 — Ordinary Sequence
 Role: Codex Didactic materialization authority
-Unit: C10-GCM02-S12-ERR-03
+Hierarchy: Cycle 10 → GCM-02 → Step 12 → Gate 12.7 pre-authorization
+Unit: C10-GCM02-S12-ERR-04
+Parent sequence: C10-GCM02-S12-SYNC-01
 Branch: `cycle10-intermid-grimoire`
-Required ancestry: `3d1e82e5259cf51e8cd2d6baf694423494bab7a5`
-Status: **ACTIVE — NARROW SOURCE MATERIALIZATION ONLY; GATE 12.7 HELD**
+Required ancestry: `27e1b77b81f658b5e704e46923ea48cce2274b3a`
+Status: **ACTIVE — NARROW SOURCE MATERIALIZATION; LIVE ACTIONS HELD**
 
-## 1. Accepted distinctions
+## 1. Accepted meaning
 
-Preserve these meanings:
+Preserve these conclusions:
 
-- hosted readiness proves only that the readiness route answered;
-- generic completion is not ordinary-Sync success;
-- the client owns the complete ordinary-Sync terminal;
-- the server owns only the request/transaction terminal it observed;
-- `client-operation` and `server-request` declarations are correlated but not
-  interchangeable;
-- a client timeout before response is not a proved server timeout;
-- a trusted rejection is not a transport failure;
-- server request success does not prove client local persistence;
-- inspection, Retry, recovery and ordinary Sync remain separate actions;
-- implementation and assay preparation do not authorize Gate 12.7.
+- the 19:50 ordinary Sync completed at the aggregate client level;
+- upload, download and acknowledgement each completed at the server-request
+  level with authentication accepted and HTTP 200;
+- the shared operation fingerprint joins the aggregate client run to Render;
+- Render's current distinct correlation fingerprints identify server request
+  instances but do not yet prove the client's child correlation identity;
+- this proves one observed Sync lifecycle, not second-device convergence;
+- the unchanged Next Device sequence is correct because replay does not create
+  a new local event;
+- the ordinary action improperly crossed into controlled failed/notApplied
+  recovery;
+- technical success does not erase the authorization-boundary defect.
 
-The displayed “Last successful sync” advanced after
-`hosted-connection-ready`; that projection is wrong and must be corrected.
+## 2. Action vocabulary
 
-## 2. User vocabulary
+Keep these actions distinct in code, UI, tests and logs:
 
-Use this ordinary-Sync terminal vocabulary consistently in code, UI, tests and
-diagnostic projections:
-
-| Result code | User meaning |
+| Action | Meaning |
 | --- | --- |
-| `sync-completed` | Sync completed successfully |
-| `sync-no-new-events` | Sync completed; no new events were found |
-| `sync-rejected` | The server rejected the Sync request; no successful Sync is claimed |
-| `sync-server-timeout` | The server reported an enforced timeout; successful Sync is not claimed |
-| `sync-failed` | Sync failed without another more precise trusted terminal |
+| Ordinary Sync | upload ordinary pending work, download, apply and acknowledge |
+| Inspect failed/notApplied | read-only candidate diagnosis |
+| Recover failed/notApplied | explicitly confirmed bounded recovery |
+| Retry unknown outcome | separately controlled retry of an unknown outcome |
+| Hosted readiness | health/readiness route only |
 
-The technical detail may retain the literal result code, but the main
-user-facing sentence should remain plain.
+Do not call failed/notApplied recovery “ordinary upload” merely because it
+eventually used the submission route. Do not call ordinary Sync successful
+recovery authorization merely because the server accepted the request.
 
-When the server was not observed, say:
+## 3. Success wording
 
-```text
-Server declaration: not observed
-```
-
-Do not say “server timeout” when only the client deadline expired. Say:
+For this assay, the accurate concise statement is:
 
 ```text
-Client stopped waiting before a trusted response.
-Server outcome remains unknown.
+Ordinary Sync completed and every observed server request returned HTTP 200.
+The run also executed failed/notApplied recovery implicitly, so the recovery
+authorization boundary failed and the assay was not the intended empty-queue
+control.
 ```
 
-## 3. Closure presentation
-
-The Closure page must make these surfaces visually and textually distinct:
+Avoid:
 
 ```text
-Hosted readiness
-Ordinary Sync result
-Failed/notApplied inspection
-Controlled recovery
-Unknown-outcome Retry
+full convergence proved
+all synchronization gates passed
+empty Sync passed
+Gate 12.7 passed
 ```
 
-Correct:
+Those claims exceed the evidence.
+
+## 4. Client/server evidence wording
+
+Use:
 
 ```text
-Last successful sync
-  only the latest ordinary-sync / sync-completed or sync-no-new-events
+Client operation
+  owns aggregate Sync terminal and local persistence
 
-Recent Closure attempts
-  all bounded Closure operations, labelled by operation kind
+Client phase
+  owns one local orchestration observation
+
+Server request
+  owns one received HTTP request and its terminal
 ```
 
-The latest ordinary-Sync detail should show:
-
-- client declaration;
-- server declaration or `not observed`;
-- declaration scope;
-- last proved phase;
-- elapsed/deadline values;
-- operation and correlation fingerprints;
-- safe next action.
-
-Keep the normal view compact. Additional detail may use the existing
-expandable technical-details surface. Do not introduce a large ERR table,
-support bundle or general telemetry panel.
-
-## 4. Timing explanation
-
-The source default changes from five seconds to a 35-second hosted
-ordinary-Sync client deadline for the focused assay. This is a diagnostic
-relaxation, not proof that timing was the root cause and not a general
-performance target.
-
-If a server-owned 25-second deadline is safely enforceable, the client waits
-longer so it can receive the server’s typed terminal. If safe cancellation and
-rollback are not provable, the server timeout result must remain unavailable.
-
-User-visible timing must distinguish:
+Use explicit identity labels:
 
 ```text
-configured deadline
-observed elapsed time
-deadline owner: client or server
+Operation
+Client child correlation
+Server request
 ```
 
-## 5. Tests and documentation
+Do not call a server-generated request fingerprint the client correlation.
+
+An aggregate multi-request attempt has no single HTTP status/header result.
+When those fields are not applicable, say `not applicable—see child
+requests`, not `not observed` or `not received`.
+
+Phase-local axes must be labelled as phase-local. A final observation with
+`provider contact=not-started` cannot be presented as the aggregate operation
+state after upload/download/acknowledgement were proved.
+
+## 5. Terminal presentation
+
+The Flutter terminal and Closure UI should make the paired evidence scannable:
+
+```text
+operation #cf23...
+client terminal: sync-completed
+client elapsed/deadline
+latest client phase
+child server evidence: correlated in server logs
+safe next action
+```
+
+Render retains one structured line per server lifecycle event. Flutter gains
+equivalent sanitized client-operation/client-phase lines for local assay
+diagnosis.
+
+Never expose full IDs, secrets, headers, URLs, payload contents, SQL,
+exception messages or stack traces.
+
+## 6. Tests
 
 Tests must prove:
 
-- readiness never appears as successful Sync;
-- the two success codes and three non-success codes remain distinct;
-- client and server declarations carry visible scopes;
-- unavailable server evidence says `not observed`;
-- timeout wording identifies its owner and does not invent causality;
-- `Recent Closure attempts` accurately labels its contents;
-- forbidden identifiers and secret-bearing data are absent;
-- normal UI remains concise.
-
-If the diagnostic vocabulary changes, update the single registry and
-regenerate Dart, TypeScript and `ERR_DIAGNOSTICS.md`. Do not hand-edit generated
-projections.
+- action labels remain distinct;
+- ordinary Sync cannot silently mean controlled recovery;
+- successful request wording remains request-scoped;
+- aggregate client success remains client-scoped;
+- unavailable child evidence is not described as a received/transport
+  failure;
+- phase-local and aggregate evidence are visibly different;
+- client-child and server-request identities are separately labelled;
+- terminal lines remain compact and redacted;
+- existing five-result and timeout-owner meanings remain unchanged.
 
 Do not edit permanent didactic memory.
 
 H terminal markers:
 
 ```text
-READINESS_SYNC_MEANING=SEPARATE_OR_BLOCKED
-CLIENT_SERVER_SCOPE_MEANING=SEPARATE_OR_BLOCKED
-FIVE_SYNC_RESULTS=VISIBLE_OR_BLOCKED
-TIMEOUT_OWNERSHIP=VISIBLE_OR_BLOCKED
-LAST_SUCCESSFUL_SYNC_LABEL=TRUTHFUL_OR_BLOCKED
-RECENT_CLOSURE_ATTEMPTS_LABEL=ALIGNED_OR_BLOCKED
+ORDINARY_SYNC_RECOVERY_MEANING=SEPARATE_OR_BLOCKED
+TECHNICAL_SUCCESS_AUTHORIZATION_MEANING=SEPARATE_OR_BLOCKED
+CLIENT_PHASE_SERVER_REQUEST_SCOPES=VISIBLE_OR_BLOCKED
+AGGREGATE_HTTP_WORDING=TRUTHFUL_OR_BLOCKED
+NEXT_SEQUENCE_REPLAY_MEANING=ALIGNED_OR_BLOCKED
+TERMINAL_LOG_REDACTION=VALIDATED_OR_BLOCKED
 GATE_12_7=HELD
 GCM02=OPEN
 ```

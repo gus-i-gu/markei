@@ -4641,3 +4641,288 @@ GCM03=UNDEFINED_INACTIVE
 GCM04=UNDEFINED_INACTIVE
 ```
 
+## 2026-07-26 — Correlated live Sync reconciliation and ERR-04 staging
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04 → FLX-ORD-01
+Role: Main Chat [M]
+Hierarchy: Cycle 10 → GCM-02 → Step 12 → Gate 12.7 pre-authorization
+Reconciliation unit: C10-GCM02-S12-SYNC-01
+Activated implementation unit: C10-GCM02-S12-ERR-04
+Branch: cycle10-intermid-grimoire
+Required staging ancestor: 27e1b77b81f658b5e704e46923ea48cce2274b3a
+Evidence: supplied Windows Closure screenshots, supplied sanitized Render
+          lifecycle lines, ERR-03 G/H/I and current source inspection
+Writable surface: append-only J plus replacement D/E/F
+Disposition: LIVE SYNC REQUEST LIFECYCLE PASSED; RECOVERY BOUNDARY FAILED;
+             ERR-04 STAGED; FURTHER LIVE ACTIONS HELD
+```
+
+This entry belongs to `Legacy_Progress`. It appends the first correlated
+post-ERR-03 hosted ordinary-Sync lifecycle. It does not rewrite the earlier
+ERR-03 source reconciliation and does not convert the observed implicit
+recovery into Gate 12.7 authorization.
+
+### Complete hierarchical classification
+
+```text
+Cycle 10 — hosted synchronization and operational acceptance [OPEN]
+└─ Phase GCM-02 — exact hosted recovery/synchronization proof [ACTIVE]
+   └─ Step 12 — Closure diagnosis and bounded hosted assays [ACTIVE]
+      ├─ Gate 12.6 — diagnostic/readiness preparation [PASSED IN PRIOR SCOPE]
+      ├─ Gate 12.7 — failed/notApplied controlled recovery [HELD]
+      │  ├─ REC-01 source and inspection surface [ACCEPTED]
+      │  ├─ ERR-03 terminal/timing/correlation source [ACCEPTED]
+      │  ├─ Readiness projection assay [PASSED]
+      │  ├─ Ordinary-Sync correlated lifecycle assay [REQUEST LIFECYCLE PASS]
+      │  ├─ Recovery authorization boundary [FAILED]
+      │  └─ ERR-04 boundary/observability correction [ACTIVE STAGED]
+      ├─ Gate 12.8 — post-action/provider reconciliation [HELD]
+      ├─ Gate 12.9 — second-device convergence proof [HELD]
+      └─ Gate 12.10 — GCM-02 terminal acceptance [HELD]
+
+Cycle 10 → GCM-03 [UNDEFINED / INACTIVE]
+Cycle 10 → GCM-04 [UNDEFINED / INACTIVE]
+Cycle 10 closure [BLOCKED BY GCM-02]
+```
+
+No Sprint identity is invented for this work. The active hierarchy is a GCM
+phase, Step and Gate sequence.
+
+### Sanitized paired evidence
+
+Client evidence:
+
+```text
+action=ordinary Sync, pressed once
+operation fingerprint=cf23d2a09c74
+terminal=sync-completed
+completedAt=2026-07-26T22:50:27Z
+configured deadline=35000ms client-owned
+queue before=0 pending / 0 uploading / 2 failed / 0 unknown
+queue after=0 pending / 0 uploading / 0 failed / 0 unknown
+next Device sequence before=3
+next Device sequence after=3
+```
+
+Server evidence:
+
+| UTC terminal | Route / operation | Correlation | Auth | Result |
+| --- | --- | --- | --- | --- |
+| `22:50:25.708Z` | `POST /v1/sync/submissions` / upload-submission | `ddd649aa0aaa` | accepted | HTTP 200, `<3s` |
+| `22:50:26.064Z` | `GET /v1/sync/events` / download-events | `90539afaa945` | accepted | HTTP 200, `<250ms` |
+| `22:50:26.433Z` | `POST /v1/sync/acknowledgements` / acknowledgement | `d038eb15cd3f` | accepted | HTTP 200, `<250ms` |
+
+All protected requests share operation fingerprint `cf23d2a09c74`. The listed
+correlations are server-request fingerprints derived from Fastify request IDs;
+they distinguish Render requests but do not yet prove exact equality with the
+client's outbound child correlations. Interleaved `/health/ready` HTTP 200 lines have
+`operationFingerprint=not-provided` and remain readiness evidence only.
+
+### Reconciled success boundary
+
+The Sync was truly successful within the observed single-client protocol
+boundary:
+
+1. the client reached the aggregate `sync-completed` terminal;
+2. upload, download and acknowledgement reached the server;
+3. authentication was accepted on all protected routes;
+4. each server request returned HTTP 200;
+5. the client persisted a successful completion timestamp;
+6. the local queue ended without pending/uploading/failed/unknown work.
+
+This is stronger than readiness and stronger than a server-only request
+success. It is not yet full convergence acceptance. The evidence does not
+prove exact provider contents, second-device materialization, retention,
+rebootstrap, revocation, a server-owned timeout or exact client-child to
+server-request fingerprint equality. The parent operation join is proved.
+
+The 35-second relaxation did not explain this run causally: the aggregate run
+finished in roughly two seconds. It proves the new budget does not block the
+path, but the historical five-second hypothesis remains neither required nor
+disproved by this fast success.
+
+### Reconciled conflict
+
+The planned assay was described as an empty-queue ordinary-Sync control that
+must not touch the failed/notApplied candidate. It was not empty in the
+relevant sense.
+
+Source inspection proves:
+
+```text
+HostedSyncCoordinator.run()
+  → unconditional recoverFailedNotApplied()
+  → upload pending events
+  → download/apply
+  → acknowledgement
+```
+
+The live transition `failed=2 → failed=0`, the recorded failed-recovery
+phases and the correlated submission upload prove that ordinary Sync executed
+the held recovery path. This was a legacy implicit recovery call, not the
+automatic retry added by ERR-03. Nevertheless it violates the accepted
+separation between ordinary Sync and explicitly confirmed controlled
+failed/notApplied recovery.
+
+The unchanged `Next Device sequence=3` is not a defect. The action replayed
+existing events with allocated sequences 1–2; it did not create a new local
+event. Sequence 3 remains the next allocation.
+
+### PRC-01 claims
+
+```text
+Claim: the post-ERR-03 ordinary-Sync request lifecycle succeeded
+Prior state: prepared/conditional; host-unvalidated
+Evidence: client sync-completed terminal plus correlated Render upload,
+          download and acknowledgement HTTP 200 terminals
+Evidence boundary: one Windows client and request-level server logs;
+                   no second-device/provider-content inspection
+Contradiction: none within the request lifecycle
+Semantic owner: C10-GCM02-S12-SYNC-01 hosted assay
+Target role: J observational reconciliation
+Resulting state: ACCEPTED WITH SINGLE-CLIENT/REQUEST BOUNDARY
+History disposition: append; supersede HOST_UNVALIDATED for this path
+```
+
+```text
+Claim: the assay was an empty-queue control and preserved the held recovery
+Prior state: required assay condition
+Evidence: failed count 2→0, failed-recovery phases, upload request and
+          unconditional source call
+Evidence boundary: client queue/source and paired server request
+Contradiction: explicit assay/Gate 12.7 prohibition
+Semantic owner: ordinary Sync versus controlled recovery command boundary
+Target role: C10-GCM02-S12-ERR-04
+Resulting state: REJECTED; SOURCE CORRECTION REQUIRED
+History disposition: append; preserve the accidental live action as evidence
+```
+
+```text
+Claim: unchanged Next Device sequence indicates Sync did not work
+Prior state: human concern
+Evidence: next sequence remained 3 while allocated sequences 1–2 were replayed
+Evidence boundary: local allocator and queue projection
+Contradiction: a Sync attempt is not a new event allocation
+Semantic owner: Device sequence invariant
+Target role: ERR-04 tests and J explanation
+Resulting state: REJECTED; UNCHANGED VALUE IS EXPECTED
+History disposition: append
+```
+
+```text
+Claim: current client UI/terminal evidence is fully coherent
+Prior state: ERR-03 locally validated declaration surface
+Evidence: Flutter terminal silence; aggregate attempt displays
+          status-not-observed/headers-not-received; newest phase can display
+          provider-contact-not-started after proved provider contact
+Evidence boundary: Windows screenshots and source projection
+Contradiction: paired Render evidence proves three trusted request terminals
+Semantic owner: client observability and aggregate/phase projection
+Target role: C10-GCM02-S12-ERR-04
+Resulting state: PARTIAL; CORRECTION REQUIRED
+History disposition: append; do not misclassify as transport failure
+```
+
+```text
+Claim: child correlation identity is exactly paired across client and server
+Prior state: locally validated correlation lineage
+Evidence: shared operation fingerprint is equal, but Render correlation uses
+          the Fastify request ID while the client sends x-correlation-id
+Evidence boundary: source inspection and supplied Render lifecycle fields
+Contradiction: no supplied client child fingerprint equals a proved Render
+               field by contract
+Semantic owner: paired client/server observability
+Target role: C10-GCM02-S12-ERR-04
+Resulting state: PARENT JOIN PASSED; EXACT CHILD PAIRING INCOMPLETE
+History disposition: append and correct field ownership
+```
+
+### Activated ERR-04 direction
+
+D/E/F now authorize one narrow source unit:
+
+```text
+UNIT=C10-GCM02-S12-ERR-04
+
+remove ordinary Sync → failed/notApplied recovery invocation
+preserve explicit confirmed recovery entry point
+preserve ordinary pending upload/download/acknowledgement
+add sanitized injectable client-operation/client-phase terminal logging
+preserve structured server-request Render logging
+expose separate client-child and server-request fingerprints
+distinguish aggregate from phase-local and child-request evidence
+preserve five Sync terminals and 35000ms client deadline
+no migration
+no automatic retry
+no live provider action
+```
+
+The unit must not erase the successful live evidence or reinterpret technical
+success as Gate authorization. G/H/I must replace ERR-03 reports with ERR-04
+materialization evidence while identifying ERR-03 as the source baseline.
+
+### Subsequent actions
+
+```text
+Cycle 10
+→ GCM-02
+→ Step 12
+→ Gate 12.7 pre-authorization
+→ ERR-04 source materialization
+→ local G/H/I validation
+→ Main reconciliation
+→ fresh Windows build from the reconciled remote commit
+→ no-action diagnostics/terminal projection check
+→ one readiness control only if deployment freshness requires it
+→ one ordinary Sync no-recovery invariant assay
+→ explicit Gate 12.7 decision packet
+→ controlled recovery only if a new valid failed/notApplied candidate exists
+→ Gate 12.8 provider/result reconciliation
+→ Gate 12.9 second-device convergence proof
+→ Gate 12.10 GCM-02 acceptance
+→ define GCM-03/GCM-04 or close them explicitly
+→ Cycle 10 closure
+```
+
+The next ordinary-Sync assay must begin with failed=0 and must prove that
+ordinary Sync cannot consume failed work if a deterministic local test
+fixture contains it. Do not create a live failed candidate solely to test the
+boundary.
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=OPEN_ACTIVE
+STEP12=OPEN_ACTIVE
+GATE_12_6=PASSED_IN_PRIOR_SCOPE
+GATE_12_7=HELD
+C10_GCM02_S12_ERR_03_SOURCE=ACCEPTED
+READINESS_PROJECTION_ASSAY=PASS
+ORDINARY_SYNC_CORRELATED_LIFECYCLE=PASS_SINGLE_CLIENT_REQUEST_SCOPE
+UPLOAD_REQUEST=HTTP_200_AUTH_ACCEPTED
+DOWNLOAD_REQUEST=HTTP_200_AUTH_ACCEPTED
+ACKNOWLEDGEMENT_REQUEST=HTTP_200_AUTH_ACCEPTED
+CLIENT_AGGREGATE_TERMINAL=SYNC_COMPLETED
+CLIENT_SERVER_PARENT_OPERATION_CORRELATION=PASS
+CLIENT_SERVER_EXACT_CHILD_CORRELATION=INCOMPLETE_SOURCE_CORRECTION_STAGED
+CLIENT_SYNC_DEADLINE_35S=HOST_VALIDATED_NOT_STRESSED
+HISTORICAL_FIVE_SECOND_CAUSAL_HYPOTHESIS=UNRESOLVED_NOT_REQUIRED_THIS_RUN
+FAILED_NOT_APPLIED_COUNT=ZERO_AFTER_IMPLICIT_RECOVERY
+NEXT_DEVICE_SEQUENCE_THREE=EXPECTED
+EMPTY_QUEUE_CONTROL=NOT_PERFORMED
+RECOVERY_AUTHORIZATION_BOUNDARY=FAILED
+C10_GCM02_S12_ERR_04=ACTIVE_STAGED
+CLIENT_TERMINAL_LOGGING=SOURCE_CORRECTION_STAGED
+AGGREGATE_CHILD_PROJECTION=SOURCE_CORRECTION_STAGED
+FURTHER_LIVE_ACTIONS=HELD
+GATE_12_8=HELD
+GATE_12_9=HELD
+GATE_12_10=HELD
+GCM03=UNDEFINED_INACTIVE
+GCM04=UNDEFINED_INACTIVE
+CYCLE10_CLOSURE=BLOCKED_BY_GCM02
+```

@@ -1,70 +1,149 @@
-# F_DSN_STAGE — Correlated ordinary-Sync declaration architecture
+# F_DSN_STAGE — Explicit recovery command boundary and paired observability
 
 Sequence: FLX-ORD-01 — Ordinary Sequence
 Role: Codex Design materialization authority
-Unit: C10-GCM02-S12-ERR-03
+Hierarchy: Cycle 10 → GCM-02 → Step 12 → Gate 12.7 pre-authorization
+Unit: C10-GCM02-S12-ERR-04
+Parent sequence: C10-GCM02-S12-SYNC-01
 Branch: `cycle10-intermid-grimoire`
-Required ancestry: `3d1e82e5259cf51e8cd2d6baf694423494bab7a5`
+Required ancestry: `27e1b77b81f658b5e704e46923ea48cce2274b3a`
 Status: **ACTIVE — SOURCE MATERIALIZATION ONLY; PROVIDER EXECUTION PROHIBITED**
 
-## 1. Architectural objective
+## 1. Architectural finding
 
-Complete the existing ordinary-Sync diagnostic contract without widening the
-ERR system:
-
-```text
-Closure UI
-└─ ordinary-Sync runner
-   ├─ top-level operation identity
-   ├─ hosted Sync coordinator
-   │  ├─ upload request
-   │  ├─ download request
-   │  └─ acknowledgement request
-   ├─ client-operation terminal declaration
-   └─ local diagnostic persistence
-
-Sync API
-└─ correlated route lifecycle
-   ├─ request ingress
-   ├─ authentication/authorization
-   ├─ database transaction
-   └─ server-request terminal declaration
-```
-
-One shared sanitized parent operation fingerprint joins the two sides. Child
-correlations retain route identity and order.
-
-## 2. Ownership boundary
-
-The client orchestration is the only component that can truthfully decide
-whether the complete ordinary Sync finished, because it owns:
-
-- the sequence of upload/download/acknowledgement calls;
-- local remote-event application;
-- local cursor/result persistence;
-- the final UI projection.
-
-The server can truthfully declare only:
-
-- whether a specific request arrived;
-- whether authorization passed;
-- whether a database transaction began and committed/rolled back;
-- which bounded response/result that request produced;
-- whether its own enforced deadline fired.
-
-Therefore every declaration carries:
+Current source combines two command boundaries:
 
 ```text
-declarationScope=client-operation | server-request
+ordinary Sync command
+└─ HostedSyncCoordinator.run()
+   ├─ authentication
+   ├─ binding
+   ├─ recoverFailedNotApplied()   ← implicit controlled-recovery crossover
+   ├─ upload pending
+   ├─ download/apply
+   └─ acknowledgement
 ```
 
-Do not add an endpoint that merely echoes the client’s result and call that a
-server self-declaration. Do not claim aggregate server knowledge that the
-current multi-request protocol does not provide.
+The live assay proves that this is reachable: failed work fell from two to
+zero and the correlated upload route completed. The design must become:
 
-## 3. Terminal model
+```text
+ordinary Sync command
+├─ authentication
+├─ binding
+├─ upload ordinary pending
+├─ download/apply
+├─ acknowledgement
+└─ aggregate terminal persistence
 
-Add or centralize a typed ordinary-Sync terminal model covering exactly:
+controlled recovery command
+├─ read-only inspection
+├─ explicit confirmation
+├─ candidate/membership revalidation
+├─ one failed→recoverable transition
+├─ one bounded submission
+└─ recovery terminal persistence
+```
+
+The commands may reuse lower-level transport and outbox primitives. They must
+not share an implicit entry point or silently invoke each other.
+
+## 2. State and sequence invariants
+
+Ordinary Sync:
+
+- may mutate ordinary pending/uploading rows according to the existing Sync
+  protocol;
+- must leave failed/notApplied and unknown candidates unchanged;
+- must not allocate a new sequence merely because Sync was pressed;
+- must not advance Next Device sequence when replaying an already allocated
+  event;
+- must not convert failed work into pending work.
+
+Controlled recovery:
+
+- acts on exactly one freshly revalidated candidate;
+- reuses its existing allocated member sequences;
+- never creates a duplicate sequence allocation;
+- remains explicit, confirmed and non-repeating.
+
+## 3. Paired observability architecture
+
+Preserve three declaration scopes:
+
+```text
+client-operation
+client-phase
+server-request
+```
+
+Identity model:
+
+```text
+parent operation identity
+├─ sanitized operation fingerprint shared across client and server
+├─ client child correlation fingerprint per outbound request
+└─ server request fingerprint per received route
+```
+
+The full identities remain internal. Only sanitized fingerprints are public
+or logged.
+
+Client observer ownership:
+
+- create/inject at the top-level Closure composition boundary;
+- pass through the runner/coordinator/phase recorder;
+- emit operation and phase declarations through one redacted projector;
+- use a test collector for deterministic assertions;
+- make the console sink failure-isolated;
+- state whether console output is enabled in debug/assay builds, release
+  builds or both.
+
+Server observer ownership remains the existing API lifecycle observer and
+`consoleLifecycleObserver`.
+
+Current source derives Render's `correlationFingerprint` from
+`FastifyRequest.id`, while the client also sends `x-correlation-id`. Preserve
+both identities as separately named sanitized fingerprints, or document and
+implement an equally explicit mapping. The parent operation fingerprint is
+already the proved aggregate join. Do not overwrite the server request
+identity with the client value or falsely claim they are identical.
+
+## 4. Aggregate evidence model
+
+Do not flatten child request evidence into nullable scalar fields on the
+parent attempt and then interpret null as failure.
+
+Preferred minimal model:
+
+```text
+ClientOperationSummary
+  resultCode
+  lastProvedPhase
+  elapsed/deadline
+  aggregate provider contact derived from all phases
+  aggregate trusted-response evidence derived from all phases
+  local/result persistence
+  parent operation fingerprint
+
+ClientPhaseEvidence[]
+  phase-local axes
+  child correlation fingerprint
+
+ServerRequestEvidence (external/log-correlated)
+  route
+  request terminal
+  HTTP status
+  server correlation fingerprint
+```
+
+No local provider request may be added merely to populate this model.
+Persisting more local diagnostic facts may use the existing schema only. If
+the correction requires a migration, stop and report the exact gap.
+
+## 5. Reachable result model
+
+Preserve ERR-03:
 
 ```text
 sync-completed
@@ -74,132 +153,64 @@ sync-server-timeout
 sync-failed
 ```
 
-Map existing outcomes deliberately:
+The current live run is `sync-completed`, not `sync-no-new-events`, because
+material upload work occurred. After the recovery crossover is removed, an
+ordinary run with no pending/download/acknowledgement work should reach the
+existing truthful no-work terminal according to the protocol’s actual
+semantics.
 
-- accepted/duplicate-equivalent request phases may continue toward one of the
-  two client success terminals;
-- typed notApplied/protocol/auth rejection maps to `sync-rejected`;
-- proved server-owned deadline with rollback maps to
-  `sync-server-timeout`;
-- client deadline without trusted response maps to `sync-failed` with server
-  outcome unknown;
-- unexpected local, transport or server failure maps to `sync-failed` while
-  preserving the last proved phase and evidence axes.
+Do not implement a server timeout without authoritative cancellation/rollback.
+The 35-second client deadline remains independent.
 
-Do not discard the lower-level MKS/native diagnostic that explains the
-terminal.
-
-## 4. Correlation and logging
-
-Propagate one top-level ordinary-Sync operation identity through every HTTP
-request. Preserve or add child correlation identities where already supported.
-
-The public/log projection uses only sanitized fingerprints. Full operation,
-Account, Device, event, submission and token identity remains internal.
-
-Structured server terminal log:
-
-```json
-{
-  "operationKind": "ordinary-sync",
-  "resultCode": "sync-completed",
-  "declarationScope": "server-request",
-  "routeClass": "sync-submission",
-  "operationFingerprint": "<sanitized>",
-  "correlationFingerprint": "<sanitized>",
-  "lastProvedPhase": "response-completed",
-  "elapsedBand": "lt-250ms",
-  "configuredDeadlineMs": 25000
-}
-```
-
-This is a schema example, not an instruction to log this result regardless of
-the actual request. Keep log ordering deterministic enough for one narrow UTC
-assay window.
-
-## 5. Timing architecture
-
-Separate timing ownership:
-
-```text
-readiness deadline
-ordinary-Sync client response deadline
-ordinary-Sync server processing deadline
-test-only injected deadline
-```
-
-Set the hosted ordinary-Sync client default to 35 seconds through composition
-or explicit configuration rather than burying a new magic value across call
-sites.
-
-An optional 25-second server deadline is valid only when:
-
-- it applies to the intended Sync request boundary;
-- outstanding database work is cancelled or rolled back;
-- the resulting response/log truthfully reports the server timeout;
-- the client remains listening long enough to receive it.
-
-Do not implement timeout by racing a response Promise while database work
-continues. If safe cancellation is not available within the narrow unit,
-leave the server deadline unimplemented, report why, and still add elapsed
-structured lifecycle evidence.
-
-## 6. Projection query
-
-Correct the local “Last successful sync” query to require all of:
-
-```text
-operationKind = ordinary-sync
-outcomeClass = completed
-resultCode IN (sync-completed, sync-no-new-events)
-completedAt IS NOT NULL
-```
-
-Do not infer success from `outcomeClass=completed` alone.
-
-No schema migration is expected. Prefer querying existing attempt/phase
-columns. If operation kind is not available in the required stored projection,
-stop and report the exact persistence gap rather than weakening the filter.
-
-## 7. Compatibility and validation
+## 6. Compatibility
 
 Preserve:
 
-- hosted readiness contracts and 20-second readiness timeout;
-- REC-01 inspection/recovery separation;
-- unknown-outcome Retry behavior;
-- current queue/submission/cursor/purchase truth;
-- diagnostic registry as single vocabulary owner;
-- existing redaction and fingerprint rules;
+- explicit failed/notApplied recovery UI and confirmation;
+- unknown-outcome Retry separation;
+- ERR-03 operation/correlation headers;
+- server request lifecycle JSON;
+- successful pending upload/download/acknowledgement;
+- local cursor and result persistence;
+- last-success predicate;
+- readiness separation;
+- diagnostic registry single ownership;
+- Drift v1–v12 compatibility;
 - no automatic retry;
-- no new provider call solely for diagnostics;
-- Drift v1–v12 compatibility unless source proves otherwise.
+- no diagnostic-only network request.
+
+## 7. Validation
 
 Design validation must prove:
 
-- typed five-result client terminal exhaustiveness;
-- truthful server-request scope;
-- shared parent correlation with distinct child request identities;
-- correct last-success query predicate;
-- independent timing ownership;
-- no continuing database work behind a reported server timeout;
-- no payload/identity leakage;
-- no live provider activity during implementation;
-- broad ERR refactor remains deferred.
+- command dependency direction prevents ordinary→controlled recovery calls;
+- controlled recovery can reuse lower-level primitives without being called
+  by ordinary Sync;
+- failed and unknown state invariants hold under ordinary Sync;
+- pending event behavior does not regress;
+- sequence allocation remains monotonic and replay-safe;
+- parent/child identity lineage matches the server log contract;
+- each server line exposes a separately owned client-child fingerprint and
+  server-request fingerprint when the client header is present;
+- aggregate evidence is derived from causal phases, not only the newest row;
+- null/not-persisted child HTTP metadata is not treated as transport failure;
+- console observer is redacted, injectable and failure-isolated;
+- no schema/provider/migration expansion occurred;
+- broad ERR refactoring remains deferred.
 
 Do not edit permanent design memory.
 
 I terminal markers:
 
 ```text
-ORDINARY_SYNC_TERMINAL_MODEL=BOUNDARY_STABLE_OR_BLOCKED
-CLIENT_OPERATION_OWNERSHIP=VALIDATED_OR_BLOCKED
-SERVER_REQUEST_OWNERSHIP=VALIDATED_OR_BLOCKED
-CORRELATION_LINEAGE=VALIDATED_OR_BLOCKED
-SUCCESS_QUERY_PREDICATE=VALIDATED_OR_BLOCKED
-TIMEOUT_OWNERSHIP=VALIDATED_OR_BLOCKED
-NO_FALSE_SERVER_TIMEOUT=VALIDATED_OR_BLOCKED
-NO_NEW_DIAGNOSTIC_PROVIDER_CALL=PASS_OR_BLOCKED
+ORDINARY_CONTROLLED_RECOVERY_BOUNDARY=SEPARATED_OR_BLOCKED
+FAILED_STATE_INVARIANT=VALIDATED_OR_BLOCKED
+SEQUENCE_REPLAY_INVARIANT=VALIDATED_OR_BLOCKED
+CLIENT_OBSERVER_ARCHITECTURE=BOUNDARY_STABLE_OR_BLOCKED
+CLIENT_SERVER_LINEAGE=VALIDATED_OR_BLOCKED
+AGGREGATE_PHASE_EVIDENCE_MODEL=TRUTHFUL_OR_BLOCKED
+NO_DIAGNOSTIC_PROVIDER_CALL=PASS_OR_BLOCKED
+NO_SCHEMA_MIGRATION=PASS_OR_BLOCKED
 GATE_12_7=HELD
 GCM02=OPEN
 ```
