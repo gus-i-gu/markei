@@ -226,7 +226,8 @@ final class HttpSyncTransport implements SyncTransport, RecoveryTransport {
 
   Future<http.Request> _protectedRequest(String method, Uri uri) async {
     final request = http.Request(method, uri);
-    request.headers['x-correlation-id'] = correlationSource();
+    request.headers['x-correlation-id'] =
+        currentSyncCorrelationId() ?? correlationSource();
     request.headers['authorization'] = 'Bearer ${await tokenSource()}';
     request.headers['x-markei-device-id'] = hostedDeviceId;
     return request;

@@ -1,6 +1,80 @@
+import 'dart:async';
+
 import '../../domain/sync/sync_event.dart';
 
 typedef SubmissionIdFactory = String Function();
+
+final Object _syncCorrelationZoneKey = Object();
+
+String? currentSyncCorrelationId() =>
+    Zone.current[_syncCorrelationZoneKey] as String?;
+
+Future<T> withSyncCorrelation<T>(
+  String correlationId,
+  Future<T> Function() body,
+) {
+  return runZoned(body, zoneValues: {_syncCorrelationZoneKey: correlationId});
+}
+
+final class SyncDiagnosticChildIdentity {
+  const SyncDiagnosticChildIdentity({
+    required this.correlationId,
+    required this.correlationFingerprint,
+    required this.ordinal,
+  });
+
+  final String correlationId;
+  final String correlationFingerprint;
+  final int ordinal;
+}
+
+final class SyncDiagnosticPhaseEvidence {
+  const SyncDiagnosticPhaseEvidence({
+    required this.code,
+    required this.nativeCode,
+    required this.operationKind,
+    required this.phase,
+    required this.lastProvedPhase,
+    required this.outcome,
+    required this.safeAction,
+    this.severity = 'INFO',
+    this.localMutationState = 'none',
+    this.providerContactState = 'not-started',
+    this.providerTransactionState = 'not-started',
+    this.trustedResponseState = 'not-received',
+    this.resultPersistenceState = 'not-started',
+    this.retryable = false,
+    this.httpStatus,
+    this.responseHeadersReceived = false,
+    this.sanitizedExceptionClass,
+    this.serverSqlstateClass,
+  });
+
+  final String code;
+  final String nativeCode;
+  final String severity;
+  final String outcome;
+  final String operationKind;
+  final String phase;
+  final String lastProvedPhase;
+  final String localMutationState;
+  final String providerContactState;
+  final String providerTransactionState;
+  final String trustedResponseState;
+  final String resultPersistenceState;
+  final String safeAction;
+  final bool retryable;
+  final int? httpStatus;
+  final bool responseHeadersReceived;
+  final String? sanitizedExceptionClass;
+  final String? serverSqlstateClass;
+}
+
+abstract interface class SyncDiagnosticPhaseRecorder {
+  Future<SyncDiagnosticChildIdentity> recordPhase(
+    SyncDiagnosticPhaseEvidence evidence,
+  );
+}
 
 final class SyncUploadSubmission {
   const SyncUploadSubmission({

@@ -328,7 +328,7 @@ function failure(
 ): ProtocolFailure {
   return {
     code,
-    diagnosticCode: "MKS-UPL-012",
+    diagnosticCode: diagnosticCodeForFailure(code, operation),
     operation,
     phase: operation,
     routeClass: "transaction-scoped-operation",
@@ -340,4 +340,19 @@ function failure(
       : "stop and preserve evidence",
     correlationId,
   };
+}
+
+function diagnosticCodeForFailure(code: string, operation: string): string {
+  if (operation === "download-events") {
+    return code === "cursor-expired" ? "MKS-DNL-004" : "MKS-DNL-001";
+  }
+  if (operation === "acknowledgement") {
+    return code === "cursor-expired" ? "MKS-ACK-003" : "MKS-ACK-001";
+  }
+  if (code === "device-revoked") return "MKS-BND-001";
+  if (code === "wrong-account") return "MKS-UPL-003";
+  if (code === "hash-mismatch") return "MKS-UPL-004";
+  if (code === "sequence-gap") return "MKS-UPL-005";
+  if (code === "service-unavailable") return "MKS-PDB-001";
+  return "MKS-UPL-001";
 }

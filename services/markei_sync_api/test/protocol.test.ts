@@ -218,7 +218,7 @@ test("health lifecycle logs are sanitized and correlated by fingerprint", async 
     assert.equal(event.routeClass, "/health/live");
     assert.equal(event.operation, "health-live");
     assert.equal(event.method, "GET");
-    assert.match(event.correlationFingerprint, /^[a-f0-9]{8}$/);
+    assert.match(event.correlationFingerprint, /^[a-f0-9]{12}$/);
     assert.equal(JSON.stringify(event).includes("x-secret"), false);
     assert.equal(JSON.stringify(event).includes("abc\r\n"), false);
   }
@@ -330,18 +330,21 @@ test("protected submission fails closed when account cursor state is missing", a
   });
 
   assert.equal(response.statusCode, 503);
-  assert.deepEqual(response.json(), {
+  const body = response.json();
+  assert.deepEqual(body, {
     code: "service-unavailable",
-    diagnosticCode: "MKS-UPL-012",
+    diagnosticCode: "MKS-PDB-001",
     operation: "upload-submission",
     phase: "upload-submission",
-    routeClass: "transaction-scoped-operation",
-    providerTransactionOutcome: "not-started-or-rolled-back",
     outcome: "not-applied",
     retryable: false,
     safeAction: "stop and preserve evidence",
-    correlationId: "submission-500-diagnosis",
+    correlationFingerprint: body.correlationFingerprint,
+    lastProvedPhase: "upload-submission",
   });
+  assert.match(body.correlationFingerprint, /^[a-f0-9]{12}$/);
+  assert.equal("correlationId" in body, false);
+  assert.equal("providerTransactionOutcome" in body, false);
   assert.equal(
     database.queries.some((sql) => sql.startsWith("insert into sync_events")),
     false,
@@ -439,23 +442,41 @@ test("unexpected protected submission failures do not log successful request-fai
   });
 
   assert.equal(response.statusCode, 500);
-  assert.deepEqual(response.json(), {
+  const body = response.json();
+  assert.deepEqual(body, {
     code: "service-unavailable",
     diagnosticCode: "MKS-API-014",
     operation: "server",
     phase: "unexpected-terminal",
-    routeClass: "/v1/sync/submissions",
-    providerTransactionOutcome: "unknown",
-    sanitizedExceptionClass: "Error",
     outcome: "unknown",
     retryable: false,
     safeAction: "preserve evidence and inspect diagnostics",
-    correlationId: "submission-500-lifecycle",
+    correlationFingerprint: body.correlationFingerprint,
+    lastProvedPhase: "api-route",
   });
+  assert.match(body.correlationFingerprint, /^[a-f0-9]{12}$/);
+  assert.equal("correlationId" in body, false);
+  assert.equal("sanitizedExceptionClass" in body, false);
+  assert.equal("providerTransactionOutcome" in body, false);
   const failed = events.filter((event) => event.event === "request-failed");
-  assert.equal(failed.length, 1);
-  assert.notEqual(failed[0].status, 200);
-  assert.equal(failed[0].result, "unexpected-server-error");
+  assert.equal(failed.length, 2);
+  assert.equal(
+    failed.some((event) => event.status === 200),
+    false,
+  );
+  assert.equal(
+    failed.some(
+      (event) =>
+        event.diagnosticCode === "MKS-API-014" &&
+        event.sanitizedExceptionClass === "Error" &&
+        event.providerTransactionOutcome === "unknown",
+    ),
+    true,
+  );
+  assert.equal(
+    failed.some((event) => event.result === "unexpected-server-error"),
+    true,
+  );
   assert.equal(
     events.some(
       (event) => event.event === "response-completed" && event.status === 500,

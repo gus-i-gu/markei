@@ -232,7 +232,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('sync-completed'), findsOneWidget);
-      expect(query.beginAttempts, 1);
+      expect(query.beginDiagnosticAttempts, 1);
       expect(query.completedResults, ['sync-completed']);
       expect(query.snapshots, greaterThanOrEqualTo(2));
     },
@@ -282,7 +282,7 @@ void main() {
     final result = await runner.hostedSyncProbe();
 
     expect(result.state, 'authentication-required');
-    expect(query.beginAttempts, 1);
+    expect(query.beginDiagnosticAttempts, 1);
     expect(query.completedResults, ['authentication-required']);
   });
 
@@ -293,7 +293,7 @@ void main() {
     final result = await runner.hostedSyncProbe();
 
     expect(result.state, 'sync-no-new-events');
-    expect(query.beginAttempts, 1);
+    expect(query.beginDiagnosticAttempts, 1);
     expect(query.completedResults, ['sync-no-new-events']);
   });
 
@@ -304,9 +304,60 @@ void main() {
     final result = await runner.hostedSyncProbe();
 
     expect(result.state, 'sync-completed');
-    expect(query.beginAttempts, 1);
+    expect(query.beginDiagnosticAttempts, 1);
     expect(query.completedResults, ['sync-completed']);
   });
+
+  test(
+    'ordinary Sync records ordered phase diagnostics and correlations',
+    () async {
+      final query = _FakeDiagnosticsQuery();
+      final runner = _runner(query: query, outbox: _UploadingOutbox());
+
+      final result = await runner.hostedSyncProbe();
+
+      expect(result.state, 'sync-completed');
+      final diagnostics = query.diagnosticEvents;
+      expect(
+        diagnostics.map((event) => event.phase),
+        containsAllInOrder([
+          'authentication',
+          'binding',
+          'failed-recovery',
+          'upload-lease',
+          'upload-transport',
+          'upload-provider',
+          'upload-result-persistence',
+          'download-transport',
+          'download-provider',
+          'download-local-apply',
+          'acknowledgement',
+          'terminal',
+        ]),
+      );
+      expect(
+        diagnostics.map((event) => event.ordinal),
+        List<int>.generate(diagnostics.length, (index) => index + 1),
+      );
+      expect(
+        diagnostics.map((event) => event.operationId).toSet(),
+        hasLength(1),
+      );
+      expect(
+        diagnostics.map((event) => event.operationFingerprint).toSet(),
+        hasLength(1),
+      );
+      expect(
+        diagnostics.map((event) => event.correlationId).toSet(),
+        hasLength(diagnostics.length),
+      );
+      for (final diagnostic in diagnostics) {
+        expect(diagnostic.diagnosticVersion, 1);
+        expect(diagnostic.correlationFingerprint, matches(r'^[a-f0-9]{12}$'));
+        expect(diagnostic.resultPersistenceState, isNotEmpty);
+      }
+    },
+  );
 
   test('runner records unavailable Sync terminal outcome once', () async {
     final query = _FakeDiagnosticsQuery();
@@ -315,7 +366,7 @@ void main() {
     final result = await runner.hostedSyncProbe();
 
     expect(result.state, 'sync-unavailable');
-    expect(query.beginAttempts, 1);
+    expect(query.beginDiagnosticAttempts, 1);
     expect(query.completedResults, ['sync-unavailable']);
   });
 
@@ -326,7 +377,7 @@ void main() {
     final result = await runner.hostedSyncProbe();
 
     expect(result.state, 'sync-interrupted');
-    expect(query.beginAttempts, 1);
+    expect(query.beginDiagnosticAttempts, 1);
     expect(query.completedResults, ['sync-interrupted']);
   });
 
@@ -413,6 +464,7 @@ final class _FakeDiagnosticsQuery
   var cleared = false;
   final completedResults = <String>[];
   final completedDiagnosticAttempts = <_CompletedDiagnosticAttempt>[];
+  final diagnosticEvents = <SyncDiagnosticEnvelope>[];
 
   @override
   Future<int> beginSyncAttempt() async {
@@ -475,6 +527,7 @@ final class _FakeDiagnosticsQuery
 
   @override
   Future<int> recordDiagnosticEvent(SyncDiagnosticEnvelope diagnostic) async {
+    diagnosticEvents.add(diagnostic);
     return diagnostic.ordinal;
   }
 

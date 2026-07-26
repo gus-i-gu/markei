@@ -341,20 +341,32 @@ class SyncDiagnosticEvents extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get attemptId =>
       integer().references(SyncAttempts, #id, onDelete: KeyAction.cascade)();
+  IntColumn get diagnosticVersion => integer().withDefault(const Constant(1))();
   IntColumn get ordinal => integer()();
+  TextColumn get operationId => text().nullable()();
+  TextColumn get correlationId => text().nullable()();
   TextColumn get code => text().withLength(min: 1, max: 32)();
   TextColumn get nativeCode => text().nullable()();
   TextColumn get severity => text().withLength(min: 1, max: 16)();
   TextColumn get outcome => text().withLength(min: 1, max: 32)();
   TextColumn get operationKind => text().withLength(min: 1, max: 64)();
   TextColumn get phase => text().withLength(min: 1, max: 64)();
+  TextColumn get lastProvedPhase => text()
+      .withLength(min: 1, max: 64)
+      .withDefault(const Constant('unknown'))();
   TextColumn get operationFingerprint => text().nullable()();
   TextColumn get correlationFingerprint => text().nullable()();
+  TextColumn get accountFingerprint => text().nullable()();
+  TextColumn get deviceFingerprint => text().nullable()();
+  TextColumn get submissionFingerprint => text().nullable()();
   TextColumn get localMutationState => text().withLength(min: 1, max: 64)();
   TextColumn get providerContactState => text().withLength(min: 1, max: 64)();
   TextColumn get providerTransactionState =>
       text().withLength(min: 1, max: 64)();
   TextColumn get trustedResponseState => text().withLength(min: 1, max: 64)();
+  TextColumn get resultPersistenceState => text()
+      .withLength(min: 1, max: 64)
+      .withDefault(const Constant('not-started'))();
   TextColumn get queueScope => text().nullable()();
   IntColumn get pendingCount => integer().nullable()();
   IntColumn get uploadingCount => integer().nullable()();
@@ -431,7 +443,7 @@ class LocalDatabase extends _$LocalDatabase {
       LocalDatabase(NativeDatabase.createInBackground(file));
 
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -632,7 +644,53 @@ SELECT id, 5, strftime('%s','now') * 1000 FROM local_accounts
           ),
         );
       }
-      if (from > 11) {
+      if (from < 12) {
+        if (from >= 11) {
+          await migrator.addColumn(
+            syncDiagnosticEvents,
+            syncDiagnosticEvents.diagnosticVersion,
+          );
+          await migrator.addColumn(
+            syncDiagnosticEvents,
+            syncDiagnosticEvents.operationId,
+          );
+          await migrator.addColumn(
+            syncDiagnosticEvents,
+            syncDiagnosticEvents.correlationId,
+          );
+          await migrator.addColumn(
+            syncDiagnosticEvents,
+            syncDiagnosticEvents.lastProvedPhase,
+          );
+          await migrator.addColumn(
+            syncDiagnosticEvents,
+            syncDiagnosticEvents.accountFingerprint,
+          );
+          await migrator.addColumn(
+            syncDiagnosticEvents,
+            syncDiagnosticEvents.deviceFingerprint,
+          );
+          await migrator.addColumn(
+            syncDiagnosticEvents,
+            syncDiagnosticEvents.submissionFingerprint,
+          );
+          await migrator.addColumn(
+            syncDiagnosticEvents,
+            syncDiagnosticEvents.resultPersistenceState,
+          );
+        }
+        await into(migrationLedger).insert(
+          MigrationLedgerCompanion.insert(
+            schemaName: 'shared_beta_local',
+            schemaVersion: to,
+            fromVersion: Value(from),
+            toVersion: const Value(12),
+            migrationId: const Value('v11-to-v12-diagnostic-envelope-v1'),
+            appliedAt: DateTime.now().toUtc(),
+          ),
+        );
+      }
+      if (from > 12) {
         throw UnsupportedError(
           'Unsupported local database migration $from to $to.',
         );

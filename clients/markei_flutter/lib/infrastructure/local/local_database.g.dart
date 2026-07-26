@@ -10230,6 +10230,18 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
       'REFERENCES sync_attempts (id) ON DELETE CASCADE',
     ),
   );
+  static const VerificationMeta _diagnosticVersionMeta = const VerificationMeta(
+    'diagnosticVersion',
+  );
+  @override
+  late final GeneratedColumn<int> diagnosticVersion = GeneratedColumn<int>(
+    'diagnostic_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
   static const VerificationMeta _ordinalMeta = const VerificationMeta(
     'ordinal',
   );
@@ -10240,6 +10252,28 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
     false,
     type: DriftSqlType.int,
     requiredDuringInsert: true,
+  );
+  static const VerificationMeta _operationIdMeta = const VerificationMeta(
+    'operationId',
+  );
+  @override
+  late final GeneratedColumn<String> operationId = GeneratedColumn<String>(
+    'operation_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _correlationIdMeta = const VerificationMeta(
+    'correlationId',
+  );
+  @override
+  late final GeneratedColumn<String> correlationId = GeneratedColumn<String>(
+    'correlation_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _codeMeta = const VerificationMeta('code');
   @override
@@ -10323,6 +10357,22 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _lastProvedPhaseMeta = const VerificationMeta(
+    'lastProvedPhase',
+  );
+  @override
+  late final GeneratedColumn<String> lastProvedPhase = GeneratedColumn<String>(
+    'last_proved_phase',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 64,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('unknown'),
+  );
   static const VerificationMeta _operationFingerprintMeta =
       const VerificationMeta('operationFingerprint');
   @override
@@ -10340,6 +10390,40 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
   late final GeneratedColumn<String> correlationFingerprint =
       GeneratedColumn<String>(
         'correlation_fingerprint',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _accountFingerprintMeta =
+      const VerificationMeta('accountFingerprint');
+  @override
+  late final GeneratedColumn<String> accountFingerprint =
+      GeneratedColumn<String>(
+        'account_fingerprint',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _deviceFingerprintMeta = const VerificationMeta(
+    'deviceFingerprint',
+  );
+  @override
+  late final GeneratedColumn<String> deviceFingerprint =
+      GeneratedColumn<String>(
+        'device_fingerprint',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _submissionFingerprintMeta =
+      const VerificationMeta('submissionFingerprint');
+  @override
+  late final GeneratedColumn<String> submissionFingerprint =
+      GeneratedColumn<String>(
+        'submission_fingerprint',
         aliasedName,
         true,
         type: DriftSqlType.string,
@@ -10404,6 +10488,22 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
         ),
         type: DriftSqlType.string,
         requiredDuringInsert: true,
+      );
+  static const VerificationMeta _resultPersistenceStateMeta =
+      const VerificationMeta('resultPersistenceState');
+  @override
+  late final GeneratedColumn<String> resultPersistenceState =
+      GeneratedColumn<String>(
+        'result_persistence_state',
+        aliasedName,
+        false,
+        additionalChecks: GeneratedColumn.checkTextLength(
+          minTextLength: 1,
+          maxTextLength: 64,
+        ),
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('not-started'),
       );
   static const VerificationMeta _queueScopeMeta = const VerificationMeta(
     'queueScope',
@@ -10594,19 +10694,27 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
   List<GeneratedColumn> get $columns => [
     id,
     attemptId,
+    diagnosticVersion,
     ordinal,
+    operationId,
+    correlationId,
     code,
     nativeCode,
     severity,
     outcome,
     operationKind,
     phase,
+    lastProvedPhase,
     operationFingerprint,
     correlationFingerprint,
+    accountFingerprint,
+    deviceFingerprint,
+    submissionFingerprint,
     localMutationState,
     providerContactState,
     providerTransactionState,
     trustedResponseState,
+    resultPersistenceState,
     queueScope,
     pendingCount,
     uploadingCount,
@@ -10647,6 +10755,15 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
     } else if (isInserting) {
       context.missing(_attemptIdMeta);
     }
+    if (data.containsKey('diagnostic_version')) {
+      context.handle(
+        _diagnosticVersionMeta,
+        diagnosticVersion.isAcceptableOrUnknown(
+          data['diagnostic_version']!,
+          _diagnosticVersionMeta,
+        ),
+      );
+    }
     if (data.containsKey('ordinal')) {
       context.handle(
         _ordinalMeta,
@@ -10654,6 +10771,24 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
       );
     } else if (isInserting) {
       context.missing(_ordinalMeta);
+    }
+    if (data.containsKey('operation_id')) {
+      context.handle(
+        _operationIdMeta,
+        operationId.isAcceptableOrUnknown(
+          data['operation_id']!,
+          _operationIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('correlation_id')) {
+      context.handle(
+        _correlationIdMeta,
+        correlationId.isAcceptableOrUnknown(
+          data['correlation_id']!,
+          _correlationIdMeta,
+        ),
+      );
     }
     if (data.containsKey('code')) {
       context.handle(
@@ -10704,6 +10839,15 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
     } else if (isInserting) {
       context.missing(_phaseMeta);
     }
+    if (data.containsKey('last_proved_phase')) {
+      context.handle(
+        _lastProvedPhaseMeta,
+        lastProvedPhase.isAcceptableOrUnknown(
+          data['last_proved_phase']!,
+          _lastProvedPhaseMeta,
+        ),
+      );
+    }
     if (data.containsKey('operation_fingerprint')) {
       context.handle(
         _operationFingerprintMeta,
@@ -10719,6 +10863,33 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
         correlationFingerprint.isAcceptableOrUnknown(
           data['correlation_fingerprint']!,
           _correlationFingerprintMeta,
+        ),
+      );
+    }
+    if (data.containsKey('account_fingerprint')) {
+      context.handle(
+        _accountFingerprintMeta,
+        accountFingerprint.isAcceptableOrUnknown(
+          data['account_fingerprint']!,
+          _accountFingerprintMeta,
+        ),
+      );
+    }
+    if (data.containsKey('device_fingerprint')) {
+      context.handle(
+        _deviceFingerprintMeta,
+        deviceFingerprint.isAcceptableOrUnknown(
+          data['device_fingerprint']!,
+          _deviceFingerprintMeta,
+        ),
+      );
+    }
+    if (data.containsKey('submission_fingerprint')) {
+      context.handle(
+        _submissionFingerprintMeta,
+        submissionFingerprint.isAcceptableOrUnknown(
+          data['submission_fingerprint']!,
+          _submissionFingerprintMeta,
         ),
       );
     }
@@ -10765,6 +10936,15 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
       );
     } else if (isInserting) {
       context.missing(_trustedResponseStateMeta);
+    }
+    if (data.containsKey('result_persistence_state')) {
+      context.handle(
+        _resultPersistenceStateMeta,
+        resultPersistenceState.isAcceptableOrUnknown(
+          data['result_persistence_state']!,
+          _resultPersistenceStateMeta,
+        ),
+      );
     }
     if (data.containsKey('queue_scope')) {
       context.handle(
@@ -10916,10 +11096,22 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
         DriftSqlType.int,
         data['${effectivePrefix}attempt_id'],
       )!,
+      diagnosticVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}diagnostic_version'],
+      )!,
       ordinal: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}ordinal'],
       )!,
+      operationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation_id'],
+      ),
+      correlationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}correlation_id'],
+      ),
       code: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}code'],
@@ -10944,6 +11136,10 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
         DriftSqlType.string,
         data['${effectivePrefix}phase'],
       )!,
+      lastProvedPhase: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_proved_phase'],
+      )!,
       operationFingerprint: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}operation_fingerprint'],
@@ -10951,6 +11147,18 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
       correlationFingerprint: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}correlation_fingerprint'],
+      ),
+      accountFingerprint: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_fingerprint'],
+      ),
+      deviceFingerprint: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_fingerprint'],
+      ),
+      submissionFingerprint: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}submission_fingerprint'],
       ),
       localMutationState: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -10967,6 +11175,10 @@ class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
       trustedResponseState: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}trusted_response_state'],
+      )!,
+      resultPersistenceState: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}result_persistence_state'],
       )!,
       queueScope: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -11045,19 +11257,27 @@ class SyncDiagnosticEvent extends DataClass
     implements Insertable<SyncDiagnosticEvent> {
   final int id;
   final int attemptId;
+  final int diagnosticVersion;
   final int ordinal;
+  final String? operationId;
+  final String? correlationId;
   final String code;
   final String? nativeCode;
   final String severity;
   final String outcome;
   final String operationKind;
   final String phase;
+  final String lastProvedPhase;
   final String? operationFingerprint;
   final String? correlationFingerprint;
+  final String? accountFingerprint;
+  final String? deviceFingerprint;
+  final String? submissionFingerprint;
   final String localMutationState;
   final String providerContactState;
   final String providerTransactionState;
   final String trustedResponseState;
+  final String resultPersistenceState;
   final String? queueScope;
   final int? pendingCount;
   final int? uploadingCount;
@@ -11077,19 +11297,27 @@ class SyncDiagnosticEvent extends DataClass
   const SyncDiagnosticEvent({
     required this.id,
     required this.attemptId,
+    required this.diagnosticVersion,
     required this.ordinal,
+    this.operationId,
+    this.correlationId,
     required this.code,
     this.nativeCode,
     required this.severity,
     required this.outcome,
     required this.operationKind,
     required this.phase,
+    required this.lastProvedPhase,
     this.operationFingerprint,
     this.correlationFingerprint,
+    this.accountFingerprint,
+    this.deviceFingerprint,
+    this.submissionFingerprint,
     required this.localMutationState,
     required this.providerContactState,
     required this.providerTransactionState,
     required this.trustedResponseState,
+    required this.resultPersistenceState,
     this.queueScope,
     this.pendingCount,
     this.uploadingCount,
@@ -11112,7 +11340,14 @@ class SyncDiagnosticEvent extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['attempt_id'] = Variable<int>(attemptId);
+    map['diagnostic_version'] = Variable<int>(diagnosticVersion);
     map['ordinal'] = Variable<int>(ordinal);
+    if (!nullToAbsent || operationId != null) {
+      map['operation_id'] = Variable<String>(operationId);
+    }
+    if (!nullToAbsent || correlationId != null) {
+      map['correlation_id'] = Variable<String>(correlationId);
+    }
     map['code'] = Variable<String>(code);
     if (!nullToAbsent || nativeCode != null) {
       map['native_code'] = Variable<String>(nativeCode);
@@ -11121,11 +11356,21 @@ class SyncDiagnosticEvent extends DataClass
     map['outcome'] = Variable<String>(outcome);
     map['operation_kind'] = Variable<String>(operationKind);
     map['phase'] = Variable<String>(phase);
+    map['last_proved_phase'] = Variable<String>(lastProvedPhase);
     if (!nullToAbsent || operationFingerprint != null) {
       map['operation_fingerprint'] = Variable<String>(operationFingerprint);
     }
     if (!nullToAbsent || correlationFingerprint != null) {
       map['correlation_fingerprint'] = Variable<String>(correlationFingerprint);
+    }
+    if (!nullToAbsent || accountFingerprint != null) {
+      map['account_fingerprint'] = Variable<String>(accountFingerprint);
+    }
+    if (!nullToAbsent || deviceFingerprint != null) {
+      map['device_fingerprint'] = Variable<String>(deviceFingerprint);
+    }
+    if (!nullToAbsent || submissionFingerprint != null) {
+      map['submission_fingerprint'] = Variable<String>(submissionFingerprint);
     }
     map['local_mutation_state'] = Variable<String>(localMutationState);
     map['provider_contact_state'] = Variable<String>(providerContactState);
@@ -11133,6 +11378,7 @@ class SyncDiagnosticEvent extends DataClass
       providerTransactionState,
     );
     map['trusted_response_state'] = Variable<String>(trustedResponseState);
+    map['result_persistence_state'] = Variable<String>(resultPersistenceState);
     if (!nullToAbsent || queueScope != null) {
       map['queue_scope'] = Variable<String>(queueScope);
     }
@@ -11182,7 +11428,14 @@ class SyncDiagnosticEvent extends DataClass
     return SyncDiagnosticEventsCompanion(
       id: Value(id),
       attemptId: Value(attemptId),
+      diagnosticVersion: Value(diagnosticVersion),
       ordinal: Value(ordinal),
+      operationId: operationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(operationId),
+      correlationId: correlationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(correlationId),
       code: Value(code),
       nativeCode: nativeCode == null && nullToAbsent
           ? const Value.absent()
@@ -11191,16 +11444,27 @@ class SyncDiagnosticEvent extends DataClass
       outcome: Value(outcome),
       operationKind: Value(operationKind),
       phase: Value(phase),
+      lastProvedPhase: Value(lastProvedPhase),
       operationFingerprint: operationFingerprint == null && nullToAbsent
           ? const Value.absent()
           : Value(operationFingerprint),
       correlationFingerprint: correlationFingerprint == null && nullToAbsent
           ? const Value.absent()
           : Value(correlationFingerprint),
+      accountFingerprint: accountFingerprint == null && nullToAbsent
+          ? const Value.absent()
+          : Value(accountFingerprint),
+      deviceFingerprint: deviceFingerprint == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deviceFingerprint),
+      submissionFingerprint: submissionFingerprint == null && nullToAbsent
+          ? const Value.absent()
+          : Value(submissionFingerprint),
       localMutationState: Value(localMutationState),
       providerContactState: Value(providerContactState),
       providerTransactionState: Value(providerTransactionState),
       trustedResponseState: Value(trustedResponseState),
+      resultPersistenceState: Value(resultPersistenceState),
       queueScope: queueScope == null && nullToAbsent
           ? const Value.absent()
           : Value(queueScope),
@@ -11252,18 +11516,31 @@ class SyncDiagnosticEvent extends DataClass
     return SyncDiagnosticEvent(
       id: serializer.fromJson<int>(json['id']),
       attemptId: serializer.fromJson<int>(json['attemptId']),
+      diagnosticVersion: serializer.fromJson<int>(json['diagnosticVersion']),
       ordinal: serializer.fromJson<int>(json['ordinal']),
+      operationId: serializer.fromJson<String?>(json['operationId']),
+      correlationId: serializer.fromJson<String?>(json['correlationId']),
       code: serializer.fromJson<String>(json['code']),
       nativeCode: serializer.fromJson<String?>(json['nativeCode']),
       severity: serializer.fromJson<String>(json['severity']),
       outcome: serializer.fromJson<String>(json['outcome']),
       operationKind: serializer.fromJson<String>(json['operationKind']),
       phase: serializer.fromJson<String>(json['phase']),
+      lastProvedPhase: serializer.fromJson<String>(json['lastProvedPhase']),
       operationFingerprint: serializer.fromJson<String?>(
         json['operationFingerprint'],
       ),
       correlationFingerprint: serializer.fromJson<String?>(
         json['correlationFingerprint'],
+      ),
+      accountFingerprint: serializer.fromJson<String?>(
+        json['accountFingerprint'],
+      ),
+      deviceFingerprint: serializer.fromJson<String?>(
+        json['deviceFingerprint'],
+      ),
+      submissionFingerprint: serializer.fromJson<String?>(
+        json['submissionFingerprint'],
       ),
       localMutationState: serializer.fromJson<String>(
         json['localMutationState'],
@@ -11276,6 +11553,9 @@ class SyncDiagnosticEvent extends DataClass
       ),
       trustedResponseState: serializer.fromJson<String>(
         json['trustedResponseState'],
+      ),
+      resultPersistenceState: serializer.fromJson<String>(
+        json['resultPersistenceState'],
       ),
       queueScope: serializer.fromJson<String?>(json['queueScope']),
       pendingCount: serializer.fromJson<int?>(json['pendingCount']),
@@ -11309,16 +11589,25 @@ class SyncDiagnosticEvent extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'attemptId': serializer.toJson<int>(attemptId),
+      'diagnosticVersion': serializer.toJson<int>(diagnosticVersion),
       'ordinal': serializer.toJson<int>(ordinal),
+      'operationId': serializer.toJson<String?>(operationId),
+      'correlationId': serializer.toJson<String?>(correlationId),
       'code': serializer.toJson<String>(code),
       'nativeCode': serializer.toJson<String?>(nativeCode),
       'severity': serializer.toJson<String>(severity),
       'outcome': serializer.toJson<String>(outcome),
       'operationKind': serializer.toJson<String>(operationKind),
       'phase': serializer.toJson<String>(phase),
+      'lastProvedPhase': serializer.toJson<String>(lastProvedPhase),
       'operationFingerprint': serializer.toJson<String?>(operationFingerprint),
       'correlationFingerprint': serializer.toJson<String?>(
         correlationFingerprint,
+      ),
+      'accountFingerprint': serializer.toJson<String?>(accountFingerprint),
+      'deviceFingerprint': serializer.toJson<String?>(deviceFingerprint),
+      'submissionFingerprint': serializer.toJson<String?>(
+        submissionFingerprint,
       ),
       'localMutationState': serializer.toJson<String>(localMutationState),
       'providerContactState': serializer.toJson<String>(providerContactState),
@@ -11326,6 +11615,9 @@ class SyncDiagnosticEvent extends DataClass
         providerTransactionState,
       ),
       'trustedResponseState': serializer.toJson<String>(trustedResponseState),
+      'resultPersistenceState': serializer.toJson<String>(
+        resultPersistenceState,
+      ),
       'queueScope': serializer.toJson<String?>(queueScope),
       'pendingCount': serializer.toJson<int?>(pendingCount),
       'uploadingCount': serializer.toJson<int?>(uploadingCount),
@@ -11352,19 +11644,27 @@ class SyncDiagnosticEvent extends DataClass
   SyncDiagnosticEvent copyWith({
     int? id,
     int? attemptId,
+    int? diagnosticVersion,
     int? ordinal,
+    Value<String?> operationId = const Value.absent(),
+    Value<String?> correlationId = const Value.absent(),
     String? code,
     Value<String?> nativeCode = const Value.absent(),
     String? severity,
     String? outcome,
     String? operationKind,
     String? phase,
+    String? lastProvedPhase,
     Value<String?> operationFingerprint = const Value.absent(),
     Value<String?> correlationFingerprint = const Value.absent(),
+    Value<String?> accountFingerprint = const Value.absent(),
+    Value<String?> deviceFingerprint = const Value.absent(),
+    Value<String?> submissionFingerprint = const Value.absent(),
     String? localMutationState,
     String? providerContactState,
     String? providerTransactionState,
     String? trustedResponseState,
+    String? resultPersistenceState,
     Value<String?> queueScope = const Value.absent(),
     Value<int?> pendingCount = const Value.absent(),
     Value<int?> uploadingCount = const Value.absent(),
@@ -11384,24 +11684,41 @@ class SyncDiagnosticEvent extends DataClass
   }) => SyncDiagnosticEvent(
     id: id ?? this.id,
     attemptId: attemptId ?? this.attemptId,
+    diagnosticVersion: diagnosticVersion ?? this.diagnosticVersion,
     ordinal: ordinal ?? this.ordinal,
+    operationId: operationId.present ? operationId.value : this.operationId,
+    correlationId: correlationId.present
+        ? correlationId.value
+        : this.correlationId,
     code: code ?? this.code,
     nativeCode: nativeCode.present ? nativeCode.value : this.nativeCode,
     severity: severity ?? this.severity,
     outcome: outcome ?? this.outcome,
     operationKind: operationKind ?? this.operationKind,
     phase: phase ?? this.phase,
+    lastProvedPhase: lastProvedPhase ?? this.lastProvedPhase,
     operationFingerprint: operationFingerprint.present
         ? operationFingerprint.value
         : this.operationFingerprint,
     correlationFingerprint: correlationFingerprint.present
         ? correlationFingerprint.value
         : this.correlationFingerprint,
+    accountFingerprint: accountFingerprint.present
+        ? accountFingerprint.value
+        : this.accountFingerprint,
+    deviceFingerprint: deviceFingerprint.present
+        ? deviceFingerprint.value
+        : this.deviceFingerprint,
+    submissionFingerprint: submissionFingerprint.present
+        ? submissionFingerprint.value
+        : this.submissionFingerprint,
     localMutationState: localMutationState ?? this.localMutationState,
     providerContactState: providerContactState ?? this.providerContactState,
     providerTransactionState:
         providerTransactionState ?? this.providerTransactionState,
     trustedResponseState: trustedResponseState ?? this.trustedResponseState,
+    resultPersistenceState:
+        resultPersistenceState ?? this.resultPersistenceState,
     queueScope: queueScope.present ? queueScope.value : this.queueScope,
     pendingCount: pendingCount.present ? pendingCount.value : this.pendingCount,
     uploadingCount: uploadingCount.present
@@ -11436,7 +11753,16 @@ class SyncDiagnosticEvent extends DataClass
     return SyncDiagnosticEvent(
       id: data.id.present ? data.id.value : this.id,
       attemptId: data.attemptId.present ? data.attemptId.value : this.attemptId,
+      diagnosticVersion: data.diagnosticVersion.present
+          ? data.diagnosticVersion.value
+          : this.diagnosticVersion,
       ordinal: data.ordinal.present ? data.ordinal.value : this.ordinal,
+      operationId: data.operationId.present
+          ? data.operationId.value
+          : this.operationId,
+      correlationId: data.correlationId.present
+          ? data.correlationId.value
+          : this.correlationId,
       code: data.code.present ? data.code.value : this.code,
       nativeCode: data.nativeCode.present
           ? data.nativeCode.value
@@ -11447,12 +11773,24 @@ class SyncDiagnosticEvent extends DataClass
           ? data.operationKind.value
           : this.operationKind,
       phase: data.phase.present ? data.phase.value : this.phase,
+      lastProvedPhase: data.lastProvedPhase.present
+          ? data.lastProvedPhase.value
+          : this.lastProvedPhase,
       operationFingerprint: data.operationFingerprint.present
           ? data.operationFingerprint.value
           : this.operationFingerprint,
       correlationFingerprint: data.correlationFingerprint.present
           ? data.correlationFingerprint.value
           : this.correlationFingerprint,
+      accountFingerprint: data.accountFingerprint.present
+          ? data.accountFingerprint.value
+          : this.accountFingerprint,
+      deviceFingerprint: data.deviceFingerprint.present
+          ? data.deviceFingerprint.value
+          : this.deviceFingerprint,
+      submissionFingerprint: data.submissionFingerprint.present
+          ? data.submissionFingerprint.value
+          : this.submissionFingerprint,
       localMutationState: data.localMutationState.present
           ? data.localMutationState.value
           : this.localMutationState,
@@ -11465,6 +11803,9 @@ class SyncDiagnosticEvent extends DataClass
       trustedResponseState: data.trustedResponseState.present
           ? data.trustedResponseState.value
           : this.trustedResponseState,
+      resultPersistenceState: data.resultPersistenceState.present
+          ? data.resultPersistenceState.value
+          : this.resultPersistenceState,
       queueScope: data.queueScope.present
           ? data.queueScope.value
           : this.queueScope,
@@ -11519,19 +11860,27 @@ class SyncDiagnosticEvent extends DataClass
     return (StringBuffer('SyncDiagnosticEvent(')
           ..write('id: $id, ')
           ..write('attemptId: $attemptId, ')
+          ..write('diagnosticVersion: $diagnosticVersion, ')
           ..write('ordinal: $ordinal, ')
+          ..write('operationId: $operationId, ')
+          ..write('correlationId: $correlationId, ')
           ..write('code: $code, ')
           ..write('nativeCode: $nativeCode, ')
           ..write('severity: $severity, ')
           ..write('outcome: $outcome, ')
           ..write('operationKind: $operationKind, ')
           ..write('phase: $phase, ')
+          ..write('lastProvedPhase: $lastProvedPhase, ')
           ..write('operationFingerprint: $operationFingerprint, ')
           ..write('correlationFingerprint: $correlationFingerprint, ')
+          ..write('accountFingerprint: $accountFingerprint, ')
+          ..write('deviceFingerprint: $deviceFingerprint, ')
+          ..write('submissionFingerprint: $submissionFingerprint, ')
           ..write('localMutationState: $localMutationState, ')
           ..write('providerContactState: $providerContactState, ')
           ..write('providerTransactionState: $providerTransactionState, ')
           ..write('trustedResponseState: $trustedResponseState, ')
+          ..write('resultPersistenceState: $resultPersistenceState, ')
           ..write('queueScope: $queueScope, ')
           ..write('pendingCount: $pendingCount, ')
           ..write('uploadingCount: $uploadingCount, ')
@@ -11556,19 +11905,27 @@ class SyncDiagnosticEvent extends DataClass
   int get hashCode => Object.hashAll([
     id,
     attemptId,
+    diagnosticVersion,
     ordinal,
+    operationId,
+    correlationId,
     code,
     nativeCode,
     severity,
     outcome,
     operationKind,
     phase,
+    lastProvedPhase,
     operationFingerprint,
     correlationFingerprint,
+    accountFingerprint,
+    deviceFingerprint,
+    submissionFingerprint,
     localMutationState,
     providerContactState,
     providerTransactionState,
     trustedResponseState,
+    resultPersistenceState,
     queueScope,
     pendingCount,
     uploadingCount,
@@ -11592,19 +11949,27 @@ class SyncDiagnosticEvent extends DataClass
       (other is SyncDiagnosticEvent &&
           other.id == this.id &&
           other.attemptId == this.attemptId &&
+          other.diagnosticVersion == this.diagnosticVersion &&
           other.ordinal == this.ordinal &&
+          other.operationId == this.operationId &&
+          other.correlationId == this.correlationId &&
           other.code == this.code &&
           other.nativeCode == this.nativeCode &&
           other.severity == this.severity &&
           other.outcome == this.outcome &&
           other.operationKind == this.operationKind &&
           other.phase == this.phase &&
+          other.lastProvedPhase == this.lastProvedPhase &&
           other.operationFingerprint == this.operationFingerprint &&
           other.correlationFingerprint == this.correlationFingerprint &&
+          other.accountFingerprint == this.accountFingerprint &&
+          other.deviceFingerprint == this.deviceFingerprint &&
+          other.submissionFingerprint == this.submissionFingerprint &&
           other.localMutationState == this.localMutationState &&
           other.providerContactState == this.providerContactState &&
           other.providerTransactionState == this.providerTransactionState &&
           other.trustedResponseState == this.trustedResponseState &&
+          other.resultPersistenceState == this.resultPersistenceState &&
           other.queueScope == this.queueScope &&
           other.pendingCount == this.pendingCount &&
           other.uploadingCount == this.uploadingCount &&
@@ -11627,19 +11992,27 @@ class SyncDiagnosticEventsCompanion
     extends UpdateCompanion<SyncDiagnosticEvent> {
   final Value<int> id;
   final Value<int> attemptId;
+  final Value<int> diagnosticVersion;
   final Value<int> ordinal;
+  final Value<String?> operationId;
+  final Value<String?> correlationId;
   final Value<String> code;
   final Value<String?> nativeCode;
   final Value<String> severity;
   final Value<String> outcome;
   final Value<String> operationKind;
   final Value<String> phase;
+  final Value<String> lastProvedPhase;
   final Value<String?> operationFingerprint;
   final Value<String?> correlationFingerprint;
+  final Value<String?> accountFingerprint;
+  final Value<String?> deviceFingerprint;
+  final Value<String?> submissionFingerprint;
   final Value<String> localMutationState;
   final Value<String> providerContactState;
   final Value<String> providerTransactionState;
   final Value<String> trustedResponseState;
+  final Value<String> resultPersistenceState;
   final Value<String?> queueScope;
   final Value<int?> pendingCount;
   final Value<int?> uploadingCount;
@@ -11659,19 +12032,27 @@ class SyncDiagnosticEventsCompanion
   const SyncDiagnosticEventsCompanion({
     this.id = const Value.absent(),
     this.attemptId = const Value.absent(),
+    this.diagnosticVersion = const Value.absent(),
     this.ordinal = const Value.absent(),
+    this.operationId = const Value.absent(),
+    this.correlationId = const Value.absent(),
     this.code = const Value.absent(),
     this.nativeCode = const Value.absent(),
     this.severity = const Value.absent(),
     this.outcome = const Value.absent(),
     this.operationKind = const Value.absent(),
     this.phase = const Value.absent(),
+    this.lastProvedPhase = const Value.absent(),
     this.operationFingerprint = const Value.absent(),
     this.correlationFingerprint = const Value.absent(),
+    this.accountFingerprint = const Value.absent(),
+    this.deviceFingerprint = const Value.absent(),
+    this.submissionFingerprint = const Value.absent(),
     this.localMutationState = const Value.absent(),
     this.providerContactState = const Value.absent(),
     this.providerTransactionState = const Value.absent(),
     this.trustedResponseState = const Value.absent(),
+    this.resultPersistenceState = const Value.absent(),
     this.queueScope = const Value.absent(),
     this.pendingCount = const Value.absent(),
     this.uploadingCount = const Value.absent(),
@@ -11692,19 +12073,27 @@ class SyncDiagnosticEventsCompanion
   SyncDiagnosticEventsCompanion.insert({
     this.id = const Value.absent(),
     required int attemptId,
+    this.diagnosticVersion = const Value.absent(),
     required int ordinal,
+    this.operationId = const Value.absent(),
+    this.correlationId = const Value.absent(),
     required String code,
     this.nativeCode = const Value.absent(),
     required String severity,
     required String outcome,
     required String operationKind,
     required String phase,
+    this.lastProvedPhase = const Value.absent(),
     this.operationFingerprint = const Value.absent(),
     this.correlationFingerprint = const Value.absent(),
+    this.accountFingerprint = const Value.absent(),
+    this.deviceFingerprint = const Value.absent(),
+    this.submissionFingerprint = const Value.absent(),
     required String localMutationState,
     required String providerContactState,
     required String providerTransactionState,
     required String trustedResponseState,
+    this.resultPersistenceState = const Value.absent(),
     this.queueScope = const Value.absent(),
     this.pendingCount = const Value.absent(),
     this.uploadingCount = const Value.absent(),
@@ -11737,19 +12126,27 @@ class SyncDiagnosticEventsCompanion
   static Insertable<SyncDiagnosticEvent> custom({
     Expression<int>? id,
     Expression<int>? attemptId,
+    Expression<int>? diagnosticVersion,
     Expression<int>? ordinal,
+    Expression<String>? operationId,
+    Expression<String>? correlationId,
     Expression<String>? code,
     Expression<String>? nativeCode,
     Expression<String>? severity,
     Expression<String>? outcome,
     Expression<String>? operationKind,
     Expression<String>? phase,
+    Expression<String>? lastProvedPhase,
     Expression<String>? operationFingerprint,
     Expression<String>? correlationFingerprint,
+    Expression<String>? accountFingerprint,
+    Expression<String>? deviceFingerprint,
+    Expression<String>? submissionFingerprint,
     Expression<String>? localMutationState,
     Expression<String>? providerContactState,
     Expression<String>? providerTransactionState,
     Expression<String>? trustedResponseState,
+    Expression<String>? resultPersistenceState,
     Expression<String>? queueScope,
     Expression<int>? pendingCount,
     Expression<int>? uploadingCount,
@@ -11770,17 +12167,25 @@ class SyncDiagnosticEventsCompanion
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (attemptId != null) 'attempt_id': attemptId,
+      if (diagnosticVersion != null) 'diagnostic_version': diagnosticVersion,
       if (ordinal != null) 'ordinal': ordinal,
+      if (operationId != null) 'operation_id': operationId,
+      if (correlationId != null) 'correlation_id': correlationId,
       if (code != null) 'code': code,
       if (nativeCode != null) 'native_code': nativeCode,
       if (severity != null) 'severity': severity,
       if (outcome != null) 'outcome': outcome,
       if (operationKind != null) 'operation_kind': operationKind,
       if (phase != null) 'phase': phase,
+      if (lastProvedPhase != null) 'last_proved_phase': lastProvedPhase,
       if (operationFingerprint != null)
         'operation_fingerprint': operationFingerprint,
       if (correlationFingerprint != null)
         'correlation_fingerprint': correlationFingerprint,
+      if (accountFingerprint != null) 'account_fingerprint': accountFingerprint,
+      if (deviceFingerprint != null) 'device_fingerprint': deviceFingerprint,
+      if (submissionFingerprint != null)
+        'submission_fingerprint': submissionFingerprint,
       if (localMutationState != null)
         'local_mutation_state': localMutationState,
       if (providerContactState != null)
@@ -11789,6 +12194,8 @@ class SyncDiagnosticEventsCompanion
         'provider_transaction_state': providerTransactionState,
       if (trustedResponseState != null)
         'trusted_response_state': trustedResponseState,
+      if (resultPersistenceState != null)
+        'result_persistence_state': resultPersistenceState,
       if (queueScope != null) 'queue_scope': queueScope,
       if (pendingCount != null) 'pending_count': pendingCount,
       if (uploadingCount != null) 'uploading_count': uploadingCount,
@@ -11817,19 +12224,27 @@ class SyncDiagnosticEventsCompanion
   SyncDiagnosticEventsCompanion copyWith({
     Value<int>? id,
     Value<int>? attemptId,
+    Value<int>? diagnosticVersion,
     Value<int>? ordinal,
+    Value<String?>? operationId,
+    Value<String?>? correlationId,
     Value<String>? code,
     Value<String?>? nativeCode,
     Value<String>? severity,
     Value<String>? outcome,
     Value<String>? operationKind,
     Value<String>? phase,
+    Value<String>? lastProvedPhase,
     Value<String?>? operationFingerprint,
     Value<String?>? correlationFingerprint,
+    Value<String?>? accountFingerprint,
+    Value<String?>? deviceFingerprint,
+    Value<String?>? submissionFingerprint,
     Value<String>? localMutationState,
     Value<String>? providerContactState,
     Value<String>? providerTransactionState,
     Value<String>? trustedResponseState,
+    Value<String>? resultPersistenceState,
     Value<String?>? queueScope,
     Value<int?>? pendingCount,
     Value<int?>? uploadingCount,
@@ -11850,21 +12265,31 @@ class SyncDiagnosticEventsCompanion
     return SyncDiagnosticEventsCompanion(
       id: id ?? this.id,
       attemptId: attemptId ?? this.attemptId,
+      diagnosticVersion: diagnosticVersion ?? this.diagnosticVersion,
       ordinal: ordinal ?? this.ordinal,
+      operationId: operationId ?? this.operationId,
+      correlationId: correlationId ?? this.correlationId,
       code: code ?? this.code,
       nativeCode: nativeCode ?? this.nativeCode,
       severity: severity ?? this.severity,
       outcome: outcome ?? this.outcome,
       operationKind: operationKind ?? this.operationKind,
       phase: phase ?? this.phase,
+      lastProvedPhase: lastProvedPhase ?? this.lastProvedPhase,
       operationFingerprint: operationFingerprint ?? this.operationFingerprint,
       correlationFingerprint:
           correlationFingerprint ?? this.correlationFingerprint,
+      accountFingerprint: accountFingerprint ?? this.accountFingerprint,
+      deviceFingerprint: deviceFingerprint ?? this.deviceFingerprint,
+      submissionFingerprint:
+          submissionFingerprint ?? this.submissionFingerprint,
       localMutationState: localMutationState ?? this.localMutationState,
       providerContactState: providerContactState ?? this.providerContactState,
       providerTransactionState:
           providerTransactionState ?? this.providerTransactionState,
       trustedResponseState: trustedResponseState ?? this.trustedResponseState,
+      resultPersistenceState:
+          resultPersistenceState ?? this.resultPersistenceState,
       queueScope: queueScope ?? this.queueScope,
       pendingCount: pendingCount ?? this.pendingCount,
       uploadingCount: uploadingCount ?? this.uploadingCount,
@@ -11895,8 +12320,17 @@ class SyncDiagnosticEventsCompanion
     if (attemptId.present) {
       map['attempt_id'] = Variable<int>(attemptId.value);
     }
+    if (diagnosticVersion.present) {
+      map['diagnostic_version'] = Variable<int>(diagnosticVersion.value);
+    }
     if (ordinal.present) {
       map['ordinal'] = Variable<int>(ordinal.value);
+    }
+    if (operationId.present) {
+      map['operation_id'] = Variable<String>(operationId.value);
+    }
+    if (correlationId.present) {
+      map['correlation_id'] = Variable<String>(correlationId.value);
     }
     if (code.present) {
       map['code'] = Variable<String>(code.value);
@@ -11916,6 +12350,9 @@ class SyncDiagnosticEventsCompanion
     if (phase.present) {
       map['phase'] = Variable<String>(phase.value);
     }
+    if (lastProvedPhase.present) {
+      map['last_proved_phase'] = Variable<String>(lastProvedPhase.value);
+    }
     if (operationFingerprint.present) {
       map['operation_fingerprint'] = Variable<String>(
         operationFingerprint.value,
@@ -11924,6 +12361,17 @@ class SyncDiagnosticEventsCompanion
     if (correlationFingerprint.present) {
       map['correlation_fingerprint'] = Variable<String>(
         correlationFingerprint.value,
+      );
+    }
+    if (accountFingerprint.present) {
+      map['account_fingerprint'] = Variable<String>(accountFingerprint.value);
+    }
+    if (deviceFingerprint.present) {
+      map['device_fingerprint'] = Variable<String>(deviceFingerprint.value);
+    }
+    if (submissionFingerprint.present) {
+      map['submission_fingerprint'] = Variable<String>(
+        submissionFingerprint.value,
       );
     }
     if (localMutationState.present) {
@@ -11942,6 +12390,11 @@ class SyncDiagnosticEventsCompanion
     if (trustedResponseState.present) {
       map['trusted_response_state'] = Variable<String>(
         trustedResponseState.value,
+      );
+    }
+    if (resultPersistenceState.present) {
+      map['result_persistence_state'] = Variable<String>(
+        resultPersistenceState.value,
       );
     }
     if (queueScope.present) {
@@ -12006,19 +12459,27 @@ class SyncDiagnosticEventsCompanion
     return (StringBuffer('SyncDiagnosticEventsCompanion(')
           ..write('id: $id, ')
           ..write('attemptId: $attemptId, ')
+          ..write('diagnosticVersion: $diagnosticVersion, ')
           ..write('ordinal: $ordinal, ')
+          ..write('operationId: $operationId, ')
+          ..write('correlationId: $correlationId, ')
           ..write('code: $code, ')
           ..write('nativeCode: $nativeCode, ')
           ..write('severity: $severity, ')
           ..write('outcome: $outcome, ')
           ..write('operationKind: $operationKind, ')
           ..write('phase: $phase, ')
+          ..write('lastProvedPhase: $lastProvedPhase, ')
           ..write('operationFingerprint: $operationFingerprint, ')
           ..write('correlationFingerprint: $correlationFingerprint, ')
+          ..write('accountFingerprint: $accountFingerprint, ')
+          ..write('deviceFingerprint: $deviceFingerprint, ')
+          ..write('submissionFingerprint: $submissionFingerprint, ')
           ..write('localMutationState: $localMutationState, ')
           ..write('providerContactState: $providerContactState, ')
           ..write('providerTransactionState: $providerTransactionState, ')
           ..write('trustedResponseState: $trustedResponseState, ')
+          ..write('resultPersistenceState: $resultPersistenceState, ')
           ..write('queueScope: $queueScope, ')
           ..write('pendingCount: $pendingCount, ')
           ..write('uploadingCount: $uploadingCount, ')
@@ -23054,19 +23515,27 @@ typedef $$SyncDiagnosticEventsTableCreateCompanionBuilder =
     SyncDiagnosticEventsCompanion Function({
       Value<int> id,
       required int attemptId,
+      Value<int> diagnosticVersion,
       required int ordinal,
+      Value<String?> operationId,
+      Value<String?> correlationId,
       required String code,
       Value<String?> nativeCode,
       required String severity,
       required String outcome,
       required String operationKind,
       required String phase,
+      Value<String> lastProvedPhase,
       Value<String?> operationFingerprint,
       Value<String?> correlationFingerprint,
+      Value<String?> accountFingerprint,
+      Value<String?> deviceFingerprint,
+      Value<String?> submissionFingerprint,
       required String localMutationState,
       required String providerContactState,
       required String providerTransactionState,
       required String trustedResponseState,
+      Value<String> resultPersistenceState,
       Value<String?> queueScope,
       Value<int?> pendingCount,
       Value<int?> uploadingCount,
@@ -23088,19 +23557,27 @@ typedef $$SyncDiagnosticEventsTableUpdateCompanionBuilder =
     SyncDiagnosticEventsCompanion Function({
       Value<int> id,
       Value<int> attemptId,
+      Value<int> diagnosticVersion,
       Value<int> ordinal,
+      Value<String?> operationId,
+      Value<String?> correlationId,
       Value<String> code,
       Value<String?> nativeCode,
       Value<String> severity,
       Value<String> outcome,
       Value<String> operationKind,
       Value<String> phase,
+      Value<String> lastProvedPhase,
       Value<String?> operationFingerprint,
       Value<String?> correlationFingerprint,
+      Value<String?> accountFingerprint,
+      Value<String?> deviceFingerprint,
+      Value<String?> submissionFingerprint,
       Value<String> localMutationState,
       Value<String> providerContactState,
       Value<String> providerTransactionState,
       Value<String> trustedResponseState,
+      Value<String> resultPersistenceState,
       Value<String?> queueScope,
       Value<int?> pendingCount,
       Value<int?> uploadingCount,
@@ -23165,8 +23642,23 @@ class $$SyncDiagnosticEventsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get diagnosticVersion => $composableBuilder(
+    column: $table.diagnosticVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get ordinal => $composableBuilder(
     column: $table.ordinal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get correlationId => $composableBuilder(
+    column: $table.correlationId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -23200,6 +23692,11 @@ class $$SyncDiagnosticEventsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get lastProvedPhase => $composableBuilder(
+    column: $table.lastProvedPhase,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get operationFingerprint => $composableBuilder(
     column: $table.operationFingerprint,
     builder: (column) => ColumnFilters(column),
@@ -23207,6 +23704,21 @@ class $$SyncDiagnosticEventsTableFilterComposer
 
   ColumnFilters<String> get correlationFingerprint => $composableBuilder(
     column: $table.correlationFingerprint,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get accountFingerprint => $composableBuilder(
+    column: $table.accountFingerprint,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceFingerprint => $composableBuilder(
+    column: $table.deviceFingerprint,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get submissionFingerprint => $composableBuilder(
+    column: $table.submissionFingerprint,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -23227,6 +23739,11 @@ class $$SyncDiagnosticEventsTableFilterComposer
 
   ColumnFilters<String> get trustedResponseState => $composableBuilder(
     column: $table.trustedResponseState,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get resultPersistenceState => $composableBuilder(
+    column: $table.resultPersistenceState,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -23348,8 +23865,23 @@ class $$SyncDiagnosticEventsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get diagnosticVersion => $composableBuilder(
+    column: $table.diagnosticVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get ordinal => $composableBuilder(
     column: $table.ordinal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get correlationId => $composableBuilder(
+    column: $table.correlationId,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -23383,6 +23915,11 @@ class $$SyncDiagnosticEventsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get lastProvedPhase => $composableBuilder(
+    column: $table.lastProvedPhase,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get operationFingerprint => $composableBuilder(
     column: $table.operationFingerprint,
     builder: (column) => ColumnOrderings(column),
@@ -23390,6 +23927,21 @@ class $$SyncDiagnosticEventsTableOrderingComposer
 
   ColumnOrderings<String> get correlationFingerprint => $composableBuilder(
     column: $table.correlationFingerprint,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get accountFingerprint => $composableBuilder(
+    column: $table.accountFingerprint,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceFingerprint => $composableBuilder(
+    column: $table.deviceFingerprint,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get submissionFingerprint => $composableBuilder(
+    column: $table.submissionFingerprint,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -23410,6 +23962,11 @@ class $$SyncDiagnosticEventsTableOrderingComposer
 
   ColumnOrderings<String> get trustedResponseState => $composableBuilder(
     column: $table.trustedResponseState,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get resultPersistenceState => $composableBuilder(
+    column: $table.resultPersistenceState,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -23529,8 +24086,23 @@ class $$SyncDiagnosticEventsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
+  GeneratedColumn<int> get diagnosticVersion => $composableBuilder(
+    column: $table.diagnosticVersion,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get ordinal =>
       $composableBuilder(column: $table.ordinal, builder: (column) => column);
+
+  GeneratedColumn<String> get operationId => $composableBuilder(
+    column: $table.operationId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get correlationId => $composableBuilder(
+    column: $table.correlationId,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get code =>
       $composableBuilder(column: $table.code, builder: (column) => column);
@@ -23554,6 +24126,11 @@ class $$SyncDiagnosticEventsTableAnnotationComposer
   GeneratedColumn<String> get phase =>
       $composableBuilder(column: $table.phase, builder: (column) => column);
 
+  GeneratedColumn<String> get lastProvedPhase => $composableBuilder(
+    column: $table.lastProvedPhase,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get operationFingerprint => $composableBuilder(
     column: $table.operationFingerprint,
     builder: (column) => column,
@@ -23561,6 +24138,21 @@ class $$SyncDiagnosticEventsTableAnnotationComposer
 
   GeneratedColumn<String> get correlationFingerprint => $composableBuilder(
     column: $table.correlationFingerprint,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get accountFingerprint => $composableBuilder(
+    column: $table.accountFingerprint,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get deviceFingerprint => $composableBuilder(
+    column: $table.deviceFingerprint,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get submissionFingerprint => $composableBuilder(
+    column: $table.submissionFingerprint,
     builder: (column) => column,
   );
 
@@ -23581,6 +24173,11 @@ class $$SyncDiagnosticEventsTableAnnotationComposer
 
   GeneratedColumn<String> get trustedResponseState => $composableBuilder(
     column: $table.trustedResponseState,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get resultPersistenceState => $composableBuilder(
+    column: $table.resultPersistenceState,
     builder: (column) => column,
   );
 
@@ -23724,19 +24321,27 @@ class $$SyncDiagnosticEventsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<int> attemptId = const Value.absent(),
+                Value<int> diagnosticVersion = const Value.absent(),
                 Value<int> ordinal = const Value.absent(),
+                Value<String?> operationId = const Value.absent(),
+                Value<String?> correlationId = const Value.absent(),
                 Value<String> code = const Value.absent(),
                 Value<String?> nativeCode = const Value.absent(),
                 Value<String> severity = const Value.absent(),
                 Value<String> outcome = const Value.absent(),
                 Value<String> operationKind = const Value.absent(),
                 Value<String> phase = const Value.absent(),
+                Value<String> lastProvedPhase = const Value.absent(),
                 Value<String?> operationFingerprint = const Value.absent(),
                 Value<String?> correlationFingerprint = const Value.absent(),
+                Value<String?> accountFingerprint = const Value.absent(),
+                Value<String?> deviceFingerprint = const Value.absent(),
+                Value<String?> submissionFingerprint = const Value.absent(),
                 Value<String> localMutationState = const Value.absent(),
                 Value<String> providerContactState = const Value.absent(),
                 Value<String> providerTransactionState = const Value.absent(),
                 Value<String> trustedResponseState = const Value.absent(),
+                Value<String> resultPersistenceState = const Value.absent(),
                 Value<String?> queueScope = const Value.absent(),
                 Value<int?> pendingCount = const Value.absent(),
                 Value<int?> uploadingCount = const Value.absent(),
@@ -23756,19 +24361,27 @@ class $$SyncDiagnosticEventsTableTableManager
               }) => SyncDiagnosticEventsCompanion(
                 id: id,
                 attemptId: attemptId,
+                diagnosticVersion: diagnosticVersion,
                 ordinal: ordinal,
+                operationId: operationId,
+                correlationId: correlationId,
                 code: code,
                 nativeCode: nativeCode,
                 severity: severity,
                 outcome: outcome,
                 operationKind: operationKind,
                 phase: phase,
+                lastProvedPhase: lastProvedPhase,
                 operationFingerprint: operationFingerprint,
                 correlationFingerprint: correlationFingerprint,
+                accountFingerprint: accountFingerprint,
+                deviceFingerprint: deviceFingerprint,
+                submissionFingerprint: submissionFingerprint,
                 localMutationState: localMutationState,
                 providerContactState: providerContactState,
                 providerTransactionState: providerTransactionState,
                 trustedResponseState: trustedResponseState,
+                resultPersistenceState: resultPersistenceState,
                 queueScope: queueScope,
                 pendingCount: pendingCount,
                 uploadingCount: uploadingCount,
@@ -23790,19 +24403,27 @@ class $$SyncDiagnosticEventsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 required int attemptId,
+                Value<int> diagnosticVersion = const Value.absent(),
                 required int ordinal,
+                Value<String?> operationId = const Value.absent(),
+                Value<String?> correlationId = const Value.absent(),
                 required String code,
                 Value<String?> nativeCode = const Value.absent(),
                 required String severity,
                 required String outcome,
                 required String operationKind,
                 required String phase,
+                Value<String> lastProvedPhase = const Value.absent(),
                 Value<String?> operationFingerprint = const Value.absent(),
                 Value<String?> correlationFingerprint = const Value.absent(),
+                Value<String?> accountFingerprint = const Value.absent(),
+                Value<String?> deviceFingerprint = const Value.absent(),
+                Value<String?> submissionFingerprint = const Value.absent(),
                 required String localMutationState,
                 required String providerContactState,
                 required String providerTransactionState,
                 required String trustedResponseState,
+                Value<String> resultPersistenceState = const Value.absent(),
                 Value<String?> queueScope = const Value.absent(),
                 Value<int?> pendingCount = const Value.absent(),
                 Value<int?> uploadingCount = const Value.absent(),
@@ -23822,19 +24443,27 @@ class $$SyncDiagnosticEventsTableTableManager
               }) => SyncDiagnosticEventsCompanion.insert(
                 id: id,
                 attemptId: attemptId,
+                diagnosticVersion: diagnosticVersion,
                 ordinal: ordinal,
+                operationId: operationId,
+                correlationId: correlationId,
                 code: code,
                 nativeCode: nativeCode,
                 severity: severity,
                 outcome: outcome,
                 operationKind: operationKind,
                 phase: phase,
+                lastProvedPhase: lastProvedPhase,
                 operationFingerprint: operationFingerprint,
                 correlationFingerprint: correlationFingerprint,
+                accountFingerprint: accountFingerprint,
+                deviceFingerprint: deviceFingerprint,
+                submissionFingerprint: submissionFingerprint,
                 localMutationState: localMutationState,
                 providerContactState: providerContactState,
                 providerTransactionState: providerTransactionState,
                 trustedResponseState: trustedResponseState,
+                resultPersistenceState: resultPersistenceState,
                 queueScope: queueScope,
                 pendingCount: pendingCount,
                 uploadingCount: uploadingCount,

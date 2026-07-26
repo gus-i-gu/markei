@@ -67,6 +67,8 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
           const SizedBox(height: 12),
           _Attempts(snapshot: snapshot),
           const SizedBox(height: 12),
+          _DiagnosticTimeline(snapshot: snapshot),
+          const SizedBox(height: 12),
           _Devices(snapshot: snapshot),
           const SizedBox(height: 12),
           _ActionableEvents(snapshot: snapshot),
@@ -125,13 +127,16 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
         _state = result.state;
         _snapshot = snapshot;
         _running = false;
-        _currentAction = _CurrentActionDiagnostic.fromState(
-          state: result.state,
-          code: result.state == 'sync-unavailable'
-              ? 'MKS-OBS-003'
-              : 'MKS-UI-003',
-          operationFingerprint: 'not-recorded',
-        );
+        final event = snapshot?.recentDiagnostics.firstOrNull;
+        _currentAction = event == null
+            ? _CurrentActionDiagnostic.fromState(
+                state: result.state,
+                code: result.state == 'sync-unavailable'
+                    ? 'MKS-OBS-003'
+                    : 'MKS-UI-003',
+                operationFingerprint: 'not-recorded',
+              )
+            : _CurrentActionDiagnostic.fromEvent(event);
       });
     } on Object catch (error) {
       if (!mounted) return;
@@ -289,6 +294,8 @@ final class _CurrentActionDiagnostic {
     required this.phase,
     required this.localMutation,
     required this.providerContact,
+    required this.trustedResponse,
+    required this.resultPersistence,
     required this.safeAction,
     required this.operationFingerprint,
     required this.nativeState,
@@ -340,6 +347,8 @@ final class _CurrentActionDiagnostic {
           : 'presentation',
       localMutation: 'none',
       providerContact: 'not-started',
+      trustedResponse: 'not-received',
+      resultPersistence: 'not-started',
       safeAction:
           definition?.safeAction ?? 'preserve evidence and inspect diagnostics',
       operationFingerprint: operationFingerprint,
@@ -362,6 +371,34 @@ final class _CurrentActionDiagnostic {
     );
   }
 
+  factory _CurrentActionDiagnostic.fromEvent(
+    ClosureDiagnosticEventSummary event,
+  ) {
+    final definition = syncDiagnosticByCode(event.code);
+    return _CurrentActionDiagnostic(
+      code: event.code,
+      title: definition?.title ?? event.code,
+      meaning: definition?.meaning ?? 'Diagnostic meaning unavailable.',
+      outcome: event.outcome,
+      phase: event.lastProvedPhase,
+      localMutation: event.localMutationState,
+      providerContact: event.providerContactState,
+      trustedResponse: event.trustedResponseState,
+      resultPersistence: event.resultPersistenceState,
+      safeAction: event.safeAction,
+      operationFingerprint: event.operationFingerprint ?? 'not-recorded',
+      nativeState: event.nativeCode ?? event.code,
+      pending: event.pendingCount,
+      uploading: event.uploadingCount,
+      failed: event.failedCount,
+      unknown: event.unknownCount,
+      memberCount: event.memberCount,
+      firstSequence: event.firstDeviceSequence,
+      lastSequence: event.lastDeviceSequence,
+      nextSequence: event.nextDeviceSequence,
+    );
+  }
+
   final String code;
   final String title;
   final String meaning;
@@ -369,6 +406,8 @@ final class _CurrentActionDiagnostic {
   final String phase;
   final String localMutation;
   final String providerContact;
+  final String trustedResponse;
+  final String resultPersistence;
   final String safeAction;
   final String operationFingerprint;
   final String nativeState;
@@ -409,6 +448,7 @@ final class _CurrentActionCard extends StatelessWidget {
               _DiagnosticValue('Last proved phase', diagnostic.phase),
               _DiagnosticValue('Local mutation', diagnostic.localMutation),
               _DiagnosticValue('Provider contact', diagnostic.providerContact),
+              _DiagnosticValue('Trusted response', diagnostic.trustedResponse),
               _DiagnosticValue(
                 'Operation',
                 '#${diagnostic.operationFingerprint}',
@@ -430,6 +470,10 @@ final class _CurrentActionCard extends StatelessWidget {
               _KeyValueGrid(
                 children: [
                   _DiagnosticValue('Native state', diagnostic.nativeState),
+                  _DiagnosticValue(
+                    'Result persistence',
+                    diagnostic.resultPersistence,
+                  ),
                   _DiagnosticValue('Pending', _number(diagnostic.pending)),
                   _DiagnosticValue('Uploading', _number(diagnostic.uploading)),
                   _DiagnosticValue('Failed', _number(diagnostic.failed)),
@@ -477,6 +521,48 @@ final class _CurrentActionCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+final class _DiagnosticTimeline extends StatelessWidget {
+  const _DiagnosticTimeline({required this.snapshot});
+
+  final ClosureDiagnosticsSnapshot snapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    final events = snapshot.recentDiagnostics;
+    return _DiagnosticsCard(
+      title: 'Recent diagnostic timeline',
+      child: events.isEmpty
+          ? const Text(
+              'No locally recorded diagnostic events',
+              key: Key('nativeClosure.diagnosticTimeline.empty'),
+            )
+          : Column(
+              key: const Key('nativeClosure.diagnosticTimeline'),
+              children: [
+                for (final event in events)
+                  ListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      '${event.ordinal}. ${event.code} / ${event.phase}',
+                    ),
+                    subtitle: Text(
+                      '${event.outcome} / last ${event.lastProvedPhase} / '
+                      'mutation ${event.localMutationState} / '
+                      'contact ${event.providerContactState} / '
+                      'trusted ${event.trustedResponseState} / '
+                      'persist ${event.resultPersistenceState}\n'
+                      'operation #${event.operationFingerprint ?? 'not-recorded'} / '
+                      'correlation #${event.correlationFingerprint ?? 'not-recorded'} / '
+                      '${event.safeAction}',
+                    ),
+                  ),
+              ],
+            ),
     );
   }
 }

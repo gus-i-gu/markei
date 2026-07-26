@@ -47,6 +47,22 @@ type RouteDescriptor = {
 
 type RouteAuthorizationDescriptor = Omit<RouteDescriptor, "handler">;
 
+type InternalDiagnosticEvent = {
+  code: string;
+  diagnosticCode: string;
+  operation: string;
+  phase: string;
+  lastProvedPhase: string;
+  routeClass: string;
+  providerTransactionOutcome: string;
+  outcome: "unknown" | "not-applied" | "applied" | "duplicate-equivalent";
+  retryable: boolean;
+  safeAction: string;
+  correlationId: string;
+  sanitizedExceptionClass?: string;
+  serverSqlstateClass?: string;
+};
+
 export type LifecycleLogEvent = {
   timestamp: string;
   event:
@@ -64,6 +80,11 @@ export type LifecycleLogEvent = {
   elapsedBand?: string;
   status?: number;
   result?: string;
+  diagnosticCode?: string;
+  lastProvedPhase?: string;
+  providerTransactionOutcome?: string;
+  sanitizedExceptionClass?: string;
+  serverSqlstateClass?: string;
 };
 
 export type LifecycleObserver = (event: LifecycleLogEvent) => void;
@@ -243,19 +264,9 @@ export function buildApp(options: {
         correlationId: request.id,
       });
     }
-    return reply.code(500).send({
-      code: "service-unavailable",
-      diagnosticCode: "MKS-API-014",
-      operation: "server",
-      phase: "unexpected-terminal",
-      routeClass: routeClass(request),
-      providerTransactionOutcome: "unknown",
-      sanitizedExceptionClass: error?.constructor?.name ?? "Error",
-      outcome: "unknown",
-      retryable: false,
-      safeAction: "preserve evidence and inspect diagnostics",
-      correlationId: request.id,
-    });
+    const diagnostic = unexpectedApiDiagnostic(error, request);
+    emitInternalDiagnostic(lifecycleObserver, diagnostic);
+    return reply.code(500).send(publicDiagnosticFailure(diagnostic));
   });
 
   const routes: RouteDescriptor[] = [];
@@ -346,14 +357,21 @@ export function buildApp(options: {
       "transaction-scoped-operation",
       async (request: FastifyRequest, reply: FastifyReply) => {
         if (!options.database) {
-          return reply.code(503).send({
-            code: "service-unavailable",
-            operation: "upload-submission",
-            outcome: "unknown",
-            retryable: true,
-            safeAction: "retry the same SubmissionId later",
-            correlationId: request.id,
-          });
+          return reply.code(503).send(
+            publicDiagnosticFailure({
+              code: "service-unavailable",
+              diagnosticCode: "MKS-CFG-001",
+              operation: "upload-submission",
+              phase: "upload-provider",
+              lastProvedPhase: "api-route",
+              routeClass: routeClass(request),
+              providerTransactionOutcome: "not-started",
+              outcome: "unknown",
+              retryable: false,
+              safeAction: "preserve evidence and inspect diagnostics",
+              correlationId: request.id,
+            }),
+          );
         }
         const result = await protectedOperation(
           options.database,
@@ -375,14 +393,21 @@ export function buildApp(options: {
       "transaction-scoped-operation",
       async (request: FastifyRequest, reply: FastifyReply) => {
         if (!options.database) {
-          return reply.code(503).send({
-            code: "service-unavailable",
-            operation: "download-events",
-            outcome: "unknown",
-            retryable: true,
-            safeAction: "retry later",
-            correlationId: request.id,
-          });
+          return reply.code(503).send(
+            publicDiagnosticFailure({
+              code: "service-unavailable",
+              diagnosticCode: "MKS-CFG-001",
+              operation: "download-events",
+              phase: "download-provider",
+              lastProvedPhase: "api-route",
+              routeClass: routeClass(request),
+              providerTransactionOutcome: "not-started",
+              outcome: "unknown",
+              retryable: false,
+              safeAction: "preserve evidence and inspect diagnostics",
+              correlationId: request.id,
+            }),
+          );
         }
         const query = request.query as { after?: string; limit?: string };
         const result = await protectedOperation(
@@ -410,14 +435,21 @@ export function buildApp(options: {
       "transaction-scoped-operation",
       async (request: FastifyRequest, reply: FastifyReply) => {
         if (!options.database) {
-          return reply.code(503).send({
-            code: "service-unavailable",
-            operation: "acknowledgement",
-            outcome: "unknown",
-            retryable: true,
-            safeAction: "retry later",
-            correlationId: request.id,
-          });
+          return reply.code(503).send(
+            publicDiagnosticFailure({
+              code: "service-unavailable",
+              diagnosticCode: "MKS-CFG-001",
+              operation: "acknowledgement",
+              phase: "acknowledgement",
+              lastProvedPhase: "api-route",
+              routeClass: routeClass(request),
+              providerTransactionOutcome: "not-started",
+              outcome: "unknown",
+              retryable: false,
+              safeAction: "preserve evidence and inspect diagnostics",
+              correlationId: request.id,
+            }),
+          );
         }
         const body = request.body as { greatestContiguousCursor: string };
         const result = await protectedOperation(
@@ -707,14 +739,19 @@ function unreachableHostedRoute(): never {
 }
 
 function unavailable(operation: string, correlationId: string) {
-  return {
+  return publicDiagnosticFailure({
     code: "service-unavailable",
+    diagnosticCode: "MKS-CFG-001",
     operation,
+    phase: operation,
+    lastProvedPhase: "api-route",
+    routeClass: "transaction-scoped-operation",
+    providerTransactionOutcome: "not-started",
     outcome: "unknown",
-    retryable: true,
-    safeAction: "retry later",
+    retryable: false,
+    safeAction: "preserve evidence and inspect diagnostics",
     correlationId,
-  };
+  });
 }
 
 function sanitizeCorrelation(value: string | undefined) {
@@ -727,7 +764,101 @@ function shortCorrelationFingerprint(value: string) {
   return createHash("sha256")
     .update(sanitizeCorrelation(value) ?? "")
     .digest("hex")
-    .slice(0, 8);
+    .slice(0, 12);
+}
+
+function unexpectedApiDiagnostic(
+  error: unknown,
+  request: FastifyRequest,
+): InternalDiagnosticEvent {
+  return {
+    code: "service-unavailable",
+    diagnosticCode: "MKS-API-014",
+    operation: "server",
+    phase: "unexpected-terminal",
+    lastProvedPhase: "api-route",
+    routeClass: routeClass(request),
+    providerTransactionOutcome: "unknown",
+    sanitizedExceptionClass:
+      error instanceof Error ? error.constructor.name : "Error",
+    serverSqlstateClass: sqlstateClass(error),
+    outcome: "unknown",
+    retryable: false,
+    safeAction: "preserve evidence and inspect diagnostics",
+    correlationId: request.id,
+  };
+}
+
+function publicDiagnosticFailure(event: InternalDiagnosticEvent) {
+  return {
+    code: event.code,
+    diagnosticCode: event.diagnosticCode,
+    operation: event.operation,
+    phase: event.phase,
+    outcome: event.outcome,
+    retryable: event.retryable,
+    safeAction: event.safeAction,
+    correlationFingerprint: shortCorrelationFingerprint(event.correlationId),
+    lastProvedPhase: event.lastProvedPhase,
+  };
+}
+
+function emitInternalDiagnostic(
+  observer: LifecycleObserver | undefined,
+  event: InternalDiagnosticEvent,
+) {
+  if (!observer) return;
+  observer({
+    timestamp: new Date().toISOString(),
+    event: "request-failed",
+    routeClass: event.routeClass,
+    operation: event.operation,
+    method: "INTERNAL",
+    correlationFingerprint: shortCorrelationFingerprint(event.correlationId),
+    result: event.code,
+    diagnosticCode: event.diagnosticCode,
+    lastProvedPhase: event.lastProvedPhase,
+    providerTransactionOutcome: event.providerTransactionOutcome,
+    sanitizedExceptionClass: event.sanitizedExceptionClass,
+    serverSqlstateClass: event.serverSqlstateClass,
+  });
+}
+
+function publicProtocolFailure(failure: ProtocolFailure) {
+  return publicDiagnosticFailure({
+    code: failure.code,
+    diagnosticCode: failure.diagnosticCode ?? diagnosticForProtocol(failure),
+    operation: failure.operation,
+    phase: failure.phase ?? failure.operation,
+    lastProvedPhase: failure.phase ?? failure.operation,
+    routeClass: failure.routeClass ?? "transaction-scoped-operation",
+    providerTransactionOutcome:
+      failure.providerTransactionOutcome ?? "not-started-or-rolled-back",
+    outcome: failure.outcome,
+    retryable: failure.retryable,
+    safeAction: failure.safeAction,
+    correlationId: failure.correlationId,
+    sanitizedExceptionClass: failure.sanitizedExceptionClass,
+    serverSqlstateClass: failure.serverSqlstateClass,
+  });
+}
+
+function diagnosticForProtocol(failure: ProtocolFailure) {
+  if (failure.operation === "download-events") return "MKS-DNL-004";
+  if (failure.operation === "acknowledgement") return "MKS-ACK-003";
+  if (failure.code === "device-revoked") return "MKS-BND-001";
+  if (failure.code === "wrong-account") return "MKS-UPL-003";
+  if (failure.code === "hash-mismatch") return "MKS-UPL-004";
+  if (failure.code === "sequence-gap") return "MKS-UPL-005";
+  if (failure.code === "service-unavailable") return "MKS-PDB-001";
+  return "MKS-API-001";
+}
+
+function sqlstateClass(error: unknown) {
+  const candidate = (error as { code?: unknown }).code;
+  return typeof candidate === "string" && /^[0-9A-Z]{5}$/.test(candidate)
+    ? candidate.slice(0, 2)
+    : undefined;
 }
 
 function bandElapsed(elapsedMs: number) {
@@ -797,7 +928,9 @@ function route(
 
 function sendHostedResult(reply: FastifyReply, result: unknown) {
   if (isProtocolFailure(result)) {
-    return reply.code(statusForFailure(result)).send(result);
+    return reply
+      .code(statusForFailure(result))
+      .send(publicProtocolFailure(result));
   }
   return reply.send(result);
 }

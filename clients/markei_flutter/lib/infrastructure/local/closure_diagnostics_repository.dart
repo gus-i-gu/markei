@@ -161,7 +161,18 @@ final class DriftClosureDiagnosticsRepository
         .insert(
           SyncDiagnosticEventsCompanion.insert(
             attemptId: diagnostic.attemptId,
+            diagnosticVersion: Value(diagnostic.diagnosticVersion),
             ordinal: diagnostic.ordinal,
+            operationId: Value(
+              diagnostic.operationId == null
+                  ? null
+                  : _sanitizeIdentifier(diagnostic.operationId!),
+            ),
+            correlationId: Value(
+              diagnostic.correlationId == null
+                  ? null
+                  : _sanitizeIdentifier(diagnostic.correlationId!),
+            ),
             code: _sanitizeMksCode(diagnostic.code),
             nativeCode: Value(
               diagnostic.nativeCode == null
@@ -172,6 +183,7 @@ final class DriftClosureDiagnosticsRepository
             outcome: _sanitizeCode(diagnostic.outcome),
             operationKind: _sanitizeCode(diagnostic.operationKind),
             phase: _sanitizeCode(diagnostic.phase),
+            lastProvedPhase: Value(_sanitizeCode(diagnostic.lastProvedPhase)),
             operationFingerprint: Value(
               diagnostic.operationFingerprint == null
                   ? null
@@ -182,6 +194,21 @@ final class DriftClosureDiagnosticsRepository
                   ? null
                   : _sanitizeFingerprint(diagnostic.correlationFingerprint!),
             ),
+            accountFingerprint: Value(
+              diagnostic.accountFingerprint == null
+                  ? null
+                  : _sanitizeFingerprint(diagnostic.accountFingerprint!),
+            ),
+            deviceFingerprint: Value(
+              diagnostic.deviceFingerprint == null
+                  ? null
+                  : _sanitizeFingerprint(diagnostic.deviceFingerprint!),
+            ),
+            submissionFingerprint: Value(
+              diagnostic.submissionFingerprint == null
+                  ? null
+                  : _sanitizeFingerprint(diagnostic.submissionFingerprint!),
+            ),
             localMutationState: _sanitizeCode(diagnostic.localMutationState),
             providerContactState: _sanitizeCode(
               diagnostic.providerContactState,
@@ -191,6 +218,9 @@ final class DriftClosureDiagnosticsRepository
             ),
             trustedResponseState: _sanitizeCode(
               diagnostic.trustedResponseState,
+            ),
+            resultPersistenceState: Value(
+              _sanitizeCode(diagnostic.resultPersistenceState),
             ),
             queueScope: Value(
               diagnostic.queueScope == null
@@ -569,6 +599,7 @@ final class DriftClosureDiagnosticsRepository
         .firstOrNull;
     final counts = await _queueCounts();
     final attempts = await _recentAttempts();
+    final diagnostics = await _recentDiagnosticEvents();
     final events = await _recentActionableEvents();
     final lastSuccess = await _lastSuccessfulSync();
     final enrollmentState = hosted?.enrollmentState ?? 'enrollment-required';
@@ -586,6 +617,7 @@ final class DriftClosureDiagnosticsRepository
       lastSuccessfulSyncAt: lastSuccess,
       recoveryGuidance: _guidance(authenticationState, enrollmentState, counts),
       recentAttempts: attempts,
+      recentDiagnostics: diagnostics,
       devices: [
         for (final device in devices)
           ClosureDeviceSummary(
@@ -744,6 +776,93 @@ final class DriftClosureDiagnosticsRepository
     ];
   }
 
+  Future<List<ClosureDiagnosticEventSummary>> _recentDiagnosticEvents() async {
+    final rows =
+        await (_db.select(_db.syncDiagnosticEvents).join([
+                innerJoin(
+                  _db.syncAttempts,
+                  _db.syncAttempts.id.equalsExp(
+                    _db.syncDiagnosticEvents.attemptId,
+                  ),
+                ),
+              ])
+              ..where(
+                _db.syncAttempts.accountId.equals(_accountId) &
+                    _db.syncAttempts.environmentAlias.equals(_environmentAlias),
+              )
+              ..orderBy([
+                OrderingTerm.desc(_db.syncDiagnosticEvents.recordedAt),
+                OrderingTerm.desc(_db.syncDiagnosticEvents.id),
+              ])
+              ..limit(30))
+            .get();
+    return [
+      for (final row in rows)
+        ClosureDiagnosticEventSummary(
+          attemptFingerprint: _fingerprint(
+            'attempt:${row.readTable(_db.syncAttempts).id}',
+          ),
+          diagnosticVersion: row
+              .readTable(_db.syncDiagnosticEvents)
+              .diagnosticVersion,
+          ordinal: row.readTable(_db.syncDiagnosticEvents).ordinal,
+          code: row.readTable(_db.syncDiagnosticEvents).code,
+          nativeCode: row.readTable(_db.syncDiagnosticEvents).nativeCode,
+          severity: row.readTable(_db.syncDiagnosticEvents).severity,
+          outcome: row.readTable(_db.syncDiagnosticEvents).outcome,
+          operationKind: row.readTable(_db.syncDiagnosticEvents).operationKind,
+          phase: row.readTable(_db.syncDiagnosticEvents).phase,
+          lastProvedPhase: row
+              .readTable(_db.syncDiagnosticEvents)
+              .lastProvedPhase,
+          operationFingerprint: row
+              .readTable(_db.syncDiagnosticEvents)
+              .operationFingerprint,
+          correlationFingerprint: row
+              .readTable(_db.syncDiagnosticEvents)
+              .correlationFingerprint,
+          localMutationState: row
+              .readTable(_db.syncDiagnosticEvents)
+              .localMutationState,
+          providerContactState: row
+              .readTable(_db.syncDiagnosticEvents)
+              .providerContactState,
+          providerTransactionState: row
+              .readTable(_db.syncDiagnosticEvents)
+              .providerTransactionState,
+          trustedResponseState: row
+              .readTable(_db.syncDiagnosticEvents)
+              .trustedResponseState,
+          resultPersistenceState: row
+              .readTable(_db.syncDiagnosticEvents)
+              .resultPersistenceState,
+          queueScope: row.readTable(_db.syncDiagnosticEvents).queueScope,
+          pendingCount: row.readTable(_db.syncDiagnosticEvents).pendingCount,
+          uploadingCount: row
+              .readTable(_db.syncDiagnosticEvents)
+              .uploadingCount,
+          failedCount: row.readTable(_db.syncDiagnosticEvents).failedCount,
+          unknownCount: row.readTable(_db.syncDiagnosticEvents).unknownCount,
+          memberCount: row.readTable(_db.syncDiagnosticEvents).memberCount,
+          firstDeviceSequence: row
+              .readTable(_db.syncDiagnosticEvents)
+              .firstDeviceSequence,
+          lastDeviceSequence: row
+              .readTable(_db.syncDiagnosticEvents)
+              .lastDeviceSequence,
+          nextDeviceSequence: row
+              .readTable(_db.syncDiagnosticEvents)
+              .nextDeviceSequence,
+          httpStatus: row.readTable(_db.syncDiagnosticEvents).httpStatus,
+          responseHeadersReceived: row
+              .readTable(_db.syncDiagnosticEvents)
+              .responseHeadersReceived,
+          safeAction: row.readTable(_db.syncDiagnosticEvents).safeAction,
+          retryable: row.readTable(_db.syncDiagnosticEvents).retryable,
+        ),
+    ];
+  }
+
   Future<DateTime?> _lastSuccessfulSync() async {
     final row =
         await (_db.select(_db.syncAttempts)
@@ -869,6 +988,16 @@ String _sanitizeFingerprint(String value) {
       .trim();
   if (sanitized.isEmpty) return 'unavailable';
   return sanitized.length <= 16 ? sanitized : sanitized.substring(0, 16);
+}
+
+String _sanitizeIdentifier(String value) {
+  final sanitized = value
+      .replaceAll(RegExp(r'[^A-Za-z0-9._:-]+'), '-')
+      .replaceAll(RegExp('-+'), '-')
+      .replaceAll(RegExp('^-|-\$'), '')
+      .trim();
+  if (sanitized.isEmpty) return 'unavailable';
+  return sanitized.length <= 96 ? sanitized : sanitized.substring(0, 96);
 }
 
 String _sanitizeMksCode(String value) {

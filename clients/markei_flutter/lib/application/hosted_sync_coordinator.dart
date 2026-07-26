@@ -24,55 +24,245 @@ final class HostedSyncCoordinator {
   final DownloadAndApplyEvents _downloadAndApplyEvents;
   final AcknowledgeAppliedCursor _acknowledgeAppliedCursor;
 
-  Future<HostedSyncOutcome> run(String environmentAlias) async {
+  Future<HostedSyncOutcome> run(
+    String environmentAlias, {
+    SyncDiagnosticPhaseRecorder? diagnostics,
+  }) async {
+    await diagnostics?.recordPhase(
+      const SyncDiagnosticPhaseEvidence(
+        code: 'MKS-AUT-001',
+        nativeCode: 'authentication-check-entered',
+        operationKind: 'ordinary-sync',
+        phase: 'authentication',
+        lastProvedPhase: 'authentication',
+        outcome: 'unknown',
+        safeAction: 'continue ordinary Sync authentication check',
+      ),
+    );
     if (await _authenticationSession.currentState() is! SignedIn) {
+      await diagnostics?.recordPhase(
+        const SyncDiagnosticPhaseEvidence(
+          code: 'MKS-AUT-001',
+          nativeCode: 'authentication-required',
+          severity: 'ERROR',
+          operationKind: 'ordinary-sync',
+          phase: 'authentication',
+          lastProvedPhase: 'authentication',
+          outcome: 'blocked',
+          safeAction: 'sign in before Sync',
+        ),
+      );
       return const HostedSyncOutcome.authenticationRequired();
     }
+    await diagnostics?.recordPhase(
+      const SyncDiagnosticPhaseEvidence(
+        code: 'MKS-AUT-001',
+        nativeCode: 'authenticated',
+        operationKind: 'ordinary-sync',
+        phase: 'authentication',
+        lastProvedPhase: 'authentication',
+        outcome: 'applied',
+        safeAction: 'continue ordinary Sync',
+      ),
+    );
+    await diagnostics?.recordPhase(
+      const SyncDiagnosticPhaseEvidence(
+        code: 'MKS-BND-001',
+        nativeCode: 'binding-check-entered',
+        operationKind: 'ordinary-sync',
+        phase: 'binding',
+        lastProvedPhase: 'binding',
+        outcome: 'unknown',
+        safeAction: 'verify current Account and Device binding',
+      ),
+    );
     final decision = await _syncGuard.evaluate(environmentAlias);
     final deviceBlocker = decision.blockedReason;
     if (deviceBlocker != null) {
+      await diagnostics?.recordPhase(
+        SyncDiagnosticPhaseEvidence(
+          code: 'MKS-BND-001',
+          nativeCode: deviceBlocker,
+          severity: 'ERROR',
+          operationKind: 'ordinary-sync',
+          phase: 'binding',
+          lastProvedPhase: 'binding',
+          outcome: 'blocked',
+          safeAction: 'preserve local state and inspect enrollment',
+        ),
+      );
       if (deviceBlocker == 'device-revoked' ||
           deviceBlocker == 'device-expired') {
         return const HostedSyncOutcome.deviceRevoked();
       }
       return const HostedSyncOutcome.deviceEnrollmentRequired();
     }
+    await diagnostics?.recordPhase(
+      const SyncDiagnosticPhaseEvidence(
+        code: 'MKS-BND-001',
+        nativeCode: 'binding-accepted',
+        operationKind: 'ordinary-sync',
+        phase: 'binding',
+        lastProvedPhase: 'binding',
+        outcome: 'applied',
+        safeAction: 'continue ordinary Sync',
+      ),
+    );
 
     try {
+      await diagnostics?.recordPhase(
+        const SyncDiagnosticPhaseEvidence(
+          code: 'MKS-REC-001',
+          nativeCode: 'failed-recovery-entered',
+          operationKind: 'ordinary-sync',
+          phase: 'failed-recovery',
+          lastProvedPhase: 'failed-recovery',
+          outcome: 'unknown',
+          safeAction: 'evaluate failed/notApplied recovery before upload',
+        ),
+      );
       final recovery = await recoverFailedNotApplied();
+      await diagnostics?.recordPhase(
+        SyncDiagnosticPhaseEvidence(
+          code: _diagnosticCodeForResult(recovery, fallback: 'MKS-REC-001'),
+          nativeCode: recovery.protocolCode ?? recovery.code.name,
+          severity: _severityFor(recovery),
+          operationKind: 'ordinary-sync',
+          phase: 'failed-recovery',
+          lastProvedPhase: 'failed-recovery',
+          outcome: recovery.outcome.name,
+          localMutationState: recovery.outcome == SyncOutcome.applied
+              ? 'committed'
+              : 'none',
+          resultPersistenceState: recovery.outcome == SyncOutcome.applied
+              ? 'committed'
+              : 'not-started',
+          safeAction: recovery.outcome == SyncOutcome.applied
+              ? 'continue ordinary Sync'
+              : 'preserve queue evidence and inspect diagnostics',
+          retryable: recovery.retryable,
+        ),
+      );
       final recoveryBlocker = _blockedBy(recovery);
       if (recoveryBlocker != null) return recoveryBlocker;
 
-      final upload = await _uploadPendingEvents();
+      final upload = await _uploadPendingEvents(diagnostics: diagnostics);
       final uploadBlocker = _blockedBy(upload);
       if (uploadBlocker != null) return uploadBlocker;
 
       final cursor = await _applier.greatestContiguousAppliedCursor();
-      final download = await _downloadAndApplyEvents(cursor);
+      final download = await _downloadAndApplyEvents(
+        cursor,
+        diagnostics: diagnostics,
+      );
       final downloadBlocker = _blockedBy(download);
       if (downloadBlocker != null) return downloadBlocker;
 
-      final acknowledgement = await _acknowledgeAppliedCursor();
+      final acknowledgement = await _acknowledgeAppliedCursor(
+        diagnostics: diagnostics,
+      );
       final acknowledgementBlocker = _blockedBy(acknowledgement);
       if (acknowledgementBlocker != null) return acknowledgementBlocker;
 
       if (upload == null &&
           download.code == SyncStatusCode.downloadReceived &&
           acknowledgement == null) {
+        await diagnostics?.recordPhase(
+          const SyncDiagnosticPhaseEvidence(
+            code: 'MKS-OBS-001',
+            nativeCode: 'sync-no-new-events',
+            operationKind: 'ordinary-sync',
+            phase: 'terminal',
+            lastProvedPhase: 'terminal',
+            outcome: 'applied',
+            safeAction: 'no further action required',
+          ),
+        );
         return const HostedSyncOutcome.noNewEvents();
       }
+      await diagnostics?.recordPhase(
+        const SyncDiagnosticPhaseEvidence(
+          code: 'MKS-OBS-001',
+          nativeCode: 'sync-completed',
+          operationKind: 'ordinary-sync',
+          phase: 'terminal',
+          lastProvedPhase: 'terminal',
+          outcome: 'applied',
+          safeAction: 'no further action required',
+        ),
+      );
       return const HostedSyncOutcome.completed();
-    } on TimeoutException {
+    } on TimeoutException catch (error) {
+      await diagnostics?.recordPhase(
+        SyncDiagnosticPhaseEvidence(
+          code: 'MKS-TRN-001',
+          nativeCode: 'timeout',
+          severity: 'ERROR',
+          operationKind: 'ordinary-sync',
+          phase: 'terminal',
+          lastProvedPhase: 'upload-transport',
+          outcome: 'unknown',
+          providerContactState: 'request-started',
+          providerTransactionState: 'unknown',
+          trustedResponseState: 'not-received',
+          safeAction: 'preserve evidence and inspect diagnostics',
+          retryable: false,
+          sanitizedExceptionClass: error.runtimeType.toString(),
+        ),
+      );
       return const HostedSyncOutcome.interrupted();
     } on StateError catch (error) {
       if (error.message == 'auth-required' ||
           error.message == 'token-expired' ||
           error.message == 'signed-out') {
+        await diagnostics?.recordPhase(
+          SyncDiagnosticPhaseEvidence(
+            code: 'MKS-AUT-001',
+            nativeCode: error.message,
+            severity: 'ERROR',
+            operationKind: 'ordinary-sync',
+            phase: 'terminal',
+            lastProvedPhase: 'authentication',
+            outcome: 'blocked',
+            safeAction: 'sign in before Sync',
+            sanitizedExceptionClass: error.runtimeType.toString(),
+          ),
+        );
         return const HostedSyncOutcome.authenticationRequired();
       }
       if (error.message == 'cursor-expired') {
+        await diagnostics?.recordPhase(
+          SyncDiagnosticPhaseEvidence(
+            code: 'MKS-DNL-004',
+            nativeCode: error.message,
+            severity: 'ERROR',
+            operationKind: 'ordinary-sync',
+            phase: 'terminal',
+            lastProvedPhase: 'download-provider',
+            outcome: 'unknown',
+            providerContactState: 'request-started',
+            trustedResponseState: 'received',
+            safeAction: 'preserve evidence and inspect diagnostics',
+            retryable: false,
+            sanitizedExceptionClass: error.runtimeType.toString(),
+          ),
+        );
         return const HostedSyncOutcome.interrupted();
       }
+      await diagnostics?.recordPhase(
+        SyncDiagnosticPhaseEvidence(
+          code: 'MKS-LDB-001',
+          nativeCode: 'state-error-redacted',
+          severity: 'ERROR',
+          operationKind: 'ordinary-sync',
+          phase: 'terminal',
+          lastProvedPhase: 'terminal',
+          outcome: 'unknown',
+          safeAction: 'preserve evidence and inspect diagnostics',
+          retryable: false,
+          sanitizedExceptionClass: error.runtimeType.toString(),
+        ),
+      );
       return const HostedSyncOutcome.unavailable();
     }
   }
@@ -105,6 +295,34 @@ final class HostedSyncCoordinator {
       _ => null,
     };
   }
+}
+
+String _diagnosticCodeForResult(SyncResult result, {required String fallback}) {
+  return switch (result.code) {
+    SyncStatusCode.unknownOutcome => 'MKS-OBS-001',
+    SyncStatusCode.failedRecoveryBlocked => 'MKS-REC-012',
+    SyncStatusCode.noRecoverableFailure ||
+    SyncStatusCode.failedRecoveryAvailable => fallback,
+    SyncStatusCode.serviceUnavailable => 'MKS-TRN-001',
+    SyncStatusCode.authRequired => 'MKS-AUT-001',
+    SyncStatusCode.deviceEnrollmentRequired ||
+    SyncStatusCode.deviceRevoked ||
+    SyncStatusCode.deviceExpired => 'MKS-BND-001',
+    SyncStatusCode.cursorExpired => 'MKS-DNL-004',
+    SyncStatusCode.wrongAccount => 'MKS-UPL-003',
+    SyncStatusCode.hashMismatch => 'MKS-UPL-004',
+    SyncStatusCode.sequenceGap => 'MKS-UPL-005',
+    SyncStatusCode.localBatchInvalid => 'MKS-UPL-006',
+    _ => fallback,
+  };
+}
+
+String _severityFor(SyncResult result) {
+  return switch (result.outcome) {
+    SyncOutcome.applied || SyncOutcome.duplicateEquivalent => 'INFO',
+    SyncOutcome.unknown => 'ERROR',
+    SyncOutcome.notApplied => result.retryable ? 'WARN' : 'ERROR',
+  };
 }
 
 final class HostedSyncOutcome {

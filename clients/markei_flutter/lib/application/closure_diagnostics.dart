@@ -48,19 +48,27 @@ abstract interface class SyncAttemptRecorder {
 final class SyncDiagnosticEnvelope {
   const SyncDiagnosticEnvelope({
     required this.attemptId,
+    this.diagnosticVersion = 1,
     required this.ordinal,
+    this.operationId,
+    this.correlationId,
     required this.code,
     required this.nativeCode,
     required this.severity,
     required this.outcome,
     required this.operationKind,
     required this.phase,
+    this.lastProvedPhase = 'unknown',
     required this.operationFingerprint,
     required this.correlationFingerprint,
+    this.accountFingerprint,
+    this.deviceFingerprint,
+    this.submissionFingerprint,
     required this.localMutationState,
     required this.providerContactState,
     required this.providerTransactionState,
     required this.trustedResponseState,
+    this.resultPersistenceState = 'not-started',
     required this.queueScope,
     required this.pendingCount,
     required this.uploadingCount,
@@ -79,19 +87,27 @@ final class SyncDiagnosticEnvelope {
   });
 
   final int attemptId;
+  final int diagnosticVersion;
   final int ordinal;
+  final String? operationId;
+  final String? correlationId;
   final String code;
   final String? nativeCode;
   final String severity;
   final String outcome;
   final String operationKind;
   final String phase;
+  final String lastProvedPhase;
   final String? operationFingerprint;
   final String? correlationFingerprint;
+  final String? accountFingerprint;
+  final String? deviceFingerprint;
+  final String? submissionFingerprint;
   final String localMutationState;
   final String providerContactState;
   final String providerTransactionState;
   final String trustedResponseState;
+  final String resultPersistenceState;
   final String? queueScope;
   final int? pendingCount;
   final int? uploadingCount;
@@ -120,6 +136,7 @@ final class ClosureDiagnosticsSnapshot {
     required this.lastSuccessfulSyncAt,
     required this.recoveryGuidance,
     required this.recentAttempts,
+    this.recentDiagnostics = const [],
     required this.devices,
     required this.actionableEvents,
     required this.refreshedAt,
@@ -134,9 +151,76 @@ final class ClosureDiagnosticsSnapshot {
   final DateTime? lastSuccessfulSyncAt;
   final String recoveryGuidance;
   final List<ClosureSyncAttemptSummary> recentAttempts;
+  final List<ClosureDiagnosticEventSummary> recentDiagnostics;
   final List<ClosureDeviceSummary> devices;
   final List<ClosureActionableEventSummary> actionableEvents;
   final DateTime refreshedAt;
+}
+
+final class ClosureDiagnosticEventSummary {
+  const ClosureDiagnosticEventSummary({
+    required this.attemptFingerprint,
+    required this.diagnosticVersion,
+    required this.ordinal,
+    required this.code,
+    required this.nativeCode,
+    required this.severity,
+    required this.outcome,
+    required this.operationKind,
+    required this.phase,
+    required this.lastProvedPhase,
+    required this.operationFingerprint,
+    required this.correlationFingerprint,
+    required this.localMutationState,
+    required this.providerContactState,
+    required this.providerTransactionState,
+    required this.trustedResponseState,
+    required this.resultPersistenceState,
+    required this.queueScope,
+    required this.pendingCount,
+    required this.uploadingCount,
+    required this.failedCount,
+    required this.unknownCount,
+    required this.memberCount,
+    required this.firstDeviceSequence,
+    required this.lastDeviceSequence,
+    required this.nextDeviceSequence,
+    required this.httpStatus,
+    required this.responseHeadersReceived,
+    required this.safeAction,
+    required this.retryable,
+  });
+
+  final String attemptFingerprint;
+  final int diagnosticVersion;
+  final int ordinal;
+  final String code;
+  final String? nativeCode;
+  final String severity;
+  final String outcome;
+  final String operationKind;
+  final String phase;
+  final String lastProvedPhase;
+  final String? operationFingerprint;
+  final String? correlationFingerprint;
+  final String localMutationState;
+  final String providerContactState;
+  final String providerTransactionState;
+  final String trustedResponseState;
+  final String resultPersistenceState;
+  final String? queueScope;
+  final int? pendingCount;
+  final int? uploadingCount;
+  final int? failedCount;
+  final int? unknownCount;
+  final int? memberCount;
+  final int? firstDeviceSequence;
+  final int? lastDeviceSequence;
+  final int? nextDeviceSequence;
+  final int? httpStatus;
+  final bool responseHeadersReceived;
+  final String safeAction;
+  final bool retryable;
 }
 
 final class ClosureQueueCounts {

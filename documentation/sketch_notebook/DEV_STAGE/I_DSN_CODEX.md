@@ -1,63 +1,79 @@
-# I_DSN_CODEX - Step 12 Diagnostic Registry And Recovery Boundaries
+# I_DSN_CODEX — C10-GCM02-S12-ERR-02
 
-Sequence: FLX-ORD-01 - Ordinary Sequence
-Unit: C10-GCM02-S12-ERR-01
-Role: Codex design report
-Evidence boundary: architecture/materialization observation only; no provider action, recovery execution, Gate 12.7 authorization, or source promotion was performed.
+Unit: C10-GCM02-S12-ERR-02 — Step 12 Diagnostic Runtime Completion
+Evidence class: repository-proven and test-validated locally unless marked otherwise.
 
-## Ownership And Dependency Direction
+## Ownership and Dependency Direction
 
-- repository-proven: `contracts/shared_beta/diagnostics_v1/diagnostics.registry.json` owns diagnostic definitions; generated Dart, generated TypeScript and Markdown depend on it.
-- repository-proven: generator validation enforces 159 unique codes, source-reference existence, closed vocabulary, sensitive-field bans and stale output detection.
-- repository-proven: Flutter UI and API can use typed lookup from generated projections; the registry remains the only hand-edited diagnostic list.
-- repository-proven: local diagnostic persistence is additive Drift v11: `sync_attempts` remains the parent operation row and `sync_diagnostic_events` stores ordered child diagnostics.
+- repository-proven: `contracts/shared_beta/diagnostics_v1/diagnostics.registry.json` remains the single hand-maintained diagnostic owner.
+- repository-proven: Dart, TypeScript and Markdown projections remain generated; no runtime code parses J or generated Markdown as a source of truth.
+- repository-proven: Flutter runtime uses the Dart projection for UI meaning and API runtime uses the TypeScript projection/domain types.
 
-## Responsibility Boundaries
+## Parent and Child Identity Model
 
-- repository-proven: UI responsibility is presentation, action naming, lock release and current-action state retention.
-- repository-proven: diagnostics repository responsibility is local read-only evidence gathering, queue counts, current binding checks, failed/notApplied candidate inspection and sanitized diagnostic child-event persistence.
-- repository-proven: local outbox responsibility is lease, identity preservation, result persistence, failed/notApplied validation and recovery requeue. Recovery execution still exists only inside ordinary Sync/coordinator flow.
-- repository-proven: transport responsibility is protocol/HTTP mapping; no provider-contact inference is promoted without trusted response evidence.
-- repository-proven: hosted API responsibility is route-scoped protected operation validation, transaction-scoped writes and sanitized public failures.
+- repository-proven: `sync_attempts` remains the parent operation ledger.
+- repository-proven: `sync_diagnostic_events` remains the ordered child timeline and is extended additively in Drift v12.
+- repository-proven: one top-level ordinary Sync action creates one operation identity and one public operation fingerprint.
+- test-validated: child events receive deterministic ordinals and distinct full correlation identities with 12-hex fingerprints.
+- repository-proven: scoped HTTP transport receives child correlation identity through a zone-scoped internal boundary, while public/UI surfaces receive only fingerprints.
 
-## State Machine Findings
+## Evidence State Machine
 
-- repository-proven: ordinary coordinator ordering remains authentication -> binding guard -> failed recovery -> upload lease -> upload transport/provider/result persistence -> download -> local apply -> acknowledgement -> terminal projection.
-- repository-proven: unknown retry and failed/notApplied recovery are intentionally distinct mechanisms. Unknown retry preserves one unknown submission identity; failed/notApplied recovery supersedes failed submission identity before pending upload and is not exposed as an execution action in this unit.
-- test-validated: failed/notApplied inspection validates exactly one current-device candidate, membership, contiguous sequences, request-hash equality, member-state compatibility, no accepted members, no active overlap and next-sequence match without mutation/network.
-- test-validated: mixed failed recovery member states block and roll back.
-- test-validated: after a committed upload lease, transport exceptions persist an unknown result rather than stranding uploading rows.
-- test-validated: provider upload validates complete submission before writes; later-member failure does not create provider events, submissions, cursor movement or device-sequence movement.
-- test-validated: duplicate-only local download pages advance the contiguous cursor transactionally.
+Repository-proven axes are persisted independently:
 
-## Implementation Drift And Remaining Boundaries
+```text
+local mutation
+provider contact
+trusted response
+provider transaction
+local result persistence
+terminal outcome
+```
 
-- inferred: the largest remaining architectural ambiguity is semantic authorization for Gate 12.7 execution, not source capability. The UI now exposes inspection evidence but no recovery execution callback.
-- unavailable: live provider transaction correlation, Auth0/Render/Neon behavior and user database state were intentionally not observed.
-- provisional: future Main reconciliation can decide whether Gate 12.7 uses ordinary Sync, a new confirmed failed/notApplied recovery action, or additional provider/log evidence.
+Design consequences:
 
-## Gate 12.7 Authorization Packet Skeleton
+- repository-proven: request-start without trusted provider outcome records `unknown` and preserves identity.
+- repository-proven: local result persistence failure is separate from provider result.
+- repository-proven: terminal summaries can reference causal child evidence instead of replacing it.
+- repository-proven: HTTP status alone is not modeled as proof of provider commit state.
 
-- candidate diagnostic code: PENDING
-- candidate fingerprint: PENDING
-- member count: PENDING
-- first Device sequence: PENDING
-- last Device sequence: PENDING
-- next Device sequence: PENDING
-- request-hash equality: PENDING
-- current Account/Device binding: PENDING
-- no unrelated active work: PENDING
-- provider action authorization: PENDING
-- local mutation authorization: PENDING
-- operator command/action: PENDING
+## Projection Boundaries
 
-This skeleton is not authorization.
+- repository-proven: API catch-all failures create one internal typed diagnostic event and project it separately to public API output and internal lifecycle evidence.
+- test-validated: public output omits full correlation ID, exception class, SQLSTATE, messages, stack traces, SQL, payloads and raw IDs.
+- test-validated: internal lifecycle evidence retains permitted sanitized exception class, last proved phase and provider transaction outcome.
+- repository-proven: public 500 remains `retryable=false`.
 
-DIAGNOSTIC_REGISTRY_SINGLE_OWNER_IMPLEMENTED
-DETECTOR_CAUSE_BOUNDARY_VALIDATED
-UNKNOWN_OUTCOME_SAFETY_PRESERVED
-FAILED_NOT_APPLIED_PREFLIGHT_NON_MUTATING
-FAILED_NOT_APPLIED_EXECUTION_ABSENT
-PROVIDER_ACTION_ABSENT
-GATE_12_7_HELD
-GCM02_OPEN
+## Detector and Cause Attribution
+
+- repository-proven: ordinary Sync emits representative AUT, BND, REC, QUE, TRN, UPL, DNL, ACK, LDB and OBS diagnostics at reachable source boundaries.
+- repository-proven: API upload protocol failures map wrong account, hash mismatch, sequence gap, binding and database failures to narrower MKS codes.
+- repository-proven: `MKS-UPL-012` is no longer the generic protocol failure code.
+- inferred: the full 159-code catalogue includes non-reachable or not-yet-emitted definitions; this unit does not claim universal runtime reachability.
+- repository-proven: detector component is not treated as automatic pathogenic cause.
+
+## Migration Boundary
+
+- repository-proven: v12 migration is forward-only and additive to the v11 diagnostic ledger.
+- test-validated: disposable migration fixtures from v1, v2, v7, v8 and v9 reopen successfully under v12.
+- repository-proven: v12 does not modify submissions, pending events, cursors, purchases or hosted PostgreSQL.
+- provider-unvalidated: no hosted migration exists or was applied.
+
+## Failed/notApplied Boundary
+
+- repository-proven: `Inspect failed/notApplied recovery` remains read-only and network-free.
+- repository-proven: failed/notApplied execution remains absent from UI and source.
+- repository-proven: unknown Retry remains isolated to unknown-outcome submission semantics.
+
+## Terminal Markers
+
+```text
+DIAGNOSTIC_SINGLE_OWNER=PRESERVED
+OPERATION_CHILD_MODEL=IMPLEMENTED
+EVIDENCE_STATE_MACHINE=IMPLEMENTED
+PROJECTION_BOUNDARIES=VALIDATED
+DETECTOR_CAUSE_ATTRIBUTION=VALIDATED
+FAILED_RECOVERY_EXECUTION=ABSENT
+GATE_12_7=HELD
+GCM02=OPEN
+```
