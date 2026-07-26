@@ -1,167 +1,163 @@
-# F_DSN_STAGE — Step 12 Diagnostic Architecture Completion
+# F_DSN_STAGE — Gate 12.7 bounded recovery architecture
 
 Sequence: FLX-ORD-01 — Ordinary Sequence
 Role: Codex Design materialization authority
-Unit: C10-GCM02-S12-ERR-02
-Required ancestry: `0636c54e139fc92b16d1e11b2672d61f42f02f1b`
-Status: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
+Unit: C10-GCM02-S12-REC-01
+Branch: `cycle10-intermid-grimoire`
+Required ancestry: `76540c45702b027d56b52fea05a8025f14496cdf`
+Status: **ACTIVE — SOURCE MATERIALIZATION ONLY; PROVIDER EXECUTION PROHIBITED**
 
-## 1. Architectural baseline
+## 1. Architectural objective
 
-Preserve this dependency direction:
+Add one narrow recovery-and-upload orchestration boundary without widening
+ordinary Sync or coupling the read-only inspection to mutation.
+
+Required dependency shape:
 
 ```text
-diagnostics_v1 registry
-    ↓ deterministic generation
-typed Dart projection       typed TypeScript projection
-    ↓                               ↓
-Flutter detectors/UI        API/provider detectors
-    ↓                               ↓
-local operation timeline    internal structured evidence
-             ↘             ↙
-       generated documentation
+Closure UI
+├─ read-only failed inspection
+└─ explicit confirmation
+   └─ bounded failed-recovery coordinator
+      ├─ auth/binding guard
+      ├─ exact candidate revalidation
+      ├─ atomic local recovery
+      ├─ exact recovered-batch lease
+      ├─ one upload transport operation
+      └─ diagnostic/result persistence
 ```
 
-J is provenance, not a runtime dependency. Markdown is a projection, not an
-input. Flutter must not import TypeScript and the API must not parse Markdown.
+The bounded coordinator must not depend on download or acknowledgement ports.
+It must not call the ordinary Sync coordinator.
 
-## 2. Parent/child model
+## 2. Identity boundary
 
-`sync_attempts` remains the top-level operation owner. Ordered diagnostic
-events remain children.
+The public/UI boundary may carry only sanitized fingerprints and counts.
+The application/infrastructure boundary must retain authoritative internal
+identity.
 
-One top-level action owns:
+Do not pass a truncated fingerprint back as the database selector.
 
-- one random operation identity;
-- one stable sanitized operation fingerprint;
-- one operation kind;
-- zero or more deterministic child ordinals.
+Model the execution input as a confirmation snapshot containing sanitized
+expectations, while the transactional repository independently resolves the
+single current Account/Device candidate and compares every expected property.
+Return an internal bounded batch descriptor only after the exact transition
+succeeds.
 
-Every child owns:
+The descriptor must be sufficient for the uploader to lease exactly the
+recovered member set. It must not be serialised to UI, logs, or public API.
 
-- a distinct full correlation identity;
-- a sanitized correlation fingerprint;
-- phase and last-proved-phase;
-- typed protocol/native code;
-- state evidence and outcome.
+## 3. Atomicity and concurrency
 
-The operation identity must not masquerade as child correlation identity.
-Network-free local phases still receive ordered child identities so the
-timeline has one uniform model.
+The local recovery transaction must:
 
-## 3. Evidence state machine
+1. re-read the current scoped candidate;
+2. validate membership, identity, content hashes, states, overlap and range;
+3. compare the current candidate with the confirmation snapshot;
+4. supersede exactly one failed submission;
+5. requeue exactly its failed members;
+6. return the exact member set and bounded metadata.
 
-Model evidence independently across axes:
+The upload-lease transaction must either lease that complete exact set or
+lease nothing. Unexpected pending work, membership drift, partial update, or
+concurrent state change is a typed pre-contact blocker.
+
+Do not create a state where the uploader can silently include unrelated work.
+
+## 4. Side-effect boundary
+
+Exactly one provider request is permitted by the new coordinator after local
+preflight and exact lease succeed.
+
+The coordinator stops after upload-result persistence. It does not:
+
+- download;
+- apply remote events;
+- acknowledge a cursor;
+- enroll/query/revoke a Device;
+- repair/rebootstrap;
+- run ordinary Sync;
+- retry automatically;
+- issue a second provider request.
+
+The one-action UI lock is presentation safety; repository/protocol invariants
+remain the authoritative safety boundary.
+
+## 5. Outcome and diagnostics architecture
+
+Preserve independent axes:
 
 ```text
-local mutation
+candidate/preflight state
+local recovery transaction
+upload lease
 provider contact
 trusted response
-provider transaction
+provider transaction outcome
 local result persistence
-terminal outcome
+terminal classification
 ```
 
-Precedence:
+Use the accepted parent/child diagnostic model:
 
-1. proved provider transaction;
-2. trusted typed provider result;
-3. trusted transport response;
-4. request-start evidence;
-5. local preflight evidence.
-
-Required invariants:
-
-- no request start plus no mutation is locally blocked;
-- request start without trusted provider outcome is unknown;
-- HTTP status alone cannot prove provider commit;
-- provider outcome and local persistence outcome cannot overwrite one another;
-- later resolution links to historical unknown evidence rather than deleting
-  it;
-- a terminal UI summary references its causal child event.
-
-## 4. Projection boundaries
-
-Use one internal typed diagnostic event and explicit projections:
-
-```text
-internal event
-├── local persisted sanitized envelope
-├── internal API/log projection
-├── public API projection
-└── Flutter UI projection
-```
-
-The public projection may expose closed codes, safe phase/outcome fields, and
-12-hex fingerprints only. Full correlation IDs, exception classes, SQLSTATE,
-messages, stack traces, SQL, raw IDs, payloads, and provider details must not
-cross the public boundary.
-
-Do not construct public response fields ad hoc in unrelated catch blocks.
-
-## 5. Detector/cause boundary
-
-The registry centralizes meaning; source boundaries own detection.
-
-Each reachable detector must emit through typed lookup and record:
-
-- detector component;
-- last proved phase;
-- cause domain;
-- causal confidence;
-- external dependency only when proved.
-
-The ordinary Sync coordinator orchestrates and correlates. It must not
-reclassify every child failure as upload or `sync-unavailable`.
-
-`MKS-UPL-012` is reserved for the invariant that a provider batch partially
-committed or risked partial commit. Route/body/auth/transport/database and
-other upload failures require their own typed code.
-
-## 6. Migration boundary
-
-Prefer the existing v11 child ledger. If required fields cannot be represented
-without ambiguity, add the smallest forward-only v12 migration.
-
-No migration may:
-
-- rewrite queue/submission/cursor/purchase truth;
-- touch the user's database;
-- introduce unbounded diagnostic payloads;
-- store forbidden sensitive fields;
-- alter hosted PostgreSQL.
-
-Prove v11 preservation and reopen behavior in disposable fixtures.
-
-## 7. Architectural validation
-
-I must provide source and test evidence for:
-
-- registry ownership unchanged;
-- dependency direction unchanged;
-- all ordinary Sync phases represented;
-- unique operation and distinct child correlation identities;
+- one random top-level operation identity;
+- one stable sanitized operation fingerprint;
+- distinct child correlations and fingerprints;
 - deterministic ordinals;
-- complete bounded persisted envelope;
-- one typed internal event feeding explicit projections;
-- public/internal field separation;
-- precise detector/cause attribution;
-- narrow `MKS-UPL-012` ownership;
-- read-only failed inspection remaining isolated from execution;
-- no provider action or Gate authorization.
+- typed detector-level MKS/native codes;
+- explicit public/local/internal projections.
 
-Do not claim that all 159 catalogue conditions are runtime-reachable. Report
-the audited reachable set and any intentionally non-reachable definitions.
+A final summary may not erase the last causal child event.
+
+Detector ownership must also remain coherent: the historical `MKS-UI-004`
+missing-inspection condition cannot be the success code for an existing,
+eligible recovery preflight. Route the current detector through a precise REC
+definition from the single registry and regenerate its projections.
+
+## 6. Compatibility boundary
+
+Preserve:
+
+- existing `Inspect failed/notApplied recovery` network-free behavior;
+- existing unknown-outcome Retry behavior;
+- ordinary Sync behavior;
+- diagnostic registry single ownership;
+- Drift v1–v12 forward compatibility;
+- current submission/event/cursor/purchase truth.
+
+Prefer no schema migration. If a new bounded field is unavoidable, use the
+smallest additive v13 migration, include ledger/reopen/preservation tests, and
+do not touch a user database or hosted PostgreSQL.
+
+## 7. Design validation
+
+I must report source and test evidence for:
+
+- separate inspection and execution dependency paths;
+- no ordinary Sync invocation;
+- no download/ack dependencies;
+- authoritative identity never reduced to a fingerprint;
+- atomic candidate recovery and exact-set lease;
+- concurrency/mismatch fail-closed behavior;
+- exactly one provider request;
+- no automatic retry;
+- complete outcome/evidence axes;
+- coherent REC preflight detector/code ownership without repurposing
+  `MKS-UI-004`;
+- explicit public/internal redaction;
+- no provider action during materialization.
+
+Do not edit permanent design memory.
 
 Terminal markers:
 
 ```text
-DIAGNOSTIC_SINGLE_OWNER=PRESERVED_OR_BLOCKED
-OPERATION_CHILD_MODEL=IMPLEMENTED_OR_BLOCKED
-EVIDENCE_STATE_MACHINE=IMPLEMENTED_OR_BLOCKED
-PROJECTION_BOUNDARIES=VALIDATED_OR_BLOCKED
-DETECTOR_CAUSE_ATTRIBUTION=VALIDATED_OR_BLOCKED
-FAILED_RECOVERY_EXECUTION=ABSENT
+BOUNDED_RECOVERY_COORDINATOR=IMPLEMENTED_OR_BLOCKED
+REC_PREFLIGHT_CODE_OWNERSHIP=VALIDATED_OR_BLOCKED
+AUTHORITATIVE_IDENTITY_BOUNDARY=VALIDATED_OR_BLOCKED
+ATOMIC_EXACT_SET_LEASE=VALIDATED_OR_BLOCKED
+ONE_PROVIDER_REQUEST_MAX=VALIDATED_OR_BLOCKED
+ORDINARY_SYNC_DOWNLOAD_ACK_ISOLATION=VALIDATED_OR_BLOCKED
 GATE_12_7=HELD
 GCM02=OPEN
 ```

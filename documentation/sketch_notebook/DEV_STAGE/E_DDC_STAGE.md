@@ -1,105 +1,122 @@
-# E_DDC_STAGE — Step 12 Diagnostic Meaning Completion
+# E_DDC_STAGE — Gate 12.7 recovery meaning
 
 Sequence: FLX-ORD-01 — Ordinary Sequence
 Role: Codex Didactic materialization authority
-Unit: C10-GCM02-S12-ERR-02
-Required ancestry: `0636c54e139fc92b16d1e11b2672d61f42f02f1b`
-Status: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
+Unit: C10-GCM02-S12-REC-01
+Branch: `cycle10-intermid-grimoire`
+Required ancestry: `76540c45702b027d56b52fea05a8025f14496cdf`
+Status: **ACTIVE — SOURCE MATERIALIZATION ONLY; GATE 12.7 HELD**
 
-## 1. Accepted meaning baseline
+## 1. Accepted meaning
 
-Preserve:
+Preserve these distinctions:
 
-- the 159-code machine registry as the single hand-maintained vocabulary;
-- generated Dart, TypeScript, and `SYNC_DIAGNOSTICS.md` projections;
-- the distinction between protocol code and native code;
-- detector, cause domain, and causal confidence as separate concepts;
-- the visible distinction between unknown Retry and read-only
-  failed/notApplied inspection;
-- the prohibition against exposing sensitive diagnostic material.
+- inspection is not execution;
+- explicit human authorization is not implementation;
+- implementation is not authorization;
+- failed/notApplied recovery is not unknown-outcome Retry;
+- bounded recovery-and-upload is not ordinary Sync;
+- a sanitized fingerprint is evidence, not authoritative identity;
+- request start is not provider application;
+- provider outcome and local persistence outcome are separate.
 
-## 2. Meaning objective
+The human-observed `MKS-UI-004 / failed-recovery-preflight` result proved that
+the inspection remained local and non-mutating. Its safe action explicitly
+held for Gate 12.7 reconciliation.
 
-Make ordinary Sync explainable without replacing precise evidence with the
-generic phrase `sync-unavailable`.
+The state evidence is accepted, but the code meaning is not: the registry
+still defines `MKS-UI-004` as “inspection action missing.” Keep that code for
+the historical missing-action condition and use a precise REC code for an
+eligible preflight. Do not redefine one code to mean both absence and success.
 
-Every user-visible blocked/error/unknown result must explain:
+## 2. User-facing action model
 
-- what happened in plain language;
-- the stable MKS code and title;
-- the last phase actually proved;
+The Closure UI must expose three unmistakably separate concepts:
+
+```text
+Inspect failed/notApplied recovery
+    read-only; no network; no mutation
+
+Recover failed/notApplied candidate
+    separately confirmed bounded recovery plus one upload; Gate-controlled
+
+Sync
+    broad ordinary synchronization; not a substitute for recovery
+```
+
+`Retry unknown-outcome submission` remains separate and must not be presented
+as applicable to the current failed/notApplied lineage.
+
+Before confirmation, explain in plain language:
+
+- exactly what candidate was found, using only sanitized fields;
+- that the action will change local recovery state and attempt one provider
+  upload;
+- that it will not download, acknowledge, enroll, repair, or run ordinary
+  Sync;
+- that cancellation changes nothing;
+- that no second action is permitted without reconciliation.
+
+Do not imply that the button itself carries Main/human authorization.
+
+## 3. Terminal explanations
+
+Every terminal must say:
+
+- last proved phase;
 - whether local state changed;
 - whether a provider request started;
-- whether a trusted response exists;
-- whether provider application is proved, rolled back, or unknown;
-- whether the local result was persisted;
-- whether retry is safe;
+- whether a trusted response arrived;
+- whether provider application/rollback is proved or unknown;
+- whether the local result persisted;
+- whether another attempt is safe;
 - the safe next action;
-- an operation fingerprint.
+- bounded operation and correlation fingerprints.
 
-The generic summary may remain, but it must point to the causal event.
+Required language:
 
-## 3. Causal language
+- `blocked-before-contact`: no provider conclusion;
+- `unknown`: preserve evidence; do not retry;
+- `rejected/notApplied`: trusted rejection/rollback, when proved;
+- `duplicate-equivalent`: accepted only when the protocol proves equivalence;
+- `applied`: provider acceptance and local persistence must be reported
+  independently;
+- `unexpected-local-failure`: do not infer provider failure.
 
-Apply these rules consistently in registry projections, UI, logs, and tests:
+Avoid blame by proximity. Do not label Auth0, Render, Neon, PostgreSQL, the
+network, or the client as causal without detector-level evidence.
 
-- detection location is not automatically causal ownership;
-- HTTP 500 does not prove PostgreSQL, Neon, Render, or Auth0 caused the failure;
-- request start without trusted outcome means `unknown`;
-- a trusted rejection with proved rollback means `not-applied`;
-- a local preflight stop before mutation/contact means `blocked`;
-- provider success plus local persistence failure must remain two facts;
-- uncertainty must be stated as `boundary-only` or `unknown`.
+## 4. Documentation and tests
 
-Do not display speculative service blame.
+If diagnostic definitions change, update the machine registry and regenerate
+Dart, TypeScript and Markdown projections. Do not hand-edit generated
+documentation.
 
-## 4. Public and technical explanations
+Tests must prove:
 
-The primary UI explanation must be understandable without reading technical
-details. Expandable details may show only sanitized closed values,
-fingerprints, counts, phases, outcomes, ordinals, and safe status evidence.
+- labels and confirmation text preserve the three-action distinction;
+- fingerprints and counts are sanitized;
+- cancellation, blocked preflight, and execution terminals use accurate
+  mutation/contact language;
+- no terminal recommends automatic retry or ordinary Sync;
+- generic summaries retain the causal child event;
+- the prior Sync result remains visually distinct from the current action;
+- an eligible preflight no longer displays the historical missing-action code;
+- technical details omit forbidden identifiers and secrets.
 
-Public API output must use a 12-hex correlation fingerprint. Full correlation
-identity, exception class, SQLSTATE class, messages, stack traces, SQL,
-payloads, raw IDs, and provider secrets are internal or forbidden.
+H must report the runtime-visible meaning, confirmation copy, terminal
+language, evidence distinctions, generated-documentation impact, and tests.
 
-Update generated `documentation/SYNC_DIAGNOSTICS.md` if schema/meaning changes
-are necessary. It must remain generated from the registry and explain:
-
-- parent operations and ordered child events;
-- operation versus correlation identity;
-- public fingerprint versus internal correlation;
-- phase evidence and state precedence;
-- detector versus cause;
-- unknown-outcome safety;
-- public/internal redaction;
-- why a generic 500 is not automatically retryable.
-
-## 5. Tests and report
-
-Test that:
-
-- the current causal event survives beneath a generic summary;
-- all blocked/error/unknown UI states carry the required explanation;
-- prior Sync, current action, last success, and timeline remain distinct;
-- public response fixtures contain no internal-only diagnostic fields;
-- unknown or boundary-only language is used where attribution is unproved;
-- `MKS-UPL-012` retains its narrow meaning;
-- registry, source lookup, UI, API, and Markdown agree on code meaning.
-
-H must report what meanings became runtime-visible, the causal-language rules,
-the public/internal split, generated-documentation changes, validation
-evidence, and any meaning still not reachable in source.
-
-Do not promote didactic canon or edit permanent didactic files.
+Do not edit permanent didactic memory.
 
 Terminal markers:
 
 ```text
-CAUSAL_DIAGNOSTIC_MEANING=IMPLEMENTED_OR_BLOCKED
-GENERIC_SUMMARY_PRESERVES_CAUSE=VALIDATED_OR_BLOCKED
-PUBLIC_DIAGNOSTIC_REDACTION=VALIDATED_OR_BLOCKED
-GENERATED_DOCUMENTATION=ALIGNED_OR_BLOCKED
+INSPECTION_EXECUTION_MEANING=SEPARATE_OR_BLOCKED
+PREFLIGHT_CODE_MEANING=ALIGNED_OR_BLOCKED
+FAILED_UNKNOWN_SYNC_ACTIONS=SEPARATE_OR_BLOCKED
+TERMINAL_CAUSAL_LANGUAGE=VALIDATED_OR_BLOCKED
+AUTHORIZATION_NOT_IMPLIED=VALIDATED_OR_BLOCKED
 GATE_12_7=HELD
 GCM02=OPEN
 ```

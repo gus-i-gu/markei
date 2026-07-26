@@ -3,13 +3,13 @@
 > Sequence: FLX-PRN-03 recovery-economy pruning after FLX-PRM-04 reconciliation
 > Role: Main Chat
 > Branch: `cycle10-intermid-grimoire`
-> Reconciliation baseline: `52ea09c9e08380fb7c2a85b58ae9909385bd3bdc`
-> Authority: human-directed J pruning and current-state rearrangement
-> Writable surface: this file only
+> Reconciliation baseline: `76540c45702b027d56b52fea05a8025f14496cdf`
+> Authority: human-directed Main reconciliation and synchronized staging
+> Writable surface: J plus D/E/F for the activated REC-01 unit
 > Evidence boundary: repository and accepted human-operated evidence through
-> the Gate 12.6 copied-database classification
-> Status: **CYCLE 10 OPEN; GCM-02 GATE 12.6 PASS; GATE 12.7
-> AUTHORIZATION PENDING**
+> the Gate 12.7 read-only failed/notApplied inspection
+> Status: **CYCLE 10 OPEN; GCM-02 GATE 12.7 PREFLIGHT PASS; REC-01 D/E/F
+> ACTIVE; EXECUTION AUTHORIZATION HELD**
 
 ## 1. Recovery entrypoint
 
@@ -45,10 +45,11 @@ Retain these ownership boundaries:
 ```text
 Repository: gus-i-gu/markei
 Active branch: cycle10-intermid-grimoire
-Current reconciliation baseline: 52ea09c9e08380fb7c2a85b58ae9909385bd3bdc
+Current reconciliation baseline: 76540c45702b027d56b52fea05a8025f14496cdf
 Cycle: 10
 Active closure unit: MCG-02 / user-facing GCM-02
-Active gate: 12.7 one-action human authorization
+Active sprint: C10-GCM02-S12-REC-01 bounded execution surface
+Active gate: 12.7 source materialization before one-action authorization
 ```
 
 The branch contains the GRM execution interface, hosted Sync
@@ -219,9 +220,10 @@ requires server behavior. Do not infer hosted state from source capability.
 GCM-02 owns the controlled exact-identity hosted recovery resolution. Gates
 12.1–12.5 established hosted readiness, metadata, alignment, exact binding
 and an immutable pre-operation baseline. Gate 12.6 has now determined the
-exact eligible transition and recovery boundary. Gate 12.7 is the explicit
-human authorization boundary for exactly one `Retry unresolved submission`
-coordinator action; it is not ordinary Sync authorization.
+exact eligible transition and recovery boundary. The read-only Gate 12.7
+inspection now passes, but current source still has no dedicated bounded
+failed/notApplied executor. C10-GCM02-S12-REC-01 must materialize and validate
+that surface before Main may prepare an exact one-action authorization packet.
 
 ### 5.1 Accepted Gate 12.6 copied-database evidence
 
@@ -345,7 +347,9 @@ GCM02_12_5_PROVIDER_BASELINE_PASS
 GCM02_12_6_COPIED_DATABASE_PROBE_PASS
 GCM02_12_6_DEVICE_SCOPED_CORRELATION_PASS
 GCM02_12_6_PASS
-GCM02_12_7_HUMAN_AUTHORIZATION_PENDING
+GCM02_12_7_READ_ONLY_PREFLIGHT_PASS
+GCM02_S12_REC_01_D_E_F_ACTIVE
+GCM02_12_7_HUMAN_AUTHORIZATION_HELD
 GCM02_12_8_CONTROLLED_OPERATION_HELD
 GCM02_12_9_POST_OPERATION_COMPARISON_HELD
 GCM02_12_10_RECONCILIATION_HELD
@@ -372,95 +376,36 @@ Keep Markei closed and preserve the copied database unchanged until the Gate
 
 ## 6. Immediate continuation — Phase 12.7
 
-Gate 12.6 is closed. No new source or procedure materialization is required
-before the authorization decision, so D/E/F remain the completed Gate 12.6
-materialization authority and Codex is not required to act now.
+The Windows read-only failed/notApplied preflight is reconciled as PASS. It
+proved one eligible two-event lineage and no mutation or provider contact.
+It also confirmed that execution remains absent.
 
-Phase 12.7 prepares and reviews one exact authorization packet. The packet
-proposes exactly one human-confirmed `Retry unresolved submission` action for
-the failed/notApplied hosted-scope lineage. It does not authorize ordinary
-Sync, Repair, Enroll, a second Retry, provider-console mutation, database
-editing, cleanup or GCM-02 closure.
-
-### 6.1 Required pre-authorization freshness
-
-Before asking for authorization:
-
-1. keep Markei closed;
-2. preserve `markei-gate-12-6-current` unchanged;
-3. verify a clean `cycle10-intermid-grimoire` worktree at the reconciled
-   branch tip;
-4. verify the intended Render service remains ready at the accepted revision;
-5. verify Auth0 issuer/audience metadata and the intended authenticated
-   principal without exposing tokens;
-6. verify the exact enrolled Device binding remains active;
-7. run only the documented read-only Neon/provider pre-operation check needed
-   to confirm the accepted 12.5 baseline has not drifted;
-8. stop on any revision, identity, membership, Device, cursor, submission,
-   event, acknowledgement, readiness or configuration mismatch.
-
-Freshness checks are evidence gathering, not authorization. If they require a
-new script or source correction, stop and stage a new Codex unit instead of
-improvising commands.
-
-### 6.2 Authorization packet
-
-Present the following resolved packet to the human:
+The active next unit is:
 
 ```text
-Operation: exactly one Retry unresolved submission
-Target: anonymized hosted/enrolled Device scope rank 3
-Local candidate: failed / notApplied
-Legacy response/error: conflict / service-unavailable
-Candidate event count: 2
-Candidate sequence range: 1–2
-Candidate positions: 0–1
-Candidate pre-state: failed
-Candidate Device next_sequence: 3
-Other pending events in target scope: 0
-Other pending events outside target scope: 6
-First recovery upload: exactly the 2 candidate events
-Same-hash active/superseded submission count: 0 / 0
-Ordinary Sync: not authorized
-Repair or Enroll: not authorized
-Second action: prohibited without a new reconciliation
+C10-GCM02-S12-REC-01
 ```
 
-The packet must also carry the fresh Git/Render/Auth0/Device/provider-baseline
-results, the sanitized candidate fingerprint produced by the approved UI
-preflight, expected API operations, accepted success and duplicate terminals,
-mandatory stop terminals, and the evidence-capture order.
+Read synchronized D/E/F and materialize only the bounded recovery-and-upload
+surface. Codex must use local/disposable tests and must not contact or modify
+the live provider.
 
-### 6.3 Human decision
+After Codex returns replacement G/H/I:
 
-Open Native Closure only after the packet is complete. Refresh Diagnostics,
-confirm authentication and exact Device enrollment, select `Retry unresolved
-submission`, inspect the non-mutating preflight, and cancel if any displayed
-fingerprint, range, count or state differs from the packet.
+1. Main reconciles source and evidence;
+2. Windows pulls the accepted commit and repeats build/run plus read-only
+   inspection;
+3. Git, Render, Auth0, Device binding and provider baseline are refreshed;
+4. Main prepares one exact Gate 12.7 packet;
+5. only explicit human approval authorizes one
+   `Recover failed/notApplied candidate` action;
+6. no second action is permitted;
+7. Gates 12.8–12.10 capture and reconcile the correlated terminal.
 
-Anything other than an explicit authorization for this exact one-action packet
-means no authorization. Authorization from an earlier build, migration,
-provider inspection, authentication check or preflight does not carry over.
-
-### 6.4 Controlled action and immediate stop
-
-Only after explicit authorization:
-
-1. perform exactly one `Retry unresolved submission`;
-2. do not press ordinary Sync, Repair, Enroll or Retry again;
-3. record the sanitized UI terminal and timestamps;
-4. close Markei after the action reaches a terminal or stop condition;
-5. preserve the post-operation local database unchanged;
-6. begin Gate 12.8 evidence capture in the specified order.
-
-Stop immediately without a second action on configuration/authentication
-failure, Device or membership mismatch, ambiguous candidate, unexpected
-sequence/count/fingerprint, provider unavailability, absent/ambiguous response,
-unexpected HTTP/protocol result, partial local transition, or any provider
-baseline drift.
-
-Gate 12.7 remains pending until the complete packet is presented and explicitly
-authorized. Gates 12.8–12.10 remain held.
+Ordinary Sync, unknown-outcome Retry, Repair, Enroll, provider-console
+mutation, database editing and cleanup remain prohibited. The complete
+evidence, hierarchy and continuation sequence are preserved in the newest
+`Legacy_Progress` entry.
 
 ## 7. GCM-03 provisional boundary
 
@@ -3644,6 +3589,342 @@ GCM04=UNDEFINED_INACTIVE
 PERMANENT_DOMAIN_PROMOTION=PENDING
 MAIN_ROOT_REFRESH=PENDING
 PROVIDER_ACTION=NOT_PERFORMED
+ORDINARY_SYNC=NOT_AUTHORIZED
+CONTROLLED_RECOVERY=NOT_AUTHORIZED
+```
+
+---
+
+## 2026-07-26 — Gate 12.7 read-only inspection reconciliation and REC-01 staging
+
+Sequence: FLX-ORD-01 — Ordinary Sequence
+Role: Main Chat [M]
+Branch: `cycle10-intermid-grimoire`
+Reconciled repository baseline:
+`76540c45702b027d56b52fea05a8025f14496cdf`
+Evidence: five sanitized human-supplied Windows Closure screenshots plus
+targeted inspection of the current J, G/H/I, diagnostic registry, Closure
+runner/page, local diagnostic query, local recovery repository and ordinary
+Sync coordinator
+Disposition: **READ-ONLY PREFLIGHT PASS; NARROW D/E/F ACTIVATED; GATE 12.7
+EXECUTION STILL HELD**
+
+### 1. Scope and authority
+
+This entry is appended under `Legacy_Progress` and does not rewrite any prior
+entry. It reconciles only the human execution of:
+
+```text
+Inspect failed/notApplied recovery
+```
+
+No screenshot or source evidence establishes that the new controlled
+failed/notApplied recovery-and-upload action exists. No recovery, provider
+request, ordinary Sync, enrollment, repair, cleanup, database edit, or second
+action is accepted as performed.
+
+The human reported that the prescribed sequence was followed. The screenshots
+prove a fresh Windows Closure application was running and that the inspection
+completed. They do not contain the terminal output needed to independently
+accept every analysis/test/build subcommand. Retain that distinction:
+
+```text
+WINDOWS_CLOSURE_RUN=HUMAN_OBSERVED_PASS
+WINDOWS_FULL_BUILD_LOG=NOT_PRESENT_IN_SCREENSHOT_EVIDENCE
+```
+
+### 2. Before-inspection observations
+
+The first three screenshots preserve the pre-inspection state.
+
+Current-action surface:
+
+```text
+MKS_CODE=MKS-UI-003
+TITLE=Current action collapsed into historical result
+OUTCOME=blocked
+LAST_PROVED_PHASE=presentation
+LOCAL_MUTATION=none
+PROVIDER_CONTACT=not-started
+TRUSTED_RESPONSE=not-received
+OPERATION=not-recorded
+```
+
+This is a prior presentation-state observation. It must not be mistaken for
+the later failed/notApplied inspection terminal.
+
+Sync overview and local queue:
+
+```text
+AUTHENTICATION=authenticated
+ENROLLMENT=device-enrolled
+READINESS=failed-work-needs-review
+LAST_RESULT=sync-unavailable
+RECOVERY_GUIDANCE=review-local-sync-state-before-retry
+PENDING=0
+UPLOADING=0
+FAILED=2
+```
+
+Recent-attempt evidence retained:
+
+- the latest ordinary Sync remained `sync-unavailable /
+  provider-evidence-unavailable`;
+- it carried no observed HTTP status or response headers;
+- prior hosted-connection checks included ready responses;
+- no local diagnostic child events were shown before the inspection;
+- the current Device fingerprint was `#a43532d0`, enrolled, with next
+  sequence `3`;
+- two actionable `purchase.registered` events were failed at sequences `1`
+  and `2`.
+
+This confirms that the read-only action started from the expected Gate 12.6
+shape. It does not refresh the live provider baseline.
+
+### 3. After-inspection result
+
+The final screenshot shows one new current diagnostic child:
+
+```text
+DIAGNOSTIC_CODE=MKS-UI-004
+PHASE=failed-recovery-preflight
+OUTCOME=not-applied
+LAST_PROVED_PHASE=failed-recovery-preflight
+LOCAL_MUTATION=none
+PROVIDER_CONTACT=not-started
+TRUSTED_RESPONSE=not-received
+RESULT_PERSISTENCE=not-started
+OPERATION_FINGERPRINT=#4af181b3d7e7
+CORRELATION_FINGERPRINT=#0ebea2b44ec7
+SAFE_ACTION=hold for Gate 12.7 reconciliation; do not execute recovery
+```
+
+The Device remained enrolled with next sequence `3`, and the same two
+actionable events remained failed at sequences `1` and `2`.
+
+Targeted source inspection confirms that an eligible `MKS-UI-004` inspection
+requires exactly one current Account/Device failed/notApplied submission,
+complete contiguous membership, valid scoped events and hashes, all member
+states failed, no accepted member, no active overlap, no current-scope
+pending/uploading/unknown work, and a matching next sequence.
+
+The inspection runner records `mutation none`, `contact not-started`,
+`trusted not-received`, and `persist not-started`; it has no execution
+callback. Therefore:
+
+```text
+FAILED_NOT_APPLIED_CANDIDATE=ONE_ELIGIBLE
+CANDIDATE_MEMBER_COUNT=2
+CANDIDATE_SEQUENCE_RANGE=1-2
+CURRENT_DEVICE_NEXT_SEQUENCE=3
+READ_ONLY_INSPECTION=PASS
+LOCAL_MUTATION=ABSENT
+PROVIDER_CONTACT=ABSENT
+FAILED_NOT_APPLIED_EXECUTION=ABSENT
+ORDINARY_SYNC=ABSENT_DURING_INSPECTION
+```
+
+One source/meaning drift is confirmed. The eligible inspection emits
+`MKS-UI-004`, while the registry title and meaning still describe the older
+condition in which the failed/notApplied inspection action is missing. The
+action now exists. The state axes and safe action remain sufficient to accept
+the read-only preflight behavior, but the code cannot continue to mean both
+“action missing” and “eligible preflight.” REC-01 must preserve the historical
+UI code and emit a precise REC preflight code for the current condition.
+
+The bounded fingerprints are useful for reconciliation and later confirmation
+display. They are not authoritative database identities and must never be
+used alone to select the candidate.
+
+### 4. PRC-01 classification
+
+```text
+Claim: the Gate 12.7 failed/notApplied preflight is human-observed eligible
+Source: Windows Closure screenshots and current source
+Current state: validated within the read-only Windows inspection boundary
+Evidence: MKS-UI-004 event plus unchanged two-event failed lineage
+Evidence boundary: local UI/database observation; no live provider refresh
+Contradictions: none within the supplied evidence
+Semantic owner: Main GCM-02 Gate 12.7 reconciliation
+Target role: J continuity and synchronized D/E/F materialization authority
+History disposition: append; preserve earlier pending/blocked states
+Confidence: high within the named boundary
+Human/Main authority: reconciliation and staging requested
+Required regeneration: Codex replacement G/H/I after REC-01 materialization
+Result: preflight PASS; execution capability still absent
+```
+
+```text
+Claim: MKS-UI-004 correctly names the eligible preflight
+Source: current registry and Closure diagnostic query
+Current state: contradicted
+Evidence: runtime emits the code for eligibility; registry defines missing action
+Evidence boundary: repository/source semantic consistency
+Contradictions: direct code-to-registry mismatch
+Semantic owner: diagnostic registry plus detector boundary
+Target role: C10-GCM02-S12-REC-01 D/E/F
+History disposition: preserve historical code; stop current mis-emission
+Confidence: high
+Human/Main authority: correction staged, not yet materialized
+Required regeneration: registry projections, tests and replacement G/H/I
+Result: bounded REC-01 correction required
+```
+
+```text
+Claim: Gate 12.7 may now authorize a controlled recovery
+Source: preflight evidence
+Current state: blocked
+Evidence: source contains inspection only; no dedicated bounded executor
+Evidence boundary: repository/source and UI inspection
+Contradictions: older J wording assumed an executable action
+Semantic owner: Main Gate 12.7 authority
+Target role: D/E/F corrective materialization first
+History disposition: preserve and correct by this later entry
+Confidence: high
+Human/Main authority: no execution authorization granted
+Required regeneration: source implementation, tests, G/H/I, Main reconciliation
+Result: authorization remains held
+```
+
+### 5. Resolved Cycle 10 hierarchy
+
+The navigation grammar is now instantiated as follows:
+
+```text
+Cycle 10 — hosted synchronization and operational acceptance
+├─ GCM-01 — development-provider foundation
+│  └─ Terminal: accepted within the sanitized development boundary
+├─ GCM-02 — exact hosted recovery/synchronization proof [ACTIVE]
+│  ├─ Gate 12.1 — Render/API readiness [PASS AT INSPECTED EVIDENCE]
+│  ├─ Gate 12.2 — Auth0 metadata contract [PASS AT INSPECTED EVIDENCE]
+│  ├─ Gate 12.3 — client/deployment alignment [PASS; REFRESH BEFORE ACTION]
+│  ├─ Gate 12.4 — exact Account/Device binding [PASS; REFRESH BEFORE ACTION]
+│  ├─ Gate 12.5 — provider baseline [PASS; REFRESH BEFORE ACTION]
+│  ├─ Gate 12.6 — copied DB and Device-scope correlation [PASS]
+│  ├─ Sprint S12-ERR-01/02 — diagnostic runtime tightening [SOURCE ACCEPTED]
+│  ├─ Gate 12.7 — one controlled failed/notApplied recovery
+│  │  ├─ Phase A — current-source Windows Closure run [HUMAN OBSERVED PASS]
+│  │  ├─ Phase B — read-only candidate inspection [PASS]
+│  │  ├─ Phase C — Main reconciliation [THIS ENTRY: PASS]
+│  │  ├─ Sprint S12-REC-01 — bounded execution surface [D/E/F ACTIVE]
+│  │  ├─ Phase D — Codex materialization and local validation [PENDING]
+│  │  ├─ Phase E — G/H/I reconciliation [PENDING]
+│  │  ├─ Phase F — fresh Windows build and repeated preflight [PENDING]
+│  │  ├─ Phase G — Git/Render/Auth0/Device/provider freshness [PENDING]
+│  │  ├─ Phase H — exact authorization packet [PENDING]
+│  │  └─ Phase I — explicit approval plus one action [HELD]
+│  ├─ Gate 12.8 — correlated client/server evidence [HELD]
+│  ├─ Gate 12.9 — provider comparison [HELD]
+│  └─ Gate 12.10 — terminal classification and GCM-02 reconciliation [HELD]
+├─ GCM-03 — bounded second-Device convergence candidate [UNDEFINED/INACTIVE]
+├─ GCM-04 — final operational acceptance families [UNDEFINED/INACTIVE]
+└─ Cycle closure — promotion, continuity refresh, hygiene and Cycle 11 handoff
+   [HELD]
+```
+
+### 6. Activated D/E/F unit
+
+This reconciliation activates synchronized materialization unit:
+
+```text
+UNIT=C10-GCM02-S12-REC-01
+OBJECTIVE=separate bounded failed/notApplied recovery-and-upload surface
+SOURCE_ONLY=YES
+LIVE_PROVIDER_ACTION=NO
+GATE_12_7_AUTHORIZATION=NO
+```
+
+The unit must preserve inspection as read-only and introduce a distinct,
+confirmed coordinator that:
+
+1. revalidates exact Account/Device/candidate state immediately before
+   mutation;
+2. uses authoritative internal identity rather than a fingerprint selector;
+3. atomically recovers exactly the candidate member set;
+4. leases and uploads exactly that recovered set;
+5. stops after one upload terminal;
+6. never invokes download, acknowledgement or ordinary Sync;
+7. records the complete diagnostic evidence axes;
+8. prevents automatic or second execution;
+9. replaces the eligible-preflight `MKS-UI-004` emission with a precise REC
+   code without erasing the historical missing-action definition.
+
+The synchronized controlling files are:
+
+```text
+DEV_STAGE/D_OPS_STAGE.md
+DEV_STAGE/E_DDC_STAGE.md
+DEV_STAGE/F_DSN_STAGE.md
+```
+
+### 7. Resolved continuation sequence
+
+Proceed only in this order:
+
+1. publish this J plus synchronized D/E/F staging;
+2. send the exact seeding prompt below to Codex;
+3. Codex verifies the required ancestry and materializes only
+   C10-GCM02-S12-REC-01;
+4. Codex runs local/disposable validation and replaces G/H/I;
+5. Main reconciles source and G/H/I into a new append-only J entry;
+6. pull the accepted commit into the clean Windows checkout;
+7. run the canonical Windows validation/build/launch procedure;
+8. repeat `Inspect failed/notApplied recovery`;
+9. require the candidate fingerprint/count/range/next-sequence and all safety
+   booleans to match the accepted packet;
+10. refresh Git revision, Render readiness/revision, Auth0 metadata/principal,
+    exact Device binding and the allowlisted provider baseline;
+11. Main prepares one exact Gate 12.7 authorization packet;
+12. obtain explicit human authorization for exactly one named action;
+13. execute exactly one `Recover failed/notApplied candidate`;
+14. issue no second action and freeze the post-action local state;
+15. Gate 12.8 captures client terminal and correlated server lifecycle;
+16. Gate 12.9 captures and compares the fresh allowlisted provider state;
+17. Gate 12.10 classifies exactly one terminal and decides GCM-02 closure.
+
+Any mismatch, unknown result, out-of-allowlist mutation, ambiguous response,
+partial local transition, revision drift, or absent correlation stops the
+sequence. It does not authorize another attempt.
+
+### 8. Gate 12.8–12.10 expected terminal
+
+The controlled action may be classified only as:
+
+```text
+expected success
+duplicate-equivalent
+rejected/notApplied
+unknown
+unexpected mutation/failure
+```
+
+GCM-02 may close only when client state, server lifecycle evidence and
+provider state agree on a trustworthy terminal. An unknown or contradictory
+terminal keeps GCM-02 open with a narrow diagnostic follow-up and no second
+action.
+
+### 9. Current terminal
+
+```text
+CYCLE10=OPEN
+GCM01=ACCEPTED_DEVELOPMENT_BOUNDARY
+GCM02=OPEN_ACTIVE
+GCM02_12_6=PASS
+WINDOWS_CLOSURE_RUN=HUMAN_OBSERVED_PASS
+FAILED_NOT_APPLIED_PREFLIGHT=READ_ONLY_PASS
+FAILED_NOT_APPLIED_CANDIDATE=ONE_ELIGIBLE
+CANDIDATE_MEMBER_COUNT=2
+CANDIDATE_SEQUENCE_RANGE=1-2
+CURRENT_DEVICE_NEXT_SEQUENCE=3
+LOCAL_MUTATION=ABSENT
+PROVIDER_CONTACT=ABSENT
+FAILED_NOT_APPLIED_EXECUTION=ABSENT
+ELIGIBLE_PREFLIGHT_CODE_SEMANTICS=DRIFT_CONFIRMED
+C10_GCM02_S12_REC_01=STAGED_ACTIVE
+GATE_12_7=HELD_PENDING_CODEX_AND_RECONCILIATION
+GATES_12_8_TO_12_10=HELD
+GCM03=UNDEFINED_INACTIVE
+GCM04=UNDEFINED_INACTIVE
 ORDINARY_SYNC=NOT_AUTHORIZED
 CONTROLLED_RECOVERY=NOT_AUTHORIZED
 ```
