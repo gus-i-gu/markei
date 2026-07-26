@@ -123,6 +123,7 @@ final class MarkeiComposition {
     );
     final repository = DriftHostedIdentityRepository(database);
     final binding = activeBinding;
+    const uuid = Uuid();
     final syncTransport = binding == null
         ? const _BlockedSyncTransport()
         : HttpSyncTransport(
@@ -136,8 +137,9 @@ final class MarkeiComposition {
               }
               return token;
             },
-            correlationSource: () => 'native-closure',
+            correlationSource: uuid.v4,
             hostedDeviceId: binding.serverDeviceId,
+            timeout: HttpSyncTransport.hostedOrdinarySyncDefaultTimeout,
           );
     final syncOutbox = binding == null
         ? DriftSyncOutboxRepository(database)
@@ -152,7 +154,6 @@ final class MarkeiComposition {
             database,
             accountId: AccountId(binding.accountId),
           );
-    const uuid = Uuid();
     const environmentAlias = 'provider-native';
     final diagnostics = DriftClosureDiagnosticsRepository(
       database,

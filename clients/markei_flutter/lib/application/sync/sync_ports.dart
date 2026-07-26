@@ -5,15 +5,37 @@ import '../../domain/sync/sync_event.dart';
 typedef SubmissionIdFactory = String Function();
 
 final Object _syncCorrelationZoneKey = Object();
+final Object _syncOperationZoneKey = Object();
+final Object _syncOperationFingerprintZoneKey = Object();
 
 String? currentSyncCorrelationId() =>
     Zone.current[_syncCorrelationZoneKey] as String?;
+
+String? currentSyncOperationId() =>
+    Zone.current[_syncOperationZoneKey] as String?;
+
+String? currentSyncOperationFingerprint() =>
+    Zone.current[_syncOperationFingerprintZoneKey] as String?;
 
 Future<T> withSyncCorrelation<T>(
   String correlationId,
   Future<T> Function() body,
 ) {
   return runZoned(body, zoneValues: {_syncCorrelationZoneKey: correlationId});
+}
+
+Future<T> withSyncOperation<T>({
+  required String operationId,
+  required String operationFingerprint,
+  required Future<T> Function() body,
+}) {
+  return runZoned(
+    body,
+    zoneValues: {
+      _syncOperationZoneKey: operationId,
+      _syncOperationFingerprintZoneKey: operationFingerprint,
+    },
+  );
 }
 
 final class SyncDiagnosticChildIdentity {

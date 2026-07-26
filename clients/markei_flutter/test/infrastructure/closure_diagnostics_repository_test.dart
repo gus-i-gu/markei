@@ -42,24 +42,38 @@ void main() {
         index: i,
         state: i.isEven ? 'pending' : 'failed',
       );
-      final id = await DriftClosureDiagnosticsRepository(
+      final repository = DriftClosureDiagnosticsRepository(
         db,
         accountId: accountA,
         deviceId: deviceA,
         environmentAlias: environment,
         now: () => DateTime.utc(2026, 7, 21, 12, i),
-      ).beginSyncAttempt();
+      );
+      final id = await repository.beginDiagnosticAttempt(
+        operationKind: i == 24 ? 'ordinary-sync' : 'hosted-connection-check',
+        latestStage: 'preflight-passed',
+        resultCode: i == 24 ? 'sync-completed' : 'hosted-connection-ready',
+        outcomeClass: 'in-progress',
+        correlationFingerprint: 'attempt-$i',
+      );
       await DriftClosureDiagnosticsRepository(
         db,
         accountId: accountA,
         deviceId: deviceA,
         environmentAlias: environment,
         now: () => DateTime.utc(2026, 7, 21, 12, i, 1),
-      ).completeSyncAttempt(
+      ).completeDiagnosticAttempt(
         id,
+        operationKind: i == 24 ? 'ordinary-sync' : 'hosted-connection-check',
+        latestStage: i == 24 ? 'completed' : 'response-parsed',
         resultCode: i == 24 ? 'sync-completed' : 'sync-unavailable',
         outcomeClass: i == 24 ? 'completed' : 'unavailable',
-        phase: 'completed',
+        recoveryCode: i == 24
+            ? 'no-local-action-needed'
+            : 'ready-does-not-prove-sync',
+        correlationFingerprint: 'attempt-$i',
+        elapsedBand: 'lt-1s',
+        responseHeadersReceived: false,
       );
     }
     await _insertEvent(

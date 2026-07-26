@@ -1,65 +1,33 @@
-# H_DDC_CODEX - C10-GCM02-S12-REC-01
+# H_DDC_CODEX — C10-GCM02-S12-ERR-03
 
-Evidence class: repository-proven and test-validated unless marked otherwise.
+Unit: C10-GCM02-S12-ERR-03 within sequence C10-GCM02-S12-SYNC-01
+Evidence class: Codex observational report
 
 ## Meaning Projection
 
-The Closure UI now distinguishes three meanings:
+- repository-proven: Readiness and ordinary Sync now remain didactically separate in UI text and storage interpretation. A live/ready hosted health result is not treated as aggregate Sync success.
+- repository-proven: `Last successful sync` now means a completed ordinary-Sync operation with result `sync-completed` or `sync-no-new-events`; hosted connection checks and other Closure attempts are excluded.
+- repository-proven: `Recent sync attempts` was renamed to `Recent Closure attempts`, preserving the difference between Sync, health/readiness checks, Retry inspection, and failed/notApplied surfaces.
+- repository-proven: The UI exposes client-operation declaration scope, ordinary-Sync operation kind, client result code, last proved phase, client-owned configured deadline, operation fingerprint, and correlation fingerprint.
+- repository-proven: API logs expose server-request declaration scope. Server-request completion is a request-level fact and not client ordinary-Sync completion.
 
-- Retry unknown-outcome submission: reuses the existing unresolved unknown-outcome submission path.
-- Inspect failed/notApplied recovery: read-only, network-free, no local mutation.
-- Recover failed/notApplied candidate: separately confirmed bounded recovery plus at most one upload request, stopping after upload-result persistence.
+## Terminal Vocabulary
 
-Implementation does not authorize human execution. Gate 12.7 remains held.
+- repository-proven: The ordinary-Sync client terminal vocabulary is bounded to `sync-completed`, `sync-no-new-events`, `sync-rejected`, `sync-server-timeout`, and `sync-failed`.
+- repository-proven: A client observation deadline before a trusted response is `sync-failed`, with provider outcome unknown.
+- repository-proven: `sync-server-timeout` remains a reserved meaning for a proved server-owned deadline with authoritative cancellation or rollback.
 
-## Diagnostic Language
+## Redaction And Causal Language
 
-Eligible failed/notApplied inspection now emits MKS-REC-001 instead of MKS-UI-004.
+- repository-proven: Public API failure bodies continue to omit full correlation IDs, exception classes, SQLSTATE, messages, stack traces, SQL, payloads, and raw IDs.
+- repository-proven: Internal lifecycle evidence may retain sanitized exception class, SQLSTATE class, route class, phase, provider transaction outcome, and sanitized lineage fingerprints.
+- inferred: The implementation preserves the detector/cause distinction by logging server-request declarations without attributing unknown outcomes to Auth0, Render, Neon, or PostgreSQL unless the specific code path proves that boundary.
 
-- MKS-REC-001 means a read-only inspection found exactly one current-device failed/notApplied candidate with compatible state, membership, request hash, sequence bounds, next sequence, and queue isolation.
-- MKS-UI-004 remains available for the historical "missing action" UI defect and is no longer used for eligible preflight.
-- Blocked failed/notApplied inspection and recovery ambiguity continue to use MKS-REC-012.
-
-The generated documentation, Dart projection, and TypeScript projection were regenerated from the single registry owner.
-
-## UI Projection
-
-The new confirmation text states that the action:
-
-- revalidates current Account and Device;
-- mutates local failed recovery state;
-- sends at most one provider upload request;
-- persists that upload result;
-- does not run download, acknowledgement, enrollment, repair, cleanup, ordinary Sync, or automatic retry;
-- changes nothing when cancelled.
-
-Current-action diagnostics continue to show MKS code, title, meaning, outcome, last proved phase, local mutation, provider contact, trusted response, safe action, operation fingerprint, and sanitized technical details.
-
-## Evidence Separation
-
-- Proven locally: action names, UI confirmation boundary, local repository invariants, diagnostic code correction, generated projection alignment, and mocked upload boundaries.
-- Test-validated: cancellation no-op, exact-batch leasing, one upload maximum, no download or acknowledgement, session disable after execution attempt.
-- Human/provider execution: unavailable and not performed.
-- Provider result truth for the real failed lineage: unavailable in this round.
-
-## Redaction
-
-The UI and reports use only bounded fingerprints, counts, statuses, sequence ranges, phases, and closed diagnostic values. Raw IDs, tokens, payloads, full hashes, URLs, SQL, exception messages, stack traces, and provider secrets are not displayed by the new surface.
-
-## Didactic Boundary
-
-This materialization clarifies terminology but does not promote permanent didactic memory:
-
-- Inspection is observation.
-- Recovery is local state transition plus bounded upload.
-- Retry remains unknown-outcome only.
-- Ordinary Sync remains broad orchestration and is not Gate 12.7's action.
-
-FAILED_NOT_APPLIED_EXECUTION_SURFACE=IMPLEMENTED
-ELIGIBLE_PREFLIGHT_DIAGNOSTIC_CODE=CORRECTED
-EXACT_RECOVERED_BATCH=VALIDATED
-ONE_UPLOAD_ONLY=VALIDATED
-DOWNLOAD_ACK_ABSENT=VALIDATED
-NO_PROVIDER_ACTION_DURING_MATERIALIZATION=PASS
+READINESS_SYNC_MEANING=SEPARATE
+CLIENT_SERVER_SCOPE_MEANING=SEPARATE
+FIVE_SYNC_RESULTS=VISIBLE
+TIMEOUT_OWNERSHIP=VISIBLE
+LAST_SUCCESSFUL_SYNC_LABEL=TRUTHFUL
+RECENT_CLOSURE_ATTEMPTS_LABEL=ALIGNED
 GATE_12_7=HELD
 GCM02=OPEN

@@ -59,6 +59,7 @@ type InternalDiagnosticEvent = {
   retryable: boolean;
   safeAction: string;
   correlationId: string;
+  operationFingerprint?: string;
   sanitizedExceptionClass?: string;
   serverSqlstateClass?: string;
 };
@@ -76,8 +77,14 @@ export type LifecycleLogEvent = {
   routeClass: string;
   operation: string;
   method: string;
+  declarationScope: "server-request";
+  operationKind: "server-request";
+  resultCode?: string;
+  operationFingerprint: string;
   correlationFingerprint: string;
   elapsedBand?: string;
+  configuredDeadlineMs?: number;
+  deadlineOwner?: "server";
   status?: number;
   result?: string;
   diagnosticCode?: string;
@@ -715,6 +722,10 @@ function emitLifecycle(
       routeClass: routeClass(pending.request),
       operation: pending.operation ?? operationClass(pending.request),
       method: pending.request.method,
+      declarationScope: "server-request",
+      operationKind: "server-request",
+      resultCode: pending.result ?? resultCodeForLifecycle(pending),
+      operationFingerprint: operationFingerprint(pending.request),
       correlationFingerprint: shortCorrelationFingerprint(pending.request.id),
       elapsedBand:
         pending.elapsedMs === undefined
@@ -760,11 +771,45 @@ function sanitizeCorrelation(value: string | undefined) {
   return sanitized || undefined;
 }
 
+function sanitizeFingerprint(value: string | undefined) {
+  if (!value) return undefined;
+  const sanitized = value
+    .toLowerCase()
+    .replace(/[^a-f0-9]/g, "")
+    .slice(0, 12);
+  return sanitized.length === 12 ? sanitized : undefined;
+}
+
+function operationFingerprint(request: FastifyRequest) {
+  const explicit = Array.isArray(request.headers["x-operation-fingerprint"])
+    ? request.headers["x-operation-fingerprint"][0]
+    : request.headers["x-operation-fingerprint"];
+  const sanitizedExplicit = sanitizeFingerprint(explicit);
+  if (sanitizedExplicit) return sanitizedExplicit;
+  const operationId = Array.isArray(request.headers["x-operation-id"])
+    ? request.headers["x-operation-id"][0]
+    : request.headers["x-operation-id"];
+  const sanitizedOperation = sanitizeCorrelation(operationId);
+  return sanitizedOperation
+    ? shortCorrelationFingerprint(sanitizedOperation)
+    : "not-provided";
+}
+
 function shortCorrelationFingerprint(value: string) {
   return createHash("sha256")
     .update(sanitizeCorrelation(value) ?? "")
     .digest("hex")
     .slice(0, 12);
+}
+
+function resultCodeForLifecycle(pending: PendingLifecycleEvent) {
+  if (pending.event === "response-completed") {
+    return pending.status && pending.status < 400
+      ? "request-completed"
+      : "request-failed";
+  }
+  if (pending.event === "request-failed") return "request-failed";
+  return pending.event;
 }
 
 function unexpectedApiDiagnostic(
@@ -786,6 +831,7 @@ function unexpectedApiDiagnostic(
     retryable: false,
     safeAction: "preserve evidence and inspect diagnostics",
     correlationId: request.id,
+    operationFingerprint: operationFingerprint(request),
   };
 }
 
@@ -814,6 +860,10 @@ function emitInternalDiagnostic(
     routeClass: event.routeClass,
     operation: event.operation,
     method: "INTERNAL",
+    declarationScope: "server-request",
+    operationKind: "server-request",
+    resultCode: event.code,
+    operationFingerprint: event.operationFingerprint ?? "not-provided",
     correlationFingerprint: shortCorrelationFingerprint(event.correlationId),
     result: event.code,
     diagnosticCode: event.diagnosticCode,

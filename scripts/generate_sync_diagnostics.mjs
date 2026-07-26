@@ -30,7 +30,7 @@ const tsPath = resolve(
   root,
   "services/markei_sync_api/src/domain/sync_diagnostic_registry.generated.ts",
 );
-const mdPath = resolve(root, "documentation/SYNC_DIAGNOSTICS.md");
+const mdPath = resolve(root, "documentation/ERR_DIAGNOSTICS.md");
 const check = process.argv.includes("--check");
 
 const registry = JSON.parse(readFileSync(registryPath, "utf8"));

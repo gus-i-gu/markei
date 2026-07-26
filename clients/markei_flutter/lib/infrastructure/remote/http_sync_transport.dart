@@ -17,9 +17,11 @@ final class HttpSyncTransport implements SyncTransport, RecoveryTransport {
     required this.tokenSource,
     required this.correlationSource,
     required this.hostedDeviceId,
-    this.timeout = const Duration(seconds: 5),
+    this.timeout = hostedOrdinarySyncDefaultTimeout,
     this.maxResponseBytes = 262144,
   });
+
+  static const hostedOrdinarySyncDefaultTimeout = Duration(seconds: 35);
 
   final http.Client client;
   final Uri baseUri;
@@ -228,6 +230,15 @@ final class HttpSyncTransport implements SyncTransport, RecoveryTransport {
     final request = http.Request(method, uri);
     request.headers['x-correlation-id'] =
         currentSyncCorrelationId() ?? correlationSource();
+    final operationId = currentSyncOperationId();
+    if (operationId != null) {
+      request.headers['x-operation-id'] = operationId;
+    }
+    final operationFingerprint = currentSyncOperationFingerprint();
+    if (operationFingerprint != null) {
+      request.headers['x-operation-fingerprint'] = operationFingerprint;
+    }
+    request.headers['x-declaration-scope'] = 'client-operation';
     request.headers['authorization'] = 'Bearer ${await tokenSource()}';
     request.headers['x-markei-device-id'] = hostedDeviceId;
     return request;

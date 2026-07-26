@@ -63,6 +63,10 @@ final class NativeAuthClosureRunner {
   final HostedConnectionCheckPort? _hostedConnectionCheck;
   final bool _unavailable;
   final Uuid? _uuid;
+  static const ordinarySyncClientDeadline = Duration(seconds: 35);
+
+  int get ordinarySyncClientDeadlineMs =>
+      ordinarySyncClientDeadline.inMilliseconds;
 
   Future<NativeClosureStatus> status() async {
     if (_unavailable) {
@@ -124,9 +128,11 @@ final class NativeAuthClosureRunner {
       uuid: _uuid,
     );
     try {
-      final outcome = await coordinator.run(
-        _environmentAlias,
-        diagnostics: diagnostics,
+      final outcome = await withSyncOperation(
+        operationId: operationId,
+        operationFingerprint: operationFingerprint,
+        body: () =>
+            coordinator.run(_environmentAlias, diagnostics: diagnostics),
       );
       await diagnostics.recordTerminal(outcome.state);
       await recorder.completeSyncAttempt(
@@ -159,12 +165,12 @@ final class NativeAuthClosureRunner {
       );
       await recorder.completeSyncAttempt(
         attemptId,
-        resultCode: 'sync-unavailable',
-        outcomeClass: 'unavailable',
+        resultCode: 'sync-failed',
+        outcomeClass: 'failed',
         phase: 'unexpected-terminal',
         recoveryCode: 'local-exception-redacted',
       );
-      return const NativeClosureStatus('sync-unavailable');
+      return const NativeClosureStatus('sync-failed');
     }
   }
 
@@ -537,17 +543,21 @@ final class NativeAuthClosureRunner {
   static String _syncOutcomeClass(String state) {
     return switch (state) {
       'sync-completed' || 'sync-no-new-events' => 'completed',
-      'sync-interrupted' => 'unknown',
+      'sync-rejected' => 'rejected',
+      'sync-server-timeout' => 'timeout',
+      'sync-failed' => 'failed',
       'authentication-required' => 'blocked',
       'device-enrollment-required' || 'device-revoked' => 'blocked',
-      _ => 'unavailable',
+      _ => 'failed',
     };
   }
 
   static String _syncPhase(String state) {
     return switch (state) {
       'sync-completed' || 'sync-no-new-events' => 'completed',
-      'sync-interrupted' => 'transport-or-closure',
+      'sync-server-timeout' => 'server-timeout',
+      'sync-failed' => 'terminal',
+      'sync-rejected' => 'rejected',
       'authentication-required' => 'authentication',
       'device-enrollment-required' || 'device-revoked' => 'enrollment',
       _ => 'sync',
@@ -560,7 +570,9 @@ final class NativeAuthClosureRunner {
       'authentication-required' => 'sign-in-required',
       'device-enrollment-required' => 'enroll-or-query-device',
       'device-revoked' => 'device-not-allowed',
-      'sync-interrupted' => 'retry-after-local-review',
+      'sync-rejected' => 'preserve-evidence-and-review-rejection',
+      'sync-server-timeout' => 'preserve-evidence-and-review-server-deadline',
+      'sync-failed' => 'preserve-evidence-and-inspect-diagnostics',
       _ => 'provider-evidence-unavailable',
     };
   }
@@ -643,21 +655,26 @@ final class _DiagnosticOperationRecorder
   }
 
   Future<void> recordTerminal(String state) async {
-    if (_causalOrdinal == null) return;
     await recordPhase(
       SyncDiagnosticPhaseEvidence(
         code: 'MKS-OBS-001',
-        nativeCode: 'sync-summary:$state:causal-ordinal-$_causalOrdinal',
+        nativeCode:
+            'client-operation-declaration:$state:scope-client-operation:'
+            'deadline-ms-${NativeAuthClosureRunner.ordinarySyncClientDeadline.inMilliseconds}:'
+            'causal-ordinal-${_causalOrdinal ?? 'none'}',
         operationKind: 'ordinary-sync',
         phase: 'terminal',
         lastProvedPhase: 'terminal',
         outcome: state == 'sync-completed' || state == 'sync-no-new-events'
             ? 'applied'
+            : state == 'sync-rejected'
+            ? 'notApplied'
             : 'unknown',
         providerTransactionState: 'see-causal-event',
         trustedResponseState: 'see-causal-event',
         resultPersistenceState: 'see-causal-event',
-        safeAction: 'inspect causal diagnostic event before retrying',
+        safeAction:
+            'client declaration only; inspect causal diagnostic before action',
         retryable: false,
       ),
     );

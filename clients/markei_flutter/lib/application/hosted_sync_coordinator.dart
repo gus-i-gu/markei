@@ -210,7 +210,7 @@ final class HostedSyncCoordinator {
           sanitizedExceptionClass: error.runtimeType.toString(),
         ),
       );
-      return const HostedSyncOutcome.interrupted();
+      return const HostedSyncOutcome.failed();
     } on StateError catch (error) {
       if (error.message == 'auth-required' ||
           error.message == 'token-expired' ||
@@ -247,7 +247,7 @@ final class HostedSyncCoordinator {
             sanitizedExceptionClass: error.runtimeType.toString(),
           ),
         );
-        return const HostedSyncOutcome.interrupted();
+        return const HostedSyncOutcome.failed();
       }
       await diagnostics?.recordPhase(
         SyncDiagnosticPhaseEvidence(
@@ -263,7 +263,7 @@ final class HostedSyncCoordinator {
           sanitizedExceptionClass: error.runtimeType.toString(),
         ),
       );
-      return const HostedSyncOutcome.unavailable();
+      return const HostedSyncOutcome.failed();
     }
   }
 
@@ -276,7 +276,7 @@ final class HostedSyncCoordinator {
         const HostedSyncOutcome.deviceEnrollmentRequired(),
       SyncStatusCode.deviceRevoked ||
       SyncStatusCode.deviceExpired => const HostedSyncOutcome.deviceRevoked(),
-      SyncStatusCode.unknownOutcome => const HostedSyncOutcome.interrupted(),
+      SyncStatusCode.unknownOutcome => const HostedSyncOutcome.failed(),
       SyncStatusCode.noRecoverableFailure ||
       SyncStatusCode.failedRecoveryAvailable => null,
       SyncStatusCode.conflict ||
@@ -291,7 +291,9 @@ final class HostedSyncCoordinator {
       SyncStatusCode.fullRebootstrapRequired ||
       SyncStatusCode.localChangesBlockRebootstrap ||
       SyncStatusCode.protocolUpgradeRequired =>
-        const HostedSyncOutcome.unavailable(),
+        result.protocolCode == 'server-timeout'
+        ? const HostedSyncOutcome.serverTimeout()
+        : const HostedSyncOutcome.rejected(),
       _ => null,
     };
   }
@@ -338,9 +340,11 @@ final class HostedSyncOutcome {
 
   const HostedSyncOutcome.completed() : this._('sync-completed');
 
-  const HostedSyncOutcome.interrupted() : this._('sync-interrupted');
+  const HostedSyncOutcome.failed() : this._('sync-failed');
 
-  const HostedSyncOutcome.unavailable() : this._('sync-unavailable');
+  const HostedSyncOutcome.rejected() : this._('sync-rejected');
+
+  const HostedSyncOutcome.serverTimeout() : this._('sync-server-timeout');
 
   const HostedSyncOutcome.deviceRevoked() : this._('device-revoked');
 

@@ -62,7 +62,10 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
             ),
           )
         else ...[
-          _SyncOverview(snapshot: snapshot),
+          _SyncOverview(
+            snapshot: snapshot,
+            deadlineMs: widget.runner.ordinarySyncClientDeadlineMs,
+          ),
           const SizedBox(height: 12),
           _LocalQueue(snapshot: snapshot),
           const SizedBox(height: 12),
@@ -115,6 +118,11 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
                     : _confirmRecoverFailedNotApplied,
                 child: const Text('Recover failed/notApplied candidate'),
               ),
+              if (_failedRecoveryAttempted)
+                const Text(
+                  'failed-not-applied-recovery-session-locked',
+                  key: Key('nativeClosure.failedRecovery.locked'),
+                ),
               OutlinedButton(
                 key: const Key('nativeClosure.Clear diagnostic history'),
                 onPressed: _running ? null : _confirmClearHistory,
@@ -143,6 +151,8 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
                 state: result.state,
                 code: result.state == 'sync-unavailable'
                     ? 'MKS-OBS-003'
+                    : result.state == 'sync-failed'
+                    ? 'MKS-OBS-001'
                     : 'MKS-UI-003',
                 operationFingerprint: 'not-recorded',
               )
@@ -674,12 +684,19 @@ final class _DiagnosticTimeline extends StatelessWidget {
 }
 
 final class _SyncOverview extends StatelessWidget {
-  const _SyncOverview({required this.snapshot});
+  const _SyncOverview({required this.snapshot, required this.deadlineMs});
 
   final ClosureDiagnosticsSnapshot snapshot;
+  final int deadlineMs;
 
   @override
   Widget build(BuildContext context) {
+    final attempt = snapshot.recentAttempts
+        .where((attempt) => attempt.operationKind == 'ordinary-sync')
+        .firstOrNull;
+    final diagnostic = snapshot.recentDiagnostics
+        .where((event) => event.operationKind == 'ordinary-sync')
+        .firstOrNull;
     return _DiagnosticsCard(
       title: 'Sync overview',
       child: Column(
@@ -696,6 +713,28 @@ final class _SyncOverview extends StatelessWidget {
                 _timeOrNotRecorded(snapshot.lastSuccessfulSyncAt),
               ),
               _DiagnosticValue('Recovery guidance', snapshot.recoveryGuidance),
+              const _DiagnosticValue('Declaration scope', 'client-operation'),
+              const _DiagnosticValue('Operation kind', 'ordinary-sync'),
+              _DiagnosticValue(
+                'Client result code',
+                attempt?.resultCode ?? 'not-recorded',
+              ),
+              const _DiagnosticValue('Server request', 'not aggregate success'),
+              _DiagnosticValue(
+                'Last proved phase',
+                diagnostic?.lastProvedPhase ??
+                    attempt?.latestStage ??
+                    'unknown',
+              ),
+              _DiagnosticValue('Configured deadline', '${deadlineMs}ms client'),
+              _DiagnosticValue(
+                'Operation',
+                '#${diagnostic?.operationFingerprint ?? attempt?.correlationFingerprint ?? 'not-recorded'}',
+              ),
+              _DiagnosticValue(
+                'Correlation',
+                '#${diagnostic?.correlationFingerprint ?? 'not-observed'}',
+              ),
             ],
           ),
           const SizedBox(height: 8),
@@ -744,7 +783,7 @@ final class _Attempts extends StatelessWidget {
   Widget build(BuildContext context) {
     final attempts = snapshot.recentAttempts;
     return _DiagnosticsCard(
-      title: 'Recent sync attempts',
+      title: 'Recent Closure attempts',
       child: attempts.isEmpty
           ? const Text(
               'No locally recorded attempt history',
@@ -764,6 +803,8 @@ final class _Attempts extends StatelessWidget {
                     subtitle: Text(
                       '${attempt.outcomeClass} / ${attempt.latestStage} / '
                       '${attempt.recoveryCode ?? 'no-recovery-code'}\n'
+                      'scope client-operation / deadline-owner client / '
+                      'deadline ${attempt.operationKind == 'ordinary-sync' ? '35000ms' : 'not-applicable'} / '
                       'correlation ${attempt.correlationFingerprint ?? 'not-recorded'} / '
                       'status ${attempt.httpStatus?.toString() ?? 'not-observed'} / '
                       'headers ${attempt.responseHeadersReceived ? 'received' : 'not-received'} / '

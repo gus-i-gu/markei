@@ -69,6 +69,7 @@ void main() {
         );
         expect(request.headers['authorization'], 'Bearer fixture-token');
         expect(request.headers['x-correlation-id'], 'fixture-correlation');
+        expect(request.headers['x-declaration-scope'], 'client-operation');
         expect(request.headers['accept'], 'application/json');
       }
       for (final request in client.requests.where(
@@ -80,6 +81,47 @@ void main() {
         'after': 'c10b:1',
         'limit': '25',
       });
+    },
+  );
+
+  test(
+    'HTTP sync transport propagates operation lineage without full public IDs',
+    () async {
+      final client = _RecordingClient();
+      final transport = HttpSyncTransport(
+        client: client,
+        baseUri: Uri.parse('https://sync.example.invalid/base'),
+        tokenSource: () => 'fixture-token',
+        correlationSource: () => 'fallback-correlation',
+        hostedDeviceId: '22222222-2222-4222-8222-222222222222',
+      );
+
+      await withSyncOperation(
+        operationId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        operationFingerprint: 'abc123def456',
+        body: () => withSyncCorrelation(
+          'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+          () => transport.uploadSubmission(
+            const SyncUploadSubmission(
+              id: 'submission-1',
+              deviceId: '22222222-2222-4222-8222-222222222222',
+              requestHash: 'request-hash',
+              events: [],
+            ),
+          ),
+        ),
+      );
+
+      final request = client.requests.single;
+      expect(
+        request.headers['x-operation-id'],
+        'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      );
+      expect(request.headers['x-operation-fingerprint'], 'abc123def456');
+      expect(
+        request.headers['x-correlation-id'],
+        'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+      );
     },
   );
 

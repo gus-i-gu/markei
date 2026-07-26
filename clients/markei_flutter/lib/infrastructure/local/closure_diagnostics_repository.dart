@@ -871,7 +871,12 @@ final class DriftClosureDiagnosticsRepository
                 (table) =>
                     table.accountId.equals(_accountId) &
                     table.environmentAlias.equals(_environmentAlias) &
+                    table.operationKind.equals('ordinary-sync') &
                     table.outcomeClass.equals('completed') &
+                    table.resultCode.isIn([
+                      'sync-completed',
+                      'sync-no-new-events',
+                    ]) &
                     table.completedAt.isNotNull(),
               )
               ..orderBy([

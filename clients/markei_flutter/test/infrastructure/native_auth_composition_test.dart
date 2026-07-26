@@ -577,7 +577,7 @@ void main() {
     );
 
     expect((await noNew.run('native')).state, 'sync-no-new-events');
-    expect((await interrupted.run('native')).state, 'sync-interrupted');
+    expect((await interrupted.run('native')).state, 'sync-failed');
   });
 
   test('stable enrollment identity survives retry and restart', () async {

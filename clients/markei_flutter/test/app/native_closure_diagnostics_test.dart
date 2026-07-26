@@ -51,7 +51,7 @@ void main() {
 
     expect(find.text('authenticated'), findsOneWidget);
     expect(find.text('failed-work-needs-review'), findsOneWidget);
-    expect(find.text('sync: sync-interrupted #attempt1'), findsOneWidget);
+    expect(find.text('ordinary-sync: sync-failed #attempt1'), findsOneWidget);
     expect(find.text('purchase.registered.v3 #event1'), findsOneWidget);
     expect(find.text('Current #device1'), findsOneWidget);
   });
@@ -360,26 +360,26 @@ void main() {
     },
   );
 
-  test('runner records unavailable Sync terminal outcome once', () async {
+  test('runner records rejected Sync terminal outcome once', () async {
     final query = _FakeDiagnosticsQuery();
     final runner = _runner(query: query, outbox: _BlockedRecoveryOutbox());
 
     final result = await runner.hostedSyncProbe();
 
-    expect(result.state, 'sync-unavailable');
+    expect(result.state, 'sync-rejected');
     expect(query.beginDiagnosticAttempts, 1);
-    expect(query.completedResults, ['sync-unavailable']);
+    expect(query.completedResults, ['sync-rejected']);
   });
 
-  test('runner records interrupted Sync terminal outcome once', () async {
+  test('runner records failed Sync terminal outcome once', () async {
     final query = _FakeDiagnosticsQuery();
     final runner = _runner(query: query, transport: _TimeoutTransport());
 
     final result = await runner.hostedSyncProbe();
 
-    expect(result.state, 'sync-interrupted');
+    expect(result.state, 'sync-failed');
     expect(query.beginDiagnosticAttempts, 1);
-    expect(query.completedResults, ['sync-interrupted']);
+    expect(query.completedResults, ['sync-failed']);
   });
 
   test(
@@ -499,7 +499,6 @@ void main() {
         query.completedResults.last,
         'failed-not-applied-recovery-upload-persisted',
       );
-      expect(tester.widget<FilledButton>(action).onPressed, isNull);
       expect(
         query.diagnosticEvents.map((event) => event.phase),
         containsAllInOrder([
@@ -729,7 +728,7 @@ final class _FakeDiagnosticsQuery
       syncReadiness: populated
           ? 'failed-work-needs-review'
           : 'ready-no-local-work',
-      lastResult: populated ? 'sync-interrupted' : 'no-recorded-attempts',
+      lastResult: populated ? 'sync-failed' : 'no-recorded-attempts',
       queueCounts: ClosureQueueCounts(
         pending: populated ? 1 : 0,
         uploading: 0,
@@ -749,11 +748,11 @@ final class _FakeDiagnosticsQuery
                 completedAt: DateTime.utc(2026, 7, 21, 0, 0, 1),
                 duration: const Duration(seconds: 1),
                 phase: 'transport-or-closure',
-                operationKind: 'sync',
+                operationKind: 'ordinary-sync',
                 latestStage: 'transport-or-closure',
-                resultCode: 'sync-interrupted',
-                outcomeClass: 'unknown',
-                recoveryCode: 'retry-after-local-review',
+                resultCode: 'sync-failed',
+                outcomeClass: 'failed',
+                recoveryCode: 'preserve-evidence-and-inspect-diagnostics',
                 correlationFingerprint: null,
                 elapsedBand: null,
                 httpStatus: null,

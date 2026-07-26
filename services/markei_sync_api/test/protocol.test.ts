@@ -218,6 +218,10 @@ test("health lifecycle logs are sanitized and correlated by fingerprint", async 
     assert.equal(event.routeClass, "/health/live");
     assert.equal(event.operation, "health-live");
     assert.equal(event.method, "GET");
+    assert.equal(event.declarationScope, "server-request");
+    assert.equal(event.operationKind, "server-request");
+    assert.match(event.operationFingerprint, /^[a-f0-9]{12}$|^not-provided$/);
+    assert.ok(event.resultCode);
     assert.match(event.correlationFingerprint, /^[a-f0-9]{12}$/);
     assert.equal(JSON.stringify(event).includes("x-secret"), false);
     assert.equal(JSON.stringify(event).includes("abc\r\n"), false);
@@ -291,6 +295,10 @@ test("protected route authentication rejection is lifecycle logged", async () =>
   const response = await app.inject({
     method: "GET",
     url: "/v1/sync/events",
+    headers: {
+      "x-operation-id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "x-correlation-id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    },
   });
 
   assert.equal(response.statusCode, 401);
@@ -305,6 +313,10 @@ test("protected route authentication rejection is lifecycle logged", async () =>
   );
   for (const event of events) {
     const serialized = JSON.stringify(event);
+    assert.equal(event.declarationScope, "server-request");
+    assert.equal(event.operationKind, "server-request");
+    assert.match(event.operationFingerprint, /^[a-f0-9]{12}$/);
+    assert.match(event.correlationFingerprint, /^[a-f0-9]{12}$/);
     assert.equal(serialized.includes("/v1/sync/events?"), false);
     assert.equal(serialized.includes("authorization"), false);
   }

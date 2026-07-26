@@ -39,7 +39,7 @@ test("generated TypeScript, Dart and Markdown expose identical code sets", () =>
     "utf8",
   );
   const markdown = readFileSync(
-    "../../documentation/SYNC_DIAGNOSTICS.md",
+    "../../documentation/ERR_DIAGNOSTICS.md",
     "utf8",
   );
   const dartCodes = uniqueMatches(dart);
