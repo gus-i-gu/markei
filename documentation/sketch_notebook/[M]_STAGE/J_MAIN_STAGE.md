@@ -3306,3 +3306,344 @@ PROVIDER_ACTION=NOT_PERFORMED
 GATE_12_7=HELD
 GCM02=OPEN
 ```
+
+---
+
+## cycle 10 - guideline
+
+> Date: 2026-07-26
+> Sequence: FLX-PRM-04 — Promotion/Reconciliation
+> Role: Main Chat [M]
+> Branch: `cycle10-intermid-grimoire`
+> Reconciled remote baseline: `71bb73f88e88f3b94dd78fb5131bd6262ae7321f`
+> Authority: human-requested navigation reconciliation
+> Scope: Cycle 10 remaining work, GCM-02 conclusion, provisional GCM-03/GCM-04
+> organisation, and closure route
+> Materialization effect: J append only; no D/E/F activation, source change,
+> provider action, Sync, Retry, Repair, Enroll, recovery execution, or semantic
+> promotion
+
+### 1. Navigation grammar
+
+The following hierarchy is a provisional Cycle 10 navigation grammar. It
+organises existing work; it does not amend canonical methodology or silently
+activate an implementation unit.
+
+```text
+Cycle
+└─ GCM / MCG phase
+   ├─ Sprint — bounded implementation or investigation package
+   └─ Gate — mandatory evidence, decision, or authorization boundary
+      └─ Gate/Sprint subphase — investigate, stage, materialize, validate,
+         authorize, execute, or reconcile
+         └─ Step — one concrete human or agent action
+```
+
+`GCM` is retained as the current conversation/J spelling. Older operational
+artifacts may use `MCG` for the same phase level. A Gate controls mandatory
+ordering and authority. A Sprint packages major work. Neither is automatically
+inside the other; their order is declared by the active GCM plan.
+
+### 2. Documentary state-of-union
+
+The most current recovery surfaces are:
+
+1. the mutable Cycle 10 prefix and newest append-only entries in
+   `[M]_STAGE/J_MAIN_STAGE.md`;
+2. current D/E/F when an implementation unit is explicitly active;
+3. the newest G/H/I materialization evidence;
+4. targeted source or provider evidence only for unresolved claims.
+
+Current remote G/H/I at the Step 12 diagnostic materialization establish:
+
+```text
+ORDINARY_SYNC_PHASE_DIAGNOSTICS=IMPLEMENTED
+PARENT_CHILD_CORRELATION=IMPLEMENTED
+DIAGNOSTIC_ENVELOPE_V1=IMPLEMENTED
+PUBLIC_INTERNAL_DIAGNOSTIC_SPLIT=IMPLEMENTED
+REACHABLE_MKS_ATTRIBUTION=VALIDATED
+CAUSAL_DIAGNOSTIC_MEANING=IMPLEMENTED
+FAILED_NOT_APPLIED_PREFLIGHT=READ_ONLY
+FAILED_NOT_APPLIED_EXECUTION=ABSENT
+PROVIDER_ACTION=NOT_PERFORMED
+GCM02=OPEN
+```
+
+The repository also contains older state-of-union surfaces that have not kept
+pace with this sequence:
+
+- `00_PROJECT_STATE.md` remains a Cycle 09 closure checkpoint;
+- `06_SESSION_SCHEME.md` remains the pre-activation Cycle 10 plan;
+- permanent domain checkpoints and `operational/04_TODO.md` retain earlier
+  C10-S03A corrective-stop language;
+- `CYCLE_10_GCMS_STEP_SEQUENCE.md` preserves the earlier broad MCG-02 Gates
+  0–11 provider-proof scaffold and older branch/baseline references.
+
+These files remain useful provenance and closure debt. They must not rewind the
+active Step 12 state. Their reconciliation and refresh are mandatory before
+Cycle 10 closure.
+
+```text
+DOCUMENTARY_DRIFT=CONFIRMED
+ACTIVE_RECOVERY_SURFACE=J_PLUS_NEWEST_GHI
+PERMANENT_PROMOTION=PENDING
+MAIN_ROOT_REFRESH=PENDING
+```
+
+### 3. Cycle 10 expectations
+
+Cycle 10 is now a hosted synchronization, recovery, and operational acceptance
+cycle built on the earlier local reliability work. Its successful terminal
+requires all of the following:
+
+1. preserve the offline-first/local-authoritative application boundary;
+2. obtain a trustworthy GCM-02 hosted recovery/synchronization terminal with
+   correlated client, server, and provider evidence;
+3. define and complete one bounded GCM-03 from the actual GCM-02 residuals;
+4. define and complete one bounded GCM-04 from the actual GCM-03 residuals;
+5. reconcile source, G/H/I, human evidence, domain memory, and Main continuity;
+6. promote accepted Operational, Didactic, and Design claims through
+   FLX-PRM-04;
+7. refresh the stale Main-root and domain checkpoint surfaces;
+8. inventory migrations, schema/protocol versions, provider resources,
+   development/production distinctions, rollback boundaries, and deferrals;
+9. pass repository, secret, generated-artifact, and final platform hygiene;
+10. establish a clean, explicit Cycle 11 baseline.
+
+Cycle 11 UI/UX convergence and basic Analytics remain separate and cannot be
+used to bypass Cycle 10 closure.
+
+### 4. Phase organisation
+
+#### GCM-01 — development provider foundation
+
+State: accepted within its sanitized development boundary.
+
+Its accepted meaning includes the isolated Neon development foundation,
+separate migrator/runtime roles, TLS/channel binding, least-privilege checks,
+provider metadata/readiness preparation, and related development evidence.
+It does not prove production acceptance.
+
+```text
+GCM01=ACCEPTED_DEVELOPMENT_BOUNDARY
+PRODUCTION_ACCEPTANCE=ABSENT
+```
+
+#### GCM-02 — hosted synchronization and exact recovery proof
+
+State: active and open.
+
+Completed Sprint/evidence packages include the local convergence foundation,
+retention/rebootstrap foundation, hosted-auth/device foundation and corrections,
+GRIMOIRE human-operation procedures, Gate 12.6 copied-database/device-scoped
+classification, and the Step 12 diagnostic-runtime completion represented by
+the current G/H/I.
+
+The active mandatory Gate sequence is:
+
+| Gate | Purpose | Current state |
+| --- | --- | --- |
+| 12.1 | Render/API readiness | pass at inspected evidence |
+| 12.2 | Auth0 metadata/contract | pass at inspected evidence |
+| 12.3 | client/deployment alignment | pass at inspected checkpoint; refresh before action |
+| 12.4 | exact Account/Device binding | pass at inspected evidence; refresh before action |
+| 12.5 | provider pre-operation baseline | pass at inspected evidence; refresh before action |
+| 12.6 | copied-database and Device-scoped candidate correlation | pass |
+| pre-12.7 | fresh Windows build plus read-only failed/notApplied preflight | active next boundary |
+| 12.7 | exact one-action authorization and controlled action | held |
+| 12.8 | correlated post-action client/server evidence capture | held |
+| 12.9 | fresh provider baseline and allowlisted comparison | held |
+| 12.10 | terminal classification and Main reconciliation | held |
+
+The accepted Gate 12.6 candidate is a failed/notApplied hosted-scope lineage
+containing exactly two contiguous events at Device sequences 1–2, with no other
+pending event in that hosted scope. The six other pending events belong to
+non-hosted scopes. Ordinary Sync is therefore not an acceptable substitute.
+
+### 5. Current restart point — pre-12.7
+
+The human has reported the Windows checkout pulled, established, and clean.
+Treat repository alignment as human-observed and require the build output to
+carry the tested HEAD before accepting it as host evidence.
+
+Proceed in this order:
+
+#### Subphase A — fresh Windows host proof
+
+1. Run the current canonical `GS-FLUTTER-WIN` procedure through the dispatcher
+   named by the checked-out GRM documentation.
+2. Require Flutter analysis, the full Flutter tests, Windows Release build,
+   Auth0Flutter protocol registration, application launch, and visible Closure
+   destination.
+3. Do not select Enroll, Query, Sync, Retry, Repair, or Clear diagnostics.
+4. Stop on build, launch, configuration, authentication-surface, or Closure
+   initialization failure.
+
+#### Subphase B — read-only candidate inspection
+
+1. Open `Closure`.
+2. Select only `Inspect failed/notApplied recovery`.
+3. Capture only the sanitized displayed classification, MKS/native codes,
+   bounded operation/correlation fingerprints, candidate count, pending count,
+   sequence range, event count, retryability, and safe action.
+4. Cancel/close if any mutation or confirmation control appears.
+5. Do not select `Retry unknown-outcome submission`, ordinary Sync, Enroll,
+   Query, Repair, or Clear diagnostics.
+
+Required terminal:
+
+```text
+PROVIDER_CONTACT=NO
+FAILED_NOT_APPLIED_EXECUTION=NO
+ORDINARY_SYNC=NO
+CANCELLED_WITHOUT_MUTATION=YES
+```
+
+#### Subphase C — Main reconciliation and implementation decision
+
+Reconcile the read-only preflight against Gate 12.6 and the fresh Windows/Git
+evidence.
+
+- If the candidate is absent, ambiguous, differently classified, differently
+  scoped, or has different counts/ranges/fingerprints, stop. Keep GCM-02 open
+  and stage only the narrow diagnosis/correction justified by the evidence.
+- If the candidate matches and is eligible, do not execute it yet. Current
+  source evidence states `FAILED_NOT_APPLIED_EXECUTION=ABSENT`.
+- If execution remains absent, Main must prepare one narrow synchronized D/E/F
+  packet for the failed/notApplied controlled-action surface and its safety
+  guards. Codex then materializes and validates it and returns new G/H/I.
+- Main reconciles that new evidence before Gate 12.7 can be presented.
+
+Therefore:
+
+```text
+NEW_DEF_BEFORE_WINDOWS_PREFLIGHT=NO
+NEW_DEF_BEFORE_CONTROLLED_FAILED_NOT_APPLIED_EXECUTION=CONDITIONAL_YES
+CONDITION=ELIGIBLE_PREFLIGHT_AND_EXECUTION_STILL_ABSENT
+```
+
+This resolves the earlier J ambiguity: a prepared authorization concept is not
+an executable recovery capability.
+
+#### Subphase D — Gate 12.7 exact authorization
+
+Only after current-source conformance, fresh Git/Windows/Render/Auth0/Device/
+provider-baseline evidence, and a matching candidate may Main present one exact
+authorization packet.
+
+The packet must name:
+
+- the accepted 12.1–12.6 state and tested revisions;
+- the sanitized candidate fingerprint;
+- target Device scope, sequence range 1–2, and event count 2;
+- the exact coordinator/action boundary;
+- expected HTTP operations;
+- the one accepted provider transition;
+- duplicate-equivalent, rejected/notApplied, unknown, and unexpected rules;
+- evidence-capture order;
+- immediate stop conditions;
+- the no-second-action rule.
+
+Only explicit human approval of that complete packet authorizes exactly one
+controlled action. It does not authorize ordinary Sync, a second action,
+Enroll, Repair, provider-console mutation, database editing, or cleanup.
+
+#### Subphase E — Gates 12.8–12.10
+
+After an explicitly authorized one-action Gate 12.7 trial:
+
+1. Gate 12.8 captures the sanitized client terminal, server lifecycle
+   correlation, timestamps, and local post-state without issuing a second
+   action.
+2. Gate 12.9 runs the fresh approved provider/Neon comparison and compares only
+   allowlisted counts, sequence/cursor/acknowledgement measures, and lifecycle
+   state.
+3. Gate 12.10 classifies the result as exactly one of:
+   expected success, duplicate-equivalent, rejected/notApplied, unknown, or
+   unexpected mutation.
+
+GCM-02 closes only when the terminal is trustworthy across client
+classification, server lifecycle logs, and provider state. Unknown,
+out-of-allowlist, or contradictory evidence keeps GCM-02 open and activates
+only a narrow diagnostic correction. Do not issue another Sync or retry.
+
+### 6. GCM-03 provisional organisation
+
+GCM-03 is undefined and inactive until GCM-02 reconciles.
+
+Current planning candidate:
+
+```text
+bounded second-Device hosted convergence and acknowledgement proof
+```
+
+After GCM-02 closure, Main must:
+
+1. inventory the actual remaining gaps;
+2. choose one narrow GCM-03 objective and explicit non-goals;
+3. request A/B/C investigation when alternatives remain;
+4. reconcile J and issue synchronized D/E/F;
+5. run bounded implementation and/or human proof;
+6. receive and reconcile G/H/I;
+7. promote accepted evidence or retain a named blocker.
+
+Production deployment, broad retention/rebootstrap acceptance, backup/PITR,
+credential lifecycle, and Cycle 11 UI/UX are not silently absorbed.
+
+### 7. GCM-04 provisional organisation
+
+GCM-04 is undefined and inactive until GCM-03 reconciles.
+
+Candidate families, not authority:
+
+- authorization, revocation, and credential lifecycle;
+- outage, recovery, and retention acceptance;
+- reproducible deployment/release operational boundary;
+- provider cleanup, rollback, and final cross-platform acceptance.
+
+Main repeats the GCM-03 definition/staging/materialization/reconciliation route
+and must split the work if one terminal unit would otherwise become too broad.
+
+### 8. Cycle 10 closure work after GCM-04
+
+The closure sequence is:
+
+1. reconcile the final GCM terminal in J;
+2. run Operational, Didactic, and Design FLX-PRM-04 promotion;
+3. refresh each permanent domain checkpoint and derived TODO surface;
+4. refresh `00_PROJECT_STATE.md`, append `05_SESSION_LOG.md`, and refresh
+   `06_SESSION_SCHEME.md`;
+5. reconcile or retire stale planning surfaces without deleting provenance,
+   including the older `CYCLE_10_GCMS_STEP_SEQUENCE.md` scaffold;
+6. preserve J `Legacy_Progress` while keeping one compact current recovery
+   pointer;
+7. inventory migrations, Drift/PostgreSQL schemas, protocol and diagnostic
+   versions, provider resources, credentials/rotation boundaries, and deferred
+   production work;
+8. run final Flutter/API tests, Windows validation, the accepted Android
+   boundary, generated-document checks, `git diff --check`, and a secret/
+   artifact hygiene scan;
+9. resolve branch/local/remote continuity and require a clean terminal
+   worktree;
+10. declare the Cycle 10 terminal and establish the Cycle 11 entry baseline.
+
+### 9. Immediate terminal
+
+```text
+CYCLE10=OPEN
+GCM01=ACCEPTED_DEVELOPMENT_BOUNDARY
+GCM02=OPEN_ACTIVE
+GCM02_12_6=PASS
+WINDOWS_CURRENT_SOURCE_BUILD_RUN=PENDING
+FAILED_NOT_APPLIED_PREFLIGHT=READ_ONLY_PENDING_HUMAN_RUN
+FAILED_NOT_APPLIED_EXECUTION=ABSENT
+GATE_12_7=HELD
+GATES_12_8_TO_12_10=HELD
+GCM03=UNDEFINED_INACTIVE
+GCM04=UNDEFINED_INACTIVE
+PERMANENT_DOMAIN_PROMOTION=PENDING
+MAIN_ROOT_REFRESH=PENDING
+PROVIDER_ACTION=NOT_PERFORMED
+ORDINARY_SYNC=NOT_AUTHORIZED
+CONTROLLED_RECOVERY=NOT_AUTHORIZED
+```
