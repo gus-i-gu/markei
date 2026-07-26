@@ -1,469 +1,167 @@
-# F_DSN_STAGE — Diagnostic Causality and Sync Boundary
+# F_DSN_STAGE — Step 12 Diagnostic Architecture Completion
 
 Sequence: FLX-ORD-01 — Ordinary Sequence
 Role: Codex Design materialization authority
-Round or unit: C10-GCM02-S12-ERR-01
-Branch: `cycle10-intermid-grimoire`
-Required remote baseline:
-`5f30b9d7a55e1312889873bdb3728233cce72ff2`
-Authority: Main Chat under explicit human direction
+Unit: C10-GCM02-S12-ERR-02
+Required ancestry: `0636c54e139fc92b16d1e11b2672d61f42f02f1b`
 Status: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
-Writable evidence surface:
-`documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
 
-## 1. Architecture objective
+## 1. Architectural baseline
 
-Build a diagnostic architecture in which:
+Preserve this dependency direction:
 
 ```text
-one registry defines stable event meaning
-detectors emit from the boundary that can prove the event
-pipeline envelopes preserve phase and outcome
-UI and logs project sanitized views
-generated documentation explains the same truth
-```
-
-The architecture must narrow failures without inventing causal certainty and
-must preserve the difference between:
-
-- local preflight block;
-- trusted provider `not-applied`;
-- applied result;
-- duplicate-equivalent result;
-- ambiguous/unknown result;
-- local persistence failure after a provider result;
-- provider transaction uncertainty.
-
-## 2. Dependency direction
-
-Required dependency direction:
-
-```text
-contracts/shared_beta/diagnostics_v1 registry
+diagnostics_v1 registry
     ↓ deterministic generation
-typed Dart registry          typed TypeScript registry
-    ↓                                  ↓
-Flutter detectors/UI         API/database detectors/logging
-    ↓                                  ↓
-sanitized local timeline     sanitized lifecycle evidence
-             ↘              ↙
+typed Dart projection       typed TypeScript projection
+    ↓                               ↓
+Flutter detectors/UI        API/provider detectors
+    ↓                               ↓
+local operation timeline    internal structured evidence
+             ↘             ↙
        generated documentation
 ```
 
-The generated documentation is a peer projection of the registry, not an input
-to source code.
+J is provenance, not a runtime dependency. Markdown is a projection, not an
+input. Flutter must not import TypeScript and the API must not parse Markdown.
 
-Flutter must not import TypeScript source.
-The API must not parse Markdown.
-J must not become a runtime dependency.
+## 2. Parent/child model
 
-## 3. Stable identity versus native cause
+`sync_attempts` remains the top-level operation owner. Ordered diagnostic
+events remain children.
 
-Every diagnostic event preserves two identities:
+One top-level action owns:
 
-```text
-protocolCode = stable MKS-* classification
-nativeCode   = existing subsystem/protocol result
-```
+- one random operation identity;
+- one stable sanitized operation fingerprint;
+- one operation kind;
+- zero or more deterministic child ordinals.
 
-`MKS-*` owns cross-system meaning.
-The native code owns the concrete local/protocol signal.
+Every child owns:
 
-Many native codes may map to one stable event only when they share the same
-causal and safety meaning. One native code may map to different stable events
-only when phase/source context makes the distinction deterministic.
+- a distinct full correlation identity;
+- a sanitized correlation fingerprint;
+- phase and last-proved-phase;
+- typed protocol/native code;
+- state evidence and outcome.
 
-No source boundary may emit an arbitrary `MKS-*` string that is absent from the
-generated typed registry.
+The operation identity must not masquerade as child correlation identity.
+Network-free local phases still receive ordered child identities so the
+timeline has one uniform model.
 
-## 4. Detection and cause ownership
+## 3. Evidence state machine
 
-Each entry and runtime event must distinguish:
-
-```text
-detectorComponent
-detectorSource
-lastProvedPhase
-causeDomain
-causeConfidence
-externalDependency
-```
-
-Required causal domains:
-
-| Domain                     | Ownership                                              |
-| -------------------------- | ------------------------------------------------------ |
-| `client-ui`                | action selection and presentation                      |
-| `client-configuration`     | compiled config/composition/revision                   |
-| `authentication-provider`  | Auth0/JWKS/token acquisition or verification           |
-| `identity-binding`         | membership/account/Device/enrollment                   |
-| `local-sqlite`             | local open/schema/transaction/attempt storage          |
-| `failed-recovery`          | failed/notApplied candidate/requeue rules              |
-| `local-queue`              | pending/uploading/unknown lease and result persistence |
-| `http-transport`           | DNS/TCP/TLS/request/response decoding boundary         |
-| `api-ingress`              | route/body/authorization/request contract              |
-| `provider-postgresql`      | pool/transaction/RLS/constraint/commit/rollback        |
-| `provider-upload`          | submission validation and application                  |
-| `provider-download`        | cursor/page/provider-to-local application              |
-| `provider-acknowledgement` | acknowledgement request/result                         |
-| `cross-boundary`           | correlation, unknown outcome, or invariant             |
-| `unknown`                  | evidence cannot localize causal ownership              |
-
-The detecting component does not automatically become the cause owner.
-
-Examples:
-
-- Flutter timeout detector:
-  `detector=http-sync-transport`,
-  `causeDomain=http-transport`,
-  `causeConfidence=boundary-only`;
-- API SQLSTATE `23` constraint failure:
-  `detector=postgres-transaction`,
-  `causeDomain=provider-postgresql`,
-  `causeConfidence=confirmed`;
-- no trusted response after request start:
-  `detector=http-sync-transport`,
-  `causeDomain=unknown`,
-  `causeConfidence=unknown`.
-
-## 5. Pipeline state model
-
-Use one top-level operation with ordered child events:
+Model evidence independently across axes:
 
 ```text
-operation
-  0 local preflight
-  1 upload request
-  2 download request
-  3 acknowledgement request
-```
-
-The exact request count may vary, but ordinals must be deterministic within the
-operation.
-
-Each event preserves:
-
-```text
-phase entered
-last phase completed
-local transaction state
-provider contact state
-trusted response state
-provider transaction state
-result persistence state
+local mutation
+provider contact
+trusted response
+provider transaction
+local result persistence
 terminal outcome
 ```
 
-Required precedence:
+Precedence:
 
-1. proved transaction result;
+1. proved provider transaction;
 2. trusted typed provider result;
 3. trusted transport response;
 4. request-start evidence;
-5. local preflight.
+5. local preflight evidence.
 
-Consequences:
+Required invariants:
 
-- local stop before mutation/request is `blocked`;
-- trusted provider rejection with proved rollback is `not-applied`;
-- request start without trusted provider outcome is `unknown`;
-- provider result plus local persistence failure creates two events, not one
-  overwritten result;
-- HTTP status alone never proves provider commit state;
-- a later resolution may link to an earlier unknown event but not delete it.
+- no request start plus no mutation is locally blocked;
+- request start without trusted provider outcome is unknown;
+- HTTP status alone cannot prove provider commit;
+- provider outcome and local persistence outcome cannot overwrite one another;
+- later resolution links to historical unknown evidence rather than deleting
+  it;
+- a terminal UI summary references its causal child event.
 
-## 6. Privacy boundary
+## 4. Projection boundaries
 
-The architecture persists fingerprints, never direct identities.
-
-Allowed:
-
-- 12-hex SHA-256 fingerprints;
-- queue counts;
-- positions and sequence ranges;
-- route templates;
-- status and closed native codes;
-- bounded time bands;
-- closed exception class names;
-- server-only SQLSTATE class.
-
-Forbidden:
-
-- raw account/Device/event/submission IDs;
-- tokens, authorization codes, credentials;
-- payloads or purchase data;
-- complete hashes;
-- connection strings;
-- URLs containing identifiers;
-- SQL text;
-- exception messages or stack traces.
-
-Fingerprint generation must be deterministic for stable identities within the
-required comparison boundary, while the random operation identity remains
-unique per user action.
-
-## 7. Source adjacency
-
-The registry is centralized, but detection remains attached to the source
-boundary that can prove it.
-
-Required detector locations include:
-
-| Layer         | Expected source boundary                          |
-| ------------- | ------------------------------------------------- |
-| `UI`          | Native Closure page/runner                        |
-| `CFG`         | Flutter composition and hosted configuration      |
-| `AUT`         | native Auth0 adapter and API JWT verifier         |
-| `BND`         | enrollment/binding guard and hosted authorization |
-| `LDB`         | Drift database and diagnostics repository         |
-| `REC`         | failed/notApplied candidate/recovery repository   |
-| `QUE`         | outbox lease and result persistence               |
-| `TRN`         | Flutter HTTP transport                            |
-| `API`         | Fastify hooks, error handler, and request parser  |
-| `PDB`         | PostgreSQL pool/transaction wrapper               |
-| `UPL`         | submission service                                |
-| `DNL`         | download service and local remote-event applier   |
-| `ACK`         | acknowledgement service/transport                 |
-| `OBS` / `INV` | coordinator and cross-boundary invariant guards   |
-
-Do not put all detection in the UI or the final API catch-all.
-Those layers may project or terminate events but may not fabricate upstream
-causes.
-
-## 8. Local diagnostic storage
-
-Model:
+Use one internal typed diagnostic event and explicit projections:
 
 ```text
-Sync operation parent
-    1 ── * ordered diagnostic child events
+internal event
+├── local persisted sanitized envelope
+├── internal API/log projection
+├── public API projection
+└── Flutter UI projection
 ```
 
-The parent owns:
+The public projection may expose closed codes, safe phase/outcome fields, and
+12-hex fingerprints only. Full correlation IDs, exception classes, SQLSTATE,
+messages, stack traces, SQL, raw IDs, payloads, and provider details must not
+cross the public boundary.
 
-- action identity;
-- operation kind;
-- start/end;
-- current terminal projection;
-- source/client revision.
+Do not construct public response fields ad hoc in unrelated catch blocks.
 
-Each child owns:
+## 5. Detector/cause boundary
 
-- request ordinal;
-- phase;
-- diagnostic/native code;
-- contact/transaction states;
-- fingerprints and sanitized metrics;
-- temporal order;
-- outcome and safe action.
+The registry centralizes meaning; source boundaries own detection.
 
-Use an additive migration if persistence cannot be represented safely by the
-existing table. Do not overload one `resultCode` column with an entire
-cross-system history.
+Each reachable detector must emit through typed lookup and record:
 
-The migration must not transform queue, submission, event, cursor, purchase,
-account, Device, or hosted-auth state.
-
-## 9. UI projection boundary
-
-UI consumes a view model produced from diagnostic storage and the generated
-registry.
-
-UI must not:
-
-- decide retryability from HTTP status;
-- infer provider contact from null fields;
-- infer causal ownership from a service name;
-- parse raw exception text;
-- mutate Sync state while building Diagnostics;
-- conflate current action with the last ordinary Sync.
-
-UI may:
-
-- display registry meaning and guidance;
-- show sanitized envelope fields;
-- group child events under one operation;
-- highlight blocked/unknown/critical outcomes;
-- route to a read-only preflight.
-
-## 10. Failed/notApplied preflight boundary
-
-Implement one read-only application port and Drift adapter for:
-
-```text
-InspectFailedNotAppliedCandidate
-```
-
-Input authority:
-
-- current authenticated account;
-- exact current Device;
-- current environment alias.
-
-Output:
-
-- eligible/blocking diagnostic code;
-- candidate fingerprint;
-- member count;
-- first/last Device sequence;
-- next Device sequence;
-- Device-scope queue counts;
-- request-hash shape/equality boolean;
-- overlap/isolation booleans.
-
-The preflight must reuse the same validation logic as recovery without invoking
-the mutating transition. Extract shared pure validation rather than maintaining
-two divergent algorithms.
-
-There must be no method, callback, route, or button in this unit that converts
-this preflight into provider execution.
-
-## 11. Unknown-outcome Retry boundary
-
-Rename the current UI and source API to express `unknown-outcome`.
-
-Preserve:
-
-- same submission identity;
-- no automatic requeue;
-- isolated unknown candidate requirement;
-- explicit confirmation before future provider contact;
-- compound coordinator phases if the existing implementation still performs
-  upload/download/acknowledgement.
-
-Do not describe it as the current Gate 12.7 action.
-Do not alter it to accept failed events.
-
-If source inspection proves its implementation is broader than its label,
-make the confirmation text and diagnostic operation kind express the actual
-compound boundary. Do not silently claim a narrow request.
-
-## 12. Transaction and invariant corrections
-
-### 12.1 Local queue
-
-Enforce:
-
-```text
-lease committed
-    -> trusted result persisted
-    OR unknown result persisted
-    OR typed local-persistence invariant emitted
-```
-
-No unclassified exit may strand `uploading`.
-
-### 12.2 Failed recovery
-
-Candidate validation must be pure/read-only.
-
-Mutation occurs in one local transaction only after:
-
-- exactly one candidate;
-- exact scope;
-- complete membership;
-- contiguous canonical order;
-- request hash equality;
-- no accepted member;
-- no active overlap;
-- uniform compatible member states.
-
-Mixed state rolls back.
-
-### 12.3 Provider upload
-
-Use a two-pass or equivalent transaction-safe design:
-
-```text
-validate entire request
-↓
-acquire/verify required locks
-↓
-apply all events
-↓
-store submission result
-↓
-commit
-```
-
-Any failure before commit must prove rollback or produce provider outcome
-`unknown`. A returned domain failure must not allow a partially mutated
-transaction to commit.
-
-Recompute the canonical request hash server-side if the current protocol
-defines a canonical request hash. If full recomputation cannot be implemented
-without changing the established wire contract, report it as a blocker rather
-than pretending the request hash was validated.
-
-### 12.4 Duplicate-only download
-
-Equivalent duplicates count as successfully observed remote positions.
-Advance the greatest contiguous local cursor transactionally after their
-equivalence is proved.
-
-Different-content duplicates remain a conflict and do not advance.
-
-### 12.5 Generic exceptions
-
-Catch-alls may provide a sanitized terminal response, but the throwing boundary
-must first attach:
-
-- a stable diagnostic code;
+- detector component;
 - last proved phase;
-- local/provider transaction state;
-- safe retry policy;
-- sanitized exception class.
+- cause domain;
+- causal confidence;
+- external dependency only when proved.
 
-Unknown exceptions default to no automatic retry.
+The ordinary Sync coordinator orchestrates and correlates. It must not
+reclassify every child failure as upload or `sync-unavailable`.
 
-## 13. Gate invariants
+`MKS-UPL-012` is reserved for the invariant that a provider batch partially
+committed or risked partial commit. Route/body/auth/transport/database and
+other upload failures require their own typed code.
 
-The implementation must preserve:
+## 6. Migration boundary
+
+Prefer the existing v11 child ledger. If required fields cannot be represented
+without ambiguity, add the smallest forward-only v12 migration.
+
+No migration may:
+
+- rewrite queue/submission/cursor/purchase truth;
+- touch the user's database;
+- introduce unbounded diagnostic payloads;
+- store forbidden sensitive fields;
+- alter hosted PostgreSQL.
+
+Prove v11 preservation and reopen behavior in disposable fixtures.
+
+## 7. Architectural validation
+
+I must provide source and test evidence for:
+
+- registry ownership unchanged;
+- dependency direction unchanged;
+- all ordinary Sync phases represented;
+- unique operation and distinct child correlation identities;
+- deterministic ordinals;
+- complete bounded persisted envelope;
+- one typed internal event feeding explicit projections;
+- public/internal field separation;
+- precise detector/cause attribution;
+- narrow `MKS-UPL-012` ownership;
+- read-only failed inspection remaining isolated from execution;
+- no provider action or Gate authorization.
+
+Do not claim that all 159 catalogue conditions are runtime-reachable. Report
+the audited reachable set and any intentionally non-reachable definitions.
+
+Terminal markers:
 
 ```text
-unknown != not-applied
-HTTP success != convergence
-HTTP 500 != retry permission
-detector != proved cause
-documentation != authorization
-preflight != mutation
-source implementation != provider validation
-Gate 12.6 PASS != Gate 12.7 authorization
+DIAGNOSTIC_SINGLE_OWNER=PRESERVED_OR_BLOCKED
+OPERATION_CHILD_MODEL=IMPLEMENTED_OR_BLOCKED
+EVIDENCE_STATE_MACHINE=IMPLEMENTED_OR_BLOCKED
+PROJECTION_BOUNDARIES=VALIDATED_OR_BLOCKED
+DETECTOR_CAUSE_ATTRIBUTION=VALIDATED_OR_BLOCKED
+FAILED_RECOVERY_EXECUTION=ABSENT
+GATE_12_7=HELD
+GCM02=OPEN
 ```
-
-No code in this unit may automatically move an ambiguous submission from
-`unknown` to `pending` or `failed`.
-
-No code in this unit may execute the proved failed/notApplied candidate.
-
-## 14. I report
-
-Replace I with an architecture evidence report containing:
-
-- source stage files and inspected baseline;
-- final file/dependency graph;
-- registry and generation owner;
-- detector/cause mappings;
-- diagnostic parent/child persistence shape;
-- pipeline phase transitions;
-- privacy/redaction enforcement;
-- unknown/not-applied precedence proof;
-- five hazard fixes and tests;
-- failed/notApplied preflight dependency boundary;
-- explicit confirmation that no execution surface was attached;
-- deviations, blockers, and host-unvalidated claims.
-
-End with:
-
-```text
-DIAGNOSTIC_REGISTRY_SINGLE_OWNER_IMPLEMENTED_OR_BLOCKED
-DETECTOR_CAUSE_BOUNDARY_VALIDATED_OR_BLOCKED
-UNKNOWN_OUTCOME_SAFETY_PRESERVED_OR_BLOCKED
-FAILED_NOT_APPLIED_PREFLIGHT_NON_MUTATING
-FAILED_NOT_APPLIED_EXECUTION_ABSENT
-PROVIDER_ACTION_ABSENT
-GATE_12_7_HELD
-GCM02_OPEN
-```
-
-No permanent Design promotion is authorized in this unit.
