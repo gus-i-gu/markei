@@ -7,6 +7,7 @@ import 'package:uuid/uuid.dart';
 
 import '../application/hosted_auth_ports.dart';
 import '../application/closure_diagnostics.dart';
+import '../application/failed_not_applied_recovery_coordinator.dart';
 import '../application/hosted_enrollment_coordinator.dart';
 import '../application/hosted_connection_check.dart';
 import '../application/hosted_sync_coordinator.dart';
@@ -21,6 +22,8 @@ final class NativeAuthClosureRunner {
     required ClosureDiagnosticsQuery diagnosticsQuery,
     required SyncAttemptRecorder syncAttemptRecorder,
     required HostedSyncCoordinator hostedSyncCoordinator,
+    required FailedNotAppliedRecoveryCoordinator
+    failedNotAppliedRecoveryCoordinator,
     required HostedConnectionCheckPort hostedConnectionCheck,
   }) : _authenticationSession = authenticationSession,
        _enrollmentCoordinator = enrollmentCoordinator,
@@ -29,6 +32,8 @@ final class NativeAuthClosureRunner {
        _diagnosticsQuery = diagnosticsQuery,
        _syncAttemptRecorder = syncAttemptRecorder,
        _hostedSyncCoordinator = hostedSyncCoordinator,
+       _failedNotAppliedRecoveryCoordinator =
+           failedNotAppliedRecoveryCoordinator,
        _hostedConnectionCheck = hostedConnectionCheck,
        _unavailable = false,
        _uuid = const Uuid();
@@ -41,6 +46,7 @@ final class NativeAuthClosureRunner {
       _diagnosticsQuery = null,
       _syncAttemptRecorder = null,
       _hostedSyncCoordinator = null,
+      _failedNotAppliedRecoveryCoordinator = null,
       _hostedConnectionCheck = null,
       _unavailable = true,
       _uuid = null;
@@ -52,6 +58,8 @@ final class NativeAuthClosureRunner {
   final ClosureDiagnosticsQuery? _diagnosticsQuery;
   final SyncAttemptRecorder? _syncAttemptRecorder;
   final HostedSyncCoordinator? _hostedSyncCoordinator;
+  final FailedNotAppliedRecoveryCoordinator?
+  _failedNotAppliedRecoveryCoordinator;
   final HostedConnectionCheckPort? _hostedConnectionCheck;
   final bool _unavailable;
   final Uuid? _uuid;
@@ -381,6 +389,100 @@ final class NativeAuthClosureRunner {
     return hostedSyncProbe();
   }
 
+  Future<NativeClosureFailedRecovery> recoverFailedNotAppliedCandidate(
+    FailedNotAppliedRecoveryInspection confirmedInspection,
+  ) async {
+    if (_unavailable) {
+      return const NativeClosureFailedRecovery(
+        state: 'configuration-missing',
+        diagnosticCode: 'MKS-CFG-001',
+        operationFingerprint: 'unavailable',
+      );
+    }
+    final uuid = _uuid!;
+    final operationId = uuid.v4();
+    final operationFingerprint = _fingerprint(operationId);
+    final recorder = _syncAttemptRecorder!;
+    final attemptId = await recorder.beginDiagnosticAttempt(
+      operationKind: 'failed-not-applied-recovery',
+      latestStage: 'authorization-preflight',
+      resultCode: 'failed-not-applied-recovery-started',
+      outcomeClass: 'in-progress',
+      correlationFingerprint: operationFingerprint,
+    );
+    final diagnostics = _DiagnosticOperationRecorder(
+      recorder: recorder,
+      attemptId: attemptId,
+      operationId: operationId,
+      operationFingerprint: operationFingerprint,
+      uuid: uuid,
+    );
+    try {
+      final outcome = await _failedNotAppliedRecoveryCoordinator!.run(
+        environmentAlias: _environmentAlias,
+        confirmedInspection: confirmedInspection,
+        operationFingerprint: operationFingerprint,
+        diagnostics: diagnostics,
+      );
+      await recorder.completeDiagnosticAttempt(
+        attemptId,
+        operationKind: 'failed-not-applied-recovery',
+        latestStage: 'upload-result-persistence',
+        resultCode: outcome.state,
+        outcomeClass: outcome.state.contains('persisted')
+            ? 'completed'
+            : outcome.state.contains('blocked')
+            ? 'blocked'
+            : 'unknown',
+        recoveryCode: 'stop-after-upload-result-persistence',
+        correlationFingerprint: operationFingerprint,
+        elapsedBand: 'local-or-one-upload',
+        responseHeadersReceived: false,
+      );
+      return NativeClosureFailedRecovery(
+        state: outcome.state,
+        diagnosticCode: 'MKS-OBS-001',
+        operationFingerprint: operationFingerprint,
+      );
+    } on Object catch (error) {
+      await diagnostics.recordPhase(
+        SyncDiagnosticPhaseEvidence(
+          code: 'MKS-UI-006',
+          nativeCode: 'closure-runner-exception',
+          severity: 'ERROR',
+          operationKind: 'failed-not-applied-recovery',
+          phase: 'terminal',
+          lastProvedPhase: 'terminal',
+          outcome: 'unknown',
+          localMutationState: 'unknown',
+          providerContactState: 'unknown',
+          providerTransactionState: 'unknown',
+          trustedResponseState: 'not-received',
+          resultPersistenceState: 'failed',
+          safeAction: 'preserve evidence and inspect diagnostics',
+          retryable: false,
+          sanitizedExceptionClass: error.runtimeType.toString(),
+        ),
+      );
+      await recorder.completeDiagnosticAttempt(
+        attemptId,
+        operationKind: 'failed-not-applied-recovery',
+        latestStage: 'terminal',
+        resultCode: 'closure-runner-exception',
+        outcomeClass: 'unknown',
+        recoveryCode: 'local-exception-redacted',
+        correlationFingerprint: operationFingerprint,
+        elapsedBand: 'local-or-one-upload',
+        responseHeadersReceived: false,
+      );
+      return NativeClosureFailedRecovery(
+        state: 'closure-runner-exception',
+        diagnosticCode: 'MKS-UI-006',
+        operationFingerprint: operationFingerprint,
+      );
+    }
+  }
+
   String _operationFingerprint() {
     final seed =
         '${DateTime.now().toUtc().microsecondsSinceEpoch}:${_uuid!.v4()}';
@@ -510,21 +612,21 @@ final class _DiagnosticOperationRecorder
         correlationFingerprint: fingerprint,
         accountFingerprint: null,
         deviceFingerprint: null,
-        submissionFingerprint: null,
+        submissionFingerprint: evidence.submissionFingerprint,
         localMutationState: evidence.localMutationState,
         providerContactState: evidence.providerContactState,
         providerTransactionState: evidence.providerTransactionState,
         trustedResponseState: evidence.trustedResponseState,
         resultPersistenceState: evidence.resultPersistenceState,
-        queueScope: null,
-        pendingCount: null,
-        uploadingCount: null,
-        failedCount: null,
-        unknownCount: null,
-        memberCount: null,
-        firstDeviceSequence: null,
-        lastDeviceSequence: null,
-        nextDeviceSequence: null,
+        queueScope: evidence.queueScope,
+        pendingCount: evidence.pendingCount,
+        uploadingCount: evidence.uploadingCount,
+        failedCount: evidence.failedCount,
+        unknownCount: evidence.unknownCount,
+        memberCount: evidence.memberCount,
+        firstDeviceSequence: evidence.firstDeviceSequence,
+        lastDeviceSequence: evidence.lastDeviceSequence,
+        nextDeviceSequence: evidence.nextDeviceSequence,
         httpStatus: evidence.httpStatus,
         responseHeadersReceived: evidence.responseHeadersReceived,
         safeAction: evidence.safeAction,
@@ -584,4 +686,16 @@ final class NativeClosureFailedInspection {
   final String diagnosticCode;
   final String operationFingerprint;
   final FailedNotAppliedRecoveryInspection? inspection;
+}
+
+final class NativeClosureFailedRecovery {
+  const NativeClosureFailedRecovery({
+    required this.state,
+    required this.diagnosticCode,
+    required this.operationFingerprint,
+  });
+
+  final String state;
+  final String diagnosticCode;
+  final String operationFingerprint;
 }

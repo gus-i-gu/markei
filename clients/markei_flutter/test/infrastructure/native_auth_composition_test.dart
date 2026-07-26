@@ -9,6 +9,7 @@ import 'package:markei/application/hosted_auth_ports.dart';
 import 'package:markei/application/hosted_connection_check.dart';
 import 'package:markei/application/hosted_enrollment_coordinator.dart';
 import 'package:markei/application/hosted_sync_coordinator.dart';
+import 'package:markei/application/failed_not_applied_recovery_coordinator.dart';
 import 'package:markei/application/stable_device_enrollment_command_factory.dart';
 import 'package:markei/application/sync/sync_ports.dart';
 import 'package:markei/application/sync/sync_use_cases.dart';
@@ -367,6 +368,13 @@ void main() {
           _MemoryApplier(cursor: 'c10b:1'),
         ),
       ),
+      failedNotAppliedRecoveryCoordinator: FailedNotAppliedRecoveryCoordinator(
+        authenticationSession: LabAuthenticationSession(),
+        syncGuard: _MemorySyncGuard.allowing(),
+        diagnosticsQuery: _FakeClosureDiagnostics(),
+        outbox: _EmptyOutbox(),
+        transport: _RecordingSyncTransport(downloadEvents: const []),
+      ),
       hostedConnectionCheck: const _FakeHostedConnectionCheck(),
     );
 
@@ -421,6 +429,13 @@ void main() {
           _MemoryApplier(),
         ),
       ),
+      failedNotAppliedRecoveryCoordinator: FailedNotAppliedRecoveryCoordinator(
+        authenticationSession: LabAuthenticationSession(),
+        syncGuard: _MemorySyncGuard.allowing(),
+        diagnosticsQuery: _FakeClosureDiagnostics(),
+        outbox: _EmptyOutbox(),
+        transport: _RecordingSyncTransport(downloadEvents: const []),
+      ),
       hostedConnectionCheck: const _FakeHostedConnectionCheck(),
     );
 
@@ -467,6 +482,13 @@ void main() {
           _RecordingSyncTransport(downloadEvents: const []),
           _MemoryApplier(),
         ),
+      ),
+      failedNotAppliedRecoveryCoordinator: FailedNotAppliedRecoveryCoordinator(
+        authenticationSession: LabAuthenticationSession(),
+        syncGuard: _MemorySyncGuard.blocked('enrollment-required'),
+        diagnosticsQuery: _FakeClosureDiagnostics(),
+        outbox: _EmptyOutbox(),
+        transport: _RecordingSyncTransport(downloadEvents: const []),
       ),
       hostedConnectionCheck: const _FakeHostedConnectionCheck(),
     );
@@ -794,6 +816,20 @@ final class _EmptyOutbox implements SyncOutboxRepository {
       null;
 
   @override
+  Future<FailedNotAppliedRecoveredBatch> recoverExactFailedNotAppliedCandidate(
+    FailedNotAppliedRecoveryConfirmation confirmation,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<SyncUploadSubmission> leaseExactRecoveredBatch(
+    FailedNotAppliedRecoveredBatch batch,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<void> persistUploadResult(String submissionId, SyncResult result) {
     throw UnimplementedError();
   }
@@ -823,6 +859,20 @@ final class _OneOutbox implements SyncOutboxRepository {
         requestHash: 'hash-1',
         events: [],
       );
+
+  @override
+  Future<FailedNotAppliedRecoveredBatch> recoverExactFailedNotAppliedCandidate(
+    FailedNotAppliedRecoveryConfirmation confirmation,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<SyncUploadSubmission> leaseExactRecoveredBatch(
+    FailedNotAppliedRecoveredBatch batch,
+  ) {
+    throw UnimplementedError();
+  }
 
   @override
   Future<void> persistUploadResult(

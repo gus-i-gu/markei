@@ -132,7 +132,7 @@ Unexpected public HTTP 500 responses remain sanitized as service-unavailable wit
 | MKS-QUE-010 | QUE   | CRITICAL | unknown              | Scoped result persistence miss                  | stop and preserve local evidence                                |
 | MKS-QUE-011 | QUE   | ERROR    | unknown              | Queue diagnostic 011                            | preserve evidence and inspect diagnostics                       |
 | MKS-QUE-012 | QUE   | ERROR    | unknown              | Queue diagnostic 012                            | preserve evidence and inspect diagnostics                       |
-| MKS-REC-001 | REC   | ERROR    | unknown              | Recovery diagnostic 001                         | preserve evidence and inspect diagnostics                       |
+| MKS-REC-001 | REC   | INFO     | not-applied          | Failed notApplied candidate preflight eligible  | confirm bounded failed/notApplied recovery only if authorized   |
 | MKS-REC-002 | REC   | ERROR    | unknown              | Recovery diagnostic 002                         | preserve evidence and inspect diagnostics                       |
 | MKS-REC-003 | REC   | ERROR    | unknown              | Recovery diagnostic 003                         | preserve evidence and inspect diagnostics                       |
 | MKS-REC-004 | REC   | ERROR    | unknown              | Recovery diagnostic 004                         | preserve evidence and inspect diagnostics                       |

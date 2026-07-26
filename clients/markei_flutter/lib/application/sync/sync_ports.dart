@@ -48,6 +48,16 @@ final class SyncDiagnosticPhaseEvidence {
     this.responseHeadersReceived = false,
     this.sanitizedExceptionClass,
     this.serverSqlstateClass,
+    this.queueScope,
+    this.pendingCount,
+    this.uploadingCount,
+    this.failedCount,
+    this.unknownCount,
+    this.memberCount,
+    this.firstDeviceSequence,
+    this.lastDeviceSequence,
+    this.nextDeviceSequence,
+    this.submissionFingerprint,
   });
 
   final String code;
@@ -68,6 +78,16 @@ final class SyncDiagnosticPhaseEvidence {
   final bool responseHeadersReceived;
   final String? sanitizedExceptionClass;
   final String? serverSqlstateClass;
+  final String? queueScope;
+  final int? pendingCount;
+  final int? uploadingCount;
+  final int? failedCount;
+  final int? unknownCount;
+  final int? memberCount;
+  final int? firstDeviceSequence;
+  final int? lastDeviceSequence;
+  final int? nextDeviceSequence;
+  final String? submissionFingerprint;
 }
 
 abstract interface class SyncDiagnosticPhaseRecorder {
@@ -88,6 +108,48 @@ final class SyncUploadSubmission {
   final String deviceId;
   final String requestHash;
   final List<Map<String, Object?>> events;
+}
+
+final class FailedNotAppliedRecoveryConfirmation {
+  const FailedNotAppliedRecoveryConfirmation({
+    required this.candidateFingerprint,
+    required this.memberCount,
+    required this.firstDeviceSequence,
+    required this.lastDeviceSequence,
+    required this.nextDeviceSequence,
+    required this.pendingCount,
+    required this.uploadingCount,
+    required this.failedCount,
+    required this.unknownCount,
+  });
+
+  final String candidateFingerprint;
+  final int memberCount;
+  final int firstDeviceSequence;
+  final int lastDeviceSequence;
+  final int nextDeviceSequence;
+  final int pendingCount;
+  final int uploadingCount;
+  final int failedCount;
+  final int unknownCount;
+}
+
+final class FailedNotAppliedRecoveredBatch {
+  const FailedNotAppliedRecoveredBatch({
+    required this.submissionId,
+    required this.candidateFingerprint,
+    required this.memberCount,
+    required this.firstDeviceSequence,
+    required this.lastDeviceSequence,
+    required this.nextDeviceSequence,
+  });
+
+  final String submissionId;
+  final String candidateFingerprint;
+  final int memberCount;
+  final int firstDeviceSequence;
+  final int lastDeviceSequence;
+  final int nextDeviceSequence;
 }
 
 final class SyncResult {
@@ -138,6 +200,12 @@ abstract interface class SyncTransport {
 
 abstract interface class SyncOutboxRepository {
   Future<SyncUploadSubmission?> leasePending({required int limit});
+  Future<FailedNotAppliedRecoveredBatch> recoverExactFailedNotAppliedCandidate(
+    FailedNotAppliedRecoveryConfirmation confirmation,
+  );
+  Future<SyncUploadSubmission> leaseExactRecoveredBatch(
+    FailedNotAppliedRecoveredBatch batch,
+  );
   Future<void> persistUploadResult(String submissionId, SyncResult result);
   Future<SyncResult> recoverFailedNotApplied(String submissionId);
   Future<SyncResult> recoverOneFailedNotApplied();

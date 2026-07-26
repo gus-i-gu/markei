@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:markei/app/native_auth_closure_runner.dart';
 import 'package:markei/app/pages/native_closure_page.dart';
 import 'package:markei/application/closure_diagnostics.dart';
+import 'package:markei/application/failed_not_applied_recovery_coordinator.dart';
 import 'package:markei/application/hosted_auth_ports.dart';
 import 'package:markei/application/hosted_connection_check.dart';
 import 'package:markei/application/hosted_enrollment_coordinator.dart';
@@ -399,6 +400,150 @@ void main() {
       expect(query.completedResults, isEmpty);
     },
   );
+
+  testWidgets(
+    'failed notApplied recovery cancellation does not mutate or contact provider',
+    (tester) async {
+      tester.view.physicalSize = const Size(1400, 2400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final query = _FakeDiagnosticsQuery(
+        populated: true,
+        failedInspection: _eligibleFailedInspection(),
+      );
+      final transport = _CountingTransport();
+      final outbox = _ExactRecoveryOutbox();
+      final runner = _runner(
+        query: query,
+        outbox: outbox,
+        transport: transport,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(home: NativeClosurePage(runner: runner)),
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(
+        find.byKey(
+          const Key('nativeClosure.Recover failed/notApplied candidate'),
+        ),
+      );
+      await tester.tap(
+        find.byKey(
+          const Key('nativeClosure.Recover failed/notApplied candidate'),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const Key('nativeClosure.failedRecovery.guidance')),
+        findsOneWidget,
+      );
+      await tester.tap(find.text('Cancel').last);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('failed-not-applied-recovery-cancelled'),
+        findsOneWidget,
+      );
+      expect(outbox.recoveries, 0);
+      expect(transport.uploads, 0);
+    },
+  );
+
+  testWidgets(
+    'failed notApplied recovery confirms one upload and disables second run',
+    (tester) async {
+      tester.view.physicalSize = const Size(1400, 2600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final query = _FakeDiagnosticsQuery(
+        populated: true,
+        failedInspection: _eligibleFailedInspection(),
+      );
+      final transport = _CountingTransport();
+      final outbox = _ExactRecoveryOutbox();
+      final runner = _runner(
+        query: query,
+        outbox: outbox,
+        transport: transport,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(home: NativeClosurePage(runner: runner)),
+      );
+      await tester.pumpAndSettle();
+      final action = find.byKey(
+        const Key('nativeClosure.Recover failed/notApplied candidate'),
+      );
+      await tester.ensureVisible(action);
+      await tester.tap(action);
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const Key('nativeClosure.failedRecovery.confirm')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('failed-not-applied-recovery-upload-persisted'),
+        findsOneWidget,
+      );
+      expect(outbox.recoveries, 1);
+      expect(outbox.exactLeases, 1);
+      expect(outbox.persisted, 1);
+      expect(transport.uploads, 1);
+      expect(transport.downloads, 0);
+      expect(transport.acknowledgements, 0);
+      expect(
+        query.completedResults.last,
+        'failed-not-applied-recovery-upload-persisted',
+      );
+      expect(tester.widget<FilledButton>(action).onPressed, isNull);
+      expect(
+        query.diagnosticEvents.map((event) => event.phase),
+        containsAllInOrder([
+          'authorization-preflight',
+          'binding',
+          'failed-recovery-preflight',
+          'failed-recovery-local-transition',
+          'recovered-batch-validation',
+          'upload-lease',
+          'upload-transport',
+          'upload-provider',
+          'upload-result-persistence',
+          'terminal',
+        ]),
+      );
+      expect(
+        query.diagnosticEvents.where((event) => event.code == 'MKS-UI-004'),
+        isEmpty,
+      );
+    },
+  );
+}
+
+FailedNotAppliedRecoveryInspection _eligibleFailedInspection() {
+  return const FailedNotAppliedRecoveryInspection.eligible(
+    diagnosticCode: 'MKS-REC-001',
+    candidateFingerprint: 'candidate123',
+    memberCount: 2,
+    firstDeviceSequence: 1,
+    lastDeviceSequence: 2,
+    nextDeviceSequence: 3,
+    queueCounts: ClosureQueueCounts(
+      pending: 0,
+      uploading: 0,
+      failed: 2,
+      unknown: 0,
+    ),
+    requestHashMatches: true,
+    membershipContiguous: true,
+    deviceScopeMatches: true,
+    eventStatesCompatible: true,
+    noAcceptedMembers: true,
+    noActiveOverlap: true,
+  );
 }
 
 NativeAuthClosureRunner _runner({
@@ -447,6 +592,13 @@ NativeAuthClosureRunner _runner({
         _NoopApplier(),
       ),
     ),
+    failedNotAppliedRecoveryCoordinator: FailedNotAppliedRecoveryCoordinator(
+      authenticationSession: auth,
+      syncGuard: const _AllowedGuard(),
+      diagnosticsQuery: query,
+      outbox: syncOutbox,
+      transport: syncTransport,
+    ),
     hostedConnectionCheck:
         hostedConnectionCheck ?? _FakeHostedConnectionCheck(),
   );
@@ -454,10 +606,15 @@ NativeAuthClosureRunner _runner({
 
 final class _FakeDiagnosticsQuery
     implements ClosureDiagnosticsQuery, SyncAttemptRecorder {
-  _FakeDiagnosticsQuery({this.populated = false, this.unknownPreflight});
+  _FakeDiagnosticsQuery({
+    this.populated = false,
+    this.unknownPreflight,
+    this.failedInspection,
+  });
 
   final bool populated;
   final UnknownSubmissionRetryPreflight? unknownPreflight;
+  final FailedNotAppliedRecoveryInspection? failedInspection;
   var snapshots = 0;
   var beginAttempts = 0;
   var beginDiagnosticAttempts = 0;
@@ -536,6 +693,8 @@ final class _FakeDiagnosticsQuery
     required String authenticationState,
     required String operationFingerprint,
   }) async {
+    final inspection = failedInspection;
+    if (inspection != null) return inspection;
     return FailedNotAppliedRecoveryInspection.blocked(
       diagnosticCode: 'MKS-REC-012',
       state: 'failed-not-applied-no-candidate',
@@ -688,6 +847,34 @@ class _NoopOutbox implements SyncOutboxRepository {
       null;
 
   @override
+  Future<FailedNotAppliedRecoveredBatch> recoverExactFailedNotAppliedCandidate(
+    FailedNotAppliedRecoveryConfirmation confirmation,
+  ) {
+    throw SyncBatchPreflightException(
+      const SyncResult(
+        code: SyncStatusCode.failedRecoveryBlocked,
+        outcome: SyncOutcome.notApplied,
+        retryable: false,
+        protocolCode: 'failed-recovery-blocked',
+      ),
+    );
+  }
+
+  @override
+  Future<SyncUploadSubmission> leaseExactRecoveredBatch(
+    FailedNotAppliedRecoveredBatch batch,
+  ) {
+    throw SyncBatchPreflightException(
+      const SyncResult(
+        code: SyncStatusCode.failedRecoveryBlocked,
+        outcome: SyncOutcome.notApplied,
+        retryable: false,
+        protocolCode: 'failed-recovery-blocked',
+      ),
+    );
+  }
+
+  @override
   Future<void> persistUploadResult(
     String submissionId,
     SyncResult result,
@@ -722,6 +909,55 @@ final class _UploadingOutbox extends _NoopOutbox {
       );
 }
 
+final class _ExactRecoveryOutbox extends _NoopOutbox {
+  var recoveries = 0;
+  var exactLeases = 0;
+  var persisted = 0;
+
+  @override
+  Future<FailedNotAppliedRecoveredBatch> recoverExactFailedNotAppliedCandidate(
+    FailedNotAppliedRecoveryConfirmation confirmation,
+  ) async {
+    recoveries++;
+    expect(confirmation.candidateFingerprint, 'candidate123');
+    expect(confirmation.memberCount, 2);
+    return const FailedNotAppliedRecoveredBatch(
+      submissionId: 'internal-submission-id',
+      candidateFingerprint: 'candidate123',
+      memberCount: 2,
+      firstDeviceSequence: 1,
+      lastDeviceSequence: 2,
+      nextDeviceSequence: 3,
+    );
+  }
+
+  @override
+  Future<SyncUploadSubmission> leaseExactRecoveredBatch(
+    FailedNotAppliedRecoveredBatch batch,
+  ) async {
+    exactLeases++;
+    return const SyncUploadSubmission(
+      id: 'upload-submission',
+      deviceId: 'device-fixture',
+      requestHash: 'request-hash',
+      events: [
+        {'eventId': 'one', 'deviceSequence': 1},
+        {'eventId': 'two', 'deviceSequence': 2},
+      ],
+    );
+  }
+
+  @override
+  Future<void> persistUploadResult(
+    String submissionId,
+    SyncResult result,
+  ) async {
+    persisted++;
+    expect(submissionId, 'upload-submission');
+    expect(result.code, SyncStatusCode.serverAccepted);
+  }
+}
+
 final class _BlockedRecoveryOutbox extends _NoopOutbox {
   @override
   Future<SyncResult> recoverOneFailedNotApplied() async => const SyncResult(
@@ -729,6 +965,35 @@ final class _BlockedRecoveryOutbox extends _NoopOutbox {
     outcome: SyncOutcome.notApplied,
     retryable: false,
   );
+}
+
+final class _CountingTransport extends _NoopTransport {
+  var uploads = 0;
+  var downloads = 0;
+  var acknowledgements = 0;
+
+  @override
+  Future<SyncResult> uploadSubmission(SyncUploadSubmission submission) async {
+    uploads++;
+    expect(submission.events.map((event) => event['deviceSequence']), [1, 2]);
+    return const SyncResult(
+      code: SyncStatusCode.serverAccepted,
+      outcome: SyncOutcome.applied,
+      retryable: false,
+    );
+  }
+
+  @override
+  Future<DownloadPage> downloadAfter(String? cursor, {required int limit}) {
+    downloads++;
+    return super.downloadAfter(cursor, limit: limit);
+  }
+
+  @override
+  Future<SyncResult> acknowledge(String greatestContiguousCursor) {
+    acknowledgements++;
+    return super.acknowledge(greatestContiguousCursor);
+  }
 }
 
 class _NoopTransport implements SyncTransport {

@@ -1363,14 +1363,15 @@ const Map<String, SyncDiagnosticDefinition> syncDiagnosticRegistry = {
   'MKS-REC-001': SyncDiagnosticDefinition(
     code: 'MKS-REC-001',
     layer: 'REC',
-    title: "Recovery diagnostic 001",
+    title: "Failed notApplied candidate preflight eligible",
     meaning:
-        "J System Diagnosis defines MKS-REC-001 as a Recovery diagnostic event; source emission must preserve detector, phase, outcome and redaction boundaries.",
-    severity: 'ERROR',
-    defaultOutcome: 'unknown',
-    safeAction: "preserve evidence and inspect diagnostics",
+        "A read-only failed/notApplied inspection found exactly one current-device candidate whose membership, sequence range, state, request hash and queue isolation support a separately confirmed bounded recovery action.",
+    severity: 'INFO',
+    defaultOutcome: 'not-applied',
+    safeAction: "confirm bounded failed/notApplied recovery only if authorized",
     retryPolicy: 'not-retryable',
-    userGuidance: "preserve evidence and inspect diagnostics",
+    userGuidance:
+        "confirm bounded failed/notApplied recovery only if authorized",
   ),
   'MKS-REC-002': SyncDiagnosticDefinition(
     code: 'MKS-REC-002',

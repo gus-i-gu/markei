@@ -1,51 +1,65 @@
-# H_DDC_CODEX — C10-GCM02-S12-ERR-02
+# H_DDC_CODEX - C10-GCM02-S12-REC-01
 
-Unit: C10-GCM02-S12-ERR-02 — Step 12 Diagnostic Runtime Completion
-Evidence class: repository-proven and test-validated locally unless marked otherwise.
+Evidence class: repository-proven and test-validated unless marked otherwise.
 
-## Meaning Changes
+## Meaning Projection
 
-- repository-proven: ordinary Sync no longer depends only on `sync-unavailable` as the visible explanation. The generic terminal result can remain, but recorded child evidence preserves the causal MKS event beneath it.
-- repository-proven: UI-visible diagnostics now include MKS code, title, meaning, outcome, last proved phase, local mutation, provider contact, trusted response, safe action and operation fingerprint.
-- repository-proven: expandable details remain sanitized and bounded to closed values, counts, phases, ordinals and fingerprints.
-- repository-proven: recent diagnostic timeline rows expose phase progression without raw IDs, payloads, tokens, URLs, SQL, stack traces or full hashes.
+The Closure UI now distinguishes three meanings:
 
-## Causal Language
+- Retry unknown-outcome submission: reuses the existing unresolved unknown-outcome submission path.
+- Inspect failed/notApplied recovery: read-only, network-free, no local mutation.
+- Recover failed/notApplied candidate: separately confirmed bounded recovery plus at most one upload request, stopping after upload-result persistence.
 
-- repository-proven: request-start without trusted provider outcome is recorded as unknown, with provider transaction state `unknown`.
-- repository-proven: local preflight and no-request paths remain blocked/local rather than provider-attributed.
-- repository-proven: provider result and local result persistence have separate state axes.
-- repository-proven: API 500 responses say `service-unavailable` and `outcome=unknown` without claiming Auth0, Render, Neon or PostgreSQL caused the failure.
-- inferred: precise pathogenic cause remains `unknown` or boundary-only unless the boundary can prove it.
+Implementation does not authorize human execution. Gate 12.7 remains held.
 
-## Public and Internal Projection
+## Diagnostic Language
 
-- repository-proven: public unexpected API responses expose `code`, `diagnosticCode`, `operation`, `phase`, `outcome`, `retryable`, `safeAction`, `correlationFingerprint` and `lastProvedPhase`.
-- test-validated: public API response fixtures omit full correlation IDs, exception classes, SQLSTATE, messages, stack traces, SQL, payloads and raw IDs.
-- test-validated: internal lifecycle evidence may retain permitted sanitized exception class and provider transaction outcome while public output omits them.
-- repository-proven: public correlation fingerprints are 12 lowercase hex characters.
+Eligible failed/notApplied inspection now emits MKS-REC-001 instead of MKS-UI-004.
 
-## Generated Documentation Alignment
+- MKS-REC-001 means a read-only inspection found exactly one current-device failed/notApplied candidate with compatible state, membership, request hash, sequence bounds, next sequence, and queue isolation.
+- MKS-UI-004 remains available for the historical "missing action" UI defect and is no longer used for eligible preflight.
+- Blocked failed/notApplied inspection and recovery ambiguity continue to use MKS-REC-012.
 
-- repository-proven: the 159-code registry remains under `contracts/shared_beta/diagnostics_v1/`.
-- test-validated: `node scripts/generate_sync_diagnostics.mjs`, `node scripts/generate_sync_diagnostics.mjs --check`, and package `npm run diagnostics:check` passed.
-- repository-proven: no second diagnostic catalogue was created.
-- inferred: not all 159 meanings are runtime-emitted; the registry is broader than current reachable detectors by design.
+The generated documentation, Dart projection, and TypeScript projection were regenerated from the single registry owner.
 
-## UI Meaning Boundary
+## UI Projection
 
-- repository-proven: Native Closure still distinguishes current action, Sync overview, local queue, recent sync attempts, recent diagnostic timeline, devices and actionable events.
-- repository-proven: `Retry unknown-outcome submission` remains distinct from `Inspect failed/notApplied recovery`.
-- repository-proven: failed/notApplied inspection remains labeled read-only and non-provider in behavior.
-- test-validated: current result remains visible through Closure runner/UI tests, and exceptional paths release the action lock.
+The new confirmation text states that the action:
 
-## Terminal Markers
+- revalidates current Account and Device;
+- mutates local failed recovery state;
+- sends at most one provider upload request;
+- persists that upload result;
+- does not run download, acknowledgement, enrollment, repair, cleanup, ordinary Sync, or automatic retry;
+- changes nothing when cancelled.
 
-```text
-CAUSAL_DIAGNOSTIC_MEANING=IMPLEMENTED
-GENERIC_SUMMARY_PRESERVES_CAUSE=VALIDATED
-PUBLIC_DIAGNOSTIC_REDACTION=VALIDATED
-GENERATED_DOCUMENTATION=ALIGNED
+Current-action diagnostics continue to show MKS code, title, meaning, outcome, last proved phase, local mutation, provider contact, trusted response, safe action, operation fingerprint, and sanitized technical details.
+
+## Evidence Separation
+
+- Proven locally: action names, UI confirmation boundary, local repository invariants, diagnostic code correction, generated projection alignment, and mocked upload boundaries.
+- Test-validated: cancellation no-op, exact-batch leasing, one upload maximum, no download or acknowledgement, session disable after execution attempt.
+- Human/provider execution: unavailable and not performed.
+- Provider result truth for the real failed lineage: unavailable in this round.
+
+## Redaction
+
+The UI and reports use only bounded fingerprints, counts, statuses, sequence ranges, phases, and closed diagnostic values. Raw IDs, tokens, payloads, full hashes, URLs, SQL, exception messages, stack traces, and provider secrets are not displayed by the new surface.
+
+## Didactic Boundary
+
+This materialization clarifies terminology but does not promote permanent didactic memory:
+
+- Inspection is observation.
+- Recovery is local state transition plus bounded upload.
+- Retry remains unknown-outcome only.
+- Ordinary Sync remains broad orchestration and is not Gate 12.7's action.
+
+FAILED_NOT_APPLIED_EXECUTION_SURFACE=IMPLEMENTED
+ELIGIBLE_PREFLIGHT_DIAGNOSTIC_CODE=CORRECTED
+EXACT_RECOVERED_BATCH=VALIDATED
+ONE_UPLOAD_ONLY=VALIDATED
+DOWNLOAD_ACK_ABSENT=VALIDATED
+NO_PROVIDER_ACTION_DURING_MATERIALIZATION=PASS
 GATE_12_7=HELD
 GCM02=OPEN
-```

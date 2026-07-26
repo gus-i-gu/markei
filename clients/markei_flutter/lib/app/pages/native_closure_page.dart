@@ -16,6 +16,7 @@ class NativeClosurePage extends StatefulWidget {
 class _NativeClosurePageState extends State<NativeClosurePage> {
   String _state = 'closure-disabled';
   bool _running = false;
+  bool _failedRecoveryAttempted = false;
   ClosureDiagnosticsSnapshot? _snapshot;
   _CurrentActionDiagnostic? _currentAction;
 
@@ -104,6 +105,15 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
                 ),
                 onPressed: _running ? null : _inspectFailedNotApplied,
                 child: const Text('Inspect failed/notApplied recovery'),
+              ),
+              FilledButton(
+                key: const Key(
+                  'nativeClosure.Recover failed/notApplied candidate',
+                ),
+                onPressed: _running || _failedRecoveryAttempted
+                    ? null
+                    : _confirmRecoverFailedNotApplied,
+                child: const Text('Recover failed/notApplied candidate'),
               ),
               OutlinedButton(
                 key: const Key('nativeClosure.Clear diagnostic history'),
@@ -253,6 +263,77 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
     });
   }
 
+  Future<void> _confirmRecoverFailedNotApplied() async {
+    setState(() => _running = true);
+    final preflight = await widget.runner.inspectFailedNotAppliedRecovery();
+    final snapshot = await widget.runner.diagnostics();
+    if (!mounted) return;
+    setState(() {
+      _running = false;
+      _state = preflight.state;
+      _snapshot = snapshot;
+      _currentAction = _currentActionFromFailedInspection(preflight);
+    });
+    final inspection = preflight.inspection;
+    if (inspection == null || !inspection.eligible) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Recover failed/notApplied candidate'),
+        content: Text(
+          'This will revalidate the current Account and Device, change the '
+          'local failed candidate to a recovered upload batch, send at most '
+          'one provider upload request, persist that upload result, and stop. '
+          'It will not run download, acknowledgement, enrollment, repair, '
+          'cleanup, ordinary Sync, or automatic retry. Cancel changes nothing. '
+          'Events ${inspection.firstDeviceSequence}-'
+          '${inspection.lastDeviceSequence}; next Device sequence '
+          '${inspection.nextDeviceSequence}; candidate '
+          '#${inspection.candidateFingerprint}.',
+          key: const Key('nativeClosure.failedRecovery.guidance'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            key: const Key('nativeClosure.failedRecovery.confirm'),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Recover'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) {
+      if (!mounted) return;
+      setState(() => _state = 'failed-not-applied-recovery-cancelled');
+      return;
+    }
+    setState(() {
+      _running = true;
+      _failedRecoveryAttempted = true;
+    });
+    final result = await widget.runner.recoverFailedNotAppliedCandidate(
+      inspection,
+    );
+    final refreshed = await widget.runner.diagnostics();
+    if (!mounted) return;
+    setState(() {
+      _state = result.state;
+      _snapshot = refreshed;
+      _running = false;
+      final event = refreshed?.recentDiagnostics.firstOrNull;
+      _currentAction = event == null
+          ? _CurrentActionDiagnostic.fromState(
+              state: result.state,
+              code: result.diagnosticCode,
+              operationFingerprint: result.operationFingerprint,
+            )
+          : _CurrentActionDiagnostic.fromEvent(event);
+    });
+  }
+
   Future<void> _confirmClearHistory() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -283,6 +364,31 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
       _running = false;
     });
   }
+}
+
+_CurrentActionDiagnostic _currentActionFromFailedInspection(
+  NativeClosureFailedInspection result,
+) {
+  final inspection = result.inspection;
+  return _CurrentActionDiagnostic.fromState(
+    state: result.state,
+    code: result.diagnosticCode,
+    operationFingerprint: result.operationFingerprint,
+    pending: inspection?.queueCounts.pending,
+    uploading: inspection?.queueCounts.uploading,
+    failed: inspection?.queueCounts.failed,
+    unknown: inspection?.queueCounts.unknown,
+    memberCount: inspection?.memberCount,
+    firstSequence: inspection?.firstDeviceSequence,
+    lastSequence: inspection?.lastDeviceSequence,
+    nextSequence: inspection?.nextDeviceSequence,
+    requestHashMatches: inspection?.requestHashMatches,
+    membershipContiguous: inspection?.membershipContiguous,
+    deviceScopeMatches: inspection?.deviceScopeMatches,
+    eventStatesCompatible: inspection?.eventStatesCompatible,
+    noAcceptedMembers: inspection?.noAcceptedMembers,
+    noActiveOverlap: inspection?.noActiveOverlap,
+  );
 }
 
 final class _CurrentActionDiagnostic {

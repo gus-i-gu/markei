@@ -372,7 +372,7 @@ void main() {
     );
 
     expect(inspection.eligible, isTrue);
-    expect(inspection.diagnosticCode, 'MKS-UI-004');
+    expect(inspection.diagnosticCode, 'MKS-REC-001');
     expect(inspection.candidateFingerprint, hasLength(8));
     expect(inspection.candidateFingerprint, isNot(contains('failed-one')));
     expect(inspection.memberCount, 2);
@@ -390,6 +390,36 @@ void main() {
       (await db.select(db.pendingEvents).get()).map((row) => row.state),
       everyElement('failed'),
     );
+  });
+
+  test('failed notApplied inspection blocks unrelated failed work', () async {
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    await _seedAccount(db, accountA.value, deviceA.value, nextSequence: 4);
+    await _seedHostedBinding(db, accountA.value, deviceA.value, environment);
+    final seq1 = _validEvent(1);
+    final seq2 = _validEvent(2);
+    final seq3 = _validEvent(3);
+    await _insertValidEvent(db, seq1, state: 'failed');
+    await _insertValidEvent(db, seq2, state: 'failed');
+    await _insertValidEvent(db, seq3, state: 'failed');
+    await _insertFailedSubmission(db, 'failed-one', [seq1, seq2]);
+    final repository = DriftClosureDiagnosticsRepository(
+      db,
+      accountId: accountA,
+      deviceId: deviceA,
+      environmentAlias: environment,
+    );
+
+    final inspection = await repository.inspectFailedNotAppliedRecovery(
+      authenticationState: 'authenticated',
+      operationFingerprint: 'abcdef123456',
+    );
+
+    expect(inspection.eligible, isFalse);
+    expect(inspection.state, 'failed-not-applied-candidate-invalid');
+    expect(inspection.diagnosticCode, 'MKS-REC-012');
+    expect(inspection.queueCounts.failed, 3);
   });
 
   test('records sanitized diagnostic event child row', () async {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart' hide isNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -755,6 +756,96 @@ void main() {
     },
   );
 
+  test(
+    'exact failed notApplied recovery returns and leases only confirmed members',
+    () async {
+      final fixture = await _fileBackedOutboxFixture();
+      final db = fixture.db;
+      addTearDown(fixture.close);
+      final seq2 = _eventPayload(sequence: 2, eventId: _eventId(2));
+      final seq1 = _eventPayload(sequence: 1, eventId: _eventId(1));
+      await _insertRawEvent(db, seq2, state: 'failed');
+      await _insertRawEvent(db, seq1, state: 'failed');
+      await _insertFailedSubmission(db, 'failed-submission', [
+        _eventId(2),
+        _eventId(1),
+      ]);
+      await _writeSubmissionRequestHash(db, 'failed-submission', [seq1, seq2]);
+      final outbox = DriftSyncOutboxRepository.scoped(
+        db,
+        accountId: _accountId(),
+        deviceId: _deviceId(),
+      );
+
+      final recovered = await outbox.recoverExactFailedNotAppliedCandidate(
+        FailedNotAppliedRecoveryConfirmation(
+          candidateFingerprint: _shortFingerprint('failed-submission'),
+          memberCount: 2,
+          firstDeviceSequence: 1,
+          lastDeviceSequence: 2,
+          nextDeviceSequence: 3,
+          pendingCount: 0,
+          uploadingCount: 0,
+          failedCount: 2,
+          unknownCount: 0,
+        ),
+      );
+      final leased = await outbox.leaseExactRecoveredBatch(recovered);
+
+      expect(recovered.submissionId, 'failed-submission');
+      expect(leased.events.map((event) => event['deviceSequence']), [1, 2]);
+      expect(
+        (await db.select(db.syncSubmissions).get()).where(
+          (row) => row.state == 'uploading',
+        ),
+        hasLength(1),
+      );
+      expect(
+        (await db.select(db.pendingEvents).get()).map((row) => row.state),
+        everyElement('uploading'),
+      );
+    },
+  );
+
+  test('exact failed notApplied recovery blocks stale confirmation', () async {
+    final fixture = await _fileBackedOutboxFixture();
+    final db = fixture.db;
+    addTearDown(fixture.close);
+    await _insertRawEvent(
+      db,
+      _eventPayload(sequence: 1, eventId: _eventId(1)),
+      state: 'failed',
+    );
+    await _insertFailedSubmission(db, 'failed-submission', [_eventId(1)]);
+    await _writeSubmissionRequestHash(db, 'failed-submission', [
+      _eventPayload(sequence: 1, eventId: _eventId(1)),
+    ]);
+    final outbox = DriftSyncOutboxRepository.scoped(
+      db,
+      accountId: _accountId(),
+      deviceId: _deviceId(),
+    );
+
+    expect(
+      () => outbox.recoverExactFailedNotAppliedCandidate(
+        const FailedNotAppliedRecoveryConfirmation(
+          candidateFingerprint: 'stale0000000',
+          memberCount: 1,
+          firstDeviceSequence: 1,
+          lastDeviceSequence: 1,
+          nextDeviceSequence: 2,
+          pendingCount: 0,
+          uploadingCount: 0,
+          failedCount: 1,
+          unknownCount: 0,
+        ),
+      ),
+      throwsA(isA<SyncBatchPreflightException>()),
+    );
+    expect((await db.select(db.pendingEvents).getSingle()).state, 'failed');
+    expect((await db.select(db.syncSubmissions).getSingle()).state, 'failed');
+  });
+
   test('file-backed recovery blocks unknown outcomes', () async {
     final fixture = await _fileBackedOutboxFixture();
     final db = fixture.db;
@@ -845,6 +936,9 @@ RegisterPurchaseCommand _command(DeviceId deviceId, String productCode) {
     ],
   );
 }
+
+String _shortFingerprint(String value) =>
+    sha256.convert(utf8.encode(value)).toString().substring(0, 12);
 
 final class _MemoryApplier implements RemoteEventApplier {
   String? cursor;
@@ -1131,6 +1225,21 @@ Future<void> _insertFailedSubmission(
           ),
         );
   }
+}
+
+Future<void> _writeSubmissionRequestHash(
+  LocalDatabase db,
+  String submissionId,
+  List<Map<String, Object?>> events,
+) async {
+  final requestHash = canonicalUtf8Sha256({
+    'deviceId': _deviceId().value,
+    'events': events,
+    'submissionId': submissionId,
+  });
+  await (db.update(db.syncSubmissions)
+        ..where((table) => table.id.equals(submissionId)))
+      .write(SyncSubmissionsCompanion(requestHash: Value(requestHash)));
 }
 
 Future<String> _insertUnknownSubmission(

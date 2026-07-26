@@ -1,79 +1,83 @@
-# I_DSN_CODEX — C10-GCM02-S12-ERR-02
+# I_DSN_CODEX - C10-GCM02-S12-REC-01
 
-Unit: C10-GCM02-S12-ERR-02 — Step 12 Diagnostic Runtime Completion
-Evidence class: repository-proven and test-validated locally unless marked otherwise.
+Evidence class: repository-proven and test-validated unless marked otherwise.
 
-## Ownership and Dependency Direction
+## Responsibility Boundaries
 
-- repository-proven: `contracts/shared_beta/diagnostics_v1/diagnostics.registry.json` remains the single hand-maintained diagnostic owner.
-- repository-proven: Dart, TypeScript and Markdown projections remain generated; no runtime code parses J or generated Markdown as a source of truth.
-- repository-proven: Flutter runtime uses the Dart projection for UI meaning and API runtime uses the TypeScript projection/domain types.
+- Closure UI owns presentation, explicit confirmation, cancellation, and session-local second-execution prevention.
+- NativeAuthClosureRunner owns parent operation identity, diagnostic attempt lifecycle, and runner exception capture.
+- FailedNotAppliedRecoveryCoordinator owns the bounded REC-01 orchestration and intentionally has no download or acknowledgement dependency.
+- DriftSyncOutboxRepository owns authoritative local candidate identity, request-hash validation, atomic recovery, and exact recovered-batch lease.
+- SyncTransport owns the single upload request.
+- SyncAttemptRecorder owns persisted parent/child diagnostic evidence.
 
-## Parent and Child Identity Model
+## State Machine
 
-- repository-proven: `sync_attempts` remains the parent operation ledger.
-- repository-proven: `sync_diagnostic_events` remains the ordered child timeline and is extended additively in Drift v12.
-- repository-proven: one top-level ordinary Sync action creates one operation identity and one public operation fingerprint.
-- test-validated: child events receive deterministic ordinals and distinct full correlation identities with 12-hex fingerprints.
-- repository-proven: scoped HTTP transport receives child correlation identity through a zone-scoped internal boundary, while public/UI surfaces receive only fingerprints.
+Bounded recovery sequence:
 
-## Evidence State Machine
+1. authorization-preflight;
+2. binding;
+3. failed-recovery-preflight refresh;
+4. failed-recovery-local-transition;
+5. recovered-batch-validation;
+6. upload-lease;
+7. upload-transport;
+8. upload-provider;
+9. upload-result-persistence;
+10. terminal.
 
-Repository-proven axes are persisted independently:
+The coordinator stops at terminal after upload-result persistence. There is no dependency path to download-local-apply or acknowledgement.
 
-```text
-local mutation
-provider contact
-trusted response
-provider transaction
-local result persistence
-terminal outcome
-```
+## Invariants
 
-Design consequences:
+The exact recovery path requires:
 
-- repository-proven: request-start without trusted provider outcome records `unknown` and preserves identity.
-- repository-proven: local result persistence failure is separate from provider result.
-- repository-proven: terminal summaries can reference causal child evidence instead of replacing it.
-- repository-proven: HTTP status alone is not modeled as proof of provider commit state.
+- signed-in authentication;
+- accepted current Device binding;
+- exactly one current-device failed/notApplied candidate;
+- zero current-device pending, uploading, and unknown work before mutation;
+- confirmation snapshot equality for candidate fingerprint, counts, member count, sequence range, and next sequence;
+- authoritative internal submission ID retained by the repository;
+- contiguous canonical member order;
+- all member states failed before recovery and pending before exact lease;
+- request-hash equality;
+- no accepted members;
+- no active upload/unknown overlap;
+- no unrelated pending work entering the exact leased batch.
 
-## Projection Boundaries
+Truncated fingerprints are never used as database selectors. They are drift checks and UI evidence only.
 
-- repository-proven: API catch-all failures create one internal typed diagnostic event and project it separately to public API output and internal lifecycle evidence.
-- test-validated: public output omits full correlation ID, exception class, SQLSTATE, messages, stack traces, SQL, payloads and raw IDs.
-- test-validated: internal lifecycle evidence retains permitted sanitized exception class, last proved phase and provider transaction outcome.
-- repository-proven: public 500 remains `retryable=false`.
+## Diagnostic Design
 
-## Detector and Cause Attribution
+The single registry remains the owner of MKS definitions. MKS-REC-001 was refined for eligible failed/notApplied preflight and regenerated into Dart, TypeScript, and Markdown.
 
-- repository-proven: ordinary Sync emits representative AUT, BND, REC, QUE, TRN, UPL, DNL, ACK, LDB and OBS diagnostics at reachable source boundaries.
-- repository-proven: API upload protocol failures map wrong account, hash mismatch, sequence gap, binding and database failures to narrower MKS codes.
-- repository-proven: `MKS-UPL-012` is no longer the generic protocol failure code.
-- inferred: the full 159-code catalogue includes non-reachable or not-yet-emitted definitions; this unit does not claim universal runtime reachability.
-- repository-proven: detector component is not treated as automatic pathogenic cause.
+The bounded coordinator emits ordered parent/child diagnostics using the existing v1 envelope and Drift v12 ledger. No v13 migration was required.
 
-## Migration Boundary
+## Architectural Findings
 
-- repository-proven: v12 migration is forward-only and additive to the v11 diagnostic ledger.
-- test-validated: disposable migration fixtures from v1, v2, v7, v8 and v9 reopen successfully under v12.
-- repository-proven: v12 does not modify submissions, pending events, cursors, purchases or hosted PostgreSQL.
-- provider-unvalidated: no hosted migration exists or was applied.
+Unknown Retry, Inspect failed/notApplied recovery, Recover failed/notApplied candidate, and ordinary Sync are now separate surfaces.
 
-## Failed/notApplied Boundary
+Ordinary Sync still contains its existing broad recovery orchestration for the accepted ERR-02 baseline, but REC-01 does not route through it. The new Gate 12.7 surface is narrower: exact candidate, exact batch, one upload, stop.
 
-- repository-proven: `Inspect failed/notApplied recovery` remains read-only and network-free.
-- repository-proven: failed/notApplied execution remains absent from UI and source.
-- repository-proven: unknown Retry remains isolated to unknown-outcome submission semantics.
+## Validation Design
 
-## Terminal Markers
+Tests added or updated prove:
 
-```text
-DIAGNOSTIC_SINGLE_OWNER=PRESERVED
-OPERATION_CHILD_MODEL=IMPLEMENTED
-EVIDENCE_STATE_MACHINE=IMPLEMENTED
-PROJECTION_BOUNDARIES=VALIDATED
-DETECTOR_CAUSE_ATTRIBUTION=VALIDATED
-FAILED_RECOVERY_EXECUTION=ABSENT
+- eligible inspection uses MKS-REC-001, not MKS-UI-004;
+- cancellation has no mutation and no provider contact;
+- exact local recovery returns and leases only confirmed members;
+- stale confirmation fails closed without mutation;
+- the confirmed action sends one upload, does not download, and does not acknowledge;
+- the UI disables a second execution attempt in the application session;
+- generated registry projections remain aligned.
+
+Provider and live database validation remain intentionally absent.
+
+FAILED_NOT_APPLIED_EXECUTION_SURFACE=IMPLEMENTED
+ELIGIBLE_PREFLIGHT_DIAGNOSTIC_CODE=CORRECTED
+EXACT_RECOVERED_BATCH=VALIDATED
+ONE_UPLOAD_ONLY=VALIDATED
+DOWNLOAD_ACK_ABSENT=VALIDATED
+NO_PROVIDER_ACTION_DURING_MATERIALIZATION=PASS
 GATE_12_7=HELD
 GCM02=OPEN
-```

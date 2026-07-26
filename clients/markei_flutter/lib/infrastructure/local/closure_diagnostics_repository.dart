@@ -415,7 +415,8 @@ final class DriftClosureDiagnosticsRepository
           eventStatesCompatible &&
           noAcceptedMembers &&
           noActiveOverlap &&
-          nextSequenceMatches;
+          nextSequenceMatches &&
+          counts.failed == canonicalRows.length;
       if (!eligible) {
         return FailedNotAppliedRecoveryInspection.blocked(
           diagnosticCode: 'MKS-REC-012',
@@ -435,7 +436,7 @@ final class DriftClosureDiagnosticsRepository
         );
       }
       return FailedNotAppliedRecoveryInspection.eligible(
-        diagnosticCode: 'MKS-UI-004',
+        diagnosticCode: 'MKS-REC-001',
         candidateFingerprint: _fingerprint(submission.id),
         memberCount: canonicalRows.length,
         firstDeviceSequence: canonicalRows.first.deviceSequence,

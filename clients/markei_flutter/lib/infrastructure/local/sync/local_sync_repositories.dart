@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
@@ -173,6 +174,174 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
       return SyncUploadSubmission(
         id: submissionId,
         deviceId: leaseDeviceId,
+        requestHash: requestHash,
+        events: eventJson,
+      );
+    });
+  }
+
+  @override
+  Future<FailedNotAppliedRecoveredBatch> recoverExactFailedNotAppliedCandidate(
+    FailedNotAppliedRecoveryConfirmation confirmation,
+  ) {
+    return _db.transaction(() async {
+      final accountId = _accountId;
+      final deviceId = _deviceId;
+      if (accountId == null || deviceId == null) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final counts = await _scopedQueueCounts();
+      if (counts.pending != confirmation.pendingCount ||
+          counts.uploading != confirmation.uploadingCount ||
+          counts.failed != confirmation.failedCount ||
+          counts.unknown != confirmation.unknownCount ||
+          counts.pending != 0 ||
+          counts.uploading != 0 ||
+          counts.unknown != 0 ||
+          counts.failed != confirmation.memberCount) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final submissions =
+          await (_db.select(_db.syncSubmissions)
+                ..where(
+                  (table) =>
+                      table.accountId.equals(accountId) &
+                      table.deviceId.equals(deviceId) &
+                      table.state.equals('failed') &
+                      table.outcome.equals(SyncOutcome.notApplied.name),
+                )
+                ..orderBy([
+                  (table) => OrderingTerm.asc(table.createdAt),
+                  (table) => OrderingTerm.asc(table.id),
+                ]))
+              .get();
+      if (submissions.length != 1) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final submission = submissions.single;
+      final candidate = await _recoverableCandidate(submission);
+      if (candidate == null ||
+          candidate.alreadyPending ||
+          !_requestHashMatches(candidate)) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final device =
+          await (_db.select(_db.devices)..where(
+                (table) =>
+                    table.id.equals(deviceId) &
+                    table.accountId.equals(accountId),
+              ))
+              .getSingleOrNull();
+      if (device == null) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final recovered = _batchForCandidate(candidate, device.nextSequence);
+      if (!_confirmationMatches(confirmation, recovered, counts)) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final result = await _recoverCandidate(candidate);
+      if (result.code != SyncStatusCode.failedRecoveryAvailable) {
+        throw SyncBatchPreflightException(result);
+      }
+      return recovered;
+    });
+  }
+
+  @override
+  Future<SyncUploadSubmission> leaseExactRecoveredBatch(
+    FailedNotAppliedRecoveredBatch batch,
+  ) {
+    return _db.transaction(() async {
+      final accountId = _accountId;
+      final deviceId = _deviceId;
+      if (accountId == null || deviceId == null) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final original =
+          await (_db.select(_db.syncSubmissions)..where(
+                (table) =>
+                    table.id.equals(batch.submissionId) &
+                    table.accountId.equals(accountId) &
+                    table.deviceId.equals(deviceId) &
+                    table.state.equals('superseded'),
+              ))
+              .getSingleOrNull();
+      if (original == null ||
+          _fingerprint(original.id) != batch.candidateFingerprint) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final candidate = await _candidateFromSuperseded(original);
+      if (candidate == null || !_requestHashMatches(candidate)) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final device =
+          await (_db.select(_db.devices)..where(
+                (table) =>
+                    table.id.equals(deviceId) &
+                    table.accountId.equals(accountId),
+              ))
+              .getSingleOrNull();
+      if (device == null ||
+          !_batchMatchesCandidate(batch, candidate, device.nextSequence)) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final counts = await _scopedQueueCounts();
+      if (counts.pending != batch.memberCount ||
+          counts.uploading != 0 ||
+          counts.failed != 0 ||
+          counts.unknown != 0) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final eventIds = candidate.canonicalRows.map((row) => row.id).toList();
+      final states = await (_db.select(
+        _db.pendingEvents,
+      )..where((table) => table.eventId.isIn(eventIds))).get();
+      if (states.length != eventIds.length ||
+          states.any((row) => row.state != 'pending')) {
+        throw SyncBatchPreflightException(_failedRecoveryBlocked());
+      }
+      final now = DateTime.now().toUtc();
+      final eventJson = candidate.canonicalRows
+          .map((row) => jsonDecode(row.payloadJson) as Map<String, Object?>)
+          .toList(growable: false);
+      final submissionId = _uuid.v4();
+      final requestHash = canonicalUtf8Sha256({
+        'deviceId': deviceId,
+        'events': eventJson,
+        'submissionId': submissionId,
+      });
+      await _db
+          .into(_db.syncSubmissions)
+          .insert(
+            SyncSubmissionsCompanion.insert(
+              id: submissionId,
+              accountId: accountId,
+              deviceId: deviceId,
+              requestHash: requestHash,
+              state: 'uploading',
+              attemptCount: const Value(1),
+              leaseUntil: Value(now.add(const Duration(minutes: 5))),
+              createdAt: now,
+              updatedAt: now,
+            ),
+          );
+      for (var i = 0; i < eventIds.length; i++) {
+        await _db
+            .into(_db.syncSubmissionEvents)
+            .insert(
+              SyncSubmissionEventsCompanion.insert(
+                submissionId: submissionId,
+                eventId: eventIds[i],
+                position: i,
+              ),
+            );
+        await (_db.update(_db.pendingEvents)
+              ..where((table) => table.eventId.equals(eventIds[i])))
+            .write(const PendingEventsCompanion(state: Value('uploading')));
+      }
+      return SyncUploadSubmission(
+        id: submissionId,
+        deviceId: deviceId,
         requestHash: requestHash,
         events: eventJson,
       );
@@ -451,6 +620,14 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
     );
   }
 
+  Future<_RecoverableFailedSubmission?> _candidateFromSuperseded(
+    SyncSubmission submission,
+  ) async {
+    final candidate = await _recoverableCandidate(submission);
+    if (candidate == null || !candidate.alreadyPending) return null;
+    return candidate;
+  }
+
   Future<SyncResult> _recoverCandidate(
     _RecoverableFailedSubmission candidate,
   ) async {
@@ -495,6 +672,96 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
     retryable: false,
     protocolCode: 'failed-recovery-blocked',
   );
+
+  FailedNotAppliedRecoveredBatch _batchForCandidate(
+    _RecoverableFailedSubmission candidate,
+    int nextDeviceSequence,
+  ) {
+    return FailedNotAppliedRecoveredBatch(
+      submissionId: candidate.submission.id,
+      candidateFingerprint: _fingerprint(candidate.submission.id),
+      memberCount: candidate.canonicalRows.length,
+      firstDeviceSequence: candidate.canonicalRows.first.deviceSequence,
+      lastDeviceSequence: candidate.canonicalRows.last.deviceSequence,
+      nextDeviceSequence: nextDeviceSequence,
+    );
+  }
+
+  bool _confirmationMatches(
+    FailedNotAppliedRecoveryConfirmation confirmation,
+    FailedNotAppliedRecoveredBatch recovered,
+    _ScopedQueueCounts counts,
+  ) {
+    return confirmation.candidateFingerprint ==
+            recovered.candidateFingerprint &&
+        confirmation.memberCount == recovered.memberCount &&
+        confirmation.firstDeviceSequence == recovered.firstDeviceSequence &&
+        confirmation.lastDeviceSequence == recovered.lastDeviceSequence &&
+        confirmation.nextDeviceSequence == recovered.nextDeviceSequence &&
+        confirmation.pendingCount == counts.pending &&
+        confirmation.uploadingCount == counts.uploading &&
+        confirmation.failedCount == counts.failed &&
+        confirmation.unknownCount == counts.unknown;
+  }
+
+  bool _batchMatchesCandidate(
+    FailedNotAppliedRecoveredBatch batch,
+    _RecoverableFailedSubmission candidate,
+    int nextDeviceSequence,
+  ) {
+    final recovered = _batchForCandidate(candidate, nextDeviceSequence);
+    return batch.submissionId == recovered.submissionId &&
+        batch.candidateFingerprint == recovered.candidateFingerprint &&
+        batch.memberCount == recovered.memberCount &&
+        batch.firstDeviceSequence == recovered.firstDeviceSequence &&
+        batch.lastDeviceSequence == recovered.lastDeviceSequence &&
+        batch.nextDeviceSequence == recovered.nextDeviceSequence;
+  }
+
+  bool _requestHashMatches(_RecoverableFailedSubmission candidate) {
+    final eventJson = candidate.canonicalRows
+        .map((row) => jsonDecode(row.payloadJson) as Map<String, Object?>)
+        .toList(growable: false);
+    return canonicalUtf8Sha256({
+          'deviceId': candidate.submission.deviceId,
+          'events': eventJson,
+          'submissionId': candidate.submission.id,
+        }) ==
+        candidate.submission.requestHash;
+  }
+
+  Future<_ScopedQueueCounts> _scopedQueueCounts() async {
+    final accountId = _accountId;
+    final deviceId = _deviceId;
+    if (accountId == null || deviceId == null) {
+      return const _ScopedQueueCounts(0, 0, 0, 0);
+    }
+    Future<int> count(String state) {
+      final query =
+          _db.select(_db.pendingEvents).join([
+            innerJoin(
+              _db.syncEvents,
+              _db.syncEvents.id.equalsExp(_db.pendingEvents.eventId),
+            ),
+          ])..where(
+            _db.pendingEvents.state.equals(state) &
+                _db.syncEvents.accountId.equals(accountId) &
+                _db.syncEvents.deviceId.equals(deviceId),
+          );
+      return query.get().then((rows) => rows.length);
+    }
+
+    return _ScopedQueueCounts(
+      await count('pending'),
+      await count('uploading'),
+      await count('failed'),
+      await count('unknown'),
+    );
+  }
+
+  String _fingerprint(String value) {
+    return sha256.convert(utf8.encode(value)).toString().substring(0, 12);
+  }
 }
 
 final class _RecoverableFailedSubmission {
@@ -507,4 +774,18 @@ final class _RecoverableFailedSubmission {
   final SyncSubmission submission;
   final List<SyncEvent> canonicalRows;
   final bool alreadyPending;
+}
+
+final class _ScopedQueueCounts {
+  const _ScopedQueueCounts(
+    this.pending,
+    this.uploading,
+    this.failed,
+    this.unknown,
+  );
+
+  final int pending;
+  final int uploading;
+  final int failed;
+  final int unknown;
 }

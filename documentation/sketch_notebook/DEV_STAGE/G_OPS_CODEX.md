@@ -1,115 +1,106 @@
-# G_OPS_CODEX — C10-GCM02-S12-ERR-02
+# G_OPS_CODEX - C10-GCM02-S12-REC-01
 
-Unit: C10-GCM02-S12-ERR-02 — Step 12 Diagnostic Runtime Completion
-Branch: `cycle10-intermid-grimoire`
-Observed starting HEAD: `d56c3a6d9f39c6a9812f7e274ea0a8134a602716`
-Required ancestry: `0636c54e139fc92b16d1e11b2672d61f42f02f1b`
-Evidence class: repository-proven and test-validated locally unless marked otherwise.
+Evidence class: repository-proven and test-validated unless marked otherwise.
 
-## Repository Safety
+## Scope
 
-- repository-proven: branch was `cycle10-intermid-grimoire`.
-- repository-proven: `0636c54e139fc92b16d1e11b2672d61f42f02f1b` is an ancestor of HEAD.
-- repository-proven: local HEAD and `origin/cycle10-intermid-grimoire` had `0 0` divergence after fetch.
-- repository-proven: initial worktree was clean.
-- repository-proven: D/E/F contained `C10-GCM02-S12-ERR-02` and `ACTIVE — CODEX IMPLEMENTATION AUTHORIZED`.
-- repository-proven: no provider, deployment, live Sync, Retry, Repair, Enroll, or user database operation was performed.
+Unit materialized: C10-GCM02-S12-REC-01 - Gate 12.7 Controlled Recovery Surface.
 
-## Source Changes
+Branch and ancestry:
 
-- repository-proven: `HostedSyncCoordinator` now accepts a phase recorder and emits typed child evidence for authentication, binding, failed recovery, upload, download, acknowledgement and terminal branches.
-- repository-proven: `UploadPendingEvents`, `DownloadAndApplyEvents`, and `AcknowledgeAppliedCursor` record phase-specific evidence and preserve provider result versus local result-persistence state.
-- repository-proven: `NativeAuthClosureRunner.hostedSyncProbe` creates one random top-level operation identity per ordinary Sync action, assigns deterministic child ordinals, records distinct child correlation identities, and persists terminal causal summaries.
-- repository-proven: `HttpSyncTransport` uses scoped child correlation IDs for protected HTTP requests when the diagnostic recorder provides them.
-- repository-proven: Drift schema advanced to v12 with additive diagnostic envelope fields and migration ledger id `v11-to-v12-diagnostic-envelope-v1`.
-- repository-proven: Closure diagnostics snapshot includes a recent diagnostic child timeline.
-- repository-proven: Native Closure UI renders trusted-response and result-persistence state and exposes a recent diagnostic timeline.
-- repository-proven: API unexpected errors now derive public and internal projections from one typed internal diagnostic event.
-- repository-proven: public API diagnostic failures expose correlation fingerprints rather than full correlation IDs and omit exception class, SQLSTATE, messages, stack traces, SQL, payloads and raw IDs.
-- repository-proven: `MKS-UPL-012` was removed as the generic API protocol failure code; upload, download, acknowledgement, binding and database conditions now map to narrower representative codes.
+- Branch: cycle10-intermid-grimoire.
+- Required ancestry: 76540c45702b027d56b52fea05a8025f14496cdf was confirmed as an ancestor before editing.
+- Local and origin were aligned before editing.
+- Pre-existing unrelated work was preserved: documentation/NEON_CHECK.ps1 deleted and documentation/I_SCRIPTS.ps1 untracked.
 
-## Ordinary Sync Phase Coverage
+No hosted provider, user database, Sync, Retry, Repair, Enroll, deployment, Render, Auth0, or Neon action was performed.
 
-Test-validated phase order in `native_closure_diagnostics_test.dart`:
+## Operational Changes
 
-```text
-authentication
-binding
-failed-recovery
-upload-lease
-upload-transport
-upload-provider
-upload-result-persistence
-download-transport
-download-provider
-download-local-apply
-acknowledgement
-terminal
-```
+- Added a separately named UI action: Recover failed/notApplied candidate.
+- Preserved Inspect failed/notApplied recovery as read-only and network-free.
+- Added a bounded failed/notApplied recovery coordinator that does not call HostedSyncCoordinator.run.
+- Added exact-candidate local repository methods for atomic recovery and exact recovered-batch leasing.
+- The bounded action revalidates authentication, binding, current-device preflight, candidate fingerprint, member count, sequence range, next Device sequence, queue counts, event states, request-hash equality, and active-overlap absence immediately before mutation.
+- The bounded action performs at most one upload request and stops after upload-result persistence.
+- Download, acknowledgement, ordinary Sync, enrollment, repair, cleanup, and automatic retry are absent from the bounded coordinator dependencies.
+- Added a session-local UI lock that disables the execution action after the first confirmed execution attempt.
+- Corrected eligible failed/notApplied inspection from MKS-UI-004 to MKS-REC-001. MKS-UI-004 remains reserved for the historical missing-action meaning.
 
-Repository-proven: each recorded child carries diagnostic version 1, operation fingerprint, correlation fingerprint, ordinal, MKS code, native code, outcome, last proved phase, mutation/contact/trusted-response/provider-transaction/result-persistence state, retryability and safe action.
+## Files Changed
 
-## Commands and Validation
+- clients/markei_flutter/lib/application/failed_not_applied_recovery_coordinator.dart
+- clients/markei_flutter/lib/application/sync/sync_ports.dart
+- clients/markei_flutter/lib/infrastructure/local/sync/local_sync_repositories.dart
+- clients/markei_flutter/lib/infrastructure/local/closure_diagnostics_repository.dart
+- clients/markei_flutter/lib/app/native_auth_closure_runner.dart
+- clients/markei_flutter/lib/app/pages/native_closure_page.dart
+- clients/markei_flutter/lib/app/markei_composition.dart
+- clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
+- clients/markei_flutter/test/sync/local_sync_application_test.dart
+- clients/markei_flutter/test/infrastructure/closure_diagnostics_repository_test.dart
+- clients/markei_flutter/test/infrastructure/native_auth_composition_test.dart
+- contracts/shared_beta/diagnostics_v1/diagnostics.registry.json
+- clients/markei_flutter/lib/domain/sync/sync_diagnostic_registry.g.dart
+- services/markei_sync_api/src/domain/sync_diagnostic_registry.generated.ts
+- documentation/SYNC_DIAGNOSTICS.md
+- documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+- documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+- documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+
+No Drift migration was added.
+
+## Validation
 
 Commands run:
 
-```text
-git branch --show-current
-git rev-parse HEAD
-git status --short
-git remote -v
-git fetch origin cycle10-intermid-grimoire
-git merge-base --is-ancestor 0636c54e139fc92b16d1e11b2672d61f42f02f1b HEAD
-git rev-list --left-right --count HEAD...origin/cycle10-intermid-grimoire
-flutter pub run build_runner build --delete-conflicting-outputs
-dart format --set-exit-if-changed lib test
-flutter analyze
-flutter test test/infrastructure/closure_diagnostics_repository_test.dart
-flutter test test/infrastructure/local_database_migration_test.dart
-flutter test test/app/native_closure_diagnostics_test.dart
-flutter test test/sync/local_sync_application_test.dart
-flutter test test/sync/sync_diagnostic_registry_test.dart
-flutter test test/infrastructure/native_auth_composition_test.dart
-node scripts/generate_sync_diagnostics.mjs
-node scripts/generate_sync_diagnostics.mjs --check
-npm run diagnostics:check
-npm run typecheck
-npm run format:check
-npm run lint
-npm run build
-npm test -- protocol.test.ts
-flutter test
-npm test
-```
+- node scripts/generate_sync_diagnostics.mjs: passed.
+- node scripts/generate_sync_diagnostics.mjs --check: passed.
+- dart format on changed Dart files: passed.
+- flutter test test/app/native_closure_diagnostics_test.dart: 17 passed.
+- flutter test test/sync/local_sync_application_test.dart: 29 passed.
+- flutter test test/infrastructure/closure_diagnostics_repository_test.dart test/infrastructure/native_auth_composition_test.dart: 26 passed before the final unrelated-failed-work tightening.
+- flutter test test/infrastructure/closure_diagnostics_repository_test.dart: 10 passed after the final unrelated-failed-work tightening.
+- flutter analyze: passed with no issues after the local lint adjustment.
+- flutter test: 189 passed, 4 skipped lab tests.
+- npm run diagnostics:check in services/markei_sync_api: passed.
+- npm run format:check in services/markei_sync_api: passed.
+- npm run lint in services/markei_sync_api: passed.
+- npm run typecheck in services/markei_sync_api: passed.
+- npm run build in services/markei_sync_api: passed.
+- npm test in services/markei_sync_api: 58 passed.
 
-Results:
+Initial npm run diagnostics:check from repository root failed because there is no root package.json. The command was rerun from services/markei_sync_api and passed.
 
-- test-validated: `flutter analyze` passed.
-- test-validated: focused Flutter diagnostics/recovery/migration/sync suites passed.
-- test-validated: `flutter test` passed with 184 passing tests and 4 lab-gated skips.
-- test-validated: API format, lint, typecheck, build and full `npm test` passed with 58 passing tests.
-- test-validated: registry generation and check mode passed; generated projections still derive from the single registry.
-- host-unavailable: Windows release build, Android validation, Render, Auth0, Neon and live end-to-end convergence were not run and are not claimed.
+## Operational Evidence
 
-## Residual Risks
+- Cancellation path test-validated: no local recovery and no provider upload.
+- Blocked and stale confirmation paths test-validated: no mutation and no provider contact.
+- Exact recovered batch test-validated: only the confirmed member sequence range is leased.
+- One-upload-only test-validated: upload count is one, download count is zero, acknowledgement count is zero.
+- Unknown-outcome automatic recovery remains absent.
+- MKS-REC-001 eligible preflight test-validated; MKS-UI-004 is not emitted for eligible preflight.
 
-- provider-unvalidated: no hosted provider evidence was collected in this unit.
-- inferred: not every one of the 159 catalogue codes is runtime-reachable; this unit validates representative reachable branch attribution and preserves the registry as single owner.
-- repository-proven: failed/notApplied inspection remains read-only; failed/notApplied execution remains absent.
+## Unavailable Validation
 
-## Terminal Markers
+Unavailable by prohibition:
 
-```text
-ORDINARY_SYNC_PHASE_DIAGNOSTICS=IMPLEMENTED
-PARENT_CHILD_CORRELATION=IMPLEMENTED
-DIAGNOSTIC_ENVELOPE_V1=IMPLEMENTED
-PUBLIC_INTERNAL_DIAGNOSTIC_SPLIT=IMPLEMENTED
-REACHABLE_MKS_ATTRIBUTION=VALIDATED
-CAUSAL_DIAGNOSTIC_MEANING=IMPLEMENTED
-DIAGNOSTIC_SINGLE_OWNER=PRESERVED
-FAILED_NOT_APPLIED_PREFLIGHT=READ_ONLY
-FAILED_NOT_APPLIED_EXECUTION=ABSENT
-PROVIDER_ACTION=NOT_PERFORMED
-GATE_12_7=HELD_FOR_RECONCILIATION
+- Windows release validation.
+- Android validation.
+- Render validation.
+- Auth0 validation.
+- Neon validation.
+- Live provider validation.
+- Live end-to-end convergence.
+- Execution against the user's database.
+
+## Gate State
+
+FAILED_NOT_APPLIED_EXECUTION_SURFACE=IMPLEMENTED
+ELIGIBLE_PREFLIGHT_DIAGNOSTIC_CODE=CORRECTED
+EXACT_RECOVERED_BATCH=VALIDATED
+ONE_UPLOAD_ONLY=VALIDATED
+DOWNLOAD_ACK_ABSENT=VALIDATED
+NO_PROVIDER_ACTION_DURING_MATERIALIZATION=PASS
+GATE_12_7=HELD
 GCM02=OPEN
-```

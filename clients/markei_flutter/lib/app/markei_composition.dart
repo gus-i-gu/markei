@@ -6,6 +6,7 @@ import '../application/history_export.dart';
 import '../application/hosted_auth_ports.dart';
 import '../application/hosted_enrollment_coordinator.dart';
 import '../application/hosted_sync_coordinator.dart';
+import '../application/failed_not_applied_recovery_coordinator.dart';
 import '../application/local_references.dart';
 import '../application/product_lists.dart';
 import '../application/purchase_history.dart';
@@ -204,6 +205,15 @@ final class MarkeiComposition {
           syncTransport,
           remoteApplier,
         ),
+      ),
+      failedNotAppliedRecoveryCoordinator: FailedNotAppliedRecoveryCoordinator(
+        authenticationSession: authentication,
+        syncGuard: binding == null
+            ? const BlockedHostedSyncGuard('hosted-restart-required')
+            : DriftHostedSyncGuard(repository),
+        diagnosticsQuery: diagnostics,
+        outbox: syncOutbox,
+        transport: syncTransport,
       ),
       hostedConnectionCheck: HttpHostedConnectionCheck(
         client: http.Client(),
