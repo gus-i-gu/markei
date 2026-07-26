@@ -4320,3 +4320,324 @@ GATES_12_8_TO_12_10=HELD
 GCM03=UNDEFINED_INACTIVE
 GCM04=UNDEFINED_INACTIVE
 ```
+
+## 2026-07-26 — ERR-03 source reconciliation and correlated assay preparation
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04 — Promotion/Reconciliation
+Role: Main Chat [M]
+Round or unit: C10-GCM02-S12-ERR-03 within C10-GCM02-S12-SYNC-01
+Branch: cycle10-intermid-grimoire
+Reconciled implementation commit: 3b7bbeaf076a5dc8454a7e09dbb61076d34f4b36
+Inputs: synchronized D/E/F, replacement G/H/I, source changed-path inventory,
+        local validation evidence and human direction for the next assay
+Writable surface: append-only J
+Evidence boundary: repository-proven and locally test-validated;
+                   Windows/host/provider/end-to-end unvalidated
+Disposition: ERR-03 SOURCE ACCEPTED; ASSAY PREPARED; GATE 12.7 HELD
+```
+
+This entry reconciles the bounded ERR-03 materialization. It accepts the
+implemented semantic and diagnostic contract only within the repository and
+local-test boundary. It does not reinterpret local validation as a hosted Sync
+result and does not authorize failed/notApplied recovery.
+
+### Materialization reconciliation
+
+The client ordinary-Sync terminal vocabulary is now:
+
+```text
+sync-completed
+sync-no-new-events
+sync-rejected
+sync-server-timeout
+sync-failed
+```
+
+The top-level Flutter action owns the aggregate ordinary-Sync result. Each API
+lifecycle record owns only one server request. The two scopes remain explicit:
+
+```text
+client declarationScope=client-operation
+server declarationScope=server-request
+```
+
+The client propagates full operation and child correlation identities only in
+internal request headers. The UI and server logs expose sanitized twelve-hex
+fingerprints. Correlation joins evidence but does not promote request success
+into aggregate Sync success.
+
+The client ordinary-Sync deadline is now an explicit 35000 ms client-owned
+budget. A 25000 ms server deadline was not implemented because the source did
+not establish authoritative cancellation or rollback for every database
+operation. A client deadline before a trusted response remains
+`sync-failed` with the provider/server outcome unknown. It must not be
+classified as `sync-server-timeout`.
+
+The corrected last-success predicate is:
+
+```text
+operationKind = ordinary-sync
+outcomeClass = completed
+resultCode IN (sync-completed, sync-no-new-events)
+completedAt IS NOT NULL
+```
+
+Therefore hosted readiness, failed/notApplied inspection, recovery
+confirmation, cancellation, Retry history and other Closure attempts cannot
+advance `Last successful sync`. The mixed list is now labelled
+`Recent Closure attempts`.
+
+### PRC-01 claims
+
+```text
+Claim: the five-result ordinary-Sync contract and client/server declaration
+       scopes exist
+Prior state: staged
+Evidence: implementation commit 3b7bbeaf, replacement G/H/I, focused and full
+          local tests
+Evidence boundary: repository and local tests; no Windows or hosted execution
+Contradiction: none reported
+Semantic owner: C10-GCM02-S12-ERR-03 source contract
+Target role: J accepted source capability
+Resulting state: IMPLEMENTED AND LOCALLY VALIDATED; HOST-UNVALIDATED
+History disposition: append; supersede ACTIVE_STAGED wording only
+```
+
+```text
+Claim: the historical five-second deadline caused the observed interruption
+Prior state: plausible and unproved
+Evidence: source now uses 35 seconds, but no post-change hosted ordinary Sync
+          has occurred
+Evidence boundary: causal assay absent
+Contradiction: the historical approximately 30-second pre-header timeout may
+               indicate a deeper transport/host/auth/database stall
+Semantic owner: correlated ordinary-Sync assay
+Target role: retained hypothesis
+Resulting state: PLAUSIBLE, STILL UNPROVED
+History disposition: retain until paired client/server evidence exists
+```
+
+```text
+Claim: Last successful sync is now truthful on Windows
+Prior state: failed projection with source correction staged
+Evidence: corrected query and local tests
+Evidence boundary: no fresh Windows build/launch or readiness regression
+Contradiction: none in source; host presentation remains unobserved
+Semantic owner: Closure UI projection
+Target role: next readiness-only regression
+Resulting state: SOURCE CORRECTED; WINDOWS/HOST VALIDATION PENDING
+History disposition: append; preserve the earlier failed observation
+```
+
+```text
+Claim: a single ordinary-Sync assay necessarily tests submission/upload
+Prior state: human-requested test objective
+Evidence: current recorded queue baseline has failed=2 and
+          pending/uploading/unknown=0/0/0; automatic retry is absent
+Evidence boundary: no new pending event has been authorized
+Contradiction: failed/notApplied events belong to the separately held recovery
+               surface and must not be silently reused by ordinary Sync
+Semantic owner: next assay authorization packet
+Target role: assay design
+Resulting state: REJECTED AS AN ASSUMPTION; REQUEST-LIFECYCLE CONTROL MAY RUN,
+                 SUBMISSION-BEARING ASSAY REQUIRES A BOUNDED PENDING CANDIDATE
+History disposition: append; prevent accidental Gate 12.7 crossover
+```
+
+### Validation absorbed
+
+```text
+diagnostic generator update/check: PASS
+deterministic second diagnostics check: PASS
+Dart formatting: PASS after formatting
+Flutter analyze: PASS
+focused Flutter tests: PASS
+full Flutter tests: 190 passed, 4 skipped
+targeted Prettier on changed TypeScript: PASS
+API lint/typecheck/build: PASS
+API tests: 58 passed
+git diff --check: PASS
+changed-content sensitive scan: no real secret reported
+live hosted/provider action: NOT PERFORMED
+```
+
+Full API `npm run format:check` remains unavailable as a clean repository-wide
+gate because of 37 pre-existing formatting warnings outside ERR-03. Changed
+TypeScript files passed the targeted Prettier check. This is a known
+repository-formatting debt, not evidence that ERR-03 failed its bounded
+validation.
+
+No Windows release, Android, Render, Auth0, Neon, live provider, user-database
+or live convergence validation was performed. Those states remain
+unvalidated.
+
+### Observable declaration surfaces
+
+The fresh Closure UI should expose, for ordinary Sync:
+
+```text
+Declaration scope = client-operation
+Operation kind = ordinary-sync
+Client result code = one of the five terminals
+Server request = not aggregate success
+Last proved phase
+Configured deadline = 35000ms client
+Operation = sanitized fingerprint
+Correlation = sanitized fingerprint
+```
+
+`Recent Closure attempts` should show operation kind, result code, outcome
+class, latest stage, client scope, client deadline owner, 35000 ms for ordinary
+Sync, sanitized correlation, HTTP status/header evidence and elapsed band.
+
+The API/Render structured lifecycle line should expose:
+
+```text
+declarationScope=server-request
+operationKind=server-request
+resultCode=request-completed | request-failed | typed internal code
+routeClass
+operationFingerprint
+correlationFingerprint
+elapsedBand
+status/result when available
+lastProvedPhase and providerTransactionOutcome when available
+```
+
+A server `request-completed` declaration proves only that request. Aggregate
+ordinary-Sync success still requires the client terminal.
+
+### Next assay sequence
+
+#### Assay A — fresh Windows and readiness projection regression
+
+1. Pull the reconciled branch and require a clean worktree at the new J commit.
+2. Produce or launch the fresh Windows client through the accepted local
+   procedure.
+3. Record the pre-action `Last successful sync` value and the newest Closure
+   attempt.
+4. Perform exactly one hosted readiness check.
+5. Require `hosted-connection-ready` or a typed readiness failure.
+6. Require a new hosted-readiness attempt while `Last successful sync`
+   remains byte-for-byte unchanged.
+7. Capture the client correlation fingerprint and the matching server-request
+   lifecycle line when available.
+8. Stop on projection drift, ambiguous lineage, untyped failure or any queue
+   mutation.
+
+Readiness remains non-Sync evidence. Passing Assay A does not prove the
+35-second ordinary-Sync hypothesis.
+
+#### Assay B — one ordinary-Sync request-lifecycle control
+
+Assay B may begin only after Assay A passes and the pre-action queue,
+authentication, Device binding, Git revision and hosted revision are freshly
+recorded.
+
+Exactly one ordinary-Sync action is allowed for the control. No Retry,
+failed/notApplied recovery, second click or automatic retry is allowed.
+Immediately freeze the UI and server evidence at the first terminal.
+
+Expected client terminals and meanings:
+
+| Terminal | Minimum meaning | Required follow-up |
+| --- | --- | --- |
+| `sync-no-new-events` | aggregate ordinary Sync completed with no new event work | correlate every server request and verify queue immobility |
+| `sync-completed` | aggregate ordinary Sync completed inside its proved scope | correlate requests and compare local/provider state before acceptance |
+| `sync-rejected` | trusted server response rejected the operation | record status, phase and typed diagnostic; do not retry |
+| `sync-failed` | client could not prove aggregate success | inspect trusted-response flag, last phase and server lineage; do not retry |
+| `sync-server-timeout` | only valid if a server-owned timeout is proved | unexpected in the current design; stop and inspect authoritative rollback evidence |
+
+Interpretation of elapsed time:
+
+```text
+terminal between 5 s and 35 s
+    -> the former five-second budget was materially causal
+
+server ingress followed by a typed failure/stall
+    -> timing exposed the next server/auth/database boundary
+
+no matching server ingress
+    -> client transport, routing or hosting ingress becomes primary
+
+server request completed but client lacks a trusted terminal
+    -> response delivery, correlation or client orchestration becomes primary
+
+terminal below 5 s
+    -> the old deadline was not exercised in this run; causal hypothesis remains
+       unproved rather than rejected
+```
+
+#### Assay C — submission-bearing control, separately bounded
+
+Assay B does not necessarily exercise upload/submission while the queue has no
+pending event. The two failed/notApplied events must not be converted into an
+implicit Retry or recovery.
+
+A true submission-bearing assay therefore requires a separately authorized,
+known test event or other bounded pending candidate, with:
+
+```text
+exact local candidate identity
+expected sequence
+expected payload class without sensitive content
+single upload limit
+no automatic retry
+pre/post local state
+allowlisted provider comparison
+client operation fingerprint
+all child correlation fingerprints
+matching server-request declarations
+explicit stop after the first terminal
+```
+
+Until that packet exists, do not manufacture a purchase event solely for
+diagnostics and do not use the existing failed/notApplied candidate. Gate 12.7
+remains held.
+
+### Hierarchical progress update
+
+```text
+Cycle 10 — hosted synchronization and operational acceptance [OPEN]
+└─ GCM-02 — exact hosted recovery/synchronization proof [ACTIVE]
+   ├─ C10-GCM02-S12-REC-01 source [ACCEPTED]
+   ├─ C10-GCM02-S12-ERR-03 source [ACCEPTED, HOST-UNVALIDATED]
+   ├─ Assay A readiness projection regression [NEXT]
+   ├─ Assay B one ordinary-Sync lifecycle control [PREPARED/CONDITIONAL]
+   ├─ Assay C submission-bearing control [NOT YET AUTHORIZED]
+   ├─ Gate 12.7 failed/notApplied recovery [HELD]
+   └─ Gates 12.8-12.10 terminal reconciliation [HELD]
+```
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=OPEN_ACTIVE
+C10_GCM02_S12_ERR_03_SOURCE=ACCEPTED
+ORDINARY_SYNC_FIVE_RESULT_CONTRACT=IMPLEMENTED_LOCALLY_VALIDATED
+CLIENT_OPERATION_DECLARATION=IMPLEMENTED_LOCALLY_VALIDATED
+SERVER_REQUEST_DECLARATION=IMPLEMENTED_LOCALLY_VALIDATED
+CLIENT_SERVER_CORRELATION=IMPLEMENTED_LOCALLY_VALIDATED
+CLIENT_SYNC_DEADLINE_35S=IMPLEMENTED_HOST_UNVALIDATED
+SERVER_DEADLINE_25S=NOT_IMPLEMENTED_WITH_REASON
+SYNC_SERVER_TIMEOUT=RESERVED_NOT_CURRENTLY_SERVER_EMITTED
+LAST_SUCCESSFUL_SYNC_PREDICATE=SOURCE_CORRECTED_WINDOWS_PENDING
+RECENT_CLOSURE_ATTEMPTS=SOURCE_CORRECTED_WINDOWS_PENDING
+HISTORICAL_FIVE_SECOND_CAUSAL_HYPOTHESIS=PLAUSIBLE_UNPROVED
+READINESS_PROJECTION_ASSAY=NEXT
+ORDINARY_SYNC_LIFECYCLE_ASSAY=PREPARED_CONDITIONAL
+SUBMISSION_BEARING_ASSAY=NOT_AUTHORIZED
+AUTOMATIC_RETRY=ABSENT
+BROAD_ERR_REFACTOR=DEFERRED
+GATE_12_7=HELD
+CONTROLLED_RECOVERY=NOT_AUTHORIZED
+PROVIDER_ACTION=NOT_YET_PERFORMED
+GATES_12_8_TO_12_10=HELD
+GCM03=UNDEFINED_INACTIVE
+GCM04=UNDEFINED_INACTIVE
+```
+
