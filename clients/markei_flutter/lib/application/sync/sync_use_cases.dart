@@ -1,3 +1,4 @@
+import '../../domain/sync/sync_event.dart';
 import 'sync_ports.dart';
 
 final class UploadPendingEvents {
@@ -16,8 +17,22 @@ final class UploadPendingEvents {
     if (submission == null) {
       return null;
     }
-    final result = await transport.uploadSubmission(submission);
-    await outbox.persistUploadResult(submission.id, result);
+    late final SyncResult result;
+    try {
+      result = await transport.uploadSubmission(submission);
+    } on Object {
+      result = const SyncResult(
+        code: SyncStatusCode.unknownOutcome,
+        outcome: SyncOutcome.unknown,
+        retryable: true,
+        protocolCode: 'transport-exception-redacted',
+      );
+    }
+    try {
+      await outbox.persistUploadResult(submission.id, result);
+    } on SyncPersistenceInvariantException catch (failure) {
+      return failure.result;
+    }
     return result;
   }
 }

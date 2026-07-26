@@ -54,29 +54,18 @@ export async function acceptSubmission(
     return row.stored_result as SubmissionResult;
   }
 
+  const validation = await validateCompleteSubmission(
+    client,
+    auth,
+    request,
+    correlationId,
+  );
+  if ("code" in validation) {
+    return validation;
+  }
+
   const cursors: string[] = [];
   for (const event of request.events) {
-    if (
-      event.accountId !== auth.accountId ||
-      event.deviceId !== auth.deviceId
-    ) {
-      return failure(
-        "wrong-account",
-        "upload-submission",
-        false,
-        correlationId,
-      );
-    }
-    const eventContent = { ...event };
-    delete eventContent.contentHash;
-    if (event.contentHash !== canonicalHash(eventContent)) {
-      return failure(
-        "hash-mismatch",
-        "upload-submission",
-        false,
-        correlationId,
-      );
-    }
     const eventId = String(event.eventId);
     const accepted = await client.query(
       "select content_hash, server_cursor from sync_events where account_id=$1 and event_id=$2",
@@ -93,24 +82,6 @@ export async function acceptSubmission(
       }
       cursors.push(encodeCursor(Number(accepted.rows[0].server_cursor)));
       continue;
-    }
-    const device = await client.query(
-      "select next_expected_sequence from devices where account_id=$1 and device_id=$2 and status='active' for update",
-      [auth.accountId, auth.deviceId],
-    );
-    if (!device.rowCount) {
-      return failure(
-        "device-revoked",
-        "upload-submission",
-        false,
-        correlationId,
-      );
-    }
-    if (
-      Number(event.deviceSequence) !==
-      Number(device.rows[0].next_expected_sequence)
-    ) {
-      return failure("sequence-gap", "upload-submission", false, correlationId);
     }
     const cursor = await client.query(
       "update account_cursor_state set next_cursor=next_cursor+1 where account_id=$1 returning next_cursor-1 as cursor",
@@ -158,6 +129,84 @@ export async function acceptSubmission(
     ],
   );
   return result;
+}
+
+async function validateCompleteSubmission(
+  client: PoolClient,
+  auth: AuthContext,
+  request: SubmissionRequest,
+  correlationId: string,
+): Promise<{ status: "validated" } | ProtocolFailure> {
+  const requestContent = {
+    deviceId: request.deviceId,
+    events: request.events,
+    submissionId: request.submissionId,
+  };
+  if (request.requestHash !== canonicalHash(requestContent)) {
+    return failure("hash-mismatch", "upload-submission", false, correlationId);
+  }
+  const device = await client.query(
+    "select next_expected_sequence from devices where account_id=$1 and device_id=$2 and status='active' for update",
+    [auth.accountId, auth.deviceId],
+  );
+  if (!device.rowCount) {
+    return failure("device-revoked", "upload-submission", false, correlationId);
+  }
+  let expectedSequence = Number(device.rows[0].next_expected_sequence);
+  const seenEventIds = new Set<string>();
+  for (const event of request.events) {
+    if (
+      event.accountId !== auth.accountId ||
+      event.deviceId !== auth.deviceId
+    ) {
+      return failure(
+        "wrong-account",
+        "upload-submission",
+        false,
+        correlationId,
+      );
+    }
+    const eventContent = { ...event };
+    delete eventContent.contentHash;
+    if (event.contentHash !== canonicalHash(eventContent)) {
+      return failure(
+        "hash-mismatch",
+        "upload-submission",
+        false,
+        correlationId,
+      );
+    }
+    const eventId = String(event.eventId);
+    if (seenEventIds.has(eventId)) {
+      return failure(
+        "hash-mismatch",
+        "upload-submission",
+        false,
+        correlationId,
+      );
+    }
+    seenEventIds.add(eventId);
+    const accepted = await client.query(
+      "select content_hash from sync_events where account_id=$1 and event_id=$2",
+      [auth.accountId, eventId],
+    );
+    if (accepted.rowCount) {
+      if (accepted.rows[0].content_hash !== event.contentHash) {
+        return failure(
+          "hash-mismatch",
+          "upload-submission",
+          false,
+          correlationId,
+        );
+      }
+      continue;
+    }
+    if (Number(event.deviceSequence) !== expectedSequence) {
+      return failure("sequence-gap", "upload-submission", false, correlationId);
+    }
+    expectedSequence += 1;
+  }
+  return { status: "validated" };
 }
 
 export async function downloadEvents(
@@ -279,7 +328,11 @@ function failure(
 ): ProtocolFailure {
   return {
     code,
+    diagnosticCode: "MKS-UPL-012",
     operation,
+    phase: operation,
+    routeClass: "transaction-scoped-operation",
+    providerTransactionOutcome: "not-started-or-rolled-back",
     outcome: "not-applied",
     retryable,
     safeAction: retryable

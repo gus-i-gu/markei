@@ -29,6 +29,9 @@ final class DriftRemoteEventApplier implements RemoteEventApplier {
       }
       final validation = await _validatePage(page);
       if (validation != null) {
+        if (validation.code == SyncStatusCode.duplicateIgnored) {
+          await _advanceCursorForPage(page);
+        }
         return validation;
       }
       for (final item in page.events) {
@@ -52,16 +55,7 @@ final class DriftRemoteEventApplier implements RemoteEventApplier {
               ),
             );
       }
-      final last = page.events.last;
-      await _db
-          .into(_db.syncState)
-          .insertOnConflictUpdate(
-            SyncStateCompanion.insert(
-              accountId: _accountId ?? (last.event['accountId'] as String),
-              accountCursor: Value(page.nextCursor ?? last.serverCursor),
-              updatedAt: DateTime.now().toUtc(),
-            ),
-          );
+      await _advanceCursorForPage(page);
       return const SyncResult(
         code: SyncStatusCode.downloadedApplied,
         outcome: SyncOutcome.applied,
@@ -142,6 +136,20 @@ final class DriftRemoteEventApplier implements RemoteEventApplier {
       );
     }
     return null;
+  }
+
+  Future<void> _advanceCursorForPage(DownloadPage page) async {
+    if (page.events.isEmpty) return;
+    final last = page.events.last;
+    await _db
+        .into(_db.syncState)
+        .insertOnConflictUpdate(
+          SyncStateCompanion.insert(
+            accountId: _accountId ?? (last.event['accountId'] as String),
+            accountCursor: Value(page.nextCursor ?? last.serverCursor),
+            updatedAt: DateTime.now().toUtc(),
+          ),
+        );
   }
 
   Future<bool> _isEquivalentInbox(

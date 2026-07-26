@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markei/application/closure_diagnostics.dart';
 import 'package:markei/domain/sync/canonical_json.dart';
 import 'package:markei/domain/shared/ids.dart';
 import 'package:markei/infrastructure/local/closure_diagnostics_repository.dart';
@@ -347,6 +348,110 @@ void main() {
       );
     },
   );
+
+  test('failed notApplied inspection is read-only and sanitized', () async {
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    await _seedAccount(db, accountA.value, deviceA.value, nextSequence: 3);
+    await _seedHostedBinding(db, accountA.value, deviceA.value, environment);
+    final seq1 = _validEvent(1);
+    final seq2 = _validEvent(2);
+    await _insertValidEvent(db, seq1, state: 'failed');
+    await _insertValidEvent(db, seq2, state: 'failed');
+    await _insertFailedSubmission(db, 'failed-one', [seq1, seq2]);
+    final repository = DriftClosureDiagnosticsRepository(
+      db,
+      accountId: accountA,
+      deviceId: deviceA,
+      environmentAlias: environment,
+    );
+
+    final inspection = await repository.inspectFailedNotAppliedRecovery(
+      authenticationState: 'authenticated',
+      operationFingerprint: 'abcdef123456',
+    );
+
+    expect(inspection.eligible, isTrue);
+    expect(inspection.diagnosticCode, 'MKS-UI-004');
+    expect(inspection.candidateFingerprint, hasLength(8));
+    expect(inspection.candidateFingerprint, isNot(contains('failed-one')));
+    expect(inspection.memberCount, 2);
+    expect(inspection.firstDeviceSequence, 1);
+    expect(inspection.lastDeviceSequence, 2);
+    expect(inspection.nextDeviceSequence, 3);
+    expect(inspection.requestHashMatches, isTrue);
+    expect(inspection.membershipContiguous, isTrue);
+    expect(inspection.deviceScopeMatches, isTrue);
+    expect(inspection.eventStatesCompatible, isTrue);
+    expect(inspection.noAcceptedMembers, isTrue);
+    expect(inspection.noActiveOverlap, isTrue);
+    expect((await db.select(db.syncSubmissions).get()).single.state, 'failed');
+    expect(
+      (await db.select(db.pendingEvents).get()).map((row) => row.state),
+      everyElement('failed'),
+    );
+  });
+
+  test('records sanitized diagnostic event child row', () async {
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    await _seedAccount(db, accountA.value, deviceA.value);
+    final repository = DriftClosureDiagnosticsRepository(
+      db,
+      accountId: accountA,
+      deviceId: deviceA,
+      environmentAlias: environment,
+    );
+    final attempt = await repository.beginDiagnosticAttempt(
+      operationKind: 'native-closure-action',
+      latestStage: 'preflight',
+      resultCode: 'started',
+      outcomeClass: 'in-progress',
+      correlationFingerprint: 'abcdef123456',
+    );
+
+    await repository.recordDiagnosticEvent(
+      SyncDiagnosticEnvelope(
+        attemptId: attempt,
+        ordinal: 1,
+        code: 'MKS-UI-001',
+        nativeCode: 'unknown-retry-queue-not-isolated',
+        severity: 'ERROR',
+        outcome: 'blocked',
+        operationKind: 'native-closure-action',
+        phase: 'preflight',
+        operationFingerprint: 'abcdef1234567890',
+        correlationFingerprint: 'abcdef1234567890',
+        localMutationState: 'none',
+        providerContactState: 'not-started',
+        providerTransactionState: 'not-started',
+        trustedResponseState: 'not-received',
+        queueScope: 'current-device',
+        pendingCount: 0,
+        uploadingCount: 0,
+        failedCount: 2,
+        unknownCount: 0,
+        memberCount: 2,
+        firstDeviceSequence: 1,
+        lastDeviceSequence: 2,
+        nextDeviceSequence: 3,
+        httpStatus: null,
+        responseHeadersReceived: false,
+        safeAction: 'inspect failed evidence without Sync',
+        retryable: false,
+        sanitizedExceptionClass: null,
+        serverSqlstateClass: null,
+      ),
+    );
+
+    final rows = await db.select(db.syncDiagnosticEvents).get();
+    expect(rows, hasLength(1));
+    expect(rows.single.code, 'MKS-UI-001');
+    expect(rows.single.operationFingerprint, hasLength(16));
+    expect(rows.single.failedCount, 2);
+    expect(rows.single.responseHeadersReceived, isFalse);
+    expect(rows.single.safeAction, isNot(contains('\n')));
+  });
 }
 
 Future<void> _seedAccount(
@@ -516,6 +621,47 @@ Future<String> _insertUnknownSubmission(
         );
   }
   return requestHash;
+}
+
+Future<void> _insertFailedSubmission(
+  LocalDatabase db,
+  String submissionId,
+  List<Map<String, Object?>> events,
+) async {
+  final requestHash = canonicalUtf8Sha256({
+    'deviceId': events.first['deviceId'],
+    'events': events,
+    'submissionId': submissionId,
+  });
+  final now = DateTime.utc(2026, 7, 21, 12);
+  await db
+      .into(db.syncSubmissions)
+      .insert(
+        SyncSubmissionsCompanion.insert(
+          id: submissionId,
+          accountId: events.first['accountId']! as String,
+          deviceId: events.first['deviceId']! as String,
+          requestHash: requestHash,
+          state: 'failed',
+          outcome: const Value('notApplied'),
+          responseCode: const Value('serviceUnavailable'),
+          errorCode: const Value('service-unavailable'),
+          attemptCount: const Value(1),
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
+  for (var i = 0; i < events.length; i++) {
+    await db
+        .into(db.syncSubmissionEvents)
+        .insert(
+          SyncSubmissionEventsCompanion.insert(
+            submissionId: submissionId,
+            eventId: events[i]['eventId']! as String,
+            position: i,
+          ),
+        );
+  }
 }
 
 Map<String, Object?> _validEvent(int sequence) {

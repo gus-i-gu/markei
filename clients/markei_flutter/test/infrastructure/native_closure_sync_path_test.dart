@@ -252,17 +252,20 @@ void main() {
       );
       final replayedA = await scopedOutboxA.leasePending(limit: 25);
       expect(replayedA?.id, leasedA.id);
-      await DriftSyncOutboxRepository.scoped(
-        restartedA,
-        accountId: hostedAccount,
-        deviceId: hostedDeviceB,
-      ).persistUploadResult(
-        leasedA.id,
-        const SyncResult(
-          code: SyncStatusCode.serverAccepted,
-          outcome: SyncOutcome.applied,
-          retryable: false,
+      await expectLater(
+        DriftSyncOutboxRepository.scoped(
+          restartedA,
+          accountId: hostedAccount,
+          deviceId: hostedDeviceB,
+        ).persistUploadResult(
+          leasedA.id,
+          const SyncResult(
+            code: SyncStatusCode.serverAccepted,
+            outcome: SyncOutcome.applied,
+            retryable: false,
+          ),
         ),
+        throwsA(isA<SyncPersistenceInvariantException>()),
       );
       expect(
         (await restartedA.select(restartedA.syncSubmissions).get())

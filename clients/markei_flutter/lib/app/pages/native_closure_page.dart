@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../application/closure_diagnostics.dart';
+import '../../domain/sync/sync_diagnostic_registry.g.dart';
 import '../native_auth_closure_runner.dart';
 
 class NativeClosurePage extends StatefulWidget {
@@ -16,6 +17,7 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
   String _state = 'closure-disabled';
   bool _running = false;
   ClosureDiagnosticsSnapshot? _snapshot;
+  _CurrentActionDiagnostic? _currentAction;
 
   @override
   void initState() {
@@ -46,6 +48,10 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
           key: const Key('nativeClosure.state'),
         ),
         const SizedBox(height: 16),
+        if (_currentAction != null) ...[
+          _CurrentActionCard(diagnostic: _currentAction!),
+          const SizedBox(height: 12),
+        ],
         if (snapshot == null)
           const _DiagnosticsCard(
             title: 'Sync overview',
@@ -84,9 +90,18 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
                 child: const Text('Refresh diagnostics'),
               ),
               OutlinedButton(
-                key: const Key('nativeClosure.Retry unresolved submission'),
-                onPressed: _running ? null : _confirmRetryUnresolved,
-                child: const Text('Retry unresolved submission'),
+                key: const Key(
+                  'nativeClosure.Retry unknown-outcome submission',
+                ),
+                onPressed: _running ? null : _confirmRetryUnknownOutcome,
+                child: const Text('Retry unknown-outcome submission'),
+              ),
+              OutlinedButton(
+                key: const Key(
+                  'nativeClosure.Inspect failed/notApplied recovery',
+                ),
+                onPressed: _running ? null : _inspectFailedNotApplied,
+                child: const Text('Inspect failed/notApplied recovery'),
               ),
               OutlinedButton(
                 key: const Key('nativeClosure.Clear diagnostic history'),
@@ -102,14 +117,35 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
 
   Future<void> _run(_Action action) async {
     setState(() => _running = true);
-    final result = await action.run();
-    final snapshot = await widget.runner.diagnostics();
-    if (!mounted) return;
-    setState(() {
-      _state = result.state;
-      _snapshot = snapshot;
-      _running = false;
-    });
+    try {
+      final result = await action.run();
+      final snapshot = await widget.runner.diagnostics();
+      if (!mounted) return;
+      setState(() {
+        _state = result.state;
+        _snapshot = snapshot;
+        _running = false;
+        _currentAction = _CurrentActionDiagnostic.fromState(
+          state: result.state,
+          code: result.state == 'sync-unavailable'
+              ? 'MKS-OBS-003'
+              : 'MKS-UI-003',
+          operationFingerprint: 'not-recorded',
+        );
+      });
+    } on Object catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _state = 'closure-runner-exception';
+        _running = false;
+        _currentAction = _CurrentActionDiagnostic.fromState(
+          state: 'closure-runner-exception',
+          code: 'MKS-UI-006',
+          operationFingerprint: 'local-page',
+          sanitizedExceptionClass: error.runtimeType.toString(),
+        );
+      });
+    }
   }
 
   Future<void> _refreshDiagnostics() async {
@@ -118,7 +154,7 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
     setState(() => _snapshot = snapshot);
   }
 
-  Future<void> _confirmRetryUnresolved() async {
+  Future<void> _confirmRetryUnknownOutcome() async {
     final preflight = await widget.runner.unknownRetryPreflight();
     if (!mounted) return;
     if (!preflight.eligible) {
@@ -127,13 +163,23 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
       setState(() {
         _state = preflight.state;
         _snapshot = snapshot;
+        _currentAction = _CurrentActionDiagnostic.fromState(
+          state: preflight.state,
+          code: 'MKS-UI-001',
+          operationFingerprint: 'local-preflight',
+          pending: snapshot?.queueCounts.pending,
+          uploading: snapshot?.queueCounts.uploading,
+          failed: snapshot?.queueCounts.failed,
+          unknown: snapshot?.queueCounts.unknown,
+          nextSequence: snapshot?.nextDeviceSequence,
+        );
       });
       return;
     }
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Retry unresolved submission'),
+        title: const Text('Retry unknown-outcome submission'),
         content: Text(
           'This will retry the same unresolved submission without changing '
           'local events. Events ${preflight.firstDeviceSequence}-'
@@ -170,6 +216,38 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
     });
   }
 
+  Future<void> _inspectFailedNotApplied() async {
+    setState(() => _running = true);
+    final result = await widget.runner.inspectFailedNotAppliedRecovery();
+    final snapshot = await widget.runner.diagnostics();
+    if (!mounted) return;
+    final inspection = result.inspection;
+    setState(() {
+      _state = result.state;
+      _snapshot = snapshot;
+      _running = false;
+      _currentAction = _CurrentActionDiagnostic.fromState(
+        state: result.state,
+        code: result.diagnosticCode,
+        operationFingerprint: result.operationFingerprint,
+        pending: inspection?.queueCounts.pending,
+        uploading: inspection?.queueCounts.uploading,
+        failed: inspection?.queueCounts.failed,
+        unknown: inspection?.queueCounts.unknown,
+        memberCount: inspection?.memberCount,
+        firstSequence: inspection?.firstDeviceSequence,
+        lastSequence: inspection?.lastDeviceSequence,
+        nextSequence: inspection?.nextDeviceSequence,
+        requestHashMatches: inspection?.requestHashMatches,
+        membershipContiguous: inspection?.membershipContiguous,
+        deviceScopeMatches: inspection?.deviceScopeMatches,
+        eventStatesCompatible: inspection?.eventStatesCompatible,
+        noAcceptedMembers: inspection?.noAcceptedMembers,
+        noActiveOverlap: inspection?.noActiveOverlap,
+      );
+    });
+  }
+
   Future<void> _confirmClearHistory() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -199,6 +277,207 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
       _snapshot = snapshot;
       _running = false;
     });
+  }
+}
+
+final class _CurrentActionDiagnostic {
+  const _CurrentActionDiagnostic({
+    required this.code,
+    required this.title,
+    required this.meaning,
+    required this.outcome,
+    required this.phase,
+    required this.localMutation,
+    required this.providerContact,
+    required this.safeAction,
+    required this.operationFingerprint,
+    required this.nativeState,
+    this.pending,
+    this.uploading,
+    this.failed,
+    this.unknown,
+    this.memberCount,
+    this.firstSequence,
+    this.lastSequence,
+    this.nextSequence,
+    this.requestHashMatches,
+    this.membershipContiguous,
+    this.deviceScopeMatches,
+    this.eventStatesCompatible,
+    this.noAcceptedMembers,
+    this.noActiveOverlap,
+    this.sanitizedExceptionClass,
+  });
+
+  factory _CurrentActionDiagnostic.fromState({
+    required String state,
+    required String code,
+    required String operationFingerprint,
+    int? pending,
+    int? uploading,
+    int? failed,
+    int? unknown,
+    int? memberCount,
+    int? firstSequence,
+    int? lastSequence,
+    int? nextSequence,
+    bool? requestHashMatches,
+    bool? membershipContiguous,
+    bool? deviceScopeMatches,
+    bool? eventStatesCompatible,
+    bool? noAcceptedMembers,
+    bool? noActiveOverlap,
+    String? sanitizedExceptionClass,
+  }) {
+    final definition = syncDiagnosticByCode(code);
+    return _CurrentActionDiagnostic(
+      code: code,
+      title: definition?.title ?? code,
+      meaning: definition?.meaning ?? 'Diagnostic meaning unavailable.',
+      outcome: definition?.defaultOutcome ?? 'unknown',
+      phase: state.contains('preflight') || code.startsWith('MKS-REC')
+          ? 'failed-recovery-preflight'
+          : 'presentation',
+      localMutation: 'none',
+      providerContact: 'not-started',
+      safeAction:
+          definition?.safeAction ?? 'preserve evidence and inspect diagnostics',
+      operationFingerprint: operationFingerprint,
+      nativeState: state,
+      pending: pending,
+      uploading: uploading,
+      failed: failed,
+      unknown: unknown,
+      memberCount: memberCount,
+      firstSequence: firstSequence,
+      lastSequence: lastSequence,
+      nextSequence: nextSequence,
+      requestHashMatches: requestHashMatches,
+      membershipContiguous: membershipContiguous,
+      deviceScopeMatches: deviceScopeMatches,
+      eventStatesCompatible: eventStatesCompatible,
+      noAcceptedMembers: noAcceptedMembers,
+      noActiveOverlap: noActiveOverlap,
+      sanitizedExceptionClass: sanitizedExceptionClass,
+    );
+  }
+
+  final String code;
+  final String title;
+  final String meaning;
+  final String outcome;
+  final String phase;
+  final String localMutation;
+  final String providerContact;
+  final String safeAction;
+  final String operationFingerprint;
+  final String nativeState;
+  final int? pending;
+  final int? uploading;
+  final int? failed;
+  final int? unknown;
+  final int? memberCount;
+  final int? firstSequence;
+  final int? lastSequence;
+  final int? nextSequence;
+  final bool? requestHashMatches;
+  final bool? membershipContiguous;
+  final bool? deviceScopeMatches;
+  final bool? eventStatesCompatible;
+  final bool? noAcceptedMembers;
+  final bool? noActiveOverlap;
+  final String? sanitizedExceptionClass;
+}
+
+final class _CurrentActionCard extends StatelessWidget {
+  const _CurrentActionCard({required this.diagnostic});
+
+  final _CurrentActionDiagnostic diagnostic;
+
+  @override
+  Widget build(BuildContext context) {
+    return _DiagnosticsCard(
+      title: 'Current action result',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _KeyValueGrid(
+            children: [
+              _DiagnosticValue('MKS code', diagnostic.code),
+              _DiagnosticValue('Title', diagnostic.title),
+              _DiagnosticValue('Outcome', diagnostic.outcome),
+              _DiagnosticValue('Last proved phase', diagnostic.phase),
+              _DiagnosticValue('Local mutation', diagnostic.localMutation),
+              _DiagnosticValue('Provider contact', diagnostic.providerContact),
+              _DiagnosticValue(
+                'Operation',
+                '#${diagnostic.operationFingerprint}',
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(diagnostic.meaning, key: const Key('nativeClosure.mks.meaning')),
+          const SizedBox(height: 8),
+          Text(
+            diagnostic.safeAction,
+            key: const Key('nativeClosure.mks.safeAction'),
+          ),
+          const SizedBox(height: 8),
+          ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            title: const Text('Sanitized technical details'),
+            children: [
+              _KeyValueGrid(
+                children: [
+                  _DiagnosticValue('Native state', diagnostic.nativeState),
+                  _DiagnosticValue('Pending', _number(diagnostic.pending)),
+                  _DiagnosticValue('Uploading', _number(diagnostic.uploading)),
+                  _DiagnosticValue('Failed', _number(diagnostic.failed)),
+                  _DiagnosticValue('Unknown', _number(diagnostic.unknown)),
+                  _DiagnosticValue('Members', _number(diagnostic.memberCount)),
+                  _DiagnosticValue(
+                    'Sequence range',
+                    _range(diagnostic.firstSequence, diagnostic.lastSequence),
+                  ),
+                  _DiagnosticValue(
+                    'Next sequence',
+                    _number(diagnostic.nextSequence),
+                  ),
+                  _DiagnosticValue(
+                    'Request hash equality',
+                    _bool(diagnostic.requestHashMatches),
+                  ),
+                  _DiagnosticValue(
+                    'Contiguous membership',
+                    _bool(diagnostic.membershipContiguous),
+                  ),
+                  _DiagnosticValue(
+                    'Device scope',
+                    _bool(diagnostic.deviceScopeMatches),
+                  ),
+                  _DiagnosticValue(
+                    'Event states',
+                    _bool(diagnostic.eventStatesCompatible),
+                  ),
+                  _DiagnosticValue(
+                    'No accepted members',
+                    _bool(diagnostic.noAcceptedMembers),
+                  ),
+                  _DiagnosticValue(
+                    'No active overlap',
+                    _bool(diagnostic.noActiveOverlap),
+                  ),
+                  _DiagnosticValue(
+                    'Exception class',
+                    diagnostic.sanitizedExceptionClass ?? 'Unavailable',
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -456,6 +735,18 @@ String _timeOrNotRecorded(DateTime? value) {
 String _duration(Duration? value) {
   if (value == null) return 'duration-unavailable';
   return '${value.inMilliseconds}ms';
+}
+
+String _number(int? value) => value?.toString() ?? 'Unavailable';
+
+String _bool(bool? value) {
+  if (value == null) return 'Unavailable';
+  return value ? 'Yes' : 'No';
+}
+
+String _range(int? first, int? last) {
+  if (first == null || last == null) return 'Unavailable';
+  return '$first-$last';
 }
 
 final class _Action {

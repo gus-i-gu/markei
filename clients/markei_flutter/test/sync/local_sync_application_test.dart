@@ -65,6 +65,63 @@ void main() {
     expect(retry.requestHash, first.requestHash);
   });
 
+  test('post-lease transport exception persists unknown result', () async {
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final device = await LocalDeviceIdentityRepository(
+      db,
+    ).loadOrCreateDeviceId(const AccountId('local-account'));
+    await LocalPurchaseRepository(
+      db,
+    ).registerPurchase(_command(device, 'ARROZ-ERR-LEASE'));
+    final outbox = DriftSyncOutboxRepository(db);
+
+    final result = await UploadPendingEvents(
+      outbox,
+      _ThrowingUploadTransport(),
+    )();
+
+    expect(result?.code, SyncStatusCode.unknownOutcome);
+    expect((await db.select(db.syncSubmissions).get()).single.state, 'unknown');
+    expect((await db.select(db.pendingEvents).get()).single.state, 'unknown');
+  });
+
+  test('scoped result persistence miss becomes typed invariant', () async {
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final device = await LocalDeviceIdentityRepository(
+      db,
+    ).loadOrCreateDeviceId(const AccountId('local-account'));
+    await LocalPurchaseRepository(
+      db,
+    ).registerPurchase(_command(device, 'ARROZ-ERR-PERSIST'));
+    final submission = await DriftSyncOutboxRepository(
+      db,
+    ).leasePending(limit: 25);
+    final scopedOutbox = DriftSyncOutboxRepository.scoped(
+      db,
+      accountId: const AccountId('other-account'),
+      deviceId: const DeviceId('other-device'),
+    );
+
+    await expectLater(
+      scopedOutbox.persistUploadResult(
+        submission!.id,
+        const SyncResult(
+          code: SyncStatusCode.serverAccepted,
+          outcome: SyncOutcome.applied,
+          retryable: false,
+        ),
+      ),
+      throwsA(isA<SyncPersistenceInvariantException>()),
+    );
+    expect(
+      (await db.select(db.syncSubmissions).get()).single.state,
+      'uploading',
+    );
+    expect((await db.select(db.pendingEvents).get()).single.state, 'uploading');
+  });
+
   test('duplicate event is applied once and can be acknowledged', () async {
     final source = LocalDatabase.memory();
     final target = LocalDatabase.memory();
@@ -883,6 +940,23 @@ final class _UnknownUploadTransport implements SyncTransport {
       outcome: SyncOutcome.unknown,
       retryable: true,
     );
+  }
+}
+
+final class _ThrowingUploadTransport implements SyncTransport {
+  @override
+  Future<SyncResult> acknowledge(String greatestContiguousCursor) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DownloadPage> downloadAfter(String? cursor, {required int limit}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<SyncResult> uploadSubmission(SyncUploadSubmission submission) {
+    throw StateError('redacted transport failure');
   }
 }
 

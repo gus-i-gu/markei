@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Markei Sync Diagnostics Registry v1",
+  "type": "object",
+  "required": ["version", "diagnostics"],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "generatedFrom": {
+      "type": "string"
+    },
+    "diagnostics": {
+      "type": "array",
+      "minItems": 159,
+      "maxItems": 159,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "layer",
+          "title",
+          "meaning",
+          "severity",
+          "defaultOutcome",
+          "operationKinds",
+          "phases",
+          "nativeCodes",
+          "detectionFingerprint",
+          "detectorComponent",
+          "detectorSourceRefs",
+          "causeDomain",
+          "causeConfidenceRule",
+          "externalDependency",
+          "retryPolicy",
+          "safeAction",
+          "userGuidance",
+          "publicVisibility",
+          "logVisibility",
+          "sensitiveFieldsForbidden"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^MKS-[A-Z]+-[0-9]{3}$"
+          },
+          "layer": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "meaning": {
+            "type": "string"
+          },
+          "severity": {
+            "enum": ["INFO", "WARNING", "ERROR", "UNKNOWN", "CRITICAL"]
+          },
+          "defaultOutcome": {
+            "enum": [
+              "blocked",
+              "not-applied",
+              "applied",
+              "duplicate-equivalent",
+              "unknown",
+              "completed"
+            ]
+          },
+          "operationKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "phases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "nativeCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "detectionFingerprint": {
+            "type": "string"
+          },
+          "detectorComponent": {
+            "type": "string"
+          },
+          "detectorSourceRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "causeDomain": {
+            "type": "string"
+          },
+          "causeConfidenceRule": {
+            "enum": [
+              "repository-proven",
+              "test-validated",
+              "human-observed",
+              "inferred",
+              "provisional",
+              "boundary-only",
+              "unknown"
+            ]
+          },
+          "externalDependency": {
+            "type": ["string", "null"]
+          },
+          "retryPolicy": {
+            "enum": [
+              "do-not-retry",
+              "retry-same-identity-after-confirmation",
+              "retry-after-local-review",
+              "retry-after-provider-evidence",
+              "read-only-inspection",
+              "not-retryable"
+            ]
+          },
+          "safeAction": {
+            "type": "string"
+          },
+          "userGuidance": {
+            "type": "string"
+          },
+          "publicVisibility": {
+            "type": "string"
+          },
+          "logVisibility": {
+            "type": "string"
+          },
+          "sensitiveFieldsForbidden": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "token",
+                "password",
+                "payload_json",
+                "payloadJson",
+                "connectionString",
+                "connection_string",
+                "completeHash",
+                "complete_hash",
+                "privateUrl",
+                "private_url",
+                "stackTrace",
+                "stack_trace",
+                "sql"
+              ]
+            },
+            "minItems": 1
+          }
+        }
+      }
+    }
+  }
+}

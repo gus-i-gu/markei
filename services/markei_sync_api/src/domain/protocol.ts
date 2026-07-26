@@ -13,7 +13,13 @@ export type ProtocolOutcome =
 
 export type ProtocolFailure = {
   code: string;
+  diagnosticCode?: string;
   operation: string;
+  phase?: string;
+  routeClass?: string;
+  providerTransactionOutcome?: string;
+  sanitizedExceptionClass?: string;
+  serverSqlstateClass?: string;
   field?: string;
   eventId?: string;
   submissionId?: string;

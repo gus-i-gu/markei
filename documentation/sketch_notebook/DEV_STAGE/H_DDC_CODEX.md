@@ -1,92 +1,43 @@
-# H_DDC_CODEX - Gate 12.6 Evidence Semantics
+# H_DDC_CODEX - Step 12 Diagnostic Meaning Projection
 
-Sequence: FLX-PRM-04 - Promotion/Reconciliation
+Sequence: FLX-ORD-01 - Ordinary Sequence
+Unit: C10-GCM02-S12-ERR-01
 Role: Codex didactic report
-Evidence boundary: observational explanation only; no permanent didactic
-promotion or methodology edit is authorized.
+Evidence boundary: observational explanation only; no didactic promotion or methodology edit was performed.
 
-## Distinctions To Preserve
+## Meaning Model
 
-- repository-proven: `markei_shared_beta.sqlite` is a database file; `sqlite3.exe`
-  is the separate CLI needed to inspect a copied database.
-- human-observed: the accepted evidence came from a verified copied database,
-  not from the live user database.
-- inferred: copied-database integrity proves the copied file is readable and
-  internally coherent for the inspected schema; it does not prove protected Sync
-  success or provider application.
-- repository-proven: `response_code` stores the local client enum name, while
-  `error_code` stores the protocol body code.
-- repository-proven/inferred: current mapping and legacy persisted
-  representation can differ without contradiction when the copied file predates
-  the mapping correction.
-- repository-proven: failed/notApplied recovery and unknown Retry are different
-  mechanisms. Unknown Retry reuses an unknown submission identity; failed
-  recovery supersedes a failed submission and requeues member events.
-- repository-proven: failed recovery is not the same as upload. Ordinary Sync
-  performs recovery first and then continues to upload, download, and
-  acknowledgement if no blocker occurs.
-- inferred: a PASS copied-database diagnosis is not authorization to mutate.
-  Gate 12.6 remains open, and Gate 12.7 still requires explicit human approval.
+- repository-proven: the Sync diagnostic registry is now the single hand-maintained code list for 159 `MKS-*` diagnostics; Dart, TypeScript and Markdown are generated projections.
+- repository-proven: registry entries distinguish detector component from proved cause domain. Boundary-adjacent Auth0, Render, Neon, PostgreSQL or HTTP components are not named as causes unless evidence proves them.
+- repository-proven: public UI/log visibility is constrained by each entry's forbidden sensitive fields: tokens, passwords, payload JSON, connection strings, full hashes, private URLs, stack traces and SQL are rejected by validation.
+- repository-proven: `documentation/SYNC_DIAGNOSTICS.md` explains layers, severity, outcomes, phases, causal attribution, native-code mappings, safe actions, retry policies, generic-500 unknown-outcome behavior and privacy/redaction.
 
-## Claim Classification
+## UI Projection
 
-- human-observed: the copied database shows one active
-  `failed / notApplied / conflict / service-unavailable` class and no unknown
-  class in the reported summary.
-- repository-proven: current source maps `service-unavailable` to
-  `serviceUnavailable`; prior source fell through to `conflict`.
-- inferred: the observed legacy representation is historically coherent, with
-  row-level executable provenance unavailable.
-- superseded: earlier Conclusion C for queue class is superseded by the copied
-  database summary.
-- unavailable: exact device scope, that scope's `next_sequence`, pending-work
-  distribution by scope, next-upload contents, and safe request-hash equality
-  are not present in the GS-SQLITE-03 transcript.
-- prohibited: Codex cannot obtain those values by querying the user database or
-  provider systems in this round.
+- repository-proven: the Closure UI label now says `Retry unknown-outcome submission`; this preserves the fact that the existing action only accepts an isolated unknown-outcome submission.
+- repository-proven: blocked unknown retry for failed=2/unknown=0 now projects as `MKS-UI-001` with outcome `blocked`, local mutation `none`, provider contact `not-started`, and safe action to inspect failed/notApplied evidence.
+- repository-proven: the page separates current action result from last ordinary Sync result, last successful Sync and recent diagnostics timeline.
+- repository-proven: blocked/error/unknown actions show MKS code, title, meaning, outcome, last proved phase, mutation/contact state, safe action and operation fingerprint.
+- repository-proven: sanitized expandable technical details expose only counts, sequence ranges, booleans, fingerprints and sanitized exception class.
 
-## Diagnostic Decision Tree
+## Failed Versus Unknown
 
-1. If GS-SQLITE-04 reports exactly one failed/notApplied candidate on the
-   hosted/current anonymized scope, with member sequences `1-2`, positions
-   `0-1`, all member states failed, and no unexpected same-scope pending work,
-   Main can prepare a tightly bounded Gate 12.7 decision packet.
-2. If the candidate is on a non-hosted scope, has unexpected `next_sequence`,
-   malformed membership, same-scope pending work that would join the first
-   upload, or unsafe hash/identity ambiguity, Gate 12.6 remains open for
-   reconciliation.
-3. If the copied state contains unknown/uploading ambiguity or multiple failed
-   candidates, unknown Retry remains inapplicable and failed recovery cannot be
-   selected without further evidence.
-4. Provider logs are only relevant after local scope correlation, and only as
-   narrowly bounded read-only evidence; readiness checks do not substitute for
-   protected Sync evidence.
+- repository-proven: unknown-outcome retry remains identity-preserving and eligible only for isolated unknown work.
+- repository-proven: failed/notApplied inspection is separate, read-only, current-device scoped, and emits no recovery/transmission callback.
+- repository-proven: ordinary Sync still includes failed recovery followed by upload/download/acknowledgement; therefore ordinary Sync remains semantically distinct from read-only inspection.
+- inferred: Main should preserve terminology that `Inspect failed/notApplied recovery` is evidence gathering, not authorization to recover.
 
-## Conceptual Ambiguity
+## Error Semantics
 
-- inferred: the UI label `Retry unresolved submission` can sound broader than
-  its implementation. In source it means exact unknown-submission retry, not
-  failed/notApplied recovery.
-- inferred: `sync-unavailable / provider-evidence-unavailable` is a later
-  diagnostic/coordinator projection. It should not be restated as the original
-  submission response unless local submission rows prove that link.
-- inferred: Gate wording should keep "copied-database PASS" separate from
-  "Gate 12.6 closed" and "Gate 12.7 authorized".
+- test-validated: request-start without trusted provider outcome after a committed local lease becomes `unknownOutcome`; local submission identity is preserved.
+- test-validated: scoped local result-persistence miss is a typed invariant, not a silent no-op.
+- test-validated: public unexpected API 500 stays sanitized as `service-unavailable` with `outcome: unknown` but is not retryable solely because it is HTTP 500.
+- unavailable: live provider logs, Auth0 behavior, Render behavior and Neon transaction evidence were not contacted and remain outside this report.
 
-## Terminal Vocabulary
-
-```text
-COPIED_DATABASE_PROBE_PASS
-GATE_12_6_COPIED_DATABASE_PROBE_PASS
-FAILED_NOT_APPLIED_CLASS_CONFIRMED
-UNKNOWN_RETRY_INAPPLICABLE
-LEGACY_RESPONSE_REPRESENTATION_EXPLAINED_WITH_BOUNDARY
-LEGACY_CONFLICT_SERVICE_UNAVAILABLE_EXPLAINED_WITH_BOUNDARY
-EXACT_DEVICE_SCOPED_TRANSITION_CORRELATION_PENDING
-GATE_12_6_OPEN
-GATE_12_7_PENDING
-RETRY_UNAUTHORIZED
-ORDINARY_SYNC_UNAUTHORIZED
-PROVIDER_ACTION_UNAUTHORIZED
+DIAGNOSTIC_MEANING_PROJECTION_IMPLEMENTED
+GENERATED_DOCUMENTATION_VALIDATED
+CURRENT_AND_HISTORICAL_RESULTS_SEPARATED
+FAILED_NOT_APPLIED_INSPECTION_READ_ONLY
+NO_PROVIDER_AUTHORIZATION
+GATE_12_7_HELD
 GCM02_OPEN
-```

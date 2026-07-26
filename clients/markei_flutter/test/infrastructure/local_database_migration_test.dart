@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:markei/infrastructure/local/local_database.dart';
 
 void main() {
-  test('migrates v1 database to v10 with transport observability', () async {
+  test('migrates v1 database to v11 with transport observability', () async {
     final temp = await Directory.systemTemp.createTemp('markei_migration_');
     addTearDown(() => temp.delete(recursive: true));
     final file = File('${temp.path}/markei.sqlite');
@@ -15,7 +15,7 @@ void main() {
     );
     addTearDown(migratingDb.close);
 
-    expect(migratingDb.schemaVersion, 10);
+    expect(migratingDb.schemaVersion, 11);
     final products = await migratingDb.select(migratingDb.products).get();
     final ledger = await migratingDb.select(migratingDb.migrationLedger).get();
 
@@ -26,8 +26,8 @@ void main() {
     expect(products.single.exactIdentityKey, contains('|v3|'));
     expect(products.single.displayName, 'arroz branco');
     expect(ledger.last.fromVersion, 1);
-    expect(ledger.last.toVersion, 10);
-    expect(ledger.last.migrationId, 'v9-to-v10-transport-observability');
+    expect(ledger.last.toVersion, 11);
+    expect(ledger.last.migrationId, 'v10-to-v11-sync-diagnostic-events');
     expect(
       await migratingDb.select(migratingDb.installationMetadata).get(),
       isEmpty,
@@ -52,12 +52,12 @@ void main() {
   });
 
   test(
-    'fresh v10 database creates local, recovery, hosted auth and attempt tables',
+    'fresh v11 database creates local, recovery, hosted auth and attempt tables',
     () async {
       final db = LocalDatabase.memory();
       addTearDown(db.close);
 
-      expect(db.schemaVersion, 10);
+      expect(db.schemaVersion, 11);
       expect(await db.select(db.people).get(), isEmpty);
       expect(await db.select(db.paymentMethods).get(), isEmpty);
       expect(await db.select(db.accountPreferences).get(), isEmpty);
@@ -70,7 +70,7 @@ void main() {
     },
   );
 
-  test('migrates file-backed v2 database to v10 and reopens', () async {
+  test('migrates file-backed v2 database to v11 and reopens', () async {
     final temp = await Directory.systemTemp.createTemp('markei_migration_v2_');
     addTearDown(() => temp.delete(recursive: true));
     final file = File('${temp.path}/markei.sqlite');
@@ -86,7 +86,7 @@ void main() {
     expect(products.single.normalizationVersion, 3);
     expect(products.single.exactIdentityKey, contains('|v3|'));
     expect(items.single.packageCount, 1);
-    expect(ledger.last.migrationId, 'v9-to-v10-transport-observability');
+    expect(ledger.last.migrationId, 'v10-to-v11-sync-diagnostic-events');
     expect(
       await migratingDb.select(migratingDb.installationMetadata).get(),
       hasLength(1),
@@ -137,7 +137,7 @@ void main() {
       hasLength(1),
     );
     final ledger = await migratingDb.select(migratingDb.migrationLedger).get();
-    expect(ledger.last.migrationId, 'v9-to-v10-transport-observability');
+    expect(ledger.last.migrationId, 'v10-to-v11-sync-diagnostic-events');
     await migratingDb.close();
 
     final reopened = LocalDatabase.file(file);
@@ -185,7 +185,7 @@ void main() {
   });
 
   test(
-    'reopening an already migrated v10 database does not rewrite rows',
+    'reopening an already migrated v11 database does not rewrite rows',
     () async {
       final temp = await Directory.systemTemp.createTemp(
         'markei_migration_v8_idempotent_',
@@ -218,7 +218,7 @@ void main() {
     },
   );
 
-  test('migrates v8 database to v10 attempt ledger without reset', () async {
+  test('migrates v8 database to v11 attempt ledger without reset', () async {
     final temp = await Directory.systemTemp.createTemp(
       'markei_migration_v8_to_v9_',
     );
@@ -229,7 +229,7 @@ void main() {
       NativeDatabase.createInBackground(file, setup: _createV8Database),
     );
 
-    expect(migratingDb.schemaVersion, 10);
+    expect(migratingDb.schemaVersion, 11);
     expect(await migratingDb.select(migratingDb.syncAttempts).get(), isEmpty);
     expect(await migratingDb.select(migratingDb.pendingEvents).get(), isEmpty);
     expect(
@@ -238,8 +238,8 @@ void main() {
     );
     final ledger = await migratingDb.select(migratingDb.migrationLedger).get();
     expect(ledger.last.fromVersion, 8);
-    expect(ledger.last.toVersion, 10);
-    expect(ledger.last.migrationId, 'v9-to-v10-transport-observability');
+    expect(ledger.last.toVersion, 11);
+    expect(ledger.last.migrationId, 'v10-to-v11-sync-diagnostic-events');
     await migratingDb.close();
 
     final reopened = LocalDatabase.file(file);
@@ -249,7 +249,7 @@ void main() {
   });
 
   test(
-    'migrates v9 attempts to v10 observability columns without reset',
+    'migrates v9 attempts to v11 observability columns without reset',
     () async {
       final temp = await Directory.systemTemp.createTemp(
         'markei_migration_v9_to_v10_',
@@ -261,7 +261,7 @@ void main() {
         NativeDatabase.createInBackground(file, setup: _createV9Database),
       );
 
-      expect(migratingDb.schemaVersion, 10);
+      expect(migratingDb.schemaVersion, 11);
       final attempts = await migratingDb.select(migratingDb.syncAttempts).get();
       expect(attempts, hasLength(1));
       expect(attempts.single.phase, 'transport-or-closure');
@@ -274,8 +274,8 @@ void main() {
           .select(migratingDb.migrationLedger)
           .get();
       expect(ledger.last.fromVersion, 9);
-      expect(ledger.last.toVersion, 10);
-      expect(ledger.last.migrationId, 'v9-to-v10-transport-observability');
+      expect(ledger.last.toVersion, 11);
+      expect(ledger.last.migrationId, 'v10-to-v11-sync-diagnostic-events');
       await migratingDb.close();
 
       final reopened = LocalDatabase.file(file);

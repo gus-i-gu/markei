@@ -36,6 +36,12 @@ final class SyncBatchPreflightException implements Exception {
   final SyncResult result;
 }
 
+final class SyncPersistenceInvariantException implements Exception {
+  const SyncPersistenceInvariantException(this.result);
+
+  final SyncResult result;
+}
+
 final class DownloadedEvent {
   const DownloadedEvent({required this.event, required this.serverCursor});
 

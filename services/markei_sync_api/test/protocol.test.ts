@@ -28,10 +28,11 @@ function submissionEvent(sequence: number) {
 
 function submissionBody() {
   const events = [submissionEvent(1), submissionEvent(2)];
+  const submissionId = "44444444-4444-4444-8444-444444444444";
   return {
-    submissionId: "44444444-4444-4444-8444-444444444444",
+    submissionId,
     deviceId,
-    requestHash: canonicalHash({ events }),
+    requestHash: canonicalHash({ deviceId, events, submissionId }),
     events,
   };
 }
@@ -76,6 +77,32 @@ function databaseThatThrowsDuringSubmission() {
     release: () => undefined,
   } as unknown as PoolClient;
   return {
+    pool: {
+      connect: async () => client,
+    } as never,
+  };
+}
+
+function databaseWithLaterMemberGap() {
+  const queries: string[] = [];
+  const client = {
+    query: async (sql: string) => {
+      queries.push(sql);
+      if (sql.startsWith("select request_hash")) {
+        return { rows: [], rowCount: 0 };
+      }
+      if (sql.startsWith("select next_expected_sequence")) {
+        return { rows: [{ next_expected_sequence: 1 }], rowCount: 1 };
+      }
+      if (sql.startsWith("select content_hash")) {
+        return { rows: [], rowCount: 0 };
+      }
+      return { rows: [], rowCount: 0 };
+    },
+    release: () => undefined,
+  } as unknown as PoolClient;
+  return {
+    queries,
     pool: {
       connect: async () => client,
     } as never,
@@ -305,7 +332,11 @@ test("protected submission fails closed when account cursor state is missing", a
   assert.equal(response.statusCode, 503);
   assert.deepEqual(response.json(), {
     code: "service-unavailable",
+    diagnosticCode: "MKS-UPL-012",
     operation: "upload-submission",
+    phase: "upload-submission",
+    routeClass: "transaction-scoped-operation",
+    providerTransactionOutcome: "not-started-or-rolled-back",
     outcome: "not-applied",
     retryable: false,
     safeAction: "stop and preserve evidence",
@@ -338,6 +369,57 @@ test("protected submission fails closed when account cursor state is missing", a
   );
 });
 
+test("later-member upload validation failure creates no provider writes", async () => {
+  const first = submissionEvent(1);
+  const later = submissionEvent(99);
+  const submissionId = "44444444-4444-4444-8444-444444444445";
+  const payload = {
+    submissionId,
+    deviceId,
+    requestHash: canonicalHash({
+      deviceId,
+      events: [first, later],
+      submissionId,
+    }),
+    events: [first, later],
+  };
+  const database = databaseWithLaterMemberGap();
+  const app = buildApp({
+    authorization: {
+      kind: "fixture",
+      verifier: new FixtureAuthVerifier({ accountId, deviceId }),
+    },
+    database,
+  });
+
+  const response = await app.inject({
+    method: "POST",
+    url: "/v1/sync/submissions",
+    payload,
+  });
+
+  assert.equal(response.statusCode, 400);
+  assert.equal(response.json().code, "sequence-gap");
+  assert.equal(
+    database.queries.some((sql) => sql.startsWith("insert into sync_events")),
+    false,
+  );
+  assert.equal(
+    database.queries.some((sql) => sql.startsWith("update devices")),
+    false,
+  );
+  assert.equal(
+    database.queries.some((sql) =>
+      sql.startsWith("update account_cursor_state"),
+    ),
+    false,
+  );
+  assert.equal(
+    database.queries.some((sql) => sql.startsWith("insert into submissions")),
+    false,
+  );
+});
+
 test("unexpected protected submission failures do not log successful request-failed status", async () => {
   const events: LifecycleLogEvent[] = [];
   const app = buildApp({
@@ -357,7 +439,19 @@ test("unexpected protected submission failures do not log successful request-fai
   });
 
   assert.equal(response.statusCode, 500);
-  assert.equal(response.json().code, "service-unavailable");
+  assert.deepEqual(response.json(), {
+    code: "service-unavailable",
+    diagnosticCode: "MKS-API-014",
+    operation: "server",
+    phase: "unexpected-terminal",
+    routeClass: "/v1/sync/submissions",
+    providerTransactionOutcome: "unknown",
+    sanitizedExceptionClass: "Error",
+    outcome: "unknown",
+    retryable: false,
+    safeAction: "preserve evidence and inspect diagnostics",
+    correlationId: "submission-500-lifecycle",
+  });
   const failed = events.filter((event) => event.event === "request-failed");
   assert.equal(failed.length, 1);
   assert.notEqual(failed[0].status, 200);

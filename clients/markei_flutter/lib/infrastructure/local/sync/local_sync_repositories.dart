@@ -211,7 +211,14 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
                 ))
                 .getSingleOrNull();
         if (submission == null) {
-          return;
+          throw const SyncPersistenceInvariantException(
+            SyncResult(
+              code: SyncStatusCode.localBatchInvalid,
+              outcome: SyncOutcome.unknown,
+              retryable: false,
+              protocolCode: 'local-result-persistence-miss',
+            ),
+          );
         }
       }
       final state = switch (result.code) {
@@ -415,6 +422,12 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
         states.any((row) => row.state == 'accepted')) {
       return null;
     }
+    final memberStates = states.map((row) => row.state).toSet();
+    final allPending =
+        memberStates.length == 1 && memberStates.single == 'pending';
+    final allFailed =
+        memberStates.length == 1 && memberStates.single == 'failed';
+    if (!allPending && !allFailed) return null;
     final activeMembers =
         await (_db.select(_db.syncSubmissionEvents).join([
               innerJoin(
@@ -434,7 +447,7 @@ final class DriftSyncOutboxRepository implements SyncOutboxRepository {
     return _RecoverableFailedSubmission(
       submission: submission,
       canonicalRows: canonicalRows,
-      alreadyPending: states.any((row) => row.state == 'pending'),
+      alreadyPending: allPending,
     );
   }
 

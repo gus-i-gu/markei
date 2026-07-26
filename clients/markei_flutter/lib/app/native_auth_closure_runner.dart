@@ -1,5 +1,10 @@
 // ignore_for_file: prefer_initializing_formals
 
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
+import 'package:uuid/uuid.dart';
+
 import '../application/hosted_auth_ports.dart';
 import '../application/closure_diagnostics.dart';
 import '../application/hosted_enrollment_coordinator.dart';
@@ -24,7 +29,8 @@ final class NativeAuthClosureRunner {
        _syncAttemptRecorder = syncAttemptRecorder,
        _hostedSyncCoordinator = hostedSyncCoordinator,
        _hostedConnectionCheck = hostedConnectionCheck,
-       _unavailable = false;
+       _unavailable = false,
+       _uuid = const Uuid();
 
   const NativeAuthClosureRunner.unavailable()
     : _authenticationSession = null,
@@ -35,7 +41,8 @@ final class NativeAuthClosureRunner {
       _syncAttemptRecorder = null,
       _hostedSyncCoordinator = null,
       _hostedConnectionCheck = null,
-      _unavailable = true;
+      _unavailable = true,
+      _uuid = null;
 
   final ExternalAuthenticationSession? _authenticationSession;
   final HostedEnrollmentCoordinator? _enrollmentCoordinator;
@@ -46,6 +53,7 @@ final class NativeAuthClosureRunner {
   final HostedSyncCoordinator? _hostedSyncCoordinator;
   final HostedConnectionCheckPort? _hostedConnectionCheck;
   final bool _unavailable;
+  final Uuid? _uuid;
 
   Future<NativeClosureStatus> status() async {
     if (_unavailable) {
@@ -171,12 +179,152 @@ final class NativeAuthClosureRunner {
     );
   }
 
+  Future<NativeClosureFailedInspection>
+  inspectFailedNotAppliedRecovery() async {
+    if (_unavailable) {
+      return const NativeClosureFailedInspection(
+        state: 'configuration-missing',
+        diagnosticCode: 'MKS-CFG-001',
+        operationFingerprint: 'unavailable',
+        inspection: null,
+      );
+    }
+    final operationFingerprint = _operationFingerprint();
+    final recorder = _syncAttemptRecorder!;
+    final attemptId = await recorder.beginDiagnosticAttempt(
+      operationKind: 'failed-not-applied-inspection',
+      latestStage: 'failed-recovery-preflight',
+      resultCode: 'failed-not-applied-inspection-started',
+      outcomeClass: 'in-progress',
+      correlationFingerprint: operationFingerprint,
+    );
+    try {
+      final auth = await _authenticationSession!.currentState();
+      final inspection = await _diagnosticsQuery!
+          .inspectFailedNotAppliedRecovery(
+            authenticationState: _stateName(auth),
+            operationFingerprint: operationFingerprint,
+          );
+      await recorder.recordDiagnosticEvent(
+        SyncDiagnosticEnvelope(
+          attemptId: attemptId,
+          ordinal: 1,
+          code: inspection.diagnosticCode,
+          nativeCode: inspection.state,
+          severity: inspection.eligible ? 'INFO' : 'ERROR',
+          outcome: inspection.eligible ? 'not-applied' : 'blocked',
+          operationKind: 'failed-not-applied-inspection',
+          phase: 'failed-recovery-preflight',
+          operationFingerprint: operationFingerprint,
+          correlationFingerprint: operationFingerprint,
+          localMutationState: 'none',
+          providerContactState: 'not-started',
+          providerTransactionState: 'not-started',
+          trustedResponseState: 'not-received',
+          queueScope: 'current-device',
+          pendingCount: inspection.queueCounts.pending,
+          uploadingCount: inspection.queueCounts.uploading,
+          failedCount: inspection.queueCounts.failed,
+          unknownCount: inspection.queueCounts.unknown,
+          memberCount: inspection.memberCount,
+          firstDeviceSequence: inspection.firstDeviceSequence,
+          lastDeviceSequence: inspection.lastDeviceSequence,
+          nextDeviceSequence: inspection.nextDeviceSequence,
+          httpStatus: null,
+          responseHeadersReceived: false,
+          safeAction: inspection.eligible
+              ? 'hold for Gate 12.7 reconciliation; do not execute recovery'
+              : 'preserve evidence and inspect diagnostics',
+          retryable: false,
+          sanitizedExceptionClass: null,
+          serverSqlstateClass: null,
+        ),
+      );
+      await recorder.completeDiagnosticAttempt(
+        attemptId,
+        operationKind: 'failed-not-applied-inspection',
+        latestStage: 'failed-recovery-preflight',
+        resultCode: inspection.state,
+        outcomeClass: inspection.eligible ? 'completed' : 'blocked',
+        recoveryCode: inspection.eligible
+            ? 'gate-12-7-held-for-reconciliation'
+            : 'review-local-sync-state-before-retry',
+        correlationFingerprint: operationFingerprint,
+        elapsedBand: 'local-only',
+        responseHeadersReceived: false,
+      );
+      return NativeClosureFailedInspection(
+        state: inspection.state,
+        diagnosticCode: inspection.diagnosticCode,
+        operationFingerprint: operationFingerprint,
+        inspection: inspection,
+      );
+    } on Object catch (error) {
+      await recorder.recordDiagnosticEvent(
+        SyncDiagnosticEnvelope(
+          attemptId: attemptId,
+          ordinal: 1,
+          code: 'MKS-UI-006',
+          nativeCode: 'closure-runner-exception',
+          severity: 'ERROR',
+          outcome: 'unknown',
+          operationKind: 'failed-not-applied-inspection',
+          phase: 'presentation',
+          operationFingerprint: operationFingerprint,
+          correlationFingerprint: operationFingerprint,
+          localMutationState: 'none',
+          providerContactState: 'not-started',
+          providerTransactionState: 'not-started',
+          trustedResponseState: 'not-received',
+          queueScope: 'current-device',
+          pendingCount: null,
+          uploadingCount: null,
+          failedCount: null,
+          unknownCount: null,
+          memberCount: null,
+          firstDeviceSequence: null,
+          lastDeviceSequence: null,
+          nextDeviceSequence: null,
+          httpStatus: null,
+          responseHeadersReceived: false,
+          safeAction: 'preserve evidence and inspect diagnostics',
+          retryable: false,
+          sanitizedExceptionClass: error.runtimeType.toString(),
+          serverSqlstateClass: null,
+        ),
+      );
+      await recorder.completeDiagnosticAttempt(
+        attemptId,
+        operationKind: 'failed-not-applied-inspection',
+        latestStage: 'presentation',
+        resultCode: 'closure-runner-exception',
+        outcomeClass: 'unknown',
+        recoveryCode: 'local-exception-redacted',
+        correlationFingerprint: operationFingerprint,
+        elapsedBand: 'local-only',
+        responseHeadersReceived: false,
+      );
+      return NativeClosureFailedInspection(
+        state: 'closure-runner-exception',
+        diagnosticCode: 'MKS-UI-006',
+        operationFingerprint: operationFingerprint,
+        inspection: null,
+      );
+    }
+  }
+
   Future<NativeClosureStatus> retryUnresolvedSubmission() async {
     final preflight = await unknownRetryPreflight();
     if (!preflight.eligible) {
       return NativeClosureStatus(preflight.state);
     }
     return hostedSyncProbe();
+  }
+
+  String _operationFingerprint() {
+    final seed =
+        '${DateTime.now().toUtc().microsecondsSinceEpoch}:${_uuid!.v4()}';
+    return sha256.convert(utf8.encode(seed)).toString().substring(0, 12);
   }
 
   Future<NativeClosureStatus> logout() async {
@@ -256,4 +404,18 @@ final class NativeClosureStatus {
   const NativeClosureStatus(this.state);
 
   final String state;
+}
+
+final class NativeClosureFailedInspection {
+  const NativeClosureFailedInspection({
+    required this.state,
+    required this.diagnosticCode,
+    required this.operationFingerprint,
+    required this.inspection,
+  });
+
+  final String state;
+  final String diagnosticCode;
+  final String operationFingerprint;
+  final FailedNotAppliedRecoveryInspection? inspection;
 }

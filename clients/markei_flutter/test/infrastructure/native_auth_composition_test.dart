@@ -974,6 +974,28 @@ final class _FakeClosureDiagnostics
   Future<void> clearAttemptHistory() async {}
 
   @override
+  Future<int> recordDiagnosticEvent(SyncDiagnosticEnvelope diagnostic) async {
+    return diagnostic.ordinal;
+  }
+
+  @override
+  Future<FailedNotAppliedRecoveryInspection> inspectFailedNotAppliedRecovery({
+    required String authenticationState,
+    required String operationFingerprint,
+  }) async {
+    return const FailedNotAppliedRecoveryInspection.blocked(
+      diagnosticCode: 'MKS-REC-012',
+      state: 'failed-not-applied-no-candidate',
+      queueCounts: ClosureQueueCounts(
+        pending: 0,
+        uploading: 0,
+        failed: 0,
+        unknown: 0,
+      ),
+    );
+  }
+
+  @override
   Future<UnknownSubmissionRetryPreflight> unknownSubmissionRetryPreflight({
     required String authenticationState,
   }) async {

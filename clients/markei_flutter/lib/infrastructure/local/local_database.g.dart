@@ -10197,6 +10197,1849 @@ class SyncAttemptsCompanion extends UpdateCompanion<SyncAttempt> {
   }
 }
 
+class $SyncDiagnosticEventsTable extends SyncDiagnosticEvents
+    with TableInfo<$SyncDiagnosticEventsTable, SyncDiagnosticEvent> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncDiagnosticEventsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _attemptIdMeta = const VerificationMeta(
+    'attemptId',
+  );
+  @override
+  late final GeneratedColumn<int> attemptId = GeneratedColumn<int>(
+    'attempt_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES sync_attempts (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _ordinalMeta = const VerificationMeta(
+    'ordinal',
+  );
+  @override
+  late final GeneratedColumn<int> ordinal = GeneratedColumn<int>(
+    'ordinal',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<String> code = GeneratedColumn<String>(
+    'code',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 32,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nativeCodeMeta = const VerificationMeta(
+    'nativeCode',
+  );
+  @override
+  late final GeneratedColumn<String> nativeCode = GeneratedColumn<String>(
+    'native_code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _severityMeta = const VerificationMeta(
+    'severity',
+  );
+  @override
+  late final GeneratedColumn<String> severity = GeneratedColumn<String>(
+    'severity',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 16,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _outcomeMeta = const VerificationMeta(
+    'outcome',
+  );
+  @override
+  late final GeneratedColumn<String> outcome = GeneratedColumn<String>(
+    'outcome',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 32,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _operationKindMeta = const VerificationMeta(
+    'operationKind',
+  );
+  @override
+  late final GeneratedColumn<String> operationKind = GeneratedColumn<String>(
+    'operation_kind',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 64,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _phaseMeta = const VerificationMeta('phase');
+  @override
+  late final GeneratedColumn<String> phase = GeneratedColumn<String>(
+    'phase',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 64,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _operationFingerprintMeta =
+      const VerificationMeta('operationFingerprint');
+  @override
+  late final GeneratedColumn<String> operationFingerprint =
+      GeneratedColumn<String>(
+        'operation_fingerprint',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _correlationFingerprintMeta =
+      const VerificationMeta('correlationFingerprint');
+  @override
+  late final GeneratedColumn<String> correlationFingerprint =
+      GeneratedColumn<String>(
+        'correlation_fingerprint',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _localMutationStateMeta =
+      const VerificationMeta('localMutationState');
+  @override
+  late final GeneratedColumn<String> localMutationState =
+      GeneratedColumn<String>(
+        'local_mutation_state',
+        aliasedName,
+        false,
+        additionalChecks: GeneratedColumn.checkTextLength(
+          minTextLength: 1,
+          maxTextLength: 64,
+        ),
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _providerContactStateMeta =
+      const VerificationMeta('providerContactState');
+  @override
+  late final GeneratedColumn<String> providerContactState =
+      GeneratedColumn<String>(
+        'provider_contact_state',
+        aliasedName,
+        false,
+        additionalChecks: GeneratedColumn.checkTextLength(
+          minTextLength: 1,
+          maxTextLength: 64,
+        ),
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _providerTransactionStateMeta =
+      const VerificationMeta('providerTransactionState');
+  @override
+  late final GeneratedColumn<String> providerTransactionState =
+      GeneratedColumn<String>(
+        'provider_transaction_state',
+        aliasedName,
+        false,
+        additionalChecks: GeneratedColumn.checkTextLength(
+          minTextLength: 1,
+          maxTextLength: 64,
+        ),
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _trustedResponseStateMeta =
+      const VerificationMeta('trustedResponseState');
+  @override
+  late final GeneratedColumn<String> trustedResponseState =
+      GeneratedColumn<String>(
+        'trusted_response_state',
+        aliasedName,
+        false,
+        additionalChecks: GeneratedColumn.checkTextLength(
+          minTextLength: 1,
+          maxTextLength: 64,
+        ),
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _queueScopeMeta = const VerificationMeta(
+    'queueScope',
+  );
+  @override
+  late final GeneratedColumn<String> queueScope = GeneratedColumn<String>(
+    'queue_scope',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pendingCountMeta = const VerificationMeta(
+    'pendingCount',
+  );
+  @override
+  late final GeneratedColumn<int> pendingCount = GeneratedColumn<int>(
+    'pending_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _uploadingCountMeta = const VerificationMeta(
+    'uploadingCount',
+  );
+  @override
+  late final GeneratedColumn<int> uploadingCount = GeneratedColumn<int>(
+    'uploading_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _failedCountMeta = const VerificationMeta(
+    'failedCount',
+  );
+  @override
+  late final GeneratedColumn<int> failedCount = GeneratedColumn<int>(
+    'failed_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _unknownCountMeta = const VerificationMeta(
+    'unknownCount',
+  );
+  @override
+  late final GeneratedColumn<int> unknownCount = GeneratedColumn<int>(
+    'unknown_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _memberCountMeta = const VerificationMeta(
+    'memberCount',
+  );
+  @override
+  late final GeneratedColumn<int> memberCount = GeneratedColumn<int>(
+    'member_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _firstDeviceSequenceMeta =
+      const VerificationMeta('firstDeviceSequence');
+  @override
+  late final GeneratedColumn<int> firstDeviceSequence = GeneratedColumn<int>(
+    'first_device_sequence',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastDeviceSequenceMeta =
+      const VerificationMeta('lastDeviceSequence');
+  @override
+  late final GeneratedColumn<int> lastDeviceSequence = GeneratedColumn<int>(
+    'last_device_sequence',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nextDeviceSequenceMeta =
+      const VerificationMeta('nextDeviceSequence');
+  @override
+  late final GeneratedColumn<int> nextDeviceSequence = GeneratedColumn<int>(
+    'next_device_sequence',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _httpStatusMeta = const VerificationMeta(
+    'httpStatus',
+  );
+  @override
+  late final GeneratedColumn<int> httpStatus = GeneratedColumn<int>(
+    'http_status',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _responseHeadersReceivedMeta =
+      const VerificationMeta('responseHeadersReceived');
+  @override
+  late final GeneratedColumn<bool> responseHeadersReceived =
+      GeneratedColumn<bool>(
+        'response_headers_received',
+        aliasedName,
+        false,
+        type: DriftSqlType.bool,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("response_headers_received" IN (0, 1))',
+        ),
+        defaultValue: const Constant(false),
+      );
+  static const VerificationMeta _safeActionMeta = const VerificationMeta(
+    'safeAction',
+  );
+  @override
+  late final GeneratedColumn<String> safeAction = GeneratedColumn<String>(
+    'safe_action',
+    aliasedName,
+    false,
+    additionalChecks: GeneratedColumn.checkTextLength(
+      minTextLength: 1,
+      maxTextLength: 160,
+    ),
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _retryableMeta = const VerificationMeta(
+    'retryable',
+  );
+  @override
+  late final GeneratedColumn<bool> retryable = GeneratedColumn<bool>(
+    'retryable',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("retryable" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _sanitizedExceptionClassMeta =
+      const VerificationMeta('sanitizedExceptionClass');
+  @override
+  late final GeneratedColumn<String> sanitizedExceptionClass =
+      GeneratedColumn<String>(
+        'sanitized_exception_class',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _serverSqlstateClassMeta =
+      const VerificationMeta('serverSqlstateClass');
+  @override
+  late final GeneratedColumn<String> serverSqlstateClass =
+      GeneratedColumn<String>(
+        'server_sqlstate_class',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _recordedAtMeta = const VerificationMeta(
+    'recordedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> recordedAt = GeneratedColumn<DateTime>(
+    'recorded_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    attemptId,
+    ordinal,
+    code,
+    nativeCode,
+    severity,
+    outcome,
+    operationKind,
+    phase,
+    operationFingerprint,
+    correlationFingerprint,
+    localMutationState,
+    providerContactState,
+    providerTransactionState,
+    trustedResponseState,
+    queueScope,
+    pendingCount,
+    uploadingCount,
+    failedCount,
+    unknownCount,
+    memberCount,
+    firstDeviceSequence,
+    lastDeviceSequence,
+    nextDeviceSequence,
+    httpStatus,
+    responseHeadersReceived,
+    safeAction,
+    retryable,
+    sanitizedExceptionClass,
+    serverSqlstateClass,
+    recordedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_diagnostic_events';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncDiagnosticEvent> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('attempt_id')) {
+      context.handle(
+        _attemptIdMeta,
+        attemptId.isAcceptableOrUnknown(data['attempt_id']!, _attemptIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_attemptIdMeta);
+    }
+    if (data.containsKey('ordinal')) {
+      context.handle(
+        _ordinalMeta,
+        ordinal.isAcceptableOrUnknown(data['ordinal']!, _ordinalMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ordinalMeta);
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+        _codeMeta,
+        code.isAcceptableOrUnknown(data['code']!, _codeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_codeMeta);
+    }
+    if (data.containsKey('native_code')) {
+      context.handle(
+        _nativeCodeMeta,
+        nativeCode.isAcceptableOrUnknown(data['native_code']!, _nativeCodeMeta),
+      );
+    }
+    if (data.containsKey('severity')) {
+      context.handle(
+        _severityMeta,
+        severity.isAcceptableOrUnknown(data['severity']!, _severityMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_severityMeta);
+    }
+    if (data.containsKey('outcome')) {
+      context.handle(
+        _outcomeMeta,
+        outcome.isAcceptableOrUnknown(data['outcome']!, _outcomeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_outcomeMeta);
+    }
+    if (data.containsKey('operation_kind')) {
+      context.handle(
+        _operationKindMeta,
+        operationKind.isAcceptableOrUnknown(
+          data['operation_kind']!,
+          _operationKindMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_operationKindMeta);
+    }
+    if (data.containsKey('phase')) {
+      context.handle(
+        _phaseMeta,
+        phase.isAcceptableOrUnknown(data['phase']!, _phaseMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_phaseMeta);
+    }
+    if (data.containsKey('operation_fingerprint')) {
+      context.handle(
+        _operationFingerprintMeta,
+        operationFingerprint.isAcceptableOrUnknown(
+          data['operation_fingerprint']!,
+          _operationFingerprintMeta,
+        ),
+      );
+    }
+    if (data.containsKey('correlation_fingerprint')) {
+      context.handle(
+        _correlationFingerprintMeta,
+        correlationFingerprint.isAcceptableOrUnknown(
+          data['correlation_fingerprint']!,
+          _correlationFingerprintMeta,
+        ),
+      );
+    }
+    if (data.containsKey('local_mutation_state')) {
+      context.handle(
+        _localMutationStateMeta,
+        localMutationState.isAcceptableOrUnknown(
+          data['local_mutation_state']!,
+          _localMutationStateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_localMutationStateMeta);
+    }
+    if (data.containsKey('provider_contact_state')) {
+      context.handle(
+        _providerContactStateMeta,
+        providerContactState.isAcceptableOrUnknown(
+          data['provider_contact_state']!,
+          _providerContactStateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_providerContactStateMeta);
+    }
+    if (data.containsKey('provider_transaction_state')) {
+      context.handle(
+        _providerTransactionStateMeta,
+        providerTransactionState.isAcceptableOrUnknown(
+          data['provider_transaction_state']!,
+          _providerTransactionStateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_providerTransactionStateMeta);
+    }
+    if (data.containsKey('trusted_response_state')) {
+      context.handle(
+        _trustedResponseStateMeta,
+        trustedResponseState.isAcceptableOrUnknown(
+          data['trusted_response_state']!,
+          _trustedResponseStateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_trustedResponseStateMeta);
+    }
+    if (data.containsKey('queue_scope')) {
+      context.handle(
+        _queueScopeMeta,
+        queueScope.isAcceptableOrUnknown(data['queue_scope']!, _queueScopeMeta),
+      );
+    }
+    if (data.containsKey('pending_count')) {
+      context.handle(
+        _pendingCountMeta,
+        pendingCount.isAcceptableOrUnknown(
+          data['pending_count']!,
+          _pendingCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('uploading_count')) {
+      context.handle(
+        _uploadingCountMeta,
+        uploadingCount.isAcceptableOrUnknown(
+          data['uploading_count']!,
+          _uploadingCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('failed_count')) {
+      context.handle(
+        _failedCountMeta,
+        failedCount.isAcceptableOrUnknown(
+          data['failed_count']!,
+          _failedCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('unknown_count')) {
+      context.handle(
+        _unknownCountMeta,
+        unknownCount.isAcceptableOrUnknown(
+          data['unknown_count']!,
+          _unknownCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('member_count')) {
+      context.handle(
+        _memberCountMeta,
+        memberCount.isAcceptableOrUnknown(
+          data['member_count']!,
+          _memberCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('first_device_sequence')) {
+      context.handle(
+        _firstDeviceSequenceMeta,
+        firstDeviceSequence.isAcceptableOrUnknown(
+          data['first_device_sequence']!,
+          _firstDeviceSequenceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_device_sequence')) {
+      context.handle(
+        _lastDeviceSequenceMeta,
+        lastDeviceSequence.isAcceptableOrUnknown(
+          data['last_device_sequence']!,
+          _lastDeviceSequenceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('next_device_sequence')) {
+      context.handle(
+        _nextDeviceSequenceMeta,
+        nextDeviceSequence.isAcceptableOrUnknown(
+          data['next_device_sequence']!,
+          _nextDeviceSequenceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('http_status')) {
+      context.handle(
+        _httpStatusMeta,
+        httpStatus.isAcceptableOrUnknown(data['http_status']!, _httpStatusMeta),
+      );
+    }
+    if (data.containsKey('response_headers_received')) {
+      context.handle(
+        _responseHeadersReceivedMeta,
+        responseHeadersReceived.isAcceptableOrUnknown(
+          data['response_headers_received']!,
+          _responseHeadersReceivedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('safe_action')) {
+      context.handle(
+        _safeActionMeta,
+        safeAction.isAcceptableOrUnknown(data['safe_action']!, _safeActionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_safeActionMeta);
+    }
+    if (data.containsKey('retryable')) {
+      context.handle(
+        _retryableMeta,
+        retryable.isAcceptableOrUnknown(data['retryable']!, _retryableMeta),
+      );
+    }
+    if (data.containsKey('sanitized_exception_class')) {
+      context.handle(
+        _sanitizedExceptionClassMeta,
+        sanitizedExceptionClass.isAcceptableOrUnknown(
+          data['sanitized_exception_class']!,
+          _sanitizedExceptionClassMeta,
+        ),
+      );
+    }
+    if (data.containsKey('server_sqlstate_class')) {
+      context.handle(
+        _serverSqlstateClassMeta,
+        serverSqlstateClass.isAcceptableOrUnknown(
+          data['server_sqlstate_class']!,
+          _serverSqlstateClassMeta,
+        ),
+      );
+    }
+    if (data.containsKey('recorded_at')) {
+      context.handle(
+        _recordedAtMeta,
+        recordedAt.isAcceptableOrUnknown(data['recorded_at']!, _recordedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recordedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SyncDiagnosticEvent map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncDiagnosticEvent(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      attemptId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}attempt_id'],
+      )!,
+      ordinal: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}ordinal'],
+      )!,
+      code: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}code'],
+      )!,
+      nativeCode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}native_code'],
+      ),
+      severity: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}severity'],
+      )!,
+      outcome: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}outcome'],
+      )!,
+      operationKind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation_kind'],
+      )!,
+      phase: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phase'],
+      )!,
+      operationFingerprint: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation_fingerprint'],
+      ),
+      correlationFingerprint: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}correlation_fingerprint'],
+      ),
+      localMutationState: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_mutation_state'],
+      )!,
+      providerContactState: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}provider_contact_state'],
+      )!,
+      providerTransactionState: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}provider_transaction_state'],
+      )!,
+      trustedResponseState: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}trusted_response_state'],
+      )!,
+      queueScope: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}queue_scope'],
+      ),
+      pendingCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pending_count'],
+      ),
+      uploadingCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}uploading_count'],
+      ),
+      failedCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}failed_count'],
+      ),
+      unknownCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}unknown_count'],
+      ),
+      memberCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}member_count'],
+      ),
+      firstDeviceSequence: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}first_device_sequence'],
+      ),
+      lastDeviceSequence: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_device_sequence'],
+      ),
+      nextDeviceSequence: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}next_device_sequence'],
+      ),
+      httpStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}http_status'],
+      ),
+      responseHeadersReceived: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}response_headers_received'],
+      )!,
+      safeAction: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}safe_action'],
+      )!,
+      retryable: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}retryable'],
+      )!,
+      sanitizedExceptionClass: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sanitized_exception_class'],
+      ),
+      serverSqlstateClass: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}server_sqlstate_class'],
+      ),
+      recordedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}recorded_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncDiagnosticEventsTable createAlias(String alias) {
+    return $SyncDiagnosticEventsTable(attachedDatabase, alias);
+  }
+}
+
+class SyncDiagnosticEvent extends DataClass
+    implements Insertable<SyncDiagnosticEvent> {
+  final int id;
+  final int attemptId;
+  final int ordinal;
+  final String code;
+  final String? nativeCode;
+  final String severity;
+  final String outcome;
+  final String operationKind;
+  final String phase;
+  final String? operationFingerprint;
+  final String? correlationFingerprint;
+  final String localMutationState;
+  final String providerContactState;
+  final String providerTransactionState;
+  final String trustedResponseState;
+  final String? queueScope;
+  final int? pendingCount;
+  final int? uploadingCount;
+  final int? failedCount;
+  final int? unknownCount;
+  final int? memberCount;
+  final int? firstDeviceSequence;
+  final int? lastDeviceSequence;
+  final int? nextDeviceSequence;
+  final int? httpStatus;
+  final bool responseHeadersReceived;
+  final String safeAction;
+  final bool retryable;
+  final String? sanitizedExceptionClass;
+  final String? serverSqlstateClass;
+  final DateTime recordedAt;
+  const SyncDiagnosticEvent({
+    required this.id,
+    required this.attemptId,
+    required this.ordinal,
+    required this.code,
+    this.nativeCode,
+    required this.severity,
+    required this.outcome,
+    required this.operationKind,
+    required this.phase,
+    this.operationFingerprint,
+    this.correlationFingerprint,
+    required this.localMutationState,
+    required this.providerContactState,
+    required this.providerTransactionState,
+    required this.trustedResponseState,
+    this.queueScope,
+    this.pendingCount,
+    this.uploadingCount,
+    this.failedCount,
+    this.unknownCount,
+    this.memberCount,
+    this.firstDeviceSequence,
+    this.lastDeviceSequence,
+    this.nextDeviceSequence,
+    this.httpStatus,
+    required this.responseHeadersReceived,
+    required this.safeAction,
+    required this.retryable,
+    this.sanitizedExceptionClass,
+    this.serverSqlstateClass,
+    required this.recordedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['attempt_id'] = Variable<int>(attemptId);
+    map['ordinal'] = Variable<int>(ordinal);
+    map['code'] = Variable<String>(code);
+    if (!nullToAbsent || nativeCode != null) {
+      map['native_code'] = Variable<String>(nativeCode);
+    }
+    map['severity'] = Variable<String>(severity);
+    map['outcome'] = Variable<String>(outcome);
+    map['operation_kind'] = Variable<String>(operationKind);
+    map['phase'] = Variable<String>(phase);
+    if (!nullToAbsent || operationFingerprint != null) {
+      map['operation_fingerprint'] = Variable<String>(operationFingerprint);
+    }
+    if (!nullToAbsent || correlationFingerprint != null) {
+      map['correlation_fingerprint'] = Variable<String>(correlationFingerprint);
+    }
+    map['local_mutation_state'] = Variable<String>(localMutationState);
+    map['provider_contact_state'] = Variable<String>(providerContactState);
+    map['provider_transaction_state'] = Variable<String>(
+      providerTransactionState,
+    );
+    map['trusted_response_state'] = Variable<String>(trustedResponseState);
+    if (!nullToAbsent || queueScope != null) {
+      map['queue_scope'] = Variable<String>(queueScope);
+    }
+    if (!nullToAbsent || pendingCount != null) {
+      map['pending_count'] = Variable<int>(pendingCount);
+    }
+    if (!nullToAbsent || uploadingCount != null) {
+      map['uploading_count'] = Variable<int>(uploadingCount);
+    }
+    if (!nullToAbsent || failedCount != null) {
+      map['failed_count'] = Variable<int>(failedCount);
+    }
+    if (!nullToAbsent || unknownCount != null) {
+      map['unknown_count'] = Variable<int>(unknownCount);
+    }
+    if (!nullToAbsent || memberCount != null) {
+      map['member_count'] = Variable<int>(memberCount);
+    }
+    if (!nullToAbsent || firstDeviceSequence != null) {
+      map['first_device_sequence'] = Variable<int>(firstDeviceSequence);
+    }
+    if (!nullToAbsent || lastDeviceSequence != null) {
+      map['last_device_sequence'] = Variable<int>(lastDeviceSequence);
+    }
+    if (!nullToAbsent || nextDeviceSequence != null) {
+      map['next_device_sequence'] = Variable<int>(nextDeviceSequence);
+    }
+    if (!nullToAbsent || httpStatus != null) {
+      map['http_status'] = Variable<int>(httpStatus);
+    }
+    map['response_headers_received'] = Variable<bool>(responseHeadersReceived);
+    map['safe_action'] = Variable<String>(safeAction);
+    map['retryable'] = Variable<bool>(retryable);
+    if (!nullToAbsent || sanitizedExceptionClass != null) {
+      map['sanitized_exception_class'] = Variable<String>(
+        sanitizedExceptionClass,
+      );
+    }
+    if (!nullToAbsent || serverSqlstateClass != null) {
+      map['server_sqlstate_class'] = Variable<String>(serverSqlstateClass);
+    }
+    map['recorded_at'] = Variable<DateTime>(recordedAt);
+    return map;
+  }
+
+  SyncDiagnosticEventsCompanion toCompanion(bool nullToAbsent) {
+    return SyncDiagnosticEventsCompanion(
+      id: Value(id),
+      attemptId: Value(attemptId),
+      ordinal: Value(ordinal),
+      code: Value(code),
+      nativeCode: nativeCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nativeCode),
+      severity: Value(severity),
+      outcome: Value(outcome),
+      operationKind: Value(operationKind),
+      phase: Value(phase),
+      operationFingerprint: operationFingerprint == null && nullToAbsent
+          ? const Value.absent()
+          : Value(operationFingerprint),
+      correlationFingerprint: correlationFingerprint == null && nullToAbsent
+          ? const Value.absent()
+          : Value(correlationFingerprint),
+      localMutationState: Value(localMutationState),
+      providerContactState: Value(providerContactState),
+      providerTransactionState: Value(providerTransactionState),
+      trustedResponseState: Value(trustedResponseState),
+      queueScope: queueScope == null && nullToAbsent
+          ? const Value.absent()
+          : Value(queueScope),
+      pendingCount: pendingCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pendingCount),
+      uploadingCount: uploadingCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(uploadingCount),
+      failedCount: failedCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(failedCount),
+      unknownCount: unknownCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(unknownCount),
+      memberCount: memberCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(memberCount),
+      firstDeviceSequence: firstDeviceSequence == null && nullToAbsent
+          ? const Value.absent()
+          : Value(firstDeviceSequence),
+      lastDeviceSequence: lastDeviceSequence == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastDeviceSequence),
+      nextDeviceSequence: nextDeviceSequence == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextDeviceSequence),
+      httpStatus: httpStatus == null && nullToAbsent
+          ? const Value.absent()
+          : Value(httpStatus),
+      responseHeadersReceived: Value(responseHeadersReceived),
+      safeAction: Value(safeAction),
+      retryable: Value(retryable),
+      sanitizedExceptionClass: sanitizedExceptionClass == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sanitizedExceptionClass),
+      serverSqlstateClass: serverSqlstateClass == null && nullToAbsent
+          ? const Value.absent()
+          : Value(serverSqlstateClass),
+      recordedAt: Value(recordedAt),
+    );
+  }
+
+  factory SyncDiagnosticEvent.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncDiagnosticEvent(
+      id: serializer.fromJson<int>(json['id']),
+      attemptId: serializer.fromJson<int>(json['attemptId']),
+      ordinal: serializer.fromJson<int>(json['ordinal']),
+      code: serializer.fromJson<String>(json['code']),
+      nativeCode: serializer.fromJson<String?>(json['nativeCode']),
+      severity: serializer.fromJson<String>(json['severity']),
+      outcome: serializer.fromJson<String>(json['outcome']),
+      operationKind: serializer.fromJson<String>(json['operationKind']),
+      phase: serializer.fromJson<String>(json['phase']),
+      operationFingerprint: serializer.fromJson<String?>(
+        json['operationFingerprint'],
+      ),
+      correlationFingerprint: serializer.fromJson<String?>(
+        json['correlationFingerprint'],
+      ),
+      localMutationState: serializer.fromJson<String>(
+        json['localMutationState'],
+      ),
+      providerContactState: serializer.fromJson<String>(
+        json['providerContactState'],
+      ),
+      providerTransactionState: serializer.fromJson<String>(
+        json['providerTransactionState'],
+      ),
+      trustedResponseState: serializer.fromJson<String>(
+        json['trustedResponseState'],
+      ),
+      queueScope: serializer.fromJson<String?>(json['queueScope']),
+      pendingCount: serializer.fromJson<int?>(json['pendingCount']),
+      uploadingCount: serializer.fromJson<int?>(json['uploadingCount']),
+      failedCount: serializer.fromJson<int?>(json['failedCount']),
+      unknownCount: serializer.fromJson<int?>(json['unknownCount']),
+      memberCount: serializer.fromJson<int?>(json['memberCount']),
+      firstDeviceSequence: serializer.fromJson<int?>(
+        json['firstDeviceSequence'],
+      ),
+      lastDeviceSequence: serializer.fromJson<int?>(json['lastDeviceSequence']),
+      nextDeviceSequence: serializer.fromJson<int?>(json['nextDeviceSequence']),
+      httpStatus: serializer.fromJson<int?>(json['httpStatus']),
+      responseHeadersReceived: serializer.fromJson<bool>(
+        json['responseHeadersReceived'],
+      ),
+      safeAction: serializer.fromJson<String>(json['safeAction']),
+      retryable: serializer.fromJson<bool>(json['retryable']),
+      sanitizedExceptionClass: serializer.fromJson<String?>(
+        json['sanitizedExceptionClass'],
+      ),
+      serverSqlstateClass: serializer.fromJson<String?>(
+        json['serverSqlstateClass'],
+      ),
+      recordedAt: serializer.fromJson<DateTime>(json['recordedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'attemptId': serializer.toJson<int>(attemptId),
+      'ordinal': serializer.toJson<int>(ordinal),
+      'code': serializer.toJson<String>(code),
+      'nativeCode': serializer.toJson<String?>(nativeCode),
+      'severity': serializer.toJson<String>(severity),
+      'outcome': serializer.toJson<String>(outcome),
+      'operationKind': serializer.toJson<String>(operationKind),
+      'phase': serializer.toJson<String>(phase),
+      'operationFingerprint': serializer.toJson<String?>(operationFingerprint),
+      'correlationFingerprint': serializer.toJson<String?>(
+        correlationFingerprint,
+      ),
+      'localMutationState': serializer.toJson<String>(localMutationState),
+      'providerContactState': serializer.toJson<String>(providerContactState),
+      'providerTransactionState': serializer.toJson<String>(
+        providerTransactionState,
+      ),
+      'trustedResponseState': serializer.toJson<String>(trustedResponseState),
+      'queueScope': serializer.toJson<String?>(queueScope),
+      'pendingCount': serializer.toJson<int?>(pendingCount),
+      'uploadingCount': serializer.toJson<int?>(uploadingCount),
+      'failedCount': serializer.toJson<int?>(failedCount),
+      'unknownCount': serializer.toJson<int?>(unknownCount),
+      'memberCount': serializer.toJson<int?>(memberCount),
+      'firstDeviceSequence': serializer.toJson<int?>(firstDeviceSequence),
+      'lastDeviceSequence': serializer.toJson<int?>(lastDeviceSequence),
+      'nextDeviceSequence': serializer.toJson<int?>(nextDeviceSequence),
+      'httpStatus': serializer.toJson<int?>(httpStatus),
+      'responseHeadersReceived': serializer.toJson<bool>(
+        responseHeadersReceived,
+      ),
+      'safeAction': serializer.toJson<String>(safeAction),
+      'retryable': serializer.toJson<bool>(retryable),
+      'sanitizedExceptionClass': serializer.toJson<String?>(
+        sanitizedExceptionClass,
+      ),
+      'serverSqlstateClass': serializer.toJson<String?>(serverSqlstateClass),
+      'recordedAt': serializer.toJson<DateTime>(recordedAt),
+    };
+  }
+
+  SyncDiagnosticEvent copyWith({
+    int? id,
+    int? attemptId,
+    int? ordinal,
+    String? code,
+    Value<String?> nativeCode = const Value.absent(),
+    String? severity,
+    String? outcome,
+    String? operationKind,
+    String? phase,
+    Value<String?> operationFingerprint = const Value.absent(),
+    Value<String?> correlationFingerprint = const Value.absent(),
+    String? localMutationState,
+    String? providerContactState,
+    String? providerTransactionState,
+    String? trustedResponseState,
+    Value<String?> queueScope = const Value.absent(),
+    Value<int?> pendingCount = const Value.absent(),
+    Value<int?> uploadingCount = const Value.absent(),
+    Value<int?> failedCount = const Value.absent(),
+    Value<int?> unknownCount = const Value.absent(),
+    Value<int?> memberCount = const Value.absent(),
+    Value<int?> firstDeviceSequence = const Value.absent(),
+    Value<int?> lastDeviceSequence = const Value.absent(),
+    Value<int?> nextDeviceSequence = const Value.absent(),
+    Value<int?> httpStatus = const Value.absent(),
+    bool? responseHeadersReceived,
+    String? safeAction,
+    bool? retryable,
+    Value<String?> sanitizedExceptionClass = const Value.absent(),
+    Value<String?> serverSqlstateClass = const Value.absent(),
+    DateTime? recordedAt,
+  }) => SyncDiagnosticEvent(
+    id: id ?? this.id,
+    attemptId: attemptId ?? this.attemptId,
+    ordinal: ordinal ?? this.ordinal,
+    code: code ?? this.code,
+    nativeCode: nativeCode.present ? nativeCode.value : this.nativeCode,
+    severity: severity ?? this.severity,
+    outcome: outcome ?? this.outcome,
+    operationKind: operationKind ?? this.operationKind,
+    phase: phase ?? this.phase,
+    operationFingerprint: operationFingerprint.present
+        ? operationFingerprint.value
+        : this.operationFingerprint,
+    correlationFingerprint: correlationFingerprint.present
+        ? correlationFingerprint.value
+        : this.correlationFingerprint,
+    localMutationState: localMutationState ?? this.localMutationState,
+    providerContactState: providerContactState ?? this.providerContactState,
+    providerTransactionState:
+        providerTransactionState ?? this.providerTransactionState,
+    trustedResponseState: trustedResponseState ?? this.trustedResponseState,
+    queueScope: queueScope.present ? queueScope.value : this.queueScope,
+    pendingCount: pendingCount.present ? pendingCount.value : this.pendingCount,
+    uploadingCount: uploadingCount.present
+        ? uploadingCount.value
+        : this.uploadingCount,
+    failedCount: failedCount.present ? failedCount.value : this.failedCount,
+    unknownCount: unknownCount.present ? unknownCount.value : this.unknownCount,
+    memberCount: memberCount.present ? memberCount.value : this.memberCount,
+    firstDeviceSequence: firstDeviceSequence.present
+        ? firstDeviceSequence.value
+        : this.firstDeviceSequence,
+    lastDeviceSequence: lastDeviceSequence.present
+        ? lastDeviceSequence.value
+        : this.lastDeviceSequence,
+    nextDeviceSequence: nextDeviceSequence.present
+        ? nextDeviceSequence.value
+        : this.nextDeviceSequence,
+    httpStatus: httpStatus.present ? httpStatus.value : this.httpStatus,
+    responseHeadersReceived:
+        responseHeadersReceived ?? this.responseHeadersReceived,
+    safeAction: safeAction ?? this.safeAction,
+    retryable: retryable ?? this.retryable,
+    sanitizedExceptionClass: sanitizedExceptionClass.present
+        ? sanitizedExceptionClass.value
+        : this.sanitizedExceptionClass,
+    serverSqlstateClass: serverSqlstateClass.present
+        ? serverSqlstateClass.value
+        : this.serverSqlstateClass,
+    recordedAt: recordedAt ?? this.recordedAt,
+  );
+  SyncDiagnosticEvent copyWithCompanion(SyncDiagnosticEventsCompanion data) {
+    return SyncDiagnosticEvent(
+      id: data.id.present ? data.id.value : this.id,
+      attemptId: data.attemptId.present ? data.attemptId.value : this.attemptId,
+      ordinal: data.ordinal.present ? data.ordinal.value : this.ordinal,
+      code: data.code.present ? data.code.value : this.code,
+      nativeCode: data.nativeCode.present
+          ? data.nativeCode.value
+          : this.nativeCode,
+      severity: data.severity.present ? data.severity.value : this.severity,
+      outcome: data.outcome.present ? data.outcome.value : this.outcome,
+      operationKind: data.operationKind.present
+          ? data.operationKind.value
+          : this.operationKind,
+      phase: data.phase.present ? data.phase.value : this.phase,
+      operationFingerprint: data.operationFingerprint.present
+          ? data.operationFingerprint.value
+          : this.operationFingerprint,
+      correlationFingerprint: data.correlationFingerprint.present
+          ? data.correlationFingerprint.value
+          : this.correlationFingerprint,
+      localMutationState: data.localMutationState.present
+          ? data.localMutationState.value
+          : this.localMutationState,
+      providerContactState: data.providerContactState.present
+          ? data.providerContactState.value
+          : this.providerContactState,
+      providerTransactionState: data.providerTransactionState.present
+          ? data.providerTransactionState.value
+          : this.providerTransactionState,
+      trustedResponseState: data.trustedResponseState.present
+          ? data.trustedResponseState.value
+          : this.trustedResponseState,
+      queueScope: data.queueScope.present
+          ? data.queueScope.value
+          : this.queueScope,
+      pendingCount: data.pendingCount.present
+          ? data.pendingCount.value
+          : this.pendingCount,
+      uploadingCount: data.uploadingCount.present
+          ? data.uploadingCount.value
+          : this.uploadingCount,
+      failedCount: data.failedCount.present
+          ? data.failedCount.value
+          : this.failedCount,
+      unknownCount: data.unknownCount.present
+          ? data.unknownCount.value
+          : this.unknownCount,
+      memberCount: data.memberCount.present
+          ? data.memberCount.value
+          : this.memberCount,
+      firstDeviceSequence: data.firstDeviceSequence.present
+          ? data.firstDeviceSequence.value
+          : this.firstDeviceSequence,
+      lastDeviceSequence: data.lastDeviceSequence.present
+          ? data.lastDeviceSequence.value
+          : this.lastDeviceSequence,
+      nextDeviceSequence: data.nextDeviceSequence.present
+          ? data.nextDeviceSequence.value
+          : this.nextDeviceSequence,
+      httpStatus: data.httpStatus.present
+          ? data.httpStatus.value
+          : this.httpStatus,
+      responseHeadersReceived: data.responseHeadersReceived.present
+          ? data.responseHeadersReceived.value
+          : this.responseHeadersReceived,
+      safeAction: data.safeAction.present
+          ? data.safeAction.value
+          : this.safeAction,
+      retryable: data.retryable.present ? data.retryable.value : this.retryable,
+      sanitizedExceptionClass: data.sanitizedExceptionClass.present
+          ? data.sanitizedExceptionClass.value
+          : this.sanitizedExceptionClass,
+      serverSqlstateClass: data.serverSqlstateClass.present
+          ? data.serverSqlstateClass.value
+          : this.serverSqlstateClass,
+      recordedAt: data.recordedAt.present
+          ? data.recordedAt.value
+          : this.recordedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncDiagnosticEvent(')
+          ..write('id: $id, ')
+          ..write('attemptId: $attemptId, ')
+          ..write('ordinal: $ordinal, ')
+          ..write('code: $code, ')
+          ..write('nativeCode: $nativeCode, ')
+          ..write('severity: $severity, ')
+          ..write('outcome: $outcome, ')
+          ..write('operationKind: $operationKind, ')
+          ..write('phase: $phase, ')
+          ..write('operationFingerprint: $operationFingerprint, ')
+          ..write('correlationFingerprint: $correlationFingerprint, ')
+          ..write('localMutationState: $localMutationState, ')
+          ..write('providerContactState: $providerContactState, ')
+          ..write('providerTransactionState: $providerTransactionState, ')
+          ..write('trustedResponseState: $trustedResponseState, ')
+          ..write('queueScope: $queueScope, ')
+          ..write('pendingCount: $pendingCount, ')
+          ..write('uploadingCount: $uploadingCount, ')
+          ..write('failedCount: $failedCount, ')
+          ..write('unknownCount: $unknownCount, ')
+          ..write('memberCount: $memberCount, ')
+          ..write('firstDeviceSequence: $firstDeviceSequence, ')
+          ..write('lastDeviceSequence: $lastDeviceSequence, ')
+          ..write('nextDeviceSequence: $nextDeviceSequence, ')
+          ..write('httpStatus: $httpStatus, ')
+          ..write('responseHeadersReceived: $responseHeadersReceived, ')
+          ..write('safeAction: $safeAction, ')
+          ..write('retryable: $retryable, ')
+          ..write('sanitizedExceptionClass: $sanitizedExceptionClass, ')
+          ..write('serverSqlstateClass: $serverSqlstateClass, ')
+          ..write('recordedAt: $recordedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hashAll([
+    id,
+    attemptId,
+    ordinal,
+    code,
+    nativeCode,
+    severity,
+    outcome,
+    operationKind,
+    phase,
+    operationFingerprint,
+    correlationFingerprint,
+    localMutationState,
+    providerContactState,
+    providerTransactionState,
+    trustedResponseState,
+    queueScope,
+    pendingCount,
+    uploadingCount,
+    failedCount,
+    unknownCount,
+    memberCount,
+    firstDeviceSequence,
+    lastDeviceSequence,
+    nextDeviceSequence,
+    httpStatus,
+    responseHeadersReceived,
+    safeAction,
+    retryable,
+    sanitizedExceptionClass,
+    serverSqlstateClass,
+    recordedAt,
+  ]);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncDiagnosticEvent &&
+          other.id == this.id &&
+          other.attemptId == this.attemptId &&
+          other.ordinal == this.ordinal &&
+          other.code == this.code &&
+          other.nativeCode == this.nativeCode &&
+          other.severity == this.severity &&
+          other.outcome == this.outcome &&
+          other.operationKind == this.operationKind &&
+          other.phase == this.phase &&
+          other.operationFingerprint == this.operationFingerprint &&
+          other.correlationFingerprint == this.correlationFingerprint &&
+          other.localMutationState == this.localMutationState &&
+          other.providerContactState == this.providerContactState &&
+          other.providerTransactionState == this.providerTransactionState &&
+          other.trustedResponseState == this.trustedResponseState &&
+          other.queueScope == this.queueScope &&
+          other.pendingCount == this.pendingCount &&
+          other.uploadingCount == this.uploadingCount &&
+          other.failedCount == this.failedCount &&
+          other.unknownCount == this.unknownCount &&
+          other.memberCount == this.memberCount &&
+          other.firstDeviceSequence == this.firstDeviceSequence &&
+          other.lastDeviceSequence == this.lastDeviceSequence &&
+          other.nextDeviceSequence == this.nextDeviceSequence &&
+          other.httpStatus == this.httpStatus &&
+          other.responseHeadersReceived == this.responseHeadersReceived &&
+          other.safeAction == this.safeAction &&
+          other.retryable == this.retryable &&
+          other.sanitizedExceptionClass == this.sanitizedExceptionClass &&
+          other.serverSqlstateClass == this.serverSqlstateClass &&
+          other.recordedAt == this.recordedAt);
+}
+
+class SyncDiagnosticEventsCompanion
+    extends UpdateCompanion<SyncDiagnosticEvent> {
+  final Value<int> id;
+  final Value<int> attemptId;
+  final Value<int> ordinal;
+  final Value<String> code;
+  final Value<String?> nativeCode;
+  final Value<String> severity;
+  final Value<String> outcome;
+  final Value<String> operationKind;
+  final Value<String> phase;
+  final Value<String?> operationFingerprint;
+  final Value<String?> correlationFingerprint;
+  final Value<String> localMutationState;
+  final Value<String> providerContactState;
+  final Value<String> providerTransactionState;
+  final Value<String> trustedResponseState;
+  final Value<String?> queueScope;
+  final Value<int?> pendingCount;
+  final Value<int?> uploadingCount;
+  final Value<int?> failedCount;
+  final Value<int?> unknownCount;
+  final Value<int?> memberCount;
+  final Value<int?> firstDeviceSequence;
+  final Value<int?> lastDeviceSequence;
+  final Value<int?> nextDeviceSequence;
+  final Value<int?> httpStatus;
+  final Value<bool> responseHeadersReceived;
+  final Value<String> safeAction;
+  final Value<bool> retryable;
+  final Value<String?> sanitizedExceptionClass;
+  final Value<String?> serverSqlstateClass;
+  final Value<DateTime> recordedAt;
+  const SyncDiagnosticEventsCompanion({
+    this.id = const Value.absent(),
+    this.attemptId = const Value.absent(),
+    this.ordinal = const Value.absent(),
+    this.code = const Value.absent(),
+    this.nativeCode = const Value.absent(),
+    this.severity = const Value.absent(),
+    this.outcome = const Value.absent(),
+    this.operationKind = const Value.absent(),
+    this.phase = const Value.absent(),
+    this.operationFingerprint = const Value.absent(),
+    this.correlationFingerprint = const Value.absent(),
+    this.localMutationState = const Value.absent(),
+    this.providerContactState = const Value.absent(),
+    this.providerTransactionState = const Value.absent(),
+    this.trustedResponseState = const Value.absent(),
+    this.queueScope = const Value.absent(),
+    this.pendingCount = const Value.absent(),
+    this.uploadingCount = const Value.absent(),
+    this.failedCount = const Value.absent(),
+    this.unknownCount = const Value.absent(),
+    this.memberCount = const Value.absent(),
+    this.firstDeviceSequence = const Value.absent(),
+    this.lastDeviceSequence = const Value.absent(),
+    this.nextDeviceSequence = const Value.absent(),
+    this.httpStatus = const Value.absent(),
+    this.responseHeadersReceived = const Value.absent(),
+    this.safeAction = const Value.absent(),
+    this.retryable = const Value.absent(),
+    this.sanitizedExceptionClass = const Value.absent(),
+    this.serverSqlstateClass = const Value.absent(),
+    this.recordedAt = const Value.absent(),
+  });
+  SyncDiagnosticEventsCompanion.insert({
+    this.id = const Value.absent(),
+    required int attemptId,
+    required int ordinal,
+    required String code,
+    this.nativeCode = const Value.absent(),
+    required String severity,
+    required String outcome,
+    required String operationKind,
+    required String phase,
+    this.operationFingerprint = const Value.absent(),
+    this.correlationFingerprint = const Value.absent(),
+    required String localMutationState,
+    required String providerContactState,
+    required String providerTransactionState,
+    required String trustedResponseState,
+    this.queueScope = const Value.absent(),
+    this.pendingCount = const Value.absent(),
+    this.uploadingCount = const Value.absent(),
+    this.failedCount = const Value.absent(),
+    this.unknownCount = const Value.absent(),
+    this.memberCount = const Value.absent(),
+    this.firstDeviceSequence = const Value.absent(),
+    this.lastDeviceSequence = const Value.absent(),
+    this.nextDeviceSequence = const Value.absent(),
+    this.httpStatus = const Value.absent(),
+    this.responseHeadersReceived = const Value.absent(),
+    required String safeAction,
+    this.retryable = const Value.absent(),
+    this.sanitizedExceptionClass = const Value.absent(),
+    this.serverSqlstateClass = const Value.absent(),
+    required DateTime recordedAt,
+  }) : attemptId = Value(attemptId),
+       ordinal = Value(ordinal),
+       code = Value(code),
+       severity = Value(severity),
+       outcome = Value(outcome),
+       operationKind = Value(operationKind),
+       phase = Value(phase),
+       localMutationState = Value(localMutationState),
+       providerContactState = Value(providerContactState),
+       providerTransactionState = Value(providerTransactionState),
+       trustedResponseState = Value(trustedResponseState),
+       safeAction = Value(safeAction),
+       recordedAt = Value(recordedAt);
+  static Insertable<SyncDiagnosticEvent> custom({
+    Expression<int>? id,
+    Expression<int>? attemptId,
+    Expression<int>? ordinal,
+    Expression<String>? code,
+    Expression<String>? nativeCode,
+    Expression<String>? severity,
+    Expression<String>? outcome,
+    Expression<String>? operationKind,
+    Expression<String>? phase,
+    Expression<String>? operationFingerprint,
+    Expression<String>? correlationFingerprint,
+    Expression<String>? localMutationState,
+    Expression<String>? providerContactState,
+    Expression<String>? providerTransactionState,
+    Expression<String>? trustedResponseState,
+    Expression<String>? queueScope,
+    Expression<int>? pendingCount,
+    Expression<int>? uploadingCount,
+    Expression<int>? failedCount,
+    Expression<int>? unknownCount,
+    Expression<int>? memberCount,
+    Expression<int>? firstDeviceSequence,
+    Expression<int>? lastDeviceSequence,
+    Expression<int>? nextDeviceSequence,
+    Expression<int>? httpStatus,
+    Expression<bool>? responseHeadersReceived,
+    Expression<String>? safeAction,
+    Expression<bool>? retryable,
+    Expression<String>? sanitizedExceptionClass,
+    Expression<String>? serverSqlstateClass,
+    Expression<DateTime>? recordedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (attemptId != null) 'attempt_id': attemptId,
+      if (ordinal != null) 'ordinal': ordinal,
+      if (code != null) 'code': code,
+      if (nativeCode != null) 'native_code': nativeCode,
+      if (severity != null) 'severity': severity,
+      if (outcome != null) 'outcome': outcome,
+      if (operationKind != null) 'operation_kind': operationKind,
+      if (phase != null) 'phase': phase,
+      if (operationFingerprint != null)
+        'operation_fingerprint': operationFingerprint,
+      if (correlationFingerprint != null)
+        'correlation_fingerprint': correlationFingerprint,
+      if (localMutationState != null)
+        'local_mutation_state': localMutationState,
+      if (providerContactState != null)
+        'provider_contact_state': providerContactState,
+      if (providerTransactionState != null)
+        'provider_transaction_state': providerTransactionState,
+      if (trustedResponseState != null)
+        'trusted_response_state': trustedResponseState,
+      if (queueScope != null) 'queue_scope': queueScope,
+      if (pendingCount != null) 'pending_count': pendingCount,
+      if (uploadingCount != null) 'uploading_count': uploadingCount,
+      if (failedCount != null) 'failed_count': failedCount,
+      if (unknownCount != null) 'unknown_count': unknownCount,
+      if (memberCount != null) 'member_count': memberCount,
+      if (firstDeviceSequence != null)
+        'first_device_sequence': firstDeviceSequence,
+      if (lastDeviceSequence != null)
+        'last_device_sequence': lastDeviceSequence,
+      if (nextDeviceSequence != null)
+        'next_device_sequence': nextDeviceSequence,
+      if (httpStatus != null) 'http_status': httpStatus,
+      if (responseHeadersReceived != null)
+        'response_headers_received': responseHeadersReceived,
+      if (safeAction != null) 'safe_action': safeAction,
+      if (retryable != null) 'retryable': retryable,
+      if (sanitizedExceptionClass != null)
+        'sanitized_exception_class': sanitizedExceptionClass,
+      if (serverSqlstateClass != null)
+        'server_sqlstate_class': serverSqlstateClass,
+      if (recordedAt != null) 'recorded_at': recordedAt,
+    });
+  }
+
+  SyncDiagnosticEventsCompanion copyWith({
+    Value<int>? id,
+    Value<int>? attemptId,
+    Value<int>? ordinal,
+    Value<String>? code,
+    Value<String?>? nativeCode,
+    Value<String>? severity,
+    Value<String>? outcome,
+    Value<String>? operationKind,
+    Value<String>? phase,
+    Value<String?>? operationFingerprint,
+    Value<String?>? correlationFingerprint,
+    Value<String>? localMutationState,
+    Value<String>? providerContactState,
+    Value<String>? providerTransactionState,
+    Value<String>? trustedResponseState,
+    Value<String?>? queueScope,
+    Value<int?>? pendingCount,
+    Value<int?>? uploadingCount,
+    Value<int?>? failedCount,
+    Value<int?>? unknownCount,
+    Value<int?>? memberCount,
+    Value<int?>? firstDeviceSequence,
+    Value<int?>? lastDeviceSequence,
+    Value<int?>? nextDeviceSequence,
+    Value<int?>? httpStatus,
+    Value<bool>? responseHeadersReceived,
+    Value<String>? safeAction,
+    Value<bool>? retryable,
+    Value<String?>? sanitizedExceptionClass,
+    Value<String?>? serverSqlstateClass,
+    Value<DateTime>? recordedAt,
+  }) {
+    return SyncDiagnosticEventsCompanion(
+      id: id ?? this.id,
+      attemptId: attemptId ?? this.attemptId,
+      ordinal: ordinal ?? this.ordinal,
+      code: code ?? this.code,
+      nativeCode: nativeCode ?? this.nativeCode,
+      severity: severity ?? this.severity,
+      outcome: outcome ?? this.outcome,
+      operationKind: operationKind ?? this.operationKind,
+      phase: phase ?? this.phase,
+      operationFingerprint: operationFingerprint ?? this.operationFingerprint,
+      correlationFingerprint:
+          correlationFingerprint ?? this.correlationFingerprint,
+      localMutationState: localMutationState ?? this.localMutationState,
+      providerContactState: providerContactState ?? this.providerContactState,
+      providerTransactionState:
+          providerTransactionState ?? this.providerTransactionState,
+      trustedResponseState: trustedResponseState ?? this.trustedResponseState,
+      queueScope: queueScope ?? this.queueScope,
+      pendingCount: pendingCount ?? this.pendingCount,
+      uploadingCount: uploadingCount ?? this.uploadingCount,
+      failedCount: failedCount ?? this.failedCount,
+      unknownCount: unknownCount ?? this.unknownCount,
+      memberCount: memberCount ?? this.memberCount,
+      firstDeviceSequence: firstDeviceSequence ?? this.firstDeviceSequence,
+      lastDeviceSequence: lastDeviceSequence ?? this.lastDeviceSequence,
+      nextDeviceSequence: nextDeviceSequence ?? this.nextDeviceSequence,
+      httpStatus: httpStatus ?? this.httpStatus,
+      responseHeadersReceived:
+          responseHeadersReceived ?? this.responseHeadersReceived,
+      safeAction: safeAction ?? this.safeAction,
+      retryable: retryable ?? this.retryable,
+      sanitizedExceptionClass:
+          sanitizedExceptionClass ?? this.sanitizedExceptionClass,
+      serverSqlstateClass: serverSqlstateClass ?? this.serverSqlstateClass,
+      recordedAt: recordedAt ?? this.recordedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (attemptId.present) {
+      map['attempt_id'] = Variable<int>(attemptId.value);
+    }
+    if (ordinal.present) {
+      map['ordinal'] = Variable<int>(ordinal.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (nativeCode.present) {
+      map['native_code'] = Variable<String>(nativeCode.value);
+    }
+    if (severity.present) {
+      map['severity'] = Variable<String>(severity.value);
+    }
+    if (outcome.present) {
+      map['outcome'] = Variable<String>(outcome.value);
+    }
+    if (operationKind.present) {
+      map['operation_kind'] = Variable<String>(operationKind.value);
+    }
+    if (phase.present) {
+      map['phase'] = Variable<String>(phase.value);
+    }
+    if (operationFingerprint.present) {
+      map['operation_fingerprint'] = Variable<String>(
+        operationFingerprint.value,
+      );
+    }
+    if (correlationFingerprint.present) {
+      map['correlation_fingerprint'] = Variable<String>(
+        correlationFingerprint.value,
+      );
+    }
+    if (localMutationState.present) {
+      map['local_mutation_state'] = Variable<String>(localMutationState.value);
+    }
+    if (providerContactState.present) {
+      map['provider_contact_state'] = Variable<String>(
+        providerContactState.value,
+      );
+    }
+    if (providerTransactionState.present) {
+      map['provider_transaction_state'] = Variable<String>(
+        providerTransactionState.value,
+      );
+    }
+    if (trustedResponseState.present) {
+      map['trusted_response_state'] = Variable<String>(
+        trustedResponseState.value,
+      );
+    }
+    if (queueScope.present) {
+      map['queue_scope'] = Variable<String>(queueScope.value);
+    }
+    if (pendingCount.present) {
+      map['pending_count'] = Variable<int>(pendingCount.value);
+    }
+    if (uploadingCount.present) {
+      map['uploading_count'] = Variable<int>(uploadingCount.value);
+    }
+    if (failedCount.present) {
+      map['failed_count'] = Variable<int>(failedCount.value);
+    }
+    if (unknownCount.present) {
+      map['unknown_count'] = Variable<int>(unknownCount.value);
+    }
+    if (memberCount.present) {
+      map['member_count'] = Variable<int>(memberCount.value);
+    }
+    if (firstDeviceSequence.present) {
+      map['first_device_sequence'] = Variable<int>(firstDeviceSequence.value);
+    }
+    if (lastDeviceSequence.present) {
+      map['last_device_sequence'] = Variable<int>(lastDeviceSequence.value);
+    }
+    if (nextDeviceSequence.present) {
+      map['next_device_sequence'] = Variable<int>(nextDeviceSequence.value);
+    }
+    if (httpStatus.present) {
+      map['http_status'] = Variable<int>(httpStatus.value);
+    }
+    if (responseHeadersReceived.present) {
+      map['response_headers_received'] = Variable<bool>(
+        responseHeadersReceived.value,
+      );
+    }
+    if (safeAction.present) {
+      map['safe_action'] = Variable<String>(safeAction.value);
+    }
+    if (retryable.present) {
+      map['retryable'] = Variable<bool>(retryable.value);
+    }
+    if (sanitizedExceptionClass.present) {
+      map['sanitized_exception_class'] = Variable<String>(
+        sanitizedExceptionClass.value,
+      );
+    }
+    if (serverSqlstateClass.present) {
+      map['server_sqlstate_class'] = Variable<String>(
+        serverSqlstateClass.value,
+      );
+    }
+    if (recordedAt.present) {
+      map['recorded_at'] = Variable<DateTime>(recordedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncDiagnosticEventsCompanion(')
+          ..write('id: $id, ')
+          ..write('attemptId: $attemptId, ')
+          ..write('ordinal: $ordinal, ')
+          ..write('code: $code, ')
+          ..write('nativeCode: $nativeCode, ')
+          ..write('severity: $severity, ')
+          ..write('outcome: $outcome, ')
+          ..write('operationKind: $operationKind, ')
+          ..write('phase: $phase, ')
+          ..write('operationFingerprint: $operationFingerprint, ')
+          ..write('correlationFingerprint: $correlationFingerprint, ')
+          ..write('localMutationState: $localMutationState, ')
+          ..write('providerContactState: $providerContactState, ')
+          ..write('providerTransactionState: $providerTransactionState, ')
+          ..write('trustedResponseState: $trustedResponseState, ')
+          ..write('queueScope: $queueScope, ')
+          ..write('pendingCount: $pendingCount, ')
+          ..write('uploadingCount: $uploadingCount, ')
+          ..write('failedCount: $failedCount, ')
+          ..write('unknownCount: $unknownCount, ')
+          ..write('memberCount: $memberCount, ')
+          ..write('firstDeviceSequence: $firstDeviceSequence, ')
+          ..write('lastDeviceSequence: $lastDeviceSequence, ')
+          ..write('nextDeviceSequence: $nextDeviceSequence, ')
+          ..write('httpStatus: $httpStatus, ')
+          ..write('responseHeadersReceived: $responseHeadersReceived, ')
+          ..write('safeAction: $safeAction, ')
+          ..write('retryable: $retryable, ')
+          ..write('sanitizedExceptionClass: $sanitizedExceptionClass, ')
+          ..write('serverSqlstateClass: $serverSqlstateClass, ')
+          ..write('recordedAt: $recordedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $MigrationLedgerTable extends MigrationLedger
     with TableInfo<$MigrationLedgerTable, MigrationLedgerData> {
   @override
@@ -10704,6 +12547,8 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
     this,
   );
   late final $SyncAttemptsTable syncAttempts = $SyncAttemptsTable(this);
+  late final $SyncDiagnosticEventsTable syncDiagnosticEvents =
+      $SyncDiagnosticEventsTable(this);
   late final $MigrationLedgerTable migrationLedger = $MigrationLedgerTable(
     this,
   );
@@ -10732,6 +12577,7 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
     recoveryChunks,
     hostedAuthStates,
     syncAttempts,
+    syncDiagnosticEvents,
     migrationLedger,
   ];
   @override
@@ -10798,6 +12644,13 @@ abstract class _$LocalDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('sync_attempts', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'sync_attempts',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('sync_diagnostic_events', kind: UpdateKind.delete)],
     ),
   ]);
 }
@@ -20625,6 +22478,31 @@ final class $$SyncAttemptsTableReferences
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
+
+  static MultiTypedResultKey<
+    $SyncDiagnosticEventsTable,
+    List<SyncDiagnosticEvent>
+  >
+  _syncDiagnosticEventsRefsTable(_$LocalDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.syncDiagnosticEvents,
+        aliasName: 'sync_attempts__id__sync_diagnostic_events__attempt_id',
+      );
+
+  $$SyncDiagnosticEventsTableProcessedTableManager
+  get syncDiagnosticEventsRefs {
+    final manager = $$SyncDiagnosticEventsTableTableManager(
+      $_db,
+      $_db.syncDiagnosticEvents,
+    ).filter((f) => f.attemptId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _syncDiagnosticEventsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$SyncAttemptsTableFilterComposer
@@ -20727,6 +22605,31 @@ class $$SyncAttemptsTableFilterComposer
           ),
     );
     return composer;
+  }
+
+  Expression<bool> syncDiagnosticEventsRefs(
+    Expression<bool> Function($$SyncDiagnosticEventsTableFilterComposer f) f,
+  ) {
+    final $$SyncDiagnosticEventsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.syncDiagnosticEvents,
+      getReferencedColumn: (t) => t.attemptId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncDiagnosticEventsTableFilterComposer(
+            $db: $db,
+            $table: $db.syncDiagnosticEvents,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 }
 
@@ -20928,6 +22831,32 @@ class $$SyncAttemptsTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> syncDiagnosticEventsRefs<T extends Object>(
+    Expression<T> Function($$SyncDiagnosticEventsTableAnnotationComposer a) f,
+  ) {
+    final $$SyncDiagnosticEventsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.syncDiagnosticEvents,
+          getReferencedColumn: (t) => t.attemptId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$SyncDiagnosticEventsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.syncDiagnosticEvents,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$SyncAttemptsTableTableManager
@@ -20943,7 +22872,10 @@ class $$SyncAttemptsTableTableManager
           $$SyncAttemptsTableUpdateCompanionBuilder,
           (SyncAttempt, $$SyncAttemptsTableReferences),
           SyncAttempt,
-          PrefetchHooks Function({bool accountId})
+          PrefetchHooks Function({
+            bool accountId,
+            bool syncDiagnosticEventsRefs,
+          })
         > {
   $$SyncAttemptsTableTableManager(_$LocalDatabase db, $SyncAttemptsTable table)
     : super(
@@ -21032,7 +22964,903 @@ class $$SyncAttemptsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({accountId = false}) {
+          prefetchHooksCallback:
+              ({accountId = false, syncDiagnosticEventsRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (syncDiagnosticEventsRefs) db.syncDiagnosticEvents,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (accountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.accountId,
+                                    referencedTable:
+                                        $$SyncAttemptsTableReferences
+                                            ._accountIdTable(db),
+                                    referencedColumn:
+                                        $$SyncAttemptsTableReferences
+                                            ._accountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (syncDiagnosticEventsRefs)
+                        await $_getPrefetchedData<
+                          SyncAttempt,
+                          $SyncAttemptsTable,
+                          SyncDiagnosticEvent
+                        >(
+                          currentTable: table,
+                          referencedTable: $$SyncAttemptsTableReferences
+                              ._syncDiagnosticEventsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$SyncAttemptsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).syncDiagnosticEventsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.attemptId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$SyncAttemptsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$LocalDatabase,
+      $SyncAttemptsTable,
+      SyncAttempt,
+      $$SyncAttemptsTableFilterComposer,
+      $$SyncAttemptsTableOrderingComposer,
+      $$SyncAttemptsTableAnnotationComposer,
+      $$SyncAttemptsTableCreateCompanionBuilder,
+      $$SyncAttemptsTableUpdateCompanionBuilder,
+      (SyncAttempt, $$SyncAttemptsTableReferences),
+      SyncAttempt,
+      PrefetchHooks Function({bool accountId, bool syncDiagnosticEventsRefs})
+    >;
+typedef $$SyncDiagnosticEventsTableCreateCompanionBuilder =
+    SyncDiagnosticEventsCompanion Function({
+      Value<int> id,
+      required int attemptId,
+      required int ordinal,
+      required String code,
+      Value<String?> nativeCode,
+      required String severity,
+      required String outcome,
+      required String operationKind,
+      required String phase,
+      Value<String?> operationFingerprint,
+      Value<String?> correlationFingerprint,
+      required String localMutationState,
+      required String providerContactState,
+      required String providerTransactionState,
+      required String trustedResponseState,
+      Value<String?> queueScope,
+      Value<int?> pendingCount,
+      Value<int?> uploadingCount,
+      Value<int?> failedCount,
+      Value<int?> unknownCount,
+      Value<int?> memberCount,
+      Value<int?> firstDeviceSequence,
+      Value<int?> lastDeviceSequence,
+      Value<int?> nextDeviceSequence,
+      Value<int?> httpStatus,
+      Value<bool> responseHeadersReceived,
+      required String safeAction,
+      Value<bool> retryable,
+      Value<String?> sanitizedExceptionClass,
+      Value<String?> serverSqlstateClass,
+      required DateTime recordedAt,
+    });
+typedef $$SyncDiagnosticEventsTableUpdateCompanionBuilder =
+    SyncDiagnosticEventsCompanion Function({
+      Value<int> id,
+      Value<int> attemptId,
+      Value<int> ordinal,
+      Value<String> code,
+      Value<String?> nativeCode,
+      Value<String> severity,
+      Value<String> outcome,
+      Value<String> operationKind,
+      Value<String> phase,
+      Value<String?> operationFingerprint,
+      Value<String?> correlationFingerprint,
+      Value<String> localMutationState,
+      Value<String> providerContactState,
+      Value<String> providerTransactionState,
+      Value<String> trustedResponseState,
+      Value<String?> queueScope,
+      Value<int?> pendingCount,
+      Value<int?> uploadingCount,
+      Value<int?> failedCount,
+      Value<int?> unknownCount,
+      Value<int?> memberCount,
+      Value<int?> firstDeviceSequence,
+      Value<int?> lastDeviceSequence,
+      Value<int?> nextDeviceSequence,
+      Value<int?> httpStatus,
+      Value<bool> responseHeadersReceived,
+      Value<String> safeAction,
+      Value<bool> retryable,
+      Value<String?> sanitizedExceptionClass,
+      Value<String?> serverSqlstateClass,
+      Value<DateTime> recordedAt,
+    });
+
+final class $$SyncDiagnosticEventsTableReferences
+    extends
+        BaseReferences<
+          _$LocalDatabase,
+          $SyncDiagnosticEventsTable,
+          SyncDiagnosticEvent
+        > {
+  $$SyncDiagnosticEventsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $SyncAttemptsTable _attemptIdTable(_$LocalDatabase db) => db
+      .syncAttempts
+      .createAlias('sync_diagnostic_events__attempt_id__sync_attempts__id');
+
+  $$SyncAttemptsTableProcessedTableManager get attemptId {
+    final $_column = $_itemColumn<int>('attempt_id')!;
+
+    final manager = $$SyncAttemptsTableTableManager(
+      $_db,
+      $_db.syncAttempts,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_attemptIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$SyncDiagnosticEventsTableFilterComposer
+    extends Composer<_$LocalDatabase, $SyncDiagnosticEventsTable> {
+  $$SyncDiagnosticEventsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get ordinal => $composableBuilder(
+    column: $table.ordinal,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nativeCode => $composableBuilder(
+    column: $table.nativeCode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get severity => $composableBuilder(
+    column: $table.severity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get operationKind => $composableBuilder(
+    column: $table.operationKind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phase => $composableBuilder(
+    column: $table.phase,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get operationFingerprint => $composableBuilder(
+    column: $table.operationFingerprint,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get correlationFingerprint => $composableBuilder(
+    column: $table.correlationFingerprint,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get localMutationState => $composableBuilder(
+    column: $table.localMutationState,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get providerContactState => $composableBuilder(
+    column: $table.providerContactState,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get providerTransactionState => $composableBuilder(
+    column: $table.providerTransactionState,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get trustedResponseState => $composableBuilder(
+    column: $table.trustedResponseState,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get queueScope => $composableBuilder(
+    column: $table.queueScope,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get pendingCount => $composableBuilder(
+    column: $table.pendingCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get uploadingCount => $composableBuilder(
+    column: $table.uploadingCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get failedCount => $composableBuilder(
+    column: $table.failedCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get unknownCount => $composableBuilder(
+    column: $table.unknownCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get memberCount => $composableBuilder(
+    column: $table.memberCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get firstDeviceSequence => $composableBuilder(
+    column: $table.firstDeviceSequence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastDeviceSequence => $composableBuilder(
+    column: $table.lastDeviceSequence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get nextDeviceSequence => $composableBuilder(
+    column: $table.nextDeviceSequence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get httpStatus => $composableBuilder(
+    column: $table.httpStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get responseHeadersReceived => $composableBuilder(
+    column: $table.responseHeadersReceived,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get safeAction => $composableBuilder(
+    column: $table.safeAction,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get retryable => $composableBuilder(
+    column: $table.retryable,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sanitizedExceptionClass => $composableBuilder(
+    column: $table.sanitizedExceptionClass,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get serverSqlstateClass => $composableBuilder(
+    column: $table.serverSqlstateClass,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$SyncAttemptsTableFilterComposer get attemptId {
+    final $$SyncAttemptsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.attemptId,
+      referencedTable: $db.syncAttempts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncAttemptsTableFilterComposer(
+            $db: $db,
+            $table: $db.syncAttempts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SyncDiagnosticEventsTableOrderingComposer
+    extends Composer<_$LocalDatabase, $SyncDiagnosticEventsTable> {
+  $$SyncDiagnosticEventsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get ordinal => $composableBuilder(
+    column: $table.ordinal,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nativeCode => $composableBuilder(
+    column: $table.nativeCode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get severity => $composableBuilder(
+    column: $table.severity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get outcome => $composableBuilder(
+    column: $table.outcome,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get operationKind => $composableBuilder(
+    column: $table.operationKind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phase => $composableBuilder(
+    column: $table.phase,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get operationFingerprint => $composableBuilder(
+    column: $table.operationFingerprint,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get correlationFingerprint => $composableBuilder(
+    column: $table.correlationFingerprint,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get localMutationState => $composableBuilder(
+    column: $table.localMutationState,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get providerContactState => $composableBuilder(
+    column: $table.providerContactState,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get providerTransactionState => $composableBuilder(
+    column: $table.providerTransactionState,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get trustedResponseState => $composableBuilder(
+    column: $table.trustedResponseState,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get queueScope => $composableBuilder(
+    column: $table.queueScope,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get pendingCount => $composableBuilder(
+    column: $table.pendingCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get uploadingCount => $composableBuilder(
+    column: $table.uploadingCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get failedCount => $composableBuilder(
+    column: $table.failedCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get unknownCount => $composableBuilder(
+    column: $table.unknownCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get memberCount => $composableBuilder(
+    column: $table.memberCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get firstDeviceSequence => $composableBuilder(
+    column: $table.firstDeviceSequence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastDeviceSequence => $composableBuilder(
+    column: $table.lastDeviceSequence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get nextDeviceSequence => $composableBuilder(
+    column: $table.nextDeviceSequence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get httpStatus => $composableBuilder(
+    column: $table.httpStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get responseHeadersReceived => $composableBuilder(
+    column: $table.responseHeadersReceived,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get safeAction => $composableBuilder(
+    column: $table.safeAction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get retryable => $composableBuilder(
+    column: $table.retryable,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sanitizedExceptionClass => $composableBuilder(
+    column: $table.sanitizedExceptionClass,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get serverSqlstateClass => $composableBuilder(
+    column: $table.serverSqlstateClass,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$SyncAttemptsTableOrderingComposer get attemptId {
+    final $$SyncAttemptsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.attemptId,
+      referencedTable: $db.syncAttempts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncAttemptsTableOrderingComposer(
+            $db: $db,
+            $table: $db.syncAttempts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SyncDiagnosticEventsTableAnnotationComposer
+    extends Composer<_$LocalDatabase, $SyncDiagnosticEventsTable> {
+  $$SyncDiagnosticEventsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get ordinal =>
+      $composableBuilder(column: $table.ordinal, builder: (column) => column);
+
+  GeneratedColumn<String> get code =>
+      $composableBuilder(column: $table.code, builder: (column) => column);
+
+  GeneratedColumn<String> get nativeCode => $composableBuilder(
+    column: $table.nativeCode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get severity =>
+      $composableBuilder(column: $table.severity, builder: (column) => column);
+
+  GeneratedColumn<String> get outcome =>
+      $composableBuilder(column: $table.outcome, builder: (column) => column);
+
+  GeneratedColumn<String> get operationKind => $composableBuilder(
+    column: $table.operationKind,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get phase =>
+      $composableBuilder(column: $table.phase, builder: (column) => column);
+
+  GeneratedColumn<String> get operationFingerprint => $composableBuilder(
+    column: $table.operationFingerprint,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get correlationFingerprint => $composableBuilder(
+    column: $table.correlationFingerprint,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get localMutationState => $composableBuilder(
+    column: $table.localMutationState,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get providerContactState => $composableBuilder(
+    column: $table.providerContactState,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get providerTransactionState => $composableBuilder(
+    column: $table.providerTransactionState,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get trustedResponseState => $composableBuilder(
+    column: $table.trustedResponseState,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get queueScope => $composableBuilder(
+    column: $table.queueScope,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get pendingCount => $composableBuilder(
+    column: $table.pendingCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get uploadingCount => $composableBuilder(
+    column: $table.uploadingCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get failedCount => $composableBuilder(
+    column: $table.failedCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get unknownCount => $composableBuilder(
+    column: $table.unknownCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get memberCount => $composableBuilder(
+    column: $table.memberCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get firstDeviceSequence => $composableBuilder(
+    column: $table.firstDeviceSequence,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lastDeviceSequence => $composableBuilder(
+    column: $table.lastDeviceSequence,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get nextDeviceSequence => $composableBuilder(
+    column: $table.nextDeviceSequence,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get httpStatus => $composableBuilder(
+    column: $table.httpStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get responseHeadersReceived => $composableBuilder(
+    column: $table.responseHeadersReceived,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get safeAction => $composableBuilder(
+    column: $table.safeAction,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get retryable =>
+      $composableBuilder(column: $table.retryable, builder: (column) => column);
+
+  GeneratedColumn<String> get sanitizedExceptionClass => $composableBuilder(
+    column: $table.sanitizedExceptionClass,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get serverSqlstateClass => $composableBuilder(
+    column: $table.serverSqlstateClass,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => column,
+  );
+
+  $$SyncAttemptsTableAnnotationComposer get attemptId {
+    final $$SyncAttemptsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.attemptId,
+      referencedTable: $db.syncAttempts,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SyncAttemptsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.syncAttempts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SyncDiagnosticEventsTableTableManager
+    extends
+        RootTableManager<
+          _$LocalDatabase,
+          $SyncDiagnosticEventsTable,
+          SyncDiagnosticEvent,
+          $$SyncDiagnosticEventsTableFilterComposer,
+          $$SyncDiagnosticEventsTableOrderingComposer,
+          $$SyncDiagnosticEventsTableAnnotationComposer,
+          $$SyncDiagnosticEventsTableCreateCompanionBuilder,
+          $$SyncDiagnosticEventsTableUpdateCompanionBuilder,
+          (SyncDiagnosticEvent, $$SyncDiagnosticEventsTableReferences),
+          SyncDiagnosticEvent,
+          PrefetchHooks Function({bool attemptId})
+        > {
+  $$SyncDiagnosticEventsTableTableManager(
+    _$LocalDatabase db,
+    $SyncDiagnosticEventsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncDiagnosticEventsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncDiagnosticEventsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$SyncDiagnosticEventsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> attemptId = const Value.absent(),
+                Value<int> ordinal = const Value.absent(),
+                Value<String> code = const Value.absent(),
+                Value<String?> nativeCode = const Value.absent(),
+                Value<String> severity = const Value.absent(),
+                Value<String> outcome = const Value.absent(),
+                Value<String> operationKind = const Value.absent(),
+                Value<String> phase = const Value.absent(),
+                Value<String?> operationFingerprint = const Value.absent(),
+                Value<String?> correlationFingerprint = const Value.absent(),
+                Value<String> localMutationState = const Value.absent(),
+                Value<String> providerContactState = const Value.absent(),
+                Value<String> providerTransactionState = const Value.absent(),
+                Value<String> trustedResponseState = const Value.absent(),
+                Value<String?> queueScope = const Value.absent(),
+                Value<int?> pendingCount = const Value.absent(),
+                Value<int?> uploadingCount = const Value.absent(),
+                Value<int?> failedCount = const Value.absent(),
+                Value<int?> unknownCount = const Value.absent(),
+                Value<int?> memberCount = const Value.absent(),
+                Value<int?> firstDeviceSequence = const Value.absent(),
+                Value<int?> lastDeviceSequence = const Value.absent(),
+                Value<int?> nextDeviceSequence = const Value.absent(),
+                Value<int?> httpStatus = const Value.absent(),
+                Value<bool> responseHeadersReceived = const Value.absent(),
+                Value<String> safeAction = const Value.absent(),
+                Value<bool> retryable = const Value.absent(),
+                Value<String?> sanitizedExceptionClass = const Value.absent(),
+                Value<String?> serverSqlstateClass = const Value.absent(),
+                Value<DateTime> recordedAt = const Value.absent(),
+              }) => SyncDiagnosticEventsCompanion(
+                id: id,
+                attemptId: attemptId,
+                ordinal: ordinal,
+                code: code,
+                nativeCode: nativeCode,
+                severity: severity,
+                outcome: outcome,
+                operationKind: operationKind,
+                phase: phase,
+                operationFingerprint: operationFingerprint,
+                correlationFingerprint: correlationFingerprint,
+                localMutationState: localMutationState,
+                providerContactState: providerContactState,
+                providerTransactionState: providerTransactionState,
+                trustedResponseState: trustedResponseState,
+                queueScope: queueScope,
+                pendingCount: pendingCount,
+                uploadingCount: uploadingCount,
+                failedCount: failedCount,
+                unknownCount: unknownCount,
+                memberCount: memberCount,
+                firstDeviceSequence: firstDeviceSequence,
+                lastDeviceSequence: lastDeviceSequence,
+                nextDeviceSequence: nextDeviceSequence,
+                httpStatus: httpStatus,
+                responseHeadersReceived: responseHeadersReceived,
+                safeAction: safeAction,
+                retryable: retryable,
+                sanitizedExceptionClass: sanitizedExceptionClass,
+                serverSqlstateClass: serverSqlstateClass,
+                recordedAt: recordedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int attemptId,
+                required int ordinal,
+                required String code,
+                Value<String?> nativeCode = const Value.absent(),
+                required String severity,
+                required String outcome,
+                required String operationKind,
+                required String phase,
+                Value<String?> operationFingerprint = const Value.absent(),
+                Value<String?> correlationFingerprint = const Value.absent(),
+                required String localMutationState,
+                required String providerContactState,
+                required String providerTransactionState,
+                required String trustedResponseState,
+                Value<String?> queueScope = const Value.absent(),
+                Value<int?> pendingCount = const Value.absent(),
+                Value<int?> uploadingCount = const Value.absent(),
+                Value<int?> failedCount = const Value.absent(),
+                Value<int?> unknownCount = const Value.absent(),
+                Value<int?> memberCount = const Value.absent(),
+                Value<int?> firstDeviceSequence = const Value.absent(),
+                Value<int?> lastDeviceSequence = const Value.absent(),
+                Value<int?> nextDeviceSequence = const Value.absent(),
+                Value<int?> httpStatus = const Value.absent(),
+                Value<bool> responseHeadersReceived = const Value.absent(),
+                required String safeAction,
+                Value<bool> retryable = const Value.absent(),
+                Value<String?> sanitizedExceptionClass = const Value.absent(),
+                Value<String?> serverSqlstateClass = const Value.absent(),
+                required DateTime recordedAt,
+              }) => SyncDiagnosticEventsCompanion.insert(
+                id: id,
+                attemptId: attemptId,
+                ordinal: ordinal,
+                code: code,
+                nativeCode: nativeCode,
+                severity: severity,
+                outcome: outcome,
+                operationKind: operationKind,
+                phase: phase,
+                operationFingerprint: operationFingerprint,
+                correlationFingerprint: correlationFingerprint,
+                localMutationState: localMutationState,
+                providerContactState: providerContactState,
+                providerTransactionState: providerTransactionState,
+                trustedResponseState: trustedResponseState,
+                queueScope: queueScope,
+                pendingCount: pendingCount,
+                uploadingCount: uploadingCount,
+                failedCount: failedCount,
+                unknownCount: unknownCount,
+                memberCount: memberCount,
+                firstDeviceSequence: firstDeviceSequence,
+                lastDeviceSequence: lastDeviceSequence,
+                nextDeviceSequence: nextDeviceSequence,
+                httpStatus: httpStatus,
+                responseHeadersReceived: responseHeadersReceived,
+                safeAction: safeAction,
+                retryable: retryable,
+                sanitizedExceptionClass: sanitizedExceptionClass,
+                serverSqlstateClass: serverSqlstateClass,
+                recordedAt: recordedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SyncDiagnosticEventsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({attemptId = false}) {
             return PrefetchHooks(
               db: db,
               explicitlyWatchedTables: [],
@@ -21052,16 +23880,18 @@ class $$SyncAttemptsTableTableManager
                       dynamic
                     >
                   >(state) {
-                    if (accountId) {
+                    if (attemptId) {
                       state =
                           state.withJoin(
                                 currentTable: table,
-                                currentColumn: table.accountId,
-                                referencedTable: $$SyncAttemptsTableReferences
-                                    ._accountIdTable(db),
-                                referencedColumn: $$SyncAttemptsTableReferences
-                                    ._accountIdTable(db)
-                                    .id,
+                                currentColumn: table.attemptId,
+                                referencedTable:
+                                    $$SyncDiagnosticEventsTableReferences
+                                        ._attemptIdTable(db),
+                                referencedColumn:
+                                    $$SyncDiagnosticEventsTableReferences
+                                        ._attemptIdTable(db)
+                                        .id,
                               )
                               as T;
                     }
@@ -21077,19 +23907,19 @@ class $$SyncAttemptsTableTableManager
       );
 }
 
-typedef $$SyncAttemptsTableProcessedTableManager =
+typedef $$SyncDiagnosticEventsTableProcessedTableManager =
     ProcessedTableManager<
       _$LocalDatabase,
-      $SyncAttemptsTable,
-      SyncAttempt,
-      $$SyncAttemptsTableFilterComposer,
-      $$SyncAttemptsTableOrderingComposer,
-      $$SyncAttemptsTableAnnotationComposer,
-      $$SyncAttemptsTableCreateCompanionBuilder,
-      $$SyncAttemptsTableUpdateCompanionBuilder,
-      (SyncAttempt, $$SyncAttemptsTableReferences),
-      SyncAttempt,
-      PrefetchHooks Function({bool accountId})
+      $SyncDiagnosticEventsTable,
+      SyncDiagnosticEvent,
+      $$SyncDiagnosticEventsTableFilterComposer,
+      $$SyncDiagnosticEventsTableOrderingComposer,
+      $$SyncDiagnosticEventsTableAnnotationComposer,
+      $$SyncDiagnosticEventsTableCreateCompanionBuilder,
+      $$SyncDiagnosticEventsTableUpdateCompanionBuilder,
+      (SyncDiagnosticEvent, $$SyncDiagnosticEventsTableReferences),
+      SyncDiagnosticEvent,
+      PrefetchHooks Function({bool attemptId})
     >;
 typedef $$MigrationLedgerTableCreateCompanionBuilder =
     MigrationLedgerCompanion Function({
@@ -21385,6 +24215,8 @@ class $LocalDatabaseManager {
       $$HostedAuthStatesTableTableManager(_db, _db.hostedAuthStates);
   $$SyncAttemptsTableTableManager get syncAttempts =>
       $$SyncAttemptsTableTableManager(_db, _db.syncAttempts);
+  $$SyncDiagnosticEventsTableTableManager get syncDiagnosticEvents =>
+      $$SyncDiagnosticEventsTableTableManager(_db, _db.syncDiagnosticEvents);
   $$MigrationLedgerTableTableManager get migrationLedger =>
       $$MigrationLedgerTableTableManager(_db, _db.migrationLedger);
 }

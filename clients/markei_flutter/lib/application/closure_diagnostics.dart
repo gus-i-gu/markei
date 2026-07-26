@@ -7,6 +7,10 @@ abstract interface class ClosureDiagnosticsQuery {
   Future<UnknownSubmissionRetryPreflight> unknownSubmissionRetryPreflight({
     required String authenticationState,
   });
+  Future<FailedNotAppliedRecoveryInspection> inspectFailedNotAppliedRecovery({
+    required String authenticationState,
+    required String operationFingerprint,
+  });
   Future<void> clearAttemptHistory();
 }
 
@@ -38,6 +42,71 @@ abstract interface class SyncAttemptRecorder {
     int? httpStatus,
     required bool responseHeadersReceived,
   });
+  Future<int> recordDiagnosticEvent(SyncDiagnosticEnvelope diagnostic);
+}
+
+final class SyncDiagnosticEnvelope {
+  const SyncDiagnosticEnvelope({
+    required this.attemptId,
+    required this.ordinal,
+    required this.code,
+    required this.nativeCode,
+    required this.severity,
+    required this.outcome,
+    required this.operationKind,
+    required this.phase,
+    required this.operationFingerprint,
+    required this.correlationFingerprint,
+    required this.localMutationState,
+    required this.providerContactState,
+    required this.providerTransactionState,
+    required this.trustedResponseState,
+    required this.queueScope,
+    required this.pendingCount,
+    required this.uploadingCount,
+    required this.failedCount,
+    required this.unknownCount,
+    required this.memberCount,
+    required this.firstDeviceSequence,
+    required this.lastDeviceSequence,
+    required this.nextDeviceSequence,
+    required this.httpStatus,
+    required this.responseHeadersReceived,
+    required this.safeAction,
+    required this.retryable,
+    required this.sanitizedExceptionClass,
+    required this.serverSqlstateClass,
+  });
+
+  final int attemptId;
+  final int ordinal;
+  final String code;
+  final String? nativeCode;
+  final String severity;
+  final String outcome;
+  final String operationKind;
+  final String phase;
+  final String? operationFingerprint;
+  final String? correlationFingerprint;
+  final String localMutationState;
+  final String providerContactState;
+  final String providerTransactionState;
+  final String trustedResponseState;
+  final String? queueScope;
+  final int? pendingCount;
+  final int? uploadingCount;
+  final int? failedCount;
+  final int? unknownCount;
+  final int? memberCount;
+  final int? firstDeviceSequence;
+  final int? lastDeviceSequence;
+  final int? nextDeviceSequence;
+  final int? httpStatus;
+  final bool responseHeadersReceived;
+  final String safeAction;
+  final bool retryable;
+  final String? sanitizedExceptionClass;
+  final String? serverSqlstateClass;
 }
 
 final class ClosureDiagnosticsSnapshot {
@@ -181,6 +250,58 @@ final class UnknownSubmissionRetryPreflight {
   final int? firstDeviceSequence;
   final int? lastDeviceSequence;
   final int? nextLocalDeviceSequence;
+}
+
+final class FailedNotAppliedRecoveryInspection {
+  const FailedNotAppliedRecoveryInspection.eligible({
+    required this.diagnosticCode,
+    required this.candidateFingerprint,
+    required this.memberCount,
+    required this.firstDeviceSequence,
+    required this.lastDeviceSequence,
+    required this.nextDeviceSequence,
+    required this.queueCounts,
+    required this.requestHashMatches,
+    required this.membershipContiguous,
+    required this.deviceScopeMatches,
+    required this.eventStatesCompatible,
+    required this.noAcceptedMembers,
+    required this.noActiveOverlap,
+  }) : eligible = true,
+       state = 'failed-not-applied-inspection-eligible';
+
+  const FailedNotAppliedRecoveryInspection.blocked({
+    required this.diagnosticCode,
+    required this.state,
+    required this.queueCounts,
+    this.candidateFingerprint,
+    this.memberCount,
+    this.firstDeviceSequence,
+    this.lastDeviceSequence,
+    this.nextDeviceSequence,
+    this.requestHashMatches = false,
+    this.membershipContiguous = false,
+    this.deviceScopeMatches = false,
+    this.eventStatesCompatible = false,
+    this.noAcceptedMembers = false,
+    this.noActiveOverlap = false,
+  }) : eligible = false;
+
+  final bool eligible;
+  final String diagnosticCode;
+  final String state;
+  final String? candidateFingerprint;
+  final int? memberCount;
+  final int? firstDeviceSequence;
+  final int? lastDeviceSequence;
+  final int? nextDeviceSequence;
+  final ClosureQueueCounts queueCounts;
+  final bool requestHashMatches;
+  final bool membershipContiguous;
+  final bool deviceScopeMatches;
+  final bool eventStatesCompatible;
+  final bool noAcceptedMembers;
+  final bool noActiveOverlap;
 }
 
 final class ClosureDiagnosticsScope {

@@ -245,10 +245,15 @@ export function buildApp(options: {
     }
     return reply.code(500).send({
       code: "service-unavailable",
+      diagnosticCode: "MKS-API-014",
       operation: "server",
+      phase: "unexpected-terminal",
+      routeClass: routeClass(request),
+      providerTransactionOutcome: "unknown",
+      sanitizedExceptionClass: error?.constructor?.name ?? "Error",
       outcome: "unknown",
-      retryable: true,
-      safeAction: "retry later",
+      retryable: false,
+      safeAction: "preserve evidence and inspect diagnostics",
       correlationId: request.id,
     });
   });

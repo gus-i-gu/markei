@@ -155,6 +155,274 @@ final class DriftClosureDiagnosticsRepository
   }
 
   @override
+  Future<int> recordDiagnosticEvent(SyncDiagnosticEnvelope diagnostic) {
+    return _db
+        .into(_db.syncDiagnosticEvents)
+        .insert(
+          SyncDiagnosticEventsCompanion.insert(
+            attemptId: diagnostic.attemptId,
+            ordinal: diagnostic.ordinal,
+            code: _sanitizeMksCode(diagnostic.code),
+            nativeCode: Value(
+              diagnostic.nativeCode == null
+                  ? null
+                  : _sanitizeCode(diagnostic.nativeCode!),
+            ),
+            severity: _sanitizeCode(diagnostic.severity),
+            outcome: _sanitizeCode(diagnostic.outcome),
+            operationKind: _sanitizeCode(diagnostic.operationKind),
+            phase: _sanitizeCode(diagnostic.phase),
+            operationFingerprint: Value(
+              diagnostic.operationFingerprint == null
+                  ? null
+                  : _sanitizeFingerprint(diagnostic.operationFingerprint!),
+            ),
+            correlationFingerprint: Value(
+              diagnostic.correlationFingerprint == null
+                  ? null
+                  : _sanitizeFingerprint(diagnostic.correlationFingerprint!),
+            ),
+            localMutationState: _sanitizeCode(diagnostic.localMutationState),
+            providerContactState: _sanitizeCode(
+              diagnostic.providerContactState,
+            ),
+            providerTransactionState: _sanitizeCode(
+              diagnostic.providerTransactionState,
+            ),
+            trustedResponseState: _sanitizeCode(
+              diagnostic.trustedResponseState,
+            ),
+            queueScope: Value(
+              diagnostic.queueScope == null
+                  ? null
+                  : _sanitizeCode(diagnostic.queueScope!),
+            ),
+            pendingCount: Value(diagnostic.pendingCount),
+            uploadingCount: Value(diagnostic.uploadingCount),
+            failedCount: Value(diagnostic.failedCount),
+            unknownCount: Value(diagnostic.unknownCount),
+            memberCount: Value(diagnostic.memberCount),
+            firstDeviceSequence: Value(diagnostic.firstDeviceSequence),
+            lastDeviceSequence: Value(diagnostic.lastDeviceSequence),
+            nextDeviceSequence: Value(diagnostic.nextDeviceSequence),
+            httpStatus: Value(diagnostic.httpStatus),
+            responseHeadersReceived: Value(diagnostic.responseHeadersReceived),
+            safeAction: _sanitizeSummary(diagnostic.safeAction),
+            retryable: Value(diagnostic.retryable),
+            sanitizedExceptionClass: Value(
+              diagnostic.sanitizedExceptionClass == null
+                  ? null
+                  : _sanitizeCode(diagnostic.sanitizedExceptionClass!),
+            ),
+            serverSqlstateClass: Value(
+              diagnostic.serverSqlstateClass == null
+                  ? null
+                  : _sanitizeCode(diagnostic.serverSqlstateClass!),
+            ),
+            recordedAt: _now(),
+          ),
+        );
+  }
+
+  @override
+  Future<FailedNotAppliedRecoveryInspection> inspectFailedNotAppliedRecovery({
+    required String authenticationState,
+    required String operationFingerprint,
+  }) {
+    return _db.transaction(() async {
+      final counts = await _queueCountsForDevice();
+      FailedNotAppliedRecoveryInspection blocked(String state) =>
+          FailedNotAppliedRecoveryInspection.blocked(
+            diagnosticCode: 'MKS-REC-012',
+            state: state,
+            queueCounts: counts,
+          );
+
+      if (authenticationState != 'authenticated') {
+        return blocked('failed-not-applied-authentication-required');
+      }
+      final hosted =
+          await (_db.select(_db.hostedAuthStates)..where(
+                (table) => table.environmentAlias.equals(_environmentAlias),
+              ))
+              .getSingleOrNull();
+      if (hosted == null ||
+          !_activeEnrollmentStates.contains(hosted.enrollmentState) ||
+          hosted.accountId != _accountId ||
+          hosted.serverDeviceId != _deviceId) {
+        return blocked('failed-not-applied-device-enrollment-required');
+      }
+      final device =
+          await (_db.select(_db.devices)..where(
+                (table) =>
+                    table.id.equals(_deviceId) &
+                    table.accountId.equals(_accountId),
+              ))
+              .getSingleOrNull();
+      if (device == null) {
+        return blocked('failed-not-applied-device-enrollment-required');
+      }
+      if (counts.pending > 0 || counts.uploading > 0 || counts.unknown > 0) {
+        return blocked('failed-not-applied-active-work-overlap');
+      }
+      final submissions =
+          await (_db.select(_db.syncSubmissions)
+                ..where(
+                  (table) =>
+                      table.accountId.equals(_accountId) &
+                      table.deviceId.equals(_deviceId) &
+                      table.state.equals('failed') &
+                      table.outcome.equals('notApplied'),
+                )
+                ..orderBy([
+                  (table) => OrderingTerm.asc(table.createdAt),
+                  (table) => OrderingTerm.asc(table.id),
+                ]))
+              .get();
+      if (submissions.length != 1) {
+        return blocked(
+          submissions.isEmpty
+              ? 'failed-not-applied-no-candidate'
+              : 'failed-not-applied-ambiguous-candidates',
+        );
+      }
+      final submission = submissions.single;
+      final members =
+          await (_db.select(_db.syncSubmissionEvents)
+                ..where((table) => table.submissionId.equals(submission.id))
+                ..orderBy([(table) => OrderingTerm.asc(table.position)]))
+              .get();
+      final membershipContiguous =
+          members.isNotEmpty && _positionsAreContiguous(members);
+      if (!membershipContiguous) {
+        return FailedNotAppliedRecoveryInspection.blocked(
+          diagnosticCode: 'MKS-REC-012',
+          state: 'failed-not-applied-membership-invalid',
+          queueCounts: counts,
+          candidateFingerprint: _fingerprint(submission.id),
+          membershipContiguous: false,
+        );
+      }
+      final rows =
+          await (_db.select(_db.syncEvents)..where(
+                (table) =>
+                    table.id.isIn(members.map((member) => member.eventId)),
+              ))
+              .get();
+      final rowsById = {for (final row in rows) row.id: row};
+      final orderedRows = [
+        for (final member in members) rowsById[member.eventId],
+      ].nonNulls.toList(growable: false);
+      final deviceScopeMatches =
+          orderedRows.length == members.length &&
+          orderedRows.every(
+            (row) => row.accountId == _accountId && row.deviceId == _deviceId,
+          );
+      if (!deviceScopeMatches ||
+          !_unknownRetryRowsValid(
+            [...orderedRows]
+              ..sort((a, b) => a.deviceSequence.compareTo(b.deviceSequence)),
+          )) {
+        return FailedNotAppliedRecoveryInspection.blocked(
+          diagnosticCode: 'MKS-REC-012',
+          state: 'failed-not-applied-event-lineage-invalid',
+          queueCounts: counts,
+          candidateFingerprint: _fingerprint(submission.id),
+          memberCount: members.length,
+          membershipContiguous: membershipContiguous,
+          deviceScopeMatches: deviceScopeMatches,
+        );
+      }
+      final canonicalRows = [...orderedRows]
+        ..sort((a, b) {
+          final sequence = a.deviceSequence.compareTo(b.deviceSequence);
+          return sequence != 0 ? sequence : a.id.compareTo(b.id);
+        });
+      final pendingRows =
+          await (_db.select(_db.pendingEvents)..where(
+                (table) =>
+                    table.eventId.isIn(canonicalRows.map((row) => row.id)),
+              ))
+              .get();
+      final pendingStates = pendingRows.map((row) => row.state).toSet();
+      final noAcceptedMembers = !pendingStates.contains('accepted');
+      final eventStatesCompatible =
+          pendingRows.length == canonicalRows.length &&
+          pendingStates.length == 1 &&
+          pendingStates.single == 'failed';
+      final activeMembers =
+          await (_db.select(_db.syncSubmissionEvents).join([
+                innerJoin(
+                  _db.syncSubmissions,
+                  _db.syncSubmissions.id.equalsExp(
+                    _db.syncSubmissionEvents.submissionId,
+                  ),
+                ),
+              ])..where(
+                _db.syncSubmissionEvents.eventId.isIn(
+                      canonicalRows.map((row) => row.id),
+                    ) &
+                    _db.syncSubmissions.id.isNotValue(submission.id) &
+                    (_db.syncSubmissions.state.equals('uploading') |
+                        _db.syncSubmissions.state.equals('unknown')),
+              ))
+              .get();
+      final noActiveOverlap = activeMembers.isEmpty;
+      final eventJson = canonicalRows
+          .map((row) => jsonDecode(row.payloadJson) as Map<String, Object?>)
+          .toList(growable: false);
+      final requestHashMatches =
+          canonicalUtf8Sha256({
+            'deviceId': submission.deviceId,
+            'events': eventJson,
+            'submissionId': submission.id,
+          }) ==
+          submission.requestHash;
+      final nextSequenceMatches =
+          device.nextSequence == canonicalRows.last.deviceSequence + 1;
+      final eligible =
+          requestHashMatches &&
+          eventStatesCompatible &&
+          noAcceptedMembers &&
+          noActiveOverlap &&
+          nextSequenceMatches;
+      if (!eligible) {
+        return FailedNotAppliedRecoveryInspection.blocked(
+          diagnosticCode: 'MKS-REC-012',
+          state: 'failed-not-applied-candidate-invalid',
+          queueCounts: counts,
+          candidateFingerprint: _fingerprint(submission.id),
+          memberCount: canonicalRows.length,
+          firstDeviceSequence: canonicalRows.first.deviceSequence,
+          lastDeviceSequence: canonicalRows.last.deviceSequence,
+          nextDeviceSequence: device.nextSequence,
+          requestHashMatches: requestHashMatches,
+          membershipContiguous: membershipContiguous,
+          deviceScopeMatches: deviceScopeMatches,
+          eventStatesCompatible: eventStatesCompatible,
+          noAcceptedMembers: noAcceptedMembers,
+          noActiveOverlap: noActiveOverlap,
+        );
+      }
+      return FailedNotAppliedRecoveryInspection.eligible(
+        diagnosticCode: 'MKS-UI-004',
+        candidateFingerprint: _fingerprint(submission.id),
+        memberCount: canonicalRows.length,
+        firstDeviceSequence: canonicalRows.first.deviceSequence,
+        lastDeviceSequence: canonicalRows.last.deviceSequence,
+        nextDeviceSequence: device.nextSequence,
+        queueCounts: counts,
+        requestHashMatches: true,
+        membershipContiguous: true,
+        deviceScopeMatches: true,
+        eventStatesCompatible: true,
+        noAcceptedMembers: true,
+        noActiveOverlap: true,
+      );
+    });
+  }
+
+  @override
   Future<UnknownSubmissionRetryPreflight> unknownSubmissionRetryPreflight({
     required String authenticationState,
   }) {
@@ -601,4 +869,18 @@ String _sanitizeFingerprint(String value) {
       .trim();
   if (sanitized.isEmpty) return 'unavailable';
   return sanitized.length <= 16 ? sanitized : sanitized.substring(0, 16);
+}
+
+String _sanitizeMksCode(String value) {
+  final match = RegExp(r'^MKS-[A-Z]+-[0-9]{3}$').firstMatch(value);
+  return match == null ? 'MKS-INV-001' : value;
+}
+
+String _sanitizeSummary(String value) {
+  final sanitized = value
+      .replaceAll(RegExp(r'[\r\n\t]+'), ' ')
+      .replaceAll(RegExp(r'[^A-Za-z0-9 ._:/#-]+'), '')
+      .trim();
+  if (sanitized.isEmpty) return 'preserve evidence and inspect diagnostics';
+  return sanitized.length <= 160 ? sanitized : sanitized.substring(0, 160);
 }

@@ -148,54 +148,8 @@ void main() {
     expect(find.text('diagnostic-history-cleared'), findsOneWidget);
   });
 
-  testWidgets('Retry unresolved submission cancellation does not start Sync', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(1400, 2200);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    final query = _FakeDiagnosticsQuery(
-      populated: true,
-      unknownPreflight: const UnknownSubmissionRetryPreflight.eligible(
-        submissionFingerprint: 'subm1234',
-        eventCount: 2,
-        firstDeviceSequence: 1,
-        lastDeviceSequence: 2,
-        nextLocalDeviceSequence: 3,
-      ),
-    );
-    final runner = _runner(query: query, outbox: _UploadingOutbox());
-
-    await tester.pumpWidget(
-      MaterialApp(home: NativeClosurePage(runner: runner)),
-    );
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(
-      find.byKey(const Key('nativeClosure.Retry unresolved submission')),
-    );
-    await tester.tap(
-      find.byKey(const Key('nativeClosure.Retry unresolved submission')),
-    );
-    await tester.pumpAndSettle();
-
-    expect(
-      find.byKey(const Key('nativeClosure.retry.guidance')),
-      findsOneWidget,
-    );
-    expect(find.textContaining('Events 1-2'), findsOneWidget);
-    expect(find.textContaining('#subm1234'), findsOneWidget);
-    expect(find.textContaining('Hosted outcome is unresolved'), findsOneWidget);
-
-    await tester.tap(find.text('Cancel').last);
-    await tester.pumpAndSettle();
-
-    expect(find.text('unknown-retry-cancelled'), findsOneWidget);
-    expect(query.beginAttempts, 0);
-  });
-
   testWidgets(
-    'Retry unresolved submission confirms and refreshes diagnostics',
+    'Retry unknown-outcome submission cancellation does not start Sync',
     (tester) async {
       tester.view.physicalSize = const Size(1400, 2200);
       tester.view.devicePixelRatio = 1;
@@ -218,10 +172,60 @@ void main() {
       );
       await tester.pumpAndSettle();
       await tester.ensureVisible(
-        find.byKey(const Key('nativeClosure.Retry unresolved submission')),
+        find.byKey(const Key('nativeClosure.Retry unknown-outcome submission')),
       );
       await tester.tap(
-        find.byKey(const Key('nativeClosure.Retry unresolved submission')),
+        find.byKey(const Key('nativeClosure.Retry unknown-outcome submission')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(const Key('nativeClosure.retry.guidance')),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Events 1-2'), findsOneWidget);
+      expect(find.textContaining('#subm1234'), findsOneWidget);
+      expect(
+        find.textContaining('Hosted outcome is unresolved'),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.text('Cancel').last);
+      await tester.pumpAndSettle();
+
+      expect(find.text('unknown-retry-cancelled'), findsOneWidget);
+      expect(query.beginAttempts, 0);
+    },
+  );
+
+  testWidgets(
+    'Retry unknown-outcome submission confirms and refreshes diagnostics',
+    (tester) async {
+      tester.view.physicalSize = const Size(1400, 2200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final query = _FakeDiagnosticsQuery(
+        populated: true,
+        unknownPreflight: const UnknownSubmissionRetryPreflight.eligible(
+          submissionFingerprint: 'subm1234',
+          eventCount: 2,
+          firstDeviceSequence: 1,
+          lastDeviceSequence: 2,
+          nextLocalDeviceSequence: 3,
+        ),
+      );
+      final runner = _runner(query: query, outbox: _UploadingOutbox());
+
+      await tester.pumpWidget(
+        MaterialApp(home: NativeClosurePage(runner: runner)),
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(
+        find.byKey(const Key('nativeClosure.Retry unknown-outcome submission')),
+      );
+      await tester.tap(
+        find.byKey(const Key('nativeClosure.Retry unknown-outcome submission')),
       );
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('nativeClosure.retry.confirm')));
@@ -234,38 +238,42 @@ void main() {
     },
   );
 
-  testWidgets('Retry unresolved submission blocked preflight is non-mutating', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(1400, 2200);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    final query = _FakeDiagnosticsQuery(
-      populated: true,
-      unknownPreflight: const UnknownSubmissionRetryPreflight.blocked(
-        state: 'unknown-retry-state-invalid',
-        guidance: 'preserve-local-evidence-and-stop',
-      ),
-    );
-    final runner = _runner(query: query, outbox: _UploadingOutbox());
+  testWidgets(
+    'Retry unknown-outcome submission blocked preflight is non-mutating',
+    (tester) async {
+      tester.view.physicalSize = const Size(1400, 2200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final query = _FakeDiagnosticsQuery(
+        populated: true,
+        unknownPreflight: const UnknownSubmissionRetryPreflight.blocked(
+          state: 'unknown-retry-state-invalid',
+          guidance: 'preserve-local-evidence-and-stop',
+        ),
+      );
+      final runner = _runner(query: query, outbox: _UploadingOutbox());
 
-    await tester.pumpWidget(
-      MaterialApp(home: NativeClosurePage(runner: runner)),
-    );
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(
-      find.byKey(const Key('nativeClosure.Retry unresolved submission')),
-    );
-    await tester.tap(
-      find.byKey(const Key('nativeClosure.Retry unresolved submission')),
-    );
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        MaterialApp(home: NativeClosurePage(runner: runner)),
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(
+        find.byKey(const Key('nativeClosure.Retry unknown-outcome submission')),
+      );
+      await tester.tap(
+        find.byKey(const Key('nativeClosure.Retry unknown-outcome submission')),
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text('unknown-retry-state-invalid'), findsOneWidget);
-    expect(query.beginAttempts, 0);
-    expect(find.byKey(const Key('nativeClosure.retry.confirm')), findsNothing);
-  });
+      expect(find.text('unknown-retry-state-invalid'), findsOneWidget);
+      expect(query.beginAttempts, 0);
+      expect(
+        find.byKey(const Key('nativeClosure.retry.confirm')),
+        findsNothing,
+      );
+    },
+  );
 
   test('runner records auth-required Sync terminal outcome once', () async {
     final query = _FakeDiagnosticsQuery();
@@ -463,6 +471,28 @@ final class _FakeDiagnosticsQuery
   @override
   Future<void> clearAttemptHistory() async {
     cleared = true;
+  }
+
+  @override
+  Future<int> recordDiagnosticEvent(SyncDiagnosticEnvelope diagnostic) async {
+    return diagnostic.ordinal;
+  }
+
+  @override
+  Future<FailedNotAppliedRecoveryInspection> inspectFailedNotAppliedRecovery({
+    required String authenticationState,
+    required String operationFingerprint,
+  }) async {
+    return FailedNotAppliedRecoveryInspection.blocked(
+      diagnosticCode: 'MKS-REC-012',
+      state: 'failed-not-applied-no-candidate',
+      queueCounts: ClosureQueueCounts(
+        pending: populated ? 1 : 0,
+        uploading: 0,
+        failed: populated ? 1 : 0,
+        unknown: populated ? 1 : 0,
+      ),
+    );
   }
 
   @override

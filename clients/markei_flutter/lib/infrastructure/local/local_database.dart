@@ -337,6 +337,43 @@ class SyncAttempts extends Table {
       boolean().withDefault(const Constant(false))();
 }
 
+class SyncDiagnosticEvents extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get attemptId =>
+      integer().references(SyncAttempts, #id, onDelete: KeyAction.cascade)();
+  IntColumn get ordinal => integer()();
+  TextColumn get code => text().withLength(min: 1, max: 32)();
+  TextColumn get nativeCode => text().nullable()();
+  TextColumn get severity => text().withLength(min: 1, max: 16)();
+  TextColumn get outcome => text().withLength(min: 1, max: 32)();
+  TextColumn get operationKind => text().withLength(min: 1, max: 64)();
+  TextColumn get phase => text().withLength(min: 1, max: 64)();
+  TextColumn get operationFingerprint => text().nullable()();
+  TextColumn get correlationFingerprint => text().nullable()();
+  TextColumn get localMutationState => text().withLength(min: 1, max: 64)();
+  TextColumn get providerContactState => text().withLength(min: 1, max: 64)();
+  TextColumn get providerTransactionState =>
+      text().withLength(min: 1, max: 64)();
+  TextColumn get trustedResponseState => text().withLength(min: 1, max: 64)();
+  TextColumn get queueScope => text().nullable()();
+  IntColumn get pendingCount => integer().nullable()();
+  IntColumn get uploadingCount => integer().nullable()();
+  IntColumn get failedCount => integer().nullable()();
+  IntColumn get unknownCount => integer().nullable()();
+  IntColumn get memberCount => integer().nullable()();
+  IntColumn get firstDeviceSequence => integer().nullable()();
+  IntColumn get lastDeviceSequence => integer().nullable()();
+  IntColumn get nextDeviceSequence => integer().nullable()();
+  IntColumn get httpStatus => integer().nullable()();
+  BoolColumn get responseHeadersReceived =>
+      boolean().withDefault(const Constant(false))();
+  TextColumn get safeAction => text().withLength(min: 1, max: 160)();
+  BoolColumn get retryable => boolean().withDefault(const Constant(false))();
+  TextColumn get sanitizedExceptionClass => text().nullable()();
+  TextColumn get serverSqlstateClass => text().nullable()();
+  DateTimeColumn get recordedAt => dateTime()();
+}
+
 class MigrationLedger extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get schemaName => text()();
@@ -369,6 +406,7 @@ class MigrationLedger extends Table {
     RecoveryChunks,
     HostedAuthStates,
     SyncAttempts,
+    SyncDiagnosticEvents,
     MigrationLedger,
   ],
 )
@@ -393,7 +431,7 @@ class LocalDatabase extends _$LocalDatabase {
       LocalDatabase(NativeDatabase.createInBackground(file));
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -581,7 +619,20 @@ SELECT id, 5, strftime('%s','now') * 1000 FROM local_accounts
           ),
         );
       }
-      if (from > 10) {
+      if (from < 11) {
+        await migrator.createTable(syncDiagnosticEvents);
+        await into(migrationLedger).insert(
+          MigrationLedgerCompanion.insert(
+            schemaName: 'shared_beta_local',
+            schemaVersion: to,
+            fromVersion: Value(from),
+            toVersion: const Value(11),
+            migrationId: const Value('v10-to-v11-sync-diagnostic-events'),
+            appliedAt: DateTime.now().toUtc(),
+          ),
+        );
+      }
+      if (from > 11) {
         throw UnsupportedError(
           'Unsupported local database migration $from to $to.',
         );

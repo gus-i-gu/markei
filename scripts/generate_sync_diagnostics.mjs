@@ -1,0 +1,346 @@
+#!/usr/bin/env node
+import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const dartExecutable = resolveDartExecutable();
+const prettierExecutable = resolve(
+  root,
+  "services/markei_sync_api/node_modules/prettier/bin/prettier.cjs",
+);
+const registryPath = resolve(
+  root,
+  "contracts/shared_beta/diagnostics_v1/diagnostics.registry.json",
+);
+const dartPath = resolve(
+  root,
+  "clients/markei_flutter/lib/domain/sync/sync_diagnostic_registry.g.dart",
+);
+const tsPath = resolve(
+  root,
+  "services/markei_sync_api/src/domain/sync_diagnostic_registry.generated.ts",
+);
+const mdPath = resolve(root, "documentation/SYNC_DIAGNOSTICS.md");
+const check = process.argv.includes("--check");
+
+const registry = JSON.parse(readFileSync(registryPath, "utf8"));
+validateRegistry(registry);
+
+const outputs = new Map([
+  [dartPath, formatGenerated("dart", renderDart(registry))],
+  [tsPath, formatGenerated("ts", renderTypeScript(registry))],
+  [mdPath, formatGenerated("md", renderMarkdown(registry))],
+]);
+
+let stale = false;
+for (const [path, content] of outputs) {
+  if (check) {
+    const current = existsSync(path) ? readFileSync(path, "utf8") : "";
+    if (current !== content) {
+      console.error(`stale generated output: ${relative(root, path)}`);
+      stale = true;
+    }
+  } else {
+    writeFileSync(path, content);
+  }
+}
+if (stale) process.exit(1);
+
+function validateRegistry(value) {
+  const required = [
+    "code",
+    "layer",
+    "title",
+    "meaning",
+    "severity",
+    "defaultOutcome",
+    "operationKinds",
+    "phases",
+    "nativeCodes",
+    "detectionFingerprint",
+    "detectorComponent",
+    "detectorSourceRefs",
+    "causeDomain",
+    "causeConfidenceRule",
+    "externalDependency",
+    "retryPolicy",
+    "safeAction",
+    "userGuidance",
+    "publicVisibility",
+    "logVisibility",
+    "sensitiveFieldsForbidden",
+  ];
+  if (value.version !== 1) throw new Error("registry version must be 1");
+  if (!Array.isArray(value.diagnostics)) {
+    throw new Error("registry diagnostics must be an array");
+  }
+  if (value.diagnostics.length !== 159) {
+    throw new Error(
+      `expected 159 diagnostics, found ${value.diagnostics.length}`,
+    );
+  }
+  const seen = new Set();
+  const forbidden = [
+    "token",
+    "password",
+    "payload_json",
+    "payloadJson",
+    "connectionString",
+    "connection_string",
+    "completeHash",
+    "complete_hash",
+    "privateUrl",
+    "private_url",
+    "stackTrace",
+    "stack_trace",
+    "sql",
+  ];
+  const severities = new Set([
+    "INFO",
+    "WARNING",
+    "ERROR",
+    "UNKNOWN",
+    "CRITICAL",
+  ]);
+  const outcomes = new Set([
+    "blocked",
+    "not-applied",
+    "applied",
+    "duplicate-equivalent",
+    "unknown",
+    "completed",
+  ]);
+  const retryPolicies = new Set([
+    "do-not-retry",
+    "retry-same-identity-after-confirmation",
+    "retry-after-local-review",
+    "retry-after-provider-evidence",
+    "read-only-inspection",
+    "not-retryable",
+  ]);
+  const causeConfidence = new Set([
+    "repository-proven",
+    "test-validated",
+    "human-observed",
+    "inferred",
+    "provisional",
+    "boundary-only",
+    "unknown",
+  ]);
+  for (const item of value.diagnostics) {
+    for (const field of required) {
+      if (!(field in item))
+        throw new Error(`${item.code ?? "unknown"} missing ${field}`);
+    }
+    if (!/^MKS-[A-Z]+-[0-9]{3}$/.test(item.code)) {
+      throw new Error(`invalid code ${item.code}`);
+    }
+    if (seen.has(item.code)) throw new Error(`duplicate code ${item.code}`);
+    seen.add(item.code);
+    if (item.layer !== item.code.split("-")[1]) {
+      throw new Error(`${item.code} layer does not match code`);
+    }
+    if (!severities.has(item.severity))
+      throw new Error(`${item.code} bad severity`);
+    if (!outcomes.has(item.defaultOutcome))
+      throw new Error(`${item.code} bad outcome`);
+    if (!retryPolicies.has(item.retryPolicy))
+      throw new Error(`${item.code} bad retry policy`);
+    if (!causeConfidence.has(item.causeConfidenceRule)) {
+      throw new Error(`${item.code} bad cause confidence`);
+    }
+    for (const ref of item.detectorSourceRefs) {
+      if (!existsSync(resolve(root, ref)))
+        throw new Error(`${item.code} missing source ${ref}`);
+    }
+    for (const field of item.sensitiveFieldsForbidden) {
+      if (!forbidden.includes(field)) {
+        throw new Error(
+          `${item.code} has unsupported sensitive-field ban ${field}`,
+        );
+      }
+    }
+  }
+}
+
+function renderDart(value) {
+  const items = sorted(value.diagnostics);
+  return `// GENERATED CODE - DO NOT MODIFY BY HAND.
+// Generated by scripts/generate_sync_diagnostics.mjs from contracts/shared_beta/diagnostics_v1.
+
+final class SyncDiagnosticDefinition {
+  const SyncDiagnosticDefinition({
+    required this.code,
+    required this.layer,
+    required this.title,
+    required this.meaning,
+    required this.severity,
+    required this.defaultOutcome,
+    required this.safeAction,
+    required this.retryPolicy,
+    required this.userGuidance,
+  });
+
+  final String code;
+  final String layer;
+  final String title;
+  final String meaning;
+  final String severity;
+  final String defaultOutcome;
+  final String safeAction;
+  final String retryPolicy;
+  final String userGuidance;
+}
+
+const int syncDiagnosticRegistryVersion = ${value.version};
+
+const Map<String, SyncDiagnosticDefinition> syncDiagnosticRegistry = {
+${items.map((item) => `  '${item.code}': SyncDiagnosticDefinition(code: '${item.code}', layer: '${item.layer}', title: ${dartString(item.title)}, meaning: ${dartString(item.meaning)}, severity: '${item.severity}', defaultOutcome: '${item.defaultOutcome}', safeAction: ${dartString(item.safeAction)}, retryPolicy: '${item.retryPolicy}', userGuidance: ${dartString(item.userGuidance)}),`).join("\n")}
+};
+
+SyncDiagnosticDefinition? syncDiagnosticByCode(String code) =>
+    syncDiagnosticRegistry[code];
+`;
+}
+
+function renderTypeScript(value) {
+  const items = sorted(value.diagnostics);
+  return `// GENERATED CODE - DO NOT MODIFY BY HAND.
+// Generated by scripts/generate_sync_diagnostics.mjs from contracts/shared_beta/diagnostics_v1.
+
+export type SyncDiagnosticDefinition = {
+  code: string;
+  layer: string;
+  title: string;
+  meaning: string;
+  severity: string;
+  defaultOutcome: string;
+  safeAction: string;
+  retryPolicy: string;
+  userGuidance: string;
+};
+
+export const syncDiagnosticRegistryVersion = ${value.version} as const;
+
+export const syncDiagnosticRegistry = {
+${items.map((item) => `  ${JSON.stringify(item.code)}: ${JSON.stringify(project(item))},`).join("\n")}
+} as const satisfies Record<string, SyncDiagnosticDefinition>;
+
+export function syncDiagnosticByCode(code: string): SyncDiagnosticDefinition | undefined {
+  return syncDiagnosticRegistry[code as keyof typeof syncDiagnosticRegistry];
+}
+`;
+}
+
+function renderMarkdown(value) {
+  const items = sorted(value.diagnostics);
+  const generatedAt = createHash("sha256")
+    .update(JSON.stringify(items.map((item) => item.code)))
+    .digest("hex")
+    .slice(0, 12);
+  return `<!-- GENERATED CODE - DO NOT MODIFY BY HAND. -->
+<!-- Generated by scripts/generate_sync_diagnostics.mjs from contracts/shared_beta/diagnostics_v1. -->
+
+# Sync Diagnostics
+
+Version: ${value.version}
+
+Deterministic registry fingerprint: ${generatedAt}
+
+The registry is the only hand-maintained Sync diagnostic code list. Dart, TypeScript and this Markdown file are generated projections.
+
+## Model
+
+Layers identify the detector boundary, not necessarily the root cause. Severities are INFO, WARNING, ERROR, UNKNOWN and CRITICAL. Outcomes are blocked, not-applied, applied, duplicate-equivalent, unknown and completed. Pipeline phases describe the last proved operation boundary. Cause confidence must remain boundary-only or unknown unless repository, test, human or provider evidence proves a narrower cause.
+
+Native-code mappings preserve current protocol and local enum names. Safe actions and retry policies distinguish read-only inspection, same-identity retry after confirmation, local review, provider-evidence requirements and non-retryable stops.
+
+Unexpected public HTTP 500 responses remain sanitized as service-unavailable with unknown outcome, and they are not retryable merely because the status is 500. Public and log visibility must not expose tokens, raw IDs, payloads, complete hashes, URLs with identifiers, connection strings, SQL text, exception messages or stack traces.
+
+## Codes
+
+| Code | Layer | Severity | Outcome | Title | Safe action |
+| --- | --- | --- | --- | --- | --- |
+${items.map((item) => `| ${item.code} | ${item.layer} | ${item.severity} | ${item.defaultOutcome} | ${escapeMd(item.title)} | ${escapeMd(item.safeAction)} |`).join("\n")}
+`;
+}
+
+function project(item) {
+  return {
+    code: item.code,
+    layer: item.layer,
+    title: item.title,
+    meaning: item.meaning,
+    severity: item.severity,
+    defaultOutcome: item.defaultOutcome,
+    safeAction: item.safeAction,
+    retryPolicy: item.retryPolicy,
+    userGuidance: item.userGuidance,
+  };
+}
+
+function sorted(items) {
+  return [...items].sort((a, b) => a.code.localeCompare(b.code));
+}
+
+function dartString(value) {
+  return JSON.stringify(value).replaceAll("$", "\\$");
+}
+
+function escapeMd(value) {
+  return String(value).replaceAll("|", "\\|");
+}
+
+function formatGenerated(kind, content) {
+  const directory = mkdtempSync(resolve(tmpdir(), "markei-sync-diagnostics-"));
+  const path = resolve(
+    directory,
+    kind === "dart"
+      ? "generated.dart"
+      : kind === "ts"
+        ? "generated.ts"
+        : "generated.md",
+  );
+  try {
+    writeFileSync(path, content);
+    if (kind === "dart") {
+      execFileSync(dartExecutable, ["format", path], { stdio: "ignore" });
+    }
+    if (kind === "ts" || kind === "md") {
+      execFileSync(process.execPath, [prettierExecutable, "--write", path], {
+        stdio: "ignore",
+      });
+    }
+    return readFileSync(path, "utf8");
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}
+
+function resolveDartExecutable() {
+  const candidates = [
+    process.env.DART,
+    "dart",
+    "C:/Users/gusrm/flutter/bin/cache/dart-sdk/bin/dart.exe",
+    "H:/Users/Gus/develop/flutter/bin/cache/dart-sdk/bin/dart.exe",
+  ].filter(Boolean);
+  for (const candidate of candidates) {
+    try {
+      execFileSync(candidate, ["--version"], { stdio: "ignore" });
+      return candidate;
+    } catch {
+      // Try the next known SDK location.
+    }
+  }
+  throw new Error("Dart executable was not found for diagnostics generation.");
+}
