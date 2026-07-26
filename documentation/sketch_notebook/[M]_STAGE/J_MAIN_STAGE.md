@@ -2126,3 +2126,515 @@ REPAIR_UNAUTHORIZED
 PROVIDER_MUTATION_UNAUTHORIZED
 GCM02_OPEN
 ```
+
+## System Diagnosis
+
+Date: 2026-07-25
+
+Record class: append-only Step 12.1–12.6 diagnostic synthesis.
+
+Change authority: documentation and Gate interpretation only. This entry does
+not authorize Retry, ordinary Sync, Repair, Enroll, provider mutation, or direct
+database mutation.
+
+### Reconciliation correction
+
+The prior Gate 12.7 preparation named `Retry unresolved submission` as the
+candidate one-action recovery. Source inspection and the captured UI state
+invalidate that action selection for the current lineage:
+
+- the visible Retry control is an **unknown-outcome Retry**;
+- the current hosted Device scope has `pending=0`, `uploading=0`, `failed=2`,
+  and `unknown=0`;
+- its preflight therefore returns the existing native code
+  `unknown-retry-queue-not-isolated`;
+- the blocked branch performs no local mutation and no provider request;
+- the page refreshes Diagnostics and changes only its compact status text; it
+  does not show a blocking dialog or an in-view banner;
+- the correct current lineage is the already-proved `failed/notApplied`
+  candidate containing Device sequences `1–2`, with `next_sequence=3`.
+
+The latest Retry button press is therefore explained. It is not evidence of a
+new SQLite/Neon contradiction, provider rejection, failed database repair, or
+HTTP 500.
+
+The displayed `sync-unavailable / provider-evidence-unavailable` result belongs
+to an earlier ordinary Sync attempt. Its exact internal failure phase remains
+unproved. Null HTTP status/header fields in the current attempt record must not
+be interpreted as proof that the earlier Sync never contacted the API, because
+the ordinary Sync path does not currently populate those fields. The supplied
+Render window proves only that the latest blocked Retry click produced health
+requests and no protected Sync request in that window.
+
+Current corrected terminal:
+
+```text
+GCM02_12_6_PASS
+GCM02_12_7_ACTION_INTERFACE_ALIGNMENT_BLOCKED
+CURRENT_UNKNOWN_RETRY_INAPPLICABLE
+BOUNDED_FAILED_NOT_APPLIED_RECOVERY_NOT_IMPLEMENTED
+PRIOR_SYNC_FAILURE_PHASE_UNRESOLVED
+RETRY_UNAUTHORIZED
+ORDINARY_SYNC_UNAUTHORIZED
+REPAIR_UNAUTHORIZED
+PROVIDER_MUTATION_UNAUTHORIZED
+GCM02_OPEN
+```
+
+### Error Protocol purpose
+
+This protocol catalogues only events that are reachable from the inspected
+Flutter, API, PostgreSQL, and SQLite composition or are directly required to
+explain the accepted Step 12 evidence. It deliberately excludes speculative
+external systems and failure modes not represented by the current source.
+
+The protocol has four objectives:
+
+1. prevent an expected, classifiable failure from collapsing into a generic
+   `500/service-unavailable`;
+2. distinguish a local preflight stop from a request that may have reached the
+   provider;
+3. preserve whether an operation was blocked, not applied, applied,
+   duplicate-equivalent, or left with unknown outcome;
+4. make every UI action traceable through one sanitized operation fingerprint
+   without exposing tokens, raw account/device IDs, payloads, SQL, or full
+   request hashes.
+
+### Code and classification contract
+
+Protocol codes use:
+
+```text
+MKS-<LAYER>-<NNN>
+```
+
+The protocol code wraps rather than replaces an existing runtime
+`resultCode`, `protocolCode`, `errorCode`, or Auth0 state. For example:
+
+```text
+protocolCode: MKS-UI-001
+nativeCode: unknown-retry-queue-not-isolated
+```
+
+Layers:
+
+| Layer | Meaning                                                          |
+| ----- | ---------------------------------------------------------------- |
+| `UI`  | action selection, preflight presentation, and visible result     |
+| `CFG` | compiled configuration, composition, revision, and endpoint      |
+| `AUT` | authentication and token acquisition                             |
+| `BND` | account, installation, Device, enrollment, and hosted binding    |
+| `LDB` | local SQLite access, schema, transaction, and attempt ledger     |
+| `REC` | failed/notApplied recovery candidate and requeue                 |
+| `QUE` | pending/uploading/unknown queue lease and persistence            |
+| `TRN` | HTTP construction, connection, timeout, and response decoding    |
+| `API` | API ingress, route, authorization, and request validation        |
+| `PDB` | PostgreSQL connection, transaction, privileges, and constraints  |
+| `UPL` | submission validation and provider upload application            |
+| `DNL` | provider download and local remote-event application             |
+| `ACK` | provider acknowledgement                                         |
+| `OBS` | observability, correlation, redaction, and diagnostic projection |
+| `INV` | invariant violations and partial-application hazards             |
+
+Severity is independent of outcome:
+
+| Severity   | Meaning                                                   |
+| ---------- | --------------------------------------------------------- |
+| `INFO`     | expected no-op or completed state                         |
+| `WARNING`  | safe blocked state requiring review or a different action |
+| `ERROR`    | known failure with a proved application boundary          |
+| `UNKNOWN`  | provider or persistence outcome cannot be proved          |
+| `CRITICAL` | invariant or atomicity violation; freeze mutation         |
+
+Allowed outcomes:
+
+```text
+blocked
+not-applied
+applied
+duplicate-equivalent
+unknown
+completed
+```
+
+Evidence relevance:
+
+| Value         | Meaning                                                     |
+| ------------- | ----------------------------------------------------------- |
+| `CONFIRMED`   | observed and sufficient to explain the named event          |
+| `REACHABLE`   | explicit current source branch; not yet observed here       |
+| `LATENT`      | source-level ambiguity or defect requiring tightening       |
+| `LOW-CURRENT` | reachable, but contradicted or reduced by accepted evidence |
+| `FRESHNESS`   | previously accepted; must be rechecked before mutation      |
+
+### Required diagnostic envelope
+
+Every top-level UI action must create one `operationId`; every child HTTP
+request must inherit it and add a request ordinal. The persisted and logged
+envelope must contain:
+
+| Field                                                           | Rule                                                                                                                        |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `diagnosticVersion`                                             | schema version, initially `1`                                                                                               |
+| `protocolCode`                                                  | stable `MKS-*` code                                                                                                         |
+| `nativeCode`                                                    | existing sanitized runtime code, if one exists                                                                              |
+| `severity` / `outcome`                                          | values from the contracts above                                                                                             |
+| `operationKind`                                                 | `diagnostics`, `unknown-retry`, `failed-recovery`, `sync`, `upload`, `download`, or `acknowledge`                           |
+| `phase`                                                         | exact last completed or failed pipeline phase                                                                               |
+| `operationFingerprint`                                          | first 12 hex characters of SHA-256 over a random per-action operation ID                                                    |
+| `correlationFingerprint`                                        | first 12 hex characters of SHA-256 over the full request correlation ID                                                     |
+| `requestOrdinal`                                                | `0` for local preflight; `1..n` for child requests                                                                          |
+| `submissionFingerprint`                                         | first 12 hex characters of SHA-256 over submission identity; never the raw ID                                               |
+| `requestHashShape`                                              | only `sha256-64-hex-valid` or `invalid`; never the full request hash                                                        |
+| `accountScopeFingerprint`                                       | first 12 hex characters of SHA-256 over the normalized account UUID                                                         |
+| `deviceScopeFingerprint`                                        | first 12 hex characters of SHA-256 over the normalized Device UUID                                                          |
+| `sourceRevision`                                                | deployed/client short Git revision                                                                                          |
+| `clientBuild` / `apiBuild`                                      | sanitized build identifiers                                                                                                 |
+| `routeClass`                                                    | route template, never a URL containing identifiers                                                                          |
+| `queueScope`                                                    | explicitly `account` or `device`                                                                                            |
+| `pendingCount`, `uploadingCount`, `failedCount`, `unknownCount` | target scope counts captured at action start                                                                                |
+| `memberCount`, `firstSequence`, `lastSequence`, `nextSequence`  | numeric boundary only                                                                                                       |
+| `localMutation`                                                 | `none`, `started`, `committed`, `rolled-back`, or `unknown`                                                                 |
+| `providerContact`                                               | `not-started`, `request-started`, `headers-received`, `trusted-response`, or `unknown`                                      |
+| `providerTransaction`                                           | `not-started`, `committed`, `rolled-back`, or `unknown`                                                                     |
+| `httpStatus`                                                    | numeric status when received                                                                                                |
+| `headersReceived`                                               | boolean                                                                                                                     |
+| `responseTrusted`                                               | boolean after origin, size, JSON, and contract validation                                                                   |
+| `elapsedBand`                                                   | bounded band, not precise timing                                                                                            |
+| `retryable`                                                     | typed protocol value, never inferred solely from HTTP 500                                                                   |
+| `safeAction`                                                    | bounded guidance such as `preserve-local-state`, `sign-in`, `recheck-enrollment`, `inspect-candidate`, or `operator-review` |
+| `exceptionClass`                                                | closed sanitized allow-list; no message or stack in UI                                                                      |
+| `sqlStateClass`                                                 | allow-listed SQLSTATE class in server logs only                                                                             |
+
+Never persist or display bearer/refresh/ID tokens, authorization codes, raw
+account/device/event/submission IDs, payload bodies, personal purchase data,
+connection strings, SQL text, complete hashes, raw exception messages, or stack
+traces.
+
+### Event parsing and precedence
+
+Events must be reduced in this order:
+
+1. Verify the `diagnosticVersion` and stable protocol code.
+2. Join by `operationFingerprint`, then `requestOrdinal`.
+3. Prefer a trusted typed provider response over an HTTP status label.
+4. Prefer a proved transaction outcome over a transport outcome.
+5. If request transmission started but no trusted provider outcome exists,
+   classify `unknown`; never automatically requeue as `not-applied`.
+6. If local preflight stopped before mutation and request start, classify
+   `blocked`.
+7. If the provider proves `not-applied`, preserve the failed lineage until a
+   separately authorized failed-recovery action.
+8. If local result persistence fails after a trusted provider response,
+   preserve the provider outcome and emit a separate local-persistence event.
+9. A later event may refine an earlier `unknown`, but must not erase it.
+10. UI projection must show the current action result separately from the last
+    ordinary Sync result.
+
+### A. Present incident and UI selection
+
+| Code         | Event / native signal                                                            | Detection fingerprint                                                                                          | Relevance   | Required disposition                                          |
+| ------------ | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------- |
+| `MKS-UI-001` | Unknown Retry blocked by non-isolated queue / `unknown-retry-queue-not-isolated` | Device queue `failed=2`, `unknown=0`; preflight stops before mutation/request                                  | `CONFIRMED` | Visible warning; select no provider action                    |
+| `MKS-UI-002` | Blocked preflight is not visibly presented                                       | state changes only in compact page status; no dialog/banner                                                    | `CONFIRMED` | Add persistent in-view warning with code and safe action      |
+| `MKS-UI-003` | Wrong recovery action label                                                      | label says unresolved submission although implementation accepts only unknown outcome                          | `CONFIRMED` | Rename to `Retry unknown-outcome submission`                  |
+| `MKS-UI-004` | Failed/notApplied action absent                                                  | failed candidate exists but no bounded failed-recovery control exists                                          | `CONFIRMED` | Implement separate preflight and separately authorized action |
+| `MKS-UI-005` | Current action result conflated with prior Sync result                           | button preflight result and `Last result: sync-unavailable` occupy different UI state without clear chronology | `CONFIRMED` | Show action name, timestamp/order, and operation fingerprint  |
+| `MKS-UI-006` | Action handler exception escapes visible reporting                               | page `_run` and diagnostic refresh/preflight lack a page-level presentation boundary                           | `LATENT`    | Catch, persist, and display sanitized typed failure           |
+| `MKS-UI-007` | Account-scoped queue summary interpreted as Device-scoped                        | snapshot totals use Account scope while recovery preflight uses Device scope                                   | `LATENT`    | Label both scopes and fingerprint the target Device           |
+| `MKS-UI-008` | Enrolled badge overstates full binding validity                                  | snapshot projects hosted row state; full binding validation happens later in Sync guard                        | `LATENT`    | Display binding-validation state separately                   |
+
+### B. Configuration and composition
+
+| Code          | Event / native signal                                             | Detection fingerprint                                                                | Relevance     | Required disposition                           |
+| ------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------- | ---------------------------------------------- |
+| `MKS-CFG-001` | Unsupported native platform / `platform-unsupported`              | client platform not supported by native Auth surface                                 | `LOW-CURRENT` | Block before sign-in or Sync                   |
+| `MKS-CFG-002` | Missing/invalid Auth0 configuration / `configuration-invalid`     | domain, client ID, audience, or callback invalid/missing                             | `LOW-CURRENT` | Block and identify missing configuration class |
+| `MKS-CFG-003` | Hosted surface disabled / `configuration-missing`                 | required hosted endpoint/define absent                                               | `LOW-CURRENT` | Block composition; no network attempt          |
+| `MKS-CFG-004` | Invalid API origin                                                | endpoint parse, scheme, or allowed-origin validation fails                           | `REACHABLE`   | Emit origin/config code; do not call provider  |
+| `MKS-CFG-005` | Binding created after app composition / `hosted-restart-required` | no active hosted binding loaded at startup although enrollment later succeeds        | `REACHABLE`   | Require controlled app restart before Sync     |
+| `MKS-CFG-006` | Client/API/repository revision drift                              | client build, API build, and expected branch revision differ                         | `FRESHNESS`   | Stop Gate 12.7 and reconcile revisions         |
+| `MKS-CFG-007` | Deployment healthy but wrong source revision                      | `/health/ready` succeeds but advertised API build differs from authorization packet  | `FRESHNESS`   | Treat readiness as insufficient; stop          |
+| `MKS-CFG-008` | Constant request correlation source                               | all native closure requests derive from `native-closure` rather than a per-action ID | `LATENT`      | Generate unique correlation per action/request |
+
+### C. Authentication and token acquisition
+
+| Code          | Event / native signal                                                     | Detection fingerprint                                                     | Relevance     | Required disposition                                            |
+| ------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------- | --------------------------------------------------------------- |
+| `MKS-AUT-001` | Signed out / `signed-out` or `auth-required`                              | no current authenticated state/token                                      | `LOW-CURRENT` | Sign in; no queue mutation                                      |
+| `MKS-AUT-002` | Sign-in already running / `signing-in`                                    | concurrent sign-in state                                                  | `REACHABLE`   | Block duplicate action                                          |
+| `MKS-AUT-003` | User cancelled sign-in / `sign-in-cancelled`                              | provider flow returns cancellation                                        | `REACHABLE`   | Preserve queue; present informational result                    |
+| `MKS-AUT-004` | Provider unavailable / `provider-unavailable`                             | provider launch/discovery unavailable                                     | `REACHABLE`   | Preserve queue; operator/network review                         |
+| `MKS-AUT-005` | Callback absent / `callback-not-received`                                 | authorization flow ends without callback                                  | `REACHABLE`   | Preserve queue; no Sync                                         |
+| `MKS-AUT-006` | Callback state rejected / `callback-state-rejected`                       | returned state does not match local state                                 | `REACHABLE`   | Security stop; discard callback                                 |
+| `MKS-AUT-007` | Code exchange rejected / `authorization-code-exchange-rejected`           | token endpoint rejects code exchange                                      | `REACHABLE`   | Preserve queue; new sign-in required                            |
+| `MKS-AUT-008` | Access token missing / `access-token-missing`                             | exchange succeeds without usable access token                             | `REACHABLE`   | Reject credentials; no provider request                         |
+| `MKS-AUT-009` | ID token missing / `id-token-missing`                                     | exchange lacks required ID token                                          | `REACHABLE`   | Reject credentials                                              |
+| `MKS-AUT-010` | Token confusion rejected / `token-confusion-rejected`                     | token identity/type binding inconsistent                                  | `REACHABLE`   | Security stop                                                   |
+| `MKS-AUT-011` | Local token expired / `token-expired`                                     | expiry within configured safety margin                                    | `REACHABLE`   | Sign in again; preserve queue                                   |
+| `MKS-AUT-012` | Server token rejected / `token-rejected`                                  | JWT malformed, oversized, wrong issuer/audience/algorithm/key, or expired | `REACHABLE`   | Public code remains sanitized; server log records safe subphase |
+| `MKS-AUT-013` | Membership missing / `membership-required`                                | verified principal has no active hosted membership                        | `LOW-CURRENT` | Stop; recheck Auth0/Neon identity                               |
+| `MKS-AUT-014` | Account selection ambiguous / `account-selection-required`                | principal maps to multiple/ambiguous account choices                      | `LOW-CURRENT` | Stop; explicit account selection required                       |
+| `MKS-AUT-015` | Authentication rejected, unclassified / `authentication-rejected-unknown` | provider error outside known local mapping                                | `REACHABLE`   | Preserve sanitized provider class and operation fingerprint     |
+
+### D. Binding, enrollment, and Device authorization
+
+| Code          | Event / native signal                              | Detection fingerprint                                                          | Relevance     | Required disposition                                |
+| ------------- | -------------------------------------------------- | ------------------------------------------------------------------------------ | ------------- | --------------------------------------------------- |
+| `MKS-BND-001` | Enrollment required / `device-enrollment-required` | no active enrolled Device for account/installation                             | `LOW-CURRENT` | Stop and query/enroll only under separate authority |
+| `MKS-BND-002` | Local hosted binding invalid / `binding-invalid`   | environment alias, UUID, installation, generation, or active-state check fails | `LOW-CURRENT` | Stop; never silently substitute Device              |
+| `MKS-BND-003` | Device header missing/malformed                    | protected request lacks valid `x-markei-device-id`                             | `REACHABLE`   | Reject before service execution                     |
+| `MKS-BND-004` | Device revoked / `device-revoked`                  | local or hosted enrollment/device is revoked                                   | `LOW-CURRENT` | Stop; preserve local events                         |
+| `MKS-BND-005` | Device expired / `device-expired`                  | enrollment/device expiry check fails                                           | `LOW-CURRENT` | Stop; explicit re-enrollment decision               |
+| `MKS-BND-006` | Device/account binding mismatch / `wrong-account`  | event, token account, binding account, or Device account differs               | `LOW-CURRENT` | Critical identity stop; no repair mutation          |
+| `MKS-BND-007` | Hosted authorization forbidden / `forbidden`       | authenticated principal lacks required operation permission                    | `REACHABLE`   | Stop; inspect policy/membership                     |
+| `MKS-BND-008` | Local Device scope differs from authorized target  | queue target fingerprint/rank differs from Gate packet                         | `LOW-CURRENT` | Cancel action and rebuild evidence                  |
+
+### E. Local SQLite and attempt ledger
+
+| Code          | Event / native signal                   | Detection fingerprint                                                              | Relevance     | Required disposition                                               |
+| ------------- | --------------------------------------- | ---------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------ |
+| `MKS-LDB-001` | SQLite open failure                     | database cannot be opened/read                                                     | `LOW-CURRENT` | Stop; preserve file and OS error class                             |
+| `MKS-LDB-002` | Integrity/schema failure                | quick check fails or expected table count/schema differs                           | `LOW-CURRENT` | Freeze mutation; copied DB showed healthy expected schema          |
+| `MKS-LDB-003` | Local migration/version mismatch        | client expects fields/tables absent from current DB                                | `LOW-CURRENT` | Stop; no ad hoc SQL                                                |
+| `MKS-LDB-004` | Diagnostics query failure               | snapshot/preflight query throws or returns invalid shape                           | `REACHABLE`   | Emit typed local-read failure                                      |
+| `MKS-LDB-005` | Attempt-begin persistence failure       | attempt row cannot be inserted before action                                       | `REACHABLE`   | Do not start provider contact                                      |
+| `MKS-LDB-006` | Attempt-completion persistence failure  | operation finishes but result row cannot be finalized                              | `LATENT`      | Preserve external outcome separately; emit local-persistence error |
+| `MKS-LDB-007` | Unknown stored enum/state               | text state cannot be decoded into current enum                                     | `REACHABLE`   | Invariant stop; never collapse to generic unavailable              |
+| `MKS-LDB-008` | Local JSON/type/date decode failure     | persisted payload cannot be decoded/cast                                           | `REACHABLE`   | Quarantine candidate by identity fingerprint; no mutation          |
+| `MKS-LDB-009` | Local transaction constraint failure    | recovery/lease/apply violates SQLite constraint                                    | `REACHABLE`   | Roll back and report transaction outcome                           |
+| `MKS-LDB-010` | Attempt evidence field absent by design | Sync attempt has null correlation/status/header because writer never supplied them | `CONFIRMED`   | Treat as instrumentation gap, not proof of no provider contact     |
+
+### F. Failed/notApplied recovery
+
+| Code          | Event / native signal                                              | Detection fingerprint                                            | Relevance     | Required disposition                                  |
+| ------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------- | ------------- | ----------------------------------------------------- |
+| `MKS-REC-001` | Recoverable failed lineage available / `failed-recovery-available` | exactly one valid scoped failed/notApplied candidate             | `CONFIRMED`   | Preflight only until Gate 12.7 authorization          |
+| `MKS-REC-002` | No recoverable failed lineage / `no-recoverable-failure`           | zero valid failed/notApplied candidates                          | `REACHABLE`   | Informational stop                                    |
+| `MKS-REC-003` | Ambiguous failed lineage / `failed-recovery-blocked`               | multiple candidate submissions                                   | `REACHABLE`   | Stop; operator reconciliation                         |
+| `MKS-REC-004` | Candidate membership malformed                                     | count, position, contiguity, or event lookup invalid             | `REACHABLE`   | Critical local invariant stop                         |
+| `MKS-REC-005` | Candidate state mismatch                                           | member/event not uniformly failed as expected                    | `REACHABLE`   | Stop; capture state-kind set                          |
+| `MKS-REC-006` | Candidate contains accepted member                                 | candidate overlaps an accepted event                             | `REACHABLE`   | Stop; never requeue                                   |
+| `MKS-REC-007` | Candidate overlaps active submission                               | uploading/unknown submission shares candidate members            | `REACHABLE`   | Stop; resolve active outcome first                    |
+| `MKS-REC-008` | Candidate request hash/payload invalid                             | canonical payload or request-hash validation fails               | `LOW-CURRENT` | Stop; SQLite-04 observed valid hash shape/contiguity  |
+| `MKS-REC-009` | Candidate Device/account mismatch                                  | candidate scope differs from authorized binding                  | `LOW-CURRENT` | Stop; no cross-scope recovery                         |
+| `MKS-REC-010` | Recovery transaction rolled back                                   | supersede/requeue transaction fails before commit                | `REACHABLE`   | Preserve candidate and record rollback                |
+| `MKS-REC-011` | Recovery commit result unknown                                     | local process/storage interruption around commit                 | `REACHABLE`   | Reopen diagnostics; do not repeat automatically       |
+| `MKS-REC-012` | Mixed pending/failed candidate partial-requeue ambiguity           | recovery sees `alreadyPending` while other members remain failed | `LATENT`      | Tighten to all-or-none candidate state before release |
+
+### G. Queue isolation, lease, and result persistence
+
+| Code          | Event / native signal                                 | Detection fingerprint                                                    | Relevance     | Required disposition                                                 |
+| ------------- | ----------------------------------------------------- | ------------------------------------------------------------------------ | ------------- | -------------------------------------------------------------------- |
+| `MKS-QUE-001` | Pending and unknown collision / `local-batch-invalid` | target Device has pending and unknown work together                      | `REACHABLE`   | Stop; resolve unknown first                                          |
+| `MKS-QUE-002` | Multiple unknown submissions                          | more than one scoped unknown candidate                                   | `REACHABLE`   | Stop; ambiguous provider outcome                                     |
+| `MKS-QUE-003` | Unknown candidate malformed                           | membership/hash/state/sequence validation fails                          | `REACHABLE`   | Stop; preserve unknown                                               |
+| `MKS-QUE-004` | Unknown Retry eligible / `unknown-retry-eligible`     | exactly one valid unknown candidate and no pending/uploading/failed work | `LOW-CURRENT` | Separate authorization path; current `unknown=0`                     |
+| `MKS-QUE-005` | Empty upload lease                                    | no pending events after recovery/preflight                               | `REACHABLE`   | Continue to download only for ordinary Sync; bounded recovery stops  |
+| `MKS-QUE-006` | Local event hash/identity invalid                     | canonical event validation fails before lease                            | `LOW-CURRENT` | Stop; current candidate passed SQLite-04 structural checks           |
+| `MKS-QUE-007` | Local sequence gap/noncanonical order                 | leased events are not contiguous/canonical                               | `LOW-CURRENT` | Stop before request                                                  |
+| `MKS-QUE-008` | Lease transaction failure                             | submission/members/event uploading states not committed atomically       | `REACHABLE`   | Roll back; no network request                                        |
+| `MKS-QUE-009` | Uploading state stranded after transport throw        | lease committed, then transport throws before typed result persistence   | `LATENT`      | Persist outcome in `finally`; diagnostics must expose stranded lease |
+| `MKS-QUE-010` | Upload result persistence target missing              | scoped submission lookup fails and current writer silently returns       | `LATENT`      | Convert silent return to invariant error                             |
+| `MKS-QUE-011` | Provider result persisted as failed                   | trusted `not-applied` response maps events/members to failed             | `REACHABLE`   | Preserve exact provider code and candidate                           |
+| `MKS-QUE-012` | Provider result persisted as unknown                  | no trusted response after request start                                  | `REACHABLE`   | Preserve unknown; do not failed-recover                              |
+
+### H. HTTP transport and response contract
+
+| Code          | Event / native signal                                 | Detection fingerprint                                                  | Relevance   | Required disposition                                         |
+| ------------- | ----------------------------------------------------- | ---------------------------------------------------------------------- | ----------- | ------------------------------------------------------------ |
+| `MKS-TRN-001` | Token source fails during request construction        | authenticated UI state cannot supply a current token                   | `REACHABLE` | No request; return exact token phase                         |
+| `MKS-TRN-002` | DNS resolution failure / `dns-failed`                 | connection fails before socket establishment                           | `REACHABLE` | Unknown only if transmission cannot be disproved             |
+| `MKS-TRN-003` | TCP/connect failure / `connection-failed`             | client exception before trusted response                               | `REACHABLE` | Preserve request-start boundary                              |
+| `MKS-TRN-004` | TLS failure / `tls-failed`                            | certificate/handshake failure                                          | `REACHABLE` | Security/transport stop                                      |
+| `MKS-TRN-005` | Timeout before response / `timeout-before-response`   | timeout with no response headers                                       | `REACHABLE` | Upload outcome is `unknown` after request start              |
+| `MKS-TRN-006` | Timeout during response / `timeout-during-response`   | headers or partial response observed before timeout                    | `REACHABLE` | Record status/header evidence; outcome may remain unknown    |
+| `MKS-TRN-007` | HTTP client exception collapsed to null upload result | `_sendJson` catches `ClientException` without phase detail             | `LATENT`    | Replace null with typed transport result                     |
+| `MKS-TRN-008` | Response is not JSON                                  | body parse throws                                                      | `REACHABLE` | Record status/size/content class; do not generic-collapse    |
+| `MKS-TRN-009` | JSON contract invalid / `response-contract-invalid`   | decoded body has wrong top-level or field types                        | `REACHABLE` | Treat response untrusted; preserve provider-contact evidence |
+| `MKS-TRN-010` | Response exceeds size limit                           | body exceeds 262144-byte bound                                         | `REACHABLE` | Reject safely; record size band                              |
+| `MKS-TRN-011` | HTTP status lacks trusted protocol body               | non-success status cannot be mapped from sanitized body                | `REACHABLE` | Preserve status and untrusted-response code                  |
+| `MKS-TRN-012` | Redirect/unexpected effective origin                  | request does not terminate at authorized API origin                    | `REACHABLE` | Security stop; do not forward bearer across untrusted origin |
+| `MKS-TRN-013` | Download `ClientException` escapes transport mapper   | download path does not use the upload `_sendJson` exception mapping    | `LATENT`    | Use one typed transport boundary for all routes              |
+| `MKS-TRN-014` | Different timeout semantics by route                  | upload null-maps timeout while download lets timeout reach coordinator | `LATENT`    | Normalize with route and phase retained                      |
+
+### I. API ingress and authorization
+
+| Code          | Event / native signal                            | Detection fingerprint                                                                                                | Relevance     | Required disposition                                             |
+| ------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------- |
+| `MKS-API-001` | Route absent or revision mismatch / HTTP 404     | protected route not present at deployed revision                                                                     | `FRESHNESS`   | Verify exact revision and route inventory                        |
+| `MKS-API-002` | Method/content type rejected                     | wrong method or media type                                                                                           | `REACHABLE`   | Typed 4xx; never generic 500                                     |
+| `MKS-API-003` | Request body missing/malformed                   | unvalidated body cast causes type/runtime error                                                                      | `LATENT`      | Add schema validation before transaction                         |
+| `MKS-API-004` | Authentication required                          | bearer absent                                                                                                        | `REACHABLE`   | Typed 401 with no service execution                              |
+| `MKS-API-005` | JWT rejected                                     | verifier rejects token                                                                                               | `REACHABLE`   | Typed auth failure; sanitized verifier subphase in server log    |
+| `MKS-API-006` | Membership/account selection rejected            | principal cannot resolve one active account                                                                          | `LOW-CURRENT` | Typed authorization result                                       |
+| `MKS-API-007` | Device header/enrollment rejected                | header or active enrollment invalid                                                                                  | `LOW-CURRENT` | Typed device result                                              |
+| `MKS-API-008` | Forbidden operation                              | policy denies authenticated request                                                                                  | `REACHABLE`   | Typed 403                                                        |
+| `MKS-API-009` | API database composition absent                  | service starts without usable database composition                                                                   | `LOW-CURRENT` | Existing typed 503; readiness is presently healthy               |
+| `MKS-API-010` | Rate limited / `rate-limited`                    | provider or authorization layer rejects request rate                                                                 | `REACHABLE`   | Preserve retry-after class; no immediate automatic Retry         |
+| `MKS-API-011` | Request lifecycle stops after `request-received` | no later validation/auth/transaction stage for same correlation                                                      | `REACHABLE`   | Server alert identifies last stage                               |
+| `MKS-API-012` | Unexpected exception genericized                 | current error handler emits `500/service-unavailable`, operation `server`, outcome `unknown` for all non-auth errors | `LATENT`      | Retain safe phase-specific internal code and transaction outcome |
+| `MKS-API-013` | Health-ready incorrectly treated as Sync proof   | `/health/ready` 200 exists without protected route execution                                                         | `CONFIRMED`   | Treat readiness only as startup/DB readiness evidence            |
+| `MKS-API-014` | Correlation ID missing/reused                    | request lacks unique per-action correlation                                                                          | `LATENT`      | Generate/reject according to correlation contract                |
+
+### J. PostgreSQL connection and transaction
+
+| Code          | Event / native signal                      | Detection fingerprint                                            | Relevance     | Required disposition                                             |
+| ------------- | ------------------------------------------ | ---------------------------------------------------------------- | ------------- | ---------------------------------------------------------------- |
+| `MKS-PDB-001` | Pool connection unavailable                | `pool.connect()` fails before transaction                        | `REACHABLE`   | Typed `db-connect-unavailable`; provider transaction not started |
+| `MKS-PDB-002` | Transaction begin/context failure          | `BEGIN`, transaction-local context, or authorization setup fails | `REACHABLE`   | Record rolled-back/not-started exactly                           |
+| `MKS-PDB-003` | Serialization retry / SQLSTATE `40001`     | serializable conflict before retry budget expires                | `REACHABLE`   | Internal warning; retry only within bounded DB helper            |
+| `MKS-PDB-004` | Deadlock retry / SQLSTATE `40P01`          | deadlock before retry budget expires                             | `REACHABLE`   | Same bounded internal retry                                      |
+| `MKS-PDB-005` | Serialization/deadlock retries exhausted   | three attempts or five-second budget exhausted                   | `REACHABLE`   | Typed transient DB failure; outcome/rollback required            |
+| `MKS-PDB-006` | Permission/RLS failure                     | runtime role lacks allowed operation or context                  | `LOW-CURRENT` | Typed server configuration failure                               |
+| `MKS-PDB-007` | Schema/migration mismatch                  | relation/function/column/readiness contract absent               | `LOW-CURRENT` | Stop deployment; migration 007/readiness previously passed       |
+| `MKS-PDB-008` | Constraint/type failure                    | insert/update violates DB constraint or type                     | `REACHABLE`   | Typed invariant/validation class; rollback                       |
+| `MKS-PDB-009` | Transaction commit failure                 | commit returns error or connection loss                          | `REACHABLE`   | Provider outcome `unknown` unless DB proves rollback             |
+| `MKS-PDB-010` | Rollback failure suppressed                | rollback attempt also fails and current helper suppresses it     | `LATENT`      | Log rollback outcome separately; public response sanitized       |
+| `MKS-PDB-011` | Cursor state row missing                   | active account has no `account_sync_state` row                   | `LOW-CURRENT` | Stop; prior Neon baseline proved row and `next_cursor=1`         |
+| `MKS-PDB-012` | Readiness passes but request-time DB fails | pool/transaction changes after last readiness check              | `FRESHNESS`   | Fresh baseline required immediately before authorization         |
+
+### K. Upload validation and provider application
+
+| Code          | Event / native signal                                               | Detection fingerprint                                                                                                 | Relevance     | Required disposition                                           |
+| ------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------- | -------------------------------------------------------------- |
+| `MKS-UPL-001` | Submission Device differs from authorized Device / `device-revoked` | request Device and authorized Device mismatch                                                                         | `LOW-CURRENT` | Reject before event writes                                     |
+| `MKS-UPL-002` | Submission shape invalid                                            | missing/invalid submission ID, hash, events, sequence, or payload fields                                              | `LATENT`      | Validate complete request before transaction mutation          |
+| `MKS-UPL-003` | Existing submission hash differs / `hash-mismatch`                  | same submission ID, different request hash                                                                            | `REACHABLE`   | Reject; preserve original submission                           |
+| `MKS-UPL-004` | Event scope differs / `wrong-account`                               | event account/device differs from submission context                                                                  | `LOW-CURRENT` | Reject entire batch atomically                                 |
+| `MKS-UPL-005` | Event content hash differs / `hash-mismatch`                        | canonical provider hash check fails                                                                                   | `LOW-CURRENT` | Reject entire batch atomically                                 |
+| `MKS-UPL-006` | Provider sequence gap / `sequence-gap`                              | event sequence differs from next expected Device sequence                                                             | `LOW-CURRENT` | Reject not-applied and report expected/observed safely         |
+| `MKS-UPL-007` | Provider cursor state unavailable / `service-unavailable`           | cursor row absent while assigning event cursor                                                                        | `LOW-CURRENT` | Roll back; classify DB invariant, not generic service outage   |
+| `MKS-UPL-008` | Duplicate event is equivalent                                       | existing event identity/hash/content matches                                                                          | `REACHABLE`   | Return `duplicate-equivalent`; do not duplicate write          |
+| `MKS-UPL-009` | Submission applied                                                  | all events and submission committed                                                                                   | `REACHABLE`   | Return trusted `server-accepted` with committed outcome        |
+| `MKS-UPL-010` | Stored submission replay                                            | same submission ID/hash already has stored result                                                                     | `REACHABLE`   | Return explicit replay/duplicate semantic                      |
+| `MKS-UPL-011` | Request hash not independently recomputed server-side               | server trusts request-level hash except identity collision comparison                                                 | `LATENT`      | Recompute canonical request hash before writes                 |
+| `MKS-UPL-012` | Partial-batch commit hazard                                         | service may return a normal `ProtocolFailure` after earlier loop iterations wrote events, allowing transaction commit | `LATENT`      | Validate full batch first or throw rollback-only typed failure |
+| `MKS-UPL-013` | Failure lacks event/field/submission context                        | failure contract supports context but service often omits it                                                          | `LATENT`      | Populate sanitized member position/field and fingerprints      |
+| `MKS-UPL-014` | Failure retryability/safe action inconsistent                       | cursor-missing/service failure may carry unsafe retry meaning                                                         | `LATENT`      | Derive safe action from outcome and transaction proof          |
+
+### L. Download and local remote-event application
+
+| Code          | Event / native signal                                 | Detection fingerprint                                      | Relevance   | Required disposition                                       |
+| ------------- | ----------------------------------------------------- | ---------------------------------------------------------- | ----------- | ---------------------------------------------------------- |
+| `MKS-DNL-001` | Provider cursor expired / `cursor-expired`            | requested cursor is outside retained/provider boundary     | `REACHABLE` | Stop; determine recovery snapshot path                     |
+| `MKS-DNL-002` | Recovery unavailable / `recovery-unavailable`         | cursor expired and no provider snapshot exists             | `REACHABLE` | Stop; explicit recovery decision                           |
+| `MKS-DNL-003` | Full rebootstrap required                             | provider requires full local rebuild                       | `REACHABLE` | Separate destructive authorization                         |
+| `MKS-DNL-004` | Local changes block rebootstrap                       | unuploaded local work prevents safe rebuild                | `REACHABLE` | Preserve local work; operator reconciliation               |
+| `MKS-DNL-005` | Protocol upgrade required                             | response/event version unsupported                         | `REACHABLE` | Stop and update client                                     |
+| `MKS-DNL-006` | Download response shape invalid                       | response/event/cursor fields fail type/contract checks     | `REACHABLE` | Reject page before apply                                   |
+| `MKS-DNL-007` | Remote event wrong account/type/version/hash          | remote applier validation fails                            | `REACHABLE` | Local transaction rollback; typed conflict subcode         |
+| `MKS-DNL-008` | Remote cursor not contiguous                          | returned cursor sequence skips expected local cursor       | `REACHABLE` | Roll back; preserve page fingerprint                       |
+| `MKS-DNL-009` | Duplicate event identity with different hash          | inbox already has identity but different content           | `REACHABLE` | Critical conflict; no overwrite                            |
+| `MKS-DNL-010` | Required fact reference absent                        | person/payment reference snapshot unavailable              | `REACHABLE` | Roll back local page                                       |
+| `MKS-DNL-011` | Store/product/purchase identity conflict              | remote fact collides with incompatible local identity      | `REACHABLE` | Roll back and name entity class only                       |
+| `MKS-DNL-012` | Local fact type/date/constraint failure               | decoded payload cannot be written under schema constraints | `REACHABLE` | Roll back and classify local apply                         |
+| `MKS-DNL-013` | Duplicate-only page does not advance local cursor     | duplicate outcome returns without updating sync state      | `LATENT`    | Prove/update cursor advancement for equivalent pages       |
+| `MKS-DNL-014` | Local apply committed but later acknowledgement fails | download transaction succeeds before ack failure           | `REACHABLE` | Preserve applied cursor; Retry acknowledgement, not upload |
+
+### M. Acknowledgement
+
+| Code          | Event / native signal                                     | Detection fingerprint                             | Relevance   | Required disposition                                    |
+| ------------- | --------------------------------------------------------- | ------------------------------------------------- | ----------- | ------------------------------------------------------- |
+| `MKS-ACK-001` | No local cursor to acknowledge                            | local sync state absent after download/apply      | `REACHABLE` | Stop; local invariant                                   |
+| `MKS-ACK-002` | Ack cursor exceeds provider high-water / `cursor-expired` | provider rejects impossible/out-of-range cursor   | `REACHABLE` | Stop and reconcile cursors                              |
+| `MKS-ACK-003` | Ack transport outcome unknown                             | request started without trusted ack response      | `REACHABLE` | Query/retry same idempotent ack only under typed policy |
+| `MKS-ACK-004` | Ack protocol failure                                      | trusted provider failure body returned            | `REACHABLE` | Preserve code/status/correlation                        |
+| `MKS-ACK-005` | Ack observability absent from local ledger                | top-level Sync result hides independent ack phase | `LATENT`    | Persist child request/phase record                      |
+
+### N. Cross-cutting observability and invariant controls
+
+| Code          | Event / native signal                                      | Detection fingerprint                                                             | Relevance   | Required disposition                                       |
+| ------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------- |
+| `MKS-OBS-001` | Client catch-all / `local-exception-redacted`              | uncaught `Object` becomes `sync-unavailable`, phase `unexpected-terminal`         | `LATENT`    | Retain sanitized exception class and last completed phase  |
+| `MKS-OBS-002` | Coordinator state loses native cause                       | many guard/protocol codes map only to `unavailable`                               | `LATENT`    | Keep projected state and diagnostic code separately        |
+| `MKS-OBS-003` | API generic 500 collapse                                   | non-auth exception maps to `service-unavailable/server/unknown`                   | `LATENT`    | Typed internal taxonomy; public envelope remains sanitized |
+| `MKS-OBS-004` | Sync attempt lacks child request evidence                  | no correlation, status, header, or route fields persisted for upload/download/ack | `LATENT`    | Persist one parent plus child phase events                 |
+| `MKS-OBS-005` | Same correlation reused across operations                  | constant `native-closure` correlation source                                      | `LATENT`    | Unique correlation per top-level action                    |
+| `MKS-OBS-006` | Render health noise mistaken for operation evidence        | only `/health/ready` entries appear                                               | `CONFIRMED` | Filter logs by operation/correlation and protected route   |
+| `MKS-OBS-007` | Provider contact inferred from missing fields              | absent fields are treated as negative evidence although not instrumented          | `CONFIRMED` | Add explicit `providerContact` state                       |
+| `MKS-OBS-008` | Sensitive raw exception/log data risk                      | unbounded error messages or payloads could enter UI/logs                          | `REACHABLE` | Closed allow-list and fingerprint-only identifiers         |
+| `MKS-INV-001` | Automatic retry after generic 500                          | HTTP status alone drives Retry despite unknown commit outcome                     | `LATENT`    | Prohibit; reconcile same submission identity first         |
+| `MKS-INV-002` | Failed recovery before provider proves not-applied         | unknown outcome is requeued as failed                                             | `REACHABLE` | Prohibit state transition                                  |
+| `MKS-INV-003` | Second action before first outcome captured                | repeated Retry/Sync changes evidence                                              | `REACHABLE` | One-operation lock and explicit terminal                   |
+| `MKS-INV-004` | Provider and local mutations cannot be joined              | missing operation/correlation/submission fingerprints                             | `LATENT`    | Require diagnostic envelope before Gate action             |
+| `MKS-INV-005` | Partial local/provider state hidden by final `unavailable` | compound Sync collapses recovery, upload, download, and ack                       | `LATENT`    | Record phase transitions and transaction outcomes          |
+
+### Conditions reduced by accepted Step 12 evidence
+
+These events remain in the catalogue because they are reachable, but they are
+not leading explanations for the latest blocked Retry:
+
+| Reduced hypothesis                                      | Accepted evidence                                                                                             |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Corrupt or structurally wrong SQLite database           | copied DB quick check passed and expected table count matched                                                 |
+| Wrong hosted Device candidate                           | rank 3 was the enrolled hosted scope and owned exactly the two failed events                                  |
+| Unrelated local pending events joining recovery         | simulated hosted-scope first upload contained only sequences `1–2`; six pending events belong to other scopes |
+| Unknown-outcome Retry candidate exists                  | hosted scope has `unknown=0`; candidate is failed/notApplied                                                  |
+| Same-hash active/superseded submission collision        | SQLite-04 found neither                                                                                       |
+| Provider/API wholly offline at captured time            | Render readiness repeatedly returned 200                                                                      |
+| Missing migration 007 cursor state at accepted baseline | Neon readiness and cursor baseline previously passed                                                          |
+| Authentication absent at the displayed checkpoint       | UI reported authenticated after recent login                                                                  |
+| Enrollment absent at the displayed checkpoint           | UI reported Device enrolled and earlier exact binding checks passed                                           |
+| Latest button caused a provider 500                     | no protected request followed the locally blocked preflight                                                   |
+
+These are freshness-sensitive rather than permanently excluded:
+
+- deployed revision and route inventory;
+- current Auth0 principal/membership;
+- current exact account/Device binding;
+- current Neon cursor/submission/event baseline;
+- request-time PostgreSQL connectivity and transaction behavior;
+- token validity at the instant of the authorized operation.
+
+### Ranked diagnosis for the present state
+
+1. **Proved present event:** `MKS-UI-001`. The pressed button selected the
+   unknown-outcome Retry path, which correctly blocked on two failed events and
+   zero unknown events.
+2. **Proved presentation defect:** `MKS-UI-002` and `MKS-UI-005`. The blocked
+   result was not made visible enough and the earlier Sync result remained the
+   prominent explanation.
+3. **Proved action gap:** `MKS-UI-004`. No bounded failed/notApplied recovery
+   surface exists; ordinary Sync is the only current code path that invokes
+   failed recovery, but it also uploads, downloads, and acknowledges.
+4. **Unresolved historical event:** the earlier `sync-unavailable` cannot yet be
+   assigned to transport, provider, database, local persistence, or response
+   parsing because `MKS-LDB-010`, `MKS-OBS-001`, `MKS-OBS-002`, and
+   `MKS-OBS-004` erase the necessary distinctions.
+5. **Pre-release source hazards:** `MKS-QUE-009`, `MKS-QUE-010`,
+   `MKS-UPL-012`, `MKS-DNL-013`, and `MKS-OBS-003` require explicit tests or
+   correction before the controlled Gate 12.7 mutation.
+
+### Required tightening before Gate 12.7 can reopen
+
+The next Codex unit should remain source-only and non-provider:
+
+1. implement the diagnostic envelope and stable code registry as one
+   language-neutral source of truth consumed by Dart UI and TypeScript/API
+   logging;
+2. retain existing native codes and map each to one `MKS-*` protocol code;
+3. rename the existing action to `Retry unknown-outcome submission`;
+4. display all blocked preflights as persistent in-view banners/dialogs;
+5. implement a separate **non-mutating** failed/notApplied preflight showing
+   Device-scoped count, sequence range, next sequence, and sanitized candidate
+   fingerprint;
+6. do not initially attach that preflight to an executing provider action;
+7. instrument ordinary Sync and future bounded recovery with parent/child
+   phases, unique correlations, provider-contact state, trusted-response state,
+   and local/provider transaction outcomes;
+8. validate the complete upload batch before any provider write and make every
+   later protocol failure roll back the transaction;
+9. convert silent local persistence misses and generic catch-alls into typed
+   invariant/phase events;
+10. add tests proving that blocked actions make no local/provider mutation,
+    ambiguous upload outcomes are never automatically requeued, and every
+    unexpected server path produces a sanitized phase-specific diagnostic
+    rather than an undifferentiated generic 500;
+11. render a readable `SYNC_DIAGNOSTICS.md` from the same registry rather than
+    maintaining a second hand-written catalogue;
+12. return to J with validation evidence before any build/deployment or Gate
+    12.7 authorization packet is activated.
+
+No current evidence justifies direct SQLite editing, Neon editing, another
+Repair, ordinary Sync, unknown Retry, or provider-side cleanup.
