@@ -168,12 +168,15 @@ indiscriminately.
 documentation/GRIMOIRE.md
 documentation/G_SCRIPTS.md
 documentation/NS_COORDINATES.md
-documentation/NEON_ACTION.md
-documentation/NEON_CHECK.md
+documentation/NEON_CHECK.ps1
+documentation/DB_MGMT.sql
 ```
 
-`GRIMOIRE.md` is the indexed human entry surface. It delegates canonical
-procedure bodies to the specialized files. Coordinates are ephemeral and
+`GRIMOIRE.md` is the concise indexed human entry surface. Every active `GRM-*`
+block dispatches exactly one `GS-*` procedure through `NEON_CHECK.ps1`.
+`G_SCRIPTS.md` owns procedure logic and runtime requests,
+`NS_COORDINATES.md` owns reviewed non-secret values, and `DB_MGMT.sql` owns
+manual SQL plus indexed automation-query blocks. Coordinates are mutable and
 must be freshly verified before provider action.
 
 Current SQLite route:
@@ -182,13 +185,13 @@ Current SQLite route:
 GRM-SQLITE-01 -> SQLite CLI availability
 GRM-SQLITE-02 -> closed-app discovery and verified temporary copy
 GRM-SQLITE-03 -> read-only sanitized copied-database classification
-GRM-SQLITE-04 -> conditional future correlation procedure, only if Codex
-                 proves existing evidence is insufficient and materializes it
+GRM-SQLITE-04 -> materialized read-only sanitized device-scope correlation
 ```
 
-Only the first three are currently materialized. The preserved copy is
-`markei-gate-12-6-current`; it must remain unchanged until Gate 12.6 evidence
-is reconciled.
+All four procedures are materialized. The first three have human-observed
+results; `GRM-SQLITE-04` remains unexecuted against the preserved copy. The
+copy is `markei-gate-12-6-current`; it must remain unchanged until the
+scope-correlation evidence is interpreted.
 
 ### 4.2 Flutter synchronization authorities
 
@@ -302,11 +305,11 @@ only for device-scoped transition correlation:
 - the exact transition from failed recovery through supersession, pending
   upload, download and acknowledgement.
 
-Current D/E/F authorize Codex to reconcile this using source/history and
-existing sanitized evidence. If and only if those facts cannot be derived
-safely, Codex may add `GS-SQLITE-04` plus its `GRM-SQLITE-04` loader and
-validate them exclusively against disposable fixtures. Codex may not query or
-copy the human database.
+Codex concluded that the aggregate evidence cannot resolve these facts safely
+and materialized `GS-SQLITE-04` plus `GRM-SQLITE-04`. Disposable zero-, one-,
+and multi-device fixture validation passed. The procedure has not been run
+against the preserved human copy; that read-only human step remains the next
+evidence action. Codex did not query or copy the human database.
 
 ### 5.4 Gate terminals
 
@@ -1821,6 +1824,55 @@ GATE_12_6_COPIED_DATABASE_PROBE_PASS
 FAILED_NOT_APPLIED_CLASS_CONFIRMED
 UNKNOWN_RETRY_INAPPLICABLE
 LEGACY_CONFLICT_SERVICE_UNAVAILABLE_EXPLAINED_WITH_BOUNDARY
+EXACT_DEVICE_SCOPED_TRANSITION_CORRELATION_PENDING
+GATE_12_6_OPEN
+GATE_12_7_PENDING
+RETRY_UNAUTHORIZED
+ORDINARY_SYNC_UNAUTHORIZED
+PROVIDER_ACTION_UNAUTHORIZED
+GCM02_OPEN
+```
+
+## Append-only reconciliation entry — 2026-07-25 — DB management cascade refactor
+
+### Sequence identity
+
+```text
+Sequence: FLX-PRN-03 with active-state reconciliation
+Scope: live GRIMOIRE operational interface
+Baseline: 41c94be245ed093b2e92e3f8403ef72cfb42984b
+Provider action: none
+Database access: none
+Gate authority change: none
+```
+
+The parallel Codex round materialized and fixture-validated
+`GS/GRM-SQLITE-04`; no human database was queried. The preceding entry's
+conditional materialization instruction is therefore superseded for current
+use. The remaining Gate 12.6 action is the human-run, read-only
+`GRM-SQLITE-04` procedure against the preserved verified copy.
+
+The live five-file interface was reorganized without changing provider state:
+
+```text
+GRIMOIRE.md       -> concise GRM invocation index
+NEON_CHECK.ps1    -> exact GS dispatcher and guarded Neon launcher
+G_SCRIPTS.md      -> complete procedures, prompts, expectations and stops
+NS_COORDINATES.md -> reviewed non-secret values
+DB_MGMT.sql       -> manual SQL plus indexed automation queries
+```
+
+`DB_MGMT.sql` supersedes `NEON_ACTION.sql` as the live catalogue. Earlier
+`NEON_ACTION.sql`/`NA-*` references remain valid historical evidence only.
+Every active `GRM-*` block now invokes one exact `GS-*` procedure; operational
+variables and query logic no longer live in GRM bodies. The nine existing
+automation SQL bodies were preserved byte-for-byte, and one read-only
+`runtime-readiness` automation block was added so `GRM-NEON-10` also follows
+the uniform cascade.
+
+Current terminals remain:
+
+```text
 EXACT_DEVICE_SCOPED_TRANSITION_CORRELATION_PENDING
 GATE_12_6_OPEN
 GATE_12_7_PENDING

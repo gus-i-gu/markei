@@ -6,11 +6,11 @@
 ## 0. Execution contract
 
 ```text
-GRIMOIRE_INDEX block
-→ canonical GS-* procedure in this file
+GRIMOIRE_INDEX block invokes NEON_CHECK.ps1 -Procedure GS-*
+→ dispatcher loads one exact canonical GS-* procedure from this file
 → NS_COORDINATES.md supplies non-secret values
-→ terminal requests only the remaining role/UUID/secret input
-→ reviewed PowerShell or SQL performs the operation
+→ the GS-* body requests only remaining role/UUID/secret input
+→ GS-* calls reviewed PowerShell and, when needed, one DB_MGMT SQL block
 → sanitized result returns to the operator
 ```
 
@@ -21,7 +21,7 @@ documentation/GRIMOIRE.md
 documentation/G_SCRIPTS.md
 documentation/NS_COORDINATES.md
 documentation/NEON_CHECK.ps1
-documentation/NEON_ACTION.sql
+documentation/DB_MGMT.sql
 ```
 
 Unless a procedure states otherwise, run PowerShell commands from anywhere
@@ -29,10 +29,11 @@ inside the repository. Active self-navigating procedures resolve the repository
 root, enter the required package or data location, and return the terminal to
 the repository root in `finally`. `G_SCRIPTS.md` remains a Markdown catalogue;
 it is not renamed to `.ps1` and is not passed directly to PowerShell's `-File`
-parameter. A `GRIMOIRE_INDEX` block may load one exact reviewed `GS-*` heading
-and execute its fenced PowerShell body. When no indexed loader is provided,
-copy only a complete fenced code body. Do not replace values already supplied
-by `NS_COORDINATES.md`.
+parameter. `NEON_CHECK.ps1 -Procedure <GS-ID>` is the active GRM dispatcher. It
+loads one exact reviewed `GS-*` heading and executes its fenced PowerShell body.
+Directly copy a GS fence only for diagnosis or when the dispatcher is
+operationally unavailable. Do not replace values already supplied by
+`NS_COORDINATES.md`.
 
 The canonical Neon launcher form is process-scoped and does not permanently
 alter PowerShell execution policy:
@@ -68,7 +69,7 @@ required.
 
 ### `GS-NEON-01` — Migrator connection proof
 
-Canonical SQL block: `NEON_ACTION.sql` → `NA-01` / `connection`.
+Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-01` / `connection`.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
@@ -104,7 +105,7 @@ Exit `psql` with `\q`.
 
 ### `GS-NEON-04` — Gate 02 postflight
 
-Canonical SQL block: `NEON_ACTION.sql` → `NA-03` /
+Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-03` /
 `gate02-postflight`.
 
 ```powershell
@@ -129,7 +130,7 @@ Required current result:
 
 ### `GS-NEON-05` — Migration ledger
 
-Canonical SQL block: `NEON_ACTION.sql` → `NA-04` /
+Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-04` /
 `migration-ledger`.
 
 ```powershell
@@ -142,7 +143,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 
 ### `GS-NEON-06` — Schema and RLS inventory
 
-Canonical SQL block: `NEON_ACTION.sql` → `NA-06` /
+Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-06` /
 `schema-inventory`.
 
 ```powershell
@@ -155,7 +156,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 
 ### `GS-NEON-07` — Runtime privilege inventory
 
-Canonical SQL block: `NEON_ACTION.sql` → `NA-05` /
+Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-05` /
 `runtime-privileges`.
 
 ```powershell
@@ -168,7 +169,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 
 ### `GS-NEON-08` — Sanitized device inventory
 
-Canonical SQL block: `NEON_ACTION.sql` → `NA-07` /
+Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-07` /
 `list-devices-sanitized`.
 
 ```powershell
@@ -181,7 +182,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 
 ### `GS-NEON-09` — Verify one device's counters
 
-Canonical SQL block: `NEON_ACTION.sql` → `NA-08` / `verify-device`.
+Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-08` / `verify-device`.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
@@ -196,22 +197,22 @@ variable, not written to any repository file.
 
 ### `GS-NEON-10` — Runtime readiness-v2 query
 
-Run only inside the runtime `psql` opened by `GS-NEON-03`:
+Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-10` /
+`runtime-readiness`.
 
-```sql
-BEGIN TRANSACTION READ ONLY;
-SELECT
-    current_user AS connected_role,
-    current_database() AS connected_database,
-    public.markei_hosted_runtime_ready_v2() AS ready;
-ROLLBACK;
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\NEON_CHECK.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role runtime `
+  -Action runtime-readiness
 ```
 
 Expected: `markei_runtime`, `markei_sync_dev`, `ready = t`, and `ROLLBACK`.
 
 ### `GS-NEON-11` — Capture the atomic provider baseline
 
-Canonical SQL block: `NEON_ACTION.sql` → `NA-09` /
+Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-09` /
 `provider-baseline`.
 
 ```powershell
@@ -2230,7 +2231,7 @@ active `GRIMOIRE_INDEX`.
 
 ### `GS-NEON-H01` — Gate 02 preflight diagnostic
 
-Canonical SQL block: `NEON_ACTION.sql` → `NA-02` /
+Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-02` /
 `gate02-preflight`.
 
 ```powershell

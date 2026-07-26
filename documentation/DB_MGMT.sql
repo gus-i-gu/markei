@@ -1,23 +1,89 @@
--- MARKEI NEON ACTION CATALOGUE
+-- MARKEI DATABASE MANAGEMENT CATALOGUE
 --
--- This file is SQL-only. Explanatory text is written as SQL comments.
--- NEON_CHECK.ps1 extracts exactly one block between ACTION markers.
--- Every routine action is read-only, returns sanitized evidence, and ends
--- with ROLLBACK.
+-- This file has two deliberately separate surfaces:
 --
--- BLOCK INDEX
--- NA-01  connection              Role/database/read-only connection proof
--- NA-02  gate02-preflight        Historical/current Gate 02 prerequisite view
--- NA-03  gate02-postflight       Current migration-007 and privilege proof
--- NA-04  migration-ledger        Ordered provider migration inventory
--- NA-05  runtime-privileges      Runtime table/schema privilege inventory
--- NA-06  schema-inventory        Public tables and RLS policy inventory
--- NA-07  list-devices-sanitized  Device-state aggregates without UUIDs
--- NA-08  verify-device           Local UUID input; sanitized device counters
--- NA-09  provider-baseline       Atomic six-table/cursor/fingerprint snapshot
+-- 1. MANUAL SQL MGMT contains copy-ready, read-only PostgreSQL/SQLite checks.
+-- 2. AUTOMATION QUERIES contains indexed blocks extracted by NEON_CHECK.ps1.
+--
+-- Never execute this mixed-dialect catalogue as one script. Copy one manual
+-- block into the matching client, or let a GS-* procedure select exactly one
+-- automation block. Explanatory text is always written as SQL comments.
 
 -- ============================================================================
--- NA-01 | SANITIZED CONNECTION PROOF
+-- ## MANUAL SQL MGMT ##
+-- ============================================================================
+--
+-- These blocks require no repository variable substitution. PostgreSQL blocks
+-- work in the Neon SQL Editor and in a PostgreSQL psql terminal opened by
+-- GS-NEON-02 or GS-NEON-03. SQLite blocks work only in sqlite3 after a safe
+-- database target has been selected. Prefer the indexed GS procedure whenever
+-- it exists, because GS owns target guards, input requests, and expectations.
+
+-- DBM-MAN-PG-01 | POSTGRESQL SESSION IDENTITY
+-- Client: Neon SQL Editor, remote psql, or local PostgreSQL psql.
+BEGIN TRANSACTION READ ONLY;
+SELECT
+    current_user AS connected_role,
+    current_database() AS connected_database,
+    current_setting('transaction_read_only') AS transaction_read_only,
+    current_setting('server_version') AS server_version;
+ROLLBACK;
+
+-- DBM-MAN-PG-02 | POSTGRESQL MIGRATION LEDGER
+-- Client: Neon SQL Editor, remote psql, or local PostgreSQL psql.
+BEGIN TRANSACTION READ ONLY;
+SELECT migration_id, checksum, applied_at
+FROM public.migration_ledger
+ORDER BY migration_id;
+ROLLBACK;
+
+-- DBM-MAN-PG-03 | POSTGRESQL SCHEMA AND RLS INVENTORY
+-- Client: Neon SQL Editor, remote psql, or local PostgreSQL psql.
+BEGIN TRANSACTION READ ONLY;
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+ORDER BY table_name;
+
+SELECT tablename, policyname
+FROM pg_policies
+WHERE schemaname = 'public'
+ORDER BY tablename, policyname;
+ROLLBACK;
+
+-- DBM-MAN-SQLITE-01 | SQLITE HEALTH AND SCHEMA INVENTORY
+-- Client: sqlite3 opened explicitly against a verified safe target.
+PRAGMA query_only = ON;
+PRAGMA quick_check;
+PRAGMA user_version;
+SELECT name, type
+FROM sqlite_schema
+WHERE type IN ('table', 'view')
+  AND name NOT LIKE 'sqlite_%'
+ORDER BY type, name;
+
+-- ============================================================================
+-- ### AUTOMATION QUERIES ###
+-- ============================================================================
+--
+-- NEON_CHECK.ps1 extracts exactly one block between ACTION markers.
+-- Every routine automation action is read-only, returns sanitized evidence,
+-- and ends with ROLLBACK.
+--
+-- AUTOMATION INDEX
+-- DBM-AUTO-01  connection              Role/database/read-only proof
+-- DBM-AUTO-02  gate02-preflight        Historical Gate 02 prerequisite view
+-- DBM-AUTO-03  gate02-postflight       Migration-007 and privilege proof
+-- DBM-AUTO-04  migration-ledger        Ordered provider migration inventory
+-- DBM-AUTO-05  runtime-privileges      Runtime table/schema privileges
+-- DBM-AUTO-06  schema-inventory        Public tables and RLS policies
+-- DBM-AUTO-07  list-devices-sanitized  Device aggregates without UUIDs
+-- DBM-AUTO-08  verify-device           Sanitized exact-device counters
+-- DBM-AUTO-09  provider-baseline       Atomic provider snapshot
+-- DBM-AUTO-10  runtime-readiness       Runtime readiness-v2 proof
+
+-- ============================================================================
+-- DBM-AUTO-01 | SANITIZED CONNECTION PROOF
 -- ACTION: connection
 -- Purpose: prove the authenticated PostgreSQL role, selected database, and
 --          read-only transaction state. TLS/channel binding are enforced by
@@ -34,7 +100,7 @@ ROLLBACK;
 -- END ACTION
 
 -- ============================================================================
--- NA-02 | GATE 02 PREFLIGHT / HISTORICAL DIAGNOSTIC
+-- DBM-AUTO-02 | GATE 02 PREFLIGHT / HISTORICAL DIAGNOSTIC
 -- ACTION: gate02-preflight
 -- Purpose: inspect migrations 006/007, readiness/provisioning objects, and
 --          Account cursor-state coverage without changing the provider.
@@ -77,7 +143,7 @@ ROLLBACK;
 -- END ACTION
 
 -- ============================================================================
--- NA-03 | GATE 02 POSTFLIGHT
+-- DBM-AUTO-03 | GATE 02 POSTFLIGHT
 -- ACTION: gate02-postflight
 -- Purpose: repeat the authoritative migration-007, readiness, provisioning,
 --          cursor-integrity, and least-privilege inspection.
@@ -156,7 +222,7 @@ ROLLBACK;
 -- END ACTION
 
 -- ============================================================================
--- NA-04 | MIGRATION LEDGER
+-- DBM-AUTO-04 | MIGRATION LEDGER
 -- ACTION: migration-ledger
 -- Purpose: list every applied provider migration in ledger order.
 -- Manual variable: none.
@@ -170,7 +236,7 @@ ROLLBACK;
 -- END ACTION
 
 -- ============================================================================
--- NA-05 | RUNTIME PRIVILEGE INVENTORY
+-- DBM-AUTO-05 | RUNTIME PRIVILEGE INVENTORY
 -- ACTION: runtime-privileges
 -- Purpose: display the runtime role's public-table grants and schema boundary.
 -- Manual variable: none.
@@ -192,7 +258,7 @@ ROLLBACK;
 -- END ACTION
 
 -- ============================================================================
--- NA-06 | SCHEMA AND RLS INVENTORY
+-- DBM-AUTO-06 | SCHEMA AND RLS INVENTORY
 -- ACTION: schema-inventory
 -- Purpose: list public tables and their Row-Level Security policy names.
 -- Manual variable: none.
@@ -211,7 +277,7 @@ ROLLBACK;
 -- END ACTION
 
 -- ============================================================================
--- NA-07 | SANITIZED DEVICE INVENTORY
+-- DBM-AUTO-07 | SANITIZED DEVICE INVENTORY
 -- ACTION: list-devices-sanitized
 -- Purpose: group devices by status and next sequence without returning UUIDs.
 -- Manual variable: none.
@@ -225,7 +291,7 @@ ROLLBACK;
 -- END ACTION
 
 -- ============================================================================
--- NA-08 | EXACT DEVICE COUNTERS
+-- DBM-AUTO-08 | EXACT DEVICE COUNTERS
 -- ACTION: verify-device
 -- Purpose: inspect submission/event counts and next expected sequence for one
 --          UUID supplied locally to psql by NEON_CHECK.ps1.
@@ -247,7 +313,7 @@ ROLLBACK;
 -- END ACTION
 
 -- ============================================================================
--- NA-09 | ATOMIC PROVIDER BASELINE
+-- DBM-AUTO-09 | ATOMIC PROVIDER BASELINE
 -- ACTION: provider-baseline
 -- Purpose: capture the exact pre-request state required by Gate 12.5d from one
 --          repeatable read-only snapshot. The selected Device UUID is used only
@@ -409,5 +475,20 @@ LEFT JOIN public.sync_events AS se
  AND se.device_id = f.device_id
 WHERE se.device_id IS NOT NULL;
 
+ROLLBACK;
+-- END ACTION
+
+-- ============================================================================
+-- DBM-AUTO-10 | RUNTIME READINESS-V2 PROOF
+-- ACTION: runtime-readiness
+-- Purpose: prove runtime identity, database identity, and readiness-v2 without
+--          opening an interactive psql session.
+-- Manual variable: none.
+-- Expected: runtime role; markei_sync_dev; ready true; terminal ROLLBACK.
+BEGIN TRANSACTION READ ONLY;
+SELECT
+    current_user AS connected_role,
+    current_database() AS connected_database,
+    public.markei_hosted_runtime_ready_v2() AS ready;
 ROLLBACK;
 -- END ACTION

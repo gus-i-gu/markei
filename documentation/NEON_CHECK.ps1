@@ -1,5 +1,8 @@
 [CmdletBinding()]
 param(
+    [ValidatePattern("^GS-[A-Z0-9-]+$")]
+    [string]$Procedure,
+
     [ValidateSet("runtime", "migrator", "dbowner")]
     [string]$Role,
 
@@ -9,6 +12,7 @@ param(
         "gate02-postflight",
         "verify-device",
         "provider-baseline",
+        "runtime-readiness",
         "list-devices-sanitized",
         "migration-ledger",
         "runtime-privileges",
@@ -38,11 +42,64 @@ Run this helper as a script with -File or .\documentation\NEON_CHECK.ps1.
     $ScriptDirectory = Split-Path -Parent $ScriptFile
 }
 
+if (-not [string]::IsNullOrWhiteSpace($Procedure)) {
+    if (-not [string]::IsNullOrWhiteSpace($Role) -or
+        -not [string]::IsNullOrWhiteSpace($Action) -or
+        -not [string]::IsNullOrWhiteSpace($MigrationPath) -or
+        -not [string]::IsNullOrWhiteSpace($ConfigPath) -or
+        -not [string]::IsNullOrWhiteSpace($ActionPath)) {
+        throw "-Procedure cannot be combined with Neon launcher parameters."
+    }
+
+    $RepositoryRoot = (
+        & git -C $ScriptDirectory rev-parse --show-toplevel 2>$null
+    ).Trim()
+    if ($LASTEXITCODE -ne 0 -or
+        [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+        throw "NEON_CHECK.ps1 must be inside the Markei Git repository."
+    }
+
+    $CataloguePath = Join-Path `
+        $RepositoryRoot `
+        "documentation\G_SCRIPTS.md"
+    if (-not (Test-Path -LiteralPath $CataloguePath -PathType Leaf)) {
+        throw "Canonical procedure catalogue not found: $CataloguePath"
+    }
+
+    $Catalogue = Get-Content -LiteralPath $CataloguePath -Raw
+    $HeadingPattern = '(?ms)^### `' +
+        [regex]::Escape($Procedure) +
+        '`[^\r\n]*\r?\n(?<Section>.*?)(?=^### `GS-|\z)'
+    $SectionMatch = [regex]::Match($Catalogue, $HeadingPattern)
+    if (-not $SectionMatch.Success) {
+        throw "Canonical procedure '$Procedure' was not found."
+    }
+
+    $FencePattern =
+        '(?ms)^```powershell[ \t]*\r?\n(?<Code>.*?)^```[ \t]*\r?$'
+    $FenceMatch = [regex]::Match(
+        $SectionMatch.Groups["Section"].Value,
+        $FencePattern
+    )
+    if (-not $FenceMatch.Success) {
+        throw "Canonical procedure '$Procedure' has no PowerShell body."
+    }
+
+    try {
+        Set-Location -LiteralPath $RepositoryRoot
+        & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
+    }
+    finally {
+        Set-Location -LiteralPath $RepositoryRoot
+    }
+    return
+}
+
 if ([string]::IsNullOrWhiteSpace($ConfigPath)) {
     $ConfigPath = Join-Path $ScriptDirectory "NS_COORDINATES.md"
 }
 if ([string]::IsNullOrWhiteSpace($ActionPath)) {
-    $ActionPath = Join-Path $ScriptDirectory "NEON_ACTION.sql"
+    $ActionPath = Join-Path $ScriptDirectory "DB_MGMT.sql"
 }
 
 function Select-Value {
@@ -122,6 +179,7 @@ $Actions = @(
     "gate02-postflight",
     "verify-device",
     "provider-baseline",
+    "runtime-readiness",
     "list-devices-sanitized",
     "migration-ledger",
     "runtime-privileges",
