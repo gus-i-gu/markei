@@ -2638,3 +2638,368 @@ The next Codex unit should remain source-only and non-provider:
 
 No current evidence justifies direct SQLite editing, Neon editing, another
 Repair, ordinary Sync, unknown Retry, or provider-side cleanup.
+
+---
+
+## Step 12 Diagnostic Tightening Materialization Reconciliation
+
+Date: 2026-07-26
+Round: C10-GCM02-S12-ERR-01
+Sequence: FLX-ORD-01 — Ordinary Sequence
+Materialization commit:
+`ecb0c500f43dd6fd8b614dcec92d06a3c2a79f26`
+Parent staging commit:
+`02aa7a0a57219faba856a22c73f1cac0ff2d1988`
+Branch: `cycle10-intermid-grimoire`
+Authority: Main reconciliation under explicit human direction
+Evidence classes: repository-proven, source-inspected, Codex-reported
+test-validated, independently projection-checked, unavailable in the present
+Work host
+Disposition: **PARTIAL ACCEPTANCE WITH BOUNDED FOLLOW-UP; NO GATE 12.7
+AUTHORIZATION**
+
+### 1. Reconciliation purpose
+
+This entry reconciles the C10-GCM02-S12-ERR-01 source materialization against:
+
+- the active D/E/F packet at `02aa7a0`;
+- the append-only `System Diagnosis` catalogue in this J file;
+- the materialized source and tests at `ecb0c50`;
+- the replacement G/H/I Codex reports;
+- the accepted Gate 12.6 state;
+- the prohibition against provider mutation before an exact Gate 12.7
+  authorization packet and explicit human approval.
+
+This reconciliation does not semantically promote G/H/I into permanent domain
+memory. It records the Main conclusion and preserves the materialization
+history needed for later functional promotion and Gate 12.7 preparation.
+
+### 2. Repository and publication evidence
+
+The selected GitHub branch was inspected through the connected repository and
+then fetched into a detached clean reconciliation worktree.
+
+Confirmed:
+
+```text
+REMOTE_BRANCH=cycle10-intermid-grimoire
+REMOTE_TIP=ecb0c500f43dd6fd8b614dcec92d06a3c2a79f26
+PARENT=02aa7a0a57219faba856a22c73f1cac0ff2d1988
+COMMIT_MESSAGE=Tighten Step 12 sync diagnostics
+REMOTE_RELATION=ONE_FAST_FORWARD_COMMIT_OVER_D_E_F
+```
+
+The commit changes 33 task-relevant files only:
+
+- Flutter Closure, diagnostics, local Sync and migration source;
+- focused Flutter Closure, diagnostics, migration and Sync tests;
+- the machine registry, schema and README;
+- the deterministic generator;
+- generated Dart, TypeScript and Markdown projections;
+- API Sync/protocol/error source and tests;
+- G/H/I Codex evidence reports.
+
+No hosted migration, methodology file, permanent domain-memory file, Main-root
+continuity file, D/E/F file or pre-existing J entry was modified by Codex.
+
+### 3. Accepted implementation results
+
+#### 3.1 Single diagnostic catalogue owner
+
+Repository inspection accepts:
+
+```text
+MACHINE_OWNER=contracts/shared_beta/diagnostics_v1/diagnostics.registry.json
+REGISTRY_VERSION=1
+REGISTRY_CODES=159
+REGISTRY_UNIQUE_CODES=159
+DART_PROJECTION_CODES=159
+TYPESCRIPT_PROJECTION_CODES=159
+MARKDOWN_PROJECTION_CODES=159
+PROJECTION_CODE_SET_DIFFERENCE=0
+```
+
+The registry is the only intended hand-maintained list. The Dart, TypeScript
+and `documentation/SYNC_DIAGNOSTICS.md` views are generated dependencies.
+
+The present Work host independently parsed all four artifacts and confirmed
+identical 159-code sets. `git diff --check 02aa7a0..ecb0c50` also passed.
+
+The generator's own `--check` mode could not be independently rerun in this
+Work host because Dart is unavailable here and the generator correctly stops
+when it cannot locate Dart. Codex reports successful generation, check mode
+and deterministic validation in its implementation environment. Therefore:
+
+```text
+CODE_SET_EQUALITY=INDEPENDENTLY_CHECKED_PASS
+GENERATOR_DART_DEPENDENT_CHECK=CODEX_REPORTED_PASS
+CURRENT_WORK_HOST_RERUN=UNAVAILABLE_NO_DART
+```
+
+This is an evidence distinction, not a contradiction.
+
+#### 3.2 Local diagnostic persistence and UI
+
+Source inspection accepts:
+
+- additive Drift schema version 11;
+- `sync_attempts` retained as the operation parent;
+- additive `sync_diagnostic_events` child-event storage;
+- migration-ledger identifier
+  `v10-to-v11-sync-diagnostic-events`;
+- the visible action label `Retry unknown-outcome submission`;
+- the separate `Inspect failed/notApplied recovery` action;
+- current-action diagnostic projection with MKS code, meaning, outcome,
+  phase, mutation/contact state, safe action and fingerprint;
+- visible blocked/error/unknown results;
+- a read-only current-Device failed/notApplied candidate inspection;
+- no execution callback attached to that inspection.
+
+The read-only inspection explicitly records:
+
+```text
+LOCAL_MUTATION=none
+PROVIDER_CONTACT=not-started
+PROVIDER_TRANSACTION=not-started
+RETRYABLE=false
+SAFE_ACTION=hold for Gate 12.7 reconciliation
+```
+
+This materially corrects the earlier action/interface ambiguity without
+executing or authorizing the failed lineage.
+
+#### 3.3 Five named source hazards
+
+Source and test evidence support accepting the five bounded corrections:
+
+| Code | Reconciled implementation result |
+| --- | --- |
+| `MKS-QUE-009` | A post-lease transport exception is converted to an unknown outcome so the submission identity is preserved instead of remaining an unexplained upload lease. |
+| `MKS-QUE-010` | A scoped upload-result persistence miss throws `SyncPersistenceInvariantException` instead of returning silently. |
+| `MKS-REC-012` | Candidate inspection/recovery distinguishes all-pending, all-failed and mixed states; mixed states block rather than partially requeue. |
+| `MKS-UPL-012` | The complete provider submission is validated before the first write; the later-member failure fixture proves no partial submission/event/cursor/Device-sequence mutation. |
+| `MKS-DNL-013` | Equivalent duplicate-only downloads transactionally advance the contiguous local cursor; conflicting duplicates remain failures. |
+
+These corrections are source-implemented and test-validated in the Codex
+environment. They are not live-provider validated.
+
+#### 3.4 Validation accepted with evidence limits
+
+G reports the following successful commands:
+
+```text
+node scripts/generate_sync_diagnostics.mjs
+node scripts/generate_sync_diagnostics.mjs --check
+npm run diagnostics:check
+flutter pub run build_runner build --delete-conflicting-outputs
+dart format --set-exit-if-changed lib test
+flutter analyze
+focused Flutter diagnostic/sync/migration/UI tests
+flutter test: 183 passed, 4 existing lab-gated skips
+npm run format:check
+npm run lint
+npm run typecheck
+npm run build
+npm test: 58 passed
+git diff --check
+credential-pattern scan: no reported assignment match
+```
+
+Main accepts these as Codex-reported test evidence. Main independently checked:
+
+- commit ancestry and remote branch position;
+- changed-file scope;
+- 159 unique registry codes;
+- identical registry/Dart/TypeScript/Markdown code sets;
+- relevant source ownership and action labels;
+- additive v11 table and migration-ledger source;
+- absence of an executing failed/notApplied UI callback;
+- `git diff --check`.
+
+Main did not repeat Flutter, Dart or complete npm validation in this Work host.
+No Windows, Android, Render, Auth0, Neon or end-to-end provider validation
+belongs to this materialization claim.
+
+### 4. D/E/F conformance limits
+
+The materialization is not a complete realization of every D/E/F requirement.
+The following differences remain material and must not be hidden by the broad
+`ERROR_PROTOCOL_SOURCE_IMPLEMENTED` terminal in G:
+
+#### 4.1 Ordinary Sync remains coarsely terminalized
+
+`NativeAuthClosureRunner.hostedSyncProbe()` still catches an unclassified
+`Object` and records:
+
+```text
+resultCode=sync-unavailable
+phase=unexpected-terminal
+recoveryCode=local-exception-redacted
+```
+
+The new MKS child-event envelope is not yet emitted across every ordinary Sync
+phase required by D:
+
+```text
+authentication
+binding
+failed-recovery
+upload-lease
+upload-transport
+upload-provider
+upload-result-persistence
+download-transport
+download-provider
+download-local-apply
+acknowledgement
+terminal
+```
+
+The new child-event ledger is materially used for the local failed/notApplied
+inspection, but source inspection does not prove complete end-to-end
+instrumentation of the existing ordinary Sync coordinator.
+
+#### 4.2 Parent/child correlation remains incomplete
+
+For the local failed/notApplied inspection, the operation fingerprint is also
+used as the correlation fingerprint. This is sufficient to group that
+network-free local preflight, but it does not implement the staged rule for
+distinct full child correlation identities, sanitized child fingerprints and
+deterministic request ordinals across every future HTTP child request.
+
+The persisted envelope also does not yet carry every field listed in the full
+D/F target, including a persisted diagnostic version and all source/build,
+route, submission and request-hash projections.
+
+#### 4.3 Public/internal API diagnostic separation needs one more tightening
+
+The API catch-all now avoids generic retry permission and returns
+`retryable=false`, which is accepted.
+
+However, it presently returns `correlationId` and
+`sanitizedExceptionClass` in the public 500 body. D/F requested a safe
+correlation fingerprint publicly while retaining exception class and richer
+failure detail internally. The current implementation therefore improves the
+500 result but does not fully satisfy the public/internal projection boundary.
+
+The helper used for ordinary protocol failures also assigns
+`MKS-UPL-012` broadly. Future tightening must map the actual operation/boundary
+instead of treating the partial-upload hazard code as a generic failure code.
+
+#### 4.4 Registry presence is broader than runtime emission coverage
+
+The 159-code registry and generated explanation surfaces exist, but source
+inspection does not prove that every reachable detector currently emits its
+corresponding MKS code at its pathogenic boundary. The catalogue is callable
+from Dart and TypeScript; full source-adjacent emission remains incremental
+work.
+
+### 5. PRC-01 classification
+
+| Claim | Classification | Main disposition |
+| --- | --- | --- |
+| Remote tip and ancestry | repository-proven | accepted |
+| 159-code registry and equal projections | repository-proven and independently checked | accepted |
+| Deterministic generator/check | Codex-reported test-validated; present host unavailable | accepted with evidence qualifier |
+| Drift v11 additive diagnostic ledger | repository-proven; Codex test-validated | accepted locally |
+| Visible renamed Retry and read-only failed inspection | repository-proven and test-validated | accepted |
+| Failed/notApplied execution absent | repository-proven | accepted |
+| Five named source-hazard corrections | source-inspected and Codex test-validated | accepted locally |
+| Complete ordinary Sync phase instrumentation | not proved by source | deferred corrective follow-up |
+| Complete parent/child correlation design | partially implemented | deferred corrective follow-up |
+| Public/internal API diagnostic separation | partially implemented | deferred corrective follow-up |
+| Live provider behavior | unavailable and intentionally unperformed | not accepted |
+| Gate 12.7 readiness | not yet established | held |
+| GCM02 closure | not established | open |
+
+### 6. Main reconciliation conclusion
+
+The round achieved the decisive structural objective:
+
+```text
+ERROR_CATALOGUE_SINGLE_OWNER_IMPLEMENTED
+ERROR_CATALOGUE_PROJECTIONS_ALIGNED
+ERROR_DOCUMENTATION_GENERATED
+DIAGNOSTIC_LEDGER_V11_IMPLEMENTED
+CURRENT_ACTION_DIAGNOSTICS_VISIBLE
+UNKNOWN_RETRY_SEMANTICS_VISIBLE
+FAILED_NOT_APPLIED_INSPECTION_READ_ONLY
+FIVE_NAMED_SOURCE_HAZARDS_LOCALLY_CORRECTED
+GENERIC_500_AUTORETRY_REJECTED
+```
+
+It did not complete:
+
+```text
+ORDINARY_SYNC_ALL_PHASE_MKS_EMISSION
+FULL_CHILD_REQUEST_CORRELATION
+FULL_DIAGNOSTIC_ENVELOPE_PROJECTION
+PUBLIC_FINGERPRINT_INTERNAL_EXCEPTION_SPLIT
+EVERY_REGISTRY_CODE_SOURCE_BOUNDARY_EMISSION
+WINDOWS_CORRECTED_CLIENT_BUILD
+FRESH_USER_DATABASE_READ_ONLY_INSPECTION
+GATE_12_7_AUTHORIZATION_PACKET
+CONTROLLED_PROVIDER_OPERATION
+POST_OPERATION_CONVERGENCE
+```
+
+The correct materialization classification is:
+
+```text
+C10_GCM02_S12_ERR_01=PARTIAL_ACCEPT_WITH_FOLLOW_UP
+SOURCE_STRUCTURE=IMPLEMENTED
+NAMED_HAZARD_FIXES=LOCALLY_TEST_VALIDATED
+DIAGNOSTIC_RUNTIME_COVERAGE=PARTIAL
+HOST_PROVIDER_VALIDATION=NOT_PERFORMED
+```
+
+### 7. Legacy and forward disposition
+
+This reconciliation belongs in `Legacy_Progress` because it records:
+
+- the exact published materialization commit and its parent;
+- the transformation of the J error catalogue into runtime-owned artifacts;
+- the evidence boundary between Codex validation and Main independent checks;
+- the accepted five-hazard correction;
+- the residual D/E/F conformance gap;
+- the reason Gate 12.7 remains held.
+
+The 159-row `System Diagnosis` catalogue remains historical provenance. It
+must not be manually maintained as a second runtime registry after this point.
+Future code/meaning changes begin in
+`contracts/shared_beta/diagnostics_v1/diagnostics.registry.json`, regenerate
+Dart/TypeScript/Markdown, and then return to J as reconciliation evidence.
+
+The next source unit should be bounded to the four conformance gaps above,
+followed by:
+
+1. a corrected Windows client build;
+2. the read-only failed/notApplied inspection only;
+3. cancellation without local mutation or provider contact;
+4. fresh sanitized Gate 12.7 baselines;
+5. an exact authorization packet;
+6. one controlled action only after explicit human approval;
+7. correlated post-operation client, server and provider comparison.
+
+The pre-existing Gate 12.7 rule remains authoritative:
+
+```text
+ANYTHING_OTHER_THAN_EXPLICIT_APPROVAL=NO_AUTHORIZATION
+NO_SECOND_ACTION_AFTER_AN_AMBIGUOUS_RESULT
+```
+
+### 8. Terminal state
+
+```text
+GATE_12_6=PASS
+C10_GCM02_S12_ERR_01=PARTIAL_ACCEPT_WITH_FOLLOW_UP
+DIAGNOSTIC_REGISTRY_SINGLE_OWNER=PASS
+DIAGNOSTIC_PROJECTION_CODE_SET=PASS
+FAILED_NOT_APPLIED_PREFLIGHT=IMPLEMENTED_READ_ONLY
+FAILED_NOT_APPLIED_EXECUTION=ABSENT
+FIVE_NAMED_SOURCE_HAZARDS=LOCALLY_TEST_VALIDATED
+ORDINARY_SYNC_PHASE_DIAGNOSTICS=PARTIAL
+PROVIDER_ACTION=NOT_PERFORMED
+GATE_12_7=HELD_FOR_CORRECTIVE_RECONCILIATION
+GCM02=OPEN
+```
