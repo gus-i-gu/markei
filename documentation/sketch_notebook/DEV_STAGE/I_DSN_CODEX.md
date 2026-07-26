@@ -1,42 +1,63 @@
-# I_DSN_CODEX — C10-GCM02-S12-ERR-03
+# I_DSN_CODEX — ERR-04 Design Evidence
 
-Unit: C10-GCM02-S12-ERR-03 within sequence C10-GCM02-S12-SYNC-01
-Evidence class: Codex observational report
+Sequence: FLX-ORD-01 — Ordinary Sequence
+Role: Codex design evidence
+Round or unit: C10-GCM02-S12-ERR-04 within C10-GCM02-S12-SYNC-01
+Branch: `cycle10-intermid-grimoire`
+Authority: D/E/F synchronized ERR-04 staging
+Evidence boundary: repository inspection and local validation only
 
-## Design Findings
+## Boundary Changes
 
-- repository-proven: The diagnostic registry remains the single definition owner. The generator still produces Dart, TypeScript, and `ERR_DIAGNOSTICS.md` projections from the registry.
-- repository-proven: Parent operation identity is owned by the Flutter top-level action. Child request correlation remains distinct and ordered through existing diagnostic phase recording.
-- repository-proven: HTTP transport propagates full operation and child correlation only through internal request headers; UI and logs expose sanitized 12-hex fingerprints.
-- repository-proven: Server lifecycle declarations are request-scoped and derived through one lifecycle projection path, not independently assembled in route catch blocks.
-- repository-proven: The success query predicate now depends on operation kind, outcome class, terminal result code, and completion timestamp.
+- repository-proven: the ordinary Sync command boundary is separated from the controlled failed/notApplied recovery command boundary. `HostedSyncCoordinator.run()` begins ordinary upload after authentication and binding.
+- repository-proven: controlled recovery still owns candidate revalidation, failed-to-recovered transition, exact batch lease, one upload, and stop-after-upload-result-persistence through `FailedNotAppliedRecoveryCoordinator` and `NativeAuthClosureRunner.recoverFailedNotAppliedCandidate()`.
+- repository-proven: ordinary Sync can reuse upload/download/acknowledgement primitives without calling the controlled recovery use case.
+- repository-proven: the `recoverFailedNotApplied` field remains in `HostedSyncCoordinator` only for constructor compatibility; it is not part of the ordinary runtime dependency chain.
 
-## Boundary Model
+## State And Sequence Invariants
 
-- repository-proven: Client operation success and server request success are separate declarations. The server can declare a request completed; the client alone declares aggregate ordinary-Sync completion.
-- repository-proven: Readiness remains a health/database-readiness boundary, not a Sync terminal.
-- repository-proven: Unknown transport evidence is not automatically retried or requeued by this unit.
-- repository-proven: Failed/notApplied inspection and recovery surfaces remain separate from ordinary Sync terminal semantics.
+- test-validated: file-backed failed/notApplied rows remain `failed` after ordinary coordinator runs.
+- test-validated: ordinary coordinator with only failed/notApplied work performs zero uploads and leaves the failed submission unchanged.
+- test-validated: ordinary pending work still uploads through the normal pending lease path.
+- test-validated: explicit failed/notApplied recovery tests still validate one bounded transition, one exact lease, one upload, no download, no acknowledgement, no automatic repetition, and no `MKS-UI-004` for eligible preflight.
+- repository-proven: no schema or migration change was introduced.
 
-## Timeout Ownership
+## Identity And Evidence Model
 
-- repository-proven: The 35-second hosted ordinary-Sync deadline is client-owned.
-- provisional: A server-owned 25-second deadline was not added because source evidence did not establish authoritative cancellation/rollback for all database work without relying on a Promise race.
-- repository-proven: `sync-server-timeout` is not emitted for client-side observation expiry.
+- repository-proven: every top-level ordinary Sync action receives a random operation ID and sanitized operation fingerprint.
+- repository-proven: phase events receive distinct child correlation IDs and sanitized 12-hex fingerprints through `_DiagnosticOperationRecorder`.
+- repository-proven: HTTP transport continues to propagate the full client child correlation identity through `x-correlation-id` and parent operation identity/fingerprint through `x-operation-id` and `x-operation-fingerprint`.
+- repository-proven: the API now generates its own Fastify request ID independently of `x-correlation-id`, preserving server request ownership.
+- repository-proven: API lifecycle projection contains both `clientChildCorrelationFingerprint` and `serverRequestFingerprint`; `correlationFingerprint` remains server-request-owned for backward compatibility.
+- test-validated: API protocol tests prove both fingerprints are separately present, 12-hex sanitized, and not populated with injected raw header text.
 
-## Reachable Attribution
+## Projection Architecture
 
-- test-validated: Representative AUT/BND/REC/QUE/TRN/UPL/DNL/ACK/OBS paths remain covered by Flutter diagnostics tests.
-- test-validated: Representative API/PDB/server-request declaration paths remain covered by API protocol tests.
-- inferred: Catalogue-only MKS codes remain definitions, not all runtime-reachable branches.
+- repository-proven: aggregate Closure attempt rows no longer infer absent provider contact or missing response headers from parent-row nulls.
+- repository-proven: child/phase evidence remains the source for contact, trusted response, local mutation, and result-persistence axes.
+- repository-proven: server-request success is not projected as aggregate client Sync success; the UI retains the explicit `Server request: not aggregate success` declaration.
+- inferred: a fuller local aggregate summary could be derived from all child rows in a later unit, but ERR-04 intentionally avoids migration or broad diagnostic refactoring.
 
-ORDINARY_SYNC_TERMINAL_MODEL=BOUNDARY_STABLE
-CLIENT_OPERATION_OWNERSHIP=VALIDATED
-SERVER_REQUEST_OWNERSHIP=VALIDATED
-CORRELATION_LINEAGE=VALIDATED
-SUCCESS_QUERY_PREDICATE=VALIDATED
-TIMEOUT_OWNERSHIP=VALIDATED
-NO_FALSE_SERVER_TIMEOUT=VALIDATED
-NO_NEW_DIAGNOSTIC_PROVIDER_CALL=PASS
+## Validation Summary
+
+- test-validated: focused Flutter tests cover ordinary/controlled recovery separation, pending upload preservation, lifecycle line schema/redaction, sink failure isolation, and aggregate wording.
+- test-validated: local sync tests cover file-backed failed-state immobility and existing explicit recovery invariants.
+- test-validated: API protocol tests cover paired client-child/server-request lineage and redaction.
+- test-validated: full Flutter and full API suites passed.
+- unavailable: broad API format check remains blocked by unrelated pre-existing `test/sync_diagnostics_registry.test.ts` formatting; changed TypeScript files passed targeted Prettier.
+- unavailable: no live provider, hosted assay, deployment, or user database action was performed.
+
+## Terminal Markers
+
+```text
+ORDINARY_CONTROLLED_RECOVERY_BOUNDARY=SEPARATED
+FAILED_STATE_INVARIANT=VALIDATED
+SEQUENCE_REPLAY_INVARIANT=VALIDATED
+CLIENT_OBSERVER_ARCHITECTURE=BOUNDARY_STABLE
+CLIENT_SERVER_LINEAGE=VALIDATED
+AGGREGATE_PHASE_EVIDENCE_MODEL=TRUTHFUL
+NO_DIAGNOSTIC_PROVIDER_CALL=PASS
+NO_SCHEMA_MIGRATION=PASS
 GATE_12_7=HELD
 GCM02=OPEN
+```

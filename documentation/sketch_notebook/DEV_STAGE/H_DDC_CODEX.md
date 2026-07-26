@@ -1,33 +1,51 @@
-# H_DDC_CODEX — C10-GCM02-S12-ERR-03
+# H_DDC_CODEX — ERR-04 Diagnostic Meaning Evidence
 
-Unit: C10-GCM02-S12-ERR-03 within sequence C10-GCM02-S12-SYNC-01
-Evidence class: Codex observational report
+Sequence: FLX-ORD-01 — Ordinary Sequence
+Role: Codex didactic evidence
+Round or unit: C10-GCM02-S12-ERR-04 within C10-GCM02-S12-SYNC-01
+Branch: `cycle10-intermid-grimoire`
+Authority: D/E/F synchronized ERR-04 staging
+Evidence boundary: repository inspection and local tests only
 
-## Meaning Projection
+## Implemented Meanings
 
-- repository-proven: Readiness and ordinary Sync now remain didactically separate in UI text and storage interpretation. A live/ready hosted health result is not treated as aggregate Sync success.
-- repository-proven: `Last successful sync` now means a completed ordinary-Sync operation with result `sync-completed` or `sync-no-new-events`; hosted connection checks and other Closure attempts are excluded.
-- repository-proven: `Recent sync attempts` was renamed to `Recent Closure attempts`, preserving the difference between Sync, health/readiness checks, Retry inspection, and failed/notApplied surfaces.
-- repository-proven: The UI exposes client-operation declaration scope, ordinary-Sync operation kind, client result code, last proved phase, client-owned configured deadline, operation fingerprint, and correlation fingerprint.
-- repository-proven: API logs expose server-request declaration scope. Server-request completion is a request-level fact and not client ordinary-Sync completion.
+- repository-proven: ordinary Sync now means authentication, Device binding, ordinary pending upload, download/apply, acknowledgement, and aggregate terminal persistence. It no longer means failed/notApplied recovery.
+- repository-proven: failed/notApplied recovery remains a separate explicit confirmed action; inspection remains read-only, and recovery execution remains outside ordinary Sync.
+- repository-proven: `Retry unknown-outcome submission`, `Inspect failed/notApplied recovery`, `Recover failed/notApplied candidate`, hosted readiness, and ordinary Sync remain separate UI/action vocabulary.
+- repository-proven: the UI still labels recent mixed history as `Recent Closure attempts`.
+- repository-proven: Last successful Sync retains the ERR-03 predicate and is not advanced by hosted readiness.
 
-## Terminal Vocabulary
+## Scope-Aware Presentation
 
-- repository-proven: The ordinary-Sync client terminal vocabulary is bounded to `sync-completed`, `sync-no-new-events`, `sync-rejected`, `sync-server-timeout`, and `sync-failed`.
-- repository-proven: A client observation deadline before a trusted response is `sync-failed`, with provider outcome unknown.
-- repository-proven: `sync-server-timeout` remains a reserved meaning for a proved server-owned deadline with authoritative cancellation or rollback.
+- repository-proven: aggregate attempt rows no longer say `status not-observed` or `headers not-received` when the parent attempt row simply does not own per-request HTTP evidence.
+- repository-proven: aggregate wording now uses `aggregate HTTP status not applicable - see child requests` and `aggregate response headers not applicable - see child requests` when no parent-owned status/header fact exists.
+- repository-proven: the overview labels the child identity as `Client child correlation` and avoids treating a missing local child event as a failed transport observation.
+- repository-proven: lifecycle lines distinguish `client-operation`, `client-phase`, and existing API `server-request` scopes.
+- repository-proven: server lifecycle lines explicitly distinguish `clientChildCorrelationFingerprint` from `serverRequestFingerprint`.
 
-## Redaction And Causal Language
+## Redaction And Comprehension Tests
 
-- repository-proven: Public API failure bodies continue to omit full correlation IDs, exception classes, SQLSTATE, messages, stack traces, SQL, payloads, and raw IDs.
-- repository-proven: Internal lifecycle evidence may retain sanitized exception class, SQLSTATE class, route class, phase, provider transaction outcome, and sanitized lineage fingerprints.
-- inferred: The implementation preserves the detector/cause distinction by logging server-request declarations without attributing unknown outcomes to Auth0, Render, Neon, or PostgreSQL unless the specific code path proves that boundary.
+- test-validated: `native_closure_diagnostics_test.dart` proves ordinary Sync lifecycle lines are JSON, scoped, fingerprinted, deadline-bearing, and redacted from fixture token, authorization text, URL text, event ID, and request hash.
+- test-validated: `native_closure_diagnostics_test.dart` proves lifecycle sink failure does not alter the Sync terminal.
+- test-validated: `native_closure_diagnostics_test.dart` proves aggregate UI wording no longer exposes the old misleading `status not-observed` phrase.
+- test-validated: `protocol.test.ts` proves server lifecycle logs expose separate client-child and server-request fingerprints and do not include injected header text.
+- test-validated: full Flutter and API tests preserve the existing five-result Sync vocabulary and redacted public API response shape.
 
-READINESS_SYNC_MEANING=SEPARATE
-CLIENT_SERVER_SCOPE_MEANING=SEPARATE
-FIVE_SYNC_RESULTS=VISIBLE
-TIMEOUT_OWNERSHIP=VISIBLE
-LAST_SUCCESSFUL_SYNC_LABEL=TRUTHFUL
-RECENT_CLOSURE_ATTEMPTS_LABEL=ALIGNED
+## Evidence Limits
+
+- unavailable: no live provider or Windows terminal assay was performed in this source-only round.
+- unavailable: second-device convergence, provider row contents, and future Gate 12.7 authorization remain outside this evidence.
+- inferred: a future manual assay should read the new Flutter terminal lines as client-side evidence only; server HTTP 200 lines remain request-scoped evidence only.
+
+## Terminal Markers
+
+```text
+ORDINARY_SYNC_RECOVERY_MEANING=SEPARATE
+TECHNICAL_SUCCESS_AUTHORIZATION_MEANING=SEPARATE
+CLIENT_PHASE_SERVER_REQUEST_SCOPES=VISIBLE
+AGGREGATE_HTTP_WORDING=TRUTHFUL
+NEXT_SEQUENCE_REPLAY_MEANING=ALIGNED
+TERMINAL_LOG_REDACTION=VALIDATED
 GATE_12_7=HELD
 GCM02=OPEN
+```

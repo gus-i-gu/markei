@@ -732,8 +732,10 @@ final class _SyncOverview extends StatelessWidget {
                 '#${diagnostic?.operationFingerprint ?? attempt?.correlationFingerprint ?? 'not-recorded'}',
               ),
               _DiagnosticValue(
-                'Correlation',
-                '#${diagnostic?.correlationFingerprint ?? 'not-observed'}',
+                'Client child correlation',
+                diagnostic?.correlationFingerprint == null
+                    ? 'child evidence unavailable locally'
+                    : '#${diagnostic!.correlationFingerprint}',
               ),
             ],
           ),
@@ -806,8 +808,8 @@ final class _Attempts extends StatelessWidget {
                       'scope client-operation / deadline-owner client / '
                       'deadline ${attempt.operationKind == 'ordinary-sync' ? '35000ms' : 'not-applicable'} / '
                       'correlation ${attempt.correlationFingerprint ?? 'not-recorded'} / '
-                      'status ${attempt.httpStatus?.toString() ?? 'not-observed'} / '
-                      'headers ${attempt.responseHeadersReceived ? 'received' : 'not-received'} / '
+                      'aggregate HTTP status ${attempt.httpStatus?.toString() ?? 'not applicable - see child requests'} / '
+                      'aggregate response headers ${attempt.responseHeadersReceived ? 'received' : 'not applicable - see child requests'} / '
                       '${attempt.elapsedBand ?? _duration(attempt.duration)}',
                     ),
                   ),

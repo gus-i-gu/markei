@@ -82,6 +82,8 @@ export type LifecycleLogEvent = {
   resultCode?: string;
   operationFingerprint: string;
   correlationFingerprint: string;
+  clientChildCorrelationFingerprint: string;
+  serverRequestFingerprint: string;
   elapsedBand?: string;
   configuredDeadlineMs?: number;
   deadlineOwner?: "server";
@@ -203,12 +205,7 @@ export function buildApp(options: {
   const requestStarts = new WeakMap<FastifyRequest, number>();
   const app = Fastify({
     logger: false,
-    genReqId: (request) =>
-      sanitizeCorrelation(
-        Array.isArray(request.headers["x-correlation-id"])
-          ? request.headers["x-correlation-id"][0]
-          : request.headers["x-correlation-id"],
-      ) ?? randomUUID(),
+    genReqId: () => randomUUID(),
   });
   const actualRoutes: Array<{ method: string; path: string }> = [];
   app.addHook("onRoute", (routeOptions) => {
@@ -726,7 +723,11 @@ function emitLifecycle(
       operationKind: "server-request",
       resultCode: pending.result ?? resultCodeForLifecycle(pending),
       operationFingerprint: operationFingerprint(pending.request),
-      correlationFingerprint: shortCorrelationFingerprint(pending.request.id),
+      correlationFingerprint: serverRequestFingerprint(pending.request),
+      clientChildCorrelationFingerprint: clientChildCorrelationFingerprint(
+        pending.request,
+      ),
+      serverRequestFingerprint: serverRequestFingerprint(pending.request),
       elapsedBand:
         pending.elapsedMs === undefined
           ? undefined
@@ -793,6 +794,18 @@ function operationFingerprint(request: FastifyRequest) {
   return sanitizedOperation
     ? shortCorrelationFingerprint(sanitizedOperation)
     : "not-provided";
+}
+
+function clientChildCorrelationFingerprint(request: FastifyRequest) {
+  const explicit = Array.isArray(request.headers["x-correlation-id"])
+    ? request.headers["x-correlation-id"][0]
+    : request.headers["x-correlation-id"];
+  const sanitized = sanitizeCorrelation(explicit);
+  return sanitized ? shortCorrelationFingerprint(sanitized) : "not-provided";
+}
+
+function serverRequestFingerprint(request: FastifyRequest) {
+  return shortCorrelationFingerprint(request.id);
 }
 
 function shortCorrelationFingerprint(value: string) {
@@ -865,6 +878,8 @@ function emitInternalDiagnostic(
     resultCode: event.code,
     operationFingerprint: event.operationFingerprint ?? "not-provided",
     correlationFingerprint: shortCorrelationFingerprint(event.correlationId),
+    clientChildCorrelationFingerprint: "not-provided",
+    serverRequestFingerprint: shortCorrelationFingerprint(event.correlationId),
     result: event.code,
     diagnosticCode: event.diagnosticCode,
     lastProvedPhase: event.lastProvedPhase,

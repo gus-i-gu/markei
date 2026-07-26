@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../application/hosted_auth_ports.dart';
@@ -12,6 +13,8 @@ import '../application/hosted_enrollment_coordinator.dart';
 import '../application/hosted_connection_check.dart';
 import '../application/hosted_sync_coordinator.dart';
 import '../application/sync/sync_ports.dart';
+
+typedef NativeClosureLifecycleSink = void Function(String line);
 
 final class NativeAuthClosureRunner {
   NativeAuthClosureRunner({
@@ -25,6 +28,7 @@ final class NativeAuthClosureRunner {
     required FailedNotAppliedRecoveryCoordinator
     failedNotAppliedRecoveryCoordinator,
     required HostedConnectionCheckPort hostedConnectionCheck,
+    NativeClosureLifecycleSink? lifecycleSink,
   }) : _authenticationSession = authenticationSession,
        _enrollmentCoordinator = enrollmentCoordinator,
        _environmentAlias = environmentAlias,
@@ -35,6 +39,7 @@ final class NativeAuthClosureRunner {
        _failedNotAppliedRecoveryCoordinator =
            failedNotAppliedRecoveryCoordinator,
        _hostedConnectionCheck = hostedConnectionCheck,
+       _lifecycleSink = lifecycleSink ?? _terminalLifecycleSink,
        _unavailable = false,
        _uuid = const Uuid();
 
@@ -48,6 +53,7 @@ final class NativeAuthClosureRunner {
       _hostedSyncCoordinator = null,
       _failedNotAppliedRecoveryCoordinator = null,
       _hostedConnectionCheck = null,
+      _lifecycleSink = null,
       _unavailable = true,
       _uuid = null;
 
@@ -61,6 +67,7 @@ final class NativeAuthClosureRunner {
   final FailedNotAppliedRecoveryCoordinator?
   _failedNotAppliedRecoveryCoordinator;
   final HostedConnectionCheckPort? _hostedConnectionCheck;
+  final NativeClosureLifecycleSink? _lifecycleSink;
   final bool _unavailable;
   final Uuid? _uuid;
   static const ordinarySyncClientDeadline = Duration(seconds: 35);
@@ -113,6 +120,24 @@ final class NativeAuthClosureRunner {
     final coordinator = _hostedSyncCoordinator!;
     final operationId = _uuid!.v4();
     final operationFingerprint = _fingerprint(operationId);
+    final stopwatch = Stopwatch()..start();
+    _emitLifecycle(_lifecycleSink, {
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
+      'event': 'operation-started',
+      'declarationScope': 'client-operation',
+      'operationKind': 'ordinary-sync',
+      'resultCode': 'sync-started',
+      'lastProvedPhase': 'started',
+      'operationFingerprint': operationFingerprint,
+      'correlationFingerprint': operationFingerprint,
+      'configuredDeadlineMs': ordinarySyncClientDeadline.inMilliseconds,
+      'elapsedBand': _elapsedBand(stopwatch.elapsed),
+      'providerContactState': 'not-started',
+      'trustedResponseState': 'not-received',
+      'localMutationState': 'none',
+      'resultPersistenceState': 'not-started',
+      'safeNextActionCode': 'continue ordinary Sync',
+    });
     final attemptId = await recorder.beginDiagnosticAttempt(
       operationKind: 'ordinary-sync',
       latestStage: 'started',
@@ -126,6 +151,8 @@ final class NativeAuthClosureRunner {
       operationId: operationId,
       operationFingerprint: operationFingerprint,
       uuid: _uuid,
+      lifecycleSink: _lifecycleSink,
+      stopwatch: stopwatch,
     );
     try {
       final outcome = await withSyncOperation(
@@ -142,6 +169,29 @@ final class NativeAuthClosureRunner {
         phase: _syncPhase(outcome.state),
         recoveryCode: _syncRecoveryCode(outcome.state),
       );
+      _emitLifecycle(_lifecycleSink, {
+        'timestamp': DateTime.now().toUtc().toIso8601String(),
+        'event':
+            outcome.state == 'sync-completed' ||
+                outcome.state == 'sync-no-new-events'
+            ? 'operation-completed'
+            : 'operation-failed',
+        'declarationScope': 'client-operation',
+        'operationKind': 'ordinary-sync',
+        'resultCode': outcome.state,
+        'diagnosticCode': 'MKS-OBS-001',
+        'lastProvedPhase': _syncPhase(outcome.state),
+        'operationFingerprint': operationFingerprint,
+        'correlationFingerprint': operationFingerprint,
+        'configuredDeadlineMs': ordinarySyncClientDeadline.inMilliseconds,
+        'elapsedBand': _elapsedBand(stopwatch.elapsed),
+        'providerContactState': 'see-causal-phase',
+        'trustedResponseState': 'see-causal-phase',
+        'localMutationState': 'see-causal-phase',
+        'resultPersistenceState': 'committed',
+        'safeNextActionCode':
+            _syncRecoveryCode(outcome.state) ?? 'no-further-action-required',
+      });
       return NativeClosureStatus(outcome.state);
     } on Object catch (error) {
       await diagnostics.recordPhase(
@@ -170,6 +220,24 @@ final class NativeAuthClosureRunner {
         phase: 'unexpected-terminal',
         recoveryCode: 'local-exception-redacted',
       );
+      _emitLifecycle(_lifecycleSink, {
+        'timestamp': DateTime.now().toUtc().toIso8601String(),
+        'event': 'operation-failed',
+        'declarationScope': 'client-operation',
+        'operationKind': 'ordinary-sync',
+        'resultCode': 'sync-failed',
+        'diagnosticCode': 'MKS-UI-006',
+        'lastProvedPhase': 'unexpected-terminal',
+        'operationFingerprint': operationFingerprint,
+        'correlationFingerprint': operationFingerprint,
+        'configuredDeadlineMs': ordinarySyncClientDeadline.inMilliseconds,
+        'elapsedBand': _elapsedBand(stopwatch.elapsed),
+        'providerContactState': 'unknown',
+        'trustedResponseState': 'not-received',
+        'localMutationState': 'unknown',
+        'resultPersistenceState': 'failed',
+        'safeNextActionCode': 'preserve-evidence-and-inspect-diagnostics',
+      });
       return const NativeClosureStatus('sync-failed');
     }
   }
@@ -408,6 +476,7 @@ final class NativeAuthClosureRunner {
     final uuid = _uuid!;
     final operationId = uuid.v4();
     final operationFingerprint = _fingerprint(operationId);
+    final stopwatch = Stopwatch()..start();
     final recorder = _syncAttemptRecorder!;
     final attemptId = await recorder.beginDiagnosticAttempt(
       operationKind: 'failed-not-applied-recovery',
@@ -422,6 +491,8 @@ final class NativeAuthClosureRunner {
       operationId: operationId,
       operationFingerprint: operationFingerprint,
       uuid: uuid,
+      lifecycleSink: _lifecycleSink,
+      stopwatch: stopwatch,
     );
     try {
       final outcome = await _failedNotAppliedRecoveryCoordinator!.run(
@@ -586,6 +657,8 @@ final class _DiagnosticOperationRecorder
     required this.operationId,
     required this.operationFingerprint,
     required this.uuid,
+    required this.lifecycleSink,
+    required this.stopwatch,
   });
 
   final SyncAttemptRecorder recorder;
@@ -593,6 +666,8 @@ final class _DiagnosticOperationRecorder
   final String operationId;
   final String operationFingerprint;
   final Uuid uuid;
+  final NativeClosureLifecycleSink? lifecycleSink;
+  final Stopwatch stopwatch;
   int _ordinal = 0;
   int? _causalOrdinal;
 
@@ -647,6 +722,28 @@ final class _DiagnosticOperationRecorder
         serverSqlstateClass: evidence.serverSqlstateClass,
       ),
     );
+    _emitLifecycle(lifecycleSink, {
+      'timestamp': DateTime.now().toUtc().toIso8601String(),
+      'event': evidence.phase == 'terminal'
+          ? 'phase-terminal'
+          : 'phase-completed',
+      'declarationScope': 'client-phase',
+      'operationKind': evidence.operationKind,
+      'resultCode': evidence.nativeCode,
+      'diagnosticCode': evidence.code,
+      'lastProvedPhase': evidence.lastProvedPhase,
+      'operationFingerprint': operationFingerprint,
+      'correlationFingerprint': fingerprint,
+      'configuredDeadlineMs': evidence.operationKind == 'ordinary-sync'
+          ? NativeAuthClosureRunner.ordinarySyncClientDeadline.inMilliseconds
+          : null,
+      'elapsedBand': _elapsedBand(stopwatch.elapsed),
+      'providerContactState': evidence.providerContactState,
+      'trustedResponseState': evidence.trustedResponseState,
+      'localMutationState': evidence.localMutationState,
+      'resultPersistenceState': evidence.resultPersistenceState,
+      'safeNextActionCode': evidence.safeAction,
+    });
     return SyncDiagnosticChildIdentity(
       correlationId: correlationId,
       correlationFingerprint: fingerprint,
@@ -683,6 +780,38 @@ final class _DiagnosticOperationRecorder
   String _fingerprint(String value) {
     return sha256.convert(utf8.encode(value)).toString().substring(0, 12);
   }
+}
+
+void _terminalLifecycleSink(String line) {
+  debugPrint(line);
+}
+
+void _emitLifecycle(
+  NativeClosureLifecycleSink? sink,
+  Map<String, Object?> fields,
+) {
+  if (sink == null) return;
+  final sanitized = <String, Object?>{};
+  for (final entry in fields.entries) {
+    final value = entry.value;
+    if (value == null) continue;
+    sanitized[entry.key] = value;
+  }
+  try {
+    sink(jsonEncode(sanitized));
+  } on Object {
+    // Lifecycle observability must not change Closure behavior.
+  }
+}
+
+String _elapsedBand(Duration elapsed) {
+  final elapsedMs = elapsed.inMilliseconds;
+  if (elapsedMs < 250) return 'lt-250ms';
+  if (elapsedMs < 1000) return 'lt-1s';
+  if (elapsedMs < 3000) return 'lt-3s';
+  if (elapsedMs < 10000) return 'lt-10s';
+  if (elapsedMs < 30000) return 'lt-30s';
+  return 'gte-30s';
 }
 
 final class NativeClosureStatus {

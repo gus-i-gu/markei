@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { canonicalHash } from "../src/domain/protocol.js";
@@ -223,6 +224,16 @@ test("health lifecycle logs are sanitized and correlated by fingerprint", async 
     assert.match(event.operationFingerprint, /^[a-f0-9]{12}$|^not-provided$/);
     assert.ok(event.resultCode);
     assert.match(event.correlationFingerprint, /^[a-f0-9]{12}$/);
+    assert.equal(
+      event.clientChildCorrelationFingerprint,
+      fingerprint("abcx-secret:value"),
+    );
+    assert.match(event.serverRequestFingerprint, /^[a-f0-9]{12}$/);
+    assert.equal(event.correlationFingerprint, event.serverRequestFingerprint);
+    assert.notEqual(
+      event.clientChildCorrelationFingerprint,
+      event.serverRequestFingerprint,
+    );
     assert.equal(JSON.stringify(event).includes("x-secret"), false);
     assert.equal(JSON.stringify(event).includes("abc\r\n"), false);
   }
@@ -317,10 +328,20 @@ test("protected route authentication rejection is lifecycle logged", async () =>
     assert.equal(event.operationKind, "server-request");
     assert.match(event.operationFingerprint, /^[a-f0-9]{12}$/);
     assert.match(event.correlationFingerprint, /^[a-f0-9]{12}$/);
+    assert.equal(
+      event.clientChildCorrelationFingerprint,
+      fingerprint("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"),
+    );
+    assert.match(event.serverRequestFingerprint, /^[a-f0-9]{12}$/);
+    assert.equal(event.correlationFingerprint, event.serverRequestFingerprint);
     assert.equal(serialized.includes("/v1/sync/events?"), false);
     assert.equal(serialized.includes("authorization"), false);
   }
 });
+
+function fingerprint(value: string) {
+  return createHash("sha256").update(value).digest("hex").slice(0, 12);
+}
 
 test("protected submission fails closed when account cursor state is missing", async () => {
   const events: LifecycleLogEvent[] = [];

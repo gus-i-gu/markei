@@ -625,65 +625,68 @@ void main() {
     },
   );
 
-  test(
-    'coordinator discovers failed recovery and uploads canonically',
-    () async {
-      final fixture = await _fileBackedOutboxFixture();
-      final db = fixture.db;
-      addTearDown(fixture.close);
-      await _insertRawEvent(
-        db,
-        _eventPayload(sequence: 2, eventId: _eventId(2)),
-        state: 'failed',
-      );
-      await _insertRawEvent(
-        db,
-        _eventPayload(sequence: 1, eventId: _eventId(1)),
-        state: 'failed',
-      );
-      await _insertFailedSubmission(db, 'legacy-failed', [
-        _eventId(2),
-        _eventId(1),
-      ]);
-      await db.close();
-      final reopened = LocalDatabase.file(fixture.file);
-      fixture.db = reopened;
-      final outbox = DriftSyncOutboxRepository.scoped(
-        reopened,
-        accountId: _accountId(),
-        deviceId: _deviceId(),
-      );
-      final transport = _RecordingUploadTransport();
-      final coordinator = HostedSyncCoordinator(
-        authenticationSession: const _SignedInSession(),
-        syncGuard: const _AllowedGuard(),
-        applier: _MemoryApplier(),
-        recoverFailedNotApplied: RecoverFailedNotApplied(outbox),
-        uploadPendingEvents: UploadPendingEvents(outbox, transport),
-        downloadAndApplyEvents: DownloadAndApplyEvents(
-          _DownloadOnlyTransport(),
-          _MemoryApplier(),
-        ),
-        acknowledgeAppliedCursor: AcknowledgeAppliedCursor(
-          _RecordingTransport(),
-          _MemoryApplier(),
-        ),
-      );
+  test('ordinary coordinator leaves failed recovery work untouched', () async {
+    final fixture = await _fileBackedOutboxFixture();
+    final db = fixture.db;
+    addTearDown(fixture.close);
+    await _insertRawEvent(
+      db,
+      _eventPayload(sequence: 2, eventId: _eventId(2)),
+      state: 'failed',
+    );
+    await _insertRawEvent(
+      db,
+      _eventPayload(sequence: 1, eventId: _eventId(1)),
+      state: 'failed',
+    );
+    await _insertFailedSubmission(db, 'legacy-failed', [
+      _eventId(2),
+      _eventId(1),
+    ]);
+    await db.close();
+    final reopened = LocalDatabase.file(fixture.file);
+    fixture.db = reopened;
+    final outbox = DriftSyncOutboxRepository.scoped(
+      reopened,
+      accountId: _accountId(),
+      deviceId: _deviceId(),
+    );
+    final transport = _RecordingUploadTransport();
+    final coordinator = HostedSyncCoordinator(
+      authenticationSession: const _SignedInSession(),
+      syncGuard: const _AllowedGuard(),
+      applier: _MemoryApplier(),
+      recoverFailedNotApplied: RecoverFailedNotApplied(outbox),
+      uploadPendingEvents: UploadPendingEvents(outbox, transport),
+      downloadAndApplyEvents: DownloadAndApplyEvents(
+        _DownloadOnlyTransport(),
+        _MemoryApplier(),
+      ),
+      acknowledgeAppliedCursor: AcknowledgeAppliedCursor(
+        _RecordingTransport(),
+        _MemoryApplier(),
+      ),
+    );
 
-      expect((await coordinator.run('native')).state, 'sync-completed');
-      expect(transport.uploadCount, 1);
-      expect(transport.uploadedSequences.single, [1, 2]);
-      expect(
-        (await reopened.select(reopened.syncSubmissions).get()).where(
-          (row) => row.state == 'superseded',
-        ),
-        hasLength(1),
-      );
+    expect((await coordinator.run('native')).state, 'sync-completed');
+    expect(transport.uploadCount, 0);
+    expect(transport.uploadedSequences, isEmpty);
+    expect(
+      (await reopened.select(reopened.syncSubmissions).get()).where(
+        (row) => row.state == 'failed',
+      ),
+      hasLength(1),
+    );
+    expect(
+      (await reopened.select(reopened.pendingEvents).get()).where(
+        (row) => row.state == 'failed',
+      ),
+      hasLength(2),
+    );
 
-      expect((await coordinator.run('native')).state, 'sync-completed');
-      expect(transport.uploadCount, 1);
-    },
-  );
+    expect((await coordinator.run('native')).state, 'sync-completed');
+    expect(transport.uploadCount, 0);
+  });
 
   test('concurrent scoped recovery creates one pending recovery', () async {
     final fixture = await _fileBackedOutboxFixture();

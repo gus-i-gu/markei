@@ -110,42 +110,6 @@ final class HostedSyncCoordinator {
     );
 
     try {
-      await diagnostics?.recordPhase(
-        const SyncDiagnosticPhaseEvidence(
-          code: 'MKS-REC-001',
-          nativeCode: 'failed-recovery-entered',
-          operationKind: 'ordinary-sync',
-          phase: 'failed-recovery',
-          lastProvedPhase: 'failed-recovery',
-          outcome: 'unknown',
-          safeAction: 'evaluate failed/notApplied recovery before upload',
-        ),
-      );
-      final recovery = await recoverFailedNotApplied();
-      await diagnostics?.recordPhase(
-        SyncDiagnosticPhaseEvidence(
-          code: _diagnosticCodeForResult(recovery, fallback: 'MKS-REC-001'),
-          nativeCode: recovery.protocolCode ?? recovery.code.name,
-          severity: _severityFor(recovery),
-          operationKind: 'ordinary-sync',
-          phase: 'failed-recovery',
-          lastProvedPhase: 'failed-recovery',
-          outcome: recovery.outcome.name,
-          localMutationState: recovery.outcome == SyncOutcome.applied
-              ? 'committed'
-              : 'none',
-          resultPersistenceState: recovery.outcome == SyncOutcome.applied
-              ? 'committed'
-              : 'not-started',
-          safeAction: recovery.outcome == SyncOutcome.applied
-              ? 'continue ordinary Sync'
-              : 'preserve queue evidence and inspect diagnostics',
-          retryable: recovery.retryable,
-        ),
-      );
-      final recoveryBlocker = _blockedBy(recovery);
-      if (recoveryBlocker != null) return recoveryBlocker;
-
       final upload = await _uploadPendingEvents(diagnostics: diagnostics);
       final uploadBlocker = _blockedBy(upload);
       if (uploadBlocker != null) return uploadBlocker;
@@ -292,39 +256,11 @@ final class HostedSyncCoordinator {
       SyncStatusCode.localChangesBlockRebootstrap ||
       SyncStatusCode.protocolUpgradeRequired =>
         result.protocolCode == 'server-timeout'
-        ? const HostedSyncOutcome.serverTimeout()
-        : const HostedSyncOutcome.rejected(),
+            ? const HostedSyncOutcome.serverTimeout()
+            : const HostedSyncOutcome.rejected(),
       _ => null,
     };
   }
-}
-
-String _diagnosticCodeForResult(SyncResult result, {required String fallback}) {
-  return switch (result.code) {
-    SyncStatusCode.unknownOutcome => 'MKS-OBS-001',
-    SyncStatusCode.failedRecoveryBlocked => 'MKS-REC-012',
-    SyncStatusCode.noRecoverableFailure ||
-    SyncStatusCode.failedRecoveryAvailable => fallback,
-    SyncStatusCode.serviceUnavailable => 'MKS-TRN-001',
-    SyncStatusCode.authRequired => 'MKS-AUT-001',
-    SyncStatusCode.deviceEnrollmentRequired ||
-    SyncStatusCode.deviceRevoked ||
-    SyncStatusCode.deviceExpired => 'MKS-BND-001',
-    SyncStatusCode.cursorExpired => 'MKS-DNL-004',
-    SyncStatusCode.wrongAccount => 'MKS-UPL-003',
-    SyncStatusCode.hashMismatch => 'MKS-UPL-004',
-    SyncStatusCode.sequenceGap => 'MKS-UPL-005',
-    SyncStatusCode.localBatchInvalid => 'MKS-UPL-006',
-    _ => fallback,
-  };
-}
-
-String _severityFor(SyncResult result) {
-  return switch (result.outcome) {
-    SyncOutcome.applied || SyncOutcome.duplicateEquivalent => 'INFO',
-    SyncOutcome.unknown => 'ERROR',
-    SyncOutcome.notApplied => result.retryable ? 'WARN' : 'ERROR',
-  };
 }
 
 final class HostedSyncOutcome {

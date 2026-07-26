@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -52,6 +53,13 @@ void main() {
     expect(find.text('authenticated'), findsOneWidget);
     expect(find.text('failed-work-needs-review'), findsOneWidget);
     expect(find.text('ordinary-sync: sync-failed #attempt1'), findsOneWidget);
+    expect(
+      find.textContaining(
+        'aggregate HTTP status not applicable - see child requests',
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('status not-observed'), findsNothing);
     expect(find.text('purchase.registered.v3 #event1'), findsOneWidget);
     expect(find.text('Current #device1'), findsOneWidget);
   });
@@ -324,7 +332,6 @@ void main() {
         containsAllInOrder([
           'authentication',
           'binding',
-          'failed-recovery',
           'upload-lease',
           'upload-transport',
           'upload-provider',
@@ -360,15 +367,112 @@ void main() {
     },
   );
 
+  test('ordinary Sync does not invoke failed notApplied recovery', () async {
+    final query = _FakeDiagnosticsQuery();
+    final outbox = _BlockedRecoveryOutbox();
+    final runner = _runner(query: query, outbox: outbox);
+
+    final result = await runner.hostedSyncProbe();
+
+    expect(result.state, 'sync-no-new-events');
+    expect(outbox.recoveries, 0);
+    expect(
+      query.diagnosticEvents.map((event) => event.phase),
+      isNot(contains('failed-recovery')),
+    );
+    expect(query.completedResults, ['sync-no-new-events']);
+  });
+
+  test('ordinary Sync uploads genuinely pending events', () async {
+    final query = _FakeDiagnosticsQuery();
+    final transport = _CountingTransport();
+    final runner = _runner(
+      query: query,
+      outbox: _UploadingOutbox(),
+      transport: transport,
+    );
+
+    final result = await runner.hostedSyncProbe();
+
+    expect(result.state, 'sync-completed');
+    expect(transport.uploads, 1);
+    expect(transport.downloads, 1);
+    expect(transport.acknowledgements, 0);
+  });
+
   test('runner records rejected Sync terminal outcome once', () async {
     final query = _FakeDiagnosticsQuery();
-    final runner = _runner(query: query, outbox: _BlockedRecoveryOutbox());
+    final runner = _runner(
+      query: query,
+      outbox: _UploadingOutbox(),
+      transport: _RejectingTransport(),
+    );
 
     final result = await runner.hostedSyncProbe();
 
     expect(result.state, 'sync-rejected');
     expect(query.beginDiagnosticAttempts, 1);
     expect(query.completedResults, ['sync-rejected']);
+  });
+
+  test('ordinary Sync lifecycle lines are structured and redacted', () async {
+    final query = _FakeDiagnosticsQuery();
+    final lines = <String>[];
+    final runner = _runner(
+      query: query,
+      outbox: _UploadingOutbox(),
+      lifecycleSink: lines.add,
+    );
+
+    final result = await runner.hostedSyncProbe();
+
+    expect(result.state, 'sync-completed');
+    expect(lines, isNotEmpty);
+    final events = lines
+        .map((line) => jsonDecode(line) as Map<String, Object?>)
+        .toList();
+    expect(events.first['event'], 'operation-started');
+    expect(events.last['event'], 'operation-completed');
+    expect(
+      events.map((event) => event['declarationScope']).toSet(),
+      containsAll({'client-operation', 'client-phase'}),
+    );
+    for (final event in events) {
+      expect(event['operationKind'], 'ordinary-sync');
+      expect(event['operationFingerprint'], matches(r'^[a-f0-9]{12}$'));
+      expect(event['correlationFingerprint'], matches(r'^[a-f0-9]{12}$'));
+      expect(event['configuredDeadlineMs'], 35000);
+      expect(event['elapsedBand'], isA<String>());
+      expect(event.containsKey('providerContactState'), isTrue);
+      expect(event.containsKey('trustedResponseState'), isTrue);
+      final serialized = jsonEncode(event);
+      expect(serialized.contains('fixture-token'), isFalse);
+      expect(serialized.contains('authorization'), isFalse);
+      expect(serialized.contains('http'), isFalse);
+      expect(serialized.contains('event-fixture'), isFalse);
+      expect(serialized.contains('request-hash'), isFalse);
+    }
+    expect(
+      events
+          .where((event) => event['declarationScope'] == 'client-phase')
+          .map((event) => event['correlationFingerprint'])
+          .toSet()
+          .length,
+      greaterThan(1),
+    );
+  });
+
+  test('lifecycle sink failure does not alter ordinary Sync result', () async {
+    final query = _FakeDiagnosticsQuery();
+    final runner = _runner(
+      query: query,
+      lifecycleSink: (_) => throw StateError('redacted'),
+    );
+
+    final result = await runner.hostedSyncProbe();
+
+    expect(result.state, 'sync-no-new-events');
+    expect(query.completedResults, ['sync-no-new-events']);
   });
 
   test('runner records failed Sync terminal outcome once', () async {
@@ -551,6 +655,7 @@ NativeAuthClosureRunner _runner({
   SyncOutboxRepository? outbox,
   SyncTransport? transport,
   HostedConnectionCheckPort? hostedConnectionCheck,
+  NativeClosureLifecycleSink? lifecycleSink,
 }) {
   final auth = LabAuthenticationSession(signedIn: signedIn);
   final enrollmentTransport = _FakeEnrollmentTransport();
@@ -600,6 +705,7 @@ NativeAuthClosureRunner _runner({
     ),
     hostedConnectionCheck:
         hostedConnectionCheck ?? _FakeHostedConnectionCheck(),
+    lifecycleSink: lifecycleSink,
   );
 }
 
@@ -958,12 +1064,17 @@ final class _ExactRecoveryOutbox extends _NoopOutbox {
 }
 
 final class _BlockedRecoveryOutbox extends _NoopOutbox {
+  var recoveries = 0;
+
   @override
-  Future<SyncResult> recoverOneFailedNotApplied() async => const SyncResult(
-    code: SyncStatusCode.failedRecoveryBlocked,
-    outcome: SyncOutcome.notApplied,
-    retryable: false,
-  );
+  Future<SyncResult> recoverOneFailedNotApplied() async {
+    recoveries++;
+    return const SyncResult(
+      code: SyncStatusCode.failedRecoveryBlocked,
+      outcome: SyncOutcome.notApplied,
+      retryable: false,
+    );
+  }
 }
 
 final class _CountingTransport extends _NoopTransport {
@@ -974,7 +1085,13 @@ final class _CountingTransport extends _NoopTransport {
   @override
   Future<SyncResult> uploadSubmission(SyncUploadSubmission submission) async {
     uploads++;
-    expect(submission.events.map((event) => event['deviceSequence']), [1, 2]);
+    final sequences = submission.events
+        .map((event) => event['deviceSequence'])
+        .whereType<int>()
+        .toList();
+    if (sequences.isNotEmpty) {
+      expect(sequences, [1, 2]);
+    }
     return const SyncResult(
       code: SyncStatusCode.serverAccepted,
       outcome: SyncOutcome.applied,
@@ -1024,6 +1141,17 @@ final class _TimeoutTransport extends _NoopTransport {
   Future<DownloadPage> downloadAfter(String? cursor, {required int limit}) {
     throw TimeoutException('redacted');
   }
+}
+
+final class _RejectingTransport extends _NoopTransport {
+  @override
+  Future<SyncResult> uploadSubmission(SyncUploadSubmission submission) async =>
+      const SyncResult(
+        code: SyncStatusCode.serviceUnavailable,
+        outcome: SyncOutcome.notApplied,
+        retryable: false,
+        protocolCode: 'service-unavailable',
+      );
 }
 
 final class _NoopApplier implements RemoteEventApplier {
