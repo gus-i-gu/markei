@@ -1,12 +1,12 @@
 # Markei General Scripts
 
-> Canonical executable catalogue for the human-supervised GRIMOIRE interface.
+> Canonical executable catalogue for the human-supervised GRM interface.
 > Repository: `gus-i-gu/markei`; branch: `cycle10-intermid-grimoire`.
 
 ## 0. Execution contract
 
 ```text
-GRIMOIRE_INDEX block invokes NEON_CHECK.ps1 -Procedure GS-*
+GRM_INDEX block invokes NEON_CHECK.ps1 -Procedure GS-*
 → dispatcher loads one exact canonical GS-* procedure from this file
 → NS_COORDINATES.md supplies non-secret values
 → the GS-* body requests only remaining role/UUID/secret input
@@ -17,7 +17,7 @@ GRIMOIRE_INDEX block invokes NEON_CHECK.ps1 -Procedure GS-*
 Keep this active five-file set together:
 
 ```text
-documentation/GRIMOIRE.md
+documentation/GRM.md
 documentation/G_SCRIPTS.md
 documentation/NS_COORDINATES.md
 documentation/NEON_CHECK.ps1
@@ -2227,7 +2227,7 @@ does not authorize Enroll, Query, Retry, or Sync.
 ## 7. Historical diagnostics and mutation record
 
 These procedures are retained for traceability and are excluded from the
-active `GRIMOIRE_INDEX`.
+active `GRM_INDEX`.
 
 ### `GS-NEON-H01` — Gate 02 preflight diagnostic
 

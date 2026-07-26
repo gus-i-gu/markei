@@ -20,11 +20,45 @@ human copies one GRM-* block
 The interface is hemi-automated. Scripts own mechanical execution; the human
 owns target confirmation, interpretation, and mutation authority.
 
+### 1.1 Ordered command glossary
+
+This is the complete active command sequence. Select the `GRM-*` code here,
+then copy its fenced block from `GRM_INDEX` below. Procedure details remain in
+the matching `GS-*` section of `G_SCRIPTS.md`.
+
+| Code              | Name                                    |
+| ----------------- | --------------------------------------- |
+| `GRM-NEON-00`     | Guided Neon role/action selection       |
+| `GRM-NEON-01`     | Migrator connection proof               |
+| `GRM-NEON-02`     | Migrator psql terminal                  |
+| `GRM-NEON-03`     | Runtime psql terminal                   |
+| `GRM-NEON-04`     | Gate 02 postflight verification         |
+| `GRM-NEON-05`     | Migration-ledger inspection             |
+| `GRM-NEON-06`     | Schema and RLS inspection               |
+| `GRM-NEON-07`     | Runtime-privilege inspection            |
+| `GRM-NEON-08`     | Sanitized Device inventory              |
+| `GRM-NEON-09`     | Exact Device-counter verification       |
+| `GRM-NEON-10`     | Runtime readiness-v2 verification       |
+| `GRM-NEON-11`     | Atomic provider baseline                |
+| `GRM-GIT-01`      | Exact Git-alignment verification        |
+| `GRM-GIT-02`      | Fast-forward pull and verification      |
+| `GRM-SQLITE-01`   | Local SQLite CLI verification           |
+| `GRM-SQLITE-02`   | Verified Gate 12.6 copy creation        |
+| `GRM-SQLITE-03`   | Sanitized classification probe          |
+| `GRM-SQLITE-04`   | Sanitized scope-correlation probe       |
+| `GRM-HOST-01`     | Render live/ready verification          |
+| `GRM-AUTH-01`     | Auth0 public-metadata verification      |
+| `GRM-AUTH-02`     | Exact hosted Auth0-binding verification |
+| `GRM-BUILD-01`    | Sync API validation                     |
+| `GRM-BUILD-02`    | Flutter-client validation               |
+| `GRM-FLUTTER-WIN` | Windows Closure build/run               |
+| `GRM-FLUTTER-AND` | Android Closure build/install/run       |
+
 ## 2. Canonical five-file system
 
 | File                              | Single responsibility                                                 |
 | --------------------------------- | --------------------------------------------------------------------- |
-| `documentation/GRIMOIRE.md`       | Concise `GRM-*` invocation index and safety boundary                  |
+| `documentation/GRM.md`            | Concise `GRM-*` invocation index and safety boundary                  |
 | `documentation/G_SCRIPTS.md`      | Canonical expanded `GS-*` procedures, inputs, expectations, and stops |
 | `documentation/NS_COORDINATES.md` | Reviewed non-secret coordinate allowlist                              |
 | `documentation/NEON_CHECK.ps1`    | `GS-*` dispatcher plus guarded Neon/Docker/psql launcher              |
@@ -38,7 +72,7 @@ observational history; they are not live interfaces.
 
 | Identifier   | Owner          | Responsibility                                               |
 | ------------ | -------------- | ------------------------------------------------------------ |
-| `GRM-*`      | `GRIMOIRE.md`  | Human-selectable invocation only                             |
+| `GRM-*`      | `GRM.md`       | Human-selectable invocation only                             |
 | `GS-*`       | `G_SCRIPTS.md` | Complete operational procedure                               |
 | `DBM-MAN-*`  | `DB_MGMT.sql`  | Manually copied, read-only SQL for the named database client |
 | `DBM-AUTO-*` | `DB_MGMT.sql`  | SQL extracted by an automated `GS-*`/launcher path           |
@@ -162,7 +196,7 @@ Required static checks include:
 
 ```powershell
 rg "GRM-|GS-|DBM-MAN-|DBM-AUTO-|NS_COORDINATES|NEON_CHECK|DB_MGMT" `
-  documentation\GRIMOIRE.md `
+  documentation\GRM.md `
   documentation\G_SCRIPTS.md `
   documentation\NS_COORDINATES.md `
   documentation\NEON_CHECK.ps1 `
@@ -174,9 +208,9 @@ live five-file interface.
 
 ---
 
-<!-- LANDLINE: GRIMOIRE_INDEX -->
+<!-- LANDLINE: GRM_INDEX -->
 
-## GRIMOIRE_INDEX
+## GRM_INDEX
 
 Copy only the fenced block for the selected ID. Inputs, expectations, and stops
 are canonical in the mapped `GS-*` section.

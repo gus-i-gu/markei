@@ -14,7 +14,7 @@
 
 This mutable prefix is the current Main recovery surface. Read it before the
 append-only `Legacy_Progress` history. Expand into the legacy entries, G/H/I,
-permanent domains, GRIMOIRE, or source only when the current task requires
+permanent domains, GRM, or source only when the current task requires
 deeper evidence.
 
 Mandatory methodology boot remains:
@@ -50,7 +50,7 @@ Active closure unit: MCG-02 / user-facing GCM-02
 Active gate: 12.6 copied-database transition correlation
 ```
 
-The branch contains the GRIMOIRE execution interface, hosted Sync
+The branch contains the GRM execution interface, hosted Sync
 implementation and diagnostics, account-cursor provisioning repair,
 human-operated provider evidence, and the latest Gate 12.6 staging.
 
@@ -65,7 +65,7 @@ Parallel-work rule:
 - integrate them by rebasing or merging one complete commit onto the other;
 - never copy individual files across histories or force-push over either
   commit;
-- stop if both commits unexpectedly change J or the same G/H/I/GRIMOIRE
+- stop if both commits unexpectedly change J or the same G/H/I/GRM
   lines.
 
 ## 3. Cycle 10 consolidated panorama
@@ -165,14 +165,14 @@ indiscriminately.
 ### 4.1 Human execution interface
 
 ```text
-documentation/GRIMOIRE.md
+documentation/GRM.md
 documentation/G_SCRIPTS.md
 documentation/NS_COORDINATES.md
 documentation/NEON_CHECK.ps1
 documentation/DB_MGMT.sql
 ```
 
-`GRIMOIRE.md` is the concise indexed human entry surface. Every active `GRM-*`
+`GRM.md` is the concise indexed human entry surface. Every active `GRM-*`
 block dispatches exactly one `GS-*` procedure through `NEON_CHECK.ps1`.
 `G_SCRIPTS.md` owns procedure logic and runtime requests,
 `NS_COORDINATES.md` owns reviewed non-secret values, and `DB_MGMT.sql` owns
@@ -348,29 +348,33 @@ ad hoc SQL.
 
 ## 6. Immediate continuation
 
-The active Codex round is evidence-only:
+The evidence-only Codex round is complete. It reconciled the copied-database
+observation into G/H/I, proved the bounded legacy mapping explanation, traced
+the coordinator transition, demonstrated that aggregate evidence cannot
+resolve the remaining Device scope, materialized and fixture-validated
+`GS-SQLITE-04`, and prepared a Gate 12.7 skeleton with unresolved fields
+`PENDING`.
 
-1. reconcile the copied-database observation into G/H/I;
-2. prove the legacy response mapping boundary from source and Git history;
-3. trace the exact coordinator transition;
-4. determine whether current evidence resolves device-scoped correlation;
-5. conditionally materialize and validate SQLite-04 if required;
-6. prepare a Gate 12.7 packet skeleton with every unresolved field `PENDING`.
+The next Gate 12.6 evidence action is limited to:
 
-Codex must not modify J. After its commit is integrated with this pruning
-commit, Main must reconcile the new G/H/I result into this mutable prefix.
+1. publish and pull the integrated GRM refactor;
+2. verify the expected branch/head and clean worktree;
+3. keep Markei closed;
+4. preserve `markei-gate-12-6-current` unchanged;
+5. copy and run only `GRM-SQLITE-04` from `documentation/GRM.md`;
+6. return only the procedure's sanitized output for Main reconciliation;
+7. perform no Retry, ordinary Sync, Enroll, provider action, ad hoc SQL,
+   database repair, cleanup, or deletion.
 
-If SQLite-04 is produced, the next human action is limited to:
+After that output is reconciled, Main must either:
 
-- pull and verify the integrated branch;
-- keep Markei closed;
-- run the indexed, sanitized, read-only procedure against the preserved copy;
-- return only its intended output;
-- perform no Retry, Sync or provider action.
+- close Gate 12.6 and complete the Gate 12.7 authorization packet; or
+- keep Gate 12.6 open with the exact unresolved field and the next
+  non-mutating evidence requirement.
 
-If SQLite-04 is unnecessary, Main should use G/H/I to decide whether Gate 12.6
-can close and whether a complete Gate 12.7 authorization packet can be
-presented for explicit human review.
+The Gate 12.7 packet is a proposal until the human explicitly authorizes one
+bounded operation. Gate 12.8 and all later mutation/post-operation steps remain
+held.
 
 ## 7. GCM-03 provisional boundary
 
@@ -443,7 +447,7 @@ to bypass Cycle 10 closure.
 | Gate 12.6 copied-database probe passed       | Human-operated accepted, read-only copied-database evidence           |
 | Failed/notApplied lineage is known           | Accepted from sanitized copied-database output                        |
 | Legacy response pairing is explained         | Source/history-consistent, not row-proven                             |
-| Exact device-scoped next transition is known | Pending Codex correlation                                             |
+| Exact device-scoped next transition is known | Pending human `GRM-SQLITE-04` evidence                                |
 | Retry is eligible                            | Rejected; unknown-retry path is inapplicable                          |
 | Ordinary Sync is a safe substitute           | Rejected; six other pending events exist                              |
 | Gate 12.7 is authorized                      | Rejected                                                              |
@@ -475,6 +479,7 @@ read this mutable prefix
 ```
 
 ---
+
 # Legacy_Progress
 
 > Persistence rule: this section is append-only Main-stage continuity. Entries
@@ -1876,6 +1881,77 @@ Current terminals remain:
 EXACT_DEVICE_SCOPED_TRANSITION_CORRELATION_PENDING
 GATE_12_6_OPEN
 GATE_12_7_PENDING
+RETRY_UNAUTHORIZED
+ORDINARY_SYNC_UNAUTHORIZED
+PROVIDER_ACTION_UNAUTHORIZED
+GCM02_OPEN
+```
+
+## Append-only reconciliation entry — 2026-07-25 — GRM rename and full catalogue audit
+
+### Sequence identity
+
+```text
+Sequence: FLX-PRN-03 with PRC-01 evidence qualification
+Scope: live GRM/GS procedural interface and Gate 12.6 recovery pointer
+Baseline: 05265cfb91f92504e1ac5e627f0af62e351c4b8f
+Provider action: none
+Database access: none
+Retry or ordinary Sync: none
+Gate authority change: none
+```
+
+The concise human entrypoint was renamed:
+
+```text
+documentation/GRIMOIRE.md -> documentation/GRM.md
+GRIMOIRE_INDEX             -> GRM_INDEX
+```
+
+The live file header now explains the complete procedural cascade and contains
+one ordered code/name glossary for every active command. The canonical route
+remains:
+
+```text
+human copies GRM
+-> NEON_CHECK dispatches one GS
+-> GS owns guards, coordinates and requested inputs
+-> GS invokes PowerShell and/or one DB_MGMT automation query
+-> sanitized evidence returns for human interpretation
+```
+
+Qualified static audit:
+
+```text
+ordered GRM glossary entries: 25 / 25
+active GRM invocation blocks: 25 / 25
+active GS procedure headings: 25 / 25
+one exact GRM-to-GS mapping per active command: PASS
+one PowerShell fence per active GS procedure: PASS
+active GRM/GS order equality: PASS
+DB_MGMT automation blocks and end markers: 10 / 10
+launcher action-name coverage: PASS
+historical GS procedures outside active GRM index: 2
+live five-file references to old GRIMOIRE filename/index: 0
+```
+
+This audit proves catalogue structure, mapping, ordering and documentation
+coherence at the inspected repository state. It is not a Windows PowerShell,
+provider, database, Flutter, Retry or Sync execution. No GS procedure body was
+changed by the rename round. Existing fixture and human evidence retain their
+previous boundaries.
+
+The mutable J recovery prefix now records that the evidence-only Codex round
+is complete. The sole next Gate 12.6 evidence action is to run the indexed,
+sanitized and read-only `GRM-SQLITE-04` procedure against the preserved
+verified copy after the integrated branch is published and pulled.
+
+Current terminals remain:
+
+```text
+GCM02_12_6_COPIED_DATABASE_PROBE_PASS
+GCM02_12_6_DEVICE_SCOPED_CORRELATION_PENDING
+GCM02_12_7_HUMAN_AUTHORIZATION_PENDING
 RETRY_UNAUTHORIZED
 ORDINARY_SYNC_UNAUTHORIZED
 PROVIDER_ACTION_UNAUTHORIZED
