@@ -147,6 +147,16 @@ CurrentMigrationLedgerChecksum: c10-mcg02-account-cursor-provisioning-v1
 Migration 007 was applied once and postflight-validated on 2026-07-23. These
 identifiers support read-only verification; they do not authorize reapplication.
 
+### 2.7 Local Android validation target
+
+```text
+AndroidAvdName: DEV-GMR
+```
+
+`AndroidAvdName` identifies the stable local Android Virtual Device definition.
+The transient ADB/Flutter device ID is discovered at runtime and is not stored
+in this file. Keep the AVD name free of personal information.
+
 ## 3. Original `NEON_CRED.md` migration coverage
 
 Every coordinate from the original file is retained without semantic loss:
@@ -182,6 +192,7 @@ one.
 | Neon direct/pooled hostnames, database, and roles | Neon **Connect** dialog with password hidden |
 | API routes and contract values | Committed Markei hosted API and Flutter transport source |
 | Migration identity and checksums | Committed migration plus read-only migration ledger |
+| Android AVD name | Android Studio **Device Manager**, or `emulator.exe -list-avds` |
 
 ## 5. Lifecycle and exposure classification
 
@@ -197,6 +208,7 @@ one.
 | Role passwords and provider tokens | Rotatable secrets | Never enter this file |
 | API routes and contract versions | Versioned | Reconcile with source changes |
 | Migration IDs and checksums | Append-only/immutable per migration | Safe and useful verification evidence |
+| Android AVD name | Stable until the local AVD is renamed or deleted | Non-secret local validation coordinate; never store a physical-device serial |
 
 The original direct Neon hostname, database name, and role names are the only
 existing fields that merit an exposure warning. They cannot authenticate

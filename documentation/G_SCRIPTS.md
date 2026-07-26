@@ -2044,10 +2044,10 @@ Query, Retry, or Sync; those remain separate human actions.
 
 ### `GS-FLUTTER-AND` — Prepare, build, install, and run Android Closure
 
-Run from anywhere inside the repository. The procedure loads the four public
-Android Closure coordinates from `documentation/NS_COORDINATES.md`. Connect
-and unlock one Android device with USB debugging already authorized, or start
-one emulator. The procedure prints only readiness booleans and Flutter's
+Run from anywhere inside the repository. The procedure loads the five public
+Android Closure coordinates from `documentation/NS_COORDINATES.md`. It reuses
+one connected supported Android target or starts the configured AVD and waits
+for it to boot. The procedure prints only readiness booleans and Flutter's
 public device metadata, never configuration values.
 
 ```powershell
@@ -2089,6 +2089,7 @@ $Auth0Domain = Get-NsCoordinate "Auth0TenantDomain"
 $Auth0Audience = Get-NsCoordinate "Auth0Audience"
 $AndroidClientId = Get-NsCoordinate "Auth0AndroidClientId"
 $HostedOrigin = Get-NsCoordinate "RenderPublicOrigin"
+$AndroidAvdName = Get-NsCoordinate "AndroidAvdName"
 
 flutter doctor -v
 
@@ -2097,6 +2098,7 @@ $ConfigurationReady = [ordered]@{
     Auth0Audience = -not [string]::IsNullOrWhiteSpace($Auth0Audience)
     AndroidClient = -not [string]::IsNullOrWhiteSpace($AndroidClientId)
     HostedOrigin  = -not [string]::IsNullOrWhiteSpace($HostedOrigin)
+    AndroidAvd    = -not [string]::IsNullOrWhiteSpace($AndroidAvdName)
 }
 [pscustomobject]$ConfigurationReady
 
@@ -2104,45 +2106,99 @@ if ($ConfigurationReady.Values -contains $false) {
     throw "One or more Android Closure coordinates could not be loaded."
 }
 
-$FlutterDevicesJson = (& flutter devices --machine 2>&1 | Out-String)
-if ($LASTEXITCODE -ne 0) {
-    throw "Could not inspect Flutter devices."
-}
-
-try {
-    $FlutterDevices = @($FlutterDevicesJson | ConvertFrom-Json)
-}
-catch {
-    throw "Flutter returned an unreadable device inventory."
-}
-
-$AndroidDevices = @(
-    $FlutterDevices | Where-Object {
-        $_.targetPlatform -match "^android" -and $_.isSupported -eq $true
+function Get-SupportedAndroidDevices {
+    $FlutterDevicesJson = (& flutter devices --machine 2>&1 | Out-String)
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not inspect Flutter devices."
     }
-)
-
-$SelectedAndroidDevice = $null
-if (-not [string]::IsNullOrWhiteSpace($AndroidDeviceId)) {
-    $SelectedAndroidDevice = @(
-        $AndroidDevices | Where-Object { $_.id -eq $AndroidDeviceId }
+    try {
+        $FlutterDevices = @($FlutterDevicesJson | ConvertFrom-Json)
+    }
+    catch {
+        throw "Flutter returned an unreadable device inventory."
+    }
+    return @(
+        $FlutterDevices | Where-Object {
+            $_.targetPlatform -match "^android" -and $_.isSupported -eq $true
+        }
     )
-    if ($SelectedAndroidDevice.Count -ne 1) {
-        throw "AndroidDeviceId does not resolve to exactly one supported connected device."
+}
+
+$AndroidDeviceId = $null
+$AndroidDevices = @(Get-SupportedAndroidDevices)
+$SelectedAndroidDevice = $null
+if ($AndroidDevices.Count -eq 0) {
+    $AndroidSdkRoot = if (
+        -not [string]::IsNullOrWhiteSpace($env:ANDROID_SDK_ROOT)
+    ) {
+        $env:ANDROID_SDK_ROOT
     }
-    $SelectedAndroidDevice = $SelectedAndroidDevice[0]
+    else {
+        Join-Path $env:LOCALAPPDATA "Android\Sdk"
+    }
+    $EmulatorExe = Join-Path $AndroidSdkRoot "emulator\emulator.exe"
+    if (-not (Test-Path -LiteralPath $EmulatorExe -PathType Leaf)) {
+        throw "Android emulator executable was not found at $EmulatorExe."
+    }
+    $KnownAvds = @(& $EmulatorExe -list-avds)
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not inspect installed Android Virtual Devices."
+    }
+    if ($KnownAvds -notcontains $AndroidAvdName) {
+        throw "Configured Android AVD '$AndroidAvdName' is not installed."
+    }
+
+    Write-Host "Starting configured Android AVD: $AndroidAvdName"
+    Start-Process -FilePath $EmulatorExe `
+        -ArgumentList @("-avd", $AndroidAvdName)
+
+    $DeviceDeadline = [DateTime]::UtcNow.AddMinutes(3)
+    do {
+        Start-Sleep -Seconds 3
+        $AndroidDevices = @(Get-SupportedAndroidDevices)
+        if ($AndroidDevices.Count -gt 1) {
+            $AndroidDevices |
+                Select-Object name, id, targetPlatform, sdk |
+                Format-Table -AutoSize
+            throw "Multiple Android devices appeared while starting the configured AVD."
+        }
+    } until (
+        $AndroidDevices.Count -eq 1 -or
+        [DateTime]::UtcNow -ge $DeviceDeadline
+    )
+    if ($AndroidDevices.Count -ne 1) {
+        throw "Configured Android AVD did not become available within 3 minutes."
+    }
+
+    $AndroidDeviceId = $AndroidDevices[0].id
+    $AdbExe = Join-Path $AndroidSdkRoot "platform-tools\adb.exe"
+    if (-not (Test-Path -LiteralPath $AdbExe -PathType Leaf)) {
+        throw "Android Debug Bridge was not found at $AdbExe."
+    }
+    $BootDeadline = [DateTime]::UtcNow.AddMinutes(3)
+    do {
+        Start-Sleep -Seconds 2
+        $BootCompleted = (
+            & $AdbExe -s $AndroidDeviceId shell getprop sys.boot_completed `
+                2>$null
+        ).Trim()
+    } until (
+        $BootCompleted -eq "1" -or
+        [DateTime]::UtcNow -ge $BootDeadline
+    )
+    if ($BootCompleted -ne "1") {
+        throw "Configured Android AVD did not finish booting within 3 minutes."
+    }
 }
-elseif ($AndroidDevices.Count -eq 1) {
+
+if ($AndroidDevices.Count -eq 1) {
     $SelectedAndroidDevice = $AndroidDevices[0]
-}
-elseif ($AndroidDevices.Count -eq 0) {
-    throw "No supported Android device or emulator is connected."
 }
 else {
     $AndroidDevices |
         Select-Object name, id, targetPlatform, sdk |
         Format-Table -AutoSize
-    throw "Multiple Android devices are connected. Set AndroidDeviceId to one displayed id and rerun."
+    throw "Multiple Android devices are connected. Leave exactly one target connected and rerun."
 }
 
 $SelectedAndroidDevice |
@@ -2214,13 +2270,14 @@ finally {
 ```
 
 This is the full Android recovery path. It loads and verifies the public
-coordinate surface, requires exactly one selected supported Android target,
-forwards the Auth0 domain to the Android manifest without writing it elsewhere,
-cleans, validates, builds the debug APK, verifies the artifact, and launches
-the app with the mandatory Closure Dart definition. If the `Closure`
-destination is absent after launch, this procedure has not passed and no Gate
-action may continue. The Auth0 Android application must already
-allow the callback/logout URI derived from package
+coordinate surface, reuses exactly one selected supported Android target or
+starts the configured AVD with bounded availability and boot waits, forwards
+the Auth0 domain to the Android manifest without writing it elsewhere, cleans,
+validates, builds the debug APK, verifies the artifact, and launches the app
+with the mandatory Closure Dart definition. If the `Closure` destination is
+absent after launch, this procedure has not passed and no Gate action may
+continue. The Auth0 Android application must already allow the callback/logout
+URI derived from package
 `com.gusigu.markei`; this procedure does not modify Auth0. Launching the client
 does not authorize Enroll, Query, Retry, or Sync.
 
