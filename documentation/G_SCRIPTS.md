@@ -6,7 +6,7 @@
 ## 0. Execution contract
 
 ```text
-GRM_INDEX block invokes NEON_CHECK.ps1 -Procedure GS-*
+GRM_INDEX block invokes I_SCRIPTS.ps1 -Procedure GS-*
 → dispatcher loads one exact canonical GS-* procedure from this file
 → NS_COORDINATES.md supplies non-secret values
 → the GS-* body requests only remaining role/UUID/secret input
@@ -20,7 +20,7 @@ Keep this active five-file set together:
 documentation/GRM.md
 documentation/G_SCRIPTS.md
 documentation/NS_COORDINATES.md
-documentation/NEON_CHECK.ps1
+documentation/I_SCRIPTS.ps1
 documentation/DB_MGMT.sql
 ```
 
@@ -29,7 +29,7 @@ inside the repository. Active self-navigating procedures resolve the repository
 root, enter the required package or data location, and return the terminal to
 the repository root in `finally`. `G_SCRIPTS.md` remains a Markdown catalogue;
 it is not renamed to `.ps1` and is not passed directly to PowerShell's `-File`
-parameter. `NEON_CHECK.ps1 -Procedure <GS-ID>` is the active GRM dispatcher. It
+parameter. `I_SCRIPTS.ps1 -Procedure <GS-ID>` is the active GRM dispatcher. It
 loads one exact reviewed `GS-*` heading and executes its fenced PowerShell body.
 Directly copy a GS fence only for diagnosis or when the dispatcher is
 operationally unavailable. Do not replace values already supplied by
@@ -40,7 +40,7 @@ alter PowerShell execution policy:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role <runtime|migrator|dbowner> `
   -Action <action>
@@ -59,7 +59,7 @@ Requirements: Windows PowerShell, Docker Desktop running, access to the
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md"
 ```
 
@@ -73,7 +73,7 @@ Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-01` / `connection`.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action connection
@@ -83,7 +83,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action shell
@@ -95,7 +95,7 @@ Exit `psql` with `\q`.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role runtime `
   -Action shell
@@ -110,7 +110,7 @@ Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-03` /
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action gate02-postflight
@@ -135,7 +135,7 @@ Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-04` /
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action migration-ledger
@@ -148,7 +148,7 @@ Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-06` /
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action schema-inventory
@@ -161,7 +161,7 @@ Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-05` /
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action runtime-privileges
@@ -174,7 +174,7 @@ Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-07` /
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action list-devices-sanitized
@@ -186,7 +186,7 @@ Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-08` / `verify-device`.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action verify-device
@@ -202,7 +202,7 @@ Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-10` /
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role runtime `
   -Action runtime-readiness
@@ -217,7 +217,7 @@ Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-09` /
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action provider-baseline
@@ -2293,7 +2293,7 @@ Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-02` /
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action gate02-preflight
@@ -2313,7 +2313,7 @@ The command below is append-oriented evidence only:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
   -Role migrator `
   -Action apply-migration `

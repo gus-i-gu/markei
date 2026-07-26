@@ -35,8 +35,8 @@ if ([string]::IsNullOrWhiteSpace($ScriptDirectory)) {
     $ScriptFile = $MyInvocation.MyCommand.Path
     if ([string]::IsNullOrWhiteSpace($ScriptFile)) {
         throw @"
-Unable to determine the NEON_CHECK.ps1 directory.
-Run this helper as a script with -File or .\documentation\NEON_CHECK.ps1.
+Unable to determine the I_SCRIPTS.ps1 directory.
+Run this helper as a script with -File or .\documentation\I_SCRIPTS.ps1.
 "@
     }
     $ScriptDirectory = Split-Path -Parent $ScriptFile
@@ -56,7 +56,7 @@ if (-not [string]::IsNullOrWhiteSpace($Procedure)) {
     ).Trim()
     if ($LASTEXITCODE -ne 0 -or
         [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
-        throw "NEON_CHECK.ps1 must be inside the Markei Git repository."
+        throw "I_SCRIPTS.ps1 must be inside the Markei Git repository."
     }
 
     $CataloguePath = Join-Path `

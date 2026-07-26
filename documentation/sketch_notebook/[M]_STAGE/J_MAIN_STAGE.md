@@ -66,10 +66,11 @@ current branch baseline. Do not replay their local-equivalent commits onto this
 branch.
 
 REC-01 was materialized at `a63367763716e2769ac58d5adc19de0c41774b35`.
-Codex explicitly preserved the unrelated local deletion of
-`documentation/NEON_CHECK.ps1` and untracked
-`documentation/I_SCRIPTS.ps1`; that rename is not part of the remote REC-01
-commit and is not accepted by this reconciliation.
+Codex explicitly preserved the then-unrelated local dispatcher rename. The
+subsequent isolated GRM alignment unit materializes
+`documentation/NEON_CHECK.ps1` as `documentation/I_SCRIPTS.ps1` and aligns
+every live five-file-interface reference. Historical occurrences under
+`Legacy_Progress` remain observational evidence.
 
 ## 3. Cycle 10 consolidated panorama
 
@@ -179,12 +180,12 @@ indiscriminately.
 documentation/GRM.md
 documentation/G_SCRIPTS.md
 documentation/NS_COORDINATES.md
-documentation/NEON_CHECK.ps1
+documentation/I_SCRIPTS.ps1
 documentation/DB_MGMT.sql
 ```
 
 `GRM.md` is the concise indexed human entry surface. Every active `GRM-*`
-block dispatches exactly one `GS-*` procedure through `NEON_CHECK.ps1`.
+block dispatches exactly one `GS-*` procedure through `I_SCRIPTS.ps1`.
 `G_SCRIPTS.md` owns procedure logic and runtime requests,
 `NS_COORDINATES.md` owns reviewed non-secret values, and `DB_MGMT.sql` owns
 manual SQL plus indexed automation-query blocks. Coordinates are mutable and
@@ -407,25 +408,23 @@ user-database action occurred.
 
 Proceed in this order:
 
-1. settle the separate `NEON_CHECK.ps1` to `I_SCRIPTS.ps1` rename and every
-   dispatcher/documentation reference in one isolated, validated commit, or
-   restore the tracked dispatcher name before host validation;
-2. pull the reconciled branch into the clean Windows checkout and require a
+1. pull the reconciled branch containing the canonical `I_SCRIPTS.ps1`
+   dispatcher into the clean Windows checkout and require a
    clean understood worktree;
-3. run the canonical Windows analysis, full tests, release build and Closure
-   launch through the dispatcher name actually tracked by that commit;
-4. select only `Inspect failed/notApplied recovery` and require
+2. run the canonical Windows analysis, full tests, release build and Closure
+   launch through `documentation/I_SCRIPTS.ps1`;
+3. select only `Inspect failed/notApplied recovery` and require
    `MKS-REC-001`, one eligible candidate, member count `2`, sequence range
    `1-2`, next sequence `3`, and no mutation/contact/persistence;
-5. confirm that `Recover failed/notApplied candidate` is separately visible
+4. confirm that `Recover failed/notApplied candidate` is separately visible
    and separately confirmed, then cancel without executing it;
-6. refresh Git revision, Render readiness/revision, Auth0 metadata/principal,
+5. refresh Git revision, Render readiness/revision, Auth0 metadata/principal,
    exact Device binding and the allowlisted provider baseline;
-7. return the sanitized host/freshness evidence for Main reconciliation;
-8. Main prepares one exact Gate 12.7 packet only if every invariant matches;
-9. only a later explicit human authorization may permit exactly one
+6. return the sanitized host/freshness evidence for Main reconciliation;
+7. Main prepares one exact Gate 12.7 packet only if every invariant matches;
+8. only a later explicit human authorization may permit exactly one
    `Recover failed/notApplied candidate` action;
-10. no second action is permitted; Gates 12.8–12.10 then capture and reconcile
+9. no second action is permitted; Gates 12.8–12.10 then capture and reconcile
     the correlated terminal.
 
 Ordinary Sync, unknown-outcome Retry, Repair, Enroll, provider-console
@@ -4118,4 +4117,3 @@ GATES_12_8_TO_12_10=HELD
 GCM03=UNDEFINED_INACTIVE
 GCM04=UNDEFINED_INACTIVE
 ```
-

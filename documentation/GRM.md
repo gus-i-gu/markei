@@ -9,7 +9,7 @@ not live in the invocation block.
 
 ```text
 human copies one GRM-* block
-→ NEON_CHECK.ps1 dispatches one exact GS-* procedure
+→ I_SCRIPTS.ps1 dispatches one exact GS-* procedure
 → GS-* loads reviewed NS_COORDINATES values
 → GS-* requests only missing secret or operation-specific input
 → GS-* calls PowerShell and/or one DB_MGMT automation query
@@ -61,7 +61,7 @@ the matching `GS-*` section of `G_SCRIPTS.md`.
 | `documentation/GRM.md`            | Concise `GRM-*` invocation index and safety boundary                  |
 | `documentation/G_SCRIPTS.md`      | Canonical expanded `GS-*` procedures, inputs, expectations, and stops |
 | `documentation/NS_COORDINATES.md` | Reviewed non-secret coordinate allowlist                              |
-| `documentation/NEON_CHECK.ps1`    | `GS-*` dispatcher plus guarded Neon/Docker/psql launcher              |
+| `documentation/I_SCRIPTS.ps1`    | `GS-*` dispatcher plus guarded Neon/Docker/psql launcher              |
 | `documentation/DB_MGMT.sql`       | Manual SQL library and indexed automation-query catalogue             |
 
 `DB_MGMT.sql` replaces the former singular `NEON_ACTION.sql`. Historical
@@ -81,9 +81,9 @@ Example:
 
 ```text
 GRM-NEON-04
-→ NEON_CHECK.ps1 -Procedure GS-NEON-04
+→ I_SCRIPTS.ps1 -Procedure GS-NEON-04
 → G_SCRIPTS.md / GS-NEON-04
-→ NEON_CHECK.ps1 -Action gate02-postflight
+→ I_SCRIPTS.ps1 -Action gate02-postflight
 → DB_MGMT.sql / DBM-AUTO-03
 ```
 
@@ -102,7 +102,7 @@ selection.
   queries that have no repository variable dependency.
 - `DB_MGMT.sql / DBM-AUTO-*` owns reusable SQL selected by automated
   procedures.
-- `NEON_CHECK.ps1` owns exact GS dispatch, secure password handling, guarded
+- `I_SCRIPTS.ps1` owns exact GS dispatch, secure password handling, guarded
   Docker/psql execution, and automation-block extraction.
 
 Exceptions require an operational reason. If a GRM block starts requesting
@@ -163,7 +163,7 @@ execution policy:
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
-  -File ".\documentation\NEON_CHECK.ps1" `
+  -File ".\documentation\I_SCRIPTS.ps1" `
   -Procedure "GS-NEON-01"
 ```
 
@@ -189,17 +189,17 @@ When the cascade changes, reconcile together:
 2. its exact `GS-*` heading and PowerShell fence;
 3. any `NS_COORDINATES` keys;
 4. any `DBM-AUTO-*` ID and `ACTION` name;
-5. `NEON_CHECK.ps1` `ValidateSet` and `$Actions`;
+5. `I_SCRIPTS.ps1` `ValidateSet` and `$Actions`;
 6. safety and expected-result text in `G_SCRIPTS.md`.
 
 Required static checks include:
 
 ```powershell
-rg "GRM-|GS-|DBM-MAN-|DBM-AUTO-|NS_COORDINATES|NEON_CHECK|DB_MGMT" `
+rg "GRM-|GS-|DBM-MAN-|DBM-AUTO-|NS_COORDINATES|I_SCRIPTS|DB_MGMT" `
   documentation\GRM.md `
   documentation\G_SCRIPTS.md `
   documentation\NS_COORDINATES.md `
-  documentation\NEON_CHECK.ps1 `
+  documentation\I_SCRIPTS.ps1 `
   documentation\DB_MGMT.sql
 ```
 
@@ -235,73 +235,73 @@ are canonical in the mapped `GS-*` section.
 ### `GRM-NEON-00`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-00"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-00"
 ```
 
 ### `GRM-NEON-01`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-01"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-01"
 ```
 
 ### `GRM-NEON-02`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-02"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-02"
 ```
 
 ### `GRM-NEON-03`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-03"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-03"
 ```
 
 ### `GRM-NEON-04`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-04"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-04"
 ```
 
 ### `GRM-NEON-05`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-05"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-05"
 ```
 
 ### `GRM-NEON-06`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-06"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-06"
 ```
 
 ### `GRM-NEON-07`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-07"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-07"
 ```
 
 ### `GRM-NEON-08`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-08"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-08"
 ```
 
 ### `GRM-NEON-09`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-09"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-09"
 ```
 
 ### `GRM-NEON-10`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-10"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-10"
 ```
 
 ### `GRM-NEON-11`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-NEON-11"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-11"
 ```
 
 **Git alignment**
@@ -314,13 +314,13 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CH
 ### `GRM-GIT-01`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-GIT-01"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-GIT-01"
 ```
 
 ### `GRM-GIT-02`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-GIT-02"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-GIT-02"
 ```
 
 **Local SQLite**
@@ -335,25 +335,25 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CH
 ### `GRM-SQLITE-01`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-SQLITE-01"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-SQLITE-01"
 ```
 
 ### `GRM-SQLITE-02`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-SQLITE-02"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-SQLITE-02"
 ```
 
 ### `GRM-SQLITE-03`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-SQLITE-03"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-SQLITE-03"
 ```
 
 ### `GRM-SQLITE-04`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-SQLITE-04"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-SQLITE-04"
 ```
 
 **Hosted service and Auth0**
@@ -367,19 +367,19 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CH
 ### `GRM-HOST-01`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-HOST-01"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-HOST-01"
 ```
 
 ### `GRM-AUTH-01`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-AUTH-01"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-AUTH-01"
 ```
 
 ### `GRM-AUTH-02`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-AUTH-02"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-AUTH-02"
 ```
 
 **Validation and Flutter clients**
@@ -394,23 +394,23 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CH
 ### `GRM-BUILD-01`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-BUILD-01"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-BUILD-01"
 ```
 
 ### `GRM-BUILD-02`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-BUILD-02"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-BUILD-02"
 ```
 
 ### `GRM-FLUTTER-WIN`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-FLUTTER-WIN"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-FLUTTER-WIN"
 ```
 
 ### `GRM-FLUTTER-AND`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\NEON_CHECK.ps1" -Procedure "GS-FLUTTER-AND"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-FLUTTER-AND"
 ```

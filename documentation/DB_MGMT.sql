@@ -3,7 +3,7 @@
 -- This file has two deliberately separate surfaces:
 --
 -- 1. MANUAL SQL MGMT contains copy-ready, read-only PostgreSQL/SQLite checks.
--- 2. AUTOMATION QUERIES contains indexed blocks extracted by NEON_CHECK.ps1.
+-- 2. AUTOMATION QUERIES contains indexed blocks extracted by I_SCRIPTS.ps1.
 --
 -- Never execute this mixed-dialect catalogue as one script. Copy one manual
 -- block into the matching client, or let a GS-* procedure select exactly one
@@ -66,7 +66,7 @@ ORDER BY type, name;
 -- ### AUTOMATION QUERIES ###
 -- ============================================================================
 --
--- NEON_CHECK.ps1 extracts exactly one block between ACTION markers.
+-- I_SCRIPTS.ps1 extracts exactly one block between ACTION markers.
 -- Every routine automation action is read-only, returns sanitized evidence,
 -- and ends with ROLLBACK.
 --
@@ -294,7 +294,7 @@ ROLLBACK;
 -- DBM-AUTO-08 | EXACT DEVICE COUNTERS
 -- ACTION: verify-device
 -- Purpose: inspect submission/event counts and next expected sequence for one
---          UUID supplied locally to psql by NEON_CHECK.ps1.
+--          UUID supplied locally to psql by I_SCRIPTS.ps1.
 -- Manual variable: device_id, requested in the terminal and never stored here.
 -- Expected: sanitized counts/sequence for the selected device; ROLLBACK.
 BEGIN TRANSACTION READ ONLY;
