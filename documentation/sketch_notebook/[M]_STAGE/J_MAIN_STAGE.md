@@ -3,13 +3,13 @@
 > Sequence: FLX-PRN-03 recovery-economy pruning after FLX-PRM-04 reconciliation
 > Role: Main Chat
 > Branch: `cycle10-intermid-grimoire`
-> Reconciliation baseline: `76540c45702b027d56b52fea05a8025f14496cdf`
-> Authority: human-directed Main reconciliation and synchronized staging
-> Writable surface: J plus D/E/F for the activated REC-01 unit
-> Evidence boundary: repository and accepted human-operated evidence through
-> the Gate 12.7 read-only failed/notApplied inspection
-> Status: **CYCLE 10 OPEN; GCM-02 GATE 12.7 PREFLIGHT PASS; REC-01 D/E/F
-> ACTIVE; EXECUTION AUTHORIZATION HELD**
+> Reconciliation baseline: `a63367763716e2769ac58d5adc19de0c41774b35`
+> Authority: human-directed Main reconciliation after REC-01 materialization
+> Writable surface: J only for this reconciliation
+> Evidence boundary: repository and local/disposable validation through the
+> REC-01 G/H/I reports; fresh Windows and provider evidence remain absent
+> Status: **CYCLE 10 OPEN; GCM-02 GATE 12.7 PREFLIGHT PASS; REC-01 SOURCE
+> ACCEPTED; HOST VALIDATION AND EXECUTION AUTHORIZATION HELD**
 
 ## 1. Recovery entrypoint
 
@@ -45,11 +45,12 @@ Retain these ownership boundaries:
 ```text
 Repository: gus-i-gu/markei
 Active branch: cycle10-intermid-grimoire
-Current reconciliation baseline: 76540c45702b027d56b52fea05a8025f14496cdf
+Current reconciliation baseline: a63367763716e2769ac58d5adc19de0c41774b35
 Cycle: 10
 Active closure unit: MCG-02 / user-facing GCM-02
-Active sprint: C10-GCM02-S12-REC-01 bounded execution surface
-Active gate: 12.7 source materialization before one-action authorization
+Latest completed sprint: C10-GCM02-S12-REC-01 bounded execution surface
+Active gate: 12.7 Windows validation, repeated preflight and freshness refresh
+before one-action authorization
 ```
 
 The branch contains the GRM execution interface, hosted Sync
@@ -63,6 +64,12 @@ merge that historical branch merely to recover J content.
 The earlier parallel J/Codex and GRM-refactor rounds are integrated in the
 current branch baseline. Do not replay their local-equivalent commits onto this
 branch.
+
+REC-01 was materialized at `a63367763716e2769ac58d5adc19de0c41774b35`.
+Codex explicitly preserved the unrelated local deletion of
+`documentation/NEON_CHECK.ps1` and untracked
+`documentation/I_SCRIPTS.ps1`; that rename is not part of the remote REC-01
+commit and is not accepted by this reconciliation.
 
 ## 3. Cycle 10 consolidated panorama
 
@@ -84,12 +91,20 @@ The source and reconciled reports establish:
 - Native Closure exposes guarded sign-in, enrollment, query, hosted
   connection, Sync and diagnostic/recovery actions;
 - durable Sync-attempt and unknown-outcome observability exists;
+- a separate, explicitly confirmed failed/notApplied recovery surface now
+  exists, preserving read-only inspection, unknown Retry and ordinary Sync as
+  distinct actions;
+- the bounded REC-01 coordinator revalidates exact internal candidate identity,
+  atomically recovers and leases only its members, performs at most one upload,
+  persists that result, and contains no download or acknowledgement path;
 - retention, snapshot and rebootstrap contracts and local harness groundwork
   exist.
 
-These are implementation and bounded validation claims. They do not by
-themselves establish production readiness, real multi-device convergence,
-hosted retention execution, backup/PITR acceptance, or release acceptance.
+These are implementation and bounded validation claims. REC-01 specifically
+remains host-unvalidated and unexecuted against the user environment. They do
+not by themselves establish production readiness, real multi-device
+convergence, hosted retention execution, backup/PITR acceptance, or release
+acceptance.
 
 ### 3.2 Account cursor-state correction
 
@@ -199,10 +214,13 @@ clients/markei_flutter/lib/infrastructure/local/sync/local_sync_repositories.dar
 clients/markei_flutter/lib/domain/sync/sync_event.dart
 ```
 
-The coordinator owns the recovery-to-upload-to-download-to-acknowledgement
-transition. Local repositories own durable queue/submission/event state.
-Transport owns protocol mapping. Domain Sync models own event and state
-semantics.
+`hosted_sync_coordinator.dart` owns ordinary Sync's broad
+recovery-to-upload-to-download-to-acknowledgement transition.
+`failed_not_applied_recovery_coordinator.dart` owns REC-01's narrower exact
+candidate recovery-to-one-upload terminal and intentionally has no download or
+acknowledgement dependency. Local repositories own durable
+queue/submission/event state. Transport owns protocol mapping. Domain Sync
+models own event and state semantics.
 
 ### 4.3 Hosted API authorities
 
@@ -221,9 +239,12 @@ GCM-02 owns the controlled exact-identity hosted recovery resolution. Gates
 12.1–12.5 established hosted readiness, metadata, alignment, exact binding
 and an immutable pre-operation baseline. Gate 12.6 has now determined the
 exact eligible transition and recovery boundary. The read-only Gate 12.7
-inspection now passes, but current source still has no dedicated bounded
-failed/notApplied executor. C10-GCM02-S12-REC-01 must materialize and validate
-that surface before Main may prepare an exact one-action authorization packet.
+inspection passes, and REC-01 now provides a dedicated bounded
+failed/notApplied executor validated only through local/disposable boundaries.
+Main may not prepare the exact one-action authorization packet until the new
+source passes fresh Windows validation, exposes the expected repeated preflight
+and confirmation surface, and the Git/Render/Auth0/Device/provider evidence is
+refreshed.
 
 ### 5.1 Accepted Gate 12.6 copied-database evidence
 
@@ -348,7 +369,8 @@ GCM02_12_6_COPIED_DATABASE_PROBE_PASS
 GCM02_12_6_DEVICE_SCOPED_CORRELATION_PASS
 GCM02_12_6_PASS
 GCM02_12_7_READ_ONLY_PREFLIGHT_PASS
-GCM02_S12_REC_01_D_E_F_ACTIVE
+GCM02_S12_REC_01_SOURCE_ACCEPTED
+GCM02_S12_REC_01_HOST_VALIDATION_PENDING
 GCM02_12_7_HUMAN_AUTHORIZATION_HELD
 GCM02_12_8_CONTROLLED_OPERATION_HELD
 GCM02_12_9_POST_OPERATION_COMPARISON_HELD
@@ -376,31 +398,35 @@ Keep Markei closed and preserve the copied database unchanged until the Gate
 
 ## 6. Immediate continuation — Phase 12.7
 
-The Windows read-only failed/notApplied preflight is reconciled as PASS. It
-proved one eligible two-event lineage and no mutation or provider contact.
-It also confirmed that execution remains absent.
+The Windows read-only failed/notApplied preflight is reconciled as PASS. REC-01
+is now source-accepted from G/H/I at
+`a63367763716e2769ac58d5adc19de0c41774b35`: the dedicated execution surface,
+precise `MKS-REC-001` preflight code, exact recovered batch, one-upload maximum,
+and absence of download/acknowledgement were locally validated. No provider or
+user-database action occurred.
 
-The active next unit is:
+Proceed in this order:
 
-```text
-C10-GCM02-S12-REC-01
-```
-
-Read synchronized D/E/F and materialize only the bounded recovery-and-upload
-surface. Codex must use local/disposable tests and must not contact or modify
-the live provider.
-
-After Codex returns replacement G/H/I:
-
-1. Main reconciles source and evidence;
-2. Windows pulls the accepted commit and repeats build/run plus read-only
-   inspection;
-3. Git, Render, Auth0, Device binding and provider baseline are refreshed;
-4. Main prepares one exact Gate 12.7 packet;
-5. only explicit human approval authorizes one
+1. settle the separate `NEON_CHECK.ps1` to `I_SCRIPTS.ps1` rename and every
+   dispatcher/documentation reference in one isolated, validated commit, or
+   restore the tracked dispatcher name before host validation;
+2. pull the reconciled branch into the clean Windows checkout and require a
+   clean understood worktree;
+3. run the canonical Windows analysis, full tests, release build and Closure
+   launch through the dispatcher name actually tracked by that commit;
+4. select only `Inspect failed/notApplied recovery` and require
+   `MKS-REC-001`, one eligible candidate, member count `2`, sequence range
+   `1-2`, next sequence `3`, and no mutation/contact/persistence;
+5. confirm that `Recover failed/notApplied candidate` is separately visible
+   and separately confirmed, then cancel without executing it;
+6. refresh Git revision, Render readiness/revision, Auth0 metadata/principal,
+   exact Device binding and the allowlisted provider baseline;
+7. return the sanitized host/freshness evidence for Main reconciliation;
+8. Main prepares one exact Gate 12.7 packet only if every invariant matches;
+9. only a later explicit human authorization may permit exactly one
    `Recover failed/notApplied candidate` action;
-6. no second action is permitted;
-7. Gates 12.8–12.10 capture and reconcile the correlated terminal.
+10. no second action is permitted; Gates 12.8–12.10 then capture and reconcile
+    the correlated terminal.
 
 Ordinary Sync, unknown-outcome Retry, Repair, Enroll, provider-console
 mutation, database editing and cleanup remain prohibited. The complete
@@ -481,7 +507,10 @@ to bypass Cycle 10 closure.
 | Exact device-scoped next transition is known | Accepted from human-operated read-only `GRM-SQLITE-04` evidence       |
 | Retry is eligible                            | Rejected; unknown-retry path is inapplicable                          |
 | Ordinary Sync is a safe substitute           | Rejected; six other pending events exist                              |
-| Gate 12.7 packet is ready                    | Prepared; freshness and UI preflight fields still required            |
+| REC-01 bounded execution surface exists      | Implemented and locally validated at `a633677`; host-unvalidated       |
+| Eligible preflight diagnostic is corrected   | `MKS-REC-001` generated and locally validated; Windows rerun pending   |
+| Exact batch and one-upload boundary hold      | Locally test-validated; no live execution performed                    |
+| Gate 12.7 packet is ready                    | Rejected; Windows and freshness evidence still required                |
 | Gate 12.7 is authorized                      | Rejected                                                              |
 | GCM-02 is closed                             | Rejected                                                              |
 | GCM-03 or GCM-04 is active                   | Rejected                                                              |
@@ -505,8 +534,8 @@ Current recovery pointer:
 
 ```text
 read this mutable prefix
--> read current D/E/F for active Codex authority
--> read newest G/H/I after Codex materialization
+-> read REC-01 G/H/I for accepted materialization evidence
+-> inspect the separately published dispatcher rename before Windows commands
 -> expand into Legacy_Progress only for provenance/history
 ```
 
@@ -3928,3 +3957,165 @@ GCM04=UNDEFINED_INACTIVE
 ORDINARY_SYNC=NOT_AUTHORIZED
 CONTROLLED_RECOVERY=NOT_AUTHORIZED
 ```
+
+## 2026-07-26 — REC-01 source reconciliation and Gate 12.7 host handoff
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04 — Promotion/Reconciliation
+Role: Main Chat [M]
+Branch: cycle10-intermid-grimoire
+Reconciled implementation commit: a63367763716e2769ac58d5adc19de0c41774b35
+Evidence: replacement G/H/I, changed-path inventory and reported validation
+Writable surface: J only
+Disposition: REC-01 SOURCE ACCEPTED; HOST VALIDATION PENDING; GATE 12.7 HELD
+```
+
+### Materialization reconciliation
+
+REC-01 is accepted within its repository and local/disposable test boundary.
+The implementation now separates four surfaces:
+
+```text
+Retry unknown-outcome submission
+Inspect failed/notApplied recovery
+Recover failed/notApplied candidate
+ordinary Sync
+```
+
+The new recovery action revalidates authentication, exact Account/Device
+binding and the complete authoritative candidate immediately before mutation.
+It retains full internal identity rather than selecting by a truncated
+fingerprint, atomically recovers and leases exactly the candidate members,
+sends at most one upload, persists the result and stops. Its dependency graph
+contains no download or acknowledgement path.
+
+The eligible read-only inspection now emits `MKS-REC-001`.
+`MKS-UI-004` remains reserved for its historical missing-action meaning.
+Generated Dart, TypeScript and Markdown projections were regenerated from the
+single registry owner.
+
+### PRC-01 claims
+
+```text
+Claim: REC-01 bounded failed/notApplied execution surface exists
+Prior state: staged; execution surface absent
+Evidence: a633677 source plus G/H/I and local/disposable tests
+Evidence boundary: repository-proven and locally test-validated; host-unvalidated
+Contradiction: none in replacement G/H/I
+Semantic owner: GCM-02 Gate 12.7 Main reconciliation
+Target role: J current state and continuation
+Resulting state: SOURCE ACCEPTED; WINDOWS/LIVE EXECUTION NOT ACCEPTED
+History disposition: append; supersede D/E/F-active wording
+```
+
+```text
+Claim: exact candidate, one upload and no download/ack boundaries hold
+Prior state: implementation requirement
+Evidence: focused Flutter tests, full 189-pass/4-skip suite, analysis, API 58-pass suite
+Evidence boundary: mocked/local/disposable transport and persistence boundaries
+Contradiction: none reported
+Semantic owner: REC-01 operational/design contract
+Target role: J accepted source capability
+Resulting state: LOCALLY VALIDATED; LIVE RESULT UNKNOWN
+History disposition: append; retain future host/provider proof requirement
+```
+
+```text
+Claim: Gate 12.7 may now execute
+Prior state: held
+Evidence: no fresh Windows build, repeated UI preflight or provider-freshness packet
+Evidence boundary: source materialization only
+Contradiction: capability exists, but authorization evidence is incomplete
+Semantic owner: human/Main Gate 12.7 authority
+Target role: prohibition and next-step boundary
+Resulting state: REJECTED; AUTHORIZATION HELD
+History disposition: append; no provider/user-database action accepted
+```
+
+### Validation absorbed
+
+```text
+generator update/check: PASS, including deterministic second check
+Dart format: PASS
+focused Flutter: 17 + 29 + 10 + 26 reported passing cases
+Flutter analyze: PASS
+full Flutter test: 189 passed, 4 skipped
+API diagnostics/format/lint/typecheck/build: PASS
+API tests: 58 passed
+git diff --check: PASS
+staged sensitive-pattern scan: no matches
+provider/live action: NOT PERFORMED
+user database inspection or mutation: NOT PERFORMED
+Drift migration: NOT ADDED
+```
+
+The reports preserve one command-location correction: an initial diagnostics
+check invoked from the repository root failed because no root
+`package.json` exists; the same command run from
+`services/markei_sync_api` passed. This is an invocation correction, not a
+product-test failure.
+
+### Separate dispatcher-rename boundary
+
+Codex preserved unrelated machine-local work:
+
+```text
+deleted: documentation/NEON_CHECK.ps1
+untracked: documentation/I_SCRIPTS.ps1
+```
+
+Therefore commit `a633677` does not publish or validate that rename. J must
+continue to regard the tracked dispatcher and its references as authoritative
+until the rename, all GRM/G_SCRIPTS references and dispatcher validation are
+published together in a separate isolated commit. This boundary must be
+resolved before relying on canonical Windows commands.
+
+### Hierarchical progress update
+
+```text
+Cycle 10 — hosted synchronization and operational acceptance [OPEN]
+└─ GCM-02 — exact hosted recovery/synchronization proof [ACTIVE]
+   └─ Gate 12.7 — one controlled failed/notApplied recovery [ACTIVE/HELD]
+      ├─ Phase A — Windows Closure and read-only inspection [PASS]
+      ├─ Phase B — Main candidate reconciliation [PASS]
+      ├─ Sprint S12-REC-01 — bounded execution surface [SOURCE ACCEPTED]
+      ├─ Phase C — G/H/I reconciliation [PASS: THIS ENTRY]
+      ├─ Phase D — dispatcher-name coherence [PENDING, SEPARATE]
+      ├─ Phase E — fresh Windows validation/build/launch [PENDING]
+      ├─ Phase F — repeated read-only MKS-REC-001 preflight [PENDING]
+      ├─ Phase G — recovery confirmation-surface cancel test [PENDING]
+      ├─ Phase H — Git/Render/Auth0/Device/provider freshness [PENDING]
+      ├─ Phase I — exact authorization packet [PENDING]
+      └─ Phase J — explicit approval plus exactly one action [HELD]
+```
+
+Gates 12.8–12.10 remain held. GCM-03 and GCM-04 remain undefined and
+inactive. No new D/E/F packet is justified by REC-01 evidence alone; any new
+packet must be triggered by a concrete Windows/freshness defect or by a later
+Main-defined post-terminal unit.
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=OPEN_ACTIVE
+GCM02_12_6=PASS
+GCM02_12_7_READ_ONLY_PREFLIGHT=PASS
+C10_GCM02_S12_REC_01_SOURCE=ACCEPTED
+ELIGIBLE_PREFLIGHT_DIAGNOSTIC_CODE=CORRECTED
+EXACT_RECOVERED_BATCH=LOCALLY_VALIDATED
+ONE_UPLOAD_ONLY=LOCALLY_VALIDATED
+DOWNLOAD_ACK_ABSENT=LOCALLY_VALIDATED
+WINDOWS_POST_REC01_VALIDATION=PENDING
+DISPATCHER_RENAME=PENDING_SEPARATE_RECONCILIATION
+GATE_12_7=HELD
+CONTROLLED_RECOVERY=NOT_AUTHORIZED
+ORDINARY_SYNC=NOT_AUTHORIZED
+PROVIDER_ACTION=NOT_AUTHORIZED
+GATES_12_8_TO_12_10=HELD
+GCM03=UNDEFINED_INACTIVE
+GCM04=UNDEFINED_INACTIVE
+```
+
