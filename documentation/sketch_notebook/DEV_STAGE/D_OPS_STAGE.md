@@ -1,281 +1,333 @@
-# D_OPS_STAGE — Gate 12.7 controlled recovery surface
+# D_OPS_STAGE — Ordinary-Sync terminal identity and bounded timing assay
 
 Sequence: FLX-ORD-01 — Ordinary Sequence
 Role: Codex Operational materialization authority
-Unit: C10-GCM02-S12-REC-01
+Unit: C10-GCM02-S12-ERR-03
 Branch: `cycle10-intermid-grimoire`
-Required ancestry: `76540c45702b027d56b52fea05a8025f14496cdf`
+Required ancestry: `3d1e82e5259cf51e8cd2d6baf694423494bab7a5`
 Authority: Main Chat under explicit human direction
-Status: **ACTIVE — CODEX SOURCE MATERIALIZATION AUTHORIZED; HUMAN/PROVIDER
-EXECUTION PROHIBITED**
-Evidence boundary: repository source, generated artifacts, disposable local
-tests and replacement G/H/I only
+Status: **ACTIVE — NARROW SOURCE MATERIALIZATION AUTHORIZED; LIVE SYNC,
+RECOVERY AND DEPLOYMENT PROHIBITED**
+Evidence boundary: repository source, generated diagnostic projections,
+disposable local tests and replacement G/H/I only
 
-## 1. Accepted input evidence
+## 1. Accepted evidence
 
-Preserve the accepted C10-GCM02-S12-ERR-02 implementation and its tests.
+Preserve the accepted REC-01 implementation, the `MKS-REC-001` correction and
+the current failed/notApplied candidate. Gate 12.7 remains held.
 
-The 2026-07-26 human-operated Windows inspection established:
+The post-REC-01 Windows assays established:
 
 ```text
-AUTHENTICATION=authenticated
-ENROLLMENT=device-enrolled
-READINESS=failed-work-needs-review
-QUEUE_PENDING=0
-QUEUE_UPLOADING=0
-QUEUE_FAILED=2
-CURRENT_DEVICE_NEXT_SEQUENCE=3
-ACTIONABLE_FAILED_EVENTS=2
-ACTIONABLE_SEQUENCE_RANGE=1-2
-INSPECTION_CODE=MKS-UI-004
-INSPECTION_PHASE=failed-recovery-preflight
-INSPECTION_OUTCOME=not-applied
-LOCAL_MUTATION=none
-PROVIDER_CONTACT=not-started
-TRUSTED_RESPONSE=not-received
-RESULT_PERSISTENCE=not-started
-SAFE_ACTION=hold for Gate 12.7 reconciliation; do not execute recovery
+authentication=authenticated
+enrollment=device-enrolled
+failed events=2
+candidate sequence range=1-2
+next Device sequence=3
+hosted readiness=HTTP 200 in under one second
+recovery execution=absent
+ordinary Sync execution=absent
 ```
 
-The operation and correlation fingerprints were present and bounded in the
-UI. They are evidence labels only and must not become execution authority or
-database identity.
+They also exposed one definite semantic defect:
 
-Targeted source inspection also found diagnostic semantic drift:
-`inspectFailedNotAppliedRecovery` emits `MKS-UI-004` for an eligible
-preflight, while the registry still defines `MKS-UI-004` as the historical
-condition in which the inspection action is missing. The action now exists.
-Preserve that historical definition and stop emitting it as the successful
-preflight code. Add or select a precise REC preflight code through the registry
-and regenerate every projection.
+```text
+Before readiness:
+Last successful sync = 2026-07-26T19:01:18Z
 
-This closes the read-only preflight requirement. It does not authorize a
-recovery, provider request, ordinary Sync, a second action, deployment, or
-GCM-02 closure.
+After readiness:
+Last successful sync = 2026-07-26T19:19:04Z
+```
+
+The latest attempt was `hosted-connection-ready`, not ordinary Sync.
+`ClosureDiagnosticsRepository._lastSuccessfulSync()` currently selects the
+newest generic completed attempt and therefore lets readiness impersonate
+successful Sync.
+
+Source inspection also confirms:
+
+```text
+ordinary Sync operation kind already exists
+HttpSyncTransport default deadline = 5 seconds
+hosted readiness deadline = 20 seconds
+ordinary Sync success states already include:
+  sync-completed
+  sync-no-new-events
+```
+
+The five-second hosted end-to-end observation budget is a credible cause of
+the historical `sync-interrupted` result, but the evidence does not yet prove
+that it is the only cause.
 
 ## 2. Objective
 
-Materialize one separately named, separately confirmed, bounded
-failed/notApplied recovery-and-upload surface.
-
-The new action must:
-
-1. re-run the current authentication, enrollment, Device-scope and candidate
-   preflight immediately before mutation;
-2. require exactly one valid current-Device failed/notApplied candidate;
-3. bind execution to the revalidated internal candidate and its exact member
-   set, never to a 12-hex fingerprint alone;
-4. transition only that candidate and its member events;
-5. upload only that recovered member set;
-6. stop after the upload terminal;
-7. perform no download, acknowledgement, broad ordinary Sync, enrollment,
-   repair, cleanup, or second recovery;
-8. emit a complete ordered diagnostic timeline through the accepted v12
-   envelope;
-9. remain unexecuted outside disposable tests until a later exact Gate 12.7
-   packet receives explicit human authorization;
-10. correct the stale `MKS-UI-004` eligible-preflight emission through the
-    single registry owner.
-
-Suggested visible label:
+Materialize one narrow diagnostic/semantic correction so a later explicitly
+authorized assay can distinguish:
 
 ```text
-Recover failed/notApplied candidate
+operationKind = ordinary-sync
+
+resultCode =
+  sync-completed
+  sync-no-new-events
+  sync-rejected
+  sync-server-timeout
+  sync-failed
 ```
 
-Do not reuse `Retry unknown-outcome submission` and do not rename ordinary
-`Sync`.
+The implementation must:
 
-## 3. Required execution boundary
+1. make ordinary-Sync terminals explicit and exhaustive at the client
+   orchestration boundary;
+2. keep hosted readiness on a separate operation/result contract;
+3. project “Last successful sync” only from genuine successful ordinary Sync;
+4. expose a compact client declaration in the Closure UI;
+5. expose compact correlated server request declarations in structured
+   terminal logs;
+6. replace the five-second hosted ordinary-Sync deadline with a configurable
+   assay budget;
+7. preserve failures, timeouts and rejections without automatic retry;
+8. avoid broad ERR catalogue refactoring until the focused assays conclude.
 
-Create a dedicated coordinator/use-case boundary rather than routing the new
-button through `HostedSyncCoordinator.run`.
+## 3. Declaration contract
 
-The bounded sequence is:
+Use one sanitized top-level operation/correlation lineage across the client
+ordinary-Sync run and its server requests. Child route correlations may remain
+distinct, but they must point to the same parent operation fingerprint.
+
+Every compact declaration must include:
 
 ```text
-authentication
-→ exact Account/Device binding
-→ failed/notApplied preflight refresh
-→ explicit confirmation
-→ atomic exact-candidate local recovery
-→ exact recovered-batch validation
-→ one upload request
-→ local upload-result persistence
-→ terminal
+operationKind
+resultCode
+declarationScope
+operationFingerprint
+correlationFingerprint
+lastProvedPhase
+elapsedMs or bounded elapsedBand
+configuredDeadlineMs
+timestamp
 ```
 
-The action must not call download or acknowledgement ports.
-
-The preflight/confirmation view must display only sanitized closed values:
-candidate fingerprint, member count, sequence range, next Device sequence,
-queue counts, operation fingerprint, expected single upload, prohibited
-actions, and the no-second-action rule.
-
-Cancellation must create no queue/submission mutation and no provider contact.
-
-## 4. Identity and time-of-check safeguards
-
-Do not treat a sanitized fingerprint as a unique database key.
-
-At execution time, revalidate inside the local transactional boundary:
-
-- current authenticated Account and enrolled Device binding;
-- exactly one `failed/notApplied` submission in the current scope;
-- complete and contiguous membership;
-- canonical event content hashes;
-- exact Account/Device ownership;
-- no accepted member;
-- no active overlapping submission;
-- member states all `failed`;
-- zero current-scope pending/uploading/unknown work;
-- Device next sequence immediately follows the candidate range;
-- displayed member count/range/next-sequence/fingerprint still match the
-  confirmation snapshot.
-
-Any mismatch must return a typed blocked terminal with no mutation and no
-provider contact.
-
-The recovery transaction must return an internal bounded batch descriptor
-containing the exact recovered member identities needed by the uploader.
-The uploader must validate and lease that exact set atomically. It must not
-select newly appeared or unrelated pending work.
-
-## 5. One-action and outcome rules
-
-Use one action lock from confirmation through terminal. Disable the action
-after the first execution attempt in that application session.
-
-Accepted terminal families:
+Scopes:
 
 ```text
-applied
-duplicate-equivalent
-rejected/notApplied
-unknown
-blocked-before-contact
-unexpected-local-failure
+client-operation
+server-request
+```
+
+The client owns the terminal result of the complete ordinary-Sync
+orchestration. The server owns only the terminal of the request/transaction it
+actually observed. A server-request declaration must never be presented as
+proof that the whole client operation, including local result persistence,
+completed.
+
+Client operation terminals:
+
+| Result | Required meaning |
+| --- | --- |
+| `sync-completed` | ordinary Sync completed and all required local terminal persistence succeeded |
+| `sync-no-new-events` | ordinary Sync completed with no new upload/download work and terminal persistence succeeded |
+| `sync-rejected` | trusted response proves the relevant server request was rejected/notApplied |
+| `sync-server-timeout` | trusted server response or authoritative server declaration proves server-owned timeout/rollback |
+| `sync-failed` | classified non-timeout failure; evidence must state whether provider contact and trusted response occurred |
+
+Do not collapse “client stopped waiting before a response” into
+`sync-server-timeout`. Preserve it as a client-owned transport diagnostic
+under the `sync-failed` terminal, with:
+
+```text
+trustedResponse=not-received
+serverOutcome=unknown
+lastProvedPhase=<actual boundary>
+```
+
+Server request declarations may use the same result vocabulary only with
+`declarationScope=server-request` and the precise route/phase. In particular:
+
+- `sync-no-new-events` is allowed only when that request itself proves an
+  empty Sync page/result;
+- `sync-completed` proves only that the named server request/transaction
+  completed;
+- `sync-rejected` requires a trusted protocol/auth rejection;
+- `sync-server-timeout` requires an enforced server-owned deadline and proved
+  rollback/cancellation;
+- `sync-failed` is the redacted unexpected server terminal.
+
+If the server cannot truthfully enforce and prove a timeout rollback, do not
+manufacture `sync-server-timeout`; report the architectural blocker in G and
+retain `sync-failed`/unknown evidence.
+
+## 4. UI and terminal visibility
+
+On Closure, provide a compact user-readable latest ordinary-Sync declaration:
+
+```text
+Ordinary Sync result
+Result: <resultCode>
+Client declaration: <resultCode>
+Server declaration: <resultCode or not-observed>
+Last proved phase: <phase>
+Elapsed / deadline: <bounded values>
+Operation: <sanitized fingerprint>
+Correlation: <sanitized fingerprint>
+Safe next action: <bounded text>
+```
+
+Requirements:
+
+- readiness remains visibly labelled as hosted readiness;
+- readiness never updates “Last successful sync”;
+- inspection, cancelled confirmation, recovery and Retry never update it;
+- rename `Recent sync attempts` to `Recent Closure attempts`;
+- retain attempt history without claiming every attempt is Sync;
+- user copy must not expose tokens, full identifiers, payloads, URLs, SQL,
+  exceptions, stack traces or secrets;
+- do not add a broad developer console, export bundle or new support-data
+  collection surface in this unit.
+
+Server output must be one compact structured JSON line per entered lifecycle
+event or at minimum per terminal, emitted through the existing lifecycle
+observer/logger. It must be readable in Render terminal logs and local API test
+output without logging request bodies or identity values.
+
+## 5. Timing experiment
+
+Replace the fixed five-second `HttpSyncTransport` default with an explicit,
+configuration-owned hosted ordinary-Sync budget.
+
+Initial assay targets:
+
+```text
+client response deadline: 35 seconds
+server processing deadline: 25 seconds, only if it can cancel/rollback safely
 ```
 
 Rules:
 
-- request not started: no provider inference;
-- request started without trusted terminal: `unknown`, never auto-retry;
-- trusted notApplied/rollback: preserve the typed rejection;
-- duplicate-equivalent: accept only through the existing protocol contract;
-- provider result and local persistence result remain separate;
-- an unexpected terminal never triggers another action;
-- no automatic fallback to ordinary Sync;
-- no second upload, Retry, recovery, download, or acknowledgement.
+- the client deadline must exceed any enforced server deadline;
+- readiness keeps its own independent deadline;
+- enrollment/auth callback/test-only deadlines are out of scope;
+- record the applicable configured deadline and elapsed duration;
+- do not extend every timeout globally;
+- do not introduce automatic retries;
+- do not issue a second request after a terminal;
+- a JavaScript timer without authoritative transaction cancellation is not a
+  valid server deadline;
+- preserve dependency injection so focused tests use short deterministic
+  deadlines.
 
-## 6. Diagnostic evidence
+## 6. Expected implementation surfaces
 
-Use one new top-level operation identity and distinct child correlations.
-Persist ordered evidence for:
-
-```text
-authorization-preflight
-binding
-failed-recovery-preflight
-failed-recovery-local-transition
-recovered-batch-validation
-upload-lease
-upload-transport
-upload-provider
-upload-result-persistence
-terminal
-```
-
-Each entered phase must preserve the accepted evidence axes:
+Inspect and change only the smallest necessary set around:
 
 ```text
-local mutation
-provider contact
-trusted response
-provider transaction
-local result persistence
-terminal outcome
+clients/markei_flutter/lib/application/hosted_sync_coordinator.dart
+clients/markei_flutter/lib/app/native_auth_closure_runner.dart
+clients/markei_flutter/lib/app/pages/native_closure_page.dart
+clients/markei_flutter/lib/infrastructure/remote/http_sync_transport.dart
+clients/markei_flutter/lib/infrastructure/local/closure_diagnostics_repository.dart
+services/markei_sync_api/src/http/app.ts
+services/markei_sync_api/src/application/sync_service.ts
+services/markei_sync_api/src/domain/protocol.ts
+diagnostic registry/generator/generated Dart, TypeScript and ERR_DIAGNOSTICS.md
+focused existing tests
+replacement G/H/I
 ```
 
-Use the existing diagnostic registry as the single vocabulary owner. Add or
-revise definitions only when the new reachable action needs a precise code.
-Regenerate all projections deterministically. Do not expose full identifiers,
-payloads, tokens, URLs, SQL, exception messages, stack traces, connection
-strings, or provider secrets.
+This list is investigative guidance, not authority to touch every file.
+Prefer no Drift or PostgreSQL migration. Existing diagnostic attempt storage
+should be sufficient. If source inspection proves otherwise, stop and report
+the blocker rather than adding schema casually.
 
-## 7. Tests
+`ERR_DIAGNOSTICS.md` is the canonical generated filename for this baseline.
+Do not restore or reference `SYNC_DIAGNOSTICS.md` as a live file.
 
-Add focused disposable tests proving:
+## 7. Focused tests
 
-- inspection remains read-only and network-free;
-- cancellation performs no mutation/contact;
-- confirmation data is sanitized and complete;
-- stale/mismatched preflight blocks before mutation/contact;
-- zero or multiple candidates block;
-- wrong Account/Device, invalid membership/hash/range/state, accepted members,
-  active overlap, or unexpected queue work block;
-- exact recovery changes only the selected submission/member set;
-- upload lease contains exactly the recovered members;
-- unrelated or concurrently appearing work is excluded and blocks safely;
-- exactly one upload request can occur;
-- download and acknowledgement ports are never called;
-- duplicate-equivalent, rejected/notApplied, unknown and local-persistence
-  failure remain distinct;
-- unknown is never automatically retried;
-- action lock prevents a second execution in the session;
-- ordered diagnostics preserve parent/child identities and all evidence axes;
-- an eligible inspection emits the precise REC preflight code and does not
-  emit historical `MKS-UI-004`;
-- existing ordinary Sync and unknown-outcome Retry behavior remain unchanged.
+Add or update tests proving:
 
-Run the generator update/check, Dart formatting, build_runner if needed,
-Flutter analysis, focused tests, the full Flutter suite, applicable
-TypeScript/API checks if a shared contract changes, `git diff --check`, and a
-changed-file sensitive-content scan. Report exact commands and counts.
+- readiness completion cannot advance `lastSuccessfulSyncAt`;
+- inspection, cancelled recovery, failed/unknown Sync and Retry cannot advance
+  it;
+- only `operationKind=ordinary-sync` with `sync-completed` or
+  `sync-no-new-events` advances it;
+- all five ordinary-Sync terminal results remain distinct;
+- client-before-response timeout does not claim server timeout;
+- a proved server timeout maps to `sync-server-timeout`;
+- correlation lineage joins client operation and server request declarations;
+- declaration scopes prevent server request success from impersonating whole
+  client operation success;
+- UI exposes compact client/server declarations and sanitized fingerprints;
+- server lifecycle logs contain the compact structured fields and no bodies,
+  tokens or full Account/Device/submission identifiers;
+- ordinary Sync uses the configured 35-second production/assay default while
+  tests can inject short deadlines;
+- no automatic retry or duplicate request is introduced;
+- failed event count, candidate identity and next sequence are not mutated by
+  readiness or diagnostic projection;
+- existing REC-01, unknown Retry and ordinary-Sync behavior do not regress.
 
-## 8. Writable scope
+Run:
+
+```text
+diagnostic generator update/check and deterministic second check
+Dart format
+Flutter analyze
+focused Flutter tests
+full Flutter tests
+API format check
+API lint
+API typecheck
+API focused tests
+full API tests
+API build
+git diff --check
+changed-content sensitive-pattern scan
+```
+
+Do not run a live hosted request, Windows manual assay, provider command or
+deployment during materialization.
+
+## 8. Writable and prohibited scope
 
 Authorized:
 
-- necessary Flutter application/domain/infrastructure/UI source and tests;
-- additive generated Drift output only if strictly necessary;
-- the existing diagnostic registry, generator and generated projections only
-  if the new reachable action requires compatible definitions;
+- necessary Flutter/API source and focused tests;
+- existing diagnostic registry, generator and generated projections;
+- `documentation/ERR_DIAGNOSTICS.md` only through its generator;
 - replacement G/H/I reports.
 
 Prohibited:
 
-- any live provider/API action;
-- deployment;
+- J, A/B/C, D/E/F and permanent domain memory;
+- methodology and Main-root continuity files;
+- GRM/GS/I_SCRIPTS execution;
+- hosted deployment or provider access;
+- Auth0, Render, Neon or PostgreSQL mutation;
 - user-database inspection or mutation;
-- Neon/Auth0/Render changes;
-- migrations against hosted PostgreSQL;
-- credentials or secrets;
-- GRM procedure execution;
-- J, A/B/C, permanent domain files, Main-root continuity, methodology, and
-  unrelated cleanup.
+- recovery execution, Retry or ordinary Sync;
+- new migration without stopping for Main clarification;
+- broad ERR renaming, catalogue rewriting or unrelated cleanup.
 
 ## 9. G report requirements
 
-G must report:
-
-- exact source and test changes;
-- the coordinator/action boundary;
-- how exact batch identity is preserved;
-- all mutation/contact/terminal rules;
-- validation commands and counts;
-- confirmation that no hosted action occurred;
-- blockers or deviations.
+G must report exact changed paths, declaration ownership, client/server field
+mapping, timing values, timeout cancellation semantics, tests/counts, any
+deviation and confirmation that no live action occurred.
 
 Terminal markers:
 
 ```text
-FAILED_NOT_APPLIED_EXECUTION_SURFACE=IMPLEMENTED_OR_BLOCKED
-ELIGIBLE_PREFLIGHT_DIAGNOSTIC_CODE=CORRECTED_OR_BLOCKED
-EXACT_RECOVERED_BATCH=VALIDATED_OR_BLOCKED
-ONE_UPLOAD_ONLY=VALIDATED_OR_BLOCKED
-DOWNLOAD_ACK_ABSENT=VALIDATED_OR_BLOCKED
-NO_PROVIDER_ACTION_DURING_MATERIALIZATION=PASS_OR_BLOCKED
+ORDINARY_SYNC_TERMINAL_VOCABULARY=IMPLEMENTED_OR_BLOCKED
+CLIENT_OPERATION_DECLARATION=IMPLEMENTED_OR_BLOCKED
+SERVER_REQUEST_DECLARATION=IMPLEMENTED_OR_BLOCKED
+LAST_SUCCESSFUL_SYNC_FILTER=CORRECTED_OR_BLOCKED
+HOSTED_READINESS_SEPARATION=VALIDATED_OR_BLOCKED
+CLIENT_SYNC_DEADLINE_35S=IMPLEMENTED_OR_BLOCKED
+SERVER_TIMEOUT_ROLLBACK=VALIDATED_OR_NOT_IMPLEMENTED_WITH_REASON
+AUTOMATIC_RETRY=ABSENT_OR_BLOCKED
+LIVE_PROVIDER_ACTION=NOT_PERFORMED
 GATE_12_7=HELD
 GCM02=OPEN
 ```

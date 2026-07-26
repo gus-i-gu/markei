@@ -1,163 +1,205 @@
-# F_DSN_STAGE — Gate 12.7 bounded recovery architecture
+# F_DSN_STAGE — Correlated ordinary-Sync declaration architecture
 
 Sequence: FLX-ORD-01 — Ordinary Sequence
 Role: Codex Design materialization authority
-Unit: C10-GCM02-S12-REC-01
+Unit: C10-GCM02-S12-ERR-03
 Branch: `cycle10-intermid-grimoire`
-Required ancestry: `76540c45702b027d56b52fea05a8025f14496cdf`
+Required ancestry: `3d1e82e5259cf51e8cd2d6baf694423494bab7a5`
 Status: **ACTIVE — SOURCE MATERIALIZATION ONLY; PROVIDER EXECUTION PROHIBITED**
 
 ## 1. Architectural objective
 
-Add one narrow recovery-and-upload orchestration boundary without widening
-ordinary Sync or coupling the read-only inspection to mutation.
-
-Required dependency shape:
+Complete the existing ordinary-Sync diagnostic contract without widening the
+ERR system:
 
 ```text
 Closure UI
-├─ read-only failed inspection
-└─ explicit confirmation
-   └─ bounded failed-recovery coordinator
-      ├─ auth/binding guard
-      ├─ exact candidate revalidation
-      ├─ atomic local recovery
-      ├─ exact recovered-batch lease
-      ├─ one upload transport operation
-      └─ diagnostic/result persistence
+└─ ordinary-Sync runner
+   ├─ top-level operation identity
+   ├─ hosted Sync coordinator
+   │  ├─ upload request
+   │  ├─ download request
+   │  └─ acknowledgement request
+   ├─ client-operation terminal declaration
+   └─ local diagnostic persistence
+
+Sync API
+└─ correlated route lifecycle
+   ├─ request ingress
+   ├─ authentication/authorization
+   ├─ database transaction
+   └─ server-request terminal declaration
 ```
 
-The bounded coordinator must not depend on download or acknowledgement ports.
-It must not call the ordinary Sync coordinator.
+One shared sanitized parent operation fingerprint joins the two sides. Child
+correlations retain route identity and order.
 
-## 2. Identity boundary
+## 2. Ownership boundary
 
-The public/UI boundary may carry only sanitized fingerprints and counts.
-The application/infrastructure boundary must retain authoritative internal
-identity.
+The client orchestration is the only component that can truthfully decide
+whether the complete ordinary Sync finished, because it owns:
 
-Do not pass a truncated fingerprint back as the database selector.
+- the sequence of upload/download/acknowledgement calls;
+- local remote-event application;
+- local cursor/result persistence;
+- the final UI projection.
 
-Model the execution input as a confirmation snapshot containing sanitized
-expectations, while the transactional repository independently resolves the
-single current Account/Device candidate and compares every expected property.
-Return an internal bounded batch descriptor only after the exact transition
-succeeds.
+The server can truthfully declare only:
 
-The descriptor must be sufficient for the uploader to lease exactly the
-recovered member set. It must not be serialised to UI, logs, or public API.
+- whether a specific request arrived;
+- whether authorization passed;
+- whether a database transaction began and committed/rolled back;
+- which bounded response/result that request produced;
+- whether its own enforced deadline fired.
 
-## 3. Atomicity and concurrency
-
-The local recovery transaction must:
-
-1. re-read the current scoped candidate;
-2. validate membership, identity, content hashes, states, overlap and range;
-3. compare the current candidate with the confirmation snapshot;
-4. supersede exactly one failed submission;
-5. requeue exactly its failed members;
-6. return the exact member set and bounded metadata.
-
-The upload-lease transaction must either lease that complete exact set or
-lease nothing. Unexpected pending work, membership drift, partial update, or
-concurrent state change is a typed pre-contact blocker.
-
-Do not create a state where the uploader can silently include unrelated work.
-
-## 4. Side-effect boundary
-
-Exactly one provider request is permitted by the new coordinator after local
-preflight and exact lease succeed.
-
-The coordinator stops after upload-result persistence. It does not:
-
-- download;
-- apply remote events;
-- acknowledge a cursor;
-- enroll/query/revoke a Device;
-- repair/rebootstrap;
-- run ordinary Sync;
-- retry automatically;
-- issue a second provider request.
-
-The one-action UI lock is presentation safety; repository/protocol invariants
-remain the authoritative safety boundary.
-
-## 5. Outcome and diagnostics architecture
-
-Preserve independent axes:
+Therefore every declaration carries:
 
 ```text
-candidate/preflight state
-local recovery transaction
-upload lease
-provider contact
-trusted response
-provider transaction outcome
-local result persistence
-terminal classification
+declarationScope=client-operation | server-request
 ```
 
-Use the accepted parent/child diagnostic model:
+Do not add an endpoint that merely echoes the client’s result and call that a
+server self-declaration. Do not claim aggregate server knowledge that the
+current multi-request protocol does not provide.
 
-- one random top-level operation identity;
-- one stable sanitized operation fingerprint;
-- distinct child correlations and fingerprints;
-- deterministic ordinals;
-- typed detector-level MKS/native codes;
-- explicit public/local/internal projections.
+## 3. Terminal model
 
-A final summary may not erase the last causal child event.
+Add or centralize a typed ordinary-Sync terminal model covering exactly:
 
-Detector ownership must also remain coherent: the historical `MKS-UI-004`
-missing-inspection condition cannot be the success code for an existing,
-eligible recovery preflight. Route the current detector through a precise REC
-definition from the single registry and regenerate its projections.
+```text
+sync-completed
+sync-no-new-events
+sync-rejected
+sync-server-timeout
+sync-failed
+```
 
-## 6. Compatibility boundary
+Map existing outcomes deliberately:
+
+- accepted/duplicate-equivalent request phases may continue toward one of the
+  two client success terminals;
+- typed notApplied/protocol/auth rejection maps to `sync-rejected`;
+- proved server-owned deadline with rollback maps to
+  `sync-server-timeout`;
+- client deadline without trusted response maps to `sync-failed` with server
+  outcome unknown;
+- unexpected local, transport or server failure maps to `sync-failed` while
+  preserving the last proved phase and evidence axes.
+
+Do not discard the lower-level MKS/native diagnostic that explains the
+terminal.
+
+## 4. Correlation and logging
+
+Propagate one top-level ordinary-Sync operation identity through every HTTP
+request. Preserve or add child correlation identities where already supported.
+
+The public/log projection uses only sanitized fingerprints. Full operation,
+Account, Device, event, submission and token identity remains internal.
+
+Structured server terminal log:
+
+```json
+{
+  "operationKind": "ordinary-sync",
+  "resultCode": "sync-completed",
+  "declarationScope": "server-request",
+  "routeClass": "sync-submission",
+  "operationFingerprint": "<sanitized>",
+  "correlationFingerprint": "<sanitized>",
+  "lastProvedPhase": "response-completed",
+  "elapsedBand": "lt-250ms",
+  "configuredDeadlineMs": 25000
+}
+```
+
+This is a schema example, not an instruction to log this result regardless of
+the actual request. Keep log ordering deterministic enough for one narrow UTC
+assay window.
+
+## 5. Timing architecture
+
+Separate timing ownership:
+
+```text
+readiness deadline
+ordinary-Sync client response deadline
+ordinary-Sync server processing deadline
+test-only injected deadline
+```
+
+Set the hosted ordinary-Sync client default to 35 seconds through composition
+or explicit configuration rather than burying a new magic value across call
+sites.
+
+An optional 25-second server deadline is valid only when:
+
+- it applies to the intended Sync request boundary;
+- outstanding database work is cancelled or rolled back;
+- the resulting response/log truthfully reports the server timeout;
+- the client remains listening long enough to receive it.
+
+Do not implement timeout by racing a response Promise while database work
+continues. If safe cancellation is not available within the narrow unit,
+leave the server deadline unimplemented, report why, and still add elapsed
+structured lifecycle evidence.
+
+## 6. Projection query
+
+Correct the local “Last successful sync” query to require all of:
+
+```text
+operationKind = ordinary-sync
+outcomeClass = completed
+resultCode IN (sync-completed, sync-no-new-events)
+completedAt IS NOT NULL
+```
+
+Do not infer success from `outcomeClass=completed` alone.
+
+No schema migration is expected. Prefer querying existing attempt/phase
+columns. If operation kind is not available in the required stored projection,
+stop and report the exact persistence gap rather than weakening the filter.
+
+## 7. Compatibility and validation
 
 Preserve:
 
-- existing `Inspect failed/notApplied recovery` network-free behavior;
-- existing unknown-outcome Retry behavior;
-- ordinary Sync behavior;
-- diagnostic registry single ownership;
-- Drift v1–v12 forward compatibility;
-- current submission/event/cursor/purchase truth.
-
-Prefer no schema migration. If a new bounded field is unavoidable, use the
-smallest additive v13 migration, include ledger/reopen/preservation tests, and
-do not touch a user database or hosted PostgreSQL.
-
-## 7. Design validation
-
-I must report source and test evidence for:
-
-- separate inspection and execution dependency paths;
-- no ordinary Sync invocation;
-- no download/ack dependencies;
-- authoritative identity never reduced to a fingerprint;
-- atomic candidate recovery and exact-set lease;
-- concurrency/mismatch fail-closed behavior;
-- exactly one provider request;
+- hosted readiness contracts and 20-second readiness timeout;
+- REC-01 inspection/recovery separation;
+- unknown-outcome Retry behavior;
+- current queue/submission/cursor/purchase truth;
+- diagnostic registry as single vocabulary owner;
+- existing redaction and fingerprint rules;
 - no automatic retry;
-- complete outcome/evidence axes;
-- coherent REC preflight detector/code ownership without repurposing
-  `MKS-UI-004`;
-- explicit public/internal redaction;
-- no provider action during materialization.
+- no new provider call solely for diagnostics;
+- Drift v1–v12 compatibility unless source proves otherwise.
+
+Design validation must prove:
+
+- typed five-result client terminal exhaustiveness;
+- truthful server-request scope;
+- shared parent correlation with distinct child request identities;
+- correct last-success query predicate;
+- independent timing ownership;
+- no continuing database work behind a reported server timeout;
+- no payload/identity leakage;
+- no live provider activity during implementation;
+- broad ERR refactor remains deferred.
 
 Do not edit permanent design memory.
 
-Terminal markers:
+I terminal markers:
 
 ```text
-BOUNDED_RECOVERY_COORDINATOR=IMPLEMENTED_OR_BLOCKED
-REC_PREFLIGHT_CODE_OWNERSHIP=VALIDATED_OR_BLOCKED
-AUTHORITATIVE_IDENTITY_BOUNDARY=VALIDATED_OR_BLOCKED
-ATOMIC_EXACT_SET_LEASE=VALIDATED_OR_BLOCKED
-ONE_PROVIDER_REQUEST_MAX=VALIDATED_OR_BLOCKED
-ORDINARY_SYNC_DOWNLOAD_ACK_ISOLATION=VALIDATED_OR_BLOCKED
+ORDINARY_SYNC_TERMINAL_MODEL=BOUNDARY_STABLE_OR_BLOCKED
+CLIENT_OPERATION_OWNERSHIP=VALIDATED_OR_BLOCKED
+SERVER_REQUEST_OWNERSHIP=VALIDATED_OR_BLOCKED
+CORRELATION_LINEAGE=VALIDATED_OR_BLOCKED
+SUCCESS_QUERY_PREDICATE=VALIDATED_OR_BLOCKED
+TIMEOUT_OWNERSHIP=VALIDATED_OR_BLOCKED
+NO_FALSE_SERVER_TIMEOUT=VALIDATED_OR_BLOCKED
+NO_NEW_DIAGNOSTIC_PROVIDER_CALL=PASS_OR_BLOCKED
 GATE_12_7=HELD
 GCM02=OPEN
 ```

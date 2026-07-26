@@ -1,122 +1,143 @@
-# E_DDC_STAGE — Gate 12.7 recovery meaning
+# E_DDC_STAGE — Ordinary-Sync declaration meaning
 
 Sequence: FLX-ORD-01 — Ordinary Sequence
 Role: Codex Didactic materialization authority
-Unit: C10-GCM02-S12-REC-01
+Unit: C10-GCM02-S12-ERR-03
 Branch: `cycle10-intermid-grimoire`
-Required ancestry: `76540c45702b027d56b52fea05a8025f14496cdf`
-Status: **ACTIVE — SOURCE MATERIALIZATION ONLY; GATE 12.7 HELD**
+Required ancestry: `3d1e82e5259cf51e8cd2d6baf694423494bab7a5`
+Status: **ACTIVE — NARROW SOURCE MATERIALIZATION ONLY; GATE 12.7 HELD**
 
-## 1. Accepted meaning
+## 1. Accepted distinctions
 
-Preserve these distinctions:
+Preserve these meanings:
 
-- inspection is not execution;
-- explicit human authorization is not implementation;
-- implementation is not authorization;
-- failed/notApplied recovery is not unknown-outcome Retry;
-- bounded recovery-and-upload is not ordinary Sync;
-- a sanitized fingerprint is evidence, not authoritative identity;
-- request start is not provider application;
-- provider outcome and local persistence outcome are separate.
+- hosted readiness proves only that the readiness route answered;
+- generic completion is not ordinary-Sync success;
+- the client owns the complete ordinary-Sync terminal;
+- the server owns only the request/transaction terminal it observed;
+- `client-operation` and `server-request` declarations are correlated but not
+  interchangeable;
+- a client timeout before response is not a proved server timeout;
+- a trusted rejection is not a transport failure;
+- server request success does not prove client local persistence;
+- inspection, Retry, recovery and ordinary Sync remain separate actions;
+- implementation and assay preparation do not authorize Gate 12.7.
 
-The human-observed `MKS-UI-004 / failed-recovery-preflight` result proved that
-the inspection remained local and non-mutating. Its safe action explicitly
-held for Gate 12.7 reconciliation.
+The displayed “Last successful sync” advanced after
+`hosted-connection-ready`; that projection is wrong and must be corrected.
 
-The state evidence is accepted, but the code meaning is not: the registry
-still defines `MKS-UI-004` as “inspection action missing.” Keep that code for
-the historical missing-action condition and use a precise REC code for an
-eligible preflight. Do not redefine one code to mean both absence and success.
+## 2. User vocabulary
 
-## 2. User-facing action model
+Use this ordinary-Sync terminal vocabulary consistently in code, UI, tests and
+diagnostic projections:
 
-The Closure UI must expose three unmistakably separate concepts:
+| Result code | User meaning |
+| --- | --- |
+| `sync-completed` | Sync completed successfully |
+| `sync-no-new-events` | Sync completed; no new events were found |
+| `sync-rejected` | The server rejected the Sync request; no successful Sync is claimed |
+| `sync-server-timeout` | The server reported an enforced timeout; successful Sync is not claimed |
+| `sync-failed` | Sync failed without another more precise trusted terminal |
+
+The technical detail may retain the literal result code, but the main
+user-facing sentence should remain plain.
+
+When the server was not observed, say:
 
 ```text
-Inspect failed/notApplied recovery
-    read-only; no network; no mutation
-
-Recover failed/notApplied candidate
-    separately confirmed bounded recovery plus one upload; Gate-controlled
-
-Sync
-    broad ordinary synchronization; not a substitute for recovery
+Server declaration: not observed
 ```
 
-`Retry unknown-outcome submission` remains separate and must not be presented
-as applicable to the current failed/notApplied lineage.
+Do not say “server timeout” when only the client deadline expired. Say:
 
-Before confirmation, explain in plain language:
+```text
+Client stopped waiting before a trusted response.
+Server outcome remains unknown.
+```
 
-- exactly what candidate was found, using only sanitized fields;
-- that the action will change local recovery state and attempt one provider
-  upload;
-- that it will not download, acknowledge, enroll, repair, or run ordinary
-  Sync;
-- that cancellation changes nothing;
-- that no second action is permitted without reconciliation.
+## 3. Closure presentation
 
-Do not imply that the button itself carries Main/human authorization.
+The Closure page must make these surfaces visually and textually distinct:
 
-## 3. Terminal explanations
+```text
+Hosted readiness
+Ordinary Sync result
+Failed/notApplied inspection
+Controlled recovery
+Unknown-outcome Retry
+```
 
-Every terminal must say:
+Correct:
 
+```text
+Last successful sync
+  only the latest ordinary-sync / sync-completed or sync-no-new-events
+
+Recent Closure attempts
+  all bounded Closure operations, labelled by operation kind
+```
+
+The latest ordinary-Sync detail should show:
+
+- client declaration;
+- server declaration or `not observed`;
+- declaration scope;
 - last proved phase;
-- whether local state changed;
-- whether a provider request started;
-- whether a trusted response arrived;
-- whether provider application/rollback is proved or unknown;
-- whether the local result persisted;
-- whether another attempt is safe;
-- the safe next action;
-- bounded operation and correlation fingerprints.
+- elapsed/deadline values;
+- operation and correlation fingerprints;
+- safe next action.
 
-Required language:
+Keep the normal view compact. Additional detail may use the existing
+expandable technical-details surface. Do not introduce a large ERR table,
+support bundle or general telemetry panel.
 
-- `blocked-before-contact`: no provider conclusion;
-- `unknown`: preserve evidence; do not retry;
-- `rejected/notApplied`: trusted rejection/rollback, when proved;
-- `duplicate-equivalent`: accepted only when the protocol proves equivalence;
-- `applied`: provider acceptance and local persistence must be reported
-  independently;
-- `unexpected-local-failure`: do not infer provider failure.
+## 4. Timing explanation
 
-Avoid blame by proximity. Do not label Auth0, Render, Neon, PostgreSQL, the
-network, or the client as causal without detector-level evidence.
+The source default changes from five seconds to a 35-second hosted
+ordinary-Sync client deadline for the focused assay. This is a diagnostic
+relaxation, not proof that timing was the root cause and not a general
+performance target.
 
-## 4. Documentation and tests
+If a server-owned 25-second deadline is safely enforceable, the client waits
+longer so it can receive the server’s typed terminal. If safe cancellation and
+rollback are not provable, the server timeout result must remain unavailable.
 
-If diagnostic definitions change, update the machine registry and regenerate
-Dart, TypeScript and Markdown projections. Do not hand-edit generated
-documentation.
+User-visible timing must distinguish:
+
+```text
+configured deadline
+observed elapsed time
+deadline owner: client or server
+```
+
+## 5. Tests and documentation
 
 Tests must prove:
 
-- labels and confirmation text preserve the three-action distinction;
-- fingerprints and counts are sanitized;
-- cancellation, blocked preflight, and execution terminals use accurate
-  mutation/contact language;
-- no terminal recommends automatic retry or ordinary Sync;
-- generic summaries retain the causal child event;
-- the prior Sync result remains visually distinct from the current action;
-- an eligible preflight no longer displays the historical missing-action code;
-- technical details omit forbidden identifiers and secrets.
+- readiness never appears as successful Sync;
+- the two success codes and three non-success codes remain distinct;
+- client and server declarations carry visible scopes;
+- unavailable server evidence says `not observed`;
+- timeout wording identifies its owner and does not invent causality;
+- `Recent Closure attempts` accurately labels its contents;
+- forbidden identifiers and secret-bearing data are absent;
+- normal UI remains concise.
 
-H must report the runtime-visible meaning, confirmation copy, terminal
-language, evidence distinctions, generated-documentation impact, and tests.
+If the diagnostic vocabulary changes, update the single registry and
+regenerate Dart, TypeScript and `ERR_DIAGNOSTICS.md`. Do not hand-edit generated
+projections.
 
 Do not edit permanent didactic memory.
 
-Terminal markers:
+H terminal markers:
 
 ```text
-INSPECTION_EXECUTION_MEANING=SEPARATE_OR_BLOCKED
-PREFLIGHT_CODE_MEANING=ALIGNED_OR_BLOCKED
-FAILED_UNKNOWN_SYNC_ACTIONS=SEPARATE_OR_BLOCKED
-TERMINAL_CAUSAL_LANGUAGE=VALIDATED_OR_BLOCKED
-AUTHORIZATION_NOT_IMPLIED=VALIDATED_OR_BLOCKED
+READINESS_SYNC_MEANING=SEPARATE_OR_BLOCKED
+CLIENT_SERVER_SCOPE_MEANING=SEPARATE_OR_BLOCKED
+FIVE_SYNC_RESULTS=VISIBLE_OR_BLOCKED
+TIMEOUT_OWNERSHIP=VISIBLE_OR_BLOCKED
+LAST_SUCCESSFUL_SYNC_LABEL=TRUTHFUL_OR_BLOCKED
+RECENT_CLOSURE_ATTEMPTS_LABEL=ALIGNED_OR_BLOCKED
 GATE_12_7=HELD
 GCM02=OPEN
 ```

@@ -1,15 +1,16 @@
 # J_MAIN_STAGE — Cycle 10 active reconciliation
 
-> Sequence: FLX-PRN-03 recovery-economy pruning after FLX-PRM-04 reconciliation
+> Sequence: FLX-ORD-01 bounded ordinary-Sync terminal/timing materialization
 > Role: Main Chat
 > Branch: `cycle10-intermid-grimoire`
-> Reconciliation baseline: `a63367763716e2769ac58d5adc19de0c41774b35`
-> Authority: human-directed Main reconciliation after REC-01 materialization
-> Writable surface: J only for this reconciliation
-> Evidence boundary: repository and local/disposable validation through the
-> REC-01 G/H/I reports; fresh Windows and provider evidence remain absent
-> Status: **CYCLE 10 OPEN; GCM-02 GATE 12.7 PREFLIGHT PASS; REC-01 SOURCE
-> ACCEPTED; HOST VALIDATION AND EXECUTION AUTHORIZATION HELD**
+> Reconciliation baseline: `3d1e82e5259cf51e8cd2d6baf694423494bab7a5`
+> Authority: human-directed Main reconciliation and D/E/F activation
+> Writable surface: J plus synchronized D/E/F staging
+> Evidence boundary: repository inspection, REC-01 source evidence and the
+> 2026-07-26 Windows read-only inspection/readiness assays; no new ordinary
+> Sync, recovery, Retry or provider mutation
+> Status: **CYCLE 10 OPEN; C10-GCM02-S12-ERR-03 D/E/F ACTIVE; GATE 12.7,
+> ORDINARY SYNC AND RECOVERY EXECUTION HELD**
 
 ## 1. Recovery entrypoint
 
@@ -45,12 +46,14 @@ Retain these ownership boundaries:
 ```text
 Repository: gus-i-gu/markei
 Active branch: cycle10-intermid-grimoire
-Current reconciliation baseline: a63367763716e2769ac58d5adc19de0c41774b35
+Current reconciliation baseline: 3d1e82e5259cf51e8cd2d6baf694423494bab7a5
 Cycle: 10
 Active closure unit: MCG-02 / user-facing GCM-02
 Latest completed sprint: C10-GCM02-S12-REC-01 bounded execution surface
-Active gate: 12.7 Windows validation, repeated preflight and freshness refresh
-before one-action authorization
+Active materialization unit: C10-GCM02-S12-ERR-03 ordinary-Sync terminal
+identification and controlled assay timing
+Active gate: source materialization and local validation before any separately
+authorized hosted assay; Gate 12.7 remains held
 ```
 
 The branch contains the GRM execution interface, hosted Sync
@@ -71,6 +74,12 @@ subsequent isolated GRM alignment unit materializes
 `documentation/NEON_CHECK.ps1` as `documentation/I_SCRIPTS.ps1` and aligns
 every live five-file-interface reference. Historical occurrences under
 `Legacy_Progress` remain observational evidence.
+
+The subsequent `3d1e82e5259cf51e8cd2d6baf694423494bab7a5`
+baseline renames the generated diagnostic projection to
+`documentation/ERR_DIAGNOSTICS.md`. That rename is accepted as repository
+state. The broad ERR-catalogue refactor remains deferred until the present
+narrow assays conclude.
 
 ## 3. Cycle 10 consolidated panorama
 
@@ -242,10 +251,11 @@ and an immutable pre-operation baseline. Gate 12.6 has now determined the
 exact eligible transition and recovery boundary. The read-only Gate 12.7
 inspection passes, and REC-01 now provides a dedicated bounded
 failed/notApplied executor validated only through local/disposable boundaries.
-Main may not prepare the exact one-action authorization packet until the new
-source passes fresh Windows validation, exposes the expected repeated preflight
-and confirmation surface, and the Git/Render/Auth0/Device/provider evidence is
-refreshed.
+The fresh Windows inspection and confirmation-cancellation assay passed
+without queue/provider mutation. A later readiness-only assay preserved the
+candidate but exposed a separate semantic defect: a completed readiness check
+advanced the UI's “Last successful sync” timestamp. Main therefore activates
+SYNC-01 before preparing any execution packet.
 
 ### 5.1 Accepted Gate 12.6 copied-database evidence
 
@@ -371,7 +381,10 @@ GCM02_12_6_DEVICE_SCOPED_CORRELATION_PASS
 GCM02_12_6_PASS
 GCM02_12_7_READ_ONLY_PREFLIGHT_PASS
 GCM02_S12_REC_01_SOURCE_ACCEPTED
-GCM02_S12_REC_01_HOST_VALIDATION_PENDING
+GCM02_S12_REC_01_WINDOWS_SURFACE_PASS
+GCM02_S12_HOSTED_READINESS_CLIENT_PASS
+GCM02_S12_LAST_SUCCESSFUL_SYNC_PROJECTION_FAIL
+GCM02_S12_SYNC_01_D_E_F_ACTIVE
 GCM02_12_7_HUMAN_AUTHORIZATION_HELD
 GCM02_12_8_CONTROLLED_OPERATION_HELD
 GCM02_12_9_POST_OPERATION_COMPARISON_HELD
@@ -397,40 +410,50 @@ GCM-02 closure: NOT GRANTED
 Keep Markei closed and preserve the copied database unchanged until the Gate
 12.7 packet is reviewed. Do not execute ad hoc SQL.
 
-## 6. Immediate continuation — Phase 12.7
+## 6. Immediate continuation — SYNC-01 before Phase 12.7
 
-The Windows read-only failed/notApplied preflight is reconciled as PASS. REC-01
-is now source-accepted from G/H/I at
-`a63367763716e2769ac58d5adc19de0c41774b35`: the dedicated execution surface,
-precise `MKS-REC-001` preflight code, exact recovered batch, one-upload maximum,
-and absence of download/acknowledgement were locally validated. No provider or
-user-database action occurred.
+The Windows read-only preflight, dedicated recovery-control visibility and
+confirmation cancellation are reconciled as PASS. The later readiness assay
+also preserved the two-event failed candidate and Device sequence. It did not
+execute recovery or ordinary Sync.
+
+The readiness assay exposed one source-proven projection defect and one
+credible timing hypothesis:
+
+```text
+projection:
+  completed readiness was selected as "Last successful sync"
+
+timing:
+  protected Sync requests currently use a fixed 5-second client deadline
+  causal role in the historical failure remains unproved
+```
 
 Proceed in this order:
 
-1. pull the reconciled branch containing the canonical `I_SCRIPTS.ps1`
-   dispatcher into the clean Windows checkout and require a
-   clean understood worktree;
-2. run the canonical Windows analysis, full tests, release build and Closure
-   launch through `documentation/I_SCRIPTS.ps1`;
-3. select only `Inspect failed/notApplied recovery` and require
-   `MKS-REC-001`, one eligible candidate, member count `2`, sequence range
-   `1-2`, next sequence `3`, and no mutation/contact/persistence;
-4. confirm that `Recover failed/notApplied candidate` is separately visible
-   and separately confirmed, then cancel without executing it;
-5. refresh Git revision, Render readiness/revision, Auth0 metadata/principal,
-   exact Device binding and the allowlisted provider baseline;
-6. return the sanitized host/freshness evidence for Main reconciliation;
-7. Main prepares one exact Gate 12.7 packet only if every invariant matches;
-8. only a later explicit human authorization may permit exactly one
-   `Recover failed/notApplied candidate` action;
-9. no second action is permitted; Gates 12.8–12.10 then capture and reconcile
-    the correlated terminal.
+1. Codex materializes synchronized D/E/F unit
+   `C10-GCM02-S12-ERR-03`;
+2. implement the complete operation-specific client terminal catalogue,
+   route-specific server terminal logging and sanitized correlation join;
+3. correct ordinary-Sync and hosted-readiness success projections;
+4. replace the fixed five-second Sync request deadline with the bounded
+   25-second server / 35-second client assay policy;
+5. validate only through local/disposable Flutter and API tests and replace
+   G/H/I;
+6. Main reconciles source evidence before any Windows or hosted action;
+7. the user pulls the accepted implementation and performs the canonical
+   Windows build/launch;
+8. run one readiness-only regression assay first, proving readiness time may
+   advance while ordinary-Sync time and the failed candidate remain unchanged;
+9. capture the matching Render window through sanitized correlation only;
+10. only after a separate Main packet may one ordinary-Sync assay or the
+    Gate 12.7 bounded recovery be considered; neither is authorized by this
+    staging.
 
-Ordinary Sync, unknown-outcome Retry, Repair, Enroll, provider-console
-mutation, database editing and cleanup remain prohibited. The complete
-evidence, hierarchy and continuation sequence are preserved in the newest
-`Legacy_Progress` entry.
+Unknown-outcome Retry, ordinary Sync, bounded recovery, Repair, Enroll,
+provider-console mutation, database editing and cleanup remain prohibited
+during materialization. SYNC-01 must not perform the deferred broad ERR
+refactor.
 
 ## 7. GCM-03 provisional boundary
 
@@ -509,7 +532,12 @@ to bypass Cycle 10 closure.
 | REC-01 bounded execution surface exists      | Implemented and locally validated at `a633677`; host-unvalidated       |
 | Eligible preflight diagnostic is corrected   | `MKS-REC-001` generated and locally validated; Windows rerun pending   |
 | Exact batch and one-upload boundary hold      | Locally test-validated; no live execution performed                    |
-| Gate 12.7 packet is ready                    | Rejected; Windows and freshness evidence still required                |
+| REC-01 Windows inspection surface passed     | Human-observed; inspection/cancellation only, no execution              |
+| Hosted readiness route passed                | Human-observed HTTP 200 client evidence; not ordinary Sync              |
+| Last successful Sync projection is correct  | Rejected; readiness advanced the timestamp                              |
+| Five-second deadline caused prior failure    | Provisional hypothesis; not proved                                     |
+| ERR-03 terminal/timing packet is active      | Accepted D/E/F materialization authority at baseline `3d1e82e`          |
+| Gate 12.7 packet is ready                    | Rejected; SYNC-01 and later freshness reconciliation required           |
 | Gate 12.7 is authorized                      | Rejected                                                              |
 | GCM-02 is closed                             | Rejected                                                              |
 | GCM-03 or GCM-04 is active                   | Rejected                                                              |
@@ -533,8 +561,9 @@ Current recovery pointer:
 
 ```text
 read this mutable prefix
--> read REC-01 G/H/I for accepted materialization evidence
--> inspect the separately published dispatcher rename before Windows commands
+-> read active ERR-03 D/E/F for Codex authority
+-> read REC-01 G/H/I for preserved recovery evidence
+-> use the canonical I_SCRIPTS dispatcher for later Windows commands
 -> expand into Legacy_Progress only for provenance/history
 ```
 
@@ -4109,6 +4138,180 @@ ONE_UPLOAD_ONLY=LOCALLY_VALIDATED
 DOWNLOAD_ACK_ABSENT=LOCALLY_VALIDATED
 WINDOWS_POST_REC01_VALIDATION=PENDING
 DISPATCHER_RENAME=PENDING_SEPARATE_RECONCILIATION
+GATE_12_7=HELD
+CONTROLLED_RECOVERY=NOT_AUTHORIZED
+ORDINARY_SYNC=NOT_AUTHORIZED
+PROVIDER_ACTION=NOT_AUTHORIZED
+GATES_12_8_TO_12_10=HELD
+GCM03=UNDEFINED_INACTIVE
+GCM04=UNDEFINED_INACTIVE
+```
+
+## 2026-07-26 — Post-REC-01 ERR evidence reconciliation and SYNC-01 staging
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04 → FLX-ORD-01
+Role: Main Chat [M]
+Branch: cycle10-intermid-grimoire
+Reconciled baseline: 3d1e82e5259cf51e8cd2d6baf694423494bab7a5
+Evidence: post-REC-01 Windows screenshots, supplied Render log window,
+          source inspection and human timing/semantic direction
+Writable surface: append-only J plus replacement D/E/F
+Disposition: SYNC-01 ACTIVATED; GATE 12.7 HELD
+```
+
+This entry belongs to `Legacy_Progress`. It preserves the assay sequence and
+activates one bounded source unit; it does not rewrite the earlier REC-01
+reconciliation or authorize a provider operation.
+
+### Evidence by observed step
+
+| ERR / observation | Step | Expected | Meaningful evidence | Reconciled meaning |
+| --- | --- | --- | --- | --- |
+| `sync-interrupted` | Historical ordinary Sync/Retry | trusted terminal within observation budget | client observation limit was 5000 ms; two events later remained failed | client stopped observing; server receipt/application remains unknown |
+| `timeout-before-response` | Earlier hosted communication | response headers or typed failure | about 30 seconds elapsed; no headers observed | stall occurred before observable headers; exact transport/API/auth/database boundary is unproved |
+| `hosted-connection-ready` | Post-REC-01 readiness check | prove readiness only | HTTP 200, headers received, under one second | hosted readiness passed; ordinary Sync not proved |
+| Render `/health/ready` | Supplied deployment window | readiness responses | 14 HTTP 200 responses, all under 250 ms | service readiness passed in that window |
+| exact Render correlation absent | Client/server comparison | shared request lineage | client terminal near 19:19:04Z; supplied logs ended near 19:13:53Z | evidence-window mismatch; client request is not server-correlated |
+| `MKS-REC-001` | failed/notApplied inspection | read-only eligible preflight | one candidate, two members, sequence 1-2, next sequence 3 | REC-01 diagnostic correction passed |
+| queue/candidate immobility | inspection and readiness | no mutation | failed=2; pending/uploading/unknown=0; next sequence=3 before and after | neither operation changed recovery state |
+| recovery confirmation | cancel-only UI assay | no execution | bounded confirmation displayed; no recovery terminal/request appeared | confirmation safety passed; recovery remains unexecuted |
+| “Last successful sync” advanced | readiness assay | remain unchanged | 19:01:18Z became 19:19:04Z after readiness | definite projection defect: generic completed attempt impersonated Sync success |
+| `outcomeClass=completed` | source/projection inspection | classify within operation kind | readiness and Sync may both be completed | generic completion is insufficient for Sync-success projection |
+| 5-second Sync deadline | source inspection | adequate hosted observation budget | `HttpSyncTransport` default is 5 seconds; readiness uses 20 seconds | timing is a credible hypothesis requiring controlled relaxation, not a proved root cause |
+
+### PRC-01 claims
+
+```text
+Claim: hosted readiness passed without changing the failed recovery candidate
+Prior state: host validation pending
+Evidence: before/after Windows screenshots and readiness terminal
+Evidence boundary: client-observed; exact latest server request not correlated
+Contradiction: none in queue/candidate evidence
+Semantic owner: GCM-02 host observation
+Target role: J observational reconciliation
+Resulting state: ACCEPTED WITH SERVER-CORRELATION LIMIT
+History disposition: append
+```
+
+```text
+Claim: the displayed Last successful sync is semantically trustworthy
+Prior state: assumed UI projection
+Evidence: timestamp advanced immediately after hosted readiness
+Evidence boundary: repeatable UI/source observation
+Contradiction: readiness explicitly does not prove Sync
+Semantic owner: Closure diagnostic projection
+Target role: C10-GCM02-S12-SYNC-01
+Resulting state: REJECTED; SOURCE CORRECTION REQUIRED
+History disposition: append and supersede generic-completed predicate
+```
+
+```text
+Claim: the five-second ordinary-Sync deadline caused the historical failure
+Prior state: hypothesis
+Evidence: 5000 ms interruption plus fast readiness and missing Sync correlation
+Evidence boundary: no paired client/server ordinary-Sync terminal
+Contradiction: a 30-second pre-header timeout was also observed historically
+Semantic owner: SYNC-01 timing assay
+Target role: configurable bounded timing experiment
+Resulting state: PLAUSIBLE, UNPROVED
+History disposition: preserve until one controlled correlated assay
+```
+
+### Activated implementation unit
+
+```text
+UNIT=C10-GCM02-S12-SYNC-01
+
+Primary contract:
+  operationKind=ordinary-sync
+
+Client terminal resultCode:
+  sync-completed
+  sync-no-new-events
+  sync-rejected
+  sync-server-timeout
+  sync-failed
+
+Declaration scopes:
+  client-operation
+  server-request
+
+Initial timing experiment:
+  client ordinary-Sync deadline=35 seconds
+  server deadline=25 seconds only with authoritative cancellation/rollback
+  automatic retry=absent
+```
+
+The client owns the complete ordinary-Sync result. The server owns only each
+request/transaction result it observed. Correlation joins those declarations;
+it does not erase their different evidence scopes.
+
+The “Last successful sync” predicate must become:
+
+```text
+operationKind = ordinary-sync
+outcomeClass = completed
+resultCode IN (sync-completed, sync-no-new-events)
+completedAt IS NOT NULL
+```
+
+`Recent sync attempts` becomes `Recent Closure attempts`. Hosted readiness
+retains its independent result and timestamp. No broad ERR list refactor is
+authorized in this unit.
+
+### Authority and held actions
+
+D/E/F now authorize only repository source, focused tests, generated
+diagnostic projections and replacement G/H/I. They do not authorize:
+
+```text
+deployment
+live hosted request
+ordinary Sync
+Retry
+failed/notApplied recovery
+provider/database mutation
+Gate 12.7 execution
+```
+
+After Codex materialization, Main must reconcile G/H/I before any manual
+assay. The first manual assay remains readiness-only and must prove that the
+readiness timestamp may advance while “Last successful sync” does not. A later
+ordinary-Sync or recovery action requires a separate exact authorization
+packet.
+
+### Continuation
+
+```text
+SYNC-01 source materialization
+→ G/H/I reconciliation
+→ clean Windows build/launch
+→ one readiness-only projection regression
+→ exact UTC client/server log correlation
+→ refreshed Git/Render/Auth0/Device/Neon freshness
+→ Gate 12.7 authorization packet
+→ one explicitly authorized action
+→ Gates 12.8-12.10 reconciliation
+```
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=OPEN_ACTIVE
+C10_GCM02_S12_REC_01_SOURCE=ACCEPTED
+POST_REC01_WINDOWS_PREFLIGHT=PASS
+HOSTED_READINESS_CLIENT=PASS
+HOSTED_READINESS_EXACT_SERVER_CORRELATION=NOT_PROVED
+LAST_SUCCESSFUL_SYNC_PROJECTION=FAILED
+C10_GCM02_S12_SYNC_01=ACTIVE_STAGED
+ORDINARY_SYNC_FIVE_RESULT_CONTRACT=STAGED
+CLIENT_SERVER_DECLARATION_SCOPES=STAGED
+CLIENT_SYNC_DEADLINE_35S=STAGED_AS_ASSAY
+BROAD_ERR_REFACTOR=DEFERRED
 GATE_12_7=HELD
 CONTROLLED_RECOVERY=NOT_AUTHORIZED
 ORDINARY_SYNC=NOT_AUTHORIZED
