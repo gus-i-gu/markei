@@ -3,12 +3,13 @@
 > Sequence: FLX-PRN-03 recovery-economy pruning after FLX-PRM-04 reconciliation
 > Role: Main Chat
 > Branch: `cycle10-intermid-grimoire`
-> Pruning baseline: `7a59bc8b2db4016bd42ca89df0cf2286cd64b755`
+> Reconciliation baseline: `52ea09c9e08380fb7c2a85b58ae9909385bd3bdc`
 > Authority: human-directed J pruning and current-state rearrangement
 > Writable surface: this file only
 > Evidence boundary: repository and accepted human-operated evidence through
 > the Gate 12.6 copied-database classification
-> Status: **CYCLE 10 OPEN; GCM-02 GATE 12.6 CORRELATION PENDING**
+> Status: **CYCLE 10 OPEN; GCM-02 GATE 12.6 PASS; GATE 12.7
+> AUTHORIZATION PENDING**
 
 ## 1. Recovery entrypoint
 
@@ -44,10 +45,10 @@ Retain these ownership boundaries:
 ```text
 Repository: gus-i-gu/markei
 Active branch: cycle10-intermid-grimoire
-Current pruning baseline: 7a59bc8b2db4016bd42ca89df0cf2286cd64b755
+Current reconciliation baseline: 52ea09c9e08380fb7c2a85b58ae9909385bd3bdc
 Cycle: 10
 Active closure unit: MCG-02 / user-facing GCM-02
-Active gate: 12.6 copied-database transition correlation
+Active gate: 12.7 one-action human authorization
 ```
 
 The branch contains the GRM execution interface, hosted Sync
@@ -58,15 +59,9 @@ The old `intermid-cycle-recovery` branch carried earlier J reconciliations.
 Their accepted meaning has already been reconciled into this branch. Do not
 merge that historical branch merely to recover J content.
 
-Parallel-work rule:
-
-- the J pruning commit and the current Codex G/H/I materialization may be
-  developed from the same baseline;
-- integrate them by rebasing or merging one complete commit onto the other;
-- never copy individual files across histories or force-push over either
-  commit;
-- stop if both commits unexpectedly change J or the same G/H/I/GRM
-  lines.
+The earlier parallel J/Codex and GRM-refactor rounds are integrated in the
+current branch baseline. Do not replay their local-equivalent commits onto this
+branch.
 
 ## 3. Cycle 10 consolidated panorama
 
@@ -188,10 +183,11 @@ GRM-SQLITE-03 -> read-only sanitized copied-database classification
 GRM-SQLITE-04 -> materialized read-only sanitized device-scope correlation
 ```
 
-All four procedures are materialized. The first three have human-observed
-results; `GRM-SQLITE-04` remains unexecuted against the preserved copy. The
-copy is `markei-gate-12-6-current`; it must remain unchanged until the
-scope-correlation evidence is interpreted.
+All four procedures are materialized and have human-observed results.
+`GRM-SQLITE-04` queried only the preserved verified copy and completed the
+device-scope correlation without Retry, Sync, provider action, mutation or
+cleanup. Preserve `markei-gate-12-6-current` unchanged through the controlled
+operation and post-operation reconciliation.
 
 ### 4.2 Flutter synchronization authorities
 
@@ -220,10 +216,12 @@ requires server behavior. Do not infer hosted state from source capability.
 
 ## 5. GCM-02 current state
 
-GCM-02 owns the controlled exact-identity hosted Sync resolution. Gates
+GCM-02 owns the controlled exact-identity hosted recovery resolution. Gates
 12.1–12.5 established hosted readiness, metadata, alignment, exact binding
-and an immutable pre-operation baseline. Gate 12.6 now determines the exact
-eligible transition and evidence packet before any human authorization.
+and an immutable pre-operation baseline. Gate 12.6 has now determined the
+exact eligible transition and recovery boundary. Gate 12.7 is the explicit
+human authorization boundary for exactly one `Retry unresolved submission`
+coordinator action; it is not ordinary Sync authorization.
 
 ### 5.1 Accepted Gate 12.6 copied-database evidence
 
@@ -292,24 +290,49 @@ predates that correction. The pairing is historically coherent with the
 older fallback, but this is not executable row-level provenance and must not
 be silently rewritten.
 
-### 5.3 Exact remaining Gate 12.6 question
+### 5.3 Gate 12.6 device-scoped correlation
 
-Gate 12.6 no longer waits on queue-classification evidence. It remains open
-only for device-scoped transition correlation:
+Human execution of `GRM-SQLITE-04` against the preserved verified copy
+returned:
 
-- which anonymized Device scope owns the active failed submission;
-- that Device scope's `next_sequence`;
-- how the six other pending events divide across anonymized Device scopes;
-- which events the next coordinator upload would include;
-- whether immutable request identity/hash reuse is safely verifiable;
-- the exact transition from failed recovery through supersession, pending
-  upload, download and acknowledgement.
+```text
+SQLite quick check: ok
+observed Device scopes: 3
+hosted/enrolled scope rank: 3
+hosted scope next_sequence: 3
+failed candidate submission: failed / notApplied
+legacy response/error: conflict / service-unavailable
+candidate members: 2
+candidate positions: 0–1, contiguous
+candidate sequences: 1–2, contiguous
+candidate member state: failed
+same-hash superseded submissions: 0
+same-hash active submissions: 0
+simulated first upload count: 2
+candidate events in first upload: 2
+other pending events in hosted scope: 0
+first upload contains only candidate events: true
+other non-hosted pending work: rank 1 = 1; rank 2 = 5
+latest Sync: sync-unavailable / provider-evidence-unavailable
+```
 
-Codex concluded that the aggregate evidence cannot resolve these facts safely
-and materialized `GS-SQLITE-04` plus `GRM-SQLITE-04`. Disposable zero-, one-,
-and multi-device fixture validation passed. The procedure has not been run
-against the preserved human copy; that read-only human step remains the next
-evidence action. Codex did not query or copy the human database.
+The output proves:
+
+- the hosted/enrolled Device scope is anonymized rank 3;
+- it owns exactly the failed two-event lineage at sequences 1–2;
+- its next local Device sequence is 3;
+- the six other pending events belong only to non-hosted ranks 1 and 2;
+- failed recovery would make exactly the two candidate events the first
+  bounded upload;
+- no active or superseded submission shares the candidate request hash;
+- no latest provider result exists because the latest Sync stopped without
+  HTTP status or response headers.
+
+The procedure queried no live database and selected no Retry or Sync. Gate
+12.6 evidence collection and correlation are complete. The local SQLite
+snapshot and the earlier Neon checkpoint are not contradictory: they describe
+different sides and times of a failed/notApplied boundary, while the latest
+Sync obtained no fresh provider evidence.
 
 ### 5.4 Gate terminals
 
@@ -320,7 +343,8 @@ GCM02_12_3_ALIGNMENT_PASS_AT_INSPECTED_CHECKPOINT
 GCM02_12_4_EXACT_BINDING_PASS
 GCM02_12_5_PROVIDER_BASELINE_PASS
 GCM02_12_6_COPIED_DATABASE_PROBE_PASS
-GCM02_12_6_DEVICE_SCOPED_CORRELATION_PENDING
+GCM02_12_6_DEVICE_SCOPED_CORRELATION_PASS
+GCM02_12_6_PASS
 GCM02_12_7_HUMAN_AUTHORIZATION_PENDING
 GCM02_12_8_CONTROLLED_OPERATION_HELD
 GCM02_12_9_POST_OPERATION_COMPARISON_HELD
@@ -343,38 +367,100 @@ Gate 12.7 authorization: NOT GRANTED
 GCM-02 closure: NOT GRANTED
 ```
 
-Keep Markei closed and preserve the copied database unchanged. Do not execute
-ad hoc SQL.
+Keep Markei closed and preserve the copied database unchanged until the Gate
+12.7 packet is reviewed. Do not execute ad hoc SQL.
 
-## 6. Immediate continuation
+## 6. Immediate continuation — Phase 12.7
 
-The evidence-only Codex round is complete. It reconciled the copied-database
-observation into G/H/I, proved the bounded legacy mapping explanation, traced
-the coordinator transition, demonstrated that aggregate evidence cannot
-resolve the remaining Device scope, materialized and fixture-validated
-`GS-SQLITE-04`, and prepared a Gate 12.7 skeleton with unresolved fields
-`PENDING`.
+Gate 12.6 is closed. No new source or procedure materialization is required
+before the authorization decision, so D/E/F remain the completed Gate 12.6
+materialization authority and Codex is not required to act now.
 
-The next Gate 12.6 evidence action is limited to:
+Phase 12.7 prepares and reviews one exact authorization packet. The packet
+proposes exactly one human-confirmed `Retry unresolved submission` action for
+the failed/notApplied hosted-scope lineage. It does not authorize ordinary
+Sync, Repair, Enroll, a second Retry, provider-console mutation, database
+editing, cleanup or GCM-02 closure.
 
-1. publish and pull the integrated GRM refactor;
-2. verify the expected branch/head and clean worktree;
-3. keep Markei closed;
-4. preserve `markei-gate-12-6-current` unchanged;
-5. copy and run only `GRM-SQLITE-04` from `documentation/GRM.md`;
-6. return only the procedure's sanitized output for Main reconciliation;
-7. perform no Retry, ordinary Sync, Enroll, provider action, ad hoc SQL,
-   database repair, cleanup, or deletion.
+### 6.1 Required pre-authorization freshness
 
-After that output is reconciled, Main must either:
+Before asking for authorization:
 
-- close Gate 12.6 and complete the Gate 12.7 authorization packet; or
-- keep Gate 12.6 open with the exact unresolved field and the next
-  non-mutating evidence requirement.
+1. keep Markei closed;
+2. preserve `markei-gate-12-6-current` unchanged;
+3. verify a clean `cycle10-intermid-grimoire` worktree at the reconciled
+   branch tip;
+4. verify the intended Render service remains ready at the accepted revision;
+5. verify Auth0 issuer/audience metadata and the intended authenticated
+   principal without exposing tokens;
+6. verify the exact enrolled Device binding remains active;
+7. run only the documented read-only Neon/provider pre-operation check needed
+   to confirm the accepted 12.5 baseline has not drifted;
+8. stop on any revision, identity, membership, Device, cursor, submission,
+   event, acknowledgement, readiness or configuration mismatch.
 
-The Gate 12.7 packet is a proposal until the human explicitly authorizes one
-bounded operation. Gate 12.8 and all later mutation/post-operation steps remain
-held.
+Freshness checks are evidence gathering, not authorization. If they require a
+new script or source correction, stop and stage a new Codex unit instead of
+improvising commands.
+
+### 6.2 Authorization packet
+
+Present the following resolved packet to the human:
+
+```text
+Operation: exactly one Retry unresolved submission
+Target: anonymized hosted/enrolled Device scope rank 3
+Local candidate: failed / notApplied
+Legacy response/error: conflict / service-unavailable
+Candidate event count: 2
+Candidate sequence range: 1–2
+Candidate positions: 0–1
+Candidate pre-state: failed
+Candidate Device next_sequence: 3
+Other pending events in target scope: 0
+Other pending events outside target scope: 6
+First recovery upload: exactly the 2 candidate events
+Same-hash active/superseded submission count: 0 / 0
+Ordinary Sync: not authorized
+Repair or Enroll: not authorized
+Second action: prohibited without a new reconciliation
+```
+
+The packet must also carry the fresh Git/Render/Auth0/Device/provider-baseline
+results, the sanitized candidate fingerprint produced by the approved UI
+preflight, expected API operations, accepted success and duplicate terminals,
+mandatory stop terminals, and the evidence-capture order.
+
+### 6.3 Human decision
+
+Open Native Closure only after the packet is complete. Refresh Diagnostics,
+confirm authentication and exact Device enrollment, select `Retry unresolved
+submission`, inspect the non-mutating preflight, and cancel if any displayed
+fingerprint, range, count or state differs from the packet.
+
+Anything other than an explicit authorization for this exact one-action packet
+means no authorization. Authorization from an earlier build, migration,
+provider inspection, authentication check or preflight does not carry over.
+
+### 6.4 Controlled action and immediate stop
+
+Only after explicit authorization:
+
+1. perform exactly one `Retry unresolved submission`;
+2. do not press ordinary Sync, Repair, Enroll or Retry again;
+3. record the sanitized UI terminal and timestamps;
+4. close Markei after the action reaches a terminal or stop condition;
+5. preserve the post-operation local database unchanged;
+6. begin Gate 12.8 evidence capture in the specified order.
+
+Stop immediately without a second action on configuration/authentication
+failure, Device or membership mismatch, ambiguous candidate, unexpected
+sequence/count/fingerprint, provider unavailability, absent/ambiguous response,
+unexpected HTTP/protocol result, partial local transition, or any provider
+baseline drift.
+
+Gate 12.7 remains pending until the complete packet is presented and explicitly
+authorized. Gates 12.8–12.10 remain held.
 
 ## 7. GCM-03 provisional boundary
 
@@ -447,9 +533,10 @@ to bypass Cycle 10 closure.
 | Gate 12.6 copied-database probe passed       | Human-operated accepted, read-only copied-database evidence           |
 | Failed/notApplied lineage is known           | Accepted from sanitized copied-database output                        |
 | Legacy response pairing is explained         | Source/history-consistent, not row-proven                             |
-| Exact device-scoped next transition is known | Pending human `GRM-SQLITE-04` evidence                                |
+| Exact device-scoped next transition is known | Accepted from human-operated read-only `GRM-SQLITE-04` evidence       |
 | Retry is eligible                            | Rejected; unknown-retry path is inapplicable                          |
 | Ordinary Sync is a safe substitute           | Rejected; six other pending events exist                              |
+| Gate 12.7 packet is ready                    | Prepared; freshness and UI preflight fields still required            |
 | Gate 12.7 is authorized                      | Rejected                                                              |
 | GCM-02 is closed                             | Rejected                                                              |
 | GCM-03 or GCM-04 is active                   | Rejected                                                              |
@@ -1955,5 +2042,87 @@ GCM02_12_7_HUMAN_AUTHORIZATION_PENDING
 RETRY_UNAUTHORIZED
 ORDINARY_SYNC_UNAUTHORIZED
 PROVIDER_ACTION_UNAUTHORIZED
+GCM02_OPEN
+```
+
+## Append-only reconciliation entry — 2026-07-25 — Gate 12.6 device-scope closure
+
+### Sequence identity
+
+```text
+Sequence: FLX-PRM-04 Main reconciliation
+Round: C10-GCM02-GATE-12.6-DEVICE-SCOPE-CLOSURE
+Branch baseline: 52ea09c9e08380fb7c2a85b58ae9909385bd3bdc
+Human evidence: sanitized GS-SQLITE-04 output
+Provider action: none
+Live database access: none
+Retry or ordinary Sync: none
+Gate authority change: Gate 12.6 PASS; Gate 12.7 remains unauthorized
+```
+
+Claim: the remaining failed lineage is correlated to one Device scope.
+
+Prior state: Gate 12.6 was open for exact anonymized scope ownership,
+`next_sequence`, other-pending-work partition and simulated first-upload
+membership.
+
+Evidence: the human-operated read-only copied-database procedure found three
+Device scopes. Rank 3 is the hosted/enrolled scope, has `next_sequence=3`, and
+owns the failed/notApplied two-event candidate at contiguous sequences 1–2 and
+positions 0–1.
+
+Evidence boundary: the procedure queried only the preserved verified SQLite
+copy with quick-check already OK. It did not query the live database, select
+Retry or Sync, contact a provider, mutate data or clean anything.
+
+Contradiction: none. The six other pending events divide across non-hosted
+rank 1 (one event) and rank 2 (five events). The hosted scope has no other
+pending work.
+
+Semantic owner: Main GCM-02 gate reconciliation.
+
+Target role: Gate 12.6 device-scoped transition correlation.
+
+Resulting state: accepted PASS. Simulated recovery places exactly the two
+candidate events in the first upload; no active or superseded submission has
+the same request hash.
+
+History disposition: the earlier Gate 12.6 pending terminals remain historical
+and are superseded for current recovery by this entry and the mutable prefix.
+
+Claim: the latest local Sync proves a fresh provider contradiction.
+
+Prior state: unresolved because the copied database stores
+`sync-unavailable / provider-evidence-unavailable`.
+
+Evidence: the latest attempt has no HTTP status and no response headers.
+
+Evidence boundary: local observational classification only.
+
+Contradiction: rejected. No fresh provider comparison occurred, so the local
+failed/notApplied lineage and earlier Neon checkpoint describe different
+sides/times of the boundary rather than proven conflicting state.
+
+Semantic owner: Gate 12.7 pre-operation freshness packet.
+
+Target role: provider-baseline interpretation.
+
+Resulting state: fresh provider readiness and baseline must be rechecked before
+authorization; no database repair is justified by the present evidence.
+
+History disposition: preserved as the reason 12.7 requires freshness checks.
+
+Current terminals:
+
+```text
+GCM02_12_6_COPIED_DATABASE_PROBE_PASS
+GCM02_12_6_DEVICE_SCOPED_CORRELATION_PASS
+GCM02_12_6_PASS
+GCM02_12_7_PACKET_PREPARATION_ACTIVE
+GCM02_12_7_HUMAN_AUTHORIZATION_PENDING
+RETRY_UNAUTHORIZED
+ORDINARY_SYNC_UNAUTHORIZED
+REPAIR_UNAUTHORIZED
+PROVIDER_MUTATION_UNAUTHORIZED
 GCM02_OPEN
 ```
