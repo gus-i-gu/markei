@@ -1,16 +1,17 @@
 # J_MAIN_STAGE — Cycle 10 active reconciliation
 
-> Sequence: FLX-PRM-04 ERR-04 materialization reconciliation
+> Sequence: FLX-PRM-04 Gate 12.7 conclusion and DIAG-01 activation
 > Role: Main Chat
 > Branch: `cycle10-intermid-grimoire`
-> Reconciliation baseline: `bb4e579612d36924e266872c351449bc0becc30f`
-> Authority: human-directed Main reconciliation of pre-approved D/E/F
-> Writable surface: J reconciliation only
-> Evidence boundary: remote ten-file patch, replacement G/H/I, repository
-> inspection and local validation reports; no new Windows, Render, Auth0,
-> Neon, provider, Sync, Retry or recovery action
-> Status: **CYCLE 10 OPEN; C10-GCM02-S12-ERR-04 SOURCE ACCEPTED,
-> HOST-UNVALIDATED; GATE 12.7 HELD**
+> Reconciliation baseline: `cf405347b6fdc58bf0da698a1f07028e05ccd471`
+> Authority: human-directed Main reconciliation and synchronized D/E/F
+> Writable surface: J plus D/E/F staging
+> Evidence boundary: ERR-04 source/tests, sanitized Windows client screenshots,
+> `REC_DIAGNOSTICS.md` Records 004–006, warm readiness and one corrected
+> ordinary-Sync control; no provider-row, second-Device, Retry, recovery,
+> migration, Auth0, Neon, or new live action
+> Status: **CYCLE 10 OPEN; GATE 12.7 PASSED AT CORRECTED SINGLE-CLIENT
+> CONTROL SCOPE; DIAG-01 ACTIVE; GATE 12.8 NEXT READ-ONLY**
 
 ## 1. Recovery entrypoint
 
@@ -46,14 +47,15 @@ Retain these ownership boundaries:
 ```text
 Repository: gus-i-gu/markei
 Active branch: cycle10-intermid-grimoire
-Current reconciliation baseline: bb4e579612d36924e266872c351449bc0becc30f
+Current reconciliation baseline: cf405347b6fdc58bf0da698a1f07028e05ccd471
 Cycle: 10
 Active closure unit: MCG-02 / user-facing GCM-02
 Latest completed corrective unit: C10-GCM02-S12-ERR-04 recovery-boundary and
 observability correction
-Active materialization unit: none; ERR-04 source is accepted and host-unvalidated
-Active gate: exact corrected-revision deployment and controlled hosted
-acceptance before Gate 12.7 conclusion; Gate 12.7 remains held
+Latest accepted gate: Gate 12.7 corrected single-client control
+Active materialization unit: C10-GCM02-S12-DIAG-01 diagnostics consolidation
+Active gate: Gate 12.8 read-only provider/result reconciliation; no second
+Sync, Retry, recovery, enrollment, migration, or provider mutation
 ```
 
 The branch contains the GRM execution interface, hosted Sync
@@ -224,8 +226,9 @@ clients/markei_flutter/lib/infrastructure/local/sync/local_sync_repositories.dar
 clients/markei_flutter/lib/domain/sync/sync_event.dart
 ```
 
-`hosted_sync_coordinator.dart` owns ordinary Sync's broad
-recovery-to-upload-to-download-to-acknowledgement transition.
+`hosted_sync_coordinator.dart` owns ordinary Sync's
+authentication-to-binding-to-pending-upload-to-download-to-acknowledgement
+transition. ERR-04 removed failed/notApplied recovery from this ordinary path.
 `failed_not_applied_recovery_coordinator.dart` owns REC-01's narrower exact
 candidate recovery-to-one-upload terminal and intentionally has no download or
 acknowledgement dependency. Local repositories own durable
@@ -245,17 +248,25 @@ requires server behavior. Do not infer hosted state from source capability.
 
 ## 5. GCM-02 current state
 
-GCM-02 owns the controlled exact-identity hosted recovery resolution. Gates
-12.1–12.5 established hosted readiness, metadata, alignment, exact binding
-and an immutable pre-operation baseline. Gate 12.6 has now determined the
-exact eligible transition and recovery boundary. The read-only Gate 12.7
-inspection passes, and REC-01 now provides a dedicated bounded
-failed/notApplied executor validated only through local/disposable boundaries.
-The fresh Windows inspection and confirmation-cancellation assay passed
-without queue/provider mutation. A later readiness-only assay preserved the
-candidate but exposed a separate semantic defect: a completed readiness check
-advanced the UI's “Last successful sync” timestamp. Main therefore activates
-SYNC-01 before preparing any execution packet.
+GCM-02 remains open, but Gate 12.7 now passes at the corrected single-client
+control scope. ERR-04 is source-accepted and locally validated. The subsequent
+Windows packet proves one warm hosted-readiness terminal and one ordinary Sync
+terminal with queue `0/0/0/0`, Next Device sequence `3`, Last successful Sync
+advanced only by ordinary Sync, and no failed-recovery phase in the newest
+operation. The first cold readiness attempt remains an unresolved wake-up
+tolerance observation.
+
+Gate 12.7 does not claim direct provider-row contents, complete Render
+child-request correlation, or second-Device convergence. Those evidence
+families remain explicit later gates. Gate 12.8 is therefore next as a
+read-only provider/result reconciliation and must issue no second Sync, Retry,
+recovery, enrollment, migration, or provider mutation.
+
+The newest Sync's 13 displayed rows are ordered lifecycle declarations, not 13
+errors. Their flat presentation is a UI comprehension defect. Main activates
+`C10-GCM02-S12-DIAG-01` to consolidate Status, Query, and Refresh diagnostics
+and to group lifecycle evidence by parent operation without changing protocol,
+schema, API, or provider state.
 
 ### 5.1 Accepted Gate 12.6 copied-database evidence
 
@@ -4926,8 +4937,6 @@ GCM03=UNDEFINED_INACTIVE
 GCM04=UNDEFINED_INACTIVE
 CYCLE10_CLOSURE=BLOCKED_BY_GCM02
 ```
-
-
 ## 2026-07-26 — ERR-04 materialization reconciliation
 
 ### Sequence envelope
@@ -5107,6 +5116,183 @@ CORRECTED_RENDER_DEPLOYMENT=NEXT
 READINESS_CONTROL=PENDING
 ORDINARY_SYNC_NO_RECOVERY_CONTROL=PENDING
 GATE_12_8=HELD
+GATE_12_9=HELD
+GATE_12_10=HELD
+GCM03=UNDEFINED_INACTIVE
+GCM04=UNDEFINED_INACTIVE
+CYCLE10_CLOSURE=BLOCKED_BY_GCM02
+```
+
+## 2026-07-26 — Gate 12.7 conclusion and DIAG-01 activation
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04 → FLX-ORD-01
+Role: Main Chat [M]
+Hierarchy: Cycle 10 → GCM-02 → Step 12 → Gate 12.7 conclusion
+Next gate: Gate 12.8 read-only provider/result reconciliation
+Materialization unit: C10-GCM02-S12-DIAG-01
+Branch: cycle10-intermid-grimoire
+Inspected HEAD: cf405347b6fdc58bf0da698a1f07028e05ccd471
+Evidence: ERR-04 source/G/H/I; sanitized client screenshots;
+          REC_DIAGNOSTICS.md Records 004–006
+Writable surface: mutable J prefix, append-only Legacy_Progress, D/E/F
+Disposition: GATE 12.7 PASS AT CORRECTED SINGLE-CLIENT CONTROL SCOPE;
+             DIAG-01 ACTIVE; GATE 12.8 NEXT READ-ONLY
+```
+
+### Assay reconciliation
+
+The corrected client packet establishes:
+
+| Control or invariant | Result | Evidence boundary |
+| --- | --- | --- |
+| warm `Check hosted connection` | PASS | second warm attempt reached `hosted-connection-ready`, HTTP 200, headers received, response parsed, `<1s` |
+| cold readiness tolerance | OPEN | first attempt timed out before a trusted response; no exact Render correlation supplied |
+| ordinary Sync | PASS | one `sync-completed` client operation |
+| implicit failed/notApplied recovery | ABSENT IN NEWEST OPERATION | no `failed-recovery` phase under operation `d723c1f392f3` |
+| queue invariant | PASS | `0 pending / 0 uploading / 0 failed / 0 unknown` before and after |
+| Next Device sequence | PASS | remained `3` because no new local Device event was allocated |
+| Last successful Sync | PASS | unchanged by diagnostics/readiness; advanced only by ordinary Sync |
+| 35000 ms client deadline | PRESERVED | displayed by corrected client projection |
+| provider-row state | UNPROVED | belongs to Gate 12.8/12.9 evidence |
+| complete client-child/Render pairing | UNPROVED IN SCREENSHOT PACKET | carry to read-only result reconciliation |
+| second-Device convergence | UNPROVED | later gate; not Gate 12.7 |
+
+### PRC-01 classifications
+
+```text
+Claim: Gate 12.7 corrected single-client control may close
+Source: ERR-04 implementation/test evidence plus corrected Windows controls
+Current state: host-unvalidated before the assay
+Evidence: warm readiness terminal; one ordinary sync-completed terminal;
+          unchanged empty queue and Next Device sequence; advanced
+          Last successful Sync; no recovery phase in newest operation
+Evidence boundary: single Windows client and client-visible hosted control;
+                   no direct provider rows or second Device
+Contradictions: cold-start tolerance remains unresolved; full Render child
+                correlation not supplied
+Semantic owner: Main GCM-02 Gate 12.7
+Target role: J current recovery state and append-only Legacy_Progress
+History disposition: append; preserve prior held/defect entries
+Confidence: sufficient for revised Gate 12.7 single-client control boundary
+Human/Main authority: user requested conclusion and transition assessment
+Required regeneration: mutable J prefix and synchronized D/E/F
+Result: GATE 12.7 PASSED; bounded exclusions carried forward
+```
+
+```text
+Claim: the 13 displayed entries are 13 Sync errors
+Source: flat Recent diagnostic timeline presentation
+Current state: user-observed anomaly
+Evidence: all rows share the newest operation fingerprint, follow ordered
+          causal phases, contain paired pre-result/result declarations and end
+          in sync-completed; no failed-recovery phase occurs
+Evidence boundary: sanitized client screenshot packet and current source
+Contradictions: older preserved operations contain recovery rows but own a
+                different parent fingerprint
+Semantic owner: Closure diagnostic projection
+Target role: DIAG-01 UI correction
+History disposition: append; do not erase valid lifecycle rows
+Confidence: high
+Human/Main authority: explicit request to correct the presentation
+Required regeneration: D/E/F and later G/H/I
+Result: REJECTED AS FAILURE COUNT; ACCEPTED AS PRESENTATION DEFECT
+```
+
+```text
+Claim: Next Device sequence should advance when Sync succeeds
+Source: unchanged displayed value `3`
+Current state: suspected defect
+Evidence: queue empty; no new local event created; sequence is a local event
+          allocator rather than an action/request counter
+Evidence boundary: client state plus accepted sequence invariant
+Contradictions: none
+Semantic owner: local Device event allocation
+Target role: preserved invariant and concise UI guidance
+History disposition: append
+Confidence: high
+Human/Main authority: Main reconciliation
+Required regeneration: DIAG-01 tests/projection only
+Result: REJECTED; value `3` is correct
+```
+
+### DIAG-01 accepted implementation direction
+
+Main activates synchronized D/E/F for:
+
+```text
+UNIT=C10-GCM02-S12-DIAG-01
+TOP_LEVEL_CONTROLS=status + query + refresh diagnostics
+REPLACEMENT_CONTROL=Diagnostics
+DEFAULT_TIMELINE=operation-grouped compact phase summaries
+RAW_TIMELINE=preserved under expandable technical view
+READINESS=separate
+ORDINARY_SYNC=separate
+RETRY_AND_RECOVERY=separate
+SCHEMA_CHANGE=NO
+API_CHANGE=NO
+PROVIDER_ACTION=NO
+LIVE_ASSAY=NO
+```
+
+The consolidated Diagnostics action must preserve distinct authentication,
+enrollment/binding and local-snapshot subcheck results. Consolidation is a
+presentation/orchestration decision, not permission to collapse their meanings
+or to add a provider request.
+
+### Gate 12.8 transition
+
+Gate 12.8 may now open as the next read-only evidence gate:
+
+1. freeze the accepted Gate 12.7 client packet and exact branch lineage;
+2. correlate any already available sanitized Render lifecycle lines without
+   issuing a new client action;
+3. run only the separately approved read-only provider/result comparison;
+4. compare allowlisted counts, cursor/sequence/acknowledgement and lifecycle
+   state;
+5. preserve unknown or contradictory results without a second action;
+6. do not use Sync, Retry, failed/notApplied recovery, Enroll, migration,
+   provider-console mutation, or database editing.
+
+DIAG-01 source materialization may proceed before the Gate 12.8 provider read.
+It does not itself execute Gate 12.8 and must not alter the frozen assay
+evidence.
+
+### Next operational order
+
+```text
+1. publish J + D/E/F staging
+2. seed Codex on exact staging SHA
+3. Codex materializes DIAG-01 and replaces G/H/I
+4. Main reconciles the exact patch and validation
+5. preserve Gate 12.7 as passed; do not rerun it merely for UI presentation
+6. prepare the exact read-only Gate 12.8 evidence packet
+7. obtain explicit authorization for any connector/provider read that needs it
+8. collect and reconcile Gate 12.8 without a second Sync/Retry/recovery action
+```
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=OPEN_ACTIVE
+STEP12=OPEN_ACTIVE
+GATE_12_6=PASSED_IN_PRIOR_SCOPE
+GATE_12_7=PASSED_CORRECTED_SINGLE_CLIENT_CONTROL_SCOPE
+WARM_HOSTED_READINESS=PASS
+COLD_START_READINESS_TOLERANCE=OPEN
+CORRECTED_ORDINARY_SYNC=PASS
+NEWEST_OPERATION_IMPLICIT_RECOVERY=ABSENT
+QUEUE_INVARIANT=PASS
+NEXT_DEVICE_SEQUENCE_INVARIANT=PASS
+LAST_SUCCESSFUL_SYNC_INVARIANT=PASS
+THIRTEEN_ROWS=ORDERED_LIFECYCLE_NOT_THIRTEEN_ERRORS
+DIAG_01=ACTIVE_CODEX_AUTHORIZED
+DIAGNOSTICS_TOP_LEVEL_CONTROL=CONSOLIDATE_STATUS_QUERY_REFRESH
+READINESS_AND_SYNC=REMAIN_SEPARATE
+GATE_12_8=NEXT_READ_ONLY_PROVIDER_RESULT_RECONCILIATION
 GATE_12_9=HELD
 GATE_12_10=HELD
 GCM03=UNDEFINED_INACTIVE

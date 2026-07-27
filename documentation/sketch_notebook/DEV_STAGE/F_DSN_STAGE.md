@@ -1,216 +1,151 @@
-# F_DSN_STAGE — Explicit recovery command boundary and paired observability
+# F_DSN_STAGE — DIAG-01 projection boundaries
 
-Sequence: FLX-ORD-01 — Ordinary Sequence
-Role: Codex Design materialization authority
-Hierarchy: Cycle 10 → GCM-02 → Step 12 → Gate 12.7 pre-authorization
-Unit: C10-GCM02-S12-ERR-04
-Parent sequence: C10-GCM02-S12-SYNC-01
-Branch: `cycle10-intermid-grimoire`
-Required ancestry: `27e1b77b81f658b5e704e46923ea48cce2274b3a`
-Status: **ACTIVE — SOURCE MATERIALIZATION ONLY; PROVIDER EXECUTION PROHIBITED**
+> Sequence: FLX-ORD-01 — Ordinary Sequence
+> Role: Main-approved Design materialization stage
+> Unit: `C10-GCM02-S12-DIAG-01`
+> Branch: `cycle10-intermid-grimoire`
+> Required ancestry: `cf405347b6fdc58bf0da698a1f07028e05ccd471`
+> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
+> Evidence boundary: Flutter UI/projection correction only
 
-## 1. Architectural finding
+## 1. Boundary decision
 
-Current source combines two command boundaries:
-
-```text
-ordinary Sync command
-└─ HostedSyncCoordinator.run()
-   ├─ authentication
-   ├─ binding
-   ├─ recoverFailedNotApplied()   ← implicit controlled-recovery crossover
-   ├─ upload pending
-   ├─ download/apply
-   └─ acknowledgement
-```
-
-The live assay proves that this is reachable: failed work fell from two to
-zero and the correlated upload route completed. The design must become:
+Implement one composition-facing Diagnostics command while preserving distinct
+internal responsibilities:
 
 ```text
-ordinary Sync command
-├─ authentication
-├─ binding
-├─ upload ordinary pending
-├─ download/apply
-├─ acknowledgement
-└─ aggregate terminal persistence
+Diagnostics command
+├─ authentication state projection
+├─ enrollment/binding state projection
+└─ local diagnostics snapshot projection
 
-controlled recovery command
-├─ read-only inspection
-├─ explicit confirmation
-├─ candidate/membership revalidation
-├─ one failed→recoverable transition
-├─ one bounded submission
-└─ recovery terminal persistence
+Hosted readiness command
+└─ separate network/readiness boundary
+
+Ordinary Sync command
+└─ separate stateful protocol boundary
 ```
 
-The commands may reuse lower-level transport and outbox primitives. They must
-not share an implicit entry point or silently invoke each other.
+The page owns orchestration and presentation. Existing runner/query ports own
+state access. Do not move provider, transport, queue, or persistence
+responsibility into widgets.
 
-## 2. State and sequence invariants
+## 2. Operation-aware projection
 
-Ordinary Sync:
-
-- may mutate ordinary pending/uploading rows according to the existing Sync
-  protocol;
-- must leave failed/notApplied and unknown candidates unchanged;
-- must not allocate a new sequence merely because Sync was pressed;
-- must not advance Next Device sequence when replaying an already allocated
-  event;
-- must not convert failed work into pending work.
-
-Controlled recovery:
-
-- acts on exactly one freshly revalidated candidate;
-- reuses its existing allocated member sequences;
-- never creates a duplicate sequence allocation;
-- remains explicit, confirmed and non-repeating.
-
-## 3. Paired observability architecture
-
-Preserve three declaration scopes:
+Build the display model from existing snapshot data:
 
 ```text
-client-operation
-client-phase
-server-request
+OperationDiagnosticGroup
+  parent fingerprint
+  attempt fingerprint
+  operation kind
+  temporal classification: newest/current or historical
+  aggregate terminal/status
+  latest proved phase
+  has genuine failure
+  compact phase summaries
+  raw events
 ```
 
-Identity model:
+A dedicated private view model/helper in the Closure page is acceptable. A
+small application-level projector is acceptable only if it materially improves
+testability and remains free of Flutter widgets. Avoid new layers or files
+unless the existing paths cannot own the logic coherently.
+
+Grouping and pairing must be deterministic:
+
+- never merge different parent fingerprints;
+- preserve ordinal order within one operation;
+- pair declarations only inside the same operation and phase;
+- prefer result-bearing evidence for compact presentation;
+- retain unpaired declarations truthfully;
+- determine failure from severity/terminal evidence, not from row count or MKS
+  prefix;
+- retain raw events unchanged.
+
+## 3. No persistence or protocol expansion
+
+The existing `ClosureDiagnosticEventSummary` carries sufficient grouping,
+ordinal, code, severity, outcome, phase, fingerprint, axis, and safe-action
+data. Do not add a Drift migration or server/API contract merely for UI
+grouping.
+
+Do not change:
+
+- diagnostic registry ownership;
+- lifecycle emission order;
+- transport headers;
+- server request identity;
+- Sync coordinator steps;
+- Retry/recovery coordinators;
+- Device sequence allocation;
+- Last successful Sync predicate.
+
+## 4. Diagnostics aggregate semantics
+
+The consolidated button is a read-only aggregate command, not an opaque
+success label. Its result must retain per-subcheck outcomes.
+
+Acceptable architecture:
 
 ```text
-parent operation identity
-├─ sanitized operation fingerprint shared across client and server
-├─ client child correlation fingerprint per outbound request
-└─ server request fingerprint per received route
+aggregate diagnostics result
+├─ authentication subcheck
+├─ enrollment/binding subcheck
+└─ local snapshot subcheck
 ```
 
-The full identities remain internal. Only sanitized fingerprints are public
-or logged.
+If one subcheck fails, project `partial` or the precise blocked state and show
+which subcheck failed. Do not let a later successful snapshot erase an earlier
+subcheck failure.
 
-Client observer ownership:
+Do not add provider calls to strengthen this aggregate. Hosted readiness remains
+the separate `Check hosted connection` action.
 
-- create/inject at the top-level Closure composition boundary;
-- pass through the runner/coordinator/phase recorder;
-- emit operation and phase declarations through one redacted projector;
-- use a test collector for deterministic assertions;
-- make the console sink failure-isolated;
-- state whether console output is enabled in debug/assay builds, release
-  builds or both.
-
-Server observer ownership remains the existing API lifecycle observer and
-`consoleLifecycleObserver`.
-
-Current source derives Render's `correlationFingerprint` from
-`FastifyRequest.id`, while the client also sends `x-correlation-id`. Preserve
-both identities as separately named sanitized fingerprints, or document and
-implement an equally explicit mapping. The parent operation fingerprint is
-already the proved aggregate join. Do not overwrite the server request
-identity with the client value or falsely claim they are identical.
-
-## 4. Aggregate evidence model
-
-Do not flatten child request evidence into nullable scalar fields on the
-parent attempt and then interpret null as failure.
-
-Preferred minimal model:
-
-```text
-ClientOperationSummary
-  resultCode
-  lastProvedPhase
-  elapsed/deadline
-  aggregate provider contact derived from all phases
-  aggregate trusted-response evidence derived from all phases
-  local/result persistence
-  parent operation fingerprint
-
-ClientPhaseEvidence[]
-  phase-local axes
-  child correlation fingerprint
-
-ServerRequestEvidence (external/log-correlated)
-  route
-  request terminal
-  HTTP status
-  server correlation fingerprint
-```
-
-No local provider request may be added merely to populate this model.
-Persisting more local diagnostic facts may use the existing schema only. If
-the correction requires a migration, stop and report the exact gap.
-
-## 5. Reachable result model
-
-Preserve ERR-03:
-
-```text
-sync-completed
-sync-no-new-events
-sync-rejected
-sync-server-timeout
-sync-failed
-```
-
-The current live run is `sync-completed`, not `sync-no-new-events`, because
-material upload work occurred. After the recovery crossover is removed, an
-ordinary run with no pending/download/acknowledgement work should reach the
-existing truthful no-work terminal according to the protocol’s actual
-semantics.
-
-Do not implement a server timeout without authoritative cancellation/rollback.
-The 35-second client deadline remains independent.
-
-## 6. Compatibility
+## 5. Compatibility and validation
 
 Preserve:
 
-- explicit failed/notApplied recovery UI and confirmation;
-- unknown-outcome Retry separation;
-- ERR-03 operation/correlation headers;
-- server request lifecycle JSON;
-- successful pending upload/download/acknowledgement;
-- local cursor and result persistence;
-- last-success predicate;
-- readiness separation;
-- diagnostic registry single ownership;
-- Drift v1–v12 compatibility;
-- no automatic retry;
-- no diagnostic-only network request.
+- constructor/composition compatibility unless a narrow cleanup is directly
+  required;
+- existing deep diagnostic history and redaction;
+- current MKS registry and generated projections;
+- explicit action guards;
+- compact/wide responsive behavior;
+- all ERR-04 recovery-boundary corrections.
 
-## 7. Validation
+Design tests must cover deterministic grouping, paired-phase reduction,
+historical separation, true-failure retention, raw-evidence expansion, and
+read-only aggregate behavior.
 
-Design validation must prove:
+No source outside Flutter Closure may change unless a directly required
+dependency is named in G/H/I and remains within this no-schema/no-API boundary.
 
-- command dependency direction prevents ordinary→controlled recovery calls;
-- controlled recovery can reuse lower-level primitives without being called
-  by ordinary Sync;
-- failed and unknown state invariants hold under ordinary Sync;
-- pending event behavior does not regress;
-- sequence allocation remains monotonic and replay-safe;
-- parent/child identity lineage matches the server log contract;
-- each server line exposes a separately owned client-child fingerprint and
-  server-request fingerprint when the client header is present;
-- aggregate evidence is derived from causal phases, not only the newest row;
-- null/not-persisted child HTTP metadata is not treated as transport failure;
-- console observer is redacted, injectable and failure-isolated;
-- no schema/provider/migration expansion occurred;
-- broad ERR refactoring remains deferred.
+## 6. I report
 
-Do not edit permanent design memory.
+Replace `I_DSN_CODEX.md` with:
 
-I terminal markers:
+- final command/responsibility map;
+- grouping model and deterministic rules;
+- files changed;
+- proof that protocol, schema, API, and provider boundaries did not expand;
+- validation evidence and unresolved UI/host risks.
+
+Terminal markers:
 
 ```text
-ORDINARY_CONTROLLED_RECOVERY_BOUNDARY=SEPARATED_OR_BLOCKED
-FAILED_STATE_INVARIANT=VALIDATED_OR_BLOCKED
-SEQUENCE_REPLAY_INVARIANT=VALIDATED_OR_BLOCKED
-CLIENT_OBSERVER_ARCHITECTURE=BOUNDARY_STABLE_OR_BLOCKED
-CLIENT_SERVER_LINEAGE=VALIDATED_OR_BLOCKED
-AGGREGATE_PHASE_EVIDENCE_MODEL=TRUTHFUL_OR_BLOCKED
-NO_DIAGNOSTIC_PROVIDER_CALL=PASS_OR_BLOCKED
-NO_SCHEMA_MIGRATION=PASS_OR_BLOCKED
-GATE_12_7=HELD
+DIAGNOSTICS_COMMAND_BOUNDARY=READ_ONLY_OR_BLOCKED
+DIAGNOSTICS_SUBCHECKS=SEPARATELY_PROJECTED_OR_BLOCKED
+OPERATION_GROUP_MODEL=DETERMINISTIC_OR_BLOCKED
+PHASE_PAIRING=TRUTHFUL_OR_BLOCKED
+TRUE_FAILURE_RETENTION=PASS_OR_BLOCKED
+RAW_EVENT_PRESERVATION=PASS_OR_BLOCKED
+HOSTED_READINESS_BOUNDARY=SEPARATE_OR_BLOCKED
+ORDINARY_SYNC_BOUNDARY=SEPARATE_OR_BLOCKED
+NO_SCHEMA_API_PROVIDER_EXPANSION=PASS_OR_BLOCKED
+GATE_12_7=PASSED_PRIOR_SCOPE
+GATE_12_8=NEXT_READ_ONLY
 GCM02=OPEN
 ```
+
+Do not edit permanent design memory.

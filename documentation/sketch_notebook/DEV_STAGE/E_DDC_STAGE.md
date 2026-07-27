@@ -1,148 +1,122 @@
-# E_DDC_STAGE — Recovery and evidence-scope vocabulary
+# E_DDC_STAGE — DIAG-01 diagnostic meaning
 
-Sequence: FLX-ORD-01 — Ordinary Sequence
-Role: Codex Didactic materialization authority
-Hierarchy: Cycle 10 → GCM-02 → Step 12 → Gate 12.7 pre-authorization
-Unit: C10-GCM02-S12-ERR-04
-Parent sequence: C10-GCM02-S12-SYNC-01
-Branch: `cycle10-intermid-grimoire`
-Required ancestry: `27e1b77b81f658b5e704e46923ea48cce2274b3a`
-Status: **ACTIVE — NARROW SOURCE MATERIALIZATION; LIVE ACTIONS HELD**
+> Sequence: FLX-ORD-01 — Ordinary Sequence
+> Role: Main-approved Didactic materialization stage
+> Unit: `C10-GCM02-S12-DIAG-01`
+> Branch: `cycle10-intermid-grimoire`
+> Required ancestry: `cf405347b6fdc58bf0da698a1f07028e05ccd471`
+> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
+> Evidence boundary: corrected Gate 12.7 client controls and sanitized
+> diagnostic record; no provider-state claim
 
-## 1. Accepted meaning
+## 1. Meaning correction
 
-Preserve these conclusions:
-
-- the 19:50 ordinary Sync completed at the aggregate client level;
-- upload, download and acknowledgement each completed at the server-request
-  level with authentication accepted and HTTP 200;
-- the shared operation fingerprint joins the aggregate client run to Render;
-- Render's current distinct correlation fingerprints identify server request
-  instances but do not yet prove the client's child correlation identity;
-- this proves one observed Sync lifecycle, not second-device convergence;
-- the unchanged Next Device sequence is correct because replay does not create
-  a new local event;
-- the ordinary action improperly crossed into controlled failed/notApplied
-  recovery;
-- technical success does not erase the authorization-boundary defect.
-
-## 2. Action vocabulary
-
-Keep these actions distinct in code, UI, tests and logs:
-
-| Action | Meaning |
-| --- | --- |
-| Ordinary Sync | upload ordinary pending work, download, apply and acknowledge |
-| Inspect failed/notApplied | read-only candidate diagnosis |
-| Recover failed/notApplied | explicitly confirmed bounded recovery |
-| Retry unknown outcome | separately controlled retry of an unknown outcome |
-| Hosted readiness | health/readiness route only |
-
-Do not call failed/notApplied recovery “ordinary upload” merely because it
-eventually used the submission route. Do not call ordinary Sync successful
-recovery authorization merely because the server accepted the request.
-
-## 3. Success wording
-
-For this assay, the accurate concise statement is:
+The UI must teach the correct distinction:
 
 ```text
-Ordinary Sync completed and every observed server request returned HTTP 200.
-The run also executed failed/notApplied recovery implicitly, so the recovery
-authorization boundary failed and the assay was not the intended empty-queue
-control.
+diagnostic declaration ≠ error
+operation group ≠ individual phase row
+pre-result unknown ≠ failed terminal
+duplicate-equivalent ≠ failure
+historical operation ≠ newest operation
+Next Device sequence ≠ Sync press counter
 ```
 
-Avoid:
+The newest successful ordinary Sync produced one operation with ordered causal
+phase declarations. The apparent “13 ERRs” are a presentation/comprehension
+defect, not evidence of 13 protocol failures.
+
+## 2. User-facing vocabulary
+
+Use one top-level action:
 
 ```text
-full convergence proved
-all synchronization gates passed
-empty Sync passed
-Gate 12.7 passed
+Diagnostics
 ```
 
-Those claims exceed the evidence.
+Within its result surface, retain separately named subchecks:
 
-## 4. Client/server evidence wording
+- Authentication;
+- Enrollment / Device binding;
+- Local queue and Next Device sequence;
+- Last Sync result and Last successful Sync;
+- Recovery guidance;
+- Recent operation summaries;
+- Devices and actionable events.
 
-Use:
+Keep these meanings separate:
 
-```text
-Client operation
-  owns aggregate Sync terminal and local persistence
+- `Diagnostics`: read-only client-state projection;
+- `Check hosted connection`: hosted readiness request;
+- `Sync`: stateful ordinary synchronization;
+- `Retry unknown-outcome submission`: explicit same-submission retry;
+- failed/notApplied inspection: read-only recovery preflight;
+- failed/notApplied recovery: explicit confirmed bounded mutation.
 
-Client phase
-  owns one local orchestration observation
+## 3. Default and technical views
 
-Server request
-  owns one received HTTP request and its terminal
-```
+Default view:
 
-Use explicit identity labels:
+- group by parent operation;
+- label newest/current and historical operations;
+- present a concise terminal and ordered phase summary;
+- show an explicit status such as `successful`, `failed`, `in progress`,
+  `unknown terminal`, or equivalent evidence-backed wording;
+- avoid using warning/error styling solely because an MKS code or pre-result
+  `unknown` exists.
 
-```text
-Operation
-Client child correlation
-Server request
-```
+Expandable technical view:
 
-Do not call a server-generated request fingerprint the client correlation.
+- retain every sanitized lifecycle row;
+- retain MKS/native codes and all causal axes;
+- retain parent and child fingerprints;
+- explain that raw declarations are ordered evidence, not an error count.
 
-An aggregate multi-request attempt has no single HTTP status/header result.
-When those fields are not applicable, say `not applicable—see child
-requests`, not `not observed` or `not received`.
+Do not hide a real failed severity or failed terminal. Presentation must reduce
+false alarm without converting failure evidence into success.
 
-Phase-local axes must be labelled as phase-local. A final observation with
-`provider contact=not-started` cannot be presented as the aggregate operation
-state after upload/download/acknowledgement were proved.
+## 4. Historical distinction
 
-## 5. Terminal presentation
+An older operation containing `MKS-REC-001` must remain recoverable as history,
+but its group must be clearly marked historical and separated from the newest
+ordinary Sync. Never blend events from different parent fingerprints into one
+apparent timeline.
 
-The Flutter terminal and Closure UI should make the paired evidence scannable:
+## 5. Sequence explanation
 
-```text
-operation #cf23...
-client terminal: sync-completed
-client elapsed/deadline
-latest client phase
-child server evidence: correlated in server logs
-safe next action
-```
+Preserve or add concise guidance near Next Device sequence:
 
-Render retains one structured line per server lifecycle event. Flutter gains
-equivalent sanitized client-operation/client-phase lines for local assay
-diagnosis.
+> The next sequence is allocated to a new local Device event. Diagnostics,
+> readiness, and Sync do not increment it by themselves.
 
-Never expose full IDs, secrets, headers, URLs, payload contents, SQL,
-exception messages or stack traces.
+Equivalent compact wording is acceptable.
 
-## 6. Tests
+## 6. Tests and H report
 
 Tests must prove:
 
-- action labels remain distinct;
-- ordinary Sync cannot silently mean controlled recovery;
-- successful request wording remains request-scoped;
-- aggregate client success remains client-scoped;
-- unavailable child evidence is not described as a received/transport
-  failure;
-- phase-local and aggregate evidence are visibly different;
-- client-child and server-request identities are separately labelled;
-- terminal lines remain compact and redacted;
-- existing five-result and timeout-owner meanings remain unchanged.
+- the single Diagnostics label and separate readiness/Sync labels;
+- subcheck meaning remains visible;
+- a 13-row successful operation is summarized as one successful operation;
+- paired pre/result declarations do not create a false failure;
+- a genuine failed terminal remains visibly failed;
+- historical recovery rows cannot be mistaken for the newest Sync;
+- raw technical evidence is accessible;
+- no secrets/raw identifiers appear.
 
-Do not edit permanent didactic memory.
-
-H terminal markers:
+Replace `H_DDC_CODEX.md` with materialized vocabulary, comprehension tests,
+evidence limits, and terminal markers:
 
 ```text
-ORDINARY_SYNC_RECOVERY_MEANING=SEPARATE_OR_BLOCKED
-TECHNICAL_SUCCESS_AUTHORIZATION_MEANING=SEPARATE_OR_BLOCKED
-CLIENT_PHASE_SERVER_REQUEST_SCOPES=VISIBLE_OR_BLOCKED
-AGGREGATE_HTTP_WORDING=TRUTHFUL_OR_BLOCKED
-NEXT_SEQUENCE_REPLAY_MEANING=ALIGNED_OR_BLOCKED
-TERMINAL_LOG_REDACTION=VALIDATED_OR_BLOCKED
-GATE_12_7=HELD
-GCM02=OPEN
+DIAGNOSTIC_DECLARATIONS_NOT_ERROR_COUNT=VISIBLE_OR_BLOCKED
+OPERATION_PHASE_HIERARCHY=VISIBLE_OR_BLOCKED
+PRE_RESULT_UNKNOWN_NOT_FAILURE=VISIBLE_OR_BLOCKED
+HISTORICAL_OPERATION_DISTINCTION=VISIBLE_OR_BLOCKED
+NEXT_SEQUENCE_MEANING=VISIBLE_OR_BLOCKED
+READINESS_SYNC_DIAGNOSTICS_MEANINGS=SEPARATE_OR_BLOCKED
+RAW_EVIDENCE_RETAINED=PASS_OR_BLOCKED
+GATE_12_7=PASSED_PRIOR_SCOPE
+GATE_12_8=NEXT_READ_ONLY
 ```
+
+Do not edit permanent didactic memory.

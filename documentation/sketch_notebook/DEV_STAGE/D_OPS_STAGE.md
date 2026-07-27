@@ -1,379 +1,262 @@
-# D_OPS_STAGE — Explicit recovery boundary and paired client/server observability
+# D_OPS_STAGE — DIAG-01 diagnostics consolidation
 
-Sequence: FLX-ORD-01 — Ordinary Sequence
-Role: Codex Operational materialization authority
-Hierarchy: Cycle 10 → GCM-02 → Step 12 → Gate 12.7 pre-authorization
-Unit: C10-GCM02-S12-ERR-04
-Parent sequence: C10-GCM02-S12-SYNC-01
-Branch: `cycle10-intermid-grimoire`
-Required ancestry: `27e1b77b81f658b5e704e46923ea48cce2274b3a`
-Authority: Main Chat under explicit human direction
-Status: **ACTIVE — SOURCE CORRECTION AUTHORIZED; LIVE ACTIONS PROHIBITED**
-Evidence boundary: supplied Windows Closure screenshots, supplied sanitized
-Render lifecycle lines, repository source, local tests and replacement G/H/I
+> Sequence: FLX-ORD-01 — Ordinary Sequence
+> Role: Main-approved Operational materialization stage
+> Unit: `C10-GCM02-S12-DIAG-01`
+> Branch: `cycle10-intermid-grimoire`
+> Required ancestry: `cf405347b6fdc58bf0da698a1f07028e05ccd471`
+> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
+> Evidence boundary: Gate 12.7 corrected Windows client controls and
+> `REC_DIAGNOSTICS.md` Records 004–006 as reconciled into J; no new
+> live/provider action
 
-## 1. Accepted live evidence
+## 1. Objective
 
-The 2026-07-26 ordinary-Sync assay began at approximately 19:50 local
-(`22:50Z`) and produced:
+Correct the Closure control and diagnostic presentation without changing the
+Sync protocol:
 
-```text
-client operation fingerprint=cf23d2a09c74
-client terminal=sync-completed
-client completedAt=2026-07-26T22:50:27Z
-client configured deadline=35000ms
-queue before=0 pending / 0 uploading / 2 failed / 0 unknown
-queue after=0 pending / 0 uploading / 0 failed / 0 unknown
-next Device sequence before=3
-next Device sequence after=3
-```
+1. replace the top-level `Status`, `Query`, and `Refresh diagnostics` controls
+   with one `Diagnostics` button;
+2. make that button refresh and coherently project authentication,
+   enrollment/binding, queue/sequence, persisted Sync result, recovery
+   guidance, attempts, devices, and actionable events;
+3. group lifecycle rows by parent operation identity and show a compact phase
+   summary by default;
+4. retain the complete sanitized raw lifecycle behind an expandable technical
+   view;
+5. keep `Check hosted connection` and `Sync` separate.
 
-The matching Render window proves:
+The observed 13 rows for operation `d723c1f392f3` are ordered lifecycle
+declarations, not 13 failures. Do not rename, delete, or suppress valid MKS
+codes to make the count disappear.
 
-| Route | Operation | Authentication | Terminal | Elapsed |
-| --- | --- | --- | --- | --- |
-| `POST /v1/sync/submissions` | upload-submission | accepted | HTTP 200 | `<3s` |
-| `GET /v1/sync/events` | download-events | accepted | HTTP 200 | `<250ms` |
-| `POST /v1/sync/acknowledgements` | acknowledgement | accepted | HTTP 200 | `<250ms` |
+## 2. Required source inspection
 
-All three protected requests carry the same sanitized parent operation
-fingerprint `cf23d2a09c74`. Their distinct Render correlation fingerprints
-identify separate server requests. Current source derives those fingerprints
-from Fastify request IDs, so they do not yet prove an exact match to the
-client's outbound child correlation headers. Interleaved `/health/ready` HTTP
-200 entries are readiness traffic and not part of aggregate Sync success.
-
-This evidence proves one successful client-orchestrated Sync and its three
-successful server-request terminals. It does not yet prove:
-
-- second-device convergence;
-- exact provider row contents or counts;
-- retention, rebootstrap or revocation behavior;
-- a server-owned timeout;
-- an empty-queue/no-work Sync;
-- a newly allocated submission sequence.
-
-`Next Device sequence=3` is expected. Replaying already allocated sequences
-1–2 does not allocate sequence 3.
-
-## 2. Reconciled defect
-
-The intended assay prohibited failed/notApplied recovery, but ordinary Sync
-executed it anyway:
+Before editing, inspect at minimum:
 
 ```text
-HostedSyncCoordinator.run()
-  → recoverFailedNotApplied()
-  → upload pending work
-  → download
-  → acknowledgement
-```
-
-The call is unconditional after authentication and binding. The queue
-transition `failed=2 → failed=0`, the `failed-recovery` phase, the upload
-request and the successful terminal jointly prove that the held candidate was
-recovered and submitted inside ordinary Sync.
-
-This is not an automatic retry introduced by ERR-03; it is a pre-existing
-implicit recovery path that ERR-03 preserved. It nevertheless conflicts with
-the explicit Closure model in which:
-
-```text
-ordinary Sync
-failed/notApplied inspection
-controlled failed/notApplied recovery
-unknown-outcome Retry
-```
-
-are separate user actions. Gate 12.7 remains held. No further live action is
-authorized until the source boundary is corrected and locally validated.
-
-## 3. Objective
-
-Materialize one narrow correction that:
-
-1. prevents ordinary Sync from mutating or submitting failed/notApplied work;
-2. keeps controlled recovery available only through its explicit
-   confirmation/action surface;
-3. preserves ordinary upload of genuinely pending events;
-4. emits sanitized structured client lifecycle lines to the Flutter-run
-   terminal;
-5. keeps existing sanitized server-request lifecycle lines in Render;
-6. makes parent-operation and child-request evidence readable without false
-   aggregate claims;
-7. exposes both client-child and server-request fingerprints in Render without
-   conflating their ownership;
-8. removes misleading `not-received`, `not-started` or `not-observed` wording
-   when those values merely mean “not stored on the aggregate attempt row”;
-9. preserves the 35-second client deadline and the five-result terminal
-   vocabulary;
-10. introduces no provider call, retry, migration or broad ERR refactor.
-
-## 4. Required recovery separation
-
-Ordinary Sync must not invoke `RecoverFailedNotApplied`.
-
-Permitted ordinary-Sync work:
-
-```text
-authenticate
-verify Device binding
-upload events already in the ordinary pending state
-download remote events
-apply remote events
-acknowledge applied cursor
-persist aggregate client terminal
-```
-
-Prohibited ordinary-Sync work:
-
-```text
-failed/notApplied inspection mutation
-failed/notApplied state transition
-failed/notApplied recovery submission
-unknown-outcome retry
-implicit conversion of failed work into pending work
-```
-
-The explicit `Recover failed/notApplied candidate` action remains the sole
-entry point for controlled recovery. It must retain:
-
-- read-only inspection before confirmation;
-- explicit user confirmation;
-- candidate fingerprint and membership validation;
-- one bounded transition/submission;
-- no automatic repeat;
-- existing redaction and Gate wording.
-
-Prefer removing the recovery dependency from `HostedSyncCoordinator` if no
-ordinary path needs it. If compatibility requires retaining the constructor
-shape temporarily, the ordinary run still must not call it. Report the exact
-choice in G/I.
-
-## 5. Client terminal lifecycle logging
-
-Add one injectable client lifecycle observer owned at the top-level Closure
-operation boundary. Its default assay/debug sink must emit compact one-line
-JSON to the terminal used by `flutter run`.
-
-At minimum emit:
-
-```text
-operation-started
-phase-completed or phase-terminal for meaningful boundaries
-operation-completed
-operation-failed
-```
-
-Required sanitized fields:
-
-```text
-timestamp
-event
-declarationScope=client-operation | client-phase
-operationKind
-resultCode
-diagnosticCode when applicable
-lastProvedPhase
-operationFingerprint
-correlationFingerprint
-configuredDeadlineMs
-elapsedBand
-providerContactState
-trustedResponseState
-localMutationState
-resultPersistenceState
-safeNextActionCode or bounded safe action
-```
-
-For paired HTTP evidence, preserve separate meanings:
-
-```text
-operationFingerprint
-  shared parent join across the complete ordinary Sync
-
-clientCorrelationFingerprint
-  fingerprint of the outbound client child correlation header
-
-serverRequestFingerprint
-  fingerprint of the server/framework request identity
-```
-
-If compatibility requires retaining the existing `correlationFingerprint`
-field, define its ownership explicitly and add the missing peer field. Do not
-log a server request ID under a name that implies it is the client's child
-correlation.
-
-Rules:
-
-- emit only fingerprints, never full operation/correlation identifiers;
-- do not emit tokens, headers, URLs, request/response bodies, purchases,
-  Account/Device/submission IDs, SQL, exception messages or stack traces;
-- do not let logging failures change Sync behavior;
-- tests must inject a collector rather than scrape the console;
-- production/release behavior must be explicit and documented in G. If the
-  sink is debug/assay-only, the UI remains the release-safe projection;
-- retain the existing server `declarationScope=server-request` logs.
-
-## 6. Projection corrections
-
-The aggregate client attempt does not own one HTTP status or header flag for
-the multi-request Sync. Therefore do not display:
-
-```text
-status not-observed
-headers not-received
-```
-
-as if they prove no server response occurred.
-
-Use explicit scope wording such as:
-
-```text
-Aggregate HTTP status: not applicable (see child requests)
-Aggregate response headers: not applicable (see child requests)
-Server request summary: 3 completed / 0 failed
-```
-
-If child request evidence is not persisted locally, say:
-
-```text
-Child server evidence: inspect correlated server logs
-```
-
-Do not invent a server summary from client inference.
-
-The latest-operation overview must distinguish:
-
-- aggregate client terminal;
-- newest phase event;
-- causal child phases;
-- server evidence available only in Render;
-- parent operation fingerprint;
-- child correlation fingerprint(s).
-
-A terminal observation phase with default `providerContact=not-started` must
-not overwrite earlier proved request contact. Either derive an aggregate
-operation summary from all phases or label the field as phase-local. The same
-rule applies to trusted response, local mutation and result persistence.
-
-## 7. Expected source surfaces
-
-Inspect and change only the smallest necessary subset around:
-
-```text
-clients/markei_flutter/lib/application/hosted_sync_coordinator.dart
-clients/markei_flutter/lib/app/native_auth_closure_runner.dart
-clients/markei_flutter/lib/app/markei_composition.dart
 clients/markei_flutter/lib/app/pages/native_closure_page.dart
+clients/markei_flutter/lib/app/native_auth_closure_runner.dart
 clients/markei_flutter/lib/application/closure_diagnostics.dart
 clients/markei_flutter/lib/infrastructure/local/closure_diagnostics_repository.dart
-clients/markei_flutter/lib/application/sync/*
-focused Flutter tests
-services/markei_sync_api tests only if server-log regression coverage changes
-diagnostic registry/generator only if a vocabulary addition is necessary
-replacement G/H/I
+clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
+clients/markei_flutter/test/app/native_closure_surface_test.dart
 ```
 
-No Drift or PostgreSQL migration is expected. Stop for Main clarification
-before adding one.
+Inspect additional Flutter source/tests only when required by direct
+dependencies. Do not scan or modify the protected Python/PySide distribution.
+`REC_DIAGNOSTICS.md` may remain an untracked/manual report and is not a
+required Codex input; J contains the controlling reconciled conclusions.
 
-## 8. Required tests
+## 3. Diagnostics action contract
+
+The new top-level button must be labelled exactly:
+
+```text
+Diagnostics
+```
+
+Use a stable widget key:
+
+```text
+nativeClosure.Diagnostics
+```
+
+Remove the three top-level buttons and their keys:
+
+```text
+nativeClosure.Status
+nativeClosure.Query
+nativeClosure.Refresh diagnostics
+```
+
+The runner methods may remain internally available for compatibility or
+composition, but the page must expose one coherent diagnostics action.
+
+The action must:
+
+- obtain the current authentication projection;
+- obtain the current enrollment/binding projection;
+- obtain one local diagnostics snapshot;
+- publish the refreshed snapshot in one UI state transition;
+- remain read-only with respect to Sync events, submissions, cursors,
+  acknowledgement state, Device sequence allocation, and provider data;
+- make no Sync, Retry, recovery, enrollment, logout, history-clear, or
+  readiness request;
+- expose subcheck results separately so one failure cannot be mistaken for a
+  successful aggregate refresh;
+- return a truthful aggregate state such as `diagnostics-ready`,
+  `diagnostics-partial`, `diagnostics-configuration-missing`, or an equally
+  explicit existing-vocabulary-compatible result.
+
+Avoid duplicate snapshot reads where one snapshot can serve the whole action.
+Do not introduce a diagnostic-only provider request.
+
+## 4. Lifecycle presentation contract
+
+Replace the flat default presentation with operation-aware grouping.
+
+Grouping identity priority:
+
+```text
+operationFingerprint
+→ attemptFingerprint when operation fingerprint is absent
+→ explicit unknown-operation bucket only as a last resort
+```
+
+For each group, show:
+
+- newest/current versus historical status;
+- operation kind;
+- parent operation fingerprint;
+- aggregate terminal/result when available;
+- phase count;
+- latest proved phase;
+- whether any failure-severity or failed terminal actually exists;
+- compact ordered phase summaries.
+
+Pair pre-result/result declarations by operation plus phase. The compact
+summary must prefer the most advanced/result-bearing declaration and must not
+label a pre-result `unknown` as a failure when a later paired declaration
+proves `applied`, `duplicate-equivalent`, or another accepted terminal.
+
+The newest successful operation must be visually distinct from older preserved
+operations. An older `MKS-REC-001` row must not appear to belong to the newest
+ordinary Sync.
+
+Keep all sanitized raw declarations accessible under an expansion control.
+Raw evidence must preserve:
+
+- ordinal;
+- MKS/native code;
+- phase and last proved phase;
+- outcome/severity;
+- local mutation, provider contact/transaction, trusted response and result
+  persistence axes;
+- parent operation and child correlation fingerprints;
+- safe action.
+
+Do not change persistence shape or order. This is a projection change.
+
+## 5. Controls that remain separate
+
+Preserve these as distinct actions with their current guards:
+
+```text
+Sign in
+Enroll
+Check hosted connection
+Sync
+Logout
+Retry unknown-outcome submission
+Inspect failed/notApplied recovery
+Recover failed/notApplied candidate
+Clear diagnostic history
+```
+
+`Check hosted connection` remains readiness-only. `Sync` remains the stateful
+ordinary protocol action. Diagnostics must not invoke either.
+
+## 6. State and sequence invariants
+
+Preserve:
+
+- ordinary Sync never invokes failed/notApplied recovery;
+- explicit recovery remains confirmed, bounded, and session-locked;
+- unknown Retry remains distinct;
+- Next Device sequence advances only when a new local Device event is
+  allocated, not when Diagnostics or Sync is pressed;
+- Last successful Sync advances only for an accepted ordinary-Sync terminal;
+- warm hosted readiness does not advance Last successful Sync;
+- queue counts and stored history are not mutated by Diagnostics;
+- client deadline remains 35000 ms;
+- diagnostic redaction and fingerprinting remain intact.
+
+## 7. Validation
 
 Add or update focused tests proving:
 
-- ordinary Sync never calls failed/notApplied recovery;
-- failed work remains failed and unchanged during ordinary Sync;
-- ordinary pending work can still upload;
-- no-new-work ordinary Sync reaches the truthful no-work terminal;
-- explicit controlled recovery remains callable only through its own action;
-- one explicit recovery cannot repeat automatically;
-- Next Device sequence does not change when replaying existing sequence
-  allocations;
-- structured client lines are emitted with scopes, fingerprints, phases,
-  timing and terminal result;
-- client logging contains no full IDs, tokens, URLs, headers, payloads, SQL,
-  exception messages or stack traces;
-- a logging sink failure cannot change protocol behavior;
-- aggregate UI fields do not claim headers were absent merely because they
-  are not stored on the parent attempt;
-- phase-local evidence cannot erase proved earlier provider contact;
-- parent operation and child request correlation roles remain distinct;
-- Render can pair each request to both the client child and server request
-  identities without exposing either full identifier;
-- ERR-03 five-result, 35-second, readiness and last-success corrections do not
-  regress;
-- API structured server-request logging remains unchanged and redacted.
+1. exactly one `Diagnostics` top-level button is rendered;
+2. `Status`, `Query`, and `Refresh diagnostics` top-level buttons are absent;
+3. Diagnostics performs the three intended read-only subchecks/projections;
+4. Diagnostics begins no Sync or diagnostic network attempt;
+5. Diagnostics leaves queue, next sequence, Last successful Sync, and history
+   unchanged;
+6. one operation with paired phase declarations renders one compact operation
+   group, not a flat apparent-error list;
+7. pre-result `unknown` followed by applied/duplicate-equivalent is not
+   projected as a failure;
+8. raw declarations remain expandable and complete;
+9. older operations and `MKS-REC-001` remain visible but clearly historical;
+10. readiness and Sync buttons remain separate and retain their tests;
+11. existing recovery/Retry confirmation and lock tests pass;
+12. no schema/migration/API change occurs.
 
 Run:
 
 ```text
-diagnostic generator update/check when touched
-deterministic second generator check when touched
-Dart format
-focused Flutter tests
-full Flutter tests
-Flutter analyze
-API format check
-API lint
-API typecheck
-focused API tests when touched/relevant
-full API tests
-API build
+dart format <changed Dart files>
+flutter test test/app/native_closure_diagnostics_test.dart
+flutter test test/app/native_closure_surface_test.dart
+flutter test
+flutter analyze
 git diff --check
-changed-content sensitive-pattern scan
 ```
 
-## 9. Writable and prohibited scope
+Run the repository’s existing changed-content sensitive-pattern scan when
+available. Do not run a live hosted assay.
 
-Authorized:
+## 8. Writable and prohibited scope
 
-- necessary Flutter source and tests;
-- minimal API tests/source only if required to preserve paired logging;
-- registry/generated projections only through the generator;
-- replacement G/H/I.
+Writable:
+
+- directly relevant Flutter Closure source;
+- directly relevant Flutter tests;
+- G/H/I replacement reports.
 
 Prohibited:
 
-- J, A/B/C, D/E/F and permanent domain memory;
-- methodology or Main-root files;
-- migration or schema change without clarification;
-- live Sync, Retry, recovery, readiness check or provider request;
-- deployment;
-- Render, Auth0, Neon or user-database access/mutation;
-- GRM/GS/I_SCRIPTS execution;
-- broad ERR catalogue/filename refactoring;
-- automatic retry;
-- diagnostic-only provider requests;
-- restoration of `SYNC_DIAGNOSTICS.md`.
+- API source/tests;
+- database schema or migrations;
+- Auth0, Render, Neon, provider consoles, or user database;
+- permanent domain memory;
+- methodology;
+- J;
+- GRM/GRIMOIRE execution documents;
+- unrelated formatting or cleanup;
+- protected Python/PySide artifacts.
 
-## 10. G report requirements
+If the requested projection cannot be implemented without a schema migration,
+API change, provider request, or broad diagnostics refactor, stop and report
+the exact blocker.
 
-G must report:
+## 9. G report requirements
 
-- exact changed paths;
-- removal/gating of the implicit recovery call;
-- ordinary pending-work behavior;
-- explicit recovery entry point preservation;
-- client log schema, sink ownership and build-mode behavior;
-- UI aggregate/phase evidence rules;
-- parent, client-child and server-request fingerprint field mapping;
-- validation commands and counts;
-- any deviation or unavailable validation;
-- confirmation that no live action occurred.
+Replace `G_OPS_CODEX.md` with:
+
+- exact inspected baseline and final commit;
+- changed paths;
+- Diagnostics subcheck implementation;
+- grouping/expansion implementation;
+- state/sequence invariant evidence;
+- commands and exact results;
+- skipped/unavailable checks;
+- explicit no-live-action statement;
+- residual risks, including cold-start readiness tolerance.
 
 Terminal markers:
 
 ```text
-ORDINARY_SYNC_IMPLICIT_RECOVERY=REMOVED_OR_BLOCKED
-FAILED_WORK_IMMOBILE_DURING_ORDINARY_SYNC=VALIDATED_OR_BLOCKED
-EXPLICIT_RECOVERY_ENTRYPOINT=PRESERVED_OR_BLOCKED
-CLIENT_TERMINAL_LIFECYCLE_LOGS=IMPLEMENTED_OR_BLOCKED
-SERVER_REQUEST_LIFECYCLE_LOGS=PRESERVED_OR_BLOCKED
-AGGREGATE_CHILD_PROJECTION=CORRECTED_OR_BLOCKED
-CLIENT_SYNC_DEADLINE_35S=PRESERVED_OR_BLOCKED
-AUTOMATIC_RETRY=ABSENT_OR_BLOCKED
-LIVE_PROVIDER_ACTION=NOT_PERFORMED
-GATE_12_7=HELD
+DIAGNOSTICS_TOP_LEVEL_CONTROL=CONSOLIDATED_OR_BLOCKED
+DIAGNOSTICS_PROVIDER_ACTION=ABSENT_OR_BLOCKED
+LIFECYCLE_OPERATION_GROUPING=IMPLEMENTED_OR_BLOCKED
+RAW_LIFECYCLE_EVIDENCE=PRESERVED_OR_BLOCKED
+HISTORICAL_OPERATION_LABELING=IMPLEMENTED_OR_BLOCKED
+NEXT_DEVICE_SEQUENCE_INVARIANT=PRESERVED_OR_BLOCKED
+LAST_SUCCESSFUL_SYNC_INVARIANT=PRESERVED_OR_BLOCKED
+NO_SCHEMA_MIGRATION=PASS_OR_BLOCKED
+NO_API_CHANGE=PASS_OR_BLOCKED
+GATE_12_7=PASSED_PRIOR_SCOPE
+GATE_12_8=NEXT_READ_ONLY
 GCM02=OPEN
 ```
