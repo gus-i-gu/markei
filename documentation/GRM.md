@@ -43,6 +43,7 @@ the matching `GS-*` section of `G_SCRIPTS.md`.
 | `GRM-MIG-01`      | Ordered open-ended migration walker     |
 | `GRM-GIT-01`      | Exact Git-alignment verification        |
 | `GRM-GIT-02`      | Fast-forward pull and verification      |
+| `GRM-GIT-BRN`     | Guarded branch handoff and reconciliation |
 | `GRM-SQLITE-01`   | Local SQLite CLI verification           |
 | `GRM-SQLITE-02`   | Verified Gate 12.6 copy creation        |
 | `GRM-SQLITE-03`   | Sanitized classification probe          |
@@ -332,10 +333,11 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 
 **Git alignment**
 
-| GRM ID       | Canonical procedure | Function                     |
-| ------------ | ------------------- | ---------------------------- |
-| `GRM-GIT-01` | `GS-GIT-01`         | Verify exact Git alignment   |
-| `GRM-GIT-02` | `GS-GIT-02`         | Fast-forward pull and verify |
+| GRM ID       | Canonical procedure | Function                                    |
+| ------------ | ------------------- | ------------------------------------------- |
+| `GRM-GIT-01`  | `GS-GIT-01`        | Verify exact Git alignment                 |
+| `GRM-GIT-02`  | `GS-GIT-02`        | Fast-forward pull and verify               |
+| `GRM-GIT-BRN` | `GS-GIT-BRN`       | Hand off branches and reconcile local work |
 
 ### `GRM-GIT-01`
 
@@ -347,6 +349,12 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-GIT-02"
+```
+
+### `GRM-GIT-BRN`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-GIT-BRN"
 ```
 
 **Local SQLite**

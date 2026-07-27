@@ -496,6 +496,416 @@ finally {
 }
 ```
 
+### `GS-GIT-BRN` — Guarded branch handoff with updates reconciliation
+
+This procedure requests the exact destination branch in the terminal. It does
+not read `RepositoryBranch`, select a default branch, or hard-code any file
+scope. It identifies the current local branch, fetches `origin`, requires the
+destination to exist remotely, and establishes the destination at the exact
+remote tip before reconciling local work.
+
+Committed source history is merged into the destination without rebasing,
+resetting, deleting, or changing the source branch reference. Staged,
+unstaged, and untracked updates are preserved in a named Git safety stash and
+reapplied after the history merge. The safety stash is retained even after a
+successful reapplication; remove it manually only after reviewing and
+committing the reconciled result.
+
+The procedure stops before handoff if a Git operation is already active, the
+destination is checked out in another worktree, or a pre-existing local
+destination contains commits absent from its remote. It never pushes and never
+chooses a conflict winner. A merge or stash-application conflict remains on the
+destination for explicit human reconciliation while the source branch and
+safety stash remain recoverable.
+
+```powershell
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+$SourceBranch = $null
+$TargetBranch = $null
+$SourceSha = $null
+$RemoteTargetSha = $null
+$StashSha = $null
+
+function Get-GitDivergence {
+    param([Parameter(Mandatory)] [string]$Range)
+
+    $DivergenceRaw = (& git rev-list --left-right --count $Range).Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not calculate Git divergence for '$Range'."
+    }
+    $Divergence = @($DivergenceRaw -split '\s+')
+    if ($Divergence.Count -ne 2 -or
+        $Divergence[0] -notmatch '^\d+$' -or
+        $Divergence[1] -notmatch '^\d+$') {
+        throw "Git returned an invalid divergence result for '$Range'."
+    }
+
+    return [pscustomobject]@{
+        LeftOnly = [int]$Divergence[0]
+        RightOnly = [int]$Divergence[1]
+    }
+}
+
+try {
+    Set-Location -LiteralPath $RepositoryRoot
+
+    foreach ($OperationMarker in @(
+            "MERGE_HEAD",
+            "CHERRY_PICK_HEAD",
+            "REVERT_HEAD",
+            "BISECT_LOG",
+            "rebase-apply",
+            "rebase-merge"
+        )) {
+        $OperationPath = (
+            & git rev-parse --git-path $OperationMarker
+        ).Trim()
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not inspect Git operation state."
+        }
+        if (Test-Path -LiteralPath $OperationPath) {
+            throw (
+                "Git operation '$OperationMarker' is already active. " +
+                "Complete or abort it before branch handoff."
+            )
+        }
+    }
+
+    $SourceBranch = (& git branch --show-current).Trim()
+    if ($LASTEXITCODE -ne 0 -or
+        [string]::IsNullOrWhiteSpace($SourceBranch)) {
+        throw "Branch handoff requires a named current branch, not detached HEAD."
+    }
+    $SourceSha = (& git rev-parse "refs/heads/$SourceBranch").Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not resolve the current source branch."
+    }
+
+    Write-Host ""
+    Write-Host "Current local branch: $SourceBranch"
+    $TargetBranch = (
+        Read-Host "Exact destination branch to check, pull, and receive current work"
+    ).Trim()
+    if ([string]::IsNullOrWhiteSpace($TargetBranch)) {
+        throw "Destination branch cannot be empty."
+    }
+    & git check-ref-format --branch $TargetBranch *> $null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Destination branch '$TargetBranch' is not a valid branch name."
+    }
+    if ($TargetBranch -ceq $SourceBranch) {
+        throw "Source and destination are identical. Use GRM-GIT-02 instead."
+    }
+
+    & git remote get-url origin *> $null
+    if ($LASTEXITCODE -ne 0) {
+        throw "The repository has no usable 'origin' remote."
+    }
+    $TargetFetchRefspec = (
+        "+refs/heads/{0}:refs/remotes/origin/{0}" -f $TargetBranch
+    )
+    & git fetch --prune origin $TargetFetchRefspec
+    if ($LASTEXITCODE -ne 0) {
+        throw "Exact fetch of 'origin/$TargetBranch' failed."
+    }
+
+    & git show-ref `
+        --verify `
+        --quiet `
+        "refs/remotes/origin/$TargetBranch"
+    if ($LASTEXITCODE -ne 0) {
+        throw "Remote destination 'origin/$TargetBranch' does not exist."
+    }
+    $RemoteTargetSha = (
+        & git rev-parse "refs/remotes/origin/$TargetBranch"
+    ).Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not resolve the remote destination branch."
+    }
+
+    $LocalTargetExists = $true
+    & git show-ref --verify --quiet "refs/heads/$TargetBranch"
+    if ($LASTEXITCODE -ne 0) {
+        $LocalTargetExists = $false
+    }
+
+    if ($LocalTargetExists) {
+        $ActiveWorktreePath = $null
+        $WorktreeLines = @(& git worktree list --porcelain)
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not inspect repository worktrees."
+        }
+        foreach ($WorktreeLine in $WorktreeLines) {
+            if ($WorktreeLine.StartsWith("worktree ")) {
+                $ActiveWorktreePath = $WorktreeLine.Substring(9)
+                continue
+            }
+            if ($WorktreeLine -ceq "branch refs/heads/$TargetBranch" -and
+                -not [string]::IsNullOrWhiteSpace($ActiveWorktreePath)) {
+                $ResolvedWorktreePath = [IO.Path]::GetFullPath(
+                    $ActiveWorktreePath
+                )
+                $ResolvedRepositoryRoot = [IO.Path]::GetFullPath(
+                    $RepositoryRoot
+                )
+                if ($ResolvedWorktreePath -ine $ResolvedRepositoryRoot) {
+                    throw (
+                        "Destination '$TargetBranch' is checked out in " +
+                        "another worktree: $ActiveWorktreePath"
+                    )
+                }
+            }
+        }
+
+        $TargetPreflight = Get-GitDivergence `
+            "origin/$TargetBranch...$TargetBranch"
+        if ($TargetPreflight.RightOnly -ne 0) {
+            throw (
+                "Local destination '$TargetBranch' contains commits absent " +
+                "from origin. Reconcile that branch separately first."
+            )
+        }
+    }
+
+    $InitialStatus = @(
+        & git status --porcelain=v1 --untracked-files=all
+    )
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not inspect the current working tree."
+    }
+    $HasLocalUpdates = $InitialStatus.Count -ne 0
+
+    Write-Host ""
+    Write-Host "Branch handoff preflight:"
+    Write-Host "  source branch       = $SourceBranch"
+    Write-Host "  source HEAD         = $SourceSha"
+    Write-Host "  destination branch  = $TargetBranch"
+    Write-Host "  remote target HEAD  = $RemoteTargetSha"
+    Write-Host "  local updates       = $HasLocalUpdates"
+    Write-Host "  reconciliation      = merge; no rebase or force update"
+    Write-Host "  push                = never"
+    Write-Host ""
+
+    $ExpectedConfirmation = "HANDOFF $SourceBranch -> $TargetBranch"
+    $Confirmation = (
+        Read-Host "Type '$ExpectedConfirmation' or STOP"
+    ).Trim()
+    if ($Confirmation -ceq "STOP") {
+        throw "Branch handoff stopped before local mutation."
+    }
+    if ($Confirmation -cne $ExpectedConfirmation) {
+        throw "Branch handoff cancelled: confirmation did not match."
+    }
+
+    if ($HasLocalUpdates) {
+        $PreviousStashSha = (
+            & git rev-parse --verify --quiet refs/stash 2>$null
+        )
+        if ($LASTEXITCODE -eq 0) {
+            $PreviousStashSha = $PreviousStashSha.Trim()
+        }
+        else {
+            $PreviousStashSha = $null
+        }
+
+        $StashMessage = (
+            "GRM-GIT-BRN {0} -> {1} {2}" -f
+            $SourceBranch,
+            $TargetBranch,
+            [DateTime]::UtcNow.ToString("yyyyMMddTHHmmssZ")
+        )
+        & git stash push `
+            --include-untracked `
+            --message $StashMessage
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not preserve local updates in a Git safety stash."
+        }
+        $StashSha = (& git rev-parse --verify refs/stash).Trim()
+        if ($LASTEXITCODE -ne 0 -or
+            [string]::IsNullOrWhiteSpace($StashSha) -or
+            $StashSha -ceq $PreviousStashSha) {
+            throw "Git did not create the expected branch-handoff safety stash."
+        }
+
+        $PostStashStatus = @(
+            & git status --porcelain=v1 --untracked-files=all
+        )
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not verify the preserved working tree."
+        }
+        if ($PostStashStatus.Count -ne 0) {
+            Write-Host (
+                "Safety stash retained at $StashSha; restoring preserved work."
+            ) -ForegroundColor Yellow
+            & git stash apply --index $StashSha
+            throw (
+                "The safety stash did not capture the complete working tree. " +
+                "Branch handoff stopped on '$SourceBranch'."
+            )
+        }
+    }
+
+    if ($LocalTargetExists) {
+        & git switch $TargetBranch
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not switch to local destination '$TargetBranch'."
+        }
+        & git merge --ff-only "origin/$TargetBranch"
+        if ($LASTEXITCODE -ne 0) {
+            throw "Fast-forward pull of '$TargetBranch' failed."
+        }
+    }
+    else {
+        & git switch `
+            --create $TargetBranch `
+            --track "origin/$TargetBranch"
+        if ($LASTEXITCODE -ne 0) {
+            throw "Could not create the tracked destination '$TargetBranch'."
+        }
+    }
+
+    $PulledTargetSha = (& git rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or
+        $PulledTargetSha -cne $RemoteTargetSha) {
+        throw (
+            "Destination checkout did not reach the exact fetched remote tip."
+        )
+    }
+    $PulledAlignment = Get-GitDivergence `
+        "origin/$TargetBranch...HEAD"
+    if ($PulledAlignment.LeftOnly -ne 0 -or
+        $PulledAlignment.RightOnly -ne 0) {
+        throw "Destination did not pass exact remote-alignment verification."
+    }
+
+    & git merge-base --is-ancestor $SourceBranch HEAD
+    if ($LASTEXITCODE -eq 0) {
+        $HistoryReconciliation = "source-already-contained"
+    }
+    elseif ($LASTEXITCODE -eq 1) {
+        & git merge --no-edit $SourceBranch
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host ""
+            Write-Host (
+                "Committed-history reconciliation requires manual resolution."
+            ) -ForegroundColor Yellow
+            Write-Host "Run: git status"
+            Write-Host "Resolve each conflict explicitly, then commit the merge."
+            if (-not [string]::IsNullOrWhiteSpace($StashSha)) {
+                Write-Host (
+                    "After the merge is committed, reapply local updates with:"
+                )
+                Write-Host "git stash apply --index $StashSha"
+                Write-Host "Safety stash retained: $StashSha"
+            }
+            throw "Branch-history merge stopped on '$TargetBranch'."
+        }
+        $HistoryReconciliation = "source-merged"
+    }
+    else {
+        throw "Could not determine source/destination ancestry."
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($StashSha)) {
+        & git stash apply --index $StashSha
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host ""
+            Write-Host (
+                "Local-update reconciliation requires manual resolution."
+            ) -ForegroundColor Yellow
+            Write-Host "Run: git status"
+            Write-Host "Resolve each conflict explicitly."
+            Write-Host "Safety stash retained: $StashSha"
+            throw "Preserved local updates did not apply cleanly."
+        }
+        $LocalUpdateReconciliation = "reapplied; safety stash retained"
+    }
+    else {
+        $LocalUpdateReconciliation = "no local updates"
+    }
+
+    $PreservedSourceSha = (
+        & git rev-parse "refs/heads/$SourceBranch"
+    ).Trim()
+    if ($LASTEXITCODE -ne 0 -or
+        $PreservedSourceSha -cne $SourceSha) {
+        throw "Source branch reference changed unexpectedly."
+    }
+    $CurrentBranch = (& git branch --show-current).Trim()
+    if ($LASTEXITCODE -ne 0 -or
+        $CurrentBranch -cne $TargetBranch) {
+        throw "Branch handoff did not finish on '$TargetBranch'."
+    }
+
+    $FinalDivergence = Get-GitDivergence `
+        "origin/$TargetBranch...HEAD"
+    if ($FinalDivergence.LeftOnly -ne 0) {
+        throw "Destination is behind the fetched remote target after handoff."
+    }
+    $FinalHead = (& git rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not resolve the reconciled destination HEAD."
+    }
+    $FinalStatus = @(
+        & git status --porcelain=v1 --untracked-files=all
+    )
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not inspect the reconciled working tree."
+    }
+    $SafetyStashReport = "none"
+    if (-not [string]::IsNullOrWhiteSpace($StashSha)) {
+        $SafetyStashReport = $StashSha
+    }
+
+    [pscustomobject][ordered]@{
+        SourceBranch = $SourceBranch
+        SourceHead = $SourceSha
+        SourceReference = "unchanged"
+        DestinationBranch = $TargetBranch
+        PulledRemoteHead = $RemoteTargetSha
+        FinalHead = $FinalHead
+        RemoteBehind = $FinalDivergence.LeftOnly
+        RemoteAhead = $FinalDivergence.RightOnly
+        HistoryReconciliation = $HistoryReconciliation
+        LocalUpdates = $LocalUpdateReconciliation
+        ReconciledStatusEntries = $FinalStatus.Count
+        SafetyStash = $SafetyStashReport
+        PushPerformed = $false
+    }
+
+    Write-Host ""
+    Write-Host "Branch handoff completed locally." -ForegroundColor Green
+    Write-Host "Review with: git status"
+    Write-Host "Review history with: git log --graph --oneline --decorate -12"
+    if (-not [string]::IsNullOrWhiteSpace($StashSha)) {
+        Write-Host "Safety stash retained: $StashSha"
+        Write-Host (
+            "After review and commit, verify it with 'git stash list', then " +
+            "remove only that backup with: git stash drop 'stash@{0}'"
+        )
+    }
+    Write-Host "Nothing was pushed."
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+```
+
+`GS-GIT-BRN` transfers no ignored files and does not treat ignored build,
+credential, or application-data artifacts as branch updates. It preserves the
+source branch pointer, but the destination may gain a local merge commit and
+reapplied uncommitted work. Therefore `GRM-GIT-01` should be used only after
+reviewing, committing, and intentionally publishing or otherwise reconciling
+the destination.
+
 ## 3. Local SQLite diagnostics
 
 These procedures operate only on the Windows application database used by the
