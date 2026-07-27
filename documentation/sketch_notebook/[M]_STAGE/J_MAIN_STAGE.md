@@ -1,16 +1,16 @@
 # J_MAIN_STAGE — Cycle 10 active reconciliation
 
-> Sequence: FLX-ORD-01 bounded ordinary-Sync terminal/timing materialization
+> Sequence: FLX-PRM-04 ERR-04 materialization reconciliation
 > Role: Main Chat
 > Branch: `cycle10-intermid-grimoire`
-> Reconciliation baseline: `3d1e82e5259cf51e8cd2d6baf694423494bab7a5`
-> Authority: human-directed Main reconciliation and D/E/F activation
-> Writable surface: J plus synchronized D/E/F staging
-> Evidence boundary: repository inspection, REC-01 source evidence and the
-> 2026-07-26 Windows read-only inspection/readiness assays; no new ordinary
-> Sync, recovery, Retry or provider mutation
-> Status: **CYCLE 10 OPEN; C10-GCM02-S12-ERR-03 D/E/F ACTIVE; GATE 12.7,
-> ORDINARY SYNC AND RECOVERY EXECUTION HELD**
+> Reconciliation baseline: `bb4e579612d36924e266872c351449bc0becc30f`
+> Authority: human-directed Main reconciliation of pre-approved D/E/F
+> Writable surface: J reconciliation only
+> Evidence boundary: remote ten-file patch, replacement G/H/I, repository
+> inspection and local validation reports; no new Windows, Render, Auth0,
+> Neon, provider, Sync, Retry or recovery action
+> Status: **CYCLE 10 OPEN; C10-GCM02-S12-ERR-04 SOURCE ACCEPTED,
+> HOST-UNVALIDATED; GATE 12.7 HELD**
 
 ## 1. Recovery entrypoint
 
@@ -46,14 +46,14 @@ Retain these ownership boundaries:
 ```text
 Repository: gus-i-gu/markei
 Active branch: cycle10-intermid-grimoire
-Current reconciliation baseline: 3d1e82e5259cf51e8cd2d6baf694423494bab7a5
+Current reconciliation baseline: bb4e579612d36924e266872c351449bc0becc30f
 Cycle: 10
 Active closure unit: MCG-02 / user-facing GCM-02
-Latest completed sprint: C10-GCM02-S12-REC-01 bounded execution surface
-Active materialization unit: C10-GCM02-S12-ERR-03 ordinary-Sync terminal
-identification and controlled assay timing
-Active gate: source materialization and local validation before any separately
-authorized hosted assay; Gate 12.7 remains held
+Latest completed corrective unit: C10-GCM02-S12-ERR-04 recovery-boundary and
+observability correction
+Active materialization unit: none; ERR-04 source is accepted and host-unvalidated
+Active gate: exact corrected-revision deployment and controlled hosted
+acceptance before Gate 12.7 conclusion; Gate 12.7 remains held
 ```
 
 The branch contains the GRM execution interface, hosted Sync
@@ -4919,6 +4919,193 @@ C10_GCM02_S12_ERR_04=ACTIVE_STAGED
 CLIENT_TERMINAL_LOGGING=SOURCE_CORRECTION_STAGED
 AGGREGATE_CHILD_PROJECTION=SOURCE_CORRECTION_STAGED
 FURTHER_LIVE_ACTIONS=HELD
+GATE_12_8=HELD
+GATE_12_9=HELD
+GATE_12_10=HELD
+GCM03=UNDEFINED_INACTIVE
+GCM04=UNDEFINED_INACTIVE
+CYCLE10_CLOSURE=BLOCKED_BY_GCM02
+```
+
+
+## 2026-07-26 — ERR-04 materialization reconciliation
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04
+Role: Main Chat [M]
+Hierarchy: Cycle 10 → GCM-02 → Step 12 → Gate 12.7 pre-authorization
+Reconciliation unit: C10-GCM02-S12-ERR-04
+Branch: cycle10-intermid-grimoire
+Staging parent: a5d198daff698a14ba932579dd867de716ed1038
+Materialization commit: bb4e579612d36924e266872c351449bc0becc30f
+Evidence: exact remote ten-file patch, replacement G/H/I and reported local
+          validation
+Writable surface: mutable J recovery prefix plus append-only Legacy_Progress
+Disposition: SOURCE ACCEPTED; HOST-UNVALIDATED; GATE 12.7 HELD
+```
+
+### Repository and ancestry result
+
+The remote branch is identical to
+`bb4e579612d36924e266872c351449bc0becc30f`. The materialization is exactly
+one fast-forward commit after
+`a5d198daff698a14ba932579dd867de716ed1038`, with no divergence. Its patch
+contains exactly ten files: five Flutter source/test paths, two API source/test
+paths, and the three replacement G/H/I reports.
+
+### Directive classification
+
+| ERR-04 directive | Result | Evidence boundary |
+| --- | --- | --- |
+| Ordinary Sync must not invoke failed/notApplied recovery | IMPLEMENTED / TEST-VALIDATED | unconditional recovery phase and call removed; failed rows remain failed under ordinary Sync |
+| Explicit confirmed failed/notApplied recovery remains separate | PRESERVED / TEST-VALIDATED | dedicated runner/coordinator entry point and bounded recovery tests remain |
+| Genuine pending-event upload remains ordinary behavior | PRESERVED / TEST-VALIDATED | pending lease/upload path and focused test pass |
+| Sanitized Flutter terminal lifecycle output | IMPLEMENTED / TEST-VALIDATED | injectable sink, one-line JSON, client-operation/client-phase scopes, redaction and sink-isolation tests |
+| Aggregate versus child evidence wording | IMPLEMENTED / TEST-VALIDATED | aggregate HTTP/header values now point to child requests; misleading absent-contact projection removed |
+| Client-child versus server-request correlation ownership | IMPLEMENTED / TEST-VALIDATED | independent Fastify request IDs plus separately named fingerprints |
+| Five ordinary-Sync terminals and 35000 ms deadline | PRESERVED / TEST-VALIDATED | existing vocabulary retained; deadline emitted by client lifecycle |
+| No automatic retry, migration or provider action | PRESERVED / REPORTED | no schema change and no live action in materialization |
+| Replacement G/H/I reports | COMPLETE | G/H/I now describe ERR-04 rather than ERR-03 |
+
+No staged ERR-04 requirement is classified absent. The compatibility-retained
+`recoverFailedNotApplied` constructor field is not used by ordinary
+`HostedSyncCoordinator.run()`; removing that unused compatibility surface is
+optional later cleanup, not a Gate 12.7 blocker.
+
+### PRC-01 claims
+
+```text
+Claim: ERR-04 repairs the ordinary-Sync versus controlled-recovery boundary
+Prior state: confirmed live defect; correction staged
+Evidence: exact source patch, focused file-backed tests and full Flutter suite
+Evidence boundary: repository and local validation; no corrected hosted assay
+Contradiction: none found
+Semantic owner: C10-GCM02-S12-ERR-04
+Target role: J current state and append-only reconciliation history
+Resulting state: ACCEPTED, HOST-UNVALIDATED
+History disposition: append; preserve the accidental pre-fix live action
+```
+
+```text
+Claim: ERR-04 completes the requested observability correction
+Prior state: aggregate/child projection and exact child pairing incomplete
+Evidence: injectable client lifecycle JSON, scope-aware UI wording, independent
+          server request identity and paired sanitized fingerprints
+Evidence boundary: source and automated tests; fresh Flutter/Render capture absent
+Contradiction: none found
+Semantic owner: ERR-04 client/server observability contract
+Target role: J current state
+Resulting state: IMPLEMENTED AND LOCALLY VALIDATED; HOST-UNVALIDATED
+History disposition: append
+```
+
+```text
+Claim: Gate 12.7 may close solely because ERR-04 tests pass
+Prior state: gate held after unauthorized implicit recovery
+Evidence: strong local regression coverage but no corrected hosted revision assay
+Evidence boundary: local source/test evidence only
+Contradiction: Gate conclusion still requires the bounded post-deployment packet
+Semantic owner: Gate 12.7 acceptance
+Target role: subsequent Main reconciliation
+Resulting state: REJECTED FOR NOW; GATE REMAINS HELD
+History disposition: append
+```
+
+### Validation absorbed
+
+```text
+Flutter diagnostics test: 21 PASS
+Focused Flutter sync/diagnostics set: 59 PASS
+Full Flutter suite: 194 PASS / 4 lab-gated SKIP
+Flutter analyze: PASS
+Diagnostics generator/check: PASS
+Changed TypeScript Prettier: PASS
+API lint/typecheck/build: PASS
+API protocol/full tests: 58 PASS
+git diff --check: PASS
+changed-content sensitive scan: PASS
+live hosted/provider action: NOT PERFORMED
+```
+
+The repository-root diagnostics command is inapplicable because the root has no
+`package.json`. The broad API formatting check remains obstructed only by the
+pre-existing unrelated
+`test/sync_diagnostics_registry.test.ts` warning; both changed TypeScript
+files pass targeted formatting. Neither item invalidates the bounded ERR-04
+materialization.
+
+### Subsequent action hierarchy
+
+```text
+Cycle 10 — hosted synchronization and operational acceptance [OPEN]
+└─ GCM-02 — exact hosted recovery/synchronization proof [ACTIVE]
+   └─ Step 12 — Closure diagnosis and bounded hosted assays [ACTIVE]
+      ├─ Gate 12.6 — preparation/readiness evidence [PASSED IN PRIOR SCOPE]
+      ├─ Gate 12.7 — controlled recovery boundary [HELD]
+      │  ├─ ERR-04 source materialization [ACCEPTED, HOST-UNVALIDATED]
+      │  ├─ exact corrected Windows revision/build [NEXT]
+      │  ├─ exact corrected Render revision/deployment [NEXT]
+      │  ├─ readiness projection control [PENDING]
+      │  ├─ ordinary Sync no-recovery control [PENDING]
+      │  └─ explicit Gate 12.7 conclusion packet [PENDING]
+      ├─ Gate 12.8 — provider/result reconciliation [HELD]
+      ├─ Gate 12.9 — second-device convergence proof [HELD]
+      └─ Gate 12.10 — GCM-02 terminal acceptance [HELD]
+
+Cycle 10 → GCM-03 [UNDEFINED / INACTIVE]
+Cycle 10 → GCM-04 [UNDEFINED / INACTIVE]
+Cycle 10 closure [BLOCKED BY GCM-02]
+```
+
+### Controlled acceptance order
+
+1. Pull the reconciled branch by fast-forward and record the exact SHA.
+2. Build/run the Windows client from that exact lineage; do not reuse an older
+   binary.
+3. Deploy Render from the same lineage because the API logging contract changed.
+4. Record client SHA, deployed Render SHA, deployment-live UTC and clean initial
+   queue/diagnostic state.
+5. Perform one readiness control. Confirm readiness does not advance Last
+   successful Sync or mutate the queue.
+6. Perform one ordinary Sync control. Capture the UI terminal, Flutter JSON
+   lifecycle lines and matching Render lifecycle lines.
+7. Confirm ordinary Sync contains no failed-recovery phase and that
+   client-child fingerprints pair with the corresponding server declarations.
+8. Do not create a new failed candidate solely to demonstrate the fix; the local
+   deterministic tests own that invariant.
+9. Reconcile the resulting packet and issue the explicit Gate 12.7 decision.
+10. Only after that decision proceed to Gate 12.8 provider-state reconciliation
+    and Gate 12.9 second-device convergence.
+
+No Retry, failed/notApplied recovery, diagnostic-history clearing, migration,
+Auth0 mutation, Neon mutation or production action is authorized by this entry.
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=OPEN_ACTIVE
+STEP12=OPEN_ACTIVE
+GATE_12_6=PASSED_IN_PRIOR_SCOPE
+GATE_12_7=HELD
+C10_GCM02_S12_ERR_04_SOURCE=ACCEPTED_HOST_UNVALIDATED
+ERR_04_REMOTE_SHA=bb4e579612d36924e266872c351449bc0becc30f
+ERR_04_EXACT_TEN_FILE_PATCH=VERIFIED
+ORDINARY_SYNC_IMPLICIT_RECOVERY=REMOVED_LOCALLY_VALIDATED
+EXPLICIT_RECOVERY_ENTRYPOINT=PRESERVED_LOCALLY_VALIDATED
+ORDINARY_PENDING_UPLOAD=PRESERVED_LOCALLY_VALIDATED
+CLIENT_TERMINAL_LIFECYCLE_LOGS=IMPLEMENTED_LOCALLY_VALIDATED
+AGGREGATE_CHILD_PROJECTION=CORRECTED_LOCALLY_VALIDATED
+CLIENT_SERVER_CHILD_PAIRING=IMPLEMENTED_LOCALLY_VALIDATED
+CLIENT_SYNC_DEADLINE_35S=PRESERVED
+NO_SCHEMA_MIGRATION=PASS
+LIVE_CORRECTED_REVISION_ASSAY=NOT_PERFORMED
+CORRECTED_WINDOWS_REVISION=NEXT
+CORRECTED_RENDER_DEPLOYMENT=NEXT
+READINESS_CONTROL=PENDING
+ORDINARY_SYNC_NO_RECOVERY_CONTROL=PENDING
 GATE_12_8=HELD
 GATE_12_9=HELD
 GATE_12_10=HELD
