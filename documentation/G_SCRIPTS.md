@@ -49,7 +49,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 Passwords are requested through `Read-Host -AsSecureString`, converted only
 for the current process/container call, and cleared in `finally`.
 
-## 1. Neon terminal and read-only actions
+## 1. Neon and migration actions
 
 Requirements: Windows PowerShell, Docker Desktop running, access to the
 `postgres:18-alpine` image, and verified non-secret Neon coordinates. Local
@@ -242,6 +242,89 @@ Device. It returns no UUID, Account identifier, payload, stored result, full
 hash, password, or connection string. `PASS` proves successful read-only
 execution only; Gate 12.5 closes only after the values are reconciled against
 the accepted 12.5a–c evidence.
+
+### `GS-MIG-01` — Ordered open-ended migration walker
+
+Canonical registry and state queries:
+
+```text
+DB_MGMT.sql → DBM-MIGRATION entries
+DB_MGMT.sql → DBM-AUTO-11 / migration-state
+DB_MGMT.sql → DBM-AUTO-04 / migration-ledger
+```
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+  -File ".\documentation\I_SCRIPTS.ps1" `
+  -ConfigPath ".\documentation\NS_COORDINATES.md" `
+  -Role migrator `
+  -Action migrate-to
+```
+
+The terminal requests:
+
+1. `latest`, `000`, or one registered numeric target;
+2. the migrator password through the masked prompt;
+3. exact `OK NNN` confirmation before each planned step.
+
+`STOP` at any step preserves the last successfully committed provider version.
+The password is entered once for the complete walk.
+
+The walker does not hard-code migration 007 or any future ceiling. It:
+
+1. parses physically ordered `DBM-MIGRATION` entries;
+2. requires a contiguous sequence beginning at `001`;
+3. treats the last valid entry in `DB_MGMT.sql` as `latest`;
+4. verifies every referenced SQL file is inside the repository, tracked,
+   clean, correctly named, and equal to its registered SHA-256;
+5. detects version `000`/`001` from the six migration-001 baseline tables
+   because migration 001 predates the ledger;
+6. validates every migration-002+ ledger ID and semantic checksum against the
+   registry;
+7. builds the complete UP or DOWN plan before the first mutation;
+8. applies one file per `psql --single-transaction` call;
+9. strips only a matching outer `BEGIN`/terminal `COMMIT`, leaving the file
+   body unchanged inside the runner-owned transaction;
+10. executes a ledger/baseline assertion before that transaction can commit;
+11. verifies the committed provider version before offering the next step;
+12. returns one consolidated start/current/target result.
+
+For example, a provider at 006 with registry entries through 009 receives:
+
+```text
+UP 007
+UP 008
+UP 009
+```
+
+A provider at 009 targeting 006 receives:
+
+```text
+DOWN 009
+DOWN 008
+DOWN 007
+```
+
+but only when all three entries register reviewed paired down files. The
+walker rejects the entire descent before its first mutation if any required
+down file is `NONE`.
+
+Current migrations 001–007 remain registered as forward-only because no
+reviewed reverse files exist. Therefore the new runner can build a fresh
+provider upward from 000 to 007 now, while a request to descend through any of
+001–007 stops safely before mutation. Open-ended DOWN execution becomes
+available automatically as paired `NNN_name.down.sql` files and exact SHA-256
+values are reviewed and registered.
+
+Every up migration numbered 002 or later must insert exactly its registered
+`migration_id` and ledger checksum. Every paired down migration must remove
+that current ledger row and restore the immediately preceding compatible
+state. A down file may not delete unrelated ledger rows or silently claim
+reversibility for data it cannot restore.
+
+SQL or in-transaction assertion failure is rolled back automatically. A
+transport interruption remains an unclear outcome: stop, run the read-only
+ledger/state inspection, and never retry blindly.
 
 ## 2. Git alignment
 

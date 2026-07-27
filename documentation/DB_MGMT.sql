@@ -1,9 +1,10 @@
 -- MARKEI DATABASE MANAGEMENT CATALOGUE
 --
--- This file has two deliberately separate surfaces:
+-- This file has three deliberately separate surfaces:
 --
 -- 1. MANUAL SQL MGMT contains copy-ready, read-only PostgreSQL/SQLite checks.
 -- 2. AUTOMATION QUERIES contains indexed blocks extracted by I_SCRIPTS.ps1.
+-- 3. DBM-MIGRATION comments define the ordered migration registry.
 --
 -- Never execute this mixed-dialect catalogue as one script. Copy one manual
 -- block into the matching client, or let a GS-* procedure select exactly one
@@ -34,7 +35,7 @@ ROLLBACK;
 BEGIN TRANSACTION READ ONLY;
 SELECT migration_id, checksum, applied_at
 FROM public.migration_ledger
-ORDER BY migration_id;
+ORDER BY split_part(migration_id, '_', 1)::bigint, migration_id;
 ROLLBACK;
 
 -- DBM-MAN-PG-03 | POSTGRESQL SCHEMA AND RLS INVENTORY
@@ -81,6 +82,31 @@ ORDER BY type, name;
 -- DBM-AUTO-08  verify-device           Sanitized exact-device counters
 -- DBM-AUTO-09  provider-baseline       Atomic provider snapshot
 -- DBM-AUTO-10  runtime-readiness       Runtime readiness-v2 proof
+-- DBM-AUTO-11  migration-state         Ledger/baseline discovery for walker
+--
+-- OPEN-ENDED MIGRATION REGISTRY
+--
+-- I_SCRIPTS.ps1 treats the physical order below as the canonical built-in
+-- sequence. The last valid entry is `latest`. Entries must start at 001,
+-- remain numerically contiguous, identify tracked clean files, and retain
+-- exact file SHA-256 plus provider-ledger checksum. Migration 001 is the only
+-- pre-ledger exception and therefore uses NONE for its ledger checksum.
+--
+-- Registry fields:
+-- version|id|ledger_checksum|up_path|up_sha256|down_path|down_sha256
+--
+-- A DOWN step is available only when a reviewed paired `.down.sql` path and
+-- SHA are registered. NONE is an intentional irreversible boundary; the
+-- walker refuses the complete DOWN plan before applying any step when one of
+-- its required reverse files is absent.
+--
+-- DBM-MIGRATION|001|001_init|NONE|services/markei_sync_api/migrations/001_init.sql|F48A9E5D097BE5BD758FF76FF83D8CE8F81F364050F7DF4E3B463D26C18BD0CD|NONE|NONE
+-- DBM-MIGRATION|002|002_coordination_hardening|c10-s01b-forward-only-v1|services/markei_sync_api/migrations/002_coordination_hardening.sql|32A0215E553585F48C8F9A8D50A622E34296A3F0D94FCDAF60A9DED278BED923|NONE|NONE
+-- DBM-MIGRATION|003|003_retention_snapshot_recovery|c10-s02-retention-snapshot-recovery-v1|services/markei_sync_api/migrations/003_retention_snapshot_recovery.sql|B5BA579866CF0C2B3376EB3FB35D208772970ADF6F570D9CB8A5569CBBD80C1D|NONE|NONE
+-- DBM-MIGRATION|004|004_hosted_identity_enrollment|c10-s03a-hosted-identity-v1|services/markei_sync_api/migrations/004_hosted_identity_enrollment.sql|937A2A6B2F23D1C2C3E3926C5D925A840A4F8382E75DE04321A1A56185FBEBDC|NONE|NONE
+-- DBM-MIGRATION|005|005_hosted_authorization_fence|c10-s03a-r2-hosted-authorization-fence-v1|services/markei_sync_api/migrations/005_hosted_authorization_fence.sql|E99F20BC7C718BA8B4614DB0E370F0E1535E5B357770DC2E402D0A8BBC5B312C|NONE|NONE
+-- DBM-MIGRATION|006|006_hosted_authorization_r3|c10-s03a-r3-hosted-authorization-v1|services/markei_sync_api/migrations/006_hosted_authorization_r3.sql|7B83DC34464559D9BA7335E27CDA106B34D64EBB49BC2FAC155112A2E78DF87F|NONE|NONE
+-- DBM-MIGRATION|007|007_account_cursor_provisioning|c10-mcg02-account-cursor-provisioning-v1|services/markei_sync_api/migrations/007_account_cursor_provisioning.sql|89AB11302F8B860C52AA1C74FBFEDF6A4DB3A0EE62FE7CB715B20B74AEF99AC6|NONE|NONE
 
 -- ============================================================================
 -- DBM-AUTO-01 | SANITIZED CONNECTION PROOF
@@ -96,6 +122,30 @@ SELECT
     current_user AS connected_role,
     current_database() AS connected_database,
     current_setting('transaction_read_only') AS transaction_read_only;
+ROLLBACK;
+-- END ACTION
+
+-- ============================================================================
+-- DBM-AUTO-11 | MIGRATION WALKER STATE
+-- ACTION: migration-state
+-- Purpose: detect the pre-ledger migration-001 baseline and whether the
+--          provider migration ledger exists without referencing a missing
+--          relation. I_SCRIPTS.ps1 reads the ledger separately only when this
+--          query proves it exists.
+-- Manual variable: none.
+-- Expected: ledger_present 0/1; baseline_object_count exactly 0 or 6;
+--           terminal ROLLBACK.
+BEGIN TRANSACTION READ ONLY;
+SELECT
+    (to_regclass('public.migration_ledger') IS NOT NULL)::integer
+        AS ledger_present,
+    (to_regclass('public.accounts') IS NOT NULL)::integer
+      + (to_regclass('public.devices') IS NOT NULL)::integer
+      + (to_regclass('public.account_cursor_state') IS NOT NULL)::integer
+      + (to_regclass('public.submissions') IS NOT NULL)::integer
+      + (to_regclass('public.sync_events') IS NOT NULL)::integer
+      + (to_regclass('public.device_acknowledgements') IS NOT NULL)::integer
+        AS baseline_object_count;
 ROLLBACK;
 -- END ACTION
 
@@ -231,7 +281,7 @@ ROLLBACK;
 BEGIN TRANSACTION READ ONLY;
 SELECT migration_id, checksum, applied_at
 FROM public.migration_ledger
-ORDER BY migration_id;
+ORDER BY split_part(migration_id, '_', 1)::bigint, migration_id;
 ROLLBACK;
 -- END ACTION
 

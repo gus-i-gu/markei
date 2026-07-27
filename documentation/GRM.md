@@ -40,6 +40,7 @@ the matching `GS-*` section of `G_SCRIPTS.md`.
 | `GRM-NEON-09`     | Exact Device-counter verification       |
 | `GRM-NEON-10`     | Runtime readiness-v2 verification       |
 | `GRM-NEON-11`     | Atomic provider baseline                |
+| `GRM-MIG-01`      | Ordered open-ended migration walker     |
 | `GRM-GIT-01`      | Exact Git-alignment verification        |
 | `GRM-GIT-02`      | Fast-forward pull and verification      |
 | `GRM-SQLITE-01`   | Local SQLite CLI verification           |
@@ -62,7 +63,7 @@ the matching `GS-*` section of `G_SCRIPTS.md`.
 | `documentation/G_SCRIPTS.md`      | Canonical expanded `GS-*` procedures, inputs, expectations, and stops |
 | `documentation/NS_COORDINATES.md` | Reviewed non-secret coordinate allowlist                              |
 | `documentation/I_SCRIPTS.ps1`    | `GS-*` dispatcher plus guarded Neon/Docker/psql launcher              |
-| `documentation/DB_MGMT.sql`       | Manual SQL library and indexed automation-query catalogue             |
+| `documentation/DB_MGMT.sql`       | SQL catalogue plus ordered migration registry                         |
 
 `DB_MGMT.sql` replaces the former singular `NEON_ACTION.sql`. Historical
 references to `NEON_ACTION.sql` or `NEON_ACTIONS.sql` in J and Git remain
@@ -76,6 +77,7 @@ observational history; they are not live interfaces.
 | `GS-*`       | `G_SCRIPTS.md` | Complete operational procedure                               |
 | `DBM-MAN-*`  | `DB_MGMT.sql`  | Manually copied, read-only SQL for the named database client |
 | `DBM-AUTO-*` | `DB_MGMT.sql`  | SQL extracted by an automated `GS-*`/launcher path           |
+| `DBM-MIGRATION` | `DB_MGMT.sql` | Ordered up/down migration registry and checksums             |
 
 Example:
 
@@ -102,6 +104,9 @@ selection.
   queries that have no repository variable dependency.
 - `DB_MGMT.sql / DBM-AUTO-*` owns reusable SQL selected by automated
   procedures.
+- `DB_MGMT.sql / DBM-MIGRATION` owns the contiguous built-in order, exact
+  migration IDs, provider-ledger checksums, tracked file paths, file SHA-256
+  values, and optional paired down files.
 - `I_SCRIPTS.ps1` owns exact GS dispatch, secure password handling, guarded
   Docker/psql execution, and automation-block extraction.
 
@@ -113,7 +118,7 @@ variables or reproducing a GS procedure, move that logic down the cascade.
 `DB_MGMT.sql` is a mixed-dialect catalogue and must never be executed as one
 script.
 
-Its two sections are:
+Its three surfaces are:
 
 ```text
 ## MANUAL SQL MGMT ##
@@ -122,6 +127,7 @@ Its two sections are:
 
 ### AUTOMATION QUERIES ###
     DBM-AUTO-*        extracted between ACTION / END ACTION markers
+    DBM-MIGRATION     parsed as the open-ended migration registry
 ```
 
 Prefer the matching `GRM-*`/`GS-*` procedure whenever one exists. Manual blocks
@@ -157,6 +163,10 @@ prompts in the selected `GS-*` procedure.
 6. Never rerun a migration merely because its first output was unclear.
 7. Keep Retry, ordinary Sync, provider mutation, and database repair outside
    Gate 12.6 unless a later authorization packet explicitly enables them.
+8. Use `GRM-MIG-01` for ordered migration changes. `STOP` preserves the last
+   committed version; SQL/assertion failure rolls back the active step.
+9. A DOWN plan is valid only when every required version has a reviewed
+   registered `.down.sql`; the walker rejects the entire plan otherwise.
 
 The dispatcher form is process-scoped and does not permanently alter PowerShell
 execution policy:
@@ -176,7 +186,9 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 | Docker/SQLite/tool unavailable                       | Stop; restore the named prerequisite                   |
 | Provider identity or database mismatch               | Stop; do not continue to the selected action           |
 | TLS/channel-binding/PostgreSQL-version mismatch      | Stop; do not open a shell or mutate                    |
-| Migration dirty, untracked, or failed                | Stop; inspect ledger/postflight read-only              |
+| Migration dirty, untracked, checksum-mismatched      | Stop before provider mutation                          |
+| Migration SQL/assertion failure                      | Roll back active step; inspect ledger read-only        |
+| DOWN file absent anywhere in requested plan          | Refuse whole plan before applying its first step       |
 | Auth0/Render/Neon mismatch                           | Stop before authenticated request, deployment, or Sync |
 | Multiple local databases or SQLite sidecar ambiguity | Stop; do not guess or query live data                  |
 | Copied-database integrity failure                    | Stop; do not query, repair, Retry, or Sync             |
@@ -189,13 +201,14 @@ When the cascade changes, reconcile together:
 2. its exact `GS-*` heading and PowerShell fence;
 3. any `NS_COORDINATES` keys;
 4. any `DBM-AUTO-*` ID and `ACTION` name;
-5. `I_SCRIPTS.ps1` `ValidateSet` and `$Actions`;
-6. safety and expected-result text in `G_SCRIPTS.md`.
+5. the contiguous `DBM-MIGRATION` entry, paths, and exact SHA-256 values;
+6. `I_SCRIPTS.ps1` `ValidateSet` and `$Actions`;
+7. safety and expected-result text in `G_SCRIPTS.md`.
 
 Required static checks include:
 
 ```powershell
-rg "GRM-|GS-|DBM-MAN-|DBM-AUTO-|NS_COORDINATES|I_SCRIPTS|DB_MGMT" `
+rg "GRM-|GS-|DBM-MAN-|DBM-AUTO-|DBM-MIGRATION|NS_COORDINATES|I_SCRIPTS|DB_MGMT" `
   documentation\GRM.md `
   documentation\G_SCRIPTS.md `
   documentation\NS_COORDINATES.md `
@@ -231,6 +244,7 @@ are canonical in the mapped `GS-*` section.
 | `GRM-NEON-09` | `GS-NEON-09`        | Verify exact device counters      |
 | `GRM-NEON-10` | `GS-NEON-10`        | Verify runtime readiness-v2       |
 | `GRM-NEON-11` | `GS-NEON-11`        | Capture atomic provider baseline  |
+| `GRM-MIG-01`  | `GS-MIG-01`         | Walk migrations to chosen version |
 
 ### `GRM-NEON-00`
 
@@ -302,6 +316,12 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-NEON-11"
+```
+
+### `GRM-MIG-01`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-MIG-01"
 ```
 
 **Git alignment**

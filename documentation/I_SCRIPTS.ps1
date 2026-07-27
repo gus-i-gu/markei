@@ -18,11 +18,13 @@ param(
         "runtime-privileges",
         "schema-inventory",
         "apply-migration",
+        "migrate-to",
         "shell"
     )]
     [string]$Action,
 
     [string]$MigrationPath,
+    [string]$TargetVersion,
     [string]$ConfigPath,
     [string]$ActionPath
 )
@@ -46,6 +48,7 @@ if (-not [string]::IsNullOrWhiteSpace($Procedure)) {
     if (-not [string]::IsNullOrWhiteSpace($Role) -or
         -not [string]::IsNullOrWhiteSpace($Action) -or
         -not [string]::IsNullOrWhiteSpace($MigrationPath) -or
+        -not [string]::IsNullOrWhiteSpace($TargetVersion) -or
         -not [string]::IsNullOrWhiteSpace($ConfigPath) -or
         -not [string]::IsNullOrWhiteSpace($ActionPath)) {
         throw "-Procedure cannot be combined with Neon launcher parameters."
@@ -152,6 +155,327 @@ function Get-ActionSql {
     return $Match.Groups[1].Value.Trim()
 }
 
+function Get-RepositoryFile {
+    param(
+        [Parameter(Mandatory)] [string]$RepositoryRoot,
+        [Parameter(Mandatory)] [string]$RelativePath,
+        [Parameter(Mandatory)] [string]$ExpectedHash
+    )
+
+    if ($RelativePath -notmatch '^[A-Za-z0-9_./-]+$' -or
+        $RelativePath.StartsWith("/") -or
+        $RelativePath.Contains("..")) {
+        throw "Migration registry path is unsafe: $RelativePath"
+    }
+    if ($ExpectedHash -notmatch '^[A-Fa-f0-9]{64}$') {
+        throw "Migration registry SHA-256 is invalid for $RelativePath."
+    }
+
+    $RepositoryDirectory = Get-Item -LiteralPath $RepositoryRoot
+    $ResolvedFile = Get-Item -LiteralPath (
+        Join-Path $RepositoryDirectory.FullName $RelativePath
+    )
+    if ($ResolvedFile.PSIsContainer -or
+        [IO.Path]::GetExtension($ResolvedFile.FullName) -ne ".sql") {
+        throw "Migration registry path must identify a .sql file."
+    }
+
+    $CandidateDirectory = $ResolvedFile.Directory
+    $IsInsideRepository = $false
+    while ($null -ne $CandidateDirectory) {
+        if ([string]::Equals(
+            $CandidateDirectory.FullName.TrimEnd([char[]]@('\', '/')),
+            $RepositoryDirectory.FullName.TrimEnd([char[]]@('\', '/')),
+            [StringComparison]::OrdinalIgnoreCase
+        )) {
+            $IsInsideRepository = $true
+            break
+        }
+        $CandidateDirectory = $CandidateDirectory.Parent
+    }
+    if (-not $IsInsideRepository) {
+        throw "Migration registry path leaves the current repository."
+    }
+
+    $Tracked = & git -C $RepositoryRoot ls-files `
+        --error-unmatch -- $RelativePath 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Migration file is not tracked by Git: $RelativePath"
+    }
+    $Dirty = & git -C $RepositoryRoot status --porcelain -- $RelativePath
+    if (-not [string]::IsNullOrWhiteSpace(($Dirty -join ""))) {
+        throw "Migration file has uncommitted changes: $RelativePath"
+    }
+
+    $ActualSha256 = (
+        Get-FileHash $ResolvedFile.FullName -Algorithm SHA256
+    ).Hash.ToUpperInvariant()
+    if ($ActualSha256 -cne $ExpectedHash.ToUpperInvariant()) {
+        throw @"
+Migration SHA-256 mismatch:
+  path     = $RelativePath
+  expected = $($ExpectedHash.ToUpperInvariant())
+  actual   = $ActualSha256
+"@
+    }
+    return $ResolvedFile
+}
+
+function Get-MigrationRegistry {
+    param(
+        [Parameter(Mandatory)] [string]$Content,
+        [Parameter(Mandatory)] [string]$RepositoryRoot
+    )
+
+    $Pattern = '(?m)^-- DBM-MIGRATION\|' +
+        '(?<Version>\d{3,})\|' +
+        '(?<Id>[A-Za-z0-9_-]+)\|' +
+        '(?<Ledger>[A-Za-z0-9_-]+|NONE)\|' +
+        '(?<UpPath>[A-Za-z0-9_./-]+)\|' +
+        '(?<UpSha>[A-Fa-f0-9]{64})\|' +
+        '(?<DownPath>[A-Za-z0-9_./-]+|NONE)\|' +
+        '(?<DownSha>[A-Fa-f0-9]{64}|NONE)\s*$'
+    $DeclaredRegistryLines = [regex]::Matches(
+        $Content,
+        '(?m)^-- DBM-MIGRATION\|.*$'
+    )
+    $RegistryMatches = [regex]::Matches($Content, $Pattern)
+    if ($RegistryMatches.Count -eq 0) {
+        throw "DB_MGMT.sql contains no DBM-MIGRATION registry entries."
+    }
+    if ($DeclaredRegistryLines.Count -ne $RegistryMatches.Count) {
+        throw "DB_MGMT.sql contains a malformed DBM-MIGRATION registry entry."
+    }
+
+    $Entries = @()
+    for ($Index = 0; $Index -lt $RegistryMatches.Count; $Index++) {
+        $RegistryMatch = $RegistryMatches[$Index]
+        $VersionText = $RegistryMatch.Groups["Version"].Value
+        $VersionNumber = 0
+        if (-not [int]::TryParse($VersionText, [ref]$VersionNumber) -or
+            $VersionNumber -ne ($Index + 1)) {
+            throw @"
+Migration registry must begin at 001 and remain physically contiguous.
+Expected version $($Index + 1); found $VersionText.
+"@
+        }
+
+        $MigrationId = $RegistryMatch.Groups["Id"].Value
+        if (-not $MigrationId.StartsWith("$VersionText`_")) {
+            throw "Migration ID '$MigrationId' does not match version $VersionText."
+        }
+
+        $LedgerChecksum = $RegistryMatch.Groups["Ledger"].Value
+        if (($VersionNumber -eq 1 -and $LedgerChecksum -ne "NONE") -or
+            ($VersionNumber -gt 1 -and $LedgerChecksum -eq "NONE")) {
+            throw "Only migration 001 may omit a ledger checksum."
+        }
+
+        $UpPath = $RegistryMatch.Groups["UpPath"].Value
+        $UpSha = $RegistryMatch.Groups["UpSha"].Value
+        $UpFile = Get-RepositoryFile -RepositoryRoot $RepositoryRoot -RelativePath $UpPath -ExpectedHash $UpSha
+        if ([IO.Path]::GetFileNameWithoutExtension($UpFile.Name) -cne
+            $MigrationId) {
+            throw "Up migration filename does not match '$MigrationId'."
+        }
+
+        $DownPath = $RegistryMatch.Groups["DownPath"].Value
+        $DownSha = $RegistryMatch.Groups["DownSha"].Value
+        $DownFile = $null
+        if ($DownPath -eq "NONE") {
+            if ($DownSha -ne "NONE") {
+                throw "Down SHA must be NONE when DownPath is NONE."
+            }
+        }
+        else {
+            if ($DownSha -eq "NONE") {
+                throw "Down SHA is required when DownPath is registered."
+            }
+            $DownFile = Get-RepositoryFile -RepositoryRoot $RepositoryRoot -RelativePath $DownPath -ExpectedHash $DownSha
+            if ([IO.Path]::GetFileNameWithoutExtension($DownFile.Name) -cne
+                "$MigrationId.down") {
+                throw "Down migration filename must be '$MigrationId.down.sql'."
+            }
+        }
+
+        $Entries += [PSCustomObject]@{
+            Version = $VersionText
+            VersionNumber = $VersionNumber
+            MigrationId = $MigrationId
+            LedgerChecksum = $LedgerChecksum
+            UpPath = $UpPath
+            UpFile = $UpFile.FullName
+            UpSha256 = $UpSha.ToUpperInvariant()
+            DownPath = $DownPath
+            DownFile = if ($null -eq $DownFile) {
+                $null
+            } else {
+                $DownFile.FullName
+            }
+            DownSha256 = if ($DownSha -eq "NONE") {
+                "NONE"
+            } else {
+                $DownSha.ToUpperInvariant()
+            }
+        }
+    }
+    return @($Entries)
+}
+
+function Get-TransactionBody {
+    param([Parameter(Mandatory)] [string]$Path)
+
+    $Lines = [IO.File]::ReadAllLines($Path)
+    $Significant = @()
+    for ($Index = 0; $Index -lt $Lines.Count; $Index++) {
+        $Trimmed = $Lines[$Index].Trim()
+        if ($Trimmed.Length -gt 0 -and -not $Trimmed.StartsWith("--")) {
+            $Significant += $Index
+        }
+    }
+    if ($Significant.Count -eq 0) {
+        throw "Migration file is empty: $Path"
+    }
+    if ($Lines | Where-Object { $_.TrimStart().StartsWith("\") }) {
+        throw "Migration files may not contain psql meta-commands: $Path"
+    }
+
+    $BoundaryPattern = '^(?i:begin(?:\s+transaction)?|commit|rollback)\s*;$'
+    $BoundaryIndexes = @(
+        0..($Lines.Count - 1) | Where-Object {
+            $Lines[$_].Trim() -match $BoundaryPattern
+        }
+    )
+    $FirstIndex = $Significant[0]
+    $LastIndex = $Significant[-1]
+    $First = $Lines[$FirstIndex].Trim()
+    $Last = $Lines[$LastIndex].Trim()
+
+    if ($First -match '^(?i:begin(?:\s+transaction)?)\s*;$') {
+        if ($Last -notmatch '^(?i:commit)\s*;$' -or
+            $BoundaryIndexes.Count -ne 2 -or
+            $BoundaryIndexes[0] -ne $FirstIndex -or
+            $BoundaryIndexes[1] -ne $LastIndex) {
+            throw @"
+Migration transaction boundary is not runner-safe: $Path
+Use one optional outer BEGIN as the first SQL statement and one matching
+terminal COMMIT. Do not place COMMIT or ROLLBACK inside the migration body.
+"@
+        }
+        $Lines[$FirstIndex] = "-- outer BEGIN owned by GRM migration walker"
+        $Lines[$LastIndex] = "-- outer COMMIT owned by GRM migration walker"
+    }
+    elseif ($BoundaryIndexes.Count -ne 0) {
+        throw "Migration contains an unsafe transaction boundary: $Path"
+    }
+
+    return [string]::Join([Environment]::NewLine, $Lines)
+}
+
+function Get-MigrationAssertionSql {
+    param(
+        [Parameter(Mandatory)] $Entry,
+        [Parameter(Mandatory)]
+        [ValidateSet("UP", "DOWN")]
+        [string]$Direction,
+        $PreviousEntry
+    )
+
+    if ($Direction -eq "UP" -and $Entry.VersionNumber -eq 1) {
+        return @"
+DO `$grm_assert`$
+BEGIN
+  IF to_regclass('public.accounts') IS NULL
+     OR to_regclass('public.devices') IS NULL
+     OR to_regclass('public.account_cursor_state') IS NULL
+     OR to_regclass('public.submissions') IS NULL
+     OR to_regclass('public.sync_events') IS NULL
+     OR to_regclass('public.device_acknowledgements') IS NULL
+     OR to_regclass('public.migration_ledger') IS NOT NULL THEN
+    RAISE EXCEPTION 'GRM postcondition failed for migration 001';
+  END IF;
+END
+`$grm_assert`$;
+"@
+    }
+
+    if ($Direction -eq "DOWN" -and $Entry.VersionNumber -eq 1) {
+        return @"
+DO `$grm_assert`$
+BEGIN
+  IF to_regclass('public.accounts') IS NOT NULL
+     OR to_regclass('public.devices') IS NOT NULL
+     OR to_regclass('public.account_cursor_state') IS NOT NULL
+     OR to_regclass('public.submissions') IS NOT NULL
+     OR to_regclass('public.sync_events') IS NOT NULL
+     OR to_regclass('public.device_acknowledgements') IS NOT NULL
+     OR to_regclass('public.migration_ledger') IS NOT NULL THEN
+    RAISE EXCEPTION 'GRM postcondition failed for migration 001 down';
+  END IF;
+END
+`$grm_assert`$;
+"@
+    }
+
+    if ($Direction -eq "UP") {
+        return @"
+DO `$grm_assert`$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+      FROM public.migration_ledger
+     WHERE migration_id = '$($Entry.MigrationId)'
+       AND checksum = '$($Entry.LedgerChecksum)'
+  ) THEN
+    RAISE EXCEPTION 'GRM ledger postcondition failed for $($Entry.MigrationId)';
+  END IF;
+END
+`$grm_assert`$;
+"@
+    }
+
+    if ($Entry.VersionNumber -eq 2) {
+        return @"
+DO `$grm_assert`$
+DECLARE
+  ledger_has_rows boolean;
+BEGIN
+  IF to_regclass('public.migration_ledger') IS NOT NULL THEN
+    EXECUTE
+      'SELECT EXISTS (SELECT 1 FROM public.migration_ledger)'
+      INTO ledger_has_rows;
+    IF ledger_has_rows THEN
+      RAISE EXCEPTION 'GRM expected an empty or absent ledger after 002 down';
+    END IF;
+  END IF;
+END
+`$grm_assert`$;
+"@
+    }
+
+    return @"
+DO `$grm_assert`$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+      FROM public.migration_ledger
+     WHERE migration_id = '$($Entry.MigrationId)'
+  ) THEN
+    RAISE EXCEPTION 'GRM down migration retained $($Entry.MigrationId)';
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1
+      FROM public.migration_ledger
+     WHERE migration_id = '$($PreviousEntry.MigrationId)'
+       AND checksum = '$($PreviousEntry.LedgerChecksum)'
+  ) THEN
+    RAISE EXCEPTION 'GRM previous-ledger postcondition failed';
+  END IF;
+END
+`$grm_assert`$;
+"@
+}
+
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
     throw "Docker CLI was not found. Install or start Docker Desktop."
 }
@@ -185,6 +509,7 @@ $Actions = @(
     "runtime-privileges",
     "schema-inventory",
     "apply-migration",
+    "migrate-to",
     "shell"
 )
 if ([string]::IsNullOrWhiteSpace($Action)) {
@@ -252,13 +577,59 @@ Write-Host `
     "The launcher cannot independently prove the Neon branch alias." `
     -ForegroundColor Yellow
 
-$MigratorOnly = @("gate02-preflight", "gate02-postflight", "apply-migration")
+$MigratorOnly = @(
+    "gate02-preflight",
+    "gate02-postflight",
+    "apply-migration",
+    "migrate-to"
+)
 if ($Action -in $MigratorOnly -and $Role -ne "migrator") {
     throw "Action '$Action' requires -Role migrator."
 }
 if ($Action -in @("verify-device", "provider-baseline") -and
     $Role -eq "runtime") {
     throw "$Action requires migrator or dbowner inspection access."
+}
+
+$ActionContent = Get-Content -LiteralPath $ActionPath -Raw
+$MigrationRegistry = @()
+$TargetVersionNumber = $null
+$RepositoryRoot = $null
+
+if ($Action -eq "migrate-to") {
+    $RepositoryRoot = (& git rev-parse --show-toplevel 2>$null).Trim()
+    if ($LASTEXITCODE -ne 0 -or
+        [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+        throw "Run migrate-to from inside the Markei Git repository."
+    }
+    $MigrationRegistry = @(
+        Get-MigrationRegistry `
+            -Content $ActionContent `
+            -RepositoryRoot $RepositoryRoot
+    )
+    $LatestEntry = $MigrationRegistry[-1]
+
+    if ([string]::IsNullOrWhiteSpace($TargetVersion)) {
+        $TargetVersion = (
+            Read-Host "Target version (latest, 000, or registered number)"
+        ).Trim()
+    }
+    if ($TargetVersion -ieq "latest") {
+        $TargetVersionNumber = $LatestEntry.VersionNumber
+    }
+    else {
+        $ParsedTarget = 0
+        if ($TargetVersion -notmatch '^\d+$' -or
+            -not [int]::TryParse($TargetVersion, [ref]$ParsedTarget) -or
+            $ParsedTarget -lt 0 -or
+            $ParsedTarget -gt $LatestEntry.VersionNumber) {
+            throw @"
+TargetVersion must be 'latest', 000, or a version registered in DB_MGMT.sql.
+Registry range: 001..$($LatestEntry.Version)
+"@
+        }
+        $TargetVersionNumber = $ParsedTarget
+    }
 }
 
 $ResolvedMigration = $null
@@ -360,6 +731,104 @@ try {
     $DockerInteractive = @("run", "--rm", "-it") + $DockerEnvironment
     $PsqlBase = @("psql", "-X", "-v", "ON_ERROR_STOP=1")
 
+    function Invoke-PsqlText {
+        param(
+            [Parameter(Mandatory)] [string]$Sql,
+            [switch]$MachineReadable,
+            [switch]$SingleTransaction
+        )
+
+        $PsqlArguments = @($PsqlBase)
+        if ($SingleTransaction) {
+            $PsqlArguments += @("--single-transaction", "--file=-")
+        }
+        if ($MachineReadable) {
+            $PsqlArguments += @("-Atq", "-F", "|")
+        }
+
+        $Output = $Sql | & docker @DockerNonInteractive `
+            $PostgresImage @PsqlArguments
+        if ($LASTEXITCODE -ne 0) {
+            throw "psql execution failed."
+        }
+        return @($Output)
+    }
+
+    function Get-ProviderMigrationState {
+        $BaselineSql = Get-ActionSql $ActionContent "migration-state"
+        $BaselineOutput = @(
+            Invoke-PsqlText -Sql $BaselineSql -MachineReadable
+        )
+        $BaselineLines = @(
+            $BaselineOutput | Where-Object {
+                -not [string]::IsNullOrWhiteSpace([string]$_)
+            }
+        )
+        if ($BaselineLines.Count -ne 1) {
+            throw "Migration baseline returned an unexpected row count."
+        }
+        $BaselineFields = ([string]$BaselineLines[0]).Trim() -split "\|", 2
+        if ($BaselineFields.Count -ne 2 -or
+            $BaselineFields[0] -notmatch '^[01]$' -or
+            $BaselineFields[1] -notmatch '^\d+$') {
+            throw "Migration baseline returned an unexpected shape."
+        }
+
+        $LedgerPresent = $BaselineFields[0] -eq "1"
+        $BaselineObjectCount = [int]$BaselineFields[1]
+        if ($BaselineObjectCount -notin @(0, 6)) {
+            throw @"
+Provider has a partial migration-001 baseline ($BaselineObjectCount of 6).
+Stop; do not infer or repair migration state.
+"@
+        }
+        if ($LedgerPresent -and $BaselineObjectCount -ne 6) {
+            throw "Provider ledger exists without the complete migration-001 baseline."
+        }
+        if (-not $LedgerPresent) {
+            return [PSCustomObject]@{
+                VersionNumber = if ($BaselineObjectCount -eq 6) { 1 } else { 0 }
+                LedgerRows = 0
+            }
+        }
+
+        $LedgerSql = Get-ActionSql $ActionContent "migration-ledger"
+        $LedgerOutput = @(
+            Invoke-PsqlText -Sql $LedgerSql -MachineReadable
+        )
+        $LedgerLines = @(
+            $LedgerOutput | Where-Object {
+                -not [string]::IsNullOrWhiteSpace([string]$_)
+            }
+        )
+
+        $ExpectedVersion = 2
+        foreach ($LedgerLine in $LedgerLines) {
+            $LedgerFields = ([string]$LedgerLine).Trim() -split "\|", 3
+            if ($LedgerFields.Count -lt 2) {
+                throw "Migration ledger returned an unexpected row shape."
+            }
+            if ($ExpectedVersion -gt $MigrationRegistry.Count) {
+                throw "Provider ledger is ahead of the DB_MGMT.sql registry."
+            }
+            $ExpectedEntry = $MigrationRegistry[$ExpectedVersion - 1]
+            if ($LedgerFields[0] -cne $ExpectedEntry.MigrationId -or
+                $LedgerFields[1] -cne $ExpectedEntry.LedgerChecksum) {
+                throw @"
+Provider migration ledger disagrees with DB_MGMT.sql.
+Expected: $($ExpectedEntry.MigrationId) | $($ExpectedEntry.LedgerChecksum)
+Received: $($LedgerFields[0]) | $($LedgerFields[1])
+"@
+            }
+            $ExpectedVersion++
+        }
+
+        return [PSCustomObject]@{
+            VersionNumber = $ExpectedVersion - 1
+            LedgerRows = $LedgerLines.Count
+        }
+    }
+
     # Identity is verified by SQL. Client-side TLS and channel binding are
     # enforced by the values loaded from NS_COORDINATES.md. The launcher
     # accepts only `require` for both. If either requirement cannot be
@@ -407,6 +876,173 @@ Received:
         Write-Host "Opening psql. Use \q to exit."
         & docker @DockerInteractive $PostgresImage @PsqlBase
     }
+    elseif ($Action -eq "migrate-to") {
+        $InitialState = Get-ProviderMigrationState
+        $InitialVersion = $InitialState.VersionNumber
+        if ($InitialVersion -gt $MigrationRegistry[-1].VersionNumber) {
+            throw "Provider migration state is ahead of the registry."
+        }
+
+        $Plan = @()
+        if ($TargetVersionNumber -gt $InitialVersion) {
+            for ($Version = $InitialVersion + 1; $Version -le $TargetVersionNumber; $Version++) {
+                $Plan += [PSCustomObject]@{
+                    Direction = "UP"
+                    Entry = $MigrationRegistry[$Version - 1]
+                }
+            }
+        }
+        elseif ($TargetVersionNumber -lt $InitialVersion) {
+            for ($Version = $InitialVersion; $Version -gt $TargetVersionNumber; $Version--) {
+                $Entry = $MigrationRegistry[$Version - 1]
+                if ($null -eq $Entry.DownFile) {
+                    throw @"
+DOWN plan is unavailable before any mutation.
+Migration $($Entry.Version) has no reviewed down file in DB_MGMT.sql.
+Use a reviewed replacement-branch/restore procedure or register its paired
+$($Entry.MigrationId).down.sql before requesting this target.
+"@
+                }
+                $Plan += [PSCustomObject]@{
+                    Direction = "DOWN"
+                    Entry = $Entry
+                }
+            }
+        }
+
+        Write-Host @"
+Migration registry:
+  current = $("{0:D3}" -f $InitialVersion)
+  target  = $("{0:D3}" -f $TargetVersionNumber)
+  latest  = $($MigrationRegistry[-1].Version)
+"@
+        if ($Plan.Count -eq 0) {
+            Write-Host "No migration step is required." -ForegroundColor Green
+        }
+        else {
+            Write-Host "Planned steps:"
+            foreach ($Step in $Plan) {
+                Write-Host (
+                    "  {0} {1} {2}" -f
+                    $Step.Direction,
+                    $Step.Entry.Version,
+                    $Step.Entry.MigrationId
+                )
+            }
+        }
+
+        $MigrationStopped = $false
+        foreach ($Step in $Plan) {
+            $Entry = $Step.Entry
+            $Direction = $Step.Direction
+            $SelectedPath = if ($Direction -eq "UP") {
+                $Entry.UpPath
+            } else {
+                $Entry.DownPath
+            }
+            $SelectedFile = if ($Direction -eq "UP") {
+                $Entry.UpFile
+            } else {
+                $Entry.DownFile
+            }
+            $SelectedSha = if ($Direction -eq "UP") {
+                $Entry.UpSha256
+            } else {
+                $Entry.DownSha256
+            }
+
+            Write-Host @"
+Next migration:
+  direction = $Direction
+  version   = $($Entry.Version)
+  id        = $($Entry.MigrationId)
+  path      = $SelectedPath
+  SHA256    = $SelectedSha
+"@
+            Write-Host @"
+Confirm in Neon before authorizing:
+  environment = $ExpectedEnvironment
+  branch      = $NeonBranchAlias
+  database    = $NeonDatabase
+"@
+            $ExpectedConfirmation = "OK $($Entry.Version)"
+            $Confirmation = (
+                Read-Host "Type '$ExpectedConfirmation' or STOP"
+            ).Trim()
+            if ($Confirmation -ceq "STOP") {
+                $MigrationStopped = $true
+                Write-Host (
+                    "STOP: provider remains at the last committed version."
+                ) -ForegroundColor Yellow
+                break
+            }
+            if ($Confirmation -cne $ExpectedConfirmation) {
+                throw "Migration cancelled: confirmation did not match."
+            }
+
+            $PreviousEntry = if ($Entry.VersionNumber -gt 1) {
+                $MigrationRegistry[$Entry.VersionNumber - 2]
+            } else {
+                $null
+            }
+            $MigrationSql = Get-TransactionBody -Path $SelectedFile
+            $AssertionSql = Get-MigrationAssertionSql `
+                -Entry $Entry `
+                -Direction $Direction `
+                -PreviousEntry $PreviousEntry
+            $TransactionalSql = $MigrationSql +
+                [Environment]::NewLine +
+                $AssertionSql
+
+            try {
+                Invoke-PsqlText `
+                    -Sql $TransactionalSql `
+                    -SingleTransaction
+            }
+            catch {
+                throw @"
+Migration $Direction $($Entry.Version) failed or has an unclear transport
+outcome. SQL and assertion failures are rolled back by psql's single
+transaction. Stop and inspect the read-only migration ledger before any retry.
+Cause: $($_.Exception.Message)
+"@
+            }
+
+            $ExpectedState = if ($Direction -eq "UP") {
+                $Entry.VersionNumber
+            } else {
+                $Entry.VersionNumber - 1
+            }
+            $CommittedState = Get-ProviderMigrationState
+            if ($CommittedState.VersionNumber -ne $ExpectedState) {
+                throw @"
+Committed migration state did not match the requested step.
+Expected: $("{0:D3}" -f $ExpectedState)
+Observed: $("{0:D3}" -f $CommittedState.VersionNumber)
+Stop; do not continue or retry.
+"@
+            }
+            Write-Host (
+                "COMMITTED: {0} {1}; provider version is now {2:D3}." -f
+                $Direction,
+                $Entry.Version,
+                $CommittedState.VersionNumber
+            ) -ForegroundColor Green
+        }
+
+        $FinalState = Get-ProviderMigrationState
+        Write-Host @"
+Migration result:
+  start   = $("{0:D3}" -f $InitialVersion)
+  current = $("{0:D3}" -f $FinalState.VersionNumber)
+  target  = $("{0:D3}" -f $TargetVersionNumber)
+  stopped = $MigrationStopped
+"@
+        if (-not $MigrationStopped -and
+            $FinalState.VersionNumber -ne $TargetVersionNumber) {
+            throw "Migration walker ended before the requested target."
+        }
+    }
     elseif ($Action -eq "apply-migration") {
         Write-Host "Migration: $ResolvedMigration"
         Write-Host `
@@ -426,7 +1062,6 @@ Confirm in Neon before authorizing:
                 $PostgresImage @PsqlBase
     }
     else {
-        $ActionContent = Get-Content -LiteralPath $ActionPath -Raw
         $Sql = Get-ActionSql $ActionContent $Action
         $Sql | & docker @DockerNonInteractive `
             $PostgresImage @PsqlBase @PsqlVariables
