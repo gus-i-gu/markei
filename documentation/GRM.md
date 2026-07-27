@@ -50,9 +50,11 @@ the matching `GS-*` section of `G_SCRIPTS.md`.
 | `GRM-HOST-01`     | Render live/ready verification          |
 | `GRM-AUTH-01`     | Auth0 public-metadata verification      |
 | `GRM-AUTH-02`     | Exact hosted Auth0-binding verification |
+| `GRM-AUTH-03`     | Guarded Account/membership provisioning |
 | `GRM-BUILD-01`    | Sync API validation                     |
 | `GRM-BUILD-02`    | Flutter-client validation               |
 | `GRM-FLUTTER-WIN` | Windows Closure build/run               |
+| `GRM-FLUTTER-DEBUG` | Windows Closure debugger preparation  |
 | `GRM-FLUTTER-AND` | Android Closure build/install/run       |
 
 ## 2. Canonical five-file system
@@ -167,6 +169,9 @@ prompts in the selected `GS-*` procedure.
    committed version; SQL/assertion failure rolls back the active step.
 9. A DOWN plan is valid only when every required version has a reviewed
    registered `.down.sql`; the walker rejects the entire plan otherwise.
+10. Use `GRM-AUTH-03` only after hosted readiness, public Auth0 metadata, and
+    Windows sign-in pass, and before pressing Enroll. Never replace it with
+    ad-hoc Account, identity, membership, or cursor SQL.
 
 The dispatcher form is process-scoped and does not permanently alter PowerShell
 execution policy:
@@ -189,7 +194,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass `
 | Migration dirty, untracked, checksum-mismatched      | Stop before provider mutation                          |
 | Migration SQL/assertion failure                      | Roll back active step; inspect ledger read-only        |
 | DOWN file absent anywhere in requested plan          | Refuse whole plan before applying its first step       |
-| Auth0/Render/Neon mismatch                           | Stop before authenticated request, deployment, or Sync |
+| Auth0/Render/Neon mismatch                           | Stop before authenticated or provider action             |
+| Provisioning token, target, or fixture mismatch      | Roll back; do not Enroll or improvise SQL              |
 | Multiple local databases or SQLite sidecar ambiguity | Stop; do not guess or query live data                  |
 | Copied-database integrity failure                    | Stop; do not query, repair, Retry, or Sync             |
 
@@ -383,6 +389,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 | `GRM-HOST-01` | `GS-HOST-01`        | Verify Render live and ready        |
 | `GRM-AUTH-01` | `GS-AUTH-01`        | Verify Auth0 public metadata        |
 | `GRM-AUTH-02` | `GS-AUTH-02`        | Verify exact account/Device binding |
+| `GRM-AUTH-03` | `GS-AUTH-03`        | Provision one guarded owner fixture |
 
 ### `GRM-HOST-01`
 
@@ -402,14 +409,21 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-AUTH-02"
 ```
 
+### `GRM-AUTH-03`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-AUTH-03"
+```
+
 **Validation and Flutter clients**
 
-| GRM ID            | Canonical procedure | Function                          |
-| ----------------- | ------------------- | --------------------------------- |
-| `GRM-BUILD-01`    | `GS-BUILD-01`       | Validate Sync API                 |
-| `GRM-BUILD-02`    | `GS-BUILD-02`       | Validate Flutter clients          |
-| `GRM-FLUTTER-WIN` | `GS-FLUTTER-WIN`    | Build/run Windows Closure         |
-| `GRM-FLUTTER-AND` | `GS-FLUTTER-AND`    | Build/install/run Android Closure |
+| GRM ID              | Canonical procedure   | Function                           |
+| ------------------- | --------------------- | ---------------------------------- |
+| `GRM-BUILD-01`      | `GS-BUILD-01`         | Validate Sync API                  |
+| `GRM-BUILD-02`      | `GS-BUILD-02`         | Validate Flutter clients           |
+| `GRM-FLUTTER-WIN`   | `GS-FLUTTER-WIN`      | Build/run Windows Closure          |
+| `GRM-FLUTTER-DEBUG` | `GS-FLUTTER-DEBUG`    | Prepare VS Code Windows debugging  |
+| `GRM-FLUTTER-AND`   | `GS-FLUTTER-AND`      | Build/install/run Android Closure  |
 
 ### `GRM-BUILD-01`
 
@@ -428,6 +442,20 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-FLUTTER-WIN"
 ```
+
+### `GRM-FLUTTER-DEBUG`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-FLUTTER-DEBUG"
+```
+
+Run this before a VS Code `F5` Windows Closure session. It verifies and exposes
+the native vcpkg dependency graph, creates the ignored public-coordinate
+define file, builds Debug beside the existing Release artifact, and registers
+the Debug executable for the `auth0flutter` callback. Open the repository root
+in VS Code and select `Markei Windows Closure (debug)`; its pre-launch task
+reuses this procedure and its post-debug task restores the callback to the
+preserved Release executable. Do not open only the Flutter subdirectory.
 
 ### `GRM-FLUTTER-AND`
 

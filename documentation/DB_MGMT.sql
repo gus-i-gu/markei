@@ -68,8 +68,9 @@ ORDER BY type, name;
 -- ============================================================================
 --
 -- I_SCRIPTS.ps1 extracts exactly one block between ACTION markers.
--- Every routine automation action is read-only, returns sanitized evidence,
--- and ends with ROLLBACK.
+-- Routine inspection actions are read-only and end with ROLLBACK. The one
+-- explicitly named provisioning action is a guarded, transactional mutation
+-- that returns sanitized counts and commits only after its postconditions pass.
 --
 -- AUTOMATION INDEX
 -- DBM-AUTO-01  connection              Role/database/read-only proof
@@ -83,6 +84,8 @@ ORDER BY type, name;
 -- DBM-AUTO-09  provider-baseline       Atomic provider snapshot
 -- DBM-AUTO-10  runtime-readiness       Runtime readiness-v2 proof
 -- DBM-AUTO-11  migration-state         Ledger/baseline discovery for walker
+-- DBM-AUTO-12  account-membership-provision
+--                                      Guarded development fixture bootstrap
 --
 -- OPEN-ENDED MIGRATION REGISTRY
 --
@@ -541,4 +544,248 @@ SELECT
     current_database() AS connected_database,
     public.markei_hosted_runtime_ready_v2() AS ready;
 ROLLBACK;
+-- END ACTION
+
+-- ============================================================================
+-- DBM-AUTO-12 | GUARDED ACCOUNT/MEMBERSHIP PROVISIONING
+-- ACTION: account-membership-provision
+-- Purpose: create exactly one development Account, external identity, active
+--          owner membership, and trigger-provisioned cursor row for the Auth0
+--          subject already verified by the hosted identity route.
+-- Input variables: identity_issuer, identity_subject, migrator_user,
+--          candidate_account_id, candidate_identity_id. They are supplied
+--          only by I_SCRIPTS.ps1 and are never returned.
+-- Mutation boundary: new provisioning is allowed only against an empty
+--          application provider. A rerun for the same sole active owner
+--          identity is an idempotent no-op. Disabled identities, zero or
+--          multiple active memberships, non-owner membership, or additional
+--          Account/identity/membership state abort the transaction.
+-- Expected: result created|existing; accounts 1; external identities 1;
+--          active owner memberships 1; cursor rows 1; no identifiers;
+--          terminal COMMIT.
+\getenv identity_subject MARKEI_GRM_IDENTITY_SUBJECT
+
+BEGIN TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+
+CREATE TEMP TABLE grm_provision_input (
+    identity_issuer text NOT NULL,
+    identity_subject text NOT NULL,
+    migrator_user text NOT NULL,
+    candidate_account_id uuid NOT NULL,
+    candidate_identity_id uuid NOT NULL
+) ON COMMIT DROP;
+
+INSERT INTO grm_provision_input(
+    identity_issuer,
+    identity_subject,
+    migrator_user,
+    candidate_account_id,
+    candidate_identity_id
+)
+VALUES (
+    :'identity_issuer',
+    :'identity_subject',
+    :'migrator_user',
+    :'candidate_account_id'::uuid,
+    :'candidate_identity_id'::uuid
+);
+
+DO $grm_provision$
+DECLARE
+    v_issuer text;
+    v_subject text;
+    v_migrator_user text;
+    v_candidate_account_id uuid;
+    v_candidate_identity_id uuid;
+    v_identity_id uuid;
+    v_identity_status text;
+    v_membership_account_id uuid;
+    v_membership_role text;
+    v_active_memberships integer;
+BEGIN
+    SELECT
+        identity_issuer,
+        identity_subject,
+        migrator_user,
+        candidate_account_id,
+        candidate_identity_id
+    INTO
+        v_issuer,
+        v_subject,
+        v_migrator_user,
+        v_candidate_account_id,
+        v_candidate_identity_id
+    FROM pg_temp.grm_provision_input;
+
+    IF current_user <> v_migrator_user THEN
+        RAISE EXCEPTION 'guarded provisioning requires the configured migrator';
+    END IF;
+    IF length(v_issuer) < 12 OR length(v_issuer) > 512
+       OR length(v_subject) < 1 OR length(v_subject) > 256 THEN
+        RAISE EXCEPTION 'guarded provisioning identity input is invalid';
+    END IF;
+    IF NOT EXISTS (
+        SELECT 1
+        FROM public.migration_ledger
+        WHERE migration_id = '007_account_cursor_provisioning'
+          AND checksum = 'c10-mcg02-account-cursor-provisioning-v1'
+    ) OR to_regprocedure(
+        'public.markei_provision_account_cursor_state()'
+    ) IS NULL THEN
+        RAISE EXCEPTION 'guarded provisioning requires validated migration 007';
+    END IF;
+
+    -- Serialize every bootstrap identity, including two different subjects
+    -- racing against the same empty development provider.
+    PERFORM pg_advisory_xact_lock(
+        hashtextextended('markei:guarded-account-provisioning', 0)
+    );
+
+    SELECT identity_id, status
+    INTO v_identity_id, v_identity_status
+    FROM public.external_identities
+    WHERE issuer = v_issuer
+      AND subject = v_subject
+    FOR UPDATE;
+
+    IF FOUND THEN
+        IF v_identity_status <> 'active' THEN
+            RAISE EXCEPTION 'existing external identity is not active';
+        END IF;
+
+        SELECT count(*)
+        INTO v_active_memberships
+        FROM public.account_memberships
+        WHERE identity_id = v_identity_id
+          AND status = 'active';
+
+        IF v_active_memberships <> 1 THEN
+            RAISE EXCEPTION
+                'existing identity must have exactly one active membership';
+        END IF;
+
+        SELECT account_id, role
+        INTO v_membership_account_id, v_membership_role
+        FROM public.account_memberships
+        WHERE identity_id = v_identity_id
+          AND status = 'active';
+
+        IF v_membership_role <> 'owner' THEN
+            RAISE EXCEPTION 'existing active membership is not owner';
+        END IF;
+        IF (SELECT count(*) FROM public.accounts) <> 1
+           OR (SELECT count(*) FROM public.external_identities) <> 1
+           OR (SELECT count(*) FROM public.account_memberships) <> 1
+           OR (SELECT count(*) FROM public.account_cursor_state) <> 1
+           OR NOT EXISTS (
+               SELECT 1
+               FROM public.account_cursor_state
+               WHERE account_id = v_membership_account_id
+           ) THEN
+            RAISE EXCEPTION
+                'existing fixture is not the sole consistent provider fixture';
+        END IF;
+    ELSE
+        IF (SELECT count(*) FROM public.accounts) <> 0
+           OR (SELECT count(*) FROM public.external_identities) <> 0
+           OR (SELECT count(*) FROM public.account_memberships) <> 0
+           OR (SELECT count(*) FROM public.account_cursor_state) <> 0
+           OR (SELECT count(*) FROM public.devices) <> 0
+           OR (SELECT count(*) FROM public.device_enrollments) <> 0
+           OR (SELECT count(*) FROM public.device_enrollment_requests) <> 0
+           OR (SELECT count(*) FROM public.device_security_events) <> 0
+           OR (SELECT count(*) FROM public.submissions) <> 0
+           OR (SELECT count(*) FROM public.sync_events) <> 0
+           OR (SELECT count(*) FROM public.device_acknowledgements) <> 0
+           OR (SELECT count(*) FROM public.account_retention_state) <> 0
+           OR (SELECT count(*) FROM public.recovery_snapshots) <> 0
+           OR (SELECT count(*) FROM public.recovery_snapshot_chunks) <> 0
+           OR (SELECT count(*) FROM public.cleanup_runs) <> 0
+           OR (SELECT count(*) FROM public.rebootstrap_sessions) <> 0 THEN
+            RAISE EXCEPTION
+                'new fixture provisioning requires an empty application provider';
+        END IF;
+
+        INSERT INTO public.accounts(account_id)
+        VALUES (v_candidate_account_id);
+
+        INSERT INTO public.external_identities(
+            identity_id,
+            issuer,
+            subject,
+            status
+        )
+        VALUES (
+            v_candidate_identity_id,
+            v_issuer,
+            v_subject,
+            'active'
+        );
+
+        INSERT INTO public.account_memberships(
+            account_id,
+            identity_id,
+            role,
+            status
+        )
+        VALUES (
+            v_candidate_account_id,
+            v_candidate_identity_id,
+            'owner',
+            'active'
+        );
+
+        IF NOT EXISTS (
+            SELECT 1
+            FROM public.account_cursor_state
+            WHERE account_id = v_candidate_account_id
+              AND next_cursor = 1
+        ) THEN
+            RAISE EXCEPTION
+                'migration-007 Account cursor trigger did not provision state';
+        END IF;
+    END IF;
+
+    IF (SELECT count(*) FROM public.accounts) <> 1
+       OR (SELECT count(*) FROM public.external_identities) <> 1
+       OR (
+           SELECT count(*)
+           FROM public.account_memberships
+           WHERE status = 'active'
+             AND role = 'owner'
+       ) <> 1
+       OR (SELECT count(*) FROM public.account_cursor_state) <> 1 THEN
+        RAISE EXCEPTION 'guarded provisioning postcondition failed';
+    END IF;
+EXCEPTION
+    WHEN unique_violation OR foreign_key_violation OR check_violation THEN
+        RAISE EXCEPTION
+            'guarded provisioning encountered conflicting provider state';
+END
+$grm_provision$;
+
+SELECT
+    CASE
+        WHEN EXISTS (
+            SELECT 1
+            FROM public.external_identities AS ei
+            CROSS JOIN pg_temp.grm_provision_input AS input
+            WHERE ei.identity_id = input.candidate_identity_id
+        ) THEN 'created'
+        ELSE 'existing'
+    END AS provisioning_result,
+    (SELECT count(*) FROM public.accounts) AS accounts_count,
+    (SELECT count(*) FROM public.external_identities)
+        AS external_identities_count,
+    (
+        SELECT count(*)
+        FROM public.account_memberships
+        WHERE status = 'active'
+          AND role = 'owner'
+    ) AS active_owner_memberships_count,
+    (SELECT count(*) FROM public.account_cursor_state)
+        AS account_cursor_state_count,
+    (SELECT count(*) FROM public.devices) AS devices_count;
+
+COMMIT;
 -- END ACTION

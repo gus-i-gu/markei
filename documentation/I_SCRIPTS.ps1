@@ -12,6 +12,7 @@ param(
         "gate02-postflight",
         "verify-device",
         "provider-baseline",
+        "account-membership-provision",
         "runtime-readiness",
         "list-devices-sanitized",
         "migration-ledger",
@@ -26,7 +27,8 @@ param(
     [string]$MigrationPath,
     [string]$TargetVersion,
     [string]$ConfigPath,
-    [string]$ActionPath
+    [string]$ActionPath,
+    [string]$IdentitySubject
 )
 
 Set-StrictMode -Version Latest
@@ -50,7 +52,8 @@ if (-not [string]::IsNullOrWhiteSpace($Procedure)) {
         -not [string]::IsNullOrWhiteSpace($MigrationPath) -or
         -not [string]::IsNullOrWhiteSpace($TargetVersion) -or
         -not [string]::IsNullOrWhiteSpace($ConfigPath) -or
-        -not [string]::IsNullOrWhiteSpace($ActionPath)) {
+        -not [string]::IsNullOrWhiteSpace($ActionPath) -or
+        -not [string]::IsNullOrWhiteSpace($IdentitySubject)) {
         throw "-Procedure cannot be combined with Neon launcher parameters."
     }
 
@@ -564,6 +567,23 @@ if ($CurrentMigrationId -notmatch '^[A-Za-z0-9_-]+$' -or
     $CurrentMigrationLedgerChecksum -notmatch '^[A-Za-z0-9_-]+$') {
     throw "Migration ID or ledger checksum contains unexpected characters."
 }
+$Auth0Issuer = $null
+if ($Action -eq "account-membership-provision") {
+    $Auth0Issuer = Read-ConfigValue $ConfigContent "Auth0Issuer"
+    if ($Auth0Issuer.Length -lt 12 -or
+        $Auth0Issuer.Length -gt 512 -or
+        $Auth0Issuer -notmatch '^https://[^/?#]+/$') {
+        throw "Auth0Issuer is not a canonical HTTPS issuer coordinate."
+    }
+    if ([string]::IsNullOrWhiteSpace($IdentitySubject) -or
+        $IdentitySubject.Length -gt 256 -or
+        $IdentitySubject -match '[\x00-\x1f\x7f]') {
+        throw "account-membership-provision requires a valid session-only identity subject."
+    }
+}
+elseif (-not [string]::IsNullOrWhiteSpace($IdentitySubject)) {
+    throw "IdentitySubject is accepted only for account-membership-provision."
+}
 $PostgresImage = "postgres:${PostgreSQLVersion}-alpine"
 
 Write-Host @"
@@ -580,6 +600,7 @@ Write-Host `
 $MigratorOnly = @(
     "gate02-preflight",
     "gate02-postflight",
+    "account-membership-provision",
     "apply-migration",
     "migrate-to"
 )
@@ -589,6 +610,27 @@ if ($Action -in $MigratorOnly -and $Role -ne "migrator") {
 if ($Action -in @("verify-device", "provider-baseline") -and
     $Role -eq "runtime") {
     throw "$Action requires migrator or dbowner inspection access."
+}
+if ($Action -eq "account-membership-provision") {
+    Write-Host @"
+Confirm independently in Neon before authorizing:
+  environment = $ExpectedEnvironment
+  branch      = $NeonBranchAlias
+  database    = $NeonDatabase
+  role        = $DatabaseUser
+"@
+    $ExpectedProvisioningConfirmation = (
+        "PROVISION {0} {1}" -f $NeonBranchAlias, $NeonDatabase
+    )
+    $ProvisioningConfirmation = (
+        Read-Host "Type '$ExpectedProvisioningConfirmation' or STOP"
+    ).Trim()
+    if ($ProvisioningConfirmation -ceq "STOP") {
+        throw "Guarded provisioning stopped before database authentication."
+    }
+    if ($ProvisioningConfirmation -cne $ExpectedProvisioningConfirmation) {
+        throw "Guarded provisioning cancelled: confirmation did not match."
+    }
 }
 
 $ActionContent = Get-Content -LiteralPath $ActionPath -Raw
@@ -691,6 +733,18 @@ $PsqlVariables = @(
     "-v", "current_migration_id=$CurrentMigrationId",
     "-v", "current_migration_checksum=$CurrentMigrationLedgerChecksum"
 )
+$CandidateAccountId = $null
+$CandidateIdentityId = $null
+if ($Action -eq "account-membership-provision") {
+    $CandidateAccountId = [guid]::NewGuid().ToString()
+    $CandidateIdentityId = [guid]::NewGuid().ToString()
+    $PsqlVariables += @(
+        "-v", "migrator_user=$MigratorUser",
+        "-v", "identity_issuer=$Auth0Issuer",
+        "-v", "candidate_account_id=$CandidateAccountId",
+        "-v", "candidate_identity_id=$CandidateIdentityId"
+    )
+}
 if ($Action -in @("verify-device", "provider-baseline")) {
     $DeviceInput = (Read-Host "Device UUID (kept local)").Trim()
     $ParsedDeviceId = [guid]::Empty
@@ -722,11 +776,21 @@ try {
     $env:PGSSLMODE = $SslMode
     $env:PGCHANNELBINDING = $ChannelBindingMode
 
+    $ProvisioningEnvironment = @()
+    if ($Action -eq "account-membership-provision") {
+        # Keep the Auth0 subject out of the child-process command line. psql
+        # imports it into a session variable from this short-lived environment
+        # entry through DBM-AUTO-12's \getenv command.
+        $env:MARKEI_GRM_IDENTITY_SUBJECT = $IdentitySubject
+        $ProvisioningEnvironment = @(
+            "--env", "MARKEI_GRM_IDENTITY_SUBJECT"
+        )
+    }
     $DockerEnvironment = @(
         "--env", "PGHOST", "--env", "PGPORT", "--env", "PGDATABASE",
         "--env", "PGUSER", "--env", "PGPASSWORD",
         "--env", "PGSSLMODE", "--env", "PGCHANNELBINDING"
-    )
+    ) + $ProvisioningEnvironment
     $DockerNonInteractive = @("run", "--rm", "-i") + $DockerEnvironment
     $DockerInteractive = @("run", "--rm", "-it") + $DockerEnvironment
     $PsqlBase = @("psql", "-X", "-v", "ON_ERROR_STOP=1")
@@ -1081,11 +1145,17 @@ finally {
     }
     @(
         "PGHOST", "PGPORT", "PGDATABASE", "PGUSER", "PGPASSWORD",
-        "PGSSLMODE", "PGCHANNELBINDING"
+        "PGSSLMODE", "PGCHANNELBINDING",
+        "MARKEI_GRM_IDENTITY_SUBJECT"
     ) | ForEach-Object {
         Remove-Item "Env:$_" -ErrorAction SilentlyContinue
     }
     $PlainPassword = $null
     $SecurePassword = $null
     $ProbeOutput = $null
+    $PsqlVariables = $null
+    $ProvisioningEnvironment = $null
+    $CandidateAccountId = $null
+    $CandidateIdentityId = $null
+    $IdentitySubject = $null
 }

@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Markei: prepare Windows Closure debug",
+            "type": "process",
+            "command": "powershell.exe",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\documentation\\I_SCRIPTS.ps1",
+                "-Procedure",
+                "GS-FLUTTER-DEBUG"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Markei: restore Windows Closure release callback",
+            "type": "process",
+            "command": "powershell.exe",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\clients\\markei_flutter\\tool\\register_windows_auth0flutter_protocol.ps1",
+                "-ExecutablePath",
+                "${workspaceFolder}\\clients\\markei_flutter\\build\\windows\\x64\\runner\\Release\\markei.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Markei Windows Closure (debug)",
+            "type": "dart",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/clients/markei_flutter",
+            "program": "${workspaceFolder}/clients/markei_flutter/lib/main.dart",
+            "deviceId": "windows",
+            "flutterMode": "debug",
+            "preLaunchTask": "Markei: prepare Windows Closure debug",
+            "postDebugTask": "Markei: restore Windows Closure release callback",
+            "toolArgs": [
+                "--dart-define-from-file=.markei_debug_defines.json"
+            ],
+            "env": {
+                "VCPKG_ROOT": "C:\\vcpkg",
+                "VCPKG_DEFAULT_TRIPLET": "x64-windows",
+                "VCPKG_TARGET_TRIPLET": "x64-windows",
+                "CMAKE_TOOLCHAIN_FILE": "C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake",
+                "CMAKE_PREFIX_PATH": "C:\\vcpkg\\installed\\x64-windows",
+                "cpprestsdk_DIR": "C:\\vcpkg\\installed\\x64-windows\\share\\cpprestsdk"
+            }
+        }
+    ]
+}

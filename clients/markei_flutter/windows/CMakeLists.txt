@@ -1,5 +1,35 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
+
+# auth0_flutter resolves cpprestsdk through vcpkg. The toolchain must be
+# selected before project() so Flutter CLI, VS Code debug, and release builds
+# all configure the same native dependency graph.
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+  if(DEFINED ENV{CMAKE_TOOLCHAIN_FILE} AND
+      EXISTS "$ENV{CMAKE_TOOLCHAIN_FILE}")
+    file(TO_CMAKE_PATH "$ENV{CMAKE_TOOLCHAIN_FILE}"
+      MARKEI_VCPKG_TOOLCHAIN)
+  elseif(DEFINED ENV{VCPKG_ROOT} AND
+      EXISTS "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+    file(TO_CMAKE_PATH
+      "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      MARKEI_VCPKG_TOOLCHAIN)
+  elseif(EXISTS "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+    set(MARKEI_VCPKG_TOOLCHAIN
+      "C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+  endif()
+
+  if(DEFINED MARKEI_VCPKG_TOOLCHAIN)
+    set(CMAKE_TOOLCHAIN_FILE "${MARKEI_VCPKG_TOOLCHAIN}"
+      CACHE FILEPATH "vcpkg toolchain for Markei Windows dependencies")
+  endif()
+endif()
+
+if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+  set(VCPKG_TARGET_TRIPLET "x64-windows"
+    CACHE STRING "vcpkg target triplet for Markei Windows")
+endif()
+
 project(markei LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change

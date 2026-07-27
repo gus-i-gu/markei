@@ -223,7 +223,7 @@ Before any provider mutation, independently confirm:
 
 ```text
 Environment = development
-BranchAlias = markei-cycle10-development
+BranchAlias = markei-c10
 Database = markei_sync_dev
 RenderDeployBranch = cycle10-intermid-grimoire
 ```

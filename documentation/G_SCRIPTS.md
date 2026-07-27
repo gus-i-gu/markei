@@ -1890,6 +1890,426 @@ the cryptographic signature, issuer, audience, expiry, membership, enrollment,
 and Device authorization decisions. HTTP `200` from both read-only endpoints
 therefore confirms the exact binding without sending a Sync submission.
 
+### `GS-AUTH-03` — Guarded Account/membership provisioning
+
+Canonical SQL block: `DB_MGMT.sql` → `DBM-AUTO-12` /
+`account-membership-provision`.
+
+This development-only bridge provisions the Account/membership required before
+the rebuilt Windows client can enroll its Device. It accepts one fresh raw
+Auth0 user access token through a masked prompt, derives the identity subject
+locally, and never asks the operator to transcribe a subject or UUID.
+
+The hosted `GET /v1/identity` route must first accept the token
+cryptographically and return either `membership-required` for a new fixture or
+`membership-confirmed` for an idempotent rerun. The procedure then invokes one
+migrator-only database action. The launcher independently requests exact
+`PROVISION <BranchAlias> <Database>` confirmation and the migrator password.
+After the transaction commits, the same hosted route must return
+`membership-confirmed`.
+
+```powershell
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+$Launcher = Join-Path $RepositoryRoot "documentation\I_SCRIPTS.ps1"
+$NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
+if (-not (Test-Path -LiteralPath $Launcher -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $NsPath -PathType Leaf)) {
+    throw "The canonical GRM launcher or coordinate file is missing."
+}
+
+try {
+    Set-Location -LiteralPath $RepositoryRoot
+
+    # Provisioning is allowed only from the exact clean remote-aligned source.
+    & $Launcher -Procedure "GS-GIT-01"
+
+    $NsText = Get-Content -LiteralPath $NsPath -Raw
+
+    function Get-NsCoordinate {
+        param([Parameter(Mandatory)] [string]$Name)
+        $Matches = [regex]::Matches(
+            $NsText,
+            "(?m)^$([regex]::Escape($Name)):\s*(.*?)\s*$"
+        )
+        if ($Matches.Count -ne 1) {
+            throw "Expected exactly one '$Name' coordinate in $NsPath."
+        }
+        $Value = $Matches[0].Groups[1].Value.Trim()
+        if ([string]::IsNullOrWhiteSpace($Value) -or
+            $Value -match '^<[^>]+>$') {
+            throw "Replace the '$Name' placeholder in $NsPath."
+        }
+        return $Value
+    }
+
+    function ConvertFrom-Base64UrlJson {
+        param([Parameter(Mandatory)] [string]$Segment)
+        $Base64 = $Segment.Replace("-", "+").Replace("_", "/")
+        switch ($Base64.Length % 4) {
+            0 { }
+            2 { $Base64 += "==" }
+            3 { $Base64 += "=" }
+            default { throw "JWT contains invalid base64url." }
+        }
+        try {
+            $Json = [Text.Encoding]::UTF8.GetString(
+                [Convert]::FromBase64String($Base64)
+            )
+            return $Json | ConvertFrom-Json
+        }
+        catch {
+            throw "JWT header or payload is not valid encoded JSON."
+        }
+    }
+
+    function Get-JsonProperty {
+        param(
+            [Parameter(Mandatory)] [object]$Object,
+            [Parameter(Mandatory)] [string]$Name
+        )
+        $Property = $Object.PSObject.Properties[$Name]
+        if ($null -eq $Property) {
+            return $null
+        }
+        return $Property.Value
+    }
+
+    function Invoke-HostedIdentityState {
+        param(
+            [Parameter(Mandatory)] [uri]$Uri,
+            [Parameter(Mandatory)] [hashtable]$Headers,
+            [Parameter(Mandatory)] [string]$Phase
+        )
+        try {
+            $Response = Invoke-WebRequest `
+                -UseBasicParsing `
+                -Uri $Uri `
+                -Method Get `
+                -Headers $Headers `
+                -MaximumRedirection 0
+        }
+        catch {
+            $Status = $null
+            if ($null -ne $_.Exception.Response) {
+                $Status = [int]$_.Exception.Response.StatusCode
+            }
+            if ($null -ne $Status) {
+                throw "$Phase hosted identity verification returned HTTP $Status."
+            }
+            throw "$Phase hosted identity verification was unavailable."
+        }
+        if ([int]$Response.StatusCode -ne 200) {
+            throw "$Phase hosted identity verification did not return HTTP 200."
+        }
+        try {
+            $Body = $Response.Content | ConvertFrom-Json
+        }
+        catch {
+            throw "$Phase hosted identity response was not valid JSON."
+        }
+        $StateProperty = $Body.PSObject.Properties["state"]
+        if ($null -eq $StateProperty -or
+            $StateProperty.Value -isnot [string] -or
+            [string]::IsNullOrWhiteSpace($StateProperty.Value)) {
+            throw "$Phase hosted identity response had no state classification."
+        }
+        $State = [string]$StateProperty.Value
+        $Body = $null
+        $Response = $null
+        return $State
+    }
+
+    $ExpectedEnvironment = Get-NsCoordinate "Environment"
+    $ExpectedBranchAlias = Get-NsCoordinate "BranchAlias"
+    $ExpectedDatabase = Get-NsCoordinate "Database"
+    $ExpectedMigrator = Get-NsCoordinate "MigratorUser"
+    $Origin = (Get-NsCoordinate "RenderPublicOrigin").TrimEnd("/")
+    $IdentityPath = Get-NsCoordinate "RenderIdentityPath"
+    $IssuerCoordinate = Get-NsCoordinate "Auth0Issuer"
+    $Audience = Get-NsCoordinate "Auth0Audience"
+    $Algorithm = Get-NsCoordinate "Auth0Algorithm"
+    $JwksPath = Get-NsCoordinate "Auth0JwksPath"
+
+    if ($ExpectedEnvironment -ne "development" -or
+        $ExpectedBranchAlias -notmatch '^[A-Za-z0-9][A-Za-z0-9_-]*$' -or
+        $ExpectedDatabase -notmatch '^[A-Za-z_][A-Za-z0-9_-]*$' -or
+        $ExpectedMigrator -notmatch '^[A-Za-z_][A-Za-z0-9_-]*$') {
+        throw "Guarded provisioning is locked to the reviewed development target."
+    }
+
+    $OriginUri = $null
+    if (-not [uri]::TryCreate(
+            $Origin,
+            [UriKind]::Absolute,
+            [ref]$OriginUri
+        ) -or
+        $OriginUri.Scheme -ne "https" -or
+        -not [string]::IsNullOrEmpty($OriginUri.UserInfo) -or
+        -not [string]::IsNullOrEmpty($OriginUri.Query) -or
+        -not [string]::IsNullOrEmpty($OriginUri.Fragment)) {
+        throw "RenderPublicOrigin must be a secret-free HTTPS origin."
+    }
+
+    $IssuerUri = $null
+    if (-not [uri]::TryCreate(
+            $IssuerCoordinate,
+            [UriKind]::Absolute,
+            [ref]$IssuerUri
+        ) -or
+        $IssuerUri.Scheme -ne "https" -or
+        -not [string]::IsNullOrEmpty($IssuerUri.UserInfo) -or
+        -not [string]::IsNullOrEmpty($IssuerUri.Query) -or
+        -not [string]::IsNullOrEmpty($IssuerUri.Fragment)) {
+        throw "Auth0Issuer must be a secret-free HTTPS issuer."
+    }
+
+    $OriginBase = [uri]($Origin + "/")
+    $IdentityUri = [uri]::new(
+        $OriginBase,
+        $IdentityPath.TrimStart([char]"/")
+    )
+    $IssuerBase = [uri]($IssuerCoordinate.TrimEnd("/") + "/")
+    $JwksUri = [uri]::new(
+        $IssuerBase,
+        $JwksPath.TrimStart([char]"/")
+    )
+
+    $TokenSecure = Read-Host `
+        "Paste a fresh Auth0 USER access token (masked; session only)" `
+        -AsSecureString
+
+    $TokenBstr = [IntPtr]::Zero
+    $AccessToken = $null
+    $Subject = $null
+    $AuthorizationHeaders = $null
+    $Claims = $null
+    $Header = $null
+    $Jwks = $null
+    $JwksKeys = $null
+    $MatchingTokenKeys = $null
+    $TokenIssuer = $null
+    $TokenAudience = $null
+    $TokenSubject = $null
+    $TokenExpiry = $null
+    $TokenNotBefore = $null
+    $TokenAlgorithm = $null
+    $TokenKeyId = $null
+
+    try {
+        $TokenBstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR(
+            $TokenSecure
+        )
+        $AccessToken = [Runtime.InteropServices.Marshal]::PtrToStringBSTR(
+            $TokenBstr
+        ).Trim()
+        if ([string]::IsNullOrWhiteSpace($AccessToken) -or
+            $AccessToken.StartsWith(
+                "Bearer ",
+                [StringComparison]::OrdinalIgnoreCase
+            )) {
+            throw "Enter only the raw access token, without the Bearer prefix."
+        }
+        if ([Text.Encoding]::UTF8.GetByteCount($AccessToken) -gt 8192) {
+            throw "The access token exceeds the hosted verifier limit."
+        }
+
+        $Parts = $AccessToken.Split(".")
+        if ($Parts.Count -ne 3) {
+            throw "The access token is not a three-part JWT."
+        }
+        $Header = ConvertFrom-Base64UrlJson $Parts[0]
+        $Claims = ConvertFrom-Base64UrlJson $Parts[1]
+
+        $TokenIssuer = Get-JsonProperty $Claims "iss"
+        $TokenAudience = Get-JsonProperty $Claims "aud"
+        $TokenSubject = Get-JsonProperty $Claims "sub"
+        $TokenExpiry = Get-JsonProperty $Claims "exp"
+        $TokenNotBefore = Get-JsonProperty $Claims "nbf"
+        $TokenAlgorithm = Get-JsonProperty $Header "alg"
+        $TokenKeyId = Get-JsonProperty $Header "kid"
+
+        $IssuerMatches = (
+            $TokenIssuer -is [string] -and
+            $TokenIssuer.TrimEnd("/") -eq $IssuerCoordinate.TrimEnd("/")
+        )
+        $AudienceMatches = (@($TokenAudience) -contains $Audience)
+        $AlgorithmMatches = (
+            $TokenAlgorithm -eq $Algorithm -and
+            $Algorithm -eq "RS256"
+        )
+        $KidPresent = (
+            $TokenKeyId -is [string] -and
+            -not [string]::IsNullOrWhiteSpace($TokenKeyId)
+        )
+        $SubjectPresent = (
+            $TokenSubject -is [string] -and
+            -not [string]::IsNullOrWhiteSpace($TokenSubject) -and
+            $TokenSubject.Length -le 256 -and
+            $TokenSubject -notmatch '[\x00-\x1f\x7f]'
+        )
+
+        $Now = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+        $ExpirySeconds = 0L
+        $ExpiryValid = (
+            $null -ne $TokenExpiry -and
+            [long]::TryParse(
+                [string]$TokenExpiry,
+                [ref]$ExpirySeconds
+            ) -and
+            $ExpirySeconds -gt ($Now + 30)
+        )
+        $NotBeforeSeconds = 0L
+        $NotBeforeValid = (
+            $null -eq $TokenNotBefore -or
+            (
+                [long]::TryParse(
+                    [string]$TokenNotBefore,
+                    [ref]$NotBeforeSeconds
+                ) -and
+                $NotBeforeSeconds -le ($Now + 30)
+            )
+        )
+        $TimeWindowValid = $ExpiryValid -and $NotBeforeValid
+
+        if (-not $IssuerMatches -or
+            -not $AudienceMatches -or
+            -not $AlgorithmMatches -or
+            -not $KidPresent -or
+            -not $SubjectPresent -or
+            -not $TimeWindowValid) {
+            throw "The token claims do not match the guarded Auth0 contract."
+        }
+
+        $Jwks = Invoke-RestMethod -Method Get -Uri $JwksUri
+        $JwksKeys = Get-JsonProperty $Jwks "keys"
+        if ($null -eq $JwksKeys) {
+            throw "The JWKS document had no keys collection."
+        }
+        $MatchingTokenKeys = @($JwksKeys | Where-Object {
+            (Get-JsonProperty $_ "kid") -eq $TokenKeyId -and
+            (Get-JsonProperty $_ "kty") -eq "RSA" -and
+            (Get-JsonProperty $_ "use") -eq "sig" -and
+            (Get-JsonProperty $_ "alg") -eq $Algorithm
+        })
+        if ($MatchingTokenKeys.Count -ne 1) {
+            throw "The token kid did not select exactly one RS256 signing key."
+        }
+
+        $AuthorizationHeaders = @{
+            Authorization = "Bearer $AccessToken"
+        }
+        $PreProvisioningState = Invoke-HostedIdentityState `
+            -Uri $IdentityUri `
+            -Headers $AuthorizationHeaders `
+            -Phase "Pre-provisioning"
+        if ($PreProvisioningState -notin @(
+                "membership-required",
+                "membership-confirmed"
+            )) {
+            throw "Hosted identity is not eligible for guarded provisioning."
+        }
+
+        $Subject = [string]$TokenSubject
+        Write-Host (
+            "PASS: hosted token accepted; pre-provisioning state = {0}" -f
+            $PreProvisioningState
+        ) -ForegroundColor Green
+
+        & $Launcher `
+            -ConfigPath $NsPath `
+            -Role migrator `
+            -Action account-membership-provision `
+            -IdentitySubject $Subject
+
+        $PostProvisioningState = Invoke-HostedIdentityState `
+            -Uri $IdentityUri `
+            -Headers $AuthorizationHeaders `
+            -Phase "Post-provisioning"
+        if ($PostProvisioningState -ne "membership-confirmed") {
+            throw "Hosted identity did not confirm the provisioned membership."
+        }
+
+        [pscustomobject]@{
+            IssuerMatches = $IssuerMatches
+            AudienceMatches = $AudienceMatches
+            AlgorithmMatches = $AlgorithmMatches
+            TokenSigningKeyMatches = $MatchingTokenKeys.Count
+            HostedTokenAccepted = $true
+            PreProvisioningState = $PreProvisioningState
+            DatabaseProvisioning = "committed-or-idempotent"
+            PostProvisioningState = $PostProvisioningState
+            ReadyForDeviceEnrollment = $true
+        }
+    }
+    finally {
+        if ($null -ne $AuthorizationHeaders) {
+            $AuthorizationHeaders.Clear()
+        }
+        $AccessToken = $null
+        $Subject = $null
+        $Claims = $null
+        $Header = $null
+        $Jwks = $null
+        $JwksKeys = $null
+        $MatchingTokenKeys = $null
+        $TokenIssuer = $null
+        $TokenAudience = $null
+        $TokenSubject = $null
+        $TokenExpiry = $null
+        $TokenNotBefore = $null
+        $TokenAlgorithm = $null
+        $TokenKeyId = $null
+        if ($TokenBstr -ne [IntPtr]::Zero) {
+            [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($TokenBstr)
+        }
+        Remove-Variable TokenSecure -ErrorAction SilentlyContinue
+    }
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+```
+
+The database action generates independent random Account and identity UUIDs in
+the launcher. It never derives identifiers from the Auth0 subject. New
+provisioning is allowed only when all application tables are empty. A same-user
+rerun succeeds only when the provider still has exactly one Account, one
+external identity, one active owner membership, and one Account cursor row.
+Every mismatch aborts and rolls back.
+
+The complete reconstruction-to-enrollment route is:
+
+```text
+GRM-GIT-01
+→ GRM-HOST-01
+→ GRM-AUTH-01
+→ GRM-FLUTTER-WIN
+→ GRM-FLUTTER-DEBUG
+→ launch `Markei Windows Closure (debug)` with F5
+→ Sign in under the required breakpoint; do not Enroll
+→ acquire one fresh raw user access token through the established secure path
+→ GRM-AUTH-03
+→ Enroll exactly once in the same Windows client
+→ close and reopen the client
+→ Diagnostics
+→ GRM-AUTH-02
+→ GRM-NEON-11
+→ stop before Sync until the controlled assay is explicitly authorized
+```
+
+Never paste the token, subject, Account UUID, identity UUID, Device UUID,
+password, or database URL into chat, Git, or notebook files. The Windows
+client retains its own token for Enroll; `GS-AUTH-03` does not export,
+intercept, or print client credentials.
+
 ## 6. Build and regression checks
 
 ### `GS-BUILD-01` — Sync API validation
@@ -2124,6 +2544,247 @@ resulting release executable with the mandatory Closure Dart definition. If the
 `Closure` destination is absent after launch, this procedure has not passed and
 no Gate action may continue. Launching the client does not authorize Enroll,
 Query, Retry, or Sync; those remain separate human actions.
+
+### `GS-FLUTTER-DEBUG` — Prepare VS Code Windows Closure debugging
+
+Run from anywhere inside the repository before using VS Code `F5`. This
+procedure closes the gap between a successful PowerShell build and an
+independent Dart debug launch: it validates `cpprestsdk`, writes the four
+reviewed public Closure coordinates to an ignored local define file, proves a
+Windows Debug build beside the existing Release build without cleaning either
+configuration, and registers that Debug executable for the Auth0 callback.
+
+The repository root must be the VS Code workspace. Select the tracked launch
+configuration `Markei Windows Closure (debug)`. Its pre-launch task runs this
+procedure; after the debugger stops, its post-debug task restores the callback
+to the byte-identical Release executable. The procedure neither signs in nor
+performs Enroll, Query, Retry, or Sync.
+
+```powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+$ClientRoot = Join-Path $RepositoryRoot "clients\markei_flutter"
+if (-not (Test-Path (Join-Path $ClientRoot "pubspec.yaml"))) {
+    throw "Flutter client not found at $ClientRoot."
+}
+
+$LaunchPath = Join-Path $RepositoryRoot ".vscode\launch.json"
+$TasksPath = Join-Path $RepositoryRoot ".vscode\tasks.json"
+if (-not (Test-Path -LiteralPath $LaunchPath -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $TasksPath -PathType Leaf)) {
+    throw "Tracked VS Code Debug launch/task configuration is incomplete."
+}
+
+$NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
+if (-not (Test-Path -LiteralPath $NsPath -PathType Leaf)) {
+    throw "Coordinate file not found at $NsPath."
+}
+$NsText = Get-Content -LiteralPath $NsPath -Raw
+
+function Get-NsCoordinate {
+    param([Parameter(Mandatory)] [string]$Name)
+    $CoordinateMatches = [regex]::Matches(
+        $NsText,
+        "(?m)^$([regex]::Escape($Name)):\s*(.*?)\s*$"
+    )
+    if ($CoordinateMatches.Count -ne 1) {
+        throw "Expected exactly one '$Name' coordinate in $NsPath."
+    }
+    $Value = $CoordinateMatches[0].Groups[1].Value.Trim()
+    if ([string]::IsNullOrWhiteSpace($Value) -or
+        $Value -match '^<[^>]+>$') {
+        throw "Replace the '$Name' placeholder in $NsPath."
+    }
+    return $Value
+}
+
+$Auth0Domain = Get-NsCoordinate "Auth0TenantDomain"
+$Auth0Audience = Get-NsCoordinate "Auth0Audience"
+$WindowsClientId = Get-NsCoordinate "Auth0WindowsClientId"
+$HostedOrigin = Get-NsCoordinate "RenderPublicOrigin"
+
+$VcpkgRoot = "C:\vcpkg"
+$VcpkgExe = Join-Path $VcpkgRoot "vcpkg.exe"
+$ToolchainPath = Join-Path `
+    $VcpkgRoot `
+    "scripts\buildsystems\vcpkg.cmake"
+$CppRestDir = Join-Path `
+    $VcpkgRoot `
+    "installed\x64-windows\share\cpprestsdk"
+
+if (-not (Test-Path -LiteralPath $VcpkgExe -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $ToolchainPath -PathType Leaf)) {
+    throw "vcpkg is incomplete at C:\vcpkg. Run GRM-FLUTTER-WIN first."
+}
+
+$CppRestConfig = @(
+    Get-ChildItem -LiteralPath $CppRestDir `
+        -Filter "*cpprestsdk*config.cmake" `
+        -File `
+        -ErrorAction SilentlyContinue
+)
+if ($CppRestConfig.Count -eq 0) {
+    & $VcpkgExe install cpprestsdk:x64-windows
+    if ($LASTEXITCODE -ne 0) {
+        throw "cpprestsdk installation failed."
+    }
+    $CppRestConfig = @(
+        Get-ChildItem -LiteralPath $CppRestDir `
+            -Filter "*cpprestsdk*config.cmake" `
+            -File `
+            -ErrorAction SilentlyContinue
+    )
+}
+if ($CppRestConfig.Count -eq 0) {
+    throw "cpprestsdk CMake configuration was not found in $CppRestDir."
+}
+
+$env:VCPKG_ROOT = $VcpkgRoot
+$env:VCPKG_DEFAULT_TRIPLET = "x64-windows"
+$env:VCPKG_TARGET_TRIPLET = "x64-windows"
+$env:CMAKE_TOOLCHAIN_FILE = $ToolchainPath
+$env:CMAKE_PREFIX_PATH = Join-Path `
+    $VcpkgRoot `
+    "installed\x64-windows"
+$env:cpprestsdk_DIR = $CppRestDir
+
+$MarkeiReleaseExecutable = Join-Path `
+    $ClientRoot `
+    "build\windows\x64\runner\Release\markei.exe"
+if (-not (Test-Path -LiteralPath $MarkeiReleaseExecutable -PathType Leaf)) {
+    throw "Preserved Release build not found. Run GRM-FLUTTER-WIN first."
+}
+$ReleaseHashBefore = (
+    Get-FileHash `
+        -LiteralPath $MarkeiReleaseExecutable `
+        -Algorithm SHA256
+).Hash
+
+$RunningMarkei = @(Get-Process -Name "markei" -ErrorAction SilentlyContinue)
+if ($RunningMarkei.Count -gt 0) {
+    throw "Close every running Markei instance before preparing Debug."
+}
+
+$DebugDefinesPath = Join-Path `
+    $ClientRoot `
+    ".markei_debug_defines.json"
+$DebugDefines = [ordered]@{
+    MARKEI_NATIVE_CLOSURE_SURFACE = "true"
+    MARKEI_AUTH0_DOMAIN = $Auth0Domain
+    MARKEI_AUTH0_AUDIENCE = $Auth0Audience
+    MARKEI_AUTH0_WINDOWS_CLIENT_ID = $WindowsClientId
+    MARKEI_HOSTED_HTTPS_ORIGIN = $HostedOrigin
+}
+$DebugDefinesJson = $DebugDefines | ConvertTo-Json
+[IO.File]::WriteAllText(
+    $DebugDefinesPath,
+    $DebugDefinesJson,
+    [Text.UTF8Encoding]::new($false)
+)
+if (-not (Test-Path -LiteralPath $DebugDefinesPath -PathType Leaf)) {
+    throw "Could not create the ignored local Flutter define file."
+}
+
+$IgnoreResult = & git -C $RepositoryRoot check-ignore `
+    --quiet `
+    -- "clients/markei_flutter/.markei_debug_defines.json"
+if ($LASTEXITCODE -ne 0) {
+    throw "The local Flutter debug define file is not ignored by Git."
+}
+
+flutter config --enable-windows-desktop
+if ($LASTEXITCODE -ne 0) {
+    throw "Could not enable Flutter Windows desktop support."
+}
+
+$WindowsDevices = (& flutter devices 2>&1 | Out-String)
+if ($LASTEXITCODE -ne 0 -or
+    $WindowsDevices -notmatch "(?im)\bwindows\b") {
+    throw "Flutter does not currently expose a Windows desktop device."
+}
+
+Push-Location $ClientRoot
+try {
+    flutter pub get
+    if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
+
+    flutter build windows `
+        --debug `
+        --dart-define-from-file=".markei_debug_defines.json"
+    if ($LASTEXITCODE -ne 0) {
+        throw "Windows Closure Debug build failed."
+    }
+
+    $MarkeiDebugExecutable = Join-Path $PWD `
+        "build\windows\x64\runner\Debug\markei.exe"
+    if (-not (Test-Path -LiteralPath $MarkeiDebugExecutable -PathType Leaf)) {
+        throw "Debug markei.exe was not found at $MarkeiDebugExecutable."
+    }
+
+    if (-not (
+            Test-Path `
+                -LiteralPath $MarkeiReleaseExecutable `
+                -PathType Leaf
+        )) {
+        throw "Debug build removed the preserved Release executable."
+    }
+    $ReleaseHashAfter = (
+        Get-FileHash `
+            -LiteralPath $MarkeiReleaseExecutable `
+            -Algorithm SHA256
+    ).Hash
+    if ($ReleaseHashAfter -cne $ReleaseHashBefore) {
+        throw "Debug build modified the preserved Release executable."
+    }
+
+    powershell.exe -NoProfile -ExecutionPolicy Bypass `
+      -File ".\tool\register_windows_auth0flutter_protocol.ps1" `
+      -ExecutablePath $MarkeiDebugExecutable
+    if ($LASTEXITCODE -ne 0) {
+        throw "Auth0 Flutter Debug callback registration failed."
+    }
+}
+finally {
+    Pop-Location
+}
+
+[pscustomobject][ordered]@{
+    DebugPreparation = "ready"
+    WindowsDevice = $true
+    VcpkgToolchain = $true
+    CppRestSdk = $true
+    LocalDefinesIgnored = $true
+    DebugBuild = $true
+    ReleaseArtifactPreserved = $true
+    CallbackRegistered = $true
+    ReleaseCallbackRestore = "configured-post-debug"
+}
+
+Write-Host ""
+Write-Host "Next:"
+Write-Host "1. Open the Markei repository root in VS Code."
+Write-Host "2. Open Run and Debug."
+Write-Host "3. Select 'Markei Windows Closure (debug)'."
+Write-Host "4. Set the required breakpoint and press F5."
+Write-Host "5. Stop normally; VS Code restores the Release callback."
+```
+
+`GS-FLUTTER-DEBUG` does not call `flutter clean`, remove the shared CMake tree,
+or rebuild Release. Flutter's multi-configuration Windows tree retains
+`runner\Release\markei.exe` while producing `runner\Debug\markei.exe`; the
+procedure proves the Release executable's SHA-256 is unchanged. If the shared
+CMake cache is stale or corrupt, the procedure stops and requires
+`GRM-FLUTTER-WIN` to perform the existing canonical clean Release recovery.
+
+The only local configuration artifact it writes is
+`clients/markei_flutter/.markei_debug_defines.json`, which is excluded by
+`.gitignore`. It contains reviewed public coordinates, not tokens, passwords,
+subjects, Device identifiers, or connection strings. Never add a raw access
+token to this file or to `.vscode/launch.json`.
 
 ### `GS-FLUTTER-AND` — Prepare, build, install, and run Android Closure
 
@@ -2422,6 +3083,12 @@ Stop before mutation if:
 - another deployment is active or the watched Render branch is uncertain;
 - a health, readiness, identity, or provider baseline differs from the
   procedure's expected boundary;
+- the provisioning token does not select exactly one current RS256 key, the
+  hosted identity preflight is neither `membership-required` nor
+  `membership-confirmed`, or the provider is not an empty/new or exact
+  same-user idempotent fixture;
+- Account provisioning did not commit with count-only postconditions or the
+  hosted identity postflight is not `membership-confirmed`;
 - `sqlite3.exe` cannot be resolved and version-verified;
 - Markei, Flutter, or Dart remains active during local-database copying;
 - the local Markei database candidate count is not exactly one;
