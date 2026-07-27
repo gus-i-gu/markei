@@ -29,10 +29,8 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
   @override
   Widget build(BuildContext context) {
     final actions = [
-      _Action('Status', widget.runner.status),
       _Action('Sign in', widget.runner.signIn),
       _Action('Enroll', widget.runner.enrollOrQueryDevice),
-      _Action('Query', widget.runner.queryEnrollment),
       _Action('Check hosted connection', widget.runner.checkHostedConnection),
       _Action('Sync', widget.runner.hostedSyncProbe),
       _Action('Logout', widget.runner.logout),
@@ -84,17 +82,17 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
             spacing: 8,
             runSpacing: 8,
             children: [
+              OutlinedButton(
+                key: const Key('nativeClosure.Diagnostics'),
+                onPressed: _running ? null : _runDiagnostics,
+                child: const Text('Diagnostics'),
+              ),
               for (final action in actions)
                 FilledButton(
                   key: Key('nativeClosure.${action.label}'),
                   onPressed: _running ? null : () => _run(action),
                   child: Text(action.label),
                 ),
-              OutlinedButton(
-                key: const Key('nativeClosure.Refresh diagnostics'),
-                onPressed: _running ? null : _refreshDiagnostics,
-                child: const Text('Refresh diagnostics'),
-              ),
               OutlinedButton(
                 key: const Key(
                   'nativeClosure.Retry unknown-outcome submission',
@@ -177,6 +175,43 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
     final snapshot = await widget.runner.diagnostics();
     if (!mounted) return;
     setState(() => _snapshot = snapshot);
+  }
+
+  Future<void> _runDiagnostics() async {
+    setState(() => _running = true);
+    try {
+      final status = await widget.runner.status();
+      final snapshot = await widget.runner.diagnostics();
+      if (!mounted) return;
+      final state = _diagnosticsState(status.state, snapshot);
+      setState(() {
+        _state = state;
+        _snapshot = snapshot;
+        _running = false;
+        _currentAction = _CurrentActionDiagnostic.fromState(
+          state: state,
+          code: snapshot == null ? 'MKS-CFG-001' : 'MKS-UI-003',
+          operationFingerprint: 'local-diagnostics',
+          pending: snapshot?.queueCounts.pending,
+          uploading: snapshot?.queueCounts.uploading,
+          failed: snapshot?.queueCounts.failed,
+          unknown: snapshot?.queueCounts.unknown,
+          nextSequence: snapshot?.nextDeviceSequence,
+        );
+      });
+    } on Object catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _state = 'diagnostics-partial';
+        _running = false;
+        _currentAction = _CurrentActionDiagnostic.fromState(
+          state: 'diagnostics-partial',
+          code: 'MKS-UI-006',
+          operationFingerprint: 'local-diagnostics',
+          sanitizedExceptionClass: error.runtimeType.toString(),
+        );
+      });
+    }
   }
 
   Future<void> _confirmRetryUnknownOutcome() async {
@@ -648,10 +683,10 @@ final class _DiagnosticTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final events = snapshot.recentDiagnostics;
+    final groups = _operationGroups(snapshot.recentDiagnostics);
     return _DiagnosticsCard(
-      title: 'Recent diagnostic timeline',
-      child: events.isEmpty
+      title: 'Recent operation summaries',
+      child: groups.isEmpty
           ? const Text(
               'No locally recorded diagnostic events',
               key: Key('nativeClosure.diagnosticTimeline.empty'),
@@ -659,26 +694,99 @@ final class _DiagnosticTimeline extends StatelessWidget {
           : Column(
               key: const Key('nativeClosure.diagnosticTimeline'),
               children: [
-                for (final event in events)
-                  ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      '${event.ordinal}. ${event.code} / ${event.phase}',
-                    ),
-                    subtitle: Text(
-                      '${event.outcome} / last ${event.lastProvedPhase} / '
-                      'mutation ${event.localMutationState} / '
-                      'contact ${event.providerContactState} / '
-                      'trusted ${event.trustedResponseState} / '
-                      'persist ${event.resultPersistenceState}\n'
-                      'operation #${event.operationFingerprint ?? 'not-recorded'} / '
-                      'correlation #${event.correlationFingerprint ?? 'not-recorded'} / '
-                      '${event.safeAction}',
-                    ),
-                  ),
+                const Text(
+                  'Raw lifecycle declarations are ordered evidence, not an '
+                  'error count.',
+                  key: Key('nativeClosure.diagnosticTimeline.guidance'),
+                ),
+                const SizedBox(height: 8),
+                for (final group in groups) _OperationDiagnosticTile(group),
               ],
             ),
+    );
+  }
+}
+
+final class _OperationDiagnosticTile extends StatelessWidget {
+  const _OperationDiagnosticTile(this.group);
+
+  final _OperationDiagnosticGroup group;
+
+  @override
+  Widget build(BuildContext context) {
+    final title =
+        '${group.temporalLabel}: ${group.operationKind} '
+        '#${group.operationFingerprint}';
+    return ExpansionTile(
+      key: Key('nativeClosure.operationGroup.${group.operationFingerprint}'),
+      tilePadding: EdgeInsets.zero,
+      initiallyExpanded: group.isNewest,
+      title: Text(
+        title,
+        key: Key(
+          'nativeClosure.operationGroup.${group.operationFingerprint}.title',
+        ),
+      ),
+      subtitle: Text(
+        '${group.status} / ${group.terminalResult} / '
+        '${group.phaseCount} phases / latest ${group.latestProvedPhase}',
+        key: Key(
+          'nativeClosure.operationGroup.${group.operationFingerprint}.status',
+        ),
+      ),
+      children: [
+        Column(
+          key: Key(
+            'nativeClosure.operationGroup.${group.operationFingerprint}.summary',
+          ),
+          children: [
+            for (final phase in group.compactPhases)
+              ListTile(
+                key: Key(
+                  'nativeClosure.operationGroup.${group.operationFingerprint}.'
+                  'phase.${phase.phase}.${phase.ordinal}',
+                ),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  '${phase.ordinal}. ${phase.phase}: ${phase.nativeCode}',
+                ),
+                subtitle: Text(
+                  '${phase.outcome} / ${phase.severity} / '
+                  'last ${phase.lastProvedPhase}',
+                ),
+              ),
+          ],
+        ),
+        ExpansionTile(
+          key: Key(
+            'nativeClosure.operationGroup.${group.operationFingerprint}.raw',
+          ),
+          tilePadding: EdgeInsets.zero,
+          title: Text('Sanitized raw lifecycle (${group.rawEvents.length})'),
+          children: [
+            for (final event in group.rawEvents)
+              ListTile(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                title: Text('${event.ordinal}. ${event.code} / ${event.phase}'),
+                subtitle: Text(
+                  '${event.nativeCode ?? 'native-code-unavailable'} / '
+                  '${event.severity} / ${event.outcome} / '
+                  'last ${event.lastProvedPhase}\n'
+                  'mutation ${event.localMutationState} / '
+                  'contact ${event.providerContactState} / '
+                  'transaction ${event.providerTransactionState} / '
+                  'trusted ${event.trustedResponseState} / '
+                  'persist ${event.resultPersistenceState}\n'
+                  'operation #${event.operationFingerprint ?? 'not-recorded'} / '
+                  'correlation #${event.correlationFingerprint ?? 'not-recorded'} / '
+                  '${event.safeAction}',
+                ),
+              ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -751,6 +859,188 @@ final class _SyncOverview extends StatelessWidget {
   }
 }
 
+final class _OperationDiagnosticGroup {
+  const _OperationDiagnosticGroup({
+    required this.operationFingerprint,
+    required this.operationKind,
+    required this.temporalLabel,
+    required this.isNewest,
+    required this.terminalResult,
+    required this.status,
+    required this.latestProvedPhase,
+    required this.phaseCount,
+    required this.compactPhases,
+    required this.rawEvents,
+  });
+
+  final String operationFingerprint;
+  final String operationKind;
+  final String temporalLabel;
+  final bool isNewest;
+  final String terminalResult;
+  final String status;
+  final String latestProvedPhase;
+  final int phaseCount;
+  final List<_CompactPhaseSummary> compactPhases;
+  final List<ClosureDiagnosticEventSummary> rawEvents;
+}
+
+final class _CompactPhaseSummary {
+  const _CompactPhaseSummary({
+    required this.ordinal,
+    required this.phase,
+    required this.nativeCode,
+    required this.severity,
+    required this.outcome,
+    required this.lastProvedPhase,
+  });
+
+  final int ordinal;
+  final String phase;
+  final String nativeCode;
+  final String severity;
+  final String outcome;
+  final String lastProvedPhase;
+}
+
+List<_OperationDiagnosticGroup> _operationGroups(
+  List<ClosureDiagnosticEventSummary> events,
+) {
+  final buckets = <String, List<ClosureDiagnosticEventSummary>>{};
+  for (final event in events) {
+    final key =
+        event.operationFingerprint ??
+        (event.attemptFingerprint.isEmpty
+            ? 'unknown-operation'
+            : event.attemptFingerprint);
+    buckets.putIfAbsent(key, () => []).add(event);
+  }
+  final keyed = buckets.entries.toList()
+    ..sort((left, right) {
+      final leftNewest = events.indexOf(left.value.first);
+      final rightNewest = events.indexOf(right.value.first);
+      return leftNewest.compareTo(rightNewest);
+    });
+  return [
+    for (var index = 0; index < keyed.length; index++)
+      _buildOperationGroup(
+        fingerprint: keyed[index].key,
+        events: keyed[index].value,
+        isNewest: index == 0,
+      ),
+  ];
+}
+
+_OperationDiagnosticGroup _buildOperationGroup({
+  required String fingerprint,
+  required List<ClosureDiagnosticEventSummary> events,
+  required bool isNewest,
+}) {
+  final ordered = [...events]..sort((a, b) => a.ordinal.compareTo(b.ordinal));
+  final terminal = ordered.lastWhere(
+    _isTerminalEvent,
+    orElse: () => ordered.last,
+  );
+  final compact = _compactPhases(ordered);
+  return _OperationDiagnosticGroup(
+    operationFingerprint: fingerprint,
+    operationKind: terminal.operationKind,
+    temporalLabel: isNewest ? 'Newest operation' : 'Historical operation',
+    isNewest: isNewest,
+    terminalResult: terminal.nativeCode ?? terminal.code,
+    status: _operationStatus(ordered, terminal),
+    latestProvedPhase: terminal.lastProvedPhase,
+    phaseCount: compact.length,
+    compactPhases: compact,
+    rawEvents: ordered,
+  );
+}
+
+List<_CompactPhaseSummary> _compactPhases(
+  List<ClosureDiagnosticEventSummary> ordered,
+) {
+  final byPhase = <String, ClosureDiagnosticEventSummary>{};
+  for (final event in ordered) {
+    final previous = byPhase[event.phase];
+    if (previous == null || _prefersCompactEvent(event, previous)) {
+      byPhase[event.phase] = event;
+    }
+  }
+  return [
+    for (final event
+        in byPhase.values.toList()
+          ..sort((a, b) => a.ordinal.compareTo(b.ordinal)))
+      _CompactPhaseSummary(
+        ordinal: event.ordinal,
+        phase: event.phase,
+        nativeCode: event.nativeCode ?? event.code,
+        severity: event.severity,
+        outcome: event.outcome,
+        lastProvedPhase: event.lastProvedPhase,
+      ),
+  ];
+}
+
+bool _prefersCompactEvent(
+  ClosureDiagnosticEventSummary candidate,
+  ClosureDiagnosticEventSummary previous,
+) {
+  final candidateTerminal = _isTerminalEvent(candidate);
+  final previousTerminal = _isTerminalEvent(previous);
+  if (candidateTerminal != previousTerminal) return candidateTerminal;
+  final candidateResult = _isResultBearing(candidate);
+  final previousResult = _isResultBearing(previous);
+  if (candidateResult != previousResult) return candidateResult;
+  return candidate.ordinal > previous.ordinal;
+}
+
+bool _isTerminalEvent(ClosureDiagnosticEventSummary event) {
+  final native = event.nativeCode ?? '';
+  return event.phase == 'terminal' ||
+      native.startsWith('client-operation-declaration:') ||
+      native.startsWith('sync-') ||
+      event.lastProvedPhase == 'completed' ||
+      event.lastProvedPhase == 'rejected';
+}
+
+bool _isResultBearing(ClosureDiagnosticEventSummary event) {
+  return event.outcome != 'unknown' ||
+      event.trustedResponseState == 'received' ||
+      event.resultPersistenceState == 'committed' ||
+      _isTerminalEvent(event);
+}
+
+String _operationStatus(
+  List<ClosureDiagnosticEventSummary> ordered,
+  ClosureDiagnosticEventSummary terminal,
+) {
+  if (_acceptedOutcome(terminal.outcome)) return 'successful';
+  final native = terminal.nativeCode ?? '';
+  if (native.contains('sync-completed') ||
+      native.contains('sync-no-new-events')) {
+    return 'successful';
+  }
+  if (_hasGenuineFailure(ordered)) return 'failed';
+  if (terminal.outcome == 'unknown') return 'unknown terminal';
+  return terminal.outcome;
+}
+
+bool _hasGenuineFailure(List<ClosureDiagnosticEventSummary> ordered) {
+  return ordered.any(
+    (event) =>
+        event.severity == 'ERROR' ||
+        event.outcome == 'failed' ||
+        ((event.nativeCode ?? '').contains('sync-failed') &&
+            _isTerminalEvent(event)),
+  );
+}
+
+bool _acceptedOutcome(String outcome) {
+  return outcome == 'applied' ||
+      outcome == 'duplicate-equivalent' ||
+      outcome == 'completed';
+}
+
 final class _LocalQueue extends StatelessWidget {
   const _LocalQueue({required this.snapshot});
 
@@ -769,6 +1059,10 @@ final class _LocalQueue extends StatelessWidget {
           _DiagnosticValue(
             'Next Device sequence',
             snapshot.nextDeviceSequence?.toString() ?? 'Unavailable',
+          ),
+          const _DiagnosticValue(
+            'Sequence meaning',
+            'Allocated only to new local Device events',
           ),
         ],
       ),
@@ -982,6 +1276,14 @@ String _bool(bool? value) {
 String _range(int? first, int? last) {
   if (first == null || last == null) return 'Unavailable';
   return '$first-$last';
+}
+
+String _diagnosticsState(String authenticationState, Object? snapshot) {
+  if (authenticationState == 'configuration-missing' || snapshot == null) {
+    return 'diagnostics-configuration-missing';
+  }
+  if (authenticationState != 'authenticated') return 'diagnostics-partial';
+  return 'diagnostics-ready';
 }
 
 final class _Action {

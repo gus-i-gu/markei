@@ -40,9 +40,16 @@ void main() {
 
     expect(find.byKey(const Key('nativeClosure.page')), findsOneWidget);
     expect(find.text('closure-disabled'), findsOneWidget);
-    await tester.tap(find.byKey(const Key('nativeClosure.Status')));
+    expect(find.byKey(const Key('nativeClosure.Diagnostics')), findsOneWidget);
+    expect(find.byKey(const Key('nativeClosure.Status')), findsNothing);
+    expect(find.byKey(const Key('nativeClosure.Query')), findsNothing);
+    expect(
+      find.byKey(const Key('nativeClosure.Refresh diagnostics')),
+      findsNothing,
+    );
+    await tester.tap(find.byKey(const Key('nativeClosure.Diagnostics')));
     await tester.pumpAndSettle();
-    expect(find.text('configuration-missing'), findsOneWidget);
+    expect(find.text('diagnostics-configuration-missing'), findsOneWidget);
   });
 }
 

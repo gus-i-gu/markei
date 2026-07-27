@@ -1,51 +1,49 @@
-# H_DDC_CODEX — ERR-04 Diagnostic Meaning Evidence
+# H_DDC_CODEX - DIAG-01 Diagnostic Meaning Evidence
 
-Sequence: FLX-ORD-01 — Ordinary Sequence
+Sequence: FLX-ORD-01 - Ordinary Sequence
 Role: Codex didactic evidence
-Round or unit: C10-GCM02-S12-ERR-04 within C10-GCM02-S12-SYNC-01
+Unit: C10-GCM02-S12-DIAG-01
 Branch: `cycle10-intermid-grimoire`
-Authority: D/E/F synchronized ERR-04 staging
+Authority: D/E/F synchronized DIAG-01 staging
 Evidence boundary: repository inspection and local tests only
 
 ## Implemented Meanings
 
-- repository-proven: ordinary Sync now means authentication, Device binding, ordinary pending upload, download/apply, acknowledgement, and aggregate terminal persistence. It no longer means failed/notApplied recovery.
-- repository-proven: failed/notApplied recovery remains a separate explicit confirmed action; inspection remains read-only, and recovery execution remains outside ordinary Sync.
-- repository-proven: `Retry unknown-outcome submission`, `Inspect failed/notApplied recovery`, `Recover failed/notApplied candidate`, hosted readiness, and ordinary Sync remain separate UI/action vocabulary.
-- repository-proven: the UI still labels recent mixed history as `Recent Closure attempts`.
-- repository-proven: Last successful Sync retains the ERR-03 predicate and is not advanced by hosted readiness.
+- repository-proven: `Diagnostics` now names the read-only local diagnostic action; it is distinct from hosted readiness, ordinary Sync, Retry, inspection, recovery, enrollment, logout, and history clearing.
+- repository-proven: authentication, enrollment/binding, and local queue/recovery guidance are preserved as subchecks rather than hidden behind the consolidated button.
+- repository-proven: the recent lifecycle list now teaches the operator that raw lifecycle declarations are ordered evidence, not an error count.
+- repository-proven: the newest operation is labeled separately from historical operations by parent operation fingerprint.
+- repository-proven: compact phase summaries show paired result-bearing rows by default and keep raw declarations available in an expandable technical view.
+- repository-proven: pre-result unknown is not described as failure when later evidence in the same operation proves the phase or operation reached an accepted/completed/duplicate-equivalent result.
+- repository-proven: genuine failure remains visible through failed/error/blocked terminal status text.
+- repository-proven: Next Device sequence wording is clarified as an event allocator, not an action counter.
 
-## Scope-Aware Presentation
+## UI Projection
 
-- repository-proven: aggregate attempt rows no longer say `status not-observed` or `headers not-received` when the parent attempt row simply does not own per-request HTTP evidence.
-- repository-proven: aggregate wording now uses `aggregate HTTP status not applicable - see child requests` and `aggregate response headers not applicable - see child requests` when no parent-owned status/header fact exists.
-- repository-proven: the overview labels the child identity as `Client child correlation` and avoids treating a missing local child event as a failed transport observation.
-- repository-proven: lifecycle lines distinguish `client-operation`, `client-phase`, and existing API `server-request` scopes.
-- repository-proven: server lifecycle lines explicitly distinguish `clientChildCorrelationFingerprint` from `serverRequestFingerprint`.
+- test-validated: `native_closure_diagnostics_test.dart` proves the visible top-level control is `Diagnostics` with key `nativeClosure.Diagnostics`, while old top-level `Status`, `Query`, and `Refresh diagnostics` keys are absent.
+- test-validated: the same focused suite proves Diagnostics is local-only in the fake runner: no Sync attempt, no diagnostic attempt, and no completed remote result are recorded.
+- test-validated: operation grouping exposes one newest group and one historical group for distinct operation fingerprints.
+- test-validated: compact projection prefers the later upload-provider result over its earlier pre-result unknown row.
+- test-validated: raw expansion still exposes the earlier pre-result row and its sanitized correlation fingerprint.
+- test-validated: a failed terminal row remains visibly classified as failed in the operation group.
 
-## Redaction And Comprehension Tests
+## Redaction And Evidence Preservation
 
-- test-validated: `native_closure_diagnostics_test.dart` proves ordinary Sync lifecycle lines are JSON, scoped, fingerprinted, deadline-bearing, and redacted from fixture token, authorization text, URL text, event ID, and request hash.
-- test-validated: `native_closure_diagnostics_test.dart` proves lifecycle sink failure does not alter the Sync terminal.
-- test-validated: `native_closure_diagnostics_test.dart` proves aggregate UI wording no longer exposes the old misleading `status not-observed` phrase.
-- test-validated: `protocol.test.ts` proves server lifecycle logs expose separate client-child and server-request fingerprints and do not include injected header text.
-- test-validated: full Flutter and API tests preserve the existing five-result Sync vocabulary and redacted public API response shape.
-
-## Evidence Limits
-
-- unavailable: no live provider or Windows terminal assay was performed in this source-only round.
-- unavailable: second-device convergence, provider row contents, and future Gate 12.7 authorization remain outside this evidence.
-- inferred: a future manual assay should read the new Flutter terminal lines as client-side evidence only; server HTTP 200 lines remain request-scoped evidence only.
+- repository-proven: expandable raw details use existing sanitized closed values, fingerprints, counts, phases, result/native codes, and evidence-axis fields.
+- repository-proven: the implementation did not add raw tokens, authorization headers, URLs, payloads, full identifiers, SQL, stack traces, or complete hashes to the UI.
+- inferred: grouping by parent operation fingerprint preserves historical evidence while reducing the false implication that each lifecycle declaration is a standalone protocol error.
+- unavailable: live human comprehension and provider/runtime assay evidence were not produced in this source-only round.
 
 ## Terminal Markers
 
 ```text
-ORDINARY_SYNC_RECOVERY_MEANING=SEPARATE
-TECHNICAL_SUCCESS_AUTHORIZATION_MEANING=SEPARATE
-CLIENT_PHASE_SERVER_REQUEST_SCOPES=VISIBLE
-AGGREGATE_HTTP_WORDING=TRUTHFUL
-NEXT_SEQUENCE_REPLAY_MEANING=ALIGNED
-TERMINAL_LOG_REDACTION=VALIDATED
-GATE_12_7=HELD
-GCM02=OPEN
+DIAGNOSTIC_DECLARATIONS_NOT_ERROR_COUNT=VISIBLE
+OPERATION_PHASE_HIERARCHY=VISIBLE
+PRE_RESULT_UNKNOWN_NOT_FAILURE=VISIBLE
+HISTORICAL_OPERATION_DISTINCTION=VISIBLE
+NEXT_SEQUENCE_MEANING=VISIBLE
+READINESS_SYNC_DIAGNOSTICS_MEANINGS=SEPARATE
+RAW_EVIDENCE_RETAINED=PASS
+GATE_12_7=PASSED_PRIOR_SCOPE
+GATE_12_8=NEXT_READ_ONLY
 ```

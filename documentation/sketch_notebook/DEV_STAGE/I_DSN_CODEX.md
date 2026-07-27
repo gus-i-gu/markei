@@ -1,63 +1,57 @@
-# I_DSN_CODEX — ERR-04 Design Evidence
+# I_DSN_CODEX - DIAG-01 Design Evidence
 
-Sequence: FLX-ORD-01 — Ordinary Sequence
+Sequence: FLX-ORD-01 - Ordinary Sequence
 Role: Codex design evidence
-Round or unit: C10-GCM02-S12-ERR-04 within C10-GCM02-S12-SYNC-01
+Unit: C10-GCM02-S12-DIAG-01
 Branch: `cycle10-intermid-grimoire`
-Authority: D/E/F synchronized ERR-04 staging
+Authority: D/E/F synchronized DIAG-01 staging
 Evidence boundary: repository inspection and local validation only
 
-## Boundary Changes
+## Boundary Findings
 
-- repository-proven: the ordinary Sync command boundary is separated from the controlled failed/notApplied recovery command boundary. `HostedSyncCoordinator.run()` begins ordinary upload after authentication and binding.
-- repository-proven: controlled recovery still owns candidate revalidation, failed-to-recovered transition, exact batch lease, one upload, and stop-after-upload-result-persistence through `FailedNotAppliedRecoveryCoordinator` and `NativeAuthClosureRunner.recoverFailedNotAppliedCandidate()`.
-- repository-proven: ordinary Sync can reuse upload/download/acknowledgement primitives without calling the controlled recovery use case.
-- repository-proven: the `recoverFailedNotApplied` field remains in `HostedSyncCoordinator` only for constructor compatibility; it is not part of the ordinary runtime dependency chain.
+- repository-proven: the Closure Diagnostics command boundary is read-only and local. It reads runner status plus the diagnostics repository snapshot and performs no provider request or queue mutation.
+- repository-proven: hosted readiness and ordinary Sync remain independent top-level actions.
+- repository-proven: unknown Retry, failed/notApplied inspection, explicit failed/notApplied recovery, and history clear remain independent action boundaries.
+- repository-proven: ERR-04 ordinary Sync and controlled recovery separation was not modified.
+- repository-proven: no API, database schema, migration, registry, generator, or provider-facing implementation changed.
 
-## State And Sequence Invariants
+## Operation Group Model
 
-- test-validated: file-backed failed/notApplied rows remain `failed` after ordinary coordinator runs.
-- test-validated: ordinary coordinator with only failed/notApplied work performs zero uploads and leaves the failed submission unchanged.
-- test-validated: ordinary pending work still uploads through the normal pending lease path.
-- test-validated: explicit failed/notApplied recovery tests still validate one bounded transition, one exact lease, one upload, no download, no acknowledgement, no automatic repetition, and no `MKS-UI-004` for eligible preflight.
-- repository-proven: no schema or migration change was introduced.
+- repository-proven: lifecycle declarations are grouped by parent operation fingerprint when available, with attempt fingerprint fallback and an explicit unknown-operation fallback.
+- repository-proven: groups are projected in repository snapshot order, preserving the newest-first ordering supplied by local diagnostics.
+- repository-proven: compact phase summaries are deterministic per group and keyed by phase plus ordinal.
+- repository-proven: result-bearing declarations replace earlier pre-result declarations for the same phase in compact view, while every raw declaration remains available below the group.
+- repository-proven: terminal declarations are retained in compact summaries and determine the operation status before phase-local pre-result rows.
+- repository-proven: failed/error/blocked outcomes remain status-bearing and are not hidden by grouping.
 
-## Identity And Evidence Model
+## State And Projection Invariants
 
-- repository-proven: every top-level ordinary Sync action receives a random operation ID and sanitized operation fingerprint.
-- repository-proven: phase events receive distinct child correlation IDs and sanitized 12-hex fingerprints through `_DiagnosticOperationRecorder`.
-- repository-proven: HTTP transport continues to propagate the full client child correlation identity through `x-correlation-id` and parent operation identity/fingerprint through `x-operation-id` and `x-operation-fingerprint`.
-- repository-proven: the API now generates its own Fastify request ID independently of `x-correlation-id`, preserving server request ownership.
-- repository-proven: API lifecycle projection contains both `clientChildCorrelationFingerprint` and `serverRequestFingerprint`; `correlationFingerprint` remains server-request-owned for backward compatibility.
-- test-validated: API protocol tests prove both fingerprints are separately present, 12-hex sanitized, and not populated with injected raw header text.
+- repository-proven: Diagnostics does not invoke Sync, Retry, recovery, enrollment, logout, history clear, or hosted connection checks.
+- repository-proven: queue-state and Next Device sequence values are displayed from the local snapshot and are not changed by the Diagnostics UI action.
+- repository-proven: Last successful Sync predicate remains in existing diagnostics source; DIAG-01 did not alter it or allow hosted readiness to advance it.
+- repository-proven: the ordinary Sync 35000 ms client deadline remains unchanged.
+- test-validated: focused widget tests verify the consolidated control, local-only diagnostics behavior, operation grouping, pre-result/result pairing, raw preservation, and genuine failure visibility.
+- test-validated: full Flutter tests and Flutter analyze passed after the projection change.
 
-## Projection Architecture
+## Remaining Risks
 
-- repository-proven: aggregate Closure attempt rows no longer infer absent provider contact or missing response headers from parent-row nulls.
-- repository-proven: child/phase evidence remains the source for contact, trusted response, local mutation, and result-persistence axes.
-- repository-proven: server-request success is not projected as aggregate client Sync success; the UI retains the explicit `Server request: not aggregate success` declaration.
-- inferred: a fuller local aggregate summary could be derived from all child rows in a later unit, but ERR-04 intentionally avoids migration or broad diagnostic refactoring.
-
-## Validation Summary
-
-- test-validated: focused Flutter tests cover ordinary/controlled recovery separation, pending upload preservation, lifecycle line schema/redaction, sink failure isolation, and aggregate wording.
-- test-validated: local sync tests cover file-backed failed-state immobility and existing explicit recovery invariants.
-- test-validated: API protocol tests cover paired client-child/server-request lineage and redaction.
-- test-validated: full Flutter and full API suites passed.
-- unavailable: broad API format check remains blocked by unrelated pre-existing `test/sync_diagnostics_registry.test.ts` formatting; changed TypeScript files passed targeted Prettier.
-- unavailable: no live provider, hosted assay, deployment, or user database action was performed.
+- unavailable: live Windows terminal output and hosted/provider behavior were not validated.
+- unavailable: second-device convergence and provider row contents remain outside this Flutter-only projection correction.
+- inferred: if a future diagnostic source produces lifecycle rows without stable operation or attempt fingerprints, they will be grouped under `unknown-operation`; that fallback is explicit but less informative.
 
 ## Terminal Markers
 
 ```text
-ORDINARY_CONTROLLED_RECOVERY_BOUNDARY=SEPARATED
-FAILED_STATE_INVARIANT=VALIDATED
-SEQUENCE_REPLAY_INVARIANT=VALIDATED
-CLIENT_OBSERVER_ARCHITECTURE=BOUNDARY_STABLE
-CLIENT_SERVER_LINEAGE=VALIDATED
-AGGREGATE_PHASE_EVIDENCE_MODEL=TRUTHFUL
-NO_DIAGNOSTIC_PROVIDER_CALL=PASS
-NO_SCHEMA_MIGRATION=PASS
-GATE_12_7=HELD
+DIAGNOSTICS_COMMAND_BOUNDARY=READ_ONLY
+DIAGNOSTICS_SUBCHECKS=SEPARATELY_PROJECTED
+OPERATION_GROUP_MODEL=DETERMINISTIC
+PHASE_PAIRING=TRUTHFUL
+TRUE_FAILURE_RETENTION=PASS
+RAW_EVENT_PRESERVATION=PASS
+HOSTED_READINESS_BOUNDARY=SEPARATE
+ORDINARY_SYNC_BOUNDARY=SEPARATE
+NO_SCHEMA_API_PROVIDER_EXPANSION=PASS
+GATE_12_7=PASSED_PRIOR_SCOPE
+GATE_12_8=NEXT_READ_ONLY
 GCM02=OPEN
 ```

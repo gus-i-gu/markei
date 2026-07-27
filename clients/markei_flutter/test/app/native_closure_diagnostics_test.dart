@@ -64,7 +64,34 @@ void main() {
     expect(find.text('Current #device1'), findsOneWidget);
   });
 
-  testWidgets('Refresh diagnostics is local only and does not invoke Sync', (
+  testWidgets('Diagnostics replaces Status Query Refresh controls', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 2200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final query = _FakeDiagnosticsQuery();
+    final runner = _runner(query: query);
+
+    await tester.pumpWidget(
+      MaterialApp(home: NativeClosurePage(runner: runner)),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('nativeClosure.Diagnostics')), findsOneWidget);
+    expect(find.text('Diagnostics'), findsOneWidget);
+    expect(find.byKey(const Key('nativeClosure.Status')), findsNothing);
+    expect(find.byKey(const Key('nativeClosure.Query')), findsNothing);
+    expect(
+      find.byKey(const Key('nativeClosure.Refresh diagnostics')),
+      findsNothing,
+    );
+    expect(find.text('Check hosted connection'), findsOneWidget);
+    expect(find.text('Sync'), findsOneWidget);
+  });
+
+  testWidgets('Diagnostics is local only and does not invoke Sync', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(1400, 2200);
@@ -79,15 +106,186 @@ void main() {
     );
     await tester.pumpAndSettle();
     await tester.ensureVisible(
-      find.byKey(const Key('nativeClosure.Refresh diagnostics')),
+      find.byKey(const Key('nativeClosure.Diagnostics')),
     );
-    await tester.tap(
-      find.byKey(const Key('nativeClosure.Refresh diagnostics')),
+    await tester.tap(find.byKey(const Key('nativeClosure.Diagnostics')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('diagnostics-ready'), findsOneWidget);
+    expect(find.text('Authentication'), findsOneWidget);
+    expect(find.text('Enrollment'), findsOneWidget);
+    expect(find.text('Local queue and Next Device sequence'), findsNothing);
+    expect(find.text('Recovery guidance'), findsOneWidget);
+    expect(
+      find.text('Allocated only to new local Device events'),
+      findsOneWidget,
+    );
+    expect(query.snapshots, 2);
+    expect(query.beginAttempts, 0);
+    expect(query.beginDiagnosticAttempts, 0);
+    expect(query.completedResults, isEmpty);
+  });
+
+  testWidgets('Lifecycle declarations are grouped by operation', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 3200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final query = _FakeDiagnosticsQuery(
+      diagnostics: [
+        _event(
+          operation: 'older12345678',
+          ordinal: 1,
+          operationKind: 'failed-not-applied-recovery',
+          phase: 'failed-recovery-preflight',
+          code: 'MKS-REC-001',
+          nativeCode: 'failed-not-applied-inspection-eligible',
+          outcome: 'not-applied',
+        ),
+        _event(
+          operation: 'newest123456',
+          ordinal: 4,
+          phase: 'terminal',
+          nativeCode:
+              'client-operation-declaration:sync-completed:scope-client-operation',
+          outcome: 'applied',
+        ),
+        _event(
+          operation: 'newest123456',
+          ordinal: 3,
+          phase: 'upload-provider',
+          nativeCode: 'serverAccepted',
+          outcome: 'applied',
+        ),
+        _event(
+          operation: 'newest123456',
+          ordinal: 2,
+          phase: 'upload-provider',
+          nativeCode: 'upload-request-started',
+          outcome: 'unknown',
+          trustedResponseState: 'not-received',
+        ),
+        _event(
+          operation: 'newest123456',
+          ordinal: 1,
+          phase: 'authentication',
+          nativeCode: 'authenticated',
+          outcome: 'applied',
+        ),
+      ],
+    );
+    final runner = _runner(query: query);
+
+    await tester.pumpWidget(
+      MaterialApp(home: NativeClosurePage(runner: runner)),
     );
     await tester.pumpAndSettle();
 
-    expect(query.snapshots, 2);
-    expect(query.beginAttempts, 0);
+    expect(
+      find.textContaining('ordered evidence, not an error count'),
+      findsOneWidget,
+    );
+    final newestGroup = find.byKey(
+      const Key('nativeClosure.operationGroup.newest123456'),
+    );
+    await tester.ensureVisible(newestGroup);
+    expect(newestGroup, findsOneWidget);
+    await tester.tap(newestGroup);
+    await tester.pumpAndSettle();
+    await tester.tap(newestGroup);
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const Key('nativeClosure.operationGroup.newest123456.title')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('nativeClosure.operationGroup.older12345678.title')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('nativeClosure.operationGroup.newest123456.status')),
+      findsOneWidget,
+    );
+    final terminalPhase = find.byKey(
+      const Key('nativeClosure.operationGroup.newest123456.phase.terminal.4'),
+    );
+    await tester.ensureVisible(terminalPhase);
+    expect(terminalPhase, findsOneWidget);
+    expect(
+      find.byKey(
+        const Key(
+          'nativeClosure.operationGroup.newest123456.phase.upload-provider.3',
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(
+        const Key(
+          'nativeClosure.operationGroup.newest123456.phase.upload-provider.2',
+        ),
+      ),
+      findsNothing,
+    );
+
+    final rawGroup = find.byKey(
+      const Key('nativeClosure.operationGroup.newest123456.raw'),
+    );
+    await tester.ensureVisible(rawGroup);
+    await tester.tap(rawGroup);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.textContaining('2. MKS-TRN-001 / upload-provider'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('correlation #corr0002'), findsOneWidget);
+  });
+
+  testWidgets('Genuine failed terminal remains visible in operation group', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 2600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final query = _FakeDiagnosticsQuery(
+      diagnostics: [
+        _event(
+          operation: 'failed123456',
+          ordinal: 1,
+          phase: 'download-transport',
+          nativeCode: 'timeout',
+          severity: 'ERROR',
+          outcome: 'unknown',
+          trustedResponseState: 'not-received',
+        ),
+        _event(
+          operation: 'failed123456',
+          ordinal: 2,
+          phase: 'terminal',
+          nativeCode:
+              'client-operation-declaration:sync-failed:scope-client-operation',
+          severity: 'ERROR',
+          outcome: 'unknown',
+        ),
+      ],
+    );
+    final runner = _runner(query: query);
+
+    await tester.pumpWidget(
+      MaterialApp(home: NativeClosurePage(runner: runner)),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Newest operation: ordinary-sync #failed123456'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('failed /'), findsOneWidget);
+    expect(find.textContaining('sync-failed'), findsWidgets);
   });
 
   testWidgets('Check hosted connection records one non-Sync attempt', (
@@ -715,11 +913,13 @@ final class _FakeDiagnosticsQuery
     this.populated = false,
     this.unknownPreflight,
     this.failedInspection,
+    this.diagnostics = const [],
   });
 
   final bool populated;
   final UnknownSubmissionRetryPreflight? unknownPreflight;
   final FailedNotAppliedRecoveryInspection? failedInspection;
+  final List<ClosureDiagnosticEventSummary> diagnostics;
   var snapshots = 0;
   var beginAttempts = 0;
   var beginDiagnosticAttempts = 0;
@@ -874,6 +1074,7 @@ final class _FakeDiagnosticsQuery
           nextSequence: 3,
         ),
       ],
+      recentDiagnostics: diagnostics,
       actionableEvents: populated
           ? [
               ClosureActionableEventSummary(
@@ -889,6 +1090,51 @@ final class _FakeDiagnosticsQuery
       refreshedAt: DateTime.utc(2026, 7, 21),
     );
   }
+}
+
+ClosureDiagnosticEventSummary _event({
+  required String operation,
+  required int ordinal,
+  String operationKind = 'ordinary-sync',
+  required String phase,
+  String code = 'MKS-TRN-001',
+  required String nativeCode,
+  String severity = 'INFO',
+  required String outcome,
+  String trustedResponseState = 'received',
+}) {
+  return ClosureDiagnosticEventSummary(
+    attemptFingerprint: 'attempt-$operation',
+    diagnosticVersion: 1,
+    ordinal: ordinal,
+    code: code,
+    nativeCode: nativeCode,
+    severity: severity,
+    outcome: outcome,
+    operationKind: operationKind,
+    phase: phase,
+    lastProvedPhase: phase,
+    operationFingerprint: operation,
+    correlationFingerprint: 'corr${ordinal.toString().padLeft(4, '0')}',
+    localMutationState: 'none',
+    providerContactState: 'request-started',
+    providerTransactionState: 'unknown',
+    trustedResponseState: trustedResponseState,
+    resultPersistenceState: outcome == 'applied' ? 'committed' : 'not-started',
+    queueScope: 'current-device',
+    pendingCount: null,
+    uploadingCount: null,
+    failedCount: null,
+    unknownCount: null,
+    memberCount: null,
+    firstDeviceSequence: null,
+    lastDeviceSequence: null,
+    nextDeviceSequence: null,
+    httpStatus: null,
+    responseHeadersReceived: false,
+    safeAction: 'inspect grouped diagnostics',
+    retryable: false,
+  );
 }
 
 final class _CompletedDiagnosticAttempt {
