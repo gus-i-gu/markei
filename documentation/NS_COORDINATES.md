@@ -97,15 +97,15 @@ the proven launcher remains compatible.
 Environment: development
 ProjectAlias: Markei
 ProjectId: long-wind-52737031
-BranchAlias: markei-cycle10-development
-BranchId: br-curly-dream-afzqmmuj
+BranchAlias: markei-c10
+BranchId: br-aged-brook-afvksd9g
 ParentBranchAlias: production
-BranchExpiration: 2026-07-27
+BranchExpiration: 2026-08-26
 Region: aws-us-west-2
 PostgreSQLVersion: 18
-EndpointId: ep-raspy-brook-afhm7zmw
-Host: ep-raspy-brook-afhm7zmw.c-2.us-west-2.aws.neon.tech
-PooledHost: ep-raspy-brook-afhm7zmw-pooler.c-2.us-west-2.aws.neon.tech
+EndpointId: ep-hidden-field-afjt7hp8
+Host: ep-hidden-field-afjt7hp8.c-2.us-west-2.aws.neon.tech
+PooledHost: ep-hidden-field-afjt7hp8-pooler.c-2.us-west-2.aws.neon.tech
 Port: 5432
 Database: markei_sync_dev
 DatabaseSchema: public
@@ -115,6 +115,7 @@ DbOwnerUser: neondb_owner
 SslMode: require
 ChannelBindingMode: require
 ```
+
 
 `ProjectId`, `BranchId`, and `PooledHost` are optional until a reviewed
 procedure consumes them. Administrative checks and migrations use `Host`, the
