@@ -2274,9 +2274,17 @@ try {
         $null -ne $Claims.exp -and
         [long]$Claims.exp -gt $Now
     )
+    $NotBeforeProperty = $Claims.PSObject.Properties["nbf"]
+    $NotBeforeSeconds = 0L
     $NotBeforeValid = (
-        $null -eq $Claims.nbf -or
-        [long]$Claims.nbf -le $Now
+        $null -eq $NotBeforeProperty -or
+        (
+            [long]::TryParse(
+                [string]$NotBeforeProperty.Value,
+                [ref]$NotBeforeSeconds
+            ) -and
+            $NotBeforeSeconds -le $Now
+        )
     )
     $TimeWindowValid = $ExpiryValid -and $NotBeforeValid
 
