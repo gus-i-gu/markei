@@ -42,7 +42,7 @@ has been independently verified. Do not invent missing values.
 ```text
 CoordinateSchemaVersion: 2
 RepositorySlug: gus-i-gu/markei
-RepositoryBranch: cycle10-intermid-grimoire
+RepositoryBranch: grm-guarded-provisioning-20260727
 ApiRootDirectory: services/markei_sync_api
 MigrationDirectory: services/markei_sync_api/migrations
 ```
@@ -55,7 +55,7 @@ RenderServiceName: markei-sync-api-dev
 RenderServiceId: srv-d9darq6rnols73f55450
 RenderPublicOrigin: https://markei-sync-api-dev.onrender.com
 RenderRegion: Oregon (US West)
-RenderDeployBranch: cycle10-intermid-grimoire
+RenderDeployBranch: grm-guarded-provisioning-20260727
 RenderLivePath: /health/live
 RenderReadyPath: /health/ready
 RenderIdentityPath: /v1/identity
