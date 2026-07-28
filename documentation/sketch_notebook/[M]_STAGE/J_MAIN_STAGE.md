@@ -1,17 +1,18 @@
 # J_MAIN_STAGE — Cycle 10 active reconciliation
 
-> Sequence: FLX-PRM-04 Gate 12.7 conclusion and DIAG-01 activation
+> Sequence: FLX-PRM-04 C10-GCM02-S12-ST08 reconciliation and ST09 entry
 > Role: Main Chat
-> Branch: `cycle10-intermid-grimoire`
-> Reconciliation baseline: `cf405347b6fdc58bf0da698a1f07028e05ccd471`
-> Authority: human-directed Main reconciliation and synchronized D/E/F
-> Writable surface: J plus D/E/F staging
-> Evidence boundary: ERR-04 source/tests, sanitized Windows client screenshots,
-> `REC_DIAGNOSTICS.md` Records 004–006, warm readiness and one corrected
-> ordinary-Sync control; no provider-row, second-Device, Retry, recovery,
-> migration, Auth0, Neon, or new live action
-> Status: **CYCLE 10 OPEN; GATE 12.7 PASSED AT CORRECTED SINGLE-CLIENT
-> CONTROL SCOPE; DIAG-01 ACTIVE; GATE 12.8 NEXT READ-ONLY**
+> Branch: `grm-guarded-provisioning-20260727`
+> Reconciliation baseline: `3cbc6d526a7a92da5306326acb9e809dbe13f3fa`
+> Authority: explicit human-directed Main reconciliation
+> Writable surface: `REC_DIAGNOSTICS.md`, mutable J recovery prefix, and
+> append-only `Legacy_Progress`
+> Evidence boundary: sanitized Windows Diagnostics evidence, `GRM-AUTH-02`
+> exact hosted binding, and one `GRM-NEON-11` repeatable read-only provider
+> snapshot ending in `ROLLBACK`; no new Sync, Retry, recovery, enrollment,
+> migration, provider mutation, second Device, or production claim
+> Status: **CYCLE 10 OPEN; C10-GCM02-S12-ST08 PASSED AT READ-ONLY
+> EXACT-BINDING/CLEAN-PROVIDER-BASELINE SCOPE; ST09 NEXT, PREPARATION ONLY**
 
 ## 1. Recovery entrypoint
 
@@ -46,16 +47,17 @@ Retain these ownership boundaries:
 
 ```text
 Repository: gus-i-gu/markei
-Active branch: cycle10-intermid-grimoire
-Current reconciliation baseline: cf405347b6fdc58bf0da698a1f07028e05ccd471
+Active branch: grm-guarded-provisioning-20260727
+Current reconciliation baseline: 3cbc6d526a7a92da5306326acb9e809dbe13f3fa
 Cycle: 10
 Active closure unit: MCG-02 / user-facing GCM-02
 Latest completed corrective unit: C10-GCM02-S12-ERR-04 recovery-boundary and
 observability correction
 Latest accepted gate: Gate 12.7 corrected single-client control
-Active materialization unit: C10-GCM02-S12-DIAG-01 diagnostics consolidation
-Active gate: Gate 12.8 read-only provider/result reconciliation; no second
-Sync, Retry, recovery, enrollment, migration, or provider mutation
+Latest completed presentation unit: C10-GCM02-S12-DIAG-01
+Latest completed evidence phase: C10-GCM02-S12-ST08 read-only exact-binding
+and atomic provider-baseline reconciliation
+Active phase: C10-GCM02-S12-ST09 preparation; no action authorized
 ```
 
 The branch contains the GRM execution interface, hosted Sync
@@ -83,7 +85,122 @@ baseline renames the generated diagnostic projection to
 state. The broad ERR-catalogue refactor remains deferred until the present
 narrow assays conclude.
 
-## 3. Cycle 10 consolidated panorama
+### 2.1 Controlling ST08 closure and ST09 entry
+
+This subsection is the newest controlling recovery surface. When an older
+mutable-prefix statement conflicts with it, this subsection controls. The
+older text remains available as pre-ST08 staging context, and the complete
+chronology remains append-only under `Legacy_Progress`.
+
+ST08 reconciles three independent evidence families:
+
+```text
+Windows client projection
+  durable enrollment and corrected DIAG-01 presentation supported
+
+GRM-AUTH-02
+  fresh token contract true
+  identity endpoint 200
+  exact Device-status endpoint 200
+  exact-binding-confirmed
+
+GRM-NEON-11
+  exact Device guard 1
+  global Account/Device/cursor counts 1/1/1
+  submissions/events/acknowledgements 0/0/0
+  Account cursor 1 after high-water 0, consistent
+  Device sequence 1 after high-water 0, consistent
+  no replay fingerprints
+  explicit ROLLBACK and PASS
+```
+
+Reconciled meaning:
+
+- the authenticated identity and one active Device are exactly bound;
+- the replacement development provider is structurally clean and internally
+  consistent before a first transition;
+- the provider contains no prior Sync result to compare;
+- the earlier successful ordinary-Sync timeline remains valid client history
+  at its original evidence boundary, but it is not corroborated by this
+  replacement provider;
+- ST08 therefore passes as a read-only identity/provider baseline, not as a
+  same-provider post-Sync convergence proof;
+- no mutating action is authorized by ST08 closure.
+
+Current terminals:
+
+```text
+CYCLE10=OPEN
+GCM02=OPEN_ACTIVE
+STEP12=OPEN_ACTIVE
+GATE_12_7=PASSED_CORRECTED_SINGLE_CLIENT_CONTROL_SCOPE
+DIAG_01=PASS_AT_WINDOWS_CLIENT_UI_SCOPE
+GRM_AUTH_02=PASS
+EXACT_HOSTED_BINDING=PASS
+GRM_NEON_11=PASS
+PROVIDER_BASELINE=1_ACCOUNT_1_DEVICE_1_CURSOR_0_SUBMISSIONS_0_EVENTS_0_ACKS
+ACCOUNT_CURSOR_BASELINE=CONSISTENT
+DEVICE_SEQUENCE_BASELINE=CONSISTENT
+ST08=PASSED_READ_ONLY_EXACT_BINDING_AND_CLEAN_PROVIDER_BASELINE_SCOPE
+PRIOR_CLIENT_SYNC_CORRELATION_TO_REPLACEMENT_PROVIDER=UNPROVED
+ST09=NEXT_PREPARATION_ONLY
+ORDINARY_SYNC=NOT_AUTHORIZED
+RETRY_OR_RECOVERY=NOT_AUTHORIZED
+ENROLLMENT_OR_MIGRATION=NOT_AUTHORIZED
+SECOND_DEVICE=NOT_AUTHORIZED
+```
+
+ST09 broad objective:
+
+> Establish one controlled same-Device transition against the clean replacement
+> provider and compare the result without weakening the action boundary.
+
+ST09 should be partitioned as:
+
+1. **ST09.1 local preflight** — recover one current, non-secret local
+   diagnostic snapshot; classify pending/uploading/failed/unknown counts,
+   active Device scope, next local sequence, and whether the client is in a
+   restart-required state.
+2. **ST09.2 provider preflight** — retain Record 009 as the immutable clean
+   baseline; rerun it only if freshness is materially lost.
+3. **ST09.3 transition contract** — derive the exact expected upload member
+   set and expected Device/account cursor changes from ST09.1 plus the provider
+   baseline. Do not infer them from stale screenshots.
+4. **ST09.4 authorization packet** — state one exact action, click count,
+   expected terminal, capture surfaces, abort conditions, and prohibited
+   alternatives. Human authorization must be explicit.
+5. **ST09.5 controlled action** — if and only if authorized, perform ordinary
+   Sync exactly once. No Retry, recovery, enrollment, migration, repair,
+   provider-console action, or second click.
+6. **ST09.6 terminal capture** — preserve client terminal, operation/child
+   fingerprints, queue transition, sequence projection, and matching sanitized
+   Render lifecycle when available.
+7. **ST09.7 post-action provider comparison** — run one read-only
+   `GRM-NEON-11` snapshot with the same Device UUID and compare counts,
+   high-water/cursor values, replay fingerprints, and acknowledgements against
+   Record 009.
+8. **ST09.8 reconciliation** — classify success, bounded blocker, unknown
+   outcome, or contradiction. Do not retry merely to improve evidence.
+
+ST09 is not yet an execution authorization. Its entry blockers are:
+
+- the current local queue and Device scope have not yet been frozen in a
+  durable sanitized preflight;
+- the expected provider delta has not yet been calculated from that fresh
+  local state;
+- the exact action/capture/abort packet has not yet received human
+  authorization.
+
+Second-Device download/convergence and acknowledgement proof remain outside
+ST09 unless a later Main reconciliation explicitly redefines the phase after
+the same-Device transition is accepted.
+
+## 3. Retained pre-ST08 panorama
+
+The following sections preserve the compact recovery panorama that controlled
+before ST08. They are not rewritten as historical records. Section 2.1
+supersedes their status, branch, gate, and next-action statements wherever
+those statements differ.
 
 Cycle 10 moved Markei from local synchronization groundwork toward bounded,
 authenticated, hosted inter-device convergence. It is not yet closed.
@@ -246,7 +363,7 @@ packages/markei_sync_contract/
 Inspect exact files through G/H/I or targeted search when the active question
 requires server behavior. Do not infer hosted state from source capability.
 
-## 5. GCM-02 current state
+## 5. Pre-ST08 GCM-02 state retained for context
 
 GCM-02 remains open, but Gate 12.7 now passes at the corrected single-client
 control scope. ERR-04 is source-accepted and locally validated. The subsequent
@@ -421,7 +538,7 @@ GCM-02 closure: NOT GRANTED
 Keep Markei closed and preserve the copied database unchanged until the Gate
 12.7 packet is reviewed. Do not execute ad hoc SQL.
 
-## 6. Immediate continuation — SYNC-01 before Phase 12.7
+## 6. Superseded pre-ST08 continuation — SYNC-01 before Phase 12.7
 
 The Windows read-only preflight, dedicated recovery-control visibility and
 confirmation cancellation are reconciled as PASS. The later readiness assay
@@ -527,7 +644,7 @@ Cycle 10 closes only after:
 Cycle 11 remains separate. Its UI/UX and basic Analytics work must not be used
 to bypass Cycle 10 closure.
 
-## 10. PRC-01 current claims
+## 10. Pre-ST08 PRC-01 claims retained for provenance
 
 | Claim                                        | Result and evidence boundary                                          |
 | -------------------------------------------- | --------------------------------------------------------------------- |
@@ -4937,6 +5054,7 @@ GCM03=UNDEFINED_INACTIVE
 GCM04=UNDEFINED_INACTIVE
 CYCLE10_CLOSURE=BLOCKED_BY_GCM02
 ```
+
 ## 2026-07-26 — ERR-04 materialization reconciliation
 
 ### Sequence envelope
@@ -5298,4 +5416,275 @@ GATE_12_10=HELD
 GCM03=UNDEFINED_INACTIVE
 GCM04=UNDEFINED_INACTIVE
 CYCLE10_CLOSURE=BLOCKED_BY_GCM02
+```
+## 2026-07-28 — C10-GCM02-S12-ST08 exact-binding/provider reconciliation
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04
+Role: Main Chat [M]
+Round or unit: C10-GCM02-S12-ST08
+Branch: grm-guarded-provisioning-20260727
+Inspected baseline: 3cbc6d526a7a92da5306326acb9e809dbe13f3fa
+Question: Does the genuinely enrolled replacement-provider Device have an
+          exact hosted identity binding and one coherent read-only pre-Sync
+          provider baseline?
+Inputs: GRM-AUTH-02 sanitized terminal; GRM-NEON-08 inventory observations;
+        GRM-NEON-11 sanitized terminal; REC_DIAGNOSTICS Records 007–009;
+        targeted GRIMOIRE and provider-baseline source inspection
+Writable surfaces: REC_DIAGNOSTICS append; mutable J prefix; append-only
+                   Legacy_Progress
+Prohibited surfaces/actions: source, D/E/F, permanent domains, methodology,
+                            Sync, Retry, recovery, Enroll, migration, provider
+                            mutation, second Device, production
+Authority: explicit human-directed ST08 reconciliation
+Next sequence: C10-GCM02-S12-ST09 preparation
+Stop condition: no mutating action before a fresh local preflight, exact delta
+                contract, and explicit one-action authorization
+```
+
+### Reconstructed incident and correction boundary
+
+The first attempted ST08 evidence packet contained a stale local enrollment
+projection. `GRM-AUTH-02` reached the hosted Device-status route but returned
+HTTP 403, and `GRM-NEON-11` failed its exact-device guard for the entered UUIDs.
+`GRM-NEON-08` then returned no Device rows, proving that the replacement
+provider had no enrolled Device at that time.
+
+The client subsequently completed one genuine enrollment after a successful
+hosted-connection check. `GRM-NEON-08` then returned exactly one active Device
+with `next_expected_sequence=1`. The required restart and post-restart sign-in
+were completed. The full Device UUID and fresh access token remained local and
+were used only through masked prompts.
+
+This entry does not erase the stale-binding attempts. They remain useful
+observational history explaining why the final evidence required exact hosted
+and provider corroboration rather than accepting the UI projection alone.
+
+### GRIMOIRE improvements materialized and exercised during ST08
+
+The five-file GRIMOIRE system improved materially during this phase:
+
+| Improvement | GRIMOIRE ownership | ST08 effect |
+| --- | --- | --- |
+| Guarded branch handoff and exact clean-remote alignment | `GRM.md` index plus `G_SCRIPTS.md`/`I_SCRIPTS.ps1` Git procedures | Prevented provider work from an unproved or stale branch lineage |
+| Reusable Windows debug preparation and named VS Code launch path | `GRM-FLUTTER-DEBUG` and generated debug configuration | Made the persisted Device binding and fresh access token observable in one controlled run without adding a credential-export path |
+| Guarded development Account/membership provisioning | `GRM-AUTH-03`, `DBM-AUTO-12`, coordinates and launcher dispatch | Reconstructed the replacement-provider owner fixture only after hosted token verification and exact confirmation |
+| Cryptographic hosted token verification tightening | `GRM-AUTH-03` source correction | Prevented provisioning from relying on an unverified decoded subject |
+| Exact hosted identity/Device verification | `GRM-AUTH-02` | Distinguished token acceptance from exact enrolled-Device authorization and exposed stale UUIDs through the hosted 403 boundary |
+| Optional JWT `nbf` compatibility correction under PowerShell StrictMode | `G_SCRIPTS.md` `GS-AUTH-02` | Accepted legitimate tokens with no optional `nbf` while retaining fail-closed expiry and malformed-claim handling |
+| Sanitized Device inventory | `GRM-NEON-08` / `DBM-AUTO-07` | Proved first that no provider Device existed, then that one active Device existed after genuine enrollment, without printing UUIDs |
+| Atomic exact-Device provider snapshot | `GRM-NEON-11` / `DBM-AUTO-09` | Added a single repeatable read-only snapshot for six-table counts, cursor integrity, sequence/high-water consistency and sanitized replay fingerprints |
+| Fail-closed exact Device guard | `DBM-AUTO-09` | Prevented a zero-match UUID from producing a misleading provider-baseline PASS |
+| Sanitized non-secret coordinate refresh | `NS_COORDINATES.md` | Aligned development branch/database/host routing while keeping credentials and complete identifiers outside Git |
+
+These are materialized interface and evidence improvements. Their successful
+use in ST08 does not promote every GRIMOIRE procedure to production
+acceptance. `GRM-AUTH-03` remains a guarded development bridge;
+`GRM-NEON-11` proves read-only execution and returned values only; and the
+launcher still cannot independently prove the human-readable Neon branch alias.
+
+### Accepted sanitized evidence
+
+`GRM-AUTH-02` returned:
+
+```text
+IssuerMatches=True
+AudienceMatches=True
+AlgorithmMatches=True
+SubjectPresent=True
+TimeWindowValid=True
+IdentityStatus=200
+DeviceStatus=200
+TokenAccepted=True
+ExactDeviceBinding=True
+BindingClass=exact-binding-confirmed
+```
+
+`GRM-NEON-11` returned one internally consistent snapshot:
+
+```text
+exact Device matches/guard: 1/1
+global Account/Device/cursor: 1/1/1
+global submissions/events/acknowledgements: 0/0/0
+missing/orphan cursor rows: 0/0
+fixture Account/Device/cursor: 1/1/1
+fixture submissions/events/acknowledgements: 0/0/0
+fixture Device: active, next expected sequence 1
+Account cursor/high-water: 1/0, consistent
+Device next/high-water: 1/0, consistent
+submission/request fingerprints: none
+event/content fingerprints: none
+transaction terminal: ROLLBACK
+launcher terminal: PASS
+```
+
+No token, subject, Account identifier, Device UUID, password, connection
+string, payload, full request hash or full content hash was recorded.
+
+### PRC-01 claims
+
+```text
+Claim: the authenticated identity is exactly authorized for the genuinely
+       enrolled replacement-provider Device
+Source: GRM-AUTH-02 sanitized terminal
+Current state: open after stale UUID/HTTP 403 attempts
+Evidence: hosted identity 200; hosted exact Device-status 200;
+          ExactDeviceBinding true; exact-binding-confirmed
+Evidence boundary: one fresh token and one exact Device on the development host
+Contradictions: none in the final packet; earlier 403s belong to stale UUIDs
+Semantic owner: ST08 hosted identity/Device binding
+Target role: J staging plus REC_DIAGNOSTICS observational evidence
+History disposition: append; preserve failed stale-binding attempts
+Confidence: high
+Human/Main authority: explicit ST08 reconciliation request
+Required regeneration: J mutable prefix
+Result: ACCEPTED / PASS
+```
+
+```text
+Claim: the replacement provider is coherent before its first authorized Sync
+Source: GRM-NEON-11 sanitized repeatable read-only snapshot
+Current state: open after genuine enrollment
+Evidence: exact Device guard; 1/1/1 structural rows; zero payload rows; no
+          cursor defects; both next-after-high-water invariants true;
+          ROLLBACK and PASS
+Evidence boundary: one development database snapshot; launcher cannot
+                   independently prove the Neon branch alias
+Contradictions: none within the replacement-provider snapshot
+Semantic owner: ST08 provider baseline
+Target role: J staging plus REC_DIAGNOSTICS observational evidence
+History disposition: append
+Confidence: high
+Human/Main authority: explicit ST08 reconciliation request
+Required regeneration: J mutable prefix
+Result: ACCEPTED / PASS
+```
+
+```text
+Claim: the earlier client historical sync-completed terminal is corroborated
+       by the replacement provider
+Source: Record 008 client history compared with Record 009 provider snapshot
+Current state: candidate cross-time inference
+Evidence: provider has zero submissions, events and acknowledgements
+Evidence boundary: client history and replacement-provider baseline belong to
+                   different provider lifetimes
+Contradictions: no corresponding provider result exists
+Semantic owner: cross-provider evidence provenance
+Target role: ST08 evidence ceiling and ST09 clean-baseline contract
+History disposition: preserve both records with their original boundaries
+Confidence: high
+Human/Main authority: Main reconciliation
+Required regeneration: none beyond J/REC classification
+Result: REJECTED AS CORROBORATION; NOT A PROVIDER INVARIANT FAILURE
+```
+
+```text
+Claim: ST08 authorizes one ordinary Sync
+Source: completion of read-only exact-binding/provider checks
+Current state: proposed transition
+Evidence: preconditions are stronger, but current local queue/device state and
+          expected provider delta are not yet frozen
+Evidence boundary: no ST09 preflight or authorization packet exists
+Contradictions: explicit stop-before-Sync contract
+Semantic owner: human/Main action authorization
+Target role: future ST09 authorization packet
+History disposition: append
+Confidence: high
+Human/Main authority: not yet granted
+Required regeneration: ST09 preflight and exact transition contract
+Result: REJECTED FOR NOW; PREPARATION ONLY
+```
+
+### ST08 conclusion
+
+ST08 passes at the narrow read-only boundary it was designed to establish:
+
+```text
+EXACT_HOSTED_BINDING=PASS
+ATOMIC_PROVIDER_BASELINE=PASS
+REPLACEMENT_PROVIDER_STRUCTURE=PASS
+ACCOUNT_CURSOR_BASELINE=PASS
+DEVICE_SEQUENCE_BASELINE=PASS
+PROVIDER_PAYLOAD_BASELINE=EMPTY
+READ_ONLY_ROLLBACK=PASS
+PRIOR_CLIENT_HISTORY_SAME_PROVIDER_CORRELATION=UNPROVED
+ST08=PASSED_BOUNDED
+```
+
+The absence of provider payload rows is expected for this newly reconstructed
+and newly enrolled provider. It is not evidence that a Sync on this provider
+has failed, because none has yet been authorized.
+
+### C10-GCM02-S12-ST09 broad view
+
+ST09 should establish the first correlated same-Device transition on the clean
+replacement provider. It begins as investigation and preparation, not
+execution authority.
+
+Required evidence spine:
+
+```text
+fresh local sanitized preflight
+↓
+exact expected member/sequence/cursor delta
+↓
+one-action authorization packet
+↓
+explicit human authorization
+↓
+ordinary Sync exactly once
+↓
+client + Render terminal capture
+↓
+read-only GRM-NEON-11 postflight
+↓
+before/after reconciliation
+```
+
+Expected ST09 outcomes must be calculated only after the local preflight. In
+particular, no entry should assume that the earlier screenshot-reported pending
+count, local Device ranks, or next sequence still describes the client at the
+moment of authorization.
+
+ST09 success would require:
+
+- the one authorized client action reaches one accepted terminal;
+- no implicit failed/notApplied recovery occurs;
+- the queue transition matches the frozen local member set;
+- provider submission/event counts and replay fingerprints match that member
+  set;
+- Device next expected sequence equals the accepted Device high-water plus one;
+- Account next cursor equals hosted high-water plus one;
+- acknowledgement state matches the client terminal and protocol contract;
+- the postflight ends in `ROLLBACK` and launcher `PASS`;
+- no second click or alternative action is used to repair ambiguous evidence.
+
+ST09 does not include second-Device convergence, production deployment,
+retention/rebootstrap acceptance, provider cleanup, credential rotation, or
+Cycle 11 UI/Analytics work.
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=OPEN_ACTIVE
+STEP12=OPEN_ACTIVE
+GATE_12_7=PASSED_CORRECTED_SINGLE_CLIENT_CONTROL_SCOPE
+DIAG_01=PASS_WINDOWS_CLIENT_UI_SCOPE
+ST08_EXACT_BINDING=PASS
+ST08_PROVIDER_BASELINE=PASS
+ST08=PASSED_BOUNDED
+ST09=NEXT_PREPARATION_ONLY
+ST09_LOCAL_PREFLIGHT=PENDING
+ST09_EXPECTED_DELTA=PENDING
+ST09_AUTHORIZATION_PACKET=PENDING
+ST09_MUTATING_ACTION=NOT_AUTHORIZED
+RETRY_OR_RECOVERY=NOT_AUTHORIZED
+ENROLLMENT_OR_MIGRATION=NOT_AUTHORIZED
+SECOND_DEVICE=NOT_AUTHORIZED
+GCM03=UNDEFINED_INACTIVE
+GCM04=UNDEFINED_INACTIVE
+CYCLE10_CLOSURE=BLOCKED_BY_REMAINING_GCM02_TRANSITION_AND_LATER_UNITS
 ```

@@ -1863,3 +1863,174 @@ GATE_12_8_PROVIDER_RECONCILIATION=OPEN
 MUTATING_ACTION_AUTHORIZATION=NONE
 ```
 
+---
+
+# APPENDIX D — EXACT BINDING AND ATOMIC PROVIDER BASELINE
+
+This appendix is append-only. It records the sanitized `GRM-AUTH-02` and
+`GRM-NEON-11` terminals supplied on 2026-07-28 after the first genuine Device
+enrollment against the replacement development provider. It closes the
+read-only evidence question left open by Record 008 without recording the
+access token, Device UUID, Auth0 subject, Account identifier, database
+credential, connection string, or full replay hash.
+
+The terminal labels use the canonical GRIMOIRE entry names. The launcher
+dispatches them as `GS-AUTH-02` and `GS-NEON-11`.
+
+## RECORD 009 — POST-ENROLLMENT EXACT BINDING AND PROVIDER BASELINE
+
+```text
+MARKEI CLOSURE ASSAY — SANITIZED RECORD
+========================================
+
+ASSAY ID: REC-2026-07-28-009-EXACT-BINDING-PROVIDER-BASELINE
+DATE/TIME (local): 2026-07-28, exact time [MANUAL]
+TESTER: [MANUAL]
+DEVICE/OS: Windows desktop [USER-SUPPLIED TERMINAL CONTEXT]
+CLIENT LINEAGE: grm-guarded-provisioning-20260727
+INSPECTED REPOSITORY HEAD: 3cbc6d526a7a92da5306326acb9e809dbe13f3fa
+ENVIRONMENT: development [USER-SUPPLIED SANITIZED TERMINAL]
+NON-SECRET BRANCH COORDINATE: markei-c10 [USER-SUPPLIED SANITIZED TERMINAL]
+DATABASE: markei_sync_dev [USER-SUPPLIED SANITIZED TERMINAL]
+DATABASE ROLE: markei_migrator [USER-SUPPLIED SANITIZED TERMINAL]
+NEON BRANCH ALIAS INDEPENDENTLY PROVED BY LAUNCHER: NO
+ASSAY PURPOSE: Prove that one fresh Auth0 user token is accepted by the hosted
+identity endpoint, that the same locally retained complete Device UUID is
+authorized by the hosted Device-status endpoint, and that one atomic read-only
+provider snapshot is internally consistent before any new Sync action.
+
+SAFETY AND ACTION BOUNDARY
+--------------------------
+Secrets copied into this file: NO
+Complete identifiers copied into this file: NO
+Token or authorization header printed by procedure: NO
+Provider payloads or response bodies recorded: NO
+Ordinary Sync executed: NO
+Retry or failed/notApplied recovery executed: NO
+Enrollment executed during these two checks: NO
+Migration or provider mutation executed: NO
+Transaction terminal: ROLLBACK
+New mutating action authorized by this record: NO
+
+GRM-AUTH-02 — EXACT HOSTED BINDING
+----------------------------------
+IssuerMatches: True
+AudienceMatches: True
+AlgorithmMatches: True
+SubjectPresent: True
+TimeWindowValid: True
+IdentityStatus: 200
+DeviceStatus: 200
+TokenAccepted: True
+ExactDeviceBinding: True
+BindingClass: exact-binding-confirmed
+
+Interpretation: The fresh token passed the local compatibility checks and the
+hosted API accepted both the identity request and the exact Device-status
+request. The API, rather than the local parser alone, owns cryptographic token,
+membership, enrollment, and Device-authorization enforcement.
+
+GRM-NEON-11 — CONNECTION AND EXACT-DEVICE GUARD
+------------------------------------------------
+Role/database/TLS check: PASS
+Fixture Device matches: 1
+Exact Device guard: 1
+
+GRM-NEON-11 — GLOBAL PROVIDER COUNTS
+-------------------------------------
+Accounts: 1
+Devices: 1
+Account cursor-state rows: 1
+Submissions: 0
+Sync events: 0
+Device acknowledgements: 0
+Accounts missing cursor state: 0
+Orphan cursor-state rows: 0
+
+GRM-NEON-11 — FIXTURE-ACCOUNT COUNTS AND DEVICE STATE
+------------------------------------------------------
+Fixture Accounts: 1
+Fixture Account Devices: 1
+Fixture Account cursor-state rows: 1
+Fixture submissions: 0
+Fixture Sync events: 0
+Fixture Device acknowledgements: 0
+Fixture Device status: active
+Fixture Device next expected sequence: 1
+
+GRM-NEON-11 — CURSOR AND SEQUENCE CONSISTENCY
+----------------------------------------------
+Account next cursor: 1
+Hosted high-water: 0
+Account cursor consistent: true
+Device next expected sequence: 1
+Device high-water: 0
+Device sequence consistent: true
+
+GRM-NEON-11 — SANITIZED REPLAY INVENTORY
+-----------------------------------------
+Fixture submissions: 0
+Distinct request hashes: 0
+Submission and request-hash fingerprints: [none]
+Fixture Sync events: 0
+Distinct content hashes: 0
+Event and content-hash fingerprints: [none]
+
+GRM-NEON-11 — TERMINAL
+-----------------------
+Transaction: ROLLBACK
+Launcher result: PASS — provider-baseline completed
+
+EVIDENCE CEILING
+----------------
+Fresh token accepted by hosted identity route: PROVED
+Exact hosted Account/Device authorization: PROVED
+Exact Device exists in replacement provider: PROVED
+Replacement provider pre-Sync baseline is internally consistent: PROVED
+Provider state changed by the baseline procedure: REJECTED; explicit ROLLBACK
+Prior client historical Sync belongs to this replacement provider: UNPROVED
+Current local queue contents immediately before a future Sync: UNPROVED BY
+THIS TERMINAL
+Upload, download, acknowledgement or convergence on this provider: UNPROVED
+Second-Device convergence: UNPROVED
+Production readiness: UNPROVED
+```
+
+## RECORD 009 ASSESSMENT
+
+| Claim | Assessment | Evidence boundary |
+| --- | --- | --- |
+| Auth0 issuer, audience, algorithm, subject and time-window contract passed | PASS | Fresh token compatibility checks plus hosted acceptance |
+| Hosted identity membership is accepted | PASS | Identity endpoint HTTP 200 |
+| The retained complete Device UUID is the active hosted Device | PASS | Device-status endpoint HTTP 200 and exact-binding terminal |
+| The UUID identifies exactly one provider Device | PASS | `fixture_device_matches=1`, fail-closed guard passed |
+| Provider Account/Device/cursor structure is coherent | PASS | `1/1/1`, no missing or orphan cursor row |
+| Provider contains a prior submission, Sync event or acknowledgement | REJECTED | All three global and fixture counts are zero |
+| Account cursor is coherent at the empty baseline | PASS | next cursor 1, high-water 0, consistency true |
+| Device sequence is coherent at the empty baseline | PASS | next expected 1, high-water 0, consistency true |
+| `GRM-NEON-11` changed provider state | REJECTED | Repeatable read-only transaction ended in `ROLLBACK` |
+| Earlier client Sync history is corroborated by this provider | UNPROVED | Replacement provider contains no corresponding rows |
+| C10-GCM02-S12-ST08 read-only identity/provider reconciliation may close | PASS WITH BOUNDED RESULT | Exact binding and clean provider baseline proved; no transition result exists yet |
+| A Sync or other mutating action is authorized by this evidence | NO | Separate ST09 preflight and explicit authorization required |
+
+Terminal classification:
+
+```text
+GRM_AUTH_02=PASS
+FRESH_TOKEN_CONTRACT=PASS
+HOSTED_IDENTITY_STATUS=HTTP_200
+HOSTED_DEVICE_STATUS=HTTP_200
+EXACT_HOSTED_BINDING=PASS
+GRM_NEON_11=PASS
+EXACT_PROVIDER_DEVICE_GUARD=PASS
+PROVIDER_GLOBAL_COUNTS=1_ACCOUNT_1_DEVICE_1_CURSOR_0_SUBMISSIONS_0_EVENTS_0_ACKS
+PROVIDER_CURSOR_INTEGRITY=PASS
+ACCOUNT_CURSOR_BASELINE=CONSISTENT_1_AFTER_0
+DEVICE_SEQUENCE_BASELINE=CONSISTENT_1_AFTER_0
+SANITIZED_REPLAY_INVENTORY=EMPTY
+READ_ONLY_TRANSACTION=ROLLED_BACK
+ST08_READ_ONLY_RECONCILIATION=PASS_BOUNDED
+PRIOR_CLIENT_SYNC_PROVIDER_CORRELATION=UNPROVED
+ST09=NEXT_PREPARATION_ONLY
+MUTATING_ACTION_AUTHORIZATION=NONE
+```
