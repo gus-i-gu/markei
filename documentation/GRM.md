@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-The GRIMOIRE is Markei's concise, human-supervised operational entrypoint.
+The GRM is Markei's concise, human-supervised operational entrypoint.
 Each active `GRM-*` block summons exactly one canonical `GS-*` procedure.
 Operational logic, variable requests, database queries, and expected results do
 not live in the invocation block.
@@ -456,14 +456,6 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-FLUTTER-DEBUG"
 ```
-
-Run this before a VS Code `F5` Windows Closure session. It verifies and exposes
-the native vcpkg dependency graph, creates the ignored public-coordinate
-define file, builds Debug beside the existing Release artifact, and registers
-the Debug executable for the `auth0flutter` callback. Open the repository root
-in VS Code and select `Markei Windows Closure (debug)`; its pre-launch task
-reuses this procedure and its post-debug task restores the callback to the
-preserved Release executable. Do not open only the Flutter subdirectory.
 
 ### `GRM-FLUTTER-AND`
 
