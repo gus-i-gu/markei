@@ -1,122 +1,152 @@
-# E_DDC_STAGE — DIAG-01 diagnostic meaning
+# E_DDC_STAGE — Android Closure parity evidence and operator meaning
 
 > Sequence: FLX-ORD-01 — Ordinary Sequence
 > Role: Main-approved Didactic materialization stage
-> Unit: `C10-GCM02-S12-DIAG-01`
-> Branch: `cycle10-intermid-grimoire`
-> Required ancestry: `cf405347b6fdc58bf0da698a1f07028e05ccd471`
-> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
-> Evidence boundary: corrected Gate 12.7 client controls and sanitized
-> diagnostic record; no provider-state claim
+> Unit: `C10-GCM03-ST04-R1`
+> Branch: `grm-guarded-provisioning-20260727`
+> Required remote ancestry:
+> `ec96f93d71efd261adc2b3b75a17453130e437a0`
+> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED WITHIN D**
+> Evidence boundary: source, tests, and public artifact-provenance projection;
+> no Android runtime acceptance or provider claim
 
-## 1. Meaning correction
+## 1. Meaning of the interruption
 
-The UI must teach the correct distinction:
-
-```text
-diagnostic declaration ≠ error
-operation group ≠ individual phase row
-pre-result unknown ≠ failed terminal
-duplicate-equivalent ≠ failure
-historical operation ≠ newest operation
-Next Device sequence ≠ Sync press counter
-```
-
-The newest successful ordinary Sync produced one operation with ordered causal
-phase declarations. The apparent “13 ERRs” are a presentation/comprehension
-defect, not evidence of 13 protocol failures.
-
-## 2. User-facing vocabulary
-
-Use one top-level action:
+The Android screenshot creates this contradiction:
 
 ```text
-Diagnostics
+current source contract = consolidated Diagnostics Closure
+visible Android artifact = legacy basic Closure
 ```
 
-Within its result surface, retain separately named subchecks:
+Teach the correct conclusion:
 
-- Authentication;
-- Enrollment / Device binding;
-- Local queue and Next Device sequence;
-- Last Sync result and Last successful Sync;
-- Recovery guidance;
-- Recent operation summaries;
-- Devices and actionable events.
+```text
+successful build command ≠ proved installed artifact lineage
+visible Closure destination ≠ current Closure revision
+authenticated label ≠ complete ST04 or ST05 evidence
+source parity test ≠ Android runtime acceptance
+legacy Android surface ≠ need for an Android-only UI fork
+```
 
-Keep these meanings separate:
+ST04 is blocked because its evidence surface is insufficient. Authentication
+is neither rejected nor accepted for GCM03 from this screenshot alone.
 
-- `Diagnostics`: read-only client-state projection;
-- `Check hosted connection`: hosted readiness request;
-- `Sync`: stateful ordinary synchronization;
-- `Retry unknown-outcome submission`: explicit same-submission retry;
-- failed/notApplied inspection: read-only recovery preflight;
-- failed/notApplied recovery: explicit confirmed bounded mutation.
+## 2. Shared operator vocabulary
 
-## 3. Default and technical views
+Windows and Android must use the same meanings:
 
-Default view:
+- `Diagnostics`: read-only local authentication/binding/queue/sequence and
+  diagnostic evidence projection;
+- `Check hosted connection`: separate hosted readiness request;
+- `Sync`: separate stateful synchronization protocol;
+- `Build provenance`: public short source fingerprint compiled into the
+  visible client;
+- generated APK hash: identity of the local build output;
+- installed package evidence: identity/location/version evidence from the
+  selected Android target;
+- runtime acceptance: human observation of the expected surface on that
+  installed target.
 
-- group by parent operation;
-- label newest/current and historical operations;
-- present a concise terminal and ordered phase summary;
-- show an explicit status such as `successful`, `failed`, `in progress`,
-  `unknown terminal`, or equivalent evidence-backed wording;
-- avoid using warning/error styling solely because an MKS code or pre-result
-  `unknown` exists.
+Do not call any of these evidence classes equivalent.
 
-Expandable technical view:
+## 3. Required visible evidence
 
-- retain every sanitized lifecycle row;
-- retain MKS/native codes and all causal axes;
-- retain parent and child fingerprints;
-- explain that raw declarations are ordered evidence, not an error count.
+The shared Closure page must expose:
 
-Do not hide a real failed severity or failed terminal. Presentation must reduce
-false alarm without converting failure evidence into success.
+```text
+Build provenance #<short fingerprint>
+```
 
-## 4. Historical distinction
+with key:
 
-An older operation containing `MKS-REC-001` must remain recoverable as history,
-but its group must be clearly marked historical and separated from the newest
-ordinary Sync. Never blend events from different parent fingerprints into one
-apparent timeline.
+```text
+nativeClosure.buildProvenance
+```
 
-## 5. Sequence explanation
+Fallback:
 
-Preserve or add concise guidance near Next Device sequence:
+```text
+Build provenance unavailable
+```
 
-> The next sequence is allocated to a new local Device event. Diagnostics,
-> readiness, and Sync do not increment it by themselves.
+The fingerprint is intentionally short and public. It identifies source
+lineage for human comparison; it is not a credential, Device identifier,
+provider proof, release signature, or security guarantee.
 
-Equivalent compact wording is acceptable.
+The page must retain the already accepted distinctions among:
 
-## 6. Tests and H report
+- current action result;
+- sanitized technical details;
+- Sync overview;
+- local queue and Next Device sequence;
+- Devices;
+- actionable events;
+- recent operation summaries and raw diagnostic history.
+
+Compact Android layout may stack or scroll these sections. It must not remove
+their meaning.
+
+## 4. Diagnostic reporting language
+
+Codex must label conclusions by evidence class:
+
+```text
+repository-proven
+test-validated
+human-observed
+inferred
+host-unvalidated
+```
+
+Examples:
+
+- the shared page contains one Diagnostics button: repository-proven;
+- a compact widget test finds it: test-validated;
+- the rebuilt emulator visibly shows the expected fingerprint: later
+  human-observed evidence;
+- the old APK likely came from a pre-consolidation revision: inference unless
+  artifact evidence proves it.
+
+Do not use `fixed on Android` until a later human rerun confirms the installed
+artifact and visible page. The Codex terminal is at most
+`READY_FOR_HUMAN_RETEST`.
+
+## 5. Tests
 
 Tests must prove:
 
-- the single Diagnostics label and separate readiness/Sync labels;
-- subcheck meaning remains visible;
-- a 13-row successful operation is summarized as one successful operation;
-- paired pre/result declarations do not create a false failure;
-- a genuine failed terminal remains visibly failed;
-- historical recovery rows cannot be mistaken for the newest Sync;
-- raw technical evidence is accessible;
-- no secrets/raw identifiers appear.
+- the same Diagnostics vocabulary at Android/compact and Windows/wide sizes;
+- old top-level Status/Query/Refresh vocabulary is absent;
+- build provenance is visible, short, sanitized, and stable;
+- missing/malformed provenance remains explicit and safe;
+- evidence cards remain reachable through scrolling on compact layout;
+- provenance inspection cannot invoke authentication, readiness, enrollment,
+  Sync, Retry, recovery, or queue mutation.
 
-Replace `H_DDC_CODEX.md` with materialized vocabulary, comprehension tests,
-evidence limits, and terminal markers:
+## 6. H report
+
+Replace `H_DDC_CODEX.md` with:
+
+- the contradiction and its corrected interpretation;
+- final operator vocabulary;
+- source/test/runtime evidence distinctions;
+- visible provenance behavior;
+- compact-layout comprehension evidence;
+- remaining human acceptance requirement.
+
+Terminal markers:
 
 ```text
-DIAGNOSTIC_DECLARATIONS_NOT_ERROR_COUNT=VISIBLE_OR_BLOCKED
-OPERATION_PHASE_HIERARCHY=VISIBLE_OR_BLOCKED
-PRE_RESULT_UNKNOWN_NOT_FAILURE=VISIBLE_OR_BLOCKED
-HISTORICAL_OPERATION_DISTINCTION=VISIBLE_OR_BLOCKED
-NEXT_SEQUENCE_MEANING=VISIBLE_OR_BLOCKED
-READINESS_SYNC_DIAGNOSTICS_MEANINGS=SEPARATE_OR_BLOCKED
-RAW_EVIDENCE_RETAINED=PASS_OR_BLOCKED
-GATE_12_7=PASSED_PRIOR_SCOPE
-GATE_12_8=NEXT_READ_ONLY
+BUILD_SUCCESS_NOT_INSTALL_PROOF=VISIBLE
+SOURCE_TEST_NOT_RUNTIME_ACCEPTANCE=VISIBLE
+AUTH_LABEL_NOT_ST04_ACCEPTANCE=VISIBLE
+SHARED_CLOSURE_MEANING=PASS_OR_BLOCKED
+BUILD_PROVENANCE_MEANING=VISIBLE_OR_BLOCKED
+COMPACT_EVIDENCE_REACHABILITY=TEST_PASS_OR_BLOCKED
+LEGACY_CONTROLS=ABSENT_OR_BLOCKED
+ANDROID_RUNTIME_ACCEPTANCE=HELD_FOR_HUMAN_RETEST
+GCM03_ST05=HELD
 ```
 
 Do not edit permanent didactic memory.

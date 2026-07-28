@@ -1,151 +1,181 @@
-# F_DSN_STAGE — DIAG-01 projection boundaries
+# F_DSN_STAGE — Shared Closure composition and artifact-lineage boundary
 
 > Sequence: FLX-ORD-01 — Ordinary Sequence
 > Role: Main-approved Design materialization stage
-> Unit: `C10-GCM02-S12-DIAG-01`
-> Branch: `cycle10-intermid-grimoire`
-> Required ancestry: `cf405347b6fdc58bf0da698a1f07028e05ccd471`
-> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
-> Evidence boundary: Flutter UI/projection correction only
+> Unit: `C10-GCM03-ST04-R1`
+> Branch: `grm-guarded-provisioning-20260727`
+> Required remote ancestry:
+> `ec96f93d71efd261adc2b3b75a17453130e437a0`
+> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED WITHIN D**
+> Evidence boundary: shared Flutter presentation and local build provenance;
+> no protocol/provider architecture expansion
 
-## 1. Boundary decision
+## 1. Controlling design decision
 
-Implement one composition-facing Diagnostics command while preserving distinct
-internal responsibilities:
-
-```text
-Diagnostics command
-├─ authentication state projection
-├─ enrollment/binding state projection
-└─ local diagnostics snapshot projection
-
-Hosted readiness command
-└─ separate network/readiness boundary
-
-Ordinary Sync command
-└─ separate stateful protocol boundary
-```
-
-The page owns orchestration and presentation. Existing runner/query ports own
-state access. Do not move provider, transport, queue, or persistence
-responsibility into widgets.
-
-## 2. Operation-aware projection
-
-Build the display model from existing snapshot data:
+Preserve one Closure surface:
 
 ```text
-OperationDiagnosticGroup
-  parent fingerprint
-  attempt fingerprint
-  operation kind
-  temporal classification: newest/current or historical
-  aggregate terminal/status
-  latest proved phase
-  has genuine failure
-  compact phase summaries
-  raw events
+MarkeiApp
+└─ NativeClosurePage
+   ├─ shared diagnostics projection
+   ├─ shared action boundaries
+   └─ responsive layout only
 ```
 
-A dedicated private view model/helper in the Closure page is acceptable. A
-small application-level projector is acceptable only if it materially improves
-testability and remains free of Flutter widgets. Avoid new layers or files
-unless the existing paths cannot own the logic coherently.
+Android and Windows may differ in authentication adapter configuration,
+package identity, callback mechanics, and responsive dimensions. They must not
+own duplicated Closure page implementations or divergent diagnostic meaning.
 
-Grouping and pairing must be deterministic:
+The screenshot/source contradiction is first an artifact-lineage problem.
+An Android-only mirror would create semantic duplication and conceal the
+actual provenance failure.
 
-- never merge different parent fingerprints;
-- preserve ordinal order within one operation;
-- pair declarations only inside the same operation and phase;
-- prefer result-bearing evidence for compact presentation;
-- retain unpaired declarations truthfully;
-- determine failure from severity/terminal evidence, not from row count or MKS
-  prefix;
-- retain raw events unchanged.
-
-## 3. No persistence or protocol expansion
-
-The existing `ClosureDiagnosticEventSummary` carries sufficient grouping,
-ordinal, code, severity, outcome, phase, fingerprint, axis, and safe-action
-data. Do not add a Drift migration or server/API contract merely for UI
-grouping.
-
-Do not change:
-
-- diagnostic registry ownership;
-- lifecycle emission order;
-- transport headers;
-- server request identity;
-- Sync coordinator steps;
-- Retry/recovery coordinators;
-- Device sequence allocation;
-- Last successful Sync predicate.
-
-## 4. Diagnostics aggregate semantics
-
-The consolidated button is a read-only aggregate command, not an opaque
-success label. Its result must retain per-subcheck outcomes.
-
-Acceptable architecture:
+## 2. Responsibility map
 
 ```text
-aggregate diagnostics result
-├─ authentication subcheck
-├─ enrollment/binding subcheck
-└─ local snapshot subcheck
+Git/build procedure
+  derives reviewed public short source fingerprint
+  passes it as a compile-time define
+
+immutable client configuration
+  validates/sanitizes the public fingerprint
+  exposes a closed value or unavailable
+
+NativeClosurePage
+  renders the fingerprint
+  owns no Git, shell, package-manager, or provider behavior
+
+GS-FLUTTER-AND
+  selects target
+  validates source/build inputs
+  builds one APK
+  launches/installs the intended package
+  reports non-secret provenance evidence
+
+authentication/enrollment/Sync components
+  remain unchanged
 ```
 
-If one subcheck fails, project `partial` or the precise blocked state and show
-which subcheck failed. Do not let a later successful snapshot erase an earlier
-subcheck failure.
+Do not persist build provenance in Drift. Do not send it to the hosted API.
+Do not use it as Account/Device identity or authorization input.
 
-Do not add provider calls to strengthen this aggregate. Hosted readiness remains
-the separate `Check hosted connection` action.
+## 3. Provenance model
 
-## 5. Compatibility and validation
+Use the smallest coherent representation:
 
-Preserve:
+```text
+BuildProvenance
+  sourceFingerprint: short public closed value | unavailable
+```
 
-- constructor/composition compatibility unless a narrow cleanup is directly
-  required;
-- existing deep diagnostic history and redaction;
-- current MKS registry and generated projections;
-- explicit action guards;
-- compact/wide responsive behavior;
-- all ERR-04 recovery-boundary corrections.
+Constraints:
 
-Design tests must cover deterministic grouping, paired-phase reduction,
-historical separation, true-failure retention, raw-evidence expansion, and
-read-only aggregate behavior.
+- immutable;
+- deterministic from compile-time input;
+- 7–12 lowercase hexadecimal characters when available;
+- never accepts arbitrary long text for direct rendering;
+- no filesystem or process dependency inside Flutter;
+- no provider transport or persistence dependency;
+- shared across platforms.
 
-No source outside Flutter Closure may change unless a directly required
-dependency is named in G/H/I and remains within this no-schema/no-API boundary.
+The display is diagnostic metadata, not a cryptographic attestation. The local
+APK SHA-256 and target package evidence remain separate operational evidence.
 
-## 6. I report
+## 4. Responsive parity contract
+
+The Closure page may use scrolling, wrapping, stacking, or compact cards on
+Android. Responsive code must not:
+
+- substitute a legacy page;
+- remove Diagnostics or evidence sections;
+- merge Diagnostics, readiness, and Sync;
+- hide queue/sequence state needed by ST04;
+- alter runner composition;
+- introduce a platform-only action;
+- change action guards or protocol semantics.
+
+Add explicit compact-dimension coverage because existing Closure tests
+primarily use wide synthetic views. Test reachability, not simultaneous
+on-screen visibility.
+
+## 5. Diagnostic decision tree
+
+```text
+current source and compact tests already pass
+  → classify artifact/build/launch provenance
+  → harden provenance; do not fork page
+
+compact test reproduces missing/legacy surface
+  → repair shared responsive composition
+  → prove wide behavior remains intact
+
+different entrypoint/page/package is selected
+  → repair build/launch selection
+  → keep shared page unchanged
+
+live target unavailable
+  → report host-unvalidated
+  → materialize only repository-proven hardening
+  → require later human rerun
+```
+
+## 6. Preserved boundaries
+
+Do not modify:
+
+- `NativeAuthClosureRunner` action semantics;
+- Auth0 platform adapter behavior;
+- enrollment command or binding storage;
+- hosted connection policy;
+- ordinary Sync coordinator;
+- Retry or failed/notApplied recovery;
+- local queue/sequence allocation;
+- diagnostics persistence shape;
+- API routes, request identity, schemas, migrations, RLS, or provider state;
+- package ID `com.gusigu.markei` unless a proven contradiction makes the unit
+  impossible, in which case stop rather than broadening scope.
+
+No Android data clear, reinstall-with-uninstall, AVD reset, or new Device
+identity is part of the implementation.
+
+## 7. Design validation
+
+Prove:
+
+1. one shared page/composition path;
+2. one shared build-provenance value path;
+3. compact and wide projections use the same action/evidence contract;
+4. platform differences remain in configuration/adapters, not Closure meaning;
+5. no provenance value reaches persistence or transport;
+6. no protocol or provider boundary changes;
+7. live Android acceptance remains a later human evidence gate.
+
+## 8. I report
 
 Replace `I_DSN_CODEX.md` with:
 
-- final command/responsibility map;
-- grouping model and deterministic rules;
-- files changed;
-- proof that protocol, schema, API, and provider boundaries did not expand;
-- validation evidence and unresolved UI/host risks.
+- final shared composition map;
+- provenance responsibility map;
+- diagnosed PROV class;
+- source or build-script correction;
+- compact/wide validation;
+- proof of no protocol/persistence/provider expansion;
+- host-unvalidated Android limitations;
+- exact later human acceptance boundary.
 
 Terminal markers:
 
 ```text
-DIAGNOSTICS_COMMAND_BOUNDARY=READ_ONLY_OR_BLOCKED
-DIAGNOSTICS_SUBCHECKS=SEPARATELY_PROJECTED_OR_BLOCKED
-OPERATION_GROUP_MODEL=DETERMINISTIC_OR_BLOCKED
-PHASE_PAIRING=TRUTHFUL_OR_BLOCKED
-TRUE_FAILURE_RETENTION=PASS_OR_BLOCKED
-RAW_EVENT_PRESERVATION=PASS_OR_BLOCKED
-HOSTED_READINESS_BOUNDARY=SEPARATE_OR_BLOCKED
-ORDINARY_SYNC_BOUNDARY=SEPARATE_OR_BLOCKED
-NO_SCHEMA_API_PROVIDER_EXPANSION=PASS_OR_BLOCKED
-GATE_12_7=PASSED_PRIOR_SCOPE
-GATE_12_8=NEXT_READ_ONLY
-GCM02=OPEN
+CLOSURE_IMPLEMENTATION=ONE_SHARED_PAGE_OR_BLOCKED
+ANDROID_ONLY_PAGE_FORK=ABSENT
+BUILD_PROVENANCE_BOUNDARY=LOCAL_PUBLIC_METADATA_OR_BLOCKED
+PROVENANCE_PERSISTENCE=ABSENT
+PROVENANCE_TRANSPORT=ABSENT
+COMPACT_WIDE_CONTRACT=SHARED_OR_BLOCKED
+AUTH_ENROLL_SYNC_BOUNDARIES=UNCHANGED
+SCHEMA_API_PROVIDER_EXPANSION=ABSENT
+ANDROID_RUNTIME_ACCEPTANCE=HELD_FOR_HUMAN_RETEST
+GCM03_ST05_AND_LATER=HELD
 ```
 
 Do not edit permanent design memory.
