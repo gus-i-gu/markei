@@ -1682,3 +1682,184 @@ weakens the already accepted Gate 12.7 ordinary-Sync result. The bounded
 `MKS-UI-003` presentation defect should be corrected or explicitly accepted
 before DIAG-01 is described as fully host-clean, but it does not authorize a
 new Sync or any recovery/provider mutation.
+
+---
+
+# APPENDIX C — POST-ENROLLMENT DIAG-01 CORRECTION EVIDENCE
+
+This appendix is append-only. It records the sanitized Windows client evidence
+supplied on 2026-07-28 after guarded hosted identity provisioning, first Device
+enrollment, the required client restart, and post-restart authentication. It
+does not replace the earlier records and does not promote client projection
+into provider truth.
+
+## RECORD 008 — POST-ENROLLMENT DURABLE BINDING AND CURRENT-ACTION CORRECTION
+
+```text
+MARKEI CLOSURE ASSAY — SANITIZED RECORD
+========================================
+
+ASSAY ID: REC-2026-07-28-008-POST-ENROLLMENT-DIAG-01
+DATE/TIME (local): 2026-07-28, exact time [MANUAL]
+TESTER: [MANUAL]
+DEVICE/OS: Windows desktop [SCREENSHOT; exact version MANUAL]
+CLIENT LINEAGE: grm-guarded-provisioning-20260727 [CONTEXT]
+ENVIRONMENT: development/disposable [CONTEXT; confirm manually]
+ASSAY PURPOSE: Inspect the post-enrollment, post-restart Closure projection;
+verify durable enrollment and authentication projection; and assess the bounded
+MKS-UI-003 current-action defect retained by Record 007.
+
+PRIOR GUARDED STATE
+-------------------
+GS-AUTH-03 hosted token accepted: PASS [USER-SUPPLIED SANITIZED TERMINAL]
+Pre-provisioning identity state: token-accepted [USER-SUPPLIED]
+Database provisioning: committed-or-idempotent [USER-SUPPLIED]
+Post-provisioning identity state: membership-confirmed [USER-SUPPLIED]
+Ready for Device enrollment: True [USER-SUPPLIED]
+First enrollment action count: exactly once [USER STATEMENT]
+Required client terminal: hosted-restart-required [USER STATEMENT/SCREENSHOT]
+Client closed and reopened: YES [USER STATEMENT]
+Post-restart sign-in projection: authenticated [SCREENSHOT]
+
+CURRENT ACTION RESULT
+---------------------
+Native Closure status: hosted-restart-required [SCREENSHOT]
+MKS code: MKS-OBS-001 [SCREENSHOT]
+Title: Observation diagnostic 001 [SCREENSHOT]
+Outcome: applied [SCREENSHOT]
+Last proved phase: terminal [SCREENSHOT]
+Local mutation: none [SCREENSHOT]
+Provider contact: not-started [SCREENSHOT]
+Trusted response: see-causal-event [SCREENSHOT]
+Operation fingerprint: #d723c1f392f3 [SCREENSHOT]
+Displayed semantic guidance: client declaration only; inspect causal diagnostic
+before action [SCREENSHOT]
+
+POST-RESTART CLIENT PROJECTION
+------------------------------
+Authentication: authenticated [SCREENSHOT]
+Enrollment: device-enrolled [SCREENSHOT]
+Readiness: ready-no-local-work [SCREENSHOT]
+Last result: sync-completed [SCREENSHOT]
+Recovery guidance: no-local-sync-action-needed [SCREENSHOT]
+Last successful Sync: 2026-07-27T01:29:48.000Z [SCREENSHOT]
+Declaration scope: client-operation [SCREENSHOT]
+Operation kind: ordinary-sync [SCREENSHOT]
+Client result code: sync-completed [SCREENSHOT]
+Last proved phase: terminal [SCREENSHOT]
+Configured deadline: 35000ms client [SCREENSHOT]
+Aggregate server request: not aggregate success; inspect child requests
+[SCREENSHOT]
+Client child correlation: #2575218c1dbf [SCREENSHOT]
+
+LOCAL QUEUE AND DEVICE
+----------------------
+Pending: 0 [SCREENSHOT]
+Uploading: 0 [SCREENSHOT]
+Failed: 0 [SCREENSHOT]
+Unknown: 0 [SCREENSHOT]
+Next Device sequence: 3 [SCREENSHOT]
+Sequence meaning: Allocated only to new local Device events [SCREENSHOT]
+Current Device fingerprint: #a43532d0 [SCREENSHOT]
+Current Device enrollment: device-enrolled [SCREENSHOT]
+Actionable events: No pending, failed or unknown events [SCREENSHOT]
+
+OPERATION-AWARE HISTORY
+-----------------------
+Newest operation: ordinary-sync #d723c1f392f3 [SCREENSHOT]
+Newest operation terminal: successful / sync-completed [SCREENSHOT]
+Newest compact phase count: 8 phases [SCREENSHOT]
+Historical operation: ordinary-sync #cf23d2a09c74 [SCREENSHOT]
+Historical operation terminal: successful / sync-completed [SCREENSHOT]
+Historical compact phase count: 11 phases [SCREENSHOT]
+Sanitized newest raw lifecycle count: 13 [SCREENSHOT]
+Latest hosted-connection observations include ready/HTTP 200 results and
+preserved historical timeout-before-response attempts [SCREENSHOT]
+Preserved historical interrupted/unavailable Sync declarations: YES
+[SCREENSHOT; not the newest terminal]
+
+SCREENSHOTS
+-----------
+- 21faf97c-06d7-4fa0-b9b8-223109a2e224.png
+- 692cff26-a34f-4e9a-9955-28f01979360f.png
+- 3cae3f48-ef08-4ab8-a779-84a86d8f055b.png
+- 3e25539d-3e80-4000-b7fa-e83123bcc1f7.png
+- 4947880c-0834-4286-8ce4-0af8cf8e5c9d.png
+
+EVIDENCE CEILING
+----------------
+Full server Device UUID recovered: UNPROVED BY SCREENSHOTS
+GRM-AUTH-02 exact hosted binding check: UNPROVED BY SCREENSHOTS
+GRM-NEON-11 atomic provider baseline: UNPROVED BY SCREENSHOTS
+Fresh provider-row contents: UNPROVED
+Fresh Render lifecycle correlation: UNPROVED
+Second-Device convergence: UNPROVED
+New Sync, Retry, recovery, enrollment, migration or provider mutation
+authorized by this record: NO
+
+OBSERVATION
+-----------
+Expected: After the one-time enrollment and required restart, the local Device
+binding persists; a fresh sign-in restores authenticated client state; the
+consolidated Diagnostics surface truthfully projects enrollment, readiness,
+queue and historical ordinary-Sync evidence; and the current-action card no
+longer emits the obsolete MKS-UI-003 historical-collapse defect.
+
+Observed: The current Device is projected as device-enrolled after restart,
+authentication is authenticated, readiness is ready-no-local-work, and the
+local queue remains 0/0/0/0 with Next Device sequence 3. The prior successful
+ordinary-Sync packet remains unchanged. The current-action card now emits
+MKS-OBS-001 / Observation diagnostic 001 / applied / terminal, with no local
+mutation and no provider contact attributable to that observation event.
+
+Difference: No client-side difference from the intended corrected DIAG-01
+presentation is visible. Historical timeout/interrupted declarations remain
+available as preserved history and do not override the newest successful
+ordinary-Sync terminal. Exact hosted binding and provider state remain outside
+the screenshot evidence.
+
+Current hypothesis: First Device enrollment persisted across the required
+restart, post-restart authentication succeeded, and the bounded MKS-UI-003
+presentation defect from Record 007 is corrected at Windows client-UI scope.
+This packet is sufficient to close the DIAG-01 current-action presentation
+observation, but not to close Gate 12.8 provider/result reconciliation.
+
+Next safe action: Preserve this packet. Recover or retain the complete server
+Device UUID locally without recording it, run the exact read-only GRM-AUTH-02
+binding check if not already completed, then run one fresh read-only
+GRM-NEON-11 provider baseline. Stop before Sync, Retry, recovery, enrollment,
+migration, provider editing, or a second action.
+```
+
+## RECORD 008 ASSESSMENT
+
+| Claim | Assessment | Boundary |
+| --- | --- | --- |
+| Enrollment persisted across restart | SUPPORTED | Windows client projection |
+| Post-restart authentication restored | PASS | Windows client projection |
+| Binding exists locally | SUPPORTED | Enrolled Device projection; full UUID not displayed |
+| DIAG-01 consolidated projection works | PASS | Windows client-UI scope |
+| Prior MKS-UI-003 current-action defect is corrected | PASS | MKS-OBS-001/applied now displayed |
+| Queue and sequence invariants remain stable | PASS | 0/0/0/0 and next sequence 3 |
+| Newest ordinary-Sync terminal remains successful | PASS | Preserved client history |
+| Historical timeout/interrupted rows are current failures | REJECTED | Preserved older attempts |
+| Exact hosted Account/Device binding is proved | OPEN | Requires GRM-AUTH-02 evidence |
+| Provider baseline is proved | OPEN | Requires GRM-NEON-11 evidence |
+| Gate 12.8 provider/result reconciliation is complete | NO | Read-only hosted/provider comparison remains |
+
+Terminal classification:
+
+```text
+POST_ENROLLMENT_RESTART=PASS_AT_CLIENT_SCOPE
+POST_RESTART_AUTHENTICATION=PASS
+DURABLE_DEVICE_ENROLLMENT=SUPPORTED
+DIAG_01_CURRENT_ACTION_CORRECTION=PASS
+MKS_UI_003_RESIDUAL_DEFECT=NOT_OBSERVED
+QUEUE_INVARIANT=PASS
+NEXT_DEVICE_SEQUENCE_INVARIANT=PASS
+EXACT_HOSTED_BINDING=OPEN
+ATOMIC_PROVIDER_BASELINE=OPEN
+GATE_12_8_PROVIDER_RECONCILIATION=OPEN
+MUTATING_ACTION_AUTHORIZATION=NONE
+```
+
