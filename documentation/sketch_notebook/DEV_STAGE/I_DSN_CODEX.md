@@ -1,86 +1,95 @@
-# I_DSN_CODEX - C10-GCM03-ST04-R1 design report
+# I_DSN_CODEX — Procedure-local provenance ownership correction
 
-Sequence: FLX-ORD-01
-Role: Codex design evidence
-Round or unit: C10-GCM03-ST04-R1
-Branch: grm-guarded-provisioning-20260727
-Baseline / inspected HEAD: db17f47f3bb7a032afbd8892754dff971ae20b56
-Authority: F_DSN_STAGE.md within synchronized D/E/F
-Evidence boundary: shared Flutter presentation, local public build provenance, GRM build/install procedure hardening; no protocol/provider architecture expansion
+> Sequence: FLX-ORD-01 — Ordinary Sequence
+> Role: Codex design evidence
+> Unit: `C10-GCM03-ST04-R1-C1`
+> Branch: `grm-guarded-provisioning-20260727`
+> Baseline / inspected HEAD:
+> `231a76281d0016ee47dd719d3ddc24d422b18c35`
+> Authority: F within synchronized D/E/F plus explicit human GRM-set audit
+> Evidence boundary: procedure-local responsibility and static interface
+> alignment; no Flutter, persistence, protocol, provider, or runtime change
 
-## Shared Composition Map
-
-```text
-MarkeiApp
-  nativeClosureSurfaceEnabled
-  -> NativeClosurePage
-       -> BuildProvenance.current
-       -> NativeAuthClosureRunner
-       -> shared diagnostics/action/evidence cards
-```
-
-Current source keeps one Closure page. Android differences remain in package identity, native Auth0 configuration, callback mechanics, and target installation mechanics, not in Closure diagnostic meaning.
-
-## Provenance Responsibility Boundary
+## Corrected responsibility map
 
 ```text
+GRM-FLUTTER-AND
+  stable human invocation
+
+I_SCRIPTS.ps1
+  selected-heading lookup
+  one-fence extraction
+  strict-mode execution
+
 GS-FLUTTER-AND
-  derives short HEAD
-  passes MARKEI_BUILD_PROVENANCE
+  resolved repository/client containment
+  active branch and inspected HEAD
+  short provenance derivation
+  public-coordinate loading
+  branch/ancestry/dirty guards
+  Android target/build/install/launch
 
 BuildProvenance
-  validates 7-12 lowercase hex
-  otherwise returns unavailable
+  compile-time validation and safe display
 
 NativeClosurePage
-  renders nativeClosure.buildProvenance
+  shared visible public projection
 ```
 
-The provenance value is not persisted, not transported, not sent to hosted APIs, and not used as Account, Device, authorization, or protocol identity.
+The Android procedure now owns its complete producer-consumer graph.
+`GS-FLUTTER-WIN` is byte-identical to its `db17f47` body and owns no Android
+lineage preparation.
 
-## Diagnosed PROV Class
+## Interface reconciliation
+
+The audit found one coherent public pipeline:
 
 ```text
-ANDROID_PARITY_ROOT_CLASS=PROV_05
+NS coordinate keys
+→ GS-FLUTTER-AND PowerShell variables
+→ Dart defines / Gradle property bridge
+→ NativeAuthConfiguration / BuildProvenance
+→ NativeClosurePage
 ```
 
-Design reason: repository inspection and tests prove the shared page; Git history proves the screenshot labels belong to an older page; this host cannot prove the live installed Android package identity or rendered runtime surface. Therefore the correction is artifact-lineage evidence hardening, not an Android page fork.
+No adapter or alias was added. Existing names already agree across the
+boundaries. The only surrounding drift was branch metadata in the catalogue
+header and human target guard, which was aligned with the existing
+machine-readable coordinates.
 
-## Boundary Preservation
+`NS_COORDINATES.md` is now explicitly included in the Android dirty-input
+guard because it participates in the build. This preserves the provenance
+boundary: the inspected source/coordinate set must be clean before a human
+artifact can claim lineage.
 
-No changes were made to:
+## Preserved architecture
 
-- `NativeAuthClosureRunner` action semantics;
-- Auth0 adapter behavior;
-- enrollment command or binding storage;
-- hosted connection policy;
-- ordinary Sync coordinator;
-- Retry or failed/notApplied recovery;
-- local queue/sequence allocation;
-- diagnostics persistence shape;
-- API routes, schemas, migrations, RLS, provider state, or deployment.
+Unchanged:
 
-## Validation
+- one shared `NativeClosurePage`;
+- build-provenance validation and display;
+- package `com.gusigu.markei`;
+- native authentication configuration;
+- enrollment, hosted readiness, Sync, Retry, and recovery;
+- Drift/local persistence;
+- API transport and provider state;
+- schema, migrations, RLS, and deployment;
+- application-data-preserving install semantics.
 
-- Compact and wide/shared behavior validated by focused and full Flutter tests.
-- Android debug APK build passed locally with public provenance define.
-- PowerShell `GS-FLUTTER-AND` body parses.
-- Changed-content sensitive scan passed.
-- Live Android acceptance remains later human evidence.
+Formal Windows PowerShell parsing and strict-mode execution are
+host-unvalidated because this host has no PowerShell runtime. This blocks
+runtime acceptance but does not create a new architecture decision.
 
-## Terminals
+No permanent design memory was edited.
 
 ```text
-CLOSURE_IMPLEMENTATION=ONE_SHARED_PAGE
-ANDROID_ONLY_PAGE_FORK=ABSENT
-BUILD_PROVENANCE_BOUNDARY=LOCAL_PUBLIC_METADATA
-PROVENANCE_PERSISTENCE=ABSENT
-PROVENANCE_TRANSPORT=ABSENT
-COMPACT_WIDE_CONTRACT=SHARED
+DISPATCH_SCOPE=ONE_SELECTED_GS_FENCE
+WINDOWS_ANDROID_VARIABLE_LEAK=REMOVED
+ANDROID_PROVENANCE_OWNERSHIP=PROCEDURE_LOCAL
+GRM_SOURCE_INTERFACE=ALIGNED_STATIC
+FLUTTER_PROVENANCE_MODEL=UNCHANGED
 AUTH_ENROLL_SYNC_BOUNDARIES=UNCHANGED
 SCHEMA_API_PROVIDER_EXPANSION=ABSENT
 ANDROID_RUNTIME_ACCEPTANCE=HELD_FOR_HUMAN_RETEST
 GCM03_ST05_AND_LATER=HELD
 ```
-
-No permanent design memory was edited.

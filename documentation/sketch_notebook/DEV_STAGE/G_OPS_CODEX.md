@@ -1,94 +1,174 @@
-# G_OPS_CODEX - C10-GCM03-ST04-R1 operational report
+# G_OPS_CODEX — Android GRM variable-cascade correction evidence
 
-Sequence: FLX-ORD-01
-Role: Codex materialization evidence
-Round or unit: C10-GCM03-ST04-R1
-Branch: grm-guarded-provisioning-20260727
-Baseline / inspected HEAD: db17f47f3bb7a032afbd8892754dff971ae20b56
-Authority: D_OPS_STAGE.md / E_DDC_STAGE.md / F_DSN_STAGE.md
-Writable surfaces: Flutter Closure/provenance source, Flutter tests, GRM/G_SCRIPTS, G/H/I reports
-Evidence boundary: repository inspection, Git history, local Flutter tests/analyze/build, non-mutating PowerShell parse and changed-content sensitive scan; no live Android/provider action
+> Sequence: FLX-ORD-01 — Ordinary Sequence
+> Role: Codex materialization evidence
+> Unit: `C10-GCM03-ST04-R1-C1`
+> Branch: `grm-guarded-provisioning-20260727`
+> Baseline / inspected HEAD:
+> `231a76281d0016ee47dd719d3ddc24d422b18c35`
+> Authority: synchronized D/E/F plus explicit human direction to audit and
+> correct the recently changed GRM set against source and variable names
+> Evidence boundary: repository inspection and non-mutating static validation;
+> no Windows PowerShell host, Android runtime, authentication, enrollment,
+> Sync, Retry, recovery, provider action, deployment, commit or push
 
-## Diagnosis
+## 1. Diagnosis
 
-- Branch check: active branch `grm-guarded-provisioning-20260727`.
-- Remote ancestry: `ec96f93d71efd261adc2b3b75a17453130e437a0` is an ancestor of HEAD.
-- Alternate local-equivalent commit `035352e58c8fb6bc887724f8f6f7607c8d455b93` is not present locally; no reconciliation action was needed because required remote ancestry is present.
-- Initial worktree: clean.
-- Current source composes one shared `NativeClosurePage` from `MarkeiApp`.
-- Android package/activity source: `com.gusigu.markei`, `.MainActivity`.
-- Git history: `301ea19` contains the legacy `Status`, `Query`, and `Refresh diagnostics` Closure controls. `ad1f228` is the verified Diagnostics consolidation boundary.
-- Current repository search found no Android-specific Closure substitute, duplicate Closure page, flavor, alternate target, or conditional import replacing the shared page.
+The defect reported by Main is confirmed.
 
-Controlling classification:
+Commit `231a762` placed these Android provenance producers inside the
+independently dispatched `GS-FLUTTER-WIN` fence:
 
 ```text
-ANDROID_PARITY_ROOT_CLASS=PROV_05
+$ResolvedClientRoot
+$Branch
+$InspectedHead
+$BuildProvenance
 ```
 
-Reason: repository and tests prove the shared source surface, and history proves the screenshot labels match an older pre-consolidation page, but this Codex host did not directly inspect the installed Android package or live rendered target. The contradiction remains host-unvalidated until the human reruns the hardened Android procedure and compares visible provenance.
+`GS-FLUTTER-AND` retained the consumers of `$Branch` and
+`$BuildProvenance`. Because `I_SCRIPTS.ps1` extracts only the selected
+`GS-*` fence and executes it under `Set-StrictMode -Version Latest`, the
+Android procedure would terminate at its first undefined `$Branch` read and
+would later fail independently at `$BuildProvenance`.
 
-Evidence classes:
+The wider human-authorized GRM audit found two additional naming drifts:
 
-- repository-proven: one shared page, Android package identity, history correlation.
-- test-validated: compact and wide Closure behavior, provenance rendering, old controls absent.
-- human-observed: prior ST03 Android build/install/launch and screenshot only.
-- inferred: screenshot likely came from stale/generated/installed artifact lineage.
-- host-unvalidated: installed package identity and live Android rendered provenance.
+- the `G_SCRIPTS.md` catalogue header still named
+  `cycle10-intermid-grimoire`;
+- the machine-readable `RenderDeployBranch` was current, but the
+  `NS_COORDINATES.md` human target guard still named the retired branch.
 
-## Changes
+No distinct dispatcher, Flutter-source, Gradle, package, or public-variable
+name defect was found.
 
-- Created `clients/markei_flutter/lib/app/build_provenance.dart` with public `MARKEI_BUILD_PROVENANCE` projection, 7-12 lowercase hex validation, and `unavailable` fallback.
-- Updated `clients/markei_flutter/lib/app/pages/native_closure_page.dart` to render `nativeClosure.buildProvenance` and align the grouped lifecycle title.
-- Updated `clients/markei_flutter/test/app/native_closure_surface_test.dart`.
-- Updated `clients/markei_flutter/test/app/native_closure_diagnostics_test.dart` for compact Android dimensions, provenance safety, and absence of legacy controls.
-- Updated `documentation/G_SCRIPTS.md` `GS-FLUTTER-AND` to resolve root/client, report branch/HEAD, reject dirty source overlap, pass `MARKEI_BUILD_PROVENANCE`, build one APK, report path/bytes/SHA-256, install `com.gusigu.markei` with data preservation, print non-secret package evidence, and stop for human verification.
-- Updated `documentation/GRM.md` `GRM-FLUTTER-AND` description.
+## 2. Materialization
 
-Files created:
+### `documentation/G_SCRIPTS.md`
 
-- `clients/markei_flutter/lib/app/build_provenance.dart`
+- restored the `GS-FLUTTER-WIN` PowerShell body exactly to its `db17f47`
+  version;
+- moved all Android lineage producers into `GS-FLUTTER-AND` before their
+  first consumers;
+- resolved repository and client directories through the filesystem provider;
+- proved containment through a Windows PowerShell 5.1-compatible parent walk;
+- derived one lowercase 40-hex `$InspectedHead`;
+- derived `$BuildProvenance` from that same inspected HEAD rather than a
+  second moving `HEAD` read;
+- used `$InspectedHead` in the required-ancestry guard;
+- changed the build working directory to `$ResolvedClientRoot`;
+- added `NS_COORDINATES.md` to the dirty build-input guard;
+- aligned the catalogue branch header with the current branch.
 
-Files deleted:
+### `documentation/NS_COORDINATES.md`
 
-- none
+- aligned the human `RenderDeployBranch` target guard with the existing
+  machine-readable branch coordinate.
 
-## Validation
+### Inspected and unchanged
 
-- `dart format clients/markei_flutter/lib/app/build_provenance.dart clients/markei_flutter/lib/app/pages/native_closure_page.dart clients/markei_flutter/test/app/native_closure_surface_test.dart clients/markei_flutter/test/app/native_closure_diagnostics_test.dart`: PASS.
-- `flutter test test/app/native_closure_surface_test.dart`: PASS.
-- `flutter test test/app/native_closure_diagnostics_test.dart`: PASS after compact scroll-test correction.
-- `flutter test test/infrastructure/native_auth_composition_test.dart`: PASS.
-- `flutter test`: PASS, 199 passed / 4 lab-gated skips; existing Drift multi-database warnings observed.
-- `flutter analyze`: PASS, no issues.
-- `flutter build apk --debug --dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true --dart-define=MARKEI_BUILD_PROVENANCE=db17f47`: PASS.
-- Local generated APK: `clients/markei_flutter/build/app/outputs/flutter-apk/app-debug.apk`, 159516500 bytes, SHA-256 `86204EBCFDB60FF25D1985FA2EDA5FE17D61B8715925C18E6125CC3358B6CB51`.
-- `git diff --check`: PASS with Git line-ending warnings only.
-- `GS-FLUTTER-AND` PowerShell fenced body parse: PASS.
-- Changed-content sensitive-pattern scan: PASS.
+- `documentation/GRM.md`: invocation and Android provenance description
+  already match the corrected procedure;
+- `documentation/I_SCRIPTS.ps1`: exact one-fence dispatch and strict-mode
+  execution remain correct;
+- Flutter source and Gradle: all public names and package identity already
+  match the procedure.
 
-Skipped/unavailable:
+No file was created or deleted.
 
-- Live Android install/launch/retest: NOT RUN.
-- Installed-package hash or runtime provenance comparison: NOT RUN.
-- Auth0, Render, Neon, enrollment, Sync, Retry, recovery, logout, storage clear: NOT RUN.
+## 3. Static alignment evidence
 
-## Terminals
+The Android procedure, Flutter source, and Gradle agree on:
 
 ```text
-ST01=PASSED_PRIOR_HUMAN_SCOPE
-ST02=PASSED_PRIOR_READ_ONLY_SCOPE
-ST03=PASSED_HUMAN_OBSERVED_BUILD_LAUNCH_SCOPE
-ST04=READY_FOR_HUMAN_RETEST
-ANDROID_PARITY_ROOT_CLASS=PROV_05
-SHARED_CLOSURE_PAGE=CONFIRMED
-ANDROID_COMPACT_DIAGNOSTICS=TEST_PASS
-BUILD_PROVENANCE=IMPLEMENTED
-ANDROID_GRM_PROVENANCE=HARDENED
-APPLICATION_DATA_PRESERVATION=PASS
+MARKEI_NATIVE_CLOSURE_SURFACE
+MARKEI_BUILD_PROVENANCE
+MARKEI_AUTH0_DOMAIN
+MARKEI_AUTH0_AUDIENCE
+MARKEI_AUTH0_ANDROID_CLIENT_ID
+MARKEI_HOSTED_HTTPS_ORIGIN
+ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN
+com.gusigu.markei
+```
+
+The Android procedure consumes six uniquely present coordinate keys:
+
+```text
+Auth0TenantDomain
+Auth0Audience
+Auth0AndroidClientId
+RenderPublicOrigin
+AndroidAvdName
+RepositoryBranch
+```
+
+The full static catalogue audit checked:
+
+```text
+unique GS headings: 31
+GRM procedure invocations: 30
+GRM table mappings: 29
+unique colon-key coordinates: 61
+catalogue coordinate consumers: 19
+dispatcher coordinate consumers: 13
+```
+
+Every checked GRM invocation resolves to an existing catalogue heading, every
+consumed coordinate exists exactly once, and all active branch surfaces agree.
+
+## 4. Validation
+
+Passed:
+
+- required ancestry `ec96f93` is an ancestor of inspected HEAD;
+- `GS-FLUTTER-WIN` body is byte-identical to `db17f47`;
+- dispatcher-equivalent extraction finds exactly one
+  `GS-FLUTTER-AND` section and exactly one PowerShell fence;
+- each of `$ResolvedClientRoot`, `$Branch`, `$InspectedHead`, and
+  `$BuildProvenance` has exactly one Android producer before all consumers;
+- none of those producers remains in `GS-FLUTTER-WIN`;
+- required initialization/guard/build order is structurally correct;
+- containment uses a parent walk and no raw string-prefix check;
+- source, Gradle, coordinate, branch, and package names align;
+- `git diff --check`;
+- changed-content sensitive-pattern scan;
+- Markdown-fence balance.
+
+Unavailable on this host:
+
+- Windows PowerShell 5.1 AST parse;
+- strict-mode mocked prefix execution;
+- live `GRM-FLUTTER-AND` execution;
+- Android build/install/launch and visible-provenance comparison.
+
+Neither `powershell.exe` nor `pwsh` is installed on this Linux host. Syntax
+and strict-mode runtime acceptance therefore remain host-unvalidated; the
+static correction is not represented as a passed Windows execution.
+
+## 5. State and residual boundary
+
+Worktree changes now contain:
+
+- four preserved pre-existing Main reconciliation/staging edits:
+  D/E/F and J;
+- this correction in `G_SCRIPTS.md` and `NS_COORDINATES.md`;
+- replacement G/H/I evidence.
+
+The live Android procedure was not run. The Windows pending
+`purchase.registered` sequence-2 member was not accessed or changed.
+
+```text
+PRIOR_FLUTTER_SOURCE_RESULT=RETAINED
+PRIOR_ANDROID_GRM_TERMINAL=SUPERSEDED
+WINDOWS_PROCEDURE=RESTORED_TO_DB17F47
+ANDROID_VARIABLE_CASCADE=CORRECTED
+ANDROID_FENCE_EXTRACTION=PASS
+ANDROID_FENCE_PARSE=BLOCKED_HOST_NO_POWERSHELL
+ANDROID_STATIC_DATA_FLOW=PASS
+ANDROID_STRICT_MODE_PREFIX=BLOCKED_HOST_NO_POWERSHELL
+GRM_SOURCE_VARIABLE_ALIGNMENT=PASS_STATIC
 LIVE_ANDROID_RETEST=NOT_RUN
 AUTH_ENROLL_SYNC_PROVIDER_ACTION=ABSENT
+ST04=BLOCKED_PENDING_WINDOWS_POWERSHELL_VALIDATION_AND_HUMAN_RETEST
 GCM03_ST05_AND_LATER=HELD
 ```
-
-Residual operator boundary: rerun `GRM-FLUTTER-AND` only after review/commit/publish, verify the visible `Build provenance #<short HEAD>` and consolidated Diagnostics surface on Android, and return that screenshot/evidence to Main. Do not Enroll, Sync, Retry, recover, clear storage, sign out, or mutate providers during ST04 retest.

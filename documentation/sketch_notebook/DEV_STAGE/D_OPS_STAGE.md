@@ -1,372 +1,227 @@
-# D_OPS_STAGE — Android Closure parity and provenance repair
+# D_OPS_STAGE — Android GRM provenance-variable cascade correction
 
 > Sequence: FLX-ORD-01 — Ordinary Sequence
 > Role: Main-approved Operational materialization stage
-> Unit: `C10-GCM03-ST04-R1`
+> Unit: `C10-GCM03-ST04-R1-C1`
 > Branch: `grm-guarded-provisioning-20260727`
-> Required remote ancestry:
-> `ec96f93d71efd261adc2b3b75a17453130e437a0`
-> Local equivalent tree may be based on:
-> `035352e58c8fb6bc887724f8f6f7607c8d455b93`
-> Authority: **ACTIVE — DIAGNOSTIC-FIRST CONDITIONAL MATERIALIZATION
-> AUTHORIZED**
-> Evidence boundary: repository/source inspection, local automated validation,
-> and non-mutating build-provenance work only; no live authentication,
-> enrollment, Sync, Retry, recovery, provider mutation, deployment, or
-> production claim
+> Required ancestry:
+> `231a76281d0016ee47dd719d3ddc24d422b18c35`
+> Authority: **ACTIVE — BOUNDED CORRECTION AUTHORIZED**
+> Evidence boundary: repository/source inspection and non-mutating static
+> validation of the GRM dispatcher cascade; no Android runtime, authentication,
+> enrollment, Sync, Retry, recovery, provider action, deployment, commit or push
 
-## 1. Controlling state
+## 1. Reconciled prior result
 
-GCM02 is closed at hosted same-Device development scope. GCM03 entered with
-one preserved Windows candidate member:
+The prior unit `C10-GCM03-ST04-R1` remains accepted for:
 
 ```text
-event = purchase.registered
-Windows Device sequence = 2
-Windows next local sequence = 3
-pending/uploading/failed/unknown = 1/0/0/0
+one shared NativeClosurePage
+compact/wide widget coverage
+public sanitized build-provenance projection
+Flutter focused and full tests
+Flutter analysis
+local debug APK build with an explicit provenance define
+absence of protocol, persistence, schema and provider expansion
 ```
 
-Human-observed GCM03 progress:
+The following prior terminal is contradicted and superseded:
 
 ```text
-ST01 repository alignment = PASS
-ST02 host/provider read-only baseline = PASS
-ST03 Android build/install/launch = PASS as observed
-ST04 Android Closure evidence surface = BLOCKED
+ANDROID_GRM_PROVENANCE=HARDENED
 ```
 
-The Android screenshot showed the legacy minimal Closure surface with the old
-`Status`, `Query`, and basic action layout. The current repository source
-instead composes the same `NativeClosurePage` on supported native platforms
-and contains the consolidated `Diagnostics` surface already validated on
-Windows.
-
-This is a provenance/parity contradiction. It is not evidence that Android
-authentication, enrollment, or two-Device convergence passed or failed.
-
-Current gate:
+It becomes:
 
 ```text
-GCM03_ST04=BLOCKED_ANDROID_CLOSURE_ARTIFACT_PARITY
-GCM03_ST05_AND_LATER=HELD
-ANDROID_ENROLLMENT=NOT_AUTHORIZED
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
+ANDROID_GRM_PROVENANCE=BLOCKED_VARIABLE_CASCADE
 ```
 
-## 2. Objective
+`ST04=READY_FOR_HUMAN_RETEST` is withdrawn until this correction is
+materialized, validated, reviewed, committed and published.
 
-Establish and repair the exact relationship:
+## 2. Exact defect
+
+Commit `231a762` intended to add these producers to `GS-FLUTTER-AND`:
 
 ```text
-published source
-→ Android build inputs
-→ generated APK
-→ installed package
-→ launched activity
-→ rendered shared Closure surface
+$ResolvedClientRoot
+$Branch
+$InspectedHead
+$BuildProvenance
 ```
 
-The final outcome must make an Android operator able to prove that the visible
-Closure page came from the intended repository revision and exposes the same
-evidence contract as Windows.
-
-Do not implement a second Android-specific copy of the Windows Closure page.
-Diagnose lineage first. Materialize only the smallest correction justified by
-the diagnosis.
-
-## 3. Required recovery and inspection
-
-Before editing:
-
-1. read root `AGENTS.md`;
-2. read `documentation/sketch_notebook/INDEX.md`;
-3. follow the complete methodology boot route;
-4. read synchronized D/E/F completely;
-5. inspect J's current GCM02 closure and GCM03 TODO prefix;
-6. verify branch, HEAD, required ancestry, worktree state, and remotes;
-7. stop on branch divergence, missing ancestry, or dirty overlap with writable
-   files.
-
-Inspect at minimum:
+The patch matched the earlier, similar `$ClientRoot` anchor inside
+`GS-FLUTTER-WIN`. The current cascade is therefore split:
 
 ```text
-clients/markei_flutter/lib/app/markei_app.dart
-clients/markei_flutter/lib/app/markei_composition.dart
-clients/markei_flutter/lib/app/pages/native_closure_page.dart
-clients/markei_flutter/lib/infrastructure/auth/native_auth_config.dart
-clients/markei_flutter/android/app/build.gradle.kts
-clients/markei_flutter/android/app/src/main/AndroidManifest.xml
-clients/markei_flutter/pubspec.yaml
-clients/markei_flutter/test/app/native_closure_surface_test.dart
-clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
-clients/markei_flutter/test/infrastructure/native_auth_composition_test.dart
-documentation/GRM.md
-documentation/G_SCRIPTS.md
-documentation/I_SCRIPTS.ps1
-documentation/NS_COORDINATES.md
+GS-FLUTTER-WIN
+  owns the new producers, prints and containment check
+  does not consume Android build provenance
+
+GS-FLUTTER-AND
+  consumes $Branch in the branch guard
+  consumes $BuildProvenance in the Dart define and operator output
+  never initializes either variable
 ```
 
-Use Git history to locate the introduction of the consolidated Diagnostics
-surface and compare the screenshot's visible labels with historical source.
-The current scan identifies `ad1f228` as the relevant Diagnostics
-consolidation commit; verify rather than assume that conclusion.
+`I_SCRIPTS.ps1` executes the extracted fence under `Set-StrictMode -Version
+Latest`. The first `$Branch` read therefore terminates `GRM-FLUTTER-AND`.
+Without that read, `$BuildProvenance` would fail later.
 
-Search for:
+The previous `GS-FLUTTER-AND` parse result remains only syntax evidence.
+PowerShell parsing does not prove runtime variable initialization.
 
-- any platform branch that substitutes another Closure widget on Android;
-- duplicate or historical Closure page implementations;
-- build flavors, package/application ID alternatives, or entrypoints;
-- conditional imports or target-platform presentation branches;
-- script paths capable of building a different checkout/client root;
-- package/activity selection ambiguity;
-- artifact installation behavior and whether application data are preserved;
-- any current non-secret build identity visible in the client.
+## 3. Required correction
 
-## 4. Diagnostic classification
+Modify only the relevant blocks in `documentation/G_SCRIPTS.md`.
 
-Classify the contradiction into exactly one controlling result:
+### 3.1 Restore Windows scope
+
+Remove from `GS-FLUTTER-WIN` only the block introduced accidentally by
+`231a762`:
 
 ```text
-PROV-01 wrong checkout or source baseline
-PROV-02 stale/generated APK or install replacement failure
-PROV-03 wrong package, activity, target, or launched application
-PROV-04 actual Android composition or responsive-layout divergence
-PROV-05 evidence insufficient / host-unvalidated
+$ResolvedClientRoot containment projection
+$Branch
+$InspectedHead
+$BuildProvenance
+the four new repository/client/branch/HEAD Write-Host lines
 ```
 
-Record:
+The resulting `GS-FLUTTER-WIN` body must be byte-equivalent to its `db17f47`
+version unless line-ending normalization prevents byte comparison. Do not
+change Windows Closure behavior, arguments, coordinates, output or validation.
+
+### 3.2 Complete the Android producer-consumer chain
+
+In `GS-FLUTTER-AND`, immediately after the existing repository/client-root
+existence checks and before the first `$Branch` or `$BuildProvenance` use:
+
+1. resolve and prove that the Flutter client directory is inside the resolved
+   repository directory;
+2. derive the non-empty active branch;
+3. derive and validate the full lowercase 40-hex inspected HEAD;
+4. derive and validate a 7–12 lowercase-hex short HEAD;
+5. assign that short value to `$BuildProvenance`;
+6. print repository root, resolved client root, active branch and full inspected
+   HEAD;
+7. keep coordinate values undisclosed.
+
+Use a Windows PowerShell 5.1-compatible parent-directory walk for containment.
+Do not use a raw string-prefix comparison, because sibling paths may share the
+same prefix.
+
+The completed order must be:
 
 ```text
-observed fact
-repository fact
-test-proven fact
-inference
-unavailable live evidence
-controlling classification
+repository root
+→ client root existence
+→ resolved containment proof
+→ branch assignment
+→ full HEAD assignment
+→ short build-provenance assignment
+→ public coordinate loading
+→ expected-branch guard
+→ required-ancestry guard
+→ dirty-overlap guard
+→ Flutter/device/build/install/launch path
 ```
 
-Do not claim that Codex reproduced the user's Android result unless an actual
-Android target was available and the exact observation was made. A passing
-widget test proves source behavior, not installation provenance.
+The required ancestry guard may compare against `$InspectedHead` rather than
+reading moving `HEAD` again.
 
-## 5. Required materialization outcome
+### 3.3 Preserve the accepted Android behavior
 
-### 5.1 Shared Closure parity
+Do not change:
 
-The repository must retain one shared `NativeClosurePage` contract. At compact
-Android dimensions it must expose:
+- the five public Closure coordinate names;
+- the Closure-surface Dart define;
+- package `com.gusigu.markei`;
+- selected-target rules;
+- application-data-preserving `adb install -r`;
+- APK path/size/SHA-256 reporting;
+- package evidence and launch;
+- Auth0 Gradle environment restoration;
+- human verification and no-mutation stop text.
 
-```text
-nativeClosure.page
-nativeClosure.Diagnostics
-nativeClosure.Check hosted connection
-nativeClosure.Sync
-```
+Do not edit `I_SCRIPTS.ps1` unless inspection proves a distinct dispatcher
+defect. The current defect is inside the extracted `GS-FLUTTER-AND` body.
 
-It must not expose the removed top-level controls:
+## 4. Validation
 
-```text
-nativeClosure.Status
-nativeClosure.Query
-nativeClosure.Refresh diagnostics
-```
+Run and report:
 
-The Android-sized projection must retain:
+1. exact `GS-FLUTTER-WIN` body comparison against `db17f47`;
+2. extraction of exactly one `GS-FLUTTER-AND` PowerShell fence through the same
+   heading/fence patterns used by `I_SCRIPTS.ps1`;
+3. Windows PowerShell 5.1 AST parse of the corrected Android fence;
+4. structural data-flow assertions proving:
 
-- current action result and expandable sanitized technical details;
-- Sync overview;
-- local queue counts;
-- Next Device sequence;
-- recent Closure attempts;
-- grouped diagnostic lifecycle;
-- Devices;
-- actionable events;
-- separate authentication, enrollment, readiness, Sync, Retry, inspection,
-  recovery, logout, and history-clear boundaries already present in source.
+   ```text
+   $Branch assignment occurs before every $Branch read
+   $InspectedHead assignment occurs before its use
+   $BuildProvenance assignment occurs before every $BuildProvenance read
+   each producer occurs exactly once in GS-FLUTTER-AND
+   none of the Android-unit producers remain in GS-FLUTTER-WIN
+   ```
 
-If current shared source already satisfies this contract, do not rewrite or
-fork it merely to generate a source diff.
+5. a non-mutating prefix assay, with Git/Flutter/device/build/install/launch
+   calls mocked or truncated before `flutter doctor`, proving strict-mode
+   evaluation reaches the expected-branch guard with all four values assigned;
+6. `git diff --check`;
+7. changed-content sensitive-pattern scan.
 
-### 5.2 Non-secret build provenance
+Do not run the full live Android procedure during Codex validation. Do not
+start an AVD, install, launch, authenticate, enroll or Sync.
 
-Add a small, shared build-provenance projection so a human can distinguish
-the intended rebuilt artifact from an obsolete installed client.
-
-Acceptable contract:
-
-```text
-compile-time public define: MARKEI_BUILD_PROVENANCE
-value: reviewed short Git commit fingerprint, 7–12 lowercase hex characters
-fallback: unavailable
-visible label in Closure diagnostics: Build provenance #<fingerprint>
-stable widget key: nativeClosure.buildProvenance
-```
-
-The value is public metadata. It must never contain a token, credential,
-connection string, complete Device/Account identifier, branch URL, filesystem
-path, or dirty diff contents.
-
-Prefer a tiny immutable configuration/value object or a direct compile-time
-constant over a new service layer. The page may project it; widgets must not
-run Git or shell commands.
-
-### 5.3 Android GRM provenance hardening
-
-Update `GS-FLUTTER-AND` and its GRM description only as needed to:
-
-1. resolve the repository root once and prove the client path belongs to it;
-2. print the branch and full inspected HEAD before building;
-3. print and validate the active branch/ancestry needed by this unit, or stop
-   with an explicit provenance error; do not permanently hard-code this
-   transient branch into a procedure intended for later reusable branches;
-4. reject dirty overlap in Flutter source, Android project files, and the live
-   Android build procedure while preserving unrelated/user work;
-5. pass the reviewed short HEAD through
-   `MARKEI_BUILD_PROVENANCE`;
-6. continue passing the existing five public Closure coordinates;
-7. run clean, dependency resolution, analysis, tests, and debug APK build;
-8. print the generated APK path, byte length, and SHA-256;
-9. launch/install only the selected supported Android target and current
-   package `com.gusigu.markei`;
-10. print sufficient non-secret package/activity evidence to correlate the
-    launched application with that target;
-11. preserve application data: no uninstall, `pm clear`, database deletion,
-    emulator reset, or storage wipe;
-12. stop after launch with explicit instructions to verify the visible build
-    provenance and consolidated Diagnostics surface.
-
-Do not print coordinate values. Keep the existing readiness booleans and safe
-redaction behavior.
-
-If exact installed-APK hashing cannot be proved portably, state the limitation
-truthfully. Do not represent the local generated APK hash as proof of the
-installed package by itself.
-
-### 5.4 Conditional actual source repair
-
-If and only if repository inspection or reproducible tests prove an Android
-composition/layout divergence, repair the shared composition or responsive
-layout. The fix must also preserve Windows behavior.
-
-Prohibited response to PROV-01, PROV-02, PROV-03, or PROV-05:
-
-```text
-copy NativeClosurePage into an Android-only file
-hide the legacy artifact mismatch with alternate labels
-change authentication/enrollment behavior
-clear or recreate local state
-```
-
-## 6. State preservation
-
-This materialization must not:
-
-- allocate a local Device sequence;
-- change queue membership or status;
-- change Last successful Sync;
-- sign in or out;
-- enroll/query/revoke a Device;
-- call hosted readiness;
-- invoke ordinary Sync, Retry, or failed/notApplied recovery;
-- access or mutate Render, Auth0, Neon, or the user database;
-- modify migrations, API contracts, server source, or deployment;
-- consume or expose the pending Windows sequence-2 member.
-
-No new live assay is authorized. A human-operated Android rerun occurs only
-after the patch is reviewed, committed, published, and separately instructed.
-
-## 7. Tests and validation
-
-Add or update tests proving:
-
-1. the shared page is used by the app composition;
-2. Android/compact dimensions expose consolidated Diagnostics;
-3. removed top-level Status/Query/Refresh controls remain absent;
-4. all evidence cards needed by ST04 remain reachable at compact dimensions;
-5. build provenance renders with its stable key;
-6. missing provenance fails safely as `unavailable`;
-7. malformed or overlong provenance does not become unsafe UI metadata;
-8. provenance rendering performs no state or network action;
-9. Windows/wide Closure behavior remains intact;
-10. no authentication, queue, sequence, Sync, persistence, schema, or API
-    contract changed.
-
-Run at minimum:
-
-```text
-dart format <changed Dart files>
-flutter test test/app/native_closure_surface_test.dart
-flutter test test/app/native_closure_diagnostics_test.dart
-flutter test test/infrastructure/native_auth_composition_test.dart
-flutter test
-flutter analyze
-git diff --check
-```
-
-Validate PowerShell syntax/dispatch for changed GRM procedures using the
-repository's existing non-mutating validation path. Do not execute
-`GS-FLUTTER-AND` against a live device merely to satisfy Codex validation.
-
-Run the existing changed-content sensitive-pattern scan. Report every skipped
-or unavailable platform check.
-
-## 8. Writable and prohibited scope
+## 5. Writable and prohibited scope
 
 Writable:
 
-- directly relevant shared Flutter Closure/composition/configuration source;
-- directly relevant Flutter tests;
-- `documentation/GRM.md`;
-- the `GS-FLUTTER-AND` block in `documentation/G_SCRIPTS.md`;
-- `documentation/I_SCRIPTS.ps1` only if dispatcher alignment is directly
-  required;
-- G/H/I replacement reports.
+```text
+documentation/G_SCRIPTS.md
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+```
 
 Prohibited:
 
-- J, REC_DIAGNOSTICS, A/B/C, methodology, permanent domain memory;
-- `NS_COORDINATES.md` values;
-- API/server source and tests;
-- schemas, migrations, provider scripts, Render/Auth0/Neon configuration;
-- Windows build behavior except shared non-secret provenance compatibility;
-- unrelated UI redesign, formatting, cleanup, or refactor;
-- protected Python/PySide artifacts;
-- commits, pushes, releases, deployments, enrollment, or Sync.
+- Flutter/Dart source and tests;
+- `GRM.md`, `I_SCRIPTS.ps1`, `NS_COORDINATES.md` unless a distinct,
+  evidence-backed contradiction requires Main restaging;
+- J, REC_DIAGNOSTICS, A/B/C, permanent memory and methodology;
+- API/server, schema, migration, provider or deployment files;
+- Windows behavior changes;
+- authentication, enrollment, Sync, Retry, recovery or provider actions;
+- commit, push, deploy or PR creation.
 
-Stop if a required fix would exceed this boundary or if D/E/F disagree.
+Stop if the correction cannot remain within the one catalogue file plus G/H/I.
 
-## 9. G report
+## 6. G report
 
-Replace `G_OPS_CODEX.md` with:
+Replace `G_OPS_CODEX.md` with the correction evidence. Include:
 
-- exact baseline/ancestry/worktree inspection;
-- screenshot-to-history label correlation;
-- PROV-01…PROV-05 classification and evidence class;
-- files inspected and changed;
-- shared-page parity result;
-- build-provenance implementation;
-- Android GRM hardening;
-- validation commands and exact outcomes;
-- unavailable live Android evidence;
-- state/provider non-action statement;
-- residual operator steps and risks.
+- exact defect and strict-mode failure order;
+- exact removed Windows block and inserted Android block;
+- validation commands and results;
+- unavailable live evidence;
+- clean/dirty inventory;
+- no-action statement.
 
-Terminal markers:
+Required terminals:
 
 ```text
-ST01=PASSED_PRIOR_HUMAN_SCOPE
-ST02=PASSED_PRIOR_READ_ONLY_SCOPE
-ST03=PASSED_HUMAN_OBSERVED_BUILD_LAUNCH_SCOPE
-ST04=BLOCKED_PENDING_HUMAN_RETEST
-ANDROID_PARITY_ROOT_CLASS=PROV_01_02_03_04_05
-SHARED_CLOSURE_PAGE=CONFIRMED_OR_REPAIRED_OR_BLOCKED
-ANDROID_COMPACT_DIAGNOSTICS=TEST_PASS_OR_BLOCKED
-BUILD_PROVENANCE=IMPLEMENTED_OR_BLOCKED
-ANDROID_GRM_PROVENANCE=HARDENED_OR_BLOCKED
-APPLICATION_DATA_PRESERVATION=PASS
+PRIOR_FLUTTER_SOURCE_RESULT=RETAINED
+PRIOR_ANDROID_GRM_TERMINAL=SUPERSEDED
+WINDOWS_PROCEDURE=RESTORED_TO_DB17F47
+ANDROID_VARIABLE_CASCADE=CORRECTED_OR_BLOCKED
+ANDROID_FENCE_PARSE=PASS_OR_BLOCKED
+ANDROID_STATIC_DATA_FLOW=PASS_OR_BLOCKED
+ANDROID_STRICT_MODE_PREFIX=PASS_OR_BLOCKED
 LIVE_ANDROID_RETEST=NOT_RUN
 AUTH_ENROLL_SYNC_PROVIDER_ACTION=ABSENT
+ST04=READY_FOR_HUMAN_RETEST_OR_BLOCKED
 GCM03_ST05_AND_LATER=HELD
 ```

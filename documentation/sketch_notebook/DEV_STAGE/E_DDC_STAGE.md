@@ -1,150 +1,86 @@
-# E_DDC_STAGE — Android Closure parity evidence and operator meaning
+# E_DDC_STAGE — GRM cascade and evidence correction
 
 > Sequence: FLX-ORD-01 — Ordinary Sequence
 > Role: Main-approved Didactic materialization stage
-> Unit: `C10-GCM03-ST04-R1`
+> Unit: `C10-GCM03-ST04-R1-C1`
 > Branch: `grm-guarded-provisioning-20260727`
-> Required remote ancestry:
-> `ec96f93d71efd261adc2b3b75a17453130e437a0`
-> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED WITHIN D**
-> Evidence boundary: source, tests, and public artifact-provenance projection;
-> no Android runtime acceptance or provider claim
+> Required ancestry:
+> `231a76281d0016ee47dd719d3ddc24d422b18c35`
+> Authority: **ACTIVE WITHIN D**
+> Evidence boundary: procedure meaning and static validation; no runtime
+> acceptance
 
-## 1. Meaning of the interruption
+## 1. Corrected meaning
 
-The Android screenshot creates this contradiction:
+Preserve these distinctions:
 
 ```text
-current source contract = consolidated Diagnostics Closure
-visible Android artifact = legacy basic Closure
+PowerShell fence parses
+  ≠ every strict-mode variable is initialized
+
+Flutter build with an explicit provenance value
+  ≠ GRM-FLUTTER-AND can derive that value
+
+source/test provenance projection passes
+  ≠ Android procedure provenance is operational
+
+correct generated APK
+  ≠ installed Android runtime acceptance
 ```
 
-Teach the correct conclusion:
+The prior Flutter and widget evidence remains valid. Only the executable
+Android GRM cascade is contradicted.
+
+## 2. Operator contract
+
+The corrected chain is:
 
 ```text
-successful build command ≠ proved installed artifact lineage
-visible Closure destination ≠ current Closure revision
-authenticated label ≠ complete ST04 or ST05 evidence
-source parity test ≠ Android runtime acceptance
-legacy Android surface ≠ need for an Android-only UI fork
+GRM-FLUTTER-AND
+→ I_SCRIPTS.ps1 exact GS dispatch
+→ GS-FLUTTER-AND producer initialization
+→ branch and ancestry guards
+→ MARKEI_BUILD_PROVENANCE build argument
+→ generated APK evidence
+→ installed package evidence
+→ later human visible-fingerprint comparison
 ```
 
-ST04 is blocked because its evidence surface is insufficient. Authentication
-is neither rejected nor accepted for GCM03 from this screenshot alone.
+Every consumed procedure variable must have one visible producer in the same
+PowerShell fence before first use. Variables in a different `GS-*` fence are
+not shared, because the dispatcher extracts and executes only the selected
+fence.
 
-## 2. Shared operator vocabulary
+## 3. Validation meaning
 
-Windows and Android must use the same meanings:
+Codex must report syntax and data-flow evidence separately:
 
-- `Diagnostics`: read-only local authentication/binding/queue/sequence and
-  diagnostic evidence projection;
-- `Check hosted connection`: separate hosted readiness request;
-- `Sync`: separate stateful synchronization protocol;
-- `Build provenance`: public short source fingerprint compiled into the
-  visible client;
-- generated APK hash: identity of the local build output;
-- installed package evidence: identity/location/version evidence from the
-  selected Android target;
-- runtime acceptance: human observation of the expected surface on that
-  installed target.
+- AST parse: the fence is syntactically valid;
+- structural data flow: producers precede consumers inside the same fence;
+- strict-mode prefix assay: the initialization prefix evaluates without an
+  undefined-variable error;
+- live human rerun: the full procedure builds, installs, launches and displays
+  the matching provenance.
 
-Do not call any of these evidence classes equivalent.
+Only the first three belong to this correction. The fourth remains held.
 
-## 3. Required visible evidence
+## 4. H report
 
-The shared Closure page must expose:
+Replace `H_DDC_CODEX.md` and include:
 
-```text
-Build provenance #<short fingerprint>
-```
+- the cross-fence producer/consumer defect;
+- why parse-only validation missed it;
+- the corrected operator cascade;
+- retained Flutter evidence;
+- held human runtime acceptance.
 
-with key:
-
-```text
-nativeClosure.buildProvenance
-```
-
-Fallback:
+Required terminals:
 
 ```text
-Build provenance unavailable
-```
-
-The fingerprint is intentionally short and public. It identifies source
-lineage for human comparison; it is not a credential, Device identifier,
-provider proof, release signature, or security guarantee.
-
-The page must retain the already accepted distinctions among:
-
-- current action result;
-- sanitized technical details;
-- Sync overview;
-- local queue and Next Device sequence;
-- Devices;
-- actionable events;
-- recent operation summaries and raw diagnostic history.
-
-Compact Android layout may stack or scroll these sections. It must not remove
-their meaning.
-
-## 4. Diagnostic reporting language
-
-Codex must label conclusions by evidence class:
-
-```text
-repository-proven
-test-validated
-human-observed
-inferred
-host-unvalidated
-```
-
-Examples:
-
-- the shared page contains one Diagnostics button: repository-proven;
-- a compact widget test finds it: test-validated;
-- the rebuilt emulator visibly shows the expected fingerprint: later
-  human-observed evidence;
-- the old APK likely came from a pre-consolidation revision: inference unless
-  artifact evidence proves it.
-
-Do not use `fixed on Android` until a later human rerun confirms the installed
-artifact and visible page. The Codex terminal is at most
-`READY_FOR_HUMAN_RETEST`.
-
-## 5. Tests
-
-Tests must prove:
-
-- the same Diagnostics vocabulary at Android/compact and Windows/wide sizes;
-- old top-level Status/Query/Refresh vocabulary is absent;
-- build provenance is visible, short, sanitized, and stable;
-- missing/malformed provenance remains explicit and safe;
-- evidence cards remain reachable through scrolling on compact layout;
-- provenance inspection cannot invoke authentication, readiness, enrollment,
-  Sync, Retry, recovery, or queue mutation.
-
-## 6. H report
-
-Replace `H_DDC_CODEX.md` with:
-
-- the contradiction and its corrected interpretation;
-- final operator vocabulary;
-- source/test/runtime evidence distinctions;
-- visible provenance behavior;
-- compact-layout comprehension evidence;
-- remaining human acceptance requirement.
-
-Terminal markers:
-
-```text
-BUILD_SUCCESS_NOT_INSTALL_PROOF=VISIBLE
-SOURCE_TEST_NOT_RUNTIME_ACCEPTANCE=VISIBLE
-AUTH_LABEL_NOT_ST04_ACCEPTANCE=VISIBLE
-SHARED_CLOSURE_MEANING=PASS_OR_BLOCKED
-BUILD_PROVENANCE_MEANING=VISIBLE_OR_BLOCKED
-COMPACT_EVIDENCE_REACHABILITY=TEST_PASS_OR_BLOCKED
-LEGACY_CONTROLS=ABSENT_OR_BLOCKED
+PARSE_NOT_DATA_FLOW=VISIBLE
+GS_FENCE_SCOPE=VISIBLE
+PRODUCER_BEFORE_CONSUMER=PASS_OR_BLOCKED
+PRIOR_FLUTTER_PROVENANCE_MEANING=RETAINED
 ANDROID_RUNTIME_ACCEPTANCE=HELD_FOR_HUMAN_RETEST
 GCM03_ST05=HELD
 ```

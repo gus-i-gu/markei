@@ -1,9 +1,9 @@
 # J_MAIN_STAGE — Cycle 10 active reconciliation
 
-> Sequence: FLX-PRM-04 C10-GCM02 final closure and GCM03 preflight staging
+> Sequence: FLX-PRM-04 C10-GCM03-ST04-R1 reconciliation and correction staging
 > Role: Main Chat
 > Branch: `grm-guarded-provisioning-20260727`
-> Reconciliation baseline: `f54b9872daf37c26b33778a36f26f733c834401d`
+> Reconciliation baseline: `231a76281d0016ee47dd719d3ddc24d422b18c35`
 > Authority: explicit human-directed Main reconciliation
 > Writable surface: `REC_DIAGNOSTICS.md`, mutable J recovery prefix, and
 > append-only `Legacy_Progress`
@@ -13,8 +13,8 @@
 > Render upload/download/acknowledgement request lifecycles; no Retry, recovery,
 > second Device, production, retention, snapshot or rebootstrap claim
 > Status: **CYCLE 10 OPEN; GCM02 CLOSED AT HOSTED SAME-DEVICE SCOPE;
-> GCM03 WINDOWS CANDIDATE PREFLIGHT PASSED; ANDROID CHECKS AND SECOND-DEVICE
-> ENROLLMENT PREPARATION NEXT**
+> GCM03 ST04 PARITY SOURCE LOCALLY VALIDATED; ANDROID GRM VARIABLE CASCADE
+> BLOCKED; CORRECTION REQUIRED BEFORE HUMAN RETEST; ST05+ HELD**
 
 ## 1. Recovery entrypoint
 
@@ -50,7 +50,7 @@ Retain these ownership boundaries:
 ```text
 Repository: gus-i-gu/markei
 Active branch: grm-guarded-provisioning-20260727
-Current reconciliation baseline: f54b9872daf37c26b33778a36f26f733c834401d
+Current reconciliation baseline: 231a76281d0016ee47dd719d3ddc24d422b18c35
 Cycle: 10
 Active closure unit: MCG-02 / user-facing GCM-02
 Latest completed corrective unit: C10-GCM02-S12-ERR-04 recovery-boundary and
@@ -59,9 +59,12 @@ Latest accepted gate: Gate 12.7 corrected single-client control
 Latest completed presentation unit: C10-GCM02-S12-DIAG-01
 Latest completed evidence phase: C10-GCM02-S12-ST10 sanitized Render
 correlation and Gate-12.10 terminal classification
-Active phase: GCM03 Android readiness and pre-enrollment preparation; the
-Windows candidate member is frozen and no client/provider mutation is
-authorized
+Latest materialized interruption: C10-GCM03-ST04-R1 shared Android Closure
+parity and artifact-provenance evidence
+Active corrective unit: C10-GCM03-ST04-R1-C1 Android GRM
+provenance-variable cascade correction
+Active phase: GCM03 ST04 remains blocked before human retest; the Windows
+candidate member is frozen and no client/provider mutation is authorized
 ```
 
 The branch contains the GRM execution interface, hosted Sync
@@ -224,7 +227,10 @@ evidence order; it does not authorize enrollment or Sync.
   Require Flutter/Android toolchain readiness, exactly one supported Android
   target, configured AVD boot where needed, successful Closure build/install/
   launch, and the same public Auth0/Render coordinate lineage. This step must
-  not sign in, enroll or Sync implicitly.
+  not sign in, enroll or Sync implicitly. **Current blocker:** commit
+  `231a762` split `$Branch` and `$BuildProvenance` producers into the Windows
+  fence while leaving their consumers in the Android fence. Complete
+  `C10-GCM03-ST04-R1-C1` before rerunning this procedure.
 - [ ] **GCM03.4 — Android local pre-enrollment snapshot.** Open Closure on
   Android, preserve sanitized diagnostics, and prove whether the fresh
   installation has no enrolled local Device. Stop on inherited Device state,
@@ -306,6 +312,127 @@ GCM03=ACTIVE_PREPARATION_ANDROID_CHECKS_NEXT
 ANDROID_ENROLLMENT=NOT_AUTHORIZED
 WINDOWS_SYNC=NOT_AUTHORIZED
 ANDROID_SYNC=NOT_AUTHORIZED
+SECOND_DEVICE_CONVERGENCE=UNPROVED
+GCM04=UNDEFINED_INACTIVE
+```
+
+### 2.3 ST04-R1 materialization reconciliation and Android GRM correction
+
+Commit `231a76281d0016ee47dd719d3ddc24d422b18c35` materialized the bounded
+Android Closure parity/provenance unit. D/E/F were compared against G/H/I,
+the implementation diff, and the live GRM dispatcher cascade.
+
+#### PRC-01 claims
+
+```text
+Claim: the shared Flutter Closure parity and build-provenance model passed the
+       authorized local materialization boundary
+Prior state: Android displayed a legacy Closure surface while current shared
+             source appeared consolidated
+Evidence: one shared NativeClosurePage; compact/wide coverage; sanitized
+          7-12 lowercase-hex provenance projection; 199 passed / 4 lab-gated
+          Flutter tests; clean Flutter analysis; local debug APK build with
+          explicit provenance define
+Evidence boundary: repository, widget tests, analysis and local build only
+Contradiction: none inside the Flutter presentation/provenance boundary
+Semantic owner: C10-GCM03-ST04-R1 local source result
+Target role: J current recovery state
+Resulting state: ACCEPTED / LOCALLY VALIDATED
+History disposition: append
+```
+
+```text
+Claim: the pushed GRM-FLUTTER-AND procedure is hardened and ready for a human
+       rerun
+Prior state: G reports ANDROID_GRM_PROVENANCE=HARDENED and
+             ST04=READY_FOR_HUMAN_RETEST
+Evidence: implementation scan shows GS-FLUTTER-AND reads $Branch before any
+          assignment and later reads $BuildProvenance without assignment;
+          their intended producer block was inserted into GS-FLUTTER-WIN
+Evidence boundary: exact pushed G_SCRIPTS.md and I_SCRIPTS.ps1 strict-mode,
+                   one-fence dispatcher semantics
+Contradiction: PowerShell fence parse passed, but parse does not validate
+               runtime variable initialization
+Semantic owner: Android GRM executable procedure
+Target role: corrected D/E/F and later replacement G/H/I
+Resulting state: CONTRADICTED / BLOCKED VARIABLE CASCADE
+History disposition: supersede only the prior Android-GRM hardening terminal
+```
+
+```text
+Claim: ST04 or any later GCM03 action may proceed before correction
+Prior state: ST04 awaited a human rebuilt-artifact retest
+Evidence: canonical Android procedure terminates under strict mode at the
+          first undefined $Branch read; $BuildProvenance is also undefined
+Evidence boundary: no live Android, authentication or provider action needed
+Contradiction: executing the procedure cannot produce the intended artifact
+Semantic owner: GCM03 action gate
+Target role: Main authorization boundary
+Resulting state: REJECTED; ST04 AND ST05+ HELD
+History disposition: append
+```
+
+#### Accepted and superseded evidence
+
+Retained:
+
+```text
+SHARED_CLOSURE_PAGE=CONFIRMED
+ANDROID_COMPACT_DIAGNOSTICS=TEST_PASS
+BUILD_PROVENANCE=IMPLEMENTED
+APPLICATION_DATA_PRESERVATION=DESIGNED_AND_SOURCE_PRESERVED
+AUTH_ENROLL_SYNC_PROVIDER_ACTION=ABSENT
+```
+
+Superseded:
+
+```text
+ANDROID_GRM_PROVENANCE=HARDENED
+ST04=READY_FOR_HUMAN_RETEST
+```
+
+Current:
+
+```text
+ANDROID_GRM_PROVENANCE=BLOCKED_VARIABLE_CASCADE
+ST04=BLOCKED_PENDING_C10_GCM03_ST04_R1_C1
+```
+
+#### Correction contract
+
+Synchronized D/E/F now authorize one narrow correction:
+
+1. remove the accidentally inserted Android-unit producer/print block from
+   `GS-FLUTTER-WIN`, restoring that procedure to its `db17f47` behavior;
+2. add Windows-PowerShell-compatible repository containment, `$Branch`,
+   `$InspectedHead`, and `$BuildProvenance` initialization inside
+   `GS-FLUTTER-AND` before any consumer;
+3. preserve the accepted Flutter source, Android coordinates, package,
+   data-preserving install, artifact evidence and no-mutation boundaries;
+4. validate exact-fence extraction, AST syntax, same-fence producer-before-
+   consumer data flow, and a mocked/truncated strict-mode prefix;
+5. produce replacement G/H/I without running the live Android procedure.
+
+The human `GRM-FLUTTER-AND` rerun becomes eligible only after correction
+review, commit, publication and Main reconciliation. It remains an ST04
+artifact-lineage retest, not authentication, enrollment or Sync authority.
+
+Updated terminals:
+
+```text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
+GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
+C10_GCM03_ST04_R1_FLUTTER_SOURCE=ACCEPTED_LOCAL_VALIDATION
+C10_GCM03_ST04_R1_ANDROID_GRM=CONTRADICTED
+C10_GCM03_ST04_R1_C1=ACTIVE_MATERIALIZATION_STAGE
+ST04=BLOCKED_PENDING_GRM_CASCADE_CORRECTION
+LIVE_ANDROID_RETEST=NOT_AUTHORIZED_YET
+ANDROID_ENROLLMENT=NOT_AUTHORIZED
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
+GCM03_ST05_AND_LATER=HELD
 SECOND_DEVICE_CONVERGENCE=UNPROVED
 GCM04=UNDEFINED_INACTIVE
 ```
@@ -6248,4 +6375,57 @@ WINDOWS_SYNC=NOT_AUTHORIZED
 ANDROID_SYNC=NOT_AUTHORIZED
 SECOND_DEVICE_CONVERGENCE=UNPROVED
 GCM04=UNDEFINED_INACTIVE
+```
+
+## 2026-07-28 — ST04-R1 Android GRM cascade contradiction
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04
+Role: Main Chat [M]
+Round or unit: C10-GCM03-ST04-R1 / C10-GCM03-ST04-R1-C1
+Branch: grm-guarded-provisioning-20260727
+Inspected baseline: 231a76281d0016ee47dd719d3ddc24d422b18c35
+Inputs: synchronized D/E/F; replacement G/H/I; commit diff; exact
+        GRM-FLUTTER-AND -> I_SCRIPTS -> GS-FLUTTER-AND cascade
+Writable surfaces: mutable J prefix; append-only Legacy_Progress; synchronized
+                   replacement D/E/F
+Prohibited actions: live Android procedure, authentication, enrollment, Sync,
+                    Retry, recovery, provider mutation, commit or push
+Authority: explicit human-directed reconciliation and downstream-code solution
+Next sequence: bounded Codex correction C10-GCM03-ST04-R1-C1
+```
+
+### Reconciliation
+
+The Flutter portion of ST04-R1 is accepted at its local evidence boundary:
+one shared Closure page, compact/wide tests, safe public provenance, a locally
+built debug APK with an explicit define, and no protocol/provider expansion.
+
+The Android procedure terminal is contradicted. Commit `231a762` placed
+`$Branch`, `$InspectedHead`, `$BuildProvenance`, containment and reporting
+producers in `GS-FLUTTER-WIN`, while `GS-FLUTTER-AND` owns the consumers.
+Because `I_SCRIPTS.ps1` extracts only the selected fence and executes it under
+strict mode, the Android procedure fails at its first undefined `$Branch`
+read; `$BuildProvenance` is independently undefined later.
+
+Parsing the fence was valid syntax evidence but not executable data-flow
+evidence. The correction therefore restores the Windows fence to `db17f47`,
+moves robust procedure-local producers into the Android fence before first
+use, and adds exact-fence, AST, producer-before-consumer and strict-mode-prefix
+validation.
+
+### Terminal
+
+```text
+C10_GCM03_ST04_R1_FLUTTER_SOURCE=ACCEPTED_LOCAL_VALIDATION
+C10_GCM03_ST04_R1_ANDROID_GRM=CONTRADICTED_VARIABLE_CASCADE
+C10_GCM03_ST04_R1_C1=ACTIVE
+ST04=BLOCKED_PENDING_CORRECTION_AND_RECONCILIATION
+LIVE_ANDROID_RETEST=NOT_AUTHORIZED_YET
+GCM03_ST05_AND_LATER=HELD
+ANDROID_ENROLLMENT=NOT_AUTHORIZED
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
 ```

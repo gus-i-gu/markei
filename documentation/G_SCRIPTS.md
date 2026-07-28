@@ -1,7 +1,7 @@
 # Markei General Scripts
 
 > Canonical executable catalogue for the human-supervised GRM interface.
-> Repository: `gus-i-gu/markei`; branch: `cycle10-intermid-grimoire`.
+> Repository: `gus-i-gu/markei`; branch: `grm-guarded-provisioning-20260727`.
 
 ## 0. Execution contract
 
@@ -2946,30 +2946,6 @@ $ClientRoot = Join-Path $RepositoryRoot "clients\markei_flutter"
 if (-not (Test-Path (Join-Path $ClientRoot "pubspec.yaml"))) {
     throw "Flutter client not found at $ClientRoot."
 }
-$ResolvedClientRoot = (Resolve-Path -LiteralPath $ClientRoot).Path
-if (-not $ResolvedClientRoot.StartsWith(
-    (Resolve-Path -LiteralPath $RepositoryRoot).Path,
-    [System.StringComparison]::OrdinalIgnoreCase
-)) {
-    throw "Resolved Flutter client is outside the repository root."
-}
-
-$Branch = (& git -C $RepositoryRoot branch --show-current).Trim()
-if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($Branch)) {
-    throw "Could not determine the active Git branch."
-}
-$InspectedHead = (& git -C $RepositoryRoot rev-parse HEAD).Trim()
-if ($LASTEXITCODE -ne 0 -or $InspectedHead -notmatch '^[a-f0-9]{40}$') {
-    throw "Could not determine the inspected Git HEAD."
-}
-$BuildProvenance = (& git -C $RepositoryRoot rev-parse --short=12 HEAD).Trim().ToLowerInvariant()
-if ($LASTEXITCODE -ne 0 -or $BuildProvenance -notmatch '^[a-f0-9]{7,12}$') {
-    throw "Could not derive reviewed short HEAD for build provenance."
-}
-Write-Host "Repository root: $RepositoryRoot"
-Write-Host "Flutter client root: $ResolvedClientRoot"
-Write-Host "Active branch: $Branch"
-Write-Host "Inspected HEAD: $InspectedHead"
 
 $NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
 if (-not (Test-Path -LiteralPath $NsPath -PathType Leaf)) {
@@ -3440,6 +3416,47 @@ if (-not (Test-Path (Join-Path $ClientRoot "pubspec.yaml"))) {
     throw "Flutter client not found at $ClientRoot."
 }
 
+$RepositoryDirectory = Get-Item -LiteralPath $RepositoryRoot
+$ClientDirectory = Get-Item -LiteralPath $ClientRoot
+$RepositoryRoot = $RepositoryDirectory.FullName
+$ResolvedClientRoot = $ClientDirectory.FullName
+$CandidateDirectory = $ClientDirectory
+$ClientInsideRepository = $false
+while ($null -ne $CandidateDirectory) {
+    if ([string]::Equals(
+        $CandidateDirectory.FullName.TrimEnd([char[]]@('\', '/')),
+        $RepositoryDirectory.FullName.TrimEnd([char[]]@('\', '/')),
+        [System.StringComparison]::OrdinalIgnoreCase
+    )) {
+        $ClientInsideRepository = $true
+        break
+    }
+    $CandidateDirectory = $CandidateDirectory.Parent
+}
+if (-not $ClientInsideRepository) {
+    throw "Resolved Flutter client is outside the repository root."
+}
+
+$Branch = (& git -C $RepositoryRoot branch --show-current).Trim()
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($Branch)) {
+    throw "Could not determine the active Git branch."
+}
+$InspectedHead = (
+    & git -C $RepositoryRoot rev-parse HEAD
+).Trim().ToLowerInvariant()
+if ($LASTEXITCODE -ne 0 -or $InspectedHead -notmatch '^[a-f0-9]{40}$') {
+    throw "Could not determine the inspected Git HEAD."
+}
+$BuildProvenance = $InspectedHead.Substring(0, 12)
+if ($BuildProvenance -notmatch '^[a-f0-9]{7,12}$') {
+    throw "Could not derive reviewed short HEAD for build provenance."
+}
+
+Write-Host "Repository root: $RepositoryRoot"
+Write-Host "Flutter client root: $ResolvedClientRoot"
+Write-Host "Active branch: $Branch"
+Write-Host "Inspected HEAD: $InspectedHead"
+
 $NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
 if (-not (Test-Path -LiteralPath $NsPath -PathType Leaf)) {
     throw "Coordinate file not found at $NsPath."
@@ -3474,7 +3491,10 @@ $RequiredPublishedAncestor = "ec96f93d71efd261adc2b3b75a17453130e437a0"
 if ($Branch -ne $ExpectedBranch) {
     throw "Active branch '$Branch' does not match reviewed coordinate '$ExpectedBranch'."
 }
-& git -C $RepositoryRoot merge-base --is-ancestor $RequiredPublishedAncestor HEAD
+& git -C $RepositoryRoot merge-base `
+    --is-ancestor `
+    $RequiredPublishedAncestor `
+    $InspectedHead
 if ($LASTEXITCODE -ne 0) {
     throw "Inspected HEAD does not contain the required published Android Closure baseline."
 }
@@ -3487,7 +3507,8 @@ $DirtyOverlap = @(
         "clients/markei_flutter/test" `
         "documentation/GRM.md" `
         "documentation/G_SCRIPTS.md" `
-        "documentation/I_SCRIPTS.ps1"
+        "documentation/I_SCRIPTS.ps1" `
+        "documentation/NS_COORDINATES.md"
 )
 if ($DirtyOverlap.Count -gt 0) {
     $DirtyOverlap | ForEach-Object { Write-Host $_ }
@@ -3637,7 +3658,7 @@ if ($FlutterDefines -notcontains $RequiredClosureSurfaceDefine) {
 $PreviousGradleAuth0Domain = $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN
 $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN = $Auth0Domain
 
-Push-Location $ClientRoot
+Push-Location $ResolvedClientRoot
 try {
     flutter clean
     if ($LASTEXITCODE -ne 0) { throw "flutter clean failed." }

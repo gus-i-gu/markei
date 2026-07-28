@@ -225,7 +225,7 @@ Before any provider mutation, independently confirm:
 Environment = development
 BranchAlias = markei-c10
 Database = markei_sync_dev
-RenderDeployBranch = cycle10-intermid-grimoire
+RenderDeployBranch = grm-guarded-provisioning-20260727
 ```
 
 The database name or hostname alone cannot prove the human-readable Neon

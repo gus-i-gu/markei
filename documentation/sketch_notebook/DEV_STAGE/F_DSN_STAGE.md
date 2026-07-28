@@ -1,177 +1,105 @@
-# F_DSN_STAGE — Shared Closure composition and artifact-lineage boundary
+# F_DSN_STAGE — Procedure-local provenance ownership correction
 
 > Sequence: FLX-ORD-01 — Ordinary Sequence
 > Role: Main-approved Design materialization stage
-> Unit: `C10-GCM03-ST04-R1`
+> Unit: `C10-GCM03-ST04-R1-C1`
 > Branch: `grm-guarded-provisioning-20260727`
-> Required remote ancestry:
-> `ec96f93d71efd261adc2b3b75a17453130e437a0`
-> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED WITHIN D**
-> Evidence boundary: shared Flutter presentation and local build provenance;
-> no protocol/provider architecture expansion
+> Required ancestry:
+> `231a76281d0016ee47dd719d3ddc24d422b18c35`
+> Authority: **ACTIVE WITHIN D**
+> Evidence boundary: GRM procedure-local responsibility; no Flutter,
+> persistence, protocol or provider architecture change
 
-## 1. Controlling design decision
+## 1. Controlling design correction
 
-Preserve one Closure surface:
+`I_SCRIPTS.ps1` creates an independent scriptblock from one selected
+`GS-*` PowerShell fence. Therefore:
 
 ```text
-MarkeiApp
-└─ NativeClosurePage
-   ├─ shared diagnostics projection
-   ├─ shared action boundaries
-   └─ responsive layout only
+GS-FLUTTER-WIN scope
+  cannot provide variables to
+GS-FLUTTER-AND scope
 ```
 
-Android and Windows may differ in authentication adapter configuration,
-package identity, callback mechanics, and responsive dimensions. They must not
-own duplicated Closure page implementations or divergent diagnostic meaning.
+Each procedure owns its own complete producer-consumer graph.
 
-The screenshot/source contradiction is first an artifact-lineage problem.
-An Android-only mirror would create semantic duplication and conceal the
-actual provenance failure.
-
-## 2. Responsibility map
+## 2. Correct responsibility map
 
 ```text
-Git/build procedure
-  derives reviewed public short source fingerprint
-  passes it as a compile-time define
+GRM-FLUTTER-AND
+  stable human invocation
 
-immutable client configuration
-  validates/sanitizes the public fingerprint
-  exposes a closed value or unavailable
-
-NativeClosurePage
-  renders the fingerprint
-  owns no Git, shell, package-manager, or provider behavior
+I_SCRIPTS.ps1
+  exact heading/fence extraction
+  strict-mode execution
 
 GS-FLUTTER-AND
-  selects target
-  validates source/build inputs
-  builds one APK
-  launches/installs the intended package
-  reports non-secret provenance evidence
+  repository/client containment
+  branch and full HEAD inspection
+  short provenance derivation
+  branch/ancestry/dirty guards
+  coordinate loading
+  Android target/build/install/launch
 
-authentication/enrollment/Sync components
-  remain unchanged
-```
-
-Do not persist build provenance in Drift. Do not send it to the hosted API.
-Do not use it as Account/Device identity or authorization input.
-
-## 3. Provenance model
-
-Use the smallest coherent representation:
-
-```text
 BuildProvenance
-  sourceFingerprint: short public closed value | unavailable
+  compile-time validation and safe display
+
+NativeClosurePage
+  visible public projection only
 ```
 
-Constraints:
+`GS-FLUTTER-WIN` must not own Android-unit lineage preparation. Its accidental
+block is removed, restoring its previous responsibility.
 
-- immutable;
-- deterministic from compile-time input;
-- 7–12 lowercase hexadecimal characters when available;
-- never accepts arbitrary long text for direct rendering;
-- no filesystem or process dependency inside Flutter;
-- no provider transport or persistence dependency;
-- shared across platforms.
+## 3. Preserved boundaries
 
-The display is diagnostic metadata, not a cryptographic attestation. The local
-APK SHA-256 and target package evidence remain separate operational evidence.
+This correction must not change:
 
-## 4. Responsive parity contract
+- one shared `NativeClosurePage`;
+- compile-time provenance format;
+- package/application identity;
+- authentication, enrollment or Sync components;
+- Drift/local persistence;
+- API or provider transport;
+- schema, migrations or RLS;
+- Windows Closure behavior;
+- application-data preservation.
 
-The Closure page may use scrolling, wrapping, stacking, or compact cards on
-Android. Responsive code must not:
+The correction is a procedure-local wiring repair, not a Flutter or protocol
+redesign.
 
-- substitute a legacy page;
-- remove Diagnostics or evidence sections;
-- merge Diagnostics, readiness, and Sync;
-- hide queue/sequence state needed by ST04;
-- alter runner composition;
-- introduce a platform-only action;
-- change action guards or protocol semantics.
+## 4. Validation architecture
 
-Add explicit compact-dimension coverage because existing Closure tests
-primarily use wide synthetic views. Test reachability, not simultaneous
-on-screen visibility.
-
-## 5. Diagnostic decision tree
+Validate the selected fence as the dispatcher sees it:
 
 ```text
-current source and compact tests already pass
-  → classify artifact/build/launch provenance
-  → harden provenance; do not fork page
-
-compact test reproduces missing/legacy surface
-  → repair shared responsive composition
-  → prove wide behavior remains intact
-
-different entrypoint/page/package is selected
-  → repair build/launch selection
-  → keep shared page unchanged
-
-live target unavailable
-  → report host-unvalidated
-  → materialize only repository-proven hardening
-  → require later human rerun
+Markdown heading
+→ exact PowerShell fence extraction
+→ AST syntax
+→ procedure-local producer/consumer assertions
+→ strict-mode non-mutating prefix
 ```
 
-## 6. Preserved boundaries
+This closes the validation gap that allowed a syntactically valid but
+non-executable fence to be reported as hardened.
 
-Do not modify:
+## 5. I report
 
-- `NativeAuthClosureRunner` action semantics;
-- Auth0 platform adapter behavior;
-- enrollment command or binding storage;
-- hosted connection policy;
-- ordinary Sync coordinator;
-- Retry or failed/notApplied recovery;
-- local queue/sequence allocation;
-- diagnostics persistence shape;
-- API routes, request identity, schemas, migrations, RLS, or provider state;
-- package ID `com.gusigu.markei` unless a proven contradiction makes the unit
-  impossible, in which case stop rather than broadening scope.
+Replace `I_DSN_CODEX.md` and include:
 
-No Android data clear, reinstall-with-uninstall, AVD reset, or new Device
-identity is part of the implementation.
+- corrected fence-scope responsibility;
+- restoration of Windows procedure ownership;
+- Android procedure-local provenance graph;
+- proof of no Flutter/protocol/persistence/provider expansion;
+- held live Android acceptance.
 
-## 7. Design validation
-
-Prove:
-
-1. one shared page/composition path;
-2. one shared build-provenance value path;
-3. compact and wide projections use the same action/evidence contract;
-4. platform differences remain in configuration/adapters, not Closure meaning;
-5. no provenance value reaches persistence or transport;
-6. no protocol or provider boundary changes;
-7. live Android acceptance remains a later human evidence gate.
-
-## 8. I report
-
-Replace `I_DSN_CODEX.md` with:
-
-- final shared composition map;
-- provenance responsibility map;
-- diagnosed PROV class;
-- source or build-script correction;
-- compact/wide validation;
-- proof of no protocol/persistence/provider expansion;
-- host-unvalidated Android limitations;
-- exact later human acceptance boundary.
-
-Terminal markers:
+Required terminals:
 
 ```text
-CLOSURE_IMPLEMENTATION=ONE_SHARED_PAGE_OR_BLOCKED
-ANDROID_ONLY_PAGE_FORK=ABSENT
-BUILD_PROVENANCE_BOUNDARY=LOCAL_PUBLIC_METADATA_OR_BLOCKED
-PROVENANCE_PERSISTENCE=ABSENT
-PROVENANCE_TRANSPORT=ABSENT
-COMPACT_WIDE_CONTRACT=SHARED_OR_BLOCKED
+DISPATCH_SCOPE=ONE_SELECTED_GS_FENCE
+WINDOWS_ANDROID_VARIABLE_LEAK=REMOVED_OR_BLOCKED
+ANDROID_PROVENANCE_OWNERSHIP=PROCEDURE_LOCAL_OR_BLOCKED
+FLUTTER_PROVENANCE_MODEL=UNCHANGED
 AUTH_ENROLL_SYNC_BOUNDARIES=UNCHANGED
 SCHEMA_API_PROVIDER_EXPANSION=ABSENT
 ANDROID_RUNTIME_ACCEPTANCE=HELD_FOR_HUMAN_RETEST
