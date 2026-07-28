@@ -501,14 +501,16 @@ finally {
 This procedure requests the exact destination branch in the terminal. It does
 not read `RepositoryBranch`, select a default branch, or hard-code any file
 scope. It identifies the current local branch, fetches `origin`, requires the
-destination to exist remotely, and establishes the destination at the exact
-remote tip before reconciling local work.
+destination to exist remotely, and reconciles both branch history and local
+work. Selecting the current branch is valid: it performs a same-branch
+state-of-union reconciliation instead of requiring a separate command.
 
 Committed source history is merged into the destination without rebasing,
-resetting, deleting, or changing the source branch reference. Staged,
-unstaged, and untracked updates are preserved in a named Git safety stash and
-reapplied after the history merge. The safety stash is retained even after a
-successful reapplication; remove it manually only after reviewing and
+resetting, or deleting. A distinct source branch reference remains unchanged;
+same-branch reconciliation advances the current branch through the merge.
+Staged, unstaged, and untracked updates are preserved in a named Git safety
+stash and reapplied after the history merge. The safety stash is retained even
+after a successful reapplication; remove it manually only after reviewing and
 committing the reconciled result.
 
 The procedure stops before handoff if a Git operation is already active, the
@@ -601,9 +603,7 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw "Destination branch '$TargetBranch' is not a valid branch name."
     }
-    if ($TargetBranch -ceq $SourceBranch) {
-        throw "Source and destination are identical. Use GRM-GIT-02 instead."
-    }
+    $SameBranchReconciliation = $TargetBranch -ceq $SourceBranch
 
     & git remote get-url origin *> $null
     if ($LASTEXITCODE -ne 0) {
@@ -667,7 +667,8 @@ try {
 
         $TargetPreflight = Get-GitDivergence `
             "origin/$TargetBranch...$TargetBranch"
-        if ($TargetPreflight.RightOnly -ne 0) {
+        if (-not $SameBranchReconciliation -and
+            $TargetPreflight.RightOnly -ne 0) {
             throw (
                 "Local destination '$TargetBranch' contains commits absent " +
                 "from origin. Reconcile that branch separately first."
@@ -694,7 +695,13 @@ try {
     Write-Host "  push                = never"
     Write-Host ""
 
-    $ExpectedConfirmation = "HANDOFF $SourceBranch -> $TargetBranch"
+    $OperationName = if ($SameBranchReconciliation) {
+        "RECONCILE"
+    }
+    else {
+        "HANDOFF"
+    }
+    $ExpectedConfirmation = "$OperationName $SourceBranch -> $TargetBranch"
     $Confirmation = (
         Read-Host "Type '$ExpectedConfirmation' or STOP"
     ).Trim()
@@ -753,7 +760,28 @@ try {
         }
     }
 
-    if ($LocalTargetExists) {
+    if ($SameBranchReconciliation) {
+        & git merge --no-edit "origin/$TargetBranch"
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host ""
+            Write-Host (
+                "Same-branch history reconciliation requires manual resolution."
+            ) -ForegroundColor Yellow
+            Write-Host "Run: git status"
+            Write-Host "Resolve each conflict explicitly, then commit the merge."
+            if (-not [string]::IsNullOrWhiteSpace($StashSha)) {
+                Write-Host "Safety stash retained: $StashSha"
+                Write-Host (
+                    "Apply it only after the merge is committed: " +
+                    "git stash apply --index $StashSha"
+                )
+            }
+            throw "Same-branch merge stopped on '$TargetBranch'."
+        }
+        $PulledTargetSha = $RemoteTargetSha
+        $HistoryReconciliation = "same-branch-state-of-union"
+    }
+    elseif ($LocalTargetExists) {
         & git switch $TargetBranch
         if ($LASTEXITCODE -ne 0) {
             throw "Could not switch to local destination '$TargetBranch'."
@@ -772,46 +800,65 @@ try {
         }
     }
 
-    $PulledTargetSha = (& git rev-parse HEAD).Trim()
-    if ($LASTEXITCODE -ne 0 -or
-        $PulledTargetSha -cne $RemoteTargetSha) {
-        throw (
-            "Destination checkout did not reach the exact fetched remote tip."
-        )
-    }
-    $PulledAlignment = Get-GitDivergence `
-        "origin/$TargetBranch...HEAD"
-    if ($PulledAlignment.LeftOnly -ne 0 -or
-        $PulledAlignment.RightOnly -ne 0) {
-        throw "Destination did not pass exact remote-alignment verification."
+    if (-not $SameBranchReconciliation) {
+        $PulledTargetSha = (& git rev-parse HEAD).Trim()
+        if ($LASTEXITCODE -ne 0 -or
+            $PulledTargetSha -cne $RemoteTargetSha) {
+            throw (
+                "Destination checkout did not reach the exact fetched remote tip."
+            )
+        }
+        $PulledAlignment = Get-GitDivergence `
+            "origin/$TargetBranch...HEAD"
+        if ($PulledAlignment.LeftOnly -ne 0 -or
+            $PulledAlignment.RightOnly -ne 0) {
+            throw "Destination did not pass exact remote-alignment verification."
+        }
+
+        & git merge-base --is-ancestor $SourceBranch HEAD
+        if ($LASTEXITCODE -eq 0) {
+            $HistoryReconciliation = "source-already-contained"
+        }
+        elseif ($LASTEXITCODE -eq 1) {
+            & git merge --no-edit $SourceBranch
+            if ($LASTEXITCODE -ne 0) {
+                Write-Host ""
+                Write-Host (
+                    "Committed-history reconciliation requires manual resolution."
+                ) -ForegroundColor Yellow
+                Write-Host "Run: git status"
+                Write-Host "Resolve each conflict explicitly, then commit the merge."
+                if (-not [string]::IsNullOrWhiteSpace($StashSha)) {
+                    Write-Host (
+                        "After the merge is committed, reapply local updates with:"
+                    )
+                    Write-Host "git stash apply --index $StashSha"
+                    Write-Host "Safety stash retained: $StashSha"
+                }
+                throw "Branch-history merge stopped on '$TargetBranch'."
+            }
+            $HistoryReconciliation = "source-merged"
+        }
+        else {
+            throw "Could not determine source/destination ancestry."
+        }
     }
 
-    & git merge-base --is-ancestor $SourceBranch HEAD
-    if ($LASTEXITCODE -eq 0) {
-        $HistoryReconciliation = "source-already-contained"
+    & git branch `
+        --set-upstream-to "origin/$TargetBranch" `
+        $TargetBranch
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not set the exact destination upstream."
     }
-    elseif ($LASTEXITCODE -eq 1) {
-        & git merge --no-edit $SourceBranch
-        if ($LASTEXITCODE -ne 0) {
-            Write-Host ""
-            Write-Host (
-                "Committed-history reconciliation requires manual resolution."
-            ) -ForegroundColor Yellow
-            Write-Host "Run: git status"
-            Write-Host "Resolve each conflict explicitly, then commit the merge."
-            if (-not [string]::IsNullOrWhiteSpace($StashSha)) {
-                Write-Host (
-                    "After the merge is committed, reapply local updates with:"
-                )
-                Write-Host "git stash apply --index $StashSha"
-                Write-Host "Safety stash retained: $StashSha"
-            }
-            throw "Branch-history merge stopped on '$TargetBranch'."
-        }
-        $HistoryReconciliation = "source-merged"
-    }
-    else {
-        throw "Could not determine source/destination ancestry."
+    $ConfiguredUpstream = (
+        & git rev-parse `
+            --abbrev-ref `
+            --symbolic-full-name `
+            "@{upstream}"
+    ).Trim()
+    if ($LASTEXITCODE -ne 0 -or
+        $ConfiguredUpstream -cne "origin/$TargetBranch") {
+        throw "Destination upstream verification failed."
     }
 
     if (-not [string]::IsNullOrWhiteSpace($StashSha)) {
@@ -832,12 +879,14 @@ try {
         $LocalUpdateReconciliation = "no local updates"
     }
 
-    $PreservedSourceSha = (
-        & git rev-parse "refs/heads/$SourceBranch"
-    ).Trim()
-    if ($LASTEXITCODE -ne 0 -or
-        $PreservedSourceSha -cne $SourceSha) {
-        throw "Source branch reference changed unexpectedly."
+    if (-not $SameBranchReconciliation) {
+        $PreservedSourceSha = (
+            & git rev-parse "refs/heads/$SourceBranch"
+        ).Trim()
+        if ($LASTEXITCODE -ne 0 -or
+            $PreservedSourceSha -cne $SourceSha) {
+            throw "Source branch reference changed unexpectedly."
+        }
     }
     $CurrentBranch = (& git branch --show-current).Trim()
     if ($LASTEXITCODE -ne 0 -or
@@ -868,8 +917,14 @@ try {
     [pscustomobject][ordered]@{
         SourceBranch = $SourceBranch
         SourceHead = $SourceSha
-        SourceReference = "unchanged"
+        SourceReference = if ($SameBranchReconciliation) {
+            "reconciled-current-branch"
+        }
+        else {
+            "unchanged"
+        }
         DestinationBranch = $TargetBranch
+        ConfiguredUpstream = $ConfiguredUpstream
         PulledRemoteHead = $RemoteTargetSha
         FinalHead = $FinalHead
         RemoteBehind = $FinalDivergence.LeftOnly
@@ -882,7 +937,7 @@ try {
     }
 
     Write-Host ""
-    Write-Host "Branch handoff completed locally." -ForegroundColor Green
+    Write-Host "Branch reconciliation completed locally." -ForegroundColor Green
     Write-Host "Review with: git status"
     Write-Host "Review history with: git log --graph --oneline --decorate -12"
     if (-not [string]::IsNullOrWhiteSpace($StashSha)) {
@@ -3026,9 +3081,21 @@ $CppRestDir = Join-Path `
     $VcpkgRoot `
     "installed\x64-windows\share\cpprestsdk"
 
-if (-not (Test-Path -LiteralPath $VcpkgExe -PathType Leaf) -or
-    -not (Test-Path -LiteralPath $ToolchainPath -PathType Leaf)) {
-    throw "vcpkg is incomplete at C:\vcpkg. Run GRM-FLUTTER-WIN first."
+if (-not (Test-Path -LiteralPath $VcpkgExe -PathType Leaf)) {
+    if (Test-Path -LiteralPath $VcpkgRoot) {
+        throw "C:\vcpkg exists but is incomplete. Inspect it before continuing."
+    }
+    & git clone https://github.com/microsoft/vcpkg.git $VcpkgRoot
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not download vcpkg."
+    }
+    & (Join-Path $VcpkgRoot "bootstrap-vcpkg.bat") -disableMetrics
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not bootstrap vcpkg."
+    }
+}
+if (-not (Test-Path -LiteralPath $ToolchainPath -PathType Leaf)) {
+    throw "vcpkg toolchain file is missing at $ToolchainPath."
 }
 
 $CppRestConfig = @(
@@ -3065,14 +3132,17 @@ $env:cpprestsdk_DIR = $CppRestDir
 $MarkeiReleaseExecutable = Join-Path `
     $ClientRoot `
     "build\windows\x64\runner\Release\markei.exe"
-if (-not (Test-Path -LiteralPath $MarkeiReleaseExecutable -PathType Leaf)) {
-    throw "Preserved Release build not found. Run GRM-FLUTTER-WIN first."
+$ReleaseExistedBefore = Test-Path `
+    -LiteralPath $MarkeiReleaseExecutable `
+    -PathType Leaf
+$ReleaseHashBefore = $null
+if ($ReleaseExistedBefore) {
+    $ReleaseHashBefore = (
+        Get-FileHash `
+            -LiteralPath $MarkeiReleaseExecutable `
+            -Algorithm SHA256
+    ).Hash
 }
-$ReleaseHashBefore = (
-    Get-FileHash `
-        -LiteralPath $MarkeiReleaseExecutable `
-        -Algorithm SHA256
-).Hash
 
 $RunningMarkei = @(Get-Process -Name "markei" -ErrorAction SilentlyContinue)
 if ($RunningMarkei.Count -gt 0) {
@@ -3122,6 +3192,31 @@ try {
     flutter pub get
     if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
 
+    if (-not $ReleaseExistedBefore) {
+        Write-Host (
+            "Release artifact absent; building the callback-restoration " +
+            "baseline automatically."
+        )
+        flutter build windows `
+            --release `
+            --dart-define-from-file=".markei_debug_defines.json"
+        if ($LASTEXITCODE -ne 0) {
+            throw "Windows Closure Release prerequisite build failed."
+        }
+        if (-not (
+                Test-Path `
+                    -LiteralPath $MarkeiReleaseExecutable `
+                    -PathType Leaf
+            )) {
+            throw "Release prerequisite executable was not created."
+        }
+        $ReleaseHashBefore = (
+            Get-FileHash `
+                -LiteralPath $MarkeiReleaseExecutable `
+                -Algorithm SHA256
+        ).Hash
+    }
+
     flutter build windows `
         --debug `
         --dart-define-from-file=".markei_debug_defines.json"
@@ -3170,6 +3265,7 @@ finally {
     LocalDefinesIgnored = $true
     DebugBuild = $true
     ReleaseArtifactPreserved = $true
+    ReleaseArtifactCreated = -not $ReleaseExistedBefore
     CallbackRegistered = $true
     ReleaseCallbackRestore = "configured-post-debug"
 }
@@ -3183,12 +3279,11 @@ Write-Host "4. Set the required breakpoint and press F5."
 Write-Host "5. Stop normally; VS Code restores the Release callback."
 ```
 
-`GS-FLUTTER-DEBUG` does not call `flutter clean`, remove the shared CMake tree,
-or rebuild Release. Flutter's multi-configuration Windows tree retains
-`runner\Release\markei.exe` while producing `runner\Debug\markei.exe`; the
-procedure proves the Release executable's SHA-256 is unchanged. If the shared
-CMake cache is stale or corrupt, the procedure stops and requires
-`GRM-FLUTTER-WIN` to perform the existing canonical clean Release recovery.
+`GS-FLUTTER-DEBUG` does not call `flutter clean` or remove the shared CMake
+tree. When Release is absent it creates the Release callback-restoration
+baseline automatically, then builds Debug beside it. When Release already
+exists it is not rebuilt. In both cases the procedure proves the Release
+executable's SHA-256 is unchanged by the Debug build.
 
 The only local configuration artifact it writes is
 `clients/markei_flutter/.markei_debug_defines.json`, which is excluded by
