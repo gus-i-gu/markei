@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markei/app/build_provenance.dart';
 import 'package:markei/app/native_auth_closure_runner.dart';
 import 'package:markei/app/pages/native_closure_page.dart';
 import 'package:markei/application/closure_diagnostics.dart';
@@ -30,6 +31,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('signed-out'), findsOneWidget);
+    expect(find.text('Build provenance unavailable'), findsOneWidget);
     expect(find.text('device-enrolled'), findsOneWidget);
     expect(find.text('No locally recorded attempt history'), findsOneWidget);
     expect(find.text('No pending, failed or unknown events'), findsOneWidget);
@@ -89,6 +91,105 @@ void main() {
     );
     expect(find.text('Check hosted connection'), findsOneWidget);
     expect(find.text('Sync'), findsOneWidget);
+  });
+
+  testWidgets(
+    'compact Closure exposes consolidated diagnostics and provenance',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final query = _FakeDiagnosticsQuery(populated: true);
+      final runner = _runner(query: query);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: NativeClosurePage(
+            runner: runner,
+            buildProvenance: BuildProvenance.fromRaw('db17f47'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('nativeClosure.page')), findsOneWidget);
+      expect(
+        find.byKey(const Key('nativeClosure.buildProvenance')),
+        findsOneWidget,
+      );
+      expect(find.text('Build provenance #db17f47'), findsOneWidget);
+
+      for (final text in [
+        'Sync overview',
+        'Local queue',
+        'Next Device sequence',
+        'Recent Closure attempts',
+        'Grouped diagnostic lifecycle',
+        'Devices',
+        'Actionable events',
+      ]) {
+        await tester.scrollUntilVisible(
+          find.text(text),
+          500,
+          scrollable: find.byType(Scrollable).first,
+        );
+        expect(find.text(text), findsOneWidget);
+      }
+
+      await tester.scrollUntilVisible(
+        find.text('Closure actions'),
+        500,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('Closure actions'), findsOneWidget);
+      expect(
+        find.byKey(const Key('nativeClosure.Diagnostics')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('nativeClosure.Check hosted connection')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('nativeClosure.Sync')), findsOneWidget);
+      expect(find.byKey(const Key('nativeClosure.Status')), findsNothing);
+      expect(find.byKey(const Key('nativeClosure.Query')), findsNothing);
+      expect(
+        find.byKey(const Key('nativeClosure.Refresh diagnostics')),
+        findsNothing,
+      );
+    },
+  );
+
+  testWidgets('build provenance rejects unsafe visible metadata', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final query = _FakeDiagnosticsQuery();
+    final runner = _runner(query: query);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: NativeClosurePage(
+          runner: runner,
+          buildProvenance: BuildProvenance.fromRaw(
+            'DB17F47-with-path-H:/repo-and-token',
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Build provenance unavailable'), findsOneWidget);
+    expect(find.textContaining('DB17F47'), findsNothing);
+    expect(find.textContaining('token'), findsNothing);
+    expect(find.textContaining('H:/repo'), findsNothing);
+    expect(query.beginAttempts, 0);
+    expect(query.beginDiagnosticAttempts, 0);
+    expect(query.completedResults, isEmpty);
   });
 
   testWidgets('Diagnostics is local only and does not invoke Sync', (

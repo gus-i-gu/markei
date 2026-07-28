@@ -1,49 +1,60 @@
-# H_DDC_CODEX - DIAG-01 Diagnostic Meaning Evidence
+# H_DDC_CODEX - C10-GCM03-ST04-R1 didactic report
 
-Sequence: FLX-ORD-01 - Ordinary Sequence
+Sequence: FLX-ORD-01
 Role: Codex didactic evidence
-Unit: C10-GCM02-S12-DIAG-01
-Branch: `cycle10-intermid-grimoire`
-Authority: D/E/F synchronized DIAG-01 staging
-Evidence boundary: repository inspection and local tests only
+Round or unit: C10-GCM03-ST04-R1
+Branch: grm-guarded-provisioning-20260727
+Baseline / inspected HEAD: db17f47f3bb7a032afbd8892754dff971ae20b56
+Authority: E_DDC_STAGE.md within synchronized D/E/F
+Evidence boundary: source, tests, build-provenance projection, and local build only; no Android runtime acceptance or provider claim
 
-## Implemented Meanings
+## Corrected Meaning
 
-- repository-proven: `Diagnostics` now names the read-only local diagnostic action; it is distinct from hosted readiness, ordinary Sync, Retry, inspection, recovery, enrollment, logout, and history clearing.
-- repository-proven: authentication, enrollment/binding, and local queue/recovery guidance are preserved as subchecks rather than hidden behind the consolidated button.
-- repository-proven: the recent lifecycle list now teaches the operator that raw lifecycle declarations are ordered evidence, not an error count.
-- repository-proven: the newest operation is labeled separately from historical operations by parent operation fingerprint.
-- repository-proven: compact phase summaries show paired result-bearing rows by default and keep raw declarations available in an expandable technical view.
-- repository-proven: pre-result unknown is not described as failure when later evidence in the same operation proves the phase or operation reached an accepted/completed/duplicate-equivalent result.
-- repository-proven: genuine failure remains visible through failed/error/blocked terminal status text.
-- repository-proven: Next Device sequence wording is clarified as an event allocator, not an action counter.
+The interruption means:
 
-## UI Projection
+- successful build command is not installed-artifact proof;
+- visible Closure destination is not proof of current Closure revision;
+- authenticated label is not ST04 or ST05 acceptance;
+- source/widget parity is not Android runtime acceptance;
+- legacy Android surface does not justify an Android-only UI fork.
 
-- test-validated: `native_closure_diagnostics_test.dart` proves the visible top-level control is `Diagnostics` with key `nativeClosure.Diagnostics`, while old top-level `Status`, `Query`, and `Refresh diagnostics` keys are absent.
-- test-validated: the same focused suite proves Diagnostics is local-only in the fake runner: no Sync attempt, no diagnostic attempt, and no completed remote result are recorded.
-- test-validated: operation grouping exposes one newest group and one historical group for distinct operation fingerprints.
-- test-validated: compact projection prefers the later upload-provider result over its earlier pre-result unknown row.
-- test-validated: raw expansion still exposes the earlier pre-result row and its sanitized correlation fingerprint.
-- test-validated: a failed terminal row remains visibly classified as failed in the operation group.
+The historical source at `301ea19` contained the screenshot vocabulary: `Status`, `Query`, and `Refresh diagnostics`. Commit `ad1f228` consolidated that surface into `Diagnostics`. Current source and tests now preserve the consolidated vocabulary.
 
-## Redaction And Evidence Preservation
+## Operator Vocabulary
 
-- repository-proven: expandable raw details use existing sanitized closed values, fingerprints, counts, phases, result/native codes, and evidence-axis fields.
-- repository-proven: the implementation did not add raw tokens, authorization headers, URLs, payloads, full identifiers, SQL, stack traces, or complete hashes to the UI.
-- inferred: grouping by parent operation fingerprint preserves historical evidence while reducing the false implication that each lifecycle declaration is a standalone protocol error.
-- unavailable: live human comprehension and provider/runtime assay evidence were not produced in this source-only round.
+- `Diagnostics`: local read-only evidence projection.
+- `Check hosted connection`: separate hosted readiness request.
+- `Sync`: separate stateful synchronization protocol.
+- `Build provenance`: public short source fingerprint compiled into the visible client.
+- generated APK hash: local output-file identity only.
+- installed package evidence: target-side package/path/version evidence.
+- runtime acceptance: later human observation of the expected installed surface.
 
-## Terminal Markers
+These evidence classes are not interchangeable.
+
+## Test Evidence
+
+- Compact Android-dimension widget test proves `nativeClosure.Diagnostics`, `nativeClosure.Check hosted connection`, `nativeClosure.Sync`, `nativeClosure.buildProvenance`, queue/sequence, recent attempts, grouped lifecycle, Devices, and actionable events are reachable through scrolling.
+- Legacy `nativeClosure.Status`, `nativeClosure.Query`, and `nativeClosure.Refresh diagnostics` remain absent.
+- Provenance accepts `db17f47`, rejects uppercase/overlong/path-like/token-like input, and falls back to `Build provenance unavailable`.
+- Provenance rendering caused no authentication, readiness, enrollment, Sync, Retry, recovery, or queue mutation in the test fixture.
+
+## Remaining Human Acceptance
+
+Codex did not claim Android runtime acceptance. The next evidence must be human-operated: run the hardened Android procedure, inspect the visible fingerprint and consolidated Diagnostics surface on the installed target, and return that evidence for Main reconciliation.
+
+## Terminals
 
 ```text
-DIAGNOSTIC_DECLARATIONS_NOT_ERROR_COUNT=VISIBLE
-OPERATION_PHASE_HIERARCHY=VISIBLE
-PRE_RESULT_UNKNOWN_NOT_FAILURE=VISIBLE
-HISTORICAL_OPERATION_DISTINCTION=VISIBLE
-NEXT_SEQUENCE_MEANING=VISIBLE
-READINESS_SYNC_DIAGNOSTICS_MEANINGS=SEPARATE
-RAW_EVIDENCE_RETAINED=PASS
-GATE_12_7=PASSED_PRIOR_SCOPE
-GATE_12_8=NEXT_READ_ONLY
+BUILD_SUCCESS_NOT_INSTALL_PROOF=VISIBLE
+SOURCE_TEST_NOT_RUNTIME_ACCEPTANCE=VISIBLE
+AUTH_LABEL_NOT_ST04_ACCEPTANCE=VISIBLE
+SHARED_CLOSURE_MEANING=PASS
+BUILD_PROVENANCE_MEANING=VISIBLE
+COMPACT_EVIDENCE_REACHABILITY=TEST_PASS
+LEGACY_CONTROLS=ABSENT
+ANDROID_RUNTIME_ACCEPTANCE=HELD_FOR_HUMAN_RETEST
+GCM03_ST05=HELD
 ```
+
+No permanent didactic memory was edited.

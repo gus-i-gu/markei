@@ -40,6 +40,11 @@ void main() {
 
     expect(find.byKey(const Key('nativeClosure.page')), findsOneWidget);
     expect(find.text('closure-disabled'), findsOneWidget);
+    expect(
+      find.byKey(const Key('nativeClosure.buildProvenance')),
+      findsOneWidget,
+    );
+    expect(find.text('Build provenance unavailable'), findsOneWidget);
     expect(find.byKey(const Key('nativeClosure.Diagnostics')), findsOneWidget);
     expect(find.byKey(const Key('nativeClosure.Status')), findsNothing);
     expect(find.byKey(const Key('nativeClosure.Query')), findsNothing);

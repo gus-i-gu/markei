@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../application/closure_diagnostics.dart';
 import '../../domain/sync/sync_diagnostic_registry.g.dart';
+import '../build_provenance.dart';
 import '../native_auth_closure_runner.dart';
 
 class NativeClosurePage extends StatefulWidget {
-  const NativeClosurePage({required this.runner, super.key});
+  NativeClosurePage({
+    required this.runner,
+    BuildProvenance? buildProvenance,
+    super.key,
+  }) : buildProvenance = buildProvenance ?? BuildProvenance.current;
 
   final NativeAuthClosureRunner runner;
+  final BuildProvenance buildProvenance;
 
   @override
   State<NativeClosurePage> createState() => _NativeClosurePageState();
@@ -41,6 +47,11 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
       padding: const EdgeInsets.all(16),
       children: [
         Text('Native closure', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 12),
+        Text(
+          widget.buildProvenance.displayLabel,
+          key: const Key('nativeClosure.buildProvenance'),
+        ),
         const SizedBox(height: 12),
         Text(
           _running ? 'action-running' : _state,
@@ -685,7 +696,7 @@ final class _DiagnosticTimeline extends StatelessWidget {
   Widget build(BuildContext context) {
     final groups = _operationGroups(snapshot.recentDiagnostics);
     return _DiagnosticsCard(
-      title: 'Recent operation summaries',
+      title: 'Grouped diagnostic lifecycle',
       child: groups.isEmpty
           ? const Text(
               'No locally recorded diagnostic events',

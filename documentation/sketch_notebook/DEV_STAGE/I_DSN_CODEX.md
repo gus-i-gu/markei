@@ -1,57 +1,86 @@
-# I_DSN_CODEX - DIAG-01 Design Evidence
+# I_DSN_CODEX - C10-GCM03-ST04-R1 design report
 
-Sequence: FLX-ORD-01 - Ordinary Sequence
+Sequence: FLX-ORD-01
 Role: Codex design evidence
-Unit: C10-GCM02-S12-DIAG-01
-Branch: `cycle10-intermid-grimoire`
-Authority: D/E/F synchronized DIAG-01 staging
-Evidence boundary: repository inspection and local validation only
+Round or unit: C10-GCM03-ST04-R1
+Branch: grm-guarded-provisioning-20260727
+Baseline / inspected HEAD: db17f47f3bb7a032afbd8892754dff971ae20b56
+Authority: F_DSN_STAGE.md within synchronized D/E/F
+Evidence boundary: shared Flutter presentation, local public build provenance, GRM build/install procedure hardening; no protocol/provider architecture expansion
 
-## Boundary Findings
-
-- repository-proven: the Closure Diagnostics command boundary is read-only and local. It reads runner status plus the diagnostics repository snapshot and performs no provider request or queue mutation.
-- repository-proven: hosted readiness and ordinary Sync remain independent top-level actions.
-- repository-proven: unknown Retry, failed/notApplied inspection, explicit failed/notApplied recovery, and history clear remain independent action boundaries.
-- repository-proven: ERR-04 ordinary Sync and controlled recovery separation was not modified.
-- repository-proven: no API, database schema, migration, registry, generator, or provider-facing implementation changed.
-
-## Operation Group Model
-
-- repository-proven: lifecycle declarations are grouped by parent operation fingerprint when available, with attempt fingerprint fallback and an explicit unknown-operation fallback.
-- repository-proven: groups are projected in repository snapshot order, preserving the newest-first ordering supplied by local diagnostics.
-- repository-proven: compact phase summaries are deterministic per group and keyed by phase plus ordinal.
-- repository-proven: result-bearing declarations replace earlier pre-result declarations for the same phase in compact view, while every raw declaration remains available below the group.
-- repository-proven: terminal declarations are retained in compact summaries and determine the operation status before phase-local pre-result rows.
-- repository-proven: failed/error/blocked outcomes remain status-bearing and are not hidden by grouping.
-
-## State And Projection Invariants
-
-- repository-proven: Diagnostics does not invoke Sync, Retry, recovery, enrollment, logout, history clear, or hosted connection checks.
-- repository-proven: queue-state and Next Device sequence values are displayed from the local snapshot and are not changed by the Diagnostics UI action.
-- repository-proven: Last successful Sync predicate remains in existing diagnostics source; DIAG-01 did not alter it or allow hosted readiness to advance it.
-- repository-proven: the ordinary Sync 35000 ms client deadline remains unchanged.
-- test-validated: focused widget tests verify the consolidated control, local-only diagnostics behavior, operation grouping, pre-result/result pairing, raw preservation, and genuine failure visibility.
-- test-validated: full Flutter tests and Flutter analyze passed after the projection change.
-
-## Remaining Risks
-
-- unavailable: live Windows terminal output and hosted/provider behavior were not validated.
-- unavailable: second-device convergence and provider row contents remain outside this Flutter-only projection correction.
-- inferred: if a future diagnostic source produces lifecycle rows without stable operation or attempt fingerprints, they will be grouped under `unknown-operation`; that fallback is explicit but less informative.
-
-## Terminal Markers
+## Shared Composition Map
 
 ```text
-DIAGNOSTICS_COMMAND_BOUNDARY=READ_ONLY
-DIAGNOSTICS_SUBCHECKS=SEPARATELY_PROJECTED
-OPERATION_GROUP_MODEL=DETERMINISTIC
-PHASE_PAIRING=TRUTHFUL
-TRUE_FAILURE_RETENTION=PASS
-RAW_EVENT_PRESERVATION=PASS
-HOSTED_READINESS_BOUNDARY=SEPARATE
-ORDINARY_SYNC_BOUNDARY=SEPARATE
-NO_SCHEMA_API_PROVIDER_EXPANSION=PASS
-GATE_12_7=PASSED_PRIOR_SCOPE
-GATE_12_8=NEXT_READ_ONLY
-GCM02=OPEN
+MarkeiApp
+  nativeClosureSurfaceEnabled
+  -> NativeClosurePage
+       -> BuildProvenance.current
+       -> NativeAuthClosureRunner
+       -> shared diagnostics/action/evidence cards
 ```
+
+Current source keeps one Closure page. Android differences remain in package identity, native Auth0 configuration, callback mechanics, and target installation mechanics, not in Closure diagnostic meaning.
+
+## Provenance Responsibility Boundary
+
+```text
+GS-FLUTTER-AND
+  derives short HEAD
+  passes MARKEI_BUILD_PROVENANCE
+
+BuildProvenance
+  validates 7-12 lowercase hex
+  otherwise returns unavailable
+
+NativeClosurePage
+  renders nativeClosure.buildProvenance
+```
+
+The provenance value is not persisted, not transported, not sent to hosted APIs, and not used as Account, Device, authorization, or protocol identity.
+
+## Diagnosed PROV Class
+
+```text
+ANDROID_PARITY_ROOT_CLASS=PROV_05
+```
+
+Design reason: repository inspection and tests prove the shared page; Git history proves the screenshot labels belong to an older page; this host cannot prove the live installed Android package identity or rendered runtime surface. Therefore the correction is artifact-lineage evidence hardening, not an Android page fork.
+
+## Boundary Preservation
+
+No changes were made to:
+
+- `NativeAuthClosureRunner` action semantics;
+- Auth0 adapter behavior;
+- enrollment command or binding storage;
+- hosted connection policy;
+- ordinary Sync coordinator;
+- Retry or failed/notApplied recovery;
+- local queue/sequence allocation;
+- diagnostics persistence shape;
+- API routes, schemas, migrations, RLS, provider state, or deployment.
+
+## Validation
+
+- Compact and wide/shared behavior validated by focused and full Flutter tests.
+- Android debug APK build passed locally with public provenance define.
+- PowerShell `GS-FLUTTER-AND` body parses.
+- Changed-content sensitive scan passed.
+- Live Android acceptance remains later human evidence.
+
+## Terminals
+
+```text
+CLOSURE_IMPLEMENTATION=ONE_SHARED_PAGE
+ANDROID_ONLY_PAGE_FORK=ABSENT
+BUILD_PROVENANCE_BOUNDARY=LOCAL_PUBLIC_METADATA
+PROVENANCE_PERSISTENCE=ABSENT
+PROVENANCE_TRANSPORT=ABSENT
+COMPACT_WIDE_CONTRACT=SHARED
+AUTH_ENROLL_SYNC_BOUNDARIES=UNCHANGED
+SCHEMA_API_PROVIDER_EXPANSION=ABSENT
+ANDROID_RUNTIME_ACCEPTANCE=HELD_FOR_HUMAN_RETEST
+GCM03_ST05_AND_LATER=HELD
+```
+
+No permanent design memory was edited.

@@ -2946,6 +2946,30 @@ $ClientRoot = Join-Path $RepositoryRoot "clients\markei_flutter"
 if (-not (Test-Path (Join-Path $ClientRoot "pubspec.yaml"))) {
     throw "Flutter client not found at $ClientRoot."
 }
+$ResolvedClientRoot = (Resolve-Path -LiteralPath $ClientRoot).Path
+if (-not $ResolvedClientRoot.StartsWith(
+    (Resolve-Path -LiteralPath $RepositoryRoot).Path,
+    [System.StringComparison]::OrdinalIgnoreCase
+)) {
+    throw "Resolved Flutter client is outside the repository root."
+}
+
+$Branch = (& git -C $RepositoryRoot branch --show-current).Trim()
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($Branch)) {
+    throw "Could not determine the active Git branch."
+}
+$InspectedHead = (& git -C $RepositoryRoot rev-parse HEAD).Trim()
+if ($LASTEXITCODE -ne 0 -or $InspectedHead -notmatch '^[a-f0-9]{40}$') {
+    throw "Could not determine the inspected Git HEAD."
+}
+$BuildProvenance = (& git -C $RepositoryRoot rev-parse --short=12 HEAD).Trim().ToLowerInvariant()
+if ($LASTEXITCODE -ne 0 -or $BuildProvenance -notmatch '^[a-f0-9]{7,12}$') {
+    throw "Could not derive reviewed short HEAD for build provenance."
+}
+Write-Host "Repository root: $RepositoryRoot"
+Write-Host "Flutter client root: $ResolvedClientRoot"
+Write-Host "Active branch: $Branch"
+Write-Host "Inspected HEAD: $InspectedHead"
 
 $NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
 if (-not (Test-Path -LiteralPath $NsPath -PathType Leaf)) {
@@ -3444,6 +3468,31 @@ $Auth0Audience = Get-NsCoordinate "Auth0Audience"
 $AndroidClientId = Get-NsCoordinate "Auth0AndroidClientId"
 $HostedOrigin = Get-NsCoordinate "RenderPublicOrigin"
 $AndroidAvdName = Get-NsCoordinate "AndroidAvdName"
+$ExpectedBranch = Get-NsCoordinate "RepositoryBranch"
+$RequiredPublishedAncestor = "ec96f93d71efd261adc2b3b75a17453130e437a0"
+
+if ($Branch -ne $ExpectedBranch) {
+    throw "Active branch '$Branch' does not match reviewed coordinate '$ExpectedBranch'."
+}
+& git -C $RepositoryRoot merge-base --is-ancestor $RequiredPublishedAncestor HEAD
+if ($LASTEXITCODE -ne 0) {
+    throw "Inspected HEAD does not contain the required published Android Closure baseline."
+}
+
+$DirtyOverlap = @(
+    & git -C $RepositoryRoot status --porcelain -- `
+        "clients/markei_flutter/lib" `
+        "clients/markei_flutter/android" `
+        "clients/markei_flutter/pubspec.yaml" `
+        "clients/markei_flutter/test" `
+        "documentation/GRM.md" `
+        "documentation/G_SCRIPTS.md" `
+        "documentation/I_SCRIPTS.ps1"
+)
+if ($DirtyOverlap.Count -gt 0) {
+    $DirtyOverlap | ForEach-Object { Write-Host $_ }
+    throw "Dirty source overlap affects Flutter or Android build-provenance inputs."
+}
 
 flutter doctor -v
 
@@ -3559,10 +3608,23 @@ $SelectedAndroidDevice |
     Select-Object name, id, targetPlatform, sdk |
     Format-List
 $SelectedAndroidDeviceId = $SelectedAndroidDevice.id
+$AndroidSdkRoot = if (
+    -not [string]::IsNullOrWhiteSpace($env:ANDROID_SDK_ROOT)
+) {
+    $env:ANDROID_SDK_ROOT
+}
+else {
+    Join-Path $env:LOCALAPPDATA "Android\Sdk"
+}
+$AdbExe = Join-Path $AndroidSdkRoot "platform-tools\adb.exe"
+if (-not (Test-Path -LiteralPath $AdbExe -PathType Leaf)) {
+    throw "Android Debug Bridge was not found at $AdbExe."
+}
 
 $RequiredClosureSurfaceDefine = "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
 $FlutterDefines = @(
     $RequiredClosureSurfaceDefine
+    "--dart-define=MARKEI_BUILD_PROVENANCE=$BuildProvenance"
     "--dart-define=MARKEI_AUTH0_DOMAIN=$Auth0Domain"
     "--dart-define=MARKEI_AUTH0_AUDIENCE=$Auth0Audience"
     "--dart-define=MARKEI_AUTH0_ANDROID_CLIENT_ID=$AndroidClientId"
@@ -3599,16 +3661,41 @@ try {
     if (-not (Test-Path $AndroidArtifact)) {
         throw "app-debug.apk was not found at $AndroidArtifact."
     }
+    $AndroidArtifactItem = Get-Item -LiteralPath $AndroidArtifact
+    $AndroidArtifactHash = Get-FileHash -LiteralPath $AndroidArtifact `
+        -Algorithm SHA256
 
     Write-Host "Android debug artifact created at:"
     Write-Host $AndroidArtifact
-    Write-Host "Launching Markei on the selected Android device."
-    Write-Host "Required UI destination: Closure."
+    Write-Host "Android debug artifact bytes: $($AndroidArtifactItem.Length)"
+    Write-Host "Android debug artifact SHA-256: $($AndroidArtifactHash.Hash)"
+    Write-Host "Build provenance visible in Closure: #$BuildProvenance"
+    Write-Host "Local APK hash alone does not prove installed-package identity."
+    Write-Host "Installing package com.gusigu.markei with data preservation."
 
-    flutter run --debug -d $SelectedAndroidDeviceId @FlutterDefines
+    & $AdbExe -s $SelectedAndroidDeviceId install -r $AndroidArtifact
     if ($LASTEXITCODE -ne 0) {
-        throw "Flutter Android run failed."
+        throw "ADB install failed for com.gusigu.markei."
     }
+
+    Write-Host "Installed package evidence for selected target:"
+    & $AdbExe -s $SelectedAndroidDeviceId shell pm path com.gusigu.markei
+    & $AdbExe -s $SelectedAndroidDeviceId shell dumpsys package com.gusigu.markei |
+        Select-String -Pattern "versionName|versionCode|firstInstallTime|lastUpdateTime" |
+        ForEach-Object { $_.Line.Trim() }
+
+    Write-Host "Launching Markei package com.gusigu.markei on the selected Android device."
+    & $AdbExe -s $SelectedAndroidDeviceId shell monkey `
+        -p com.gusigu.markei `
+        -c android.intent.category.LAUNCHER 1 | Out-Host
+    if ($LASTEXITCODE -ne 0) {
+        throw "ADB launch failed for com.gusigu.markei."
+    }
+    Write-Host "Required human verification:"
+    Write-Host "  Closure destination is visible."
+    Write-Host "  Build provenance shows #$BuildProvenance."
+    Write-Host "  Consolidated Diagnostics surface is visible."
+    Write-Host "Do not Enroll, Sync, Retry, recover, clear storage, or sign out."
 }
 finally {
     Pop-Location
@@ -3623,17 +3710,24 @@ finally {
 }
 ```
 
-This is the full Android recovery path. It loads and verifies the public
-coordinate surface, reuses exactly one selected supported Android target or
-starts the configured AVD with bounded availability and boot waits, forwards
-the Auth0 domain to the Android manifest without writing it elsewhere, cleans,
-validates, builds the debug APK, verifies the artifact, and launches the app
-with the mandatory Closure Dart definition. If the `Closure` destination is
-absent after launch, this procedure has not passed and no Gate action may
-continue. The Auth0 Android application must already allow the callback/logout
-URI derived from package
-`com.gusigu.markei`; this procedure does not modify Auth0. Launching the client
-does not authorize Enroll, Query, Retry, or Sync.
+This is the full Android recovery path. It resolves and reports the repository
+root, client root, branch and inspected HEAD; rejects relevant dirty source
+overlap; loads and verifies the public coordinate surface without printing
+coordinate values; reuses exactly one selected supported Android target or
+starts the configured AVD with bounded availability and boot waits; forwards
+the Auth0 domain to the Android manifest without writing it elsewhere; cleans,
+validates, builds the debug APK, reports the artifact path, byte length and
+SHA-256, installs the package `com.gusigu.markei` with replacement while
+preserving application data, prints non-secret target/package evidence, and
+launches the app with the mandatory Closure and build-provenance Dart
+definitions. The local APK hash identifies the generated file only; by itself
+it does not prove installed-package identity. If the `Closure` destination,
+visible build provenance, or consolidated `Diagnostics` surface is absent after
+launch, this procedure has not passed and no Gate action may continue. The
+Auth0 Android application must already allow the callback/logout URI derived
+from package `com.gusigu.markei`; this procedure does not modify Auth0.
+Launching the client does not authorize Enroll, Query, Retry, recovery, storage
+clear, sign-out, or Sync.
 
 ## 7. Historical diagnostics and mutation record
 

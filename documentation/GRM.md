@@ -470,3 +470,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-FLUTTER-AND"
 ```
+
+Builds one Android debug APK from the resolved repository/client root, embeds
+the reviewed short HEAD as visible Closure build provenance, reports the APK
+path, size and SHA-256, installs package `com.gusigu.markei` while preserving
+application data, launches it on the selected Android target, and then stops
+for human verification of the provenance and consolidated Diagnostics surface.
+The APK hash alone is not installed-package proof.
