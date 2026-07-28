@@ -2034,3 +2034,591 @@ PRIOR_CLIENT_SYNC_PROVIDER_CORRELATION=UNPROVED
 ST09=NEXT_PREPARATION_ONLY
 MUTATING_ACTION_AUTHORIZATION=NONE
 ```
+
+## RECORD 010 — ST09 INITIAL WINDOWS LOCAL PREFLIGHT
+
+```text
+MARKEI CLOSURE ASSAY — SANITIZED RECORD
+========================================
+
+ASSAY ID: REC-2026-07-28-010-ST09-WINDOWS-LOCAL-PREFLIGHT
+DATE/TIME (local): 2026-07-28, exact time [MANUAL]
+TESTER: [MANUAL]
+DEVICE/OS: Windows desktop [USER-SUPPLIED SCREENSHOT CONTEXT]
+CLIENT LINEAGE: grm-guarded-provisioning-20260727
+INSPECTED REPOSITORY HEAD: f54b9872daf37c26b33778a36f26f733c834401d
+ENVIRONMENT: development
+ASSAY PURPOSE: Freeze the first post-restart local client state for
+C10-GCM02-S12-ST09 before creating or submitting a controlled Sync member.
+
+SAFETY AND ACTION BOUNDARY
+--------------------------
+Secrets visible or copied into this record: NO
+Complete Account, Device or subject identifiers recorded: NO
+Provider request performed by Diagnostics: NO
+Ordinary Sync executed: NO
+Retry or failed/notApplied recovery executed: NO
+Enrollment or migration executed: NO
+Provider mutation authorized by this record: NO
+
+NATIVE CLOSURE AND CURRENT-ACTION PROJECTION
+---------------------------------------------
+Native closure state: diagnostics-ready
+Current-action MKS code: MKS-UI-003
+Current-action title: Current action collapsed into historical result
+Current-action outcome: blocked
+Last proved phase: presentation
+Local mutation: none
+Provider contact: not-started
+Trusted response: not-received
+Operation: local-diagnostics
+
+Interpretation: Diagnostics completed as a local preflight, but the current
+action presentation still exposes the known MKS-UI-003 separation defect. This
+presentation defect does not establish a hosted failure because the action
+made no provider contact and performed no local mutation.
+
+SYNC OVERVIEW
+-------------
+Authentication: authenticated
+Enrollment: device-enrolled
+Readiness: ready-no-local-work
+Last result: no-recorded-attempts
+Last successful Sync: not recorded
+Recovery guidance: no-local-sync-action-needed
+Declaration scope: client-operation
+Operation kind: ordinary-sync
+Client result code: not-recorded
+Server request: not aggregate success
+Last proved phase: unknown
+Configured deadline: 35000ms client
+Operation correlation: not recorded
+Client child correlation: unavailable locally
+
+LOCAL QUEUE
+-----------
+Pending: 0
+Uploading: 0
+Failed: 0
+Unknown: 0
+Next Device sequence: 1
+Sequence meaning: allocated only to new local Device events
+
+DEVICE AND ACTIONABLE-EVENT PROJECTION
+---------------------------------------
+Current Device projection count: 1
+Current Device: device-enrolled
+Current Device next sequence: 1
+Actionable pending/failed/unknown events: none
+Recent closure-attempt history: none recorded
+Recent diagnostic-event history: none recorded
+
+EVIDENCE CEILING
+----------------
+Post-restart hosted binding adopted by Windows client: PROVED AT CLIENT UI
+Windows local queue empty and internally coherent: PROVED AT CLIENT UI
+Next local Device event will use sequence 1: PROVED AT CLIENT UI
+Current controlled Sync member set: EMPTY
+Useful ordinary Sync transition can be authorized from this state: NO; one
+intentional local test event must first be created and re-frozen
+Provider baseline remains Record 009: RETAINED
+Upload, acknowledgement, provider delta or convergence: UNPROVED
+Second-Device or Android enrollment/convergence: UNPROVED
+```
+
+## RECORD 010 ASSESSMENT
+
+| Claim | Assessment | Evidence boundary |
+| --- | --- | --- |
+| ST09.1 has a fresh post-restart local preflight | PASS | User-supplied Windows Diagnostics screenshots |
+| Authentication and enrollment are loaded | PASS AT CLIENT UI | `authenticated` and `device-enrolled` projections |
+| The Windows queue contains a Sync member | REJECTED | Pending/uploading/failed/unknown are all zero |
+| Local Device sequence aligns with the empty provider baseline | PASS | Local next sequence 1 matches Record 009 provider next expected sequence 1 |
+| `MKS-UI-003` proves a hosted failure | REJECTED | Local Diagnostics made no provider contact or mutation |
+| An empty ordinary Sync should be used as the ST09 transition assay | NO | It would not exercise upload or event materialization |
+| Android enrollment belongs inside the current ST09 transition | NO | Same-Device transition must close first; second-Device convergence remains separately authorized |
+
+Terminal classification:
+
+```text
+ST09_LOCAL_PREFLIGHT=PASS
+WINDOWS_BINDING_PROJECTION=ADOPTED
+LOCAL_QUEUE=EMPTY_0_0_0_0
+LOCAL_NEXT_DEVICE_SEQUENCE=1
+PROVIDER_NEXT_EXPECTED_SEQUENCE_BASELINE=1
+LOCAL_PROVIDER_SEQUENCE_ALIGNMENT=PASS
+CONTROLLED_SYNC_MEMBER_SET=EMPTY
+MKS_UI_003=PRESENTATION_DEFECT_OBSERVED
+ST09_TEST_EVENT_CREATION=NEXT_PREPARATION
+ORDINARY_SYNC=NOT_YET_AUTHORIZED
+SECOND_DEVICE=NOT_AUTHORIZED_IN_ST09
+```
+
+## RECORD 011 — ST09 CONTROLLED SAME-DEVICE SYNC AND PROVIDER POSTFLIGHT
+
+```text
+MARKEI CLOSURE ASSAY — SANITIZED RECORD
+========================================
+
+ASSAY ID: REC-2026-07-28-011-ST09-SAME-DEVICE-SYNC-POSTFLIGHT
+DATE/TIME (local): 2026-07-28
+LAST SUCCESSFUL SYNC (UTC): 2026-07-28T20:25:55.000Z
+TESTER: [MANUAL]
+DEVICE/OS: Windows desktop [USER-SUPPLIED SCREENSHOT CONTEXT]
+CLIENT LINEAGE: grm-guarded-provisioning-20260727
+INSPECTED REPOSITORY HEAD: f54b9872daf37c26b33778a36f26f733c834401d
+ENVIRONMENT: development
+ASSAY PURPOSE: Exercise exactly one intentionally created
+purchase.registered event through the authenticated hosted Sync path, then
+compare the terminal client state with one atomic read-only provider
+postflight.
+
+SAFETY AND ACTION BOUNDARY
+--------------------------
+Secrets visible or copied into this record: NO
+Complete Account, Device or subject identifiers recorded: NO
+Full request/content hashes recorded: NO
+Ordinary Sync authorized and executed: EXACTLY ONE
+Second Sync or retry executed: NO
+Failed/notApplied recovery executed: NO
+Enrollment or migration executed during this assay: NO
+Provider-console or direct database mutation executed: NO
+Postflight transaction terminal: ROLLBACK
+New mutating action authorized by this record: NO
+
+PRE-ACTION LOCAL MEMBER SET
+---------------------------
+Authentication: authenticated
+Enrollment: device-enrolled
+Hosted readiness after warm verification: hosted-connection-ready
+Live endpoint: HTTP 200
+Ready endpoint: HTTP 200
+Pending: 1
+Uploading: 0
+Failed: 0
+Unknown: 0
+Pending event type: purchase.registered
+Pending Device sequence: 1
+Next local Device sequence: 2
+
+One earlier hosted-connection check timed out before response during a cold
+service start. The standalone live/ready checks then returned HTTP 200 and the
+next client check completed successfully in under three seconds. The cold
+timeout is retained as an operational sensitivity, not reclassified as an API,
+authentication or Sync failure.
+
+AUTHORIZED TRANSITION CONTRACT
+------------------------------
+Client action: ordinary Sync
+Authorized click count: 1
+Expected local queue transition: pending 1 -> 0
+Expected provider payload transition: submissions/events/acknowledgements
+0/0/0 -> 1/1/1
+Expected Account cursor transition: next cursor 1 -> 2; high-water 0 -> 1
+Expected Device sequence transition: next expected 1 -> 2; high-water 0 -> 1
+Ambiguous-outcome retry authorization: NONE
+
+CLIENT TERMINAL
+---------------
+Native closure state: sync-completed
+Last result: sync-completed
+Client result code: sync-completed
+Last proved phase: terminal
+Authentication: authenticated
+Enrollment: device-enrolled
+Readiness: ready-no-local-work
+Recovery guidance: no-local-sync-action-needed
+Operation kind: ordinary-sync
+Declaration scope: client-operation
+Configured deadline: 35000ms client
+Last successful Sync: 2026-07-28T20:25:55.000Z
+Operation fingerprint: d1cb6cb600a1
+Client child-correlation fingerprint: 6a53d7090d68
+
+POST-ACTION LOCAL QUEUE
+-----------------------
+Pending: 0
+Uploading: 0
+Failed: 0
+Unknown: 0
+Next Device sequence: 2
+Actionable pending/failed/unknown events: none
+Current Device projection: device-enrolled, next sequence 2
+
+SANITIZED CLIENT LIFECYCLE PROJECTION
+-------------------------------------
+Authentication: authenticated
+Binding: binding-accepted
+Upload lease: upload-lease-committed
+Upload transport: upload-request-started
+Upload provider: serveraccepted
+Upload result persistence: upload-result-persisted
+Download transport: download-request-started
+Download provider: download-response-received
+Download local apply: downloadedapplied
+Acknowledgement: acknowledged
+Terminal: client-operation declaration / sync-completed
+
+The raw lifecycle projection contains 17 ordered phase slots and 11 displayed
+phase summaries. They are ordered evidence, not an error count.
+
+GRM-NEON-11 — CONNECTION AND EXACT-DEVICE GUARD
+------------------------------------------------
+Role/database/TLS check: PASS
+Fixture Device matches: 1
+Exact Device guard: 1
+
+GRM-NEON-11 — GLOBAL PROVIDER COUNTS
+-------------------------------------
+Accounts: 1
+Devices: 1
+Account cursor-state rows: 1
+Submissions: 1
+Sync events: 1
+Device acknowledgements: 1
+Accounts missing cursor state: 0
+Orphan cursor-state rows: 0
+
+GRM-NEON-11 — FIXTURE-ACCOUNT COUNTS AND DEVICE STATE
+------------------------------------------------------
+Fixture Accounts: 1
+Fixture Account Devices: 1
+Fixture Account cursor-state rows: 1
+Fixture submissions: 1
+Fixture Sync events: 1
+Fixture Device acknowledgements: 1
+Fixture Device status: active
+Fixture Device next expected sequence: 2
+
+GRM-NEON-11 — CURSOR AND SEQUENCE CONSISTENCY
+----------------------------------------------
+Account next cursor: 2
+Hosted high-water: 1
+Account cursor consistent: true
+Device next expected sequence: 2
+Device high-water: 1
+Device sequence consistent: true
+
+GRM-NEON-11 — SANITIZED REPLAY INVENTORY
+-----------------------------------------
+Fixture submissions: 1
+Distinct request hashes: 1
+First/last submission fingerprint: 0456e9ed / 0456e9ed
+First/last request-hash fingerprint: 7be3ab38d19a / 7be3ab38d19a
+Fixture Sync events: 1
+Distinct content hashes: 1
+First/last event fingerprint: 58f5fc68 / 58f5fc68
+First/last content-hash fingerprint: b4d057dd26de / b4d057dd26de
+
+GRM-NEON-11 — TERMINAL
+-----------------------
+Transaction: ROLLBACK
+Launcher result: PASS — provider-baseline completed
+
+INCIDENTAL LOCAL-WORKFLOW OBSERVATIONS
+--------------------------------------
+Product lookup dropdown assertion: OBSERVED before purchase creation; a fresh
+Product object did not match exactly one dropdown item by object identity.
+Purchase resolution rollback: OBSERVED and contained; one staged new-product
+reference reached resolveProduct with an empty required code and created no
+purchase or Sync event.
+Successful controlled member preparation: ACHIEVED later through the existing
+Product path; exactly one purchase.registered event at Device sequence 1 was
+frozen before authorization.
+Unauthenticated local purchase capture: OBSERVED as compatible with the present
+offline-first local-write model; Account adoption/isolation UX remains an open
+Cycle 11 design question rather than a proved Sync defect.
+MKS-UI-003 current-versus-historical presentation defect: RETAINED.
+
+EVIDENCE CEILING
+----------------
+One authorized Windows ordinary Sync reached a client success terminal: PROVED
+The exact frozen local member set drained without failed/unknown residue:
+PROVED
+One provider submission, event and acknowledgement were materialized: PROVED
+Account cursor and Device sequence advanced by the exact expected delta: PROVED
+Read-only provider postflight rolled back and passed: PROVED
+Same-Device client/provider transition: PROVED
+Sanitized matching Render request-lifecycle log for this operation: NOT YET
+CAPTURED IN THIS RECORD
+Second-Device download/convergence: UNPROVED
+Production readiness: UNPROVED
+```
+
+## RECORD 011 ASSESSMENT
+
+| Claim | Assessment | Evidence boundary |
+| --- | --- | --- |
+| The authorized ordinary Sync was executed exactly once | PASS | User action report plus one newest client operation |
+| The client reached a trustworthy local success terminal | PASS | `sync-completed`, terminal phase, no recovery guidance |
+| The local queue drained exactly one controlled member | PASS | `1/0/0/0 -> 0/0/0/0`, next sequence retained at 2 |
+| Provider payload rows match the expected one-event transition | PASS | `0/0/0 -> 1/1/1` against Records 009 and 011 |
+| Account cursor and Device sequence invariants match | PASS | Both are consistent at 2 after high-water 1 |
+| Provider postflight changed provider state | REJECTED | Explicit `ROLLBACK`; the ordinary Sync owns the accepted mutation |
+| The initial hosted timeout invalidates the assay | REJECTED | Subsequent live/ready and client readiness checks passed before Sync |
+| ST09 same-Device transition may close | PASS | Client terminal, local post-state and independent provider postflight agree |
+| GCM02 may close without the final server-log correlation/classification | NOT YET | Render lifecycle evidence required by the controlling Gate-12.10 contract remains absent |
+| Android/second-Device convergence was proved | NO | Deferred to GCM03 |
+
+Terminal classification:
+
+```text
+ST09_PRE_ACTION_MEMBER_SET=PASS_ONE_EVENT_SEQUENCE_1
+ST09_READINESS=PASS_AFTER_COLD_START_WARMUP
+ST09_ONE_ACTION_AUTHORIZATION=SATISFIED
+ST09_ORDINARY_SYNC=PASS_EXACTLY_ONCE
+ST09_CLIENT_TERMINAL=SYNC_COMPLETED
+ST09_LOCAL_QUEUE=PASS_DRAINED_1_TO_0
+ST09_LOCAL_NEXT_DEVICE_SEQUENCE=2
+ST09_PROVIDER_COUNTS=PASS_1_SUBMISSION_1_EVENT_1_ACK
+ST09_ACCOUNT_CURSOR=CONSISTENT_2_AFTER_1
+ST09_DEVICE_SEQUENCE=CONSISTENT_2_AFTER_1
+ST09_PROVIDER_POSTFLIGHT=ROLLBACK_PASS
+ST09_SAME_DEVICE_TRANSITION=PASS
+ST09=PASSED_BOUNDED
+ST10=NEXT_SERVER_CORRELATION_AND_TERMINAL_CLASSIFICATION
+SECOND_DEVICE=HELD_FOR_GCM03
+NEW_MUTATING_ACTION_AUTHORIZATION=NONE
+```
+
+## RECORD 012 — ST10 RENDER LIFECYCLE CORRELATION AND GCM02 TERMINAL
+
+```text
+MARKEI CLOSURE ASSAY — SANITIZED RECORD
+========================================
+
+ASSAY ID: REC-2026-07-28-012-ST10-RENDER-CORRELATION
+DATE/TIME (UTC): 2026-07-28T20:25:47Z–2026-07-28T20:25:58Z
+TESTER: [MANUAL LOG COLLECTION]
+CLIENT LINEAGE: grm-guarded-provisioning-20260727
+INSPECTED REPOSITORY HEAD: f54b9872daf37c26b33778a36f26f733c834401d
+ENVIRONMENT: development
+ASSAY PURPOSE: Correlate the already completed ST09 ordinary Sync with the
+sanitized Render request lifecycle, without repeating or mutating the assay.
+
+SAFETY AND ACTION BOUNDARY
+--------------------------
+Secrets visible or copied into this record: NO
+Complete Account, Device or subject identifiers recorded: NO
+Authorization headers, tokens or request payloads recorded: NO
+Full replay hashes recorded: NO
+New Sync, Retry, recovery, enrollment or migration executed: NO
+Provider mutation executed by this inspection: NO
+New mutating action authorized by this record: NO
+
+CORRELATION GUARD
+-----------------
+Expected operation fingerprint: d1cb6cb600a1
+Matching Sync child operations: 3
+Unrelated health-readiness requests in interval: present and separated
+Operation-fingerprint mismatch: none
+
+UPLOAD-SUBMISSION CHILD
+-----------------------
+Route class: /v1/sync/submissions
+Method: POST
+Request received: yes
+Operation validation started: yes
+Authentication accepted: yes
+Response completed: yes
+HTTP status: 200
+Result code: request-completed
+Elapsed band: lt-3s
+
+DOWNLOAD-EVENTS CHILD
+---------------------
+Route class: /v1/sync/events
+Method: GET
+Request received: yes
+Operation validation started: yes
+Authentication accepted: yes
+Response completed: yes
+HTTP status: 200
+Result code: request-completed
+Elapsed band: lt-250ms
+
+ACKNOWLEDGEMENT CHILD
+---------------------
+Route class: /v1/sync/acknowledgements
+Method: POST
+Request received: yes
+Operation validation started: yes
+Authentication accepted: yes
+Response completed: yes
+HTTP status: 200
+Result code: request-completed
+Elapsed band: lt-250ms
+
+NEGATIVE-EVIDENCE REVIEW
+------------------------
+Authentication rejected: absent
+Request failed: absent
+HTTP status >= 400: absent
+Unexpected server error: absent
+Rejected/notApplied terminal: absent
+Duplicate-equivalent terminal: absent
+Timeout or unknown terminal: absent
+MKS-* server result: absent
+
+INTERVAL-BOUNDARY NOTE
+----------------------
+The final unrelated /health/ready request at 20:25:58Z is truncated after
+request-received and operation-validation-started because the supplied interval
+ends there. It is not part of operation d1cb6cb600a1 and does not contradict
+the three completed Sync children. Earlier health-ready requests in the same
+interval completed with HTTP 200.
+
+CORRELATED EVIDENCE SPINE
+-------------------------
+Client terminal: sync-completed
+Local queue transition: pending 1 -> 0; failed/unknown remained 0/0
+Render upload terminal: authenticated HTTP 200 request-completed
+Render download terminal: authenticated HTTP 200 request-completed
+Render acknowledgement terminal: authenticated HTTP 200 request-completed
+Provider transition: submissions/events/acknowledgements 0/0/0 -> 1/1/1
+Account cursor: 2 after high-water 1, consistent
+Device sequence: 2 after high-water 1, consistent
+Provider postflight: ROLLBACK / PASS
+
+EVIDENCE CEILING
+----------------
+Matching sanitized server lifecycle for the ST09 operation: PROVED
+All three protocol children reached authenticated HTTP success terminals:
+PROVED
+Client, server and provider evidence agree without contradiction: PROVED
+Gate 12.10 expected-success classification: SUPPORTED
+GCM02 hosted single-Device closure scope: SUPPORTED
+Android/second-Device convergence: UNPROVED
+Production readiness: UNPROVED
+Retention, snapshot and rebootstrap acceptance: UNPROVED
+```
+
+## RECORD 012 ASSESSMENT
+
+| Claim | Assessment | Evidence boundary |
+| --- | --- | --- |
+| Render logs correlate to the ST09 client operation | PASS | The same sanitized operation fingerprint is present on all three Sync children |
+| Upload reached an authenticated HTTP success terminal | PASS | POST submissions: accepted authentication, `200`, `request-completed` |
+| Download reached an authenticated HTTP success terminal | PASS | GET events: accepted authentication, `200`, `request-completed` |
+| Acknowledgement reached an authenticated HTTP success terminal | PASS | POST acknowledgements: accepted authentication, `200`, `request-completed` |
+| A server failure or ambiguous terminal is present | REJECTED | No rejection, failure, `>=400`, timeout, unknown, unexpected error or `MKS-*` line |
+| The truncated final health request invalidates correlation | REJECTED | It is unrelated to the completed Sync fingerprint and lies at the capture boundary |
+| Gate 12.10 may classify expected success | PASS | Client, three-child server lifecycle and provider postflight agree |
+| GCM02 may close at its hosted same-Device scope | PASS | ST08, ST09 and ST10 terminals are complete and non-contradictory |
+| Second-Device convergence was proved | NO | This remains the next separately controlled objective |
+
+Terminal classification:
+
+```text
+ST10_OPERATION_CORRELATION=PASS
+ST10_UPLOAD_SUBMISSION=AUTHENTICATED_HTTP_200_REQUEST_COMPLETED
+ST10_DOWNLOAD_EVENTS=AUTHENTICATED_HTTP_200_REQUEST_COMPLETED
+ST10_ACKNOWLEDGEMENT=AUTHENTICATED_HTTP_200_REQUEST_COMPLETED
+ST10_FAILURE_OR_AMBIGUITY=ABSENT
+ST10=PASSED_READ_ONLY
+GATE_12_10=PASS_EXPECTED_SUCCESS
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=READY_FOR_EXPLICIT_SECOND_DEVICE_DEFINITION
+NEW_MUTATING_ACTION_AUTHORIZATION=NONE
+```
+
+## RECORD 013 — GCM03 WINDOWS CANDIDATE-MEMBER PREFLIGHT
+
+```text
+MARKEI CLOSURE ASSAY — SANITIZED RECORD
+========================================
+
+ASSAY ID: REC-2026-07-28-013-GCM03-WINDOWS-CANDIDATE
+DATE (LOCAL): 2026-07-28
+TESTER: [MANUAL UI COLLECTION]
+CLIENT LINEAGE: grm-guarded-provisioning-20260727
+INSPECTED REPOSITORY HEAD: f54b9872daf37c26b33778a36f26f733c834401d
+ENVIRONMENT: development
+ASSAY PURPOSE: Freeze the newly created, unsynchronized Windows purchase event
+as the candidate first member of a future Android inter-device convergence
+assay, without performing another Sync or enrolling a second Device.
+
+SAFETY AND ACTION BOUNDARY
+--------------------------
+Secrets visible or copied into this record: NO
+Complete Account, Device or subject identifiers recorded: NO
+Complete event identifiers or payloads recorded: NO
+New Windows Sync, Retry or recovery executed: NO
+Android client launched by this assay: NO
+Android Device enrolled by this assay: NO
+Provider mutation executed by this assay: NO
+New mutating action authorized by this record: NO
+
+WINDOWS LOCAL QUEUE
+-------------------
+Pending: 1
+Uploading: 0
+Failed: 0
+Unknown outcome: 0
+Next Device sequence: 3
+Sequence meaning: allocated only to new local Device events
+
+ACTIONABLE EVENT
+----------------
+Event type: purchase.registered
+Sanitized event fingerprint: 05d21c54
+State: pending
+Device sequence: 2
+
+CURRENT DEVICE
+--------------
+Sanitized Device fingerprint: 429e3422
+Current marker: yes
+Enrollment state: device-enrolled
+
+SYNC OVERVIEW CONTINUITY
+------------------------
+Authentication: authenticated
+Enrollment: device-enrolled
+Readiness: ready-with-pending-work
+Last result: sync-completed
+Last successful Sync: retained from accepted ST09
+Recovery guidance: sync-can-upload-local-work
+Client result code: sync-completed
+Last proved phase: terminal
+
+EVIDENCE CEILING
+----------------
+One unsynchronized Windows purchase.registered event exists: PROVED
+The event is pending at Windows Device sequence 2: PROVED
+The next Windows Device sequence is 3: PROVED
+The current Windows Device remains enrolled: PROVED
+The event is suitable as a candidate Windows-to-Android member: SUPPORTED
+Provider state after creation of this local-only event: NOT RECHECKED HERE
+Android build/install/run readiness: UNPROVED IN THIS RECORD
+Android authentication or enrollment: UNPROVED
+Windows-to-Android download/convergence: UNPROVED
+Android-to-Windows reverse convergence: UNPROVED
+Repeated idempotent Sync: UNPROVED
+```
+
+## RECORD 013 ASSESSMENT
+
+| Claim | Assessment | Evidence boundary |
+| --- | --- | --- |
+| The post-GCM02 purchase is now a frozen GCM03 candidate member | PASS | Windows Diagnostics shows one pending `purchase.registered` event |
+| Its local Device sequence and next sequence are known | PASS | Event sequence 2; next Device sequence 3 |
+| Failed, uploading or unknown local residue is present | REJECTED | All three counters are zero |
+| The accepted GCM02 provider transition was repeated | NO | No Sync or provider mutation occurred |
+| Android enrollment may begin without a separate pre-enrollment packet | NO | Android lineage, local state and provider two-Device expectations remain unfrozen |
+| GCM03 inter-device convergence has already been proved | NO | Record 013 proves only the Windows candidate-member preflight |
+
+Terminal classification:
+
+```text
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
+GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
+GCM03_WINDOWS_QUEUE=PASS_1_0_0_0
+GCM03_WINDOWS_NEXT_DEVICE_SEQUENCE=3
+GCM03_ANDROID_CHECKS=NEXT_PREPARATION_ONLY
+ANDROID_ENROLLMENT=NOT_AUTHORIZED
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
+SECOND_DEVICE_CONVERGENCE=UNPROVED
+```

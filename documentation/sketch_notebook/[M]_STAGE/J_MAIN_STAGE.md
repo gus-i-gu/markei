@@ -1,18 +1,20 @@
 # J_MAIN_STAGE — Cycle 10 active reconciliation
 
-> Sequence: FLX-PRM-04 C10-GCM02-S12-ST08 reconciliation and ST09 entry
+> Sequence: FLX-PRM-04 C10-GCM02 final closure and GCM03 preflight staging
 > Role: Main Chat
 > Branch: `grm-guarded-provisioning-20260727`
-> Reconciliation baseline: `3cbc6d526a7a92da5306326acb9e809dbe13f3fa`
+> Reconciliation baseline: `f54b9872daf37c26b33778a36f26f733c834401d`
 > Authority: explicit human-directed Main reconciliation
 > Writable surface: `REC_DIAGNOSTICS.md`, mutable J recovery prefix, and
 > append-only `Legacy_Progress`
-> Evidence boundary: sanitized Windows Diagnostics evidence, `GRM-AUTH-02`
-> exact hosted binding, and one `GRM-NEON-11` repeatable read-only provider
-> snapshot ending in `ROLLBACK`; no new Sync, Retry, recovery, enrollment,
-> migration, provider mutation, second Device, or production claim
-> Status: **CYCLE 10 OPEN; C10-GCM02-S12-ST08 PASSED AT READ-ONLY
-> EXACT-BINDING/CLEAN-PROVIDER-BASELINE SCOPE; ST09 NEXT, PREPARATION ONLY**
+> Evidence boundary: sanitized Windows preflight and post-Sync UI evidence,
+> one explicitly authorized ordinary Sync, one `GRM-NEON-11` repeatable
+> read-only provider postflight ending in `ROLLBACK`, and matching sanitized
+> Render upload/download/acknowledgement request lifecycles; no Retry, recovery,
+> second Device, production, retention, snapshot or rebootstrap claim
+> Status: **CYCLE 10 OPEN; GCM02 CLOSED AT HOSTED SAME-DEVICE SCOPE;
+> GCM03 WINDOWS CANDIDATE PREFLIGHT PASSED; ANDROID CHECKS AND SECOND-DEVICE
+> ENROLLMENT PREPARATION NEXT**
 
 ## 1. Recovery entrypoint
 
@@ -48,16 +50,18 @@ Retain these ownership boundaries:
 ```text
 Repository: gus-i-gu/markei
 Active branch: grm-guarded-provisioning-20260727
-Current reconciliation baseline: 3cbc6d526a7a92da5306326acb9e809dbe13f3fa
+Current reconciliation baseline: f54b9872daf37c26b33778a36f26f733c834401d
 Cycle: 10
 Active closure unit: MCG-02 / user-facing GCM-02
 Latest completed corrective unit: C10-GCM02-S12-ERR-04 recovery-boundary and
 observability correction
 Latest accepted gate: Gate 12.7 corrected single-client control
 Latest completed presentation unit: C10-GCM02-S12-DIAG-01
-Latest completed evidence phase: C10-GCM02-S12-ST08 read-only exact-binding
-and atomic provider-baseline reconciliation
-Active phase: C10-GCM02-S12-ST09 preparation; no action authorized
+Latest completed evidence phase: C10-GCM02-S12-ST10 sanitized Render
+correlation and Gate-12.10 terminal classification
+Active phase: GCM03 Android readiness and pre-enrollment preparation; the
+Windows candidate member is frozen and no client/provider mutation is
+authorized
 ```
 
 The branch contains the GRM execution interface, hosted Sync
@@ -85,115 +89,226 @@ baseline renames the generated diagnostic projection to
 state. The broad ERR-catalogue refactor remains deferred until the present
 narrow assays conclude.
 
-### 2.1 Controlling ST08 closure and ST09 entry
+### 2.1 Controlling ST10 closure and GCM03 entry
 
 This subsection is the newest controlling recovery surface. When an older
 mutable-prefix statement conflicts with it, this subsection controls. The
-older text remains available as pre-ST08 staging context, and the complete
+older text remains available as pre-ST09 staging context, and the complete
 chronology remains append-only under `Legacy_Progress`.
 
-ST08 reconciles three independent evidence families:
+GCM02 now reconciles five aligned evidence families:
 
 ```text
-Windows client projection
-  durable enrollment and corrected DIAG-01 presentation supported
+Records 009-010
+  exact hosted binding
+  clean provider baseline 0/0/0
+  Windows empty queue and sequence alignment
 
-GRM-AUTH-02
-  fresh token contract true
-  identity endpoint 200
-  exact Device-status endpoint 200
-  exact-binding-confirmed
+controlled member preflight
+  authenticated and device-enrolled
+  one pending purchase.registered event at Device sequence 1
+  local next Device sequence 2
+  warm hosted readiness HTTP 200 after one cold-start timeout
 
-GRM-NEON-11
+authorized Windows ordinary Sync
+  exactly one click
+  sync-completed
+  pending 1 -> 0
+  failed/unknown 0/0
+  current Device next sequence 2
+
+GRM-NEON-11 postflight
   exact Device guard 1
-  global Account/Device/cursor counts 1/1/1
-  submissions/events/acknowledgements 0/0/0
-  Account cursor 1 after high-water 0, consistent
-  Device sequence 1 after high-water 0, consistent
-  no replay fingerprints
+  submissions/events/acknowledgements 1/1/1
+  Account cursor 2 after high-water 1, consistent
+  Device sequence 2 after high-water 1, consistent
+  one distinct sanitized request/content lineage
   explicit ROLLBACK and PASS
+
+ST10 Render correlation
+  one matching operation fingerprint across three Sync children
+  upload-submission POST authenticated and completed HTTP 200
+  download-events GET authenticated and completed HTTP 200
+  acknowledgement POST authenticated and completed HTTP 200
+  no rejected, failed, >=400, timeout, unknown, unexpected-error or MKS line
 ```
 
 Reconciled meaning:
 
-- the authenticated identity and one active Device are exactly bound;
-- the replacement development provider is structurally clean and internally
-  consistent before a first transition;
-- the provider contains no prior Sync result to compare;
-- the earlier successful ordinary-Sync timeline remains valid client history
-  at its original evidence boundary, but it is not corroborated by this
-  replacement provider;
-- ST08 therefore passes as a read-only identity/provider baseline, not as a
-  same-provider post-Sync convergence proof;
-- no mutating action is authorized by ST08 closure.
+- the first correlated same-Device transition on the replacement development
+  provider succeeded at client/local/provider scope;
+- the actual provider delta exactly equals the frozen one-event contract;
+- there is no failed, unknown or actionable local residue;
+- acknowledgement, Account cursor and Device sequence projections agree;
+- the cold-start readiness timeout is operational sensitivity, not a Sync
+  contradiction, because both host endpoints and the immediately subsequent
+  client readiness check passed before authorization;
+- the Product selection/staging defects observed while creating the test member
+  were contained locally and did not contaminate the successful assay;
+- ST09 therefore passes at the same-Device transition boundary;
+- ST10 correlates the exact same operation across all three server children;
+- the client, server and provider terminals agree without contradiction;
+- Gate 12.10 therefore classifies the operation as expected success;
+- GCM02 closes at its hosted same-Device scope;
+- second-Device enrollment and convergence remain unproved and begin only
+  under a separately defined and authorized GCM03 sequence.
 
 Current terminals:
 
 ```text
 CYCLE10=OPEN
-GCM02=OPEN_ACTIVE
-STEP12=OPEN_ACTIVE
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+STEP12=CLOSED_THROUGH_GATE_12_10
 GATE_12_7=PASSED_CORRECTED_SINGLE_CLIENT_CONTROL_SCOPE
-DIAG_01=PASS_AT_WINDOWS_CLIENT_UI_SCOPE
-GRM_AUTH_02=PASS
-EXACT_HOSTED_BINDING=PASS
-GRM_NEON_11=PASS
-PROVIDER_BASELINE=1_ACCOUNT_1_DEVICE_1_CURSOR_0_SUBMISSIONS_0_EVENTS_0_ACKS
-ACCOUNT_CURSOR_BASELINE=CONSISTENT
-DEVICE_SEQUENCE_BASELINE=CONSISTENT
-ST08=PASSED_READ_ONLY_EXACT_BINDING_AND_CLEAN_PROVIDER_BASELINE_SCOPE
-PRIOR_CLIENT_SYNC_CORRELATION_TO_REPLACEMENT_PROVIDER=UNPROVED
-ST09=NEXT_PREPARATION_ONLY
-ORDINARY_SYNC=NOT_AUTHORIZED
-RETRY_OR_RECOVERY=NOT_AUTHORIZED
+ST08=PASSED_EXACT_BINDING_AND_CLEAN_PROVIDER_BASELINE
+ST09_LOCAL_PREFLIGHT=PASS
+ST09_CONTROLLED_MEMBER=ONE_PURCHASE_REGISTERED_SEQUENCE_1
+ST09_HOSTED_READINESS=PASS_AFTER_COLD_START_WARMUP
+ST09_ONE_ACTION_AUTHORIZATION=SATISFIED
+ST09_ORDINARY_SYNC=PASS_EXACTLY_ONCE
+ST09_CLIENT_TERMINAL=SYNC_COMPLETED
+ST09_LOCAL_QUEUE=PASS_DRAINED_1_TO_0
+ST09_PROVIDER_COUNTS=PASS_1_SUBMISSION_1_EVENT_1_ACK
+ST09_ACCOUNT_CURSOR=CONSISTENT_2_AFTER_1
+ST09_DEVICE_SEQUENCE=CONSISTENT_2_AFTER_1
+ST09_PROVIDER_POSTFLIGHT=ROLLBACK_PASS
+ST09=PASSED_SAME_DEVICE_CLIENT_PROVIDER_TRANSITION_SCOPE
+ST10_RENDER_CORRELATION=PASS_THREE_AUTHENTICATED_HTTP_200_TERMINALS
+ST10_FAILURE_OR_AMBIGUITY=ABSENT
+ST10=PASSED_READ_ONLY
+GATE_12_10=PASS_EXPECTED_SUCCESS
+NEW_SYNC_OR_RETRY=NOT_AUTHORIZED
 ENROLLMENT_OR_MIGRATION=NOT_AUTHORIZED
-SECOND_DEVICE=NOT_AUTHORIZED
+SECOND_DEVICE=UNPROVED_READY_FOR_GCM03_DEFINITION
+GCM03=READY_FOR_DEFINITION_AND_READ_ONLY_PREFLIGHT
 ```
 
-ST09 broad objective:
+The shortest evidence-correct GCM03 entry is:
 
-> Establish one controlled same-Device transition against the clean replacement
-> provider and compare the result without weakening the action boundary.
+1. preserve the newly reported unsynchronized purchase without another Sync;
+2. run Windows Diagnostics once to freeze its event type, queue class, Device
+   sequence and next sequence;
+3. reconfirm the provider remains at the accepted GCM02 `1/1/1` baseline
+   before any new action, only if the GCM03 contract requires it;
+4. verify Android toolchain/client lineage and establish a fresh, clearly
+   identified local Device state;
+5. sign in to the same Account without reusing or exposing tokens;
+6. capture Android pre-enrollment Diagnostics and prepare an exact enrollment
+   authorization packet;
+7. enroll the Android Device exactly once only after explicit authorization;
+8. reconcile the two-Device provider inventory before authorizing any upload
+   or download/convergence action.
 
-ST09 should be partitioned as:
+Record 013 now proves that the new unsynchronized Windows purchase is one
+pending `purchase.registered` event at Device sequence 2, with
+pending/uploading/failed/unknown `1/0/0/0` and next Device sequence 3. It is
+the frozen candidate Windows-to-Android convergence member. Do not Sync,
+recreate or discard it while Android readiness and pre-enrollment state are
+prepared.
 
-1. **ST09.1 local preflight** — recover one current, non-secret local
-   diagnostic snapshot; classify pending/uploading/failed/unknown counts,
-   active Device scope, next local sequence, and whether the client is in a
-   restart-required state.
-2. **ST09.2 provider preflight** — retain Record 009 as the immutable clean
-   baseline; rerun it only if freshness is materially lost.
-3. **ST09.3 transition contract** — derive the exact expected upload member
-   set and expected Device/account cursor changes from ST09.1 plus the provider
-   baseline. Do not infer them from stale screenshots.
-4. **ST09.4 authorization packet** — state one exact action, click count,
-   expected terminal, capture surfaces, abort conditions, and prohibited
-   alternatives. Human authorization must be explicit.
-5. **ST09.5 controlled action** — if and only if authorized, perform ordinary
-   Sync exactly once. No Retry, recovery, enrollment, migration, repair,
-   provider-console action, or second click.
-6. **ST09.6 terminal capture** — preserve client terminal, operation/child
-   fingerprints, queue transition, sequence projection, and matching sanitized
-   Render lifecycle when available.
-7. **ST09.7 post-action provider comparison** — run one read-only
-   `GRM-NEON-11` snapshot with the same Device UUID and compare counts,
-   high-water/cursor values, replay fingerprints, and acknowledgements against
-   Record 009.
-8. **ST09.8 reconciliation** — classify success, bounded blocker, unknown
-   outcome, or contradiction. Do not retry merely to improve evidence.
+### 2.2 GCM03 TODOs and Android check placement
 
-ST09 is not yet an execution authorization. Its entry blockers are:
+GCM03 is an investigative, separately authorized unit. This list defines its
+evidence order; it does not authorize enrollment or Sync.
 
-- the current local queue and Device scope have not yet been frozen in a
-  durable sanitized preflight;
-- the expected provider delta has not yet been calculated from that fresh
-  local state;
-- the exact action/capture/abort packet has not yet received human
-  authorization.
+- [x] **GCM03.1 — Freeze Windows candidate member.** Record 013 proves one
+  pending `purchase.registered` event at Windows Device sequence 2, next
+  sequence 3, and no uploading/failed/unknown residue.
+- [ ] **GCM03.2 — Reconfirm repository and provider baseline.** Fast-forward
+  the Windows checkout to the published GCM02 closure commit, require a clean
+  worktree, run read-only host readiness, and use `GRM-NEON-11` only if Main
+  requires a fresh pre-enrollment provider inventory. Expected pre-enrollment
+  payload baseline remains the accepted GCM02 `1/1/1`, with one active Device.
+- [ ] **GCM03.3 — Android environment and client check.** Run canonical
+  `GRM-FLUTTER-AND` / `GS-FLUTTER-AND` from the same published checkout.
+  Require Flutter/Android toolchain readiness, exactly one supported Android
+  target, configured AVD boot where needed, successful Closure build/install/
+  launch, and the same public Auth0/Render coordinate lineage. This step must
+  not sign in, enroll or Sync implicitly.
+- [ ] **GCM03.4 — Android local pre-enrollment snapshot.** Open Closure on
+  Android, preserve sanitized diagnostics, and prove whether the fresh
+  installation has no enrolled local Device. Stop on inherited Device state,
+  unexpected queue members, configuration mismatch, revoked/expired state, or
+  any source Device fingerprint collision.
+- [ ] **GCM03.5 — Same-Account authentication.** Sign in through the ordinary
+  Auth0 flow to the same test Account. Capture only sanitized authentication
+  state; never copy tokens, subjects, credentials or complete identifiers.
+- [ ] **GCM03.6 — Exact Android enrollment authorization packet.** Freeze the
+  intended one-click Enroll action, expected new active-Device count
+  `1 -> 2`, expected Android local enrollment terminal, evidence-capture
+  order, and no-second-click/unknown-outcome rules. Obtain explicit human
+  authorization before enrollment.
+- [ ] **GCM03.7 — Enroll Android exactly once.** Execute only the authorized
+  enrollment. Preserve the Android terminal, sanitized Device fingerprint,
+  Render enrollment lifecycle and read-only provider inventory. Do not Sync
+  either client in this step.
+- [ ] **GCM03.8 — Two-Device baseline reconciliation.** Require one Account,
+  two distinct active Devices, Windows next expected sequence 2 on the
+  provider, Android next expected sequence at its fresh baseline, and no
+  payload/cursor changes caused solely by enrollment.
+- [ ] **GCM03.9 — Windows-to-Android convergence authorization.** Freeze the
+  existing Windows sequence-2 event as the only upload member, calculate the
+  exact submission/event/cursor/acknowledgement delta, and authorize one
+  Windows Sync followed by one Android download Sync only after all stop
+  conditions are explicit.
+- [ ] **GCM03.10 — Windows-to-Android convergence assay.** Prove Windows queue
+  drain, provider acceptance, Android download/application, matching purchase
+  identity/content, acknowledgement, and preservation of Android-local state.
+- [ ] **GCM03.11 — Android-to-Windows reverse member.** Create exactly one
+  controlled Android purchase only after the first direction passes, freeze
+  its Android queue/sequence, and prepare a new exact authorization packet.
+- [ ] **GCM03.12 — Reverse convergence assay.** Authorize and prove Android
+  upload followed by Windows download/application, with exact provider delta
+  and no duplication or local-history loss.
+- [ ] **GCM03.13 — Idempotent repeat.** With both queues empty and both clients
+  converged, authorize one bounded repeat Sync per Device and require no new
+  submissions/events, no duplicate purchases, stable cursors/sequences, and
+  successful acknowledgements.
+- [ ] **GCM03.14 — Reconcile and close.** Correlate client, Render and provider
+  evidence; classify every unexpected/duplicate/rejected/unknown result;
+  preserve Android operational findings; and close GCM03 only at the proven
+  two-Device development scope.
 
-Second-Device download/convergence and acknowledgement proof remain outside
-ST09 unless a later Main reconciliation explicitly redefines the phase after
-the same-Device transition is accepted.
+GCM03 global stop conditions:
+
+```text
+dirty_or_diverged_checkout
+android_target_ambiguous_or_unsupported
+android_configuration_or_binding_mismatch
+unexpected_inherited_android_device_or_queue_state
+authentication_required_or_rejected
+binding_invalid
+device_revoked_or_expired
+enrollment_timeout_unknown_or_duplicate
+sync_timeout_unknown_failed_or_notApplied
+cursor_or_sequence_inconsistency
+unexpected_provider_delta
+duplicate_or_missing_purchase_after_apply
+```
+
+On any stop condition, preserve the visible terminal and do not repeat the
+action merely to improve evidence. Enrollment, Windows Sync, Android Sync,
+Retry, recovery, migration, revocation and provider repair each require their
+own explicit boundary.
+
+Updated terminals:
+
+```text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+STEP12=CLOSED_THROUGH_GATE_12_10
+GATE_12_10=PASS_EXPECTED_SUCCESS
+GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
+GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
+GCM03_WINDOWS_QUEUE=PASS_1_0_0_0
+GCM03_WINDOWS_NEXT_DEVICE_SEQUENCE=3
+GCM03=ACTIVE_PREPARATION_ANDROID_CHECKS_NEXT
+ANDROID_ENROLLMENT=NOT_AUTHORIZED
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
+SECOND_DEVICE_CONVERGENCE=UNPROVED
+GCM04=UNDEFINED_INACTIVE
+```
 
 ## 3. Retained pre-ST08 panorama
 
@@ -5677,7 +5792,8 @@ ST08_EXACT_BINDING=PASS
 ST08_PROVIDER_BASELINE=PASS
 ST08=PASSED_BOUNDED
 ST09=NEXT_PREPARATION_ONLY
-ST09_LOCAL_PREFLIGHT=PENDING
+ST09_LOCAL_PREFLIGHT=PASS_EMPTY_QUEUE
+ST09_TEST_EVENT_CREATION=NEXT_PREPARATION
 ST09_EXPECTED_DELTA=PENDING
 ST09_AUTHORIZATION_PACKET=PENDING
 ST09_MUTATING_ACTION=NOT_AUTHORIZED
@@ -5687,4 +5803,449 @@ SECOND_DEVICE=NOT_AUTHORIZED
 GCM03=UNDEFINED_INACTIVE
 GCM04=UNDEFINED_INACTIVE
 CYCLE10_CLOSURE=BLOCKED_BY_REMAINING_GCM02_TRANSITION_AND_LATER_UNITS
+```
+
+## 2026-07-28 — C10-GCM02-S12-ST09 same-Device transition reconciliation
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04
+Role: Main Chat [M]
+Round or unit: C10-GCM02-S12-ST09
+Branch: grm-guarded-provisioning-20260727
+Inspected baseline: f54b9872daf37c26b33778a36f26f733c834401d
+Question: Did one explicitly authorized Windows ordinary Sync materialize the
+          exact frozen one-event transition on the replacement development
+          provider without local residue or cursor/sequence contradiction?
+Inputs: REC_DIAGNOSTICS Records 009-011; user-supplied Windows preflight and
+        post-Sync screenshots; GRM-HOST-01 sanitized health terminal;
+        GRM-NEON-11 sanitized provider postflight
+Writable surfaces: REC_DIAGNOSTICS append; mutable J prefix; append-only
+                   Legacy_Progress
+Prohibited actions: second Sync, Retry, recovery, Enroll, migration,
+                    provider mutation, Android/second Device, production claim
+Authority: explicit human-directed ST09 reconciliation
+Next sequence: C10-GCM02-S12-ST10 read-only server correlation and terminal
+               GCM02 classification
+```
+
+### Reconstructed assay sequence
+
+Record 010 froze a post-restart Windows state with one authenticated, enrolled
+Device, an empty local queue and next Device sequence 1. One controlled test
+purchase was then prepared. During that preparation, the Product page exposed
+two contained local defects:
+
+- Product lookup could rebuild the dropdown around a distinct Product object
+  and trigger Flutter's exactly-one-matching-item assertion;
+- one staged new-product reference could reach `resolveProduct` with an empty
+  required code, after which the purchase transaction rolled back without
+  creating a purchase or Sync event.
+
+The tester recovered through the existing-Product path and produced exactly one
+pending `purchase.registered` event at Device sequence 1. The queue was frozen
+at pending/uploading/failed/unknown `1/0/0/0`, with next sequence 2.
+
+The first hosted-connection check timed out before response during a cold
+Render start. `GRM-HOST-01` then returned live/ready HTTP 200, and the immediate
+client readiness check returned `hosted-connection-ready` in under three
+seconds. Main authorized exactly one ordinary Sync. No retry or alternative
+action was authorized.
+
+The Windows client reached `sync-completed`, drained the queue to `0/0/0/0`,
+retained next sequence 2, and displayed no actionable events. The newest
+lifecycle projection included accepted authentication/binding, upload lease,
+upload request, server acceptance, persisted upload result, download response
+and local application, acknowledgement, and terminal client success.
+
+The subsequent `GRM-NEON-11` postflight independently returned exactly one
+submission, one Sync event and one acknowledgement; Account cursor 2 after
+high-water 1; Device next expected sequence 2 after high-water 1; both
+consistency booleans true; one distinct sanitized replay lineage; `ROLLBACK`;
+and launcher `PASS`.
+
+### PRC-01 claims
+
+```text
+Claim: ST09 executed the exact authorized one-event same-Device transition
+Prior state: prepared and held after Record 010
+Evidence: one purchase.registered at Device sequence 1; exactly one ordinary
+          Sync; client sync-completed; queue 1 -> 0; provider 0/0/0 -> 1/1/1
+Evidence boundary: one Windows Device and one development provider lifetime
+Contradiction: none across client/local/provider evidence
+Semantic owner: C10-GCM02-S12-ST09 transition assay
+Target role: REC_DIAGNOSTICS observational record and J current recovery state
+Resulting state: ACCEPTED / PASS
+History disposition: append
+```
+
+```text
+Claim: cursor, sequence and acknowledgement state equal the frozen contract
+Prior state: provider cursor/sequence 1 after high-water 0; no acknowledgement
+Evidence: Account 2 after 1 consistent; Device 2 after 1 consistent;
+          acknowledgement count 1; local next sequence 2
+Evidence boundary: sanitized GRM-NEON-11 values plus Windows UI projection
+Contradiction: none
+Semantic owner: ST09 provider comparison
+Target role: J current recovery state
+Resulting state: ACCEPTED / PASS
+History disposition: append
+```
+
+```text
+Claim: the first cold hosted-connection timeout invalidates ST09
+Prior state: transport outcome unknown before readiness refresh
+Evidence: subsequent live/ready HTTP 200; client hosted readiness HTTP 200
+          before authorization; successful Sync and exact provider delta
+Evidence boundary: development Render cold-start behavior
+Contradiction: no later failure at the same operation boundary
+Semantic owner: operational readiness evidence
+Target role: future operational promotion candidate
+Resulting state: REJECTED AS ST09 FAILURE; RETAINED AS COLD-START SENSITIVITY
+History disposition: append
+```
+
+```text
+Claim: the Product-page defects or pre-auth local capture invalidate Sync
+Prior state: incidental member-preparation observations
+Evidence: failed resolution rolled back before event creation; later existing-
+          Product path created exactly one controlled member; provider delta
+          matches that member exactly
+Evidence boundary: local Windows workflow; no Cycle 11 account-boundary
+                   decision has been made
+Contradiction: none to the successful Sync transition
+Semantic owner: future UI/account-boundary investigation
+Target role: Cycle 11 candidate backlog after Cycle 10 closure
+Resulting state: DEFERRED NON-BLOCKING OBSERVATIONS
+History disposition: append; do not silently convert offline-first capture
+                     into an authentication requirement
+```
+
+```text
+Claim: GCM02 is fully closed by ST09
+Prior state: GCM02 requires trustworthy client, server and provider terminal
+Evidence: client and provider evidence agree; matching sanitized Render request
+          lifecycle has not yet been captured into the durable packet
+Evidence boundary: server correlation remains missing, not contradicted
+Contradiction: controlling Gate-12.10 contract requires server lifecycle
+Semantic owner: C10-GCM02 terminal reconciliation
+Target role: C10-GCM02-S12-ST10
+Resulting state: NOT YET; ONE READ-ONLY TERMINAL STEP REMAINS
+History disposition: append
+```
+
+### ST09 conclusion
+
+```text
+ST09_CONTROLLED_MEMBER=ONE_PURCHASE_REGISTERED_SEQUENCE_1
+ST09_AUTHORIZATION=EXACTLY_ONE_ORDINARY_SYNC
+ST09_CLIENT_TERMINAL=SYNC_COMPLETED
+ST09_LOCAL_QUEUE=PASS_1_TO_0
+ST09_PROVIDER_DELTA=PASS_0_0_0_TO_1_1_1
+ST09_ACCOUNT_CURSOR=PASS_1_AFTER_0_TO_2_AFTER_1
+ST09_DEVICE_SEQUENCE=PASS_1_AFTER_0_TO_2_AFTER_1
+ST09_ACKNOWLEDGEMENT=PASS_0_TO_1
+ST09_POSTFLIGHT=ROLLBACK_PASS
+ST09=PASSED_BOUNDED
+```
+
+### ST10 and GCM02 closure boundary
+
+ST10 does not rerun the assay. It inspects the already existing Render logs
+around `2026-07-28T20:25:55Z`, searches for only the sanitized operation
+fingerprint `d1cb6cb600a1` or client child-correlation fingerprint
+`6a53d7090d68`, and records:
+
+- request ingress and HTTP terminal;
+- authenticated Account/Device authorization result;
+- provider transaction/application result;
+- response/acknowledgement lifecycle;
+- absence or presence of exception, rejected/notApplied, duplicate-equivalent,
+  timeout or unknown classification.
+
+If those logs corroborate the client/provider packet, Gate 12.10 may classify
+the transition as expected success and GCM02 may close. If the matching logs
+are unavailable, contradictory, ambiguous or secret-bearing, stop without
+another Sync and retain GCM02 as evidence-blocked.
+
+Android enrollment and bounded inter-device download/convergence begin only
+after this classification, under GCM03.
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=OPEN_ONE_READ_ONLY_TERMINAL_STEP
+ST08=PASSED_BOUNDED
+ST09=PASSED_BOUNDED
+ST10=NEXT_READ_ONLY_SERVER_CORRELATION_AND_GATE_12_10_CLASSIFICATION
+NEW_SYNC_OR_RETRY=NOT_AUTHORIZED
+SECOND_DEVICE=HELD_FOR_GCM03
+GCM03=DEFINED_PROVISIONALLY_NOT_ACTIVE
+GCM04=UNDEFINED_INACTIVE
+```
+
+## 2026-07-28 — C10-GCM02-S12-ST10 Render correlation and terminal closure
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04
+Role: Main Chat [M]
+Round or unit: C10-GCM02-S12-ST10
+Branch: grm-guarded-provisioning-20260727
+Inspected baseline: f54b9872daf37c26b33778a36f26f733c834401d
+Question: Do the sanitized Render logs correlate the already accepted ST09
+          client/provider transition to authenticated HTTP success terminals
+          for upload, download and acknowledgement?
+Inputs: REC_DIAGNOSTICS Records 009-012; user-supplied Render JSON interval;
+        ST09 Windows terminal; GRM-NEON-11 provider postflight
+Writable surfaces: REC_DIAGNOSTICS append; mutable J prefix; append-only
+                   Legacy_Progress
+Prohibited actions: new Sync, Retry, recovery, Enroll, migration, provider
+                    mutation, Android/second Device, production claim
+Authority: explicit human-directed ST10 evidence submission and reconciliation
+Next sequence: GCM03 definition and read-only two-Device preflight
+```
+
+### Correlated server sequence
+
+The sanitized Render interval contains three children with the same ST09
+operation fingerprint:
+
+```text
+upload-submission
+  POST /v1/sync/submissions
+  request received
+  validation started
+  authentication accepted
+  response completed / HTTP 200 / request-completed
+
+download-events
+  GET /v1/sync/events
+  request received
+  validation started
+  authentication accepted
+  response completed / HTTP 200 / request-completed
+
+acknowledgement
+  POST /v1/sync/acknowledgements
+  request received
+  validation started
+  authentication accepted
+  response completed / HTTP 200 / request-completed
+```
+
+No matching request is rejected, failed, ambiguous, timed out, classified
+`notApplied`, completed with HTTP status `>=400`, or assigned an `MKS-*`
+server result. The final unrelated readiness request is cut off by the supplied
+log interval after ingress/validation; it is not part of the Sync operation and
+does not contradict the three completed children.
+
+### PRC-01 claims
+
+```text
+Claim: ST10 correlates the accepted ST09 operation across the Render boundary
+Prior state: client and provider transition passed; server lifecycle pending
+Evidence: one matching operation fingerprint on upload, download and
+          acknowledgement; each child has ingress, validation, accepted
+          authentication and HTTP 200 request-completed terminal
+Evidence boundary: sanitized Render interval for one development Sync
+Contradiction: none
+Semantic owner: C10-GCM02-S12-ST10 server correlation
+Target role: REC_DIAGNOSTICS observational record and J current recovery state
+Resulting state: ACCEPTED / PASS
+History disposition: append
+```
+
+```text
+Claim: Gate 12.10 may classify the ST09 transition as expected success
+Prior state: held for matching server lifecycle
+Evidence: client sync-completed and queue drained; all three server children
+          authenticated and completed HTTP 200; provider changed exactly
+          0/0/0 -> 1/1/1 with consistent cursor/sequence and ROLLBACK postflight
+Evidence boundary: one Account, one Windows Device, development provider
+Contradiction: none
+Semantic owner: Gate 12.10 terminal classification
+Target role: J current recovery state
+Resulting state: ACCEPTED / PASS EXPECTED SUCCESS
+History disposition: append
+```
+
+```text
+Claim: GCM02 closes
+Prior state: open for one read-only terminal step
+Evidence: exact binding and clean baseline passed in ST08; controlled
+          same-Device transition passed in ST09; matching three-child server
+          lifecycle passed in ST10
+Evidence boundary: hosted authenticated same-Device development scope;
+                   excludes second Device and production readiness
+Contradiction: none
+Semantic owner: C10 GCM02 closure
+Target role: J current recovery state and later permanent-domain promotion
+Resulting state: ACCEPTED / CLOSED BOUNDED
+History disposition: append
+```
+
+```text
+Claim: the newly reported unsynchronized purchase is already a controlled
+       GCM03 member
+Prior state: human observation after ST09 closure
+Evidence: report that one purchase exists and has not been synchronized
+Evidence boundary: no fresh Diagnostics member/sequence snapshot yet
+Contradiction: none, but queue identity and sequence are unproved
+Semantic owner: future GCM03 preflight
+Target role: GCM03 candidate member set
+Resulting state: PROVISIONAL; PRESERVE WITHOUT SYNC
+History disposition: append
+```
+
+### ST10 and GCM02 conclusion
+
+```text
+ST10_OPERATION_CORRELATION=PASS
+ST10_UPLOAD_SUBMISSION=AUTHENTICATED_HTTP_200_REQUEST_COMPLETED
+ST10_DOWNLOAD_EVENTS=AUTHENTICATED_HTTP_200_REQUEST_COMPLETED
+ST10_ACKNOWLEDGEMENT=AUTHENTICATED_HTTP_200_REQUEST_COMPLETED
+ST10_FAILURE_OR_AMBIGUITY=ABSENT
+ST10=PASSED_READ_ONLY
+GATE_12_10=PASS_EXPECTED_SUCCESS
+STEP12=CLOSED_THROUGH_GATE_12_10
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+```
+
+### Next boundary
+
+GCM03 may now be defined around Android enrollment and bounded inter-device
+convergence. Its first action remains read-only: freeze the new Windows pending
+member and inspect the Android client/device baseline before authorizing
+enrollment or Sync. The existing unsynchronized purchase must not be synced,
+recreated or discarded before that preflight.
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+STEP12=CLOSED_THROUGH_GATE_12_10
+ST08=PASSED_BOUNDED
+ST09=PASSED_BOUNDED
+ST10=PASSED_READ_ONLY
+GATE_12_10=PASS_EXPECTED_SUCCESS
+GCM03=READY_FOR_DEFINITION_AND_READ_ONLY_PREFLIGHT
+NEW_SYNC_OR_RETRY=NOT_AUTHORIZED
+ANDROID_ENROLLMENT=NOT_AUTHORIZED
+SECOND_DEVICE_CONVERGENCE=UNPROVED
+GCM04=UNDEFINED_INACTIVE
+```
+
+## 2026-07-28 — GCM02 final closure handoff and GCM03 Windows preflight
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04
+Role: Main Chat [M]
+Round or unit: C10-GCM02-CLOSURE / C10-GCM03-ST01
+Branch: grm-guarded-provisioning-20260727
+Inspected baseline: f54b9872daf37c26b33778a36f26f733c834401d
+Question: Is the bounded GCM02 closure packet complete, and does the new
+          Windows local event provide a frozen candidate member from which
+          Android readiness, enrollment and inter-device convergence may be
+          prepared under GCM03?
+Inputs: REC_DIAGNOSTICS Records 009-013; accepted ST08-ST10 client, Render and
+        GRM-NEON-11 evidence; user-supplied post-GCM02 Windows Diagnostics
+Writable surfaces: REC_DIAGNOSTICS append; mutable J recovery prefix;
+                   append-only Legacy_Progress
+Prohibited actions: Windows or Android Sync, Android enrollment, Retry,
+                    recovery, migration, provider mutation, production claim
+Authority: explicit human-directed final GCM02 reconciliation and GCM03 plan
+Next sequence: C10-GCM03 Android readiness and pre-enrollment preparation
+```
+
+### PRC-01 claims
+
+```text
+Claim: the GCM02 closure packet is final at its bounded scope
+Prior state: ST10 and Gate 12.10 passed; publication still pending
+Evidence: exact binding and clean baseline in ST08; one controlled same-Device
+          transition in ST09; correlated authenticated HTTP 200 upload,
+          download and acknowledgement lifecycles in ST10; exact provider
+          0/0/0 -> 1/1/1 delta and consistent cursor/sequence postflight
+Evidence boundary: one Account, one Windows Device, development hosted provider
+Contradiction: none
+Semantic owner: C10 GCM02 closure
+Target role: REC_DIAGNOSTICS and J closure handoff; later permanent promotion
+Resulting state: ACCEPTED / CLOSED BOUNDED
+History disposition: append
+```
+
+```text
+Claim: the new Windows purchase is a controlled GCM03 candidate member
+Prior state: provisionally reported but not frozen
+Evidence: Record 013 shows one pending purchase.registered event at Windows
+          Device sequence 2, next sequence 3, queue 1/0/0/0, same current
+          enrolled Device
+Evidence boundary: local Windows Diagnostics; no provider or Android action
+Contradiction: none
+Semantic owner: C10-GCM03-ST01 Windows candidate preflight
+Target role: GCM03 member set and authorization preparation
+Resulting state: ACCEPTED / PREFLIGHT PASS
+History disposition: append
+```
+
+```text
+Claim: Android enrollment or inter-device Sync is authorized by this plan
+Prior state: held for separate GCM03 preparation
+Evidence: Android environment, fresh local state, same-Account authentication,
+          enrollment delta and two-Device provider baseline remain unproved
+Evidence boundary: planning only
+Contradiction: mutation would skip required evidence and authorization gates
+Semantic owner: future GCM03 authorization packets
+Target role: human/Main action boundary
+Resulting state: REJECTED; PREPARATION ONLY
+History disposition: append
+```
+
+### GCM03 staged direction
+
+The controlling mutable prefix now holds the complete fourteen-item GCM03 TODO
+sequence. Android checks are explicitly positioned before authentication and
+enrollment:
+
+```text
+published closure checkout alignment
+read-only provider/host freshness as required
+GRM-FLUTTER-AND build/install/run
+Android local pre-enrollment Diagnostics
+same-Account Auth0 authentication
+exact one-click enrollment packet and authorization
+Android enrollment exactly once
+two-Device provider baseline
+Windows-to-Android controlled convergence
+Android-to-Windows controlled reverse convergence
+idempotent repeat
+client/Render/provider reconciliation
+```
+
+Each mutating step remains separately held. Record 013's Windows event must
+remain pending and unchanged through the Android readiness and enrollment
+preflight.
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM02_FINAL_RECONCILIATION=READY_FOR_PUBLICATION
+GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
+GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
+GCM03_WINDOWS_NEXT_DEVICE_SEQUENCE=3
+GCM03=ACTIVE_PREPARATION_ANDROID_CHECKS_NEXT
+ANDROID_ENROLLMENT=NOT_AUTHORIZED
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
+SECOND_DEVICE_CONVERGENCE=UNPROVED
+GCM04=UNDEFINED_INACTIVE
 ```
