@@ -105,8 +105,14 @@ export class HostedIdentityService {
     private readonly barrier: AuthorizationBarrier = noopAuthorizationBarrier,
   ) {}
 
-  async identity(request: FastifyRequest): Promise<IdentityResult> {
+  async identity(
+    request: FastifyRequest,
+    verification: "membership" | "token" = "membership",
+  ): Promise<IdentityResult> {
     const principal = await this.verifier.verify(request);
+    if (verification === "token") {
+      return { contractVersion: 1, state: "token-accepted" };
+    }
     return inTransactionWithContext(
       this.database,
       { operation: "identity-resolution" },

@@ -423,6 +423,14 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-AUTH-03"
 ```
 
+This guarded workflow uses the fresh raw **access token** collected after the
+ordinary Flutter Auth0 sign-in. Its pre-provisioning request verifies the token
+through hosted `GET /v1/identity?verification=token` without requiring an
+Account membership to exist yet. Only after that hosted acceptance may the
+guarded migrator action provision the owner fixture. The final ordinary
+identity request must then prove `membership-confirmed` before enrollment is
+allowed.
+
 **Validation and Flutter clients**
 
 | GRM ID              | Canonical procedure   | Function                           |

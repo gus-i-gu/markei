@@ -6,6 +6,7 @@ import { exportJWK, generateKeyPair, SignJWT } from "jose";
 import { parseHostedConfig } from "../src/application/hosted_config.js";
 import { Auth0JwtVerifier } from "../src/application/jwt_verifier.js";
 import { HostedAuthError } from "../src/application/hosted_contracts.js";
+import { HostedIdentityService } from "../src/application/hosted_authorization.js";
 import { buildApp, ROUTE_AUTHORIZATION_DESCRIPTORS } from "../src/http/app.js";
 import { noopAuthorizationBarrier } from "../src/application/authorization_barrier.js";
 
@@ -56,6 +57,114 @@ test("normal hosted composition uses the inert authorization barrier", async () 
   });
   reached = true;
   assert.equal(reached, true);
+});
+
+test("GRM token verification accepts a valid access token without provider lookup", async () => {
+  const fixture = await jwtFixture();
+  let providerConnections = 0;
+  const database = {
+    pool: {
+      connect: async () => {
+        providerConnections++;
+        throw new Error("provider lookup must not start");
+      },
+    },
+  } as never;
+  const verifier = newVerifier(fixture);
+  const identityService = new HostedIdentityService(database, verifier, {
+    now: () => fixture.now,
+  });
+  const app = buildApp({
+    authorization: {
+      kind: "hosted",
+      identityService,
+      transactionAuthorizer: {} as never,
+    },
+    database,
+  });
+  try {
+    const response = await app.inject({
+      method: "GET",
+      url: "/v1/identity?verification=token",
+      headers: { authorization: `Bearer ${await fixture.token()}` },
+    });
+    assert.equal(response.statusCode, 200);
+    assert.deepEqual(response.json(), {
+      contractVersion: 1,
+      state: "token-accepted",
+    });
+    assert.equal(providerConnections, 0);
+  } finally {
+    await app.close();
+    await fixture.close();
+  }
+});
+
+test("GRM token verification rejects unsupported verification modes", async () => {
+  const identityService = {
+    identity: async () => {
+      throw new Error("identity service must not run");
+    },
+  } as never;
+  const app = buildApp({
+    authorization: {
+      kind: "hosted",
+      identityService,
+      transactionAuthorizer: {} as never,
+    },
+  });
+  try {
+    const response = await app.inject({
+      method: "GET",
+      url: "/v1/identity?verification=membership",
+    });
+    assert.equal(response.statusCode, 400);
+    assert.equal(response.json().code, "conflict");
+  } finally {
+    await app.close();
+  }
+});
+
+test("first hosted identity resolves membership-required on an empty provider", async () => {
+  const queries: string[] = [];
+  const client = {
+    query: async (sql: string) => {
+      queries.push(sql);
+      if (sql.includes("markei_authorize_identity_membership")) {
+        return { rowCount: 0, rows: [] };
+      }
+      return { rowCount: 1, rows: [] };
+    },
+    release: () => undefined,
+  };
+  const database = {
+    pool: { connect: async () => client },
+  } as never;
+  const verifier = {
+    verify: async () => ({
+      issuer: "https://issuer.example/",
+      subject: "auth0|first-user",
+      audience: "markei-api",
+      expiresAt: new Date("2026-07-28T18:00:00.000Z"),
+    }),
+  };
+  const service = new HostedIdentityService(database, verifier, {
+    now: () => new Date("2026-07-28T17:00:00.000Z"),
+  });
+
+  const result = await service.identity({ headers: {} } as never);
+
+  assert.deepEqual(result, {
+    contractVersion: 1,
+    state: "membership-required",
+  });
+  assert.equal(
+    queries.filter((sql) =>
+      sql.includes("markei_authorize_identity_membership"),
+    ).length,
+    1,
+  );
+  assert.equal(queries.at(-1), "commit");
 });
 
 test("Auth0JwtVerifier accepts RS256 access token and rejects wrong audience", async () => {

@@ -281,10 +281,22 @@ export function buildApp(options: {
         "/v1/identity",
         "identity-resolution",
         "principal-only",
-        async (request: FastifyRequest) =>
-          options.authorization.kind === "hosted"
-            ? options.authorization.identityService.identity(request)
-            : unreachableHostedRoute(),
+        async (request: FastifyRequest) => {
+          if (options.authorization.kind !== "hosted") {
+            return unreachableHostedRoute();
+          }
+          const query = request.query as { verification?: unknown };
+          if (
+            query.verification !== undefined &&
+            query.verification !== "token"
+          ) {
+            throw new HostedAuthError("conflict", 400);
+          }
+          return options.authorization.identityService.identity(
+            request,
+            query.verification === "token" ? "token" : "membership",
+          );
+        },
       ),
       route(
         "POST",

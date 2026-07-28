@@ -2365,13 +2365,13 @@ the rebuilt Windows client can enroll its Device. It accepts one fresh raw
 Auth0 user access token through a masked prompt, derives the identity subject
 locally, and never asks the operator to transcribe a subject or UUID.
 
-The hosted `GET /v1/identity` route must first accept the token
-cryptographically and return either `membership-required` for a new fixture or
-`membership-confirmed` for an idempotent rerun. The procedure then invokes one
+The hosted `GET /v1/identity?verification=token` mode must first accept the
+token cryptographically and return `token-accepted` without requiring or
+querying provider membership state. The procedure then invokes one
 migrator-only database action. The launcher independently requests exact
 `PROVISION <BranchAlias> <Database>` confirmation and the migrator password.
-After the transaction commits, the same hosted route must return
-`membership-confirmed`.
+After the transaction commits, the ordinary `GET /v1/identity` membership mode
+must return `membership-confirmed`.
 
 ```powershell
 $ErrorActionPreference = "Stop"
@@ -2395,6 +2395,9 @@ try {
 
     # Provisioning is allowed only from the exact clean remote-aligned source.
     & $Launcher -Procedure "GS-GIT-01"
+    # Re-prove the live and database-readiness contracts immediately before
+    # accepting a session-only token or permitting provider provisioning.
+    & $Launcher -Procedure "GS-HOST-01"
 
     $NsText = Get-Content -LiteralPath $NsPath -Raw
 
@@ -2463,11 +2466,105 @@ try {
         }
         catch {
             $Status = $null
-            if ($null -ne $_.Exception.Response) {
-                $Status = [int]$_.Exception.Response.StatusCode
+            $FailureResponse = $_.Exception.Response
+            if ($null -ne $FailureResponse) {
+                $Status = [int]$FailureResponse.StatusCode
             }
             if ($null -ne $Status) {
-                throw "$Phase hosted identity verification returned HTTP $Status."
+                $FailureContent = $null
+                $FailureStream = $null
+                $FailureReader = $null
+                try {
+                    $ContentProperty = $FailureResponse.PSObject.Properties[
+                        "Content"
+                    ]
+                    if ($null -ne $ContentProperty -and
+                        $ContentProperty.Value -is [string]) {
+                        $FailureContent = [string]$ContentProperty.Value
+                    }
+                    elseif ($null -ne $FailureResponse.PSObject.Methods[
+                            "GetResponseStream"
+                        ]) {
+                        $FailureStream = $FailureResponse.GetResponseStream()
+                        if ($null -ne $FailureStream) {
+                            $FailureReader = [IO.StreamReader]::new(
+                                $FailureStream
+                            )
+                            $FailureContent = $FailureReader.ReadToEnd()
+                        }
+                    }
+                    elseif ($null -ne $ContentProperty -and
+                        $null -ne $ContentProperty.Value -and
+                        $null -ne $ContentProperty.Value.PSObject.Methods[
+                            "ReadAsStringAsync"
+                        ]) {
+                        $ContentTask =
+                            $ContentProperty.Value.ReadAsStringAsync()
+                        $FailureContent =
+                            $ContentTask.GetAwaiter().GetResult()
+                        $ContentTask = $null
+                    }
+                }
+                catch {
+                    $FailureContent = $null
+                }
+                finally {
+                    if ($null -ne $FailureReader) {
+                        $FailureReader.Dispose()
+                    }
+                    if ($null -ne $FailureStream) {
+                        $FailureStream.Dispose()
+                    }
+                }
+
+                $SafeFailureFields = @()
+                if (-not [string]::IsNullOrWhiteSpace($FailureContent) -and
+                    [Text.Encoding]::UTF8.GetByteCount($FailureContent) -le
+                        16384) {
+                    try {
+                        $FailureBody = $FailureContent | ConvertFrom-Json
+                        foreach ($FieldName in @(
+                                "code",
+                                "diagnosticCode",
+                                "operation",
+                                "phase",
+                                "lastProvedPhase",
+                                "correlationFingerprint"
+                            )) {
+                            $FieldProperty = $FailureBody.PSObject.Properties[
+                                $FieldName
+                            ]
+                            if ($null -ne $FieldProperty -and
+                                $FieldProperty.Value -is [string] -and
+                                $FieldProperty.Value -match
+                                    '^[A-Za-z0-9._:-]{1,96}$') {
+                                $SafeFailureFields += (
+                                    "{0}={1}" -f
+                                    $FieldName,
+                                    $FieldProperty.Value
+                                )
+                            }
+                        }
+                    }
+                    catch {
+                        $SafeFailureFields = @()
+                    }
+                    finally {
+                        $FailureBody = $null
+                    }
+                }
+                $FailureContent = $null
+                $FailureResponse = $null
+                $FailureSummary = if ($SafeFailureFields.Count -gt 0) {
+                    $SafeFailureFields -join "; "
+                }
+                else {
+                    "no-sanitized-diagnostic"
+                }
+                throw (
+                    "$Phase hosted identity verification returned HTTP " +
+                    "$Status; $FailureSummary."
+                )
             }
             throw "$Phase hosted identity verification was unavailable."
         }
@@ -2541,6 +2638,9 @@ try {
         $OriginBase,
         $IdentityPath.TrimStart([char]"/")
     )
+    $TokenVerificationBuilder = [UriBuilder]::new($IdentityUri)
+    $TokenVerificationBuilder.Query = "verification=token"
+    $TokenVerificationUri = $TokenVerificationBuilder.Uri
     $IssuerBase = [uri]($IssuerCoordinate.TrimEnd("/") + "/")
     $JwksUri = [uri]::new(
         $IssuerBase,
@@ -2672,14 +2772,11 @@ try {
             Authorization = "Bearer $AccessToken"
         }
         $PreProvisioningState = Invoke-HostedIdentityState `
-            -Uri $IdentityUri `
+            -Uri $TokenVerificationUri `
             -Headers $AuthorizationHeaders `
             -Phase "Pre-provisioning"
-        if ($PreProvisioningState -notin @(
-                "membership-required",
-                "membership-confirmed"
-            )) {
-            throw "Hosted identity is not eligible for guarded provisioning."
+        if ($PreProvisioningState -ne "token-accepted") {
+            throw "Hosted identity did not cryptographically accept the token."
         }
 
         $Subject = [string]$TokenSubject
