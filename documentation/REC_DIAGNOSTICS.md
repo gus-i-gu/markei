@@ -1439,3 +1439,246 @@ Gate 12.7 final semantic disposition: RECONCILIATION REQUIRED
 No Retry, recovery, Clear diagnostic history, new event creation, provider
 mutation, or second-device action is recommended merely to repeat evidence
 already established by this packet.
+
+---
+
+# APPENDIX B — DIAG-01 WINDOWS HOST OBSERVATION, INNER-STEPS 3–4
+
+This appendix is append-only. It records the Windows UI observations supplied
+on 2026-07-28 after the consolidated `Diagnostics` control had been
+implemented. It does not rewrite Records 001–006 or project the current
+signed-out state backward onto those earlier assay times.
+
+Controlling sequence at the time of observation:
+
+```text
+Cycle 10
+└─ GCM-02
+   └─ Step 12
+      ├─ Gate 12.7 — passed at the prior corrected single-client scope
+      └─ DIAG-01 host observation
+         ├─ inner-step 3 — exercise and inspect Diagnostics
+         └─ inner-step 4 — freeze the unchanged Gate 12.7 client packet
+```
+
+The screenshots establish client-side Windows UI evidence only. They do not
+establish a fresh Render request, provider-row contents, or second-Device
+convergence. The Diagnostics action is evaluated against its intended local,
+read-only projection boundary.
+
+## RECORD 007 — CONSOLIDATED DIAGNOSTICS WINDOWS CONTROL
+
+```text
+MARKEI CLOSURE ASSAY — SANITIZED RECORD
+========================================
+
+ASSAY ID: REC-2026-07-28-007-DIAG-01-WINDOWS-CONTROL
+DATE/TIME (local): 2026-07-28, exact time [MANUAL]
+DATE/TIME (UTC, if available): [MANUAL]
+TESTER: [MANUAL]
+DEVICE/OS: Windows desktop [SCREENSHOT; exact version MANUAL]
+CLIENT BUILD OR COMMIT SHA: grm-guarded-provisioning-20260727 lineage
+[CONTEXT; exact executable SHA MANUAL]
+ENVIRONMENT: development/disposable [CONTEXT; confirm manually]
+ASSAY PURPOSE: Exercise the consolidated Diagnostics control once, inspect its
+local projections and operation-aware history, freeze the prior Gate 12.7
+client packet, and assess whether DIAG-01 behaves as intended.
+
+ACTION PERFORMED
+----------------
+Button/action: Diagnostics [USER STATEMENT/SCREENSHOT]
+Exact click count: 1 [USER STATEMENT]
+Hosted readiness executed by this action: NO evidence observed
+Ordinary Sync executed by this action: NO evidence observed
+Retry or failed/notApplied recovery executed: NO evidence observed
+Enrollment or logout executed by this action: NO evidence observed
+Diagnostic-history clear executed: NO evidence observed
+
+CURRENT DIAGNOSTICS ACTION
+--------------------------
+Page status: diagnostics-partial [SCREENSHOT]
+MKS code: MKS-UI-003 [SCREENSHOT]
+Title: Current action collapsed into historical result [SCREENSHOT]
+Outcome: blocked [SCREENSHOT]
+Last proved phase: presentation [SCREENSHOT]
+Local mutation: none [SCREENSHOT]
+Provider contact: not-started [SCREENSHOT]
+Trusted response: not-received [SCREENSHOT]
+Operation: #local-diagnostics [SCREENSHOT]
+Displayed safe action: separate current and historical result surfaces
+[SCREENSHOT]
+
+DIAGNOSTICS SUBCHECKS AND DURABLE PROJECTION
+--------------------------------------------
+Authentication: signed-out [SCREENSHOT]
+Enrollment: device-enrolled [SCREENSHOT]
+Readiness: authentication-required [SCREENSHOT]
+Recovery guidance: sign-in-required [SCREENSHOT]
+Last ordinary-Sync result: sync-completed [SCREENSHOT]
+Last successful Sync: 2026-07-27T01:29:48.000Z [SCREENSHOT]
+Declaration scope: client-operation [SCREENSHOT]
+Historical operation kind: ordinary-sync [SCREENSHOT]
+Historical client result code: sync-completed [SCREENSHOT]
+Historical last proved phase: terminal [SCREENSHOT]
+Configured ordinary-Sync deadline: 35000ms client [SCREENSHOT]
+Historical operation fingerprint: #d723c1f392f3 [SCREENSHOT]
+Historical child correlation: #2575218c1dbf [SCREENSHOT]
+
+LOCAL QUEUE AND DEVICE
+----------------------
+Pending: 0 [SCREENSHOT]
+Uploading: 0 [SCREENSHOT]
+Failed: 0 [SCREENSHOT]
+Unknown: 0 [SCREENSHOT]
+Next Device sequence: 3 [SCREENSHOT]
+Displayed sequence meaning: Allocated only to new local Device events
+[SCREENSHOT]
+Current Device fingerprint: #a43532d0 [SCREENSHOT]
+Current Device enrollment: device-enrolled [SCREENSHOT]
+Actionable events: No pending, failed or unknown events [SCREENSHOT]
+
+OPERATION-AWARE HISTORY PROJECTION
+----------------------------------
+Newest operation: ordinary-sync #d723c1f392f3 [SCREENSHOT]
+Newest operation terminal: successful / sync-completed [SCREENSHOT]
+Newest compact phase count: 8 phases [SCREENSHOT]
+Newest latest proved phase: terminal [SCREENSHOT]
+Historical operation: ordinary-sync #cf23d2a09c74 [SCREENSHOT]
+Historical compact phase count: 11 phases [SCREENSHOT]
+Historical latest proved phase: terminal [SCREENSHOT]
+Raw newest lifecycle: Sanitized raw lifecycle (13), expandable [SCREENSHOT]
+Pre-result/result reduction visible: YES; download and acknowledgement phases
+show later result-bearing classifications, including `downloadreceived` and
+`duplicateequivalent`, rather than treating every earlier `unknown` declaration
+as an independent failure [SCREENSHOT]
+Newest/historical separation visible: YES [SCREENSHOT]
+
+STATE COMPARISON WITH FROZEN RECORD 006
+---------------------------------------
+Queue before: 0/0/0/0 [RECORD 006]
+Queue after Diagnostics: 0/0/0/0 [SCREENSHOT]
+Next Device sequence before: 3 [RECORD 006]
+Next Device sequence after Diagnostics: 3 [SCREENSHOT]
+Last successful Sync before: 2026-07-27T01:29:48.000Z [RECORD 006]
+Last successful Sync after Diagnostics: 2026-07-27T01:29:48.000Z [SCREENSHOT]
+Newest accepted ordinary-Sync operation before: #d723c1f392f3 [RECORD 006]
+Newest accepted ordinary-Sync operation after: #d723c1f392f3 [SCREENSHOT]
+Visible client-state mutation attributable to Diagnostics: NONE
+[RECORD 006/SCREENSHOT COMPARISON]
+
+SCREENSHOTS
+-----------
+- 793e050d-bce6-43e3-9b4e-5cdea5884555.png
+- 8e038bab-1589-4076-a740-f96825517573.png
+- 73734b85-dce1-4aae-b2b9-d65a5371f38b.png
+- 1afc527e-6556-424e-83da-79d846d53a0c.png
+- c9876767-48c6-41e9-8bef-f2d09ca0bfcc.png
+
+OBSERVATION
+-----------
+Expected: One Diagnostics action locally reprojects authentication,
+enrollment/binding, durable Sync state, queue/sequence state, actionable
+events, and grouped lifecycle history. It performs no hosted readiness,
+ordinary Sync, Retry, recovery, enrollment, logout, history clear, provider
+mutation, or new Device-event allocation. A signed-out client with retained
+local enrollment should truthfully produce a partial diagnostic aggregate
+rather than claim readiness.
+
+Observed: The consolidated control is present and produces the expected local
+projection. Authentication is signed-out, enrollment remains device-enrolled,
+readiness is authentication-required, and the page-level status is
+diagnostics-partial. The prior successful ordinary Sync remains historical and
+unchanged. Queue 0/0/0/0, Next Device sequence 3, Last successful Sync, newest
+operation identity, and actionable-event state remain consistent with frozen
+Record 006. Newest and historical operations are separated, compact phase
+summaries are shown, and the complete sanitized lifecycle remains expandable.
+
+Difference: The aggregate `diagnostics-partial` classification is coherent
+with the signed-out authentication subcheck and is not evidence that the
+Diagnostics command failed. However, the Current action result is projected as
+`MKS-UI-003 / blocked / Current action collapsed into historical result` even
+though the UI now visibly separates `#local-diagnostics` from the historical
+ordinary-Sync result. This is a residual semantic/presentation mismatch in the
+current-action diagnostic mapping. It does not negate the successful local
+snapshot refresh, but it prevents an unqualified claim that the complete
+Diagnostics presentation is working exactly as intended.
+
+Current hypothesis: The Diagnostics command boundary is operational and
+read-only at the observed client-UI scope. Its subchecks, invariant
+preservation, operation grouping, and raw-evidence access behave as expected.
+The unconditional use of `MKS-UI-003` for an available local snapshot is
+misleading and should be corrected so the current-action card reports the
+truthful aggregate terminal (`diagnostics-ready`, `diagnostics-partial`, or
+`diagnostics-configuration-missing`) without asserting a historical-collapse
+defect that the new surface has already separated.
+
+Next safe action: Preserve this client packet. Do not repeat Sync, readiness,
+Retry, recovery, Enroll, logout, or history clear to improve the record. Route
+the `MKS-UI-003` current-action classification mismatch as a bounded DIAG-01
+presentation correction, while keeping provider contents and second-Device
+claims outside this record.
+```
+
+## INNER-STEP 3 ASSESSMENT — IS THE DIAGNOSTICS BUTTON WORKING?
+
+| Requirement | Host observation | Assessment |
+| --- | --- | --- |
+| One consolidated Diagnostics control | One `Diagnostics` button is visible | PASS |
+| Authentication remains a distinct subcheck | `signed-out` is visible | PASS |
+| Enrollment/binding remains distinct | `device-enrolled` is visible | PASS |
+| Local snapshot is refreshed/projected | Queue, sequence, attempts, devices, actionable events, and lifecycle history are visible | PASS |
+| Signed-out aggregate is truthful | `diagnostics-partial`, `authentication-required`, and `sign-in-required` agree | PASS |
+| No visible queue mutation | Queue remains `0/0/0/0` | PASS at client-UI scope |
+| No Device-sequence allocation | Next Device sequence remains `3` | PASS at client-UI scope |
+| Last successful Sync is not advanced | Timestamp remains `2026-07-27T01:29:48.000Z` | PASS at client-UI scope |
+| Newest and historical operations are separated | `#d723c1f392f3` is newest and `#cf23d2a09c74` is historical | PASS |
+| Compact summaries do not treat lifecycle-row count as error count | 8/11 compact phase summaries and accepted result-bearing rows are visible | PASS |
+| Raw sanitized evidence remains available | `Sanitized raw lifecycle (13)` is expandable | PASS |
+| Current-action diagnostic is semantically accurate | `MKS-UI-003 / blocked` claims historical collapse despite the separated surface | PRESENTATION DEFECT |
+| Provider contents or server correlation proved | No fresh provider/Render evidence supplied | OUTSIDE SCOPE |
+
+Overall host assessment:
+
+```text
+DIAGNOSTICS_BUTTON_INVOCATION=PASS
+DIAGNOSTICS_LOCAL_PROJECTION=PASS
+DIAGNOSTICS_READ_ONLY_INVARIANTS=SUPPORTED_AT_CLIENT_UI_SCOPE
+DIAGNOSTICS_SUBCHECK_SEPARATION=PASS
+DIAGNOSTICS_OPERATION_GROUPING=PASS
+DIAGNOSTICS_RAW_EVIDENCE=PASS
+DIAGNOSTICS_AGGREGATE_PARTIAL=EXPECTED_WHILE_SIGNED_OUT
+DIAGNOSTICS_CURRENT_ACTION_CLASSIFICATION=PRESENTATION_DEFECT
+DIAG_01_HOST_ACCEPTANCE=PASS_WITH_BOUNDED_PRESENTATION_DEFECT
+```
+
+The first two supplied screenshots do contain Diagnostics results: they show
+the refreshed lower portion of the same Closure diagnostics surface, including
+operation grouping, lifecycle evidence, Devices, actionable events, and
+Closure actions. The current-action aggregate itself appears in
+`c9876767-48c6-41e9-8bef-f2d09ca0bfcc.png`; the Sync overview and invariant
+state continue through `1afc527e-6556-424e-83da-79d846d53a0c.png`. The five
+screenshots should therefore be read as one vertically distributed
+post-Diagnostics evidence surface, not as independent actions.
+
+## INNER-STEP 4 ASSESSMENT — FROZEN CLIENT PACKET
+
+The prior Gate 12.7 client packet remains stable across the observed
+Diagnostics action:
+
+```text
+accepted newest operation: #d723c1f392f3
+accepted terminal: sync-completed
+queue: 0 pending / 0 uploading / 0 failed / 0 unknown
+Next Device sequence: 3
+Last successful Sync: 2026-07-27T01:29:48.000Z
+implicit failed/notApplied recovery in newest operation: not observed
+new action attributable to Diagnostics: #local-diagnostics
+provider contact attributable to Diagnostics: not-started
+local mutation attributable to Diagnostics: none
+```
+
+This freezes inner-step 4 at client-UI scope. It neither strengthens nor
+weakens the already accepted Gate 12.7 ordinary-Sync result. The bounded
+`MKS-UI-003` presentation defect should be corrected or explicitly accepted
+before DIAG-01 is described as fully host-clean, but it does not authorize a
+new Sync or any recovery/provider mutation.
