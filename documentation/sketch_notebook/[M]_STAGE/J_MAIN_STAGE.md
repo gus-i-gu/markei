@@ -8760,3 +8760,456 @@ GCM03 acceptance: not promoted
 ~~~
 
 Accordingly, no live control is released by this reconciliation.
+---
+
+# 2026-07-29 — Post-Codex reconciliation: C10-GCM03-S10-R04
+
+## 1. Reconciliation envelope
+
+~~~text
+Sequence: FLX-PRM-04 post-materialization reconciliation
+Primary unit: C10-GCM03-S10-R04
+Human-assay continuity alias: C10-GCM03-S09-R04
+Repository: gus-i-gu/markei
+Branch: grm-guarded-provisioning-20260727
+Controlling staging head: fac76dfb961a13e479e03849fc838c5aaa212a74
+Materialization commit: e740d9de8bcab28110f9e398b8a29101acbb3869
+Materialization parent: fac76dfb961a13e479e03849fc838c5aaa212a74
+Remote branch before J publication: identical to e740d9de
+Materialization distance: exactly one non-forced fast-forward commit
+Live operation authority during reconciliation: NONE
+~~~
+
+This entry reconciles R04 against the controlling D/E/F contract, the exact
+eight-file remote comparison, changed source and tests, replacement G/H/I and
+the retained preserved-state evidence. Codex terminals remain observational
+until Main checks whether the implementation represents the independent truth
+planes required by D, E and F.
+
+## 2. Publication and scope guard
+
+The materialization changed exactly eight paths:
+
+~~~text
+clients/markei_flutter/lib/app/native_auth_closure_runner.dart
+clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_event_applier.dart
+clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_fact_writer.dart
+clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
+clients/markei_flutter/test/infrastructure/remote_purchase_event_applier_test.dart
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+~~~
+
+This is exactly one commit after the R04 staging head. Every path is inside D's
+allowed production, test or G/H/I scope. The two fact-application production
+files were touched only to add the authorized deterministic test seams for an
+otherwise unreachable Product ambiguity and an arbitrary apply failure.
+
+No schema, migration, payload, hosted API, authentication, enrollment,
+dependency, provider configuration, D/E/F, J, REC_DIAGNOSTICS, methodology,
+permanent-domain or GRIMOIRE operator path entered the R04 commit.
+
+~~~text
+R04_FAST_FORWARD_GUARD=PASS
+R04_CHANGED_PATH_SCOPE=PASS
+R04_BRANCH_TOPOLOGY=PASS
+R04_LIVE_OPERATION_DURING_CODEX=NO_REPORTED
+R04_PROVIDER_MUTATION_DURING_CODEX=NONE_REPORTED
+~~~
+
+## 3. R04 improvements accepted at implementation and automated scope
+
+### Cumulative replacement of the R03 whole-object selector
+
+The R03 strongest-event selector was removed. The runner now owns an in-memory
+per-operation cumulative object and updates it before awaiting durable
+diagnostic writes.
+
+The merge retains important facts monotonically:
+
+- trusted response received is not erased by acknowledgement or terminal
+  defaults;
+- a committed download apply remains visible through an acknowledgement
+  transport exception;
+- a proved rollback is not silently rewritten by a later placeholder;
+- begin-attempt failure starts the recorder with persistence degradation active;
+- row-write and completion-write failure mark degradation without throwing
+  through core Sync;
+- terminal lifecycle output projects diagnostics-persistence-degraded when the
+  diagnostic plane failed.
+
+This directly corrects the R03 defect in which an acknowledgement-request event
+could replace an earlier trusted download and committed apply object.
+
+### Product/apply decision and replay evidence
+
+R04 adds direct deterministic evidence for:
+
+- ambiguous normalized-code resolution through a constrained test seam;
+- ambiguous exact-identity resolution through the same bounded seam;
+- production uniqueness keeping those ambiguous row shapes unreachable through
+  ordinary storage;
+- established incoming UUID immutable mutation;
+- arbitrary unexpected apply failure and complete rollback;
+- replay of the formerly rejected exact-identity/different-code event;
+- later cursor progress after that replay;
+- mixed two-client page application and idempotent replay without duplicate
+  Product, Store, Purchase, Purchase Item or inbox effects.
+
+The R03 Product resolver, remote-to-local Product map and one-Drift-transaction
+facts/inbox/cursor boundary remain unchanged.
+
+### Diagnostic degradation evidence
+
+Focused runner tests inject:
+
+- diagnostic-attempt begin failure;
+- diagnostic row failure with committed apply;
+- diagnostic row failure while reporting rollback;
+- diagnostic completion failure after committed apply;
+- acknowledgement transport exception after committed apply.
+
+Those tests establish that diagnostic durability is observational and cannot by
+itself flip the core result, manufacture provider success or prevent
+acknowledgement after an independently committed cursor.
+
+## 4. Validation absorbed under PRC-01
+
+Codex reports:
+
+~~~text
+dart format check=PASS; 98 files; 0 changed
+flutter analyze=PASS
+focused native diagnostics=33 PASS
+focused remote applier=18 PASS
+combined diagnostic/repository/applier=61 PASS
+local sync application=29 PASS
+two-device deterministic harness=1 PASS
+v3 contract=2 PASS
+catalogue/store/app regression=34 PASS
+full flutter test=228 PASS / 4 disposable labs skipped
+debug Android APK build=PASS
+Windows release build=PASS first attempt
+merged Android manifest inspection=PASS
+git diff --check=PASS
+diagnostics generator/check=PASS
+changed-content sensitive scan=PASS reported
+~~~
+
+The disposable hosted/provider labs were skipped because MARKEI_RUN_SYNC_LAB
+was absent. No live Android or Windows client, preserved application database,
+Render operation or provider mutation was exercised.
+
+These results are strong local implementation, deterministic test, regression
+and packaging evidence. They do not prove installed preserved-state behavior,
+live provider-to-client convergence, live acknowledgement, bidirectional
+inter-device usability, idempotent hosted replay or GCM03 closure.
+
+## 5. Main gap 1 — acknowledgement truth is not an independent cumulative plane
+
+D required the cumulative operation state to retain acknowledgement as an
+independent not-started, started and classified-result progression.
+
+The implemented cumulative type has no acknowledgement state or result field.
+The external SyncDiagnosticPhaseEvidence type also has no acknowledgement
+dimension. An acknowledgement is represented only by generic fields:
+
+~~~text
+phase
+nativeCode
+outcome
+providerContactState
+providerTransactionState
+trustedResponseState
+~~~
+
+Those generic fields are later overwritten or merged with upload, download and
+terminal evidence. The acknowledgement-exception test proves that trusted
+download and committed local apply survive, but it does not assert:
+
+~~~text
+acknowledgement started
+acknowledgement response absent or received
+acknowledgement outcome unknown, failed, rejected or applied
+~~~
+
+After the runner records a generic terminal exception, phase and nativeCode no
+longer preserve the acknowledgement-request identity in the cumulative
+snapshot. Durable event history may still contain the request row, but D
+explicitly required the runner/lifecycle cumulative snapshot to preserve the
+acknowledgement transition independently.
+
+The providerTransactionState field cannot substitute for this dimension. A
+previous successful upload may set it to committed. If acknowledgement later
+throws before a trusted response, the cumulative state can retain committed
+from the upload and offer no field showing that acknowledgement merely started
+and is uncertain. This can mislead a terminal consumer into reading an upload
+provider transaction as acknowledgement success.
+
+Therefore:
+
+~~~text
+ACK_TRANSITION_RETAINS_PRIOR_DOWNLOAD_APPLY=PASS
+ACK_INDEPENDENT_NOT_STARTED_STARTED_RESULT_STATE=FAIL_OPEN
+ACK_EXCEPTION_CLASSIFICATION_IN_CUMULATIVE_SNAPSHOT=PARTIAL
+ACK_TRANSITION_TRUTH_PRESERVED_TERMINAL=NOT_PROMOTED_AS_COMPLETE
+~~~
+
+## 6. Main gap 2 — distinct local transactions are collapsed into one mutation field
+
+The cumulative state owns one generic localMutationState. Ordinary Sync uses
+that same field for different local transactions:
+
+- upload lease/result persistence can emit committed;
+- inbound page application can emit committed or rolled-back;
+- diagnostic persistence is tracked separately.
+
+The merge classifies committed followed by rolled-back, or rolled-back followed
+by committed, as diagnostic-causal-invariant-conflict.
+
+That rule is valid only when two declarations contradict the same transaction.
+It is not valid when an upload-queue transaction commits and a later independent
+download-apply transaction rolls back. Both facts can be true in one ordinary
+Sync.
+
+The required preserved-state scenario makes this concrete. The earlier Android
+operation successfully uploaded its pending event and then failed while applying
+hosted inbound events. A corrected implementation must be able to represent:
+
+~~~text
+upload local persistence=committed
+download trusted response=received
+download local apply=rolled-back
+acknowledgement=not-started
+~~~
+
+R04 can instead merge the first two local-mutation declarations into
+diagnostic-invariant-conflict. The new rollback tests use no prior committed
+upload mutation. The mixed-client replay test calls the applier directly and
+does not exercise the coordinator sequence of successful upload followed by
+failed inbound apply.
+
+Consequently the broad G/H/I conclusion that every authoritative transaction
+plane is independently retained is too strong.
+
+~~~text
+UPLOAD_LOCAL_PERSISTENCE_PLANE=NOT_SEPARATED
+DOWNLOAD_LOCAL_APPLY_PLANE=NOT_SEPARATED
+LEGITIMATE_UPLOAD_COMMIT_PLUS_APPLY_ROLLBACK=UNTESTED_AND_MISCLASSIFIED
+CAUSAL_TRANSACTION_PARTITION=FAIL_OPEN
+~~~
+
+## 7. PRC-01 disposition
+
+~~~text
+Claim: R04 was one scoped fast-forward materialization
+Result: ACCEPTED
+Evidence ceiling: GitHub ancestry and exact path comparison
+
+Claim: R03 whole-object evidence replacement was corrected
+Result: ACCEPTED_AT_IMPLEMENTATION_AND_FOCUSED_TEST_SCOPE
+Evidence ceiling: trusted download and committed apply survive ack/terminal
+                  defaults in deterministic runner tests
+
+Claim: diagnostic begin, row and completion failures are contained
+Result: ACCEPTED_AT_DETERMINISTIC_TEST_SCOPE
+Evidence ceiling: local injected recorder failures; no preserved-state runtime
+
+Claim: the missing Product/apply/replay test categories were materialized
+Result: ACCEPTED_AT_DETERMINISTIC_APPLIER_SCOPE
+Evidence ceiling: constrained test seams and local Drift databases
+
+Claim: acknowledgement truth is retained independently
+Result: REJECTED_AS_COMPLETE
+Evidence: no acknowledgement field/result exists in cumulative or projected
+          state; generic provider fields conflate upload and acknowledgement
+
+Claim: local transaction truth is partitioned correctly
+Result: REJECTED_AS_COMPLETE
+Evidence: upload persistence and download apply share one mutation field;
+          legitimate commit then rollback becomes an invariant conflict
+
+Claim: all R04 D terminals may be promoted as PASS
+Result: REJECTED
+Evidence: ACK_TRANSITION_TRUTH_PRESERVED and CUMULATIVE_CAUSAL_STATE remain
+          partial because the required independent planes are absent
+
+Claim: overall Android/Windows Sync is solved
+Result: REJECTED / NOT YET PROVED
+Evidence: no corrected preserved-state clients or live assay; two source truth
+          partitions remain incomplete
+~~~
+
+## 8. Main terminal
+
+The Codex IMPLEMENTED_VALIDATED terminal is retained as Codex evidence. Main
+accepts the Product, apply/replay and diagnostic-degradation achievements but
+does not promote R04 as D-complete.
+
+~~~text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=ACTIVE_CORRECTIVE_MATERIALIZATION
+C10_GCM03_S10_R04=IMPLEMENTED_WITH_MAIN_RECONCILIATION_GAPS
+C10_GCM03_S09_R04=HUMAN_ASSAY_CONTINUITY_ALIAS
+R04_REMOTE_COMMIT=e740d9de8bcab28110f9e398b8a29101acbb3869
+R04_SCOPE_RECONCILIATION=PASS
+R04_PRODUCT_APPLY_REPLAY_MATRIX=PASS_AUTOMATED_SCOPE
+R04_DIAGNOSTIC_DEGRADATION=PASS_AUTOMATED_SCOPE
+R04_TRUSTED_DOWNLOAD_AND_COMMITTED_APPLY_RETENTION=PASS_AUTOMATED_SCOPE
+R04_ACKNOWLEDGEMENT_INDEPENDENT_STATE=FAIL_OPEN
+R04_LOCAL_TRANSACTION_PARTITION=FAIL_OPEN
+CUMULATIVE_CAUSAL_STATE=PARTIAL
+ACK_TRANSITION_TRUTH_PRESERVED=PARTIAL_FAIL
+INTER_DEVICE_SAME_ACCOUNT_SYNC=FAIL_OPEN
+MVP_SYNC_ACCEPTANCE=NOT_PROMOTED
+ANDROID_SYNC=HELD
+WINDOWS_SYNC=HELD
+RETRY_RECOVERY=HELD
+QUERY=HELD
+ENROLL=DO_NOT_REPEAT
+NEW_PURCHASE_REGISTRATION=HELD
+DIAGNOSTIC_HISTORY=PRESERVE
+PROVIDER_MUTATION=NONE
+NEXT_ACTION=STAGE_C10_GCM03_S10_R05_TRUTH_PLANE_COMPLETION
+~~~
+
+## 9. R05 corrective directive frame
+
+The next implementation authority should be:
+
+~~~text
+Primary unit: C10-GCM03-S10-R05
+Human-assay continuity alias: C10-GCM03-S09-R05
+Starting implementation parent: a future Main D/E/F staging commit descended
+                                directly from this J reconciliation
+~~~
+
+R05 must remain narrower than R04.
+
+### Required state separation
+
+The recorder-owned cumulative model must retain independently:
+
+1. upload request/provider outcome;
+2. upload local lease/result-persistence outcome;
+3. download request and trusted-response outcome;
+4. inbound local-apply not-started/committed/rolled-back/unknown;
+5. acknowledgement not-started/request-started/response-received and classified
+   outcome;
+6. diagnostic persistence durable/degraded;
+7. latest entered phase, latest proved phase, bounded terminal result,
+   sanitized exception class and safe action.
+
+A state from one transaction must not satisfy or contradict another transaction.
+In particular:
+
+~~~text
+upload committed + inbound apply rolled-back = valid compound state
+upload committed + acknowledgement uncertain = valid compound state
+inbound apply committed + acknowledgement uncertain = valid compound state
+inbound apply failed/unproved + acknowledgement started = bounded invariant
+~~~
+
+The lifecycle and runner fallback must project the independent inbound-apply and
+acknowledgement facts. If the current public evidence model cannot represent
+them without ambiguity, R05 may extend the in-memory/application evidence type
+and bounded lifecycle fields inside the approved Flutter scope. It must not add
+a database migration, hosted payload field or provider contract change.
+
+### Required direct tests
+
+R05 must add coordinator/runner-level deterministic tests for:
+
+1. no upload, committed inbound apply, acknowledgement success;
+2. no upload, committed inbound apply, acknowledgement transport exception;
+3. successful upload persistence followed by inbound apply rollback;
+4. successful upload persistence followed by committed inbound apply and
+   acknowledgement transport exception;
+5. upload unknown/rejected followed by the existing early stop, with no download
+   or acknowledgement proof;
+6. failed/unproved inbound apply with acknowledgement not started;
+7. diagnostic begin/row/complete failure across the compound upload/download/ack
+   cases without altering any core plane;
+8. terminal projection preserving upload, inbound apply and acknowledgement
+   fields independently;
+9. no false diagnostic invariant for valid cross-phase transaction outcomes;
+10. a real contradiction within the same authoritative plane producing the
+    bounded invariant category;
+11. sanitized lifecycle output containing no payload, business fact, UUID,
+    token, SQL, exception message, stack, secret or full hash;
+12. regression of the accepted R03/R04 Product decision, poison-page and
+    idempotent replay behavior.
+
+Direct assertions must inspect independent fields rather than infer
+acknowledgement from providerTransactionState or infer inbound apply from a
+generic operation-wide localMutationState.
+
+### Frozen boundaries
+
+R05 must preserve:
+
+- the R03 Product resolver and remote-to-local reference map;
+- the R04 ambiguity, unexpected-apply, poison-page and mixed replay evidence;
+- one Drift transaction for facts/inbox/cursor;
+- acknowledgement eligibility from committed contiguous cursor only;
+- diagnostic persistence as best-effort observability;
+- Protocol v3, schema, hosted API, Auth0, enrollment, Account binding,
+  dependencies, Store rules and Person/Payment restrictions.
+
+R05 must perform no live Sync, Retry, Recovery, Query, Enroll, acknowledgement,
+new Purchase registration, preserved-state installation, provider mutation,
+diagnostic clearing, migration, rebase, branch creation, force push or PR.
+
+G/H/I must be replaced and must report any residual partial plane honestly.
+
+## 10. Post-R05 human route
+
+Only after R05 materialization and a separate Main reconciliation may the human
+assay line resume.
+
+The provisional order is:
+
+1. build and install R05-descended Android and Windows artifacts while preserving
+   both application databases and diagnostic history;
+2. prove exact build provenance, authentication, existing enrollment, queue
+   state, Device sequences and absence of automatic Sync;
+3. perform offline Product, Catalogue and History projection checks without
+   registering a new Purchase;
+4. freeze fresh read-only Android SQLite, Windows SQLite and provider baselines;
+5. choose exactly one first client from those actual baselines;
+6. authorize one ordinary Sync only;
+7. reconcile lifecycle, UI, SQLite, Render and provider results before the other
+   client may act;
+8. authorize the second client only after the first result is classified;
+9. run one separately authorized no-op repeat proving idempotency and no
+   duplicate Product, Store, Purchase or Purchase Item.
+
+The former GCM03 plan remains provenance, not executable authority. Both hosted
+Purchases already exist and must not be recreated. The historical Windows
+commit-versus-rollback truth remains unresolved; the current first-client order
+must therefore come from fresh read-only baselines rather than the old
+Windows-first sequence.
+
+Android is the provisional diagnostic preference because its earlier rollback
+was directly proved, while Windows transaction truth was not. This is not an
+authorization or final order. R05 reconciliation and fresh baselines control
+that decision.
+
+## 11. Held boundary
+
+Until R05 is staged, implemented and reconciled:
+
+~~~text
+ANDROID_SYNC=HELD
+WINDOWS_SYNC=HELD
+RETRY_RECOVERY=HELD
+QUERY=HELD
+ENROLL=DO_NOT_REPEAT
+NEW_PURCHASE_REGISTRATION=HELD
+PRESERVED_STATE_INSTALL=HELD
+DIAGNOSTIC_HISTORY=PRESERVE
+PROVIDER_MUTATION=NONE
+OVERALL_SYNC_ACCEPTANCE=NOT_PROMOTED
+~~~
