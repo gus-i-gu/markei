@@ -3536,16 +3536,79 @@ function Get-SupportedAndroidDevices {
         throw "Could not inspect Flutter devices."
     }
     try {
-        $FlutterDevices = @($FlutterDevicesJson | ConvertFrom-Json)
+        $ParsedFlutterDevices = $FlutterDevicesJson | ConvertFrom-Json
     }
     catch {
         throw "Flutter returned an unreadable device inventory."
     }
+
+    $FlutterDevices = @()
+    if ($null -ne $ParsedFlutterDevices) {
+        if ($ParsedFlutterDevices -is [System.Array]) {
+            foreach ($ParsedFlutterDevice in $ParsedFlutterDevices) {
+                $FlutterDevices += ,$ParsedFlutterDevice
+            }
+        }
+        else {
+            $FlutterDevices = @($ParsedFlutterDevices)
+        }
+    }
+
     return @(
         $FlutterDevices | Where-Object {
-            $_.targetPlatform -match "^android" -and $_.isSupported -eq $true
+            $TargetPlatformProperty = $_.PSObject.Properties["targetPlatform"]
+            $SupportedProperty = $_.PSObject.Properties["isSupported"]
+            $IdProperty = $_.PSObject.Properties["id"]
+            $null -ne $TargetPlatformProperty -and
+                $TargetPlatformProperty.Value -is [string] -and
+                $TargetPlatformProperty.Value -match "^android" -and
+                $null -ne $SupportedProperty -and
+                $SupportedProperty.Value -is [bool] -and
+                $SupportedProperty.Value -eq $true -and
+                $null -ne $IdProperty -and
+                $IdProperty.Value -is [string] -and
+                -not [string]::IsNullOrWhiteSpace($IdProperty.Value) -and
+                $IdProperty.Value -notmatch '[\s\x00-\x1F\x7F]'
         }
     )
+}
+
+function Assert-AdbTargetSerial {
+    param(
+        [Parameter(Mandatory)] [string]$AdbExecutable,
+        [Parameter(Mandatory)] [object]$CandidateId
+    )
+
+    if ($CandidateId -isnot [string] -or
+        [string]::IsNullOrWhiteSpace($CandidateId) -or
+        $CandidateId -match '[\s\x00-\x1F\x7F]' -or
+        $CandidateId -eq "windows") {
+        throw "Selected Android device ID is not one safe scalar serial."
+    }
+
+    $AdbInventoryLines = @(& $AdbExecutable devices 2>&1)
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not inspect the Android Debug Bridge device inventory."
+    }
+    $MatchingSerials = @(
+        $AdbInventoryLines | ForEach-Object {
+            $InventoryMatch = [regex]::Match(
+                [string]$_,
+                '^(?<serial>[^\s]+)\s+device$'
+            )
+            if ($InventoryMatch.Success -and
+                $InventoryMatch.Groups["serial"].Value -ceq $CandidateId) {
+                $InventoryMatch.Groups["serial"].Value
+            }
+        }
+    )
+    if ($MatchingSerials.Count -ne 1) {
+        throw (
+            "Selected Android device ID was not exactly present as one " +
+            "ready ADB serial."
+        )
+    }
+    return [string]$MatchingSerials[0]
 }
 
 $AndroidDeviceId = $null
@@ -3599,12 +3662,21 @@ if ($AndroidDevices.Count -eq 0) {
     if (-not (Test-Path -LiteralPath $AdbExe -PathType Leaf)) {
         throw "Android Debug Bridge was not found at $AdbExe."
     }
+    $AndroidDeviceId = Assert-AdbTargetSerial `
+        -AdbExecutable $AdbExe `
+        -CandidateId $AndroidDeviceId
     $BootDeadline = [DateTime]::UtcNow.AddMinutes(3)
     do {
         Start-Sleep -Seconds 2
+        $BootProbeArguments = @(
+            "-s"
+            $AndroidDeviceId
+            "shell"
+            "getprop"
+            "sys.boot_completed"
+        )
         $BootCompleted = (
-            & $AdbExe -s $AndroidDeviceId shell getprop sys.boot_completed `
-                2>$null
+            & $AdbExe @BootProbeArguments 2>$null
         ).Trim()
     } until (
         $BootCompleted -eq "1" -or
@@ -3641,6 +3713,9 @@ $AdbExe = Join-Path $AndroidSdkRoot "platform-tools\adb.exe"
 if (-not (Test-Path -LiteralPath $AdbExe -PathType Leaf)) {
     throw "Android Debug Bridge was not found at $AdbExe."
 }
+$SelectedAndroidDeviceId = Assert-AdbTargetSerial `
+    -AdbExecutable $AdbExe `
+    -CandidateId $SelectedAndroidDeviceId
 
 $RequiredClosureSurfaceDefine = "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
 $FlutterDefines = @(
@@ -3694,21 +3769,53 @@ try {
     Write-Host "Local APK hash alone does not prove installed-package identity."
     Write-Host "Installing package com.gusigu.markei with data preservation."
 
-    & $AdbExe -s $SelectedAndroidDeviceId install -r $AndroidArtifact
+    $InstallArguments = @(
+        "-s"
+        $SelectedAndroidDeviceId
+        "install"
+        "-r"
+        $AndroidArtifact
+    )
+    & $AdbExe @InstallArguments
     if ($LASTEXITCODE -ne 0) {
         throw "ADB install failed for com.gusigu.markei."
     }
 
     Write-Host "Installed package evidence for selected target:"
-    & $AdbExe -s $SelectedAndroidDeviceId shell pm path com.gusigu.markei
-    & $AdbExe -s $SelectedAndroidDeviceId shell dumpsys package com.gusigu.markei |
+    $PackagePathArguments = @(
+        "-s"
+        $SelectedAndroidDeviceId
+        "shell"
+        "pm"
+        "path"
+        "com.gusigu.markei"
+    )
+    & $AdbExe @PackagePathArguments
+    $PackageInspectionArguments = @(
+        "-s"
+        $SelectedAndroidDeviceId
+        "shell"
+        "dumpsys"
+        "package"
+        "com.gusigu.markei"
+    )
+    & $AdbExe @PackageInspectionArguments |
         Select-String -Pattern "versionName|versionCode|firstInstallTime|lastUpdateTime" |
         ForEach-Object { $_.Line.Trim() }
 
     Write-Host "Launching Markei package com.gusigu.markei on the selected Android device."
-    & $AdbExe -s $SelectedAndroidDeviceId shell monkey `
-        -p com.gusigu.markei `
-        -c android.intent.category.LAUNCHER 1 | Out-Host
+    $LaunchArguments = @(
+        "-s"
+        $SelectedAndroidDeviceId
+        "shell"
+        "monkey"
+        "-p"
+        "com.gusigu.markei"
+        "-c"
+        "android.intent.category.LAUNCHER"
+        "1"
+    )
+    & $AdbExe @LaunchArguments | Out-Host
     if ($LASTEXITCODE -ne 0) {
         throw "ADB launch failed for com.gusigu.markei."
     }

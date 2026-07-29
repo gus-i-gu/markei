@@ -1,141 +1,94 @@
-# F_DSN_STAGE — Android target and authentication boundary repair
+# F_DSN_STAGE — Main-owned GRM boundary and launcher verification
 
 > Sequence: FLX-ORD-01 — Ordinary Sequence
-> Role: Main-approved Design materialization stage
-> Unit: `C10-GCM03-ST04-R1-C2`
+> Role: Main-approved Design validation stage
+> Unit: `C10-GCM03-ST04-R1-C3`
 > Branch: `grm-guarded-provisioning-20260727`
-> Required ancestry:
-> `1af1d887e4fe8370ab988a80e4af16eafcd4699c`
-> Authority: **ACTIVE WITHIN D**
-> Evidence boundary: launcher and authentication responsibility inspection; no
-> protocol, persistence, provider or synchronization expansion
+> Required published ancestry:
+> `084e637e6771b8713b2504b155a82cd4d3bd792a`
+> Authority: **ACTIVE WITHIN D — REPORT ONLY**
+> Evidence boundary: protected-interface and launcher responsibility
+> validation; no protocol, persistence, provider or synchronization expansion
 
-## 1. Controlling responsibility correction
+## 1. GRM ownership boundary
 
-`GS-FLUTTER-AND` owns two distinct identities:
+The seven-file GRM set is one protected operational interface:
 
 ```text
-stable target definition
-  AndroidAvdName from reviewed public coordinates
-
-transient runtime target
-  exactly one supported Android Flutter object
-  exactly one scalar ADB serial
-  exact membership in the current ADB inventory
+human direction
+→ Main synthesis and GRM materialization
+→ immutable protected GRM input
+→ Codex read/test/report
+→ human runtime acceptance
 ```
 
-The AVD name must not be used as the serial. A collection of Flutter IDs must
-not cross the ADB boundary.
+Codex may not mutate a GRM file directly or indirectly. Any further GRM design
+correction returns to Main.
 
-Correct responsibility map:
+This protection is parallel to methodology protection but does not reclassify
+GRM as Sketch Notebook methodology.
+
+## 2. Launcher responsibility map
+
+Validate:
 
 ```text
 Flutter CLI
-  emits public device inventory JSON
+  owns raw machine JSON
 
 GS-FLUTTER-AND parser
-  parses and enumerates member objects
+  owns one parse and explicit member enumeration
 
 GS-FLUTTER-AND selector
-  filters supported Android targets and enforces cardinality
+  owns per-member platform, support and scalar-ID predicates
+
+cardinality guard
+  owns zero/one/multiple target decisions
 
 ADB inventory guard
-  binds one selected Flutter ID to one current ADB serial
+  binds the chosen Flutter ID to exactly one ready current serial
 
 ADB invocation
-  receives exactly one -s value
+  receives one explicit argument vector with one -s value
 ```
 
-## 2. Authentication responsibility map
+Keep stable AVD definition separate from transient ADB identity. Preserve
+package `com.gusigu.markei`, application data, public build provenance, the
+shared Closure page and current Auth0 responsibility graph.
 
-Keep the authentication scan separate:
+## 3. Preserved architecture
 
-```text
-NS_COORDINATES
-  reviewed non-secret public inputs
+This unit must not add or change:
 
-GS-FLUTTER-AND
-  build-input propagation and environment restoration
+- Android-only Closure composition;
+- authentication source or provider configuration;
+- API routes or hosted behavior;
+- enrollment or synchronization protocol;
+- persistence, schema, migrations or RLS;
+- retry/recovery behavior;
+- the pending Windows event.
 
-Gradle / Android manifest
-  package and callback placeholder materialization
+## 4. I report
 
-NativeAuthConfiguration
-  platform configuration validation and callback evidence
+Replace `I_DSN_CODEX.md`. Report:
 
-Auth0 native adapter
-  interactive login/logout and sanitized exception mapping
-
-NativeClosurePage
-  operator action and sanitized result projection
-
-Auth0 dashboard/provider
-  external callback/logout/client acceptance; read-only human evidence only
-```
-
-A launcher correction must not change authentication architecture. An auth
-source change is allowed only when a focused static/test failure proves the
-owning layer defective.
-
-## 3. Preserved boundaries
-
-Preserve:
-
-- one shared `NativeClosurePage`;
-- package `com.gusigu.markei`;
-- current public coordinate names and safe-display rules;
-- application-data-preserving installation;
-- build-provenance format and projection;
-- local authentication/enrollment persistence boundaries;
-- API, synchronization and provider protocols;
-- Drift schema and local data;
-- pending Windows sequence-2 event.
-
-Do not add an Android-only Closure page, alternate auth stack, hard-coded ADB
-serial, provider fallback or automatic retry.
-
-## 4. Validation architecture
-
-```text
-selected Markdown fence
-→ Windows PowerShell 5.1 parse
-→ JSON member-enumeration fixtures
-→ Android cardinality fixtures
-→ exact Flutter-ID/ADB-serial binding
-→ captured native argument vector
-
-Auth history diff
-→ public input graph
-→ package/manifest/callback graph
-→ native composition tests
-→ generated artifact evidence
-→ held human runtime assay
-```
-
-The first graph repairs a proved operational boundary. The second graph
-classifies a separate observation without widening provider authority.
-
-## 5. I report
-
-Replace `I_DSN_CODEX.md`. Include:
-
-- repaired collection-to-scalar ownership boundary;
-- exact ADB identity binding;
-- separate Auth0 responsibility graph;
-- any evidence-backed owning-layer correction;
-- proof that API/persistence/provider/synchronization architecture did not
-  expand;
-- held installed-runtime and provider acceptance.
+- the protected GRM ownership map;
+- actual collection-to-member and member-to-serial validation;
+- captured proof that each ADB boundary receives one scalar serial;
+- absence of hard-coded runtime serials;
+- retained Auth0 ownership and `AUTHAND-06`;
+- absence of API/persistence/provider/synchronization expansion.
 
 Required terminals:
 
 ```text
+GRM_MUTATION_OWNER=HUMAN_MAIN
+CODEX_PROTECTED_INTERFACE_MUTATION=ABSENT_OR_STOP
 FLUTTER_INVENTORY_TO_MEMBER_OBJECTS=CORRECTED_OR_BLOCKED
 ANDROID_MEMBER_TO_ONE_ADB_SERIAL=CORRECTED_OR_BLOCKED
 HARD_CODED_DEVICE_SERIAL=ABSENT
-AUTH_RESPONSIBILITY_OWNER=CLASSIFIED_OR_UNRESOLVED
-AUTH_PROVIDER_CONFIGURATION_MUTATION=ABSENT
-SYNC_PERSISTENCE_SCHEMA_EXPANSION=ABSENT
+AUTH_RESPONSIBILITY_OWNER=UNCHANGED_AUTHAND-06
+API_PERSISTENCE_PROVIDER_SYNC_EXPANSION=ABSENT
 ANDROID_RUNTIME_ACCEPTANCE=HELD
 GCM03_ST05_AND_LATER=HELD
 ```
