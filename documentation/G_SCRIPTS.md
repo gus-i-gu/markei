@@ -234,6 +234,9 @@ returns:
 - fixture-account six-table counts and sanitized Device state;
 - Account cursor/hosted-high-water consistency;
 - Device sequence/high-water consistency;
+- selected-Device acknowledgement row count, acknowledged cursor, and
+  consistency against the hosted high-water (`count=0, cursor=0` means no
+  acknowledgement row);
 - truncated submission/request and event/content replay fingerprints;
 - explicit `ROLLBACK` and final launcher `PASS`.
 

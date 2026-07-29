@@ -437,7 +437,8 @@ SELECT
     f.next_expected_sequence AS fixture_device_next_expected_sequence
 FROM fixture AS f;
 
--- Account cursor/high-water and Device sequence/high-water consistency.
+-- Account cursor/high-water, Device sequence/high-water, and selected-Device
+-- acknowledgement consistency.
 WITH fixture AS (
     SELECT account_id, device_id, next_expected_sequence
     FROM public.devices
@@ -467,6 +468,19 @@ device_water AS (
         f.account_id,
         f.device_id,
         f.next_expected_sequence
+),
+acknowledgement_state AS (
+    SELECT
+        f.account_id,
+        f.device_id,
+        count(da.device_id) AS fixture_acknowledgement_count,
+        coalesce(max(da.greatest_contiguous_cursor), 0)
+            AS fixture_acknowledged_cursor
+    FROM fixture AS f
+    LEFT JOIN public.device_acknowledgements AS da
+      ON da.account_id = f.account_id
+     AND da.device_id = f.device_id
+    GROUP BY f.account_id, f.device_id
 )
 SELECT
     aw.next_cursor AS account_next_cursor,
@@ -476,9 +490,27 @@ SELECT
     dw.next_expected_sequence AS device_next_expected_sequence,
     dw.device_high_water,
     dw.next_expected_sequence = dw.device_high_water + 1
-        AS device_sequence_consistent
+        AS device_sequence_consistent,
+    ast.fixture_acknowledgement_count,
+    ast.fixture_acknowledged_cursor,
+    (
+        (
+            ast.fixture_acknowledgement_count = 0
+            AND ast.fixture_acknowledged_cursor = 0
+        )
+        OR
+        (
+            ast.fixture_acknowledgement_count = 1
+            AND ast.fixture_acknowledged_cursor BETWEEN 1
+                AND aw.hosted_high_water
+        )
+    ) AS fixture_acknowledgement_consistent
 FROM account_water AS aw
-JOIN device_water AS dw USING (account_id);
+JOIN device_water AS dw
+  ON dw.account_id = aw.account_id
+JOIN acknowledgement_state AS ast
+  ON ast.account_id = aw.account_id
+ AND ast.device_id = dw.device_id;
 
 -- Sanitized persisted replay fingerprints. Prefixes support before/after
 -- correlation without returning UUIDs, payloads, stored results, or full
