@@ -7564,3 +7564,308 @@ ENROLL=DO_NOT_REPEAT
 PROVIDER_MUTATION=NONE
 GCM04=UNDEFINED_INACTIVE
 ```
+
+
+## 2026-07-29 — GCM03 S10 R02 post-Codex reconciliation and human-acceptance activation
+
+### Sequence envelope
+
+~~~text
+Sequence: FLX-PRM-04 after FLX-ORD-01 materialization
+Role: Main Chat [M]
+Round or unit: C10-GCM03-S10-R02
+Continuity alias: C10-GCM02-S09-R02
+GitHub branch: grm-guarded-provisioning-20260727
+Materialization parent: 9127a2e8a85ede3a6c881060b4ce47224f59e577
+Materialization commit: cf8dcc6377b54c4b6944b2dec6cd844721bd29b1
+Inputs: D/E/F controlling stage; G/H/I Codex reports; one-commit remote
+        comparison; changed Flutter source; focused widget/infrastructure tests;
+        existing GRM Android build/install procedure
+Writable surface in this reconciliation: append-only J_MAIN_STAGE
+Prohibited actions: Android/Windows Sync; Retry; Recovery; Enroll; Query;
+                    acknowledgement; provider mutation; schema/migration/API
+                    change; application-data clearing; snapshot replacement
+Authority: human return with the completed pushed R02 materialization and prior
+           instruction to reconcile before manual acceptance
+Next sequence: C10-GCM03-S10-R02-H01 artifact-preserving Android install and
+               offline Product-selection acceptance
+Stop condition: branch/provenance mismatch; dirty Flutter/GRM overlap; data loss;
+                automatic network action; missing authentication/enrollment;
+                queue/cursor/Device-sequence drift
+~~~
+
+### Remote lineage and scope reconciliation
+
+The remote comparison proves that R02 is exactly one fast-forward commit over
+the controlling stage:
+
+~~~text
+9127a2e8a85ede3a6c881060b4ce47224f59e577
+↓
+cf8dcc6377b54c4b6944b2dec6cd844721bd29b1
+~~~
+
+Exactly nine paths changed:
+
+~~~text
+clients/markei_flutter/lib/app/pages/purchase_page.dart
+clients/markei_flutter/lib/application/sync/sync_use_cases.dart
+clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_event_applier.dart
+clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_fact_writer.dart
+clients/markei_flutter/test/app/markei_app_test.dart
+clients/markei_flutter/test/infrastructure/remote_purchase_event_applier_test.dart
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+~~~
+
+No migration, Drift schema, hosted API, payload contract, authentication,
+enrollment, dependency, provider configuration, D/E/F/J, permanent domain
+memory, methodology, DB_MGMT.sql, G_SCRIPTS.md or I_SCRIPTS.ps1 change entered
+the materialization commit. The published scope therefore conforms to the
+controlling R02 envelope.
+
+### Source reconciliation
+
+The Purchase UI now stores one nullable Product-ID scalar instead of a Product
+object as dropdown identity. It normalizes the current Account-scoped Product
+projection, resolves the selected Product only when exactly one current row
+matches that ID, rebinds Find-code results through their Product ID, collapses
+equivalent repeated IDs, rejects conflicting repetitions, and safely clears a
+missing or ambiguous selection with bounded feedback.
+
+This resolves the source-confirmed zero-match path from the original screenshot
+without asserting that SQLite contained duplicate Product rows and without
+globally redefining Product equality.
+
+The remote fact writer now:
+
+1. resolves Store by incoming UUID and existing Account-scoped display identity;
+2. resolves Product by incoming UUID, normalized user Product code and exact
+   identity key;
+3. reuses one coherent local identity when the remote UUID differs;
+4. rejects contradictory immutable/natural facts as a typed
+   RemoteIdentityConflict;
+5. maintains event-local incoming-to-local Product mapping;
+6. writes Purchase Items with the selected local Product ID;
+7. writes Purchases with the selected local Store ID.
+
+The remote applier continues to own one page-wide Drift transaction. Catalogue
+reconciliation, Purchase facts, Purchase Items, inbox rows and Account cursor
+therefore commit or roll back together. Identity conflicts and SQLite failures
+are translated only after rollback.
+
+The ordinary-Sync diagnostic path now preserves:
+
+~~~text
+phase = download-local-apply
+last proved phase = download-local-apply
+trusted response state = received
+local mutation state = rolled-back for conflict/SQLite failure
+safe SQLite protocol category = local-sqlite-apply-failed
+~~~
+
+A failed local apply exposes no committed cursor to the acknowledgement use
+case. The focused regression explicitly calls the acknowledgement boundary
+after a sanitized SQLite apply failure and observes a null result with zero
+transport acknowledgements.
+
+### Codex validation classification
+
+Codex reported:
+
+~~~text
+dart format lib/test = PASS
+flutter analyze = PASS
+focused Purchase widget test file = PASS
+native Closure diagnostic tests = PASS
+new remote event-applier tests = PASS
+local synchronization application tests = PASS
+full flutter test = PASS
+debug Android build with reviewed public placeholder defines = PASS
+merged manifest inspection = PASS
+git diff --check = PASS
+changed-content sensitive scan = PASS
+~~~
+
+The full Flutter suite skipped the disposable convergence lab because
+MARKEI_RUN_SYNC_LAB was not set. That is an explicit evidence ceiling, not a
+failure: the implementation stage prohibited a live lab/provider action.
+
+The placeholder-defined APK build proves compile/package compatibility. It is
+not the operator's final installed-artifact provenance and must not be used to
+claim that the preserved Android client has been updated.
+
+### PRC-01 claims
+
+~~~text
+Claim: R02 was materialized inside the controlling D/E/F scope
+Prior state: ACTIVE_CODEX_IMPLEMENTATION_AUTHORIZED
+Evidence: exact one-commit comparison, nine-path inventory and G/H/I reports
+Evidence boundary: remote commit and inspected client source
+Contradiction: none
+Semantic owner: C10-GCM03-S10-R02 materialization record
+Target role: J cross-domain reconciliation
+Resulting state: VALIDATED / IMPLEMENTED AND AUTOMATED-TESTED
+History disposition: append
+~~~
+
+~~~text
+Claim: the Purchase Find-code assertion is corrected
+Prior state: source-confirmed Product object-identity defect
+Evidence: stable Product-ID implementation plus widget regressions for a
+          separately materialized lookup object, refresh/removal, equivalent
+          repetitions and conflicting repetitions
+Evidence boundary: source and automated Flutter widget behavior
+Contradiction: no corrected APK has yet been manually exercised over the
+               preserved Android application data
+Semantic owner: Purchase presentation identity
+Target role: R02-H01 offline human acceptance
+Resulting state: ACCEPTED AT AUTOMATED EVIDENCE; HUMAN ANDROID ACCEPTANCE OPEN
+History disposition: append
+~~~
+
+~~~text
+Claim: remote Product/Store reconciliation and page atomicity are corrected
+Prior state: actionable R01 implementation gap
+Evidence: Account-scoped reconciliation, remote-to-local remapping, typed
+          conflicts, page-wide transaction and focused disposable-DB tests
+Evidence boundary: deterministic local Flutter/Drift tests
+Contradiction: corrected live Windows-to-Android download has not occurred
+Semantic owner: remote local-materialization boundary
+Target role: later single-operation live convergence assay
+Resulting state: ACCEPTED AT IMPLEMENTATION/TEST SCOPE; LIVE ACCEPTANCE HELD
+History disposition: append
+~~~
+
+~~~text
+Claim: failed local apply cannot acknowledge
+Prior state: frozen live failure showed acknowledgement not started
+Evidence: no committed cursor after failure; focused test observes null
+          acknowledgement result and zero transport acknowledgement calls
+Evidence boundary: deterministic local failure path and prior frozen live assay
+Contradiction: none
+Semantic owner: local-commit-to-acknowledgement ordering
+Target role: R02 regression evidence
+Resulting state: VALIDATED AT REGRESSION SCOPE
+History disposition: append
+~~~
+
+~~~text
+Claim: R02 closes GCM03 or proves practical inter-device Sync usability
+Prior state: GCM03 active; convergence unproved
+Evidence: no live Sync, Retry, provider mutation, Android install or launch was
+          executed during materialization
+Evidence boundary: source/build/test only
+Contradiction: practical usability requires preserved-state installation,
+               offline UI acceptance, one bounded inbound Sync and postflights
+Semantic owner: GCM03 live acceptance
+Target role: human acceptance ladder
+Resulting state: REJECTED / NOT YET PROVED
+History disposition: append
+~~~
+
+### Human acceptance ladder
+
+The remaining R02 acceptance is divided so one action cannot silently authorize
+the next.
+
+#### H01 — artifact-preserving install and offline preflight
+
+Use the existing GS-FLUTTER-AND procedure from a clean local checkout whose
+HEAD contains the reconciled J publication and R02 commit. It builds with the
+configured public Closure coordinates, installs through adb install -r,
+preserves application data, exposes build provenance, and launches Markei.
+
+H01 must stop before any Closure network control. Required observations:
+
+~~~text
+installed build provenance contains cf8dcc6377b or its J-only descendant
+Authentication remains authenticated
+Enrollment remains device-enrolled
+queue remains 0/0/0/0
+Android next Device sequence remains 1
+Android History still lacks the hosted candidate before corrected Sync
+no automatic Sync or acknowledgement occurs
+previous failed-operation evidence remains present or is safely retained
+~~~
+
+#### H02 — offline Purchase Product-selection acceptance
+
+Without registering a Purchase:
+
+1. open Purchase;
+2. invoke Find code for the existing Catalogue Product that previously raised
+   the Dropdown assertion;
+3. verify exactly one existing Product becomes selected;
+4. navigate away and return or trigger a harmless projection refresh;
+5. verify the selection remains coherent by Product ID;
+6. cancel/clear the draft without submission.
+
+Required observations:
+
+~~~text
+red Flutter assertion = absent
+selected Product = exactly one coherent existing Product
+duplicate Catalogue row created = no
+Purchase registered = no
+producer queue changed = no
+Device sequence changed = no
+~~~
+
+#### H03 — read-only pre-Sync baselines
+
+Only after H01/H02 pass, take a fresh Android snapshot using the published
+GS-SQLITE-05/06/07 sequence and one read-only GS-NEON-11 provider inventory.
+The preserved pre-R02 snapshot remains immutable historical evidence; a new
+snapshot must not overwrite it.
+
+Expected local/provider invariants remain:
+
+~~~text
+Android cursor = null/0
+Android inbox = empty
+Android hosted Purchase facts = 0
+Android queue = 0/0/0/0
+Android Device sequence = 1
+provider hosted high-water = 2
+Android-origin provider submissions/events = 0/0
+Android acknowledgement = absent/0
+~~~
+
+#### H04 — one corrected inbound Android ordinary Sync
+
+H04 remains held until H01-H03 evidence is reconciled. A later Main packet may
+authorize exactly one ordinary Sync, followed by immediate UI, SQLite and
+read-only provider postflights. Retry, Recovery, Enroll and concurrent Windows
+Sync remain prohibited.
+
+### Current terminal
+
+~~~text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=ACTIVE_R02_HUMAN_ACCEPTANCE
+C10_GCM03_S10_R02=IMPLEMENTED_VALIDATED_AUTOMATED_SCOPE
+C10_GCM02_S09_R02=CONTINUITY_ALIAS_ONLY
+R02_REMOTE_COMMIT=cf8dcc6377b54c4b6944b2dec6cd844721bd29b1
+R02_SCOPE_RECONCILIATION=PASS
+PRODUCT_SELECTOR_IDENTITY=STABLE_PRODUCT_ID
+FIND_BY_CODE_AUTOMATED_REGRESSION=PASS
+REMOTE_PRODUCT_IDENTITY_RECONCILIATION=PASS_AUTOMATED_SCOPE
+REMOTE_STORE_IDENTITY_RECONCILIATION=PASS_AUTOMATED_SCOPE
+REMOTE_ITEM_ID_REMAP=PASS_AUTOMATED_SCOPE
+REMOTE_PAGE_ATOMICITY=PASS_AUTOMATED_SCOPE
+LOCAL_APPLY_CAUSAL_DIAGNOSTICS=PASS_AUTOMATED_SCOPE
+ACKNOWLEDGEMENT_AFTER_FAILED_LOCAL_APPLY=NOT_STARTED_VALIDATED
+LIVE_CONVERGENCE_ACCEPTANCE=HELD
+NEXT_GATE=C10_GCM03_S10_R02_H01
+ANDROID_SNAPSHOT_PRE_R02=PRESERVE
+WINDOWS_SYNC=HELD
+ANDROID_SYNC=HELD
+RETRY=HELD
+RECOVERY=HELD
+ENROLL=DO_NOT_REPEAT
+PROVIDER_MUTATION=NONE
+GCM04=UNDEFINED_INACTIVE
+~~~
