@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 
 import '../local_database.dart';
 
@@ -6,6 +7,13 @@ final class RemotePurchaseFactWriter {
   const RemotePurchaseFactWriter(this._db);
 
   final LocalDatabase _db;
+
+  @visibleForTesting
+  static Product? debugSelectNaturalProductForTest(
+    List<Product> byCode,
+    List<Product> byIdentity,
+    Map<String, Object?> product,
+  ) => _selectNaturalProduct(byCode, byIdentity, product);
 
   Future<void> applyPurchaseRegistered(Map<String, Object?> event) async {
     final payload = event['payload'] as Map<String, Object?>;
@@ -165,7 +173,7 @@ final class RemotePurchaseFactWriter {
     }
   }
 
-  Product? _selectNaturalProduct(
+  static Product? _selectNaturalProduct(
     List<Product> byCode,
     List<Product> byIdentity,
     Map<String, Object?> product,
@@ -207,7 +215,7 @@ final class RemotePurchaseFactWriter {
         existing.displayBrand == product['displayBrand'];
   }
 
-  bool _coherentProductIdentity(
+  static bool _coherentProductIdentity(
     Product existing,
     Map<String, Object?> product,
   ) {

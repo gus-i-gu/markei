@@ -158,6 +158,7 @@ final class NativeAuthClosureRunner {
       uuid: _uuid,
       lifecycleSink: _lifecycleSink,
       stopwatch: stopwatch,
+      initialPersistenceDegraded: attemptId == null,
     );
     try {
       final outcome = await withSyncOperation(
@@ -167,6 +168,7 @@ final class NativeAuthClosureRunner {
             coordinator.run(_environmentAlias, diagnostics: diagnostics),
       );
       await diagnostics.recordTerminal(outcome.state);
+      final cumulative = diagnostics.strongestEvidence;
       if (attemptId != null) {
         try {
           await recorder.completeSyncAttempt(
@@ -191,15 +193,21 @@ final class NativeAuthClosureRunner {
         'operationKind': 'ordinary-sync',
         'resultCode': outcome.state,
         'diagnosticCode': 'MKS-OBS-001',
-        'lastProvedPhase': _syncPhase(outcome.state),
+        'lastProvedPhase':
+            cumulative?.lastProvedPhase ?? _syncPhase(outcome.state),
         'operationFingerprint': operationFingerprint,
         'correlationFingerprint': operationFingerprint,
         'configuredDeadlineMs': ordinarySyncClientDeadline.inMilliseconds,
         'elapsedBand': _elapsedBand(stopwatch.elapsed),
-        'providerContactState': 'see-causal-phase',
-        'trustedResponseState': 'see-causal-phase',
-        'localMutationState': 'see-causal-phase',
-        'resultPersistenceState': 'committed',
+        'providerContactState':
+            cumulative?.providerContactState ?? 'see-causal-phase',
+        'trustedResponseState':
+            cumulative?.trustedResponseState ?? 'see-causal-phase',
+        'localMutationState':
+            cumulative?.localMutationState ?? 'see-causal-phase',
+        'resultPersistenceState': diagnostics.persistenceDegraded
+            ? 'diagnostics-persistence-degraded'
+            : cumulative?.resultPersistenceState ?? 'committed',
         'safeNextActionCode':
             _syncRecoveryCode(outcome.state) ?? 'no-further-action-required',
       });
@@ -227,13 +235,14 @@ final class NativeAuthClosureRunner {
           sanitizedExceptionClass: _sanitizeExceptionClass(error),
         ),
       );
+      final cumulative = diagnostics.strongestEvidence;
       if (attemptId != null) {
         try {
           await recorder.completeSyncAttempt(
             attemptId,
             resultCode: 'sync-failed',
             outcomeClass: 'failed',
-            phase: strongest?.lastProvedPhase ?? 'unexpected-terminal',
+            phase: cumulative?.lastProvedPhase ?? 'unexpected-terminal',
             recoveryCode: 'local-exception-redacted',
           );
         } on Object {
@@ -247,16 +256,18 @@ final class NativeAuthClosureRunner {
         'operationKind': 'ordinary-sync',
         'resultCode': 'sync-failed',
         'diagnosticCode': 'MKS-UI-006',
-        'lastProvedPhase': strongest?.lastProvedPhase ?? 'unexpected-terminal',
+        'lastProvedPhase': cumulative?.lastProvedPhase ?? 'unexpected-terminal',
         'operationFingerprint': operationFingerprint,
         'correlationFingerprint': operationFingerprint,
         'configuredDeadlineMs': ordinarySyncClientDeadline.inMilliseconds,
         'elapsedBand': _elapsedBand(stopwatch.elapsed),
-        'providerContactState': strongest?.providerContactState ?? 'unknown',
+        'providerContactState': cumulative?.providerContactState ?? 'unknown',
         'trustedResponseState':
-            strongest?.trustedResponseState ?? 'not-received',
-        'localMutationState': strongest?.localMutationState ?? 'unknown',
-        'resultPersistenceState': 'failed',
+            cumulative?.trustedResponseState ?? 'not-received',
+        'localMutationState': cumulative?.localMutationState ?? 'unknown',
+        'resultPersistenceState': diagnostics.persistenceDegraded
+            ? 'diagnostics-persistence-degraded'
+            : cumulative?.resultPersistenceState ?? 'failed',
         'safeNextActionCode': 'preserve-evidence-and-inspect-diagnostics',
       });
       return const NativeClosureStatus('sync-failed');
@@ -680,7 +691,8 @@ final class _DiagnosticOperationRecorder
     required this.uuid,
     required this.lifecycleSink,
     required this.stopwatch,
-  });
+    bool initialPersistenceDegraded = false,
+  }) : _persistenceDegraded = initialPersistenceDegraded;
 
   final SyncAttemptRecorder recorder;
   final int? attemptId;
@@ -691,10 +703,12 @@ final class _DiagnosticOperationRecorder
   final Stopwatch stopwatch;
   int _ordinal = 0;
   int? _causalOrdinal;
-  SyncDiagnosticPhaseEvidence? _strongestEvidence;
-  bool _persistenceDegraded = false;
+  _CumulativeDiagnosticState? _state;
+  bool _persistenceDegraded;
 
-  SyncDiagnosticPhaseEvidence? get strongestEvidence => _strongestEvidence;
+  SyncDiagnosticPhaseEvidence? get strongestEvidence => _state?.snapshot();
+
+  bool get persistenceDegraded => _persistenceDegraded;
 
   void markPersistenceDegraded() {
     _persistenceDegraded = true;
@@ -710,7 +724,7 @@ final class _DiagnosticOperationRecorder
     if (evidence.severity != 'INFO' && _causalOrdinal == null) {
       _causalOrdinal = ordinal;
     }
-    _strongestEvidence = _preferStrongestEvidence(_strongestEvidence, evidence);
+    _state = (_state ?? _CumulativeDiagnosticState.initial()).merge(evidence);
     final id = attemptId;
     if (id != null) {
       try {
@@ -775,13 +789,20 @@ final class _DiagnosticOperationRecorder
           ? NativeAuthClosureRunner.ordinarySyncClientDeadline.inMilliseconds
           : null,
       'elapsedBand': _elapsedBand(stopwatch.elapsed),
-      'providerContactState': evidence.providerContactState,
-      'trustedResponseState': evidence.trustedResponseState,
-      'localMutationState': evidence.localMutationState,
+      'providerContactState':
+          strongestEvidence?.providerContactState ??
+          evidence.providerContactState,
+      'trustedResponseState':
+          strongestEvidence?.trustedResponseState ??
+          evidence.trustedResponseState,
+      'localMutationState':
+          strongestEvidence?.localMutationState ?? evidence.localMutationState,
       'resultPersistenceState': _persistenceDegraded
           ? 'diagnostics-persistence-degraded'
-          : evidence.resultPersistenceState,
-      'safeNextActionCode': evidence.safeAction,
+          : strongestEvidence?.resultPersistenceState ??
+                evidence.resultPersistenceState,
+      'safeNextActionCode':
+          strongestEvidence?.safeAction ?? evidence.safeAction,
     });
     return SyncDiagnosticChildIdentity(
       correlationId: correlationId,
@@ -800,15 +821,23 @@ final class _DiagnosticOperationRecorder
             'causal-ordinal-${_causalOrdinal ?? 'none'}',
         operationKind: 'ordinary-sync',
         phase: 'terminal',
-        lastProvedPhase: 'terminal',
+        lastProvedPhase: strongestEvidence?.lastProvedPhase ?? 'terminal',
         outcome: state == 'sync-completed' || state == 'sync-no-new-events'
             ? 'applied'
             : state == 'sync-rejected'
             ? 'notApplied'
             : 'unknown',
-        providerTransactionState: 'see-causal-event',
-        trustedResponseState: 'see-causal-event',
-        resultPersistenceState: 'see-causal-event',
+        localMutationState:
+            strongestEvidence?.localMutationState ?? 'see-causal-event',
+        providerContactState:
+            strongestEvidence?.providerContactState ?? 'see-causal-event',
+        providerTransactionState:
+            strongestEvidence?.providerTransactionState ?? 'see-causal-event',
+        trustedResponseState:
+            strongestEvidence?.trustedResponseState ?? 'see-causal-event',
+        resultPersistenceState: _persistenceDegraded
+            ? 'diagnostics-persistence-degraded'
+            : strongestEvidence?.resultPersistenceState ?? 'see-causal-event',
         safeAction:
             'client declaration only; inspect causal diagnostic before action',
         retryable: false,
@@ -821,22 +850,291 @@ final class _DiagnosticOperationRecorder
   }
 }
 
-SyncDiagnosticPhaseEvidence _preferStrongestEvidence(
-  SyncDiagnosticPhaseEvidence? previous,
-  SyncDiagnosticPhaseEvidence candidate,
-) {
-  if (previous == null) return candidate;
-  if (candidate.trustedResponseState == 'received' &&
-      previous.trustedResponseState != 'received') {
-    return candidate;
+final class _CumulativeDiagnosticState {
+  const _CumulativeDiagnosticState({
+    required this.code,
+    required this.nativeCode,
+    required this.severity,
+    required this.outcome,
+    required this.operationKind,
+    required this.phase,
+    required this.lastProvedPhase,
+    required this.localMutationState,
+    required this.providerContactState,
+    required this.providerTransactionState,
+    required this.trustedResponseState,
+    required this.resultPersistenceState,
+    required this.safeAction,
+    required this.retryable,
+    required this.httpStatus,
+    required this.responseHeadersReceived,
+    required this.sanitizedExceptionClass,
+    required this.serverSqlstateClass,
+    required this.queueScope,
+    required this.pendingCount,
+    required this.uploadingCount,
+    required this.failedCount,
+    required this.unknownCount,
+    required this.memberCount,
+    required this.firstDeviceSequence,
+    required this.lastDeviceSequence,
+    required this.nextDeviceSequence,
+    required this.submissionFingerprint,
+  });
+
+  factory _CumulativeDiagnosticState.initial() =>
+      const _CumulativeDiagnosticState(
+        code: 'MKS-OBS-001',
+        nativeCode: 'operation-state-initialized',
+        severity: 'INFO',
+        outcome: 'unknown',
+        operationKind: 'ordinary-sync',
+        phase: 'started',
+        lastProvedPhase: 'started',
+        localMutationState: 'none',
+        providerContactState: 'not-started',
+        providerTransactionState: 'not-started',
+        trustedResponseState: 'not-received',
+        resultPersistenceState: 'not-started',
+        safeAction: 'continue ordinary Sync',
+        retryable: false,
+        httpStatus: null,
+        responseHeadersReceived: false,
+        sanitizedExceptionClass: null,
+        serverSqlstateClass: null,
+        queueScope: null,
+        pendingCount: null,
+        uploadingCount: null,
+        failedCount: null,
+        unknownCount: null,
+        memberCount: null,
+        firstDeviceSequence: null,
+        lastDeviceSequence: null,
+        nextDeviceSequence: null,
+        submissionFingerprint: null,
+      );
+
+  final String code;
+  final String nativeCode;
+  final String severity;
+  final String outcome;
+  final String operationKind;
+  final String phase;
+  final String lastProvedPhase;
+  final String localMutationState;
+  final String providerContactState;
+  final String providerTransactionState;
+  final String trustedResponseState;
+  final String resultPersistenceState;
+  final String safeAction;
+  final bool retryable;
+  final int? httpStatus;
+  final bool responseHeadersReceived;
+  final String? sanitizedExceptionClass;
+  final String? serverSqlstateClass;
+  final String? queueScope;
+  final int? pendingCount;
+  final int? uploadingCount;
+  final int? failedCount;
+  final int? unknownCount;
+  final int? memberCount;
+  final int? firstDeviceSequence;
+  final int? lastDeviceSequence;
+  final int? nextDeviceSequence;
+  final String? submissionFingerprint;
+
+  _CumulativeDiagnosticState merge(SyncDiagnosticPhaseEvidence evidence) {
+    final mergedMutation = _mergeLocalMutation(
+      localMutationState,
+      evidence.localMutationState,
+    );
+    final mergedTransaction = _mergeProviderTransaction(
+      providerTransactionState,
+      evidence.providerTransactionState,
+    );
+    final invariant =
+        mergedMutation == 'diagnostic-invariant-conflict' ||
+        mergedTransaction == 'diagnostic-invariant-conflict';
+    return _CumulativeDiagnosticState(
+      code: invariant ? 'MKS-OBS-001' : evidence.code,
+      nativeCode: invariant
+          ? 'diagnostic-causal-invariant-conflict'
+          : evidence.nativeCode,
+      severity: invariant
+          ? 'ERROR'
+          : _mergeSeverity(severity, evidence.severity),
+      outcome: invariant ? 'unknown' : _mergeOutcome(outcome, evidence.outcome),
+      operationKind: evidence.operationKind,
+      phase: evidence.phase,
+      lastProvedPhase: _mergeLastProvedPhase(
+        lastProvedPhase,
+        evidence.lastProvedPhase,
+      ),
+      localMutationState: mergedMutation,
+      providerContactState: _mergeProviderContact(
+        providerContactState,
+        evidence.providerContactState,
+      ),
+      providerTransactionState: mergedTransaction,
+      trustedResponseState: _mergeTrustedResponse(
+        trustedResponseState,
+        evidence.trustedResponseState,
+      ),
+      resultPersistenceState: _mergeResultPersistence(
+        resultPersistenceState,
+        evidence.resultPersistenceState,
+      ),
+      safeAction: invariant
+          ? 'preserve evidence and inspect diagnostics'
+          : evidence.safeAction,
+      retryable: invariant ? false : retryable || evidence.retryable,
+      httpStatus: evidence.httpStatus ?? httpStatus,
+      responseHeadersReceived:
+          responseHeadersReceived || evidence.responseHeadersReceived,
+      sanitizedExceptionClass:
+          evidence.sanitizedExceptionClass ?? sanitizedExceptionClass,
+      serverSqlstateClass: evidence.serverSqlstateClass ?? serverSqlstateClass,
+      queueScope: evidence.queueScope ?? queueScope,
+      pendingCount: evidence.pendingCount ?? pendingCount,
+      uploadingCount: evidence.uploadingCount ?? uploadingCount,
+      failedCount: evidence.failedCount ?? failedCount,
+      unknownCount: evidence.unknownCount ?? unknownCount,
+      memberCount: evidence.memberCount ?? memberCount,
+      firstDeviceSequence: evidence.firstDeviceSequence ?? firstDeviceSequence,
+      lastDeviceSequence: evidence.lastDeviceSequence ?? lastDeviceSequence,
+      nextDeviceSequence: evidence.nextDeviceSequence ?? nextDeviceSequence,
+      submissionFingerprint:
+          evidence.submissionFingerprint ?? submissionFingerprint,
+    );
   }
-  if (candidate.localMutationState == 'committed' &&
-      previous.localMutationState != 'committed') {
-    return candidate;
-  }
-  if (candidate.phase == 'terminal' && previous.phase != 'terminal') {
+
+  SyncDiagnosticPhaseEvidence snapshot() => SyncDiagnosticPhaseEvidence(
+    code: code,
+    nativeCode: nativeCode,
+    severity: severity,
+    outcome: outcome,
+    operationKind: operationKind,
+    phase: phase,
+    lastProvedPhase: lastProvedPhase,
+    localMutationState: localMutationState,
+    providerContactState: providerContactState,
+    providerTransactionState: providerTransactionState,
+    trustedResponseState: trustedResponseState,
+    resultPersistenceState: resultPersistenceState,
+    safeAction: safeAction,
+    retryable: retryable,
+    httpStatus: httpStatus,
+    responseHeadersReceived: responseHeadersReceived,
+    sanitizedExceptionClass: sanitizedExceptionClass,
+    serverSqlstateClass: serverSqlstateClass,
+    queueScope: queueScope,
+    pendingCount: pendingCount,
+    uploadingCount: uploadingCount,
+    failedCount: failedCount,
+    unknownCount: unknownCount,
+    memberCount: memberCount,
+    firstDeviceSequence: firstDeviceSequence,
+    lastDeviceSequence: lastDeviceSequence,
+    nextDeviceSequence: nextDeviceSequence,
+    submissionFingerprint: submissionFingerprint,
+  );
+}
+
+String _mergeSeverity(String previous, String candidate) {
+  if (previous == 'ERROR' || candidate == 'ERROR') return 'ERROR';
+  return candidate;
+}
+
+String _mergeOutcome(String previous, String candidate) {
+  if (candidate != 'unknown') return candidate;
+  return previous;
+}
+
+String _mergeLastProvedPhase(String previous, String candidate) {
+  if (candidate == 'terminal' && previous != 'started') return previous;
+  if (candidate == 'acknowledgement' && previous == 'download-local-apply') {
     return previous;
   }
+  return candidate;
+}
+
+String _mergeTrustedResponse(String previous, String candidate) {
+  if (previous == 'received') return previous;
+  if (candidate == 'received') return candidate;
+  if (candidate == 'see-causal-event' || candidate == 'see-causal-phase') {
+    return previous;
+  }
+  if (previous != 'not-received' && previous != 'unknown') return previous;
+  return candidate;
+}
+
+String _mergeLocalMutation(String previous, String candidate) {
+  if (previous == 'diagnostic-invariant-conflict') return previous;
+  if (previous == 'committed' && candidate == 'rolled-back') {
+    return 'diagnostic-invariant-conflict';
+  }
+  if (previous == 'rolled-back' && candidate == 'committed') {
+    return 'diagnostic-invariant-conflict';
+  }
+  if (previous == 'committed' || previous == 'rolled-back') return previous;
+  if (candidate == 'committed' || candidate == 'rolled-back') return candidate;
+  if (candidate == 'see-causal-event' || candidate == 'see-causal-phase') {
+    return previous;
+  }
+  if (previous != 'none' && previous != 'unknown') return previous;
+  return candidate;
+}
+
+String _mergeProviderContact(String previous, String candidate) {
+  if (previous == 'request-started') return previous;
+  if (candidate == 'request-started') return candidate;
+  if (candidate == 'see-causal-event' || candidate == 'see-causal-phase') {
+    return previous;
+  }
+  if (previous != 'not-started' && previous != 'unknown') return previous;
+  return candidate;
+}
+
+String _mergeProviderTransaction(String previous, String candidate) {
+  if (previous == 'diagnostic-invariant-conflict') return previous;
+  if (_isAuthoritativeProviderCommit(previous) &&
+      _isAuthoritativeProviderRollback(candidate)) {
+    return 'diagnostic-invariant-conflict';
+  }
+  if (_isAuthoritativeProviderRollback(previous) &&
+      _isAuthoritativeProviderCommit(candidate)) {
+    return 'diagnostic-invariant-conflict';
+  }
+  if (_isAuthoritativeProviderCommit(previous) ||
+      _isAuthoritativeProviderRollback(previous)) {
+    return previous;
+  }
+  if (_isAuthoritativeProviderCommit(candidate) ||
+      _isAuthoritativeProviderRollback(candidate)) {
+    return candidate;
+  }
+  if (candidate == 'see-causal-event' || candidate == 'see-causal-phase') {
+    return previous;
+  }
+  if (previous != 'not-started' && previous != 'unknown') return previous;
+  return candidate;
+}
+
+bool _isAuthoritativeProviderCommit(String value) =>
+    value == 'committed' || value == 'proved-separately';
+
+bool _isAuthoritativeProviderRollback(String value) =>
+    value == 'rolled-back' || value == 'not-started-or-rolled-back';
+
+String _mergeResultPersistence(String previous, String candidate) {
+  if (previous == 'diagnostics-persistence-degraded') return previous;
+  if (candidate == 'diagnostics-persistence-degraded') return candidate;
+  if (previous == 'committed') return previous;
+  if (candidate == 'committed') return candidate;
+  if (candidate == 'see-causal-event' || candidate == 'see-causal-phase') {
+    return previous;
+  }
+  if (previous != 'not-started' && previous != 'unknown') return previous;
   return candidate;
 }
 

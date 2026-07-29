@@ -16,6 +16,7 @@ import 'package:markei/infrastructure/local/local_database.dart' hide Product;
 import 'package:markei/infrastructure/local/local_device_identity_repository.dart';
 import 'package:markei/infrastructure/local/local_purchase_repository.dart';
 import 'package:markei/infrastructure/local/sync/remote_purchase_event_applier.dart';
+import 'package:markei/infrastructure/local/sync/remote_purchase_fact_writer.dart';
 
 void main() {
   test('fresh remote target materializes purchase facts', () async {
@@ -181,6 +182,137 @@ void main() {
 
     expect(result.code, SyncStatusCode.conflict);
     expect(result.protocolCode, 'remote-product-split-key-conflict');
+  });
+
+  test('ambiguous normalized-code resolver branch is bounded', () async {
+    final source = LocalDatabase.memory();
+    final target = LocalDatabase.memory();
+    addTearDown(source.close);
+    addTearDown(target.close);
+    await _register(target, deviceId: _targetDevice);
+    final localProduct = (await target.select(target.products).get()).single;
+    final product = _productSnapshot(await _sourceEvent(source, sequence: 1));
+
+    expect(
+      () => RemotePurchaseFactWriter.debugSelectNaturalProductForTest(
+        [localProduct, localProduct],
+        const [],
+        product,
+      ),
+      throwsA(
+        isA<RemoteIdentityConflict>().having(
+          (failure) => failure.protocolCode,
+          'protocolCode',
+          'remote-product-ambiguous-code-match',
+        ),
+      ),
+    );
+  });
+
+  test('ambiguous exact-identity resolver branch is bounded', () async {
+    final source = LocalDatabase.memory();
+    final target = LocalDatabase.memory();
+    addTearDown(source.close);
+    addTearDown(target.close);
+    await _register(target, deviceId: _targetDevice, productCode: 'LOCAL-RICE');
+    final localProduct = (await target.select(target.products).get()).single;
+    final product = _productSnapshot(await _sourceEvent(source, sequence: 1));
+
+    expect(
+      () => RemotePurchaseFactWriter.debugSelectNaturalProductForTest(
+        const [],
+        [localProduct, localProduct],
+        product,
+      ),
+      throwsA(
+        isA<RemoteIdentityConflict>().having(
+          (failure) => failure.protocolCode,
+          'protocolCode',
+          'remote-product-ambiguous-exact-identity-match',
+        ),
+      ),
+    );
+  });
+
+  test(
+    'production Product uniqueness makes ambiguity unreachable by rows',
+    () async {
+      final source = LocalDatabase.memory();
+      final target = LocalDatabase.memory();
+      addTearDown(source.close);
+      addTearDown(target.close);
+      await _register(target, deviceId: _targetDevice);
+      final event = await _sourceEvent(source, sequence: 1);
+      final product = _productSnapshot(event);
+
+      await DriftRemoteEventApplier.scoped(
+        target,
+        accountId: _account,
+      ).applyPage(_page(event, cursor: 1));
+
+      expect(
+        (await target.select(target.products).get())
+            .where(
+              (row) =>
+                  row.accountId == _account.value &&
+                  row.normalizedUserProductCode ==
+                      ((product['userProductCode']
+                              as Map<String, Object?>)['normalizedKey']
+                          as String),
+            )
+            .length,
+        1,
+      );
+      expect(
+        (await target.select(target.products).get())
+            .where(
+              (row) =>
+                  row.accountId == _account.value &&
+                  row.exactIdentityKey == product['identityKey'],
+            )
+            .length,
+        1,
+      );
+    },
+  );
+
+  test('established incoming UUID immutable mutation is bounded', () async {
+    final source = LocalDatabase.memory();
+    final target = LocalDatabase.memory();
+    addTearDown(source.close);
+    addTearDown(target.close);
+    await _register(target, deviceId: _targetDevice);
+    final localProduct = (await target.select(target.products).get()).single;
+    final event = await _sourceEvent(source, sequence: 1);
+    final payload = event['payload'] as Map<String, Object?>;
+    final purchase = Map<String, Object?>.from(
+      payload['purchase'] as Map<String, Object?>,
+    );
+    final items = (purchase['items'] as List<Object?>)
+        .cast<Map<String, Object?>>()
+        .map((item) => Map<String, Object?>.from(item))
+        .toList();
+    items.single['productId'] = localProduct.id;
+    purchase['items'] = items;
+    final product = Map<String, Object?>.from(_productSnapshot(event))
+      ..['id'] = localProduct.id
+      ..['displayName'] = 'Mutated display';
+    final mutatedPayload = Map<String, Object?>.from(payload)
+      ..['purchase'] = purchase
+      ..['productSnapshots'] = [product];
+    final mutatedEvent = Map<String, Object?>.from(event)
+      ..['payload'] = mutatedPayload;
+    mutatedEvent['contentHash'] = canonicalUtf8Sha256(
+      Map<String, Object?>.from(mutatedEvent)..remove('contentHash'),
+    );
+
+    final result = await DriftRemoteEventApplier.scoped(
+      target,
+      accountId: _account,
+    ).applyPage(_page(mutatedEvent, cursor: 1));
+
+    expect(result.code, SyncStatusCode.conflict);
+    expect(result.protocolCode, 'remote-product-identity-conflict');
   });
 
   test('two events sharing catalogue identities remap each item', () async {
@@ -389,6 +521,132 @@ void main() {
     expect(localApply.localMutationState, 'rolled-back');
     expect(localApply.sanitizedExceptionClass, 'payload-shape-failure');
   });
+
+  test('unexpected apply exception rolls back and remains bounded', () async {
+    final source = LocalDatabase.memory();
+    final target = LocalDatabase.memory();
+    addTearDown(source.close);
+    addTearDown(target.close);
+    final event = await _sourceEvent(source, sequence: 1);
+    final before = await _counts(target);
+    final transport = _DownloadTransport(_page(event, cursor: 1));
+    final applier = DriftRemoteEventApplier.scopedWithApplyFailureForTest(
+      target,
+      accountId: _account,
+      throwBeforeApply: () => _ArbitraryApplyFailure(),
+    );
+    final diagnostics = _RecordingDiagnostics();
+
+    final result = await DownloadAndApplyEvents(transport, applier)(
+      null,
+      diagnostics: diagnostics,
+    );
+    final ack = await AcknowledgeAppliedCursor(transport, applier)(
+      diagnostics: diagnostics,
+    );
+
+    expect(result.code, SyncStatusCode.unknownOutcome);
+    expect(result.protocolCode, 'unexpected-local-apply-failed');
+    expect(result.sanitizedExceptionClass, 'unexpected-local-apply-failure');
+    expect(await _counts(target), before);
+    expect(ack, isNull);
+    expect(transport.acknowledgements, 0);
+    final localApply = diagnostics.events.lastWhere(
+      (event) => event.phase == 'download-local-apply',
+    );
+    expect(localApply.trustedResponseState, 'received');
+    expect(localApply.localMutationState, 'rolled-back');
+  });
+
+  test(
+    'exact-identity different-code replay unpoisons later progress',
+    () async {
+      final source = LocalDatabase.memory();
+      final target = LocalDatabase.memory();
+      addTearDown(source.close);
+      addTearDown(target.close);
+      await _register(
+        target,
+        deviceId: _targetDevice,
+        productCode: 'LOCAL-RICE',
+      );
+      final localProduct = (await target.select(target.products).get()).single;
+      final first = await _sourceEvent(source, sequence: 1);
+      final later = await _sourceEvent(source, sequence: 2);
+      final applier = DriftRemoteEventApplier.scoped(
+        target,
+        accountId: _account,
+      );
+
+      expect(
+        (await applier.applyPage(_page(first, cursor: 1))).code,
+        SyncStatusCode.downloadedApplied,
+      );
+      expect(
+        (await applier.applyPage(_page(first, cursor: 1))).code,
+        SyncStatusCode.duplicateIgnored,
+      );
+      expect(
+        (await applier.applyPage(_page(later, cursor: 2))).code,
+        SyncStatusCode.downloadedApplied,
+      );
+      expect(await applier.greatestContiguousAppliedCursor(), 'c10b:2');
+      expect(await target.select(target.products).get(), hasLength(1));
+      expect(
+        (await target.select(target.products).get()).single.id,
+        localProduct.id,
+      );
+      expect(await target.select(target.purchases).get(), hasLength(3));
+      expect(await target.select(target.purchaseItems).get(), hasLength(3));
+      expect(await target.select(target.syncInbox).get(), hasLength(2));
+    },
+  );
+
+  test('mixed two-client replay converges without duplicate facts', () async {
+    final android = LocalDatabase.memory();
+    final windows = LocalDatabase.memory();
+    final target = LocalDatabase.memory();
+    addTearDown(android.close);
+    addTearDown(windows.close);
+    addTearDown(target.close);
+    await _register(target, deviceId: _targetDevice, productCode: 'LOCAL-RICE');
+    final localProduct = (await target.select(target.products).get()).single;
+    final androidEvent = await _sourceEvent(android, sequence: 1);
+    final windowsEvent = await _sourceEvent(windows, sequence: 2);
+    final applier = DriftRemoteEventApplier.scoped(target, accountId: _account);
+
+    final result = await applier.applyPage(
+      DownloadPage(
+        nextCursor: 'c10b:2',
+        events: [
+          DownloadedEvent(event: androidEvent, serverCursor: 'c10b:1'),
+          DownloadedEvent(event: windowsEvent, serverCursor: 'c10b:2'),
+        ],
+      ),
+    );
+    final replay = await applier.applyPage(
+      DownloadPage(
+        nextCursor: 'c10b:2',
+        events: [
+          DownloadedEvent(event: androidEvent, serverCursor: 'c10b:1'),
+          DownloadedEvent(event: windowsEvent, serverCursor: 'c10b:2'),
+        ],
+      ),
+    );
+
+    expect(result.code, SyncStatusCode.downloadedApplied);
+    expect(replay.code, SyncStatusCode.duplicateIgnored);
+    expect(await target.select(target.products).get(), hasLength(1));
+    expect(
+      (await target.select(target.products).get()).single.id,
+      localProduct.id,
+    );
+    expect(await target.select(target.stores).get(), hasLength(1));
+    expect(await target.select(target.purchases).get(), hasLength(3));
+    expect(await target.select(target.purchaseItems).get(), hasLength(3));
+    expect(await target.select(target.syncInbox).get(), hasLength(2));
+    expect(await applier.greatestContiguousAppliedCursor(), 'c10b:2');
+  });
 }
 
 const _account = AccountId('11111111-1111-4111-8111-111111111111');
@@ -546,6 +804,12 @@ Map<String, Object?> _event({
   return {...content, 'contentHash': canonicalUtf8Sha256(content)};
 }
 
+Map<String, Object?> _productSnapshot(Map<String, Object?> event) {
+  final payload = event['payload'] as Map<String, Object?>;
+  final products = payload['productSnapshots'] as List<Object?>;
+  return Map<String, Object?>.from(products.single as Map<String, Object?>);
+}
+
 Future<Map<String, int>> _counts(LocalDatabase db) async {
   return {
     'stores': (await db.select(db.stores).get()).length,
@@ -604,3 +868,5 @@ final class _RecordingDiagnostics implements SyncDiagnosticPhaseRecorder {
     );
   }
 }
+
+final class _ArbitraryApplyFailure {}

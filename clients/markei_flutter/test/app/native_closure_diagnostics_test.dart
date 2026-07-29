@@ -800,6 +800,188 @@ void main() {
     );
   });
 
+  test(
+    'acknowledgement request preserves trusted download and committed apply',
+    () async {
+      final query = _FakeDiagnosticsQuery();
+      final lines = <String>[];
+      final applier = _CursorApplier(cursor: 'c10b:1');
+      final runner = _runner(
+        query: query,
+        applier: applier,
+        lifecycleSink: lines.add,
+      );
+
+      final result = await runner.hostedSyncProbe();
+
+      expect(result.state, 'sync-completed');
+      final ackRequest = query.diagnosticEvents.firstWhere(
+        (event) =>
+            event.phase == 'acknowledgement' &&
+            event.nativeCode == 'acknowledgement-request-started',
+      );
+      expect(ackRequest.trustedResponseState, 'not-received');
+      final terminalLifecycle = lines
+          .map((line) => jsonDecode(line) as Map<String, Object?>)
+          .lastWhere(
+            (event) => event['declarationScope'] == 'client-operation',
+          );
+      expect(terminalLifecycle['trustedResponseState'], 'received');
+      expect(terminalLifecycle['localMutationState'], 'committed');
+      expect(terminalLifecycle['lastProvedPhase'], 'download-local-apply');
+    },
+  );
+
+  test(
+    'acknowledgement exception keeps committed apply in runner fallback',
+    () async {
+      final query = _FakeDiagnosticsQuery();
+      final lines = <String>[];
+      final applier = _CursorApplier(cursor: 'c10b:1');
+      final runner = _runner(
+        query: query,
+        applier: applier,
+        transport: _ThrowingAcknowledgementTransport(),
+        lifecycleSink: lines.add,
+      );
+
+      final result = await runner.hostedSyncProbe();
+
+      expect(result.state, 'sync-failed');
+      final terminalLifecycle = lines
+          .map((line) => jsonDecode(line) as Map<String, Object?>)
+          .lastWhere(
+            (event) => event['declarationScope'] == 'client-operation',
+          );
+      expect(terminalLifecycle['trustedResponseState'], 'received');
+      expect(terminalLifecycle['localMutationState'], 'committed');
+      expect(terminalLifecycle['lastProvedPhase'], 'download-local-apply');
+      expect(terminalLifecycle['resultPersistenceState'], 'committed');
+      expect(
+        query.diagnosticEvents.map((event) => event.sanitizedExceptionClass),
+        contains('arbitraryacknowledgementfailure'),
+      );
+    },
+  );
+
+  test('diagnostic begin failure is degraded while Sync continues', () async {
+    final query = _FakeDiagnosticsQuery(throwBeginDiagnostic: true);
+    final lines = <String>[];
+    final runner = _runner(query: query, lifecycleSink: lines.add);
+
+    final result = await runner.hostedSyncProbe();
+
+    expect(result.state, 'sync-no-new-events');
+    expect(query.diagnosticEvents, isEmpty);
+    final events = lines
+        .map((line) => jsonDecode(line) as Map<String, Object?>)
+        .toList();
+    expect(
+      events
+          .where(
+            (event) =>
+                event['resultPersistenceState'] ==
+                'diagnostics-persistence-degraded',
+          )
+          .length,
+      greaterThan(1),
+    );
+    expect(events.last['event'], 'operation-completed');
+  });
+
+  test(
+    'diagnostic row failure is degraded without changing commit truth',
+    () async {
+      final query = _FakeDiagnosticsQuery(throwDiagnosticEvents: true);
+      final lines = <String>[];
+      final applier = _CursorApplier(cursor: 'c10b:1');
+      final transport = _CountingTransport();
+      final runner = _runner(
+        query: query,
+        applier: applier,
+        transport: transport,
+        lifecycleSink: lines.add,
+      );
+
+      final result = await runner.hostedSyncProbe();
+
+      expect(result.state, 'sync-completed');
+      expect(transport.acknowledgements, 1);
+      expect(query.diagnosticEvents, isEmpty);
+      final terminalLifecycle = lines
+          .map((line) => jsonDecode(line) as Map<String, Object?>)
+          .lastWhere(
+            (event) => event['declarationScope'] == 'client-operation',
+          );
+      expect(
+        terminalLifecycle['resultPersistenceState'],
+        'diagnostics-persistence-degraded',
+      );
+      expect(terminalLifecycle['localMutationState'], 'committed');
+      expect(terminalLifecycle['trustedResponseState'], 'received');
+    },
+  );
+
+  test(
+    'diagnostic row failure while reporting rollback preserves rollback truth',
+    () async {
+      final query = _FakeDiagnosticsQuery(throwDiagnosticEvents: true);
+      final lines = <String>[];
+      final transport = _CountingTransport();
+      final runner = _runner(
+        query: query,
+        applier: _FailingApplyApplier(),
+        transport: transport,
+        lifecycleSink: lines.add,
+      );
+
+      final result = await runner.hostedSyncProbe();
+
+      expect(result.state, 'sync-failed');
+      expect(transport.acknowledgements, 0);
+      final terminalLifecycle = lines
+          .map((line) => jsonDecode(line) as Map<String, Object?>)
+          .lastWhere(
+            (event) => event['declarationScope'] == 'client-operation',
+          );
+      expect(
+        terminalLifecycle['resultPersistenceState'],
+        'diagnostics-persistence-degraded',
+      );
+      expect(terminalLifecycle['trustedResponseState'], 'received');
+      expect(terminalLifecycle['localMutationState'], 'rolled-back');
+    },
+  );
+
+  test(
+    'diagnostic completion failure is degraded after committed apply',
+    () async {
+      final query = _FakeDiagnosticsQuery(throwCompleteSyncAttempt: true);
+      final lines = <String>[];
+      final applier = _CursorApplier(cursor: 'c10b:1');
+      final runner = _runner(
+        query: query,
+        applier: applier,
+        lifecycleSink: lines.add,
+      );
+
+      final result = await runner.hostedSyncProbe();
+
+      expect(result.state, 'sync-completed');
+      final terminalLifecycle = lines
+          .map((line) => jsonDecode(line) as Map<String, Object?>)
+          .lastWhere(
+            (event) => event['declarationScope'] == 'client-operation',
+          );
+      expect(
+        terminalLifecycle['resultPersistenceState'],
+        'diagnostics-persistence-degraded',
+      );
+      expect(terminalLifecycle['localMutationState'], 'committed');
+      expect(terminalLifecycle['trustedResponseState'], 'received');
+    },
+  );
+
   test('lifecycle sink failure does not alter ordinary Sync result', () async {
     final query = _FakeDiagnosticsQuery();
     final runner = _runner(
@@ -992,6 +1174,7 @@ NativeAuthClosureRunner _runner({
   bool signedIn = true,
   SyncOutboxRepository? outbox,
   SyncTransport? transport,
+  RemoteEventApplier? applier,
   HostedConnectionCheckPort? hostedConnectionCheck,
   NativeClosureLifecycleSink? lifecycleSink,
 }) {
@@ -999,6 +1182,7 @@ NativeAuthClosureRunner _runner({
   final enrollmentTransport = _FakeEnrollmentTransport();
   final syncOutbox = outbox ?? _NoopOutbox();
   final syncTransport = transport ?? _NoopTransport();
+  final syncApplier = applier ?? _NoopApplier();
   return NativeAuthClosureRunner(
     authenticationSession: auth,
     enrollmentCoordinator: HostedEnrollmentCoordinator(
@@ -1022,16 +1206,16 @@ NativeAuthClosureRunner _runner({
     hostedSyncCoordinator: HostedSyncCoordinator(
       authenticationSession: auth,
       syncGuard: const _AllowedGuard(),
-      applier: _NoopApplier(),
+      applier: syncApplier,
       recoverFailedNotApplied: RecoverFailedNotApplied(syncOutbox),
       uploadPendingEvents: UploadPendingEvents(syncOutbox, syncTransport),
       downloadAndApplyEvents: DownloadAndApplyEvents(
         syncTransport,
-        _NoopApplier(),
+        syncApplier,
       ),
       acknowledgeAppliedCursor: AcknowledgeAppliedCursor(
         syncTransport,
-        _NoopApplier(),
+        syncApplier,
       ),
     ),
     failedNotAppliedRecoveryCoordinator: FailedNotAppliedRecoveryCoordinator(
@@ -1054,12 +1238,18 @@ final class _FakeDiagnosticsQuery
     this.unknownPreflight,
     this.failedInspection,
     this.diagnostics = const [],
+    this.throwBeginDiagnostic = false,
+    this.throwDiagnosticEvents = false,
+    this.throwCompleteSyncAttempt = false,
   });
 
   final bool populated;
   final UnknownSubmissionRetryPreflight? unknownPreflight;
   final FailedNotAppliedRecoveryInspection? failedInspection;
   final List<ClosureDiagnosticEventSummary> diagnostics;
+  final bool throwBeginDiagnostic;
+  final bool throwDiagnosticEvents;
+  final bool throwCompleteSyncAttempt;
   var snapshots = 0;
   var beginAttempts = 0;
   var beginDiagnosticAttempts = 0;
@@ -1083,6 +1273,7 @@ final class _FakeDiagnosticsQuery
     required String correlationFingerprint,
   }) async {
     beginDiagnosticAttempts++;
+    if (throwBeginDiagnostic) throw StateError('redacted');
     return beginDiagnosticAttempts + 100;
   }
 
@@ -1094,6 +1285,7 @@ final class _FakeDiagnosticsQuery
     required String phase,
     String? recoveryCode,
   }) async {
+    if (throwCompleteSyncAttempt) throw StateError('redacted');
     completedResults.add(resultCode);
   }
 
@@ -1129,6 +1321,7 @@ final class _FakeDiagnosticsQuery
 
   @override
   Future<int> recordDiagnosticEvent(SyncDiagnosticEnvelope diagnostic) async {
+    if (throwDiagnosticEvents) throw StateError('redacted');
     diagnosticEvents.add(diagnostic);
     return diagnostic.ordinal;
   }
@@ -1500,6 +1693,15 @@ final class _CountingTransport extends _NoopTransport {
   }
 }
 
+final class _ThrowingAcknowledgementTransport extends _NoopTransport {
+  @override
+  Future<SyncResult> acknowledge(String greatestContiguousCursor) {
+    throw ArbitraryAcknowledgementFailure();
+  }
+}
+
+final class ArbitraryAcknowledgementFailure implements Exception {}
+
 class _NoopTransport implements SyncTransport {
   @override
   Future<SyncResult> acknowledge(String greatestContiguousCursor) async =>
@@ -1552,6 +1754,26 @@ final class _NoopApplier implements RemoteEventApplier {
 
   @override
   Future<String?> greatestContiguousAppliedCursor() async => null;
+}
+
+final class _CursorApplier extends _NoopApplier {
+  _CursorApplier({required this.cursor});
+
+  final String? cursor;
+
+  @override
+  Future<String?> greatestContiguousAppliedCursor() async => cursor;
+}
+
+final class _FailingApplyApplier extends _NoopApplier {
+  @override
+  Future<SyncResult> applyPage(DownloadPage page) async => const SyncResult(
+    code: SyncStatusCode.unknownOutcome,
+    outcome: SyncOutcome.unknown,
+    retryable: false,
+    protocolCode: 'unexpected-local-apply-failed',
+    sanitizedExceptionClass: 'unexpected-local-apply-failure',
+  );
 }
 
 final class _FakeEnrollmentTransport implements DeviceEnrollmentTransport {

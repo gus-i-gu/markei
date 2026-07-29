@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../application/sync/sync_ports.dart';
 import '../../../domain/shared/ids.dart';
@@ -9,13 +10,25 @@ import '../local_database.dart';
 import 'remote_purchase_fact_writer.dart';
 
 final class DriftRemoteEventApplier implements RemoteEventApplier {
-  DriftRemoteEventApplier(this._db) : _accountId = null;
+  DriftRemoteEventApplier(this._db)
+    : _accountId = null,
+      _debugThrowBeforeApply = null;
 
   DriftRemoteEventApplier.scoped(this._db, {required AccountId accountId})
-    : _accountId = accountId.value;
+    : _accountId = accountId.value,
+      _debugThrowBeforeApply = null;
+
+  @visibleForTesting
+  DriftRemoteEventApplier.scopedWithApplyFailureForTest(
+    this._db, {
+    required AccountId accountId,
+    required Object Function() throwBeforeApply,
+  }) : _accountId = accountId.value,
+       _debugThrowBeforeApply = throwBeforeApply;
 
   final LocalDatabase _db;
   final String? _accountId;
+  final Object Function()? _debugThrowBeforeApply;
   late final RemotePurchaseFactWriter _facts = RemotePurchaseFactWriter(_db);
 
   @override
@@ -36,6 +49,8 @@ final class DriftRemoteEventApplier implements RemoteEventApplier {
           }
           return validation;
         }
+        final debugFailure = _debugThrowBeforeApply;
+        if (debugFailure != null) throw debugFailure();
         for (final item in page.events) {
           final eventId = item.event['eventId'] as String;
           final accountId = item.event['accountId'] as String;
