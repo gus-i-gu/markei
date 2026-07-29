@@ -8375,3 +8375,388 @@ NEXT_ACTION=PIN_HANDOFF_COMMIT_AND_LAUNCH_CODEX_R03
 This section is the recovery bridge for the fresh Main Chat. Detailed human
 evidence remains in `documentation/REC_DIAGNOSTICS.md`; executable correction
 authority remains in D/E/F.
+
+
+---
+
+# 2026-07-29 — Post-Codex reconciliation: C10-GCM03-S10-R03
+
+## 1. Reconciliation envelope
+
+~~~text
+Sequence: FLX-PRM-04 post-materialization reconciliation
+Primary unit: C10-GCM03-S10-R03
+Human-assay continuity alias: C10-GCM03-S09-R03
+Repository: gus-i-gu/markei
+Branch: grm-guarded-provisioning-20260727
+Controlling handoff head: 8fb43654b3e93908530165c29e580a5f5c12c1f8
+Materialization commit: 23cd872848ebc0654a4d9de6f41a9ba3c09fe92c
+Materialization parent: 8fb43654b3e93908530165c29e580a5f5c12c1f8
+Remote branch read-back before J publication: identical to 23cd872
+Materialization distance: exactly one non-forced fast-forward commit
+Live operation authority during reconciliation: NONE
+~~~
+
+This entry reconciles the published R03 implementation against D/E/F, the
+actual source/test diff, G/H/I and the retained human/provider evidence. It does
+not erase the R03 diagnosis or accept the Codex terminal merely because the
+reported commands passed.
+
+## 2. Publication and writable-scope guard
+
+The materialization changed exactly fourteen paths:
+
+~~~text
+clients/markei_flutter/lib/app/native_auth_closure_runner.dart
+clients/markei_flutter/lib/app/pages/native_closure_page.dart
+clients/markei_flutter/lib/application/closure_diagnostics.dart
+clients/markei_flutter/lib/application/sync/sync_ports.dart
+clients/markei_flutter/lib/application/sync/sync_use_cases.dart
+clients/markei_flutter/lib/infrastructure/local/closure_diagnostics_repository.dart
+clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_event_applier.dart
+clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_fact_writer.dart
+clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
+clients/markei_flutter/test/infrastructure/closure_diagnostics_repository_test.dart
+clients/markei_flutter/test/infrastructure/remote_purchase_event_applier_test.dart
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+~~~
+
+Every changed path falls inside D's source/test/G/H/I writable envelope. No
+D/E/F, J, REC_DIAGNOSTICS, methodology, permanent domain memory, GRIMOIRE
+operator file, migration, schema, hosted API, authentication, enrollment,
+dependency or provider-configuration path entered the materialization commit.
+
+~~~text
+R03_FAST_FORWARD_GUARD=PASS
+R03_CHANGED_PATH_SCOPE=PASS
+R03_BRANCH_TOPOLOGY=PASS
+R03_LIVE_OPERATION_DURING_CODEX=NO_REPORTED
+R03_PROVIDER_MUTATION_DURING_CODEX=NONE_REPORTED
+~~~
+
+## 3. Source decisions accepted at implementation scope
+
+### Product identity and reference convergence
+
+RemotePurchaseFactWriter now distinguishes an established incoming UUID from a
+previously unseen incoming UUID.
+
+For an established UUID, full immutable coherence still includes user code and
+display fields. For a new UUID, resolution obtains all Account-scoped normalized
+code matches and exact-identity matches, rejects ambiguity and split keys, rejects
+same-code/different-identity, and reuses one exact-identity row despite another
+client-chosen code. The selected local code and display are preserved.
+
+The incoming Product UUID to selected local Product UUID map is then used for
+dependent Purchase Items. The Store path remains the prior Account-scoped
+incoming-UUID/display-identity rule.
+
+The implementation therefore corrects the source mechanism that produced the
+Android remote-product-natural-identity-conflict without introducing an alias
+table, hosted rewrite, migration or global Product equality override.
+
+### Page atomicity and local-apply translation
+
+DriftRemoteEventApplier still places validation, Product/Store reconciliation,
+Purchase facts, Purchase Items, inbox rows and Account cursor advancement inside
+one Drift transaction.
+
+RemoteIdentityConflict and every other thrown Object leave that transaction
+before translation. The outer boundary now maps identity, typed SQLite/Drift,
+payload-shape, local-invariant and residual unexpected failures to bounded
+SyncResult categories. The residual catch no longer rethrows into the UI runner.
+
+This is implementation evidence that the previously unclassified post-download
+apply path now has a total source boundary. It is not evidence that the frozen
+Windows operation rolled back, nor can it reconstruct that historical
+transaction truth.
+
+### Stored exception-class projection
+
+The existing sanitizedExceptionClass field now flows through SyncResult,
+diagnostic persistence, repository projection, application summary,
+current-action mapping and the Closure technical-details UI. No migration was
+introduced. The added repository and widget assertions establish the bounded
+class projection at automated scope.
+
+### Acknowledgement ordering
+
+The coordinator still stops on a blocked download result before calling
+AcknowledgeAppliedCursor. Acknowledgement eligibility still comes from the
+greatest committed contiguous local cursor. Focused failure tests observe no
+acknowledgement after SQLite and payload-shape apply failures.
+
+These source decisions are accepted as implemented. Their live behavior remains
+unproved.
+
+## 4. Validation evidence reported by Codex
+
+Codex reports:
+
+~~~text
+dart format check=PASS
+flutter analyze=PASS
+focused changed diagnostic/apply tests=48 PASS
+local sync application tests=29 PASS
+two-device local harness=1 PASS
+v3 contract tests=2 PASS
+catalogue/store identity tests=8 PASS
+markei_app widget tests=26 PASS
+full flutter test=215 PASS / 4 disposable labs skipped
+debug Android APK build=PASS
+Windows build=PASS after releasing a local executable lock
+merged Android manifest inspection=PASS
+git diff --check=PASS
+changed-content sensitive scan=PASS reported
+~~~
+
+The Windows build's first failure was an environment lock, followed by a passing
+retry. The disposable HTTP/PostgreSQL/provider labs were not run because
+MARKEI_RUN_SYNC_LAB was unset. No live client/provider assay occurred.
+
+Under PRC-01 this proves strong static, deterministic automated and packaging
+evidence. It does not prove installed preserved-state behavior, provider
+convergence, acknowledgement, inter-device usability or GCM03 acceptance.
+
+## 5. D-matrix reconciliation gaps
+
+Inspection of the actual test additions does not support every G/H/I terminal at
+the strength reported.
+
+The added remote-applier tests cover:
+
+- new UUID plus exact identity under another code;
+- same code plus different identity;
+- split natural keys;
+- two-event Item remapping;
+- page rollback on typed conflict;
+- SQLite failure with no acknowledgement;
+- payload-shape failure with bounded class and rollback.
+
+The R03 diff does not add direct tests for all D-required branches:
+
+- ambiguous normalized-code match;
+- ambiguous exact-identity match;
+- established UUID immutable mutation;
+- a mixed Android/Windows page reproducing distinct client codes and later
+  cursor progression without duplicates;
+- the previously rejected hosted event followed by later-page poison recovery;
+- the residual unexpected-local-apply-failed category itself, rather than a
+  TypeError translated as payload-shape failure;
+- diagnostic-persistence failure before apply;
+- diagnostic-persistence failure while recording a rolled-back result;
+- diagnostic-persistence failure after a committed apply;
+- committed apply remaining acknowledgement-eligible under diagnostic
+  degradation;
+- runner fallback after those injected persistence failures.
+
+The full suite contains prior replay, cursor and acknowledgement tests, but those
+do not substitute automatically for the precise R03 injection matrix.
+
+Therefore:
+
+~~~text
+PRODUCT_EXACT_ID_DIFFERENT_CODE=PASS_IMPLEMENTED_AND_FOCUSED_TESTED
+PRODUCT_CODE_DIFFERENT_IDENTITY_CONFLICT=PASS_IMPLEMENTED_AND_FOCUSED_TESTED
+REMOTE_ITEM_ID_REMAP=PASS_IMPLEMENTED_AND_FOCUSED_TESTED
+REMOTE_PAGE_ATOMICITY=PASS_IMPLEMENTED_AND_PARTIALLY_TESTED
+UNEXPECTED_LOCAL_APPLY_TRANSLATION=IMPLEMENTED_NOT_DIRECTLY_TESTED
+AMBIGUOUS_PRODUCT_MATCHES=IMPLEMENTED_NOT_DIRECTLY_TESTED
+ESTABLISHED_UUID_MUTATION=IMPLEMENTED_NOT_DIRECTLY_TESTED
+POISON_PAGE_RECOVERY=NOT_DIRECTLY_TESTED
+DIAGNOSTIC_PERSISTENCE_CONTAINMENT=PARTIAL_EVIDENCE
+SANITIZED_EXCEPTION_CLASS_UI=PASS_IMPLEMENTED_AND_FOCUSED_TESTED
+ACKNOWLEDGEMENT_AFTER_UNPROVED_APPLY=NOT_STARTED_FOCUSED_TESTED
+~~~
+
+## 6. Residual causal-snapshot defect
+
+The in-memory recorder updates its stored evidence before attempting a durable
+diagnostic write and contains recordDiagnosticEvent failures. That is a real
+improvement over R02.
+
+However, the current _preferStrongestEvidence function is not a cumulative
+operation snapshot. Except when the new candidate newly proves trusted response
+received, newly proves local mutation committed, or is a generic terminal, it
+replaces the previous evidence object.
+
+A later acknowledgement-request phase is non-terminal and normally declares:
+
+~~~text
+trustedResponseState=not-received
+localMutationState=none/default
+providerContactState=request-started
+~~~
+
+It can therefore replace an earlier download-local-apply declaration that had
+already proved:
+
+~~~text
+trustedResponseState=received
+localMutationState=committed
+lastProvedPhase=download-local-apply
+~~~
+
+If acknowledgement transport or later coordination then throws, the runner
+fallback can consume the weaker acknowledgement-request object and lose the
+proved committed local-apply/trusted-download facts. This conflicts with D
+sections 5 and 7 and F sections 4 and 6, which require a snapshot retaining
+provider, apply, local mutation and acknowledgement truth separately.
+
+There is a second observability gap: beginDiagnosticAttempt failure sets
+attemptId to null but does not mark diagnostic persistence degraded. Subsequent
+phase calls skip durable writes without necessarily exposing
+diagnostics-persistence-degraded, and the final operation lifecycle declaration
+does not establish that the degradation became visible.
+
+No added R03 test injects these exact sequences.
+
+Consequently the G/H/I claims CAUSAL_EVIDENCE_PRESERVATION=PASS and
+DIAGNOSTIC_PERSISTENCE_CONTAINMENT=PASS are not promoted by Main.
+
+~~~text
+CAUSAL_EVIDENCE_PRESERVATION=PARTIAL_FAIL_ACK_TRANSITION
+DIAGNOSTIC_BEGIN_FAILURE_DEGRADATION=NOT_PROVED
+DIAGNOSTIC_AFTER_COMMIT_DEGRADATION=NOT_PROVED
+RUNNER_FALLBACK_STRONGEST_CAUSE=PARTIAL
+~~~
+
+## 7. PRC-01 disposition
+
+~~~text
+Claim: R03 was published as one scoped fast-forward commit
+Result: ACCEPTED
+Evidence ceiling: GitHub ancestry and changed-path comparison
+
+Claim: exact Product identity under another client code is corrected
+Result: ACCEPTED_AT_IMPLEMENTATION_AND_FOCUSED_TEST_SCOPE
+Evidence ceiling: deterministic Flutter/Drift source and test; no live client
+
+Claim: every apply exception has a bounded post-rollback source translation
+Result: ACCEPTED_AT_SOURCE_SCOPE
+Evidence ceiling: residual unexpected category lacks a direct injected test
+
+Claim: transaction truth is independent of diagnostic persistence
+Result: PARTIALLY_ACCEPTED
+Evidence ceiling: production recorder contains row-write failures, but required
+                  before/after-commit injection evidence is incomplete
+
+Claim: the runner always preserves the strongest causal truth
+Result: REJECTED_AS_COMPLETE
+Evidence: later acknowledgement request can replace earlier committed apply state
+
+Claim: R03 satisfies the complete controlling D test matrix
+Result: REJECTED
+Evidence: named required cases above are absent from the materialization diff
+
+Claim: practical Android/Windows Sync is now solved
+Result: REJECTED / NOT YET PROVED
+Evidence: no corrected binaries were installed or exercised; one causal defect
+          and multiple D validation gaps remain
+
+Claim: the historical Windows transaction truth is now known
+Result: REJECTED
+Evidence: new source cannot retroactively classify the frozen operation
+~~~
+
+## 8. Main terminal and required corrective continuation
+
+The Codex report's IMPLEMENTED_VALIDATED terminal is retained as a Codex
+observation but is not promoted as the Main terminal.
+
+~~~text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=ACTIVE_CORRECTIVE_MATERIALIZATION
+C10_GCM03_S10_R03=IMPLEMENTED_WITH_MAIN_RECONCILIATION_GAPS
+C10_GCM03_S09_R03=HUMAN_ASSAY_CONTINUITY_ALIAS
+R03_REMOTE_COMMIT=23cd872848ebc0654a4d9de6f41a9ba3c09fe92c
+R03_SCOPE_RECONCILIATION=PASS
+R03_D_MATRIX_RECONCILIATION=PARTIAL_FAIL
+PRODUCT_CONVERGENCE_CORRECTION=IMPLEMENTED_FOCUSED_TESTED
+TOTAL_APPLY_TRANSLATION=IMPLEMENTED_PARTIALLY_TESTED
+CAUSAL_SNAPSHOT_ACK_TRANSITION=FAIL_OPEN
+DIAGNOSTIC_DEGRADATION_VISIBILITY=FAIL_OPEN
+INTER_DEVICE_SAME_ACCOUNT_SYNC=FAIL_OPEN
+MVP_SYNC_ACCEPTANCE=NOT_PROMOTED
+ANDROID_SYNC=HELD
+WINDOWS_SYNC=HELD
+RETRY_RECOVERY=HELD
+NEW_PURCHASE_REGISTRATION=HELD
+DIAGNOSTIC_HISTORY=PRESERVE
+PROVIDER_MUTATION=NONE
+NEXT_ACTION=STAGE_ONE_FOCUSED_R03_COMPLETION_ROUND
+~~~
+
+A new implementation authority should use a fresh revision identifier rather
+than silently rewriting R03 success. Main's proposed identifier is:
+
+~~~text
+C10-GCM03-S10-R04
+continuity: C10-GCM03-S09-R04
+~~~
+
+Its scope should be limited to:
+
+1. replace the single strongest-evidence object with a cumulative causal state
+   that preserves download trust, apply commit/rollback and acknowledgement
+   state independently;
+2. surface begin/row/complete diagnostic persistence failure as bounded
+   degradation without changing core truth;
+3. add the missing D decision/injection tests listed above;
+4. preserve the R03 Product resolver, total transaction boundary, exception
+   projection, protocol v3, schema, hosted API, auth/enrollment and provider
+   immobility;
+5. replace G/H/I and publish one scoped fast-forward commit;
+6. perform no live Sync, Retry, Recovery, Query, Enroll, acknowledgement or new
+   Purchase registration.
+
+No preserved-state install or live S09 assay is authorized until this completion
+round is materialized and reconciled.
+
+## 9. Provisional S09 human-assay route after corrective closure
+
+The former GCM03 human plan may be recovered for exact labels and client order,
+but it is not needed to decide the present stop. After R04 passes Main
+reconciliation, the human-assay route should be restaged from the actual R04
+commit:
+
+1. build/install corrected Android and Windows binaries while preserving both
+   application data sets and diagnostic history;
+2. prove build provenance, authenticated state, existing enrollment, local queue
+   shape, Device sequences and absence of automatic Sync;
+3. run offline Product/History projections only, registering no new Purchase;
+4. capture fresh read-only Android SQLite, Windows SQLite and provider baselines;
+5. authorize exactly one ordinary Sync on one named client;
+6. reconcile UI, SQLite, Render and provider postflights before authorizing the
+   other client;
+7. prove acknowledgement only after committed cursor exposure;
+8. run one separately authorized no-op replay to prove idempotency and absence of
+   duplicate Product, Store, Purchase or Purchase Item.
+
+The exact first client and the prior human record labels must be reconciled from
+the former GCM03 plan or REC evidence before issuing the executable S09 packet.
+They must not be guessed from this implementation report.
+
+## 10. Answer to the overall Sync question
+
+R03 materially corrects the Product exact-identity conflict and makes the local
+apply boundary much safer. It does not yet establish the overall solution for
+Sync.
+
+The remaining layers are:
+
+~~~text
+source Product convergence: corrected at focused automated scope
+source local-apply totality: implemented, incomplete direct validation
+causal diagnostic continuity through acknowledgement: still defective
+preserved-state Android/Windows installation: not performed
+live provider-to-client convergence: not rerun
+acknowledgement and postflight agreement: not observed
+idempotent live replay: not observed
+GCM03 acceptance: not promoted
+~~~
+
+Accordingly, no live control is released by this reconciliation.
