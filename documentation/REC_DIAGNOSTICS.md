@@ -2981,3 +2981,339 @@ ST06_PROVIDER_BASELINE=OUTSTANDING_READ_ONLY
 WINDOWS_SYNC=NOT_AUTHORIZED
 ANDROID_SYNC=NOT_AUTHORIZED
 ```
+
+## RECORD 016 — ANDROID POST-RESTART DURABLE ENROLLMENT CONTROL
+
+```text
+MARKEI CLOSURE ASSAY — SANITIZED RECORD
+========================================
+
+ASSAY ID: REC-2026-07-28-016-GCM03-ANDROID-POST-RESTART
+DATE/TIME (local): 2026-07-28, screenshots 11:13-11:14
+TESTER: [MANUAL UI COLLECTION]
+CLIENT LINEAGE: grm-guarded-provisioning-20260727
+VISIBLE BUILD PROVENANCE: 65c9ab56079c
+TARGET: configured Android AVD DEV-GRM; transient ADB serial omitted
+ENVIRONMENT: development
+ASSAY PURPOSE: Verify that the one accepted Android enrollment survives the
+required application restart, classify the change from the pre-enrollment
+local Device fingerprint to the post-restart hosted Device fingerprint, and
+freeze the clean client baseline before exact hosted binding and provider
+inspection.
+
+SAFETY AND ACTION BOUNDARY
+--------------------------
+Secrets, tokens or credentials copied into this record: NO
+Complete Account, subject, Installation or Device identifiers recorded: NO
+Complete provider URLs or connection strings recorded: NO
+Android application restart completed: YES [USER STATEMENT/UI PACKET]
+Android Diagnostics executed after restart: YES [USER STATEMENT]
+Android Enroll repeated: NO
+Android or Windows Sync executed: NO
+Retry, recovery, logout or history clearing executed: NO
+Provider mutation attributable to Diagnostics: NO
+
+POST-RESTART CLIENT PROJECTION
+------------------------------
+Authentication: authenticated [SCREENSHOT]
+Enrollment: device-enrolled [SCREENSHOT]
+Current Device enrollment: device-enrolled [SCREENSHOT]
+Pending/uploading/failed/unknown: 0/0/0/0 [SCREENSHOT]
+Next Device sequence: 1 [SCREENSHOT]
+Actionable events: none [SCREENSHOT]
+Recent Closure attempts: none locally recorded [SCREENSHOT]
+Last successful Sync: not recorded [SCREENSHOT]
+Recovery guidance: no-local-sync-action-needed [SCREENSHOT]
+Ordinary-Sync result: not recorded [SCREENSHOT]
+Provider request aggregate: not aggregate success [SCREENSHOT]
+Provider contact for displayed current action: not-started [SCREENSHOT]
+Trusted response for displayed current action: not-received [SCREENSHOT]
+
+DEVICE-IDENTITY HANDOFF
+-----------------------
+Pre-enrollment local-only Device fingerprint: #2b75367e [RECORD 014]
+Post-restart current enrolled Device fingerprint: #a4d906aa [SCREENSHOT]
+Fingerprint unchanged: NO
+Fingerprint collision with frozen Windows Device: NOT OBSERVED
+
+The change is consistent with the implemented composition boundary:
+before enrollment, runtime composition uses the locally generated Device
+identity; after enrollment and restart, it loads the persisted hosted binding
+and composes the client with the hosted server Device identity. The UI
+fingerprint change therefore does not by itself indicate loss of enrollment.
+It also does not prove exact hosted authorization. That remains the purpose of
+GRM-AUTH-02 and the exact-device guard in GRM-NEON-11.
+
+CURRENT-ACTION PRESENTATION
+---------------------------
+MKS code: MKS-UI-003 [SCREENSHOT]
+Title: Current action collapsed into historical result [SCREENSHOT]
+Outcome: blocked [SCREENSHOT]
+Last proved phase: presentation [SCREENSHOT]
+Local mutation: none [SCREENSHOT]
+Provider contact: not-started [SCREENSHOT]
+Trusted response: not-received [SCREENSHOT]
+Operation: #not-recorded [SCREENSHOT]
+
+This is the already bounded empty-history presentation fallback. It does not
+contradict the authoritative authenticated/device-enrolled projection and
+must not cause a second Enroll, Sync, Retry or recovery action.
+
+SCREENSHOTS
+-----------
+- 8a459457-2f4f-46d6-9a2f-839108993396.png
+- 222ff829-be78-4478-87dd-b092709500c3.png
+- 34a0fc42-1201-4322-8dff-f8b42702abf8.png
+- 79de6a18-8611-4fa9-9ff3-16d1f2424762.png
+- 5e4da6ae-a6e7-4542-972d-c997636e58bb.png
+
+EVIDENCE CEILING
+----------------
+Enrollment survived the required restart at client projection scope: PASS
+Post-restart authentication: PASS AT CLIENT SCOPE
+Clean Android local queue: PASS
+Fresh Android sequence baseline: PASS AT CLIENT SCOPE
+Expected local-to-hosted Device identity handoff: SUPPORTED BY SOURCE/UI
+Exact hosted Account/Device authorization: UNPROVED; GRM-AUTH-02 REQUIRED
+Exact provider Device row and two-Device inventory: UNPROVED;
+GRM-NEON-11 REQUIRED
+Android purchase created after this packet: NO EVIDENCE
+Windows or Android Sync: UNPROVED / NOT AUTHORIZED
+Inter-device convergence: UNPROVED
+```
+
+## RECORD 016 ASSESSMENT
+
+| Claim | Assessment | Evidence boundary |
+| --- | --- | --- |
+| Android enrollment survives restart | PASS BOUNDED | Post-restart client projects `device-enrolled` |
+| Post-restart authentication is active | PASS AT CLIENT SCOPE | UI projects `authenticated` |
+| Android is still at a clean pre-event baseline | PASS | Queue `0/0/0/0`, next sequence `1`, no actionable event |
+| Changed fingerprint means enrollment was lost | REJECTED | Client is enrolled; source intentionally switches from local identity to persisted hosted `serverDeviceId` after restart |
+| Changed fingerprint proves exact hosted binding | NO | Requires hosted Device-status authorization and provider exact-device guard |
+| MKS-UI-003 is an enrollment failure | REJECTED | Empty-history presentation fallback with no provider contact or local mutation |
+| An Android purchase may be mixed into the baseline checks | NO | It would alter queue and next sequence before AUTH-02/NEON-11 reconciliation |
+| S08 convergence may begin now | HELD | Exact hosted binding and post-enrollment two-Device provider baseline remain open |
+
+Terminal classification:
+
+```text
+C10_GCM03_S07_INNER_STEP_01=PASS
+C10_GCM03_S07_INNER_STEP_02=PASS
+C10_GCM03_S07_INNER_STEP_03=PASS
+C10_GCM03_S07_INNER_STEP_04=PASS_PRE_RESTART_CLIENT_SCOPE
+C10_GCM03_S07_INNER_STEP_05=PASS_POST_RESTART_CLIENT_SCOPE
+ANDROID_POST_RESTART_AUTHENTICATION=PASS_CLIENT_SCOPE
+ANDROID_DURABLE_ENROLLMENT=PASS_CLIENT_SCOPE
+ANDROID_QUEUE_BASELINE=PASS_0_0_0_0
+ANDROID_NEXT_DEVICE_SEQUENCE=1
+ANDROID_DEVICE_FINGERPRINT_HANDOFF=EXPECTED_LOCAL_TO_HOSTED
+EXACT_HOSTED_ANDROID_BINDING=OPEN_GRM_AUTH_02
+TWO_DEVICE_PROVIDER_BASELINE=OPEN_GRM_NEON_11
+ANDROID_PURCHASE=HELD
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
+C10_GCM03_S08=HELD_PENDING_READ_ONLY_CHECKS
+```
+
+---
+
+# APPENDIX F — GCM03 S08 EXACT BINDING AND TWO-DEVICE BASELINE
+
+This appendix is append-only. It reconciles the previously sanitized GCM03
+Android enrollment/post-restart reports with the operator-supplied
+`GS-AUTH-02` and `GS-NEON-11 -Action provider-baseline` terminals collected on
+2026-07-29. Complete tokens, UUIDs, subjects, connection strings and private
+provider coordinates remain omitted.
+
+## RECORD 017 — POST-ENROLLMENT EXACT BINDING / PROVIDER BASELINE
+
+```text
+MARKEI CLOSURE ASSAY — SANITIZED RECORD
+========================================
+
+ASSAY ID: REC-2026-07-29-017-GCM03-S08-EXACT-BINDING-BASELINE
+DATE/TIME (local): 2026-07-29
+TESTER: [MANUAL TERMINAL COLLECTION]
+CLIENT/REPOSITORY BRANCH: grm-guarded-provisioning-20260727
+ENVIRONMENT: development
+DATABASE: markei_sync_dev
+AUTH PROCEDURE: GS-AUTH-02
+PROVIDER PROCEDURE: GS-NEON-11 / provider-baseline
+ASSAY PURPOSE: Prove the post-restart Android user token and retained hosted
+Device UUID resolve to one exact authorized binding, then freeze a
+transactionally read-only two-Device provider baseline before any
+inter-device convergence action.
+
+SAFETY AND ACTION BOUNDARY
+--------------------------
+Fresh user access token pasted to masked local prompt: YES
+Complete token copied into this record: NO
+Complete hosted Device UUID pasted to masked local prompt: YES
+Complete Device UUID copied into this record: NO
+Password pasted to masked local prompt: YES
+Password copied into this record: NO
+Connection string or complete private URL copied into this record: NO
+Android purchase created: NO
+Windows or Android Sync executed: NO
+Retry, recovery, migration, revocation or provider repair executed: NO
+Provider-baseline transaction committed: NO
+Explicit provider rollback observed: YES
+
+AUTH0 / HOSTED BINDING RESULT
+-----------------------------
+Issuer matches configured issuer: PASS
+Audience matches configured audience: PASS
+Algorithm matches accepted algorithm: PASS
+Subject claim present: PASS
+Token time window valid: PASS
+Identity endpoint: HTTP 200
+Device endpoint: HTTP 200
+Token accepted: PASS
+Exact Device binding: PASS
+Binding class: exact-binding-confirmed
+
+PROVIDER CONNECTION RESULT
+--------------------------
+Role login: PASS
+Database target: markei_sync_dev
+TLS: active
+Declared launcher environment: development
+Declared launcher branch label: markei-c10
+Declared launcher role: markei_migrator
+Human-readable Neon branch alias independently proved by launcher: NO
+
+The launcher limitation is a coordinate-provenance ceiling, not a query
+failure. The authenticated role/database/TLS terminal and the returned
+inventory are proved; the displayed branch label remains a declared
+non-secret selector unless separately reconciled against the Neon control
+plane.
+
+TRANSACTIONAL PROVIDER INVENTORY
+--------------------------------
+Transaction opened: BEGIN
+Fixture Device matches: 1
+Exact Device guard: 1
+
+Account rows: 1
+Device rows: 2
+Account cursor-state rows: 1
+Submission rows: 1
+Sync-event rows: 1
+Device-acknowledgement rows: 1
+
+Accounts missing cursor state: 0
+Orphan cursor-state rows: 0
+
+Fixture Account rows: 1
+Fixture Account Device rows: 2
+Fixture Account cursor-state rows: 1
+Fixture submission rows: 1
+Fixture Sync-event rows: 1
+Fixture Device-acknowledgement rows: 1
+Exact fixture Device status: active
+Exact fixture Device next expected sequence: 1
+
+Account next cursor: 2
+Hosted Account high-water: 1
+Account cursor consistent: true
+
+Exact Device next expected sequence: 1
+Exact Device high-water: 0
+Exact Device sequence consistent: true
+
+Exact Device submission count: 0
+Exact Device distinct request hashes: 0
+Exact Device submission fingerprints: none
+Exact Device request-hash fingerprints: none
+
+Exact Device Sync-event count: 0
+Exact Device distinct content hashes: 0
+Exact Device event fingerprints: none
+Exact Device content-hash fingerprints: none
+
+Transaction terminal: ROLLBACK
+Procedure terminal: PASS — provider-baseline completed
+
+RECONCILIATION
+--------------
+The Auth0 token and retained Android hosted Device UUID resolve through both
+hosted identity and Device-status endpoints with an exact binding. This closes
+the exact-hosted-binding gap left by Record 016.
+
+The provider contains one Account and two Device rows. The exact selected
+Android Device is active at its clean provider sequence baseline: next
+expected sequence 1 after high-water 0. It owns no submission or Sync event.
+Account-level submissions/events/acknowledgements remain 1/1/1, and the
+Account cursor remains 2 after high-water 1. Enrollment therefore introduced
+the second Device without adding a purchase payload, advancing the Account
+cursor, or consuming an Android Device sequence.
+
+The two-Device baseline is accepted only at this read-only development
+boundary. The current terminal does not prove either direction of
+inter-device convergence, an Android purchase, a Windows queue refresh,
+production readiness, retention, snapshot or rebootstrap behavior.
+
+NEXT SAFE ACTION
+----------------
+Keep both Sync buttons, Android purchase creation, Retry, recovery and provider
+mutation held. Prepare a separate Windows-to-Android authorization packet
+that:
+
+1. reconfirms the frozen Windows sequence-2 purchase remains the sole pending
+   upload member and the Android queue remains 0/0/0/0 at next sequence 1;
+2. derives the exact per-phase submission, event, cursor, Device-sequence and
+   acknowledgement deltas from the implemented protocol;
+3. authorizes at most one Windows ordinary Sync first;
+4. requires client, Render and provider postflight reconciliation before any
+   Android ordinary Sync;
+5. authorizes at most one Android ordinary Sync only after the Windows phase
+   is classified as expected success;
+6. preserves a stop on timeout, unknown, failed, notApplied, unexpected count,
+   cursor/sequence inconsistency, duplicate/missing purchase, or binding
+   rejection.
+
+Do not create the reverse-direction Android purchase until the
+Windows-to-Android member is proved converged and the catalogue-selection
+defect is separately corrected and validated.
+```
+
+## RECORD 017 ASSESSMENT
+
+| Claim | Assessment | Evidence boundary |
+| --- | --- | --- |
+| Fresh Auth0 user token is structurally and temporally accepted | PASS | Issuer, audience, algorithm, subject and time-window checks |
+| Token resolves to the intended hosted identity and Device | PASS | Identity and Device endpoints HTTP 200; exact-binding-confirmed |
+| Exact Android hosted Device row exists and is active | PASS | Fixture match 1, exact guard 1, status active |
+| Account owns two Device rows | PASS | Account-scoped provider count 2 |
+| Enrollment added purchase payload or advanced cursor | REJECTED | Payload remains 1/1/1; cursor remains 2 after high-water 1 |
+| Android has already submitted or received an event | REJECTED | Exact Device submission/event counts 0/0; high-water 0 |
+| Android provider sequence baseline is internally consistent | PASS | Next expected sequence 1 after high-water 0 |
+| Provider inspection mutated durable state | REJECTED | Explicit `BEGIN` / `ROLLBACK`; procedure PASS |
+| Launcher independently proved the Neon branch alias | NO | Explicit launcher caveat retained |
+| S08 proves inter-device convergence | NO | No Sync or cross-client apply occurred |
+| S08 authorizes either Sync action | NO | Separate exact-delta/action packet remains required |
+
+Terminal classification:
+
+```text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+C10_GCM03_S07=PASS_BOUNDED_CLIENT_SCOPE
+C10_GCM03_S08_AUTH0_BINDING=PASS_EXACT_BINDING_CONFIRMED
+C10_GCM03_S08_PROVIDER_BASELINE=PASS_ROLLBACK
+ANDROID_EXACT_HOSTED_BINDING=PASS
+PROVIDER_ACCOUNT_COUNT=1
+PROVIDER_DEVICE_COUNT=2
+PROVIDER_PAYLOAD_COUNTS=PASS_1_1_1
+PROVIDER_ACCOUNT_CURSOR=CONSISTENT_2_AFTER_1
+ANDROID_PROVIDER_SEQUENCE=CONSISTENT_1_AFTER_0
+ANDROID_PROVIDER_SUBMISSIONS_EVENTS=0_0
+NEON_BRANCH_ALIAS_INDEPENDENTLY_PROVED_BY_LAUNCHER=NO
+C10_GCM03_S08=PASSED_READ_ONLY_EXACT_BINDING_TWO_DEVICE_BASELINE
+SECOND_DEVICE_CONVERGENCE=UNPROVED
+GCM03_NEXT=WINDOWS_TO_ANDROID_AUTHORIZATION_PACKET
+ANDROID_PURCHASE=HELD
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
+```

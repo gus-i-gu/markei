@@ -1,9 +1,10 @@
 # J_MAIN_STAGE — Cycle 10 active reconciliation
 
-> Sequence: FLX-PRM-04 C10-GCM03-ST04/ST05 closure and ST06 preflight
+> Sequence: FLX-PRM-04 C10-GCM03 S08 exact hosted binding and two-Device
+> provider-baseline reconciliation
 > Role: Main Chat
 > Branch: `grm-guarded-provisioning-20260727`
-> Reconciliation baseline: `65c9ab56079c7a9866910db9037c28045efd1d34`
+> Publication parent: `e37f03b66e594a8dd54bbec0de94a42afb3fcecd`
 > Authority: explicit human-directed Main reconciliation
 > Writable surface: `REC_DIAGNOSTICS.md`, mutable J recovery prefix, and
 > append-only `Legacy_Progress`
@@ -14,13 +15,17 @@
 > Android Sign in with authenticated client projection; two explicitly
 > human-triggered hosted-connection checks after cold boot, preserving one
 > timeout-before-response and one later HTTP-200 hosted-connection-ready
-> terminal; no Android enrollment, Sync, fresh two-Device provider inventory,
+> terminal; one accepted Android enrollment followed by the required
+> application restart and a post-restart authenticated/device-enrolled client
+> projection with queue 0/0/0/0 and next sequence 1; fresh masked-session
+> `GS-AUTH-02` exact binding; read-only `GS-NEON-11` two-Device provider
+> inventory with explicit rollback; no Sync, convergence, Android purchase,
 > production, retention, snapshot or rebootstrap claim
 > Status: **CYCLE 10 OPEN; GCM02 CLOSED AT HOSTED SAME-DEVICE SCOPE;
-> GCM03 ST04 PASSED AT BOUNDED ANDROID RUNTIME/PRE-ENROLLMENT SCOPE;
-> ST05 PASSED AT CLIENT AUTHENTICATION SCOPE; ST06 CLIENT HOSTED READINESS
-> PASSED AFTER COLD-START WARMUP; READ-ONLY PROVIDER BASELINE NEXT;
-> ENROLLMENT AND SYNC STILL HELD**
+> GCM03 S07 INNER STEPS 1–5 PASSED AT BOUNDED CLIENT SCOPE; ANDROID
+> ENROLLMENT SURVIVED RESTART; S08 EXACT HOSTED BINDING AND READ-ONLY
+> TWO-DEVICE PROVIDER BASELINE PASSED; WINDOWS-TO-ANDROID AUTHORIZATION PACKET
+> NEXT; PURCHASE AND BOTH SYNC ACTIONS HELD**
 
 ## 1. Recovery entrypoint
 
@@ -56,7 +61,7 @@ Retain these ownership boundaries:
 ```text
 Repository: gus-i-gu/markei
 Active branch: grm-guarded-provisioning-20260727
-Current reconciliation baseline: 65c9ab56079c7a9866910db9037c28045efd1d34
+Current publication parent: e37f03b66e594a8dd54bbec0de94a42afb3fcecd
 Cycle: 10
 Active closure unit: MCG-02 / user-facing GCM-02
 Latest completed corrective unit: C10-GCM02-S12-ERR-04 recovery-boundary and
@@ -69,11 +74,14 @@ Latest completed correction: C10-GCM03-ST04-R1-C3 Main-owned Android selector
 repair validation
 Latest human evidence: Android build/install/launch at visible provenance
 65c9ab56079c, local pre-enrollment Diagnostics, authenticated client state,
-and hosted readiness after one preserved cold-start timeout and one later
-ready HTTP-200 attempt
-Active phase: GCM03 ST06 read-only provider-baseline preflight; the client
-hosted-readiness prerequisite is satisfied, while the Windows candidate
-member remains frozen and enrollment/Sync are not yet authorized
+hosted readiness after one preserved cold-start timeout and one later ready
+HTTP-200 attempt, accepted one-time enrollment, and post-restart durable
+authenticated/device-enrolled projection with a clean queue and next
+sequence 1; masked-session `GS-AUTH-02` exact binding; and transactional
+`GS-NEON-11` provider-baseline PASS with explicit rollback
+Active phase: GCM03 S09 Windows-to-Android convergence authorization-packet
+preparation; the Windows candidate member remains frozen and Android purchase
+and both Sync actions are not yet authorized
 ```
 
 The branch contains the GRM execution interface, hosted Sync
@@ -226,16 +234,19 @@ evidence order; it does not authorize enrollment or Sync.
 - [x] **GCM03.1 — Freeze Windows candidate member.** Record 013 proves one
   pending `purchase.registered` event at Windows Device sequence 2, next
   sequence 3, and no uploading/failed/unknown residue.
-- [ ] **GCM03.2 — Reconfirm repository and provider baseline.** Fast-forward
+- [x] **GCM03.2 — Reconfirm repository and provider baseline.** Fast-forward
   the Windows checkout to the published GCM02 closure commit, require a clean
   worktree, run read-only host readiness, and use `GRM-NEON-11` only if Main
   requires a fresh pre-enrollment provider inventory. Expected pre-enrollment
   payload baseline remains the accepted GCM02 `1/1/1`, with one active Device.
-  **Partial:** Android artifact lineage `65c9ab56079c` is proved. The client
+  **Passed through the post-enrollment boundary:** Android artifact lineage
+  `65c9ab56079c` is proved. The client
   hosted-readiness prerequisite passed after one preserved cold-start
   `timeout-before-response` attempt and one later
-  `hosted-connection-ready`/HTTP-200 attempt. A fresh read-only provider
-  baseline remains required before Enroll.
+  `hosted-connection-ready`/HTTP-200 attempt. Record 017 adds exact hosted
+  binding plus a transactional provider baseline with one Account, two Device
+  rows, payload counts `1/1/1`, consistent Account cursor `2` after high-water
+  `1`, exact Android sequence `1` after high-water `0`, and rollback/PASS.
 - [x] **GCM03.3 — Android environment and client check.** Run canonical
   `GRM-FLUTTER-AND` / `GS-FLUTTER-AND` from the same published checkout.
   Require Flutter/Android toolchain readiness, exactly one supported Android
@@ -259,19 +270,25 @@ evidence order; it does not authorize enrollment or Sync.
   **Passed at client scope:** Android projects `authenticated`. Exact
   same-Account/provider binding remains to be proved by the bounded enrollment
   and provider postflight rather than by screenshots alone.
-- [ ] **GCM03.6 — Exact Android enrollment authorization packet.** Freeze the
+- [x] **GCM03.6 — Exact Android enrollment authorization packet.** Freeze the
   intended one-click Enroll action, expected new active-Device count
   `1 -> 2`, expected Android local enrollment terminal, evidence-capture
   order, and no-second-click/unknown-outcome rules. Obtain explicit human
-  authorization before enrollment.
-- [ ] **GCM03.7 — Enroll Android exactly once.** Execute only the authorized
+  authorization before enrollment. **Passed by the prior bounded S07
+  authorization packet; historical action authority is exhausted.**
+- [x] **GCM03.7 — Enroll Android exactly once.** Execute only the authorized
   enrollment. Preserve the Android terminal, sanitized Device fingerprint,
   Render enrollment lifecycle and read-only provider inventory. Do not Sync
-  either client in this step.
-- [ ] **GCM03.8 — Two-Device baseline reconciliation.** Require one Account,
+  either client in this step. **Passed bounded:** one accepted Enroll followed
+  by required restart; no second click and no Sync.
+- [x] **GCM03.8 — Two-Device baseline reconciliation.** Require one Account,
   two distinct active Devices, Windows next expected sequence 2 on the
   provider, Android next expected sequence at its fresh baseline, and no
-  payload/cursor changes caused solely by enrollment.
+  payload/cursor changes caused solely by enrollment. **Passed at the combined
+  prior-Windows plus Record-017 boundary:** two Device rows; exact Android
+  Device active; Account payload `1/1/1`; cursor `2` after `1`; Android
+  sequence `1` after `0`; no Android submission/event; rollback/PASS. The
+  launcher branch-alias caveat remains explicit.
 - [ ] **GCM03.9 — Windows-to-Android convergence authorization.** Freeze the
   existing Windows sequence-2 event as the only upload member, calculate the
   exact submission/event/cursor/acknowledgement delta, and authorize one
@@ -332,11 +349,17 @@ GCM03_ANDROID_SELECTOR_C3=PASS
 GCM03_ANDROID_BUILD_LINEAGE=PASS_65C9AB56079C
 GCM03_ANDROID_PRE_ENROLLMENT=PASS_LOCAL_ONLY_NEXT_1_QUEUE_0_0_0_0
 GCM03_ANDROID_AUTHENTICATION=PASS_CLIENT_SCOPE
-GCM03_ANDROID_SAME_ACCOUNT_EXACT_BINDING=OPEN
+GCM03_ANDROID_SAME_ACCOUNT_EXACT_BINDING=PASS_EXACT_BINDING_CONFIRMED
 GCM03_ANDROID_HOSTED_READINESS=PASS_AFTER_COLD_START_WARMUP
 GCM03_ANDROID_HOSTED_ATTEMPTS=2_WITH_1_READY_1_TIMEOUT_PRESERVED
-GCM03=ACTIVE_ST06_READ_ONLY_PROVIDER_BASELINE
-ANDROID_ENROLLMENT=NOT_AUTHORIZED_YET
+GCM03_ANDROID_DURABLE_ENROLLMENT=PASS_CLIENT_SCOPE
+GCM03_PROVIDER_DEVICE_COUNT=2
+GCM03_PROVIDER_PAYLOAD_COUNTS=PASS_1_1_1
+GCM03_PROVIDER_ACCOUNT_CURSOR=CONSISTENT_2_AFTER_1
+GCM03_ANDROID_PROVIDER_SEQUENCE=CONSISTENT_1_AFTER_0
+GCM03_S08=PASSED_READ_ONLY_EXACT_BINDING_TWO_DEVICE_BASELINE
+GCM03=ACTIVE_WINDOWS_TO_ANDROID_AUTHORIZATION_PACKET
+ANDROID_ENROLLMENT=COMPLETE_DO_NOT_REPEAT
 WINDOWS_SYNC=NOT_AUTHORIZED
 ANDROID_SYNC=NOT_AUTHORIZED
 SECOND_DEVICE_CONVERGENCE=UNPROVED
@@ -462,6 +485,56 @@ ANDROID_SYNC=NOT_AUTHORIZED
 GCM03_ST05_AND_LATER=HELD
 SECOND_DEVICE_CONVERGENCE=UNPROVED
 GCM04=UNDEFINED_INACTIVE
+```
+
+### 2.4 GCM03 S08 exact binding and provider baseline
+
+Record 017 reconciles the masked-session `GS-AUTH-02` and transactional
+`GS-NEON-11` terminals against Records 014–016.
+
+The combined evidence proves:
+
+- the fresh user access token satisfies issuer, audience, algorithm, subject
+  and time-window checks;
+- hosted identity and Device-status endpoints both return HTTP 200;
+- the supplied hosted Android Device UUID is exactly bound to the token;
+- the provider contains one Account and two Device rows;
+- the exact Android Device is active at next expected sequence 1 after
+  high-water 0;
+- Account-level submissions/events/acknowledgements remain `1/1/1`;
+- the Account cursor remains 2 after high-water 1 and is consistent;
+- the Android Device owns no submission or Sync event;
+- the provider transaction explicitly rolls back and the procedure passes.
+
+The displayed development target label is retained as a launcher declaration.
+`GS-NEON-11` does not independently prove the human-readable Neon branch
+alias. This provenance ceiling does not contradict the authenticated
+role/database/TLS terminal or the returned read-only inventory.
+
+S08 closes exact hosted binding and the post-enrollment two-Device baseline.
+It does not prove convergence and it authorizes no Sync. The next controlling
+work is GCM03.9: derive and freeze the exact Windows-sequence-2 to Android
+convergence action packet. This packet must separate the Windows upload phase,
+its client/Render/provider postflight, the later Android download phase, and
+its own postflight. Either phase stops on timeout, unknown, failed,
+`notApplied`, binding rejection, unexpected delta, cursor/sequence
+inconsistency, or duplicate/missing purchase.
+
+Current terminal:
+
+```text
+C10_GCM03_S08_AUTH0_BINDING=PASS_EXACT_BINDING_CONFIRMED
+C10_GCM03_S08_PROVIDER_BASELINE=PASS_ROLLBACK
+GCM03_PROVIDER_DEVICE_COUNT=2
+GCM03_PROVIDER_PAYLOAD_COUNTS=PASS_1_1_1
+GCM03_PROVIDER_ACCOUNT_CURSOR=CONSISTENT_2_AFTER_1
+GCM03_ANDROID_PROVIDER_SEQUENCE=CONSISTENT_1_AFTER_0
+GCM03_S08=PASSED_READ_ONLY_EXACT_BINDING_TWO_DEVICE_BASELINE
+GCM03=ACTIVE_WINDOWS_TO_ANDROID_AUTHORIZATION_PACKET
+SECOND_DEVICE_CONVERGENCE=UNPROVED
+ANDROID_PURCHASE=HELD
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
 ```
 
 ## 3. Retained pre-ST08 panorama
@@ -6770,4 +6843,185 @@ ANDROID_ENROLLMENT=NOT_AUTHORIZED_YET
 WINDOWS_SYNC=NOT_AUTHORIZED
 ANDROID_SYNC=NOT_AUTHORIZED
 SECOND_DEVICE_CONVERGENCE=UNPROVED
+```
+
+## 2026-07-28 — GCM03 S07 post-restart Android enrollment reconciliation
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04
+Role: Main Chat [M]
+Round or unit: C10-GCM03-S07 inner steps 1-5
+Branch: grm-guarded-provisioning-20260727
+Reconciliation baseline: 65c9ab56079c7a9866910db9037c28045efd1d34
+Inputs: REC_DIAGNOSTICS Records 014-016; user-supplied post-restart Android
+        Closure screenshots; inspected runtime-composition source
+Writable surfaces: REC_DIAGNOSTICS append; mutable J recovery prefix;
+                   append-only Legacy_Progress
+Prohibited actions: Android purchase, Windows or Android Sync, repeated
+                    enrollment, Retry, recovery, provider mutation
+Authority: explicit human-directed sanitized addition and check preparation
+Next sequence: GRM-AUTH-02 followed by post-enrollment GRM-NEON-11
+```
+
+### PRC-01 claims
+
+```text
+Claim: Android enrollment persisted through the required restart
+Prior state: enrollment accepted with hosted-restart-required; durability open
+Evidence: post-restart client projects authenticated, device-enrolled, queue
+          0/0/0/0, next Device sequence 1 and no actionable event
+Evidence boundary: Android client projection; exact hosted authorization open
+Contradiction: none
+Semantic owner: C10-GCM03-S07 post-restart client verification
+Target role: Record 016 and J current recovery state
+Resulting state: ACCEPTED / PASS BOUNDED AT CLIENT SCOPE
+History disposition: append
+```
+
+```text
+Claim: the changed Device fingerprint means enrollment was lost
+Prior state: pre-enrollment local-only fingerprint #2b75367e
+Evidence: post-restart fingerprint #a4d906aa is device-enrolled; source loads
+          hostedBinding.serverDeviceId after restart instead of the provisional
+          local Device identity
+Evidence boundary: source/UI relationship; exact hosted member still open
+Contradiction: none
+Semantic owner: local-to-hosted Device identity handoff
+Target role: S07 interpretation and AUTH-02/NEON-11 preflight
+Resulting state: REJECTED AS LOSS; EXPECTED HANDOFF SUPPORTED
+History disposition: append
+```
+
+```text
+Claim: an Android purchase may now be created
+Prior state: Android queue 0/0/0/0 and next sequence 1 frozen for exact
+             post-enrollment checks; Windows sequence-2 member already frozen
+Evidence: GRM-AUTH-02 exact binding and GRM-NEON-11 two-Device inventory have
+          not yet been supplied
+Evidence boundary: action authorization
+Contradiction: purchase creation would alter queue and sequence before the
+               clean baseline is reconciled and mix the reverse-direction
+               member into the Windows-to-Android assay
+Semantic owner: future GCM03 reverse-direction authorization
+Target role: human/Main action boundary
+Resulting state: REJECTED / HELD
+History disposition: append
+```
+
+### Current terminal
+
+```text
+C10_GCM03_S07_INNER_STEPS_1_TO_5=PASS_BOUNDED_CLIENT_SCOPE
+ANDROID_DURABLE_ENROLLMENT=PASS_CLIENT_SCOPE
+ANDROID_DEVICE_FINGERPRINT_HANDOFF=EXPECTED_LOCAL_TO_HOSTED
+EXACT_HOSTED_ANDROID_BINDING=OPEN_GRM_AUTH_02
+TWO_DEVICE_PROVIDER_BASELINE=OPEN_GRM_NEON_11
+C10_GCM03_S08=HELD_PENDING_READ_ONLY_CHECKS
+ANDROID_PURCHASE=HELD
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
+```
+
+## 2026-07-29 — GCM03 S08 exact binding and two-Device provider reconciliation
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04
+Role: Main Chat [M]
+Round or unit: C10-GCM03-S08 read-only exact binding/provider baseline
+Branch: grm-guarded-provisioning-20260727
+Publication parent: e37f03b66e594a8dd54bbec0de94a42afb3fcecd
+Inputs: REC_DIAGNOSTICS Records 014-016; operator-supplied masked-session
+        GS-AUTH-02 terminal; operator-supplied GS-NEON-11 provider-baseline
+        terminal; launcher branch-alias caveat
+Writable surfaces: REC_DIAGNOSTICS append; mutable J recovery prefix;
+                   append-only Legacy_Progress
+Prohibited actions: Windows or Android Sync, Android purchase, repeated
+                    enrollment, Retry, recovery, migration, revocation,
+                    provider repair, secret persistence
+Authority: explicit human-directed sanitized reconciliation and publication
+Next sequence: GCM03.9 Windows-to-Android convergence authorization packet
+```
+
+### PRC-01 claims
+
+```text
+Claim: the post-restart Android token and hosted Device are exactly bound
+Prior state: authenticated/device-enrolled client projection; exact hosted
+             authorization open
+Evidence: issuer/audience/algorithm/time checks true; subject present; identity
+          and Device endpoints HTTP 200; TokenAccepted true;
+          ExactDeviceBinding true; exact-binding-confirmed
+Evidence boundary: fresh masked local token/UUID prompts and hosted
+                   authorization endpoints; no secret retained
+Contradiction: none
+Semantic owner: C10-GCM03-S08 exact hosted binding
+Target role: Record 017 and J current recovery state
+Resulting state: VALIDATED / PASS EXACT BINDING
+History disposition: append; supersede S07 exact-binding-open terminal
+```
+
+```text
+Claim: the post-enrollment provider baseline is clean and internally
+       consistent
+Prior state: Android enrollment durable at client scope; two-Device provider
+             inventory open
+Evidence: fixture match/guard 1/1; one Account; two Device rows; payload
+          1/1/1; cursor 2 after high-water 1; exact Android active at sequence
+          1 after high-water 0; exact Android submissions/events 0/0; explicit
+          BEGIN/ROLLBACK and PASS
+Evidence boundary: development database, selected exact Device and
+                   transactionally read-only inventory
+Contradiction: launcher cannot independently prove the human-readable branch
+               alias
+Semantic owner: C10-GCM03-S08 two-Device baseline
+Target role: Record 017 and GCM03.9 input
+Resulting state: VALIDATED / PASS WITH BRANCH-ALIAS PROVENANCE CEILING
+History disposition: append
+```
+
+```text
+Claim: S08 proves or authorizes inter-device convergence
+Prior state: both Sync actions held
+Evidence: no Windows or Android Sync occurred; exact Android owns no provider
+          submission or event; frozen Windows candidate remains unapplied to
+          Android
+Evidence boundary: read-only exact binding and inventory only
+Contradiction: convergence requires separately authorized upload/download and
+               cross-client apply evidence
+Semantic owner: GCM03.9/GCM03.10 action boundary
+Target role: next Main authorization packet
+Resulting state: REJECTED; CONVERGENCE UNPROVED AND BOTH SYNC ACTIONS HELD
+History disposition: append
+```
+
+### Next TODOs
+
+1. Reconfirm by local Diagnostics only that the Windows sequence-2 candidate
+   remains the sole pending upload and Android remains `0/0/0/0`, next 1.
+2. Inspect the implemented ordinary-Sync protocol and calculate exact
+   per-phase provider and local deltas; do not infer acknowledgement or cursor
+   increments.
+3. Freeze one Windows ordinary-Sync authorization with explicit stop
+   conditions and required client/Render/provider evidence.
+4. Reconcile that Windows phase before considering one Android ordinary-Sync
+   authorization.
+5. Prove Android download/application and matching purchase identity/content
+   without duplication or Android-local history loss.
+6. Keep the reverse Android purchase held until the first direction passes
+   and the catalogue dropdown identity defect is corrected and validated.
+
+### Current terminal
+
+```text
+C10_GCM03_S08=PASSED_READ_ONLY_EXACT_BINDING_TWO_DEVICE_BASELINE
+GCM03=ACTIVE_WINDOWS_TO_ANDROID_AUTHORIZATION_PACKET
+SECOND_DEVICE_CONVERGENCE=UNPROVED
+ANDROID_PURCHASE=HELD
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
+GCM04=UNDEFINED_INACTIVE
 ```
