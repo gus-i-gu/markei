@@ -1,96 +1,212 @@
-# F_DSN_STAGE — Main-owned GRM boundary and launcher verification
+# F_DSN_STAGE — Product identity and atomic convergence architecture
 
 > Sequence: FLX-ORD-01 — Ordinary Sequence
-> Role: Main-approved Design validation stage
-> Unit: `C10-GCM03-ST04-R1-C3`
+> Role: Main-approved Design materialization stage
+> Unit: `C10-GCM03-S10-R02`
+> Continuity alias: `C10-GCM02-S09-R02`
 > Branch: `grm-guarded-provisioning-20260727`
 > Required published ancestry:
-> `084e637e6771b8713b2504b155a82cd4d3bd792a`
-> Authority: **ACTIVE WITHIN D — REPORT ONLY**
-> Evidence boundary: protected-interface and launcher responsibility
-> validation; no protocol, persistence, provider or synchronization expansion
+> `716ae7f082714944b6b51042d98a56e685978c38`
+> Authority: **ACTIVE WITHIN D — IMPLEMENT AND REPORT**
+> Evidence boundary: client presentation, local materialization and diagnostic
+> responsibility correction; no hosted-contract or schema expansion
 
-## 1. GRM ownership boundary
+## 1. Responsibility map
 
-The seven-file GRM set is one protected operational interface:
-
-```text
-human direction
-→ Main synthesis and GRM materialization
-→ immutable protected GRM input
-→ Codex read/test/report
-→ human runtime acceptance
-```
-
-Codex may not mutate a GRM file directly or indirectly. Any further GRM design
-correction returns to Main.
-
-This protection is parallel to methodology protection but does not reclassify
-GRM as Sketch Notebook methodology.
-
-## 2. Launcher responsibility map
-
-Validate:
+Implement and preserve:
 
 ```text
-Flutter CLI
-  owns raw machine JSON
+CatalogueQueryRepository
+  owns Account-scoped Product projections and exact code lookup
 
-GS-FLUTTER-AND parser
-  owns one parse and explicit member enumeration
+PurchasePage selection state
+  owns one nullable stable Product ID
 
-GS-FLUTTER-AND selector
-  owns per-member platform, support and scalar-ID predicates
+PurchasePage current projection resolver
+  binds that ID to exactly one current Product projection
 
-cardinality guard
-  owns zero/one/multiple target decisions
+RemotePurchaseFactWriter
+  owns Store/Product snapshot reconciliation and event-local ID maps
 
-ADB inventory guard
-  binds the chosen Flutter ID to exactly one ready current serial
+DriftRemoteEventApplier
+  owns one atomic page transaction and conversion of local apply failures into
+  bounded SyncResult values after rollback
 
-ADB invocation
-  receives one explicit argument vector with one -s value
+DownloadAndApplyEvents
+  owns trusted-response and download-local-apply phase diagnostics
+
+HostedSyncCoordinator
+  owns phase ordering and prevents acknowledgement after a failed apply
+
+NativeAuthClosureRunner
+  owns client-operation declaration without overwriting causal child evidence
 ```
 
-Keep stable AVD definition separate from transient ADB identity. Preserve
-package `com.gusigu.markei`, application data, public build provenance, the
-shared Closure page and current Auth0 responsibility graph.
+Do not move domain reconciliation into the widget. Do not move UI selection
+state into the database.
 
-## 3. Preserved architecture
+## 2. Purchase projection boundary
 
-This unit must not add or change:
+Use:
 
-- Android-only Closure composition;
-- authentication source or provider configuration;
-- API routes or hosted behavior;
-- enrollment or synchronization protocol;
-- persistence, schema, migrations or RLS;
-- retry/recovery behavior;
-- the pending Windows event.
+```text
+selection state = Product ID
+rendered/staged facts = Product resolved from current _products projection
+```
 
-## 4. I report
+This makes selection stable across separately materialized repository objects
+and refreshes. The dropdown must expose exactly one item per scalar ID.
 
-Replace `I_DSN_CODEX.md`. Report:
+If the current projection cannot resolve the selection exactly once, the page
+owns safe invalidation and recovery feedback. It must not pass ambiguous state
+to Flutter.
 
-- the protected GRM ownership map;
-- actual collection-to-member and member-to-serial validation;
-- captured proof that each ADB boundary receives one scalar serial;
-- absence of hard-coded runtime serials;
-- retained Auth0 ownership and `AUTHAND-06`;
-- absence of API/persistence/provider/synchronization expansion.
+Preserve:
+
+- Account scope;
+- immutable Product code/facts;
+- existing/new Product modes;
+- staged Purchase Item behavior;
+- Store, Person and Payment Method behavior;
+- responsive page composition.
+
+## 3. Local canonicalization boundary
+
+Incoming UUIDs remain immutable event identities. The receiving database may
+already own an equivalent local row under another UUID.
+
+Required flow:
+
+```text
+validate incoming snapshot
+↓
+resolve UUID and Account-scoped natural keys
+↓
+choose one coherent local row or insert
+↓
+record remote -> local ID map
+↓
+materialize Purchase references through the map
+```
+
+Natural keys are conflict detectors and convergence keys. They are not
+permission to merge contradictory rows.
+
+Product resolution must use the already persisted normalized code and exact
+identity key. Store resolution must use the current Account/display-name
+identity without introducing a new normalization version or schema column.
+
+## 4. Atomic page boundary
+
+Preserve the existing page-wide transaction:
+
+```text
+all fact reconciliation
++ all Purchase/Purchase Item writes
++ all inbox writes
++ Account cursor advancement
+= one commit
+```
+
+Any typed conflict or SQLite failure throws inside that transaction so Drift
+rolls it back. Only after rollback may the infrastructure boundary translate
+the failure into a sanitized `SyncResult`.
+
+Do not catch an exception inside the transaction and return a normal result
+that would commit earlier writes.
+
+Duplicate-equivalent replay remains idempotent. A conflict remains
+not-applied. An unknown SQLite write category remains unknown, never
+misrepresented as applied.
+
+## 5. Diagnostic architecture
+
+The diagnostic graph is causal:
+
+```text
+download request
+→ trusted response
+→ local apply
+→ acknowledgement only after committed cursor
+→ client terminal
+```
+
+The local-apply failure node must retain:
+
+```text
+download-local-apply
+trusted response received
+transaction rolled back / no retained mutation
+acknowledgement not started
+sanitized category only
+```
+
+The Closure client terminal may reference the causal diagnostic. It must not
+rewrite the causal node as transport failure.
+
+## 6. Contract and schema invariants
+
+This unit must not change:
+
+- `purchase.registered` payload version 3;
+- canonical JSON or content hashes;
+- API request/response routes;
+- Neon tables, migrations, grants, RLS or functions;
+- authentication or Device enrollment;
+- Person/Payment Method remote restriction;
+- provider retention, snapshot or rebootstrap behavior;
+- production configuration;
+- local Drift schema version.
+
+No new hosted identifier-mapping table is required. Mapping is local and
+transactional during materialization.
+
+## 7. Conflict semantics
+
+Report distinct outcomes:
+
+```text
+equivalent identity under different UUID
+  => converge and apply
+
+contradictory immutable identity
+  => typed conflict / notApplied / complete rollback
+
+SQLite write failure after trusted response
+  => sanitized local apply failure / unknown / complete rollback
+
+duplicate equivalent event
+  => existing replay behavior
+```
+
+Do not turn identity conflict into retryable transport failure.
+
+## 8. I report
+
+Replace `I_DSN_CODEX.md` and report:
+
+- final UI selection responsibility;
+- Product and Store reconciliation decision graph;
+- remote-to-local reference map ownership;
+- transaction placement of catches and result translation;
+- diagnostic causality and acknowledgement ordering;
+- invariants and non-goals;
+- any deviation from the authorized source surface.
 
 Required terminals:
 
 ```text
-GRM_MUTATION_OWNER=HUMAN_MAIN
-CODEX_PROTECTED_INTERFACE_MUTATION=ABSENT_OR_STOP
-FLUTTER_INVENTORY_TO_MEMBER_OBJECTS=CORRECTED_OR_BLOCKED
-ANDROID_MEMBER_TO_ONE_ADB_SERIAL=CORRECTED_OR_BLOCKED
-HARD_CODED_DEVICE_SERIAL=ABSENT
-AUTH_RESPONSIBILITY_OWNER=UNCHANGED_AUTHAND-06
-API_PERSISTENCE_PROVIDER_SYNC_EXPANSION=ABSENT
-ANDROID_RUNTIME_ACCEPTANCE=HELD
-GCM03_ST05_AND_LATER=HELD
+PURCHASE_SELECTION_OWNER=STABLE_PRODUCT_ID
+CURRENT_PRODUCT_PROJECTION=EXACTLY_ONE_OR_SAFE_INVALIDATION
+REMOTE_PRODUCT_CANONICALIZATION=ACCOUNT_SCOPED
+REMOTE_STORE_CANONICALIZATION=ACCOUNT_SCOPED
+REMOTE_ID_MAP_OWNER=LOCAL_APPLY_TRANSACTION
+FACT_INBOX_CURSOR_ATOMICITY=PRESERVED
+CONFLICT_CAUSES_COMPLETE_ROLLBACK=YES_OR_BLOCKED
+ACK_REQUIRES_COMMITTED_CURSOR=YES_OR_BLOCKED
+HOSTED_CONTRACT_CHANGE=ABSENT
+LOCAL_SCHEMA_CHANGE=ABSENT
+AUTH_ENROLLMENT_CHANGE=ABSENT
 ```
 
 Do not edit permanent design memory.

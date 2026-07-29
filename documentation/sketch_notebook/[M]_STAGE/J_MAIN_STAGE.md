@@ -7025,3 +7025,542 @@ WINDOWS_SYNC=NOT_AUTHORIZED
 ANDROID_SYNC=NOT_AUTHORIZED
 GCM04=UNDEFINED_INACTIVE
 ```
+
+## 2026-07-29 — GCM03 S09/S10 Android failed-apply containment, R01 conclusion and R02 activation
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04 reconciliation -> FLX-ORD-01 materialization
+Role: Main Chat [M]
+Round or unit: C10-GCM03-S09/S10; C10-GCM02-S09-R01/R02 continuity labels
+GitHub branch: grm-guarded-provisioning-20260727
+Inspected remote HEAD: 716ae7f082714944b6b51042d98a56e685978c38
+Inputs: S09 hosted two-event state; one Android ordinary-Sync failure;
+        GS-SQLITE-05/06/07 frozen-snapshot evidence; Android History and
+        Diagnostics human projection; read-only GS-NEON-11 postflight;
+        Flutter assertion screenshot; exact remote source/blob inspection
+Writable surfaces: replacement D/E/F; append-only J reconciliation
+Prohibited actions: source materialization in this Main turn; Windows/Android
+                    Sync; Retry; recovery; repeated enrollment; provider
+                    mutation; migration; deployment; production action
+Authority: explicit human direction to preserve the record, activate R02
+           corrective staging, and publish D/E/F/J
+Next sequence: Codex FLX-ORD-01 materialization from controlling D/E/F
+Stop condition: any required migration, protocol/provider change, live action,
+                secret exposure, unrelated dirty overlap or branch-head race
+```
+
+### Branch namespace clarification
+
+The prior terminal:
+
+```text
+BRANCH PROVENANCE = CONFIRMED_MARKei-c10
+```
+
+was ambiguous and must not be interpreted as a GitHub operation.
+
+No GitHub branch named `CONFIRMED_MARKei-c10` was created. The repository branch
+remains:
+
+```text
+grm-guarded-provisioning-20260727
+```
+
+The current sanitized coordinates configure the Neon development branch alias:
+
+```text
+markei-c10
+```
+
+`GS-NEON-11` prints that configured target but explicitly cannot independently
+prove the human-readable Neon alias. New records therefore use:
+
+```text
+GITHUB_BRANCH=grm-guarded-provisioning-20260727
+CONFIGURED_PROVIDER_BRANCH_ALIAS=markei-c10
+PROVIDER_BRANCH_ALIAS_LAUNCHER_INDEPENDENT_PROOF=NO
+```
+
+The historical marker is preserved as history and superseded for current
+reporting vocabulary. This is a naming correction, not a provider or
+repository mutation.
+
+### S09 hosted transition carried into S10
+
+The previously frozen Windows sequence-2 candidate was uploaded under its
+separately authorized S09 action. By the S10 provider containment postflight,
+the Account-wide provider totals were:
+
+```text
+submissions = 2
+sync events = 2
+device acknowledgement rows = 1
+Account next cursor = 3
+hosted high-water = 2
+Account cursor relation = consistent
+```
+
+These totals include the completed Windows-origin transitions. They do not
+describe Android producer activity. The exact selected Android Device remained
+at next expected Device sequence 1 with zero selected-Device submissions,
+events and acknowledgements.
+
+The expected Windows-to-Android candidate therefore existed at the provider
+before the Android download assay.
+
+### S10 Innerstep 01 — one failed Android ordinary Sync
+
+Exactly one ordinary Android Sync progressed through:
+
+```text
+authentication-check-entered
+authenticated
+binding-check-entered
+binding-accepted
+upload-lease-entered
+no-pending-events
+download-request-started
+download-response-received
+closure-runner-exception
+```
+
+The terminal was:
+
+```text
+operation = ordinary-sync
+result = sync-failed
+outcome = failed
+phase/latest stage = unexpected-terminal
+recovery = local-exception-redacted
+sanitized exception class = DriftRemoteException
+```
+
+The causal child evidence proves a trusted download response was received.
+The later broad runner fallback incorrectly recorded
+`trusted_response_state=not-received`. This is an observability defect, not
+evidence that the provider response was absent.
+
+No second Sync, Retry or recovery action was selected.
+
+### S10 Innerstep 02 — frozen Android SQLite rollback proof
+
+`GS-SQLITE-05` created and verified one private Android database snapshot while
+Markei was force-stopped. The manifest, size and hash comparison passed. The
+live database was not queried or modified.
+
+`GS-SQLITE-06` and `GS-SQLITE-07` inspected that snapshot through distinct SQL
+programs embedded in `G_SCRIPTS.md`:
+
+```text
+GS-SQLITE-06 = general schema/state/diagnostic inventory
+GS-SQLITE-07 = cross-field correlation and final local-state classification
+```
+
+They intentionally share underlying facts. Neither currently dispatches a
+`DB_MGMT.sql` SQL block. That is a catalogue-organization observation, not an
+assay defect.
+
+Accepted snapshot evidence:
+
+```text
+schema table count = 13/13
+SQLite integrity = ok
+foreign-key check rows = 0
+
+enrollment = device-enrolled
+active Account scope count = 1
+current Device count = 1
+current Device next sequence = 1
+current Installation count = 0
+
+sync-state rows = 1
+Account cursor = null
+Account numeric cursor = null
+inbox rows = 0
+distinct inbox event/cursor counts = 0/0
+applied inbox rows = 0
+inbox high-water = 0
+hosted Purchase/Purchase-item rows = 0/0
+
+Android-originated events = 0
+Android submissions = 0
+pending/uploading/failed/unknown = 0/0/0/0
+
+trusted download response child count = 1
+acknowledgement-started count = 0
+sync-completed count = 0
+closure-runner-exception count = 1
+```
+
+Final classification:
+
+```text
+android_local_state_class=failed-download-empty-local-state
+C10_GCM03_S10_I02=PASS_LOCAL_TRANSACTION_ROLLBACK
+ANDROID_CURSOR_ADVANCED=NO
+ANDROID_ACKNOWLEDGEMENT_STARTED=NO
+ANDROID_BUSINESS_FACTS_RETAINED=NO
+LIVE_DATABASE_QUERIED=NO
+LOCAL_DATABASE_MODIFIED=NO
+```
+
+The snapshot proves complete local page rollback at this evidence boundary.
+It does not claim the provider contains zero Purchases.
+
+### S10 Innerstep 03 — human projection agreement
+
+The app was opened without reinstalling or rebuilding. Human inspection
+observed:
+
+```text
+Windows-origin candidate visible in Android History = no
+unexpected hosted-origin Purchases visible = no
+queue pending/uploading/failed/unknown = 0/0/0/0
+Android next Device sequence = 1
+latest ordinary Sync = sync-failed
+acknowledgement/completion = not observed
+```
+
+Diagnostics retained the `closure-runner-exception` terminal and the earlier,
+separate hosted-connection timeout. The latter is a different historical
+operation and does not contradict the failed ordinary-Sync chain.
+
+Gate:
+
+```text
+C10_GCM03_S10_I03=PASS_UI_PROJECTION_MATCHES_LOCAL_ROLLBACK
+ANDROID_HISTORY_CANDIDATE=ABSENT
+ANDROID_LAST_SUCCESSFUL_SYNC=NOT_ADVANCED
+```
+
+### S10 Innerstep 04 — read-only provider containment
+
+One `GS-NEON-11` repeatable read-only postflight selected the exact Android
+Device and returned:
+
+```text
+selected Device match/guard = 1/1
+selected Device state = active
+selected Device next expected sequence = 1
+selected Device high-water = 0
+selected Device submissions = 0
+selected Device events = 0
+selected Device acknowledgement rows = 0
+selected Device acknowledged cursor = 0
+selected Device consistency booleans = true
+Account next cursor / hosted high-water = 3/2, consistent
+transaction terminal = ROLLBACK
+launcher terminal = PASS
+```
+
+Account-wide totals `2/2/1` belong to the already hosted Windows history. They
+are not Android mutations.
+
+Gate:
+
+```text
+C10_GCM03_S10_I04_PROVIDER_CONTAINMENT=PASS
+ANDROID_PROVIDER_STATE_ADVANCED=NO
+TRANSACTION_ROLLED_BACK=YES
+```
+
+The configured provider alias is `markei-c10`; the launcher alias-proof ceiling
+remains explicit as recorded above.
+
+### S10 Innerstep 05 / R01 — actionable source diagnosis
+
+Exact remote blobs at HEAD matched the inspected local source for:
+
+```text
+PurchasePage
+Product domain model
+LocalQueryRepository
+RemotePurchaseFactWriter
+DriftRemoteEventApplier
+sync use cases
+HostedSyncCoordinator
+NativeAuthClosureRunner
+focused app and convergence tests
+```
+
+The source establishes:
+
+1. `RemotePurchaseFactWriter` resolves incoming Store and Product snapshots
+   only by incoming UUID.
+2. local Products also enforce Account-scoped uniqueness on normalized
+   user Product code and exact identity key.
+3. Purchase Items use incoming Product UUIDs directly.
+4. Purchases use incoming Store UUIDs directly.
+5. the receiving Android database was intentionally preserved and may already
+   contain equivalent catalogue rows under different local UUIDs.
+6. `DriftRemoteEventApplier.applyPage()` already provides the correct
+   page-wide facts/inbox/cursor transaction.
+7. a Drift exception can escape the application boundary and be collapsed by
+   the Closure runner into inaccurate hard-coded causal fields.
+
+This proves an implementation gap at the remote natural-identity boundary.
+It is a high-confidence actionable explanation for the observed failure. The
+exact runtime SQLite extended constraint code was not retained, so J does not
+claim that one particular constraint was proved in the live assay.
+
+R01 conclusion:
+
+```text
+C10_GCM03_S10_I05=PASS_ACTIONABLE_DIAGNOSIS
+C10_GCM02_S09_R01=CONCLUDED
+PRIMARY_GAP=REMOTE_NATURAL_IDENTITY_NOT_RECONCILED
+SECONDARY_GAP=LOCAL_APPLY_CAUSAL_EVIDENCE_COLLAPSED
+LIVE_RETRY_REQUIRED_FOR_DIAGNOSIS=NO
+```
+
+### Independent Purchase-page Product-selection defect
+
+The supplied Android screenshot records Flutter's
+`DropdownButton<Product?>` exactly-one-item assertion after a Catalogue Product
+is found by exact code from Purchase.
+
+The screenshot wording permits either zero matching items or multiple matching
+items. It does not prove duplicate database rows.
+
+Source inspection provides the exact zero-match path:
+
+```text
+_products
+  <- listProducts()
+  <- one set of Product object instances
+
+_findProductByCode()
+  <- productByCode()
+  <- a separately materialized Product object instance
+
+Product
+  <- no value equality override
+
+DropdownButton<Product?> value
+  <- selected lookup instance
+
+Dropdown menu values
+  <- list projection instances
+```
+
+Two objects representing the same Product UUID are not equal by Dart reference
+identity. The selected value can therefore match zero menu items even when
+SQLite contains one unique Product row.
+
+Correction boundary:
+
+```text
+selection key = stable Product ID scalar
+selected facts = exact Product resolved from current Account projection
+refresh = rebind by Product ID
+missing/ambiguous ID = safe invalidation and user recovery feedback
+global Product equality change = rejected
+```
+
+R02 must also guard repeated/conflicting Product IDs in the UI projection so
+that neither zero nor multiple menu matches can reach Flutter.
+
+This defect is independent from the failed remote download, but both expose
+the same architectural distinction between object instance, surrogate UUID
+and natural identity. They are one cohesive Product-identity correction unit.
+
+### PRC-01 claims
+
+```text
+Claim: CONFIRMED_MARKei-c10 is a newly created GitHub remote branch
+Source: historical terminal wording compared with remote repository branch and
+        NS_COORDINATES provider alias
+Current state: user uncertainty
+Evidence: GitHub branch is grm-guarded-provisioning-20260727;
+          configured Neon BranchAlias is markei-c10
+Evidence boundary: repository and configured provider coordinates; launcher
+                   cannot independently prove the human-readable Neon alias
+Contradictions: none
+Semantic owner: external-resource provenance vocabulary
+Target role: J history and D/E reporting contract
+History disposition: preserve old marker; supersede its ambiguous wording
+Confidence: high
+Human/Main authority: explicit clarification request
+Required regeneration: D/E/F vocabulary
+Result: REJECTED; NO GITHUB BRANCH WAS CREATED BY THE MARKER
+```
+
+```text
+Claim: the failed Android download left partially applied local facts or cursor
+Source: frozen GS-SQLITE-05/06/07 snapshot and Android UI projection
+Current state: open after DriftRemoteException
+Evidence: zero inbox/facts; null cursor; zero queue/provider producer state;
+          no acknowledgement; failed-download-empty-local-state
+Evidence boundary: captured Android snapshot and non-mutating UI inspection
+Contradictions: none
+Semantic owner: C10-GCM03-S10 local containment
+Target role: J R01 conclusion and R02 regression contract
+History disposition: append
+Confidence: high
+Human/Main authority: explicit evidence reconciliation
+Required regeneration: none
+Result: VALIDATED / COMPLETE LOCAL ROLLBACK
+```
+
+```text
+Claim: the failed Android assay advanced Android provider state
+Source: GS-NEON-11 selected-Device read-only postflight
+Current state: open after local failure
+Evidence: Android next expected sequence 1; submissions/events/acks 0/0/0;
+          acknowledged cursor 0; ROLLBACK/PASS
+Evidence boundary: exact selected Device on configured development target
+Contradictions: none
+Semantic owner: C10-GCM03-S10 provider containment
+Target role: J R01 conclusion
+History disposition: append
+Confidence: high
+Human/Main authority: explicit evidence reconciliation
+Required regeneration: none
+Result: VALIDATED / PROVIDER NON-ADVANCEMENT
+```
+
+```text
+Claim: one exact SQLite constraint caused the failed apply
+Source: source inspection and sanitized DriftRemoteException
+Current state: proposed
+Evidence: UUID-only writer conflicts with multiple possible local constraints
+Evidence boundary: exception extended result/message was not retained
+Contradictions: several constraint paths can produce the same observed class
+Semantic owner: R02 deterministic regression suite
+Target role: source correction and typed diagnostic categories
+History disposition: append without selecting an unproved constraint
+Confidence: high that the boundary is defective; insufficient for one exact
+            runtime constraint category
+Human/Main authority: Main diagnosis
+Required regeneration: deterministic test matrix
+Result: PARTIALLY ACCEPTED; BOUNDARY CONFIRMED, EXACT RUNTIME CONSTRAINT UNKNOWN
+```
+
+```text
+Claim: the Product dropdown screenshot proves duplicate Catalogue rows
+Source: screenshot plus exact Product/PurchasePage/query source
+Current state: proposed from assertion wording
+Evidence: source-confirmed distinct-object/zero-match path; assertion combines
+          zero and multiple matches
+Evidence boundary: no direct duplicate-row query accompanied the screenshot
+Contradictions: Products primary key and natural unique constraints exist
+Semantic owner: Purchase presentation identity
+Target role: R02 stable-ID correction and widget regressions
+History disposition: append
+Confidence: high
+Human/Main authority: explicit correction request
+Required regeneration: widget tests for zero and multiple projection classes
+Result: REJECTED AS DATABASE-DUPLICATE PROOF; UI IDENTITY DEFECT CONFIRMED
+```
+
+```text
+Claim: R02 may now materialize the bounded client corrections
+Source: R01 conclusion, contained live state, exact source inspection and human
+        implementation request
+Current state: staged
+Evidence: writable source boundary, regression matrix, transaction and
+          diagnostic invariants, live-action exclusions are explicit
+Evidence boundary: local source/tests only; corrected live convergence remains
+                   unvalidated
+Contradictions: none
+Semantic owner: D/E/F controlling materialization stage
+Target role: Codex FLX-ORD-01
+History disposition: append; D/E/F replace superseded active stage
+Confidence: high
+Human/Main authority: explicit
+Required regeneration: G/H/I after materialization
+Result: ACCEPTED / ACTIVE CODEX IMPLEMENTATION AUTHORITY
+```
+
+### Activated R02 materialization
+
+Controlling files:
+
+```text
+documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md
+```
+
+The cohesive correction owns:
+
+1. Product-ID-keyed Purchase dropdown selection and refresh rebinding.
+2. deterministic safe handling of missing or repeated Product IDs.
+3. Account-scoped Product reconciliation by UUID, normalized code and exact
+   identity.
+4. Account-scoped Store reconciliation by UUID and current stable display
+   identity.
+5. remote-to-local Store/Product reference maps for Purchases and Items.
+6. typed natural-identity conflict and sanitized SQLite failure categories.
+7. preserved page-wide facts/inbox/cursor atomicity.
+8. acknowledgement only after committed local cursor.
+9. causal diagnostic preservation after a trusted response.
+
+Explicit non-goals:
+
+```text
+no payload v4
+no Person/Payment Method remote exchange
+no migration or Drift schema change
+no hosted API/server/provider change
+no authentication or enrollment change
+no retention/snapshot/rebootstrap change
+no GRIMOIRE change
+no live Sync/Retry/recovery
+```
+
+### Post-Codex and later live sequence
+
+Codex must materialize and validate locally, replace G/H/I, and publish one
+focused source/evidence commit. Unit tests and a disposable local convergence
+lab may validate implementation, but they do not close real GCM03 convergence.
+
+After Main reconciles G/H/I and a corrected Android artifact with matching
+provenance is installed while preserving application data, a later human
+packet may authorize exactly one Android ordinary Sync.
+
+Expected later live result:
+
+```text
+both hosted Windows events materialize on Android
+one coherent local Product/Store identity per Account
+Purchase Items reference selected local Product IDs
+Android Account cursor advances to c10b:2
+one Android acknowledgement reaches cursor 2
+Android producer sequence remains 1
+Android producer queue remains empty
+History and Catalogue projection show no duplicate fact
+read-only local/provider postflights agree
+```
+
+None of those later live outcomes is claimed by the R02 staging commit.
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=ACTIVE_CORRECTIVE_MATERIALIZATION
+C10_GCM03_S10_I02=PASS_LOCAL_TRANSACTION_ROLLBACK
+C10_GCM03_S10_I03=PASS_UI_PROJECTION_MATCHES_LOCAL_ROLLBACK
+C10_GCM03_S10_I04=PASS_PROVIDER_CONTAINMENT
+C10_GCM03_S10_I05=PASS_ACTIONABLE_DIAGNOSIS
+C10_GCM02_S09_R01=CONCLUDED
+C10_GCM03_S10_R02=ACTIVE_CODEX_IMPLEMENTATION_AUTHORIZED
+PURCHASE_PRODUCT_DROPDOWN_IDENTITY_FIX=IN_SCOPE
+REMOTE_PRODUCT_STORE_IDENTITY_CONVERGENCE=IN_SCOPE
+LOCAL_APPLY_CAUSAL_DIAGNOSTICS=IN_SCOPE
+GITHUB_BRANCH=grm-guarded-provisioning-20260727
+CONFIGURED_PROVIDER_BRANCH_ALIAS=markei-c10
+PROVIDER_BRANCH_ALIAS_LAUNCHER_INDEPENDENT_PROOF=NO
+ANDROID_SNAPSHOT=PRESERVE
+WINDOWS_SYNC=HELD
+ANDROID_SYNC=HELD
+RETRY=HELD
+RECOVERY=HELD
+ENROLL=DO_NOT_REPEAT
+PROVIDER_MUTATION=NONE
+GCM04=UNDEFINED_INACTIVE
+```
