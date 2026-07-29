@@ -8017,3 +8017,361 @@ RETRY_RECOVERY=HELD
 NEW_PURCHASE_REGISTRATION=HELD
 PROVIDER_MUTATION=NONE
 ~~~
+
+---
+
+# 2026-07-29 — Full handoff: C10-GCM03-S10-R03 corrective materialization launch
+
+## Sequence Handoff Envelope
+
+```text
+Outgoing sequence: FLX-PRM-04 diagnostic reconciliation and FLX-ORD-01 staging
+Receiving sequence: FLX-ORD-01 Codex corrective materialization
+Outgoing role: Main Chat [M], exhausted-session closure
+Receiving roles:
+  1. fresh Main Chat [M] for continuity and later reconciliation
+  2. Codex for the already-authorized corrective implementation
+Primary unit: C10-GCM03-S10-R03
+Human-assay continuity alias: C10-GCM03-S09-R03
+Repository: gus-i-gu/markei
+Existing GitHub branch: grm-guarded-provisioning-20260727
+Pre-handoff authority commit: b9882118b543cc9637af31f8343935bee94300de
+Required Codex starting head: the direct J-handoff descendant of b988211,
+                              pinned by the launch prompt
+Authority: human direction plus active D/E/F stage
+Writable surface of this handoff publication: append-only J_MAIN_STAGE.md
+Codex writable surface: exactly the source/test/G/H/I scope authorized by D
+Evidence boundary: D/E/F/J/REC_DIAGNOSTICS.md at b988211 plus inspected
+                   one-commit ancestry from 1975bf0
+Live operation authority: NONE
+```
+
+This handoff closes only the exhausted conversation. It does not close R03,
+GCM03 or Cycle 10, and it does not promote live synchronization acceptance.
+
+## 1. Recovery instruction for the fresh Main Chat
+
+Recover the project from repository memory rather than reconstructing the
+exhausted conversation.
+
+Read in this order:
+
+1. root `AGENTS.md`;
+2. `documentation/sketch_notebook/INDEX.md`;
+3. notebook `AGENTS.md`;
+4. the complete methodology route selected by `INDEX.md`:
+   `METHOD_FOUNDATIONS.md`, `FLUX.md`, `PROMOTION_RULES.md`,
+   `CHAT_PROTOCOL.md`;
+5. the newest section of this J file, including the R03 reconciliation
+   immediately above and this handoff;
+6. `documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md`;
+7. `documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md`;
+8. `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`;
+9. `documentation/REC_DIAGNOSTICS.md`, Appendix G / Records 018–020;
+10. G/H/I only after Codex publishes the R03 materialization.
+
+Use hierarchical recovery. Earlier J/REC history remains available when a
+claim requires provenance, but the current R03 sections are the controlling
+low-cost recovery surface.
+
+Do not redirect Codex through old A/B/C stages, prior R02 G/H/I reports,
+conversation screenshots, or a reconstructed prompt that weakens D/E/F.
+
+## 2. Authority and naming
+
+The controlling implementation unit is:
+
+```text
+C10-GCM03-S10-R03
+```
+
+The manual-assay label used during the live failure chain is retained as:
+
+```text
+C10-GCM03-S09-R03
+```
+
+The alias must not be erased because it connects the human H02/Sync evidence
+to the correction. It must not replace the primary S10 implementation unit in
+source reports, validation terminals or the final implementation commit.
+
+Authority order for the materialization is:
+
+```text
+D_OPS_STAGE.md = controlling operational scope and terminals
+E_DDC_STAGE.md = evidence and interpretation constraints
+F_DSN_STAGE.md = architecture and responsibility constraints
+J_MAIN_STAGE.md = Main reconciliation, continuity and launch envelope
+REC_DIAGNOSTICS.md = append-only sanitized human/provider evidence
+G/H/I = post-materialization observations, not canonical truth
+```
+
+If D/E/F are contradictory, missing, or insufficient, Codex must stop. Codex
+must not use J or REC_DIAGNOSTICS.md to expand the writable source scope.
+
+## 3. State that the receiving chat must retain
+
+R02 corrected and human-validated the Purchase Product-selector defect:
+
+```text
+PRODUCT_SELECTOR_IDENTITY=STABLE_PRODUCT_ID
+FIND_ITEM_ASSERTION=ABSENT_HUMAN_ASSAY
+PURCHASE_REVIEW=PASS
+PURCHASE_REGISTRATION=PASS
+```
+
+The subsequent live assays proved both hosted transport and a still-open local
+convergence defect:
+
+```text
+ANDROID_UPLOAD_PROVIDER=HTTP_200_TRUSTED
+ANDROID_UPLOAD_RESULT_PERSISTENCE=COMMITTED
+ANDROID_DOWNLOAD_PROVIDER=HTTP_200_TRUSTED
+ANDROID_LOCAL_APPLY=REMOTE_PRODUCT_NATURAL_IDENTITY_CONFLICT
+
+WINDOWS_UPLOAD_PROVIDER=SERVER_ACCEPTED
+WINDOWS_UPLOAD_RESULT_PERSISTENCE=COMMITTED
+WINDOWS_DOWNLOAD_PROVIDER=TRUSTED_RESPONSE_RECEIVED
+WINDOWS_LOCAL_APPLY=NO_DURABLE_RESULT
+WINDOWS_TERMINAL=CLOSURE_RUNNER_EXCEPTION
+
+ACKNOWLEDGEMENT_AFTER_BOTH_FAILED_DOWNLOADS=NOT_STARTED
+RENDER_REJECTION=FALSE
+```
+
+The Android page proves a Product reconciliation conflict. The Windows page
+proves a trusted download response followed by an exception escaping the
+typed local-apply boundary. The Windows terminal then incorrectly replaced
+the already-proved trusted response with a generic not-received state.
+
+The Android event and the later Windows event were already accepted by the
+provider. Neither purchase may be registered again merely to repeat the test.
+
+## 4. Evidence ceilings that must not be promoted
+
+The supplied Windows evidence does not prove whether facts, inbox and cursor
+committed or rolled back before diagnostic persistence or runner failure.
+
+Retain:
+
+```text
+WINDOWS_TRANSACTION_TRUTH=UNKNOWN
+WINDOWS_LOCAL_MUTATION=UNKNOWN
+WINDOWS_FACTS_INBOX_CURSOR_COMMIT=UNKNOWN
+```
+
+Do not infer rollback from the absence of acknowledgement. Do not infer commit
+from the successful provider download. Do not let diagnostic truth define
+transaction truth.
+
+R02 causal diagnostics are therefore classified as:
+
+```text
+LOCAL_APPLY_CAUSAL_DIAGNOSTICS=PASS_TYPED_PATHS_ONLY
+LOCAL_APPLY_CAUSAL_DIAGNOSTICS_UNCLASSIFIED_PATH=FAIL
+```
+
+Automated R03 validation will not prove live convergence. A passing Flutter
+suite or disposable local database test cannot promote GCM03 acceptance.
+
+## 5. Corrective mission already authorized by D/E/F
+
+Codex must implement the complete R03 correction, with D controlling exact
+requirements.
+
+The cohesive mission has six parts:
+
+1. For a previously unseen incoming Product UUID, reuse the one coherent
+   Account-scoped Product when exact semantic identity matches even if the two
+   clients chose different user Product codes. Preserve the selected local
+   code and display.
+2. Preserve conflicts for same code/different identity, split natural keys,
+   ambiguity, and established-UUID immutable mutation. Never use first-row
+   wins and never rewrite hosted events or existing Product identities.
+3. Maintain incoming-to-local Product identity mapping for Purchase Items and
+   preserve the already-correct Store mapping/reconciliation contract.
+4. Make the post-download local-apply boundary total: every exception must
+   leave the Drift transaction first, allow full rollback, and then become a
+   bounded sanitized result. No apply exception may escape into the UI runner.
+5. Separate synchronization truth from diagnostic truth. Update an in-memory
+   causal snapshot before fallible durable diagnostics; contain diagnostics
+   persistence failure without reversing a committed core result; make the
+   runner consume the strongest causal snapshot.
+6. Project the existing stored sanitized exception class through repository,
+   application summary and Closure UI without a migration or unsafe message,
+   SQL, payload, identifier, stack, token, secret or full-hash disclosure.
+
+The single page transaction must continue to own Product/Store reconciliation,
+Purchases, Purchase Items, inbox records and Account cursor. Acknowledgement
+may begin only from a committed cursor. Replay must remain idempotent.
+
+## 6. Required implementation boundaries
+
+Preserve:
+
+```text
+protocol payload version = 3
+Flutter/Drift schema = unchanged
+hosted API/server = unchanged
+Auth0 authentication = unchanged
+Device enrollment/binding = unchanged
+Store identity rules = unchanged unless a source-proved minimal correction is
+                       strictly required by D
+Person/Payment Method v3 remote restriction = unchanged
+dependencies = unchanged
+GitHub branch = existing guarded branch
+```
+
+Prohibited during Codex execution:
+
+```text
+Android or Windows Sync
+Retry, Recovery, Enroll or Query
+new Purchase registration
+acknowledgement or provider mutation
+database surgery or application-data clearing
+schema, migration, API, payload, authentication or dependency change
+branch creation, rename, rebase, force push, reset or clean
+methodology, permanent-domain, J or REC_DIAGNOSTICS edits
+DB_MGMT.sql, G_SCRIPTS.md or I_SCRIPTS.ps1 edits
+test weakening, exception swallowing or first-row-wins reconciliation
+```
+
+## 7. Codex validation and evidence return
+
+Codex must implement the D test matrix, including:
+
+- exact identity under another code for a new incoming UUID;
+- same code/different identity, split-key, ambiguity and established UUID
+  conflict cases;
+- local code/display preservation and remote-to-local Item remapping;
+- mixed Android/Windows cursor page convergence and poison-page recovery;
+- generic non-SQL failure with full facts/inbox/cursor rollback;
+- acknowledgement prohibition after failed or unproved apply;
+- committed apply with diagnostic-persistence degradation;
+- causal trusted-response preservation through apply/reporting/runner failures;
+- sanitized exception-class projection to Closure UI;
+- Product-selector, Store, queue, upload-result and v3 restriction regressions;
+- idempotent replay and unchanged hosted protocol.
+
+Required validation evidence is the exact D list: format, analysis, focused
+tests, full Flutter test suite, debug Android and Windows builds, manifest
+inspection where applicable, diff check, sensitive-content scan and exact
+changed-file inventory.
+
+Codex shall replace only:
+
+```text
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+```
+
+alongside the source/tests authorized by D.
+
+The Codex return must include:
+
+```text
+final commit SHA and parent
+remote branch read-back
+exact changed-file list
+implementation summary by D requirement
+focused and full validation outcomes
+skipped or environment-limited evidence
+G/H/I terminal states
+confirmation of zero live/client/provider mutation
+```
+
+## 8. Fresh Main Chat first responsibility
+
+The fresh Main Chat should not reopen the completed diagnosis before Codex
+starts. Its first responsibility is to verify the handoff publication at the
+remote branch head and issue the exact Codex prompt pinned to that commit.
+
+While Codex runs, Main may prepare the post-materialization reconciliation
+frame, but it must not issue any live Sync authorization.
+
+After Codex publishes:
+
+1. verify the materialization is one non-forced fast-forward descendant of the
+   handoff commit;
+2. compare the changed paths against D;
+3. read G/H/I as observational evidence;
+4. reconcile source decisions, tests, builds, terminals and residual limits;
+5. append the R03 post-Codex reconciliation to J;
+6. authorize a preserved-state build/install and offline preflight only;
+7. issue a new, separately numbered one-operation live assay only after the
+   installed artifact and read-only baselines pass.
+
+Neither the current handoff nor the future Codex success authorizes immediate
+Sync.
+
+## 9. Post-Codex human acceptance outline
+
+The exact manual packet must be derived from the implemented commit rather
+than copied blindly from R02. At minimum it must preserve existing Android and
+Windows application data and verify:
+
+1. both corrected binaries carry the reconciled R03 provenance;
+2. authentication, enrollment, queues and Device sequences remain coherent;
+3. no automatic Sync or acknowledgement occurred during installation/launch;
+4. offline Find Item and Purchase projection remain correct;
+5. current local/provider read-only baselines are frozen;
+6. exactly one client ordinary Sync is authorized first;
+7. UI, SQLite, Render and provider postflights agree before the other client
+   can Sync;
+8. one no-op replay proves idempotency and no duplicate Product, Store,
+   Purchase or Purchase Item.
+
+Retry and Recovery remain separate later decisions. They are not substitutes
+for the first corrected ordinary-Sync assay.
+
+## 10. Fresh-chat stop and escalation conditions
+
+Stop and preserve evidence if:
+
+- the remote head is not the handoff commit pinned by the prompt;
+- the branch diverged or a force update is required;
+- D/E/F disagree or their writable scope is insufficient;
+- implementation requires schema/provider/API/auth/dependency change;
+- unrelated work overlaps an authorized source or report file;
+- a validation failure is hidden by skipped tests or swallowed exceptions;
+- a secret, token, connection string, payload fact, SQL value or identifier
+  appears in a proposed report;
+- any live Sync, Retry, Recovery, Enroll, Query, acknowledgement or provider
+  mutation would be needed to claim success.
+
+Write a precise G/H/I blocker rather than improvising outside the envelope.
+
+## 11. Handoff terminals
+
+```text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=ACTIVE_CORRECTIVE_MATERIALIZATION
+C10_GCM03_S10_R03=CODEX_IMPLEMENTATION_AUTHORIZED_NOT_STARTED
+C10_GCM03_S09_R03=HUMAN_ASSAY_CONTINUITY_ALIAS
+R03_STAGE_COMMIT=b9882118b543cc9637af31f8343935bee94300de
+R03_HANDOFF_COMMIT=PIN_FROM_PUBLICATION
+PRODUCT_SELECTOR_REGRESSION=PASS_AUTOMATED_AND_HUMAN
+ANDROID_PROVIDER_UPLOAD=PASS_TRUSTED
+WINDOWS_PROVIDER_UPLOAD=PASS_TRUSTED
+ANDROID_INBOUND_CONVERGENCE=FAIL_TYPED_PRODUCT_CONFLICT
+WINDOWS_INBOUND_CONVERGENCE=FAIL_POST_DOWNLOAD_UNCLASSIFIED
+WINDOWS_TRANSACTION_TRUTH=UNKNOWN
+ACKNOWLEDGEMENT_AFTER_FAILED_OR_UNPROVED_APPLY=NOT_STARTED
+RENDER_REJECTION=FALSE
+INTER_DEVICE_SAME_ACCOUNT_SYNC=FAIL_OPEN
+MVP_SYNC_ACCEPTANCE=NOT_PROMOTED
+ANDROID_SYNC=HELD
+WINDOWS_SYNC=HELD
+RETRY_RECOVERY=HELD
+NEW_PURCHASE_REGISTRATION=HELD
+DIAGNOSTIC_HISTORY=PRESERVE
+PROVIDER_MUTATION=NONE
+NEXT_ACTION=PIN_HANDOFF_COMMIT_AND_LAUNCH_CODEX_R03
+```
+
+This section is the recovery bridge for the fresh Main Chat. Detailed human
+evidence remains in `documentation/REC_DIAGNOSTICS.md`; executable correction
+authority remains in D/E/F.
