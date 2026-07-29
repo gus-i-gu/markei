@@ -218,7 +218,8 @@ final class DownloadAndApplyEvents {
     int limit = 100,
     SyncDiagnosticPhaseRecorder? diagnostics,
   }) async {
-    final identity = await diagnostics?.recordPhase(
+    final identity = await _recordPhase(
+      diagnostics,
       const SyncDiagnosticPhaseEvidence(
         code: 'MKS-TRN-001',
         nativeCode: 'download-request-started',
@@ -236,7 +237,8 @@ final class DownloadAndApplyEvents {
             identity.correlationId,
             () => transport.downloadAfter(cursor, limit: limit),
           ));
-    await diagnostics?.recordPhase(
+    await _recordPhase(
+      diagnostics,
       const SyncDiagnosticPhaseEvidence(
         code: 'MKS-DNL-001',
         nativeCode: 'download-response-received',
@@ -251,7 +253,8 @@ final class DownloadAndApplyEvents {
       ),
     );
     final result = await applier.applyPage(page);
-    await diagnostics?.recordPhase(
+    await _recordPhase(
+      diagnostics,
       SyncDiagnosticPhaseEvidence(
         code: _diagnosticCodeForDownloadResult(result),
         nativeCode: result.protocolCode ?? result.code.name,
@@ -271,6 +274,7 @@ final class DownloadAndApplyEvents {
             ? 'continue ordinary Sync'
             : 'preserve local state and inspect diagnostics',
         retryable: result.retryable,
+        sanitizedExceptionClass: result.sanitizedExceptionClass,
       ),
     );
     return result;
@@ -377,6 +381,9 @@ String _localMutationStateForDownloadResult(SyncResult result) {
     return 'committed';
   }
   if (result.protocolCode == 'local-sqlite-apply-failed' ||
+      result.protocolCode == 'unexpected-local-apply-failed' ||
+      result.protocolCode == 'remote-payload-shape-invalid' ||
+      result.protocolCode == 'local-apply-invariant-failed' ||
       result.code == SyncStatusCode.conflict) {
     return 'rolled-back';
   }
@@ -390,4 +397,15 @@ String _diagnosticCodeForAcknowledgementResult(SyncResult result) {
     SyncStatusCode.unknownOutcome => 'MKS-OBS-001',
     _ => 'MKS-ACK-001',
   };
+}
+
+Future<SyncDiagnosticChildIdentity?> _recordPhase(
+  SyncDiagnosticPhaseRecorder? diagnostics,
+  SyncDiagnosticPhaseEvidence evidence,
+) async {
+  try {
+    return await diagnostics?.recordPhase(evidence);
+  } on Object {
+    return null;
+  }
 }

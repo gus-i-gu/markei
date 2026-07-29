@@ -860,6 +860,9 @@ final class DriftClosureDiagnosticsRepository
               .responseHeadersReceived,
           safeAction: row.readTable(_db.syncDiagnosticEvents).safeAction,
           retryable: row.readTable(_db.syncDiagnosticEvents).retryable,
+          sanitizedExceptionClass: row
+              .readTable(_db.syncDiagnosticEvents)
+              .sanitizedExceptionClass,
         ),
     ];
   }

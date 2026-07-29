@@ -189,6 +189,7 @@ final class ClosureDiagnosticEventSummary {
     required this.responseHeadersReceived,
     required this.safeAction,
     required this.retryable,
+    required this.sanitizedExceptionClass,
   });
 
   final String attemptFingerprint;
@@ -221,6 +222,7 @@ final class ClosureDiagnosticEventSummary {
   final bool responseHeadersReceived;
   final String safeAction;
   final bool retryable;
+  final String? sanitizedExceptionClass;
 }
 
 final class ClosureQueueCounts {

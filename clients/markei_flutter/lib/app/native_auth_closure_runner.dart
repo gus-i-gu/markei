@@ -138,13 +138,18 @@ final class NativeAuthClosureRunner {
       'resultPersistenceState': 'not-started',
       'safeNextActionCode': 'continue ordinary Sync',
     });
-    final attemptId = await recorder.beginDiagnosticAttempt(
-      operationKind: 'ordinary-sync',
-      latestStage: 'started',
-      resultCode: 'sync-started',
-      outcomeClass: 'in-progress',
-      correlationFingerprint: operationFingerprint,
-    );
+    int? attemptId;
+    try {
+      attemptId = await recorder.beginDiagnosticAttempt(
+        operationKind: 'ordinary-sync',
+        latestStage: 'started',
+        resultCode: 'sync-started',
+        outcomeClass: 'in-progress',
+        correlationFingerprint: operationFingerprint,
+      );
+    } on Object {
+      attemptId = null;
+    }
     final diagnostics = _DiagnosticOperationRecorder(
       recorder: recorder,
       attemptId: attemptId,
@@ -162,13 +167,19 @@ final class NativeAuthClosureRunner {
             coordinator.run(_environmentAlias, diagnostics: diagnostics),
       );
       await diagnostics.recordTerminal(outcome.state);
-      await recorder.completeSyncAttempt(
-        attemptId,
-        resultCode: outcome.state,
-        outcomeClass: _syncOutcomeClass(outcome.state),
-        phase: _syncPhase(outcome.state),
-        recoveryCode: _syncRecoveryCode(outcome.state),
-      );
+      if (attemptId != null) {
+        try {
+          await recorder.completeSyncAttempt(
+            attemptId,
+            resultCode: outcome.state,
+            outcomeClass: _syncOutcomeClass(outcome.state),
+            phase: _syncPhase(outcome.state),
+            recoveryCode: _syncRecoveryCode(outcome.state),
+          );
+        } on Object {
+          diagnostics.markPersistenceDegraded();
+        }
+      }
       _emitLifecycle(_lifecycleSink, {
         'timestamp': DateTime.now().toUtc().toIso8601String(),
         'event':
@@ -194,6 +205,7 @@ final class NativeAuthClosureRunner {
       });
       return NativeClosureStatus(outcome.state);
     } on Object catch (error) {
+      final strongest = diagnostics.strongestEvidence;
       await diagnostics.recordPhase(
         SyncDiagnosticPhaseEvidence(
           code: 'MKS-UI-006',
@@ -201,25 +213,33 @@ final class NativeAuthClosureRunner {
           severity: 'ERROR',
           operationKind: 'ordinary-sync',
           phase: 'terminal',
-          lastProvedPhase: 'terminal',
+          lastProvedPhase: strongest?.lastProvedPhase ?? 'terminal',
           outcome: 'unknown',
-          localMutationState: 'unknown',
-          providerContactState: 'unknown',
-          providerTransactionState: 'unknown',
-          trustedResponseState: 'not-received',
+          localMutationState: strongest?.localMutationState ?? 'unknown',
+          providerContactState: strongest?.providerContactState ?? 'unknown',
+          providerTransactionState:
+              strongest?.providerTransactionState ?? 'unknown',
+          trustedResponseState:
+              strongest?.trustedResponseState ?? 'not-received',
           resultPersistenceState: 'failed',
           safeAction: 'preserve evidence and inspect diagnostics',
           retryable: false,
-          sanitizedExceptionClass: error.runtimeType.toString(),
+          sanitizedExceptionClass: _sanitizeExceptionClass(error),
         ),
       );
-      await recorder.completeSyncAttempt(
-        attemptId,
-        resultCode: 'sync-failed',
-        outcomeClass: 'failed',
-        phase: 'unexpected-terminal',
-        recoveryCode: 'local-exception-redacted',
-      );
+      if (attemptId != null) {
+        try {
+          await recorder.completeSyncAttempt(
+            attemptId,
+            resultCode: 'sync-failed',
+            outcomeClass: 'failed',
+            phase: strongest?.lastProvedPhase ?? 'unexpected-terminal',
+            recoveryCode: 'local-exception-redacted',
+          );
+        } on Object {
+          diagnostics.markPersistenceDegraded();
+        }
+      }
       _emitLifecycle(_lifecycleSink, {
         'timestamp': DateTime.now().toUtc().toIso8601String(),
         'event': 'operation-failed',
@@ -227,14 +247,15 @@ final class NativeAuthClosureRunner {
         'operationKind': 'ordinary-sync',
         'resultCode': 'sync-failed',
         'diagnosticCode': 'MKS-UI-006',
-        'lastProvedPhase': 'unexpected-terminal',
+        'lastProvedPhase': strongest?.lastProvedPhase ?? 'unexpected-terminal',
         'operationFingerprint': operationFingerprint,
         'correlationFingerprint': operationFingerprint,
         'configuredDeadlineMs': ordinarySyncClientDeadline.inMilliseconds,
         'elapsedBand': _elapsedBand(stopwatch.elapsed),
-        'providerContactState': 'unknown',
-        'trustedResponseState': 'not-received',
-        'localMutationState': 'unknown',
+        'providerContactState': strongest?.providerContactState ?? 'unknown',
+        'trustedResponseState':
+            strongest?.trustedResponseState ?? 'not-received',
+        'localMutationState': strongest?.localMutationState ?? 'unknown',
         'resultPersistenceState': 'failed',
         'safeNextActionCode': 'preserve-evidence-and-inspect-diagnostics',
       });
@@ -662,7 +683,7 @@ final class _DiagnosticOperationRecorder
   });
 
   final SyncAttemptRecorder recorder;
-  final int attemptId;
+  final int? attemptId;
   final String operationId;
   final String operationFingerprint;
   final Uuid uuid;
@@ -670,6 +691,14 @@ final class _DiagnosticOperationRecorder
   final Stopwatch stopwatch;
   int _ordinal = 0;
   int? _causalOrdinal;
+  SyncDiagnosticPhaseEvidence? _strongestEvidence;
+  bool _persistenceDegraded = false;
+
+  SyncDiagnosticPhaseEvidence? get strongestEvidence => _strongestEvidence;
+
+  void markPersistenceDegraded() {
+    _persistenceDegraded = true;
+  }
 
   @override
   Future<SyncDiagnosticChildIdentity> recordPhase(
@@ -681,47 +710,55 @@ final class _DiagnosticOperationRecorder
     if (evidence.severity != 'INFO' && _causalOrdinal == null) {
       _causalOrdinal = ordinal;
     }
-    await recorder.recordDiagnosticEvent(
-      SyncDiagnosticEnvelope(
-        attemptId: attemptId,
-        diagnosticVersion: 1,
-        ordinal: ordinal,
-        operationId: operationId,
-        correlationId: correlationId,
-        code: evidence.code,
-        nativeCode: evidence.nativeCode,
-        severity: evidence.severity,
-        outcome: evidence.outcome,
-        operationKind: evidence.operationKind,
-        phase: evidence.phase,
-        lastProvedPhase: evidence.lastProvedPhase,
-        operationFingerprint: operationFingerprint,
-        correlationFingerprint: fingerprint,
-        accountFingerprint: null,
-        deviceFingerprint: null,
-        submissionFingerprint: evidence.submissionFingerprint,
-        localMutationState: evidence.localMutationState,
-        providerContactState: evidence.providerContactState,
-        providerTransactionState: evidence.providerTransactionState,
-        trustedResponseState: evidence.trustedResponseState,
-        resultPersistenceState: evidence.resultPersistenceState,
-        queueScope: evidence.queueScope,
-        pendingCount: evidence.pendingCount,
-        uploadingCount: evidence.uploadingCount,
-        failedCount: evidence.failedCount,
-        unknownCount: evidence.unknownCount,
-        memberCount: evidence.memberCount,
-        firstDeviceSequence: evidence.firstDeviceSequence,
-        lastDeviceSequence: evidence.lastDeviceSequence,
-        nextDeviceSequence: evidence.nextDeviceSequence,
-        httpStatus: evidence.httpStatus,
-        responseHeadersReceived: evidence.responseHeadersReceived,
-        safeAction: evidence.safeAction,
-        retryable: evidence.retryable,
-        sanitizedExceptionClass: evidence.sanitizedExceptionClass,
-        serverSqlstateClass: evidence.serverSqlstateClass,
-      ),
-    );
+    _strongestEvidence = _preferStrongestEvidence(_strongestEvidence, evidence);
+    final id = attemptId;
+    if (id != null) {
+      try {
+        await recorder.recordDiagnosticEvent(
+          SyncDiagnosticEnvelope(
+            attemptId: id,
+            diagnosticVersion: 1,
+            ordinal: ordinal,
+            operationId: operationId,
+            correlationId: correlationId,
+            code: evidence.code,
+            nativeCode: evidence.nativeCode,
+            severity: evidence.severity,
+            outcome: evidence.outcome,
+            operationKind: evidence.operationKind,
+            phase: evidence.phase,
+            lastProvedPhase: evidence.lastProvedPhase,
+            operationFingerprint: operationFingerprint,
+            correlationFingerprint: fingerprint,
+            accountFingerprint: null,
+            deviceFingerprint: null,
+            submissionFingerprint: evidence.submissionFingerprint,
+            localMutationState: evidence.localMutationState,
+            providerContactState: evidence.providerContactState,
+            providerTransactionState: evidence.providerTransactionState,
+            trustedResponseState: evidence.trustedResponseState,
+            resultPersistenceState: evidence.resultPersistenceState,
+            queueScope: evidence.queueScope,
+            pendingCount: evidence.pendingCount,
+            uploadingCount: evidence.uploadingCount,
+            failedCount: evidence.failedCount,
+            unknownCount: evidence.unknownCount,
+            memberCount: evidence.memberCount,
+            firstDeviceSequence: evidence.firstDeviceSequence,
+            lastDeviceSequence: evidence.lastDeviceSequence,
+            nextDeviceSequence: evidence.nextDeviceSequence,
+            httpStatus: evidence.httpStatus,
+            responseHeadersReceived: evidence.responseHeadersReceived,
+            safeAction: evidence.safeAction,
+            retryable: evidence.retryable,
+            sanitizedExceptionClass: evidence.sanitizedExceptionClass,
+            serverSqlstateClass: evidence.serverSqlstateClass,
+          ),
+        );
+      } on Object {
+        markPersistenceDegraded();
+      }
+    }
     _emitLifecycle(lifecycleSink, {
       'timestamp': DateTime.now().toUtc().toIso8601String(),
       'event': evidence.phase == 'terminal'
@@ -741,7 +778,9 @@ final class _DiagnosticOperationRecorder
       'providerContactState': evidence.providerContactState,
       'trustedResponseState': evidence.trustedResponseState,
       'localMutationState': evidence.localMutationState,
-      'resultPersistenceState': evidence.resultPersistenceState,
+      'resultPersistenceState': _persistenceDegraded
+          ? 'diagnostics-persistence-degraded'
+          : evidence.resultPersistenceState,
       'safeNextActionCode': evidence.safeAction,
     });
     return SyncDiagnosticChildIdentity(
@@ -780,6 +819,36 @@ final class _DiagnosticOperationRecorder
   String _fingerprint(String value) {
     return sha256.convert(utf8.encode(value)).toString().substring(0, 12);
   }
+}
+
+SyncDiagnosticPhaseEvidence _preferStrongestEvidence(
+  SyncDiagnosticPhaseEvidence? previous,
+  SyncDiagnosticPhaseEvidence candidate,
+) {
+  if (previous == null) return candidate;
+  if (candidate.trustedResponseState == 'received' &&
+      previous.trustedResponseState != 'received') {
+    return candidate;
+  }
+  if (candidate.localMutationState == 'committed' &&
+      previous.localMutationState != 'committed') {
+    return candidate;
+  }
+  if (candidate.phase == 'terminal' && previous.phase != 'terminal') {
+    return previous;
+  }
+  return candidate;
+}
+
+String _sanitizeExceptionClass(Object error) {
+  final sanitized = error.runtimeType
+      .toString()
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9._:-]+'), '-')
+      .replaceAll(RegExp('-+'), '-')
+      .replaceAll(RegExp('^-|-\$'), '');
+  if (sanitized.isEmpty) return 'unexpected-local-exception';
+  return sanitized.length <= 64 ? sanitized : sanitized.substring(0, 64);
 }
 
 void _terminalLifecycleSink(String line) {

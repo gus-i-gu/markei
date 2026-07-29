@@ -483,7 +483,7 @@ void main() {
         responseHeadersReceived: false,
         safeAction: 'inspect failed evidence without Sync',
         retryable: false,
-        sanitizedExceptionClass: null,
+        sanitizedExceptionClass: 'payload-shape-failure',
         serverSqlstateClass: null,
       ),
     );
@@ -495,6 +495,15 @@ void main() {
     expect(rows.single.failedCount, 2);
     expect(rows.single.responseHeadersReceived, isFalse);
     expect(rows.single.safeAction, isNot(contains('\n')));
+    expect(rows.single.sanitizedExceptionClass, 'payload-shape-failure');
+
+    final snapshot = await repository.snapshot(
+      authenticationState: 'authenticated',
+    );
+    expect(
+      snapshot.recentDiagnostics.single.sanitizedExceptionClass,
+      'payload-shape-failure',
+    );
   });
 }
 

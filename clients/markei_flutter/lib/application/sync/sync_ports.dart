@@ -180,12 +180,14 @@ final class SyncResult {
     required this.outcome,
     required this.retryable,
     this.protocolCode,
+    this.sanitizedExceptionClass,
   });
 
   final SyncStatusCode code;
   final SyncOutcome outcome;
   final bool retryable;
   final String? protocolCode;
+  final String? sanitizedExceptionClass;
 }
 
 final class SyncBatchPreflightException implements Exception {

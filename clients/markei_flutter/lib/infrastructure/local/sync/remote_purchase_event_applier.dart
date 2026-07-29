@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:drift/native.dart';
 
 import '../../../application/sync/sync_ports.dart';
 import '../../../domain/shared/ids.dart';
@@ -77,9 +78,34 @@ final class DriftRemoteEventApplier implements RemoteEventApplier {
           outcome: SyncOutcome.unknown,
           retryable: false,
           protocolCode: 'local-sqlite-apply-failed',
+          sanitizedExceptionClass: 'sqlite-drift-database-failure',
         );
       }
-      rethrow;
+      if (error is TypeError || error is FormatException) {
+        return const SyncResult(
+          code: SyncStatusCode.conflict,
+          outcome: SyncOutcome.notApplied,
+          retryable: false,
+          protocolCode: 'remote-payload-shape-invalid',
+          sanitizedExceptionClass: 'payload-shape-failure',
+        );
+      }
+      if (error is StateError || error is ArgumentError) {
+        return const SyncResult(
+          code: SyncStatusCode.conflict,
+          outcome: SyncOutcome.notApplied,
+          retryable: false,
+          protocolCode: 'local-apply-invariant-failed',
+          sanitizedExceptionClass: 'local-invariant-failure',
+        );
+      }
+      return const SyncResult(
+        code: SyncStatusCode.unknownOutcome,
+        outcome: SyncOutcome.unknown,
+        retryable: false,
+        protocolCode: 'unexpected-local-apply-failed',
+        sanitizedExceptionClass: 'unexpected-local-apply-failure',
+      );
     }
   }
 
@@ -205,6 +231,10 @@ final class DriftRemoteEventApplier implements RemoteEventApplier {
 }
 
 bool _isSqliteFailure(Object error) {
+  if (error is SqliteException) return true;
+  if (error is DriftWrappedException && error.cause is SqliteException) {
+    return true;
+  }
   final typeName = error.runtimeType.toString().toLowerCase();
-  return typeName.contains('sqlite') || typeName.contains('databaseexception');
+  return typeName.contains('databaseexception');
 }

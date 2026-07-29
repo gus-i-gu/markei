@@ -97,6 +97,92 @@ void main() {
     },
   );
 
+  test(
+    'new Product UUID reuses exact identity despite different code',
+    () async {
+      final source = LocalDatabase.memory();
+      final target = LocalDatabase.memory();
+      addTearDown(source.close);
+      addTearDown(target.close);
+      await _register(
+        target,
+        deviceId: _targetDevice,
+        productCode: 'LOCAL-RICE',
+      );
+      final localProduct = (await target.select(target.products).get()).single;
+      final event = await _sourceEvent(source, sequence: 1);
+
+      final result = await DriftRemoteEventApplier.scoped(
+        target,
+        accountId: _account,
+      ).applyPage(_page(event, cursor: 1));
+
+      expect(result.code, SyncStatusCode.downloadedApplied);
+      final products = await target.select(target.products).get();
+      expect(products, hasLength(1));
+      expect(products.single.id, localProduct.id);
+      expect(products.single.userProductCode, 'LOCAL-RICE');
+      final item = (await target.select(target.purchaseItems).get()).last;
+      expect(item.productId, localProduct.id);
+    },
+  );
+
+  test(
+    'same code with different exact identity returns typed conflict',
+    () async {
+      final source = LocalDatabase.memory();
+      final target = LocalDatabase.memory();
+      addTearDown(source.close);
+      addTearDown(target.close);
+      await _register(
+        target,
+        deviceId: _targetDevice,
+        productName: 'Different rice facts',
+      );
+      final event = await _sourceEvent(source, sequence: 1);
+
+      final result = await DriftRemoteEventApplier.scoped(
+        target,
+        accountId: _account,
+      ).applyPage(_page(event, cursor: 1));
+
+      expect(result.code, SyncStatusCode.conflict);
+      expect(
+        result.protocolCode,
+        'remote-product-same-code-different-identity',
+      );
+    },
+  );
+
+  test('split product natural keys return typed conflict', () async {
+    final source = LocalDatabase.memory();
+    final target = LocalDatabase.memory();
+    addTearDown(source.close);
+    addTearDown(target.close);
+    await _register(
+      target,
+      deviceId: _targetDevice,
+      productName: 'Different rice facts',
+      productCode: 'RICE-001',
+    );
+    await _register(
+      target,
+      deviceId: _targetDevice,
+      productName: 'Synthetic rice',
+      productCode: 'LOCAL-RICE',
+      occurrenceMinute: 13,
+    );
+    final event = await _sourceEvent(source, sequence: 1);
+
+    final result = await DriftRemoteEventApplier.scoped(
+      target,
+      accountId: _account,
+    ).applyPage(_page(event, cursor: 1));
+
+    expect(result.code, SyncStatusCode.conflict);
+    expect(result.protocolCode, 'remote-product-split-key-conflict');
+  });
+
   test('two events sharing catalogue identities remap each item', () async {
     final source = LocalDatabase.memory();
     final target = LocalDatabase.memory();
@@ -147,7 +233,7 @@ void main() {
     ).applyPage(_page(event, cursor: 1));
 
     expect(result.code, SyncStatusCode.conflict);
-    expect(result.protocolCode, 'remote-product-natural-identity-conflict');
+    expect(result.protocolCode, 'remote-product-same-code-different-identity');
     expect(await _counts(target), before);
     expect(
       await DriftRemoteEventApplier.scoped(
@@ -232,6 +318,7 @@ void main() {
 
     expect(result.code, SyncStatusCode.unknownOutcome);
     expect(result.protocolCode, 'local-sqlite-apply-failed');
+    expect(result.sanitizedExceptionClass, 'sqlite-drift-database-failure');
     expect(ack, isNull);
     expect(transport.acknowledgements, 0);
     final localApply = diagnostics.events.lastWhere(
@@ -243,6 +330,64 @@ void main() {
     expect(localApply.resultPersistenceState, 'not-started');
     expect(await target.select(target.syncInbox).get(), isEmpty);
     expect(await target.select(target.purchases).get(), isEmpty);
+  });
+
+  test('non-SQL apply exception rolls back and remains bounded', () async {
+    final target = LocalDatabase.memory();
+    addTearDown(target.close);
+    final event = _event(
+      eventId: 'event-shape',
+      purchaseId: 'purchase-shape',
+      storeId: 'store-shape',
+      productId: 'product-shape',
+      productCode: 'SHAPE-001',
+      productName: 'Shape proof',
+      productBrand: 'Fixture',
+      cursor: 1,
+    );
+    final payload = event['payload'] as Map<String, Object?>;
+    final snapshots = payload['productSnapshots'] as List<Object?>;
+    final brokenProduct = Map<String, Object?>.from(
+      snapshots.single as Map<String, Object?>,
+    )..remove('identityKey');
+    final brokenPayload = Map<String, Object?>.from(payload)
+      ..['productSnapshots'] = [brokenProduct];
+    final brokenEvent = Map<String, Object?>.from(event)
+      ..['payload'] = brokenPayload;
+    brokenEvent['contentHash'] = canonicalUtf8Sha256(
+      Map<String, Object?>.from(brokenEvent)..remove('contentHash'),
+    );
+    final transport = _DownloadTransport(_page(brokenEvent, cursor: 1));
+    final applier = DriftRemoteEventApplier.scoped(target, accountId: _account);
+    final diagnostics = _RecordingDiagnostics();
+
+    final result = await DownloadAndApplyEvents(transport, applier)(
+      null,
+      diagnostics: diagnostics,
+    );
+    final ack = await AcknowledgeAppliedCursor(transport, applier)(
+      diagnostics: diagnostics,
+    );
+
+    expect(result.code, SyncStatusCode.conflict);
+    expect(result.protocolCode, 'remote-payload-shape-invalid');
+    expect(result.sanitizedExceptionClass, 'payload-shape-failure');
+    expect(ack, isNull);
+    expect(transport.acknowledgements, 0);
+    expect(await _counts(target), {
+      'stores': 0,
+      'products': 0,
+      'purchases': 0,
+      'items': 0,
+      'inbox': 0,
+      'state': 0,
+    });
+    final localApply = diagnostics.events.lastWhere(
+      (event) => event.phase == 'download-local-apply',
+    );
+    expect(localApply.trustedResponseState, 'received');
+    expect(localApply.localMutationState, 'rolled-back');
+    expect(localApply.sanitizedExceptionClass, 'payload-shape-failure');
   });
 }
 
@@ -263,6 +408,8 @@ Future<void> _register(
   LocalDatabase db, {
   required DeviceId deviceId,
   String productName = 'Synthetic rice',
+  String productCode = 'RICE-001',
+  int occurrenceMinute = 0,
 }) async {
   final device = await LocalDeviceIdentityRepository(
     db,
@@ -271,6 +418,8 @@ Future<void> _register(
     _command(
       deviceId.value == _sourceDevice.value ? device : deviceId,
       productName: productName,
+      productCode: productCode,
+      occurrenceMinute: occurrenceMinute,
     ),
   );
 }
@@ -278,18 +427,20 @@ Future<void> _register(
 RegisterPurchaseCommand _command(
   DeviceId deviceId, {
   required String productName,
+  required String productCode,
+  required int occurrenceMinute,
 }) {
   return RegisterPurchaseCommand(
     accountId: _account,
     deviceId: deviceId,
     storeName: 'test-store',
-    occurrenceTime: DateTime.utc(2026, 7, 14, 12),
+    occurrenceTime: DateTime.utc(2026, 7, 14, 12, occurrenceMinute),
     currencyCode: 'BRL',
     items: [
       PurchaseItemDraft(
         productReference: NewProductReference(
           ProductDraft(
-            userCode: 'RICE-001',
+            userCode: productCode,
             name: productName,
             brand: 'Fixture',
             mode: ProductMode.packaged,

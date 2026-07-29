@@ -558,6 +558,7 @@ final class _CurrentActionDiagnostic {
       firstSequence: event.firstDeviceSequence,
       lastSequence: event.lastDeviceSequence,
       nextSequence: event.nextDeviceSequence,
+      sanitizedExceptionClass: event.sanitizedExceptionClass,
     );
   }
 

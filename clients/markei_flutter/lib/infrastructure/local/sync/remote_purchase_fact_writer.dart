@@ -106,21 +106,16 @@ final class RemotePurchaseFactWriter {
                   table.accountId.equals(accountId) &
                   table.normalizedUserProductCode.equals(normalizedCode),
             ))
-            .getSingleOrNull();
+            .get();
     final byIdentity =
         await (_db.select(_db.products)..where(
               (table) =>
                   table.accountId.equals(accountId) &
                   table.exactIdentityKey.equals(identityKey),
             ))
-            .getSingleOrNull();
-    final selected = _selectNaturalProduct(byCode, byIdentity);
+            .get();
+    final selected = _selectNaturalProduct(byCode, byIdentity, product);
     if (selected != null) {
-      if (!_coherentProduct(selected, product)) {
-        throw const RemoteIdentityConflict(
-          'remote-product-natural-identity-conflict',
-        );
-      }
       return selected.id;
     }
     await _db
@@ -170,24 +165,55 @@ final class RemotePurchaseFactWriter {
     }
   }
 
-  Product? _selectNaturalProduct(Product? byCode, Product? byIdentity) {
-    if (byCode != null && byIdentity != null && byCode.id != byIdentity.id) {
+  Product? _selectNaturalProduct(
+    List<Product> byCode,
+    List<Product> byIdentity,
+    Map<String, Object?> product,
+  ) {
+    if (byCode.length > 1) {
+      throw const RemoteIdentityConflict('remote-product-ambiguous-code-match');
+    }
+    if (byIdentity.length > 1) {
+      throw const RemoteIdentityConflict(
+        'remote-product-ambiguous-exact-identity-match',
+      );
+    }
+    final code = byCode.singleOrNull;
+    final identity = byIdentity.singleOrNull;
+    if (code != null && identity != null && code.id != identity.id) {
+      throw const RemoteIdentityConflict('remote-product-split-key-conflict');
+    }
+    if (code != null && identity == null) {
+      throw const RemoteIdentityConflict(
+        'remote-product-same-code-different-identity',
+      );
+    }
+    final selected = code ?? identity;
+    if (selected == null) return null;
+    if (!_coherentProductIdentity(selected, product)) {
       throw const RemoteIdentityConflict(
         'remote-product-natural-identity-conflict',
       );
     }
-    return byCode ?? byIdentity;
+    return selected;
   }
 
   bool _coherentProduct(Product existing, Map<String, Object?> product) {
     final userCode = product['userProductCode'] as Map<String, Object?>;
-    final packageQuantity = product['packageQuantity'] as Map<String, Object?>?;
-    return existing.accountId == product['accountId'] &&
+    return _coherentProductIdentity(existing, product) &&
         existing.userProductCode == userCode['displayValue'] &&
         existing.normalizedUserProductCode == userCode['normalizedKey'] &&
-        existing.normalizationVersion == product['normalizationVersion'] &&
         existing.displayName == product['displayName'] &&
-        existing.displayBrand == product['displayBrand'] &&
+        existing.displayBrand == product['displayBrand'];
+  }
+
+  bool _coherentProductIdentity(
+    Product existing,
+    Map<String, Object?> product,
+  ) {
+    final packageQuantity = product['packageQuantity'] as Map<String, Object?>?;
+    return existing.accountId == product['accountId'] &&
+        existing.normalizationVersion == product['normalizationVersion'] &&
         existing.normalizedName == product['normalizedName'] &&
         existing.normalizedBrand == product['normalizedBrand'] &&
         existing.mode == product['mode'] &&

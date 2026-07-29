@@ -1,44 +1,41 @@
-# I_DSN_CODEX - C10-GCM03-S10-R02
+# I_DSN_CODEX - C10-GCM03-S10-R03
 
 ## Design Report
 
-Purchase selection ownership now sits at the UI boundary as a stable Product ID.
-The Product object remains a domain value without global equality redefinition.
-The current Account-scoped Product projection is the only source used to
-materialize immutable Product fields into the Purchase draft.
+Product semantic identity remains owned by the domain Product model and its identityKey. No global Product equality override was introduced. User Product code and raw display formatting remain outside exact semantic identity for new remote UUID convergence, but established UUID rows still require full immutable snapshot coherence.
 
-Remote Product canonicalization is Account-scoped and transaction-local:
-incoming UUID is checked first, then normalized user code, then exact identity
-key. A coherent existing local Product is selected when natural identity matches
-under a different incoming UUID. The remote-to-local Product map exists only
-inside the local apply operation and is used when writing Purchase Items.
+Remote Product resolution is Account-scoped and local-apply scoped. The resolver checks incoming UUID first, then normalized code and exact identity. It selects, rejects, or inserts according to the D/F table and returns bounded protocol codes for conflict states. No alias table, migration, dependency, schema exception, or hosted event rewrite was added.
 
-Remote Store canonicalization is Account-scoped and uses incoming UUID plus the
-existing stable display identity. The selected local Store ID is used for the
-Purchase row. No Store normalization rule, mapping table, migration, or hosted
-contract was added.
+The remote Product UUID to local Product UUID mapping is held only inside the apply operation and is passed to Purchase Item writes. This preserves hosted event contents while letting local references converge on the selected row.
 
-DriftRemoteEventApplier still places validation, fact writes, inbox writes, and
-cursor advancement in one applyPage transaction. RemoteIdentityConflict and
-SQLite write failures are thrown inside that transaction and translated after
-rollback into bounded SyncResult values. Acknowledgement still depends on a
-committed greatest contiguous applied cursor, so failed local apply cannot
-produce an acknowledgement cursor.
+Remote Store behavior was not redesigned. It still uses the existing incoming UUID and Account-scoped stable display identity reconciliation path, and the selected Store ID is used by the Purchase row.
 
-Native/provider architecture did not expand. API routes, payload version,
-schema, persistence model, synchronization protocol, authentication,
-enrollment, provider configuration, and dependencies are unchanged.
+The page apply architecture remains one Drift transaction over catalogue reconciliation, Purchase facts, Purchase Items, inbox rows, and cursor advancement. Exceptions are not converted inside the transaction; they escape first so Drift can roll back. The outer apply boundary then translates to bounded SyncResult categories.
+
+The diagnostic architecture now has a stronger in-memory causal layer. Diagnostic writes are best effort and cannot redefine transaction truth. NativeAuthClosureRunner consumes the strongest causal snapshot in its safety fallback, preserving trusted-response evidence when already proved.
+
+The existing sanitizedExceptionClass column is projected through repository, application summary, current action, and Closure UI without a migration. The UI displays only bounded classes/categories.
+
+Acknowledgement architecture remains unchanged: acknowledgement can start only after local apply exposes a committed greatest contiguous cursor. Failed, rejected, rolled-back, or unproved apply produces no acknowledgement cursor.
+
+## Compatibility
+
+Unchanged: protocol payload version 3, hosted API, Flutter/Drift schema, authentication, enrollment, Device binding, provider configuration, dependencies, Product selector domain equality, Store contract, Person/Payment Method v3 restrictions, upload-result persistence, retry/recovery boundaries, and branch topology.
 
 ## Terminals
 
-PURCHASE_SELECTION_OWNER=STABLE_PRODUCT_ID
-CURRENT_PRODUCT_PROJECTION=EXACTLY_ONE_OR_SAFE_INVALIDATION
+PRODUCT_IDENTITY_OWNER=DOMAIN_PRODUCT_IDENTITY_KEY
+PRODUCT_CODE_EXCLUDED_FROM_NEW_UUID_EXACT_IDENTITY=YES
+ESTABLISHED_PRODUCT_UUID_MUTATION=CONFLICT
 REMOTE_PRODUCT_CANONICALIZATION=ACCOUNT_SCOPED
-REMOTE_STORE_CANONICALIZATION=ACCOUNT_SCOPED
-REMOTE_ID_MAP_OWNER=LOCAL_APPLY_TRANSACTION
-FACT_INBOX_CURSOR_ATOMICITY=PRESERVED
-CONFLICT_CAUSES_COMPLETE_ROLLBACK=YES
+REMOTE_PRODUCT_ID_MAP_OWNER=LOCAL_APPLY_OPERATION
+STORE_CONTRACT_CHANGE=ABSENT
+FACT_INBOX_CURSOR_TRANSACTION=ONE_DRIFT_TRANSACTION
+APPLY_TRANSLATION_AFTER_ROLLBACK=YES
+DIAGNOSTICS_PERSISTENCE_BEST_EFFORT=YES
+RUNNER_FALLBACK_USES_CAUSAL_SNAPSHOT=YES
+SANITIZED_EXCEPTION_CLASS_PROJECTION=NO_MIGRATION
 ACK_REQUIRES_COMMITTED_CURSOR=YES
-HOSTED_CONTRACT_CHANGE=ABSENT
-LOCAL_SCHEMA_CHANGE=ABSENT
-AUTH_ENROLLMENT_CHANGE=ABSENT
+HOSTED_API_CHANGE=ABSENT
+SCHEMA_CHANGE=ABSENT
+DEPENDENCY_CHANGE=ABSENT

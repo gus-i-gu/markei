@@ -227,6 +227,45 @@ void main() {
     expect(query.completedResults, isEmpty);
   });
 
+  testWidgets('Current Sync action shows sanitized exception class only', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 2200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final query = _FakeDiagnosticsQuery(
+      diagnostics: [
+        _event(
+          operation: 'apply12345678',
+          ordinal: 1,
+          phase: 'download-local-apply',
+          code: 'MKS-DNL-006',
+          nativeCode: 'remote-payload-shape-invalid',
+          severity: 'ERROR',
+          outcome: 'notApplied',
+          sanitizedExceptionClass: 'payload-shape-failure',
+        ),
+      ],
+    );
+    final runner = _runner(query: query);
+
+    await tester.pumpWidget(
+      MaterialApp(home: NativeClosurePage(runner: runner)),
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('nativeClosure.Sync')));
+    await tester.tap(find.byKey(const Key('nativeClosure.Sync')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sanitized technical details'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Exception class'), findsOneWidget);
+    expect(find.text('payload-shape-failure'), findsOneWidget);
+    expect(find.textContaining('Exception:'), findsNothing);
+    expect(find.textContaining('SQL'), findsNothing);
+  });
+
   testWidgets('Lifecycle declarations are grouped by operation', (
     tester,
   ) async {
@@ -1203,6 +1242,7 @@ ClosureDiagnosticEventSummary _event({
   String severity = 'INFO',
   required String outcome,
   String trustedResponseState = 'received',
+  String? sanitizedExceptionClass,
 }) {
   return ClosureDiagnosticEventSummary(
     attemptFingerprint: 'attempt-$operation',
@@ -1235,6 +1275,7 @@ ClosureDiagnosticEventSummary _event({
     responseHeadersReceived: false,
     safeAction: 'inspect grouped diagnostics',
     retryable: false,
+    sanitizedExceptionClass: sanitizedExceptionClass,
   );
 }
 
