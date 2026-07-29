@@ -1,95 +1,95 @@
-# I_DSN_CODEX — Procedure-local provenance ownership correction
+# I_DSN_CODEX - C10-GCM03-ST04-R1-C2
 
-> Sequence: FLX-ORD-01 — Ordinary Sequence
-> Role: Codex design evidence
-> Unit: `C10-GCM03-ST04-R1-C1`
-> Branch: `grm-guarded-provisioning-20260727`
-> Baseline / inspected HEAD:
-> `231a76281d0016ee47dd719d3ddc24d422b18c35`
-> Authority: F within synchronized D/E/F plus explicit human GRM-set audit
-> Evidence boundary: procedure-local responsibility and static interface
-> alignment; no Flutter, persistence, protocol, provider, or runtime change
+> Role: Codex design report
+> Unit: `C10-GCM03-ST04-R1-C2`
+> Evidence boundary: repository/static validation and non-mutating fixtures;
+> no provider, persistence, API, synchronization or live Android mutation
 
-## Corrected responsibility map
+## Launcher Responsibility Map
+
+The intended ownership boundary is:
 
 ```text
-GRM-FLUTTER-AND
-  stable human invocation
+Flutter device inventory
+  owns raw machine JSON
 
-I_SCRIPTS.ps1
-  selected-heading lookup
-  one-fence extraction
-  strict-mode execution
+PowerShell JSON parser
+  owns exactly one parse operation
+
+member enumeration
+  owns conversion from top-level JSON array to individual device objects
+
+Android selector
+  owns platform/support/scalar-ID predicates
+
+cardinality guard
+  owns zero/one/multiple target decision
+
+ADB inventory guard
+  binds one selected Flutter ID to one current ADB serial
+
+ADB invocation
+  receives exactly one -s value through an explicit argument vector
+```
+
+The current repository procedure still violates the first collection-to-member
+boundary because the updated human instruction protects `G_SCRIPTS.md`, where
+the owning repair belongs. The equivalent fixture proved the target design:
+member enumeration before filtering and one scalar ADB serial before invocation.
+
+No hard-coded emulator serial was introduced. The stable AVD name remains a
+definition, not a runtime serial.
+
+## Auth0 Responsibility Map
+
+The Auth0 contract remains layered:
+
+```text
+NS_COORDINATES
+  reviewed public input names and values, not secrets
 
 GS-FLUTTER-AND
-  resolved repository/client containment
-  active branch and inspected HEAD
-  short provenance derivation
-  public-coordinate loading
-  branch/ancestry/dirty guards
-  Android target/build/install/launch
+  loads public coordinates and should pass Dart defines / Gradle property
 
-BuildProvenance
-  compile-time validation and safe display
+Gradle manifest placeholders
+  bind Android callback scheme/domain into merged manifest
+
+Android package identity
+  remains com.gusigu.markei
+
+NativeAuthConfiguration
+  validates public inputs and selects Android client ID on Android
+
+Native Auth0 adapter
+  owns interactive login/logout and sanitized exception mapping
 
 NativeClosurePage
-  shared visible public projection
+  exposes Sign in and diagnostics without owning provider configuration
+
+Auth0 dashboard/provider
+  owns external callback/logout/client acceptance and requires human evidence
 ```
 
-The Android procedure now owns its complete producer-consumer graph.
-`GS-FLUTTER-WIN` is byte-identical to its `db17f47` body and owns no Android
-lineage preparation.
+No owning-layer Auth0 defect was proved. No Auth0 source, manifest, Gradle,
+provider or public coordinate model was changed.
 
-## Interface reconciliation
+## Architecture Impact
 
-The audit found one coherent public pipeline:
+The work did not add an Android-only Closure page, alternate auth stack,
+provider fallback, retry path, database mutation, API route, schema migration,
+RLS change or synchronization behavior. The only remaining required source
+repair is the launcher/procedure boundary in a surface that is currently
+protected by the latest human instruction.
 
-```text
-NS coordinate keys
-→ GS-FLUTTER-AND PowerShell variables
-→ Dart defines / Gradle property bridge
-→ NativeAuthConfiguration / BuildProvenance
-→ NativeClosurePage
-```
-
-No adapter or alias was added. Existing names already agree across the
-boundaries. The only surrounding drift was branch metadata in the catalogue
-header and human target guard, which was aligned with the existing
-machine-readable coordinates.
-
-`NS_COORDINATES.md` is now explicitly included in the Android dirty-input
-guard because it participates in the build. This preserves the provenance
-boundary: the inspected source/coordinate set must be clean before a human
-artifact can claim lineage.
-
-## Preserved architecture
-
-Unchanged:
-
-- one shared `NativeClosurePage`;
-- build-provenance validation and display;
-- package `com.gusigu.markei`;
-- native authentication configuration;
-- enrollment, hosted readiness, Sync, Retry, and recovery;
-- Drift/local persistence;
-- API transport and provider state;
-- schema, migrations, RLS, and deployment;
-- application-data-preserving install semantics.
-
-Formal Windows PowerShell parsing and strict-mode execution are
-host-unvalidated because this host has no PowerShell runtime. This blocks
-runtime acceptance but does not create a new architecture decision.
-
-No permanent design memory was edited.
+## Terminals
 
 ```text
-DISPATCH_SCOPE=ONE_SELECTED_GS_FENCE
-WINDOWS_ANDROID_VARIABLE_LEAK=REMOVED
-ANDROID_PROVENANCE_OWNERSHIP=PROCEDURE_LOCAL
-GRM_SOURCE_INTERFACE=ALIGNED_STATIC
-FLUTTER_PROVENANCE_MODEL=UNCHANGED
-AUTH_ENROLL_SYNC_BOUNDARIES=UNCHANGED
-SCHEMA_API_PROVIDER_EXPANSION=ABSENT
-ANDROID_RUNTIME_ACCEPTANCE=HELD_FOR_HUMAN_RETEST
+FLUTTER_INVENTORY_TO_MEMBER_OBJECTS=BLOCKED_BY_PROTECTED_G_SCRIPTS
+ANDROID_MEMBER_TO_ONE_ADB_SERIAL=BLOCKED_BY_PROTECTED_G_SCRIPTS
+HARD_CODED_DEVICE_SERIAL=ABSENT
+AUTH_RESPONSIBILITY_OWNER=AUTHAND-06_RUNTIME_EVIDENCE_GAP
+AUTH_PROVIDER_CONFIGURATION_MUTATION=ABSENT
+API_PERSISTENCE_PROVIDER_SYNC_EXPANSION=ABSENT
+ST04=BLOCKED_PENDING_MAIN_RESTAGING
 GCM03_ST05_AND_LATER=HELD
 ```

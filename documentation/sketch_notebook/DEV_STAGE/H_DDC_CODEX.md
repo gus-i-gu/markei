@@ -1,86 +1,85 @@
-# H_DDC_CODEX — GRM cascade and evidence correction
+# H_DDC_CODEX - C10-GCM03-ST04-R1-C2
 
-> Sequence: FLX-ORD-01 — Ordinary Sequence
-> Role: Codex didactic evidence
-> Unit: `C10-GCM03-ST04-R1-C1`
-> Branch: `grm-guarded-provisioning-20260727`
-> Baseline / inspected HEAD:
-> `231a76281d0016ee47dd719d3ddc24d422b18c35`
-> Authority: E within synchronized D/E/F plus explicit human GRM-set audit
-> Evidence boundary: procedure meaning and static source/coordinate
-> reconciliation; no Windows PowerShell or Android runtime acceptance
+> Role: Codex didactic report
+> Unit: `C10-GCM03-ST04-R1-C2`
+> Evidence boundary: explanation of validated local/static evidence only
 
-## Corrected meaning
+## Device Selection Meaning
 
-The defect demonstrates four separate evidence layers:
+`ConvertFrom-Json` parsing is not the same thing as member enumeration. On the
+observed Windows PowerShell 5.1 host, wrapping the top-level JSON array with
+`@(...)` produced one `System.Object[]` element. `Where-Object` then evaluated
+aggregate member-expanded properties, so one Android value inside the aggregate
+made the whole aggregate look selectable.
+
+That is why this shape appeared:
 
 ```text
-PowerShell text parses
-  ≠ strict-mode variables exist at runtime
-
-one GS fence defines a variable
-  ≠ another independently extracted GS fence can consume it
-
-Flutter accepts MARKEI_BUILD_PROVENANCE
-  ≠ GRM-FLUTTER-AND can derive and pass the value
-
-static procedure correction
-  ≠ installed Android artifact acceptance
+selectedIds=windows,edge,emulator-5554
+adbArgs=-s|windows|edge|emulator-5554|shell|getprop|sys.boot_completed
 ```
 
-`I_SCRIPTS.ps1` selects one Markdown section, extracts one PowerShell fence,
-creates one scriptblock, and executes only that body. A producer in
-`GS-FLUTTER-WIN` is therefore invisible to `GS-FLUTTER-AND`.
-
-## Corrected operator cascade
+The correct learning boundary is:
 
 ```text
-GRM-FLUTTER-AND
-→ I_SCRIPTS.ps1 exact GS-FLUTTER-AND extraction
-→ resolved repository/client containment
-→ active branch
-→ one full inspected HEAD
-→ short provenance derived from that same HEAD
-→ coordinate loading
-→ branch, ancestry and dirty-input guards
-→ MARKEI_BUILD_PROVENANCE build argument
-→ generated APK evidence
-→ installed package evidence
-→ later human visible-provenance comparison
+parse JSON once
+enumerate member objects
+filter Android members
+preserve cardinality
+require one scalar ID
+prove exact ADB serial membership
+then invoke ADB
 ```
 
-The source-facing names were audited rather than renamed. They already match
-the Flutter and Gradle consumers exactly, so inventing aliases would have
-created a second vocabulary rather than fixing the defect.
+Cardinality and scalar identity are separate checks. One selected object is not
+sufficient if its `id` property expands to several strings. One scalar ID is not
+sufficient unless it is exactly present in the current `adb devices` inventory.
 
-The catalogue and coordinate branch labels were also reconciled so the
-machine-readable value, human target guard, and catalogue context no longer
-describe different branches.
+## Sign-In Evidence Ladder
 
-## Evidence distinction
+The `adb.exe: unknown command windows` terminal is launcher/device-selection
+evidence. It happened before clean, dependency resolution, analysis, tests,
+APK build, APK install, application launch and interactive Sign in. Therefore
+it cannot prove an Auth0 regression and could not replace the installed app.
 
-Passed here:
-
-- one producer before consumers inside the Android fence;
-- one-fence extraction;
-- complete GRM-to-catalogue and coordinate-name alignment;
-- Flutter/Gradle public-variable and package-name alignment.
-
-Still required on the Windows operator host:
-
-- Windows PowerShell 5.1 AST parse;
-- strict-mode prefix execution;
-- the full human `GRM-FLUTTER-AND` retest;
-- visible provenance and consolidated Diagnostics comparison.
-
-No permanent didactic memory was edited.
+The Android sign-in evidence ladder remains:
 
 ```text
-PARSE_NOT_DATA_FLOW=VISIBLE
-GS_FENCE_SCOPE=VISIBLE
-PRODUCER_BEFORE_CONSUMER=PASS_STATIC
-PRIOR_FLUTTER_PROVENANCE_MEANING=RETAINED
-SOURCE_VARIABLE_VOCABULARY=ALIGNED
-ANDROID_RUNTIME_ACCEPTANCE=HELD_FOR_HUMAN_RETEST
-GCM03_ST05=HELD
+repository static contract
+build inputs and Dart defines
+Gradle manifest placeholders
+merged callback manifest
+generated APK provenance
+installed package identity
+visible app provenance
+human-operated Sign in terminal
+provider/dashboard correlation when separately authorized
+```
+
+This run validated the static side through history inspection, source scan,
+focused tests, full Flutter tests, analyzer, debug APK build and generated
+manifest inspection. It did not execute live authentication.
+
+## Auth Classification
+
+No static/test-backed Auth0 defect was proved. The proper classification is:
+
+```text
+AUTHAND-06=INSUFFICIENT_RUNTIME_SYMPTOM_EVIDENCE
+```
+
+This does not mean sign-in works. It means the available evidence does not yet
+identify a source/configuration defect. Runtime acceptance remains held for a
+later human-operated run.
+
+## Terminals
+
+```text
+JSON_PARSE_NOT_MEMBER_ENUMERATION=VISIBLE
+CARDINALITY_AND_SCALAR_IDENTITY=VISIBLE
+ADB_TERMINAL_IS_AUTH_EVIDENCE=NO
+AUTH_STATIC_CONTRACT=VALIDATED
+AUTH_RUNTIME_ACCEPTANCE=HELD
+ST04=BLOCKED_PENDING_MAIN_RESTAGING
+GCM03_ST05_AND_LATER=HELD
 ```
