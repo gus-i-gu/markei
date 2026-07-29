@@ -1,7 +1,17 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+val markeiDbaProperties = Properties().apply {
+    val propertiesFile =
+        rootProject.projectDir.parentFile.resolve(".markei_dba_gradle.properties")
+    if (propertiesFile.isFile) {
+        propertiesFile.inputStream().use { load(it) }
+    }
 }
 
 android {
@@ -22,8 +32,15 @@ android {
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        val debugAuth0Domain =
+            markeiDbaProperties.getProperty("MARKEI_AUTH0_DOMAIN")
+                ?.trim()
+                ?.takeIf { it.isNotEmpty() }
+                ?: "auth0.example.invalid"
         manifestPlaceholders["auth0Domain"] =
-            providers.gradleProperty("MARKEI_AUTH0_DOMAIN").orElse("auth0.example.invalid").get()
+            providers.gradleProperty("MARKEI_AUTH0_DOMAIN")
+                .orElse(debugAuth0Domain)
+                .get()
         manifestPlaceholders["auth0Scheme"] = "https"
     }
 

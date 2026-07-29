@@ -55,8 +55,9 @@ the matching `GS-*` section of `G_SCRIPTS.md`.
 | `GRM-BUILD-01`    | Sync API validation                     |
 | `GRM-BUILD-02`    | Flutter-client validation               |
 | `GRM-FLUTTER-WIN` | Windows Closure build/run               |
-| `GRM-FLUTTER-DEBUG` | Windows Closure debugger preparation  |
+| `GRM-FLUTTER-DBW` | Windows Closure debugger preparation    |
 | `GRM-FLUTTER-AND` | Android Closure build/install/run       |
+| `GRM-FLUTTER-DBA` | Android Closure debugger preparation    |
 
 ## 2. Canonical five-file system
 
@@ -438,8 +439,9 @@ allowed.
 | `GRM-BUILD-01`      | `GS-BUILD-01`         | Validate Sync API                  |
 | `GRM-BUILD-02`      | `GS-BUILD-02`         | Validate Flutter clients           |
 | `GRM-FLUTTER-WIN`   | `GS-FLUTTER-WIN`      | Build/run Windows Closure          |
-| `GRM-FLUTTER-DEBUG` | `GS-FLUTTER-DEBUG`    | Prepare VS Code Windows debugging  |
+| `GRM-FLUTTER-DBW`   | `GS-FLUTTER-DBW`      | Prepare VS Code Windows debugging  |
 | `GRM-FLUTTER-AND`   | `GS-FLUTTER-AND`      | Build/install/run Android Closure  |
+| `GRM-FLUTTER-DBA`   | `GS-FLUTTER-DBA`      | Prepare VS Code Android debugging  |
 
 ### `GRM-BUILD-01`
 
@@ -459,10 +461,10 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-FLUTTER-WIN"
 ```
 
-### `GRM-FLUTTER-DEBUG`
+### `GRM-FLUTTER-DBW`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-FLUTTER-DEBUG"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-FLUTTER-DBW"
 ```
 
 ### `GRM-FLUTTER-AND`
@@ -477,3 +479,16 @@ path, size and SHA-256, installs package `com.gusigu.markei` while preserving
 application data, launches it on the selected Android target, and then stops
 for human verification of the provenance and consolidated Diagnostics surface.
 The APK hash alone is not installed-package proof.
+
+### `GRM-FLUTTER-DBA`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-FLUTTER-DBA"
+```
+
+Prepares exactly one supported Android target and a guarded Android debug
+build, then leaves launch ownership with the tracked VS Code configuration
+`Markei Android Closure (debug)`. Select that configuration and press `F5` to
+open Markei under the Dart debugger with breakpoints and the Debug Console.
+The procedure preserves application data and does not perform Sign in, Enroll,
+Sync, Retry, recovery, or provider mutation.

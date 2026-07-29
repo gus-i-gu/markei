@@ -9,10 +9,10 @@
             "program": "${workspaceFolder}/clients/markei_flutter/lib/main.dart",
             "deviceId": "windows",
             "flutterMode": "debug",
-            "preLaunchTask": "Markei: prepare Windows Closure debug",
+            "preLaunchTask": "Markei: prepare Windows Closure debug (DBW)",
             "postDebugTask": "Markei: restore Windows Closure release callback",
             "toolArgs": [
-                "--dart-define-from-file=.markei_debug_defines.json"
+                "--dart-define-from-file=.markei_dbw_defines.json"
             ],
             "env": {
                 "VCPKG_ROOT": "C:\\vcpkg",
@@ -22,6 +22,20 @@
                 "CMAKE_PREFIX_PATH": "C:\\vcpkg\\installed\\x64-windows",
                 "cpprestsdk_DIR": "C:\\vcpkg\\installed\\x64-windows\\share\\cpprestsdk"
             }
+        },
+        {
+            "name": "Markei Android Closure (debug)",
+            "type": "dart",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/clients/markei_flutter",
+            "program": "${workspaceFolder}/clients/markei_flutter/lib/main.dart",
+            "deviceId": "android",
+            "flutterMode": "debug",
+            "preLaunchTask": "Markei: prepare Android Closure debug (DBA)",
+            "toolArgs": [
+                "--dart-define-from-file=.markei_dba_defines.json"
+            ],
+            "console": "debugConsole"
         }
     ]
 }

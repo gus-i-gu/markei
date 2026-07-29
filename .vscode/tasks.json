@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Markei: prepare Windows Closure debug",
+            "label": "Markei: prepare Windows Closure debug (DBW)",
             "type": "process",
             "command": "powershell.exe",
             "args": [
@@ -12,7 +12,25 @@
                 "-File",
                 "${workspaceFolder}\\documentation\\I_SCRIPTS.ps1",
                 "-Procedure",
-                "GS-FLUTTER-DEBUG"
+                "GS-FLUTTER-DBW"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Markei: prepare Android Closure debug (DBA)",
+            "type": "process",
+            "command": "powershell.exe",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\documentation\\I_SCRIPTS.ps1",
+                "-Procedure",
+                "GS-FLUTTER-DBA"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

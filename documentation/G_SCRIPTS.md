@@ -2862,7 +2862,7 @@ GRM-GIT-01
 → GRM-HOST-01
 → GRM-AUTH-01
 → GRM-FLUTTER-WIN
-→ GRM-FLUTTER-DEBUG
+→ GRM-FLUTTER-DBW
 → launch `Markei Windows Closure (debug)` with F5
 → Sign in under the required breakpoint; do not Enroll
 → acquire one fresh raw user access token through the established secure path
@@ -3115,7 +3115,7 @@ resulting release executable with the mandatory Closure Dart definition. If the
 no Gate action may continue. Launching the client does not authorize Enroll,
 Query, Retry, or Sync; those remain separate human actions.
 
-### `GS-FLUTTER-DEBUG` — Prepare VS Code Windows Closure debugging
+### `GS-FLUTTER-DBW` — Prepare VS Code Windows Closure debugging
 
 Run from anywhere inside the repository before using VS Code `F5`. This
 procedure closes the gap between a successful PowerShell build and an
@@ -3256,7 +3256,7 @@ if ($RunningMarkei.Count -gt 0) {
 
 $DebugDefinesPath = Join-Path `
     $ClientRoot `
-    ".markei_debug_defines.json"
+    ".markei_dbw_defines.json"
 $DebugDefines = [ordered]@{
     MARKEI_NATIVE_CLOSURE_SURFACE = "true"
     MARKEI_AUTH0_DOMAIN = $Auth0Domain
@@ -3276,7 +3276,7 @@ if (-not (Test-Path -LiteralPath $DebugDefinesPath -PathType Leaf)) {
 
 $IgnoreResult = & git -C $RepositoryRoot check-ignore `
     --quiet `
-    -- "clients/markei_flutter/.markei_debug_defines.json"
+    -- "clients/markei_flutter/.markei_dbw_defines.json"
 if ($LASTEXITCODE -ne 0) {
     throw "The local Flutter debug define file is not ignored by Git."
 }
@@ -3304,7 +3304,7 @@ try {
         )
         flutter build windows `
             --release `
-            --dart-define-from-file=".markei_debug_defines.json"
+            --dart-define-from-file=".markei_dbw_defines.json"
         if ($LASTEXITCODE -ne 0) {
             throw "Windows Closure Release prerequisite build failed."
         }
@@ -3324,7 +3324,7 @@ try {
 
     flutter build windows `
         --debug `
-        --dart-define-from-file=".markei_debug_defines.json"
+        --dart-define-from-file=".markei_dbw_defines.json"
     if ($LASTEXITCODE -ne 0) {
         throw "Windows Closure Debug build failed."
     }
@@ -3384,14 +3384,14 @@ Write-Host "4. Set the required breakpoint and press F5."
 Write-Host "5. Stop normally; VS Code restores the Release callback."
 ```
 
-`GS-FLUTTER-DEBUG` does not call `flutter clean` or remove the shared CMake
+`GS-FLUTTER-DBW` does not call `flutter clean` or remove the shared CMake
 tree. When Release is absent it creates the Release callback-restoration
 baseline automatically, then builds Debug beside it. When Release already
 exists it is not rebuilt. In both cases the procedure proves the Release
 executable's SHA-256 is unchanged by the Debug build.
 
 The only local configuration artifact it writes is
-`clients/markei_flutter/.markei_debug_defines.json`, which is excluded by
+`clients/markei_flutter/.markei_dbw_defines.json`, which is excluded by
 `.gitignore`. It contains reviewed public coordinates, not tokens, passwords,
 subjects, Device identifiers, or connection strings. Never add a raw access
 token to this file or to `.vscode/launch.json`.
@@ -3856,6 +3856,455 @@ Auth0 Android application must already allow the callback/logout URI derived
 from package `com.gusigu.markei`; this procedure does not modify Auth0.
 Launching the client does not authorize Enroll, Query, Retry, recovery, storage
 clear, sign-out, or Sync.
+
+### `GS-FLUTTER-DBA` — Prepare VS Code Android Closure debugging
+
+Run from anywhere inside the repository before using VS Code `F5`. This
+procedure combines the guarded Android target selection from
+`GS-FLUTTER-AND` with the ignored-local-configuration and tracked VS Code
+launch model used by `GS-FLUTTER-DBW`. It reuses one connected supported
+Android target or starts the configured AVD, proves exactly one safe ADB
+serial, writes only reviewed public Closure coordinates to ignored local
+files, and validates one Android Debug APK without installing or launching it
+outside the debugger.
+
+The repository root must be the VS Code workspace. Select the tracked launch
+configuration `Markei Android Closure (debug)`. Its pre-launch task runs this
+procedure; VS Code then performs the debug install/launch and owns the Dart
+debugger, breakpoints, variables, and Debug Console. The procedure preserves
+application data and neither signs in nor performs Enroll, Query, Retry,
+recovery, or Sync.
+
+```powershell
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+$ClientRoot = Join-Path $RepositoryRoot "clients\markei_flutter"
+if (-not (Test-Path (Join-Path $ClientRoot "pubspec.yaml"))) {
+    throw "Flutter client not found at $ClientRoot."
+}
+
+$RepositoryDirectory = Get-Item -LiteralPath $RepositoryRoot
+$ClientDirectory = Get-Item -LiteralPath $ClientRoot
+$RepositoryRoot = $RepositoryDirectory.FullName
+$ResolvedClientRoot = $ClientDirectory.FullName
+$CandidateDirectory = $ClientDirectory
+$ClientInsideRepository = $false
+while ($null -ne $CandidateDirectory) {
+    if ([string]::Equals(
+        $CandidateDirectory.FullName.TrimEnd([char[]]@('\', '/')),
+        $RepositoryDirectory.FullName.TrimEnd([char[]]@('\', '/')),
+        [System.StringComparison]::OrdinalIgnoreCase
+    )) {
+        $ClientInsideRepository = $true
+        break
+    }
+    $CandidateDirectory = $CandidateDirectory.Parent
+}
+if (-not $ClientInsideRepository) {
+    throw "Resolved Flutter client is outside the repository root."
+}
+
+$LaunchPath = Join-Path $RepositoryRoot ".vscode\launch.json"
+$TasksPath = Join-Path $RepositoryRoot ".vscode\tasks.json"
+if (-not (Test-Path -LiteralPath $LaunchPath -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $TasksPath -PathType Leaf)) {
+    throw "Tracked VS Code Android Debug launch/task configuration is incomplete."
+}
+
+$Branch = (& git -C $RepositoryRoot branch --show-current).Trim()
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($Branch)) {
+    throw "Could not determine the active Git branch."
+}
+$InspectedHead = (
+    & git -C $RepositoryRoot rev-parse HEAD
+).Trim().ToLowerInvariant()
+if ($LASTEXITCODE -ne 0 -or $InspectedHead -notmatch '^[a-f0-9]{40}$') {
+    throw "Could not determine the inspected Git HEAD."
+}
+$BuildProvenance = $InspectedHead.Substring(0, 12)
+if ($BuildProvenance -notmatch '^[a-f0-9]{7,12}$') {
+    throw "Could not derive reviewed short HEAD for build provenance."
+}
+
+Write-Host "Repository root: $RepositoryRoot"
+Write-Host "Flutter client root: $ResolvedClientRoot"
+Write-Host "Active branch: $Branch"
+Write-Host "Inspected HEAD: $InspectedHead"
+
+$NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
+if (-not (Test-Path -LiteralPath $NsPath -PathType Leaf)) {
+    throw "Coordinate file not found at $NsPath."
+}
+$NsText = Get-Content -LiteralPath $NsPath -Raw
+
+function Get-NsCoordinate {
+    param([Parameter(Mandatory)] [string]$Name)
+    $CoordinateMatches = [regex]::Matches(
+        $NsText,
+        "(?m)^$([regex]::Escape($Name)):\s*(.*?)\s*$"
+    )
+    if ($CoordinateMatches.Count -ne 1) {
+        throw "Expected exactly one '$Name' coordinate in $NsPath."
+    }
+    $Value = $CoordinateMatches[0].Groups[1].Value.Trim()
+    if ([string]::IsNullOrWhiteSpace($Value) -or
+        $Value -match '^<[^>]+>$') {
+        throw "Replace the '$Name' placeholder in $NsPath."
+    }
+    return $Value
+}
+
+$Auth0Domain = Get-NsCoordinate "Auth0TenantDomain"
+$Auth0Audience = Get-NsCoordinate "Auth0Audience"
+$AndroidClientId = Get-NsCoordinate "Auth0AndroidClientId"
+$HostedOrigin = Get-NsCoordinate "RenderPublicOrigin"
+$AndroidAvdName = Get-NsCoordinate "AndroidAvdName"
+$ExpectedBranch = Get-NsCoordinate "RepositoryBranch"
+$RequiredPublishedAncestor = "ec96f93d71efd261adc2b3b75a17453130e437a0"
+
+if ($Auth0Domain -notmatch '^[A-Za-z0-9.-]+$') {
+    throw "Auth0 tenant domain is not safe for the local Gradle property file."
+}
+if ($Branch -ne $ExpectedBranch) {
+    throw "Active branch '$Branch' does not match reviewed coordinate '$ExpectedBranch'."
+}
+& git -C $RepositoryRoot merge-base `
+    --is-ancestor `
+    $RequiredPublishedAncestor `
+    $InspectedHead
+if ($LASTEXITCODE -ne 0) {
+    throw "Inspected HEAD does not contain the required published Android Closure baseline."
+}
+
+$DirtyOverlap = @(
+    & git -C $RepositoryRoot status --porcelain -- `
+        ".gitignore" `
+        ".vscode/launch.json" `
+        ".vscode/tasks.json" `
+        "clients/markei_flutter/lib" `
+        "clients/markei_flutter/android" `
+        "clients/markei_flutter/pubspec.yaml" `
+        "clients/markei_flutter/test" `
+        "documentation/GRM.md" `
+        "documentation/G_SCRIPTS.md" `
+        "documentation/I_SCRIPTS.ps1" `
+        "documentation/NS_COORDINATES.md"
+)
+if ($DirtyOverlap.Count -gt 0) {
+    $DirtyOverlap | ForEach-Object { Write-Host $_ }
+    throw "Dirty source overlap affects Android debugger preparation inputs."
+}
+
+flutter doctor -v
+
+$ConfigurationReady = [ordered]@{
+    Auth0Domain   = -not [string]::IsNullOrWhiteSpace($Auth0Domain)
+    Auth0Audience = -not [string]::IsNullOrWhiteSpace($Auth0Audience)
+    AndroidClient = -not [string]::IsNullOrWhiteSpace($AndroidClientId)
+    HostedOrigin  = -not [string]::IsNullOrWhiteSpace($HostedOrigin)
+    AndroidAvd    = -not [string]::IsNullOrWhiteSpace($AndroidAvdName)
+}
+[pscustomobject]$ConfigurationReady
+
+if ($ConfigurationReady.Values -contains $false) {
+    throw "One or more Android Closure coordinates could not be loaded."
+}
+
+function Get-SupportedAndroidDevices {
+    $FlutterDevicesJson = (& flutter devices --machine 2>&1 | Out-String)
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not inspect Flutter devices."
+    }
+    try {
+        $ParsedFlutterDevices = $FlutterDevicesJson | ConvertFrom-Json
+    }
+    catch {
+        throw "Flutter returned an unreadable device inventory."
+    }
+
+    $FlutterDevices = @()
+    if ($null -ne $ParsedFlutterDevices) {
+        if ($ParsedFlutterDevices -is [System.Array]) {
+            foreach ($ParsedFlutterDevice in $ParsedFlutterDevices) {
+                $FlutterDevices += ,$ParsedFlutterDevice
+            }
+        }
+        else {
+            $FlutterDevices = @($ParsedFlutterDevices)
+        }
+    }
+
+    return @(
+        $FlutterDevices | Where-Object {
+            $TargetPlatformProperty = $_.PSObject.Properties["targetPlatform"]
+            $SupportedProperty = $_.PSObject.Properties["isSupported"]
+            $IdProperty = $_.PSObject.Properties["id"]
+            $null -ne $TargetPlatformProperty -and
+                $TargetPlatformProperty.Value -is [string] -and
+                $TargetPlatformProperty.Value -match "^android" -and
+                $null -ne $SupportedProperty -and
+                $SupportedProperty.Value -is [bool] -and
+                $SupportedProperty.Value -eq $true -and
+                $null -ne $IdProperty -and
+                $IdProperty.Value -is [string] -and
+                -not [string]::IsNullOrWhiteSpace($IdProperty.Value) -and
+                $IdProperty.Value -notmatch '[\s\x00-\x1F\x7F]'
+        }
+    )
+}
+
+function Assert-AdbTargetSerial {
+    param(
+        [Parameter(Mandatory)] [string]$AdbExecutable,
+        [Parameter(Mandatory)] [object]$CandidateId
+    )
+
+    if ($CandidateId -isnot [string] -or
+        [string]::IsNullOrWhiteSpace($CandidateId) -or
+        $CandidateId -match '[\s\x00-\x1F\x7F]' -or
+        $CandidateId -eq "windows") {
+        throw "Selected Android device ID is not one safe scalar serial."
+    }
+
+    $AdbInventoryLines = @(& $AdbExecutable devices 2>&1)
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not inspect the Android Debug Bridge device inventory."
+    }
+    $MatchingSerials = @(
+        $AdbInventoryLines | ForEach-Object {
+            $InventoryMatch = [regex]::Match(
+                [string]$_,
+                '^(?<serial>[^\s]+)\s+device$'
+            )
+            if ($InventoryMatch.Success -and
+                $InventoryMatch.Groups["serial"].Value -ceq $CandidateId) {
+                $InventoryMatch.Groups["serial"].Value
+            }
+        }
+    )
+    if ($MatchingSerials.Count -ne 1) {
+        throw (
+            "Selected Android device ID was not exactly present as one " +
+            "ready ADB serial."
+        )
+    }
+    return [string]$MatchingSerials[0]
+}
+
+$AndroidDevices = @(Get-SupportedAndroidDevices)
+if ($AndroidDevices.Count -eq 0) {
+    $AndroidSdkRoot = if (
+        -not [string]::IsNullOrWhiteSpace($env:ANDROID_SDK_ROOT)
+    ) {
+        $env:ANDROID_SDK_ROOT
+    }
+    else {
+        Join-Path $env:LOCALAPPDATA "Android\Sdk"
+    }
+    $EmulatorExe = Join-Path $AndroidSdkRoot "emulator\emulator.exe"
+    if (-not (Test-Path -LiteralPath $EmulatorExe -PathType Leaf)) {
+        throw "Android emulator executable was not found at $EmulatorExe."
+    }
+    $KnownAvds = @(& $EmulatorExe -list-avds)
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not inspect installed Android Virtual Devices."
+    }
+    if ($KnownAvds -notcontains $AndroidAvdName) {
+        throw "Configured Android AVD '$AndroidAvdName' is not installed."
+    }
+
+    Write-Host "Starting configured Android AVD: $AndroidAvdName"
+    Start-Process -FilePath $EmulatorExe `
+        -ArgumentList @("-avd", $AndroidAvdName)
+
+    $DeviceDeadline = [DateTime]::UtcNow.AddMinutes(3)
+    do {
+        Start-Sleep -Seconds 3
+        $AndroidDevices = @(Get-SupportedAndroidDevices)
+        if ($AndroidDevices.Count -gt 1) {
+            $AndroidDevices |
+                Select-Object name, id, targetPlatform, sdk |
+                Format-Table -AutoSize
+            throw "Multiple Android devices appeared while starting the configured AVD."
+        }
+    } until (
+        $AndroidDevices.Count -eq 1 -or
+        [DateTime]::UtcNow -ge $DeviceDeadline
+    )
+    if ($AndroidDevices.Count -ne 1) {
+        throw "Configured Android AVD did not become available within 3 minutes."
+    }
+
+    $AndroidSdkRoot = if (
+        -not [string]::IsNullOrWhiteSpace($env:ANDROID_SDK_ROOT)
+    ) {
+        $env:ANDROID_SDK_ROOT
+    }
+    else {
+        Join-Path $env:LOCALAPPDATA "Android\Sdk"
+    }
+    $AdbExe = Join-Path $AndroidSdkRoot "platform-tools\adb.exe"
+    if (-not (Test-Path -LiteralPath $AdbExe -PathType Leaf)) {
+        throw "Android Debug Bridge was not found at $AdbExe."
+    }
+    $BootDeviceId = Assert-AdbTargetSerial `
+        -AdbExecutable $AdbExe `
+        -CandidateId $AndroidDevices[0].id
+    $BootDeadline = [DateTime]::UtcNow.AddMinutes(3)
+    do {
+        Start-Sleep -Seconds 2
+        $BootProbeArguments = @(
+            "-s"
+            $BootDeviceId
+            "shell"
+            "getprop"
+            "sys.boot_completed"
+        )
+        $BootCompleted = (
+            & $AdbExe @BootProbeArguments 2>$null
+        ).Trim()
+    } until (
+        $BootCompleted -eq "1" -or
+        [DateTime]::UtcNow -ge $BootDeadline
+    )
+    if ($BootCompleted -ne "1") {
+        throw "Configured Android AVD did not finish booting within 3 minutes."
+    }
+}
+
+if ($AndroidDevices.Count -ne 1) {
+    $AndroidDevices |
+        Select-Object name, id, targetPlatform, sdk |
+        Format-Table -AutoSize
+    throw "Leave exactly one supported Android target connected and rerun."
+}
+
+$SelectedAndroidDevice = $AndroidDevices[0]
+$SelectedAndroidDevice |
+    Select-Object name, id, targetPlatform, sdk |
+    Format-List
+$AndroidSdkRoot = if (
+    -not [string]::IsNullOrWhiteSpace($env:ANDROID_SDK_ROOT)
+) {
+    $env:ANDROID_SDK_ROOT
+}
+else {
+    Join-Path $env:LOCALAPPDATA "Android\Sdk"
+}
+$AdbExe = Join-Path $AndroidSdkRoot "platform-tools\adb.exe"
+if (-not (Test-Path -LiteralPath $AdbExe -PathType Leaf)) {
+    throw "Android Debug Bridge was not found at $AdbExe."
+}
+$SelectedAndroidDeviceId = Assert-AdbTargetSerial `
+    -AdbExecutable $AdbExe `
+    -CandidateId $SelectedAndroidDevice.id
+
+$DebugDefinesPath = Join-Path `
+    $ResolvedClientRoot `
+    ".markei_dba_defines.json"
+$DebugDefines = [ordered]@{
+    MARKEI_NATIVE_CLOSURE_SURFACE = "true"
+    MARKEI_BUILD_PROVENANCE = $BuildProvenance
+    MARKEI_AUTH0_DOMAIN = $Auth0Domain
+    MARKEI_AUTH0_AUDIENCE = $Auth0Audience
+    MARKEI_AUTH0_ANDROID_CLIENT_ID = $AndroidClientId
+    MARKEI_HOSTED_HTTPS_ORIGIN = $HostedOrigin
+}
+$DebugDefinesJson = $DebugDefines | ConvertTo-Json
+[IO.File]::WriteAllText(
+    $DebugDefinesPath,
+    $DebugDefinesJson,
+    [Text.UTF8Encoding]::new($false)
+)
+
+$DebugGradlePropertiesPath = Join-Path `
+    $ResolvedClientRoot `
+    ".markei_dba_gradle.properties"
+$DebugGradleProperties = "MARKEI_AUTH0_DOMAIN=$Auth0Domain`n"
+[IO.File]::WriteAllText(
+    $DebugGradlePropertiesPath,
+    $DebugGradleProperties,
+    [Text.UTF8Encoding]::new($false)
+)
+
+$IgnoredDebugFiles = @(
+    "clients/markei_flutter/.markei_dba_defines.json"
+    "clients/markei_flutter/.markei_dba_gradle.properties"
+)
+foreach ($IgnoredDebugFile in $IgnoredDebugFiles) {
+    & git -C $RepositoryRoot check-ignore --quiet -- $IgnoredDebugFile
+    if ($LASTEXITCODE -ne 0) {
+        throw "Android Debug local file is not ignored: $IgnoredDebugFile"
+    }
+}
+
+Push-Location $ResolvedClientRoot
+try {
+    flutter pub get
+    if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
+
+    flutter build apk `
+        --debug `
+        --dart-define-from-file=".markei_dba_defines.json"
+    if ($LASTEXITCODE -ne 0) {
+        throw "Android Closure Debug prerequisite build failed."
+    }
+
+    $AndroidArtifact = Join-Path $PWD `
+        "build\app\outputs\flutter-apk\app-debug.apk"
+    if (-not (Test-Path -LiteralPath $AndroidArtifact -PathType Leaf)) {
+        throw "Debug app-debug.apk was not found at $AndroidArtifact."
+    }
+    $AndroidArtifactItem = Get-Item -LiteralPath $AndroidArtifact
+    $AndroidArtifactHash = Get-FileHash `
+        -LiteralPath $AndroidArtifact `
+        -Algorithm SHA256
+}
+finally {
+    Pop-Location
+}
+
+[pscustomobject][ordered]@{
+    DebugPreparation = "ready"
+    AndroidDevice = $true
+    AndroidDeviceId = $SelectedAndroidDeviceId
+    AdbSerialGuard = "exactly-one"
+    LocalDefinesIgnored = $true
+    LocalGradlePropertiesIgnored = $true
+    DebugBuild = $true
+    DebugArtifactBytes = $AndroidArtifactItem.Length
+    DebugArtifactSha256 = $AndroidArtifactHash.Hash
+    BuildProvenance = $BuildProvenance
+    DebugLaunch = "configured-for-vscode-f5"
+}
+
+Write-Host ""
+Write-Host "Next:"
+Write-Host "1. Open the Markei repository root in VS Code."
+Write-Host "2. Open Run and Debug."
+Write-Host "3. Select 'Markei Android Closure (debug)'."
+Write-Host "4. Set the required breakpoint and press F5."
+Write-Host "5. Keep exactly this Android target connected during launch."
+Write-Host "6. Stop normally when the bounded debug observation is complete."
+```
+
+`GS-FLUTTER-DBA` does not call `flutter clean`, uninstall the package, clear
+application data, or use ADB to install/launch outside the debugger. The
+tracked VS Code launch uses the Android device selector only after the
+pre-launch procedure has proved that exactly one supported Android target and
+one matching ready ADB serial exist.
+
+The only local configuration artifacts it writes are
+`clients/markei_flutter/.markei_dba_defines.json` and
+`clients/markei_flutter/.markei_dba_gradle.properties`; both are excluded by
+`.gitignore`. They contain reviewed public coordinates and build provenance,
+not tokens, passwords, subjects, Account/Device identifiers, or connection
+strings. Never add a raw access token to either file or to
+`.vscode/launch.json`.
 
 ## 7. Historical diagnostics and mutation record
 
