@@ -2443,7 +2443,7 @@ try {
         param([Parameter(Mandatory)] [string]$Sql)
 
         $Output = $Sql |
-            & $SqliteCli -readonly -uri $CopiedDatabaseUri 2>&1
+            & $SqliteCli -readonly $CopiedDatabaseUri 2>&1
         $ExitCode = $LASTEXITCODE
         if ($ExitCode -ne 0) {
             $Output
@@ -2858,7 +2858,7 @@ try {
         param([Parameter(Mandatory)] [string]$Sql)
 
         $Output = $Sql |
-            & $SqliteCli -readonly -uri $CopiedDatabaseUri 2>&1
+            & $SqliteCli -readonly $CopiedDatabaseUri 2>&1
         $ExitCode = $LASTEXITCODE
         if ($ExitCode -ne 0) {
             $Output
