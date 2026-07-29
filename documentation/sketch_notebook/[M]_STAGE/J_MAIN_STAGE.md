@@ -1,20 +1,26 @@
 # J_MAIN_STAGE — Cycle 10 active reconciliation
 
-> Sequence: FLX-PRM-04 C10-GCM03-ST04-R1 reconciliation and correction staging
+> Sequence: FLX-PRM-04 C10-GCM03-ST04/ST05 closure and ST06 preflight
 > Role: Main Chat
 > Branch: `grm-guarded-provisioning-20260727`
-> Reconciliation baseline: `231a76281d0016ee47dd719d3ddc24d422b18c35`
+> Reconciliation baseline: `65c9ab56079c7a9866910db9037c28045efd1d34`
 > Authority: explicit human-directed Main reconciliation
 > Writable surface: `REC_DIAGNOSTICS.md`, mutable J recovery prefix, and
 > append-only `Legacy_Progress`
-> Evidence boundary: sanitized Windows preflight and post-Sync UI evidence,
-> one explicitly authorized ordinary Sync, one `GRM-NEON-11` repeatable
-> read-only provider postflight ending in `ROLLBACK`, and matching sanitized
-> Render upload/download/acknowledgement request lifecycles; no Retry, recovery,
-> second Device, production, retention, snapshot or rebootstrap claim
+> Evidence boundary: accepted GCM02 same-Device closure; frozen Windows
+> sequence-2 candidate; C3 actual-fence/ADB validation; human Android
+> build/install/launch with visible matching provenance; Android local
+> pre-enrollment Diagnostics before and after one read-only refresh; ordinary
+> Android Sign in with authenticated client projection; two explicitly
+> human-triggered hosted-connection checks after cold boot, preserving one
+> timeout-before-response and one later HTTP-200 hosted-connection-ready
+> terminal; no Android enrollment, Sync, fresh two-Device provider inventory,
+> production, retention, snapshot or rebootstrap claim
 > Status: **CYCLE 10 OPEN; GCM02 CLOSED AT HOSTED SAME-DEVICE SCOPE;
-> GCM03 ST04 PARITY SOURCE LOCALLY VALIDATED; ANDROID GRM VARIABLE CASCADE
-> BLOCKED; CORRECTION REQUIRED BEFORE HUMAN RETEST; ST05+ HELD**
+> GCM03 ST04 PASSED AT BOUNDED ANDROID RUNTIME/PRE-ENROLLMENT SCOPE;
+> ST05 PASSED AT CLIENT AUTHENTICATION SCOPE; ST06 CLIENT HOSTED READINESS
+> PASSED AFTER COLD-START WARMUP; READ-ONLY PROVIDER BASELINE NEXT;
+> ENROLLMENT AND SYNC STILL HELD**
 
 ## 1. Recovery entrypoint
 
@@ -50,7 +56,7 @@ Retain these ownership boundaries:
 ```text
 Repository: gus-i-gu/markei
 Active branch: grm-guarded-provisioning-20260727
-Current reconciliation baseline: 231a76281d0016ee47dd719d3ddc24d422b18c35
+Current reconciliation baseline: 65c9ab56079c7a9866910db9037c28045efd1d34
 Cycle: 10
 Active closure unit: MCG-02 / user-facing GCM-02
 Latest completed corrective unit: C10-GCM02-S12-ERR-04 recovery-boundary and
@@ -59,12 +65,15 @@ Latest accepted gate: Gate 12.7 corrected single-client control
 Latest completed presentation unit: C10-GCM02-S12-DIAG-01
 Latest completed evidence phase: C10-GCM02-S12-ST10 sanitized Render
 correlation and Gate-12.10 terminal classification
-Latest materialized interruption: C10-GCM03-ST04-R1 shared Android Closure
-parity and artifact-provenance evidence
-Active corrective unit: C10-GCM03-ST04-R1-C1 Android GRM
-provenance-variable cascade correction
-Active phase: GCM03 ST04 remains blocked before human retest; the Windows
-candidate member is frozen and no client/provider mutation is authorized
+Latest completed correction: C10-GCM03-ST04-R1-C3 Main-owned Android selector
+repair validation
+Latest human evidence: Android build/install/launch at visible provenance
+65c9ab56079c, local pre-enrollment Diagnostics, authenticated client state,
+and hosted readiness after one preserved cold-start timeout and one later
+ready HTTP-200 attempt
+Active phase: GCM03 ST06 read-only provider-baseline preflight; the client
+hosted-readiness prerequisite is satisfied, while the Windows candidate
+member remains frozen and enrollment/Sync are not yet authorized
 ```
 
 The branch contains the GRM execution interface, hosted Sync
@@ -222,23 +231,34 @@ evidence order; it does not authorize enrollment or Sync.
   worktree, run read-only host readiness, and use `GRM-NEON-11` only if Main
   requires a fresh pre-enrollment provider inventory. Expected pre-enrollment
   payload baseline remains the accepted GCM02 `1/1/1`, with one active Device.
-- [ ] **GCM03.3 — Android environment and client check.** Run canonical
+  **Partial:** Android artifact lineage `65c9ab56079c` is proved. The client
+  hosted-readiness prerequisite passed after one preserved cold-start
+  `timeout-before-response` attempt and one later
+  `hosted-connection-ready`/HTTP-200 attempt. A fresh read-only provider
+  baseline remains required before Enroll.
+- [x] **GCM03.3 — Android environment and client check.** Run canonical
   `GRM-FLUTTER-AND` / `GS-FLUTTER-AND` from the same published checkout.
   Require Flutter/Android toolchain readiness, exactly one supported Android
   target, configured AVD boot where needed, successful Closure build/install/
   launch, and the same public Auth0/Render coordinate lineage. This step must
-  not sign in, enroll or Sync implicitly. **Current blocker:** commit
-  `231a762` split `$Branch` and `$BuildProvenance` producers into the Windows
-  fence while leaving their consumers in the Android fence. Complete
-  `C10-GCM03-ST04-R1-C1` before rerunning this procedure.
-- [ ] **GCM03.4 — Android local pre-enrollment snapshot.** Open Closure on
+  not sign in, enroll or Sync implicitly. **Passed bounded:** C3 validated the
+  repaired exact fence and one-safe-ADB-serial boundary; the human rerun
+  launched `DEV-GRM` with visible matching provenance `65c9ab56079c`.
+- [x] **GCM03.4 — Android local pre-enrollment snapshot.** Open Closure on
   Android, preserve sanitized diagnostics, and prove whether the fresh
   installation has no enrolled local Device. Stop on inherited Device state,
   unexpected queue members, configuration mismatch, revoked/expired state, or
-  any source Device fingerprint collision.
-- [ ] **GCM03.5 — Same-Account authentication.** Sign in through the ordinary
+  any source Device fingerprint collision. **Passed with storage-freshness
+  qualification:** one distinct local-only Android Device at next sequence 1,
+  queue `0/0/0/0`, no attempts, diagnostic history or actionable events.
+  Complete database freshness is unproved because installation preserves
+  Android app data.
+- [x] **GCM03.5 — Same-Account authentication.** Sign in through the ordinary
   Auth0 flow to the same test Account. Capture only sanitized authentication
   state; never copy tokens, subjects, credentials or complete identifiers.
+  **Passed at client scope:** Android projects `authenticated`. Exact
+  same-Account/provider binding remains to be proved by the bounded enrollment
+  and provider postflight rather than by screenshots alone.
 - [ ] **GCM03.6 — Exact Android enrollment authorization packet.** Freeze the
   intended one-click Enroll action, expected new active-Device count
   `1 -> 2`, expected Android local enrollment terminal, evidence-capture
@@ -308,8 +328,15 @@ GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
 GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
 GCM03_WINDOWS_QUEUE=PASS_1_0_0_0
 GCM03_WINDOWS_NEXT_DEVICE_SEQUENCE=3
-GCM03=ACTIVE_PREPARATION_ANDROID_CHECKS_NEXT
-ANDROID_ENROLLMENT=NOT_AUTHORIZED
+GCM03_ANDROID_SELECTOR_C3=PASS
+GCM03_ANDROID_BUILD_LINEAGE=PASS_65C9AB56079C
+GCM03_ANDROID_PRE_ENROLLMENT=PASS_LOCAL_ONLY_NEXT_1_QUEUE_0_0_0_0
+GCM03_ANDROID_AUTHENTICATION=PASS_CLIENT_SCOPE
+GCM03_ANDROID_SAME_ACCOUNT_EXACT_BINDING=OPEN
+GCM03_ANDROID_HOSTED_READINESS=PASS_AFTER_COLD_START_WARMUP
+GCM03_ANDROID_HOSTED_ATTEMPTS=2_WITH_1_READY_1_TIMEOUT_PRESERVED
+GCM03=ACTIVE_ST06_READ_ONLY_PROVIDER_BASELINE
+ANDROID_ENROLLMENT=NOT_AUTHORIZED_YET
 WINDOWS_SYNC=NOT_AUTHORIZED
 ANDROID_SYNC=NOT_AUTHORIZED
 SECOND_DEVICE_CONVERGENCE=UNPROVED
@@ -6428,4 +6455,319 @@ GCM03_ST05_AND_LATER=HELD
 ANDROID_ENROLLMENT=NOT_AUTHORIZED
 WINDOWS_SYNC=NOT_AUTHORIZED
 ANDROID_SYNC=NOT_AUTHORIZED
+```
+
+## 2026-07-28 — C10-GCM03 ST04/ST05 Android human-evidence reconciliation
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04
+Role: Main Chat [M]
+Round or unit: C10-GCM03-ST04-R1-C3 / ST04 / ST05
+Branch: grm-guarded-provisioning-20260727
+Inspected Android artifact lineage: 65c9ab56079c7a9866910db9037c28045efd1d34
+Inputs: user-supplied C3 Codex terminal; ten Android screenshots divided into
+        five before and five after one Diagnostics press; exact current
+        NativeClosurePage Diagnostics and enrollment paths; Record 013
+Writable surfaces: REC_DIAGNOSTICS append; mutable J recovery prefix
+Prohibited actions: Enroll, Windows or Android Sync, Retry, recovery, logout,
+                    clear history, provider mutation, secret capture
+Authority: explicit human-directed ST04/ST05 reconciliation
+Next sequence: C10-GCM03-ST06 read-only enrollment preflight
+```
+
+### Reconciled evidence
+
+The C3 Codex result closes the static/host validation gap left by C2:
+
+```text
+DEVSEL_CLASSIFICATION=DEVSEL-01
+ACTUAL_GS_FLUTTER_AND_FIXTURES=PASS
+ANDROID_DEVICE_ENUMERATION=CORRECTED
+NON_ANDROID_ID_REACHES_ADB=NO
+ADB_SERIAL_CARDINALITY=EXACTLY_ONE
+ANDROID_SIGN_IN_CLASSIFICATION=AUTHAND-06
+ST04=BLOCKED_PENDING_HUMAN_RETEST
+```
+
+The human rerun supplies the evidence Codex intentionally could not:
+
+- `DEV-GRM` is the visible Android target;
+- the installed Closure surface exposes build provenance `65c9ab56079c`;
+- the shared consolidated page is usable on the compact Android viewport;
+- one distinct Android local-only Device exists at local next sequence 1;
+- the Android queue is `0/0/0/0`;
+- no local Closure attempt, diagnostic lifecycle or actionable event exists;
+- ordinary Sign in returns an authenticated client projection;
+- enrollment remains required and no enrollment or Sync occurred;
+- one Diagnostics press returns `diagnostics-ready` without changing
+  authentication, enrollment, queue, Device sequence, attempts or history.
+
+This is Android-local evidence. The page reads the Android app's own
+Drift/SQLite store and current native authentication session. It does not read
+the Windows SQLite file. Because the canonical Android installer preserves
+application data, the record does not claim that the complete Android database
+was created by this exact installation. The clean hosted/sync projection is
+accepted; complete storage freshness remains unproved.
+
+### PRC-01 claims
+
+```text
+Claim: C10-GCM03-ST04-R1-C3 corrected and validated the Android target boundary
+Prior state: selector repair materialized; human runtime retest pending
+Evidence: actual-fence Windows PowerShell 5.1 fixtures; captured ADB vectors;
+          no non-Android ID; exactly one scalar ADB serial; matching-provenance
+          human launch on DEV-GRM
+Evidence boundary: static/host tests plus one Android build/install/launch
+Contradiction: none
+Semantic owner: Android GRM execution boundary
+Target role: ST04 terminal
+Resulting state: VALIDATED / PASSED BOUNDED
+History disposition: append; supersede prior ST04 blocker
+```
+
+```text
+Claim: the Android pre-enrollment state is safe to freeze
+Prior state: required fresh local observation
+Evidence: distinct local-only Device fingerprint, next 1, queue 0/0/0/0,
+          enrollment-required, no attempts/diagnostics/actionable events
+Evidence boundary: Android local client projection only
+Contradiction: installer preserves app data, so whole-database freshness is
+               not proved
+Semantic owner: C10-GCM03-ST04 pre-enrollment packet
+Target role: ST04 runtime closure and ST06 input
+Resulting state: ACCEPTED / PASSED WITH STORAGE-FRESHNESS QUALIFICATION
+History disposition: append
+```
+
+```text
+Claim: C10-GCM03-ST05 proves Android authentication
+Prior state: AUTHAND-06 pending human observation
+Evidence: ordinary native Sign in followed by visible authenticated projection
+Evidence boundary: client session; screenshots expose no Account identifier
+Contradiction: none for authentication; exact same-Account binding remains
+               outside screenshot evidence
+Semantic owner: C10-GCM03-ST05 authentication gate
+Target role: ST05 terminal and ST06 input
+Resulting state: PASSED CLIENT SCOPE; SAME-ACCOUNT EXACT BINDING OPEN
+History disposition: append
+```
+
+```text
+Claim: the persistent MKS-UI-003 card is an authentication or provider failure
+Prior state: runtime symptom unclassified
+Evidence: source fallback creates MKS-UI-003 when no recent diagnostic event
+          exists; Diagnostics changes the page terminal to diagnostics-ready
+          while provider contact/local mutation remain not-started/none
+Evidence boundary: client presentation and before/after screenshots
+Contradiction: card wording is misleading for a successful local snapshot
+Semantic owner: Closure empty-history current-action presentation
+Target role: non-blocking residual defect and enrollment evidence warning
+Resulting state: REJECTED AS AUTH/PROVIDER FAILURE; OBSERVED PRESENTATION DEFECT
+History disposition: append; defer source correction outside this assay
+```
+
+```text
+Claim: this reconciliation authorizes Android enrollment
+Prior state: held for an exact one-click packet
+Evidence: a fresh read-only hosted/provider baseline and warm readiness result
+          have not yet been reconciled
+Evidence boundary: no provider preflight after the Android observation
+Contradiction: immediate Enroll would skip ST06's expected-delta freeze
+Semantic owner: C10-GCM03-ST06 authorization packet
+Target role: next human action boundary
+Resulting state: NOT YET AUTHORIZED; READ-ONLY PREFLIGHT NEXT
+History disposition: append
+```
+
+### ST06 enrollment packet under preparation
+
+The pre-enrollment invariants already frozen are:
+
+```text
+Windows candidate member:
+  purchase.registered
+  local state pending
+  Device sequence 2
+  Windows next local sequence 3
+  queue 1/0/0/0
+
+Android:
+  authenticated at client scope
+  enrollment-required
+  distinct local-only Device
+  local next sequence 1
+  queue 0/0/0/0
+  no attempts or diagnostic events
+
+Accepted provider payload baseline from GCM02:
+  one Account
+  one active Windows Device
+  submissions/events/acknowledgements 1/1/1
+  Account next cursor 2 after high-water 1
+  Windows provider next expected sequence 2
+```
+
+Before authorization, ST06 must reconfirm:
+
+1. one warm `Check hosted connection` result with no enrollment or Sync;
+2. one read-only `GRM-NEON-11` baseline ending in explicit `ROLLBACK` and
+   `PASS`, still showing the expected one-Device GCM02 state;
+3. no new provider payload/cursor/acknowledgement delta;
+4. no change to either local queue.
+
+Only then may Main authorize one Android Enroll press. The expected enrollment
+delta is:
+
+```text
+accounts: unchanged
+external identities and active membership: unchanged
+active devices: 1 -> 2
+active device enrollments: 1 -> 2
+completed enrollment requests: +1 for the Android installation
+device-enrolled security events: +1
+Android provider next expected sequence: 1
+submissions: unchanged
+sync events: unchanged
+device acknowledgements: unchanged
+Account cursor/high-water: unchanged
+Windows provider next expected sequence: unchanged at 2
+Windows local pending member: unchanged
+```
+
+After the one click, any terminal other than a clearly applied/restart-required
+result is a stop. Do not click Enroll a second time. Preserve the page terminal,
+then follow the required restart and post-restart Sign in/Diagnostics packet.
+The MKS-UI-003 fallback card must not be used to decide whether enrollment
+should be repeated.
+
+### Current terminal
+
+```text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
+GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
+C10_GCM03_ST04_R1_C3=VALIDATED
+C10_GCM03_ST04=PASSED_BOUNDED_ANDROID_RUNTIME_AND_LOCAL_PREFLIGHT
+C10_GCM03_ST05=PASSED_CLIENT_AUTHENTICATION_SCOPE
+ANDROID_SAME_ACCOUNT_EXACT_BINDING=OPEN
+ANDROID_DIAGNOSTICS=PASS_READ_ONLY_REFRESH
+MKS_UI_003_EMPTY_HISTORY_PRESENTATION=OBSERVED_NON_BLOCKING
+ANDROID_STORAGE_FRESHNESS=UNPROVED_PRESERVED_DATA_POSSIBLE
+C10_GCM03_ST06=ACTIVE_READ_ONLY_PREFLIGHT
+ANDROID_ENROLLMENT=NOT_AUTHORIZED_YET
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
+SECOND_DEVICE_CONVERGENCE=UNPROVED
+GCM04=UNDEFINED_INACTIVE
+```
+
+## 2026-07-28 — C10-GCM03 ST06 Android hosted-readiness reconciliation
+
+### Sequence envelope
+
+```text
+Sequence: FLX-PRM-04
+Role: Main Chat [M]
+Round or unit: C10-GCM03-ST06 read-only hosted-readiness preflight
+Branch: grm-guarded-provisioning-20260727
+Reconciliation baseline: 65c9ab56079c7a9866910db9037c28045efd1d34
+Inputs: one user-supplied Recent Closure attempts screenshot; Record 014
+Writable surfaces: REC_DIAGNOSTICS append; mutable J recovery prefix;
+                   append-only Legacy_Progress
+Prohibited actions: Android Enroll, Windows or Android Sync, Retry, recovery,
+                    logout, history clearing, provider mutation, secret capture
+Authority: explicit human-directed ST06 evidence registration and publication
+Next sequence: read-only GRM-NEON-11 pre-enrollment provider baseline
+```
+
+### Reconciled evidence
+
+The operator pressed `Check hosted connection` twice because the first
+cold-start attempt timed out before receiving a response. The Closure history
+preserves two distinct attempts:
+
+```text
+earlier #b6652cab
+  hosted-connection-check
+  timeout-before-response
+  unknown / transport-started
+  no applicable aggregate HTTP status or response headers
+  latency approximately 30 seconds
+
+later #03748b75
+  hosted-connection-check
+  hosted-connection-ready
+  completed / response-parsed
+  aggregate HTTP 200
+  aggregate response headers received
+  latency under 3 seconds
+```
+
+Different attempt and correlation fingerprints prove that the UI did not
+collapse the two presses into one row. Only the later attempt is a successful
+readiness result. The earlier unknown timeout remains valid historical
+transport evidence and must not be silently rewritten as success.
+
+The later ready terminal satisfies the bounded client hosted-readiness
+prerequisite. It proves neither ordinary Sync nor enrollment; the UI itself
+states `ready-does-not-prove-sync`. No third readiness press is required.
+
+### PRC-01 claims
+
+```text
+Claim: pressing the hosted-readiness control twice produced two successes
+Prior state: one warm hosted-readiness result required before enrollment
+Evidence: two distinct attempt rows; only the later row is completed,
+          response-parsed and HTTP 200
+Evidence boundary: Android client attempt history screenshot
+Contradiction: earlier row remains timeout-before-response with unknown outcome
+Semantic owner: ST06 client hosted-readiness preflight
+Target role: readiness terminal and cold-start operational history
+Resulting state: REJECTED AS TWO SUCCESSES; ONE READY PLUS ONE PRESERVED TIMEOUT
+History disposition: append
+```
+
+```text
+Claim: the ST06 client hosted-readiness prerequisite is satisfied
+Prior state: outstanding after Record 014
+Evidence: later hosted-connection-ready attempt completed with response parsed,
+          aggregate HTTP 200 and headers received in under three seconds
+Evidence boundary: readiness only; no child Sync protocol or provider delta
+Contradiction: cold attempt timed out before response
+Semantic owner: C10-GCM03-ST06
+Target role: enrollment authorization preflight
+Resulting state: PASSED AFTER COLD-START WARMUP
+History disposition: append; preserve cold timeout as sensitivity evidence
+```
+
+```text
+Claim: Android enrollment is now authorized
+Prior state: held for readiness plus fresh provider baseline
+Evidence: readiness is satisfied; GRM-NEON-11 pre-enrollment inventory has not
+          yet been supplied for this packet
+Evidence boundary: no fresh provider inventory in Record 015
+Contradiction: authorizing Enroll now would lose the exact provider delta
+Semantic owner: ST06 enrollment authorization packet
+Target role: next Main decision
+Resulting state: NOT AUTHORIZED; READ-ONLY PROVIDER BASELINE NEXT
+History disposition: append
+```
+
+### Current terminal
+
+```text
+C10_GCM03_ST06_CLIENT_HOSTED_READINESS=PASS_AFTER_COLD_START_WARMUP
+HOSTED_CONNECTION_HUMAN_ACTIVATIONS=2
+HOSTED_CONNECTION_ATTEMPTS_RECORDED=2
+HOSTED_CONNECTION_READY_RESULTS=1
+HOSTED_CONNECTION_TIMEOUT_BEFORE_RESPONSE=1_PRESERVED_UNKNOWN
+READY_PROVES_SYNC=NO
+C10_GCM03_ST06=ACTIVE_READ_ONLY_PROVIDER_BASELINE
+ANDROID_ENROLLMENT=NOT_AUTHORIZED_YET
+WINDOWS_SYNC=NOT_AUTHORIZED
+ANDROID_SYNC=NOT_AUTHORIZED
+SECOND_DEVICE_CONVERGENCE=UNPROVED
 ```
