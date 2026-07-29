@@ -1957,7 +1957,8 @@ finally {
 This is the Android counterpart of `GS-SQLITE-02`. It requires exactly one
 connected, ready Android target, proves that the debug package supports
 `run-as`, force-stops Markei without clearing its data, and extracts the
-app-private database plus any WAL/SHM companions. Extraction uses a redirected
+app-private database plus any present WAL/SHM companions. Missing sidecars are
+a normal SQLite state and do not fail the procedure. Extraction uses a redirected
 .NET byte stream rather than PowerShell text redirection. Each file's remote
 size and SHA-256 are compared with the copied file before and after extraction.
 The private manifest is retained only in the fixed temporary snapshot
@@ -2033,11 +2034,48 @@ GS-SQLITE-05.
     function Test-MarkeiAndroidPrivateFile {
         param([Parameter(Mandatory)] [string]$RemotePath)
 
-        & $AdbExe `
-            -s $DeviceSerial `
-            shell run-as $PackageName `
-            ls $RemotePath *> $null
-        return $LASTEXITCODE -eq 0
+        if ($RemotePath -notmatch '^[A-Za-z0-9._/-]+$' -or
+            $DeviceSerial -notmatch '^[A-Za-z0-9._:-]+$') {
+            throw "Android private-file probe arguments contain unexpected characters."
+        }
+
+        $StartInfo = New-Object System.Diagnostics.ProcessStartInfo
+        $StartInfo.FileName = $AdbExe
+        $StartInfo.Arguments = (
+            "-s {0} shell run-as {1} ls {2}" -f
+            $DeviceSerial,
+            $PackageName,
+            $RemotePath
+        )
+        $StartInfo.UseShellExecute = $false
+        $StartInfo.CreateNoWindow = $true
+        $StartInfo.RedirectStandardOutput = $true
+        $StartInfo.RedirectStandardError = $true
+
+        $Process = New-Object System.Diagnostics.Process
+        $Process.StartInfo = $StartInfo
+        try {
+            if (-not $Process.Start()) {
+                throw "ADB private-file existence probe did not start."
+            }
+            $OutputTask = $Process.StandardOutput.ReadToEndAsync()
+            $ErrorTask = $Process.StandardError.ReadToEndAsync()
+            $Process.WaitForExit()
+            $OutputTask.GetAwaiter().GetResult() | Out-Null
+            $ErrorTask.GetAwaiter().GetResult() | Out-Null
+            $ExitCode = $Process.ExitCode
+        }
+        finally {
+            $Process.Dispose()
+        }
+
+        if ($ExitCode -eq 0) {
+            return $true
+        }
+        if ($ExitCode -eq 1) {
+            return $false
+        }
+        throw "Could not inspect an Android private-file presence state."
     }
 
     function Get-MarkeiAndroidPrivateFileMetadata {
@@ -2219,22 +2257,6 @@ GS-SQLITE-05.
         throw "The Markei app-private SQLite database is absent."
     }
 
-    $SnapshotDirectory = Join-Path `
-        ([System.IO.Path]::GetTempPath()) `
-        "markei-android-sqlite-current"
-    if (Test-Path -LiteralPath $SnapshotDirectory) {
-        throw @"
-The current Android SQLite snapshot directory already exists.
-Do not overwrite it. Preserve it for interpretation or remove it only after
-explicit cleanup authorization, then rerun GS-SQLITE-05.
-"@
-    }
-    New-Item `
-        -ItemType Directory `
-        -Path $SnapshotDirectory `
-        -ErrorAction Stop |
-        Out-Null
-
     $FilesToCopy = @(
         [pscustomobject]@{
             RemotePath = $RemoteDatabase
@@ -2258,6 +2280,22 @@ explicit cleanup authorization, then rerun GS-SQLITE-05.
             (Test-MarkeiAndroidPrivateFile -RemotePath $_.RemotePath)
         }
     )
+
+    $SnapshotDirectory = Join-Path `
+        ([System.IO.Path]::GetTempPath()) `
+        "markei-android-sqlite-current"
+    if (Test-Path -LiteralPath $SnapshotDirectory) {
+        throw @"
+The current Android SQLite snapshot directory already exists.
+Do not overwrite it. Preserve it for interpretation or remove it only after
+explicit cleanup authorization, then rerun GS-SQLITE-05.
+"@
+    }
+    New-Item `
+        -ItemType Directory `
+        -Path $SnapshotDirectory `
+        -ErrorAction Stop |
+        Out-Null
 
     $ManifestEntries = @()
     foreach ($FileToCopy in $PresentFiles) {
