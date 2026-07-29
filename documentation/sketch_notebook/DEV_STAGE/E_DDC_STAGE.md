@@ -1,170 +1,109 @@
-# E_DDC_STAGE — Identity, projection and evidence semantics
+# E_DDC_STAGE — Evidence contract for C10-GCM03-S10-R03
 
-> Sequence: FLX-ORD-01 — Ordinary Sequence
-> Role: Main-approved Didactic materialization stage
-> Unit: `C10-GCM03-S10-R02`
-> Continuity alias: `C10-GCM02-S09-R02`
-> Branch: `grm-guarded-provisioning-20260727`
-> Required published ancestry:
-> `716ae7f082714944b6b51042d98a56e685978c38`
-> Authority: **ACTIVE WITHIN D — IMPLEMENT AND REPORT**
-> Evidence boundary: identity and failure-semantics explanation derived from
-> the source and bounded evidence in D; no permanent didactic promotion
+D_OPS_STAGE.md is operational authority. This file defines interpretation. F_DSN_STAGE.md assigns responsibilities.
 
-## 1. Preserve the three identity layers
+Primary unit: C10-GCM03-S10-R03  
+Continuity alias: C10-GCM03-S09-R03
 
-Keep these distinct:
+## 1. Separate proofs
 
-```text
-Flutter object instance
-  temporary in-memory object identity
+| Evidence | Proven conclusion |
+|---|---|
+| Preserved provenance/auth/enrollment | R02 ran against preserved client state |
+| Find Item no longer asserted | Stable Product-ID selector passed human acceptance |
+| Purchase registration and sequence delta | One Android outbound event committed locally |
+| Android submission HTTP 200/result persisted | Android upload became trusted and left pending |
+| Android download HTTP 200 then typed conflict | Provider succeeded; local Product reconciliation rejected |
+| Windows upload HTTP 200/result persisted | Windows upload became trusted |
+| Windows download-response-received | Windows received a trusted page |
+| closure-runner-exception before local-apply result | Post-download failure escaped typed classification |
+| No acknowledgement request | No client proved an inbound page eligible for acknowledgement |
 
-Product/Store surrogate UUID
-  stable record and event-reference identity
+Render did not reject the observed operations.
 
-Account-scoped natural identity
-  Product normalized code + exact identity key
-  Store current stable display identity
-```
+## 2. Identity semantics
 
-The UI needs a stable scalar selection key, not object-instance equality.
-Cross-device materialization needs surrogate-ID mapping plus natural-identity
-reconciliation, not UUID replacement.
+A Product has incoming UUID, normalized user code, and exact semantic identity. Exact identity excludes user code. Two clients may independently assign different codes to the same semantic Product.
 
-Do not globally redefine `Product.operator ==` as a shortcut. Domain-value
-equality and widget selection identity are separate decisions.
+Safe asymmetry:
 
-## 2. Interpret the Flutter assertion correctly
+~~~
+different code + same exact identity = convergence candidate
+same code + different exact identity = conflict
+~~~
 
-Flutter requires the current dropdown value to match exactly one menu item.
-The assertion combines:
+This does not loosen established identity: an existing UUID cannot mutate; split keys and ambiguity conflict; no first-row wins.
 
-```text
-zero matching menu items
-two or more matching menu items
-```
+Hosted content stays immutable. Local references converge through incoming UUID → selected local UUID mapping.
 
-The screenshot alone does not distinguish them.
+## 3. Three truth planes
 
-Source evidence makes the zero-match path actionable:
+Provider truth asks whether a trusted response arrived. For Windows upload/download: yes.
 
-```text
-listProducts() materializes Product object A for the menu
-productByCode() materializes Product object B for Find code
-A and B represent the same row but A != B by reference identity
-DropdownButton<Product?> receives B while the menu contains A
-```
+Transaction truth asks whether facts/inbox/cursor committed. For the supplied Windows evidence: unknown.
 
-The correction must still guard repeated IDs so that the opposite
-multiple-match class cannot reach Flutter.
+Diagnostic truth asks whether a durable declaration was recorded. No durable local-apply result was observed.
 
-Required H-report statement:
+Diagnostic failure cannot decide transaction truth.
 
-```text
-DATABASE_DUPLICATE_PROVED_BY_SCREENSHOT=NO
-OBJECT_INSTANCE_SELECTION_GAP=SOURCE_CONFIRMED
-STABLE_PRODUCT_ID_SELECTION=IMPLEMENTED_OR_BLOCKED
-```
+## 4. Precise states
 
-## 3. Explain cross-device convergence
+- entered: execution crossed a boundary;
+- proved: authoritative evidence establishes an outcome;
+- committed: transaction is durable;
+- rolled back: no page mutation retained;
+- unknown: evidence cannot distinguish;
+- diagnostic degraded: core truth exists but durable observability failed.
 
-Two clients may independently contain semantically equivalent catalogue facts
-under different local UUIDs. A downloaded event cannot safely assume:
+The runner may show generic terminal as event kind but must retain the latest entered/proved phase and trusted response.
 
-```text
-same fact => same local UUID
-```
+## 5. Correct ordering
 
-The receiving client must:
+Failure path:
 
-1. validate the incoming Account and identity facts;
-2. select one coherent local canonical row;
-3. map the remote UUID to that local UUID inside the apply operation;
-4. write Purchase/Purchase Item references through the map;
-5. reject contradictions atomically.
+1. update in-memory causal state;
+2. run the complete transaction;
+3. allow exception to unwind and rollback;
+4. translate bounded result;
+5. update causal state;
+6. attempt sanitized diagnostics;
+7. emit lifecycle;
+8. prohibit acknowledgement.
 
-This is identity convergence. It is not destructive deduplication and does not
-rewrite the hosted event.
+Committed apply with diagnostic failure:
 
-## 4. Explain transaction and diagnostic meaning
+1. transaction commits facts/inbox/cursor;
+2. core result remains committed;
+3. diagnostic failure is contained;
+4. report degradation without reversing truth;
+5. acknowledgement eligibility follows committed cursor.
 
-Preserve:
+Never catch inside the transaction merely to return a result.
 
-```text
-trusted response received
-≠ local page committed
+## 6. Total but bounded
 
-local page failed
-+ transaction rolled back
-= no inbox/fact/cursor advancement
+A total boundary covers every thrown object while exposing only stable categories: identity conflict, database failure, payload shape, local invariant, unexpected local apply, and diagnostic degradation.
 
-no local cursor
-=> no acknowledgement request
-```
+Safe sanitized class/category is allowed. Messages, SQL, values, identifiers, payload facts, stacks, and secrets are forbidden.
 
-A failure record written after rollback may truthfully say:
+## 7. Stored exception class
 
-```text
-trustedResponseState = received
-localMutationState = rolled-back
-lastProvedPhase = download-local-apply
-```
+The schema already stores sanitizedExceptionClass. The projection currently drops it, so the UI receives null. Carry it through storage → application summary → current action → Closure UI. This is not a migration.
 
-It must not collapse to `not-received` merely because an exception crossed a
-later UI boundary.
+## 8. Acceptance boundary
 
-## 5. Preserve provenance vocabulary
+Automated R03 validation will not prove live convergence. After Codex publication, Main must reconcile and issue a fresh one-operation preserved-state assay proving commit, acknowledgement, no duplicates, and replay.
 
-Explain in H:
+Until then both clients’ Sync/Retry remain held.
 
-```text
-GitHub branch = repository ref carrying source and staging
-Neon branch alias = provider target coordinate
-status marker = evidence classification, not resource creation
-```
+## 9. Review questions
 
-Therefore `CONFIRMED_MARKei-c10` did not create a GitHub branch. New reporting
-uses `CONFIGURED_PROVIDER_BRANCH_ALIAS` and separately retains that the
-launcher did not independently prove the human-readable provider alias.
-
-## 6. Evidence-state discipline
-
-Report these boundaries without inflation:
-
-- the page transaction rollback is validated by the frozen SQLite snapshot;
-- provider non-advancement is validated by the read-only postflight;
-- the source identity gaps are source-confirmed;
-- the exact runtime SQLite constraint category is not known;
-- implementation may become implemented/locally validated through tests;
-- real corrected inter-device convergence remains unvalidated until a later,
-  separately authorized live assay.
-
-Do not call Cycle 10, GCM03 or synchronization complete from unit tests alone.
-
-## 7. H report
-
-Replace `H_DDC_CODEX.md` and explain:
-
-- object, surrogate and natural identity;
-- why ID-keyed selection fixes the dropdown contract;
-- why the screenshot does not prove duplicate rows;
-- remote-to-local reconciliation and reference remapping;
-- atomic rollback and acknowledgement ordering;
-- causal diagnostic preservation;
-- GitHub branch versus Neon alias;
-- the exact remaining human evidence boundary.
-
-Required terminals:
-
-```text
-UI_OBJECT_IDENTITY_VS_PRODUCT_ID=VISIBLE
-ZERO_VS_MULTIPLE_DROPDOWN_MATCH=VISIBLE
-SCREENSHOT_PROVES_DATABASE_DUPLICATE=NO
-SURROGATE_VS_NATURAL_IDENTITY=VISIBLE
-REMOTE_TO_LOCAL_REFERENCE_MAPPING=VISIBLE
-TRUSTED_RESPONSE_VS_LOCAL_COMMIT=VISIBLE
-PROVIDER_BRANCH_ALIAS_VS_GITHUB_BRANCH=VISIBLE
-LIVE_CONVERGENCE_ACCEPTANCE=HELD
-```
-
-Do not edit permanent didactic memory.
+- Does new UUID + exact identity + different code reuse locally?
+- Does same code + different identity still conflict?
+- Are item references remapped?
+- Do all apply exceptions translate after rollback?
+- Can diagnostics fail without changing core truth?
+- Does the runner preserve trusted-response evidence?
+- Is the sanitized class visible without a message?
+- Can acknowledgement start only from committed cursor?
+- Are schema, provider, API, and protocol unchanged?

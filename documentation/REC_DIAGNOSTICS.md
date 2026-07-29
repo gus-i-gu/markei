@@ -3317,3 +3317,127 @@ ANDROID_PURCHASE=HELD
 WINDOWS_SYNC=NOT_AUTHORIZED
 ANDROID_SYNC=NOT_AUTHORIZED
 ```
+
+
+---
+
+# Appendix G — R02 human acceptance and R03 failure chain
+
+This appendix preserves sanitized evidence activating C10-GCM03-S10-R03. It contains no Product display names, user codes, UUIDs, payloads, SQL, tokens, or secrets.
+
+## Record 018 — Preserved Android installation and Purchase acceptance
+
+Date: 2026-07-29
+
+~~~
+BUILD_PROVENANCE=1975bf0d216f
+AUTHENTICATION=AUTHENTICATED
+ENROLLMENT=DEVICE_ENROLLED
+QUEUE_BEFORE=0/0/0/0
+NEXT_DEVICE_SEQUENCE_BEFORE=1
+APP_DATA_CLEAR=NO
+FIND_ITEM_ASSERTION=ABSENT
+PURCHASE_REVIEW=PASS
+PURCHASE_REGISTRATION=PASS
+PENDING=0_TO_1
+NEXT_DEVICE_SEQUENCE=1_TO_2
+ACTIONABLE_EVENT_FINGERPRINT=e86df5c0
+DUPLICATE_PRODUCT_OBSERVED=NO
+~~~
+
+The user recorded C10-GCM03-S09-R03-H02. Primary corrective authority is C10-GCM03-S10-R03; the alias remains historical.
+
+## Record 019 — Android trusted upload; typed inbound conflict
+
+First Sync:
+
+~~~
+OPERATION=b161b297b16b
+UPLOAD_PROVIDER=HTTP_200_TRUSTED
+UPLOAD_RESULT_PERSISTENCE=COMMITTED
+DOWNLOAD_PROVIDER=HTTP_200_TRUSTED
+LOCAL_APPLY=REMOTE_PRODUCT_NATURAL_IDENTITY_CONFLICT
+ACKNOWLEDGEMENT=NOT_STARTED
+~~~
+
+Second Sync:
+
+~~~
+OPERATION=5a3e6d18af89
+UPLOAD=NOT_STARTED_QUEUE_EMPTY
+DOWNLOAD_PROVIDER=HTTP_200_TRUSTED
+LOCAL_APPLY=REMOTE_PRODUCT_NATURAL_IDENTITY_CONFLICT
+ACKNOWLEDGEMENT=NOT_STARTED
+~~~
+
+The Android event is hosted and must not be registered again. The page replay is deterministic. Render did not reject it.
+
+## Record 020 — Windows trusted download; unclassified terminal
+
+Date: 2026-07-29  
+Operation: e6e918285640
+
+| UTC interval | Route | Correlation | Child correlation | Result |
+|---|---|---|---|---|
+| 18:56:54.479–18:56:54.672 | POST /v1/sync/submissions | 4e0d0ea50e75 | 013bbbc82c57 | auth accepted; HTTP 200; under 250 ms |
+| 18:56:54.949–18:56:54.981 | GET /v1/sync/events | d1b555665f01 | d4e57c134aca | auth accepted; HTTP 200; under 250 ms |
+
+No acknowledgement request appears.
+
+Readiness completed HTTP 200 at 18:56:53.788. A later readiness request began at 18:56:58.786 but the supplied excerpt lacks its completion. Health events have no operation fingerprint.
+
+Lifecycle:
+
+~~~
+01 authentication-check-entered
+02 authenticated
+03 binding-check-entered
+04 binding-accepted
+05 upload-lease-entered
+06 upload-lease-committed
+07 upload-request-started
+08 serveraccepted
+09 upload-result-persistence-entered
+10 upload-result-persisted
+11 download-request-started
+12 download-response-received
+13 closure-runner-exception
+~~~
+
+The terminal’s trusted-response-not-received claim contradicts phase 12.
+
+Evidence ceiling:
+
+~~~
+AUTHENTICATION=PASS
+BINDING=PASS
+UPLOAD_PROVIDER=SERVER_ACCEPTED
+UPLOAD_RESULT_PERSISTENCE=COMMITTED
+DOWNLOAD_PROVIDER=TRUSTED_RESPONSE_RECEIVED
+DOWNLOAD_LOCAL_APPLY=NO_DURABLE_RESULT
+LOCAL_MUTATION=UNKNOWN
+FACTS_INBOX_CURSOR=UNKNOWN
+ACKNOWLEDGEMENT=NOT_STARTED
+RENDER_REJECTION=FALSE
+~~~
+
+R03 directives preserved:
+
+- exact semantic identity + different code + new UUID converges;
+- same code/different identity, split keys, ambiguity, and established UUID mutation conflict;
+- remote references map to selected local identities;
+- all apply exceptions translate after rollback;
+- committed apply and diagnostic failure remain distinguishable;
+- causal state updates before durable diagnostics;
+- runner cannot erase trusted-response evidence;
+- stored sanitized exception class reaches Closure UI;
+- acknowledgement requires committed cursor;
+- no live Sync, Retry, provider mutation, schema change, or migration during implementation.
+
+~~~
+ANDROID_SYNC=HELD
+WINDOWS_SYNC=HELD
+RETRY_RECOVERY=HELD
+NEW_PURCHASE_REGISTRATION=HELD
+DIAGNOSTIC_HISTORY=PRESERVE
+~~~

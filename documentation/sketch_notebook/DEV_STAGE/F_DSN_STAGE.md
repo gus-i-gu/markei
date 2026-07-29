@@ -1,212 +1,99 @@
-# F_DSN_STAGE — Product identity and atomic convergence architecture
+# F_DSN_STAGE — Architecture for C10-GCM03-S10-R03
 
-> Sequence: FLX-ORD-01 — Ordinary Sequence
-> Role: Main-approved Design materialization stage
-> Unit: `C10-GCM03-S10-R02`
-> Continuity alias: `C10-GCM02-S09-R02`
-> Branch: `grm-guarded-provisioning-20260727`
-> Required published ancestry:
-> `716ae7f082714944b6b51042d98a56e685978c38`
-> Authority: **ACTIVE WITHIN D — IMPLEMENT AND REPORT**
-> Evidence boundary: client presentation, local materialization and diagnostic
-> responsibility correction; no hosted-contract or schema expansion
+## Objective
+
+Close cross-device Product convergence and post-download observability gaps while preserving protocol v3, page atomicity, causal diagnostics, and acknowledgement ordering.
 
 ## 1. Responsibility map
 
-Implement and preserve:
+| Responsibility | Owner | Constraint |
+|---|---|---|
+| Semantic Product identity | domain Product | identityKey excludes code/raw display |
+| Incoming resolution | remote fact writer | asymmetric UUID/code/exact table |
+| Reference mapping | event/page applier | map Product/Store before dependent facts |
+| Facts/inbox/cursor | Drift transaction | one transaction; exception escapes |
+| Failure translation | local sync boundary | bounded result after rollback |
+| Causal state | operation recorder/runner | in-memory update before diagnostics |
+| Durable diagnostics | repository | best effort; never redefine core outcome |
+| UI projection | application/app | preserve phase and sanitized class |
+| Safety fallback | NativeAuthClosureRunner | keep strongest causal snapshot |
+| Acknowledgement | coordinator | only after committed cursor |
 
-```text
-CatalogueQueryRepository
-  owns Account-scoped Product projections and exact code lookup
+## 2. Product state machine
 
-PurchasePage selection state
-  owns one nullable stable Product ID
+~~~mermaid
+flowchart TD
+    A["Incoming Product"] --> B{"Existing UUID?"}
+    B -->|yes| C{"Full snapshot coherent?"}
+    C -->|yes| D["Reuse UUID row"]
+    C -->|no| X["Typed conflict"]
+    B -->|no| E{"Code / exact matches"}
+    E -->|"none / none"| F["Insert"]
+    E -->|"same / same"| G["Reuse row"]
+    E -->|"code only"| X
+    E -->|"exact only"| H["Reuse exact row; preserve local code"]
+    E -->|"split or ambiguous"| X
+    D --> M["Map incoming to local UUID"]
+    F --> M
+    G --> M
+    H --> M
+~~~
 
-PurchasePage current projection resolver
-  binds that ID to exactly one current Product projection
+The relaxed comparison applies only to exact-identity convergence for a previously unseen incoming UUID. Established UUIDs retain full immutable coherence.
 
-RemotePurchaseFactWriter
-  owns Store/Product snapshot reconciliation and event-local ID maps
+## 3. Page apply flow
 
-DriftRemoteEventApplier
-  owns one atomic page transaction and conversion of local apply failures into
-  bounded SyncResult values after rollback
+~~~mermaid
+flowchart TD
+    A["Trusted page"] --> B["Causal state: apply entered"]
+    B --> C["One Drift transaction"]
+    C -->|commit| D["Core committed"]
+    C -->|throw| E["Rollback completes"]
+    E --> F["Translate bounded failure"]
+    D --> G["Persist diagnostic"]
+    F --> G
+    G -->|success| H["Emit lifecycle"]
+    G -->|failure| I["Diagnostic degraded; retain core truth"]
+    H --> J{"Committed cursor?"}
+    I --> J
+    J -->|yes| K["Ack eligible"]
+    J -->|no| L["Ack prohibited"]
+~~~
 
-DownloadAndApplyEvents
-  owns trusted-response and download-local-apply phase diagnostics
+Translation cannot happen inside the transaction. Diagnostic persistence cannot decide whether the transaction committed.
 
-HostedSyncCoordinator
-  owns phase ordering and prevents acknowledgement after a failed apply
+## 4. In-memory causal snapshot
 
-NativeAuthClosureRunner
-  owns client-operation declaration without overwriting causal child evidence
-```
+Keep per-operation state with phase, latest proved phase, provider contact, trusted response, local apply state, mutation/result persistence, acknowledgement, bounded result, and sanitized class.
 
-Do not move domain reconciliation into the widget. Do not move UI selection
-state into the database.
+Update synchronously before awaiting durable diagnostics. Do not retain payloads, business facts, UUIDs, SQL, tokens, messages, stacks, or secrets.
 
-## 2. Purchase projection boundary
+## 5. Recorder containment
 
-Use:
+Allowed designs include a diagnostic-write outcome, guarded best-effort sink, or split core recorder/sink. Regardless:
 
-```text
-selection state = Product ID
-rendered/staged facts = Product resolved from current _products projection
-```
+- write failure becomes bounded degradation;
+- it cannot throw beyond the coordinator after core truth is known;
+- it cannot flip committed/rolled-back truth;
+- it cannot create provider/ack evidence;
+- avoid recursive recording of recording failures.
 
-This makes selection stable across separately materialized repository objects
-and refreshes. The dropdown must expose exactly one item per scalar ID.
+## 6. Apply result and fallback
 
-If the current projection cannot resolve the selection exactly once, the page
-owns safe invalidation and recovery feedback. It must not pass ambiguous state
-to Flutter.
+Extend result models minimally for applied/notApplied, bounded code, proven mutation state, retry/protocol fields where needed, and sanitized class/category.
 
-Preserve:
+Runner fallback consumes the causal snapshot. It retains trusted download received, server accepted where proved, unknown local mutation only where truly unknown, and acknowledgement not-started unless proved.
 
-- Account scope;
-- immutable Product code/facts;
-- existing/new Product modes;
-- staged Purchase Item behavior;
-- Store, Person and Payment Method behavior;
-- responsive page composition.
+## 7. Exception-class projection
 
-## 3. Local canonicalization boundary
+Carry the stored class through a typed summary to the UI. Prefer stable allow-listed categories. Never show toString(), messages, SQL, values, payload, or stack.
 
-Incoming UUIDs remain immutable event identities. The receiving database may
-already own an equivalent local row under another UUID.
+## 8. Compatibility
 
-Required flow:
+Preserve schema version/tables, API, payload v3, auth/binding, upload result persistence, stable Product selector, Account scope, Store rules, Person/Payment restrictions, branch, and non-forced publication.
 
-```text
-validate incoming snapshot
-↓
-resolve UUID and Account-scoped natural keys
-↓
-choose one coherent local row or insert
-↓
-record remote -> local ID map
-↓
-materialize Purchase references through the map
-```
+## 9. Test injection points
 
-Natural keys are conflict detectors and convergence keys. They are not
-permission to merge contradictory rows.
+Inject at Product decision branches, mid-transaction, translation, diagnostic persistence before apply, after rollback, after commit, final runner fallback, and repository-to-UI projection.
 
-Product resolution must use the already persisted normalized code and exact
-identity key. Store resolution must use the current Account/display-name
-identity without introducing a new normalization version or schema column.
-
-## 4. Atomic page boundary
-
-Preserve the existing page-wide transaction:
-
-```text
-all fact reconciliation
-+ all Purchase/Purchase Item writes
-+ all inbox writes
-+ Account cursor advancement
-= one commit
-```
-
-Any typed conflict or SQLite failure throws inside that transaction so Drift
-rolls it back. Only after rollback may the infrastructure boundary translate
-the failure into a sanitized `SyncResult`.
-
-Do not catch an exception inside the transaction and return a normal result
-that would commit earlier writes.
-
-Duplicate-equivalent replay remains idempotent. A conflict remains
-not-applied. An unknown SQLite write category remains unknown, never
-misrepresented as applied.
-
-## 5. Diagnostic architecture
-
-The diagnostic graph is causal:
-
-```text
-download request
-→ trusted response
-→ local apply
-→ acknowledgement only after committed cursor
-→ client terminal
-```
-
-The local-apply failure node must retain:
-
-```text
-download-local-apply
-trusted response received
-transaction rolled back / no retained mutation
-acknowledgement not started
-sanitized category only
-```
-
-The Closure client terminal may reference the causal diagnostic. It must not
-rewrite the causal node as transport failure.
-
-## 6. Contract and schema invariants
-
-This unit must not change:
-
-- `purchase.registered` payload version 3;
-- canonical JSON or content hashes;
-- API request/response routes;
-- Neon tables, migrations, grants, RLS or functions;
-- authentication or Device enrollment;
-- Person/Payment Method remote restriction;
-- provider retention, snapshot or rebootstrap behavior;
-- production configuration;
-- local Drift schema version.
-
-No new hosted identifier-mapping table is required. Mapping is local and
-transactional during materialization.
-
-## 7. Conflict semantics
-
-Report distinct outcomes:
-
-```text
-equivalent identity under different UUID
-  => converge and apply
-
-contradictory immutable identity
-  => typed conflict / notApplied / complete rollback
-
-SQLite write failure after trusted response
-  => sanitized local apply failure / unknown / complete rollback
-
-duplicate equivalent event
-  => existing replay behavior
-```
-
-Do not turn identity conflict into retryable transport failure.
-
-## 8. I report
-
-Replace `I_DSN_CODEX.md` and report:
-
-- final UI selection responsibility;
-- Product and Store reconciliation decision graph;
-- remote-to-local reference map ownership;
-- transaction placement of catches and result translation;
-- diagnostic causality and acknowledgement ordering;
-- invariants and non-goals;
-- any deviation from the authorized source surface.
-
-Required terminals:
-
-```text
-PURCHASE_SELECTION_OWNER=STABLE_PRODUCT_ID
-CURRENT_PRODUCT_PROJECTION=EXACTLY_ONE_OR_SAFE_INVALIDATION
-REMOTE_PRODUCT_CANONICALIZATION=ACCOUNT_SCOPED
-REMOTE_STORE_CANONICALIZATION=ACCOUNT_SCOPED
-REMOTE_ID_MAP_OWNER=LOCAL_APPLY_TRANSACTION
-FACT_INBOX_CURSOR_ATOMICITY=PRESERVED
-CONFLICT_CAUSES_COMPLETE_ROLLBACK=YES_OR_BLOCKED
-ACK_REQUIRES_COMMITTED_CURSOR=YES_OR_BLOCKED
-HOSTED_CONTRACT_CHANGE=ABSENT
-LOCAL_SCHEMA_CHANGE=ABSENT
-AUTH_ENROLLMENT_CHANGE=ABSENT
-```
-
-Do not edit permanent design memory.
+Each failure test asserts facts, inbox, cursor, acknowledgement, causal state, and diagnostic state separately.

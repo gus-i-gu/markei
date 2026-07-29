@@ -7869,3 +7869,151 @@ ENROLL=DO_NOT_REPEAT
 PROVIDER_MUTATION=NONE
 GCM04=UNDEFINED_INACTIVE
 ~~~
+
+
+---
+
+# Reconciliation — C10-GCM03-S10-R03 corrective staging
+
+Recorded: 2026-07-29  
+Primary unit: C10-GCM03-S10-R03  
+Human-assay continuity alias: C10-GCM03-S09-R03  
+Previous materialization: cf8dcc6377b54c4b6944b2dec6cd844721bd29b1  
+Pre-stage head: 1975bf0d216ff03a3ead6c47e0892df00d55d62e  
+Disposition: ACTIVE — CODEX IMPLEMENTATION AUTHORIZED; LIVE SYNC HELD
+
+## Historical sequence
+
+### H01 preserved installation
+
+~~~
+BUILD_PROVENANCE=1975bf0d216f
+AUTHENTICATION=AUTHENTICATED
+ENROLLMENT=DEVICE_ENROLLED
+QUEUE=0/0/0/0
+NEXT_DEVICE_SEQUENCE=1
+APP_DATA_CLEAR=NO
+AUTOMATIC_SYNC=NOT_SEPARATELY_PROVED
+~~~
+
+### H02 Purchase acceptance
+
+The prior Find Item assertion did not recur. Catalogue selection, review, and registration worked. The user’s C10-GCM03-S09-R03-H02 alias is preserved; the implementation authority is normalized to S10.
+
+~~~
+FIND_ITEM_ASSERTION=ABSENT
+PURCHASE_REVIEW=PASS
+PURCHASE_REGISTRATION=PASS
+PENDING=0_TO_1
+NEXT_DEVICE_SEQUENCE=1_TO_2
+ACTIONABLE_EVENT_FINGERPRINT=e86df5c0
+DUPLICATE_PRODUCT_OBSERVED=NO
+~~~
+
+No Product display name or user code is retained.
+
+### Android attempts
+
+Operation b161b297b16b uploaded the new event with HTTP 200 and persisted its trusted provider result. Download also returned HTTP 200, but local apply returned remote-product-natural-identity-conflict. No acknowledgement began.
+
+Operation 5a3e6d18af89 had no pending upload, downloaded again, returned the same typed conflict, and did not acknowledge.
+
+The Android event is hosted and must not be registered again. Repeated Sync remains held.
+
+### Windows attempt
+
+Operation e6e918285640 uploaded its event, persisted the trusted result, and received a trusted download response. It then escaped as closure-runner-exception before a durable local-apply result.
+
+| UTC interval | Route | Child correlation | Result |
+|---|---|---|---|
+| 18:56:54.479–18:56:54.672 | POST /v1/sync/submissions | 013bbbc82c57 | authenticated; HTTP 200; under 250 ms |
+| 18:56:54.949–18:56:54.981 | GET /v1/sync/events | d4e57c134aca | authenticated; HTTP 200; under 250 ms |
+| absent | acknowledgement | none | correctly not started |
+
+A readiness request completed with HTTP 200 before the operation. A later readiness request began at 18:56:58.786 but its completion is absent from the supplied excerpt. Health records have no operation fingerprint and cannot be attributed to Sync.
+
+Windows lifecycle:
+
+| Phase | Event | Result |
+|---|---|---|
+| 1–2 | authentication | authenticated |
+| 3–4 | binding | accepted |
+| 5–6 | upload lease | committed |
+| 7–8 | upload transport/provider | server accepted |
+| 9–10 | upload result persistence | committed |
+| 11–12 | download transport/provider | trusted response received |
+| 13 | terminal | closure-runner-exception |
+
+Phase 13 claims trusted-response-not-received, contradicting phase 12. Stronger causal child evidence controls.
+
+## PRC-01 reconciliation
+
+~~~
+WINDOWS_UPLOAD_TRANSPORT=PASS
+WINDOWS_UPLOAD_PROVIDER=SERVER_ACCEPTED
+WINDOWS_UPLOAD_RESULT_PERSISTENCE=COMMITTED
+WINDOWS_DOWNLOAD_TRANSPORT=PASS
+WINDOWS_DOWNLOAD_PROVIDER=TRUSTED_RESPONSE_RECEIVED
+RENDER_REJECTION=FALSE
+WINDOWS_LOCAL_APPLY=UNPROVED
+WINDOWS_LOCAL_MUTATION=UNKNOWN
+WINDOWS_FACTS_INBOX_CURSOR_COMMIT=UNKNOWN
+WINDOWS_ACKNOWLEDGEMENT=NOT_STARTED
+~~~
+
+The evidence cannot distinguish an apply exception from diagnostic persistence failure after apply returned. No stronger claim is promoted.
+
+~~~
+ANDROID_TO_PROVIDER_UPLOAD=PASS
+WINDOWS_TO_PROVIDER_UPLOAD=PASS
+PROVIDER_TO_ANDROID_CONVERGENCE=FAIL_TYPED_PRODUCT_CONFLICT
+PROVIDER_TO_WINDOWS_CONVERGENCE=FAIL_POST_DOWNLOAD_UNCLASSIFIED
+INTER_DEVICE_SAME_ACCOUNT_SYNC=FAIL_OPEN
+MVP_SYNC_ACCEPTANCE=NOT_PROMOTED
+~~~
+
+## Source reconciliation
+
+- Product.identityKey excludes user code/raw display.
+- Remote reconciliation currently rejects exact identity under another code.
+- The applier rethrows unrecognized non-SQL exceptions.
+- DownloadAndApplyEvents can skip local-apply declaration on apply or diagnostic failure.
+- The coordinator catches only TimeoutException and StateError.
+- NativeAuthClosureRunner replaces causal evidence with generic terminal state.
+- The table stores sanitizedExceptionClass, but repository/application/UI projection drops it.
+
+R02 claims narrow to:
+
+~~~
+PRODUCT_SELECTOR_IDENTITY=PASS_AUTOMATED_AND_HUMAN
+REMOTE_PRODUCT_IDENTITY_RECONCILIATION=PASS_AUTOMATED_LIMITED
+LOCAL_APPLY_CAUSAL_DIAGNOSTICS=PASS_TYPED_PATHS_ONLY
+LOCAL_APPLY_CAUSAL_DIAGNOSTICS_UNCLASSIFIED_PATH=FAIL
+LIVE_INTER_DEVICE_CONVERGENCE=FAIL_OPEN
+~~~
+
+## R03 directives
+
+R03 shall implement asymmetric Product convergence, reference remapping, total after-rollback apply translation, diagnostic/core truth separation, pre-persistence causal snapshot, causal runner fallback, stored exception-class projection, atomic facts/inbox/cursor, acknowledgement ordering, and idempotent replay. Protocol v3, schema, provider, API, auth, enrollment, and dependencies remain unchanged.
+
+D controls. E/F constrain. Codex must replace G/H/I and perform no live Sync.
+
+## Current terminals
+
+~~~
+C10_GCM03_S10_R03=ACTIVE_CODEX_IMPLEMENTATION_AUTHORIZED
+CONTINUITY_ALIAS=C10_GCM03_S09_R03
+RENDER_SUBMISSION_RESPONSE=HTTP_200
+RENDER_DOWNLOAD_RESPONSE=HTTP_200
+RENDER_ACKNOWLEDGEMENT_REQUEST=ABSENT
+WINDOWS_LAST_PROVED_PHASE=DOWNLOAD_PROVIDER_RESPONSE_RECEIVED
+WINDOWS_TERMINAL_CLASSIFICATION=CONTRADICTS_CAUSAL_CHILD
+WINDOWS_LOCAL_MUTATION=UNKNOWN
+ANDROID_PRODUCT_CONFLICT=TYPED
+INTER_DEVICE_CONVERGENCE=FAIL_OPEN
+ANDROID_SYNC=HELD
+WINDOWS_SYNC=HELD
+RETRY_RECOVERY=HELD
+NEW_PURCHASE_REGISTRATION=HELD
+PROVIDER_MUTATION=NONE
+~~~
