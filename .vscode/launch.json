@@ -29,7 +29,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/clients/markei_flutter",
             "program": "${workspaceFolder}/clients/markei_flutter/lib/main.dart",
-            "deviceId": "android",
+            "deviceId": "${command:flutter.getSelectedDeviceId}",
             "flutterMode": "debug",
             "preLaunchTask": "Markei: prepare Android Closure debug (DBA)",
             "toolArgs": [

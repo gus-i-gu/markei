@@ -57,7 +57,7 @@ the matching `GS-*` section of `G_SCRIPTS.md`.
 | `GRM-FLUTTER-WIN` | Windows Closure build/run               |
 | `GRM-FLUTTER-DBW` | Windows Closure debugger preparation    |
 | `GRM-FLUTTER-AND` | Android Closure build/install/run       |
-| `GRM-FLUTTER-DBA` | Android Closure debugger preparation    |
+| `GRM-FLUTTER-DBA` | Android Closure Dart debugger launch    |
 
 ## 2. Canonical five-file system
 
@@ -441,7 +441,7 @@ allowed.
 | `GRM-FLUTTER-WIN`   | `GS-FLUTTER-WIN`      | Build/run Windows Closure          |
 | `GRM-FLUTTER-DBW`   | `GS-FLUTTER-DBW`      | Prepare VS Code Windows debugging  |
 | `GRM-FLUTTER-AND`   | `GS-FLUTTER-AND`      | Build/install/run Android Closure  |
-| `GRM-FLUTTER-DBA`   | `GS-FLUTTER-DBA`      | Prepare VS Code Android debugging  |
+| `GRM-FLUTTER-DBA`   | `GS-FLUTTER-DBA`      | Guard/launch VS Code Android debug |
 
 ### `GRM-BUILD-01`
 
@@ -487,8 +487,15 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 ```
 
 Prepares exactly one supported Android target and a guarded Android debug
-build, then leaves launch ownership with the tracked VS Code configuration
-`Markei Android Closure (debug)`. Select that configuration and press `F5` to
-open Markei under the Dart debugger with breakpoints and the Debug Console.
-The procedure preserves application data and does not perform Sign in, Enroll,
-Sync, Retry, recovery, or provider mutation.
+build. For a debugger session, select the same Android target in Flutter's
+VS Code device selector, choose `Markei Android Closure (debug)`, and press
+`F5`. The launch configuration resolves the selector's complete device ID,
+passes it through the pre-launch task for exact agreement with the guarded ADB
+serial, and then lets Dart Code run/open Markei automatically under the
+debugger with breakpoints and the Debug Console.
+
+The DBA procedure adds no install, uninstall, storage-clear, or ADB-launch
+function. A manual GRM invocation prepares and validates only; the tracked
+Dart `launch` request owns the later debug deployment and app launch. Neither
+path performs Sign in, Enroll, Query, Sync, Retry, recovery, or provider
+mutation.

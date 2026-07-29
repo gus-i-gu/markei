@@ -33,9 +33,19 @@
                 "GS-FLUTTER-DBA"
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "MARKEI_DBA_VSCODE_LAUNCH": "true",
+                    "MARKEI_DBA_VSCODE_DEVICE_ID": "${command:flutter.getSelectedDeviceId}"
+                }
             },
-            "problemMatcher": []
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "silent",
+                "focus": false,
+                "panel": "dedicated",
+                "clear": true
+            }
         },
         {
             "label": "Markei: restore Windows Closure release callback",

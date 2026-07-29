@@ -3865,12 +3865,16 @@ procedure combines the guarded Android target selection from
 launch model used by `GS-FLUTTER-DBW`. It reuses one connected supported
 Android target or starts the configured AVD, proves exactly one safe ADB
 serial, writes only reviewed public Closure coordinates to ignored local
-files, and validates one Android Debug APK without installing or launching it
-outside the debugger.
+files, and validates one Android Debug APK without adding an install or launch
+function to the procedure.
 
-The repository root must be the VS Code workspace. Select the tracked launch
-configuration `Markei Android Closure (debug)`. Its pre-launch task runs this
-procedure; VS Code then performs the debug install/launch and owns the Dart
+The repository root must be the VS Code workspace. Select the same Android
+target in Flutter's VS Code device selector, select the tracked launch
+configuration `Markei Android Closure (debug)`, and press `F5`. Dart Code's
+`flutter.getSelectedDeviceId` command supplies the complete selected ID to
+both the launch request and this pre-launch task. This procedure proves exact
+agreement with its independently guarded ADB serial; after it returns, the
+tracked Dart `launch` request runs/opens Markei automatically and owns the
 debugger, breakpoints, variables, and Debug Console. The procedure preserves
 application data and neither signs in nor performs Enroll, Query, Retry,
 recovery, or Sync.
@@ -3913,6 +3917,19 @@ $TasksPath = Join-Path $RepositoryRoot ".vscode\tasks.json"
 if (-not (Test-Path -LiteralPath $LaunchPath -PathType Leaf) -or
     -not (Test-Path -LiteralPath $TasksPath -PathType Leaf)) {
     throw "Tracked VS Code Android Debug launch/task configuration is incomplete."
+}
+
+$VsCodeLaunchRequested =
+    $env:MARKEI_DBA_VSCODE_LAUNCH -ceq "true"
+$VsCodeSelectedDeviceId = [string]$env:MARKEI_DBA_VSCODE_DEVICE_ID
+if ($VsCodeLaunchRequested -and
+    ([string]::IsNullOrWhiteSpace($VsCodeSelectedDeviceId) -or
+     $VsCodeSelectedDeviceId -match '[\s\x00-\x1F\x7F]')) {
+    throw @"
+VS Code did not supply one safe selected Flutter device ID.
+Select the Android target in Flutter's VS Code device selector, keep
+'Markei Android Closure (debug)' selected, and press F5 again.
+"@
 }
 
 $Branch = (& git -C $RepositoryRoot branch --show-current).Trim()
@@ -4203,6 +4220,18 @@ $SelectedAndroidDeviceId = Assert-AdbTargetSerial `
     -AdbExecutable $AdbExe `
     -CandidateId $SelectedAndroidDevice.id
 
+$VsCodeDeviceAlignment = "manual-preparation"
+if ($VsCodeLaunchRequested) {
+    if ($VsCodeSelectedDeviceId -cne $SelectedAndroidDeviceId) {
+        throw @"
+VS Code selected device '$VsCodeSelectedDeviceId', but the guarded Android
+target is '$SelectedAndroidDeviceId'. Select that exact Android target in
+Flutter's VS Code device selector and press F5 again.
+"@
+    }
+    $VsCodeDeviceAlignment = "exact-selected-device"
+}
+
 $DebugDefinesPath = Join-Path `
     $ResolvedClientRoot `
     ".markei_dba_defines.json"
@@ -4273,30 +4302,46 @@ finally {
     AndroidDevice = $true
     AndroidDeviceId = $SelectedAndroidDeviceId
     AdbSerialGuard = "exactly-one"
+    VsCodeLaunchRequested = $VsCodeLaunchRequested
+    VsCodeDeviceAlignment = $VsCodeDeviceAlignment
     LocalDefinesIgnored = $true
     LocalGradlePropertiesIgnored = $true
     DebugBuild = $true
     DebugArtifactBytes = $AndroidArtifactItem.Length
     DebugArtifactSha256 = $AndroidArtifactHash.Hash
     BuildProvenance = $BuildProvenance
-    DebugLaunch = "configured-for-vscode-f5"
+    DebugLaunch = if ($VsCodeLaunchRequested) {
+        "ready-for-automatic-dart-launch"
+    }
+    else {
+        "prepared-for-vscode-f5"
+    }
 }
 
 Write-Host ""
-Write-Host "Next:"
-Write-Host "1. Open the Markei repository root in VS Code."
-Write-Host "2. Open Run and Debug."
-Write-Host "3. Select 'Markei Android Closure (debug)'."
-Write-Host "4. Set the required breakpoint and press F5."
-Write-Host "5. Keep exactly this Android target connected during launch."
-Write-Host "6. Stop normally when the bounded debug observation is complete."
+if ($VsCodeLaunchRequested) {
+    Write-Host "DBA preparation and exact VS Code device alignment passed."
+    Write-Host "Dart Code will now run/open Markei under the debugger."
+}
+else {
+    Write-Host "Next:"
+    Write-Host "1. Open the Markei repository root in VS Code."
+    Write-Host "2. Select this exact Android target in Flutter's device selector."
+    Write-Host "3. Open Run and Debug."
+    Write-Host "4. Select 'Markei Android Closure (debug)'."
+    Write-Host "5. Set the required breakpoint and press F5."
+    Write-Host "6. Keep exactly this Android target connected during launch."
+    Write-Host "7. Stop normally after the bounded debug observation."
+}
 ```
 
 `GS-FLUTTER-DBA` does not call `flutter clean`, uninstall the package, clear
-application data, or use ADB to install/launch outside the debugger. The
-tracked VS Code launch uses the Android device selector only after the
-pre-launch procedure has proved that exactly one supported Android target and
-one matching ready ADB serial exist.
+application data, or use ADB to install/launch outside the debugger. It also
+does not add an independent install function. The tracked VS Code launch
+resolves the complete current device ID through
+`flutter.getSelectedDeviceId`; its pre-launch task requires exact agreement
+with the one supported Android target and matching ready ADB serial before the
+Dart launch may run/open the app.
 
 The only local configuration artifacts it writes are
 `clients/markei_flutter/.markei_dba_defines.json` and
