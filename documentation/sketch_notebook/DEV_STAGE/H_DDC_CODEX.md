@@ -1,86 +1,48 @@
-# H_DDC_CODEX - C10-GCM03-ST04-R1-C3
+# H_DDC_CODEX - C10-GCM03-S10-R02
 
-> Role: Codex didactic validation report
-> Unit: `C10-GCM03-ST04-R1-C3`
+## Didactic Report
 
-## Ownership
+The Purchase dropdown failure was an object-identity problem, not proof of a
+database duplicate. Flutter requires exactly one menu item equal to the current
+Dropdown value. A Product returned by Find code can represent the same row as a
+Product in the list while still being a different object instance. The repaired
+UI uses the Product ID as the scalar selection value and resolves the current
+Product object from the active projection only when exactly one row matches.
 
-The GRM set is human/Main-owned for mutation. Codex's role in this unit was
-limited to:
+Zero matches and multiple matches mean different things. Zero means the prior
+selection is no longer available in the Account projection and must be cleared.
+Multiple means the projection is unsafe for Dropdown construction. Equivalent
+repeated IDs can be collapsed; conflicting repeated IDs are rejected and surfaced
+as bounded feedback rather than left for a Flutter assertion.
 
-```text
-read
-extract
-parse
-hash
-test
-report
-```
+Remote synchronization has two identity layers. UUIDs are surrogate event
+identifiers. Product code and exact identity key are natural Account-scoped
+catalogue identities. When a remote UUID differs but both natural identities
+match one coherent local Product, the local row is reused and the event-local
+remote UUID maps to the local UUID for Purchase Items. If code and exact
+identity point to different local rows, or immutable facts contradict, the page
+is a typed notApplied conflict.
 
-Codex did not edit, restore, format, normalize, stage or regenerate any GRM
-file. The seven protected file identities were recorded before and after
-validation and matched exactly.
+Store convergence follows the existing Account-scoped stable display identity.
+No new Store normalization rule was introduced.
 
-## Parsing And Enumeration
+The trusted download response and the local commit are separate evidence steps.
+A provider response can be received while local apply fails. The repaired
+diagnostic path records download-local-apply with trustedResponseState=received
+and localMutationState=rolled-back for local conflict/SQLite failure. That is
+different from a transport failure where the trusted response was not received.
 
-The original C2 defect was not that JSON parsing failed. The defect was that
-Windows PowerShell 5.1 could preserve the top-level JSON array as one aggregate
-object when wrapped incorrectly. The repaired actual fence separates these
-steps:
-
-```text
-parse Flutter JSON once
-if parsed value is an array, foreach over members
-filter each member object
-```
-
-That distinction matters because aggregate member-expanded properties can make
-a mixed Windows/Edge/Android inventory look like one Android candidate. The
-actual-fence mixed fixture now returns only the Android member.
-
-## Cardinality And Identity
-
-The repaired contract keeps three separate gates:
-
-```text
-Android device cardinality
-selected ID scalar safety
-exact ADB ready-serial membership
-```
-
-Zero Android targets, one Android target and two Android targets retain their
-different meanings. A selected ID must be one non-empty scalar string without
-whitespace/control characters, and it must match exactly one ready serial from
-`adb devices`.
-
-The captured boot, install, package-path, package-inspection and launch vectors
-all put exactly one safe scalar value after `-s`. Neither `windows` nor `edge`
-appeared in any captured vector.
-
-## Actual Fence Versus Equivalent Fixture
-
-C2 validated an equivalent selector fixture. C3 validates the actual extracted
-repository fence. That is stronger evidence because the test body used the
-Main-authored `Get-SupportedAndroidDevices` and `Assert-AdbTargetSerial`
-definitions from `documentation/G_SCRIPTS.md` without editing that file or
-running the live procedure.
-
-## AUTHAND
-
-`AUTHAND-06` remains held because this validation did not perform interactive
-Android Sign in. Static Auth0 composition tests pass, but runtime provider
-acceptance requires a later human-operated Sign in observation and, if
-authorized, separately controlled provider correlation.
+Unit tests validate the static/materialized behavior. Corrected live
+inter-device convergence still requires a later, separately authorized human
+assay and Main reconciliation.
 
 ## Terminals
 
-```text
-GRM_AUTHORITY=HUMAN_MAIN_ONLY
-CODEX_GRM_ROLE=READ_TEST_REPORT
-JSON_PARSE_NOT_MEMBER_ENUMERATION=VALIDATED_ON_ACTUAL_FENCE
-CARDINALITY_VERSUS_SCALAR_IDENTITY=VALIDATED
-ACTUAL_FENCE_VALIDATION=PASS
-AUTHAND_06_RUNTIME_HELD=YES
-ST04=BLOCKED_PENDING_HUMAN_RETEST
-GCM03_ST05_AND_LATER=HELD
-```
+UI_OBJECT_IDENTITY_VS_PRODUCT_ID=VISIBLE
+ZERO_VS_MULTIPLE_DROPDOWN_MATCH=VISIBLE
+SCREENSHOT_PROVES_DATABASE_DUPLICATE=NO
+SURROGATE_VS_NATURAL_IDENTITY=VISIBLE
+REMOTE_TO_LOCAL_REFERENCE_MAPPING=VISIBLE
+TRUSTED_RESPONSE_VS_LOCAL_COMMIT=VISIBLE
+PROVIDER_BRANCH_ALIAS_VS_GITHUB_BRANCH=VISIBLE
+LIVE_CONVERGENCE_ACCEPTANCE=HELD

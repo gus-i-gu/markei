@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:markei/application/app_failure.dart';
+import 'package:markei/application/catalogue_queries.dart';
 import 'package:markei/application/history_export.dart';
+import 'package:markei/application/local_references.dart';
 import 'package:markei/application/purchase_history.dart';
 import 'package:markei/application/register_purchase.dart';
 import 'package:markei/app/markei_app.dart';
 import 'package:markei/app/markei_composition.dart';
 import 'package:markei/app/native_auth_closure_runner.dart';
 import 'package:markei/app/pages/history_page.dart';
+import 'package:markei/app/pages/purchase_page.dart';
 import 'package:markei/domain/catalogue/product.dart';
+import 'package:markei/domain/catalogue/product_code.dart';
+import 'package:markei/domain/references/local_reference.dart';
 import 'package:markei/domain/shared/ids.dart';
 import 'package:markei/domain/shared/quantity.dart';
-import 'package:markei/infrastructure/local/local_database.dart';
+import 'package:markei/domain/store/store.dart';
+import 'package:markei/infrastructure/local/local_database.dart'
+    hide Product, Store;
 import 'package:markei/infrastructure/local/local_purchase_repository.dart';
 import 'package:markei/infrastructure/local/local_query_repository.dart';
 
@@ -178,6 +185,227 @@ void main() {
     expect(item.packageCount, 3);
     expect(item.purchasedAmount, '2.000000');
     expect(item.lineTotalMinorUnits, 1550);
+  });
+
+  testWidgets('Find code binds a separately materialized Product by ID', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    await queries.createStore(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      'Mercado Central',
+    );
+    final product = await queries.createProduct(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      const ProductDraft(
+        userCode: 'CAFE-FIND',
+        name: 'Cafe Encontrado',
+        brand: 'Marca A',
+        mode: ProductMode.packaged,
+        measurementKind: MeasurementKind.mass,
+        packageAmount: '1',
+        packageUnit: 'kg',
+      ),
+    );
+    final composition = _composition(
+      db: db,
+      queries: queries,
+      registration: LocalPurchaseRepository(db),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+    await _pumpReady(tester);
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+    await _enterVisibleText(
+      tester,
+      find.byKey(const Key('product.code')),
+      'CAFE-FIND',
+    );
+    await _tapVisible(tester, find.byKey(const Key('product.findByCode')));
+    await _pumpReady(tester);
+
+    expect(
+      find.text('Product facts filled. Add staged Item when ready.'),
+      findsOneWidget,
+    );
+    expect(find.text('Mode: PACKAGED · mass'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await _enterVisibleText(
+      tester,
+      find.byKey(const Key('item.lineTotal')),
+      '10.00',
+    );
+    await _tapVisible(tester, find.byKey(const Key('product.useSelected')));
+    await _pumpReady(tester);
+    await _selectStore(tester, 'Mercado Central');
+    await _enterPurchaseMoment(tester);
+    await _tapVisible(tester, find.byKey(const Key('purchase.review')));
+    await _pumpReady(tester);
+    await _tapVisible(tester, find.byKey(const Key('purchase.register')));
+    await _pumpReady(tester);
+
+    final item = (await db.select(db.purchaseItems).get()).single;
+    expect(item.productId, product.id.value);
+  });
+
+  testWidgets('selected Product removal clears safely on projection refresh', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    final queries = LocalQueryRepository(db);
+    await queries.createProduct(
+      const AccountId('11111111-1111-4111-8111-111111111111'),
+      const ProductDraft(
+        userCode: 'REMOVE-001',
+        name: 'Produto Removivel',
+        brand: 'Marca A',
+        mode: ProductMode.packaged,
+        measurementKind: MeasurementKind.mass,
+        packageAmount: '1',
+        packageUnit: 'kg',
+      ),
+    );
+    final composition = _composition(
+      db: db,
+      queries: queries,
+      registration: LocalPurchaseRepository(db),
+    );
+
+    await tester.pumpWidget(MarkeiApp(composition: composition));
+    await _pumpReady(tester);
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+    await _tapVisible(tester, find.byKey(const Key('purchase.product.select')));
+    await _pumpReady(tester);
+    await tester.tap(find.text('REMOVE-001 · Produto Removivel').last);
+    await _pumpReady(tester);
+    await db.delete(db.products).go();
+    await tester.tap(find.text('Catalogue'));
+    await _pumpReady(tester);
+    await _createStoreInCatalogue(tester, 'Refresh Store');
+    await tester.tap(find.text('Purchase'));
+    await _pumpReady(tester);
+
+    expect(
+      find.textContaining('product-selection-invalidated'),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('product.useSelected')), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'repeated Product IDs do not reach dropdown as duplicate values',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final product = _testProduct(
+        id: 'product-duplicate',
+        code: 'DUP-001',
+        name: 'Produto Duplicado',
+      );
+      final catalogue = _FakeCatalogue(
+        products: [product, product],
+        stores: const [
+          Store(
+            id: StoreId('store-1'),
+            accountId: AccountId('11111111-1111-4111-8111-111111111111'),
+            displayName: 'Mercado Central',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PurchasePage(
+              accountId: const AccountId(
+                '11111111-1111-4111-8111-111111111111',
+              ),
+              deviceId: const DeviceId('22222222-2222-4222-8222-222222222222'),
+              registration: const _NoopRegistration(),
+              catalogueQueries: catalogue,
+              references: const _EmptyReferences(),
+              refreshSignal: 0,
+              onRegistered: () {},
+            ),
+          ),
+        ),
+      );
+      await _pumpReady(tester);
+
+      await _tapVisible(
+        tester,
+        find.byKey(const Key('purchase.product.select')),
+      );
+      await _pumpReady(tester);
+      expect(find.text('DUP-001 · Produto Duplicado'), findsOneWidget);
+      await tester.tap(find.text('DUP-001 · Produto Duplicado').last);
+      await _pumpReady(tester);
+
+      expect(find.byKey(const Key('product.useSelected')), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('conflicting repeated Product IDs are rejected before dropdown', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: PurchasePage(
+            accountId: const AccountId('11111111-1111-4111-8111-111111111111'),
+            deviceId: const DeviceId('22222222-2222-4222-8222-222222222222'),
+            registration: const _NoopRegistration(),
+            catalogueQueries: _FakeCatalogue(
+              products: [
+                _testProduct(
+                  id: 'product-conflict',
+                  code: 'CONFLICT-001',
+                  name: 'Produto A',
+                ),
+                _testProduct(
+                  id: 'product-conflict',
+                  code: 'CONFLICT-001',
+                  name: 'Produto B',
+                ),
+              ],
+            ),
+            references: const _EmptyReferences(),
+            refreshSignal: 0,
+            onRegistered: () {},
+          ),
+        ),
+      ),
+    );
+    await _pumpReady(tester);
+
+    expect(find.textContaining('product-selection-conflict'), findsOneWidget);
+    expect(find.text('CONFLICT-001 · Produto A'), findsNothing);
+    expect(find.text('CONFLICT-001 · Produto B'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('phone-width shell shows purchase and history states', (
@@ -1057,6 +1285,133 @@ final class _ThrowingRegistration implements PurchaseRegistrationRepository {
   ) async {
     throw error;
   }
+}
+
+final class _NoopRegistration implements PurchaseRegistrationRepository {
+  const _NoopRegistration();
+
+  @override
+  Future<PurchaseRegistrationResult> registerPurchase(
+    RegisterPurchaseCommand command,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
+final class _EmptyReferences implements LocalReferenceRepository {
+  const _EmptyReferences();
+
+  @override
+  Future<void> archiveReference({
+    required AccountId accountId,
+    required LocalReferenceKind kind,
+    required String id,
+  }) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<LocalReference>> listReferences(
+    AccountId accountId,
+    LocalReferenceKind kind, {
+    bool includeArchived = false,
+  }) async {
+    return const [];
+  }
+
+  @override
+  Future<LocalReference> saveReference({
+    required AccountId accountId,
+    required LocalReferenceKind kind,
+    String? id,
+    required String nickname,
+    bool active = true,
+  }) {
+    throw UnimplementedError();
+  }
+}
+
+final class _FakeCatalogue implements CatalogueQueryRepository {
+  const _FakeCatalogue({required this.products, this.stores = const []});
+
+  final List<Product> products;
+  final List<Store> stores;
+
+  @override
+  Future<Product> createProduct(AccountId accountId, ProductDraft draft) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Store> createStore(AccountId accountId, String displayName) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<Product>> listProducts(AccountId accountId) async => products;
+
+  @override
+  Future<List<Store>> listStores(AccountId accountId) async => stores;
+
+  @override
+  Future<Product?> productByCode(
+    AccountId accountId,
+    String productCode,
+  ) async {
+    final normalized = normalizeProductCode(productCode).normalizedKey;
+    for (final product in products) {
+      if (product.userProductCode.normalizedKey == normalized) {
+        return product;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<Product?> productByExactIdentity(
+    AccountId accountId,
+    ProductDraft draft,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Product?> productDetail(AccountId accountId, ProductId productId) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<ProductSimilarityWarning>> similarityWarnings(
+    AccountId accountId,
+    ProductDraft draft,
+  ) async {
+    return const [];
+  }
+}
+
+Product _testProduct({
+  required String id,
+  required String code,
+  required String name,
+}) {
+  final package = NormalizedQuantity.fromDecimalString(
+    kind: MeasurementKind.mass,
+    unit: CanonicalUnit.kg,
+    decimal: '1',
+  );
+  return Product(
+    id: ProductId(id),
+    accountId: const AccountId('11111111-1111-4111-8111-111111111111'),
+    userProductCode: normalizeProductCode(code),
+    normalizationVersion: productNormalizationVersion,
+    displayName: name,
+    displayBrand: 'Marca A',
+    normalizedName: normalizeSemanticIdentityText(name),
+    normalizedBrand: normalizeSemanticIdentityText('Marca A'),
+    mode: ProductMode.packaged,
+    measurementKind: MeasurementKind.mass,
+    packageQuantity: package,
+  );
 }
 
 MarkeiComposition _composition({

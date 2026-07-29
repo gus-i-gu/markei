@@ -260,9 +260,7 @@ final class DownloadAndApplyEvents {
         phase: 'download-local-apply',
         lastProvedPhase: 'download-local-apply',
         outcome: result.outcome.name,
-        localMutationState: result.outcome == SyncOutcome.applied
-            ? 'committed'
-            : 'none',
+        localMutationState: _localMutationStateForDownloadResult(result),
         providerContactState: 'request-started',
         trustedResponseState: 'received',
         providerTransactionState: 'not-applicable',
@@ -363,12 +361,26 @@ String _diagnosticCodeForUploadResult(SyncResult result) {
 }
 
 String _diagnosticCodeForDownloadResult(SyncResult result) {
+  if (result.protocolCode == 'local-sqlite-apply-failed') {
+    return 'MKS-LDB-001';
+  }
   return switch (result.code) {
     SyncStatusCode.cursorExpired => 'MKS-DNL-004',
     SyncStatusCode.conflict => 'MKS-DNL-006',
     SyncStatusCode.unknownOutcome => 'MKS-OBS-001',
     _ => 'MKS-DNL-001',
   };
+}
+
+String _localMutationStateForDownloadResult(SyncResult result) {
+  if (result.outcome == SyncOutcome.applied) {
+    return 'committed';
+  }
+  if (result.protocolCode == 'local-sqlite-apply-failed' ||
+      result.code == SyncStatusCode.conflict) {
+    return 'rolled-back';
+  }
+  return 'none';
 }
 
 String _diagnosticCodeForAcknowledgementResult(SyncResult result) {

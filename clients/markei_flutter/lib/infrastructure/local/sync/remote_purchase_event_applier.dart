@@ -18,50 +18,69 @@ final class DriftRemoteEventApplier implements RemoteEventApplier {
   late final RemotePurchaseFactWriter _facts = RemotePurchaseFactWriter(_db);
 
   @override
-  Future<SyncResult> applyPage(DownloadPage page) {
-    return _db.transaction(() async {
-      if (page.events.isEmpty) {
+  Future<SyncResult> applyPage(DownloadPage page) async {
+    try {
+      return await _db.transaction(() async {
+        if (page.events.isEmpty) {
+          return const SyncResult(
+            code: SyncStatusCode.downloadReceived,
+            outcome: SyncOutcome.duplicateEquivalent,
+            retryable: false,
+          );
+        }
+        final validation = await _validatePage(page);
+        if (validation != null) {
+          if (validation.code == SyncStatusCode.duplicateIgnored) {
+            await _advanceCursorForPage(page);
+          }
+          return validation;
+        }
+        for (final item in page.events) {
+          final eventId = item.event['eventId'] as String;
+          final accountId = item.event['accountId'] as String;
+          final hash = item.event['contentHash'] as String;
+          if (await _isEquivalentInbox(accountId, eventId, hash)) {
+            continue;
+          }
+          await _facts.applyPurchaseRegistered(item.event);
+          await _db
+              .into(_db.syncInbox)
+              .insert(
+                SyncInboxCompanion.insert(
+                  accountId: accountId,
+                  eventId: eventId,
+                  contentHash: hash,
+                  serverCursor: item.serverCursor,
+                  state: 'applied',
+                  appliedAt: Value(DateTime.now().toUtc()),
+                ),
+              );
+        }
+        await _advanceCursorForPage(page);
         return const SyncResult(
-          code: SyncStatusCode.downloadReceived,
-          outcome: SyncOutcome.duplicateEquivalent,
+          code: SyncStatusCode.downloadedApplied,
+          outcome: SyncOutcome.applied,
           retryable: false,
         );
-      }
-      final validation = await _validatePage(page);
-      if (validation != null) {
-        if (validation.code == SyncStatusCode.duplicateIgnored) {
-          await _advanceCursorForPage(page);
-        }
-        return validation;
-      }
-      for (final item in page.events) {
-        final eventId = item.event['eventId'] as String;
-        final accountId = item.event['accountId'] as String;
-        final hash = item.event['contentHash'] as String;
-        if (await _isEquivalentInbox(accountId, eventId, hash)) {
-          continue;
-        }
-        await _facts.applyPurchaseRegistered(item.event);
-        await _db
-            .into(_db.syncInbox)
-            .insert(
-              SyncInboxCompanion.insert(
-                accountId: accountId,
-                eventId: eventId,
-                contentHash: hash,
-                serverCursor: item.serverCursor,
-                state: 'applied',
-                appliedAt: Value(DateTime.now().toUtc()),
-              ),
-            );
-      }
-      await _advanceCursorForPage(page);
-      return const SyncResult(
-        code: SyncStatusCode.downloadedApplied,
-        outcome: SyncOutcome.applied,
+      });
+    } on RemoteIdentityConflict catch (failure) {
+      return SyncResult(
+        code: SyncStatusCode.conflict,
+        outcome: SyncOutcome.notApplied,
         retryable: false,
+        protocolCode: failure.protocolCode,
       );
-    });
+    } on Object catch (error) {
+      if (_isSqliteFailure(error)) {
+        return const SyncResult(
+          code: SyncStatusCode.unknownOutcome,
+          outcome: SyncOutcome.unknown,
+          retryable: false,
+          protocolCode: 'local-sqlite-apply-failed',
+        );
+      }
+      rethrow;
+    }
   }
 
   @override
@@ -183,4 +202,9 @@ final class DriftRemoteEventApplier implements RemoteEventApplier {
     outcome: SyncOutcome.notApplied,
     retryable: false,
   );
+}
+
+bool _isSqliteFailure(Object error) {
+  final typeName = error.runtimeType.toString().toLowerCase();
+  return typeName.contains('sqlite') || typeName.contains('databaseexception');
 }

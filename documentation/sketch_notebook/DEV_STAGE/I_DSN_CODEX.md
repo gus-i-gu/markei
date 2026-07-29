@@ -1,87 +1,44 @@
-# I_DSN_CODEX - C10-GCM03-ST04-R1-C3
+# I_DSN_CODEX - C10-GCM03-S10-R02
 
-> Role: Codex design validation report
-> Unit: `C10-GCM03-ST04-R1-C3`
+## Design Report
 
-## Protected GRM Map
+Purchase selection ownership now sits at the UI boundary as a stable Product ID.
+The Product object remains a domain value without global equality redefinition.
+The current Account-scoped Product projection is the only source used to
+materialize immutable Product fields into the Purchase draft.
 
-```text
-documentation/GRM.md
-  operator/process contract
+Remote Product canonicalization is Account-scoped and transaction-local:
+incoming UUID is checked first, then normalized user code, then exact identity
+key. A coherent existing local Product is selected when natural identity matches
+under a different incoming UUID. The remote-to-local Product map exists only
+inside the local apply operation and is used when writing Purchase Items.
 
-documentation/G_SCRIPTS.md
-  Main-owned procedure catalogue and GS-FLUTTER-AND implementation
+Remote Store canonicalization is Account-scoped and uses incoming UUID plus the
+existing stable display identity. The selected local Store ID is used for the
+Purchase row. No Store normalization rule, mapping table, migration, or hosted
+contract was added.
 
-documentation/I_SCRIPTS.ps1
-  dispatcher/extractor
+DriftRemoteEventApplier still places validation, fact writes, inbox writes, and
+cursor advancement in one applyPage transaction. RemoteIdentityConflict and
+SQLite write failures are thrown inside that transaction and translated after
+rollback into bounded SyncResult values. Acknowledgement still depends on a
+committed greatest contiguous applied cursor, so failed local apply cannot
+produce an acknowledgement cursor.
 
-documentation/NS_COORDINATES.md
-  reviewed public coordinate surface
-
-documentation/DB_MGMT.sql
-  database action catalogue
-
-documentation/ERR_DIAGNOSTICS.md
-  diagnostics projection
-
-documentation/REC_DIAGNOSTICS.md
-  recovery diagnostics record
-```
-
-All seven are human/Main-owned for mutation. Codex validated identity,
-structure and behavior without modifying them.
-
-## Device Boundary
-
-The validated launcher boundary is:
-
-```text
-flutter devices --machine JSON
-  -> exactly one ConvertFrom-Json parse
-  -> explicit top-level member enumeration
-  -> member predicate: android platform, Boolean true support, scalar safe ID
-  -> zero/one/multiple cardinality decision
-  -> exact ready ADB serial binding
-  -> explicit targeted ADB argument arrays
-```
-
-The actual fence prevents the collection of Flutter IDs from crossing into ADB.
-The captured ADB vectors demonstrate one `-s` scalar for boot, install,
-package path, package inspection and launch.
-
-## Serial And AVD Responsibility
-
-No hard-coded emulator serial was introduced. `DEV-GRM` remains the stable AVD
-definition. The runtime ADB serial is discovered from Flutter and then bound to
-the current `adb devices` inventory.
-
-## Auth0 And Architecture
-
-Auth0 responsibility remains unchanged:
-
-```text
-public coordinates and Dart defines
-Gradle manifest placeholders
-package com.gusigu.markei
-NativeAuthConfiguration
-Auth0 native adapter
-Closure Sign in
-external provider/dashboard acceptance
-```
-
-No Auth0 source, API route, persistence model, provider configuration,
-synchronization behavior, schema, migration or RLS surface changed during this
-validation. No Android-only Closure page or alternate auth stack was added.
+Native/provider architecture did not expand. API routes, payload version,
+schema, persistence model, synchronization protocol, authentication,
+enrollment, provider configuration, and dependencies are unchanged.
 
 ## Terminals
 
-```text
-GRM_PROTECTED_SET_MUTATION=ABSENT
-FLUTTER_COLLECTION_TO_MEMBER_OBJECTS=VALIDATED
-ANDROID_MEMBER_TO_ONE_ADB_SERIAL=VALIDATED
-HARD_CODED_DEVICE_SERIAL=ABSENT
-AUTH_RESPONSIBILITY_UNCHANGED=YES
-API_PERSISTENCE_PROVIDER_SYNC_EXPANSION=ABSENT
-ST04=BLOCKED_PENDING_HUMAN_RETEST
-GCM03_ST05_AND_LATER=HELD
-```
+PURCHASE_SELECTION_OWNER=STABLE_PRODUCT_ID
+CURRENT_PRODUCT_PROJECTION=EXACTLY_ONE_OR_SAFE_INVALIDATION
+REMOTE_PRODUCT_CANONICALIZATION=ACCOUNT_SCOPED
+REMOTE_STORE_CANONICALIZATION=ACCOUNT_SCOPED
+REMOTE_ID_MAP_OWNER=LOCAL_APPLY_TRANSACTION
+FACT_INBOX_CURSOR_ATOMICITY=PRESERVED
+CONFLICT_CAUSES_COMPLETE_ROLLBACK=YES
+ACK_REQUIRES_COMMITTED_CURSOR=YES
+HOSTED_CONTRACT_CHANGE=ABSENT
+LOCAL_SCHEMA_CHANGE=ABSENT
+AUTH_ENROLLMENT_CHANGE=ABSENT

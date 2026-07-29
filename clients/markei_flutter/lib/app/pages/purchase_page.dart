@@ -57,7 +57,7 @@ class _PurchasePageState extends State<PurchasePage> {
   List<LocalReference> _people = const [];
   List<LocalReference> _paymentMethods = const [];
   List<ProductSimilarityWarning> _warnings = const [];
-  Product? _selectedProduct;
+  String? _selectedProductId;
   String? _selectedStoreId;
   LocalReference? _selectedPerson;
   LocalReference? _selectedPaymentMethod;
@@ -129,6 +129,13 @@ class _PurchasePageState extends State<PurchasePage> {
       if (!mounted) {
         return;
       }
+      final projection = _normalizedProductProjection(products);
+      final selectedProductState = _selectionState(
+        projection.products,
+        _selectedProductId,
+      );
+      final selectedProductInvalidated =
+          _selectedProductId != null && selectedProductState.product == null;
       final previousStoreId = _selectedStoreId;
       final selectedStoreStillAvailable =
           previousStoreId != null &&
@@ -136,15 +143,31 @@ class _PurchasePageState extends State<PurchasePage> {
       final selectedStoreInvalidated =
           previousStoreId != null && !selectedStoreStillAvailable;
       setState(() {
-        _products = products;
+        _products = projection.products;
         _stores = stores;
         _people = people;
         _paymentMethods = paymentMethods;
+        if (selectedProductInvalidated) {
+          _clearSelectedProduct();
+        }
         if (selectedStoreInvalidated) {
           _selectedStoreId = null;
         }
         _loading = false;
-        if (selectedStoreInvalidated) {
+        if (projection.conflictedProductId != null) {
+          _feedback = _PurchaseFeedback.error(
+            'product-selection-conflict: Product projection contains conflicting repeated IDs. Refresh Catalogue before choosing that Product.',
+          );
+        } else if (selectedProductState.multiple) {
+          _clearSelectedProduct();
+          _feedback = _PurchaseFeedback.error(
+            'product-selection-invalidated: Selected Product is ambiguous in the current projection. Choose a Product again.',
+          );
+        } else if (selectedProductInvalidated) {
+          _feedback = _PurchaseFeedback.error(
+            'product-selection-invalidated: Selected Product is no longer available for this account. Choose a Product again.',
+          );
+        } else if (selectedStoreInvalidated) {
           _feedback = _PurchaseFeedback.error(
             'store-selection-invalidated: Selected Store is no longer available for this account. Choose a Store again.',
           );
@@ -229,7 +252,7 @@ class _PurchasePageState extends State<PurchasePage> {
       }
       if (product == null) {
         setState(() {
-          _selectedProduct = null;
+          _clearSelectedProduct();
           _feedback = _PurchaseFeedback.error(
             'No Product matches this exact code. Check details or create a new Product.',
           );
@@ -237,10 +260,14 @@ class _PurchasePageState extends State<PurchasePage> {
         return;
       }
       setState(() {
-        _applyProductFacts(product);
-        _feedback = _PurchaseFeedback.success(
-          'Product facts filled. Add staged Item when ready.',
-        );
+        final selected = _selectProductId(product.id.value);
+        _feedback = selected == null
+            ? _PurchaseFeedback.error(
+                'product-selection-invalidated: Found Product is not available in the current Purchase projection. Refresh Catalogue and try again.',
+              )
+            : _PurchaseFeedback.success(
+                'Product facts filled. Add staged Item when ready.',
+              );
       });
     } on Object {
       if (!mounted) {
@@ -255,7 +282,7 @@ class _PurchasePageState extends State<PurchasePage> {
   }
 
   void _applyProductFacts(Product product) {
-    _selectedProduct = product;
+    _selectedProductId = product.id.value;
     _bulk = product.mode == ProductMode.bulk;
     _codeController.text = product.userProductCode.displayValue;
     _nameController.text = product.displayName;
@@ -265,6 +292,21 @@ class _PurchasePageState extends State<PurchasePage> {
       _packageAmountController.text = package.decimalText;
       _packageUnitController.text = package.unit.name;
     }
+  }
+
+  Product? _selectProductId(String productId) {
+    final state = _selectionState(_products, productId);
+    final product = state.product;
+    if (product == null) {
+      _clearSelectedProduct();
+      return null;
+    }
+    _applyProductFacts(product);
+    return product;
+  }
+
+  void _clearSelectedProduct() {
+    _selectedProductId = null;
   }
 
   void _saveEditedLine() {
@@ -491,6 +533,14 @@ class _PurchasePageState extends State<PurchasePage> {
     return null;
   }
 
+  Product? _selectedProduct() {
+    final selectedId = _selectedProductId;
+    if (selectedId == null) {
+      return null;
+    }
+    return _selectionState(_products, selectedId).product;
+  }
+
   Store? _selectedStore() {
     final selectedId = _selectedStoreId;
     if (selectedId == null) {
@@ -567,7 +617,7 @@ class _PurchasePageState extends State<PurchasePage> {
     _brandController.clear();
     _pricePerUnitController.clear();
     _lineTotalController.clear();
-    _selectedProduct = null;
+    _clearSelectedProduct();
   }
 
   void _clearEditState() {
@@ -796,6 +846,7 @@ class _PurchasePageState extends State<PurchasePage> {
   }
 
   Widget _productSection() {
+    final selectedProduct = _selectedProduct();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -806,7 +857,7 @@ class _PurchasePageState extends State<PurchasePage> {
               child: TextField(
                 key: const Key('product.code'),
                 controller: _codeController,
-                readOnly: _selectedProduct != null,
+                readOnly: selectedProduct != null,
                 decoration: const InputDecoration(
                   labelText: 'Product code',
                   helperText: 'Required and immutable',
@@ -824,9 +875,9 @@ class _PurchasePageState extends State<PurchasePage> {
         if (_products.isEmpty)
           const Text('No Products yet. Create a Product to stage an Item.')
         else
-          DropdownButton<Product?>(
+          DropdownButton<String?>(
             key: const Key('purchase.product.select'),
-            value: _selectedProduct,
+            value: selectedProduct?.id.value,
             hint: const Text('Use existing Product'),
             isExpanded: true,
             items: [
@@ -836,7 +887,7 @@ class _PurchasePageState extends State<PurchasePage> {
               ),
               for (final product in _products)
                 DropdownMenuItem(
-                  value: product,
+                  value: product.id.value,
                   child: Text(
                     '${product.userProductCode.displayValue} · ${product.displayName}',
                   ),
@@ -844,16 +895,21 @@ class _PurchasePageState extends State<PurchasePage> {
             ],
             onChanged: (value) => setState(() {
               if (value == null) {
-                _selectedProduct = null;
+                _clearSelectedProduct();
                 _codeController.clear();
                 _nameController.clear();
                 _brandController.clear();
               } else {
-                _applyProductFacts(value);
+                final selected = _selectProductId(value);
+                if (selected == null) {
+                  _feedback = _PurchaseFeedback.error(
+                    'product-selection-invalidated: Selected Product is not available. Choose a Product again.',
+                  );
+                }
               }
             }),
           ),
-        if (_selectedProduct != null) ...[
+        if (selectedProduct != null) ...[
           TextField(
             key: const Key('product.name'),
             controller: _nameController,
@@ -867,12 +923,12 @@ class _PurchasePageState extends State<PurchasePage> {
             decoration: const InputDecoration(labelText: 'Brand'),
           ),
           Text(
-            'Mode: ${_selectedProduct!.mode.name.toUpperCase()} · ${_selectedProduct!.measurementKind.name}',
+            'Mode: ${selectedProduct.mode.name.toUpperCase()} · ${selectedProduct.measurementKind.name}',
             key: const Key('product.immutableFacts'),
           ),
           FilledButton.tonal(
             key: const Key('product.useSelected'),
-            onPressed: () => _stageExistingProduct(_selectedProduct!),
+            onPressed: () => _stageExistingProduct(selectedProduct),
             child: const Text('Add selected Product'),
           ),
         ] else ...[
@@ -1062,6 +1118,86 @@ final class _PurchaseFeedback {
 
   final String message;
   final bool isError;
+}
+
+final class _ProductProjection {
+  const _ProductProjection({
+    required this.products,
+    required this.conflictedProductId,
+  });
+
+  final List<Product> products;
+  final String? conflictedProductId;
+}
+
+final class _ProductSelectionState {
+  const _ProductSelectionState({required this.product, required this.multiple});
+
+  final Product? product;
+  final bool multiple;
+}
+
+_ProductProjection _normalizedProductProjection(List<Product> products) {
+  final byId = <String, Product>{};
+  final conflictedIds = <String>{};
+  for (final product in products) {
+    final id = product.id.value;
+    final existing = byId[id];
+    if (existing == null) {
+      byId[id] = product;
+      continue;
+    }
+    if (!_sameProductFacts(existing, product)) {
+      conflictedIds.add(id);
+    }
+  }
+  final emitted = <String>{};
+  final normalized = <Product>[];
+  for (final product in products) {
+    final id = product.id.value;
+    if (conflictedIds.contains(id) || !emitted.add(id)) {
+      continue;
+    }
+    normalized.add(product);
+  }
+  return _ProductProjection(
+    products: List.unmodifiable(normalized),
+    conflictedProductId: conflictedIds.isEmpty ? null : conflictedIds.first,
+  );
+}
+
+_ProductSelectionState _selectionState(List<Product> products, String? id) {
+  if (id == null) {
+    return const _ProductSelectionState(product: null, multiple: false);
+  }
+  Product? selected;
+  var count = 0;
+  for (final product in products) {
+    if (product.id.value == id) {
+      selected = product;
+      count++;
+    }
+  }
+  return _ProductSelectionState(
+    product: count == 1 ? selected : null,
+    multiple: count > 1,
+  );
+}
+
+bool _sameProductFacts(Product left, Product right) {
+  return left.accountId.value == right.accountId.value &&
+      left.userProductCode.displayValue == right.userProductCode.displayValue &&
+      left.userProductCode.normalizedKey ==
+          right.userProductCode.normalizedKey &&
+      left.normalizationVersion == right.normalizationVersion &&
+      left.displayName == right.displayName &&
+      left.displayBrand == right.displayBrand &&
+      left.normalizedName == right.normalizedName &&
+      left.normalizedBrand == right.normalizedBrand &&
+      left.mode == right.mode &&
+      left.measurementKind == right.measurementKind &&
+      left.packageQuantity?.decimalText == right.packageQuantity?.decimalText &&
+      left.packageQuantity?.unit == right.packageQuantity?.unit;
 }
 
 int _parseMinorUnits(String value) {

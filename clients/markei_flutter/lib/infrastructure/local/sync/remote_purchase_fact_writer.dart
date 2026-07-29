@@ -24,27 +24,46 @@ final class RemotePurchaseFactWriter {
           ),
           mode: InsertMode.insertOrIgnore,
         );
-    await _applyStore(purchase['store'] as Map<String, Object?>);
+    final storeId = await _resolveStore(
+      purchase['store'] as Map<String, Object?>,
+    );
     final products = (payload['productSnapshots'] as List<Object?>)
         .cast<Map<String, Object?>>();
+    final productIdMap = <String, String>{};
     for (final product in products) {
-      await _applyProduct(product);
+      final incomingId = product['id'] as String;
+      productIdMap[incomingId] = await _resolveProduct(product);
     }
-    await _applyPurchase(purchase);
+    await _applyPurchase(
+      purchase,
+      storeId: storeId,
+      productIdMap: productIdMap,
+    );
   }
 
-  Future<void> _applyStore(Map<String, Object?> store) async {
+  Future<String> _resolveStore(Map<String, Object?> store) async {
     final id = store['id'] as String;
     final accountId = store['accountId'] as String;
+    final displayName = store['displayName'] as String;
     final existing = await (_db.select(
       _db.stores,
     )..where((table) => table.id.equals(id))).getSingleOrNull();
     if (existing != null) {
       if (existing.accountId != accountId ||
-          existing.displayName != store['displayName']) {
-        throw StateError('Store identity conflict.');
+          existing.displayName != displayName) {
+        throw const RemoteIdentityConflict('remote-store-identity-conflict');
       }
-      return;
+      return existing.id;
+    }
+    final equivalent =
+        await (_db.select(_db.stores)..where(
+              (table) =>
+                  table.accountId.equals(accountId) &
+                  table.displayName.equals(displayName),
+            ))
+            .getSingleOrNull();
+    if (equivalent != null) {
+      return equivalent.id;
     }
     await _db
         .into(_db.stores)
@@ -52,34 +71,66 @@ final class RemotePurchaseFactWriter {
           StoresCompanion.insert(
             id: id,
             accountId: accountId,
-            displayName: store['displayName'] as String,
+            displayName: displayName,
             createdAt: DateTime.now().toUtc(),
           ),
         );
+    return id;
   }
 
-  Future<void> _applyProduct(Map<String, Object?> product) async {
+  Future<String> _resolveProduct(Map<String, Object?> product) async {
     final id = product['id'] as String;
+    final accountId = product['accountId'] as String;
     final userCode = product['userProductCode'] as Map<String, Object?>;
+    final normalizedCode = userCode['normalizedKey'] as String;
+    final identityKey = product['identityKey'] as String;
     final packageQuantity = product['packageQuantity'] as Map<String, Object?>?;
     final existing = await (_db.select(
       _db.products,
     )..where((table) => table.id.equals(id))).getSingleOrNull();
     if (existing != null) {
-      if (existing.accountId != product['accountId'] ||
-          existing.exactIdentityKey != product['identityKey']) {
-        throw StateError('Product identity conflict.');
+      if (!_coherentProduct(existing, product)) {
+        throw const RemoteIdentityConflict('remote-product-identity-conflict');
       }
-      return;
+      await _assertNoDistinctNaturalMatch(
+        id: existing.id,
+        accountId: accountId,
+        normalizedCode: normalizedCode,
+        identityKey: identityKey,
+      );
+      return existing.id;
+    }
+    final byCode =
+        await (_db.select(_db.products)..where(
+              (table) =>
+                  table.accountId.equals(accountId) &
+                  table.normalizedUserProductCode.equals(normalizedCode),
+            ))
+            .getSingleOrNull();
+    final byIdentity =
+        await (_db.select(_db.products)..where(
+              (table) =>
+                  table.accountId.equals(accountId) &
+                  table.exactIdentityKey.equals(identityKey),
+            ))
+            .getSingleOrNull();
+    final selected = _selectNaturalProduct(byCode, byIdentity);
+    if (selected != null) {
+      if (!_coherentProduct(selected, product)) {
+        throw const RemoteIdentityConflict(
+          'remote-product-natural-identity-conflict',
+        );
+      }
+      return selected.id;
     }
     await _db
         .into(_db.products)
         .insert(
           ProductsCompanion.insert(
             id: id,
-            accountId: product['accountId'] as String,
+            accountId: accountId,
             userProductCode: userCode['displayValue'] as String,
-            normalizedUserProductCode: userCode['normalizedKey'] as String,
+            normalizedUserProductCode: normalizedCode,
             normalizationVersion: product['normalizationVersion'] as int,
             displayName: Value(product['displayName'] as String?),
             displayBrand: Value(product['displayBrand'] as String?),
@@ -89,20 +140,76 @@ final class RemotePurchaseFactWriter {
             measurementKind: product['measurementKind'] as String,
             packageAmount: Value(packageQuantity?['amount'] as String?),
             packageUnit: Value(packageQuantity?['unit'] as String?),
-            exactIdentityKey: product['identityKey'] as String,
+            exactIdentityKey: identityKey,
             createdAt: DateTime.now().toUtc(),
           ),
         );
+    return id;
   }
 
-  Future<void> _applyPurchase(Map<String, Object?> purchase) async {
+  Future<void> _assertNoDistinctNaturalMatch({
+    required String id,
+    required String accountId,
+    required String normalizedCode,
+    required String identityKey,
+  }) async {
+    final rows =
+        await (_db.select(_db.products)..where(
+              (table) =>
+                  table.accountId.equals(accountId) &
+                  (table.normalizedUserProductCode.equals(normalizedCode) |
+                      table.exactIdentityKey.equals(identityKey)),
+            ))
+            .get();
+    for (final row in rows) {
+      if (row.id != id) {
+        throw const RemoteIdentityConflict(
+          'remote-product-natural-identity-conflict',
+        );
+      }
+    }
+  }
+
+  Product? _selectNaturalProduct(Product? byCode, Product? byIdentity) {
+    if (byCode != null && byIdentity != null && byCode.id != byIdentity.id) {
+      throw const RemoteIdentityConflict(
+        'remote-product-natural-identity-conflict',
+      );
+    }
+    return byCode ?? byIdentity;
+  }
+
+  bool _coherentProduct(Product existing, Map<String, Object?> product) {
+    final userCode = product['userProductCode'] as Map<String, Object?>;
+    final packageQuantity = product['packageQuantity'] as Map<String, Object?>?;
+    return existing.accountId == product['accountId'] &&
+        existing.userProductCode == userCode['displayValue'] &&
+        existing.normalizedUserProductCode == userCode['normalizedKey'] &&
+        existing.normalizationVersion == product['normalizationVersion'] &&
+        existing.displayName == product['displayName'] &&
+        existing.displayBrand == product['displayBrand'] &&
+        existing.normalizedName == product['normalizedName'] &&
+        existing.normalizedBrand == product['normalizedBrand'] &&
+        existing.mode == product['mode'] &&
+        existing.measurementKind == product['measurementKind'] &&
+        existing.packageAmount == packageQuantity?['amount'] &&
+        existing.packageUnit == packageQuantity?['unit'] &&
+        existing.exactIdentityKey == product['identityKey'];
+  }
+
+  Future<void> _applyPurchase(
+    Map<String, Object?> purchase, {
+    required String storeId,
+    required Map<String, String> productIdMap,
+  }) async {
     final id = purchase['id'] as String;
     final existing = await (_db.select(
       _db.purchases,
     )..where((table) => table.id.equals(id))).getSingleOrNull();
     if (existing != null) {
-      if (existing.totalMinorUnits != purchase['totalMinorUnits']) {
-        throw StateError('Purchase identity conflict.');
+      if (existing.totalMinorUnits != purchase['totalMinorUnits'] ||
+          existing.storeId != storeId) {
+        throw const RemoteIdentityConflict('remote-purchase-identity-conflict');
       }
       return;
     }
@@ -112,8 +219,7 @@ final class RemotePurchaseFactWriter {
           PurchasesCompanion.insert(
             id: id,
             accountId: purchase['accountId'] as String,
-            storeId:
-                (purchase['store'] as Map<String, Object?>)['id'] as String,
+            storeId: storeId,
             personId: const Value(null),
             paymentMethodId: const Value(null),
             occurrenceTime: DateTime.parse(
@@ -126,20 +232,28 @@ final class RemotePurchaseFactWriter {
         );
     for (final item
         in (purchase['items'] as List<Object?>).cast<Map<String, Object?>>()) {
-      await _applyItem(item);
+      await _applyItem(item, productIdMap: productIdMap);
     }
   }
 
-  Future<void> _applyItem(Map<String, Object?> item) async {
+  Future<void> _applyItem(
+    Map<String, Object?> item, {
+    required Map<String, String> productIdMap,
+  }) async {
     final quantity = item['purchasedQuantity'] as Map<String, Object?>;
     final money = item['lineTotal'] as Map<String, Object?>;
+    final incomingProductId = item['productId'] as String;
+    final localProductId = productIdMap[incomingProductId];
+    if (localProductId == null) {
+      throw const RemoteIdentityConflict('remote-product-reference-missing');
+    }
     await _db
         .into(_db.purchaseItems)
         .insert(
           PurchaseItemsCompanion.insert(
             id: item['id'] as String,
             purchaseId: item['purchaseId'] as String,
-            productId: item['productId'] as String,
+            productId: localProductId,
             packageCount: Value(item['packageCount'] as int?),
             measurementKind: quantity['kind'] as String,
             purchasedAmount: quantity['amount'] as String,
@@ -149,4 +263,10 @@ final class RemotePurchaseFactWriter {
           ),
         );
   }
+}
+
+final class RemoteIdentityConflict implements Exception {
+  const RemoteIdentityConflict(this.protocolCode);
+
+  final String protocolCode;
 }

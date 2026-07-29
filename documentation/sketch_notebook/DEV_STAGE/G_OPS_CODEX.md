@@ -1,210 +1,99 @@
-# G_OPS_CODEX - C10-GCM03-ST04-R1-C3
+# G_OPS_CODEX - C10-GCM03-S10-R02
 
-> Role: Codex operational validation report
-> Unit: `C10-GCM03-ST04-R1-C3`
-> Branch: `grm-guarded-provisioning-20260727`
-> Required ancestry: `084e637e6771b8713b2504b155a82cd4d3bd792a`
-> Evidence boundary: read-only GRM inspection, extracted actual-fence
-> PowerShell 5.1 fixtures, Flutter tests, analyzer, debug APK build and
-> redacted merged-manifest inspection; no live Android install, launch,
-> authentication, enrollment, Query, Sync, Retry, recovery, provider mutation,
-> commit or push
+## Operational Report
 
-## Repository And Authority
+Unit: C10-GCM03-S10-R02, continuity alias C10-GCM02-S09-R02.
+Branch: grm-guarded-provisioning-20260727.
+Required starting head: 9127a2e8a85ede3a6c881060b4ce47224f59e577.
 
-```text
-HEAD=65c9ab56079c7a9866910db9037c28045efd1d34
-BRANCH=grm-guarded-provisioning-20260727
-ANCESTRY_084e637=PASS
-D_E_F_C3_BRANCH_ANCESTRY=CONFIRMED
-```
+Connected GitHub app branch-head verification compared the branch to the
+required starting head and returned identical: ahead_by=0, behind_by=0,
+total_commits=0. Local checkout was on the required branch at the same HEAD
+with no dirty files before materialization.
 
-The worktree was clean before validation. D/E/F identify C3, the required
-branch and the required ancestry. The GRM set was treated as read/test/report
-only.
+## Changes
 
-## Protected Identities
+Changed source/test files:
 
-Before and after validation identities matched:
+- clients/markei_flutter/lib/app/pages/purchase_page.dart
+- clients/markei_flutter/lib/application/sync/sync_use_cases.dart
+- clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_event_applier.dart
+- clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_fact_writer.dart
+- clients/markei_flutter/test/app/markei_app_test.dart
+- clients/markei_flutter/test/infrastructure/remote_purchase_event_applier_test.dart
 
-```text
-documentation/GRM.md
-  blob=54cc0e3ff96575937c401b5ed61e4fa0ab169d7b
-  sha256=2a724a7f8dcc5b2466c17d5fe9e64d9ed185389933c427c928d8539e48b1a11e
+Changed report files:
 
-documentation/G_SCRIPTS.md
-  blob=2c10e3c7c033d059b236389b212542e9bad0b4de
-  sha256=6fd109a384f419acf2426c50ea57da9c327020f3499dccb42a44df528b983e9b
+- documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+- documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+- documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
 
-documentation/I_SCRIPTS.ps1
-  blob=d6d3100ca2ea0f25fc697a853d8564cfc423c054
-  sha256=5afbb09326f52ac0789b9a1ad208f25adb3290a0f4792cbc12d71646041c49e2
+No GRM files, DB_MGMT.sql, G_SCRIPTS.md, D/E/F/J, A/B/C, permanent notebook
+memory, methodology files, migrations, API, schema, authentication, enrollment,
+dependencies, or provider configuration were modified.
 
-documentation/NS_COORDINATES.md
-  blob=17fc9346e4d9e2c019b59b6bbfa8cd974c206466
-  sha256=c442938b1f4b727df8c425e8e6ac119f962d8c2b2e8448287607867a9ec643e5
+## Behavior
 
-documentation/DB_MGMT.sql
-  blob=d38a14de6b5e3a98047a5bdf749786fce740ae77
-  sha256=feee6cd9fc809a4fb52340b4509112249715735767cd4fc41225a4c71bd9df47
+Purchase Product selection now uses one nullable Product-ID scalar as the
+Dropdown value. The selected Product is resolved from the current Account-scoped
+Product projection. Find code stores the returned row's Product ID and then
+resolves the current projected row by that ID. Equivalent repeated Product IDs
+are collapsed before menu construction; conflicting repeated Product IDs are
+rejected from the menu and reported through bounded recovery feedback. Removed
+or ambiguous selected Product IDs are safely invalidated.
 
-documentation/ERR_DIAGNOSTICS.md
-  blob=88eca195d55889fac6da1b932522d2e38c9360e8
-  sha256=f4424c3f3ba847a73acf1a235dc938b2974e3e295afcbef762c6279be18cb56c
+Remote Product application now reconciles within the Account by incoming UUID,
+normalized user Product code, and exact identity key. Equivalent natural
+identity under a different UUID maps the incoming Product UUID to the existing
+local Product UUID for the event. Contradictory immutable facts return a typed
+remote natural-identity conflict. Remote Stores are reconciled by incoming UUID
+and the existing Account-scoped stable display identity. Purchase and
+PurchaseItem rows use the selected local Store/Product IDs.
 
-documentation/REC_DIAGNOSTICS.md
-  blob=bc9295f46a343a970b25c57c65d49d899a6ec7d9
-  sha256=3f058632a168f91560ef4c67444a638974d838034eb7f583cf2a53a5e5327cac
-```
+Drift applyPage still owns one page transaction for Product/Store
+reconciliation, Purchase facts, Purchase Items, inbox rows, and cursor
+advancement. Identity conflicts and SQLite write failures occur inside the
+transaction and are translated only after rollback. Failed local apply leaves no
+new facts, inbox rows, or cursor advancement and therefore no acknowledgement
+cursor.
 
-## Actual-Fence DEVSEL Validation
+## Validation
 
-The `GS-FLUTTER-AND` heading and fenced PowerShell body extracted exactly and
-parsed under Windows PowerShell 5.1. Extracted actual functions:
+Commands run from clients/markei_flutter unless noted:
 
-```text
-Get-SupportedAndroidDevices
-Assert-AdbTargetSerial
-```
+- dart format --output=none --set-exit-if-changed lib test: PASS
+- flutter analyze: PASS
+- flutter test test/app/markei_app_test.dart: PASS
+- flutter test test/app/native_closure_diagnostics_test.dart: PASS
+- flutter test test/infrastructure/remote_purchase_event_applier_test.dart: PASS
+- flutter test test/sync/local_sync_application_test.dart: PASS
+- flutter test: PASS; disposable lab tests skipped because MARKEI_RUN_SYNC_LAB was not set
+- flutter build apk --debug with reviewed public placeholder defines: PASS
+- generated merged Android manifest inspection: PASS; package com.gusigu.markei, MainActivity, Auth0 redirect activity, and callback path shape observed with host/value redacted
+- git diff --check: PASS, with Git line-ending warnings only
+- changed-content sensitive-pattern scan: PASS; one false positive on non-secret text "Unsupported cursor token"
 
-Windows PowerShell:
+Unavailable evidence:
 
-```text
-5.1.26100.8875
-```
+- No live Android install, launch, Sync, Retry, Recovery, Enroll, Query, hosted
+  acknowledgement, or interactive provider action was executed.
+- Disposable HTTP/PostgreSQL convergence harness was not executed because it is
+  gated by MARKEI_RUN_SYNC_LAB and was not authorized as a live lab run here.
 
-Actual-function fixture results:
+## Terminals
 
-```text
-MIXED_COUNT=1
-MIXED_IDS=emulator-5554
-PHYSICAL_COUNT=1
-NO_ANDROID_COUNT=0
-TWO_ANDROID_COUNT=2
-MALFORMED=PASS
-UNSUPPORTED_COUNT=0
-INVALID_COUNTS=0,0,0,0,0
-ADB_EXACT=emulator-5554
-ADB_MISSING=PASS
-ADB_AMBIG=PASS
-ADB_WINDOWS=PASS
-```
-
-Captured argument arrays from the actual fence:
-
-```text
-BootProbeArguments=-s|emulator-5554|shell|getprop|sys.boot_completed safe=True
-InstallArguments=-s|emulator-5554|install|-r|app-debug.apk safe=True
-PackagePathArguments=-s|emulator-5554|shell|pm|path|com.gusigu.markei safe=True
-PackageInspectionArguments=-s|emulator-5554|shell|dumpsys|package|com.gusigu.markei safe=True
-LaunchArguments=-s|emulator-5554|shell|monkey|-p|com.gusigu.markei|-c|android.intent.category.LAUNCHER|1 safe=True
-```
-
-Result:
-
-```text
-DEVSEL-01=POWERSHELL_5_1_TOP_LEVEL_JSON_ARRAY_NESTING
-ACTUAL_GS_FLUTTER_AND_FIXTURES=PASS
-ANDROID_DEVICE_ENUMERATION=CORRECTED
-NON_ANDROID_ID_REACHES_ADB=NO
-ADB_SERIAL_CARDINALITY=EXACTLY_ONE
-```
-
-The Main-authored repair satisfies the validation requirements for actual
-fence extraction, JSON parse/member enumeration, scalar Android filtering,
-cardinality preservation, exact ADB serial binding and targeted ADB argument
-arrays. It preserves `DEV-GRM` as the AVD definition and package
-`com.gusigu.markei` with `install -r`.
-
-## Auth Classification
-
-The C2 classification remains unchanged:
-
-```text
-ANDROID_SIGN_IN_CLASSIFICATION=AUTHAND-06
-AUTH_SOURCE_CHANGE=NONE
-```
-
-This validation did not execute live Android Sign in and did not mutate Auth0,
-Render, Neon, local storage or the preserved Windows event.
-
-## Validation Commands
-
-```text
-git merge-base --is-ancestor 084e637e6771b8713b2504b155a82cd4d3bd792a HEAD
-  PASS
-
-Windows PowerShell 5.1 actual-fence extraction and AST parse
-  PASS
-
-Windows PowerShell 5.1 extracted actual-function fixtures
-  PASS
-
-Windows PowerShell 5.1 captured ADB vectors
-  PASS
-
-flutter test test/infrastructure/native_auth_composition_test.dart
-  PASS, 17 tests
-
-flutter test test/app/native_closure_surface_test.dart
-  PASS, 2 tests
-
-flutter test test/app/native_closure_diagnostics_test.dart
-  PASS, 26 tests
-
-flutter test
-  PASS, 199 passed, 4 skipped
-
-flutter analyze
-  PASS, no issues found
-
-flutter build apk --debug with reviewed placeholder values
-  PASS
-  APK bytes=179136304
-  APK sha256=E6941D7D7EF0C2096D62A8442CD34A788B9ECB1B34C3197483EA9CD49DFC404C
-
-merged-manifest inspection
-  PASS: package/activity marker, Auth0 marker, HTTPS scheme marker and
-  redacted host marker present
-```
-
-Unavailable by design:
-
-```text
-ANDROID_INSTALL=NOT_EXECUTED
-ANDROID_LAUNCH=NOT_EXECUTED
-ANDROID_LIVE_SIGN_IN=NOT_EXECUTED
-PROVIDER_DASHBOARD_VERIFICATION=NOT_EXECUTED
-```
-
-## Worktree
-
-Changed files:
-
-```text
-documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-```
-
-No GRM, application source, D/E/F, J, A/B/C, methodology or permanent-memory
-file was modified.
-
-## Required Terminals
-
-```text
-GRM_PROTECTED_SET_MUTATION=ABSENT
-GRM_AUTHORITY=HUMAN_MAIN_ONLY
-CODEX_GRM_ROLE=READ_TEST_REPORT
-DEVSEL_CLASSIFICATION=DEVSEL-01
-ACTUAL_GS_FLUTTER_AND_FIXTURES=PASS
-ANDROID_DEVICE_ENUMERATION=CORRECTED
-NON_ANDROID_ID_REACHES_ADB=NO
-ADB_SERIAL_CARDINALITY=EXACTLY_ONE
-ANDROID_SIGN_IN_CLASSIFICATION=AUTHAND-06
-AUTH_SOURCE_CHANGE=NONE
-ANDROID_LIVE_SIGN_IN=NOT_EXECUTED
-API_PERSISTENCE_PROVIDER_SYNC_EXPANSION=ABSENT
-ST04=BLOCKED_PENDING_HUMAN_RETEST
-GCM03_ST05_AND_LATER=HELD
-```
+CONFIGURED_PROVIDER_BRANCH_ALIAS=markei-c10
+PROVIDER_BRANCH_ALIAS_LAUNCHER_INDEPENDENT_PROOF=NO
+GITHUB_BRANCH=grm-guarded-provisioning-20260727
+PRODUCT_SELECTOR_IDENTITY=STABLE_PRODUCT_ID
+FIND_BY_CODE_DROPDOWN_ASSERTION=REGRESSION_PASS
+REMOTE_PRODUCT_IDENTITY_RECONCILIATION=PASS
+REMOTE_STORE_IDENTITY_RECONCILIATION=PASS
+REMOTE_ITEM_ID_REMAP=PASS
+REMOTE_PAGE_ATOMICITY=PASS
+LOCAL_APPLY_CAUSAL_DIAGNOSTICS=PASS
+TRUSTED_RESPONSE_STATE_AFTER_LOCAL_FAILURE=RECEIVED
+ACKNOWLEDGEMENT_AFTER_FAILED_LOCAL_APPLY=NOT_STARTED
+LIVE_SYNC_EXECUTED=NO
+PROVIDER_MUTATION=NONE
+C10_GCM03_S10_R02=IMPLEMENTED_VALIDATED
