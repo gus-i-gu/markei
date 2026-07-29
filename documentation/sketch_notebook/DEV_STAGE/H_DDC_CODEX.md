@@ -1,85 +1,86 @@
-# H_DDC_CODEX - C10-GCM03-ST04-R1-C2
+# H_DDC_CODEX - C10-GCM03-ST04-R1-C3
 
-> Role: Codex didactic report
-> Unit: `C10-GCM03-ST04-R1-C2`
-> Evidence boundary: explanation of validated local/static evidence only
+> Role: Codex didactic validation report
+> Unit: `C10-GCM03-ST04-R1-C3`
 
-## Device Selection Meaning
+## Ownership
 
-`ConvertFrom-Json` parsing is not the same thing as member enumeration. On the
-observed Windows PowerShell 5.1 host, wrapping the top-level JSON array with
-`@(...)` produced one `System.Object[]` element. `Where-Object` then evaluated
-aggregate member-expanded properties, so one Android value inside the aggregate
-made the whole aggregate look selectable.
-
-That is why this shape appeared:
+The GRM set is human/Main-owned for mutation. Codex's role in this unit was
+limited to:
 
 ```text
-selectedIds=windows,edge,emulator-5554
-adbArgs=-s|windows|edge|emulator-5554|shell|getprop|sys.boot_completed
+read
+extract
+parse
+hash
+test
+report
 ```
 
-The correct learning boundary is:
+Codex did not edit, restore, format, normalize, stage or regenerate any GRM
+file. The seven protected file identities were recorded before and after
+validation and matched exactly.
+
+## Parsing And Enumeration
+
+The original C2 defect was not that JSON parsing failed. The defect was that
+Windows PowerShell 5.1 could preserve the top-level JSON array as one aggregate
+object when wrapped incorrectly. The repaired actual fence separates these
+steps:
 
 ```text
-parse JSON once
-enumerate member objects
-filter Android members
-preserve cardinality
-require one scalar ID
-prove exact ADB serial membership
-then invoke ADB
+parse Flutter JSON once
+if parsed value is an array, foreach over members
+filter each member object
 ```
 
-Cardinality and scalar identity are separate checks. One selected object is not
-sufficient if its `id` property expands to several strings. One scalar ID is not
-sufficient unless it is exactly present in the current `adb devices` inventory.
+That distinction matters because aggregate member-expanded properties can make
+a mixed Windows/Edge/Android inventory look like one Android candidate. The
+actual-fence mixed fixture now returns only the Android member.
 
-## Sign-In Evidence Ladder
+## Cardinality And Identity
 
-The `adb.exe: unknown command windows` terminal is launcher/device-selection
-evidence. It happened before clean, dependency resolution, analysis, tests,
-APK build, APK install, application launch and interactive Sign in. Therefore
-it cannot prove an Auth0 regression and could not replace the installed app.
-
-The Android sign-in evidence ladder remains:
+The repaired contract keeps three separate gates:
 
 ```text
-repository static contract
-build inputs and Dart defines
-Gradle manifest placeholders
-merged callback manifest
-generated APK provenance
-installed package identity
-visible app provenance
-human-operated Sign in terminal
-provider/dashboard correlation when separately authorized
+Android device cardinality
+selected ID scalar safety
+exact ADB ready-serial membership
 ```
 
-This run validated the static side through history inspection, source scan,
-focused tests, full Flutter tests, analyzer, debug APK build and generated
-manifest inspection. It did not execute live authentication.
+Zero Android targets, one Android target and two Android targets retain their
+different meanings. A selected ID must be one non-empty scalar string without
+whitespace/control characters, and it must match exactly one ready serial from
+`adb devices`.
 
-## Auth Classification
+The captured boot, install, package-path, package-inspection and launch vectors
+all put exactly one safe scalar value after `-s`. Neither `windows` nor `edge`
+appeared in any captured vector.
 
-No static/test-backed Auth0 defect was proved. The proper classification is:
+## Actual Fence Versus Equivalent Fixture
 
-```text
-AUTHAND-06=INSUFFICIENT_RUNTIME_SYMPTOM_EVIDENCE
-```
+C2 validated an equivalent selector fixture. C3 validates the actual extracted
+repository fence. That is stronger evidence because the test body used the
+Main-authored `Get-SupportedAndroidDevices` and `Assert-AdbTargetSerial`
+definitions from `documentation/G_SCRIPTS.md` without editing that file or
+running the live procedure.
 
-This does not mean sign-in works. It means the available evidence does not yet
-identify a source/configuration defect. Runtime acceptance remains held for a
-later human-operated run.
+## AUTHAND
+
+`AUTHAND-06` remains held because this validation did not perform interactive
+Android Sign in. Static Auth0 composition tests pass, but runtime provider
+acceptance requires a later human-operated Sign in observation and, if
+authorized, separately controlled provider correlation.
 
 ## Terminals
 
 ```text
-JSON_PARSE_NOT_MEMBER_ENUMERATION=VISIBLE
-CARDINALITY_AND_SCALAR_IDENTITY=VISIBLE
-ADB_TERMINAL_IS_AUTH_EVIDENCE=NO
-AUTH_STATIC_CONTRACT=VALIDATED
-AUTH_RUNTIME_ACCEPTANCE=HELD
-ST04=BLOCKED_PENDING_MAIN_RESTAGING
+GRM_AUTHORITY=HUMAN_MAIN_ONLY
+CODEX_GRM_ROLE=READ_TEST_REPORT
+JSON_PARSE_NOT_MEMBER_ENUMERATION=VALIDATED_ON_ACTUAL_FENCE
+CARDINALITY_VERSUS_SCALAR_IDENTITY=VALIDATED
+ACTUAL_FENCE_VALIDATION=PASS
+AUTHAND_06_RUNTIME_HELD=YES
+ST04=BLOCKED_PENDING_HUMAN_RETEST
 GCM03_ST05_AND_LATER=HELD
 ```

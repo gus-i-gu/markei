@@ -1,95 +1,87 @@
-# I_DSN_CODEX - C10-GCM03-ST04-R1-C2
+# I_DSN_CODEX - C10-GCM03-ST04-R1-C3
 
-> Role: Codex design report
-> Unit: `C10-GCM03-ST04-R1-C2`
-> Evidence boundary: repository/static validation and non-mutating fixtures;
-> no provider, persistence, API, synchronization or live Android mutation
+> Role: Codex design validation report
+> Unit: `C10-GCM03-ST04-R1-C3`
 
-## Launcher Responsibility Map
-
-The intended ownership boundary is:
+## Protected GRM Map
 
 ```text
-Flutter device inventory
-  owns raw machine JSON
+documentation/GRM.md
+  operator/process contract
 
-PowerShell JSON parser
-  owns exactly one parse operation
+documentation/G_SCRIPTS.md
+  Main-owned procedure catalogue and GS-FLUTTER-AND implementation
 
-member enumeration
-  owns conversion from top-level JSON array to individual device objects
+documentation/I_SCRIPTS.ps1
+  dispatcher/extractor
 
-Android selector
-  owns platform/support/scalar-ID predicates
+documentation/NS_COORDINATES.md
+  reviewed public coordinate surface
 
-cardinality guard
-  owns zero/one/multiple target decision
+documentation/DB_MGMT.sql
+  database action catalogue
 
-ADB inventory guard
-  binds one selected Flutter ID to one current ADB serial
+documentation/ERR_DIAGNOSTICS.md
+  diagnostics projection
 
-ADB invocation
-  receives exactly one -s value through an explicit argument vector
+documentation/REC_DIAGNOSTICS.md
+  recovery diagnostics record
 ```
 
-The current repository procedure still violates the first collection-to-member
-boundary because the updated human instruction protects `G_SCRIPTS.md`, where
-the owning repair belongs. The equivalent fixture proved the target design:
-member enumeration before filtering and one scalar ADB serial before invocation.
+All seven are human/Main-owned for mutation. Codex validated identity,
+structure and behavior without modifying them.
 
-No hard-coded emulator serial was introduced. The stable AVD name remains a
-definition, not a runtime serial.
+## Device Boundary
 
-## Auth0 Responsibility Map
-
-The Auth0 contract remains layered:
+The validated launcher boundary is:
 
 ```text
-NS_COORDINATES
-  reviewed public input names and values, not secrets
+flutter devices --machine JSON
+  -> exactly one ConvertFrom-Json parse
+  -> explicit top-level member enumeration
+  -> member predicate: android platform, Boolean true support, scalar safe ID
+  -> zero/one/multiple cardinality decision
+  -> exact ready ADB serial binding
+  -> explicit targeted ADB argument arrays
+```
 
-GS-FLUTTER-AND
-  loads public coordinates and should pass Dart defines / Gradle property
+The actual fence prevents the collection of Flutter IDs from crossing into ADB.
+The captured ADB vectors demonstrate one `-s` scalar for boot, install,
+package path, package inspection and launch.
 
+## Serial And AVD Responsibility
+
+No hard-coded emulator serial was introduced. `DEV-GRM` remains the stable AVD
+definition. The runtime ADB serial is discovered from Flutter and then bound to
+the current `adb devices` inventory.
+
+## Auth0 And Architecture
+
+Auth0 responsibility remains unchanged:
+
+```text
+public coordinates and Dart defines
 Gradle manifest placeholders
-  bind Android callback scheme/domain into merged manifest
-
-Android package identity
-  remains com.gusigu.markei
-
+package com.gusigu.markei
 NativeAuthConfiguration
-  validates public inputs and selects Android client ID on Android
-
-Native Auth0 adapter
-  owns interactive login/logout and sanitized exception mapping
-
-NativeClosurePage
-  exposes Sign in and diagnostics without owning provider configuration
-
-Auth0 dashboard/provider
-  owns external callback/logout/client acceptance and requires human evidence
+Auth0 native adapter
+Closure Sign in
+external provider/dashboard acceptance
 ```
 
-No owning-layer Auth0 defect was proved. No Auth0 source, manifest, Gradle,
-provider or public coordinate model was changed.
-
-## Architecture Impact
-
-The work did not add an Android-only Closure page, alternate auth stack,
-provider fallback, retry path, database mutation, API route, schema migration,
-RLS change or synchronization behavior. The only remaining required source
-repair is the launcher/procedure boundary in a surface that is currently
-protected by the latest human instruction.
+No Auth0 source, API route, persistence model, provider configuration,
+synchronization behavior, schema, migration or RLS surface changed during this
+validation. No Android-only Closure page or alternate auth stack was added.
 
 ## Terminals
 
 ```text
-FLUTTER_INVENTORY_TO_MEMBER_OBJECTS=BLOCKED_BY_PROTECTED_G_SCRIPTS
-ANDROID_MEMBER_TO_ONE_ADB_SERIAL=BLOCKED_BY_PROTECTED_G_SCRIPTS
+GRM_PROTECTED_SET_MUTATION=ABSENT
+FLUTTER_COLLECTION_TO_MEMBER_OBJECTS=VALIDATED
+ANDROID_MEMBER_TO_ONE_ADB_SERIAL=VALIDATED
 HARD_CODED_DEVICE_SERIAL=ABSENT
-AUTH_RESPONSIBILITY_OWNER=AUTHAND-06_RUNTIME_EVIDENCE_GAP
-AUTH_PROVIDER_CONFIGURATION_MUTATION=ABSENT
+AUTH_RESPONSIBILITY_UNCHANGED=YES
 API_PERSISTENCE_PROVIDER_SYNC_EXPANSION=ABSENT
-ST04=BLOCKED_PENDING_MAIN_RESTAGING
+ST04=BLOCKED_PENDING_HUMAN_RETEST
 GCM03_ST05_AND_LATER=HELD
 ```

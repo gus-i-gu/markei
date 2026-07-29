@@ -1,136 +1,146 @@
-# G_OPS_CODEX - C10-GCM03-ST04-R1-C2
+# G_OPS_CODEX - C10-GCM03-ST04-R1-C3
 
-> Role: Codex operational report
-> Unit: `C10-GCM03-ST04-R1-C2`
+> Role: Codex operational validation report
+> Unit: `C10-GCM03-ST04-R1-C3`
 > Branch: `grm-guarded-provisioning-20260727`
-> Required ancestry: `1af1d887e4fe8370ab988a80e4af16eafcd4699c`
-> Evidence boundary: repository inspection, Windows PowerShell 5.1 fixtures,
-> Flutter static tests, analyzer and Android debug build; no live
+> Required ancestry: `084e637e6771b8713b2504b155a82cd4d3bd792a`
+> Evidence boundary: read-only GRM inspection, extracted actual-fence
+> PowerShell 5.1 fixtures, Flutter tests, analyzer, debug APK build and
+> redacted merged-manifest inspection; no live Android install, launch,
 > authentication, enrollment, Query, Sync, Retry, recovery, provider mutation,
-> install, launch, commit or push
+> commit or push
 
-## Operational Result
-
-The checkout was on the required branch and `1af1d887` was an ancestor of
-HEAD. D/E/F were read and all named the C2 unit, branch and ancestry.
-
-Human follow-up narrowed the writable surface after work started:
-`documentation/G_SCRIPTS.md`, `documentation/GRM.md`,
-`documentation/I_SCRIPTS.ps1`, `documentation/NS_COORDINATES.md`,
-`documentation/DB_MGMT.sql`, `documentation/ERR_DIAGNOSTICS.md` and
-`documentation/REC_DIAGNOSTICS.md` were made non-writable. The interrupted
-`G_SCRIPTS.md` edit was reverted with `git restore -- documentation/G_SCRIPTS.md`.
-Those protected files are clean.
-
-Because `GS-FLUTTER-AND` lives in `documentation/G_SCRIPTS.md`, the owning
-launcher repair could not be materialized after the updated protection. The
-root cause and equivalent repair contract were still reproduced and validated
-without mutating the protected procedure.
-
-## DEVSEL
-
-Windows PowerShell 5.1 reproduction:
+## Repository And Authority
 
 ```text
-PSVersion: 5.1.26100.8875
-count=1
-type=System.Object[]
-selectedCount=1
-selectedIds=windows,edge,emulator-5554
-adbArgs=-s|windows|edge|emulator-5554|shell|getprop|sys.boot_completed
+HEAD=65c9ab56079c7a9866910db9037c28045efd1d34
+BRANCH=grm-guarded-provisioning-20260727
+ANCESTRY_084e637=PASS
+D_E_F_C3_BRANCH_ANCESTRY=CONFIRMED
 ```
 
-Classification:
+The worktree was clean before validation. D/E/F identify C3, the required
+branch and the required ancestry. The GRM set was treated as read/test/report
+only.
+
+## Protected Identities
+
+Before and after validation identities matched:
+
+```text
+documentation/GRM.md
+  blob=54cc0e3ff96575937c401b5ed61e4fa0ab169d7b
+  sha256=2a724a7f8dcc5b2466c17d5fe9e64d9ed185389933c427c928d8539e48b1a11e
+
+documentation/G_SCRIPTS.md
+  blob=2c10e3c7c033d059b236389b212542e9bad0b4de
+  sha256=6fd109a384f419acf2426c50ea57da9c327020f3499dccb42a44df528b983e9b
+
+documentation/I_SCRIPTS.ps1
+  blob=d6d3100ca2ea0f25fc697a853d8564cfc423c054
+  sha256=5afbb09326f52ac0789b9a1ad208f25adb3290a0f4792cbc12d71646041c49e2
+
+documentation/NS_COORDINATES.md
+  blob=17fc9346e4d9e2c019b59b6bbfa8cd974c206466
+  sha256=c442938b1f4b727df8c425e8e6ac119f962d8c2b2e8448287607867a9ec643e5
+
+documentation/DB_MGMT.sql
+  blob=d38a14de6b5e3a98047a5bdf749786fce740ae77
+  sha256=feee6cd9fc809a4fb52340b4509112249715735767cd4fc41225a4c71bd9df47
+
+documentation/ERR_DIAGNOSTICS.md
+  blob=88eca195d55889fac6da1b932522d2e38c9360e8
+  sha256=f4424c3f3ba847a73acf1a235dc938b2974e3e295afcbef762c6279be18cb56c
+
+documentation/REC_DIAGNOSTICS.md
+  blob=bc9295f46a343a970b25c57c65d49d899a6ec7d9
+  sha256=3f058632a168f91560ef4c67444a638974d838034eb7f583cf2a53a5e5327cac
+```
+
+## Actual-Fence DEVSEL Validation
+
+The `GS-FLUTTER-AND` heading and fenced PowerShell body extracted exactly and
+parsed under Windows PowerShell 5.1. Extracted actual functions:
+
+```text
+Get-SupportedAndroidDevices
+Assert-AdbTargetSerial
+```
+
+Windows PowerShell:
+
+```text
+5.1.26100.8875
+```
+
+Actual-function fixture results:
+
+```text
+MIXED_COUNT=1
+MIXED_IDS=emulator-5554
+PHYSICAL_COUNT=1
+NO_ANDROID_COUNT=0
+TWO_ANDROID_COUNT=2
+MALFORMED=PASS
+UNSUPPORTED_COUNT=0
+INVALID_COUNTS=0,0,0,0,0
+ADB_EXACT=emulator-5554
+ADB_MISSING=PASS
+ADB_AMBIG=PASS
+ADB_WINDOWS=PASS
+```
+
+Captured argument arrays from the actual fence:
+
+```text
+BootProbeArguments=-s|emulator-5554|shell|getprop|sys.boot_completed safe=True
+InstallArguments=-s|emulator-5554|install|-r|app-debug.apk safe=True
+PackagePathArguments=-s|emulator-5554|shell|pm|path|com.gusigu.markei safe=True
+PackageInspectionArguments=-s|emulator-5554|shell|dumpsys|package|com.gusigu.markei safe=True
+LaunchArguments=-s|emulator-5554|shell|monkey|-p|com.gusigu.markei|-c|android.intent.category.LAUNCHER|1 safe=True
+```
+
+Result:
 
 ```text
 DEVSEL-01=POWERSHELL_5_1_TOP_LEVEL_JSON_ARRAY_NESTING
+ACTUAL_GS_FLUTTER_AND_FIXTURES=PASS
+ANDROID_DEVICE_ENUMERATION=CORRECTED
+NON_ANDROID_ID_REACHES_ADB=NO
+ADB_SERIAL_CARDINALITY=EXACTLY_ONE
 ```
 
-Equivalent non-mutating fixture result:
+The Main-authored repair satisfies the validation requirements for actual
+fence extraction, JSON parse/member enumeration, scalar Android filtering,
+cardinality preservation, exact ADB serial binding and targeted ADB argument
+arrays. It preserves `DEV-GRM` as the AVD definition and package
+`com.gusigu.markei` with `install -r`.
+
+## Auth Classification
+
+The C2 classification remains unchanged:
 
 ```text
-PASS_INLINE_DEVICE_SELECTION_FIXTURE
-PSVersion: 5.1.26100.8875
+ANDROID_SIGN_IN_CLASSIFICATION=AUTHAND-06
+AUTH_SOURCE_CHANGE=NONE
 ```
 
-The fixture covered mixed Windows/Edge/Android, physical Android, no Android,
-two Android targets, malformed JSON, unsupported target, missing/empty/
-non-scalar IDs, exact ADB serial match, missing ADB serial and ambiguous ADB
-serial. The captured ADB vector was:
+This validation did not execute live Android Sign in and did not mutate Auth0,
+Render, Neon, local storage or the preserved Windows event.
+
+## Validation Commands
 
 ```text
--s|emulator-5554|shell|getprop|sys.boot_completed
-```
-
-No `windows` or `edge` value reached the fixture ADB vector.
-
-Required launcher correction, not materialized under the updated protected
-surface:
-
-- parse Flutter machine JSON once;
-- enumerate parsed top-level members before filtering;
-- accept only Android platform, `isSupported -eq $true`, scalar non-empty ID;
-- preserve zero/one/multiple target cardinality;
-- require selected ID to be one safe scalar and exactly present in `adb devices`;
-- call ADB through explicit argument arrays;
-- preserve AVD name `DEV-GRM` as definition while discovering the runtime serial.
-
-## Auth0 Scan
-
-Changed-path verification:
-
-```text
-db17f47..231a762 targeted Auth0/Android identity paths: no changes
-231a762..1af1d887 targeted Auth0/Android identity paths: no changes
-```
-
-Static contract inspected:
-
-```text
-NS_COORDINATES public keys
-GS-FLUTTER-AND coordinate loading
-MARKEI_AUTH0_DOMAIN
-MARKEI_AUTH0_AUDIENCE
-MARKEI_AUTH0_ANDROID_CLIENT_ID
-ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN
-Gradle manifest placeholders
-merged Android callback scheme/domain
-package com.gusigu.markei
-NativeAuthConfiguration
-Auth0 native client selection
-Closure Sign in
-sanitized terminal/error mapping
-```
-
-No Auth0 source/configuration defect was proved. Auth0 source was not changed.
-
-Classification:
-
-```text
-AUTHAND-06=INSUFFICIENT_RUNTIME_SYMPTOM_EVIDENCE
-```
-
-## Validation
-
-Commands and results:
-
-```text
-git status --short
-  clean before report edits
-
-git merge-base --is-ancestor 1af1d887e4fe8370ab988a80e4af16eafcd4699c HEAD
+git merge-base --is-ancestor 084e637e6771b8713b2504b155a82cd4d3bd792a HEAD
   PASS
 
-GS-FLUTTER-AND heading/fence extraction
-  PASS, chars=12150
+Windows PowerShell 5.1 actual-fence extraction and AST parse
+  PASS
 
-Windows PowerShell 5.1 AST parse of extracted GS-FLUTTER-AND body
-  PASS, 5.1.26100.8875
+Windows PowerShell 5.1 extracted actual-function fixtures
+  PASS
 
-Windows PowerShell 5.1 DEVSEL reproduction
-  PASS, reproduced aggregate nested array and expanded ADB IDs
-
-Windows PowerShell 5.1 inline equivalent correction fixture
+Windows PowerShell 5.1 captured ADB vectors
   PASS
 
 flutter test test/infrastructure/native_auth_composition_test.dart
@@ -148,32 +158,28 @@ flutter test
 flutter analyze
   PASS, no issues found
 
-flutter build apk --debug with non-secret placeholder defines
+flutter build apk --debug with reviewed placeholder values
   PASS
-  APK: clients/markei_flutter/build/app/outputs/flutter-apk/app-debug.apk
-  bytes: 179136301
-  sha256: 4969BD99771F14C494431FACD6824B349E915394C2D60346F24DE79B31ED2FF3
+  APK bytes=179136304
+  APK sha256=E6941D7D7EF0C2096D62A8442CD34A788B9ECB1B34C3197483EA9CD49DFC404C
 
-generated/merged manifest inspection
-  PASS: package/activity marker present; Auth0 marker present;
-  HTTPS scheme marker present; host marker present and redacted
-
-git diff --check
-  PASS before report edits
+merged-manifest inspection
+  PASS: package/activity marker, Auth0 marker, HTTPS scheme marker and
+  redacted host marker present
 ```
 
-Skipped or unavailable:
+Unavailable by design:
 
 ```text
-live Android install/launch: not executed
-interactive Android Sign in: not executed
-provider/dashboard verification: not executed
-GS-FLUTTER-AND repository repair validation: blocked by updated protected surface
+ANDROID_INSTALL=NOT_EXECUTED
+ANDROID_LAUNCH=NOT_EXECUTED
+ANDROID_LIVE_SIGN_IN=NOT_EXECUTED
+PROVIDER_DASHBOARD_VERIFICATION=NOT_EXECUTED
 ```
 
-## Worktree Inventory
+## Worktree
 
-Changed files after report replacement:
+Changed files:
 
 ```text
 documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
@@ -181,30 +187,24 @@ documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
 documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
 ```
 
-Protected files explicitly restored or left unmodified:
+No GRM, application source, D/E/F, J, A/B/C, methodology or permanent-memory
+file was modified.
+
+## Required Terminals
 
 ```text
-documentation/G_SCRIPTS.md
-documentation/GRM.md
-documentation/I_SCRIPTS.ps1
-documentation/NS_COORDINATES.md
-documentation/DB_MGMT.sql
-documentation/ERR_DIAGNOSTICS.md
-documentation/REC_DIAGNOSTICS.md
-```
-
-## Terminals
-
-```text
+GRM_PROTECTED_SET_MUTATION=ABSENT
+GRM_AUTHORITY=HUMAN_MAIN_ONLY
+CODEX_GRM_ROLE=READ_TEST_REPORT
 DEVSEL_CLASSIFICATION=DEVSEL-01
-ANDROID_DEVICE_ENUMERATION=BLOCKED_BY_UPDATED_PROTECTED_SURFACE
-NON_ANDROID_ID_REACHES_ADB=YES_IN_CURRENT_GS_FLUTTER_AND_SOURCE
-NON_ANDROID_ID_REACHES_ADB_IN_EQUIVALENT_FIXTURE=NO
+ACTUAL_GS_FLUTTER_AND_FIXTURES=PASS
+ANDROID_DEVICE_ENUMERATION=CORRECTED
+NON_ANDROID_ID_REACHES_ADB=NO
+ADB_SERIAL_CARDINALITY=EXACTLY_ONE
 ANDROID_SIGN_IN_CLASSIFICATION=AUTHAND-06
 AUTH_SOURCE_CHANGE=NONE
 ANDROID_LIVE_SIGN_IN=NOT_EXECUTED
-LIVE_PROVIDER_ACTIONS=ABSENT
-COMMIT_OR_PUSH=NOT_EXECUTED
-ST04=BLOCKED_PENDING_MAIN_RESTAGING
+API_PERSISTENCE_PROVIDER_SYNC_EXPANSION=ABSENT
+ST04=BLOCKED_PENDING_HUMAN_RETEST
 GCM03_ST05_AND_LATER=HELD
 ```
