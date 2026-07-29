@@ -1,148 +1,289 @@
-# D_OPS_STAGE — C10-GCM03-S10-R03 corrective implementation
+# D_OPS_STAGE — C10-GCM03-S10-R04 completion materialization
 
 ## Active authority
 
-Authority state: ACTIVE — CODEX IMPLEMENTATION AUTHORIZED
+Authority state: ACTIVE — CODEX IMPLEMENTATION AUTHORIZED AFTER PUBLICATION
 
-Primary unit: C10-GCM03-S10-R03  
-Human-assay continuity alias: C10-GCM03-S09-R03  
-Previous unit: C10-GCM03-S10-R02  
-Repository: gus-i-gu/markei  
-Existing branch: grm-guarded-provisioning-20260727  
-Required pre-stage ancestry: 1975bf0d216ff03a3ead6c47e0892df00d55d62e  
-Required Codex starting head: the published R03 staging commit containing this file, as pinned by Main.
+Primary unit: C10-GCM03-S10-R04
 
-This is a bounded FLX-ORD-01 correction entered from failed human acceptance. D controls operations; E/F constrain semantics and architecture. J and REC_DIAGNOSTICS.md remain append-only.
+Human-assay continuity alias: C10-GCM03-S09-R04
 
-## 1. Diagnostic conclusion
+Previous unit: C10-GCM03-S10-R03
 
-R02 passed the Purchase selector regression but not inter-device convergence.
+Repository: gus-i-gu/markei
 
-Windows operation e6e918285640 proves authenticated upload/download requests, HTTP 200 provider responses, trusted upload-result persistence, and download-response-received. No acknowledgement began. An exception then escaped before a durable download-local-apply result. NativeAuthClosureRunner emitted closure-runner-exception and incorrectly replaced the proved trusted response with not-received.
+Existing branch: grm-guarded-provisioning-20260727
 
-Android separately proved that a new incoming Product UUID with the same exact semantic identity but a different user Product code is rejected as remote-product-natural-identity-conflict. Repeating Sync replays the unacknowledged page.
+Required pre-stage head: 5d7cd6c9784f0fa169a5ed6fb6ca8cb3db4037ce
 
-Windows facts/inbox/cursor commit versus rollback is unproved. The unknown interval includes applyPage and durable local-apply diagnostics. R03 must separate transaction truth from diagnostic truth.
+Required Codex starting head: the published R04 D/E/F staging commit, as pinned by Main.
 
-## 2. Writable scope
+This is one bounded FLX-ORD-01 completion round entered from Main's R03
+post-materialization reconciliation. D controls implementation scope and
+terminals; E constrains evidence interpretation; F constrains architecture.
+J and REC_DIAGNOSTICS.md remain append-only and are not writable by Codex.
 
-Codex may minimally modify source/tests under clients/markei_flutter/lib/application, app, domain, infrastructure/local, and clients/markei_flutter/test.
+## 1. Entry diagnosis
 
-Codex shall replace only G_OPS_CODEX.md, H_DDC_CODEX.md, and I_DSN_CODEX.md. No other GRIMOIRE file is writable.
+R03 corrected the observed Product exact-identity/different-code failure at
+source and focused-test scope, retained one-transaction page application,
+introduced bounded post-rollback translation, projected the sanitized exception
+class, and kept acknowledgement behind committed cursor exposure.
 
-## 3. Product reconciliation
+Main did not promote R03 as complete because:
 
-For an established incoming UUID, require full immutable snapshot coherence, including user code. Contradiction is a typed conflict.
+1. `_DiagnosticOperationRecorder` keeps one replaceable
+   `SyncDiagnosticPhaseEvidence`, not cumulative operation truth;
+2. an acknowledgement-request or later terminal phase can replace an earlier
+   trusted download and committed local apply with weaker defaults;
+3. `beginDiagnosticAttempt` failure becomes `attemptId == null` without marking
+   persistence degraded;
+4. row/complete diagnostic failures are not consistently reflected in the final
+   operation declaration;
+5. the exact R03 Product, apply, persistence-failure, replay, and runner-fallback
+   test matrix is incomplete.
 
-For a new incoming UUID:
+No evidence indicates a schema, provider, API, authentication, enrollment,
+payload-v3, dependency, or hosted-event change is required.
 
-| Code match | Exact-identity match | Action |
-|---|---|---|
-| none | none | Insert |
-| same row | same row | Reuse and map |
-| one row | none | Typed same-code/different-identity conflict |
-| none | one row | Reuse exact row despite different code; preserve local code/display |
-| different rows | different rows | Typed split-key conflict |
-| ambiguous | any | Typed bounded conflict |
-| any | ambiguous | Typed bounded conflict |
+## 2. Accepted baseline that R04 must preserve
 
-Exact semantic identity is Product.identityKey and normalized Account/name/brand/mode/measurement/package facts. It deliberately excludes user code and raw display formatting. A new UUID with same exact identity but another code is a convergence candidate.
+- A previously unseen remote Product UUID may reuse one exact semantic local
+  Product despite a different user code.
+- Same-code/different-identity, split-key, ambiguity, and established-UUID
+  mutation remain typed conflicts.
+- Local Product code/display is preserved and dependent Purchase Items use the
+  remote-to-local Product UUID map.
+- Product/Store reconciliation, Purchases/Items, inbox, and Account cursor remain
+  in one Drift transaction.
+- Apply failures translate only outside the rolled-back transaction.
+- Acknowledgement is ineligible unless the local page and cursor committed.
+- Stored `sanitizedExceptionClass` reaches summary/current action/Closure UI.
+- Protocol v3, Store rules, Account scope, Person/Payment restrictions, and
+  stable Product selector behavior remain unchanged.
 
-Maintain incoming Product UUID → selected local Product UUID mapping for every Purchase Item. Preserve existing Store mapping/rules unless source-proved evidence requires a minimal correction.
+If implementation discovers that one of these accepted properties is false,
+stop and report the exact blocker in G/H/I rather than redesigning silently.
 
-Do not rewrite hosted events/existing Products or add an alias table, migration, dependency, provider mutation, constraint exception, or global equality override.
+## 3. Writable scope
 
-## 4. Total local-apply boundary
+Default production scope:
 
-Keep one Drift transaction covering Product/Store reconciliation, Purchases/Items, inbox, and Account cursor.
+- `clients/markei_flutter/lib/app/native_auth_closure_runner.dart`
+- `clients/markei_flutter/lib/application/sync/sync_ports.dart`
+- `clients/markei_flutter/lib/application/sync/sync_use_cases.dart`
 
-Any exception inside must escape first so Drift rolls back completely. Translate only after rollback into a bounded category: identity conflict, SQLite/Drift database failure, payload/snapshot shape failure, local invariant failure, or unexpected local-apply failure.
+Use only when required by the diagnostic-persistence contract:
 
-Use typed/library-aware checks where available, not only runtime-name substring tests. No applyPage exception may escape into the UI runner.
+- `clients/markei_flutter/lib/application/closure_diagnostics.dart`
+- `clients/markei_flutter/lib/infrastructure/local/closure_diagnostics_repository.dart`
 
-Allow only sanitized exception class/category. Never retain messages, SQL, values, payloads, catalogue facts, UUIDs, stacks, tokens, secrets, or full hashes.
+Default test scope:
 
-## 5. Core truth and diagnostics
+- `clients/markei_flutter/test/app/native_closure_diagnostics_test.dart`
+- `clients/markei_flutter/test/infrastructure/closure_diagnostics_repository_test.dart`
+- `clients/markei_flutter/test/infrastructure/remote_purchase_event_applier_test.dart`
+- `clients/markei_flutter/test/sync/local_sync_application_test.dart`
+- `clients/markei_flutter/test/sync/two_device_system_harness_test.dart`
 
-Observability must not alter synchronization truth.
+Minimal test-only seams may touch
+`remote_purchase_event_applier.dart` or `remote_purchase_fact_writer.dart` only
+when deterministic coverage cannot be achieved through existing public seams.
+Such a touch must preserve production decisions and be justified in G/H/I.
 
-Update an in-memory causal snapshot before durable diagnostics. Retain entered/proved phase, provider/trusted-response state, apply state, local mutation/result persistence, acknowledgement, bounded result, and sanitized class.
+Codex shall replace only `G_OPS_CODEX.md`, `H_DDC_CODEX.md`, and
+`I_DSN_CODEX.md`. No other Sketch Notebook or GRIMOIRE file is writable.
 
-If apply rolls back: report not-applied/rolled-back and do not acknowledge.
+Any additional production path, generated file, schema, migration, API,
+dependency, or configuration requirement is a stop condition.
 
-If apply commits but diagnostics persistence fails: keep committed facts/cursor, do not relabel as rolled back, do not abort the core result, and report bounded diagnostics-persistence-degraded.
+## 4. Cumulative causal state
 
-NativeAuthClosureRunner may keep a safety catch, but must use the strongest causal snapshot. It must never rewrite download-response-received/trusted-received as terminal/trusted-not-received.
+Replace single-object strongest-evidence selection with one per-operation
+cumulative causal state. It may be a dedicated immutable model or an equivalent
+recorder-owned structure, but it must retain these dimensions independently:
 
-## 6. Exception visibility
+- latest entered phase;
+- latest proved phase;
+- provider contact;
+- provider transaction;
+- trusted response;
+- download/local-apply outcome;
+- local mutation commit/rollback/unknown;
+- result/diagnostic persistence;
+- acknowledgement not-started/started/result;
+- bounded outcome/result code;
+- retryability and safe action;
+- sanitized exception class/category;
+- safe queue/sequence/fingerprint metadata already authorized.
 
-The diagnostics table already stores sanitizedExceptionClass. Propagate it through repository projection, application summary, current-action mapping, and Closure UI technical details. Show only the bounded class/category. No migration.
+Merge rules are monotonic:
 
-## 7. Acknowledgement/replay
+- `received` trusted-response proof cannot regress to `not-received`, a default,
+  `unknown`, or `see-causal-event`;
+- `committed` local mutation cannot be erased by an acknowledgement-request or
+  terminal declaration;
+- proved rollback cannot become committed without a later authoritative core
+  result, and contradictory authoritative core states must produce a bounded
+  invariant failure rather than first/last-writer wins;
+- acknowledgement-request may advance acknowledgement/provider-contact state
+  while retaining download/apply truth;
+- terminal placeholder fields cannot erase causal facts;
+- a generic runner exception may add its sanitized class and terminal outcome,
+  but cannot rewrite earlier provider, trusted-response, apply, or commit proof.
 
-Acknowledgement begins only after complete local commit and cursor advancement. Failed, rejected, rolled-back, or unproved apply means no acknowledgement/cursor advance. Committed apply with diagnostic degradation remains committed. Replay stays idempotent.
+Update the cumulative state synchronously before any awaited durable diagnostic
+write. Do not retain payloads, business facts, UUIDs, SQL, tokens, messages,
+stacks, secrets, or full hashes.
 
-## 8. Required tests
+## 5. Diagnostic-persistence containment
 
-Product identity:
+Treat begin, row/event, and completion persistence as best-effort observability:
 
-- new UUID + exact identity + different code reuses one local Product;
-- same code + different identity conflicts;
-- split keys, ambiguity, and established UUID mutation conflict;
-- local code/display is preserved;
-- Purchase Items use the remote-to-local mapping;
-- mixed Android/Windows cursor page converges without duplicates;
-- prior rejected hosted event no longer poisons later pages.
+- begin failure initializes the operation recorder as persistence-degraded;
+- row/event failure marks degradation without throwing through the coordinator;
+- completion failure marks degradation after the core result is known;
+- final lifecycle/result projection exposes
+  `diagnostics-persistence-degraded` when any of those failures occurred;
+- degradation must not change committed versus rolled-back transaction truth;
+- degradation after committed apply must not make acknowledgement ineligible;
+- degradation must not manufacture acknowledgement or provider success;
+- do not recursively attempt to diagnose a failing diagnostic write.
 
-Transaction/protocol:
+If no durable attempt row exists, the in-memory/lifecycle declaration must still
+retain the bounded degradation state. If some durable writes remain possible,
+persist only the already-authorized sanitized degradation category.
 
-- generic non-SQL exception rolls back all facts/inbox/cursor;
-- no acknowledgement after failed/unproved apply;
-- cursor advances atomically;
-- replay remains idempotent;
-- typed conflict/database categories remain bounded.
+Pure diagnostic failure must not turn an otherwise completed/no-new-events core
+Sync result into `sync-failed`.
 
-Diagnostics:
+## 6. Runner and acknowledgement boundary
 
-- trusted response survives every apply failure;
-- latest causal phase remains precise;
-- runner cannot overwrite stronger evidence;
-- sanitized class reaches summary/UI;
-- diagnostic persistence failures before apply, during reporting, and after committed apply are contained;
-- diagnostics cannot flip committed versus rolled-back truth;
-- forbidden diagnostic content is absent.
+The runner safety catch must consume the cumulative snapshot after every phase.
+It must preserve any trusted download, committed/rolled-back local apply, and
+acknowledgement state already proved.
 
-Regression:
+Acknowledgement may begin only from a committed contiguous cursor. A failed,
+rejected, rolled-back, or unproved apply prohibits it. A committed apply remains
+eligible even if diagnostics are degraded. An acknowledgement transport failure
+must retain the committed local-apply truth while recording acknowledgement as
+started/unknown or failed according to authoritative evidence.
 
-- stable Product-ID selection/Find Item;
-- Store convergence, upload-result persistence, queue behavior, v3 Person/Payment restrictions;
-- unchanged hosted API/payload version.
+## 7. Required deterministic tests
 
-## 9. Validation
+### Causal and persistence tests
 
-Record exact outcomes for format, flutter analyze, focused identity/apply/diagnostics/sync tests, full flutter test, debug APK and Windows builds, manifest inspection where applicable, git diff --check, sensitive scan, and changed-file inventory. Skipped labs are not live evidence.
+- committed download apply followed by acknowledgement-request preserves trusted
+  response and committed local mutation;
+- acknowledgement exception preserves committed apply and reports
+  acknowledgement uncertainty without rewriting transaction truth;
+- terminal declaration preserves all earlier causal facts;
+- runner fallback after apply/ack failure consumes the cumulative state;
+- begin-diagnostic failure is visible as degraded while core Sync continues;
+- row-write failure before apply is contained and visible;
+- row-write failure while reporting rollback preserves rollback truth;
+- row-write or completion failure after commit preserves commit truth;
+- committed apply with diagnostic degradation remains acknowledgement-eligible;
+- diagnostics cannot create provider, transaction, or acknowledgement proof;
+- sanitized output contains no message, SQL, value, payload, UUID, token, stack,
+  secret, or full hash.
 
-## 10. Prohibited
+### Product decision table completion
 
-No live client Sync/Retry/Recovery/Enroll/Query, diagnostic clearing, new Purchase, data reset, database surgery, provider/API/auth/enrollment/schema/migration/dependency change, branch creation/rename, force push, or GRIMOIRE authority/history edit. Do not modify DB_MGMT.sql, G_SCRIPTS.md, or I_SCRIPTS.ps1.
+- ambiguous normalized-code match is a bounded conflict;
+- ambiguous exact-identity match is a bounded conflict;
+- established incoming UUID immutable mutation is a bounded conflict;
+- exact identity under another code still reuses and preserves local display;
+- same code/different identity and split-key conflicts remain;
+- every dependent Purchase Item uses the remote-to-local Product map.
 
-If scope expansion is required, stop with a precise G/H/I blocker.
+If a database uniqueness invariant makes an ambiguity impossible through normal
+rows, test the resolver branch through a minimal seam and separately prove the
+invariant; do not weaken or bypass production constraints.
 
-## 11. Terminals
+### Apply, replay, and poison-page completion
 
-~~~
-C10_GCM03_S10_R03=IMPLEMENTED_VALIDATED | BLOCKED
-PRODUCT_EXACT_ID_DIFFERENT_CODE=PASS | FAIL
-PRODUCT_CODE_DIFFERENT_IDENTITY_CONFLICT=PASS | FAIL
-REMOTE_ITEM_ID_REMAP=PASS | FAIL
-REMOTE_PAGE_ATOMICITY=PASS | FAIL
-UNEXPECTED_LOCAL_APPLY_TRANSLATION=PASS | FAIL
-DIAGNOSTIC_PERSISTENCE_CONTAINMENT=PASS | FAIL
-CAUSAL_EVIDENCE_PRESERVATION=PASS | FAIL
-SANITIZED_EXCEPTION_CLASS_UI=PASS | FAIL
-ACKNOWLEDGEMENT_AFTER_UNPROVED_APPLY=NOT_STARTED | VIOLATED
+- an arbitrary non-SQL/non-payload/non-invariant exception maps to
+  `unexpected-local-apply-failed` after total rollback;
+- facts, inbox, and cursor remain unchanged on every failed page;
+- no acknowledgement follows failed or unproved apply;
+- the formerly rejected exact-identity/different-code event can apply on replay;
+- a later page/event then advances without the earlier event poisoning progress;
+- mixed two-client events converge without duplicate Product, Store, Purchase,
+  Purchase Item, inbox, or cursor effects;
+- a repeated page remains idempotent.
+
+### Regression
+
+- stable Product-ID selection and Find Item;
+- Store convergence;
+- upload-result persistence and queue behavior;
+- v3 Person/Payment restrictions and contract;
+- prior local sync, two-device harness, and Closure UI diagnostics suites.
+
+## 8. Validation
+
+Run from `clients/markei_flutter` and report exact outcomes:
+
+1. `dart format --output=none --set-exit-if-changed lib test`
+2. `flutter analyze`
+3. focused R04 runner/diagnostic/Product/apply/replay tests
+4. `flutter test test/sync/local_sync_application_test.dart`
+5. `flutter test test/sync/two_device_system_harness_test.dart`
+6. `flutter test test/sync/v3_contract_test.dart`
+7. stable catalogue/Store/Product selector regression tests
+8. `flutter test`
+9. `flutter build apk --debug`
+10. `flutter build windows`
+11. merged Android manifest inspection where the existing procedure applies
+12. repository-root `git diff --check`
+13. changed-content sensitive scan
+14. exact changed-file inventory and ancestry guard
+
+Skipped disposable labs are environment-limited evidence, never live acceptance.
+
+## 9. Prohibited operations
+
+No live client Sync, Retry, Recovery, Enroll, Query, acknowledgement, new
+Purchase registration, install/launch against preserved data, diagnostic
+clearing, data reset, database surgery, provider mutation, hosted event rewrite,
+schema/migration/API/auth/enrollment/dependency/configuration change, branch
+creation/rename, rebase, force push, or unrelated cleanup.
+
+Do not modify J, REC_DIAGNOSTICS.md, permanent notebook memory, methodology,
+D/E/F after starting, `DB_MGMT.sql`, `G_SCRIPTS.md`, or `I_SCRIPTS.ps1`.
+
+## 10. G/H/I evidence contract
+
+G records starting/ending heads, exact paths, implementation mapping, commands,
+results, skips, builds, terminals, and confirmation of zero live/provider action.
+
+H maps every required test and negative assertion to direct evidence and applies
+PRC-01 ceilings. Missing direct coverage is reported as missing, not inferred
+from the full-suite count.
+
+I records the cumulative-state design, merge laws, recorder failure boundaries,
+acknowledgement ordering, preserved R03 architecture, compatibility, and any
+residual design risk.
+
+## 11. Terminals and publication
+
+```text
+C10_GCM03_S10_R04=IMPLEMENTED_VALIDATED | BLOCKED
+CUMULATIVE_CAUSAL_STATE=PASS | FAIL
+ACK_TRANSITION_TRUTH_PRESERVED=PASS | FAIL
+DIAGNOSTIC_BEGIN_FAILURE_VISIBLE=PASS | FAIL
+DIAGNOSTIC_ROW_FAILURE_CONTAINED=PASS | FAIL
+DIAGNOSTIC_COMPLETE_FAILURE_CONTAINED=PASS | FAIL
+COMMITTED_APPLY_ACK_ELIGIBLE_WHEN_DIAGNOSTICS_DEGRADED=PASS | FAIL
+PRODUCT_DECISION_MATRIX_DIRECT_EVIDENCE=PASS | PARTIAL | FAIL
+UNEXPECTED_LOCAL_APPLY_DIRECT_EVIDENCE=PASS | FAIL
+POISON_PAGE_RECOVERY=PASS | FAIL
+MIXED_CLIENT_REPLAY_IDEMPOTENCY=PASS | FAIL
+R03_ACCEPTED_BASELINE_REGRESSION=PASS | FAIL
 LIVE_SYNC_EXECUTED=NO
 PROVIDER_MUTATION=NONE
-~~~
+```
 
-Publish one non-forced fast-forward commit containing only authorized source/test/G/H/I files.
+Publish one non-forced fast-forward commit containing only authorized
+source/test/G/H/I paths. Do not open a competing branch or PR.
