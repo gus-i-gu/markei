@@ -966,10 +966,13 @@ the destination.
 
 ## 3. Local SQLite diagnostics
 
-These procedures operate only on the Windows application database used by the
-Flutter client. The database file and the SQLite command-line program are
-different objects: finding `markei_shared_beta.sqlite` does not prove that
-`sqlite3.exe` is installed or discoverable.
+`GS-SQLITE-02/03/04` operate only on the Windows application database used by
+the Flutter client. `GS-SQLITE-05/06/07` provide the symmetric Android path:
+ADB selects exactly one debug-capable Android target, force-stops Markei,
+extracts a hash-verified app-private snapshot with binary-safe streaming, and
+queries only that snapshot. The database file and the SQLite command-line
+program are different objects: finding `markei_shared_beta.sqlite` does not
+prove that `sqlite3.exe` is installed or discoverable.
 
 The diagnostic sequence is:
 
@@ -978,11 +981,18 @@ GS-SQLITE-01
 → GS-SQLITE-02
 → GS-SQLITE-03
 → GS-SQLITE-04, only when Main requests exact device-scoped correlation
+
+GS-SQLITE-01
+→ GS-SQLITE-05
+→ GS-SQLITE-06
+→ GS-SQLITE-07, only when Main requests Android apply-state correlation
 ```
 
 Keep Markei closed throughout `GS-SQLITE-02`, `GS-SQLITE-03`, and
-`GS-SQLITE-04`. These procedures never press Enroll, Query, Retry, or Sync and
-never contact Auth0, Render, or Neon.
+`GS-SQLITE-04`. `GS-SQLITE-05` force-stops the Android app and leaves it
+stopped; keep it stopped throughout `GS-SQLITE-06` and `GS-SQLITE-07`. These
+procedures never press Enroll, Query, Retry, or Sync, never clear or replace
+application data, and never contact Auth0, Render, or Neon.
 
 ### `GS-SQLITE-01` — Verify the SQLite CLI
 
@@ -1935,6 +1945,1305 @@ ROLLBACK;
     Write-Host "SyncSelected: False"
     Write-Host "ProviderActionPerformed: False"
     Write-Host "CleanupPerformed: False"
+    Write-Host "TerminalLocation: repository-root"
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+```
+
+### `GS-SQLITE-05` — Create and verify the Android SQLite snapshot
+
+This is the Android counterpart of `GS-SQLITE-02`. It requires exactly one
+connected, ready Android target, proves that the debug package supports
+`run-as`, force-stops Markei without clearing its data, and extracts the
+app-private database plus any WAL/SHM companions. Extraction uses a redirected
+.NET byte stream rather than PowerShell text redirection. Each file's remote
+size and SHA-256 are compared with the copied file before and after extraction.
+The private manifest is retained only in the fixed temporary snapshot
+directory; no serial, private path, UUID, hash value, or file content is
+printed.
+
+```powershell
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+try {
+    Set-Location -LiteralPath $RepositoryRoot
+
+    function Resolve-MarkeiAdb {
+        $PathCommand = Get-Command adb.exe `
+            -CommandType Application `
+            -ErrorAction SilentlyContinue
+        if ($null -ne $PathCommand) {
+            return $PathCommand.Source
+        }
+
+        $SdkRoots = @(
+            $env:ANDROID_SDK_ROOT
+            $env:ANDROID_HOME
+            if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+                Join-Path $env:LOCALAPPDATA "Android\Sdk"
+            }
+        ) |
+            Where-Object {
+                -not [string]::IsNullOrWhiteSpace($_)
+            } |
+            Select-Object -Unique
+        $Candidates = @(
+            foreach ($SdkRoot in $SdkRoots) {
+                $Candidate = Join-Path $SdkRoot "platform-tools\adb.exe"
+                if (Test-Path -LiteralPath $Candidate -PathType Leaf) {
+                    Get-Item -LiteralPath $Candidate
+                }
+            }
+        ) |
+            Sort-Object FullName -Unique
+        $Candidates = @($Candidates)
+        if ($Candidates.Count -ne 1) {
+            throw @"
+Android Debug Bridge is unavailable or ambiguous.
+Install Android SDK Platform-Tools or set ANDROID_SDK_ROOT, then rerun
+GS-SQLITE-05.
+"@
+        }
+        return $Candidates[0].FullName
+    }
+
+    function Invoke-MarkeiAdbText {
+        param(
+            [Parameter(Mandatory)] [string[]]$Arguments,
+            [string]$Failure = "ADB command failed."
+        )
+
+        $Output = @(& $AdbExe @Arguments 2>&1)
+        $ExitCode = $LASTEXITCODE
+        if ($ExitCode -ne 0) {
+            throw $Failure
+        }
+        return ($Output | Out-String).Trim()
+    }
+
+    function Test-MarkeiAndroidPrivateFile {
+        param([Parameter(Mandatory)] [string]$RemotePath)
+
+        & $AdbExe `
+            -s $DeviceSerial `
+            shell run-as $PackageName `
+            ls $RemotePath *> $null
+        return $LASTEXITCODE -eq 0
+    }
+
+    function Get-MarkeiAndroidPrivateFileMetadata {
+        param([Parameter(Mandatory)] [string]$RemotePath)
+
+        $SizeText = Invoke-MarkeiAdbText `
+            -Arguments @(
+                "-s", $DeviceSerial,
+                "shell", "run-as", $PackageName,
+                "stat", "-c", "%s", $RemotePath
+            ) `
+            -Failure "Could not inspect an Android database-file size."
+        if ($SizeText -notmatch '^\d+$') {
+            throw "Android database-file size had an unexpected shape."
+        }
+
+        $HashText = Invoke-MarkeiAdbText `
+            -Arguments @(
+                "-s", $DeviceSerial,
+                "shell", "run-as", $PackageName,
+                "sha256sum", $RemotePath
+            ) `
+            -Failure "Android sha256sum is unavailable for the private file."
+        $HashMatch = [regex]::Match(
+            $HashText,
+            '^(?<Hash>[A-Fa-f0-9]{64})(?:\s|$)'
+        )
+        if (-not $HashMatch.Success) {
+            throw "Android database-file SHA-256 had an unexpected shape."
+        }
+
+        return [pscustomobject]@{
+            Length = [int64]$SizeText
+            Sha256 = $HashMatch.Groups["Hash"].Value.ToUpperInvariant()
+        }
+    }
+
+    function Copy-MarkeiAndroidPrivateFile {
+        param(
+            [Parameter(Mandatory)] [string]$RemotePath,
+            [Parameter(Mandatory)] [string]$Destination
+        )
+
+        if ($RemotePath -notmatch '^[A-Za-z0-9._/-]+$' -or
+            $DeviceSerial -notmatch '^[A-Za-z0-9._:-]+$') {
+            throw "Android extraction arguments contain unexpected characters."
+        }
+
+        $StartInfo = New-Object System.Diagnostics.ProcessStartInfo
+        $StartInfo.FileName = $AdbExe
+        $StartInfo.Arguments = (
+            "-s {0} exec-out run-as {1} cat {2}" -f
+            $DeviceSerial,
+            $PackageName,
+            $RemotePath
+        )
+        $StartInfo.UseShellExecute = $false
+        $StartInfo.CreateNoWindow = $true
+        $StartInfo.RedirectStandardOutput = $true
+        $StartInfo.RedirectStandardError = $true
+
+        $Process = New-Object System.Diagnostics.Process
+        $Process.StartInfo = $StartInfo
+        $CopySucceeded = $false
+        try {
+            if (-not $Process.Start()) {
+                throw "ADB binary extraction did not start."
+            }
+            $ErrorTask = $Process.StandardError.ReadToEndAsync()
+            $DestinationStream = [IO.File]::Open(
+                $Destination,
+                [IO.FileMode]::CreateNew,
+                [IO.FileAccess]::Write,
+                [IO.FileShare]::None
+            )
+            try {
+                $Process.StandardOutput.BaseStream.CopyTo($DestinationStream)
+            }
+            finally {
+                $DestinationStream.Dispose()
+            }
+            $Process.WaitForExit()
+            $ErrorTask.GetAwaiter().GetResult() | Out-Null
+            if ($Process.ExitCode -ne 0) {
+                throw "ADB binary extraction failed."
+            }
+            $CopySucceeded = $true
+        }
+        finally {
+            $Process.Dispose()
+            if (-not $CopySucceeded -and
+                (Test-Path -LiteralPath $Destination -PathType Leaf)) {
+                Remove-Item -LiteralPath $Destination -Force
+            }
+        }
+    }
+
+    $AdbExe = Resolve-MarkeiAdb
+    $Inventory = @(& $AdbExe devices 2>&1)
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not inspect connected Android targets."
+    }
+    $DeviceRows = @(
+        $Inventory |
+            ForEach-Object {
+                [string]$_
+            } |
+            Where-Object {
+                $_ -match '^\S+\s+\S+(?:\s|$)' -and
+                $_ -notmatch '^List of devices' -and
+                $_ -notmatch '^\*'
+            }
+    )
+    $DeviceMatches = @(
+        $DeviceRows | ForEach-Object {
+            [regex]::Match(
+                $_,
+                '^(?<Serial>\S+)\s+(?<State>\S+)(?:\s|$)'
+            )
+        }
+    )
+    if ($DeviceMatches.Count -ne 1 -or
+        -not $DeviceMatches[0].Success -or
+        $DeviceMatches[0].Groups["State"].Value -ne "device") {
+        [pscustomobject]@{
+            AndroidTargetCount = $DeviceMatches.Count
+            ReadyTargetCount = @(
+                $DeviceMatches | Where-Object {
+                    $_.Groups["State"].Value -eq "device"
+                }
+            ).Count
+        }
+        throw "Leave exactly one authorized, ready Android target connected."
+    }
+
+    $DeviceSerial = $DeviceMatches[0].Groups["Serial"].Value
+    if ($DeviceSerial -notmatch '^[A-Za-z0-9._:-]+$') {
+        throw "The selected Android target identifier has an unsafe shape."
+    }
+    $PackageName = "com.gusigu.markei"
+    $PackageProof = Invoke-MarkeiAdbText `
+        -Arguments @(
+            "-s", $DeviceSerial,
+            "shell", "pm", "path", $PackageName
+        ) `
+        -Failure "The Markei Android package is not installed."
+    if ($PackageProof -notmatch '^package:') {
+        throw "The Markei Android package proof had an unexpected shape."
+    }
+
+    $RunAsProof = Invoke-MarkeiAdbText `
+        -Arguments @(
+            "-s", $DeviceSerial,
+            "shell", "run-as", $PackageName, "id"
+        ) `
+        -Failure "The installed Markei package does not permit debug run-as."
+    if ($RunAsProof -notmatch '\buid=\d+') {
+        throw "Android run-as proof had an unexpected shape."
+    }
+
+    Invoke-MarkeiAdbText `
+        -Arguments @(
+            "-s", $DeviceSerial,
+            "shell", "am", "force-stop", $PackageName
+        ) `
+        -Failure "Could not force-stop Markei before extraction." |
+        Out-Null
+    $PidOutput = (
+        & $AdbExe -s $DeviceSerial shell pidof $PackageName 2>$null |
+            Out-String
+    ).Trim()
+    if ($LASTEXITCODE -eq 0 -and
+        -not [string]::IsNullOrWhiteSpace($PidOutput)) {
+        throw "Markei remained active after force-stop."
+    }
+
+    $RemoteDatabase = "files/markei_shared_beta.sqlite"
+    if (-not (Test-MarkeiAndroidPrivateFile -RemotePath $RemoteDatabase)) {
+        throw "The Markei app-private SQLite database is absent."
+    }
+
+    $SnapshotDirectory = Join-Path `
+        ([System.IO.Path]::GetTempPath()) `
+        "markei-android-sqlite-current"
+    if (Test-Path -LiteralPath $SnapshotDirectory) {
+        throw @"
+The current Android SQLite snapshot directory already exists.
+Do not overwrite it. Preserve it for interpretation or remove it only after
+explicit cleanup authorization, then rerun GS-SQLITE-05.
+"@
+    }
+    New-Item `
+        -ItemType Directory `
+        -Path $SnapshotDirectory `
+        -ErrorAction Stop |
+        Out-Null
+
+    $FilesToCopy = @(
+        [pscustomobject]@{
+            RemotePath = $RemoteDatabase
+            LocalName = "markei_shared_beta.sqlite"
+            Required = $true
+        }
+        [pscustomobject]@{
+            RemotePath = "$RemoteDatabase-wal"
+            LocalName = "markei_shared_beta.sqlite-wal"
+            Required = $false
+        }
+        [pscustomobject]@{
+            RemotePath = "$RemoteDatabase-shm"
+            LocalName = "markei_shared_beta.sqlite-shm"
+            Required = $false
+        }
+    )
+    $PresentFiles = @(
+        $FilesToCopy | Where-Object {
+            $_.Required -or
+            (Test-MarkeiAndroidPrivateFile -RemotePath $_.RemotePath)
+        }
+    )
+
+    $ManifestEntries = @()
+    foreach ($FileToCopy in $PresentFiles) {
+        $Before = Get-MarkeiAndroidPrivateFileMetadata `
+            -RemotePath $FileToCopy.RemotePath
+        $Destination = Join-Path `
+            $SnapshotDirectory `
+            $FileToCopy.LocalName
+        Copy-MarkeiAndroidPrivateFile `
+            -RemotePath $FileToCopy.RemotePath `
+            -Destination $Destination
+        $After = Get-MarkeiAndroidPrivateFileMetadata `
+            -RemotePath $FileToCopy.RemotePath
+        $LocalInfo = Get-Item -LiteralPath $Destination
+        $LocalHash = (
+            Get-FileHash -LiteralPath $Destination -Algorithm SHA256
+        ).Hash.ToUpperInvariant()
+
+        if ($Before.Length -ne $After.Length -or
+            $Before.Sha256 -cne $After.Sha256 -or
+            $LocalInfo.Length -ne $Before.Length -or
+            $LocalHash -cne $Before.Sha256) {
+            throw "Android database snapshot verification failed."
+        }
+        $ManifestEntries += [pscustomobject]@{
+            Name = $FileToCopy.LocalName
+            Length = $LocalInfo.Length
+            Sha256 = $LocalHash
+        }
+    }
+
+    $ManifestPath = Join-Path $SnapshotDirectory "snapshot-manifest.json"
+    [pscustomobject]@{
+        Format = "markei-android-sqlite-snapshot-v1"
+        Files = @($ManifestEntries)
+    } |
+        ConvertTo-Json -Depth 4 |
+        Set-Content -LiteralPath $ManifestPath -Encoding UTF8
+
+    $PidOutputAfter = (
+        & $AdbExe -s $DeviceSerial shell pidof $PackageName 2>$null |
+            Out-String
+    ).Trim()
+    if ($LASTEXITCODE -eq 0 -and
+        -not [string]::IsNullOrWhiteSpace($PidOutputAfter)) {
+        throw "Markei restarted during Android database extraction."
+    }
+
+    [pscustomobject]@{
+        AndroidTargetCount = 1
+        ReadyTargetCount = 1
+        PackageInstalled = $true
+        DebugRunAsAvailable = $true
+        MarkeiForceStopped = $true
+        DatabasePresent = $true
+        SidecarCount = $PresentFiles.Count - 1
+        SnapshotFileCount = $PresentFiles.Count
+        SizeMatches = $true
+        HashMatches = $true
+        ManifestCreated = $true
+        HashValuesPrinted = $false
+        DeviceIdentifierPrinted = $false
+        PrivatePathPrinted = $false
+        LiveDatabaseQueried = $false
+        AppDataCleared = $false
+        AppDataReplaced = $false
+        ProbeDirectoryName = Split-Path $SnapshotDirectory -Leaf
+        TerminalLocation = $RepositoryRoot
+    }
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+```
+
+### `GS-SQLITE-06` — Run the sanitized Android local-state probe
+
+This is the Android counterpart of `GS-SQLITE-03`. It re-verifies the private
+snapshot manifest created by `GS-SQLITE-05`, opens only the copied database
+with SQLite `-readonly`, an `immutable=1` URI, and
+`PRAGMA query_only = ON`, requires both
+`integrity_check=ok` and an empty foreign-key check, and requires one active
+hosted binding. It reports only schema presence, binding classes, local
+Device/cursor counts, business-fact cardinalities, inbox/queue cardinalities,
+and the latest ordinary-Sync attempt and sanitized diagnostic phases.
+
+```powershell
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+try {
+    Set-Location -LiteralPath $RepositoryRoot
+
+    function Resolve-MarkeiSqliteCli {
+        $PathCommand = Get-Command sqlite3.exe `
+            -CommandType Application `
+            -ErrorAction SilentlyContinue
+        if ($null -ne $PathCommand) {
+            return $PathCommand.Source
+        }
+
+        $Candidates = @()
+        if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+            $WinGetLink = Join-Path $env:LOCALAPPDATA `
+                "Microsoft\WinGet\Links\sqlite3.exe"
+            if (Test-Path -LiteralPath $WinGetLink -PathType Leaf) {
+                $Candidates += Get-Item -LiteralPath $WinGetLink
+            }
+            $PackageRoot = Join-Path $env:LOCALAPPDATA `
+                "Microsoft\WinGet\Packages"
+            if (Test-Path -LiteralPath $PackageRoot -PathType Container) {
+                $Candidates += Get-ChildItem `
+                    -LiteralPath $PackageRoot `
+                    -Directory `
+                    -Filter "SQLite.SQLite_*" `
+                    -ErrorAction SilentlyContinue |
+                    ForEach-Object {
+                        Get-ChildItem `
+                            -LiteralPath $_.FullName `
+                            -Filter "sqlite3.exe" `
+                            -File `
+                            -Recurse `
+                            -ErrorAction SilentlyContinue
+                    }
+            }
+        }
+        $Selected = @(
+            $Candidates |
+                Sort-Object LastWriteTime -Descending |
+                Select-Object -First 1
+        )
+        if ($Selected.Count -ne 1) {
+            throw "sqlite3.exe is unavailable. Run GS-SQLITE-01."
+        }
+        return $Selected[0].FullName
+    }
+
+    function Invoke-MarkeiAndroidSqliteText {
+        param([Parameter(Mandatory)] [string]$Sql)
+
+        $Output = $Sql |
+            & $SqliteCli -readonly -uri $CopiedDatabaseUri 2>&1
+        $ExitCode = $LASTEXITCODE
+        if ($ExitCode -ne 0) {
+            $Output
+            throw "The copied Android database probe failed."
+        }
+        return ($Output | Out-String).Trim()
+    }
+
+    function Assert-MarkeiAndroidSnapshot {
+        if (-not (Test-Path -LiteralPath $ManifestPath -PathType Leaf)) {
+            throw "Android snapshot manifest not found. Run GS-SQLITE-05."
+        }
+        try {
+            $Manifest = Get-Content -LiteralPath $ManifestPath -Raw |
+                ConvertFrom-Json
+        }
+        catch {
+            throw "Android snapshot manifest is unreadable."
+        }
+        if ($Manifest.Format -cne "markei-android-sqlite-snapshot-v1") {
+            throw "Android snapshot manifest format is unsupported."
+        }
+        $ManifestFiles = @($Manifest.Files)
+        if ($ManifestFiles.Count -lt 1 -or $ManifestFiles.Count -gt 3) {
+            throw "Android snapshot manifest file count is invalid."
+        }
+        $AllowedNames = @(
+            "markei_shared_beta.sqlite"
+            "markei_shared_beta.sqlite-wal"
+            "markei_shared_beta.sqlite-shm"
+        )
+        if (@($ManifestFiles.Name | Select-Object -Unique).Count -ne
+            $ManifestFiles.Count -or
+            $ManifestFiles.Name -notcontains "markei_shared_beta.sqlite") {
+            throw "Android snapshot manifest membership is invalid."
+        }
+        foreach ($Entry in $ManifestFiles) {
+            if ($Entry.Name -notin $AllowedNames -or
+                ([string]$Entry.Length) -notmatch '^\d+$' -or
+                ([string]$Entry.Sha256) -notmatch '^[A-Fa-f0-9]{64}$') {
+                throw "Android snapshot manifest entry is invalid."
+            }
+            $SnapshotFile = Join-Path $SnapshotDirectory $Entry.Name
+            if (-not (Test-Path -LiteralPath $SnapshotFile -PathType Leaf)) {
+                throw "An Android snapshot file is absent."
+            }
+            $SnapshotInfo = Get-Item -LiteralPath $SnapshotFile
+            $SnapshotHash = (
+                Get-FileHash -LiteralPath $SnapshotFile -Algorithm SHA256
+            ).Hash
+            if ($SnapshotInfo.Length -ne [int64]$Entry.Length -or
+                $SnapshotHash -ine [string]$Entry.Sha256) {
+                throw "Android snapshot no longer matches its manifest."
+            }
+        }
+    }
+
+    $SqliteCli = Resolve-MarkeiSqliteCli
+    $SnapshotDirectory = Join-Path `
+        ([System.IO.Path]::GetTempPath()) `
+        "markei-android-sqlite-current"
+    $CopiedDatabase = Join-Path `
+        $SnapshotDirectory `
+        "markei_shared_beta.sqlite"
+    $ManifestPath = Join-Path `
+        $SnapshotDirectory `
+        "snapshot-manifest.json"
+    Assert-MarkeiAndroidSnapshot
+    $CopiedDatabaseUri = (
+        New-Object System.Uri($CopiedDatabase)
+    ).AbsoluteUri + "?immutable=1"
+
+    $IntegrityCheck = Invoke-MarkeiAndroidSqliteText `
+        -Sql "PRAGMA integrity_check;"
+    if ($IntegrityCheck -ne "ok") {
+        throw "Copied Android database integrity_check was not exactly 'ok'."
+    }
+    $ForeignKeyCheck = Invoke-MarkeiAndroidSqliteText `
+        -Sql "PRAGMA foreign_key_check;"
+    if (-not [string]::IsNullOrWhiteSpace($ForeignKeyCheck)) {
+        throw "Copied Android database foreign_key_check returned rows."
+    }
+
+    $SchemaSql = @'
+PRAGMA query_only = ON;
+SELECT COUNT(*)
+FROM sqlite_master
+WHERE type = 'table'
+  AND name IN (
+    'local_accounts',
+    'devices',
+    'installation_metadata',
+    'hosted_auth_states',
+    'sync_state',
+    'purchases',
+    'purchase_items',
+    'sync_inbox',
+    'sync_events',
+    'pending_events',
+    'sync_submissions',
+    'sync_attempts',
+    'sync_diagnostic_events'
+  );
+'@
+    $SchemaCount = Invoke-MarkeiAndroidSqliteText -Sql $SchemaSql
+    if ($SchemaCount -ne "13") {
+        throw "Expected thirteen Android diagnostic tables; stop before inference."
+    }
+
+    $BindingCountSql = @'
+PRAGMA query_only = ON;
+SELECT COUNT(*)
+FROM hosted_auth_states
+WHERE enrollment_state IN ('device-enrolled', 'duplicate-equivalent')
+  AND account_id IS NOT NULL
+  AND server_device_id IS NOT NULL;
+'@
+    $BindingCount = Invoke-MarkeiAndroidSqliteText -Sql $BindingCountSql
+    if ($BindingCount -ne "1") {
+        [pscustomobject]@{
+            ActiveHostedBindingCount = $BindingCount
+            Terminal = "android-hosted-scope-ambiguous"
+        }
+        throw "Expected exactly one active Android hosted binding."
+    }
+
+    $ProbeSql = @'
+.bail on
+.headers on
+.mode column
+.nullvalue [null]
+PRAGMA query_only = ON;
+BEGIN;
+
+.print === ANDROID_PROBE_0_SCHEMA ===
+SELECT
+  13 AS expected_table_count,
+  COUNT(*) AS observed_table_count
+FROM sqlite_master
+WHERE type = 'table'
+  AND name IN (
+    'local_accounts',
+    'devices',
+    'installation_metadata',
+    'hosted_auth_states',
+    'sync_state',
+    'purchases',
+    'purchase_items',
+    'sync_inbox',
+    'sync_events',
+    'pending_events',
+    'sync_submissions',
+    'sync_attempts',
+    'sync_diagnostic_events'
+  );
+
+.print === ANDROID_PROBE_1_ACTIVE_BINDING ===
+SELECT
+  enrollment_state,
+  CASE WHEN account_id IS NULL THEN 0 ELSE 1 END AS has_account_id,
+  CASE WHEN server_device_id IS NULL THEN 0 ELSE 1 END AS has_server_device_id,
+  CASE WHEN generation IS NULL THEN 0 ELSE 1 END AS has_generation,
+  COUNT(*) AS binding_count
+FROM hosted_auth_states
+WHERE enrollment_state IN ('device-enrolled', 'duplicate-equivalent')
+  AND account_id IS NOT NULL
+  AND server_device_id IS NOT NULL
+GROUP BY
+  enrollment_state,
+  has_account_id,
+  has_server_device_id,
+  has_generation;
+
+.print === ANDROID_PROBE_2_HOSTED_LOCAL_SCOPE ===
+WITH active_binding AS (
+  SELECT account_id, server_device_id
+  FROM hosted_auth_states
+  WHERE enrollment_state IN ('device-enrolled', 'duplicate-equivalent')
+    AND account_id IS NOT NULL
+    AND server_device_id IS NOT NULL
+)
+SELECT
+  (SELECT COUNT(*) FROM local_accounts AS a
+    JOIN active_binding AS b ON b.account_id = a.id)
+    AS local_account_count,
+  (SELECT COUNT(*) FROM devices AS d
+    JOIN active_binding AS b
+      ON b.account_id = d.account_id
+     AND b.server_device_id = d.id)
+    AS current_device_count,
+  COALESCE((
+    SELECT d.next_sequence
+    FROM devices AS d
+    JOIN active_binding AS b
+      ON b.account_id = d.account_id
+     AND b.server_device_id = d.id
+  ), '[null]') AS current_device_next_sequence,
+  (SELECT COUNT(*) FROM installation_metadata AS m
+    JOIN active_binding AS b
+      ON b.account_id = m.account_id
+     AND b.server_device_id = m.current_device_id)
+    AS current_installation_count,
+  (SELECT COUNT(*) FROM sync_state AS s
+    JOIN active_binding AS b ON b.account_id = s.account_id)
+    AS sync_state_count,
+  COALESCE((
+    SELECT s.account_cursor
+    FROM sync_state AS s
+    JOIN active_binding AS b ON b.account_id = s.account_id
+  ), '[null]') AS account_cursor;
+
+.print === ANDROID_PROBE_3_FACT_AND_INBOX_COUNTS ===
+WITH active_binding AS (
+  SELECT account_id, server_device_id
+  FROM hosted_auth_states
+  WHERE enrollment_state IN ('device-enrolled', 'duplicate-equivalent')
+    AND account_id IS NOT NULL
+    AND server_device_id IS NOT NULL
+)
+SELECT
+  (SELECT COUNT(*) FROM purchases AS p
+    JOIN active_binding AS b ON b.account_id = p.account_id)
+    AS hosted_purchase_count,
+  (SELECT COUNT(*) FROM purchase_items AS pi
+    JOIN purchases AS p ON p.id = pi.purchase_id
+    JOIN active_binding AS b ON b.account_id = p.account_id)
+    AS hosted_purchase_item_count,
+  (SELECT COUNT(*) FROM sync_inbox AS i
+    JOIN active_binding AS b ON b.account_id = i.account_id)
+    AS sync_inbox_count,
+  (SELECT COUNT(DISTINCT i.event_id) FROM sync_inbox AS i
+    JOIN active_binding AS b ON b.account_id = i.account_id)
+    AS distinct_inbox_event_count,
+  (SELECT COUNT(DISTINCT i.server_cursor) FROM sync_inbox AS i
+    JOIN active_binding AS b ON b.account_id = i.account_id)
+    AS distinct_inbox_cursor_count,
+  COALESCE((SELECT SUM(CASE WHEN i.state = 'applied' THEN 1 ELSE 0 END)
+    FROM sync_inbox AS i
+    JOIN active_binding AS b ON b.account_id = i.account_id), 0)
+    AS applied_inbox_count,
+  (SELECT COUNT(*) FROM sync_events AS e
+    JOIN active_binding AS b
+      ON b.account_id = e.account_id
+     AND b.server_device_id = e.device_id)
+    AS android_originated_event_count,
+  (SELECT COUNT(*) FROM sync_submissions AS s
+    JOIN active_binding AS b
+      ON b.account_id = s.account_id
+     AND b.server_device_id = s.device_id)
+    AS android_submission_count;
+
+.print === ANDROID_PROBE_4_QUEUE_COUNTS ===
+WITH active_binding AS (
+  SELECT account_id, server_device_id
+  FROM hosted_auth_states
+  WHERE enrollment_state IN ('device-enrolled', 'duplicate-equivalent')
+    AND account_id IS NOT NULL
+    AND server_device_id IS NOT NULL
+)
+SELECT
+  COALESCE(SUM(CASE WHEN pe.state = 'pending' THEN 1 ELSE 0 END), 0)
+    AS pending_count,
+  COALESCE(SUM(CASE WHEN pe.state = 'uploading' THEN 1 ELSE 0 END), 0)
+    AS uploading_count,
+  COALESCE(SUM(CASE WHEN pe.state = 'failed' THEN 1 ELSE 0 END), 0)
+    AS failed_count,
+  COALESCE(SUM(CASE WHEN pe.state = 'unknown' THEN 1 ELSE 0 END), 0)
+    AS unknown_count
+FROM pending_events AS pe
+JOIN sync_events AS e ON e.id = pe.event_id
+JOIN active_binding AS b
+  ON b.account_id = e.account_id
+ AND b.server_device_id = e.device_id;
+
+.print === ANDROID_PROBE_5_LATEST_ORDINARY_SYNC ===
+SELECT
+  operation_kind,
+  result_code,
+  outcome_class,
+  phase,
+  COALESCE(latest_stage, '[null]') AS latest_stage,
+  COALESCE(recovery_code, '[null]') AS recovery_code,
+  CASE WHEN http_status IS NULL THEN 0 ELSE 1 END AS has_http_status,
+  response_headers_received,
+  COALESCE(elapsed_band, '[null]') AS elapsed_band
+FROM sync_attempts
+WHERE operation_kind = 'ordinary-sync'
+ORDER BY started_at DESC, id DESC
+LIMIT 1;
+
+.print === ANDROID_PROBE_6_LATEST_SYNC_DIAGNOSTICS ===
+WITH latest_attempt AS (
+  SELECT id
+  FROM sync_attempts
+  WHERE operation_kind = 'ordinary-sync'
+  ORDER BY started_at DESC, id DESC
+  LIMIT 1
+)
+SELECT
+  d.ordinal,
+  d.code,
+  COALESCE(d.native_code, '[null]') AS native_code,
+  d.severity,
+  d.outcome,
+  d.phase,
+  d.last_proved_phase,
+  d.local_mutation_state,
+  d.provider_contact_state,
+  d.provider_transaction_state,
+  d.trusted_response_state,
+  d.result_persistence_state,
+  COALESCE(d.sanitized_exception_class, '[null]')
+    AS sanitized_exception_class,
+  d.safe_action,
+  d.retryable
+FROM sync_diagnostic_events AS d
+JOIN latest_attempt AS a ON a.id = d.attempt_id
+ORDER BY d.ordinal
+LIMIT 25;
+
+ROLLBACK;
+'@
+
+    $ProbeOutput = Invoke-MarkeiAndroidSqliteText -Sql $ProbeSql
+    $ProbeOutput
+
+    Write-Host "SQLiteIntegrityCheck: ok"
+    Write-Host "SQLiteForeignKeyCheckRows: 0"
+    Write-Host "SnapshotManifestVerified: True"
+    Write-Host "LiveDatabaseQueried: False"
+    Write-Host "AndroidAppForceStoppedByGS05: Required"
+    Write-Host "RetrySelected: False"
+    Write-Host "SyncSelected: False"
+    Write-Host "ProviderActionPerformed: False"
+    Write-Host "TerminalLocation: repository-root"
+}
+finally {
+    Set-Location -LiteralPath $RepositoryRoot
+}
+```
+
+### `GS-SQLITE-07` — Correlate Android rollback or convergence state
+
+This is the Android counterpart of `GS-SQLITE-04`. It opens only the
+manifest-verified snapshot from `GS-SQLITE-05` through an immutable read-only
+URI, requires one active hosted binding and exactly one matching local Device,
+and correlates the selected
+Account's cursor, facts, inbox, local producer state, queue, latest ordinary
+Sync terminal, and sanitized phase chain. The final classification is one of
+`failed-download-empty-local-state`, `coherent-local-download-state`, or
+`partial-or-ambiguous-local-state`. The classification is local evidence only;
+it does not authorize Retry, Sync, repair, acknowledgement, or provider work.
+
+```powershell
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+try {
+    Set-Location -LiteralPath $RepositoryRoot
+
+    function Resolve-MarkeiSqliteCli {
+        $PathCommand = Get-Command sqlite3.exe `
+            -CommandType Application `
+            -ErrorAction SilentlyContinue
+        if ($null -ne $PathCommand) {
+            return $PathCommand.Source
+        }
+
+        $Candidates = @()
+        if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+            $WinGetLink = Join-Path $env:LOCALAPPDATA `
+                "Microsoft\WinGet\Links\sqlite3.exe"
+            if (Test-Path -LiteralPath $WinGetLink -PathType Leaf) {
+                $Candidates += Get-Item -LiteralPath $WinGetLink
+            }
+            $PackageRoot = Join-Path $env:LOCALAPPDATA `
+                "Microsoft\WinGet\Packages"
+            if (Test-Path -LiteralPath $PackageRoot -PathType Container) {
+                $Candidates += Get-ChildItem `
+                    -LiteralPath $PackageRoot `
+                    -Directory `
+                    -Filter "SQLite.SQLite_*" `
+                    -ErrorAction SilentlyContinue |
+                    ForEach-Object {
+                        Get-ChildItem `
+                            -LiteralPath $_.FullName `
+                            -Filter "sqlite3.exe" `
+                            -File `
+                            -Recurse `
+                            -ErrorAction SilentlyContinue
+                    }
+            }
+        }
+        $Selected = @(
+            $Candidates |
+                Sort-Object LastWriteTime -Descending |
+                Select-Object -First 1
+        )
+        if ($Selected.Count -ne 1) {
+            throw "sqlite3.exe is unavailable. Run GS-SQLITE-01."
+        }
+        return $Selected[0].FullName
+    }
+
+    function Invoke-MarkeiAndroidSqliteText {
+        param([Parameter(Mandatory)] [string]$Sql)
+
+        $Output = $Sql |
+            & $SqliteCli -readonly -uri $CopiedDatabaseUri 2>&1
+        $ExitCode = $LASTEXITCODE
+        if ($ExitCode -ne 0) {
+            $Output
+            throw "The Android apply-state correlation probe failed."
+        }
+        return ($Output | Out-String).Trim()
+    }
+
+    function Assert-MarkeiAndroidSnapshot {
+        if (-not (Test-Path -LiteralPath $ManifestPath -PathType Leaf)) {
+            throw "Android snapshot manifest not found. Run GS-SQLITE-05."
+        }
+        try {
+            $Manifest = Get-Content -LiteralPath $ManifestPath -Raw |
+                ConvertFrom-Json
+        }
+        catch {
+            throw "Android snapshot manifest is unreadable."
+        }
+        if ($Manifest.Format -cne "markei-android-sqlite-snapshot-v1") {
+            throw "Android snapshot manifest format is unsupported."
+        }
+        $ManifestFiles = @($Manifest.Files)
+        if ($ManifestFiles.Count -lt 1 -or $ManifestFiles.Count -gt 3) {
+            throw "Android snapshot manifest file count is invalid."
+        }
+        $AllowedNames = @(
+            "markei_shared_beta.sqlite"
+            "markei_shared_beta.sqlite-wal"
+            "markei_shared_beta.sqlite-shm"
+        )
+        if (@($ManifestFiles.Name | Select-Object -Unique).Count -ne
+            $ManifestFiles.Count -or
+            $ManifestFiles.Name -notcontains "markei_shared_beta.sqlite") {
+            throw "Android snapshot manifest membership is invalid."
+        }
+        foreach ($Entry in $ManifestFiles) {
+            if ($Entry.Name -notin $AllowedNames -or
+                ([string]$Entry.Length) -notmatch '^\d+$' -or
+                ([string]$Entry.Sha256) -notmatch '^[A-Fa-f0-9]{64}$') {
+                throw "Android snapshot manifest entry is invalid."
+            }
+            $SnapshotFile = Join-Path $SnapshotDirectory $Entry.Name
+            if (-not (Test-Path -LiteralPath $SnapshotFile -PathType Leaf)) {
+                throw "An Android snapshot file is absent."
+            }
+            $SnapshotInfo = Get-Item -LiteralPath $SnapshotFile
+            $SnapshotHash = (
+                Get-FileHash -LiteralPath $SnapshotFile -Algorithm SHA256
+            ).Hash
+            if ($SnapshotInfo.Length -ne [int64]$Entry.Length -or
+                $SnapshotHash -ine [string]$Entry.Sha256) {
+                throw "Android snapshot no longer matches its manifest."
+            }
+        }
+    }
+
+    $SqliteCli = Resolve-MarkeiSqliteCli
+    $SnapshotDirectory = Join-Path `
+        ([System.IO.Path]::GetTempPath()) `
+        "markei-android-sqlite-current"
+    $CopiedDatabase = Join-Path `
+        $SnapshotDirectory `
+        "markei_shared_beta.sqlite"
+    $ManifestPath = Join-Path `
+        $SnapshotDirectory `
+        "snapshot-manifest.json"
+    Assert-MarkeiAndroidSnapshot
+    $CopiedDatabaseUri = (
+        New-Object System.Uri($CopiedDatabase)
+    ).AbsoluteUri + "?immutable=1"
+
+    $IntegrityCheck = Invoke-MarkeiAndroidSqliteText `
+        -Sql "PRAGMA integrity_check;"
+    if ($IntegrityCheck -ne "ok") {
+        throw "Copied Android database integrity_check was not exactly 'ok'."
+    }
+    $ForeignKeyCheck = Invoke-MarkeiAndroidSqliteText `
+        -Sql "PRAGMA foreign_key_check;"
+    if (-not [string]::IsNullOrWhiteSpace($ForeignKeyCheck)) {
+        throw "Copied Android database foreign_key_check returned rows."
+    }
+
+    $GuardSql = @'
+PRAGMA query_only = ON;
+WITH active_binding AS (
+  SELECT account_id, server_device_id
+  FROM hosted_auth_states
+  WHERE enrollment_state IN ('device-enrolled', 'duplicate-equivalent')
+    AND account_id IS NOT NULL
+    AND server_device_id IS NOT NULL
+)
+SELECT
+  (SELECT COUNT(*) FROM active_binding) || '|' ||
+  (SELECT COUNT(*)
+   FROM devices AS d
+   JOIN active_binding AS b
+     ON b.account_id = d.account_id
+    AND b.server_device_id = d.id);
+'@
+    $GuardResult = Invoke-MarkeiAndroidSqliteText -Sql $GuardSql
+    if ($GuardResult -ne "1|1") {
+        [pscustomobject]@{
+            BindingAndDeviceGuard = $GuardResult
+            Terminal = "android-apply-scope-ambiguous"
+        }
+        throw "Expected one active binding and one matching local Device."
+    }
+
+    $ProbeSql = @'
+.bail on
+.headers on
+.mode column
+.nullvalue [null]
+PRAGMA query_only = ON;
+BEGIN;
+
+.print === ANDROID_CORRELATION_0_SCOPE ===
+WITH active_binding AS (
+  SELECT account_id, server_device_id, enrollment_state
+  FROM hosted_auth_states
+  WHERE enrollment_state IN ('device-enrolled', 'duplicate-equivalent')
+    AND account_id IS NOT NULL
+    AND server_device_id IS NOT NULL
+)
+SELECT
+  b.enrollment_state,
+  COUNT(DISTINCT b.account_id) AS active_account_scope_count,
+  COUNT(d.id) AS current_device_count,
+  MIN(d.next_sequence) AS current_device_next_sequence,
+  COUNT(m.id) AS current_installation_count
+FROM active_binding AS b
+JOIN devices AS d
+  ON d.account_id = b.account_id
+ AND d.id = b.server_device_id
+LEFT JOIN installation_metadata AS m
+  ON m.account_id = b.account_id
+ AND m.current_device_id = b.server_device_id
+GROUP BY b.enrollment_state;
+
+.print === ANDROID_CORRELATION_1_CURSOR_INBOX_FACTS ===
+WITH active_binding AS (
+  SELECT account_id
+  FROM hosted_auth_states
+  WHERE enrollment_state IN ('device-enrolled', 'duplicate-equivalent')
+    AND account_id IS NOT NULL
+    AND server_device_id IS NOT NULL
+),
+inbox_summary AS (
+  SELECT
+    COUNT(*) AS inbox_count,
+    COUNT(DISTINCT i.event_id) AS distinct_event_count,
+    COUNT(DISTINCT i.server_cursor) AS distinct_cursor_count,
+    SUM(CASE WHEN i.state = 'applied' THEN 1 ELSE 0 END)
+      AS applied_count,
+    MAX(
+      CASE
+        WHEN i.server_cursor GLOB 'c10b:[0-9]*'
+        THEN CAST(substr(i.server_cursor, 6) AS INTEGER)
+      END
+    ) AS cursor_high_water
+  FROM sync_inbox AS i
+  JOIN active_binding AS b ON b.account_id = i.account_id
+)
+SELECT
+  (SELECT COUNT(*) FROM sync_state AS s
+    JOIN active_binding AS b ON b.account_id = s.account_id)
+    AS sync_state_count,
+  COALESCE((
+    SELECT s.account_cursor
+    FROM sync_state AS s
+    JOIN active_binding AS b ON b.account_id = s.account_id
+  ), '[null]') AS account_cursor,
+  CASE
+    WHEN (
+      SELECT s.account_cursor
+      FROM sync_state AS s
+      JOIN active_binding AS b ON b.account_id = s.account_id
+    ) GLOB 'c10b:[0-9]*'
+    THEN CAST(substr((
+      SELECT s.account_cursor
+      FROM sync_state AS s
+      JOIN active_binding AS b ON b.account_id = s.account_id
+    ), 6) AS INTEGER)
+    ELSE NULL
+  END AS account_cursor_number,
+  COALESCE(ins.inbox_count, 0) AS inbox_count,
+  COALESCE(ins.distinct_event_count, 0) AS distinct_inbox_event_count,
+  COALESCE(ins.distinct_cursor_count, 0) AS distinct_inbox_cursor_count,
+  COALESCE(ins.applied_count, 0) AS applied_inbox_count,
+  COALESCE(ins.cursor_high_water, 0) AS inbox_cursor_high_water,
+  (SELECT COUNT(*) FROM purchases AS p
+    JOIN active_binding AS b ON b.account_id = p.account_id)
+    AS hosted_purchase_count,
+  (SELECT COUNT(*) FROM purchase_items AS pi
+    JOIN purchases AS p ON p.id = pi.purchase_id
+    JOIN active_binding AS b ON b.account_id = p.account_id)
+    AS hosted_purchase_item_count
+FROM inbox_summary AS ins;
+
+.print === ANDROID_CORRELATION_2_LOCAL_PRODUCER_QUEUE ===
+WITH active_binding AS (
+  SELECT account_id, server_device_id
+  FROM hosted_auth_states
+  WHERE enrollment_state IN ('device-enrolled', 'duplicate-equivalent')
+    AND account_id IS NOT NULL
+    AND server_device_id IS NOT NULL
+),
+queue_summary AS (
+  SELECT
+    SUM(CASE WHEN pe.state = 'pending' THEN 1 ELSE 0 END)
+      AS pending_count,
+    SUM(CASE WHEN pe.state = 'uploading' THEN 1 ELSE 0 END)
+      AS uploading_count,
+    SUM(CASE WHEN pe.state = 'failed' THEN 1 ELSE 0 END)
+      AS failed_count,
+    SUM(CASE WHEN pe.state = 'unknown' THEN 1 ELSE 0 END)
+      AS unknown_count
+  FROM pending_events AS pe
+  JOIN sync_events AS e ON e.id = pe.event_id
+  JOIN active_binding AS b
+    ON b.account_id = e.account_id
+   AND b.server_device_id = e.device_id
+)
+SELECT
+  d.next_sequence AS current_device_next_sequence,
+  (SELECT COUNT(*) FROM sync_events AS e
+    JOIN active_binding AS b
+      ON b.account_id = e.account_id
+     AND b.server_device_id = e.device_id)
+    AS android_originated_event_count,
+  (SELECT COUNT(*) FROM sync_submissions AS s
+    JOIN active_binding AS b
+      ON b.account_id = s.account_id
+     AND b.server_device_id = s.device_id)
+    AS android_submission_count,
+  COALESCE(q.pending_count, 0) AS pending_count,
+  COALESCE(q.uploading_count, 0) AS uploading_count,
+  COALESCE(q.failed_count, 0) AS failed_count,
+  COALESCE(q.unknown_count, 0) AS unknown_count
+FROM devices AS d
+JOIN active_binding AS b
+  ON b.account_id = d.account_id
+ AND b.server_device_id = d.id
+CROSS JOIN queue_summary AS q;
+
+.print === ANDROID_CORRELATION_3_LATEST_SYNC_CHAIN ===
+WITH latest_attempt AS (
+  SELECT *
+  FROM sync_attempts
+  WHERE operation_kind = 'ordinary-sync'
+  ORDER BY started_at DESC, id DESC
+  LIMIT 1
+)
+SELECT
+  a.operation_kind,
+  a.result_code,
+  a.outcome_class,
+  a.phase,
+  COALESCE(a.latest_stage, '[null]') AS latest_stage,
+  COALESCE(a.recovery_code, '[null]') AS recovery_code,
+  CASE WHEN a.http_status IS NULL THEN 0 ELSE 1 END AS has_http_status,
+  a.response_headers_received,
+  SUM(CASE WHEN d.native_code = 'download-response-received'
+           THEN 1 ELSE 0 END) AS download_response_received_count,
+  SUM(CASE WHEN d.native_code = 'acknowledgement-request-started'
+           THEN 1 ELSE 0 END) AS acknowledgement_started_count,
+  SUM(CASE WHEN d.native_code = 'sync-completed'
+           THEN 1 ELSE 0 END) AS sync_completed_count,
+  SUM(CASE WHEN d.native_code = 'closure-runner-exception'
+           THEN 1 ELSE 0 END) AS closure_runner_exception_count,
+  COALESCE(MAX(d.sanitized_exception_class), '[null]')
+    AS sanitized_exception_class
+FROM latest_attempt AS a
+LEFT JOIN sync_diagnostic_events AS d ON d.attempt_id = a.id
+GROUP BY
+  a.operation_kind,
+  a.result_code,
+  a.outcome_class,
+  a.phase,
+  a.latest_stage,
+  a.recovery_code,
+  a.http_status,
+  a.response_headers_received;
+
+.print === ANDROID_CORRELATION_4_SANITIZED_PHASES ===
+WITH latest_attempt AS (
+  SELECT id
+  FROM sync_attempts
+  WHERE operation_kind = 'ordinary-sync'
+  ORDER BY started_at DESC, id DESC
+  LIMIT 1
+)
+SELECT
+  d.ordinal,
+  d.code,
+  COALESCE(d.native_code, '[null]') AS native_code,
+  d.phase,
+  d.last_proved_phase,
+  d.local_mutation_state,
+  d.provider_contact_state,
+  d.provider_transaction_state,
+  d.trusted_response_state,
+  d.result_persistence_state,
+  COALESCE(d.sanitized_exception_class, '[null]')
+    AS sanitized_exception_class,
+  d.safe_action,
+  d.retryable
+FROM sync_diagnostic_events AS d
+JOIN latest_attempt AS a ON a.id = d.attempt_id
+ORDER BY d.ordinal
+LIMIT 25;
+
+.print === ANDROID_CORRELATION_5_LOCAL_STATE_CLASS ===
+WITH active_binding AS (
+  SELECT account_id, server_device_id
+  FROM hosted_auth_states
+  WHERE enrollment_state IN ('device-enrolled', 'duplicate-equivalent')
+    AND account_id IS NOT NULL
+    AND server_device_id IS NOT NULL
+),
+state_summary AS (
+  SELECT
+    (SELECT s.account_cursor FROM sync_state AS s
+      JOIN active_binding AS b ON b.account_id = s.account_id)
+      AS account_cursor,
+    (SELECT COUNT(*) FROM sync_inbox AS i
+      JOIN active_binding AS b ON b.account_id = i.account_id)
+      AS inbox_count,
+    (SELECT COUNT(DISTINCT i.event_id) FROM sync_inbox AS i
+      JOIN active_binding AS b ON b.account_id = i.account_id)
+      AS distinct_inbox_events,
+    (SELECT COUNT(DISTINCT i.server_cursor) FROM sync_inbox AS i
+      JOIN active_binding AS b ON b.account_id = i.account_id)
+      AS distinct_inbox_cursors,
+    (SELECT SUM(CASE WHEN i.state = 'applied' THEN 1 ELSE 0 END)
+      FROM sync_inbox AS i
+      JOIN active_binding AS b ON b.account_id = i.account_id)
+      AS applied_inbox_count,
+    (SELECT MAX(
+       CASE
+         WHEN i.server_cursor GLOB 'c10b:[0-9]*'
+         THEN CAST(substr(i.server_cursor, 6) AS INTEGER)
+       END
+     ) FROM sync_inbox AS i
+      JOIN active_binding AS b ON b.account_id = i.account_id)
+      AS inbox_cursor_high_water,
+    (SELECT COUNT(*) FROM purchases AS p
+      JOIN active_binding AS b ON b.account_id = p.account_id)
+      AS purchase_count,
+    (SELECT COUNT(*) FROM purchase_items AS pi
+      JOIN purchases AS p ON p.id = pi.purchase_id
+      JOIN active_binding AS b ON b.account_id = p.account_id)
+      AS purchase_item_count,
+    (SELECT COUNT(*) FROM sync_events AS e
+      JOIN active_binding AS b
+        ON b.account_id = e.account_id
+       AND b.server_device_id = e.device_id)
+      AS local_event_count,
+    (SELECT COUNT(*) FROM pending_events AS pe
+      JOIN sync_events AS e ON e.id = pe.event_id
+      JOIN active_binding AS b
+        ON b.account_id = e.account_id
+       AND b.server_device_id = e.device_id)
+      AS queue_count,
+    (SELECT COUNT(*) FROM sync_diagnostic_events AS d
+      JOIN sync_attempts AS a ON a.id = d.attempt_id
+      WHERE a.operation_kind = 'ordinary-sync'
+        AND a.id = (
+          SELECT id FROM sync_attempts
+          WHERE operation_kind = 'ordinary-sync'
+          ORDER BY started_at DESC, id DESC LIMIT 1
+        )
+        AND d.native_code = 'download-response-received')
+      AS download_response_received_count,
+    (SELECT result_code FROM sync_attempts
+      WHERE operation_kind = 'ordinary-sync'
+      ORDER BY started_at DESC, id DESC LIMIT 1)
+      AS latest_sync_result
+)
+SELECT
+  CASE
+    WHEN account_cursor IS NULL
+     AND inbox_count = 0
+     AND purchase_count = 0
+     AND purchase_item_count = 0
+     AND local_event_count = 0
+     AND queue_count = 0
+     AND latest_sync_result = 'sync-failed'
+     AND download_response_received_count > 0
+      THEN 'failed-download-empty-local-state'
+    WHEN account_cursor GLOB 'c10b:[0-9]*'
+     AND inbox_count > 0
+     AND inbox_count = distinct_inbox_events
+     AND inbox_count = distinct_inbox_cursors
+     AND inbox_count = COALESCE(applied_inbox_count, 0)
+     AND CAST(substr(account_cursor, 6) AS INTEGER) =
+         inbox_cursor_high_water
+     AND purchase_count > 0
+     AND purchase_item_count > 0
+     AND local_event_count = 0
+     AND queue_count = 0
+      THEN 'coherent-local-download-state'
+    ELSE 'partial-or-ambiguous-local-state'
+  END AS android_local_state_class
+FROM state_summary;
+
+ROLLBACK;
+'@
+
+    $ProbeOutput = Invoke-MarkeiAndroidSqliteText -Sql $ProbeSql
+    $ProbeOutput
+
+    Write-Host "SQLiteIntegrityCheck: ok"
+    Write-Host "SQLiteForeignKeyCheckRows: 0"
+    Write-Host "SnapshotManifestVerified: True"
+    Write-Host "ExactHostedScopeGuard: 1|1"
+    Write-Host "LiveDatabaseQueried: False"
+    Write-Host "RetrySelected: False"
+    Write-Host "SyncSelected: False"
+    Write-Host "RecoverySelected: False"
+    Write-Host "ProviderActionPerformed: False"
+    Write-Host "LocalDatabaseModified: False"
     Write-Host "TerminalLocation: repository-root"
 }
 finally {

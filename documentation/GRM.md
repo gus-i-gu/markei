@@ -48,6 +48,9 @@ the matching `GS-*` section of `G_SCRIPTS.md`.
 | `GRM-SQLITE-02`   | Verified Gate 12.6 copy creation        |
 | `GRM-SQLITE-03`   | Sanitized classification probe          |
 | `GRM-SQLITE-04`   | Sanitized scope-correlation probe       |
+| `GRM-SQLITE-05`   | Verified Android SQLite snapshot        |
+| `GRM-SQLITE-06`   | Sanitized Android state probe           |
+| `GRM-SQLITE-07`   | Android apply-state correlation         |
 | `GRM-HOST-01`     | Render live/ready verification          |
 | `GRM-AUTH-01`     | Auth0 public-metadata verification      |
 | `GRM-AUTH-02`     | Exact hosted Auth0-binding verification |
@@ -366,6 +369,9 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 | `GRM-SQLITE-02` | `GS-SQLITE-02`      | Create verified Gate 12.6 copy        |
 | `GRM-SQLITE-03` | `GS-SQLITE-03`      | Run sanitized classification probe    |
 | `GRM-SQLITE-04` | `GS-SQLITE-04`      | Run sanitized scope-correlation probe |
+| `GRM-SQLITE-05` | `GS-SQLITE-05`      | Create verified Android snapshot      |
+| `GRM-SQLITE-06` | `GS-SQLITE-06`      | Run sanitized Android state probe     |
+| `GRM-SQLITE-07` | `GS-SQLITE-07`      | Correlate Android apply state         |
 
 ### `GRM-SQLITE-01`
 
@@ -389,6 +395,24 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-SQLITE-04"
+```
+
+### `GRM-SQLITE-05`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-SQLITE-05"
+```
+
+### `GRM-SQLITE-06`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-SQLITE-06"
+```
+
+### `GRM-SQLITE-07`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-SQLITE-07"
 ```
 
 **Hosted service and Auth0**
