@@ -1,209 +1,149 @@
-# F_DSN_STAGE — Architecture for C10-GCM03-S09-R06-CR01
-
-## Envelope
+# F_DSN_STAGE - C10-GCM03-S09-R06-CR02
 
 Sequence: FLX-ORD-01
-
-Role: Main architecture constraint
-
-Round or unit: C10-GCM03-S09-R06-CR01
-
+Role: Main design stage
+Round or unit: C10-GCM03-S09-R06-CR02
 Branch: grm-guarded-provisioning-20260727
+Required starting HEAD: 5fef8a51ccb61dff00e773b3c8759062560d27da
+Authority: Human-supervised Main Chat
+Architecture boundary: Windows preparation and verification procedure only
 
-Baseline / inspected HEAD: e5168f6d2063b359ba773c107b73420bb29d43e8
+## 1. Design Correction
 
-Authority: D controls execution; E controls evidence; F controls ownership.
+CR01 conflated three different kinds of evidence:
 
-## 1. Architectural objective
+```text
+process name
+generated-state ownership
+actual cleanup failure
+```
 
-Add one bounded fail-closed preparation gate to the existing Windows build procedure:
+CR02 must separate them:
 
-~~~text
-operator-owned process state
-→ relevant-owner preflight
-→ Flutter cleanup request
-→ independent generated-state postcondition
-→ bounded exact-path cleanup when safe
-→ second absence proof
-→ dependency/plugin regeneration
-→ regeneration coherence proof
-→ existing R06 validation/build/identity chain
-~~~
+```text
+process observation
+-> attributable owner classification
+-> cleanup attempt
+-> filesystem postcondition
+-> package/plugin regeneration verification
+-> analysis/test/build
+```
 
-This is procedure architecture. It does not change application architecture or Sync architecture.
+A name match is an observation. It is not ownership.
 
-## 2. Root responsibility
+An ownership claim requires an attributable relationship to the client, its
+build output, or an active Flutter build/run command.
 
-The defect belongs to GS-FLUTTER-WIN orchestration because the procedure advanced from cleanup into pub get without proving the filesystem state required by pub get.
+The filesystem postcondition remains the authoritative gate: if exact generated
+targets cannot be removed or reappear, the procedure stops regardless of
+process classification.
 
-Flutter remains responsible for ordinary cleanup and package/plugin generation. CR01 does not replace Flutter's generator. It wraps the transition with explicit preconditions and postconditions.
+## 2. Windows Generated-State Topology
 
-The auth0_flutter symlink is an observed collision location, not an architectural root cause assigned to Auth0 or the plugin dependency.
+The procedure must preserve this distinction:
 
-## 3. Responsibility map
+```text
+clients/markei_flutter/
+├── .dart_tool/                              generated; bounded cleanup target
+├── build/windows/                           generated; bounded cleanup target
+└── windows/flutter/
+    ├── generated_plugins.cmake              generated manifest; verify here
+    └── ephemeral/                           generated; bounded cleanup target
+        └── .plugin_symlinks/
+            └── auth0_flutter/               generated plugin target; verify here
+```
 
-| Responsibility | Owner | Constraint |
-|---|---|---|
-| Operator closes active app/build/debug activity | human operator | procedure gives bounded guidance |
-| Relevant owner/process inspection | GS-FLUTTER-WIN | observe and stop; never terminate |
-| Ordinary generated-state cleanup | flutter clean | exit code is necessary, not sufficient |
-| Cleanup postcondition verification | GS-FLUTTER-WIN | exact enumerated generated targets |
-| Safe residual generated-target removal | GS-FLUTTER-WIN | literal paths, contained client root, no active owner |
-| Package/plugin regeneration | flutter pub get | only after cleanup gate passes |
-| Regeneration coherence verification | GS-FLUTTER-WIN | package config plus Windows plugin state |
-| R06 source identity resolution | existing shared helper | unchanged |
-| Analysis/tests/build | existing Flutter commands | unchanged after gate |
-| Artifact identity | existing GS-FLUTTER-WIN tail | unchanged |
-| Callback registration and launch | existing GS-FLUTTER-WIN tail | exact built executable |
-| Preserved data and live actions | installed application/human authority | untouched by Codex |
-| Sync and diagnostics | existing R02–R05 owners | frozen |
-| R07 Settings/Audit design | later Main-approved unit | held |
+`generated_plugins.cmake` must not be relocated conceptually into `ephemeral`.
+The procedure verifies Flutter's output; it does not manually author generated
+native state.
 
-## 4. State machine
+## 3. Process Attribution Contract
 
-Required preparation states:
+The classifier should expose at least:
 
-~~~text
-preflight-pending
-→ blocked-active-owner
-or
-→ cleanup-requested
-→ blocked-clean-command
-or
-→ cleanup-postcondition-check
-→ bounded-residual-removal
-→ blocked-residual-or-reappeared
-or
-→ clean-state-proved
-→ pub-get-running
-→ blocked-pub-get
-or
-→ regeneration-check
-→ blocked-regeneration-incoherent
-or
-→ windows-build-preparation-ready
-~~~
+```text
+Candidate
+DefiniteRelevantOwner
+BenignAnalysisActivity
+UnknownMetadata
+```
 
-No transition may skip from cleanup-requested directly to pub-get-running. The clean-state-proved transition requires filesystem evidence independent of flutter clean's exit code.
+Rules:
 
-## 5. Containment invariant
+- `markei.exe` whose executable path is inside the client's Windows build output
+  is a definite relevant owner;
+- a Flutter/Dart process whose bounded command metadata connects it to this
+  client and a build/run action may be a definite relevant owner;
+- Dart analysis/language-server activity is not a definite owner merely because
+  it analyzes the repository;
+- missing metadata is unknown, not proof of ownership;
+- unknown candidates may be reported after an actual cleanup failure but must
+  not create a universal pre-clean veto;
+- no raw full command line should be printed;
+- no process may be terminated automatically.
 
-Every removable path must satisfy all of:
+If implementation needs platform-specific process inspection, it belongs
+inside the canonical `GS-FLUTTER-WIN` body and must remain Windows-only,
+read-only, bounded, and failure-tolerant.
 
-~~~text
-TARGET_IS_EXPLICITLY_ENUMERATED
-TARGET_IS_FLUTTER_GENERATED
-TARGET_RESOLVES_UNDER_CLIENT_ROOT
-TARGET_IS_NOT_CLIENT_ROOT
-TARGET_IS_NOT_REPOSITORY_ROOT
-NO_RELEVANT_OWNER_IS_ACTIVE
-REMOVAL_RESULT_IS_VERIFIED
-~~~
+## 4. Preparation State Machine
 
-A failed invariant stops the procedure. It must never be converted into a wildcard, broad recursive deletion, cache-wide purge, or process kill.
+The corrected state machine is:
 
-The Flutter client root, repository root, source directories, pubspec files, lockfile, application data, databases, coordinates, and user files are immutable boundaries.
+```text
+coordinates and R06 identity validated
+-> definite relevant-owner preflight
+-> flutter clean
+-> exact bounded cleanup
+-> exact absence proof
+-> flutter pub get
+-> package_config auth0 entry proof
+-> ephemeral auth0 symlink/CMake proof
+-> non-ephemeral generated_plugins.cmake proof
+-> analyze
+-> tests
+-> Windows Release build
+-> artifact hash
+-> callback registration
+-> exact executable launch
+```
 
-## 6. Process-boundary law
+Failure at any earlier stage must not be described as failure of a later stage.
 
-The procedure may inspect a bounded process set and report names/IDs sufficient for operator action. It must not:
+## 5. Authority Boundaries
 
-- call Stop-Process, taskkill, kill, or equivalent;
-- infer permission to close VS Code or terminals;
-- terminate Markei automatically;
-- expose full command lines, environment variables, tokens, local coordinates, or unrelated processes;
-- treat every Dart analysis process as automatically safe to terminate.
+- Flutter owns dependency and generated-plugin materialization.
+- `GS-FLUTTER-WIN` owns bounded orchestration and verification.
+- The human owns manual closure of genuinely relevant activity.
+- PowerShell process inspection supplies hints and attribution evidence, not
+  transaction truth.
+- Filesystem postconditions decide whether cleanup succeeded.
+- The Windows scaffold owns the manifest location.
+- R06 provenance owns source/artifact identity.
+- Application, Auth0, Sync, database, provider, and R07 architectures are
+  unchanged.
 
-If it cannot distinguish a relevant owner safely, it stops and delegates closure to the operator.
+## 6. Safety Invariants
 
-## 7. Regeneration invariant
+```text
+AUTOMATIC_PROCESS_TERMINATION=NO
+PROCESS_NAME_ALONE_PROVES_OWNERSHIP=NO
+ANALYSIS_SERVER_REQUIRES_VSCODE_CLOSURE=NO
+RAW_COMMAND_LINE_OUTPUT=NO
+CLEANUP_OUTSIDE_CLIENT=NO
+BROAD_WILDCARD_DELETION=NO
+GENERATED_NATIVE_FILE_MANUAL_EDIT=NO
+DEPENDENCY_UPGRADE=NO
+SYNC_AUTHORIZATION=NO
+```
 
-After flutter pub get:
+## 7. Acceptance
 
-~~~text
-package configuration exists and is readable
-AND
-Windows ephemeral/plugin generation exists in the expected shape
-AND
-auth0_flutter has one coherent generated plugin target
-AND
-no stale-collision condition is observed
-~~~
+CR02 architecture is accepted only if:
 
-This proof establishes only dependency-generation readiness. It does not validate Auth0 login, callback behavior, hosted service availability, or Sync.
-
-## 8. R06 identity preservation
-
-The existing architecture remains:
-
-~~~text
-clean committed Git HEAD/tree
-→ shared deterministic source-identity helper
-→ MARKEI_SOURCE_REVISION / MARKEI_SOURCE_TREE_SHA256
-→ immutable BuildProvenance
-→ boot transport
-→ Closure presentation
-~~~
-
-CR01 must not create another identity helper, rename definitions, alter BuildProvenance, or change platform semantics.
-
-Because documentation/G_SCRIPTS.md participates in the source-tree digest, the CR01 implementation commit becomes the next candidate identity. A human rerun must rebuild from that exact pushed HEAD; old e5168f6 artifacts remain historical evidence only.
-
-## 9. Existing execution tail is frozen
-
-Once windows-build-preparation-ready is reached, preserve the R06 tail:
-
-~~~text
-flutter analyze
-→ flutter test
-→ flutter build windows --release with existing definitions
-→ exact markei.exe existence
-→ byte size and SHA-256
-→ callback registration for exact executable
-→ exact executable launch
-→ visible identity instruction
-~~~
-
-CR01 may add bounded readiness output but must not reorder or weaken these ownership relationships.
-
-## 10. Frozen boundaries
-
-CR01 does not modify:
-
-- application source, navigation, Closure UI, Settings, Audit, MKS/ERR, or diagnostic projection;
-- Product, purchase, catalogue, Sync, cursor, acknowledgement, or operation semantics;
-- SQLite schema/state, hosted API, protocol, Render, Neon, Auth0 configuration, enrollment, or provider data;
-- dependencies, pubspec.lock, native plugin source, CMake, vcpkg, or cpprestsdk;
-- Android or Windows Debug procedures;
-- methodology, permanent domain memory, J, A/B/C, or R07 design.
-
-## 11. Completion boundary
-
-CR01 completes when:
-
-- GS-FLUTTER-WIN has an observable non-terminating process preflight;
-- cleanup success is proved by exact postconditions;
-- residual generated state can be removed only within the containment invariant;
-- pub get is gated by clean-state proof;
-- package/plugin regeneration is checked coherently;
-- extraction and PowerShell parsing pass;
-- the R06 identity/build tail is preserved;
-- G/H/I report the bounded result;
-- one fast-forward implementation commit is published.
-
-CR01 does not complete the preserved-machine build. That result belongs to the user's corrected GS-FLUTTER-WIN rerun.
-
-## 12. Release architecture
-
-~~~text
-CR01 implementation and focused validation
-→ Main reconciliation
-→ corrected GS-FLUTTER-WIN human rerun
-→ Windows artifact and visible identity
-→ Android artifact and visible identity if still pending
-→ freeze exact candidate
-→ separately authorized serialized Sync assay
-→ activate R07 only if the assay yields a real attribution ambiguity
-~~~
-
-No live Sync authority exists inside CR01.
+- process classification is evidence-backed;
+- name-only Dart/Flutter false positives are removed;
+- actual cleanup failure remains fail-closed;
+- the plugin symlink and manifest use their distinct correct paths;
+- all R06 identity and final build-tail responsibilities remain intact;
+- G/H/I preserve evidence ceilings and name the remaining human rerun.

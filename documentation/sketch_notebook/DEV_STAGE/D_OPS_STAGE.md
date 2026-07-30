@@ -1,190 +1,228 @@
-# D_OPS_STAGE — C10-GCM03-S09-R06-CR01 Windows cleanup hardening
-
-## Active authority
-
-Authority state: ACTIVE — CODEX CORRECTIVE IMPLEMENTATION AUTHORIZED AFTER PUBLICATION
+# D_OPS_STAGE - C10-GCM03-S09-R06-CR02
 
 Sequence: FLX-ORD-01
+Role: Main operational materialization stage
+Round or unit: C10-GCM03-S09-R06-CR02
+Branch: grm-guarded-provisioning-20260727
+Required starting HEAD: 5fef8a51ccb61dff00e773b3c8759062560d27da
+Authority: Human-supervised Main Chat
+Scope: Windows procedure attribution and generated-plugin manifest correction only
 
-Primary unit: C10-GCM03-S09-R06-CR01
+## 1. Purpose
 
-Repository: gus-i-gu/markei
+Correct two false guards introduced by CR01 in the canonical
+`GS-FLUTTER-WIN` procedure:
 
-Existing branch: grm-guarded-provisioning-20260727
+1. name-only process detection classifies every `dart.exe` process as an owner
+   of this Flutter client;
+2. plugin verification checks
+   `windows\flutter\ephemeral\generated_plugins.cmake`, while the repository
+   Windows scaffold and Flutter-generated manifest use
+   `windows\flutter\generated_plugins.cmake`.
 
-Required pre-stage head: e5168f6d2063b359ba773c107b73420bb29d43e8
+This round does not diagnose or change application, dependency, Auth0, CMake,
+Sync, provider, or database behavior.
 
-Required Codex starting head: the published CR01 D/E/F staging commit pinned by Main in the seeding prompt.
+## 2. Established Evidence
 
-D controls executable scope and terminals. E constrains evidence meaning. F controls architecture and responsibility. R06 source implementation remains accepted. A/B/C support reports, J, R07/UI design, installed clients, preserved SQLite databases, diagnostic history, Render, Neon, Auth0, and provider state are read-only and out of scope.
+The human CR01 reruns established:
 
-## 1. Incident classification
+- a plain Dart PID was enough to stop pre-clean without repository, command
+  line, file-lock, or client-path attribution;
+- after that PID was manually stopped, `flutter clean` completed;
+- bounded generated-state cleanup completed;
+- `flutter pub get` completed with `Got dependencies!`;
+- `.dart_tool/package_config.json`, the `auth0_flutter` package entry, the
+  Windows plugin symlink, and its `windows/CMakeLists.txt` passed the existing
+  checks;
+- the procedure then failed only at
+  `Windows generated_plugins.cmake was not regenerated`;
+- repository inspection proves
+  `clients/markei_flutter/windows/flutter/generated_plugins.cmake` exists and
+  contains one `auth0_flutter` plugin entry;
+- the repository has no
+  `clients/markei_flutter/windows/flutter/ephemeral/generated_plugins.cmake`.
 
-The preserved-client Windows procedure stopped before compilation:
+Therefore:
 
-~~~text
-flutter clean could not remove .dart_tool completely
-→ the procedure continued
-→ flutter pub get encountered the existing auth0_flutter plugin symlink
-→ PathExistsException / errno 183
-→ Windows build was not reached
-~~~
+```text
+WINDOWS_TOOLCHAIN=AVAILABLE
+DEPENDENCY_RESOLUTION=PASS
+PLUGIN_SYMLINK_REGENERATION=PASS
+GENERATED_PLUGIN_MANIFEST_ASSERTION=FALSE_PATH
+PROCESS_OWNERSHIP_ASSERTION=UNATTRIBUTED
+WINDOWS_COMPILATION=NOT_REACHED
+```
 
-This evidence does not establish a CMake, cpprestsdk, dependency, Auth0-coordinate, R06 source-identity, application, or Sync failure. The missing Chrome installation is irrelevant to the Windows desktop target.
-
-The defect is procedural: GS-FLUTTER-WIN checks the flutter clean exit code and removes windows/flutter/ephemeral, but it does not prove that all cleanup postconditions required by pub get are satisfied before continuing.
-
-## 2. Objective
-
-Harden only GS-FLUTTER-WIN so generated Flutter state is handled deterministically and the procedure fails closed on incomplete cleanup or a relevant active-process/lock condition.
-
-The correction must preserve the complete R06 identity/build chain and must not broaden into R07, UI restructuring, Sync behavior, dependency changes, or preserved-state operations.
-
-## 3. Required procedure behavior
-
-Modify the canonical GS-FLUTTER-WIN PowerShell block in documentation/G_SCRIPTS.md.
-
-Before cleanup:
-
-1. Inspect for an active Markei executable and relevant Flutter/Dart build or run processes that can own or recreate the target generated paths.
-2. Do not terminate any process automatically.
-3. If a relevant owner is present or ownership cannot be bounded safely, stop with concise instructions to close Markei, active Flutter run/build terminals, and relevant VS Code debug/build activity, then rerun.
-4. Do not treat unrelated Chrome availability as a Windows-build prerequisite.
-
-Cleanup and verification:
-
-1. Run flutter clean and require a successful exit code.
-2. Independently verify cleanup postconditions; do not trust the exit code alone.
-3. The verified target set must cover the generated state implicated in this incident, including .dart_tool and windows/flutter/ephemeral, plus any additional exact Flutter-generated path that the existing procedure already relies on being absent.
-4. If a safe generated target remains and no relevant owner is active, remove only that exact generated target with literal-path handling.
-5. Verify every targeted path is absent after removal.
-6. If removal fails, a target reappears, or ownership is ambiguous, stop before flutter pub get and identify the bounded path without printing secrets or broad environment data.
-7. Never delete source, pubspec.yaml, pubspec.lock, application data, SQLite files, Auth0 configuration, user documents, or a directory outside clients/markei_flutter.
-8. Do not use a broad wildcard, repository-root recursive deletion, forceful process termination, reboot, dependency upgrade, cache-wide purge, or package repair as a substitute.
-
-Dependency regeneration:
-
-1. Run flutter pub get only after cleanup postconditions pass.
-2. Require a successful exit code.
-3. Verify package configuration exists and the Windows generated plugin state was recreated coherently.
-4. Verify the auth0_flutter plugin entry resolves as one coherent generated link/directory rather than accepting a stale collision.
-5. Stop before analyze/build if regeneration is incomplete or ambiguous.
-
-Continuation:
-
-After regeneration passes, preserve the existing order and behavior for:
-
-- flutter analyze;
-- flutter test;
-- Windows Release build with the common R06 identity definitions;
-- exact executable existence, byte size, and SHA-256;
-- Auth0 callback registration for that exact executable;
-- launch of that exact executable;
-- visible source revision and source-tree SHA-256 instructions.
-
-Launching the rebuilt application remains part of the operator procedure but Codex must not launch or install against the user's preserved client while implementing CR01.
-
-## 4. Writable scope
+## 3. Writable Scope
 
 Implementation:
 
-~~~text
-documentation/G_SCRIPTS.md
-~~~
-
-Existing focused procedure-test files may change only if a directly relevant test surface already exists and can validate extraction or static fail-closed invariants without creating a new framework. Otherwise validate through extraction and bounded source inspection.
+- `documentation/G_SCRIPTS.md`
 
 Reports to replace:
 
-~~~text
-documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-~~~
+- `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
+- `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
+- `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
 
-A required path outside this list is a stop condition.
+An existing directly relevant procedure-test file may change only if it already
+provides a focused extraction or PowerShell validation surface. Do not create a
+new test framework for this round.
 
-documentation/I_SCRIPTS.ps1 remains the authoritative extractor/dispatcher and must not change unless Codex proves that the correction cannot be extracted correctly without a dispatcher defect. If such a defect is found, stop and report it rather than expanding scope.
+## 4. Required Correction
 
-## 5. Prohibited scope
+### 4.1 Process attribution
+
+Replace name-only ownership classification with evidence-backed attribution.
+
+The procedure must:
+
+- inspect process ID, process name, executable path, and command line through a
+  read-only Windows process query where available;
+- classify a process as a definite relevant owner only when evidence connects
+  it to Markei, this repository/client path, the Markei Windows build output,
+  or a Flutter run/build command operating on this client;
+- classify Dart/Flutter analysis or language-server activity as non-owning
+  unless separate evidence connects it to a relevant build/run or target lock;
+- never claim that process ownership was detected from process name alone;
+- never terminate a process automatically;
+- avoid printing secrets or full raw command lines; diagnostics must show only
+  bounded fields needed for attribution;
+- preserve fail-closed behavior when a definite relevant owner is found;
+- if process metadata is unavailable or ambiguous, rely on actual cleanup and
+  cleanup-postcondition failure as the blocking evidence rather than declaring
+  ownership pre-emptively;
+- on cleanup failure, report bounded candidate process diagnostics and instruct
+  the operator to inspect or close the relevant activity manually.
+
+The procedure must not require closing VS Code merely because its Dart analysis
+server exists.
+
+### 4.2 Generated-plugin verification
+
+Correct the generated manifest contract:
+
+- verify the manifest at
+  `windows\flutter\generated_plugins.cmake`;
+- verify that it is a file;
+- verify exactly one `auth0_flutter` entry using a bounded parse;
+- keep the plugin symlink check at
+  `windows\flutter\ephemeral\.plugin_symlinks\auth0_flutter`;
+- keep the plugin CMake check under that symlink;
+- do not move, recreate manually, or edit generated native files;
+- do not add the non-ephemeral manifest to the bounded deletion set;
+- do not treat a missing nonexistent ephemeral manifest as a Flutter failure.
+
+If the corrected manifest is missing or incoherent after `flutter pub get`,
+stop with a message that names the correct path and does not claim compilation
+was attempted.
+
+### 4.3 Preserved CR01/R06 behavior
+
+Preserve:
+
+- exact-path containment for `.dart_tool`,
+  `windows\flutter\ephemeral`, and `build\windows`;
+- `flutter clean` exit-code check;
+- cleanup postcondition checks;
+- `flutter pub get` gating;
+- no automatic process termination;
+- R06 source identity resolution and definitions;
+- analysis, tests, Windows Release build, artifact hashing, callback
+  registration, exact-executable launch, and visible-identity instructions.
+
+## 5. Prohibited Scope
 
 Do not modify:
 
-- Flutter/Dart application source or tests unrelated to an existing procedure-test surface;
-- dependencies, pubspec.yaml, pubspec.lock, native plugin configuration, CMake, vcpkg, or cpprestsdk;
-- GS-FLUTTER-AND, GS-FLUTTER-DBW, GS-FLUTTER-DBA, or another procedure except a shared local helper already inside the GS-FLUTTER-WIN block;
-- Sync coordinator, Product resolver, applier, cursor, acknowledgement, diagnostics, Audit, Settings, database, API, hosted provider, authentication, or enrollment behavior;
-- A/B/C, J, REC_DIAGNOSTICS.md, permanent memory, methodology, GRM, NS coordinates, or R07/UI staging.
+- Flutter/Dart application source or behavior;
+- `pubspec.yaml`, `pubspec.lock`, dependency constraints, or packages;
+- native CMake files, generated plugin files, plugin source, vcpkg, or
+  cpprestsdk;
+- `documentation/I_SCRIPTS.ps1`, unless a dispatcher defect is proved; if
+  proved, stop and report rather than expanding scope;
+- Android procedures or Windows Debug procedures;
+- Sync, Product, inbound apply, cursor, acknowledgement, diagnostics, Settings,
+  Audit, SQLite, migrations, hosted API, Render, Neon, Auth0, or enrollment;
+- A/B/C, J, `REC_DIAGNOSTICS.md`, permanent memory, methodology, GRM, DB_MGMT,
+  or NS coordinates;
+- R07 or `ALT_DEV.md`.
 
-Do not run:
+Do not execute:
 
-~~~text
-Sync
-Retry
-Recovery
-Query
-Enroll
-new Purchase
-provider mutation
-database repair/reset/clear
-installation or launch against preserved clients
-automatic process termination
-~~~
+- Sync, Retry, Recovery, Query, Enroll, or new Purchase;
+- provider mutation or database repair/reset/clear;
+- preserved-client installation or live application launch;
+- automatic process termination;
+- `flutter upgrade`, dependency upgrade, pub-cache purge, or broad recursive
+  deletion.
 
-## 6. Focused validation
+## 6. Validation
 
-Run the smallest sufficient CR01 suite:
+Codex must:
 
-1. extract GS-FLUTTER-WIN through the existing documented extractor path;
-2. PowerShell parse/syntax validation of the extracted block;
-3. static inspection proving process handling never terminates automatically;
-4. static inspection proving flutter pub get is unreachable until verified cleanup postconditions pass;
-5. static inspection proving cleanup targets are exact, generated, and contained by the Flutter client root;
-6. static inspection proving the existing R06 identity definitions, artifact hashing, callback registration, and exact-executable launch remain present;
-7. if safely reproducible on a disposable Codex checkout, exercise the clean-state path without any preserved client, login, installation, launch, or live operation;
-8. git diff --check and exact changed-path inspection.
+1. Extract `GS-FLUTTER-WIN` through the existing dispatcher-compatible heading
+   and fence contract.
+2. Parse the extracted PowerShell body successfully.
+3. Prove no automatic process termination command exists.
+4. Prove name alone cannot classify `dart` or `flutter` as a definite owner.
+5. Prove analysis/language-server activity is not a definite owner without
+   additional attributable evidence.
+6. Prove diagnostics do not emit raw command lines or coordinate values.
+7. Prove cleanup and postcondition gates remain before `flutter pub get`.
+8. Prove the plugin symlink uses the ephemeral path.
+9. Prove `generated_plugins.cmake` uses the non-ephemeral
+   `windows\flutter\generated_plugins.cmake` path.
+10. Prove the manifest contains exactly one `auth0_flutter` entry.
+11. Prove the three bounded cleanup targets remain exact and unchanged.
+12. Prove the R06 identity/build/artifact/callback/launch tail remains present.
+13. If safe on Codex's disposable host, run a focused clean/pub-get
+    regeneration exercise without installing, launching, logging in, or
+    touching a preserved client. If unavailable, mark it skipped explicitly.
+14. Run `git diff --check`.
+15. Confirm the complete changed-path set is authorized.
 
-Do not rerun the full Flutter suite, Android build, provider, SQLite, Render, Neon, Auth0, GRIMOIRE, or preserved-state suite. Do not manufacture the user's lock incident by interfering with preserved processes.
+## 7. Reporting Terminals
 
-## 7. Required reports and terminals
+G/H/I must include:
 
-G must record the incident-to-correction mapping, exact changed paths, validation commands/results, skipped actions, and residual human checkpoint.
-
-H must preserve the evidence ceilings from E.
-
-I must confirm the architecture boundaries from F.
-
-All three reports must state:
-
-~~~text
-C10_GCM03_S09_R06_CR01=IMPLEMENTED_VALIDATED | PARTIAL | BLOCKED
-WINDOWS_GENERATED_STATE_PREFLIGHT=PASS | FAIL
-CLEANUP_POSTCONDITION_VERIFICATION=PASS | FAIL
-AUTOMATIC_PROCESS_TERMINATION=NO
-PUB_GET_GATED_BY_VERIFIED_CLEANUP=PASS | FAIL
-PLUGIN_REGENERATION_VERIFICATION=PASS | FAIL
-R06_IDENTITY_CHAIN_PRESERVED=PASS | FAIL
-WINDOWS_BUILD_PROCEDURE_READY_FOR_HUMAN_RERUN=YES | NO
-WINDOWS_BUILD_REACHED_BY_CODEX=YES | NO
-SYNC_SOURCE_CHANGED=NO
-PRESERVED_CLIENT_STATE_TOUCHED=NO
-LIVE_SYNC_EXECUTED=NO
-PROVIDER_MUTATION=NONE
-R07_IMPLEMENTATION=HELD
-NEXT_HUMAN_CHECK=RERUN_GS_FLUTTER_WIN_ONLY
-~~~
-
-If Codex cannot validate a safe bounded cleanup contract, classify CR01 as BLOCKED and do not improvise broad deletion or process control.
+```text
+C10_GCM03_S09_R06_CR02
+CR01_PROCESS_ATTRIBUTION
+NAME_ONLY_DART_OWNERSHIP
+ANALYSIS_SERVER_FALSE_POSITIVE
+GENERATED_PLUGIN_MANIFEST_PATH
+PLUGIN_SYMLINK_PATH
+PUB_GET_GATED_BY_VERIFIED_CLEANUP
+AUTOMATIC_PROCESS_TERMINATION
+R06_IDENTITY_CHAIN_PRESERVED
+WINDOWS_BUILD_REACHED_BY_CODEX
+WINDOWS_BUILD_PROCEDURE_READY_FOR_HUMAN_RERUN
+SYNC_SOURCE_CHANGED
+PRESERVED_CLIENT_STATE_TOUCHED
+LIVE_SYNC_EXECUTED
+PROVIDER_MUTATION
+R07_IMPLEMENTATION
+NEXT_HUMAN_CHECK
+```
 
 ## 8. Publication
 
 If implementation and focused validation succeed:
 
-1. replace G/H/I;
-2. confirm every changed path is authorized;
-3. create one intentional CR01 implementation commit whose direct parent is this published staging commit;
-4. push by non-forced fast-forward to grm-guarded-provisioning-20260727;
-5. do not create a branch or pull request;
-6. verify the remote branch equals the implementation commit.
+- commit only authorized paths;
+- make the implementation commit a direct child of the CR02 staging commit;
+- push by non-forced fast-forward to
+  `grm-guarded-provisioning-20260727`;
+- do not create another branch or pull request;
+- verify the remote branch equals the implementation commit.
 
-CR01 does not authorize Sync. After Main reconciles the correction, the next human action is to rerun only the corrected GS-FLUTTER-WIN procedure. Android provenance verification and the serialized Sync assay remain held until the Windows build and visible identity checkpoint pass.
+If attribution cannot be made safe without broad process termination or
+unbounded inspection, report:
+
+```text
+C10_GCM03_S09_R06_CR02=BLOCKED
+```
+
+and do not improvise.
