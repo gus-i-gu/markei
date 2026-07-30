@@ -9213,3 +9213,359 @@ DIAGNOSTIC_HISTORY=PRESERVE
 PROVIDER_MUTATION=NONE
 OVERALL_SYNC_ACCEPTANCE=NOT_PROMOTED
 ~~~
+
+
+---
+
+# 2026-07-29 — Post-Codex reconciliation: C10-GCM03-S10-R05 and S09-st05 Recoverytest entry
+
+## 1. Reconciliation envelope
+
+~~~text
+Sequence: FLX-PRM-04 post-materialization reconciliation
+Primary source unit: C10-GCM03-S10-R05
+Human-assay continuity alias: C10-GCM03-S09-R05
+Recovery line: C10-GCM03-S09-st05-Recoverytest
+Repository: gus-i-gu/markei
+Branch: grm-guarded-provisioning-20260727
+Controlling staging head: c186edccd0be03b6adca9d4d1609ec82372b82b6
+Materialization commit: 0ac34d0c4233b196b89f97d9b61d78e3dfb55ee2
+Materialization parent: c186edccd0be03b6adca9d4d1609ec82372b82b6
+Materialization distance: exactly one non-forced fast-forward commit
+Live operation authority during R05 and this reconciliation: NONE
+~~~
+
+Main reconciled the exact remote comparison, D/E/F, the R05 source changes,
+the direct compound tests, and replacement G/H/I. Codex terminals are accepted
+only at their actual evidence class. This entry does not itself authorize an
+installation, Sync, Retry, Recovery, Query, Enroll, new Purchase, diagnostic
+clearing, database repair, or provider mutation.
+
+## 2. Publication and scope guard
+
+R05 changed exactly eight paths:
+
+~~~text
+clients/markei_flutter/lib/app/native_auth_closure_runner.dart
+clients/markei_flutter/lib/application/hosted_sync_coordinator.dart
+clients/markei_flutter/lib/application/sync/sync_ports.dart
+clients/markei_flutter/lib/application/sync/sync_use_cases.dart
+clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+~~~
+
+Every path is inside D's authorized production, test, or report scope. No
+schema, migration, hosted API, payload, authentication, enrollment, dependency,
+configuration, Product resolver, remote fact writer, generated file, J, REC,
+methodology, permanent memory, GRM operator file, or provider resource entered
+the R05 materialization.
+
+~~~text
+R05_FAST_FORWARD_GUARD=PASS
+R05_CHANGED_PATH_SCOPE=PASS
+R05_BRANCH_TOPOLOGY=PASS
+R05_LIVE_OPERATION_DURING_CODEX=NO_REPORTED
+R05_PRESERVED_CLIENT_STATE_TOUCHED=NO_REPORTED
+R05_PROVIDER_MUTATION_DURING_CODEX=NONE_REPORTED
+~~~
+
+## 3. Source correction accepted at automated scope
+
+The runner-owned cumulative state now contains explicit, bounded fields for:
+
+- upload request, trusted response, provider outcome, lease state, and result
+  persistence;
+- download request and trusted response;
+- inbound apply and committed-cursor proof;
+- acknowledgement request, trusted response, and outcome;
+- diagnostic durability;
+- terminal result, latest entered/proved phase, safe action, retryability, and
+  sanitized exception class.
+
+The generic compatibility fields remain event-row projections, not the
+authoritative cumulative representation. The merge now operates within each
+transaction plane. Different transactions may therefore retain different
+outcomes without manufacturing a causal invariant.
+
+Direct tests establish at deterministic runner/coordinator scope:
+
+- no-upload committed apply followed by acknowledgement success;
+- acknowledgement transport exception retaining committed apply while recording
+  request-started, response-not-received, and unknown acknowledgement outcome;
+- successful upload persistence followed by inbound rollback, with
+  acknowledgement not started and no false invariant;
+- successful upload and committed inbound apply followed by acknowledgement
+  uncertainty;
+- rejected upload stopping before download and acknowledgement;
+- diagnostic begin, row, and completion degradation across compound operations;
+- a real same-plane committed/rolled-back contradiction producing the bounded
+  invariant;
+- sanitized lifecycle projection and frozen R03/R04 Product/apply/replay
+  regressions.
+
+Source inspection confirms that upload-local truth no longer satisfies or
+contradicts inbound-apply truth, and upload-provider truth no longer substitutes
+for acknowledgement truth.
+
+## 4. Validation absorbed under PRC-01
+
+Codex reports:
+
+~~~text
+dart format check=PASS; 98 files; 0 changed
+flutter analyze=PASS
+native closure diagnostics=39 PASS
+local sync application=29 PASS
+two-device deterministic harness=1 PASS
+v3 contract=2 PASS
+remote purchase applier regression=18 PASS
+catalogue/store/app regression=34 PASS
+full flutter test=234 PASS / 4 disposable labs skipped
+debug Android APK build=PASS
+Windows release build=PASS first attempt
+merged Android manifest inspection=PASS
+git diff --check=PASS
+diagnostics generator/check=PASS
+changed-content sensitive scan=PASS reported
+~~~
+
+The four hosted/provider labs were skipped because MARKEI_RUN_SYNC_LAB was
+absent. No preserved client, installed R05 binary, Render operation, live
+provider response, or live acknowledgement was exercised.
+
+Accordingly:
+
+~~~text
+R05_TRUTH_PLANE_PARTITION=ACCEPTED_AUTOMATED_SCOPE
+R05_UPLOAD_APPLY_ROLLBACK_COMPOUND=ACCEPTED_AUTOMATED_SCOPE
+R05_ACKNOWLEDGEMENT_INDEPENDENCE=ACCEPTED_AUTOMATED_SCOPE
+R05_DIAGNOSTIC_DEGRADATION=ACCEPTED_AUTOMATED_SCOPE
+R05_SAME_PLANE_INVARIANT=ACCEPTED_AUTOMATED_SCOPE
+R03_R04_REGRESSION=ACCEPTED_REPORTED_AUTOMATED_SCOPE
+INSTALLED_CLIENT_BEHAVIOR=UNPROVED
+PRESERVED_STATE_CONTINUITY=REQUIRES_FRESH_CHECKPOINT
+LIVE_INTER_DEVICE_CONVERGENCE=UNPROVED
+~~~
+
+## 5. Main disposition
+
+R05 satisfies the source-only corrective authority. Main does not identify a
+new source-model defect requiring an R06 before runtime recovery begins. This
+is not overall Sync acceptance: the evidence ceiling now moves from
+deterministic source validation to preserved-state observation.
+
+~~~text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=ACTIVE_RECOVERY_ASSAY_PREPARATION
+C10_GCM03_S10_R05=IMPLEMENTED_RECONCILED_AUTOMATED_SCOPE
+C10_GCM03_S09_R05=HUMAN_ASSAY_CONTINUITY_ALIAS
+R05_REMOTE_COMMIT=0ac34d0c4233b196b89f97d9b61d78e3dfb55ee2
+TRUTH_PLANES_PARTITIONED=PASS_AUTOMATED_SCOPE
+ACKNOWLEDGEMENT_INDEPENDENT_PLANE=PASS_AUTOMATED_SCOPE
+VALID_UPLOAD_COMMIT_PLUS_APPLY_ROLLBACK=PASS_AUTOMATED_SCOPE
+DIAGNOSTIC_DEGRADATION_INDEPENDENT=PASS_AUTOMATED_SCOPE
+INTER_DEVICE_SAME_ACCOUNT_SYNC=FAIL_OPEN
+MVP_SYNC_ACCEPTANCE=NOT_PROMOTED
+ANDROID_SYNC=HELD
+WINDOWS_SYNC=HELD
+RETRY_RECOVERY=HELD
+QUERY=HELD
+ENROLL=DO_NOT_REPEAT
+NEW_PURCHASE_REGISTRATION=HELD
+PRESERVED_STATE_INSTALL=HELD
+DIAGNOSTIC_HISTORY=PRESERVE
+PROVIDER_MUTATION=NONE
+NEXT_ACTION=C10_GCM03_S09_ST05_01_PREINSTALL_READ_ONLY_CHECKPOINT
+~~~
+
+## 6. C10-GCM03-S09-st05-Recoverytest inner-step ladder
+
+The Recoverytest is serialized. A later step does not become executable merely
+because it appears here. Main must reconcile the evidence terminal of the
+current step before releasing the next mutation-bearing step.
+
+### st05.01 — Pre-install read-only preserved-state checkpoint
+
+Purpose: anchor the unchanged R02-descended WIN, Android, and provider state
+before either R05 binary is installed.
+
+Collect, using the established sanitized GS/GRM procedures:
+
+1. current branch and R05 commit provenance;
+2. visible installed build/app identity on WIN and Android without reinstalling;
+3. authentication and existing enrollment presentation;
+4. queue counts: pending, uploading, failed, and unknown;
+5. Device sequence, local cursor, inbox, and diagnostic-attempt summaries;
+6. last result, readiness, recovery guidance, and bounded lifecycle categories;
+7. sanitized read-only WIN SQLite and Android SQLite probes;
+8. sanitized read-only provider/Render baseline sufficient to compare account,
+   Device, hosted event, acknowledgement, and cursor state;
+9. timestamps and labels tying every capture to one checkpoint envelope.
+
+Prohibited during st05.01:
+
+~~~text
+Sync
+Retry
+Recovery
+Query
+Enroll
+new Purchase
+installation or launch caused by a new binary
+diagnostic clearing
+database repair/reset/surgery
+provider mutation
+hosted-event rewrite
+acknowledgement
+~~~
+
+Terminal:
+
+~~~text
+ST05_01_PREINSTALL_CHECKPOINT=COMPLETE | BLOCKED
+WIN_STATE_CAPTURED=YES | NO
+ANDROID_STATE_CAPTURED=YES | NO
+PROVIDER_STATE_CAPTURED=YES | NO
+UNEXPLAINED_STATE_DRIFT=NONE | PRESENT | UNRESOLVED
+CLIENT_MUTATION=NONE
+PROVIDER_MUTATION=NONE
+LIVE_SYNC_EXECUTED=NO
+~~~
+
+### st05.02 — Baseline reconciliation and client-order decision
+
+Main compares st05.01 with retained R02/R03/R04 evidence and classifies:
+
+- whether each preserved database and queue remains intelligible;
+- whether the hosted event and acknowledgement set agrees with the clients;
+- whether any state change occurred without an authorized operation;
+- whether the known failed events remain recoverable without clearing history;
+- which client has the strongest proved starting truth.
+
+If drift is unexplained, stop. Do not install or test through ambiguity.
+
+Only after a coherent checkpoint may Main choose the first client. Android
+remains a diagnostic preference because its prior rollback was directly proved;
+it is not preselected. The actual st05.01 evidence controls order.
+
+Terminal:
+
+~~~text
+ST05_02_BASELINE_RECONCILIATION=PASS | BLOCKED
+PRESERVED_STATE_COHERENT=YES | NO
+FIRST_CLIENT=ANDROID | WINDOWS | UNDECIDED
+INSTALLATION_AUTHORITY=HELD_PENDING_EXPLICIT_RELEASE
+~~~
+
+### st05.03 — R05 artifact provenance packet
+
+Prepare or verify Android and Windows artifacts descended exactly from the R05
+implementation/reconciliation line. Record source SHA, build command, artifact
+identity/fingerprint, configuration class, manifest/packaging checks, and zero
+automatic operation expectation.
+
+This step does not install or launch against preserved data.
+
+Terminal:
+
+~~~text
+ST05_03_ARTIFACT_PROVENANCE=PASS | BLOCKED
+ANDROID_ARTIFACT_R05_DESCENDED=YES | NO
+WINDOWS_ARTIFACT_R05_DESCENDED=YES | NO
+PRESERVED_CLIENT_STATE_TOUCHED=NO
+~~~
+
+### st05.04 — Preserved-data installation, one client at a time
+
+This is mutation-bearing and requires a fresh explicit Main packet after
+st05.01-st05.03 pass. Install only the selected first client's verified R05
+artifact without clearing application data or diagnostic history. Do not press
+Sync, Retry, Recovery, Query, or Enroll.
+
+After launch, capture offline/read-only identity, authentication/enrollment
+presentation, queue, cursor, Product, Catalogue, History, and diagnostics.
+Compare them to st05.01 before installing the second client.
+
+The second installation requires a separate gate. Any migration surprise,
+automatic Sync, data loss, queue rewrite, enrollment change, or diagnostic
+clearing stops the assay.
+
+### st05.05 — Post-install dual-client read-only checkpoint
+
+After both gated installations, prove:
+
+- both binaries descend from the accepted R05 line;
+- both preserved databases and diagnostic histories remain present;
+- no automatic Sync or acknowledgement occurred;
+- Product/Catalogue/History projections remain coherent;
+- local queues, cursors, inboxes, Device sequences, and provider baseline still
+  reconcile.
+
+No live operation is authorized by completion of this step alone.
+
+### st05.06 — First-client ordinary Sync
+
+Requires a new explicit one-operation packet naming the client chosen in
+st05.02. Authorize exactly one ordinary Sync on that client.
+
+Prohibit Retry, Recovery, Query, Enroll, new Purchase, second-client Sync,
+diagnostic clearing, or any automatic repeat. Immediately collect UI, lifecycle,
+SQLite, Render, and provider postflight evidence.
+
+### st05.07 — First-client postflight reconciliation
+
+Classify independently:
+
+- upload provider and local persistence;
+- download trusted response;
+- inbound apply and cursor proof;
+- acknowledgement request/response/outcome;
+- diagnostic durability;
+- Product/Store/Purchase/Purchase Item cardinality;
+- queue, inbox, cursor, and provider agreement.
+
+Do not release the second client if any plane is unknown, contradictory, or
+unsafe.
+
+### st05.08 — Second-client ordinary Sync
+
+Only after st05.07 passes, issue a separate one-operation packet for the other
+client and repeat the same evidence collection and prohibitions.
+
+### st05.09 — Two-client convergence postflight
+
+Reconcile both clients and the provider. Require equal intended facts, bounded
+local presentation differences, empty or classified queues, consistent cursors
+and acknowledgements, and no duplicate Product, Store, Purchase, Purchase Item,
+inbox, or hosted event effects.
+
+### st05.10 — Separately authorized no-op replay
+
+Only after st05.09 passes, authorize one named-client no-op ordinary Sync.
+Require idempotent result, no duplicate facts, no cursor regression, no new
+provider event, and no inappropriate acknowledgement or queue mutation.
+
+## 7. Current executable boundary
+
+Only st05.01 may now be prepared as the next operator packet. This J entry is a
+route definition, not a command to interact with the clients or provider.
+st05.02 is reconciliation work after evidence returns. st05.03 and every later
+step remain held until their preceding terminals pass and Main explicitly
+releases them.
+
+~~~text
+C10_GCM03_S09_ST05_RECOVERYTEST=ACTIVE_GATED
+CURRENT_INNERSTEP=ST05_01_PREINSTALL_READ_ONLY_CHECKPOINT
+LIVE_SYNC_AUTHORITY=NONE
+INSTALLATION_AUTHORITY=NONE
+RETRY_RECOVERY_AUTHORITY=NONE
+QUERY_AUTHORITY=NONE
+ENROLL_AUTHORITY=NONE
+NEW_PURCHASE_AUTHORITY=NONE
+DIAGNOSTIC_CLEARING_AUTHORITY=NONE
+PROVIDER_MUTATION_AUTHORITY=NONE
+OVERALL_SYNC_ACCEPTANCE=NOT_PROMOTED
+~~~
