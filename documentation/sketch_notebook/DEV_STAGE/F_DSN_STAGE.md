@@ -1,304 +1,222 @@
-# F_DSN_STAGE — Architecture for C10-GCM03-S10-R05
+# F_DSN_STAGE — Architecture for C10-GCM03-S09-R06
 
-## Objective
-
-Complete the R04 causal recorder by partitioning transaction truth into upload,
-download/inbound-apply, acknowledgement, diagnostic, and terminal planes. Keep
-event-row compatibility, R03/R04 data convergence design, and all hosted
-contracts unchanged.
+## Envelope
 
 Sequence: FLX-ORD-01
 
-Primary unit: C10-GCM03-S10-R05
+Role: Main architecture constraint
 
-Continuity alias: C10-GCM03-S09-R05
+Round or unit: C10-GCM03-S09-R06
 
-## 1. Responsibility map
+Branch: `grm-guarded-provisioning-20260727`
+
+Baseline / inspected HEAD: `c321675325cc4d7358b96c1e125f2aa2c5e84e7f`
+
+Authority: D controls execution; E controls evidence; F controls ownership.
+
+## 1. Architectural objective
+
+Create one source identity chain:
+
+```text
+clean Git HEAD and tree
+  -> shared deterministic identity resolver
+  -> compile-time Flutter definitions
+  -> one immutable shared Dart identity
+  -> boot initialization
+  -> one Closure presentation
+```
+
+Android and Windows are consumers of this chain. They do not own independent
+provenance semantics.
+
+## 2. Responsibility map
 
 | Responsibility | Owner | Constraint |
 |---|---|---|
-| Upload request/provider result | UploadPendingEvents + transport | never used as ack proof |
-| Upload lease/result persistence | outbox repository/use case | never used as inbound-apply proof |
-| Download request/response | DownloadAndApplyEvents + transport | trusted response is page receipt only |
-| Facts/inbox/cursor | remote applier Drift transaction | one atomic inbound-apply boundary |
-| Acknowledgement | AcknowledgeAppliedCursor + transport | starts only from committed cursor |
-| Cumulative operation truth | diagnostic operation recorder | independent typed/explicit planes |
-| Durable diagnostic chronology | attempt/event repository | best effort; legacy row compatibility |
-| Core Sync orchestration | HostedSyncCoordinator | stop ordering and eligibility |
-| Runner fallback | NativeAuthClosureRunner | retain planes; add bounded terminal category |
-| Lifecycle projection | runner/application | sanitized independent fields |
-| Product identity/reference mapping | R03 fact writer/applier | frozen |
+| Git revision/tree resolution | shared build identity helper | no platform-specific algorithm |
+| Source-tree SHA-256 derivation | shared build identity helper | domain-separated deterministic input |
+| Public build-definition transport | canonical GS Flutter procedures | same names and values |
+| Identity validation/sanitization | shared Dart identity value | no external I/O |
+| Boot initialization | `main.dart` | exactly once before `runApp` |
+| Application transport | MarkeiApp/shared composition boundary | immutable value |
+| Closure display | NativeClosurePage | presentation only |
+| APK artifact SHA-256 | Android build procedure | external artifact record |
+| Windows executable SHA-256 | Windows build procedure | external artifact record |
+| Sync/domain/runtime truth | existing R02–R05 owners | frozen |
 
-## 2. Cumulative state shape
+## 3. Identity model
 
 Conceptually:
 
 ```text
-operation
-  phase
-    latestEntered
-    latestProved
-  upload
-    request
-    trustedResponse
-    providerOutcome
-    leasePersistence
-    resultPersistence
-  download
-    request
-    trustedResponse
-  inboundApply
-    transactionOutcome
-    cursorProof
-  acknowledgement
-    request
-    trustedResponse
-    outcome
-  diagnostics
-    durability
-  terminal
-    result
-    safeAction
-    retryable
-    sanitizedExceptionClass
-  metadata
-    authorized counts/sequences/fingerprints
+BuildIdentity
+  fullRevision
+  displayRevision
+  sourceTreeSha256
+  status
+  safe labels
 ```
 
-The code need not use these exact class or field names. The snapshot and tests
-must expose equivalent independent semantics.
+The class name may remain `BuildProvenance` to minimize churn. There must be one
+canonical instance and one validation rule.
 
-## 3. Event evidence versus cumulative truth
+The full revision and source-tree digest are atomic as a presentation packet.
+If one is invalid, the packet is unavailable. Do not present a valid-looking
+digest paired with an unavailable revision or vice versa.
 
-`SyncDiagnosticPhaseEvidence` currently carries generic fields suitable for one
-phase event. `SyncDiagnosticEnvelope` stores those event rows.
+## 4. Why the source digest is common
 
-R05 separates two roles:
-
-1. event evidence describes the phase that emitted the row;
-2. cumulative state describes the whole operation without collapsing distinct
-   transactions.
-
-Allowed compatibility strategies:
-
-- add optional explicit plane fields to phase evidence and consume them in the
-  cumulative recorder;
-- introduce a recorder-internal typed event derived deterministically from phase
-  and bounded evidence;
-- use another equally explicit design with direct producer-to-plane tests.
-
-Not allowed:
-
-- continuing to treat one operation-wide `localMutationState` as both upload and
-  inbound apply;
-- continuing to treat one operation-wide `providerTransactionState` as both
-  upload and acknowledgement;
-- inferring acknowledgement success from the last generic provider value;
-- adding a database migration solely to store cumulative fields.
-
-## 4. Plane-scoped merge laws
-
-Each plane has its own monotonic merge.
-
-```mermaid
-flowchart TD
-    A["Phase evidence"] --> B{"Owning plane"}
-    B --> C["Upload merge"]
-    B --> D["Download/apply merge"]
-    B --> E["Acknowledgement merge"]
-    B --> F["Diagnostic/terminal merge"]
-    C --> G["Cumulative snapshot"]
-    D --> G
-    E --> G
-    F --> G
-```
-
-Within one plane:
-
-- not-started may advance to started;
-- response not-received may advance to received;
-- unknown may advance to an authoritative result;
-- terminal/default evidence cannot regress proof;
-- incompatible authoritative results produce a bounded causal invariant.
-
-Across different planes:
-
-- outcomes coexist and never contradict merely because their strings differ;
-- upload commit plus inbound rollback is valid;
-- upload commit plus acknowledgement uncertainty is valid;
-- inbound commit plus acknowledgement uncertainty is valid;
-- diagnostic degradation adds observability state only.
-
-## 5. Invariant ownership
-
-An invariant requires two incompatible claims about the same authoritative
-object or transition.
-
-Valid invariant examples:
-
-- the same inbound page transaction is authoritatively both committed and
-  rolled-back;
-- acknowledgement starts when inbound apply/cursor eligibility is failed or
-  unproved;
-- the same acknowledgement response is authoritatively both received and
-  explicitly not received at the same completed transition.
-
-Non-invariants:
-
-- upload persistence commits, then inbound apply rolls back;
-- upload provider commits, then acknowledgement transport is unknown;
-- diagnostic persistence fails after inbound apply commits.
-
-The bounded invariant category remains a safety result. R05 narrows its scope;
-it does not remove it.
-
-## 6. Coordinator ordering
-
-The core order remains:
+Platform artifacts cannot share a SHA-256:
 
 ```text
-authentication/binding
-  -> upload lease/request/provider/result persistence
-  -> download request/trusted response
-  -> inbound apply facts/inbox/cursor transaction
-  -> committed-cursor eligibility
-  -> acknowledgement request/response/result
-  -> terminal projection
+same Flutter source
+  -> Android toolchain -> APK bytes -> Android artifact SHA-256
+  -> Windows toolchain -> EXE/native bundle bytes -> Windows artifact SHA-256
 ```
 
-Early-stop behavior remains:
-
-- upload unknown/rejected blocks download and acknowledgement;
-- inbound apply failed/rejected/rolled-back/unproved blocks acknowledgement;
-- no later phase may manufacture skipped-phase proof.
-
-Diagnostic failure never changes this ordering.
-
-## 7. Runner and lifecycle projection
-
-The recorder updates in memory before attempting durable diagnostic writes.
-
-Both runner success and catch paths consume one snapshot API. Avoid reconstructing
-truth from the caught exception or the last event.
-
-Lifecycle output should expose bounded independent keys sufficient to
-distinguish:
-
-- upload provider and local persistence;
-- download trusted response;
-- inbound apply;
-- acknowledgement request/response/outcome;
-- diagnostic durability;
-- terminal result and safe action.
-
-Compatibility generic keys may remain, but they cannot be the only cumulative
-truth or contradict the explicit keys.
-
-## 8. Diagnostic persistence
-
-R04 containment remains:
+The common digest therefore belongs before platform compilation:
 
 ```text
-begin failure -> recorder exists, durability degraded
-row failure -> cumulative truth retained, durability degraded
-complete failure -> core outcome retained, durability degraded
+Git tree object
+  -> domain-separated SHA-256
+  -> common source-tree identity
 ```
 
-No diagnostic failure:
+Artifact hashes remain useful for proving which local package/executable was
+built or launched, but they are leaves of the chain rather than the common
+root.
 
-- rolls back or commits business data;
-- changes provider evidence;
-- changes acknowledgement eligibility;
-- creates acknowledgement success;
-- triggers recursive logging;
-- starts Retry, Recovery, Query, or a second Sync.
+## 5. Boot lifecycle
 
-## 9. Transaction and Product freeze
-
-Do not modify:
-
-- Product resolution decision table;
-- remote-to-local Product reference map;
-- Store convergence;
-- Purchase/Purchase Item fact rules;
-- facts/inbox/cursor Drift transaction;
-- post-rollback exception translation;
-- poison-page replay behavior;
-- protocol-v3 Person/Payment restrictions.
-
-R05 changes how operation truth is represented, not how remote facts converge.
-
-## 10. Compatibility boundary
-
-No change to:
-
-- Drift tables, schema version, or migrations;
-- hosted API routes, request/response bodies, event v3, or acknowledgement
-  contract;
-- Render/Neon/Auth0 configuration;
-- enrollment or Account/Device binding;
-- dependencies, generated code, or build configuration;
-- installed Android/Windows databases or diagnostic history.
-
-Old diagnostic rows remain historical event evidence. R05 must not claim they
-contain newly introduced cumulative planes.
-
-## 11. Test architecture
-
-Use coordinator/runner-level fakes to execute complete compound sequences.
-
-The primary matrix crosses:
-
-| Upload | Inbound apply | Acknowledgement | Diagnostics | Expected |
-|---|---|---|---|---|
-| none | committed | applied | durable | completed/no-new-events |
-| none | committed | throws | durable | apply retained; ack unknown |
-| committed | rolled-back | not-started | durable | bounded core failure; no false invariant |
-| committed | committed | throws | durable | upload/apply retained; ack unknown |
-| unknown/rejected | not-started | not-started | durable | early stop |
-| committed | committed | applied | degraded | core planes unchanged |
-| committed | rolled-back | not-started | degraded | rollback retained; no false invariant |
-
-Add a same-plane contradiction fixture separately. Do not manufacture it by
-mixing legitimate outcomes from two transactions.
-
-Every test should inspect downstream invocation counts and the independent
-snapshot/lifecycle fields.
-
-## 12. Security and diagnostic boundary
-
-The new state carries categories, not data.
-
-Never retain:
-
-- event payloads or business facts;
-- UUIDs or raw correlation/operation IDs;
-- SQL, database values, filesystem paths, messages, or stacks;
-- tokens, credentials, secrets, request hashes, or full hashes.
-
-Keep only allow-listed codes/states, sanitized class names, short fingerprints,
-safe counts/sequences, status classes, timing bands, and safe actions.
-
-## 13. Completion boundary
-
-R05 completes only:
-
-- source truth-plane partition;
-- direct compound deterministic evidence;
-- regression and package validation;
-- replacement G/H/I;
-- one scoped implementation commit.
-
-R05 does not complete practical Sync.
-
-After Main reconciles R05, the next possible sequence is:
+Required production path:
 
 ```text
-read-only preserved-state checkpoint
-  -> exact post-R05 build provenance
-  -> separately authorized preserved-data installation
-  -> second read-only post-install baseline
-  -> one-client-at-a-time live assay
+WidgetsFlutterBinding.ensureInitialized
+  -> resolve immutable compile-time BuildIdentity.current
+  -> create application composition
+  -> run MarkeiApp with that exact identity
+  -> pass identity to NativeClosurePage
 ```
 
-No step in that route is authorized by this F file.
+Navigation to Closure must not recompute Git state, inspect files, contact a
+provider, query SQLite, or select a platform implementation.
+
+Compile-time values make identity available offline and before authentication,
+enrollment, or Sync.
+
+## 6. Build procedure architecture
+
+`documentation/G_SCRIPTS.md` remains the canonical executable-procedure source.
+
+One shared helper owns Git revision/tree/digest derivation. Android, Windows
+Release, and Windows Debug consume its result.
+
+Required flow:
+
+```text
+assert repository and clean relevant tree
+  -> resolve HEAD and HEAD tree
+  -> derive source SHA-256 once
+  -> validate values
+  -> inject both compile-time definitions
+  -> build platform artifact
+  -> record platform artifact identity
+```
+
+The helper may return an object or an ignored JSON define file. It must not
+persist secrets or platform/runtime identifiers. Generated identity files must
+be local, ignored, and reproducible.
+
+## 7. Compatibility
+
+Preserve:
+
+- existing Closure surface enablement;
+- existing Auth0/public-coordinate compile-time definitions;
+- Android target selection and data-preserving install;
+- Flutter SDK/package resolution guards added at `c321675`;
+- Windows Auth0 callback registration;
+- Debug/Release callback restoration and Release-hash preservation;
+- existing test injection of an explicit identity;
+- safe unavailability behavior.
+
+The former 7–12-character `MARKEI_BUILD_PROVENANCE` may be accepted by isolated
+tests during migration. Production builds must carry the full revision and
+source-tree SHA-256.
+
+## 8. Security boundary
+
+Allowed visible identity:
+
+- full revision internally;
+- 12-character revision abbreviation visibly;
+- full 64-character source-tree SHA-256 visibly;
+- artifact path/size/hash in local terminal evidence.
+
+Never include:
+
+- token, password, connection string, Auth0 subject;
+- Account, identity, Device, operation, correlation, or event UUID;
+- local repository path inside the app identity;
+- Git remote URL, username, machine name, or environment variables;
+- source file contents, SQLite values, provider facts, or exception messages.
+
+Raw malformed input is discarded, not reflected.
+
+## 9. Sync freeze
+
+R06 has no dependency arrow into the Sync subsystem:
+
+```text
+Build identity -> Closure presentation
+
+Sync coordinator / Product resolver / applier / provider contracts
+  = unchanged
+```
+
+Any required modification to a Sync, database, hosted, Product, or provider
+path is a stop condition and must be reported instead of implemented.
+
+## 10. Focused human terminal after R06
+
+After Codex and Main reconciliation:
+
+1. pull the exact R06 implementation commit;
+2. build/install or launch Android and Windows through the corrected canonical
+   procedures while preserving app data;
+3. open Closure on each;
+4. compare only:
+   - source revision;
+   - source-tree SHA-256;
+   - preserved visible History/Closure presence;
+   - absence of automatic operation;
+5. record each platform artifact SHA-256 separately;
+6. freeze the candidate if the common fields match.
+
+No broad GRIMOIRE, SQLite, Neon, Render, Auth0, or provider replay is required
+for this R06 terminal.
+
+## 11. Completion boundary
+
+R06 completes:
+
+- one cross-platform source identity;
+- one boot-initialized shared Dart value;
+- one common Closure presentation;
+- platform artifact attribution;
+- focused deterministic and package evidence;
+- G/H/I replacement and one scoped implementation commit.
+
+R06 does not complete:
+
+- live Sync;
+- convergence;
+- acknowledgement;
+- no-op replay;
+- GCM03;
+- MVP acceptance.
+
+After visible two-platform identity passes, the architecture requires movement
+forward to the serialized Sync assay. Provenance must then serve as a freeze
+mechanism, not as a reason for further incidental correction.

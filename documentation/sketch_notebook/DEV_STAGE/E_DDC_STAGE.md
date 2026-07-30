@@ -1,241 +1,190 @@
-# E_DDC_STAGE — Evidence contract for C10-GCM03-S10-R05
+# E_DDC_STAGE — Evidence contract for C10-GCM03-S09-R06
 
-D_OPS_STAGE.md is executable authority. This file limits what evidence can
-establish. F_DSN_STAGE.md assigns architectural responsibility.
+## Envelope
 
 Sequence: FLX-ORD-01
 
-Primary unit: C10-GCM03-S10-R05
+Role: Main evidence constraint
 
-Continuity alias: C10-GCM03-S09-R05
+Round or unit: C10-GCM03-S09-R06
 
-Pre-stage head: 0fdd2b9fbadbf935d8e20f09f597516a93f4e7dd
+Branch: `grm-guarded-provisioning-20260727`
 
-## 1. Accepted evidence entering R05
+Baseline / inspected HEAD: `c321675325cc4d7358b96c1e125f2aa2c5e84e7f`
 
-R04 is accepted at implementation and deterministic-test scope for cumulative
-retention of trusted download/apply facts, diagnostic-degradation containment,
-the Product decision matrix, unexpected apply rollback, poison-page recovery,
-mixed-client replay, idempotency, full Flutter regression, and both platform
-builds.
+Authority: D is executable; E limits conclusions; F owns architecture.
 
-R04 is not accepted as complete evidence for independent acknowledgement or
-transaction-plane truth.
+Writable surfaces: only those named by D.
 
-Source inspection directly establishes:
+Evidence boundary: source identity and artifact attribution only.
 
-- one generic local-mutation field receives both upload and inbound-apply facts;
-- one generic provider/trusted-response field receives upload, download, and
-  acknowledgement facts;
-- acknowledgement lacks an independent cumulative transition/result;
-- a valid upload commit followed by inbound rollback can be classified as a
-  causal invariant conflict.
+## 1. Question being answered
 
-These source facts are sufficient to authorize source correction. A live assay
-of the old installed binaries cannot invalidate them.
+R06 answers:
 
-## 2. Runtime checkpoint evidence boundary
+> Did the Android and Windows builds under test consume one identical committed
+> Markei source identity, and can each running Closure surface report it?
 
-No new runtime checkpoint is required to prove that R05 source work is
-necessary. R05 is prohibited from changing preserved runtime state.
+R06 does not answer:
 
-A read-only WIN/AND/provider checkpoint is still required after R05
-reconciliation and before corrected-client installation or live Sync. Because
-R05 cannot touch those surfaces, the later pre-install checkpoint anchors the
-same preserved runtime state without creating a source-evidence gap.
+> Does inter-device Sync converge?
 
-```text
-SOURCE_CORRECTION_EVIDENCE=SUFFICIENT
-PRESERVED_RUNTIME_STATE_EVIDENCE=NOT_REFRESHED_BY_R05
-PRACTICAL_SYNC_EVIDENCE=ABSENT
-POST_R05_PRE_INSTALL_CHECKPOINT=MANDATORY
-```
+Those questions must remain separate.
 
-## 3. Independent evidence planes
+## 2. Identity distinctions
 
-| Plane | Minimum direct question | Authoritative source |
+| Evidence | Meaning | Expected cross-platform relation |
 |---|---|---|
-| Upload request | Did upload start? | upload use case/transport invocation |
-| Upload provider | Was a trusted response received and how was it classified? | upload transport result |
-| Upload local | Did lease/result persistence commit, fail, or remain unknown? | outbox repository result |
-| Download provider | Did download start and return a trusted page? | download transport result |
-| Inbound apply | Did facts/inbox/cursor commit or roll back? | applier transaction/result |
-| Acknowledgement | Did ack start, receive a response, and reach a classified outcome? | acknowledgement transport/result |
-| Diagnostic | Were begin/event/completion records durable or degraded? | recorder repository |
-| Terminal | What bounded state and safe action reached the runner/lifecycle? | cumulative projection |
+| Full Git revision | Exact committed source revision | identical |
+| 12-character display revision | Human-readable abbreviation of full revision | identical |
+| Source-tree SHA-256 | Deterministic digest bound to the Git tree | identical |
+| APK SHA-256 | Exact Android artifact bytes | different from Windows |
+| Windows executable SHA-256 | Exact Windows artifact bytes | different from Android |
+| Visible Closure identity | Running application presents embedded source identity | identical source fields |
 
-Truth in one row cannot be substituted by another row.
+An artifact SHA-256 does not identify source by itself. A source-tree SHA-256
+does not identify installed artifact bytes by itself. The build record connects
+them.
 
-## 4. Required compound-state proof
+## 3. Common source-tree digest evidence
 
-R05 passes only if tests inspect the separate fields that coexist in one
-ordinary operation.
-
-Required valid state:
+The accepted algorithm is:
 
 ```text
-upload provider=committed
-upload local result persistence=committed
-download trusted response=received
-inbound apply=rolled-back
-acknowledgement=not-started
+SHA256(UTF8("markei-source-tree-v1\n" + gitTreeObjectId + "\n"))
 ```
 
-This is not an invariant conflict.
+Evidence passes only if:
 
-Required acknowledgement-failure state:
+- the Git revision is validated as 40 lowercase hexadecimal characters;
+- the tree object is resolved from that same revision;
+- the helper produces 64 lowercase hexadecimal characters;
+- repeated resolution of the same clean HEAD is identical;
+- both Android and Windows consume the same helper output;
+- the app rejects malformed values without echoing them.
+
+The digest is a source-tree identity fingerprint. Do not describe it as a hash
+of the APK, executable, SQLite database, provider state, or runtime memory.
+
+## 4. Boot and UI evidence
+
+Source inspection may establish that identity is resolved once at shared Flutter
+boot and passed to Closure.
+
+Focused widget tests may establish:
+
+- valid full revision becomes the expected 12-character label;
+- valid source-tree SHA-256 is shown exactly;
+- missing or invalid fields fail closed;
+- unsafe raw input is not echoed;
+- the same identity object reaches Closure through MarkeiApp;
+- no platform branch or runtime external read is required.
+
+These tests cannot establish what a future installed client displays.
+
+The later human two-platform check may establish only:
+
+- the exact running Windows client displays the expected R06 revision/tree
+  digest;
+- the exact running Android client displays the same revision/tree digest;
+- the preserved History/Closure baseline remains visibly present;
+- no operation was initiated merely by boot/navigation.
+
+## 5. Artifact evidence
+
+A successful platform build plus artifact inspection may establish:
+
+- artifact exists;
+- path and byte size were recorded;
+- SHA-256 identifies those exact bytes;
+- build command carried the common source identity.
+
+It cannot establish installation or launch unless separately observed.
+
+Android and Windows artifact hashes must not be expected to match. A mismatch is
+normal because package formats and native outputs differ.
+
+## 6. Validation economy
+
+The user has already completed the broader R02–R05 automated and preserved-state
+preparation. R06 must not restart that evidence collection.
+
+Sufficient R06 evidence is:
 
 ```text
-inbound apply=committed
-ack request=request-started
-ack trusted response=not-received
-ack outcome=unknown
+changed-source inspection
++ focused identity tests
++ focused boot/Closure propagation test
++ Flutter analysis
++ shared-helper determinism check
++ available Android/Windows package builds
++ artifact hash report
 ```
 
-Earlier upload state may be committed or absent; neither value may be presented
-as acknowledgement success.
+Insufficient substitutions:
 
-Required invariant state:
+- running every GRIMOIRE procedure;
+- rerunning SQLite/Neon/provider baselines;
+- using a fresh timestamp as provenance;
+- using artifact SHA-256 alone as source identity;
+- relying on operator memory that a build was fresh;
+- showing only a short revision without the validated full revision behind it;
+- showing the source-tree digest on only one platform.
 
-```text
-inbound apply=failed-or-unproved
-ack request=request-started
-```
-
-The test must prove that the contradiction is within one authority boundary,
-not merely that two different transactions ended differently.
-
-## 5. Direct-test adequacy
-
-A test is direct only when it:
-
-- executes the relevant coordinator/runner sequence;
-- controls upload, download/apply, acknowledgement, and diagnostics through
-  bounded fakes or repositories;
-- inspects independent cumulative and terminal fields;
-- asserts forbidden downstream calls;
-- distinguishes core truth from diagnostic durability.
-
-Insufficient substitutes include:
-
-- asserting only `sync-completed` or `sync-failed`;
-- asserting only event order;
-- inspecting only the final generic `providerTransactionState`;
-- inspecting only the final generic `localMutationState`;
-- calling the page applier without the upload/coordinator sequence;
-- relying on the full-suite count to infer a named compound case;
-- swallowing a diagnostic exception without asserting core planes.
-
-## 6. Compatibility evidence
-
-Legacy generic event fields may remain as phase-row chronology. Their continued
-existence does not prove the cumulative model is partitioned.
-
-If R05 adds in-memory or lifecycle fields without a database migration, H and I
-must establish:
-
-- which event-specific legacy fields remain;
-- which independent fields are cumulative authority;
-- how each producer maps into its own plane;
-- that old durable rows are not reinterpreted beyond their recorded phase;
-- that no schema, payload, API, or provider contract changed.
-
-Event-row compatibility and cumulative correctness are separate conclusions.
-
-## 7. Diagnostic degradation evidence
-
-Begin, row, and completion failures must be injected across compound operations.
-
-Required conclusions:
-
-- diagnostic degradation is visible;
-- upload truth remains unchanged;
-- download/apply truth remains unchanged;
-- acknowledgement eligibility and outcome remain unchanged;
-- the core result is not manufactured or reversed;
-- no recursive diagnostic write occurs;
-- no automatic retry/recovery operation begins.
-
-One injection at an isolated phase is not sufficient for the compound R05
-claim. At least one committed upload + committed apply + acknowledgement case
-and the committed upload + rolled-back apply case must experience diagnostic
-degradation directly.
-
-## 8. Negative and sanitization evidence
-
-Directly assert that cumulative state, lifecycle JSON, UI/repository projection
-when touched, test failure output, and G/H/I do not retain or emit:
-
-- payload or serialized business facts;
-- Product, Purchase, Store, Person, or Payment values;
-- UUIDs or raw operation/correlation identifiers;
-- request hashes or full hashes;
-- tokens, credentials, secrets, paths, SQL, or database values;
-- exception messages, `toString()` output, or stacks.
-
-Allowed evidence remains bounded codes, allow-listed/sanitized class names,
-short fingerprints, counts, sequences, state names, status classes, and timing
-bands already authorized by D.
-
-## 9. PRC-01 ceilings
+## 7. PRC-01 ceilings
 
 | Evidence | Maximum conclusion |
 |---|---|
-| Source inspection | R05 model implemented |
-| Focused compound deterministic test | named truth-plane sequence validated |
-| Full Flutter suite | repository regression evidence |
-| APK/Windows build | package materialized |
-| Manifest inspection | expected packaged configuration present |
-| Disposable lab skipped | no provider-lab conclusion |
-| No live operation | no practical convergence conclusion |
-| Future read-only checkpoint | preserved-state description only |
-| Future one-client live assay | only that authorized client/provider operation |
+| Source inspection | common identity model implemented |
+| Focused parser/identity test | validation and sanitization work at test scope |
+| Focused boot/Closure test | shared application propagation works at widget scope |
+| Helper determinism check | same clean source resolves to same source identity |
+| Android build | Android artifact materialized with supplied identity |
+| Windows build | Windows artifact materialized with supplied identity |
+| Artifact SHA-256 | exact built bytes identified |
+| Human visible Android Closure | running Android identity observed |
+| Human visible Windows Closure | running Windows identity observed |
+| Matching visible source fields | both running clients claim one common source identity |
+| No live Sync | no convergence conclusion |
 
-`IMPLEMENTED_VALIDATED` may be reported only when every D terminal has direct
-evidence. Any residual field inference, missing compound case, or unclassified
-same-plane contradiction must be `PARTIAL` or `BLOCKED`, not inferred from the
-full suite.
+`IMPLEMENTED_VALIDATED` requires every non-host-specific direct R06 check to
+pass. A platform unavailable on Codex's host is `host-unvalidated`, and the
+later human Windows/Android build supplies that missing platform evidence.
 
-## 10. R03/R04 regression ceiling
+## 8. Freeze and release rule
 
-Passing existing Product/apply/replay tests preserves their previously accepted
-automated scope. It does not create new live Product or Sync evidence.
+If Codex materialization passes and the later human check shows the same source
+revision and source-tree SHA-256 on both clients:
 
-The R05 diff should not touch Product resolution or transaction application
-code. If it does, D's stop condition applies unless the change is a strictly
-mechanical evidence-model fixture adaptation in an already authorized path.
+```text
+R06_SOURCE_ATTRIBUTION=PASS
+R02_R05_CANDIDATE=FROZEN
+MORE_INCIDENTAL_SOURCE_CHANGE=NO
+NEXT_ACTION=SEPARATELY_AUTHORIZED_SERIALIZED_SYNC
+```
 
-## 11. Acceptance boundary
+Do not require another complete SQLite × Neon × UI baseline merely because R06
+changed source identity presentation. Stop only if the focused human check
+shows:
 
-A fully passing R05 may establish:
+- different source identities;
+- missing/invalid identity;
+- build/install failure;
+- preserved data visibly missing;
+- automatic Sync or another unexpected mutation.
 
-- source and deterministic-test truth-plane separation;
-- no false cross-transaction invariant;
-- bounded same-plane invariant detection;
-- independent acknowledgement terminal truth;
-- regression and package viability.
+## 9. Non-promotion boundary
 
-It cannot establish or authorize:
+R06 cannot promote:
 
-- current WIN/AND/provider preserved-state freshness;
-- installation against preserved data;
-- live Android or Windows Sync;
-- Retry, Recovery, Query, enrollment, or new Purchase registration;
-- hosted acknowledgement;
-- bidirectional same-account convergence;
-- GCM03 closure or MVP Sync acceptance.
+- practical Sync success;
+- inbound Product reconciliation;
+- cursor advancement;
+- acknowledgement;
+- two-device convergence;
+- no-op replay;
+- GCM03 closure;
+- MVP Sync acceptance.
 
-Main must reconcile R05. The next authorized operation, if reconciliation
-passes, is a read-only preserved-state checkpoint before installation.
-
-## 12. Review questions
-
-- Are upload local persistence and inbound apply represented separately?
-- Are upload provider and acknowledgement represented separately?
-- Does acknowledgement expose request, trusted response, and result?
-- Does a valid upload-commit/apply-rollback sequence avoid false invariant?
-- Does a same-plane contradiction still fail closed?
-- Do runner success and catch project the same cumulative snapshot?
-- Do diagnostic failures leave every core plane unchanged?
-- Are R03/R04 accepted tests still passing?
-- Did any preserved client/provider state or prohibited contract change?
+R06 merely makes the next live result attributable to one frozen source
+candidate.
