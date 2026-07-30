@@ -1,65 +1,62 @@
-# I_DSN_CODEX - C10-GCM03-S09-R06
+# I_DSN_CODEX - C10-GCM03-S09-R06-CR01
 
 Sequence: FLX-ORD-01
 Role: Codex design evidence
-Round or unit: C10-GCM03-S09-R06
+Round or unit: C10-GCM03-S09-R06-CR01
 Branch: grm-guarded-provisioning-20260727
-Baseline / inspected HEAD: 832c433896d9ba425e14891d9cbed9b58dcd8057
+Baseline / inspected HEAD: ece4375f228c5564e86f845fa65bd0f88b9ca829
 Authority: D executable; E evidence ceilings; F architecture ownership
-Evidence boundary: shared build provenance architecture only
+Evidence boundary: Windows procedure architecture only
 
-## Architecture Materialized
+## Architecture Confirmation
+
+`GS-FLUTTER-WIN` now follows the staged preparation state machine:
 
 ```text
-clean Git HEAD and tree
-  -> clients/markei_flutter/tool/resolve_markei_source_identity.ps1
-  -> MARKEI_SOURCE_REVISION / MARKEI_SOURCE_TREE_SHA256
-  -> BuildProvenance.current
-  -> main.dart boot resolution
-  -> MarkeiApp immutable transport
-  -> NativeClosurePage presentation
+operator-owned process state
+-> relevant-owner preflight
+-> flutter clean
+-> generated-state postcondition check
+-> bounded exact-path cleanup
+-> second absence proof
+-> flutter pub get
+-> package/plugin regeneration proof
+-> existing R06 analyze/test/build/artifact/callback/launch tail
 ```
 
-## Responsibility Confirmation
+## Responsibility Boundaries
 
-- Git revision/tree resolution and source digest calculation belong to the shared helper.
-- Compile-time transport belongs to the documented Flutter procedures.
-- Identity validation and sanitization belong to `BuildProvenance`.
-- Boot initialization belongs to `main.dart`.
-- Application transport belongs to `MarkeiApp`.
-- Closure presentation belongs to `NativeClosurePage`.
-- APK and Windows executable SHA-256 values remain external artifact evidence.
-- Sync, Product reconciliation, applier, cursor, acknowledgement, recorder, provider, database, and Auth0 behavior were not changed.
+- Human operator owns closing active Markei, Flutter, Dart, or VS Code build/debug activity.
+- `GS-FLUTTER-WIN` observes bounded owners and stops; it does not terminate processes.
+- `flutter clean` remains the ordinary cleanup request.
+- `GS-FLUTTER-WIN` owns independent cleanup postconditions and exact generated-target containment.
+- `flutter pub get` remains the package/plugin generator and runs only after clean-state proof.
+- `GS-FLUTTER-WIN` verifies package config and one coherent `auth0_flutter` Windows generated target before analysis/build.
+- Existing R06 identity definitions, artifact hashing, callback registration, and exact executable launch are preserved.
 
-## Files Not Touched
+## Frozen Boundaries
 
-- No Sync coordinator, Sync use case, Product resolver, inbound applier, cursor, acknowledgement, recorder, port, SQLite schema, Drift migration/generated code, hosted API, Render, Neon, Auth0 behavior, enrollment, Account/Device binding, dependency, `pubspec.lock`, methodology, permanent memory, J, REC_DIAGNOSTICS, or NS coordinate file was modified.
+- No Flutter/Dart application behavior changed.
+- No dependencies, `pubspec.yaml`, `pubspec.lock`, native plugin configuration, CMake, vcpkg, cpprestsdk, Android procedure, Windows Debug procedure, Sync, Product, applier, cursor, acknowledgement, diagnostics, Settings, Audit, SQLite, hosted API, Render, Neon, Auth0, enrollment, provider state, methodology, permanent memory, A/B/C, J, REC_DIAGNOSTICS, GRM, NS coordinates, or R07 implementation changed.
 
-## Platform Design Evidence
+## Residual Design Risk
 
-- `GS-FLUTTER-WIN` uses the shared helper and injects `MARKEI_SOURCE_REVISION` plus `MARKEI_SOURCE_TREE_SHA256`.
-- `GS-FLUTTER-DBW` uses the shared helper and writes the same fields to the ignored debug define file.
-- `GS-FLUTTER-AND` uses the shared helper and injects the same fields for Android Debug.
-- Closure displays `Source revision #<12>` and `Source tree SHA-256 <64>` from one supplied immutable identity.
-
-## Unresolved Design Risk
-
-- `GS-FLUTTER-DBA` remains on older provenance wording because it was outside D's R06 target list. If Android VS Code debug provenance must also be brought into the shared identity chain, Main should stage that as a separate authorized round.
+- Static validation and parsing prove the fail-closed procedure shape, not the user's preserved-machine execution result. The next design evidence must come from a human rerun of corrected `GS-FLUTTER-WIN`.
 
 ## Terminals
 
-C10_GCM03_S09_R06=IMPLEMENTED_VALIDATED
-COMMON_BOOT_IDENTITY=PASS
-FULL_SOURCE_REVISION_VALIDATION=PASS
-COMMON_SOURCE_TREE_SHA256=PASS
-ANDROID_IDENTITY_INJECTION=PASS
-WINDOWS_RELEASE_IDENTITY_INJECTION=PASS
-WINDOWS_DEBUG_IDENTITY_INJECTION=PASS
-CLOSURE_COMMON_PRESENTATION=PASS
-WINDOWS_ARTIFACT_SHA256_REPORT=PASS
-ANDROID_ARTIFACT_SHA256_REPORT=PASS
+C10_GCM03_S09_R06_CR01=IMPLEMENTED_VALIDATED
+WINDOWS_GENERATED_STATE_PREFLIGHT=PASS
+CLEANUP_POSTCONDITION_VERIFICATION=PASS
+AUTOMATIC_PROCESS_TERMINATION=NO
+PUB_GET_GATED_BY_VERIFIED_CLEANUP=PASS
+PLUGIN_REGENERATION_VERIFICATION=PASS
+R06_IDENTITY_CHAIN_PRESERVED=PASS
+WINDOWS_BUILD_PROCEDURE_READY_FOR_HUMAN_RERUN=YES
+WINDOWS_BUILD_REACHED_BY_CODEX=NO
 SYNC_SOURCE_CHANGED=NO
 PRESERVED_CLIENT_STATE_TOUCHED=NO
 LIVE_SYNC_EXECUTED=NO
 PROVIDER_MUTATION=NONE
-NEXT_HUMAN_CHECK=TWO_PLATFORM_VISIBLE_IDENTITY_ONLY
+R07_IMPLEMENTATION=HELD
+NEXT_HUMAN_CHECK=RERUN_GS_FLUTTER_WIN_ONLY

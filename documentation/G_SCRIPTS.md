@@ -4451,17 +4451,195 @@ if ($FlutterDefines -notcontains $RequiredClosureSurfaceDefine) {
     throw "Windows Closure UI define is missing; refusing to build or run."
 }
 
+$GeneratedStateTargets = @(
+    [pscustomobject][ordered]@{
+        Name = "Dart package tool state"
+        RelativePath = ".dart_tool"
+        Kind = "directory"
+    }
+    [pscustomobject][ordered]@{
+        Name = "Windows Flutter ephemeral state"
+        RelativePath = "windows\flutter\ephemeral"
+        Kind = "directory"
+    }
+    [pscustomobject][ordered]@{
+        Name = "Windows build output"
+        RelativePath = "build\windows"
+        Kind = "directory"
+    }
+)
+
+function Get-ContainedClientGeneratedPath {
+    param([Parameter(Mandatory)] [string]$RelativePath)
+
+    if ([string]::IsNullOrWhiteSpace($RelativePath) -or
+        [IO.Path]::IsPathRooted($RelativePath) -or
+        $RelativePath -match '[*?]' -or
+        $RelativePath -split '[\\/]' -contains '..') {
+        throw "Generated-state target is not one bounded relative path."
+    }
+
+    $ClientDirectory = Get-Item -LiteralPath $ClientRoot
+    $ClientFullName = $ClientDirectory.FullName.TrimEnd([char[]]@('\', '/'))
+    $ResolvedPath = [IO.Path]::GetFullPath(
+        (Join-Path $ClientDirectory.FullName $RelativePath)
+    ).TrimEnd([char[]]@('\', '/'))
+
+    if ([string]::Equals(
+        $ResolvedPath,
+        $ClientFullName,
+        [StringComparison]::OrdinalIgnoreCase
+    )) {
+        throw "Generated-state target resolves to the Flutter client root."
+    }
+    if (-not $ResolvedPath.StartsWith(
+        $ClientFullName + [IO.Path]::DirectorySeparatorChar,
+        [StringComparison]::OrdinalIgnoreCase
+    )) {
+        throw "Generated-state target resolves outside the Flutter client."
+    }
+
+    return $ResolvedPath
+}
+
+function Get-RelevantWindowsBuildOwners {
+    $OwnerNames = @("markei", "flutter", "dart")
+    $Owners = @()
+    foreach ($OwnerName in $OwnerNames) {
+        $Owners += @(
+            Get-Process -Name $OwnerName -ErrorAction SilentlyContinue |
+                Select-Object Id, ProcessName
+        )
+    }
+    return @($Owners)
+}
+
+function Assert-NoRelevantWindowsBuildOwners {
+    param([Parameter(Mandatory)] [string]$Stage)
+
+    $Owners = @(Get-RelevantWindowsBuildOwners)
+    if ($Owners.Count -gt 0) {
+        Write-Host "Relevant Markei/Flutter/Dart process ownership was detected during $Stage."
+        $Owners | Sort-Object ProcessName, Id | Format-Table -AutoSize
+        throw @"
+Close Markei, active Flutter run/build terminals, and VS Code debug/build
+activity that owns this Flutter client, then rerun GS-FLUTTER-WIN. The
+procedure does not terminate processes automatically.
+"@
+    }
+}
+
+function Assert-GeneratedTargetsAbsent {
+    param([Parameter(Mandatory)] [string]$Stage)
+
+    $RemainingTargets = @()
+    foreach ($Target in $GeneratedStateTargets) {
+        $ResolvedPath = Get-ContainedClientGeneratedPath `
+            -RelativePath $Target.RelativePath
+        if (Test-Path -LiteralPath $ResolvedPath) {
+            $RemainingTargets += [pscustomobject][ordered]@{
+                Name = $Target.Name
+                Path = $ResolvedPath
+            }
+        }
+    }
+    if ($RemainingTargets.Count -gt 0) {
+        Write-Host "Generated-state cleanup postcondition failed during $Stage."
+        $RemainingTargets | Format-Table -AutoSize
+        throw "Generated Flutter state remains; stopping before flutter pub get."
+    }
+}
+
+function Remove-BoundedGeneratedState {
+    Assert-NoRelevantWindowsBuildOwners -Stage "bounded generated-state cleanup"
+    foreach ($Target in $GeneratedStateTargets) {
+        $ResolvedPath = Get-ContainedClientGeneratedPath `
+            -RelativePath $Target.RelativePath
+        if (Test-Path -LiteralPath $ResolvedPath) {
+            Remove-Item -LiteralPath $ResolvedPath -Recurse -Force
+        }
+        if (Test-Path -LiteralPath $ResolvedPath) {
+            throw "Generated Flutter state could not be removed: $ResolvedPath"
+        }
+    }
+    Assert-GeneratedTargetsAbsent -Stage "bounded generated-state cleanup"
+    Assert-NoRelevantWindowsBuildOwners -Stage "post-clean reappearance check"
+}
+
+function Assert-WindowsPluginRegeneration {
+    $PackageConfigPath = Join-Path $ClientRoot ".dart_tool\package_config.json"
+    if (-not (Test-Path -LiteralPath $PackageConfigPath -PathType Leaf)) {
+        throw "flutter pub get did not create .dart_tool\package_config.json."
+    }
+    try {
+        $PackageConfig = Get-Content -LiteralPath $PackageConfigPath -Raw |
+            ConvertFrom-Json
+    }
+    catch {
+        throw "Generated package_config.json is unreadable."
+    }
+    $Auth0Packages = @(
+        $PackageConfig.packages | Where-Object {
+            $_.name -is [string] -and $_.name -ceq "auth0_flutter"
+        }
+    )
+    if ($Auth0Packages.Count -ne 1) {
+        throw "package_config.json does not contain exactly one auth0_flutter package."
+    }
+
+    $PluginSymlinkPath = Join-Path `
+        $ClientRoot `
+        "windows\flutter\ephemeral\.plugin_symlinks\auth0_flutter"
+    if (-not (Test-Path -LiteralPath $PluginSymlinkPath -PathType Container)) {
+        throw "auth0_flutter Windows plugin symlink was not regenerated."
+    }
+    $Auth0WindowsCMake = Join-Path `
+        $PluginSymlinkPath `
+        "windows\CMakeLists.txt"
+    if (-not (Test-Path -LiteralPath $Auth0WindowsCMake -PathType Leaf)) {
+        throw "auth0_flutter generated Windows target is incomplete."
+    }
+    $GeneratedPluginsCmake = Join-Path `
+        $ClientRoot `
+        "windows\flutter\ephemeral\generated_plugins.cmake"
+    if (-not (Test-Path -LiteralPath $GeneratedPluginsCmake -PathType Leaf)) {
+        throw "Windows generated_plugins.cmake was not regenerated."
+    }
+    $GeneratedPluginsText = Get-Content `
+        -LiteralPath $GeneratedPluginsCmake `
+        -Raw
+    $Auth0GeneratedMentions = [regex]::Matches(
+        $GeneratedPluginsText,
+        '(?m)^\s*auth0_flutter\s*$'
+    )
+    if ($Auth0GeneratedMentions.Count -ne 1) {
+        throw "Windows generated_plugins.cmake does not contain exactly one auth0_flutter target."
+    }
+
+    [pscustomobject][ordered]@{
+        PackageConfigPresent = $true
+        Auth0PackageEntries = $Auth0Packages.Count
+        Auth0WindowsPluginDirectory = $true
+        Auth0WindowsCMake = $true
+        GeneratedPluginsCmake = $true
+        Auth0GeneratedTargets = $Auth0GeneratedMentions.Count
+    }
+}
+
 Push-Location $ClientRoot
 try {
+    Assert-NoRelevantWindowsBuildOwners -Stage "pre-clean preflight"
+
     flutter clean
     if ($LASTEXITCODE -ne 0) { throw "flutter clean failed." }
 
-    if (Test-Path ".\windows\flutter\ephemeral") {
-        Remove-Item ".\windows\flutter\ephemeral" -Recurse -Force
-    }
+    Remove-BoundedGeneratedState
+    Assert-GeneratedTargetsAbsent -Stage "before flutter pub get"
 
     flutter pub get
     if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
+
+    Assert-WindowsPluginRegeneration
 
     flutter analyze
     if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
