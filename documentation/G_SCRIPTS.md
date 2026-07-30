@@ -4502,25 +4502,117 @@ function Get-ContainedClientGeneratedPath {
     return $ResolvedPath
 }
 
-function Get-RelevantWindowsBuildOwners {
-    $OwnerNames = @("markei", "flutter", "dart")
-    $Owners = @()
-    foreach ($OwnerName in $OwnerNames) {
-        $Owners += @(
-            Get-Process -Name $OwnerName -ErrorAction SilentlyContinue |
-                Select-Object Id, ProcessName
-        )
+function Get-WindowsBuildProcessObservations {
+    $ObservedNames = @("markei", "flutter", "dart")
+    $ClientDirectory = Get-Item -LiteralPath $ClientRoot
+    $ClientFullName = $ClientDirectory.FullName.TrimEnd([char[]]@('\', '/'))
+    $BuildWindowsPath = Get-ContainedClientGeneratedPath `
+        -RelativePath "build\windows"
+    $ProcessesById = @{}
+    foreach ($ObservedName in $ObservedNames) {
+        Get-Process -Name $ObservedName -ErrorAction SilentlyContinue |
+            ForEach-Object { $ProcessesById[[int]$_.Id] = $_ }
     }
-    return @($Owners)
+
+    $ProcessMetadata = @{}
+    try {
+        Get-CimInstance Win32_Process `
+            -Filter "name = 'markei.exe' or name = 'flutter.bat' or name = 'flutter.exe' or name = 'dart.exe'" |
+            ForEach-Object { $ProcessMetadata[[int]$_.ProcessId] = $_ }
+    }
+    catch {
+        Write-Host "Process command metadata unavailable; cleanup postconditions remain authoritative."
+    }
+
+    $Observations = @()
+    foreach ($ProcessId in $ProcessesById.Keys) {
+        $Process = $ProcessesById[$ProcessId]
+        $Metadata = $ProcessMetadata[$ProcessId]
+        $ExecutablePath = if ($null -ne $Metadata) {
+            [string]$Metadata.ExecutablePath
+        } else {
+            ""
+        }
+        $CommandLine = if ($null -ne $Metadata) {
+            [string]$Metadata.CommandLine
+        } else {
+            ""
+        }
+
+        $Classification = "ProcessCandidate"
+        $Evidence = "name-only-observation"
+        $PathLower = $ExecutablePath.ToLowerInvariant()
+        $CommandLower = $CommandLine.ToLowerInvariant()
+        $ClientLower = $ClientFullName.ToLowerInvariant()
+        $BuildLower = $BuildWindowsPath.ToLowerInvariant()
+        $HasClientEvidence = (
+            -not [string]::IsNullOrWhiteSpace($ExecutablePath) -and
+                $PathLower.StartsWith($ClientLower)
+        ) -or (
+            -not [string]::IsNullOrWhiteSpace($CommandLine) -and
+                $CommandLower.Contains($ClientLower)
+        )
+        $HasBuildOutputEvidence = (
+            -not [string]::IsNullOrWhiteSpace($ExecutablePath) -and
+                $PathLower.StartsWith($BuildLower)
+        ) -or (
+            -not [string]::IsNullOrWhiteSpace($CommandLine) -and
+                $CommandLower.Contains($BuildLower)
+        )
+        $HasBuildOrRunVerb = $CommandLower -match '(^|\s)(build|run)(\s|$)'
+        $IsAnalysisActivity = $CommandLower -match `
+            'analysis_server|language-server|dartdevc|frontend_server'
+
+        if ([string]::IsNullOrWhiteSpace($ExecutablePath) -and
+            [string]::IsNullOrWhiteSpace($CommandLine)) {
+            $Classification = "UnknownMetadata"
+            $Evidence = "metadata-unavailable"
+        }
+        elseif ($Process.ProcessName -ieq "markei" -and
+            $HasBuildOutputEvidence) {
+            $Classification = "DefiniteRelevantOwner"
+            $Evidence = "markei-executable-in-client-build-output"
+        }
+        elseif ($Process.ProcessName -in @("flutter", "dart") -and
+            $HasClientEvidence -and $HasBuildOrRunVerb -and
+            -not $IsAnalysisActivity) {
+            $Classification = "DefiniteRelevantOwner"
+            $Evidence = "flutter-or-dart-build-run-for-client"
+        }
+        elseif ($Process.ProcessName -in @("flutter", "dart") -and
+            $IsAnalysisActivity) {
+            $Classification = "BenignAnalysisActivity"
+            $Evidence = "analysis-or-language-server-without-build-run-ownership"
+        }
+        elseif ($HasClientEvidence -or $HasBuildOutputEvidence) {
+            $Classification = "ProcessCandidate"
+            $Evidence = "client-path-candidate-without-build-run-proof"
+        }
+
+        $Observations += [pscustomobject][ordered]@{
+            Id = $ProcessId
+            ProcessName = $Process.ProcessName
+            Classification = $Classification
+            Evidence = $Evidence
+        }
+    }
+    return @($Observations)
 }
 
 function Assert-NoRelevantWindowsBuildOwners {
     param([Parameter(Mandatory)] [string]$Stage)
 
-    $Owners = @(Get-RelevantWindowsBuildOwners)
+    $Owners = @(
+        Get-WindowsBuildProcessObservations | Where-Object {
+            $_.Classification -eq "DefiniteRelevantOwner"
+        }
+    )
     if ($Owners.Count -gt 0) {
-        Write-Host "Relevant Markei/Flutter/Dart process ownership was detected during $Stage."
-        $Owners | Sort-Object ProcessName, Id | Format-Table -AutoSize
+        Write-Host "Definite Markei/Flutter/Dart process ownership was detected during $Stage."
+        $Owners |
+            Sort-Object ProcessName, Id |
+            Select-Object Id, ProcessName, Classification, Evidence |
+            Format-Table -AutoSize
         throw @"
 Close Markei, active Flutter run/build terminals, and VS Code debug/build
 activity that owns this Flutter client, then rerun GS-FLUTTER-WIN. The
@@ -4556,9 +4648,24 @@ function Remove-BoundedGeneratedState {
         $ResolvedPath = Get-ContainedClientGeneratedPath `
             -RelativePath $Target.RelativePath
         if (Test-Path -LiteralPath $ResolvedPath) {
-            Remove-Item -LiteralPath $ResolvedPath -Recurse -Force
+            try {
+                Remove-Item -LiteralPath $ResolvedPath -Recurse -Force
+            }
+            catch {
+                Write-Host "Generated-state removal failed at bounded path: $ResolvedPath"
+                Get-WindowsBuildProcessObservations |
+                    Sort-Object Classification, ProcessName, Id |
+                    Select-Object Id, ProcessName, Classification, Evidence |
+                    Format-Table -AutoSize
+                throw "Generated Flutter state could not be removed. Inspect or close relevant activity manually, then rerun."
+            }
         }
         if (Test-Path -LiteralPath $ResolvedPath) {
+            Write-Host "Generated-state target remained after removal: $ResolvedPath"
+            Get-WindowsBuildProcessObservations |
+                Sort-Object Classification, ProcessName, Id |
+                Select-Object Id, ProcessName, Classification, Evidence |
+                Format-Table -AutoSize
             throw "Generated Flutter state could not be removed: $ResolvedPath"
         }
     }
@@ -4601,9 +4708,9 @@ function Assert-WindowsPluginRegeneration {
     }
     $GeneratedPluginsCmake = Join-Path `
         $ClientRoot `
-        "windows\flutter\ephemeral\generated_plugins.cmake"
+        "windows\flutter\generated_plugins.cmake"
     if (-not (Test-Path -LiteralPath $GeneratedPluginsCmake -PathType Leaf)) {
-        throw "Windows generated_plugins.cmake was not regenerated."
+        throw "Windows generated_plugins.cmake was not found at windows\flutter\generated_plugins.cmake."
     }
     $GeneratedPluginsText = Get-Content `
         -LiteralPath $GeneratedPluginsCmake `

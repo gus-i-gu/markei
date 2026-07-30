@@ -1,19 +1,18 @@
-# G_OPS_CODEX - C10-GCM03-S09-R06-CR01
+# G_OPS_CODEX - C10-GCM03-S09-R06-CR02
 
 Sequence: FLX-ORD-01
 Role: Codex operational evidence
-Round or unit: C10-GCM03-S09-R06-CR01
+Round or unit: C10-GCM03-S09-R06-CR02
 Branch: grm-guarded-provisioning-20260727
-Baseline / inspected HEAD: ece4375f228c5564e86f845fa65bd0f88b9ca829
+Baseline / inspected HEAD: 4be2df25e1b720b447adb41233c2989b0a8b3f46
 Authority: D_OPS_STAGE.md, E_DDC_STAGE.md, F_DSN_STAGE.md
 Writable surfaces: documentation/G_SCRIPTS.md and G/H/I reports only
-Evidence boundary: Windows generated-state preparation and procedure readiness only
+Evidence boundary: Windows process attribution and generated-plugin manifest correction only
 
 ## Incident-To-Correction Mapping
 
-- Incident: `flutter clean` did not leave generated state clean; the procedure continued into `flutter pub get`; stale or recreated `auth0_flutter` generated plugin state collided with pub regeneration.
-- Correction: `GS-FLUTTER-WIN` now inspects bounded Markei/Flutter/Dart process ownership, refuses to terminate anything, requires `flutter clean` success, verifies exact generated-state postconditions, removes only enumerated generated paths under `clients/markei_flutter` when no relevant owner is active, verifies absence again before `flutter pub get`, and checks package/plugin regeneration after `pub get`.
-- Non-correction: no dependency, CMake, Auth0-coordinate, R06 identity, application, Sync, provider, database, R07, Android, or Windows Debug change was made.
+- CR01 defect 1: name-only `dart`/`flutter` detection could classify analysis activity as ownership. Correction: `GS-FLUTTER-WIN` now uses bounded process observations with `ProcessCandidate`, `DefiniteRelevantOwner`, `BenignAnalysisActivity`, and `UnknownMetadata`; only definite relevant ownership blocks pre-clean.
+- CR01 defect 2: plugin manifest verification used nonexistent `windows\flutter\ephemeral\generated_plugins.cmake`. Correction: manifest verification now uses `windows\flutter\generated_plugins.cmake`; the `auth0_flutter` symlink check remains under `windows\flutter\ephemeral\.plugin_symlinks\auth0_flutter`.
 
 ## Files Changed
 
@@ -26,39 +25,45 @@ Evidence boundary: Windows generated-state preparation and procedure readiness o
 
 - `git fetch origin grm-guarded-provisioning-20260727` -> passed.
 - `git switch grm-guarded-provisioning-20260727` -> already on branch, up to date.
-- `git rev-parse HEAD` -> `ece4375f228c5564e86f845fa65bd0f88b9ca829`.
+- `git rev-parse HEAD` -> `4be2df25e1b720b447adb41233c2989b0a8b3f46`.
 - `git rev-list --left-right --count HEAD...origin/grm-guarded-provisioning-20260727` -> `0 0`.
-- `git merge-base --is-ancestor e5168f6d2063b359ba773c107b73420bb29d43e8 ece4375f228c5564e86f845fa65bd0f88b9ca829` -> passed.
+- `git merge-base --is-ancestor 5fef8a51ccb61dff00e773b3c8759062560d27da 4be2df25e1b720b447adb41233c2989b0a8b3f46` -> passed.
 - Required AGENTS/INDEX/D/E/F reads -> completed.
-- Extracted `GS-FLUTTER-WIN` from `documentation/G_SCRIPTS.md` using the same heading/fence pattern as `documentation/I_SCRIPTS.ps1`; `[scriptblock]::Create(...)` parse validation -> passed, extracted length 13346.
-- Static termination inspection of extracted block for `Stop-Process`, `taskkill`, `kill` -> 0 matches.
-- Static gate-order inspection -> `Remove-BoundedGeneratedState` and `Assert-GeneratedTargetsAbsent -Stage "before flutter pub get"` occur before the actual `flutter pub get` command.
-- Static containment/removal inspection -> exact relative generated targets `.dart_tool`, `windows\flutter\ephemeral`, and `build\windows` are present; containment guard rejects rooted paths, wildcards, and `..`; removal uses `Remove-Item -LiteralPath`.
-- Static plugin-regeneration inspection -> package config, `auth0_flutter`, plugin symlink, Windows CMake file, generated plugins file, and one-target count checks are present.
-- Static R06 tail inspection -> `MARKEI_SOURCE_REVISION`, `MARKEI_SOURCE_TREE_SHA256`, artifact `Get-FileHash`, callback registration, and exact executable launch remain present.
+- Extracted `GS-FLUTTER-WIN` from `documentation/G_SCRIPTS.md` using dispatcher-compatible heading/fence parsing; `[scriptblock]::Create(...)` -> passed, extracted length 18016.
+- Static termination inspection for `Stop-Process`, `taskkill`, `kill` -> 0 matches.
+- Static process-attribution inspection -> classifier states present; only `Classification -eq "DefiniteRelevantOwner"` blocks; analysis/language-server evidence is classified as benign without build/run ownership.
+- Static raw command-line output inspection -> no `Select-Object CommandLine` or `Format-* CommandLine` output.
+- Static cleanup gate inspection -> bounded cleanup and absence proof remain before actual `flutter pub get`.
+- Static cleanup target inspection -> `.dart_tool`, `windows\flutter\ephemeral`, and `build\windows` remain the exact cleanup targets.
+- Static plugin path inspection -> symlink path remains `windows\flutter\ephemeral\.plugin_symlinks\auth0_flutter`; generated manifest path is `windows\flutter\generated_plugins.cmake`; ephemeral manifest path is absent from `GS-FLUTTER-WIN`.
+- Static manifest-count inspection -> procedure asserts `$Auth0GeneratedMentions.Count -ne 1` as failure and reports `Auth0GeneratedTargets`.
+- Repository manifest inspection -> `clients\markei_flutter\windows\flutter\generated_plugins.cmake` exists and contains exactly one `auth0_flutter` entry; `clients\markei_flutter\windows\flutter\ephemeral\generated_plugins.cmake` does not exist.
+- Static R06 tail inspection -> `MARKEI_SOURCE_REVISION`, `MARKEI_SOURCE_TREE_SHA256`, `flutter analyze`, `flutter test`, `flutter build windows --release @FlutterDefines`, artifact hashing, callback registration, and exact executable launch remain present.
 
 ## Skipped Actions
 
-- Did not execute `GS-FLUTTER-WIN`, `flutter clean`, `flutter pub get`, Windows build, callback registration, or application launch.
-- Did not run a disposable clean-state exercise because executing the procedure would continue into build/callback/launch unless further harnessing was introduced outside scope.
-- Did not stop or terminate any process.
+- Did not run `GS-FLUTTER-WIN`, `flutter clean`, `flutter pub get`, Windows build, callback registration, or application launch.
+- Did not run a focused clean/pub-get exercise because doing so would mutate generated workspace state and static validation was sufficient for the CR02 procedure correction.
+- Did not terminate processes.
 - Did not run Sync, Retry, Recovery, Query, Enroll, new Purchase, provider mutation, database repair/reset/clear, preserved-client installation, preserved-client launch, full Flutter regression, Android build, GRIMOIRE, SQLite, Neon, Render, Auth0, or hosted-provider suites.
 
-## Residual Human Checkpoint
+## Remaining Human Checkpoint
 
-After Main reconciliation, rerun only the corrected `GS-FLUTTER-WIN` procedure from the pushed CR01 commit. The procedure should either stop with bounded operator instructions for active owners or pass cleanup/pub-get/build and record the Windows artifact and visible source identity.
+Rerun only the corrected `GS-FLUTTER-WIN` procedure from the pushed CR02 commit. Static validation must not be promoted into a Windows build claim.
 
 ## Terminals
 
-C10_GCM03_S09_R06_CR01=IMPLEMENTED_VALIDATED
-WINDOWS_GENERATED_STATE_PREFLIGHT=PASS
-CLEANUP_POSTCONDITION_VERIFICATION=PASS
-AUTOMATIC_PROCESS_TERMINATION=NO
+C10_GCM03_S09_R06_CR02=IMPLEMENTED_VALIDATED
+CR01_PROCESS_ATTRIBUTION=PASS
+NAME_ONLY_DART_OWNERSHIP=NO
+ANALYSIS_SERVER_FALSE_POSITIVE=NO
+GENERATED_PLUGIN_MANIFEST_PATH=PASS
+PLUGIN_SYMLINK_PATH=PASS
 PUB_GET_GATED_BY_VERIFIED_CLEANUP=PASS
-PLUGIN_REGENERATION_VERIFICATION=PASS
+AUTOMATIC_PROCESS_TERMINATION=NO
 R06_IDENTITY_CHAIN_PRESERVED=PASS
-WINDOWS_BUILD_PROCEDURE_READY_FOR_HUMAN_RERUN=YES
 WINDOWS_BUILD_REACHED_BY_CODEX=NO
+WINDOWS_BUILD_PROCEDURE_READY_FOR_HUMAN_RERUN=YES
 SYNC_SOURCE_CHANGED=NO
 PRESERVED_CLIENT_STATE_TOUCHED=NO
 LIVE_SYNC_EXECUTED=NO

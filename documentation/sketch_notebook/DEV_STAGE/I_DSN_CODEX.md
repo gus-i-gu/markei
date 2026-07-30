@@ -1,59 +1,64 @@
-# I_DSN_CODEX - C10-GCM03-S09-R06-CR01
+# I_DSN_CODEX - C10-GCM03-S09-R06-CR02
 
 Sequence: FLX-ORD-01
 Role: Codex design evidence
-Round or unit: C10-GCM03-S09-R06-CR01
+Round or unit: C10-GCM03-S09-R06-CR02
 Branch: grm-guarded-provisioning-20260727
-Baseline / inspected HEAD: ece4375f228c5564e86f845fa65bd0f88b9ca829
+Baseline / inspected HEAD: 4be2df25e1b720b447adb41233c2989b0a8b3f46
 Authority: D executable; E evidence ceilings; F architecture ownership
-Evidence boundary: Windows procedure architecture only
+Evidence boundary: Windows preparation procedure architecture only
 
 ## Architecture Confirmation
 
-`GS-FLUTTER-WIN` now follows the staged preparation state machine:
+`GS-FLUTTER-WIN` now separates:
 
 ```text
-operator-owned process state
--> relevant-owner preflight
--> flutter clean
--> generated-state postcondition check
--> bounded exact-path cleanup
--> second absence proof
--> flutter pub get
--> package/plugin regeneration proof
--> existing R06 analyze/test/build/artifact/callback/launch tail
+process observation
+-> attributable owner classification
+-> cleanup attempt
+-> filesystem postcondition
+-> package/plugin regeneration verification
+-> analysis/test/build tail
 ```
 
-## Responsibility Boundaries
+Name matches remain observations, not ownership. The filesystem cleanup postcondition remains authoritative.
 
-- Human operator owns closing active Markei, Flutter, Dart, or VS Code build/debug activity.
-- `GS-FLUTTER-WIN` observes bounded owners and stops; it does not terminate processes.
-- `flutter clean` remains the ordinary cleanup request.
-- `GS-FLUTTER-WIN` owns independent cleanup postconditions and exact generated-target containment.
-- `flutter pub get` remains the package/plugin generator and runs only after clean-state proof.
-- `GS-FLUTTER-WIN` verifies package config and one coherent `auth0_flutter` Windows generated target before analysis/build.
-- Existing R06 identity definitions, artifact hashing, callback registration, and exact executable launch are preserved.
+## Topology Confirmation
+
+The procedure preserves the intended Windows generated-state topology:
+
+```text
+clients/markei_flutter/
+├── .dart_tool/                              cleanup target
+├── build/windows/                           cleanup target
+└── windows/flutter/
+    ├── generated_plugins.cmake              generated manifest verification
+    └── ephemeral/                           cleanup target
+        └── .plugin_symlinks/auth0_flutter/  plugin symlink verification
+```
 
 ## Frozen Boundaries
 
 - No Flutter/Dart application behavior changed.
-- No dependencies, `pubspec.yaml`, `pubspec.lock`, native plugin configuration, CMake, vcpkg, cpprestsdk, Android procedure, Windows Debug procedure, Sync, Product, applier, cursor, acknowledgement, diagnostics, Settings, Audit, SQLite, hosted API, Render, Neon, Auth0, enrollment, provider state, methodology, permanent memory, A/B/C, J, REC_DIAGNOSTICS, GRM, NS coordinates, or R07 implementation changed.
+- No dependencies, `pubspec.yaml`, `pubspec.lock`, generated native files, CMake, vcpkg, cpprestsdk, Android procedure, Windows Debug procedure, Sync, diagnostics, database, provider, Auth0 behavior, methodology, permanent memory, A/B/C/J, GRM, NS coordinates, ALT_DEV, or R07 implementation changed.
 
-## Residual Design Risk
+## Remaining Design Evidence
 
-- Static validation and parsing prove the fail-closed procedure shape, not the user's preserved-machine execution result. The next design evidence must come from a human rerun of corrected `GS-FLUTTER-WIN`.
+Only a human rerun of corrected `GS-FLUTTER-WIN` can establish Windows build, artifact identity, visible source identity, and preserved-client behavior from the CR02 implementation commit.
 
 ## Terminals
 
-C10_GCM03_S09_R06_CR01=IMPLEMENTED_VALIDATED
-WINDOWS_GENERATED_STATE_PREFLIGHT=PASS
-CLEANUP_POSTCONDITION_VERIFICATION=PASS
-AUTOMATIC_PROCESS_TERMINATION=NO
+C10_GCM03_S09_R06_CR02=IMPLEMENTED_VALIDATED
+CR01_PROCESS_ATTRIBUTION=PASS
+NAME_ONLY_DART_OWNERSHIP=NO
+ANALYSIS_SERVER_FALSE_POSITIVE=NO
+GENERATED_PLUGIN_MANIFEST_PATH=PASS
+PLUGIN_SYMLINK_PATH=PASS
 PUB_GET_GATED_BY_VERIFIED_CLEANUP=PASS
-PLUGIN_REGENERATION_VERIFICATION=PASS
+AUTOMATIC_PROCESS_TERMINATION=NO
 R06_IDENTITY_CHAIN_PRESERVED=PASS
-WINDOWS_BUILD_PROCEDURE_READY_FOR_HUMAN_RERUN=YES
 WINDOWS_BUILD_REACHED_BY_CODEX=NO
+WINDOWS_BUILD_PROCEDURE_READY_FOR_HUMAN_RERUN=YES
 SYNC_SOURCE_CHANGED=NO
 PRESERVED_CLIENT_STATE_TOUCHED=NO
 LIVE_SYNC_EXECUTED=NO
