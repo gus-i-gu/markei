@@ -4,7 +4,8 @@ Sequence: FLX-ORD-01
 Role: Main operational materialization stage
 Round or unit: C10-GCM03-S09-R06-CR02
 Branch: grm-guarded-provisioning-20260727
-Required starting HEAD: 5fef8a51ccb61dff00e773b3c8759062560d27da
+CR01 implementation baseline / required staging parent: 5fef8a51ccb61dff00e773b3c8759062560d27da
+Codex starting HEAD: the final CR02 staging tip named by the seeding prompt
 Authority: Human-supervised Main Chat
 Scope: Windows procedure attribution and generated-plugin manifest correction only
 
