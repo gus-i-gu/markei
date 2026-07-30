@@ -75,6 +75,17 @@ final class NativeAuthClosureRunner {
   int get ordinarySyncClientDeadlineMs =>
       ordinarySyncClientDeadline.inMilliseconds;
 
+  @visibleForTesting
+  static SyncDiagnosticPhaseEvidence debugMergeDiagnosticEvidenceForTest(
+    Iterable<SyncDiagnosticPhaseEvidence> events,
+  ) {
+    var state = _CumulativeDiagnosticState.initial();
+    for (final event in events) {
+      state = state.merge(event);
+    }
+    return state.snapshot();
+  }
+
   Future<NativeClosureStatus> status() async {
     if (_unavailable) {
       return const NativeClosureStatus('configuration-missing');
@@ -136,6 +147,10 @@ final class NativeAuthClosureRunner {
       'trustedResponseState': 'not-received',
       'localMutationState': 'none',
       'resultPersistenceState': 'not-started',
+      ..._planeLifecycleFields(
+        _CumulativeDiagnosticState.initial().snapshot(),
+        false,
+      ),
       'safeNextActionCode': 'continue ordinary Sync',
     });
     int? attemptId;
@@ -208,6 +223,7 @@ final class NativeAuthClosureRunner {
         'resultPersistenceState': diagnostics.persistenceDegraded
             ? 'diagnostics-persistence-degraded'
             : cumulative?.resultPersistenceState ?? 'committed',
+        ..._planeLifecycleFields(cumulative, diagnostics.persistenceDegraded),
         'safeNextActionCode':
             _syncRecoveryCode(outcome.state) ?? 'no-further-action-required',
       });
@@ -230,6 +246,19 @@ final class NativeAuthClosureRunner {
           trustedResponseState:
               strongest?.trustedResponseState ?? 'not-received',
           resultPersistenceState: 'failed',
+          uploadRequestState: strongest?.uploadRequestState,
+          uploadTrustedResponseState: strongest?.uploadTrustedResponseState,
+          uploadProviderOutcome: strongest?.uploadProviderOutcome,
+          uploadLeaseLocalState: strongest?.uploadLeaseLocalState,
+          uploadResultPersistenceState: strongest?.uploadResultPersistenceState,
+          downloadRequestState: strongest?.downloadRequestState,
+          downloadTrustedResponseState: strongest?.downloadTrustedResponseState,
+          inboundApplyState: strongest?.inboundApplyState,
+          committedCursorProofState: strongest?.committedCursorProofState,
+          acknowledgementRequestState: strongest?.acknowledgementRequestState,
+          acknowledgementTrustedResponseState:
+              strongest?.acknowledgementTrustedResponseState,
+          acknowledgementOutcome: strongest?.acknowledgementOutcome,
           safeAction: 'preserve evidence and inspect diagnostics',
           retryable: false,
           sanitizedExceptionClass: _sanitizeExceptionClass(error),
@@ -268,6 +297,7 @@ final class NativeAuthClosureRunner {
         'resultPersistenceState': diagnostics.persistenceDegraded
             ? 'diagnostics-persistence-degraded'
             : cumulative?.resultPersistenceState ?? 'failed',
+        ..._planeLifecycleFields(cumulative, diagnostics.persistenceDegraded),
         'safeNextActionCode': 'preserve-evidence-and-inspect-diagnostics',
       });
       return const NativeClosureStatus('sync-failed');
@@ -801,6 +831,7 @@ final class _DiagnosticOperationRecorder
           ? 'diagnostics-persistence-degraded'
           : strongestEvidence?.resultPersistenceState ??
                 evidence.resultPersistenceState,
+      ..._planeLifecycleFields(strongestEvidence, _persistenceDegraded),
       'safeNextActionCode':
           strongestEvidence?.safeAction ?? evidence.safeAction,
     });
@@ -838,6 +869,23 @@ final class _DiagnosticOperationRecorder
         resultPersistenceState: _persistenceDegraded
             ? 'diagnostics-persistence-degraded'
             : strongestEvidence?.resultPersistenceState ?? 'see-causal-event',
+        uploadRequestState: strongestEvidence?.uploadRequestState,
+        uploadTrustedResponseState:
+            strongestEvidence?.uploadTrustedResponseState,
+        uploadProviderOutcome: strongestEvidence?.uploadProviderOutcome,
+        uploadLeaseLocalState: strongestEvidence?.uploadLeaseLocalState,
+        uploadResultPersistenceState:
+            strongestEvidence?.uploadResultPersistenceState,
+        downloadRequestState: strongestEvidence?.downloadRequestState,
+        downloadTrustedResponseState:
+            strongestEvidence?.downloadTrustedResponseState,
+        inboundApplyState: strongestEvidence?.inboundApplyState,
+        committedCursorProofState: strongestEvidence?.committedCursorProofState,
+        acknowledgementRequestState:
+            strongestEvidence?.acknowledgementRequestState,
+        acknowledgementTrustedResponseState:
+            strongestEvidence?.acknowledgementTrustedResponseState,
+        acknowledgementOutcome: strongestEvidence?.acknowledgementOutcome,
         safeAction:
             'client declaration only; inspect causal diagnostic before action',
         retryable: false,
@@ -864,6 +912,18 @@ final class _CumulativeDiagnosticState {
     required this.providerTransactionState,
     required this.trustedResponseState,
     required this.resultPersistenceState,
+    required this.uploadRequestState,
+    required this.uploadTrustedResponseState,
+    required this.uploadProviderOutcome,
+    required this.uploadLeaseLocalState,
+    required this.uploadResultPersistenceState,
+    required this.downloadRequestState,
+    required this.downloadTrustedResponseState,
+    required this.inboundApplyState,
+    required this.committedCursorProofState,
+    required this.acknowledgementRequestState,
+    required this.acknowledgementTrustedResponseState,
+    required this.acknowledgementOutcome,
     required this.safeAction,
     required this.retryable,
     required this.httpStatus,
@@ -896,6 +956,18 @@ final class _CumulativeDiagnosticState {
         providerTransactionState: 'not-started',
         trustedResponseState: 'not-received',
         resultPersistenceState: 'not-started',
+        uploadRequestState: 'not-started',
+        uploadTrustedResponseState: 'not-received',
+        uploadProviderOutcome: 'not-started',
+        uploadLeaseLocalState: 'not-started',
+        uploadResultPersistenceState: 'not-started',
+        downloadRequestState: 'not-started',
+        downloadTrustedResponseState: 'not-received',
+        inboundApplyState: 'not-started',
+        committedCursorProofState: 'unknown',
+        acknowledgementRequestState: 'not-started',
+        acknowledgementTrustedResponseState: 'not-received',
+        acknowledgementOutcome: 'not-started',
         safeAction: 'continue ordinary Sync',
         retryable: false,
         httpStatus: null,
@@ -926,6 +998,18 @@ final class _CumulativeDiagnosticState {
   final String providerTransactionState;
   final String trustedResponseState;
   final String resultPersistenceState;
+  final String uploadRequestState;
+  final String uploadTrustedResponseState;
+  final String uploadProviderOutcome;
+  final String uploadLeaseLocalState;
+  final String uploadResultPersistenceState;
+  final String downloadRequestState;
+  final String downloadTrustedResponseState;
+  final String inboundApplyState;
+  final String committedCursorProofState;
+  final String acknowledgementRequestState;
+  final String acknowledgementTrustedResponseState;
+  final String acknowledgementOutcome;
   final String safeAction;
   final bool retryable;
   final int? httpStatus;
@@ -944,17 +1028,79 @@ final class _CumulativeDiagnosticState {
   final String? submissionFingerprint;
 
   _CumulativeDiagnosticState merge(SyncDiagnosticPhaseEvidence evidence) {
-    final mergedMutation = _mergeLocalMutation(
-      localMutationState,
-      evidence.localMutationState,
+    final mergedUploadProvider = _mergePlaneOutcome(
+      uploadProviderOutcome,
+      evidence.uploadProviderOutcome,
+      commitValues: const {'committed'},
+      rejectValues: const {'rejected'},
     );
-    final mergedTransaction = _mergeProviderTransaction(
-      providerTransactionState,
-      evidence.providerTransactionState,
+    final mergedUploadLease = _mergePlaneOutcome(
+      uploadLeaseLocalState,
+      evidence.uploadLeaseLocalState,
+      commitValues: const {'committed'},
+      rejectValues: const {'failed'},
+    );
+    final mergedUploadResultPersistence = _mergePlaneOutcome(
+      uploadResultPersistenceState,
+      evidence.uploadResultPersistenceState,
+      commitValues: const {'committed'},
+      rejectValues: const {'failed'},
+      startedValue: 'started',
+    );
+    final mergedInboundApply = _mergePlaneOutcome(
+      inboundApplyState,
+      evidence.inboundApplyState,
+      commitValues: const {'committed'},
+      rejectValues: const {'rolled-back'},
+    );
+    final mergedAcknowledgementOutcome = _mergePlaneOutcome(
+      acknowledgementOutcome,
+      evidence.acknowledgementOutcome,
+      commitValues: const {'applied'},
+      rejectValues: const {'rejected'},
+    );
+    final mergedCursorProof = _mergeCursorProof(
+      committedCursorProofState,
+      evidence.committedCursorProofState,
+    );
+    final mergedAcknowledgementRequest = _mergeRequestState(
+      acknowledgementRequestState,
+      evidence.acknowledgementRequestState,
     );
     final invariant =
-        mergedMutation == 'diagnostic-invariant-conflict' ||
-        mergedTransaction == 'diagnostic-invariant-conflict';
+        mergedUploadProvider == 'diagnostic-invariant-conflict' ||
+        mergedUploadLease == 'diagnostic-invariant-conflict' ||
+        mergedUploadResultPersistence == 'diagnostic-invariant-conflict' ||
+        mergedInboundApply == 'diagnostic-invariant-conflict' ||
+        mergedAcknowledgementOutcome == 'diagnostic-invariant-conflict' ||
+        _isInvalidAcknowledgementStart(
+          inboundApply: mergedInboundApply,
+          cursorProof: mergedCursorProof,
+          acknowledgementRequest: mergedAcknowledgementRequest,
+        );
+    final mergedGenericMutation = _projectLegacyLocalMutation(
+      uploadLease: mergedUploadLease,
+      uploadResultPersistence: mergedUploadResultPersistence,
+      inboundApply: mergedInboundApply,
+    );
+    final mergedGenericTransaction = _projectLegacyProviderTransaction(
+      uploadProvider: mergedUploadProvider,
+      acknowledgementOutcome: mergedAcknowledgementOutcome,
+    );
+    final mergedGenericTrustedResponse = _projectLegacyTrustedResponse(
+      uploadTrustedResponse: _mergeTrustedResponse(
+        uploadTrustedResponseState,
+        evidence.uploadTrustedResponseState ?? 'not-received',
+      ),
+      downloadTrustedResponse: _mergeTrustedResponse(
+        downloadTrustedResponseState,
+        evidence.downloadTrustedResponseState ?? 'not-received',
+      ),
+      acknowledgementTrustedResponse: _mergeTrustedResponse(
+        acknowledgementTrustedResponseState,
+        evidence.acknowledgementTrustedResponseState ?? 'not-received',
+      ),
+    );
     return _CumulativeDiagnosticState(
       code: invariant ? 'MKS-OBS-001' : evidence.code,
       nativeCode: invariant
@@ -970,20 +1116,48 @@ final class _CumulativeDiagnosticState {
         lastProvedPhase,
         evidence.lastProvedPhase,
       ),
-      localMutationState: mergedMutation,
+      localMutationState: invariant
+          ? 'diagnostic-invariant-conflict'
+          : mergedGenericMutation,
       providerContactState: _mergeProviderContact(
         providerContactState,
         evidence.providerContactState,
       ),
-      providerTransactionState: mergedTransaction,
-      trustedResponseState: _mergeTrustedResponse(
-        trustedResponseState,
-        evidence.trustedResponseState,
-      ),
+      providerTransactionState: invariant
+          ? 'diagnostic-invariant-conflict'
+          : mergedGenericTransaction,
+      trustedResponseState: mergedGenericTrustedResponse,
       resultPersistenceState: _mergeResultPersistence(
         resultPersistenceState,
         evidence.resultPersistenceState,
       ),
+      uploadRequestState: _mergeRequestState(
+        uploadRequestState,
+        evidence.uploadRequestState,
+      ),
+      uploadTrustedResponseState: _mergeTrustedResponse(
+        uploadTrustedResponseState,
+        evidence.uploadTrustedResponseState ?? 'not-received',
+      ),
+      uploadProviderOutcome: mergedUploadProvider,
+      uploadLeaseLocalState: mergedUploadLease,
+      uploadResultPersistenceState: mergedUploadResultPersistence,
+      downloadRequestState: _mergeRequestState(
+        downloadRequestState,
+        evidence.downloadRequestState,
+      ),
+      downloadTrustedResponseState: _mergeTrustedResponse(
+        downloadTrustedResponseState,
+        evidence.downloadTrustedResponseState ?? 'not-received',
+      ),
+      inboundApplyState: mergedInboundApply,
+      committedCursorProofState: mergedCursorProof,
+      acknowledgementRequestState: mergedAcknowledgementRequest,
+      acknowledgementTrustedResponseState: _mergeTrustedResponse(
+        acknowledgementTrustedResponseState,
+        evidence.acknowledgementTrustedResponseState ?? 'not-received',
+      ),
+      acknowledgementOutcome: mergedAcknowledgementOutcome,
       safeAction: invariant
           ? 'preserve evidence and inspect diagnostics'
           : evidence.safeAction,
@@ -1021,6 +1195,18 @@ final class _CumulativeDiagnosticState {
     providerTransactionState: providerTransactionState,
     trustedResponseState: trustedResponseState,
     resultPersistenceState: resultPersistenceState,
+    uploadRequestState: uploadRequestState,
+    uploadTrustedResponseState: uploadTrustedResponseState,
+    uploadProviderOutcome: uploadProviderOutcome,
+    uploadLeaseLocalState: uploadLeaseLocalState,
+    uploadResultPersistenceState: uploadResultPersistenceState,
+    downloadRequestState: downloadRequestState,
+    downloadTrustedResponseState: downloadTrustedResponseState,
+    inboundApplyState: inboundApplyState,
+    committedCursorProofState: committedCursorProofState,
+    acknowledgementRequestState: acknowledgementRequestState,
+    acknowledgementTrustedResponseState: acknowledgementTrustedResponseState,
+    acknowledgementOutcome: acknowledgementOutcome,
     safeAction: safeAction,
     retryable: retryable,
     httpStatus: httpStatus,
@@ -1038,6 +1224,34 @@ final class _CumulativeDiagnosticState {
     nextDeviceSequence: nextDeviceSequence,
     submissionFingerprint: submissionFingerprint,
   );
+}
+
+Map<String, Object?> _planeLifecycleFields(
+  SyncDiagnosticPhaseEvidence? evidence,
+  bool persistenceDegraded,
+) {
+  final snapshot = evidence ?? _CumulativeDiagnosticState.initial().snapshot();
+  return {
+    'uploadRequestState': snapshot.uploadRequestState ?? 'not-started',
+    'uploadTrustedResponseState':
+        snapshot.uploadTrustedResponseState ?? 'not-received',
+    'uploadProviderOutcome': snapshot.uploadProviderOutcome ?? 'not-started',
+    'uploadLeaseLocalState': snapshot.uploadLeaseLocalState ?? 'not-started',
+    'uploadResultPersistenceState':
+        snapshot.uploadResultPersistenceState ?? 'not-started',
+    'downloadRequestState': snapshot.downloadRequestState ?? 'not-started',
+    'downloadTrustedResponseState':
+        snapshot.downloadTrustedResponseState ?? 'not-received',
+    'inboundApplyState': snapshot.inboundApplyState ?? 'not-started',
+    'committedCursorProofState':
+        snapshot.committedCursorProofState ?? 'unknown',
+    'acknowledgementRequestState':
+        snapshot.acknowledgementRequestState ?? 'not-started',
+    'acknowledgementTrustedResponseState':
+        snapshot.acknowledgementTrustedResponseState ?? 'not-received',
+    'acknowledgementOutcome': snapshot.acknowledgementOutcome ?? 'not-started',
+    'diagnosticPersistenceState': persistenceDegraded ? 'degraded' : 'durable',
+  };
 }
 
 String _mergeSeverity(String previous, String candidate) {
@@ -1068,21 +1282,110 @@ String _mergeTrustedResponse(String previous, String candidate) {
   return candidate;
 }
 
-String _mergeLocalMutation(String previous, String candidate) {
-  if (previous == 'diagnostic-invariant-conflict') return previous;
-  if (previous == 'committed' && candidate == 'rolled-back') {
-    return 'diagnostic-invariant-conflict';
-  }
-  if (previous == 'rolled-back' && candidate == 'committed') {
-    return 'diagnostic-invariant-conflict';
-  }
-  if (previous == 'committed' || previous == 'rolled-back') return previous;
-  if (candidate == 'committed' || candidate == 'rolled-back') return candidate;
-  if (candidate == 'see-causal-event' || candidate == 'see-causal-phase') {
+String _mergeRequestState(String previous, String? candidate) {
+  if (candidate == null ||
+      candidate == 'see-causal-event' ||
+      candidate == 'see-causal-phase') {
     return previous;
   }
-  if (previous != 'none' && previous != 'unknown') return previous;
+  if (previous == 'request-started' || previous == 'started') return previous;
+  if (candidate == 'request-started' || candidate == 'started') {
+    return candidate;
+  }
+  if (previous != 'not-started' && previous != 'unknown') return previous;
   return candidate;
+}
+
+String _mergePlaneOutcome(
+  String previous,
+  String? candidate, {
+  required Set<String> commitValues,
+  required Set<String> rejectValues,
+  String? startedValue,
+}) {
+  if (previous == 'diagnostic-invariant-conflict') return previous;
+  if (candidate == null ||
+      candidate == 'see-causal-event' ||
+      candidate == 'see-causal-phase') {
+    return previous;
+  }
+  final previousCommitted = commitValues.contains(previous);
+  final previousRejected = rejectValues.contains(previous);
+  final candidateCommitted = commitValues.contains(candidate);
+  final candidateRejected = rejectValues.contains(candidate);
+  if ((previousCommitted && candidateRejected) ||
+      (previousRejected && candidateCommitted)) {
+    return 'diagnostic-invariant-conflict';
+  }
+  if (previousCommitted || previousRejected) return previous;
+  if (candidateCommitted || candidateRejected) return candidate;
+  if (startedValue != null && candidate == startedValue) return candidate;
+  if (previous != 'not-started' && previous != 'unknown') return previous;
+  return candidate;
+}
+
+String _mergeCursorProof(String previous, String? candidate) {
+  if (candidate == null ||
+      candidate == 'see-causal-event' ||
+      candidate == 'see-causal-phase') {
+    return previous;
+  }
+  if (previous == 'available') return previous;
+  if (candidate == 'available') return candidate;
+  if (previous != 'unknown') return previous;
+  return candidate;
+}
+
+bool _isInvalidAcknowledgementStart({
+  required String inboundApply,
+  required String cursorProof,
+  required String acknowledgementRequest,
+}) {
+  if (acknowledgementRequest != 'request-started') return false;
+  return inboundApply != 'committed' || cursorProof != 'available';
+}
+
+String _projectLegacyLocalMutation({
+  required String uploadLease,
+  required String uploadResultPersistence,
+  required String inboundApply,
+}) {
+  if (inboundApply == 'committed') return 'committed';
+  if (inboundApply == 'rolled-back') return 'rolled-back';
+  if (uploadResultPersistence == 'committed' || uploadLease == 'committed') {
+    return 'committed';
+  }
+  if (uploadResultPersistence == 'failed' || uploadLease == 'failed') {
+    return 'failed';
+  }
+  return 'none';
+}
+
+String _projectLegacyProviderTransaction({
+  required String uploadProvider,
+  required String acknowledgementOutcome,
+}) {
+  if (acknowledgementOutcome == 'applied') return 'committed';
+  if (acknowledgementOutcome == 'rejected') return 'not-started-or-rolled-back';
+  if (uploadProvider == 'committed') return 'committed';
+  if (uploadProvider == 'rejected') return 'not-started-or-rolled-back';
+  if (uploadProvider == 'unknown' || acknowledgementOutcome == 'unknown') {
+    return 'unknown';
+  }
+  return 'not-started';
+}
+
+String _projectLegacyTrustedResponse({
+  required String uploadTrustedResponse,
+  required String downloadTrustedResponse,
+  required String acknowledgementTrustedResponse,
+}) {
+  if (acknowledgementTrustedResponse == 'received' ||
+      downloadTrustedResponse == 'received' ||
+      uploadTrustedResponse == 'received') {
+    return 'received';
+  }
+  return 'not-received';
 }
 
 String _mergeProviderContact(String previous, String candidate) {
@@ -1094,37 +1397,6 @@ String _mergeProviderContact(String previous, String candidate) {
   if (previous != 'not-started' && previous != 'unknown') return previous;
   return candidate;
 }
-
-String _mergeProviderTransaction(String previous, String candidate) {
-  if (previous == 'diagnostic-invariant-conflict') return previous;
-  if (_isAuthoritativeProviderCommit(previous) &&
-      _isAuthoritativeProviderRollback(candidate)) {
-    return 'diagnostic-invariant-conflict';
-  }
-  if (_isAuthoritativeProviderRollback(previous) &&
-      _isAuthoritativeProviderCommit(candidate)) {
-    return 'diagnostic-invariant-conflict';
-  }
-  if (_isAuthoritativeProviderCommit(previous) ||
-      _isAuthoritativeProviderRollback(previous)) {
-    return previous;
-  }
-  if (_isAuthoritativeProviderCommit(candidate) ||
-      _isAuthoritativeProviderRollback(candidate)) {
-    return candidate;
-  }
-  if (candidate == 'see-causal-event' || candidate == 'see-causal-phase') {
-    return previous;
-  }
-  if (previous != 'not-started' && previous != 'unknown') return previous;
-  return candidate;
-}
-
-bool _isAuthoritativeProviderCommit(String value) =>
-    value == 'committed' || value == 'proved-separately';
-
-bool _isAuthoritativeProviderRollback(String value) =>
-    value == 'rolled-back' || value == 'not-started-or-rolled-back';
 
 String _mergeResultPersistence(String previous, String candidate) {
   if (previous == 'diagnostics-persistence-degraded') return previous;

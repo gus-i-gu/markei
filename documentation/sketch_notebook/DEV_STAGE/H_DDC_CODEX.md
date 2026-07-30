@@ -1,91 +1,92 @@
-# H_DDC_CODEX - C10-GCM03-S10-R04
+# H_DDC_CODEX - C10-GCM03-S10-R05
 
 ## Evidence Boundary
 
-This report is Codex observational evidence for R04 materialization. It does not promote live Sync, close GCM03, or replace Main reconciliation.
+This report is Codex observational evidence for R05 materialization. It does not promote live Sync, close GCM03, or replace Main reconciliation.
 
-D was implementation authority. E limited evidence interpretation. F defined architecture.
+D was executable authority. E limited evidence interpretation. F defined architecture.
 
 ## Requirement-To-Test Mapping
 
-- Cumulative causal state retention:
+- No upload, committed inbound apply, acknowledgement success:
+  - `acknowledgement request preserves trusted download and committed apply`
+- No upload, committed inbound apply, acknowledgement transport exception:
+  - `acknowledgement exception keeps committed apply in runner fallback`
+- Successful upload/result persistence followed by inbound apply rollback:
+  - `upload commit plus inbound rollback keeps acknowledgement not-started`
+- Successful upload/result persistence followed by committed inbound apply and acknowledgement transport exception:
+  - `upload commit plus acknowledgement exception preserves every plane`
+- Upload unknown/rejected early stop:
+  - `upload rejection stops before download and acknowledgement`
+  - existing timeout/rejected runner tests.
+- Failed or unproved inbound apply keeps acknowledgement not-started:
+  - `upload commit plus inbound rollback keeps acknowledgement not-started`
+  - `diagnostic row failure preserves upload commit plus inbound rollback`
+  - existing unexpected apply rollback tests.
+- Diagnostic begin/row/completion failure across compound operations:
+  - `diagnostic degradation preserves compound upload apply acknowledgement`
+  - `diagnostic row failure preserves upload commit plus inbound rollback`
+- Terminal success and runner fallback preserve independent planes:
   - `acknowledgement request preserves trusted download and committed apply`
   - `acknowledgement exception keeps committed apply in runner fallback`
-  - `diagnostic row failure is degraded without changing commit truth`
-  - `diagnostic row failure while reporting rollback preserves rollback truth`
-  - `diagnostic completion failure is degraded after committed apply`
-- Diagnostic begin/row/completion containment:
-  - `diagnostic begin failure is degraded while Sync continues`
-  - `diagnostic row failure is degraded without changing commit truth`
-  - `diagnostic row failure while reporting rollback preserves rollback truth`
-  - `diagnostic completion failure is degraded after committed apply`
-- Acknowledgement ordering and eligibility:
-  - `acknowledgement request preserves trusted download and committed apply`
-  - `diagnostic row failure is degraded without changing commit truth`
-  - `unexpected apply exception rolls back and remains bounded`
-  - existing local sync duplicate/acknowledgement regression tests.
-- Product decision table:
-  - `ambiguous normalized-code resolver branch is bounded`
-  - `ambiguous exact-identity resolver branch is bounded`
-  - `production Product uniqueness makes ambiguity unreachable by rows`
-  - `established incoming UUID immutable mutation is bounded`
-  - existing same-code/different-identity and split-key conflict tests.
-  - existing exact-identity/different-code Product reuse tests.
-  - existing dependent Purchase Item remap tests.
-- Apply/replay completion:
-  - `unexpected apply exception rolls back and remains bounded`
-  - `exact-identity different-code replay unpoisons later progress`
-  - `mixed two-client replay converges without duplicate facts`
-  - existing idempotent duplicate-page tests.
-- Regression:
-  - focused catalogue/store/app suite
-  - local sync application suite
-  - two-device system harness
-  - v3 contract suite
+  - `upload commit plus acknowledgement exception preserves every plane`
+- Valid cross-plane outcomes avoid false invariant:
+  - `upload commit plus inbound rollback keeps acknowledgement not-started`
+  - `diagnostic row failure preserves upload commit plus inbound rollback`
+- Same-plane contradiction bounded:
+  - `same-plane contradiction is bounded by cumulative merge`
+- Sanitization:
+  - `ordinary Sync lifecycle lines are structured and redacted`
+  - `upload commit plus acknowledgement exception preserves every plane`
+  - changed-content sensitive scan.
+- R03/R04 regression:
+  - `remote_purchase_event_applier_test.dart`
+  - `local_sync_application_test.dart`
+  - `two_device_system_harness_test.dart`
+  - catalogue/Store/Product-selector focused suite
   - full Flutter suite.
 
-## Separate Evidence Planes
+## Independent Plane Assertions
 
-- Provider/trusted-response evidence:
-  - Tests assert `trustedResponseState=received` after a trusted download even when acknowledgement or diagnostics later fail.
-  - Tests assert diagnostic success/failure does not create trusted provider success.
-- Transaction evidence:
-  - Tests assert committed apply stays `localMutationState=committed`.
-  - Tests assert failed apply reports `localMutationState=rolled-back` and preserves unchanged facts.
-  - Contradictory authoritative transaction states are bounded as diagnostic invariant conflicts.
-- Diagnostic durability/degradation evidence:
-  - Begin failure, row write failure, and completion failure are separately exercised.
-  - Terminal lifecycle projection exposes `diagnostics-persistence-degraded`.
-  - Degradation does not change committed versus rolled-back apply truth.
-- Acknowledgement evidence:
-  - Acknowledgement starts only after committed contiguous cursor proof.
-  - Failed or unproved apply remains acknowledgement-ineligible.
-  - Diagnostic degradation after committed apply remains acknowledgement-eligible.
-  - A runner fallback acknowledgement exception preserves earlier trusted-response and local-commit proof.
-- Presentation evidence:
-  - Closure diagnostic repository and UI projection remain covered by existing focused and full Flutter tests.
+- Upload plane:
+  - Tests assert `uploadRequestState=started`, `uploadTrustedResponseState=received`, `uploadProviderOutcome=committed`, `uploadLeaseLocalState=committed`, and `uploadResultPersistenceState=committed`.
+  - Rejected upload asserts no download or acknowledgement proof.
+- Download and inbound apply plane:
+  - Tests assert `downloadRequestState=started`, `downloadTrustedResponseState=received`, `inboundApplyState=committed` or `rolled-back`, and `committedCursorProofState=available` or `unavailable`.
+- Acknowledgement plane:
+  - Success asserts `acknowledgementRequestState=request-started`, `acknowledgementTrustedResponseState=received`, and `acknowledgementOutcome=applied`.
+  - Transport exception asserts request started, trusted response not received, and outcome unknown.
+  - Failed/rolled-back apply asserts acknowledgement not-started.
+- Diagnostic plane:
+  - Begin, row, and completion failures assert `diagnosticPersistenceState=degraded` while core planes remain unchanged.
+- Terminal plane:
+  - Tests assert terminal result state, safe-action presence, latest proved phase, sanitized exception class where applicable, and forbidden downstream invocation counts.
 
-## Negative Assertions
+## Same-Plane Invariant And Cross-Plane Compatibility
 
-- No acknowledgement follows unexpected local apply failure.
-- Facts, inbox, and cursor remain unchanged on failed pages.
-- Replayed exact-identity/different-code event does not poison later cursor progress.
-- Mixed two-client replay converges without duplicate Product, Store, Purchase, Purchase Item, inbox, or cursor effects.
-- Diagnostic persistence failure does not manufacture provider success, acknowledgement success, or core Sync failure.
-- Product ambiguity direct tests use a test-only seam because production uniqueness keeps the ambiguous row shape unreachable.
+- Valid upload result persistence committed plus inbound apply rolled back remains a valid compound state and does not emit `diagnostic-causal-invariant-conflict`.
+- Upload provider committed plus acknowledgement unknown remains valid.
+- Inbound apply committed plus acknowledgement request-started/response-not-received remains valid.
+- Same inbound apply plane committed plus rolled-back is bounded as `diagnostic-causal-invariant-conflict`.
 
-## Sensitive-Content Evidence
+## Forbidden Downstream Calls
 
-- Diagnostic tests assert sanitized exception-class projection rather than exception messages, stacks, payloads, SQL, tokens, secrets, or full hashes.
-- Changed-content sensitive scan against the current diff reported no high-risk secret-pattern matches.
-- Diagnostic fields retain bounded categories and already-authorized fingerprints/counts/sequences only.
+- Upload rejection asserts downloads and acknowledgements remain zero.
+- Rolled-back inbound apply asserts acknowledgement count remains zero.
+- Acknowledgement transport exception asserts one acknowledgement attempt only and no automatic retry/recovery/query/second Sync.
+
+## Sanitization Assertions
+
+- Lifecycle tests reject payload/business fixtures, request hashes, raw cursor values, tokens, authorization text, exception messages, stacks, SQL, and unbounded diagnostic strings.
+- Changed-content sensitive scan reported no high-risk secret-pattern matches.
+- New plane fields contain bounded state vocabulary only.
 
 ## PRC-01 Ceiling
 
-Evidence strength is deterministic local source/test/build evidence plus packaging inspection. It is not live provider evidence and does not prove preserved-state Android/Windows sync behavior.
+Evidence strength is source inspection, deterministic runner/coordinator tests, regression tests, and packaging/build inspection. It proves R05 source truth-plane separation at automated scope only.
 
-The four disposable sync labs were skipped because `MARKEI_RUN_SYNC_LAB=1` was absent. They remain environment-gated and non-live in this R04 run.
+It does not prove preserved Android/Windows runtime state, installed-client behavior, hosted provider convergence, live acknowledgement, inter-device sync acceptance, GCM03 closure, or MVP Sync acceptance.
 
-## Gaps Or Partial Evidence
+## Partial, Skipped, Or Missing Direct Tests
 
-No required R04 test category is partial after this materialization. The only limit is evidence class: all proof is automated/local/build-time evidence, not Main promotion or human-assay evidence.
+No required R05 direct test is missing at automated scope. Four disposable hosted/provider labs were skipped because `MARKEI_RUN_SYNC_LAB=1` was absent and are not live evidence.

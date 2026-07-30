@@ -36,6 +36,7 @@ final class UploadPendingEvents {
           lastProvedPhase: 'upload-lease',
           outcome: failure.result.outcome.name,
           localMutationState: 'none',
+          uploadLeaseLocalState: 'failed',
           safeAction: 'preserve local queue and inspect diagnostics',
           retryable: failure.result.retryable,
         ),
@@ -51,6 +52,7 @@ final class UploadPendingEvents {
           phase: 'upload-lease',
           lastProvedPhase: 'upload-lease',
           outcome: 'applied',
+          uploadLeaseLocalState: 'not-started',
           safeAction: 'continue ordinary Sync',
         ),
       );
@@ -66,6 +68,7 @@ final class UploadPendingEvents {
         lastProvedPhase: 'upload-lease',
         outcome: 'unknown',
         localMutationState: 'committed',
+        uploadLeaseLocalState: 'committed',
         resultPersistenceState: 'not-started',
         safeAction: 'persist a trusted or unknown upload result',
       ),
@@ -80,6 +83,9 @@ final class UploadPendingEvents {
         lastProvedPhase: 'upload-transport',
         outcome: 'unknown',
         localMutationState: 'committed',
+        uploadRequestState: 'started',
+        uploadTrustedResponseState: 'not-received',
+        uploadProviderOutcome: 'unknown',
         providerContactState: 'request-started',
         trustedResponseState: 'not-received',
         resultPersistenceState: 'not-started',
@@ -114,6 +120,11 @@ final class UploadPendingEvents {
             : 'upload-provider',
         outcome: result.outcome.name,
         localMutationState: 'committed',
+        uploadRequestState: 'started',
+        uploadTrustedResponseState: result.outcome == SyncOutcome.unknown
+            ? 'not-received'
+            : 'received',
+        uploadProviderOutcome: _uploadProviderOutcomeForResult(result),
         providerContactState: 'request-started',
         providerTransactionState: result.outcome == SyncOutcome.unknown
             ? 'unknown'
@@ -140,6 +151,7 @@ final class UploadPendingEvents {
         lastProvedPhase: 'upload-result-persistence',
         outcome: 'unknown',
         localMutationState: 'committed',
+        uploadResultPersistenceState: 'started',
         providerContactState: 'request-started',
         resultPersistenceState: 'started',
         safeAction: 'persist provider result separately from provider outcome',
@@ -158,6 +170,7 @@ final class UploadPendingEvents {
           lastProvedPhase: 'upload-result-persistence',
           outcome: failure.result.outcome.name,
           localMutationState: 'failed',
+          uploadResultPersistenceState: 'failed',
           providerContactState: 'request-started',
           providerTransactionState: result.outcome == SyncOutcome.unknown
               ? 'unknown'
@@ -181,6 +194,7 @@ final class UploadPendingEvents {
         lastProvedPhase: 'upload-result-persistence',
         outcome: result.outcome.name,
         localMutationState: 'committed',
+        uploadResultPersistenceState: 'committed',
         providerContactState: 'request-started',
         providerTransactionState: result.outcome == SyncOutcome.unknown
             ? 'unknown'
@@ -227,6 +241,8 @@ final class DownloadAndApplyEvents {
         phase: 'download-transport',
         lastProvedPhase: 'download-transport',
         outcome: 'unknown',
+        downloadRequestState: 'started',
+        downloadTrustedResponseState: 'not-received',
         providerContactState: 'request-started',
         safeAction: 'await trusted download response',
       ),
@@ -246,6 +262,8 @@ final class DownloadAndApplyEvents {
         phase: 'download-provider',
         lastProvedPhase: 'download-provider',
         outcome: 'applied',
+        downloadRequestState: 'started',
+        downloadTrustedResponseState: 'received',
         providerContactState: 'request-started',
         trustedResponseState: 'received',
         providerTransactionState: 'not-applicable',
@@ -264,6 +282,12 @@ final class DownloadAndApplyEvents {
         lastProvedPhase: 'download-local-apply',
         outcome: result.outcome.name,
         localMutationState: _localMutationStateForDownloadResult(result),
+        downloadRequestState: 'started',
+        downloadTrustedResponseState: 'received',
+        inboundApplyState: _inboundApplyStateForDownloadResult(result),
+        committedCursorProofState: result.outcome == SyncOutcome.applied
+            ? 'available'
+            : 'unavailable',
         providerContactState: 'request-started',
         trustedResponseState: 'received',
         providerTransactionState: 'not-applicable',
@@ -298,6 +322,10 @@ final class AcknowledgeAppliedCursor {
           phase: 'acknowledgement',
           lastProvedPhase: 'acknowledgement',
           outcome: 'applied',
+          committedCursorProofState: 'unavailable',
+          acknowledgementRequestState: 'not-started',
+          acknowledgementTrustedResponseState: 'not-received',
+          acknowledgementOutcome: 'not-started',
           safeAction: 'finish ordinary Sync',
         ),
       );
@@ -311,6 +339,10 @@ final class AcknowledgeAppliedCursor {
         phase: 'acknowledgement',
         lastProvedPhase: 'acknowledgement',
         outcome: 'unknown',
+        committedCursorProofState: 'available',
+        acknowledgementRequestState: 'request-started',
+        acknowledgementTrustedResponseState: 'not-received',
+        acknowledgementOutcome: 'unknown',
         providerContactState: 'request-started',
         trustedResponseState: 'not-received',
         safeAction: 'await acknowledgement response',
@@ -331,6 +363,10 @@ final class AcknowledgeAppliedCursor {
         phase: 'acknowledgement',
         lastProvedPhase: 'acknowledgement',
         outcome: result.outcome.name,
+        acknowledgementRequestState: 'request-started',
+        acknowledgementTrustedResponseState:
+            result.outcome == SyncOutcome.unknown ? 'not-received' : 'received',
+        acknowledgementOutcome: _acknowledgementOutcomeForResult(result),
         providerContactState: 'request-started',
         providerTransactionState: result.outcome == SyncOutcome.unknown
             ? 'unknown'
@@ -388,6 +424,38 @@ String _localMutationStateForDownloadResult(SyncResult result) {
     return 'rolled-back';
   }
   return 'none';
+}
+
+String _inboundApplyStateForDownloadResult(SyncResult result) {
+  if (result.outcome == SyncOutcome.applied) {
+    return 'committed';
+  }
+  if (result.protocolCode == 'local-sqlite-apply-failed' ||
+      result.protocolCode == 'unexpected-local-apply-failed' ||
+      result.protocolCode == 'remote-payload-shape-invalid' ||
+      result.protocolCode == 'local-apply-invariant-failed' ||
+      result.code == SyncStatusCode.conflict) {
+    return 'rolled-back';
+  }
+  return 'unknown';
+}
+
+String _uploadProviderOutcomeForResult(SyncResult result) {
+  if (result.outcome == SyncOutcome.unknown) return 'unknown';
+  if (result.outcome == SyncOutcome.applied ||
+      result.outcome == SyncOutcome.duplicateEquivalent) {
+    return 'committed';
+  }
+  return 'rejected';
+}
+
+String _acknowledgementOutcomeForResult(SyncResult result) {
+  if (result.outcome == SyncOutcome.unknown) return 'unknown';
+  if (result.outcome == SyncOutcome.applied ||
+      result.outcome == SyncOutcome.duplicateEquivalent) {
+    return 'applied';
+  }
+  return 'rejected';
 }
 
 String _diagnosticCodeForAcknowledgementResult(SyncResult result) {

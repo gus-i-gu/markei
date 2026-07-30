@@ -65,6 +65,18 @@ final class SyncDiagnosticPhaseEvidence {
     this.providerTransactionState = 'not-started',
     this.trustedResponseState = 'not-received',
     this.resultPersistenceState = 'not-started',
+    this.uploadRequestState,
+    this.uploadTrustedResponseState,
+    this.uploadProviderOutcome,
+    this.uploadLeaseLocalState,
+    this.uploadResultPersistenceState,
+    this.downloadRequestState,
+    this.downloadTrustedResponseState,
+    this.inboundApplyState,
+    this.committedCursorProofState,
+    this.acknowledgementRequestState,
+    this.acknowledgementTrustedResponseState,
+    this.acknowledgementOutcome,
     this.retryable = false,
     this.httpStatus,
     this.responseHeadersReceived = false,
@@ -94,6 +106,18 @@ final class SyncDiagnosticPhaseEvidence {
   final String providerTransactionState;
   final String trustedResponseState;
   final String resultPersistenceState;
+  final String? uploadRequestState;
+  final String? uploadTrustedResponseState;
+  final String? uploadProviderOutcome;
+  final String? uploadLeaseLocalState;
+  final String? uploadResultPersistenceState;
+  final String? downloadRequestState;
+  final String? downloadTrustedResponseState;
+  final String? inboundApplyState;
+  final String? committedCursorProofState;
+  final String? acknowledgementRequestState;
+  final String? acknowledgementTrustedResponseState;
+  final String? acknowledgementOutcome;
   final String safeAction;
   final bool retryable;
   final int? httpStatus;

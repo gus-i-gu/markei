@@ -829,6 +829,21 @@ void main() {
       expect(terminalLifecycle['trustedResponseState'], 'received');
       expect(terminalLifecycle['localMutationState'], 'committed');
       expect(terminalLifecycle['lastProvedPhase'], 'download-local-apply');
+      expect(terminalLifecycle['uploadRequestState'], 'not-started');
+      expect(terminalLifecycle['downloadRequestState'], 'started');
+      expect(terminalLifecycle['downloadTrustedResponseState'], 'received');
+      expect(terminalLifecycle['inboundApplyState'], 'committed');
+      expect(terminalLifecycle['committedCursorProofState'], 'available');
+      expect(
+        terminalLifecycle['acknowledgementRequestState'],
+        'request-started',
+      );
+      expect(
+        terminalLifecycle['acknowledgementTrustedResponseState'],
+        'received',
+      );
+      expect(terminalLifecycle['acknowledgementOutcome'], 'applied');
+      expect(terminalLifecycle['diagnosticPersistenceState'], 'durable');
     },
   );
 
@@ -857,12 +872,237 @@ void main() {
       expect(terminalLifecycle['localMutationState'], 'committed');
       expect(terminalLifecycle['lastProvedPhase'], 'download-local-apply');
       expect(terminalLifecycle['resultPersistenceState'], 'committed');
+      expect(terminalLifecycle['uploadRequestState'], 'not-started');
+      expect(terminalLifecycle['downloadTrustedResponseState'], 'received');
+      expect(terminalLifecycle['inboundApplyState'], 'committed');
+      expect(
+        terminalLifecycle['acknowledgementRequestState'],
+        'request-started',
+      );
+      expect(
+        terminalLifecycle['acknowledgementTrustedResponseState'],
+        'not-received',
+      );
+      expect(terminalLifecycle['acknowledgementOutcome'], 'unknown');
       expect(
         query.diagnosticEvents.map((event) => event.sanitizedExceptionClass),
         contains('arbitraryacknowledgementfailure'),
       );
     },
   );
+
+  test(
+    'upload commit plus inbound rollback keeps acknowledgement not-started',
+    () async {
+      final query = _FakeDiagnosticsQuery();
+      final lines = <String>[];
+      final transport = _CountingTransport();
+      final runner = _runner(
+        query: query,
+        outbox: _UploadingOutbox(),
+        transport: transport,
+        applier: _FailingApplyApplier(),
+        lifecycleSink: lines.add,
+      );
+
+      final result = await runner.hostedSyncProbe();
+
+      expect(result.state, 'sync-failed');
+      expect(transport.uploads, 1);
+      expect(transport.downloads, 1);
+      expect(transport.acknowledgements, 0);
+      final terminalLifecycle = _operationTerminal(lines);
+      expect(terminalLifecycle['uploadRequestState'], 'started');
+      expect(terminalLifecycle['uploadTrustedResponseState'], 'received');
+      expect(terminalLifecycle['uploadProviderOutcome'], 'committed');
+      expect(terminalLifecycle['uploadLeaseLocalState'], 'committed');
+      expect(terminalLifecycle['uploadResultPersistenceState'], 'committed');
+      expect(terminalLifecycle['downloadRequestState'], 'started');
+      expect(terminalLifecycle['downloadTrustedResponseState'], 'received');
+      expect(terminalLifecycle['inboundApplyState'], 'rolled-back');
+      expect(terminalLifecycle['committedCursorProofState'], 'unavailable');
+      expect(terminalLifecycle['acknowledgementRequestState'], 'not-started');
+      expect(
+        terminalLifecycle['acknowledgementTrustedResponseState'],
+        'not-received',
+      );
+      expect(terminalLifecycle['acknowledgementOutcome'], 'not-started');
+      expect(
+        jsonEncode(
+          terminalLifecycle,
+        ).contains('diagnostic-causal-invariant-conflict'),
+        isFalse,
+      );
+    },
+  );
+
+  test(
+    'upload commit plus acknowledgement exception preserves every plane',
+    () async {
+      final query = _FakeDiagnosticsQuery();
+      final lines = <String>[];
+      final transport = _ThrowingCountingAcknowledgementTransport();
+      final runner = _runner(
+        query: query,
+        outbox: _UploadingOutbox(),
+        transport: transport,
+        applier: _CursorApplier(cursor: 'c10b:1'),
+        lifecycleSink: lines.add,
+      );
+
+      final result = await runner.hostedSyncProbe();
+
+      expect(result.state, 'sync-failed');
+      expect(transport.uploads, 1);
+      expect(transport.downloads, 1);
+      expect(transport.acknowledgements, 1);
+      final terminalLifecycle = _operationTerminal(lines);
+      expect(terminalLifecycle['uploadProviderOutcome'], 'committed');
+      expect(terminalLifecycle['uploadResultPersistenceState'], 'committed');
+      expect(terminalLifecycle['downloadTrustedResponseState'], 'received');
+      expect(terminalLifecycle['inboundApplyState'], 'committed');
+      expect(terminalLifecycle['committedCursorProofState'], 'available');
+      expect(
+        terminalLifecycle['acknowledgementRequestState'],
+        'request-started',
+      );
+      expect(
+        terminalLifecycle['acknowledgementTrustedResponseState'],
+        'not-received',
+      );
+      expect(terminalLifecycle['acknowledgementOutcome'], 'unknown');
+      expect(terminalLifecycle['safeNextActionCode'], isA<String>());
+      expect(
+        _jsonContainsForbiddenDiagnosticContent(terminalLifecycle),
+        isFalse,
+      );
+    },
+  );
+
+  test('upload rejection stops before download and acknowledgement', () async {
+    final query = _FakeDiagnosticsQuery();
+    final lines = <String>[];
+    final transport = _RejectingCountingTransport();
+    final runner = _runner(
+      query: query,
+      outbox: _UploadingOutbox(),
+      transport: transport,
+      applier: _CursorApplier(cursor: 'c10b:1'),
+      lifecycleSink: lines.add,
+    );
+
+    final result = await runner.hostedSyncProbe();
+
+    expect(result.state, 'sync-rejected');
+    expect(transport.uploads, 1);
+    expect(transport.downloads, 0);
+    expect(transport.acknowledgements, 0);
+    final terminalLifecycle = _operationTerminal(lines);
+    expect(terminalLifecycle['uploadRequestState'], 'started');
+    expect(terminalLifecycle['uploadProviderOutcome'], 'rejected');
+    expect(terminalLifecycle['downloadRequestState'], 'not-started');
+    expect(terminalLifecycle['inboundApplyState'], 'not-started');
+    expect(terminalLifecycle['acknowledgementRequestState'], 'not-started');
+  });
+
+  test(
+    'diagnostic degradation preserves compound upload apply acknowledgement',
+    () async {
+      for (final query in [
+        _FakeDiagnosticsQuery(throwBeginDiagnostic: true),
+        _FakeDiagnosticsQuery(throwDiagnosticEvents: true),
+        _FakeDiagnosticsQuery(throwCompleteSyncAttempt: true),
+      ]) {
+        final lines = <String>[];
+        final transport = _CountingTransport();
+        final runner = _runner(
+          query: query,
+          outbox: _UploadingOutbox(),
+          transport: transport,
+          applier: _CursorApplier(cursor: 'c10b:1'),
+          lifecycleSink: lines.add,
+        );
+
+        final result = await runner.hostedSyncProbe();
+
+        expect(result.state, 'sync-completed');
+        expect(transport.uploads, 1);
+        expect(transport.downloads, 1);
+        expect(transport.acknowledgements, 1);
+        final terminalLifecycle = _operationTerminal(lines);
+        expect(terminalLifecycle['diagnosticPersistenceState'], 'degraded');
+        expect(terminalLifecycle['uploadProviderOutcome'], 'committed');
+        expect(terminalLifecycle['uploadResultPersistenceState'], 'committed');
+        expect(terminalLifecycle['inboundApplyState'], 'committed');
+        expect(terminalLifecycle['committedCursorProofState'], 'available');
+        expect(terminalLifecycle['acknowledgementOutcome'], 'applied');
+      }
+    },
+  );
+
+  test(
+    'diagnostic row failure preserves upload commit plus inbound rollback',
+    () async {
+      final query = _FakeDiagnosticsQuery(throwDiagnosticEvents: true);
+      final lines = <String>[];
+      final transport = _CountingTransport();
+      final runner = _runner(
+        query: query,
+        outbox: _UploadingOutbox(),
+        transport: transport,
+        applier: _FailingApplyApplier(),
+        lifecycleSink: lines.add,
+      );
+
+      final result = await runner.hostedSyncProbe();
+
+      expect(result.state, 'sync-failed');
+      expect(transport.acknowledgements, 0);
+      final terminalLifecycle = _operationTerminal(lines);
+      expect(terminalLifecycle['diagnosticPersistenceState'], 'degraded');
+      expect(terminalLifecycle['uploadProviderOutcome'], 'committed');
+      expect(terminalLifecycle['uploadResultPersistenceState'], 'committed');
+      expect(terminalLifecycle['inboundApplyState'], 'rolled-back');
+      expect(terminalLifecycle['acknowledgementRequestState'], 'not-started');
+      expect(
+        jsonEncode(
+          terminalLifecycle,
+        ).contains('diagnostic-causal-invariant-conflict'),
+        isFalse,
+      );
+    },
+  );
+
+  test('same-plane contradiction is bounded by cumulative merge', () {
+    final snapshot =
+        NativeAuthClosureRunner.debugMergeDiagnosticEvidenceForTest([
+          const SyncDiagnosticPhaseEvidence(
+            code: 'MKS-DNL-001',
+            nativeCode: 'downloadReceived',
+            operationKind: 'ordinary-sync',
+            phase: 'download-local-apply',
+            lastProvedPhase: 'download-local-apply',
+            outcome: 'applied',
+            inboundApplyState: 'committed',
+            committedCursorProofState: 'available',
+            safeAction: 'continue ordinary Sync',
+          ),
+          const SyncDiagnosticPhaseEvidence(
+            code: 'MKS-DNL-001',
+            nativeCode: 'local-apply-rolled-back',
+            severity: 'ERROR',
+            operationKind: 'ordinary-sync',
+            phase: 'download-local-apply',
+            lastProvedPhase: 'download-local-apply',
+            outcome: 'unknown',
+            inboundApplyState: 'rolled-back',
+            safeAction: 'preserve local state and inspect diagnostics',
+          ),
+        ]);
+
+    expect(snapshot.nativeCode, 'diagnostic-causal-invariant-conflict');
+    expect(snapshot.inboundApplyState, 'diagnostic-invariant-conflict');
+  });
 
   test('diagnostic begin failure is degraded while Sync continues', () async {
     final query = _FakeDiagnosticsQuery(throwBeginDiagnostic: true);
@@ -1229,6 +1469,30 @@ NativeAuthClosureRunner _runner({
         hostedConnectionCheck ?? _FakeHostedConnectionCheck(),
     lifecycleSink: lifecycleSink,
   );
+}
+
+Map<String, Object?> _operationTerminal(List<String> lines) {
+  return lines
+      .map((line) => jsonDecode(line) as Map<String, Object?>)
+      .lastWhere((event) => event['declarationScope'] == 'client-operation');
+}
+
+bool _jsonContainsForbiddenDiagnosticContent(Map<String, Object?> event) {
+  final serialized = jsonEncode(event).toLowerCase();
+  return [
+    'fixture-token',
+    'authorization',
+    'event-fixture',
+    'request-hash',
+    'submission-fixture',
+    'install-fixture',
+    'request-fixture',
+    'stateerror',
+    'redacted',
+    'stack',
+    'sql',
+    'c10b:1',
+  ].any(serialized.contains);
 }
 
 final class _FakeDiagnosticsQuery
@@ -1700,6 +1964,15 @@ final class _ThrowingAcknowledgementTransport extends _NoopTransport {
   }
 }
 
+final class _ThrowingCountingAcknowledgementTransport
+    extends _CountingTransport {
+  @override
+  Future<SyncResult> acknowledge(String greatestContiguousCursor) {
+    acknowledgements++;
+    throw ArbitraryAcknowledgementFailure();
+  }
+}
+
 final class ArbitraryAcknowledgementFailure implements Exception {}
 
 class _NoopTransport implements SyncTransport {
@@ -1742,6 +2015,19 @@ final class _RejectingTransport extends _NoopTransport {
         retryable: false,
         protocolCode: 'service-unavailable',
       );
+}
+
+final class _RejectingCountingTransport extends _CountingTransport {
+  @override
+  Future<SyncResult> uploadSubmission(SyncUploadSubmission submission) async {
+    uploads++;
+    return const SyncResult(
+      code: SyncStatusCode.serviceUnavailable,
+      outcome: SyncOutcome.notApplied,
+      retryable: false,
+      protocolCode: 'service-unavailable',
+    );
+  }
 }
 
 final class _NoopApplier implements RemoteEventApplier {
