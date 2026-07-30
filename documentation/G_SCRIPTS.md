@@ -1015,12 +1015,16 @@ try {
     Set-Location -LiteralPath $RepositoryRoot
 
     function Resolve-MarkeiSqliteCli {
-        $PathCommand = Get-Command sqlite3.exe `
-            -CommandType Application `
-            -ErrorAction SilentlyContinue
-        if ($null -ne $PathCommand) {
+        $PathCommand = @(
+            Get-Command sqlite3.exe `
+                -CommandType Application `
+                -All `
+                -ErrorAction SilentlyContinue |
+                Select-Object -First 1
+        )
+        if ($PathCommand.Count -eq 1) {
             return [pscustomobject]@{
-                Source = $PathCommand.Source
+                Source = $PathCommand[0].Source
                 Discovery = "PATH"
             }
         }
@@ -1256,11 +1260,15 @@ try {
     Set-Location -LiteralPath $RepositoryRoot
 
     function Resolve-MarkeiSqliteCli {
-        $PathCommand = Get-Command sqlite3.exe `
-            -CommandType Application `
-            -ErrorAction SilentlyContinue
-        if ($null -ne $PathCommand) {
-            return $PathCommand.Source
+        $PathCommand = @(
+            Get-Command sqlite3.exe `
+                -CommandType Application `
+                -All `
+                -ErrorAction SilentlyContinue |
+                Select-Object -First 1
+        )
+        if ($PathCommand.Count -eq 1) {
+            return $PathCommand[0].Source
         }
 
         $Candidates = @()
@@ -1486,11 +1494,15 @@ try {
     Set-Location -LiteralPath $RepositoryRoot
 
     function Resolve-MarkeiSqliteCli {
-        $PathCommand = Get-Command sqlite3.exe `
-            -CommandType Application `
-            -ErrorAction SilentlyContinue
-        if ($null -ne $PathCommand) {
-            return $PathCommand.Source
+        $PathCommand = @(
+            Get-Command sqlite3.exe `
+                -CommandType Application `
+                -All `
+                -ErrorAction SilentlyContinue |
+                Select-Object -First 1
+        )
+        if ($PathCommand.Count -eq 1) {
+            return $PathCommand[0].Source
         }
 
         $Candidates = @()
@@ -2396,11 +2408,15 @@ try {
     Set-Location -LiteralPath $RepositoryRoot
 
     function Resolve-MarkeiSqliteCli {
-        $PathCommand = Get-Command sqlite3.exe `
-            -CommandType Application `
-            -ErrorAction SilentlyContinue
-        if ($null -ne $PathCommand) {
-            return $PathCommand.Source
+        $PathCommand = @(
+            Get-Command sqlite3.exe `
+                -CommandType Application `
+                -All `
+                -ErrorAction SilentlyContinue |
+                Select-Object -First 1
+        )
+        if ($PathCommand.Count -eq 1) {
+            return $PathCommand[0].Source
         }
 
         $Candidates = @()
@@ -2811,11 +2827,15 @@ try {
     Set-Location -LiteralPath $RepositoryRoot
 
     function Resolve-MarkeiSqliteCli {
-        $PathCommand = Get-Command sqlite3.exe `
-            -CommandType Application `
-            -ErrorAction SilentlyContinue
-        if ($null -ne $PathCommand) {
-            return $PathCommand.Source
+        $PathCommand = @(
+            Get-Command sqlite3.exe `
+                -CommandType Application `
+                -All `
+                -ErrorAction SilentlyContinue |
+                Select-Object -First 1
+        )
+        if ($PathCommand.Count -eq 1) {
+            return $PathCommand[0].Source
         }
 
         $Candidates = @()
