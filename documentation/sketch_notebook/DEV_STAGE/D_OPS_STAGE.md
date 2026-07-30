@@ -1,260 +1,124 @@
-# D_OPS_STAGE — C10-GCM03-S09-R06 shared source identity
+# D_OPS_STAGE — C10-GCM03-S09-R06-CR01 Windows cleanup hardening
 
 ## Active authority
 
-Authority state: ACTIVE — CODEX IMPLEMENTATION AUTHORIZED AFTER PUBLICATION
+Authority state: ACTIVE — CODEX CORRECTIVE IMPLEMENTATION AUTHORIZED AFTER PUBLICATION
 
 Sequence: FLX-ORD-01
 
-Primary unit: C10-GCM03-S09-R06
+Primary unit: C10-GCM03-S09-R06-CR01
 
-Repository: `gus-i-gu/markei`
+Repository: gus-i-gu/markei
 
-Existing branch: `grm-guarded-provisioning-20260727`
+Existing branch: grm-guarded-provisioning-20260727
 
-Required pre-stage head: `c321675325cc4d7358b96c1e125f2aa2c5e84e7f`
+Required pre-stage head: e5168f6d2063b359ba773c107b73420bb29d43e8
 
-Required Codex starting head: the published R06 D/E/F staging commit, pinned by
-Main in the seeding prompt.
+Required Codex starting head: the published CR01 D/E/F staging commit pinned by Main in the seeding prompt.
 
-D controls executable scope and terminals. E constrains evidence meaning. F
-controls architecture and responsibility. J, REC_DIAGNOSTICS.md, installed
-clients, preserved SQLite databases, diagnostic history, Render, Neon, Auth0,
-and provider state are read-only and out of scope.
+D controls executable scope and terminals. E constrains evidence meaning. F controls architecture and responsibility. R06 source implementation remains accepted. A/B/C support reports, J, R07/UI design, installed clients, preserved SQLite databases, diagnostic history, Render, Neon, Auth0, and provider state are read-only and out of scope.
 
-## 1. Objective
+## 1. Incident classification
 
-Complete the existing shared Flutter provenance design so Android and Windows
-derive, embed, initialize, and display the same source identity:
+The preserved-client Windows procedure stopped before compilation:
 
-1. exact Git source revision;
-2. deterministic SHA-256 source-tree fingerprint;
-3. one platform-neutral Dart identity object initialized at application boot;
-4. one always-visible Closure presentation on either platform;
-5. separate external artifact SHA-256 values for the APK and Windows
-   executable.
+~~~text
+flutter clean could not remove .dart_tool completely
+→ the procedure continued
+→ flutter pub get encountered the existing auth0_flutter plugin symlink
+→ PathExistsException / errno 183
+→ Windows build was not reached
+~~~
 
-This is an evidence-chain correction. It must not change Sync behavior.
+This evidence does not establish a CMake, cpprestsdk, dependency, Auth0-coordinate, R06 source-identity, application, or Sync failure. The missing Chrome installation is irrelevant to the Windows desktop target.
 
-The 12-character source revision remains a display abbreviation only. The
-identity model must retain the exact full revision. The source-tree SHA-256 is
-the common cross-platform value. APK and Windows executable SHA-256 values are
-expected to differ and must not be compared as if they were source identity.
+The defect is procedural: GS-FLUTTER-WIN checks the flutter clean exit code and removes windows/flutter/ephemeral, but it does not prove that all cleanup postconditions required by pub get are satisfied before continuing.
 
-## 2. Accepted entry state
+## 2. Objective
 
-The branch already contains:
+Harden only GS-FLUTTER-WIN so generated Flutter state is handled deterministically and the procedure fails closed on incomplete cleanup or a relevant active-process/lock condition.
 
-- `clients/markei_flutter/lib/app/build_provenance.dart`;
-- a platform-neutral `BuildProvenance.current` based on
-  `MARKEI_BUILD_PROVENANCE`;
-- Closure rendering through
-  `clients/markei_flutter/lib/app/pages/native_closure_page.dart`;
-- safe 7–12 lowercase-hex validation;
-- Android `GS-FLUTTER-AND` derivation and injection of a short Git HEAD;
-- Android artifact path, size, SHA-256, data-preserving installation, and
-  visible-provenance instruction.
+The correction must preserve the complete R06 identity/build chain and must not broaden into R07, UI restructuring, Sync behavior, dependency changes, or preserved-state operations.
 
-The remaining defect is bounded:
+## 3. Required procedure behavior
 
-- Windows Release and Debug procedures do not inject provenance;
-- no shared source-tree SHA-256 exists;
-- the identity is resolved lazily by Closure rather than explicitly at app
-  boot;
-- Android and Windows cannot present one identical source identity packet;
-- Windows Release does not report its executable size and SHA-256.
+Modify the canonical GS-FLUTTER-WIN PowerShell block in documentation/G_SCRIPTS.md.
 
-R02–R05 are accepted as the corrective Sync baseline. Do not reopen them.
+Before cleanup:
 
-## 3. Required source identity contract
+1. Inspect for an active Markei executable and relevant Flutter/Dart build or run processes that can own or recreate the target generated paths.
+2. Do not terminate any process automatically.
+3. If a relevant owner is present or ownership cannot be bounded safely, stop with concise instructions to close Markei, active Flutter run/build terminals, and relevant VS Code debug/build activity, then rerun.
+4. Do not treat unrelated Chrome availability as a Windows-build prerequisite.
 
-Implement one immutable platform-neutral Dart value, by extending or replacing
-the existing `BuildProvenance` class without creating competing truth.
+Cleanup and verification:
 
-It must expose:
+1. Run flutter clean and require a successful exit code.
+2. Independently verify cleanup postconditions; do not trust the exit code alone.
+3. The verified target set must cover the generated state implicated in this incident, including .dart_tool and windows/flutter/ephemeral, plus any additional exact Flutter-generated path that the existing procedure already relies on being absent.
+4. If a safe generated target remains and no relevant owner is active, remove only that exact generated target with literal-path handling.
+5. Verify every targeted path is absent after removal.
+6. If removal fails, a target reappears, or ownership is ambiguous, stop before flutter pub get and identify the bounded path without printing secrets or broad environment data.
+7. Never delete source, pubspec.yaml, pubspec.lock, application data, SQLite files, Auth0 configuration, user documents, or a directory outside clients/markei_flutter.
+8. Do not use a broad wildcard, repository-root recursive deletion, forceful process termination, reboot, dependency upgrade, cache-wide purge, or package repair as a substitute.
 
-```text
-full source revision: exactly 40 lowercase hexadecimal characters
-display revision: first 12 characters of the validated full revision
-source-tree SHA-256: exactly 64 lowercase hexadecimal characters
-availability/validity state
-safe Closure labels
-```
+Dependency regeneration:
 
-Use compile-time Flutter definitions with stable names. Preferred names:
+1. Run flutter pub get only after cleanup postconditions pass.
+2. Require a successful exit code.
+3. Verify package configuration exists and the Windows generated plugin state was recreated coherently.
+4. Verify the auth0_flutter plugin entry resolves as one coherent generated link/directory rather than accepting a stale collision.
+5. Stop before analyze/build if regeneration is incomplete or ambiguous.
 
-```text
-MARKEI_SOURCE_REVISION
-MARKEI_SOURCE_TREE_SHA256
-```
+Continuation:
 
-`MARKEI_BUILD_PROVENANCE` may remain temporarily as a backwards-compatible
-input only if one canonical identity result is produced. New builds must use
-the full revision input and must not depend only on a caller-supplied short
-string.
+After regeneration passes, preserve the existing order and behavior for:
 
-Invalid, partial, uppercase, path-like, secret-like, or malformed inputs must
-produce an unavailable/invalid identity without echoing the unsafe raw value.
+- flutter analyze;
+- flutter test;
+- Windows Release build with the common R06 identity definitions;
+- exact executable existence, byte size, and SHA-256;
+- Auth0 callback registration for that exact executable;
+- launch of that exact executable;
+- visible source revision and source-tree SHA-256 instructions.
 
-## 4. Deterministic source-tree SHA-256
+Launching the rebuilt application remains part of the operator procedure but Codex must not launch or install against the user's preserved client while implementing CR01.
 
-Define and document one deterministic algorithm shared by every Markei Flutter
-build procedure:
+## 4. Writable scope
 
-```text
-head = git rev-parse HEAD
-tree = git rev-parse HEAD^{tree}
-material = UTF8("markei-source-tree-v1\n" + tree + "\n")
-sourceTreeSha256 = SHA256(material), lowercase hexadecimal
-```
+Implementation:
 
-The Git tree object identifies the complete committed source tree. The
-domain-separated SHA-256 makes the displayed digest stable for the same HEAD
-tree on Android and Windows without hashing platform artifacts.
-
-Both procedures must use the same helper or one single owned implementation of
-this algorithm. Do not duplicate slightly different algorithms in the Android
-and Windows blocks.
-
-Require a clean relevant worktree before deriving identity. If the tree or
-revision cannot be resolved and validated, fail before build.
-
-## 5. Boot and Closure integration
-
-Resolve the immutable current identity once in `main()` after Flutter binding
-initialization and before application composition/run.
-
-Pass that exact value through the shared Flutter application boundary to the
-Closure page. Constructor defaults may remain for isolated tests, but
-production boot must not rely on Closure's first navigation to initialize
-identity.
-
-Closure must always show, when the Closure surface is enabled:
-
-```text
-Source revision #<12 lowercase hex>
-Source tree SHA-256 <64 lowercase hex>
-```
-
-If either required source field is invalid or missing, show one bounded
-unavailable/invalid state and do not display partial identity as complete.
-
-No platform branching, `Platform.isAndroid`, `Platform.isWindows`, method
-channel, filesystem read, network call, provider query, or database read is
-allowed in the Dart identity model.
-
-## 6. Build-procedure integration
-
-Update the canonical procedure source in:
-
-```text
+~~~text
 documentation/G_SCRIPTS.md
-```
+~~~
 
-The existing extractor remains authoritative:
-
-```text
-documentation/I_SCRIPTS.ps1
-```
-
-Do not hand-edit generated/extracted procedure copies.
-
-### Android
-
-`GS-FLUTTER-AND` must:
-
-- derive the common identity using the shared helper;
-- inject the full revision and source-tree SHA-256;
-- preserve current Flutter SDK/package resolution guards;
-- preserve data-preserving installation;
-- preserve the APK artifact path, size, and SHA-256 report;
-- require the two visible source identity fields after launch.
-
-### Windows Release
-
-`GS-FLUTTER-WIN` must:
-
-- derive and inject the same common identity;
-- build the Release artifact from that identity;
-- report exact executable path, byte size, and artifact SHA-256;
-- register and launch that exact executable;
-- require the two visible source identity fields after launch.
-
-### Windows Debug
-
-`GS-FLUTTER-DBW` must put the same common identity into its ignored
-`--dart-define-from-file` configuration and retain the Release/Debug callback
-and Release-hash preservation guards.
-
-Every identity-bearing ignored local file must remain ignored and contain only
-public source identity plus already-reviewed public coordinates. Never include
-tokens, subjects, Account/Device IDs, connection strings, secrets, or local
-paths.
-
-## 7. Writable scope
-
-Production:
-
-```text
-clients/markei_flutter/lib/main.dart
-clients/markei_flutter/lib/app/build_provenance.dart
-clients/markei_flutter/lib/app/markei_app.dart
-clients/markei_flutter/lib/app/pages/native_closure_page.dart
-```
-
-One shared source-identity helper may be added under:
-
-```text
-clients/markei_flutter/tool/
-```
-
-only if it is consumed by Android and Windows procedure paths and has a direct
-determinism test or self-check.
-
-Procedures:
-
-```text
-documentation/G_SCRIPTS.md
-```
-
-Focused tests:
-
-```text
-clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
-clients/markei_flutter/test/app/native_closure_surface_test.dart
-clients/markei_flutter/test/app/markei_app_test.dart
-```
-
-Only tests directly affected by the constructor/identity contract may change.
+Existing focused procedure-test files may change only if a directly relevant test surface already exists and can validate extraction or static fail-closed invariants without creating a new framework. Otherwise validate through extraction and bounded source inspection.
 
 Reports to replace:
 
-```text
+~~~text
 documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
 documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
 documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-```
+~~~
 
 A required path outside this list is a stop condition.
 
-## 8. Prohibited scope
+documentation/I_SCRIPTS.ps1 remains the authoritative extractor/dispatcher and must not change unless Codex proves that the correction cannot be extracted correctly without a dispatcher defect. If such a defect is found, stop and report it rather than expanding scope.
+
+## 5. Prohibited scope
 
 Do not modify:
 
-- Sync coordinator, use cases, ports, recorder, Product resolver, applier, or
-  repository logic;
-- database schema, migrations, SQLite files, generated Drift code, fixtures,
-  or preserved app data;
-- hosted API, protocol v3, Render, Neon, Auth0, enrollment, Account/Device
-  binding, or provider configuration;
-- dependencies or `pubspec.lock`;
-- J, REC_DIAGNOSTICS.md, permanent memory, methodology, NS coordinates, GRM
-  interface names, or unrelated scripts;
-- application behavior beyond build identity transport/presentation.
+- Flutter/Dart application source or tests unrelated to an existing procedure-test surface;
+- dependencies, pubspec.yaml, pubspec.lock, native plugin configuration, CMake, vcpkg, or cpprestsdk;
+- GS-FLUTTER-AND, GS-FLUTTER-DBW, GS-FLUTTER-DBA, or another procedure except a shared local helper already inside the GS-FLUTTER-WIN block;
+- Sync coordinator, Product resolver, applier, cursor, acknowledgement, diagnostics, Audit, Settings, database, API, hosted provider, authentication, or enrollment behavior;
+- A/B/C, J, REC_DIAGNOSTICS.md, permanent memory, methodology, GRM, NS coordinates, or R07/UI staging.
 
 Do not run:
 
-```text
+~~~text
 Sync
 Retry
 Recovery
@@ -263,71 +127,64 @@ Enroll
 new Purchase
 provider mutation
 database repair/reset/clear
-installation against the user's preserved clients
-```
+installation or launch against preserved clients
+automatic process termination
+~~~
 
-Codex may build local disposable artifacts. It must not install or launch them
-against the user's preserved Windows or Android state.
+## 6. Focused validation
 
-## 9. Focused validation
+Run the smallest sufficient CR01 suite:
 
-Run only the smallest sufficient R06 suite:
+1. extract GS-FLUTTER-WIN through the existing documented extractor path;
+2. PowerShell parse/syntax validation of the extracted block;
+3. static inspection proving process handling never terminates automatically;
+4. static inspection proving flutter pub get is unreachable until verified cleanup postconditions pass;
+5. static inspection proving cleanup targets are exact, generated, and contained by the Flutter client root;
+6. static inspection proving the existing R06 identity definitions, artifact hashing, callback registration, and exact-executable launch remain present;
+7. if safely reproducible on a disposable Codex checkout, exercise the clean-state path without any preserved client, login, installation, launch, or live operation;
+8. git diff --check and exact changed-path inspection.
 
-1. format changed Dart files;
-2. `flutter analyze`;
-3. focused identity/parser and Closure widget tests;
-4. focused MarkeiApp boot-to-Closure propagation test;
-5. deterministic helper self-check: two resolutions of the same clean HEAD
-   yield the same revision/tree digest;
-6. source inspection proving Android, Windows Release, and Windows Debug consume
-   the same identity algorithm and define names;
-7. Windows Release build with explicit R06 identity definitions when the host
-   supports it;
-8. Android Debug APK build with the same definitions when the host supports it;
-9. artifact path/size/SHA-256 inspection for every built platform;
-10. `git diff --check` and changed-path inspection.
+Do not rerun the full Flutter suite, Android build, provider, SQLite, Render, Neon, Auth0, GRIMOIRE, or preserved-state suite. Do not manufacture the user's lock incident by interfering with preserved processes.
 
-Do not rerun the complete GRIMOIRE, SQLite, Neon, Render, Auth0, provider, full
-Flutter regression, hosted lab, or preserved-state suite. A host-unavailable
-platform build must be reported as host-unvalidated, not silently inferred.
+## 7. Required reports and terminals
 
-## 10. Required terminals
+G must record the incident-to-correction mapping, exact changed paths, validation commands/results, skipped actions, and residual human checkpoint.
 
-G/H/I must state:
+H must preserve the evidence ceilings from E.
 
-```text
-C10_GCM03_S09_R06=IMPLEMENTED_VALIDATED | PARTIAL | BLOCKED
-COMMON_BOOT_IDENTITY=PASS | FAIL
-FULL_SOURCE_REVISION_VALIDATION=PASS | FAIL
-COMMON_SOURCE_TREE_SHA256=PASS | FAIL
-ANDROID_IDENTITY_INJECTION=PASS | FAIL
-WINDOWS_RELEASE_IDENTITY_INJECTION=PASS | FAIL
-WINDOWS_DEBUG_IDENTITY_INJECTION=PASS | FAIL
-CLOSURE_COMMON_PRESENTATION=PASS | FAIL
-WINDOWS_ARTIFACT_SHA256_REPORT=PASS | FAIL
-ANDROID_ARTIFACT_SHA256_REPORT=PASS | FAIL
+I must confirm the architecture boundaries from F.
+
+All three reports must state:
+
+~~~text
+C10_GCM03_S09_R06_CR01=IMPLEMENTED_VALIDATED | PARTIAL | BLOCKED
+WINDOWS_GENERATED_STATE_PREFLIGHT=PASS | FAIL
+CLEANUP_POSTCONDITION_VERIFICATION=PASS | FAIL
+AUTOMATIC_PROCESS_TERMINATION=NO
+PUB_GET_GATED_BY_VERIFIED_CLEANUP=PASS | FAIL
+PLUGIN_REGENERATION_VERIFICATION=PASS | FAIL
+R06_IDENTITY_CHAIN_PRESERVED=PASS | FAIL
+WINDOWS_BUILD_PROCEDURE_READY_FOR_HUMAN_RERUN=YES | NO
+WINDOWS_BUILD_REACHED_BY_CODEX=YES | NO
 SYNC_SOURCE_CHANGED=NO
 PRESERVED_CLIENT_STATE_TOUCHED=NO
 LIVE_SYNC_EXECUTED=NO
 PROVIDER_MUTATION=NONE
-NEXT_HUMAN_CHECK=TWO_PLATFORM_VISIBLE_IDENTITY_ONLY
-```
+R07_IMPLEMENTATION=HELD
+NEXT_HUMAN_CHECK=RERUN_GS_FLUTTER_WIN_ONLY
+~~~
 
-## 11. Publication
+If Codex cannot validate a safe bounded cleanup contract, classify CR01 as BLOCKED and do not improvise broad deletion or process control.
 
-If implementation and required validation succeed:
+## 8. Publication
+
+If implementation and focused validation succeed:
 
 1. replace G/H/I;
 2. confirm every changed path is authorized;
-3. create one intentional implementation commit whose direct parent is this
-   published R06 staging commit;
-4. push by non-forced fast-forward to
-   `grm-guarded-provisioning-20260727`;
-5. do not create a branch or PR;
+3. create one intentional CR01 implementation commit whose direct parent is this published staging commit;
+4. push by non-forced fast-forward to grm-guarded-provisioning-20260727;
+5. do not create a branch or pull request;
 6. verify the remote branch equals the implementation commit.
 
-R06 does not prove Sync. After Main reconciles R06, the only next human evidence
-is the focused two-platform visible-identity comparison. If both clients show
-the same source revision and source-tree SHA-256 while preserving their
-existing state, freeze source and proceed to the separately authorized
-serialized Sync check without another broad preparation loop.
+CR01 does not authorize Sync. After Main reconciles the correction, the next human action is to rerun only the corrected GS-FLUTTER-WIN procedure. Android provenance verification and the serialized Sync assay remain held until the Windows build and visible identity checkpoint pass.

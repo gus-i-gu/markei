@@ -1,4 +1,4 @@
-# F_DSN_STAGE — Architecture for C10-GCM03-S09-R06
+# F_DSN_STAGE — Architecture for C10-GCM03-S09-R06-CR01
 
 ## Envelope
 
@@ -6,217 +6,204 @@ Sequence: FLX-ORD-01
 
 Role: Main architecture constraint
 
-Round or unit: C10-GCM03-S09-R06
+Round or unit: C10-GCM03-S09-R06-CR01
 
-Branch: `grm-guarded-provisioning-20260727`
+Branch: grm-guarded-provisioning-20260727
 
-Baseline / inspected HEAD: `c321675325cc4d7358b96c1e125f2aa2c5e84e7f`
+Baseline / inspected HEAD: e5168f6d2063b359ba773c107b73420bb29d43e8
 
 Authority: D controls execution; E controls evidence; F controls ownership.
 
 ## 1. Architectural objective
 
-Create one source identity chain:
+Add one bounded fail-closed preparation gate to the existing Windows build procedure:
 
-```text
-clean Git HEAD and tree
-  -> shared deterministic identity resolver
-  -> compile-time Flutter definitions
-  -> one immutable shared Dart identity
-  -> boot initialization
-  -> one Closure presentation
-```
+~~~text
+operator-owned process state
+→ relevant-owner preflight
+→ Flutter cleanup request
+→ independent generated-state postcondition
+→ bounded exact-path cleanup when safe
+→ second absence proof
+→ dependency/plugin regeneration
+→ regeneration coherence proof
+→ existing R06 validation/build/identity chain
+~~~
 
-Android and Windows are consumers of this chain. They do not own independent
-provenance semantics.
+This is procedure architecture. It does not change application architecture or Sync architecture.
 
-## 2. Responsibility map
+## 2. Root responsibility
+
+The defect belongs to GS-FLUTTER-WIN orchestration because the procedure advanced from cleanup into pub get without proving the filesystem state required by pub get.
+
+Flutter remains responsible for ordinary cleanup and package/plugin generation. CR01 does not replace Flutter's generator. It wraps the transition with explicit preconditions and postconditions.
+
+The auth0_flutter symlink is an observed collision location, not an architectural root cause assigned to Auth0 or the plugin dependency.
+
+## 3. Responsibility map
 
 | Responsibility | Owner | Constraint |
 |---|---|---|
-| Git revision/tree resolution | shared build identity helper | no platform-specific algorithm |
-| Source-tree SHA-256 derivation | shared build identity helper | domain-separated deterministic input |
-| Public build-definition transport | canonical GS Flutter procedures | same names and values |
-| Identity validation/sanitization | shared Dart identity value | no external I/O |
-| Boot initialization | `main.dart` | exactly once before `runApp` |
-| Application transport | MarkeiApp/shared composition boundary | immutable value |
-| Closure display | NativeClosurePage | presentation only |
-| APK artifact SHA-256 | Android build procedure | external artifact record |
-| Windows executable SHA-256 | Windows build procedure | external artifact record |
-| Sync/domain/runtime truth | existing R02–R05 owners | frozen |
+| Operator closes active app/build/debug activity | human operator | procedure gives bounded guidance |
+| Relevant owner/process inspection | GS-FLUTTER-WIN | observe and stop; never terminate |
+| Ordinary generated-state cleanup | flutter clean | exit code is necessary, not sufficient |
+| Cleanup postcondition verification | GS-FLUTTER-WIN | exact enumerated generated targets |
+| Safe residual generated-target removal | GS-FLUTTER-WIN | literal paths, contained client root, no active owner |
+| Package/plugin regeneration | flutter pub get | only after cleanup gate passes |
+| Regeneration coherence verification | GS-FLUTTER-WIN | package config plus Windows plugin state |
+| R06 source identity resolution | existing shared helper | unchanged |
+| Analysis/tests/build | existing Flutter commands | unchanged after gate |
+| Artifact identity | existing GS-FLUTTER-WIN tail | unchanged |
+| Callback registration and launch | existing GS-FLUTTER-WIN tail | exact built executable |
+| Preserved data and live actions | installed application/human authority | untouched by Codex |
+| Sync and diagnostics | existing R02–R05 owners | frozen |
+| R07 Settings/Audit design | later Main-approved unit | held |
 
-## 3. Identity model
+## 4. State machine
 
-Conceptually:
+Required preparation states:
 
-```text
-BuildIdentity
-  fullRevision
-  displayRevision
-  sourceTreeSha256
-  status
-  safe labels
-```
+~~~text
+preflight-pending
+→ blocked-active-owner
+or
+→ cleanup-requested
+→ blocked-clean-command
+or
+→ cleanup-postcondition-check
+→ bounded-residual-removal
+→ blocked-residual-or-reappeared
+or
+→ clean-state-proved
+→ pub-get-running
+→ blocked-pub-get
+or
+→ regeneration-check
+→ blocked-regeneration-incoherent
+or
+→ windows-build-preparation-ready
+~~~
 
-The class name may remain `BuildProvenance` to minimize churn. There must be one
-canonical instance and one validation rule.
+No transition may skip from cleanup-requested directly to pub-get-running. The clean-state-proved transition requires filesystem evidence independent of flutter clean's exit code.
 
-The full revision and source-tree digest are atomic as a presentation packet.
-If one is invalid, the packet is unavailable. Do not present a valid-looking
-digest paired with an unavailable revision or vice versa.
+## 5. Containment invariant
 
-## 4. Why the source digest is common
+Every removable path must satisfy all of:
 
-Platform artifacts cannot share a SHA-256:
+~~~text
+TARGET_IS_EXPLICITLY_ENUMERATED
+TARGET_IS_FLUTTER_GENERATED
+TARGET_RESOLVES_UNDER_CLIENT_ROOT
+TARGET_IS_NOT_CLIENT_ROOT
+TARGET_IS_NOT_REPOSITORY_ROOT
+NO_RELEVANT_OWNER_IS_ACTIVE
+REMOVAL_RESULT_IS_VERIFIED
+~~~
 
-```text
-same Flutter source
-  -> Android toolchain -> APK bytes -> Android artifact SHA-256
-  -> Windows toolchain -> EXE/native bundle bytes -> Windows artifact SHA-256
-```
+A failed invariant stops the procedure. It must never be converted into a wildcard, broad recursive deletion, cache-wide purge, or process kill.
 
-The common digest therefore belongs before platform compilation:
+The Flutter client root, repository root, source directories, pubspec files, lockfile, application data, databases, coordinates, and user files are immutable boundaries.
 
-```text
-Git tree object
-  -> domain-separated SHA-256
-  -> common source-tree identity
-```
+## 6. Process-boundary law
 
-Artifact hashes remain useful for proving which local package/executable was
-built or launched, but they are leaves of the chain rather than the common
-root.
+The procedure may inspect a bounded process set and report names/IDs sufficient for operator action. It must not:
 
-## 5. Boot lifecycle
+- call Stop-Process, taskkill, kill, or equivalent;
+- infer permission to close VS Code or terminals;
+- terminate Markei automatically;
+- expose full command lines, environment variables, tokens, local coordinates, or unrelated processes;
+- treat every Dart analysis process as automatically safe to terminate.
 
-Required production path:
+If it cannot distinguish a relevant owner safely, it stops and delegates closure to the operator.
 
-```text
-WidgetsFlutterBinding.ensureInitialized
-  -> resolve immutable compile-time BuildIdentity.current
-  -> create application composition
-  -> run MarkeiApp with that exact identity
-  -> pass identity to NativeClosurePage
-```
+## 7. Regeneration invariant
 
-Navigation to Closure must not recompute Git state, inspect files, contact a
-provider, query SQLite, or select a platform implementation.
+After flutter pub get:
 
-Compile-time values make identity available offline and before authentication,
-enrollment, or Sync.
+~~~text
+package configuration exists and is readable
+AND
+Windows ephemeral/plugin generation exists in the expected shape
+AND
+auth0_flutter has one coherent generated plugin target
+AND
+no stale-collision condition is observed
+~~~
 
-## 6. Build procedure architecture
+This proof establishes only dependency-generation readiness. It does not validate Auth0 login, callback behavior, hosted service availability, or Sync.
 
-`documentation/G_SCRIPTS.md` remains the canonical executable-procedure source.
+## 8. R06 identity preservation
 
-One shared helper owns Git revision/tree/digest derivation. Android, Windows
-Release, and Windows Debug consume its result.
+The existing architecture remains:
 
-Required flow:
+~~~text
+clean committed Git HEAD/tree
+→ shared deterministic source-identity helper
+→ MARKEI_SOURCE_REVISION / MARKEI_SOURCE_TREE_SHA256
+→ immutable BuildProvenance
+→ boot transport
+→ Closure presentation
+~~~
 
-```text
-assert repository and clean relevant tree
-  -> resolve HEAD and HEAD tree
-  -> derive source SHA-256 once
-  -> validate values
-  -> inject both compile-time definitions
-  -> build platform artifact
-  -> record platform artifact identity
-```
+CR01 must not create another identity helper, rename definitions, alter BuildProvenance, or change platform semantics.
 
-The helper may return an object or an ignored JSON define file. It must not
-persist secrets or platform/runtime identifiers. Generated identity files must
-be local, ignored, and reproducible.
+Because documentation/G_SCRIPTS.md participates in the source-tree digest, the CR01 implementation commit becomes the next candidate identity. A human rerun must rebuild from that exact pushed HEAD; old e5168f6 artifacts remain historical evidence only.
 
-## 7. Compatibility
+## 9. Existing execution tail is frozen
 
-Preserve:
+Once windows-build-preparation-ready is reached, preserve the R06 tail:
 
-- existing Closure surface enablement;
-- existing Auth0/public-coordinate compile-time definitions;
-- Android target selection and data-preserving install;
-- Flutter SDK/package resolution guards added at `c321675`;
-- Windows Auth0 callback registration;
-- Debug/Release callback restoration and Release-hash preservation;
-- existing test injection of an explicit identity;
-- safe unavailability behavior.
+~~~text
+flutter analyze
+→ flutter test
+→ flutter build windows --release with existing definitions
+→ exact markei.exe existence
+→ byte size and SHA-256
+→ callback registration for exact executable
+→ exact executable launch
+→ visible identity instruction
+~~~
 
-The former 7–12-character `MARKEI_BUILD_PROVENANCE` may be accepted by isolated
-tests during migration. Production builds must carry the full revision and
-source-tree SHA-256.
+CR01 may add bounded readiness output but must not reorder or weaken these ownership relationships.
 
-## 8. Security boundary
+## 10. Frozen boundaries
 
-Allowed visible identity:
+CR01 does not modify:
 
-- full revision internally;
-- 12-character revision abbreviation visibly;
-- full 64-character source-tree SHA-256 visibly;
-- artifact path/size/hash in local terminal evidence.
-
-Never include:
-
-- token, password, connection string, Auth0 subject;
-- Account, identity, Device, operation, correlation, or event UUID;
-- local repository path inside the app identity;
-- Git remote URL, username, machine name, or environment variables;
-- source file contents, SQLite values, provider facts, or exception messages.
-
-Raw malformed input is discarded, not reflected.
-
-## 9. Sync freeze
-
-R06 has no dependency arrow into the Sync subsystem:
-
-```text
-Build identity -> Closure presentation
-
-Sync coordinator / Product resolver / applier / provider contracts
-  = unchanged
-```
-
-Any required modification to a Sync, database, hosted, Product, or provider
-path is a stop condition and must be reported instead of implemented.
-
-## 10. Focused human terminal after R06
-
-After Codex and Main reconciliation:
-
-1. pull the exact R06 implementation commit;
-2. build/install or launch Android and Windows through the corrected canonical
-   procedures while preserving app data;
-3. open Closure on each;
-4. compare only:
-   - source revision;
-   - source-tree SHA-256;
-   - preserved visible History/Closure presence;
-   - absence of automatic operation;
-5. record each platform artifact SHA-256 separately;
-6. freeze the candidate if the common fields match.
-
-No broad GRIMOIRE, SQLite, Neon, Render, Auth0, or provider replay is required
-for this R06 terminal.
+- application source, navigation, Closure UI, Settings, Audit, MKS/ERR, or diagnostic projection;
+- Product, purchase, catalogue, Sync, cursor, acknowledgement, or operation semantics;
+- SQLite schema/state, hosted API, protocol, Render, Neon, Auth0 configuration, enrollment, or provider data;
+- dependencies, pubspec.lock, native plugin source, CMake, vcpkg, or cpprestsdk;
+- Android or Windows Debug procedures;
+- methodology, permanent domain memory, J, A/B/C, or R07 design.
 
 ## 11. Completion boundary
 
-R06 completes:
+CR01 completes when:
 
-- one cross-platform source identity;
-- one boot-initialized shared Dart value;
-- one common Closure presentation;
-- platform artifact attribution;
-- focused deterministic and package evidence;
-- G/H/I replacement and one scoped implementation commit.
+- GS-FLUTTER-WIN has an observable non-terminating process preflight;
+- cleanup success is proved by exact postconditions;
+- residual generated state can be removed only within the containment invariant;
+- pub get is gated by clean-state proof;
+- package/plugin regeneration is checked coherently;
+- extraction and PowerShell parsing pass;
+- the R06 identity/build tail is preserved;
+- G/H/I report the bounded result;
+- one fast-forward implementation commit is published.
 
-R06 does not complete:
+CR01 does not complete the preserved-machine build. That result belongs to the user's corrected GS-FLUTTER-WIN rerun.
 
-- live Sync;
-- convergence;
-- acknowledgement;
-- no-op replay;
-- GCM03;
-- MVP acceptance.
+## 12. Release architecture
 
-After visible two-platform identity passes, the architecture requires movement
-forward to the serialized Sync assay. Provenance must then serve as a freeze
-mechanism, not as a reason for further incidental correction.
+~~~text
+CR01 implementation and focused validation
+→ Main reconciliation
+→ corrected GS-FLUTTER-WIN human rerun
+→ Windows artifact and visible identity
+→ Android artifact and visible identity if still pending
+→ freeze exact candidate
+→ separately authorized serialized Sync assay
+→ activate R07 only if the assay yields a real attribution ambiguity
+~~~
+
+No live Sync authority exists inside CR01.
