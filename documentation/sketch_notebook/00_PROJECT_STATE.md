@@ -1,15 +1,92 @@
 # 00_PROJECT_STATE.md
 
-> Version: Cycle 09 Main closure 2.0
+> Version: Cycle 10 Main closure / Cycle 11 preparation 3.0
 > Status: Active Global State Canon-Checkpoint
 > Persistence Class: Canon-Checkpoint
 > Knowledge Class: Main / Global
 > Authority: Main Chat [M]
-> Branch: `intermid-cycle-recovery`
-> Reconciled implementation: `1d817972aea0229c9f109f236f4d224671927aab`
-> Post-Codex J: `4bf2e52d9d3e23437c4da1d8bb05e2402e189dd5`
-> Permanent-domain head inspected: `d21507ad8cd1ce69bbb6768d2583bb1a84a5af44`
-> Scope: Current global state after Cycle 09 closure
+> Branch: `grm-guarded-provisioning-20260727`
+> Reconciled source implementation: `97cec7f733926f669d2a844feb2b5e6e0b7e6bce`
+> GCM03 closure publication: `05e630cfe04aa03846bc635c524278d4fa9b7c39`
+> Scope: Current global state after bounded Cycle 10 closure
+
+---
+
+<!-- TEMPORAL_MARKER:C10-MAIN-CLOSURE-C11-PREPARATION-2026-07-30 -->
+
+# Cycle 10 Main Closure / Cycle 11 Preparation
+
+## Current terminal
+
+Cycle 10 closes at the proved two-Device development boundary. GCM01 is
+accepted at its development boundary, GCM02 closed hosted same-Device Sync, and
+GCM03 closed reciprocal Windows/Android same-Account convergence.
+
+Human evidence establishes:
+
+- reciprocal and commutative Windows/Android ordinary Sync;
+- one natural-identity Product merged rather than duplicated;
+- Catalogue and History convergence;
+- drained `0/0/0/0` queues on both clients;
+- one empty-queue idempotent repeat per Device;
+- authenticated event download and acknowledgement HTTP 200;
+- no no-op submission request and no observed duplicate Product/Purchase.
+
+The evidence ceiling remains development-only. Production acceptance, a fresh
+final provider-table recount, multi-Account isolation, revocation,
+outage/recovery, retention/snapshot/rebootstrap and reproducible production
+operations are absent.
+
+Human/Main direction postpones the unstarted GCM04 residual to
+`C12-PHASE02`. It is not a Cycle 10 closure requirement.
+
+```text
+CYCLE10=CLOSED_GCM03_TWO_DEVICE_DEVELOPMENT_SCOPE
+MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_DEVELOPMENT_SCOPE
+PRODUCTION_ACCEPTANCE=ABSENT
+GCM04=DEFERRED_TO_C12_PHASE02
+LIVE_SYNC_AUTHORITY=NONE
+PROVIDER_MUTATION_AUTHORITY=NONE
+```
+
+## Cycle 11 prepared scope
+
+Cycle 11 is a product-surface and UX development cycle:
+
+- recompose the Flutter UI from the five archived C09-S02 target PNGs;
+- improve responsive desktop/mobile interaction and shared components;
+- make Settings a mandatory, intuitive and functional page;
+- replace the user-facing Closure navigation destination with a mandatory
+  Audit page while preserving authoritative diagnostic/application boundaries;
+- implement Analytics as a functional local/account-scoped page;
+- connect History “Move to Analytics” to the accepted Analytics interaction;
+- improve state presentation, accessibility, keyboard/focus and workflow UX.
+
+Settings, Audit and Analytics require fresh Operational, Didactic and Design
+investigation before implementation. The PNGs are visual/product references,
+not pixel-perfect source authority.
+
+Explicit C11 exclusions:
+
+- GCM04 and multi-user backend assays;
+- R07 causal-engine activation;
+- production release acceptance;
+- provider/account/enrollment mutation;
+- hosted behavioral telemetry or developer-side analytics;
+- automatic Retry/Recovery.
+
+## Forward schedule
+
+```text
+C11=UI_UX_AND_PRODUCT_PAGE_FUNCTIONALITY
+C12_PHASE01=FINE_TUNING_AND_POLISHING_MOSTLY_UI_UX
+C12_PHASE02=BACKEND_FINE_TUNING_MULTI_USER_ASSAYS_AND_GCM04
+```
+
+Permanent domain files retain their current ownership. Their Cycle 10
+absorption and C11 entry deltas must be produced by the respective domain chats
+from this Main closure, J, Record 021 and current source rather than by copying
+Main text as canon.
 
 ---
 

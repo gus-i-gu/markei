@@ -1,9797 +1,36 @@
-# J_MAIN_STAGE â€” Cycle 10 active reconciliation
-
-> Sequence: FLX-PRM-04 C10-GCM03 S08 exact hosted binding and two-Device
-> provider-baseline reconciliation
-> Role: Main Chat
-> Branch: `grm-guarded-provisioning-20260727`
-> Publication parent: `e37f03b66e594a8dd54bbec0de94a42afb3fcecd`
-> Authority: explicit human-directed Main reconciliation
-> Writable surface: `REC_DIAGNOSTICS.md`, mutable J recovery prefix, and
-> append-only `Legacy_Progress`
-> Evidence boundary: accepted GCM02 same-Device closure; frozen Windows
-> sequence-2 candidate; C3 actual-fence/ADB validation; human Android
-> build/install/launch with visible matching provenance; Android local
-> pre-enrollment Diagnostics before and after one read-only refresh; ordinary
-> Android Sign in with authenticated client projection; two explicitly
-> human-triggered hosted-connection checks after cold boot, preserving one
-> timeout-before-response and one later HTTP-200 hosted-connection-ready
-> terminal; one accepted Android enrollment followed by the required
-> application restart and a post-restart authenticated/device-enrolled client
-> projection with queue 0/0/0/0 and next sequence 1; fresh masked-session
-> `GS-AUTH-02` exact binding; read-only `GS-NEON-11` two-Device provider
-> inventory with explicit rollback; no Sync, convergence, Android purchase,
-> production, retention, snapshot or rebootstrap claim
-> Status: **CYCLE 10 OPEN; GCM02 CLOSED AT HOSTED SAME-DEVICE SCOPE;
-> GCM03 S07 INNER STEPS 1â€“5 PASSED AT BOUNDED CLIENT SCOPE; ANDROID
-> ENROLLMENT SURVIVED RESTART; S08 EXACT HOSTED BINDING AND READ-ONLY
-> TWO-DEVICE PROVIDER BASELINE PASSED; WINDOWS-TO-ANDROID AUTHORIZATION PACKET
-> NEXT; PURCHASE AND BOTH SYNC ACTIONS HELD**
-
-## 1. Recovery entrypoint
-
-This mutable prefix is the current Main recovery surface. Read it before the
-append-only `Legacy_Progress` history. Expand into the legacy entries, G/H/I,
-permanent domains, GRM, or source only when the current task requires
-deeper evidence.
-
-Mandatory methodology boot remains:
-
-```text
-AGENTS.md
-documentation/sketch_notebook/INDEX.md
-documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
-documentation/sketch_notebook/methodology/FLUX.md
-documentation/sketch_notebook/methodology/PROMOTION_RULES.md
-documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
-```
-
-Retain these ownership boundaries:
-
-- Main synthesizes and stages authority.
-- A/B/C are functional investigation and reconciliation inputs.
-- D/E/F are synchronized Codex materialization authority.
-- G/H/I are observational materialization reports.
-- J is Main staging and continuity, not permanent domain canon.
-- `Legacy_Progress` is append-only and must not be compacted or rewritten.
-- Semantic promotion and physical materialization remain distinct.
-- Human/provider actions require explicit, narrow authorization.
-
-## 2. Current repository frame
-
-```text
-Repository: gus-i-gu/markei
-Active branch: grm-guarded-provisioning-20260727
-Current publication parent: e37f03b66e594a8dd54bbec0de94a42afb3fcecd
-Cycle: 10
-Active closure unit: MCG-02 / user-facing GCM-02
-Latest completed corrective unit: C10-GCM02-S12-ERR-04 recovery-boundary and
-observability correction
-Latest accepted gate: Gate 12.7 corrected single-client control
-Latest completed presentation unit: C10-GCM02-S12-DIAG-01
-Latest completed evidence phase: C10-GCM02-S12-ST10 sanitized Render
-correlation and Gate-12.10 terminal classification
-Latest completed correction: C10-GCM03-ST04-R1-C3 Main-owned Android selector
-repair validation
-Latest human evidence: Android build/install/launch at visible provenance
-65c9ab56079c, local pre-enrollment Diagnostics, authenticated client state,
-hosted readiness after one preserved cold-start timeout and one later ready
-HTTP-200 attempt, accepted one-time enrollment, and post-restart durable
-authenticated/device-enrolled projection with a clean queue and next
-sequence 1; masked-session `GS-AUTH-02` exact binding; and transactional
-`GS-NEON-11` provider-baseline PASS with explicit rollback
-Active phase: GCM03 S09 Windows-to-Android convergence authorization-packet
-preparation; the Windows candidate member remains frozen and Android purchase
-and both Sync actions are not yet authorized
-```
-
-The branch contains the GRM execution interface, hosted Sync
-implementation and diagnostics, account-cursor provisioning repair,
-human-operated provider evidence, and the latest Gate 12.6 staging.
-
-The old `intermid-cycle-recovery` branch carried earlier J reconciliations.
-Their accepted meaning has already been reconciled into this branch. Do not
-merge that historical branch merely to recover J content.
-
-The earlier parallel J/Codex and GRM-refactor rounds are integrated in the
-current branch baseline. Do not replay their local-equivalent commits onto this
-branch.
-
-REC-01 was materialized at `a63367763716e2769ac58d5adc19de0c41774b35`.
-Codex explicitly preserved the then-unrelated local dispatcher rename. The
-subsequent isolated GRM alignment unit materializes
-`documentation/NEON_CHECK.ps1` as `documentation/I_SCRIPTS.ps1` and aligns
-every live five-file-interface reference. Historical occurrences under
-`Legacy_Progress` remain observational evidence.
-
-The subsequent `3d1e82e5259cf51e8cd2d6baf694423494bab7a5`
-baseline renames the generated diagnostic projection to
-`documentation/ERR_DIAGNOSTICS.md`. That rename is accepted as repository
-state. The broad ERR-catalogue refactor remains deferred until the present
-narrow assays conclude.
-
-### 2.1 Controlling ST10 closure and GCM03 entry
-
-This subsection is the newest controlling recovery surface. When an older
-mutable-prefix statement conflicts with it, this subsection controls. The
-older text remains available as pre-ST09 staging context, and the complete
-chronology remains append-only under `Legacy_Progress`.
-
-GCM02 now reconciles five aligned evidence families:
-
-```text
-Records 009-010
-  exact hosted binding
-  clean provider baseline 0/0/0
-  Windows empty queue and sequence alignment
-
-controlled member preflight
-  authenticated and device-enrolled
-  one pending purchase.registered event at Device sequence 1
-  local next Device sequence 2
-  warm hosted readiness HTTP 200 after one cold-start timeout
-
-authorized Windows ordinary Sync
-  exactly one click
-  sync-completed
-  pending 1 -> 0
-  failed/unknown 0/0
-  current Device next sequence 2
-
-GRM-NEON-11 postflight
-  exact Device guard 1
-  submissions/events/acknowledgements 1/1/1
-  Account cursor 2 after high-water 1, consistent
-  Device sequence 2 after high-water 1, consistent
-  one distinct sanitized request/content lineage
-  explicit ROLLBACK and PASS
-
-ST10 Render correlation
-  one matching operation fingerprint across three Sync children
-  upload-submission POST authenticated and completed HTTP 200
-  download-events GET authenticated and completed HTTP 200
-  acknowledgement POST authenticated and completed HTTP 200
-  no rejected, failed, >=400, timeout, unknown, unexpected-error or MKS line
-```
-
-Reconciled meaning:
-
-- the first correlated same-Device transition on the replacement development
-  provider succeeded at client/local/provider scope;
-- the actual provider delta exactly equals the frozen one-event contract;
-- there is no failed, unknown or actionable local residue;
-- acknowledgement, Account cursor and Device sequence projections agree;
-- the cold-start readiness timeout is operational sensitivity, not a Sync
-  contradiction, because both host endpoints and the immediately subsequent
-  client readiness check passed before authorization;
-- the Product selection/staging defects observed while creating the test member
-  were contained locally and did not contaminate the successful assay;
-- ST09 therefore passes at the same-Device transition boundary;
-- ST10 correlates the exact same operation across all three server children;
-- the client, server and provider terminals agree without contradiction;
-- Gate 12.10 therefore classifies the operation as expected success;
-- GCM02 closes at its hosted same-Device scope;
-- second-Device enrollment and convergence remain unproved and begin only
-  under a separately defined and authorized GCM03 sequence.
-
-Current terminals:
-
-```text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-STEP12=CLOSED_THROUGH_GATE_12_10
-GATE_12_7=PASSED_CORRECTED_SINGLE_CLIENT_CONTROL_SCOPE
-ST08=PASSED_EXACT_BINDING_AND_CLEAN_PROVIDER_BASELINE
-ST09_LOCAL_PREFLIGHT=PASS
-ST09_CONTROLLED_MEMBER=ONE_PURCHASE_REGISTERED_SEQUENCE_1
-ST09_HOSTED_READINESS=PASS_AFTER_COLD_START_WARMUP
-ST09_ONE_ACTION_AUTHORIZATION=SATISFIED
-ST09_ORDINARY_SYNC=PASS_EXACTLY_ONCE
-ST09_CLIENT_TERMINAL=SYNC_COMPLETED
-ST09_LOCAL_QUEUE=PASS_DRAINED_1_TO_0
-ST09_PROVIDER_COUNTS=PASS_1_SUBMISSION_1_EVENT_1_ACK
-ST09_ACCOUNT_CURSOR=CONSISTENT_2_AFTER_1
-ST09_DEVICE_SEQUENCE=CONSISTENT_2_AFTER_1
-ST09_PROVIDER_POSTFLIGHT=ROLLBACK_PASS
-ST09=PASSED_SAME_DEVICE_CLIENT_PROVIDER_TRANSITION_SCOPE
-ST10_RENDER_CORRELATION=PASS_THREE_AUTHENTICATED_HTTP_200_TERMINALS
-ST10_FAILURE_OR_AMBIGUITY=ABSENT
-ST10=PASSED_READ_ONLY
-GATE_12_10=PASS_EXPECTED_SUCCESS
-NEW_SYNC_OR_RETRY=NOT_AUTHORIZED
-ENROLLMENT_OR_MIGRATION=NOT_AUTHORIZED
-SECOND_DEVICE=UNPROVED_READY_FOR_GCM03_DEFINITION
-GCM03=READY_FOR_DEFINITION_AND_READ_ONLY_PREFLIGHT
-```
-
-The shortest evidence-correct GCM03 entry is:
-
-1. preserve the newly reported unsynchronized purchase without another Sync;
-2. run Windows Diagnostics once to freeze its event type, queue class, Device
-   sequence and next sequence;
-3. reconfirm the provider remains at the accepted GCM02 `1/1/1` baseline
-   before any new action, only if the GCM03 contract requires it;
-4. verify Android toolchain/client lineage and establish a fresh, clearly
-   identified local Device state;
-5. sign in to the same Account without reusing or exposing tokens;
-6. capture Android pre-enrollment Diagnostics and prepare an exact enrollment
-   authorization packet;
-7. enroll the Android Device exactly once only after explicit authorization;
-8. reconcile the two-Device provider inventory before authorizing any upload
-   or download/convergence action.
-
-Record 013 now proves that the new unsynchronized Windows purchase is one
-pending `purchase.registered` event at Device sequence 2, with
-pending/uploading/failed/unknown `1/0/0/0` and next Device sequence 3. It is
-the frozen candidate Windows-to-Android convergence member. Do not Sync,
-recreate or discard it while Android readiness and pre-enrollment state are
-prepared.
-
-### 2.2 GCM03 TODOs and Android check placement
-
-GCM03 is an investigative, separately authorized unit. This list defines its
-evidence order; it does not authorize enrollment or Sync.
-
-- [x] **GCM03.1 â€” Freeze Windows candidate member.** Record 013 proves one
-  pending `purchase.registered` event at Windows Device sequence 2, next
-  sequence 3, and no uploading/failed/unknown residue.
-- [x] **GCM03.2 â€” Reconfirm repository and provider baseline.** Fast-forward
-  the Windows checkout to the published GCM02 closure commit, require a clean
-  worktree, run read-only host readiness, and use `GRM-NEON-11` only if Main
-  requires a fresh pre-enrollment provider inventory. Expected pre-enrollment
-  payload baseline remains the accepted GCM02 `1/1/1`, with one active Device.
-  **Passed through the post-enrollment boundary:** Android artifact lineage
-  `65c9ab56079c` is proved. The client
-  hosted-readiness prerequisite passed after one preserved cold-start
-  `timeout-before-response` attempt and one later
-  `hosted-connection-ready`/HTTP-200 attempt. Record 017 adds exact hosted
-  binding plus a transactional provider baseline with one Account, two Device
-  rows, payload counts `1/1/1`, consistent Account cursor `2` after high-water
-  `1`, exact Android sequence `1` after high-water `0`, and rollback/PASS.
-- [x] **GCM03.3 â€” Android environment and client check.** Run canonical
-  `GRM-FLUTTER-AND` / `GS-FLUTTER-AND` from the same published checkout.
-  Require Flutter/Android toolchain readiness, exactly one supported Android
-  target, configured AVD boot where needed, successful Closure build/install/
-  launch, and the same public Auth0/Render coordinate lineage. This step must
-  not sign in, enroll or Sync implicitly. **Passed bounded:** C3 validated the
-  repaired exact fence and one-safe-ADB-serial boundary; the human rerun
-  launched `DEV-GRM` with visible matching provenance `65c9ab56079c`.
-- [x] **GCM03.4 â€” Android local pre-enrollment snapshot.** Open Closure on
-  Android, preserve sanitized diagnostics, and prove whether the fresh
-  installation has no enrolled local Device. Stop on inherited Device state,
-  unexpected queue members, configuration mismatch, revoked/expired state, or
-  any source Device fingerprint collision. **Passed with storage-freshness
-  qualification:** one distinct local-only Android Device at next sequence 1,
-  queue `0/0/0/0`, no attempts, diagnostic history or actionable events.
-  Complete database freshness is unproved because installation preserves
-  Android app data.
-- [x] **GCM03.5 â€” Same-Account authentication.** Sign in through the ordinary
-  Auth0 flow to the same test Account. Capture only sanitized authentication
-  state; never copy tokens, subjects, credentials or complete identifiers.
-  **Passed at client scope:** Android projects `authenticated`. Exact
-  same-Account/provider binding remains to be proved by the bounded enrollment
-  and provider postflight rather than by screenshots alone.
-- [x] **GCM03.6 â€” Exact Android enrollment authorization packet.** Freeze the
-  intended one-click Enroll action, expected new active-Device count
-  `1 -> 2`, expected Android local enrollment terminal, evidence-capture
-  order, and no-second-click/unknown-outcome rules. Obtain explicit human
-  authorization before enrollment. **Passed by the prior bounded S07
-  authorization packet; historical action authority is exhausted.**
-- [x] **GCM03.7 â€” Enroll Android exactly once.** Execute only the authorized
-  enrollment. Preserve the Android terminal, sanitized Device fingerprint,
-  Render enrollment lifecycle and read-only provider inventory. Do not Sync
-  either client in this step. **Passed bounded:** one accepted Enroll followed
-  by required restart; no second click and no Sync.
-- [x] **GCM03.8 â€” Two-Device baseline reconciliation.** Require one Account,
-  two distinct active Devices, Windows next expected sequence 2 on the
-  provider, Android next expected sequence at its fresh baseline, and no
-  payload/cursor changes caused solely by enrollment. **Passed at the combined
-  prior-Windows plus Record-017 boundary:** two Device rows; exact Android
-  Device active; Account payload `1/1/1`; cursor `2` after `1`; Android
-  sequence `1` after `0`; no Android submission/event; rollback/PASS. The
-  launcher branch-alias caveat remains explicit.
-- [ ] **GCM03.9 â€” Windows-to-Android convergence authorization.** Freeze the
-  existing Windows sequence-2 event as the only upload member, calculate the
-  exact submission/event/cursor/acknowledgement delta, and authorize one
-  Windows Sync followed by one Android download Sync only after all stop
-  conditions are explicit.
-- [ ] **GCM03.10 â€” Windows-to-Android convergence assay.** Prove Windows queue
-  drain, provider acceptance, Android download/application, matching purchase
-  identity/content, acknowledgement, and preservation of Android-local state.
-- [ ] **GCM03.11 â€” Android-to-Windows reverse member.** Create exactly one
-  controlled Android purchase only after the first direction passes, freeze
-  its Android queue/sequence, and prepare a new exact authorization packet.
-- [ ] **GCM03.12 â€” Reverse convergence assay.** Authorize and prove Android
-  upload followed by Windows download/application, with exact provider delta
-  and no duplication or local-history loss.
-- [ ] **GCM03.13 â€” Idempotent repeat.** With both queues empty and both clients
-  converged, authorize one bounded repeat Sync per Device and require no new
-  submissions/events, no duplicate purchases, stable cursors/sequences, and
-  successful acknowledgements.
-- [ ] **GCM03.14 â€” Reconcile and close.** Correlate client, Render and provider
-  evidence; classify every unexpected/duplicate/rejected/unknown result;
-  preserve Android operational findings; and close GCM03 only at the proven
-  two-Device development scope.
-
-GCM03 global stop conditions:
-
-```text
-dirty_or_diverged_checkout
-android_target_ambiguous_or_unsupported
-android_configuration_or_binding_mismatch
-unexpected_inherited_android_device_or_queue_state
-authentication_required_or_rejected
-binding_invalid
-device_revoked_or_expired
-enrollment_timeout_unknown_or_duplicate
-sync_timeout_unknown_failed_or_notApplied
-cursor_or_sequence_inconsistency
-unexpected_provider_delta
-duplicate_or_missing_purchase_after_apply
-```
-
-On any stop condition, preserve the visible terminal and do not repeat the
-action merely to improve evidence. Enrollment, Windows Sync, Android Sync,
-Retry, recovery, migration, revocation and provider repair each require their
-own explicit boundary.
-
-Updated terminals:
-
-```text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-STEP12=CLOSED_THROUGH_GATE_12_10
-GATE_12_10=PASS_EXPECTED_SUCCESS
-GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
-GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
-GCM03_WINDOWS_QUEUE=PASS_1_0_0_0
-GCM03_WINDOWS_NEXT_DEVICE_SEQUENCE=3
-GCM03_ANDROID_SELECTOR_C3=PASS
-GCM03_ANDROID_BUILD_LINEAGE=PASS_65C9AB56079C
-GCM03_ANDROID_PRE_ENROLLMENT=PASS_LOCAL_ONLY_NEXT_1_QUEUE_0_0_0_0
-GCM03_ANDROID_AUTHENTICATION=PASS_CLIENT_SCOPE
-GCM03_ANDROID_SAME_ACCOUNT_EXACT_BINDING=PASS_EXACT_BINDING_CONFIRMED
-GCM03_ANDROID_HOSTED_READINESS=PASS_AFTER_COLD_START_WARMUP
-GCM03_ANDROID_HOSTED_ATTEMPTS=2_WITH_1_READY_1_TIMEOUT_PRESERVED
-GCM03_ANDROID_DURABLE_ENROLLMENT=PASS_CLIENT_SCOPE
-GCM03_PROVIDER_DEVICE_COUNT=2
-GCM03_PROVIDER_PAYLOAD_COUNTS=PASS_1_1_1
-GCM03_PROVIDER_ACCOUNT_CURSOR=CONSISTENT_2_AFTER_1
-GCM03_ANDROID_PROVIDER_SEQUENCE=CONSISTENT_1_AFTER_0
-GCM03_S08=PASSED_READ_ONLY_EXACT_BINDING_TWO_DEVICE_BASELINE
-GCM03=ACTIVE_WINDOWS_TO_ANDROID_AUTHORIZATION_PACKET
-ANDROID_ENROLLMENT=COMPLETE_DO_NOT_REPEAT
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-SECOND_DEVICE_CONVERGENCE=UNPROVED
-GCM04=UNDEFINED_INACTIVE
-```
-
-### 2.3 ST04-R1 materialization reconciliation and Android GRM correction
-
-Commit `231a76281d0016ee47dd719d3ddc24d422b18c35` materialized the bounded
-Android Closure parity/provenance unit. D/E/F were compared against G/H/I,
-the implementation diff, and the live GRM dispatcher cascade.
-
-#### PRC-01 claims
-
-```text
-Claim: the shared Flutter Closure parity and build-provenance model passed the
-       authorized local materialization boundary
-Prior state: Android displayed a legacy Closure surface while current shared
-             source appeared consolidated
-Evidence: one shared NativeClosurePage; compact/wide coverage; sanitized
-          7-12 lowercase-hex provenance projection; 199 passed / 4 lab-gated
-          Flutter tests; clean Flutter analysis; local debug APK build with
-          explicit provenance define
-Evidence boundary: repository, widget tests, analysis and local build only
-Contradiction: none inside the Flutter presentation/provenance boundary
-Semantic owner: C10-GCM03-ST04-R1 local source result
-Target role: J current recovery state
-Resulting state: ACCEPTED / LOCALLY VALIDATED
-History disposition: append
-```
-
-```text
-Claim: the pushed GRM-FLUTTER-AND procedure is hardened and ready for a human
-       rerun
-Prior state: G reports ANDROID_GRM_PROVENANCE=HARDENED and
-             ST04=READY_FOR_HUMAN_RETEST
-Evidence: implementation scan shows GS-FLUTTER-AND reads $Branch before any
-          assignment and later reads $BuildProvenance without assignment;
-          their intended producer block was inserted into GS-FLUTTER-WIN
-Evidence boundary: exact pushed G_SCRIPTS.md and I_SCRIPTS.ps1 strict-mode,
-                   one-fence dispatcher semantics
-Contradiction: PowerShell fence parse passed, but parse does not validate
-               runtime variable initialization
-Semantic owner: Android GRM executable procedure
-Target role: corrected D/E/F and later replacement G/H/I
-Resulting state: CONTRADICTED / BLOCKED VARIABLE CASCADE
-History disposition: supersede only the prior Android-GRM hardening terminal
-```
-
-```text
-Claim: ST04 or any later GCM03 action may proceed before correction
-Prior state: ST04 awaited a human rebuilt-artifact retest
-Evidence: canonical Android procedure terminates under strict mode at the
-          first undefined $Branch read; $BuildProvenance is also undefined
-Evidence boundary: no live Android, authentication or provider action needed
-Contradiction: executing the procedure cannot produce the intended artifact
-Semantic owner: GCM03 action gate
-Target role: Main authorization boundary
-Resulting state: REJECTED; ST04 AND ST05+ HELD
-History disposition: append
-```
-
-#### Accepted and superseded evidence
-
-Retained:
-
-```text
-SHARED_CLOSURE_PAGE=CONFIRMED
-ANDROID_COMPACT_DIAGNOSTICS=TEST_PASS
-BUILD_PROVENANCE=IMPLEMENTED
-APPLICATION_DATA_PRESERVATION=DESIGNED_AND_SOURCE_PRESERVED
-AUTH_ENROLL_SYNC_PROVIDER_ACTION=ABSENT
-```
-
-Superseded:
-
-```text
-ANDROID_GRM_PROVENANCE=HARDENED
-ST04=READY_FOR_HUMAN_RETEST
-```
-
-Current:
-
-```text
-ANDROID_GRM_PROVENANCE=BLOCKED_VARIABLE_CASCADE
-ST04=BLOCKED_PENDING_C10_GCM03_ST04_R1_C1
-```
-
-#### Correction contract
-
-Synchronized D/E/F now authorize one narrow correction:
-
-1. remove the accidentally inserted Android-unit producer/print block from
-   `GS-FLUTTER-WIN`, restoring that procedure to its `db17f47` behavior;
-2. add Windows-PowerShell-compatible repository containment, `$Branch`,
-   `$InspectedHead`, and `$BuildProvenance` initialization inside
-   `GS-FLUTTER-AND` before any consumer;
-3. preserve the accepted Flutter source, Android coordinates, package,
-   data-preserving install, artifact evidence and no-mutation boundaries;
-4. validate exact-fence extraction, AST syntax, same-fence producer-before-
-   consumer data flow, and a mocked/truncated strict-mode prefix;
-5. produce replacement G/H/I without running the live Android procedure.
-
-The human `GRM-FLUTTER-AND` rerun becomes eligible only after correction
-review, commit, publication and Main reconciliation. It remains an ST04
-artifact-lineage retest, not authentication, enrollment or Sync authority.
-
-Updated terminals:
-
-```text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
-GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
-C10_GCM03_ST04_R1_FLUTTER_SOURCE=ACCEPTED_LOCAL_VALIDATION
-C10_GCM03_ST04_R1_ANDROID_GRM=CONTRADICTED
-C10_GCM03_ST04_R1_C1=ACTIVE_MATERIALIZATION_STAGE
-ST04=BLOCKED_PENDING_GRM_CASCADE_CORRECTION
-LIVE_ANDROID_RETEST=NOT_AUTHORIZED_YET
-ANDROID_ENROLLMENT=NOT_AUTHORIZED
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-GCM03_ST05_AND_LATER=HELD
-SECOND_DEVICE_CONVERGENCE=UNPROVED
-GCM04=UNDEFINED_INACTIVE
-```
-
-### 2.4 GCM03 S08 exact binding and provider baseline
-
-Record 017 reconciles the masked-session `GS-AUTH-02` and transactional
-`GS-NEON-11` terminals against Records 014â€“016.
-
-The combined evidence proves:
-
-- the fresh user access token satisfies issuer, audience, algorithm, subject
-  and time-window checks;
-- hosted identity and Device-status endpoints both return HTTP 200;
-- the supplied hosted Android Device UUID is exactly bound to the token;
-- the provider contains one Account and two Device rows;
-- the exact Android Device is active at next expected sequence 1 after
-  high-water 0;
-- Account-level submissions/events/acknowledgements remain `1/1/1`;
-- the Account cursor remains 2 after high-water 1 and is consistent;
-- the Android Device owns no submission or Sync event;
-- the provider transaction explicitly rolls back and the procedure passes.
-
-The displayed development target label is retained as a launcher declaration.
-`GS-NEON-11` does not independently prove the human-readable Neon branch
-alias. This provenance ceiling does not contradict the authenticated
-role/database/TLS terminal or the returned read-only inventory.
-
-S08 closes exact hosted binding and the post-enrollment two-Device baseline.
-It does not prove convergence and it authorizes no Sync. The next controlling
-work is GCM03.9: derive and freeze the exact Windows-sequence-2 to Android
-convergence action packet. This packet must separate the Windows upload phase,
-its client/Render/provider postflight, the later Android download phase, and
-its own postflight. Either phase stops on timeout, unknown, failed,
-`notApplied`, binding rejection, unexpected delta, cursor/sequence
-inconsistency, or duplicate/missing purchase.
-
-Current terminal:
-
-```text
-C10_GCM03_S08_AUTH0_BINDING=PASS_EXACT_BINDING_CONFIRMED
-C10_GCM03_S08_PROVIDER_BASELINE=PASS_ROLLBACK
-GCM03_PROVIDER_DEVICE_COUNT=2
-GCM03_PROVIDER_PAYLOAD_COUNTS=PASS_1_1_1
-GCM03_PROVIDER_ACCOUNT_CURSOR=CONSISTENT_2_AFTER_1
-GCM03_ANDROID_PROVIDER_SEQUENCE=CONSISTENT_1_AFTER_0
-GCM03_S08=PASSED_READ_ONLY_EXACT_BINDING_TWO_DEVICE_BASELINE
-GCM03=ACTIVE_WINDOWS_TO_ANDROID_AUTHORIZATION_PACKET
-SECOND_DEVICE_CONVERGENCE=UNPROVED
-ANDROID_PURCHASE=HELD
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-```
-
-## 3. Retained pre-ST08 panorama
-
-The following sections preserve the compact recovery panorama that controlled
-before ST08. They are not rewritten as historical records. Section 2.1
-supersedes their status, branch, gate, and next-action statements wherever
-those statements differ.
-
-Cycle 10 moved Markei from local synchronization groundwork toward bounded,
-authenticated, hosted inter-device convergence. It is not yet closed.
-
-### 3.1 Accepted implementation track
-
-The source and reconciled reports establish:
-
-- offline-first local data remains primary;
-- immutable append-only Sync events and deterministic request content exist;
-- Account/Device-scoped local queues, download/apply, acknowledgements and
-  idempotent application paths exist;
-- two-Device disposable convergence and recovery harnesses exist;
-- hosted Auth0/OIDC verification, membership resolution, Device enrollment,
-  query/replay/status/revocation and transaction-scoped authorization exist;
-- RLS context and runtime/migrator privilege separation exist;
-- Native Closure exposes guarded sign-in, enrollment, query, hosted
-  connection, Sync and diagnostic/recovery actions;
-- durable Sync-attempt and unknown-outcome observability exists;
-- a separate, explicitly confirmed failed/notApplied recovery surface now
-  exists, preserving read-only inspection, unknown Retry and ordinary Sync as
-  distinct actions;
-- the bounded REC-01 coordinator revalidates exact internal candidate identity,
-  atomically recovers and leases only its members, performs at most one upload,
-  persists that result, and contains no download or acknowledgement path;
-- retention, snapshot and rebootstrap contracts and local harness groundwork
-  exist.
-
-These are implementation and bounded validation claims. REC-01 specifically
-remains host-unvalidated and unexecuted against the user environment. They do
-not by themselves establish production readiness, real multi-device
-convergence, hosted retention execution, backup/PITR acceptance, or release
-acceptance.
-
-### 3.2 Account cursor-state correction
-
-The protected hosted submission failure was traced locally to an Account that
-existed without `account_cursor_state`.
-
-The accepted correction lineage includes:
-
-- fail-closed handling for a missing cursor row;
-- explicit `service-unavailable / not-applied` classification;
-- migration 007 provisioning exactly one cursor-state row for new Accounts;
-- backfill only for missing historical rows;
-- preservation of existing cursor rows;
-- hosted high-water-derived initialization;
-- revocation of runtime cursor INSERT/DELETE;
-- retained scoped runtime SELECT/UPDATE;
-- readiness-v2 migration capability.
-
-Migration 007 was applied once to the development Neon target and
-postflight-validated. It must not be reapplied.
-
-### 3.3 Hosted preparation accepted
-
-Within development-provider boundaries, accepted human-operated evidence
-includes:
-
-- the intended corrected Render revision was deployed;
-- live and ready endpoints returned their expected ready results;
-- readiness-v2 was true;
-- Auth0 issuer, audience and RS256 metadata matched;
-- an authenticated fixture principal resolved to active membership;
-- exact enrolled Device binding was confirmed;
-- provider state remained unchanged across the inspected pre-Sync checkpoint;
-- secrets and complete identifiers were kept out of notebook evidence.
-
-This does not authorize production deployment, provider mutation, credential
-rotation, ordinary Sync, or a recovery operation.
-
-### 3.4 Validation record retained
-
-The latest complete materialization record before the current evidence-only
-round retained:
-
-```text
-API format/lint/typecheck/build: PASS
-API tests: 53 / 53
-production dependency audit: 0 vulnerabilities
-migration-007 disposable PostgreSQL probe: 29 / 29
-hosted local authorization cases: 28 true / 0 pending
-Flutter format/analyze: PASS
-Flutter tests: 178 passed / 4 lab-gated skips
-real convergence harness: 3 / 3
-real recovery harness: 1 / 1
-Windows release build: PASS
-Android debug build: PASS
-protected Python unittest suite: 5 / 5
-```
-
-One older aggregate orchestrator observation retained a
-`query-replay-same-request-id` Flutter-producer failure while the direct suite
-and opt-in harnesses passed. Do not mark that aggregate observation resolved
-without a correlated rerun.
-
-## 4. Current source and operational map
-
-Use this map for targeted recovery rather than scanning the repository
-indiscriminately.
-
-### 4.1 Human execution interface
-
-```text
-documentation/GRM.md
-documentation/G_SCRIPTS.md
-documentation/NS_COORDINATES.md
-documentation/I_SCRIPTS.ps1
-documentation/DB_MGMT.sql
-```
-
-`GRM.md` is the concise indexed human entry surface. Every active `GRM-*`
-block dispatches exactly one `GS-*` procedure through `I_SCRIPTS.ps1`.
-`G_SCRIPTS.md` owns procedure logic and runtime requests,
-`NS_COORDINATES.md` owns reviewed non-secret values, and `DB_MGMT.sql` owns
-manual SQL plus indexed automation-query blocks. Coordinates are mutable and
-must be freshly verified before provider action.
-
-Current SQLite route:
-
-```text
-GRM-SQLITE-01 -> SQLite CLI availability
-GRM-SQLITE-02 -> closed-app discovery and verified temporary copy
-GRM-SQLITE-03 -> read-only sanitized copied-database classification
-GRM-SQLITE-04 -> materialized read-only sanitized device-scope correlation
-```
-
-All four procedures are materialized and have human-observed results.
-`GRM-SQLITE-04` queried only the preserved verified copy and completed the
-device-scope correlation without Retry, Sync, provider action, mutation or
-cleanup. Preserve `markei-gate-12-6-current` unchanged through the controlled
-operation and post-operation reconciliation.
-
-### 4.2 Flutter synchronization authorities
-
-```text
-clients/markei_flutter/lib/application/hosted_sync_coordinator.dart
-clients/markei_flutter/lib/infrastructure/remote/http_sync_transport.dart
-clients/markei_flutter/lib/infrastructure/local/sync/local_sync_repositories.dart
-clients/markei_flutter/lib/domain/sync/sync_event.dart
-```
-
-`hosted_sync_coordinator.dart` owns ordinary Sync's
-authentication-to-binding-to-pending-upload-to-download-to-acknowledgement
-transition. ERR-04 removed failed/notApplied recovery from this ordinary path.
-`failed_not_applied_recovery_coordinator.dart` owns REC-01's narrower exact
-candidate recovery-to-one-upload terminal and intentionally has no download or
-acknowledgement dependency. Local repositories own durable
-queue/submission/event state. Transport owns protocol mapping. Domain Sync
-models own event and state semantics.
-
-### 4.3 Hosted API authorities
-
-```text
-services/markei_sync_api/src/
-services/markei_sync_api/migrations/
-packages/markei_sync_contract/
-```
-
-Inspect exact files through G/H/I or targeted search when the active question
-requires server behavior. Do not infer hosted state from source capability.
-
-## 5. Pre-ST08 GCM-02 state retained for context
-
-GCM-02 remains open, but Gate 12.7 now passes at the corrected single-client
-control scope. ERR-04 is source-accepted and locally validated. The subsequent
-Windows packet proves one warm hosted-readiness terminal and one ordinary Sync
-terminal with queue `0/0/0/0`, Next Device sequence `3`, Last successful Sync
-advanced only by ordinary Sync, and no failed-recovery phase in the newest
-operation. The first cold readiness attempt remains an unresolved wake-up
-tolerance observation.
-
-Gate 12.7 does not claim direct provider-row contents, complete Render
-child-request correlation, or second-Device convergence. Those evidence
-families remain explicit later gates. Gate 12.8 is therefore next as a
-read-only provider/result reconciliation and must issue no second Sync, Retry,
-recovery, enrollment, migration, or provider mutation.
-
-The newest Sync's 13 displayed rows are ordered lifecycle declarations, not 13
-errors. Their flat presentation is a UI comprehension defect. Main activates
-`C10-GCM02-S12-DIAG-01` to consolidate Status, Query, and Refresh diagnostics
-and to group lifecycle evidence by parent operation without changing protocol,
-schema, API, or provider state.
-
-### 5.1 Accepted Gate 12.6 copied-database evidence
-
-The human-operated procedure:
-
-- confirmed Markei and relevant Flutter execution were closed;
-- found exactly one local database candidate;
-- found no WAL/SHM sidecars;
-- created a fixed-name copy;
-- verified copy size and hash equality without printing hashes;
-- queried only the copy with SQLite read-only and
-  `PRAGMA query_only=ON`;
-- returned `SQLiteQuickCheck: ok`;
-- performed no Retry, ordinary Sync or provider action.
-
-Sanitized classification:
-
-```text
-submissions:
-  superseded / notApplied / conflict / null                  = 1
-  superseded / notApplied / conflict / enrollment-required   = 1
-  failed     / notApplied / conflict / service-unavailable   = 1
-
-each submission:
-  two member events
-  event sequences 1â€“2
-  event state failed
-  positions 0â€“1
-
-pending-event summary:
-  failed  = 2, sequences 1â€“2
-  pending = 6, sequences 1â€“5
-
-latest attempt:
-  sync-unavailable
-  provider-evidence-unavailable
-  no HTTP status
-  no response headers
-```
-
-### 5.2 Reconciled conclusions
-
-Accepted:
-
-- copied-database procedure: PASS;
-- database copy: healthy and internally coherent;
-- exactly one active failed/notApplied two-event lineage: confirmed;
-- two earlier two-event submissions: superseded;
-- unknown-submission Retry path: inapplicable;
-- earlier insufficient-evidence queue classification: superseded;
-- no trustworthy provider result exists for the latest ordinary Sync;
-- the six other pending events make ordinary Sync an unsafe substitute for
-  the bounded recovery question.
-
-The observed active legacy row stores:
-
-```text
-response_code = conflict
-error_code = service-unavailable
-```
-
-Current source maps `service-unavailable` to `serviceUnavailable`. Git history
-shows that explicit mapping was added in
-`75dc7bed0789d693af93abb3ed15e107fd77433a`; the observed database timestamp
-predates that correction. The pairing is historically coherent with the
-older fallback, but this is not executable row-level provenance and must not
-be silently rewritten.
-
-### 5.3 Gate 12.6 device-scoped correlation
-
-Human execution of `GRM-SQLITE-04` against the preserved verified copy
-returned:
-
-```text
-SQLite quick check: ok
-observed Device scopes: 3
-hosted/enrolled scope rank: 3
-hosted scope next_sequence: 3
-failed candidate submission: failed / notApplied
-legacy response/error: conflict / service-unavailable
-candidate members: 2
-candidate positions: 0â€“1, contiguous
-candidate sequences: 1â€“2, contiguous
-candidate member state: failed
-same-hash superseded submissions: 0
-same-hash active submissions: 0
-simulated first upload count: 2
-candidate events in first upload: 2
-other pending events in hosted scope: 0
-first upload contains only candidate events: true
-other non-hosted pending work: rank 1 = 1; rank 2 = 5
-latest Sync: sync-unavailable / provider-evidence-unavailable
-```
-
-The output proves:
-
-- the hosted/enrolled Device scope is anonymized rank 3;
-- it owns exactly the failed two-event lineage at sequences 1â€“2;
-- its next local Device sequence is 3;
-- the six other pending events belong only to non-hosted ranks 1 and 2;
-- failed recovery would make exactly the two candidate events the first
-  bounded upload;
-- no active or superseded submission shares the candidate request hash;
-- no latest provider result exists because the latest Sync stopped without
-  HTTP status or response headers.
-
-The procedure queried no live database and selected no Retry or Sync. Gate
-12.6 evidence collection and correlation are complete. The local SQLite
-snapshot and the earlier Neon checkpoint are not contradictory: they describe
-different sides and times of a failed/notApplied boundary, while the latest
-Sync obtained no fresh provider evidence.
-
-### 5.4 Gate terminals
-
-```text
-GCM02_12_1_RENDER_READY_PASS
-GCM02_12_2_AUTH0_METADATA_PASS
-GCM02_12_3_ALIGNMENT_PASS_AT_INSPECTED_CHECKPOINT
-GCM02_12_4_EXACT_BINDING_PASS
-GCM02_12_5_PROVIDER_BASELINE_PASS
-GCM02_12_6_COPIED_DATABASE_PROBE_PASS
-GCM02_12_6_DEVICE_SCOPED_CORRELATION_PASS
-GCM02_12_6_PASS
-GCM02_12_7_READ_ONLY_PREFLIGHT_PASS
-GCM02_S12_REC_01_SOURCE_ACCEPTED
-GCM02_S12_REC_01_WINDOWS_SURFACE_PASS
-GCM02_S12_HOSTED_READINESS_CLIENT_PASS
-GCM02_S12_LAST_SUCCESSFUL_SYNC_PROJECTION_FAIL
-GCM02_S12_SYNC_01_D_E_F_ACTIVE
-GCM02_12_7_HUMAN_AUTHORIZATION_HELD
-GCM02_12_8_CONTROLLED_OPERATION_HELD
-GCM02_12_9_POST_OPERATION_COMPARISON_HELD
-GCM02_12_10_RECONCILIATION_HELD
-GCM02_OPEN
-```
-
-### 5.5 Active prohibitions
-
-Until a new Main reconciliation explicitly changes them:
-
-```text
-Retry: NOT AUTHORIZED
-ordinary Sync: NOT AUTHORIZED
-Enroll/re-enroll: NOT AUTHORIZED
-provider query or mutation: NOT AUTHORIZED
-database repair, cleanup or deletion: NOT AUTHORIZED
-credential inspection or rotation: NOT AUTHORIZED
-Gate 12.7 authorization: NOT GRANTED
-GCM-02 closure: NOT GRANTED
-```
-
-Keep Markei closed and preserve the copied database unchanged until the Gate
-12.7 packet is reviewed. Do not execute ad hoc SQL.
-
-## 6. Superseded pre-ST08 continuation â€” SYNC-01 before Phase 12.7
-
-The Windows read-only preflight, dedicated recovery-control visibility and
-confirmation cancellation are reconciled as PASS. The later readiness assay
-also preserved the two-event failed candidate and Device sequence. It did not
-execute recovery or ordinary Sync.
-
-The readiness assay exposed one source-proven projection defect and one
-credible timing hypothesis:
-
-```text
-projection:
-  completed readiness was selected as "Last successful sync"
-
-timing:
-  protected Sync requests currently use a fixed 5-second client deadline
-  causal role in the historical failure remains unproved
-```
-
-Proceed in this order:
-
-1. Codex materializes synchronized D/E/F unit
-   `C10-GCM02-S12-ERR-03`;
-2. implement the complete operation-specific client terminal catalogue,
-   route-specific server terminal logging and sanitized correlation join;
-3. correct ordinary-Sync and hosted-readiness success projections;
-4. replace the fixed five-second Sync request deadline with the bounded
-   25-second server / 35-second client assay policy;
-5. validate only through local/disposable Flutter and API tests and replace
-   G/H/I;
-6. Main reconciles source evidence before any Windows or hosted action;
-7. the user pulls the accepted implementation and performs the canonical
-   Windows build/launch;
-8. run one readiness-only regression assay first, proving readiness time may
-   advance while ordinary-Sync time and the failed candidate remain unchanged;
-9. capture the matching Render window through sanitized correlation only;
-10. only after a separate Main packet may one ordinary-Sync assay or the
-    Gate 12.7 bounded recovery be considered; neither is authorized by this
-    staging.
-
-Unknown-outcome Retry, ordinary Sync, bounded recovery, Repair, Enroll,
-provider-console mutation, database editing and cleanup remain prohibited
-during materialization. SYNC-01 must not perform the deferred broad ERR
-refactor.
-
-## 7. GCM-03 provisional boundary
-
-GCM-03 is undefined and inactive until GCM-02 closes. Its scope must be
-derived from the actual GCM-02 terminal, not from the optimistic expectation
-of success.
-
-Current provisional candidate:
-
-```text
-bounded second-Device hosted convergence and acknowledgement proof
-```
-
-Main must first inspect GCM-02 closure evidence, inventory remaining accepted
-gaps, select one narrow objective, stage fresh A/B/C investigation if needed,
-then create new D/E/F authority.
-
-GCM-03 must not silently absorb:
-
-- production deployment;
-- broad retention/rebootstrap acceptance;
-- backup/PITR acceptance;
-- credential-lifecycle acceptance;
-- Cycle 11 UI/UX work.
-
-## 8. GCM-04 provisional boundary
-
-GCM-04 is undefined and inactive until earlier closure evidence establishes
-what remains. It should contain the final bounded external/operational
-acceptance needed for Cycle 10, potentially partitioned by Main if one unit
-would otherwise become non-terminal.
-
-Current candidate families:
-
-```text
-authorization, revocation and credential lifecycle
-outage, recovery and retention acceptance
-deployment/release operational boundary
-```
-
-These are planning candidates, not authority. Main must reconcile GCM-03
-evidence before selecting GCM-04.
-
-## 9. Cycle 10 closure route
-
-Cycle 10 closes only after:
-
-1. GCM-02 reaches a trustworthy correlated terminal or an explicitly accepted
-   bounded blocker;
-2. GCM-03 is defined, materialized, validated and reconciled;
-3. GCM-04 is defined, materialized, validated and reconciled;
-4. remaining host/provider/release gaps are classified;
-5. source, G/H/I, domain memory and human evidence are reconciled;
-6. Operational, Didactic and Design permanent files are promoted through
-   their authorized FLX-PRM-04 sequences;
-7. `00_PROJECT_STATE.md`, `05_SESSION_LOG.md` and
-   `06_SESSION_SCHEME.md` are refreshed under Main authority;
-8. Cycle 11 receives a clean entry baseline with Cycle 10 residuals explicit.
-
-Cycle 11 remains separate. Its UI/UX and basic Analytics work must not be used
-to bypass Cycle 10 closure.
-
-## 10. Pre-ST08 PRC-01 claims retained for provenance
-
-| Claim                                        | Result and evidence boundary                                          |
-| -------------------------------------------- | --------------------------------------------------------------------- |
-| Cycle 10 implementation foundation exists    | Implemented and locally validated within named reports                |
-| Migration 007 repaired cursor provisioning   | Implemented; development-provider application and postflight accepted |
-| Hosted readiness and exact binding passed    | Human-operated accepted development evidence                          |
-| Gate 12.6 copied-database probe passed       | Human-operated accepted, read-only copied-database evidence           |
-| Failed/notApplied lineage is known           | Accepted from sanitized copied-database output                        |
-| Legacy response pairing is explained         | Source/history-consistent, not row-proven                             |
-| Exact device-scoped next transition is known | Accepted from human-operated read-only `GRM-SQLITE-04` evidence       |
-| Retry is eligible                            | Rejected; unknown-retry path is inapplicable                          |
-| Ordinary Sync is a safe substitute           | Rejected; six other pending events exist                              |
-| REC-01 bounded execution surface exists      | Implemented and locally validated at `a633677`; host-unvalidated       |
-| Eligible preflight diagnostic is corrected   | `MKS-REC-001` generated and locally validated; Windows rerun pending   |
-| Exact batch and one-upload boundary hold      | Locally test-validated; no live execution performed                    |
-| REC-01 Windows inspection surface passed     | Human-observed; inspection/cancellation only, no execution              |
-| Hosted readiness route passed                | Human-observed HTTP 200 client evidence; not ordinary Sync              |
-| Last successful Sync projection is correct  | Rejected; readiness advanced the timestamp                              |
-| Five-second deadline caused prior failure    | Provisional hypothesis; not proved                                     |
-| ERR-03 terminal/timing packet is active      | Accepted D/E/F materialization authority at baseline `3d1e82e`          |
-| Gate 12.7 packet is ready                    | Rejected; SYNC-01 and later freshness reconciliation required           |
-| Gate 12.7 is authorized                      | Rejected                                                              |
-| GCM-02 is closed                             | Rejected                                                              |
-| GCM-03 or GCM-04 is active                   | Rejected                                                              |
-| Cycle 10 is closed                           | Rejected                                                              |
-
-## 11. Pruning disposition
-
-This refresh replaces the former mutable prefix, which had accumulated:
-
-- superseded cursor-state implementation instructions;
-- pre-probe Gate 12.6 Cancel/Retry decision trees;
-- repeated repository, methodology and validation panoramas;
-- cleared provider-preflight and deployment steps;
-- stale one-line continuation terminals;
-- duplicated future GCM-03/04 and Cycle 10 closure descriptions.
-
-Their continuing meaning is consolidated above. Historical progression remains
-available under `Legacy_Progress`, which was preserved unchanged.
-
-Current recovery pointer:
-
-```text
-read this mutable prefix
--> read active ERR-03 D/E/F for Codex authority
--> read REC-01 G/H/I for preserved recovery evidence
--> use the canonical I_SCRIPTS dispatcher for later Windows commands
--> expand into Legacy_Progress only for provenance/history
-```
-
----
-
-# Legacy_Progress
-
-> Persistence rule: this section is append-only Main-stage continuity. Entries
-> under `Legacy_Progress` must survive later J refresh, reconciliation,
-> compaction, or structural mutation. Corrections are appended as new dated
-> entries; prior entries are not removed or silently rewritten.
-
-## 2026-07-23 â€” GRIMOIRE human-operationalisation inner sprint and Gate 02 closure
-
-### Sprint identity
-
-```text
-Sequence: FLX-ORD-01 bounded human-supervised operational materialization
-Cycle: 10
-Phase: GCM-02 closure recovery
-Gate: 02 â€” account cursor provisioning
-Inner sprint: GRIMOIRE human-operationalisation check-up and build
-Repository baseline: 837e9e18706b1eccb2bfafc0bf8980b69e1acf0a
-Human authority: explicit
-```
-
-### Purpose and system mechanics
-
-GRIMOIRE is the human-facing operational interface between project intent and
-reviewed automation. It implements a hemi-automated chain:
-
-```text
-human selects a minimal indexed command
-â†’ versioned PowerShell launcher validates local prerequisites and target role
-â†’ committed mitigated-risk coordinates supply non-secret endpoint identity
-â†’ password is entered only through a masked terminal prompt
-â†’ Docker supplies the pinned PostgreSQL 18 client
-â†’ libpq requires TLS and channel binding
-â†’ SQL verifies database role and database identity
-â†’ named SQL action or exact tracked migration is selected
-â†’ mutation requires an explicit human confirmation boundary
-â†’ sanitized evidence returns to the operator
-â†’ Main/Operational reconciliation records meaning and next authority
-```
-
-The operational collection separates responsibilities:
-
-- `GRIMOIRE.md` explains architecture, safety boundaries, workflow, failure
-  classification, proven checkpoints, and ends with the active minimal-command
-  index;
-- `GENERAL_SCRIPTS.md` provides expanded operator commands and validation
-  sequences;
-- `models/NEON_CHECK.ps1` owns masked credentials, Docker `psql`, role/database
-  preflight, TLS/channel-binding enforcement, action dispatch, exact migration
-  path containment, Git tracking/cleanliness checks, SHA-256 display, and
-  explicit mutation confirmation;
-- `models/NEON_ACTION.sql` owns delimited, named, predominantly read-only SQL
-  evidence blocks;
-- root `NEON_ACTION.sql`, `NEON_CHECK.ps1`, and `NEON_CRED.md` preserve the
-  user-uploaded operational originals;
-- `NEON_CRED.md` is committed under an explicit mitigated-risk decision,
-  stores only non-secret target coordinates and role names, and contains
-  neither passwords nor complete connection URLs;
-- `SECRET_INPUTS.md` remains the sole ignored private input surface.
-
-Executable mechanics, reusable models, and minimal non-secret coordinates are
-versioned. Secret inputs are not. Minimal commands are treated as stable
-interfaces into reviewed verbose mechanics; when an action or variable name
-changes, every reference must be reconciled in the same focused change.
-
-### Failure-to-system learning
-
-The sprint resolved four recurrent operator/tooling defects:
-
-1. recycled download filenames produced stale script revisions, so development
-   revisions use unique immutable names before promotion to the canonical
-   repository filename;
-2. `$PSScriptRoot` was unsafe in parameter defaults, so companion paths are
-   resolved after script initialization;
-3. server-side `pg_stat_ssl` behind Neon proxying was not authoritative for
-   the client transport, so the launcher instead enforces
-   `PGSSLMODE=require` and `PGCHANNELBINDING=require` and treats successful
-   libpq authentication under those requirements as transport evidence;
-4. textual Windows path-prefix comparison was separator-sensitive, so exact
-   migration containment uses a parent-directory walk before Git tracked/clean
-   checks.
-
-### Gate 02 applied and validated evidence
-
-Migration `007_account_cursor_provisioning.sql` was applied once with:
-
-```text
-role: markei_migrator
-database: markei_sync_dev
-client TLS/channel binding: required
-file SHA-256: 89AB11302F8B860C52AA1C74FBFEDF6A4DB3A0EE62FE7CB715B20B74AEF99AC6
-confirmation: APPLY-ONCE
-transaction terminal: COMMIT
-```
-
-Postflight returned:
-
-```text
-migration_id: 007_account_cursor_provisioning
-checksum: c10-mcg02-account-cursor-provisioning-v1
-readiness_v2: true
-provisioning function: present
-provisioning trigger count: 1
-account count: 1
-cursor-state count: 1
-accounts missing cursor state: 0
-orphan cursor-state rows: 0
-runtime SELECT: true
-runtime INSERT: false
-runtime DELETE: false
-runtime next_cursor UPDATE: true
-runtime readiness-v2 EXECUTE: true
-runtime provisioning EXECUTE: false
-inspection terminal: ROLLBACK
-action terminal: PASS
-```
-
-The false privilege values are intended least-privilege boundaries and are not
-caused by absent Flutter activity. Migration 007 must not be reapplied.
-
-### Resulting state and next authority
-
-```text
-GRIMOIRE_BASELINE_ESTABLISHED
-MIGRATION_007_APPLIED_ONCE
-GATE_02_POSTFLIGHT_PASS
-ACCOUNT_CURSOR_INVARIANT_PASS
-RUNTIME_PRIVILEGE_SHAPE_PASS_BY_MIGRATOR_INSPECTION
-GATE_02_CLOSED
-RUNTIME_ROLE_DIRECT_READINESS_CHECK_NEXT
-RENDER_CORRECTED_REVISION_NOT_YET_RECONCILED
-REAL_SYNC_RETRY_UNAUTHORIZED
-GCM02_OPEN
-```
-
-The next bounded operation is a direct runtime-role connection and
-`markei_hosted_runtime_ready_v2()` call. After that passes, reconcile GitHub
-HEAD and Render deployment revision, deploy only an explicitly authorized
-reconciled revision, and require live/ready HTTP 200 evidence before any
-controlled Sync attempt.
-
-## 2026-07-23 â€” Canonical five-file reconciliation and branch remodelling
-
-### Sprint identity
-
-```text
-Sequence: FLX-PRN-03 pruning + FLX-PRM-04 reconciliation
-Cycle: 10
-Phase: post-migration-007 GRIMOIRE consolidation
-Source branch: intermid-cycle-recovery
-Source HEAD: c76734e32f70702978f5c7a543c1f0ef3c63c521
-Target branch: cycle10-intermid-grimoire
-Human authority: explicit
-Write scope: GRIMOIRE five-file set, obsolete duplicates, and this append
-```
-
-### Reconciliation result
-
-The five latest uploaded files were compared with the `c76734e` tree. The
-uploads were useful source evidence but were not accepted blindly as the final
-tree: the existing repository documentation contained later Gate 02 closure
-knowledge, while the former `models/` layer contained the launcher and SQL
-corrections that had been operationally proven.
-
-The live repository interface is now one commutatively maintained set:
-
-```text
-documentation/GRIMOIRE.md
-documentation/GENERAL_SCRIPTS.md
-documentation/NEON_CHECK.ps1
-documentation/NEON_ACTION.sql
-documentation/NEON_CRED.md
-```
-
-`NEON_ACTION.sql` is the canonical filename. The occasional plural
-`NEON_ACTIONS.sql` and the uploaded numbered filenames are treated as naming
-noise, not additional repository interfaces.
-
-### Explicit tuning and pruning
-
-- `GRIMOIRE.md` now defines the root five-file set as canonical, preserves the
-  proven Gate 02 closure, keeps `GRIMOIRE_INDEX` as its final subsection, and
-  points every launcher command to `documentation/NEON_CHECK.ps1`.
-- `GENERAL_SCRIPTS.md` now uses the same root paths, identifies
-  `cycle10-intermid-grimoire` as its Git-alignment branch, and retains migration
-  007 as historical/do-not-rerun evidence.
-- `NEON_CHECK.ps1` is the Windows-proven v8 launcher promoted from the former
-  model layer. Its SHA-256 remains
-  `c4c050e3c83ba17e3ca509bd97f7d8cb7f6fdc301db02f0a3c72e6f1d98f6818`.
-- `NEON_ACTION.sql` is the aligned read-only catalogue promoted from the former
-  model layer. Its connection action reports role, database, and read-only
-  transaction state; transport assurance remains owned by the launcher's
-  enforced libpq TLS and channel-binding settings rather than proxy-sensitive
-  server-side TLS columns.
-- `NEON_CRED.md` retains the latest uploaded minimal non-secret coordinates and
-  role-name interface. Passwords, tokens, private keys, and complete connection
-  URLs remain prohibited.
-- `documentation/models/NEON_CHECK.ps1`,
-  `documentation/models/NEON_ACTION.sql`, and
-  `documentation/models/NEON_CRED.md` were removed after promotion because a
-  second live layer would duplicate semantic and executable ownership.
-- `documentation/legacy/GENERAL_SCRIPTS.md` was removed because Git already
-  preserves its history and a stale copy would remain discoverable as a false
-  operational route. `documentation/legacy/PT_INTRO.md` was retained because it
-  is unrelated to the Neon/GRIMOIRE reconciliation.
-- `documentation/SECRET_INPUTS.md` remains ignored and untracked as the sole
-  private input surface.
-
-### PRC-01 claims
-
-```text
-Claim: c76734e is the exact source coordinate for this remodelling
-Prior state: requested / remotely verified
-Evidence: GitHub comparison reports intermid-cycle-recovery identical to c76734e
-Semantic owner: Git history
-Resulting state: accepted
-
-Claim: the models folder is still required for current operation
-Prior state: accepted by the earlier 2026-07-23 Legacy_Progress entry
-Evidence: latest uploaded v8 launcher equals the proven model launcher; the
-          corrected model SQL can be promoted without losing behavior
-Contradiction: duplicate root/model paths create two competing live interfaces
-Semantic owner: GRIMOIRE operational documentation
-Resulting state: superseded; models pruned after promotion
-History disposition: earlier entry retained unchanged; this entry corrects it
-
-Claim: migration 007 should be applied during this sprint
-Prior state: already applied once and postflight-validated
-Evidence boundary: documentation and static reconciliation only
-Resulting state: rejected; do not rerun migration 007
-
-Claim: creating cycle10-intermid-grimoire authorizes Render reconfiguration
-Prior state: not authorized
-Evidence: branch work is documentation/Git reconciliation
-Resulting state: still not authorized
-```
-
-### Expected next sequence before resuming the former steps 4â€“14
-
-The earlier eleven-step route is not replayed literally because migration 007
-and Gate 02 have since completed. Resume through these seven bounded steps:
-
-1. pull and inspect `cycle10-intermid-grimoire` locally; verify clean `0 0`
-   divergence and review this five-file/J reconciliation;
-2. run the direct runtime-role connection and
-   `markei_hosted_runtime_ready_v2()` read-only proof;
-3. reconcile the intended application revision against the current Render
-   deployment fingerprint;
-4. decide explicitly whether the new branch remains documentation-only or
-   becomes the branch Render follows; branch creation alone changes no Render
-   setting;
-5. deploy exactly one authorized reconciled application revision and capture
-   its full Git SHA plus Render deployment fingerprint;
-6. require `/health/live = 200`, `/health/ready = 200`, and a fresh provider
-   immobility baseline;
-7. only then authorize at most one exact-identity Sync resolution attempt and
-   reconcile its correlated terminal evidence.
-
-Current terminals:
-
-```text
-GRIMOIRE_CANONICAL_FIVE_FILE_SET_RECONCILED
-MODELS_LAYER_SUPERSEDED_AND_PRUNED
-MIGRATION_007_DO_NOT_RERUN
-GATE_02_REMAINS_CLOSED
-RUNTIME_ROLE_DIRECT_READINESS_CHECK_NEXT
-RENDER_BRANCH_CHANGE_NOT_AUTHORIZED
-REAL_SYNC_RETRY_UNAUTHORIZED
-GCM02_OPEN
-```
-
-## 2026-07-23 â€” Hosted pre-Sync gate closure and controlled-Sync planning boundary
-
-### Sequence identity
-
-```text
-Sequence: post-Gate-02 hosted deployment verification
-Cycle: 10
-Phase: GCM-02 closure recovery
-Active branch: cycle10-intermid-grimoire
-Authorized revision: baaa3231c0b8f9b1af2c2aff80255e883309ca74
-Previous observed Render revision: 5b36421
-Provider database: markei_sync_dev
-Evidence date: 2026-07-23
-Human authority: explicit
-Mutation boundary: one Render deployment; no Sync request
-```
-
-### Purpose
-
-This sequence verified that the reconciled Cycle 10 branch could become the active Render branch, that its intended revision could be deployed exactly once, and that the hosted service could satisfy its live and ready contracts without changing the inspected Neon coordination state.
-
-The sequence also completed the direct runtime-role readiness-v2 proof that remained pending after migration 007.
-
-No controlled Sync request was performed. Migration 007 was not reapplied. No Neon schema, role, Auth0, hosted identity, or Render environment-variable change was performed during this gate.
-
-### 1. Local Git alignment â€” PASS
-
-The Windows checkout was clean and exactly aligned with the remote branch before deployment:
-
-```text
-Repository: gus-i-gu/markei
-Branch: cycle10-intermid-grimoire
-Local HEAD: baaa3231c0b8f9b1af2c2aff80255e883309ca74
-Remote HEAD: baaa3231c0b8f9b1af2c2aff80255e883309ca74
-Local/remote divergence: 0 / 0
-Working tree: clean
-```
-
-This established an unambiguous application revision for the hosted gate.
-
-### 2. Direct runtime-role readiness-v2 proof â€” PASS
-
-A direct read-only connection was opened using the restricted runtime role.
-
-Observed evidence:
-
-```text
-Role: markei_runtime
-Database: markei_sync_dev
-TLS: active
-Protocol: TLS 1.3
-Cipher: TLS_AES_256_GCM_SHA384
-Readiness function: public.markei_hosted_runtime_ready_v2()
-Readiness result: true
-Transaction: read only
-Terminal: ROLLBACK
-```
-
-The proof establishes that the runtime identity could reach the intended development database and execute the readiness-v2 contract.
-
-It does not by itself prove application Sync, token validity, device identity resolution, or event convergence.
-
-### 3. Pre-deployment provider baseline â€” PASS
-
-A sanitized aggregate baseline was captured through the migrator inspection role inside a read-only transaction.
-
-| Measure                               | Before deployment |
-| ------------------------------------- | ----------------: |
-| Accounts                              |                 1 |
-| Devices                               |                 1 |
-| Account cursor states                 |                 1 |
-| Submissions                           |                 0 |
-| Sync events                           |                 0 |
-| Device acknowledgements               |                 0 |
-| Sum of next cursors                   |                 1 |
-| Sum of device next-expected sequences |                 1 |
-
-The transaction ended with `ROLLBACK`.
-
-The evidence contains no account ID, device ID, credential, token, connection string, event payload, or submission content.
-
-The state is consistent with one previously provisioned account/device fixture and no submitted or synchronized application event.
-
-### 4. Render revision comparison â€” PASS
-
-The previous observed Render deployment was:
-
-```text
-Revision: 5b36421
-Description: Implement transport observability diagnostics
-Started: 2026-07-21 21:15 local dashboard time
-Live: 2026-07-21 21:16 local dashboard time
-Trigger: manual dashboard deployment
-```
-
-The intended revision for the new gate was:
-
-```text
-baaa3231c0b8f9b1af2c2aff80255e883309ca74
-```
-
-The intended revision differed from the previously hosted revision and belonged to the reconciled `cycle10-intermid-grimoire` branch.
-
-The newest commit primarily reconciled documentation and GRIMOIRE structure while inheriting the hosted application implementation from its ancestry. Deploying the exact revision nevertheless established one reproducible Git fingerprint for subsequent evidence.
-
-### 5. Render branch establishment â€” PASS
-
-The Render development service was configured to follow:
-
-```text
-Repository: gus-i-gu/markei
-Branch: cycle10-intermid-grimoire
-Service type: Node web service
-Instance class: free development instance
-Auto-deploy during gate: off
-```
-
-No Render environment variable, secret, build command, start command, Neon coordinate, or Auth0 setting was changed during branch establishment.
-
-### 6. Single authorized deployment â€” PASS
-
-Exactly one deployment of the authorized revision was observed for this gate:
-
-```text
-Revision: baaa3231c0b8f9b1af2c2aff80255e883309ca74
-Short revision: baaa323
-Description: Reconcile Cycle 10 GRIMOIRE interface
-Trigger: manual dashboard deployment
-Started: 2026-07-23 20:18 local dashboard time
-Final state: live
-Unexpected second deployment: none observed
-```
-
-Build and startup evidence:
-
-```text
-Node.js: 24.14.1
-Build command: npm ci --include=dev && npm run build
-Packages installed: 208
-Packages audited by npm install: 209
-TypeScript compilation: PASS
-Build upload: PASS
-Runtime command: npm start
-Hosted entry point: node dist/src/hosted.js
-Startup marker: MARKEI_HOSTED_SYNC_READY
-Render terminal: live
-```
-
-The service became publicly available after successful compilation, artifact upload, startup, and readiness probing.
-
-Renderâ€™s initial platform probes included undefined-root `HEAD /` and `GET /` requests returning 404. These were unclassified root-route requests and did not contradict the designated health contracts.
-
-### 7. Hosted HTTP health verification â€” PASS
-
-The deployed service was queried through its public development origin.
-
-| Endpoint        | Status | Sanitized response   |
-| --------------- | -----: | -------------------- |
-| `/health/live`  |    200 | `{"status":"live"}`  |
-| `/health/ready` |    200 | `{"status":"ready"}` |
-
-Render logs independently recorded `/health/ready` requests with:
-
-```text
-Route class: /health/ready
-Operation: health-ready
-Method: GET
-Status: 200
-Elapsed band: below 250 ms
-```
-
-The application logs used short correlation fingerprints and did not expose raw credentials or identity material.
-
-### 8. Post-deployment provider immobility â€” PASS
-
-After deployment and public health verification, the exact pre-deployment aggregate inspection was repeated through the migrator role in a read-only transaction.
-
-Observed post-deployment state:
-
-| Measure                               | Before | After | Difference |
-| ------------------------------------- | -----: | ----: | ---------: |
-| Accounts                              |      1 |     1 |          0 |
-| Devices                               |      1 |     1 |          0 |
-| Account cursor states                 |      1 |     1 |          0 |
-| Submissions                           |      0 |     0 |          0 |
-| Sync events                           |      0 |     0 |          0 |
-| Device acknowledgements               |      0 |     0 |          0 |
-| Sum of next cursors                   |      1 |     1 |          0 |
-| Sum of device next-expected sequences |      1 |     1 |          0 |
-
-Connection and transaction evidence:
-
-```text
-Role: markei_migrator
-Database: markei_sync_dev
-TLS: active
-Protocol: TLS 1.3
-Transaction: read only
-Terminal: ROLLBACK
-```
-
-All eight values exactly matched the pre-deployment baseline.
-
-Within the inspected coordination boundary, branch retargeting, deployment, startup, Render readiness probes, and explicit public health requests produced no observable provider mutation.
-
-This evidence does not claim that no unobserved provider metric changed. It proves immobility only for the eight inspected database aggregates.
-
-### 9. Deployment singularity â€” PASS
-
-The Render event history showed one deployment of `baaa323` during this gate:
-
-```text
-Watched branch: cycle10-intermid-grimoire
-Authorized revision: baaa3231c0b8f9b1af2c2aff80255e883309ca74
-Deployment count for this gate: 1
-Final state: live
-Unexpected later deployment: no
-```
-
-The earlier `5b36421` deployment belongs to the preceding 2026-07-21 observability round and is not a duplicate deployment of the present revision.
-
-### 10. Hosted pre-Sync gate conclusion â€” PASS
-
-```text
-LOCAL_GIT_ALIGNMENT_PASS
-RUNTIME_ROLE_DIRECT_READINESS_V2_PASS
-PRE_DEPLOYMENT_PROVIDER_BASELINE_CAPTURED
-RENDER_REVISION_COMPARISON_PASS
-RENDER_WATCHED_BRANCH_ESTABLISHED
-SINGLE_AUTHORIZED_DEPLOYMENT_PASS
-HOSTED_LIVENESS_HTTP_200
-HOSTED_READINESS_HTTP_200
-POST_DEPLOYMENT_PROVIDER_IMMOBILITY_PASS
-HOSTED_PRE_SYNC_GATE_CLOSED
-```
-
-Preserved constraints:
-
-```text
-Migration 007 reapplied: NO
-Sync request performed: NO
-Application event intentionally submitted: NO
-Neon schema edited: NO
-Neon roles edited: NO
-Auth0 configuration edited: NO
-Render environment variables edited: NO
-Provider aggregate difference: NONE
-Controlled Sync authorization: PENDING SEPARATE REVIEW
-```
-
-### 11. Dependency-audit observation â€” OPEN / NOT YET DIAGNOSED
-
-Renderâ€™s dependency installation reported:
-
-```text
-One high-severity vulnerability
-```
-
-This is an npm install-time advisory observation. It did not prevent compilation or deployment, but it must not be classified as a clean dependency-security result.
-
-The first local follow-up command was executed from the repository root:
-
-```text
-npm audit
-```
-
-That directory has no npm lockfile. npm therefore returned:
-
-```text
-Code: ENOLOCK
-Meaning: audit requires an existing lockfile
-```
-
-The generated `npm-audit-cycle10.json` contains only the `ENOLOCK` error. It is not a vulnerability report and provides no affected package, installed version, dependency path, exploitability, or remediation range.
-
-Repository inspection locates the actual Node package and lockfile at:
-
-```text
-services/markei_sync_api/package.json
-services/markei_sync_api/package-lock.json
-```
-
-Current classification:
-
-```text
-Render npm advisory observation: OPEN
-Local vulnerability diagnosis: NOT YET PERFORMED
-Local audit failure cause: WRONG WORKING DIRECTORY / LOCKFILE ABSENT THERE
-Dependency remediation authorized: NO
-npm audit fix authorized: NO
-npm audit fix --force authorized: NO
-```
-
-The root-level JSON artifact should remain outside the repository. A corrected read-only audit must be run from `services/markei_sync_api` before selecting any dependency change.
-
-The dependency observation is tracked separately from the hosted pre-Sync gate because it did not invalidate Git alignment, runtime readiness, deployment identity, health behavior, or provider immobility. Its actual runtime relevance remains unknown until the corrected audit is interpreted.
-
-### Dependency-audit remediation â€” PASS
-
-The hosted installation had reported one high-severity advisory affecting `find-my-way <=9.6.0`.
-
-Dependency inspection established:
-
-```text
-Dependency: find-my-way
-Installed before remediation: 9.6.0
-Dependency type: transitive production dependency
-Introduced by: fastify 5.10.0
-Dependency path: @markei/sync-api â†’ fastify â†’ find-my-way
-Advisory: GHSA-c96f-x56v-gq3h
-Advisory class: HTTP/2 denial of service
-Evidence of rogue installation or repository intrusion: NONE
-
-find-my-way: 9.6.0 â†’ 9.7.0
-package.json changed: NO
-Force or major-version remediation used: NO
-
-npm ls find-my-way: 9.7.0
-npm audit: 0 vulnerabilities
-format:check: PASS
-lint: PASS
-typecheck: PASS
-tests: 53 passed, 0 failed
-build: PASS
-```
-
-### PRC-01 classification
-
-```text
-Claim: direct runtime readiness-v2 is available
-Source: runtime-role read-only provider inspection
-Current state: validated
-Evidence: markei_hosted_runtime_ready_v2() returned true
-Evidence boundary: markei_runtime against markei_sync_dev
-Does not prove: authenticated Sync or event convergence
-Semantic owner: Operational
-Result: accepted within the named boundary
-
-Claim: baaa323 was successfully hosted
-Source: Render deployment event and runtime logs
-Current state: validated
-Evidence: build pass, startup marker, live terminal
-Evidence boundary: Render development/free service
-Does not prove: production acceptance
-Semantic owner: Operational
-Result: accepted within the development-host boundary
-
-Claim: the hosted service was live and ready
-Source: explicit HTTP requests and Render readiness logs
-Current state: validated
-Evidence: /health/live 200 and /health/ready 200
-Does not prove: Sync success
-Semantic owner: Operational
-Result: accepted
-
-Claim: the deployment mutated no inspected coordination state
-Source: matched pre/post read-only aggregate inspections
-Current state: validated
-Evidence: all eight inspected values unchanged
-Evidence boundary: named Neon tables and aggregate fields
-Does not prove: universal provider immobility outside inspected measures
-Semantic owner: Operational
-Result: accepted within the inspected boundary
-
-Claim: exactly one baaa323 deployment occurred during this gate
-Source: Render event history
-Current state: validated
-Evidence: one manually triggered baaa323 deployment; earlier 5b36421 event belongs to a different round
-Semantic owner: Operational
-Result: accepted
-
-Claim: the Node dependency tree contains a confirmed exploitable high-severity vulnerability
-Source: Render npm install warning
-Current state: candidate / unresolved
-Evidence: aggregate advisory count only
-Contradiction: local npm audit did not run against a lockfile
-Semantic owner: Operational dependency evidence
-Result: remain open pending corrected package-root audit
-
-Claim: the ENOLOCK JSON is a dependency vulnerability report
-Source: root-level local npm audit attempt
-Current state: contradicted
-Evidence: JSON contains only the ENOLOCK error
-Result: rejected; do not preserve it as audit evidence
-
-Claim: one controlled Sync request is now authorized
-Source: hosted pre-Sync gate result
-Current state: proposed
-Evidence: prerequisite deployment and immobility gate passed
-Missing evidence: exact identity, token, sequence, endpoint, expected mutation, and containment plan
-Result: not yet authorized
-```
-
-Claim: the reported dependency vulnerability was safely remediated
-Source: dependency explanation, lockfile resolution, npm audit, and API validation
-State: validated
-Evidence boundary: services/markei_sync_api dependency tree
-Result: accepted
-
-Claim: find-my-way represented an unauthorized or rogue dependency
-State: contradicted
-Evidence: normal Fastify dependency path recorded by npm
-Result: rejected
-
-### 12. Controlled exact-identity Sync attempt â€” PLANNING STARTED / EXECUTION HELD
-
-The next sequence is a single bounded authenticated Sync experiment. Passing the hosted pre-Sync gate makes planning appropriate but does not automatically authorize execution.
-
-Planning must resolve five evidence groups before a request is sent.
-
-#### 12.1 Identity binding
-
-Establish, without recording raw secrets:
-
-```text
-Auth0 issuer expected by the hosted API
-Auth0 audience expected by the hosted API
-Token subject fingerprint or sanitized comparison method
-Token expiry and not-before validity
-Fixture account mapped to the authenticated subject
-Fixture device enrolled under that same account
-Device active/revoked state
-```
-
-A raw access token, client secret, password, complete connection string, account UUID, or device UUID must not be copied into J.
-
-#### 12.2 Request contract
-
-Resolve from the committed implementation:
-
-```text
-Exact public endpoint
-HTTP method
-Required authorization header shape
-Required request body schema
-Operation name/version
-Supported event type
-Idempotency or submission identifier requirements
-Expected success status and response schema
-```
-
-The procedure must be derived from the deployed `baaa323` source contract rather than reconstructed from memory.
-
-#### 12.3 Sequence and cursor preconditions
-
-Capture a sanitized read-only baseline immediately before the request:
-
-```text
-Account next cursor
-Device next expected sequence
-Submission count
-Sync-event count
-Acknowledgement count
-Device enrollment state
-Account/device relationship valid
-```
-
-The current aggregate baseline indicates cursor `1` and device sequence `1`, but exact-identity readiness must be checked at execution time.
-
-#### 12.4 Expected single transition
-
-Before authorization, specify exactly which values may change after one valid request.
-
-The expected transition must identify:
-
-```text
-Expected submission count delta
-Expected sync-event count delta
-Expected acknowledgement behavior
-Expected account-cursor delta
-Expected device-sequence delta
-Expected HTTP response
-Expected correlated terminal log events
-Expected local application effect, if any
-```
-
-Any mutation outside that allowlist is a stop condition.
-
-#### 12.5 Containment and stop rules
-
-The first request is limited to one attempt.
-
-Do not automatically retry on:
-
-```text
-401 or 403 identity rejection
-409 sequence or replay conflict
-unexpected 4xx response
-5xx response
-timeout with uncertain provider outcome
-missing terminal correlation
-unexpected provider-state delta
-```
-
-A timeout or lost response does not prove that the provider remained unchanged. Inspect correlated logs and provider state before deciding whether the request was accepted.
-
-No cleanup, deletion, sequence correction, fixture recreation, second submission, credential rotation, or migration is authorized merely because the attempt fails.
-
-#### 12.6 Planned evidence order
-
-```text
-1. Complete corrected read-only npm audit diagnosis.
-2. Inspect the deployed Sync route and authentication contract.
-3. Verify sanitized Auth0 issuer/audience and token claim compatibility.
-4. Verify exact fixture account/device binding read-only.
-5. Capture exact pre-attempt provider baseline.
-6. Define the one allowed state transition.
-7. Review the assembled evidence and authorize or reject one request.
-8. If authorized, send exactly one controlled request.
-9. Capture HTTP result and correlated hosted logs.
-10. Capture exact post-attempt provider state.
-11. Compare expected and observed transitions.
-12. Reconcile GCM-02 closure state and determine Cycle 11 readiness.
-```
-
-Current terminals:
-
-```text
-HOSTED_PRE_SYNC_GATE_PASS
-RENDER_ACTIVE_BRANCH_CYCLE10_INTERMID_GRIMOIRE
-RENDER_REVISION_BAAA323_LIVE
-PROVIDER_IMMOBILITY_PASS
-DEPENDENCY_AUDIT_DIAGNOSIS_OPEN
-CONTROLLED_SYNC_PLAN_INCOMPLETE
-CONTROLLED_SYNC_REQUEST_UNAUTHORIZED
-MIGRATION_007_DO_NOT_RERUN
-GCM02_OPEN
-```
-
-## Append-only reconciliation entry â€” 2026-07-23 â€” Neo-Grimoire indexed coordinate-system redesign
-
-### Sprint identity
-
-```text
-Sequence: FLX-ORD-01 direct human-authorized documentation materialization
-Cycle: 10
-Phase: GCM-02 closure support / Step 12 preparation
-Branch: cycle10-intermid-grimoire
-Baseline HEAD: 1106dbea6a6d6b309d306d2f5a7911240b84bc2e
-Immediate parent: f1851ca
-Baseline commit: Neo-Grimoire system for Human Supervised Execution1.3
-Human authority: explicit
-Materialization scope: canonical GRIMOIRE five-file interface
-Evidence boundary: isolated local checkout and static structural validation
-Provider mutation authority: none
-Persistence status: human replacement, diff review, commit, and push pending
-```
-
-The baseline ambiguity is resolved as follows:
-
-```text
-1106dbea6a6d6b309d306d2f5a7911240b84bc2e
-    current branch HEAD / Execution1.3
-
-f1851ca
-    immediate parent / Execution1.2
-```
-
-### Objective
-
-The sprint restructures the existing human-supervised execution system without
-adding unrelated provider operations.
-
-The intended active interface remains five files:
-
-```text
-documentation/GRIMOIRE.md
-documentation/GENERAL_SCRIPTS.md
-documentation/NS_COORDINATES.md
-documentation/NEON_CHECK.ps1
-documentation/NEON_ACTION.sql
-```
-
-The responsibilities are now separated as:
-
-```text
-GRIMOIRE.md
-    human-facing architecture, safety rules, usage model, and concise index
-
-GENERAL_SCRIPTS.md
-    canonical expanded commands, queries, validation procedures, and evidence
-    expectations
-
-NS_COORDINATES.md
-    repository-safe non-secret coordinates, lifecycle classifications, and
-    verification sources
-
-NEON_CHECK.ps1
-    Windows launcher, coordinate parser, role/action dispatcher, secure runtime
-    input, target guards, and Docker psql execution
-
-NEON_ACTION.sql
-    SQL-only indexed read-only action catalogue
-```
-
-### Naming reconciliation
-
-Commit `1106dbe` had already renamed:
-
-```text
-documentation/NEON_CRED.md
-â†’ documentation/NS_COORDINATES.md
-```
-
-The rename-only state left active GRIMOIRE commands and the launcher capable of
-referring to the superseded filename. The present materialization reconciles the
-live interface:
-
-- `NEON_CHECK.ps1` now defaults to `NS_COORDINATES.md`;
-- active GRIMOIRE and GENERAL_SCRIPTS command bodies pass
-  `-ConfigPath ".\documentation\NS_COORDINATES.md"`;
-- hosted and Git procedures load public values from `NS_COORDINATES.md`;
-- no active execution route requires `documentation/NEON_CRED.md`;
-- `NEON_ACTION.sql` remains the canonical singular filename.
-
-Historical references to `NEON_CRED.md` remain valid observational evidence in
-earlier J entries, Git history, and the migration explanation inside the active
-documentation. They are not stale executable paths and must not be erased merely
-to make a global text search return zero results.
-
-### Materialized system
-
-#### GRIMOIRE
-
-`GRIMOIRE.md` now defines:
-
-- the canonical five-file architecture;
-- the coordinate and secret boundaries;
-- the runtime-input model;
-- Neon launcher and role behavior;
-- SQL action architecture;
-- migration and do-not-rerun boundaries;
-- Gate 02â€™s proven checkpoint;
-- failure classifications;
-- interface-maintenance rules;
-- the stable `GRIMOIRE_INDEX` landline.
-
-The final index contains 16 `GRM-*` blocks. Every active block contains:
-
-```text
-GRM identifier and functionality name
-01 â€” canonical command/query and hosting path
-Copy-paste-ready body
-What this does
-Variables required
-Expected output or result
-```
-
-Only the fenced copy-paste body is machine input. Its stable non-secret values
-are loaded from `NS_COORDINATES.md`; manually supplied values are restricted to
-runtime role selection, masked passwords, locally entered UUIDs, or an explicit
-authorization phrase where the canonical procedure requires one.
-
-#### GENERAL_SCRIPTS
-
-`GENERAL_SCRIPTS.md` now contains 18 canonical `GS-*` procedures.
-
-The active GRIMOIRE blocks map to 16 corresponding procedures. Two additional
-procedures remain historical or deliberately non-indexed:
-
-```text
-GS-NEON-H01
-GS-MIG-H01
-```
-
-The historical migration procedure preserves auditability but does not restore
-migration 007 to the active GRIMOIRE index.
-
-The Git, Render-health, Auth0-metadata, Windows-build, and Android-build
-procedures fetch their public coordinates from `NS_COORDINATES.md` and reject
-required placeholders instead of silently inventing values.
-
-#### NS_COORDINATES
-
-`NS_COORDINATES.md` is explicitly a coordinate allowlist, not a credential
-store.
-
-It now contains 60 unique machine-readable coordinate keys covering:
-
-```text
-repository and source
-Render development service
-Auth0 public development configuration
-Neon development target
-Markei hosted API contract
-provider migration state
-```
-
-All 11 keys from the former `NEON_CRED.md` were retained by name and without
-semantic loss:
-
-```text
-Environment
-ProjectAlias
-BranchAlias
-Region
-PostgreSQLVersion
-Host
-Port
-Database
-RuntimeUser
-MigratorUser
-DbOwnerUser
-```
-
-The file also records:
-
-- where each coordinate must be verified;
-- whether it is stable, mutable, rotatable, or ephemeral;
-- which values remain optional until a procedure consumes them;
-- which values must never be committed;
-- when the coordinate set was last reviewed.
-
-No password, token, client secret, API key, private key, complete connection
-string, identity-bound UUID, authorization header, cookie, or raw environment
-dump was migrated into the file.
-
-The direct Neon hostname, database name, and role names remain non-secret.
-Together they expose development topology, so they are retained under the
-existing mitigated-risk decision and should not be redistributed
-unnecessarily.
-
-#### NEON_ACTION
-
-`NEON_ACTION.sql` now contains eight indexed `NA-*` action blocks:
-
-```text
-NA-01  connection
-NA-02  gate02-preflight
-NA-03  gate02-postflight
-NA-04  migration-ledger
-NA-05  runtime-privileges
-NA-06  schema-inventory
-NA-07  list-devices-sanitized
-NA-08  verify-device
-```
-
-The file remains SQL-only. Explanations are SQL comments, while extraction
-continues to use the exact parser contract:
-
-```sql
--- ACTION: action-name
-...
--- END ACTION
-```
-
-Routine actions remain read-only and terminate through `ROLLBACK`.
-
-#### NEON_CHECK
-
-`NEON_CHECK.ps1` now:
-
-- resolves `NS_COORDINATES.md` by default;
-- loads the required Neon and migration coordinates dynamically;
-- rejects unresolved required placeholders;
-- remains locked to the development environment;
-- requires the direct Neon hostname;
-- requires PostgreSQL 18;
-- requires TLS and channel binding;
-- separates runtime, migrator, and database-owner roles;
-- prompts for passwords through masked terminal input;
-- requests a device UUID only for the exact action that requires it;
-- forwards non-secret action variables through `psql`;
-- preserves the tracked, clean, repository-contained migration guard;
-- preserves the exact `APPLY-ONCE` mutation confirmation;
-- clears PostgreSQL environment variables and temporary plaintext password
-  material in `finally`.
-
-Migration 007 remains applied-once historical evidence. This update does not
-authorize or perform its reapplication.
-
-### Validation record
-
-Static validation returned:
-
-```text
-GRIMOIRE blocks:                         16
-Canonical GENERAL_SCRIPTS procedures:   18
-NEON_ACTION indexed actions:              8
-NS_COORDINATES unique keys:              60
-Original coordinate keys retained:     11/11
-Active GRM â†’ GS cross-references:        PASS
-Executable bodies with placeholders:       0
-Active stale executable NEON_CRED paths:   0
-Canonical NS_COORDINATES default:        PASS
-Secret-pattern scan:                     PASS
-SQL action parsing:                    8/8 PASS
-git diff --check:                        PASS
-```
-
-All eight SQL action bodies parsed as PostgreSQL after substituting the
-non-secret `psql` variables supplied by the launcher.
-
-The validation boundary is static and structural. The Linux materialization
-environment did not repeat:
-
-- Windows PowerShell execution;
-- Docker Desktop execution;
-- Neon connections or queries;
-- Render requests or configuration;
-- Auth0 requests or token acquisition;
-- Windows or Android builds;
-- a Sync submission.
-
-No provider state, deployment, credential, migration, or application source was
-changed by this documentation sprint.
-
-### PRC-01 classification
-
-```text
-Claim: the redesigned five-file GRIMOIRE interface exists
-Source: local repository diff against 1106dbea
-Current state: implemented and statically validated
-Evidence: five modified active-interface files, index counts, cross-reference
-          checks, parser checks, and git diff --check
-Evidence boundary: isolated local checkout
-Semantic owner: operational execution documentation
-Target role: active human-supervised execution interface
-History disposition: prior Execution1.3 state retained in Git and J
-Result: accepted as a materialization candidate pending human diff review and
-        Git persistence
-```
-
-```text
-Claim: NEON_CRED.md remains the active coordinate filename
-Source: pre-reconciliation live references
-Current state: contradicted
-Evidence: canonical file is NS_COORDINATES.md; launcher default and active
-          command bodies now use NS_COORDINATES.md
-Semantic owner: canonical five-file interface
-History disposition: historical NEON_CRED.md references preserved as evidence
-Result: rejected as a live path; retained only as historical naming
-```
-
-```text
-Claim: the coordinate file contains authentication secrets
-Source: inspected NS_COORDINATES content and scoped secret-pattern scan
-Current state: contradicted within the inspected five-file boundary
-Evidence: only non-secret coordinates, identifiers, route names, public
-          metadata, role names, and migration identifiers were found
-Evidence boundary: inspected repository files; no claim about external secret
-                   stores
-Semantic owner: coordinate safety contract
-Result: rejected
-```
-
-```text
-Claim: every GRIMOIRE procedure is runtime-validated on Windows and providers
-Source: static materialization validation
-Current state: host-unvalidated for this sprint
-Evidence: structural and parser validation passed; Windows/provider execution
-          was not repeated
-Semantic owner: operational runtime evidence
-Result: remain host-unvalidated until the applicable procedures are executed in
-        the intended Windows/provider environment
-```
-
-```text
-Claim: this redesign authorizes migration, deployment, credential changes, or
-       one controlled Sync request
-Source: documentation materialization
-Current state: contradicted
-Evidence: no provider action was included in the authorized scope
-Result: rejected; existing provider and Step 12 stop boundaries remain active
-```
-
-### Continuation boundary
-
-The immediate continuation is:
-
-1. replace the five local files with the reviewed candidate versions;
-2. append this record to J;
-3. run the naming and diff integrity guard;
-4. inspect the complete six-file diff;
-5. persist the batch only after human acceptance;
-6. collect and independently verify the remaining non-secret coordinates;
-7. fill `NS_COORDINATES.md` without adding secrets;
-8. resume Cycle 10 GCM-02 closure and Step 12 from the read-only preparation
-   boundary.
-
-Step 12â€™s authenticated Sync mutation remains held. No request is authorized
-until identity, token flow, exact device/account binding, canonical request
-generation, expected state transition, and stop conditions are fully resolved.
-
-Current terminals:
-
-```text
-NEO_GRIMOIRE_FIVE_FILE_REDESIGN_IMPLEMENTED_LOCALLY
-ACTIVE_COORDINATE_FILENAME_NS_COORDINATES
-STALE_LIVE_NEON_CRED_EXECUTION_PATHS_REMOVED
-HISTORICAL_NEON_CRED_REFERENCES_PRESERVED
-ORIGINAL_COORDINATE_KEYS_RETAINED_11_OF_11
-STATIC_INTERFACE_VALIDATION_PASS
-WINDOWS_AND_PROVIDER_RUNTIME_NOT_REEXECUTED
-HUMAN_DIFF_REVIEW_AND_GIT_PERSISTENCE_PENDING
-NS_COORDINATE_COLLECTION_NEXT
-MIGRATION_007_DO_NOT_RERUN
-CONTROLLED_SYNC_REQUEST_UNAUTHORIZED
-GCM02_OPEN
-```
-
-## Append-only reconciliation entry â€” 2026-07-25 â€” Gate 12.6 copied-database classification
-
-### Sequence identity
-
-```text
-Sequence: FLX-PRM-04 â€” Promotion/Reconciliation
-Role: Main Chat
-Round: C10-GCM02-GATE-12.6-COPIED-DATABASE-RECONCILIATION
-Branch: cycle10-intermid-grimoire
-Inspected remote baseline: 49534b2029ecc56441cc00a5ad8b5a1a29ddbb38
-Authority: human-requested Main reconciliation and next-Codex staging
-Evidence boundary: sanitized user-transcribed Windows/SQLite output,
-                   repository source, and Git history
-```
-
-### Accepted copied-database observation
-
-The human operator first aligned the Windows checkout to
-`49534b2029ecc56441cc00a5ad8b5a1a29ddbb38`. Markei was closed. The canonical
-`GS-SQLITE-02` procedure then:
-
-- found exactly one local `markei_shared_beta.sqlite` candidate;
-- observed no WAL/SHM sidecars;
-- created the fixed-name Gate 12.6 working copy;
-- verified equal source/copy sizes and hashes without printing hash values;
-- did not query the live database;
-- returned the terminal to repository root.
-
-The canonical `GS-SQLITE-03` procedure queried only that copy in read-only
-mode. It observed:
-
-```text
-Expected Sync tables:                    6/6 present
-SQLite quick_check:                      ok
-Active failed submissions:               1
-Active failed outcome:                   notApplied
-Active response/error representation:    conflict / service-unavailable
-Active submission members:               2
-Active member sequence range:            1â€“2
-Active member positions:                 0â€“1
-Active member event state:               failed
-Superseded submissions:                  2
-Each superseded member count/range:       2 / 1â€“2
-Device next_sequence distribution:        2, 3, 6
-Failed pending-event rows:                2 / sequences 1â€“2
-Pending pending-event rows:               6 / sequences 1â€“5
-Latest ordinary Sync result:              sync-unavailable
-Latest recovery classification:           provider-evidence-unavailable
-Latest HTTP status/headers:                absent / absent
-Live database queried:                    false
-Retry selected:                           false
-Sync selected:                            false
-Provider action performed:                false
-```
-
-This evidence contains no database path, account/device/submission/event ID,
-payload, purchase content, token, URL, complete hash, or provider secret.
-
-### Repository and history reconciliation
-
-Current source proves:
-
-1. `HttpSyncTransport._failure` now maps protocol
-   `service-unavailable` to `SyncStatusCode.serviceUnavailable`;
-2. `LocalSyncRepository.persistUploadResult` stores `result.code.name` in
-   `response_code` and the protocol body code in `error_code`;
-3. the fallback branch maps unrecognized protocol codes to
-   `SyncStatusCode.conflict`;
-4. commit `75dc7bed0789d693af93abb3ed15e107fd77433a`, authored
-   2026-07-22 11:54:56 -0300, introduced the explicit
-   `service-unavailable -> serviceUnavailable` mapping;
-5. the copied database reports a last-modified time of
-   2026-07-22 10:08:29 in the human's Windows locale, earlier than that commit.
-
-The observed `conflict / service-unavailable` pair is therefore historically
-coherent with the pre-fix fallback mapper: the client retained the precise
-protocol code in `error_code` while persisting the fallback client enum name in
-`response_code`. This is strong source-history evidence for a legacy
-representation. It is not proof that every row was written by a uniquely
-identified executable, because filesystem timestamps and Git author time do
-not provide row-level provenance.
-
-### Gate conclusion
-
-PRC-01 classification:
-
-```text
-Claim: the copied database is structurally readable and internally healthy
-Prior state: unavailable
-Evidence: verified copy procedure, six-table presence, PRAGMA quick_check=ok
-Evidence boundary: sanitized human-observed output; no Codex/user live-DB read
-Contradiction: none
-Semantic owner: GCM-02 operational evidence
-Target role: Gate 12.6 copied-database subprocedure
-Resulting state: accepted PASS
-History disposition: diagnostic uncertainty superseded
-```
-
-```text
-Claim: the current queue contains an unknown submission eligible for unknown Retry
-Prior state: provisional possibility
-Evidence: one active submission is failed/notApplied; no unknown class emitted
-Evidence boundary: copied database at the preserved snapshot
-Contradiction: earlier screenshot/procedure language implied unresolved unknown
-Semantic owner: local Sync recovery classification
-Target role: Gate 12.6 eligibility
-Resulting state: rejected; unknown-retry path is inapplicable
-History disposition: earlier provisional Conclusion C superseded
-```
-
-```text
-Claim: exactly one failed/notApplied recovery candidate exists
-Prior state: provisional
-Evidence: active class and two-member failed lineage at sequences 1â€“2
-Evidence boundary: sanitized grouping; exact device/account correlation omitted
-Contradiction: none
-Semantic owner: failed-recovery eligibility
-Target role: Gate 12.6 transition definition
-Resulting state: accepted as queue classification; exact scoped transition pending
-History disposition: retain pre-probe diagnosis as observational history
-```
-
-```text
-Claim: conflict/service-unavailable contradicts current mapping
-Prior state: unresolved semantic anomaly
-Evidence: source mapping, persistence fields, Git introduction commit, file time
-Evidence boundary: source/history and file-level time; no row-level provenance
-Contradiction: apparent current-source mismatch
-Semantic owner: client protocol persistence history
-Target role: Gate 12.6 evidence interpretation
-Resulting state: explained as historically coherent legacy representation
-History disposition: preserve boundary; do not rewrite the database
-```
-
-```text
-Claim: the successful copied-database probe authorizes ordinary Sync
-Prior state: unauthorized
-Evidence: coordinator performs failed recovery before upload, download and ack;
-          six other pending rows are present
-Evidence boundary: current source plus copied grouping
-Contradiction: none
-Semantic owner: Gate 12.7 human authorization
-Target role: mutation boundary
-Resulting state: rejected; ordinary Sync remains unauthorized
-History disposition: stop boundary retained
-```
-
-Gate 12.6 no longer waits on queue-classification evidence. It remains open
-only because the sanitized output does not yet correlate the failed submission
-to an anonymized device scope, that scope's `next_sequence`, or the distribution
-of the six other pending events. Those facts determine whether the coordinator's
-recovery-then-upload path can be described as one exact bounded transition.
-
-### Next materialization round
-
-D/E/F are replaced with one bounded evidence-reconciliation round:
-
-```text
-D: classify copied evidence; prove legacy mapping history; decide whether one
-   additional sanitized copied-database correlation procedure is necessary
-E: stabilize evidence vocabulary and prevent PASS/authorization conflation
-F: trace failed recovery -> upload -> download -> acknowledgement and prepare
-   a Gate 12.7 packet skeleton with every unproven field marked PENDING
-```
-
-The round may update G/H/I. It may add only `GS/GRM-SQLITE-04` if exact
-device-scoped correlation cannot be established from current evidence. It may
-not modify application source, query a user database, perform provider action,
-authorize Gate 12.7, or close GCM-02.
-
-### Current terminals
-
-```text
-GATE_12_6_COPIED_DATABASE_PROBE_PASS
-FAILED_NOT_APPLIED_CLASS_CONFIRMED
-UNKNOWN_RETRY_INAPPLICABLE
-LEGACY_CONFLICT_SERVICE_UNAVAILABLE_EXPLAINED_WITH_BOUNDARY
-EXACT_DEVICE_SCOPED_TRANSITION_CORRELATION_PENDING
-GATE_12_6_OPEN
-GATE_12_7_PENDING
-RETRY_UNAUTHORIZED
-ORDINARY_SYNC_UNAUTHORIZED
-PROVIDER_ACTION_UNAUTHORIZED
-GCM02_OPEN
-```
-
-## Append-only reconciliation entry â€” 2026-07-25 â€” DB management cascade refactor
-
-### Sequence identity
-
-```text
-Sequence: FLX-PRN-03 with active-state reconciliation
-Scope: live GRIMOIRE operational interface
-Baseline: 41c94be245ed093b2e92e3f8403ef72cfb42984b
-Provider action: none
-Database access: none
-Gate authority change: none
-```
-
-The parallel Codex round materialized and fixture-validated
-`GS/GRM-SQLITE-04`; no human database was queried. The preceding entry's
-conditional materialization instruction is therefore superseded for current
-use. The remaining Gate 12.6 action is the human-run, read-only
-`GRM-SQLITE-04` procedure against the preserved verified copy.
-
-The live five-file interface was reorganized without changing provider state:
-
-```text
-GRIMOIRE.md       -> concise GRM invocation index
-NEON_CHECK.ps1    -> exact GS dispatcher and guarded Neon launcher
-G_SCRIPTS.md      -> complete procedures, prompts, expectations and stops
-NS_COORDINATES.md -> reviewed non-secret values
-DB_MGMT.sql       -> manual SQL plus indexed automation queries
-```
-
-`DB_MGMT.sql` supersedes `NEON_ACTION.sql` as the live catalogue. Earlier
-`NEON_ACTION.sql`/`NA-*` references remain valid historical evidence only.
-Every active `GRM-*` block now invokes one exact `GS-*` procedure; operational
-variables and query logic no longer live in GRM bodies. The nine existing
-automation SQL bodies were preserved byte-for-byte, and one read-only
-`runtime-readiness` automation block was added so `GRM-NEON-10` also follows
-the uniform cascade.
-
-Current terminals remain:
-
-```text
-EXACT_DEVICE_SCOPED_TRANSITION_CORRELATION_PENDING
-GATE_12_6_OPEN
-GATE_12_7_PENDING
-RETRY_UNAUTHORIZED
-ORDINARY_SYNC_UNAUTHORIZED
-PROVIDER_ACTION_UNAUTHORIZED
-GCM02_OPEN
-```
-
-## Append-only reconciliation entry â€” 2026-07-25 â€” GRM rename and full catalogue audit
-
-### Sequence identity
-
-```text
-Sequence: FLX-PRN-03 with PRC-01 evidence qualification
-Scope: live GRM/GS procedural interface and Gate 12.6 recovery pointer
-Baseline: 05265cfb91f92504e1ac5e627f0af62e351c4b8f
-Provider action: none
-Database access: none
-Retry or ordinary Sync: none
-Gate authority change: none
-```
-
-The concise human entrypoint was renamed:
-
-```text
-documentation/GRIMOIRE.md -> documentation/GRM.md
-GRIMOIRE_INDEX             -> GRM_INDEX
-```
-
-The live file header now explains the complete procedural cascade and contains
-one ordered code/name glossary for every active command. The canonical route
-remains:
-
-```text
-human copies GRM
--> NEON_CHECK dispatches one GS
--> GS owns guards, coordinates and requested inputs
--> GS invokes PowerShell and/or one DB_MGMT automation query
--> sanitized evidence returns for human interpretation
-```
-
-Qualified static audit:
-
-```text
-ordered GRM glossary entries: 25 / 25
-active GRM invocation blocks: 25 / 25
-active GS procedure headings: 25 / 25
-one exact GRM-to-GS mapping per active command: PASS
-one PowerShell fence per active GS procedure: PASS
-active GRM/GS order equality: PASS
-DB_MGMT automation blocks and end markers: 10 / 10
-launcher action-name coverage: PASS
-historical GS procedures outside active GRM index: 2
-live five-file references to old GRIMOIRE filename/index: 0
-```
-
-This audit proves catalogue structure, mapping, ordering and documentation
-coherence at the inspected repository state. It is not a Windows PowerShell,
-provider, database, Flutter, Retry or Sync execution. No GS procedure body was
-changed by the rename round. Existing fixture and human evidence retain their
-previous boundaries.
-
-The mutable J recovery prefix now records that the evidence-only Codex round
-is complete. The sole next Gate 12.6 evidence action is to run the indexed,
-sanitized and read-only `GRM-SQLITE-04` procedure against the preserved
-verified copy after the integrated branch is published and pulled.
-
-Current terminals remain:
-
-```text
-GCM02_12_6_COPIED_DATABASE_PROBE_PASS
-GCM02_12_6_DEVICE_SCOPED_CORRELATION_PENDING
-GCM02_12_7_HUMAN_AUTHORIZATION_PENDING
-RETRY_UNAUTHORIZED
-ORDINARY_SYNC_UNAUTHORIZED
-PROVIDER_ACTION_UNAUTHORIZED
-GCM02_OPEN
-```
-
-## Append-only reconciliation entry â€” 2026-07-25 â€” Gate 12.6 device-scope closure
-
-### Sequence identity
-
-```text
-Sequence: FLX-PRM-04 Main reconciliation
-Round: C10-GCM02-GATE-12.6-DEVICE-SCOPE-CLOSURE
-Branch baseline: 52ea09c9e08380fb7c2a85b58ae9909385bd3bdc
-Human evidence: sanitized GS-SQLITE-04 output
-Provider action: none
-Live database access: none
-Retry or ordinary Sync: none
-Gate authority change: Gate 12.6 PASS; Gate 12.7 remains unauthorized
-```
-
-Claim: the remaining failed lineage is correlated to one Device scope.
-
-Prior state: Gate 12.6 was open for exact anonymized scope ownership,
-`next_sequence`, other-pending-work partition and simulated first-upload
-membership.
-
-Evidence: the human-operated read-only copied-database procedure found three
-Device scopes. Rank 3 is the hosted/enrolled scope, has `next_sequence=3`, and
-owns the failed/notApplied two-event candidate at contiguous sequences 1â€“2 and
-positions 0â€“1.
-
-Evidence boundary: the procedure queried only the preserved verified SQLite
-copy with quick-check already OK. It did not query the live database, select
-Retry or Sync, contact a provider, mutate data or clean anything.
-
-Contradiction: none. The six other pending events divide across non-hosted
-rank 1 (one event) and rank 2 (five events). The hosted scope has no other
-pending work.
-
-Semantic owner: Main GCM-02 gate reconciliation.
-
-Target role: Gate 12.6 device-scoped transition correlation.
-
-Resulting state: accepted PASS. Simulated recovery places exactly the two
-candidate events in the first upload; no active or superseded submission has
-the same request hash.
-
-History disposition: the earlier Gate 12.6 pending terminals remain historical
-and are superseded for current recovery by this entry and the mutable prefix.
-
-Claim: the latest local Sync proves a fresh provider contradiction.
-
-Prior state: unresolved because the copied database stores
-`sync-unavailable / provider-evidence-unavailable`.
-
-Evidence: the latest attempt has no HTTP status and no response headers.
-
-Evidence boundary: local observational classification only.
-
-Contradiction: rejected. No fresh provider comparison occurred, so the local
-failed/notApplied lineage and earlier Neon checkpoint describe different
-sides/times of the boundary rather than proven conflicting state.
-
-Semantic owner: Gate 12.7 pre-operation freshness packet.
-
-Target role: provider-baseline interpretation.
-
-Resulting state: fresh provider readiness and baseline must be rechecked before
-authorization; no database repair is justified by the present evidence.
-
-History disposition: preserved as the reason 12.7 requires freshness checks.
-
-Current terminals:
-
-```text
-GCM02_12_6_COPIED_DATABASE_PROBE_PASS
-GCM02_12_6_DEVICE_SCOPED_CORRELATION_PASS
-GCM02_12_6_PASS
-GCM02_12_7_PACKET_PREPARATION_ACTIVE
-GCM02_12_7_HUMAN_AUTHORIZATION_PENDING
-RETRY_UNAUTHORIZED
-ORDINARY_SYNC_UNAUTHORIZED
-REPAIR_UNAUTHORIZED
-PROVIDER_MUTATION_UNAUTHORIZED
-GCM02_OPEN
-```
-
-## System Diagnosis
-
-Date: 2026-07-25
-
-Record class: append-only Step 12.1â€“12.6 diagnostic synthesis.
-
-Change authority: documentation and Gate interpretation only. This entry does
-not authorize Retry, ordinary Sync, Repair, Enroll, provider mutation, or direct
-database mutation.
-
-### Reconciliation correction
-
-The prior Gate 12.7 preparation named `Retry unresolved submission` as the
-candidate one-action recovery. Source inspection and the captured UI state
-invalidate that action selection for the current lineage:
-
-- the visible Retry control is an **unknown-outcome Retry**;
-- the current hosted Device scope has `pending=0`, `uploading=0`, `failed=2`,
-  and `unknown=0`;
-- its preflight therefore returns the existing native code
-  `unknown-retry-queue-not-isolated`;
-- the blocked branch performs no local mutation and no provider request;
-- the page refreshes Diagnostics and changes only its compact status text; it
-  does not show a blocking dialog or an in-view banner;
-- the correct current lineage is the already-proved `failed/notApplied`
-  candidate containing Device sequences `1â€“2`, with `next_sequence=3`.
-
-The latest Retry button press is therefore explained. It is not evidence of a
-new SQLite/Neon contradiction, provider rejection, failed database repair, or
-HTTP 500.
-
-The displayed `sync-unavailable / provider-evidence-unavailable` result belongs
-to an earlier ordinary Sync attempt. Its exact internal failure phase remains
-unproved. Null HTTP status/header fields in the current attempt record must not
-be interpreted as proof that the earlier Sync never contacted the API, because
-the ordinary Sync path does not currently populate those fields. The supplied
-Render window proves only that the latest blocked Retry click produced health
-requests and no protected Sync request in that window.
-
-Current corrected terminal:
-
-```text
-GCM02_12_6_PASS
-GCM02_12_7_ACTION_INTERFACE_ALIGNMENT_BLOCKED
-CURRENT_UNKNOWN_RETRY_INAPPLICABLE
-BOUNDED_FAILED_NOT_APPLIED_RECOVERY_NOT_IMPLEMENTED
-PRIOR_SYNC_FAILURE_PHASE_UNRESOLVED
-RETRY_UNAUTHORIZED
-ORDINARY_SYNC_UNAUTHORIZED
-REPAIR_UNAUTHORIZED
-PROVIDER_MUTATION_UNAUTHORIZED
-GCM02_OPEN
-```
-
-### Error Protocol purpose
-
-This protocol catalogues only events that are reachable from the inspected
-Flutter, API, PostgreSQL, and SQLite composition or are directly required to
-explain the accepted Step 12 evidence. It deliberately excludes speculative
-external systems and failure modes not represented by the current source.
-
-The protocol has four objectives:
-
-1. prevent an expected, classifiable failure from collapsing into a generic
-   `500/service-unavailable`;
-2. distinguish a local preflight stop from a request that may have reached the
-   provider;
-3. preserve whether an operation was blocked, not applied, applied,
-   duplicate-equivalent, or left with unknown outcome;
-4. make every UI action traceable through one sanitized operation fingerprint
-   without exposing tokens, raw account/device IDs, payloads, SQL, or full
-   request hashes.
-
-### Code and classification contract
-
-Protocol codes use:
-
-```text
-MKS-<LAYER>-<NNN>
-```
-
-The protocol code wraps rather than replaces an existing runtime
-`resultCode`, `protocolCode`, `errorCode`, or Auth0 state. For example:
-
-```text
-protocolCode: MKS-UI-001
-nativeCode: unknown-retry-queue-not-isolated
-```
-
-Layers:
-
-| Layer | Meaning                                                          |
-| ----- | ---------------------------------------------------------------- |
-| `UI`  | action selection, preflight presentation, and visible result     |
-| `CFG` | compiled configuration, composition, revision, and endpoint      |
-| `AUT` | authentication and token acquisition                             |
-| `BND` | account, installation, Device, enrollment, and hosted binding    |
-| `LDB` | local SQLite access, schema, transaction, and attempt ledger     |
-| `REC` | failed/notApplied recovery candidate and requeue                 |
-| `QUE` | pending/uploading/unknown queue lease and persistence            |
-| `TRN` | HTTP construction, connection, timeout, and response decoding    |
-| `API` | API ingress, route, authorization, and request validation        |
-| `PDB` | PostgreSQL connection, transaction, privileges, and constraints  |
-| `UPL` | submission validation and provider upload application            |
-| `DNL` | provider download and local remote-event application             |
-| `ACK` | provider acknowledgement                                         |
-| `OBS` | observability, correlation, redaction, and diagnostic projection |
-| `INV` | invariant violations and partial-application hazards             |
-
-Severity is independent of outcome:
-
-| Severity   | Meaning                                                   |
-| ---------- | --------------------------------------------------------- |
-| `INFO`     | expected no-op or completed state                         |
-| `WARNING`  | safe blocked state requiring review or a different action |
-| `ERROR`    | known failure with a proved application boundary          |
-| `UNKNOWN`  | provider or persistence outcome cannot be proved          |
-| `CRITICAL` | invariant or atomicity violation; freeze mutation         |
-
-Allowed outcomes:
-
-```text
-blocked
-not-applied
-applied
-duplicate-equivalent
-unknown
-completed
-```
-
-Evidence relevance:
-
-| Value         | Meaning                                                     |
-| ------------- | ----------------------------------------------------------- |
-| `CONFIRMED`   | observed and sufficient to explain the named event          |
-| `REACHABLE`   | explicit current source branch; not yet observed here       |
-| `LATENT`      | source-level ambiguity or defect requiring tightening       |
-| `LOW-CURRENT` | reachable, but contradicted or reduced by accepted evidence |
-| `FRESHNESS`   | previously accepted; must be rechecked before mutation      |
-
-### Required diagnostic envelope
-
-Every top-level UI action must create one `operationId`; every child HTTP
-request must inherit it and add a request ordinal. The persisted and logged
-envelope must contain:
-
-| Field                                                           | Rule                                                                                                                        |
-| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `diagnosticVersion`                                             | schema version, initially `1`                                                                                               |
-| `protocolCode`                                                  | stable `MKS-*` code                                                                                                         |
-| `nativeCode`                                                    | existing sanitized runtime code, if one exists                                                                              |
-| `severity` / `outcome`                                          | values from the contracts above                                                                                             |
-| `operationKind`                                                 | `diagnostics`, `unknown-retry`, `failed-recovery`, `sync`, `upload`, `download`, or `acknowledge`                           |
-| `phase`                                                         | exact last completed or failed pipeline phase                                                                               |
-| `operationFingerprint`                                          | first 12 hex characters of SHA-256 over a random per-action operation ID                                                    |
-| `correlationFingerprint`                                        | first 12 hex characters of SHA-256 over the full request correlation ID                                                     |
-| `requestOrdinal`                                                | `0` for local preflight; `1..n` for child requests                                                                          |
-| `submissionFingerprint`                                         | first 12 hex characters of SHA-256 over submission identity; never the raw ID                                               |
-| `requestHashShape`                                              | only `sha256-64-hex-valid` or `invalid`; never the full request hash                                                        |
-| `accountScopeFingerprint`                                       | first 12 hex characters of SHA-256 over the normalized account UUID                                                         |
-| `deviceScopeFingerprint`                                        | first 12 hex characters of SHA-256 over the normalized Device UUID                                                          |
-| `sourceRevision`                                                | deployed/client short Git revision                                                                                          |
-| `clientBuild` / `apiBuild`                                      | sanitized build identifiers                                                                                                 |
-| `routeClass`                                                    | route template, never a URL containing identifiers                                                                          |
-| `queueScope`                                                    | explicitly `account` or `device`                                                                                            |
-| `pendingCount`, `uploadingCount`, `failedCount`, `unknownCount` | target scope counts captured at action start                                                                                |
-| `memberCount`, `firstSequence`, `lastSequence`, `nextSequence`  | numeric boundary only                                                                                                       |
-| `localMutation`                                                 | `none`, `started`, `committed`, `rolled-back`, or `unknown`                                                                 |
-| `providerContact`                                               | `not-started`, `request-started`, `headers-received`, `trusted-response`, or `unknown`                                      |
-| `providerTransaction`                                           | `not-started`, `committed`, `rolled-back`, or `unknown`                                                                     |
-| `httpStatus`                                                    | numeric status when received                                                                                                |
-| `headersReceived`                                               | boolean                                                                                                                     |
-| `responseTrusted`                                               | boolean after origin, size, JSON, and contract validation                                                                   |
-| `elapsedBand`                                                   | bounded band, not precise timing                                                                                            |
-| `retryable`                                                     | typed protocol value, never inferred solely from HTTP 500                                                                   |
-| `safeAction`                                                    | bounded guidance such as `preserve-local-state`, `sign-in`, `recheck-enrollment`, `inspect-candidate`, or `operator-review` |
-| `exceptionClass`                                                | closed sanitized allow-list; no message or stack in UI                                                                      |
-| `sqlStateClass`                                                 | allow-listed SQLSTATE class in server logs only                                                                             |
-
-Never persist or display bearer/refresh/ID tokens, authorization codes, raw
-account/device/event/submission IDs, payload bodies, personal purchase data,
-connection strings, SQL text, complete hashes, raw exception messages, or stack
-traces.
-
-### Event parsing and precedence
-
-Events must be reduced in this order:
-
-1. Verify the `diagnosticVersion` and stable protocol code.
-2. Join by `operationFingerprint`, then `requestOrdinal`.
-3. Prefer a trusted typed provider response over an HTTP status label.
-4. Prefer a proved transaction outcome over a transport outcome.
-5. If request transmission started but no trusted provider outcome exists,
-   classify `unknown`; never automatically requeue as `not-applied`.
-6. If local preflight stopped before mutation and request start, classify
-   `blocked`.
-7. If the provider proves `not-applied`, preserve the failed lineage until a
-   separately authorized failed-recovery action.
-8. If local result persistence fails after a trusted provider response,
-   preserve the provider outcome and emit a separate local-persistence event.
-9. A later event may refine an earlier `unknown`, but must not erase it.
-10. UI projection must show the current action result separately from the last
-    ordinary Sync result.
-
-### A. Present incident and UI selection
-
-| Code         | Event / native signal                                                            | Detection fingerprint                                                                                          | Relevance   | Required disposition                                          |
-| ------------ | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------- |
-| `MKS-UI-001` | Unknown Retry blocked by non-isolated queue / `unknown-retry-queue-not-isolated` | Device queue `failed=2`, `unknown=0`; preflight stops before mutation/request                                  | `CONFIRMED` | Visible warning; select no provider action                    |
-| `MKS-UI-002` | Blocked preflight is not visibly presented                                       | state changes only in compact page status; no dialog/banner                                                    | `CONFIRMED` | Add persistent in-view warning with code and safe action      |
-| `MKS-UI-003` | Wrong recovery action label                                                      | label says unresolved submission although implementation accepts only unknown outcome                          | `CONFIRMED` | Rename to `Retry unknown-outcome submission`                  |
-| `MKS-UI-004` | Failed/notApplied action absent                                                  | failed candidate exists but no bounded failed-recovery control exists                                          | `CONFIRMED` | Implement separate preflight and separately authorized action |
-| `MKS-UI-005` | Current action result conflated with prior Sync result                           | button preflight result and `Last result: sync-unavailable` occupy different UI state without clear chronology | `CONFIRMED` | Show action name, timestamp/order, and operation fingerprint  |
-| `MKS-UI-006` | Action handler exception escapes visible reporting                               | page `_run` and diagnostic refresh/preflight lack a page-level presentation boundary                           | `LATENT`    | Catch, persist, and display sanitized typed failure           |
-| `MKS-UI-007` | Account-scoped queue summary interpreted as Device-scoped                        | snapshot totals use Account scope while recovery preflight uses Device scope                                   | `LATENT`    | Label both scopes and fingerprint the target Device           |
-| `MKS-UI-008` | Enrolled badge overstates full binding validity                                  | snapshot projects hosted row state; full binding validation happens later in Sync guard                        | `LATENT`    | Display binding-validation state separately                   |
-
-### B. Configuration and composition
-
-| Code          | Event / native signal                                             | Detection fingerprint                                                                | Relevance     | Required disposition                           |
-| ------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------- | ---------------------------------------------- |
-| `MKS-CFG-001` | Unsupported native platform / `platform-unsupported`              | client platform not supported by native Auth surface                                 | `LOW-CURRENT` | Block before sign-in or Sync                   |
-| `MKS-CFG-002` | Missing/invalid Auth0 configuration / `configuration-invalid`     | domain, client ID, audience, or callback invalid/missing                             | `LOW-CURRENT` | Block and identify missing configuration class |
-| `MKS-CFG-003` | Hosted surface disabled / `configuration-missing`                 | required hosted endpoint/define absent                                               | `LOW-CURRENT` | Block composition; no network attempt          |
-| `MKS-CFG-004` | Invalid API origin                                                | endpoint parse, scheme, or allowed-origin validation fails                           | `REACHABLE`   | Emit origin/config code; do not call provider  |
-| `MKS-CFG-005` | Binding created after app composition / `hosted-restart-required` | no active hosted binding loaded at startup although enrollment later succeeds        | `REACHABLE`   | Require controlled app restart before Sync     |
-| `MKS-CFG-006` | Client/API/repository revision drift                              | client build, API build, and expected branch revision differ                         | `FRESHNESS`   | Stop Gate 12.7 and reconcile revisions         |
-| `MKS-CFG-007` | Deployment healthy but wrong source revision                      | `/health/ready` succeeds but advertised API build differs from authorization packet  | `FRESHNESS`   | Treat readiness as insufficient; stop          |
-| `MKS-CFG-008` | Constant request correlation source                               | all native closure requests derive from `native-closure` rather than a per-action ID | `LATENT`      | Generate unique correlation per action/request |
-
-### C. Authentication and token acquisition
-
-| Code          | Event / native signal                                                     | Detection fingerprint                                                     | Relevance     | Required disposition                                            |
-| ------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------- | --------------------------------------------------------------- |
-| `MKS-AUT-001` | Signed out / `signed-out` or `auth-required`                              | no current authenticated state/token                                      | `LOW-CURRENT` | Sign in; no queue mutation                                      |
-| `MKS-AUT-002` | Sign-in already running / `signing-in`                                    | concurrent sign-in state                                                  | `REACHABLE`   | Block duplicate action                                          |
-| `MKS-AUT-003` | User cancelled sign-in / `sign-in-cancelled`                              | provider flow returns cancellation                                        | `REACHABLE`   | Preserve queue; present informational result                    |
-| `MKS-AUT-004` | Provider unavailable / `provider-unavailable`                             | provider launch/discovery unavailable                                     | `REACHABLE`   | Preserve queue; operator/network review                         |
-| `MKS-AUT-005` | Callback absent / `callback-not-received`                                 | authorization flow ends without callback                                  | `REACHABLE`   | Preserve queue; no Sync                                         |
-| `MKS-AUT-006` | Callback state rejected / `callback-state-rejected`                       | returned state does not match local state                                 | `REACHABLE`   | Security stop; discard callback                                 |
-| `MKS-AUT-007` | Code exchange rejected / `authorization-code-exchange-rejected`           | token endpoint rejects code exchange                                      | `REACHABLE`   | Preserve queue; new sign-in required                            |
-| `MKS-AUT-008` | Access token missing / `access-token-missing`                             | exchange succeeds without usable access token                             | `REACHABLE`   | Reject credentials; no provider request                         |
-| `MKS-AUT-009` | ID token missing / `id-token-missing`                                     | exchange lacks required ID token                                          | `REACHABLE`   | Reject credentials                                              |
-| `MKS-AUT-010` | Token confusion rejected / `token-confusion-rejected`                     | token identity/type binding inconsistent                                  | `REACHABLE`   | Security stop                                                   |
-| `MKS-AUT-011` | Local token expired / `token-expired`                                     | expiry within configured safety margin                                    | `REACHABLE`   | Sign in again; preserve queue                                   |
-| `MKS-AUT-012` | Server token rejected / `token-rejected`                                  | JWT malformed, oversized, wrong issuer/audience/algorithm/key, or expired | `REACHABLE`   | Public code remains sanitized; server log records safe subphase |
-| `MKS-AUT-013` | Membership missing / `membership-required`                                | verified principal has no active hosted membership                        | `LOW-CURRENT` | Stop; recheck Auth0/Neon identity                               |
-| `MKS-AUT-014` | Account selection ambiguous / `account-selection-required`                | principal maps to multiple/ambiguous account choices                      | `LOW-CURRENT` | Stop; explicit account selection required                       |
-| `MKS-AUT-015` | Authentication rejected, unclassified / `authentication-rejected-unknown` | provider error outside known local mapping                                | `REACHABLE`   | Preserve sanitized provider class and operation fingerprint     |
-
-### D. Binding, enrollment, and Device authorization
-
-| Code          | Event / native signal                              | Detection fingerprint                                                          | Relevance     | Required disposition                                |
-| ------------- | -------------------------------------------------- | ------------------------------------------------------------------------------ | ------------- | --------------------------------------------------- |
-| `MKS-BND-001` | Enrollment required / `device-enrollment-required` | no active enrolled Device for account/installation                             | `LOW-CURRENT` | Stop and query/enroll only under separate authority |
-| `MKS-BND-002` | Local hosted binding invalid / `binding-invalid`   | environment alias, UUID, installation, generation, or active-state check fails | `LOW-CURRENT` | Stop; never silently substitute Device              |
-| `MKS-BND-003` | Device header missing/malformed                    | protected request lacks valid `x-markei-device-id`                             | `REACHABLE`   | Reject before service execution                     |
-| `MKS-BND-004` | Device revoked / `device-revoked`                  | local or hosted enrollment/device is revoked                                   | `LOW-CURRENT` | Stop; preserve local events                         |
-| `MKS-BND-005` | Device expired / `device-expired`                  | enrollment/device expiry check fails                                           | `LOW-CURRENT` | Stop; explicit re-enrollment decision               |
-| `MKS-BND-006` | Device/account binding mismatch / `wrong-account`  | event, token account, binding account, or Device account differs               | `LOW-CURRENT` | Critical identity stop; no repair mutation          |
-| `MKS-BND-007` | Hosted authorization forbidden / `forbidden`       | authenticated principal lacks required operation permission                    | `REACHABLE`   | Stop; inspect policy/membership                     |
-| `MKS-BND-008` | Local Device scope differs from authorized target  | queue target fingerprint/rank differs from Gate packet                         | `LOW-CURRENT` | Cancel action and rebuild evidence                  |
-
-### E. Local SQLite and attempt ledger
-
-| Code          | Event / native signal                   | Detection fingerprint                                                              | Relevance     | Required disposition                                               |
-| ------------- | --------------------------------------- | ---------------------------------------------------------------------------------- | ------------- | ------------------------------------------------------------------ |
-| `MKS-LDB-001` | SQLite open failure                     | database cannot be opened/read                                                     | `LOW-CURRENT` | Stop; preserve file and OS error class                             |
-| `MKS-LDB-002` | Integrity/schema failure                | quick check fails or expected table count/schema differs                           | `LOW-CURRENT` | Freeze mutation; copied DB showed healthy expected schema          |
-| `MKS-LDB-003` | Local migration/version mismatch        | client expects fields/tables absent from current DB                                | `LOW-CURRENT` | Stop; no ad hoc SQL                                                |
-| `MKS-LDB-004` | Diagnostics query failure               | snapshot/preflight query throws or returns invalid shape                           | `REACHABLE`   | Emit typed local-read failure                                      |
-| `MKS-LDB-005` | Attempt-begin persistence failure       | attempt row cannot be inserted before action                                       | `REACHABLE`   | Do not start provider contact                                      |
-| `MKS-LDB-006` | Attempt-completion persistence failure  | operation finishes but result row cannot be finalized                              | `LATENT`      | Preserve external outcome separately; emit local-persistence error |
-| `MKS-LDB-007` | Unknown stored enum/state               | text state cannot be decoded into current enum                                     | `REACHABLE`   | Invariant stop; never collapse to generic unavailable              |
-| `MKS-LDB-008` | Local JSON/type/date decode failure     | persisted payload cannot be decoded/cast                                           | `REACHABLE`   | Quarantine candidate by identity fingerprint; no mutation          |
-| `MKS-LDB-009` | Local transaction constraint failure    | recovery/lease/apply violates SQLite constraint                                    | `REACHABLE`   | Roll back and report transaction outcome                           |
-| `MKS-LDB-010` | Attempt evidence field absent by design | Sync attempt has null correlation/status/header because writer never supplied them | `CONFIRMED`   | Treat as instrumentation gap, not proof of no provider contact     |
-
-### F. Failed/notApplied recovery
-
-| Code          | Event / native signal                                              | Detection fingerprint                                            | Relevance     | Required disposition                                  |
-| ------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------- | ------------- | ----------------------------------------------------- |
-| `MKS-REC-001` | Recoverable failed lineage available / `failed-recovery-available` | exactly one valid scoped failed/notApplied candidate             | `CONFIRMED`   | Preflight only until Gate 12.7 authorization          |
-| `MKS-REC-002` | No recoverable failed lineage / `no-recoverable-failure`           | zero valid failed/notApplied candidates                          | `REACHABLE`   | Informational stop                                    |
-| `MKS-REC-003` | Ambiguous failed lineage / `failed-recovery-blocked`               | multiple candidate submissions                                   | `REACHABLE`   | Stop; operator reconciliation                         |
-| `MKS-REC-004` | Candidate membership malformed                                     | count, position, contiguity, or event lookup invalid             | `REACHABLE`   | Critical local invariant stop                         |
-| `MKS-REC-005` | Candidate state mismatch                                           | member/event not uniformly failed as expected                    | `REACHABLE`   | Stop; capture state-kind set                          |
-| `MKS-REC-006` | Candidate contains accepted member                                 | candidate overlaps an accepted event                             | `REACHABLE`   | Stop; never requeue                                   |
-| `MKS-REC-007` | Candidate overlaps active submission                               | uploading/unknown submission shares candidate members            | `REACHABLE`   | Stop; resolve active outcome first                    |
-| `MKS-REC-008` | Candidate request hash/payload invalid                             | canonical payload or request-hash validation fails               | `LOW-CURRENT` | Stop; SQLite-04 observed valid hash shape/contiguity  |
-| `MKS-REC-009` | Candidate Device/account mismatch                                  | candidate scope differs from authorized binding                  | `LOW-CURRENT` | Stop; no cross-scope recovery                         |
-| `MKS-REC-010` | Recovery transaction rolled back                                   | supersede/requeue transaction fails before commit                | `REACHABLE`   | Preserve candidate and record rollback                |
-| `MKS-REC-011` | Recovery commit result unknown                                     | local process/storage interruption around commit                 | `REACHABLE`   | Reopen diagnostics; do not repeat automatically       |
-| `MKS-REC-012` | Mixed pending/failed candidate partial-requeue ambiguity           | recovery sees `alreadyPending` while other members remain failed | `LATENT`      | Tighten to all-or-none candidate state before release |
-
-### G. Queue isolation, lease, and result persistence
-
-| Code          | Event / native signal                                 | Detection fingerprint                                                    | Relevance     | Required disposition                                                 |
-| ------------- | ----------------------------------------------------- | ------------------------------------------------------------------------ | ------------- | -------------------------------------------------------------------- |
-| `MKS-QUE-001` | Pending and unknown collision / `local-batch-invalid` | target Device has pending and unknown work together                      | `REACHABLE`   | Stop; resolve unknown first                                          |
-| `MKS-QUE-002` | Multiple unknown submissions                          | more than one scoped unknown candidate                                   | `REACHABLE`   | Stop; ambiguous provider outcome                                     |
-| `MKS-QUE-003` | Unknown candidate malformed                           | membership/hash/state/sequence validation fails                          | `REACHABLE`   | Stop; preserve unknown                                               |
-| `MKS-QUE-004` | Unknown Retry eligible / `unknown-retry-eligible`     | exactly one valid unknown candidate and no pending/uploading/failed work | `LOW-CURRENT` | Separate authorization path; current `unknown=0`                     |
-| `MKS-QUE-005` | Empty upload lease                                    | no pending events after recovery/preflight                               | `REACHABLE`   | Continue to download only for ordinary Sync; bounded recovery stops  |
-| `MKS-QUE-006` | Local event hash/identity invalid                     | canonical event validation fails before lease                            | `LOW-CURRENT` | Stop; current candidate passed SQLite-04 structural checks           |
-| `MKS-QUE-007` | Local sequence gap/noncanonical order                 | leased events are not contiguous/canonical                               | `LOW-CURRENT` | Stop before request                                                  |
-| `MKS-QUE-008` | Lease transaction failure                             | submission/members/event uploading states not committed atomically       | `REACHABLE`   | Roll back; no network request                                        |
-| `MKS-QUE-009` | Uploading state stranded after transport throw        | lease committed, then transport throws before typed result persistence   | `LATENT`      | Persist outcome in `finally`; diagnostics must expose stranded lease |
-| `MKS-QUE-010` | Upload result persistence target missing              | scoped submission lookup fails and current writer silently returns       | `LATENT`      | Convert silent return to invariant error                             |
-| `MKS-QUE-011` | Provider result persisted as failed                   | trusted `not-applied` response maps events/members to failed             | `REACHABLE`   | Preserve exact provider code and candidate                           |
-| `MKS-QUE-012` | Provider result persisted as unknown                  | no trusted response after request start                                  | `REACHABLE`   | Preserve unknown; do not failed-recover                              |
-
-### H. HTTP transport and response contract
-
-| Code          | Event / native signal                                 | Detection fingerprint                                                  | Relevance   | Required disposition                                         |
-| ------------- | ----------------------------------------------------- | ---------------------------------------------------------------------- | ----------- | ------------------------------------------------------------ |
-| `MKS-TRN-001` | Token source fails during request construction        | authenticated UI state cannot supply a current token                   | `REACHABLE` | No request; return exact token phase                         |
-| `MKS-TRN-002` | DNS resolution failure / `dns-failed`                 | connection fails before socket establishment                           | `REACHABLE` | Unknown only if transmission cannot be disproved             |
-| `MKS-TRN-003` | TCP/connect failure / `connection-failed`             | client exception before trusted response                               | `REACHABLE` | Preserve request-start boundary                              |
-| `MKS-TRN-004` | TLS failure / `tls-failed`                            | certificate/handshake failure                                          | `REACHABLE` | Security/transport stop                                      |
-| `MKS-TRN-005` | Timeout before response / `timeout-before-response`   | timeout with no response headers                                       | `REACHABLE` | Upload outcome is `unknown` after request start              |
-| `MKS-TRN-006` | Timeout during response / `timeout-during-response`   | headers or partial response observed before timeout                    | `REACHABLE` | Record status/header evidence; outcome may remain unknown    |
-| `MKS-TRN-007` | HTTP client exception collapsed to null upload result | `_sendJson` catches `ClientException` without phase detail             | `LATENT`    | Replace null with typed transport result                     |
-| `MKS-TRN-008` | Response is not JSON                                  | body parse throws                                                      | `REACHABLE` | Record status/size/content class; do not generic-collapse    |
-| `MKS-TRN-009` | JSON contract invalid / `response-contract-invalid`   | decoded body has wrong top-level or field types                        | `REACHABLE` | Treat response untrusted; preserve provider-contact evidence |
-| `MKS-TRN-010` | Response exceeds size limit                           | body exceeds 262144-byte bound                                         | `REACHABLE` | Reject safely; record size band                              |
-| `MKS-TRN-011` | HTTP status lacks trusted protocol body               | non-success status cannot be mapped from sanitized body                | `REACHABLE` | Preserve status and untrusted-response code                  |
-| `MKS-TRN-012` | Redirect/unexpected effective origin                  | request does not terminate at authorized API origin                    | `REACHABLE` | Security stop; do not forward bearer across untrusted origin |
-| `MKS-TRN-013` | Download `ClientException` escapes transport mapper   | download path does not use the upload `_sendJson` exception mapping    | `LATENT`    | Use one typed transport boundary for all routes              |
-| `MKS-TRN-014` | Different timeout semantics by route                  | upload null-maps timeout while download lets timeout reach coordinator | `LATENT`    | Normalize with route and phase retained                      |
-
-### I. API ingress and authorization
-
-| Code          | Event / native signal                            | Detection fingerprint                                                                                                | Relevance     | Required disposition                                             |
-| ------------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- | ------------- | ---------------------------------------------------------------- |
-| `MKS-API-001` | Route absent or revision mismatch / HTTP 404     | protected route not present at deployed revision                                                                     | `FRESHNESS`   | Verify exact revision and route inventory                        |
-| `MKS-API-002` | Method/content type rejected                     | wrong method or media type                                                                                           | `REACHABLE`   | Typed 4xx; never generic 500                                     |
-| `MKS-API-003` | Request body missing/malformed                   | unvalidated body cast causes type/runtime error                                                                      | `LATENT`      | Add schema validation before transaction                         |
-| `MKS-API-004` | Authentication required                          | bearer absent                                                                                                        | `REACHABLE`   | Typed 401 with no service execution                              |
-| `MKS-API-005` | JWT rejected                                     | verifier rejects token                                                                                               | `REACHABLE`   | Typed auth failure; sanitized verifier subphase in server log    |
-| `MKS-API-006` | Membership/account selection rejected            | principal cannot resolve one active account                                                                          | `LOW-CURRENT` | Typed authorization result                                       |
-| `MKS-API-007` | Device header/enrollment rejected                | header or active enrollment invalid                                                                                  | `LOW-CURRENT` | Typed device result                                              |
-| `MKS-API-008` | Forbidden operation                              | policy denies authenticated request                                                                                  | `REACHABLE`   | Typed 403                                                        |
-| `MKS-API-009` | API database composition absent                  | service starts without usable database composition                                                                   | `LOW-CURRENT` | Existing typed 503; readiness is presently healthy               |
-| `MKS-API-010` | Rate limited / `rate-limited`                    | provider or authorization layer rejects request rate                                                                 | `REACHABLE`   | Preserve retry-after class; no immediate automatic Retry         |
-| `MKS-API-011` | Request lifecycle stops after `request-received` | no later validation/auth/transaction stage for same correlation                                                      | `REACHABLE`   | Server alert identifies last stage                               |
-| `MKS-API-012` | Unexpected exception genericized                 | current error handler emits `500/service-unavailable`, operation `server`, outcome `unknown` for all non-auth errors | `LATENT`      | Retain safe phase-specific internal code and transaction outcome |
-| `MKS-API-013` | Health-ready incorrectly treated as Sync proof   | `/health/ready` 200 exists without protected route execution                                                         | `CONFIRMED`   | Treat readiness only as startup/DB readiness evidence            |
-| `MKS-API-014` | Correlation ID missing/reused                    | request lacks unique per-action correlation                                                                          | `LATENT`      | Generate/reject according to correlation contract                |
-
-### J. PostgreSQL connection and transaction
-
-| Code          | Event / native signal                      | Detection fingerprint                                            | Relevance     | Required disposition                                             |
-| ------------- | ------------------------------------------ | ---------------------------------------------------------------- | ------------- | ---------------------------------------------------------------- |
-| `MKS-PDB-001` | Pool connection unavailable                | `pool.connect()` fails before transaction                        | `REACHABLE`   | Typed `db-connect-unavailable`; provider transaction not started |
-| `MKS-PDB-002` | Transaction begin/context failure          | `BEGIN`, transaction-local context, or authorization setup fails | `REACHABLE`   | Record rolled-back/not-started exactly                           |
-| `MKS-PDB-003` | Serialization retry / SQLSTATE `40001`     | serializable conflict before retry budget expires                | `REACHABLE`   | Internal warning; retry only within bounded DB helper            |
-| `MKS-PDB-004` | Deadlock retry / SQLSTATE `40P01`          | deadlock before retry budget expires                             | `REACHABLE`   | Same bounded internal retry                                      |
-| `MKS-PDB-005` | Serialization/deadlock retries exhausted   | three attempts or five-second budget exhausted                   | `REACHABLE`   | Typed transient DB failure; outcome/rollback required            |
-| `MKS-PDB-006` | Permission/RLS failure                     | runtime role lacks allowed operation or context                  | `LOW-CURRENT` | Typed server configuration failure                               |
-| `MKS-PDB-007` | Schema/migration mismatch                  | relation/function/column/readiness contract absent               | `LOW-CURRENT` | Stop deployment; migration 007/readiness previously passed       |
-| `MKS-PDB-008` | Constraint/type failure                    | insert/update violates DB constraint or type                     | `REACHABLE`   | Typed invariant/validation class; rollback                       |
-| `MKS-PDB-009` | Transaction commit failure                 | commit returns error or connection loss                          | `REACHABLE`   | Provider outcome `unknown` unless DB proves rollback             |
-| `MKS-PDB-010` | Rollback failure suppressed                | rollback attempt also fails and current helper suppresses it     | `LATENT`      | Log rollback outcome separately; public response sanitized       |
-| `MKS-PDB-011` | Cursor state row missing                   | active account has no `account_sync_state` row                   | `LOW-CURRENT` | Stop; prior Neon baseline proved row and `next_cursor=1`         |
-| `MKS-PDB-012` | Readiness passes but request-time DB fails | pool/transaction changes after last readiness check              | `FRESHNESS`   | Fresh baseline required immediately before authorization         |
-
-### K. Upload validation and provider application
-
-| Code          | Event / native signal                                               | Detection fingerprint                                                                                                 | Relevance     | Required disposition                                           |
-| ------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------- | -------------------------------------------------------------- |
-| `MKS-UPL-001` | Submission Device differs from authorized Device / `device-revoked` | request Device and authorized Device mismatch                                                                         | `LOW-CURRENT` | Reject before event writes                                     |
-| `MKS-UPL-002` | Submission shape invalid                                            | missing/invalid submission ID, hash, events, sequence, or payload fields                                              | `LATENT`      | Validate complete request before transaction mutation          |
-| `MKS-UPL-003` | Existing submission hash differs / `hash-mismatch`                  | same submission ID, different request hash                                                                            | `REACHABLE`   | Reject; preserve original submission                           |
-| `MKS-UPL-004` | Event scope differs / `wrong-account`                               | event account/device differs from submission context                                                                  | `LOW-CURRENT` | Reject entire batch atomically                                 |
-| `MKS-UPL-005` | Event content hash differs / `hash-mismatch`                        | canonical provider hash check fails                                                                                   | `LOW-CURRENT` | Reject entire batch atomically                                 |
-| `MKS-UPL-006` | Provider sequence gap / `sequence-gap`                              | event sequence differs from next expected Device sequence                                                             | `LOW-CURRENT` | Reject not-applied and report expected/observed safely         |
-| `MKS-UPL-007` | Provider cursor state unavailable / `service-unavailable`           | cursor row absent while assigning event cursor                                                                        | `LOW-CURRENT` | Roll back; classify DB invariant, not generic service outage   |
-| `MKS-UPL-008` | Duplicate event is equivalent                                       | existing event identity/hash/content matches                                                                          | `REACHABLE`   | Return `duplicate-equivalent`; do not duplicate write          |
-| `MKS-UPL-009` | Submission applied                                                  | all events and submission committed                                                                                   | `REACHABLE`   | Return trusted `server-accepted` with committed outcome        |
-| `MKS-UPL-010` | Stored submission replay                                            | same submission ID/hash already has stored result                                                                     | `REACHABLE`   | Return explicit replay/duplicate semantic                      |
-| `MKS-UPL-011` | Request hash not independently recomputed server-side               | server trusts request-level hash except identity collision comparison                                                 | `LATENT`      | Recompute canonical request hash before writes                 |
-| `MKS-UPL-012` | Partial-batch commit hazard                                         | service may return a normal `ProtocolFailure` after earlier loop iterations wrote events, allowing transaction commit | `LATENT`      | Validate full batch first or throw rollback-only typed failure |
-| `MKS-UPL-013` | Failure lacks event/field/submission context                        | failure contract supports context but service often omits it                                                          | `LATENT`      | Populate sanitized member position/field and fingerprints      |
-| `MKS-UPL-014` | Failure retryability/safe action inconsistent                       | cursor-missing/service failure may carry unsafe retry meaning                                                         | `LATENT`      | Derive safe action from outcome and transaction proof          |
-
-### L. Download and local remote-event application
-
-| Code          | Event / native signal                                 | Detection fingerprint                                      | Relevance   | Required disposition                                       |
-| ------------- | ----------------------------------------------------- | ---------------------------------------------------------- | ----------- | ---------------------------------------------------------- |
-| `MKS-DNL-001` | Provider cursor expired / `cursor-expired`            | requested cursor is outside retained/provider boundary     | `REACHABLE` | Stop; determine recovery snapshot path                     |
-| `MKS-DNL-002` | Recovery unavailable / `recovery-unavailable`         | cursor expired and no provider snapshot exists             | `REACHABLE` | Stop; explicit recovery decision                           |
-| `MKS-DNL-003` | Full rebootstrap required                             | provider requires full local rebuild                       | `REACHABLE` | Separate destructive authorization                         |
-| `MKS-DNL-004` | Local changes block rebootstrap                       | unuploaded local work prevents safe rebuild                | `REACHABLE` | Preserve local work; operator reconciliation               |
-| `MKS-DNL-005` | Protocol upgrade required                             | response/event version unsupported                         | `REACHABLE` | Stop and update client                                     |
-| `MKS-DNL-006` | Download response shape invalid                       | response/event/cursor fields fail type/contract checks     | `REACHABLE` | Reject page before apply                                   |
-| `MKS-DNL-007` | Remote event wrong account/type/version/hash          | remote applier validation fails                            | `REACHABLE` | Local transaction rollback; typed conflict subcode         |
-| `MKS-DNL-008` | Remote cursor not contiguous                          | returned cursor sequence skips expected local cursor       | `REACHABLE` | Roll back; preserve page fingerprint                       |
-| `MKS-DNL-009` | Duplicate event identity with different hash          | inbox already has identity but different content           | `REACHABLE` | Critical conflict; no overwrite                            |
-| `MKS-DNL-010` | Required fact reference absent                        | person/payment reference snapshot unavailable              | `REACHABLE` | Roll back local page                                       |
-| `MKS-DNL-011` | Store/product/purchase identity conflict              | remote fact collides with incompatible local identity      | `REACHABLE` | Roll back and name entity class only                       |
-| `MKS-DNL-012` | Local fact type/date/constraint failure               | decoded payload cannot be written under schema constraints | `REACHABLE` | Roll back and classify local apply                         |
-| `MKS-DNL-013` | Duplicate-only page does not advance local cursor     | duplicate outcome returns without updating sync state      | `LATENT`    | Prove/update cursor advancement for equivalent pages       |
-| `MKS-DNL-014` | Local apply committed but later acknowledgement fails | download transaction succeeds before ack failure           | `REACHABLE` | Preserve applied cursor; Retry acknowledgement, not upload |
-
-### M. Acknowledgement
-
-| Code          | Event / native signal                                     | Detection fingerprint                             | Relevance   | Required disposition                                    |
-| ------------- | --------------------------------------------------------- | ------------------------------------------------- | ----------- | ------------------------------------------------------- |
-| `MKS-ACK-001` | No local cursor to acknowledge                            | local sync state absent after download/apply      | `REACHABLE` | Stop; local invariant                                   |
-| `MKS-ACK-002` | Ack cursor exceeds provider high-water / `cursor-expired` | provider rejects impossible/out-of-range cursor   | `REACHABLE` | Stop and reconcile cursors                              |
-| `MKS-ACK-003` | Ack transport outcome unknown                             | request started without trusted ack response      | `REACHABLE` | Query/retry same idempotent ack only under typed policy |
-| `MKS-ACK-004` | Ack protocol failure                                      | trusted provider failure body returned            | `REACHABLE` | Preserve code/status/correlation                        |
-| `MKS-ACK-005` | Ack observability absent from local ledger                | top-level Sync result hides independent ack phase | `LATENT`    | Persist child request/phase record                      |
-
-### N. Cross-cutting observability and invariant controls
-
-| Code          | Event / native signal                                      | Detection fingerprint                                                             | Relevance   | Required disposition                                       |
-| ------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------- |
-| `MKS-OBS-001` | Client catch-all / `local-exception-redacted`              | uncaught `Object` becomes `sync-unavailable`, phase `unexpected-terminal`         | `LATENT`    | Retain sanitized exception class and last completed phase  |
-| `MKS-OBS-002` | Coordinator state loses native cause                       | many guard/protocol codes map only to `unavailable`                               | `LATENT`    | Keep projected state and diagnostic code separately        |
-| `MKS-OBS-003` | API generic 500 collapse                                   | non-auth exception maps to `service-unavailable/server/unknown`                   | `LATENT`    | Typed internal taxonomy; public envelope remains sanitized |
-| `MKS-OBS-004` | Sync attempt lacks child request evidence                  | no correlation, status, header, or route fields persisted for upload/download/ack | `LATENT`    | Persist one parent plus child phase events                 |
-| `MKS-OBS-005` | Same correlation reused across operations                  | constant `native-closure` correlation source                                      | `LATENT`    | Unique correlation per top-level action                    |
-| `MKS-OBS-006` | Render health noise mistaken for operation evidence        | only `/health/ready` entries appear                                               | `CONFIRMED` | Filter logs by operation/correlation and protected route   |
-| `MKS-OBS-007` | Provider contact inferred from missing fields              | absent fields are treated as negative evidence although not instrumented          | `CONFIRMED` | Add explicit `providerContact` state                       |
-| `MKS-OBS-008` | Sensitive raw exception/log data risk                      | unbounded error messages or payloads could enter UI/logs                          | `REACHABLE` | Closed allow-list and fingerprint-only identifiers         |
-| `MKS-INV-001` | Automatic retry after generic 500                          | HTTP status alone drives Retry despite unknown commit outcome                     | `LATENT`    | Prohibit; reconcile same submission identity first         |
-| `MKS-INV-002` | Failed recovery before provider proves not-applied         | unknown outcome is requeued as failed                                             | `REACHABLE` | Prohibit state transition                                  |
-| `MKS-INV-003` | Second action before first outcome captured                | repeated Retry/Sync changes evidence                                              | `REACHABLE` | One-operation lock and explicit terminal                   |
-| `MKS-INV-004` | Provider and local mutations cannot be joined              | missing operation/correlation/submission fingerprints                             | `LATENT`    | Require diagnostic envelope before Gate action             |
-| `MKS-INV-005` | Partial local/provider state hidden by final `unavailable` | compound Sync collapses recovery, upload, download, and ack                       | `LATENT`    | Record phase transitions and transaction outcomes          |
-
-### Conditions reduced by accepted Step 12 evidence
-
-These events remain in the catalogue because they are reachable, but they are
-not leading explanations for the latest blocked Retry:
-
-| Reduced hypothesis                                      | Accepted evidence                                                                                             |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Corrupt or structurally wrong SQLite database           | copied DB quick check passed and expected table count matched                                                 |
-| Wrong hosted Device candidate                           | rank 3 was the enrolled hosted scope and owned exactly the two failed events                                  |
-| Unrelated local pending events joining recovery         | simulated hosted-scope first upload contained only sequences `1â€“2`; six pending events belong to other scopes |
-| Unknown-outcome Retry candidate exists                  | hosted scope has `unknown=0`; candidate is failed/notApplied                                                  |
-| Same-hash active/superseded submission collision        | SQLite-04 found neither                                                                                       |
-| Provider/API wholly offline at captured time            | Render readiness repeatedly returned 200                                                                      |
-| Missing migration 007 cursor state at accepted baseline | Neon readiness and cursor baseline previously passed                                                          |
-| Authentication absent at the displayed checkpoint       | UI reported authenticated after recent login                                                                  |
-| Enrollment absent at the displayed checkpoint           | UI reported Device enrolled and earlier exact binding checks passed                                           |
-| Latest button caused a provider 500                     | no protected request followed the locally blocked preflight                                                   |
-
-These are freshness-sensitive rather than permanently excluded:
-
-- deployed revision and route inventory;
-- current Auth0 principal/membership;
-- current exact account/Device binding;
-- current Neon cursor/submission/event baseline;
-- request-time PostgreSQL connectivity and transaction behavior;
-- token validity at the instant of the authorized operation.
-
-### Ranked diagnosis for the present state
-
-1. **Proved present event:** `MKS-UI-001`. The pressed button selected the
-   unknown-outcome Retry path, which correctly blocked on two failed events and
-   zero unknown events.
-2. **Proved presentation defect:** `MKS-UI-002` and `MKS-UI-005`. The blocked
-   result was not made visible enough and the earlier Sync result remained the
-   prominent explanation.
-3. **Proved action gap:** `MKS-UI-004`. No bounded failed/notApplied recovery
-   surface exists; ordinary Sync is the only current code path that invokes
-   failed recovery, but it also uploads, downloads, and acknowledges.
-4. **Unresolved historical event:** the earlier `sync-unavailable` cannot yet be
-   assigned to transport, provider, database, local persistence, or response
-   parsing because `MKS-LDB-010`, `MKS-OBS-001`, `MKS-OBS-002`, and
-   `MKS-OBS-004` erase the necessary distinctions.
-5. **Pre-release source hazards:** `MKS-QUE-009`, `MKS-QUE-010`,
-   `MKS-UPL-012`, `MKS-DNL-013`, and `MKS-OBS-003` require explicit tests or
-   correction before the controlled Gate 12.7 mutation.
-
-### Required tightening before Gate 12.7 can reopen
-
-The next Codex unit should remain source-only and non-provider:
-
-1. implement the diagnostic envelope and stable code registry as one
-   language-neutral source of truth consumed by Dart UI and TypeScript/API
-   logging;
-2. retain existing native codes and map each to one `MKS-*` protocol code;
-3. rename the existing action to `Retry unknown-outcome submission`;
-4. display all blocked preflights as persistent in-view banners/dialogs;
-5. implement a separate **non-mutating** failed/notApplied preflight showing
-   Device-scoped count, sequence range, next sequence, and sanitized candidate
-   fingerprint;
-6. do not initially attach that preflight to an executing provider action;
-7. instrument ordinary Sync and future bounded recovery with parent/child
-   phases, unique correlations, provider-contact state, trusted-response state,
-   and local/provider transaction outcomes;
-8. validate the complete upload batch before any provider write and make every
-   later protocol failure roll back the transaction;
-9. convert silent local persistence misses and generic catch-alls into typed
-   invariant/phase events;
-10. add tests proving that blocked actions make no local/provider mutation,
-    ambiguous upload outcomes are never automatically requeued, and every
-    unexpected server path produces a sanitized phase-specific diagnostic
-    rather than an undifferentiated generic 500;
-11. render a readable `SYNC_DIAGNOSTICS.md` from the same registry rather than
-    maintaining a second hand-written catalogue;
-12. return to J with validation evidence before any build/deployment or Gate
-    12.7 authorization packet is activated.
-
-No current evidence justifies direct SQLite editing, Neon editing, another
-Repair, ordinary Sync, unknown Retry, or provider-side cleanup.
-
----
-
-## Step 12 Diagnostic Tightening Materialization Reconciliation
-
-Date: 2026-07-26
-Round: C10-GCM02-S12-ERR-01
-Sequence: FLX-ORD-01 â€” Ordinary Sequence
-Materialization commit:
-`ecb0c500f43dd6fd8b614dcec92d06a3c2a79f26`
-Parent staging commit:
-`02aa7a0a57219faba856a22c73f1cac0ff2d1988`
-Branch: `cycle10-intermid-grimoire`
-Authority: Main reconciliation under explicit human direction
-Evidence classes: repository-proven, source-inspected, Codex-reported
-test-validated, independently projection-checked, unavailable in the present
-Work host
-Disposition: **PARTIAL ACCEPTANCE WITH BOUNDED FOLLOW-UP; NO GATE 12.7
-AUTHORIZATION**
-
-### 1. Reconciliation purpose
-
-This entry reconciles the C10-GCM02-S12-ERR-01 source materialization against:
-
-- the active D/E/F packet at `02aa7a0`;
-- the append-only `System Diagnosis` catalogue in this J file;
-- the materialized source and tests at `ecb0c50`;
-- the replacement G/H/I Codex reports;
-- the accepted Gate 12.6 state;
-- the prohibition against provider mutation before an exact Gate 12.7
-  authorization packet and explicit human approval.
-
-This reconciliation does not semantically promote G/H/I into permanent domain
-memory. It records the Main conclusion and preserves the materialization
-history needed for later functional promotion and Gate 12.7 preparation.
-
-### 2. Repository and publication evidence
-
-The selected GitHub branch was inspected through the connected repository and
-then fetched into a detached clean reconciliation worktree.
-
-Confirmed:
-
-```text
-REMOTE_BRANCH=cycle10-intermid-grimoire
-REMOTE_TIP=ecb0c500f43dd6fd8b614dcec92d06a3c2a79f26
-PARENT=02aa7a0a57219faba856a22c73f1cac0ff2d1988
-COMMIT_MESSAGE=Tighten Step 12 sync diagnostics
-REMOTE_RELATION=ONE_FAST_FORWARD_COMMIT_OVER_D_E_F
-```
-
-The commit changes 33 task-relevant files only:
-
-- Flutter Closure, diagnostics, local Sync and migration source;
-- focused Flutter Closure, diagnostics, migration and Sync tests;
-- the machine registry, schema and README;
-- the deterministic generator;
-- generated Dart, TypeScript and Markdown projections;
-- API Sync/protocol/error source and tests;
-- G/H/I Codex evidence reports.
-
-No hosted migration, methodology file, permanent domain-memory file, Main-root
-continuity file, D/E/F file or pre-existing J entry was modified by Codex.
-
-### 3. Accepted implementation results
-
-#### 3.1 Single diagnostic catalogue owner
-
-Repository inspection accepts:
-
-```text
-MACHINE_OWNER=contracts/shared_beta/diagnostics_v1/diagnostics.registry.json
-REGISTRY_VERSION=1
-REGISTRY_CODES=159
-REGISTRY_UNIQUE_CODES=159
-DART_PROJECTION_CODES=159
-TYPESCRIPT_PROJECTION_CODES=159
-MARKDOWN_PROJECTION_CODES=159
-PROJECTION_CODE_SET_DIFFERENCE=0
-```
-
-The registry is the only intended hand-maintained list. The Dart, TypeScript
-and `documentation/SYNC_DIAGNOSTICS.md` views are generated dependencies.
-
-The present Work host independently parsed all four artifacts and confirmed
-identical 159-code sets. `git diff --check 02aa7a0..ecb0c50` also passed.
-
-The generator's own `--check` mode could not be independently rerun in this
-Work host because Dart is unavailable here and the generator correctly stops
-when it cannot locate Dart. Codex reports successful generation, check mode
-and deterministic validation in its implementation environment. Therefore:
-
-```text
-CODE_SET_EQUALITY=INDEPENDENTLY_CHECKED_PASS
-GENERATOR_DART_DEPENDENT_CHECK=CODEX_REPORTED_PASS
-CURRENT_WORK_HOST_RERUN=UNAVAILABLE_NO_DART
-```
-
-This is an evidence distinction, not a contradiction.
-
-#### 3.2 Local diagnostic persistence and UI
-
-Source inspection accepts:
-
-- additive Drift schema version 11;
-- `sync_attempts` retained as the operation parent;
-- additive `sync_diagnostic_events` child-event storage;
-- migration-ledger identifier
-  `v10-to-v11-sync-diagnostic-events`;
-- the visible action label `Retry unknown-outcome submission`;
-- the separate `Inspect failed/notApplied recovery` action;
-- current-action diagnostic projection with MKS code, meaning, outcome,
-  phase, mutation/contact state, safe action and fingerprint;
-- visible blocked/error/unknown results;
-- a read-only current-Device failed/notApplied candidate inspection;
-- no execution callback attached to that inspection.
-
-The read-only inspection explicitly records:
-
-```text
-LOCAL_MUTATION=none
-PROVIDER_CONTACT=not-started
-PROVIDER_TRANSACTION=not-started
-RETRYABLE=false
-SAFE_ACTION=hold for Gate 12.7 reconciliation
-```
-
-This materially corrects the earlier action/interface ambiguity without
-executing or authorizing the failed lineage.
-
-#### 3.3 Five named source hazards
-
-Source and test evidence support accepting the five bounded corrections:
-
-| Code | Reconciled implementation result |
-| --- | --- |
-| `MKS-QUE-009` | A post-lease transport exception is converted to an unknown outcome so the submission identity is preserved instead of remaining an unexplained upload lease. |
-| `MKS-QUE-010` | A scoped upload-result persistence miss throws `SyncPersistenceInvariantException` instead of returning silently. |
-| `MKS-REC-012` | Candidate inspection/recovery distinguishes all-pending, all-failed and mixed states; mixed states block rather than partially requeue. |
-| `MKS-UPL-012` | The complete provider submission is validated before the first write; the later-member failure fixture proves no partial submission/event/cursor/Device-sequence mutation. |
-| `MKS-DNL-013` | Equivalent duplicate-only downloads transactionally advance the contiguous local cursor; conflicting duplicates remain failures. |
-
-These corrections are source-implemented and test-validated in the Codex
-environment. They are not live-provider validated.
-
-#### 3.4 Validation accepted with evidence limits
-
-G reports the following successful commands:
-
-```text
-node scripts/generate_sync_diagnostics.mjs
-node scripts/generate_sync_diagnostics.mjs --check
-npm run diagnostics:check
-flutter pub run build_runner build --delete-conflicting-outputs
-dart format --set-exit-if-changed lib test
-flutter analyze
-focused Flutter diagnostic/sync/migration/UI tests
-flutter test: 183 passed, 4 existing lab-gated skips
-npm run format:check
-npm run lint
-npm run typecheck
-npm run build
-npm test: 58 passed
-git diff --check
-credential-pattern scan: no reported assignment match
-```
-
-Main accepts these as Codex-reported test evidence. Main independently checked:
-
-- commit ancestry and remote branch position;
-- changed-file scope;
-- 159 unique registry codes;
-- identical registry/Dart/TypeScript/Markdown code sets;
-- relevant source ownership and action labels;
-- additive v11 table and migration-ledger source;
-- absence of an executing failed/notApplied UI callback;
-- `git diff --check`.
-
-Main did not repeat Flutter, Dart or complete npm validation in this Work host.
-No Windows, Android, Render, Auth0, Neon or end-to-end provider validation
-belongs to this materialization claim.
-
-### 4. D/E/F conformance limits
-
-The materialization is not a complete realization of every D/E/F requirement.
-The following differences remain material and must not be hidden by the broad
-`ERROR_PROTOCOL_SOURCE_IMPLEMENTED` terminal in G:
-
-#### 4.1 Ordinary Sync remains coarsely terminalized
-
-`NativeAuthClosureRunner.hostedSyncProbe()` still catches an unclassified
-`Object` and records:
-
-```text
-resultCode=sync-unavailable
-phase=unexpected-terminal
-recoveryCode=local-exception-redacted
-```
-
-The new MKS child-event envelope is not yet emitted across every ordinary Sync
-phase required by D:
-
-```text
-authentication
-binding
-failed-recovery
-upload-lease
-upload-transport
-upload-provider
-upload-result-persistence
-download-transport
-download-provider
-download-local-apply
-acknowledgement
-terminal
-```
-
-The new child-event ledger is materially used for the local failed/notApplied
-inspection, but source inspection does not prove complete end-to-end
-instrumentation of the existing ordinary Sync coordinator.
-
-#### 4.2 Parent/child correlation remains incomplete
-
-For the local failed/notApplied inspection, the operation fingerprint is also
-used as the correlation fingerprint. This is sufficient to group that
-network-free local preflight, but it does not implement the staged rule for
-distinct full child correlation identities, sanitized child fingerprints and
-deterministic request ordinals across every future HTTP child request.
-
-The persisted envelope also does not yet carry every field listed in the full
-D/F target, including a persisted diagnostic version and all source/build,
-route, submission and request-hash projections.
-
-#### 4.3 Public/internal API diagnostic separation needs one more tightening
-
-The API catch-all now avoids generic retry permission and returns
-`retryable=false`, which is accepted.
-
-However, it presently returns `correlationId` and
-`sanitizedExceptionClass` in the public 500 body. D/F requested a safe
-correlation fingerprint publicly while retaining exception class and richer
-failure detail internally. The current implementation therefore improves the
-500 result but does not fully satisfy the public/internal projection boundary.
-
-The helper used for ordinary protocol failures also assigns
-`MKS-UPL-012` broadly. Future tightening must map the actual operation/boundary
-instead of treating the partial-upload hazard code as a generic failure code.
-
-#### 4.4 Registry presence is broader than runtime emission coverage
-
-The 159-code registry and generated explanation surfaces exist, but source
-inspection does not prove that every reachable detector currently emits its
-corresponding MKS code at its pathogenic boundary. The catalogue is callable
-from Dart and TypeScript; full source-adjacent emission remains incremental
-work.
-
-### 5. PRC-01 classification
-
-| Claim | Classification | Main disposition |
-| --- | --- | --- |
-| Remote tip and ancestry | repository-proven | accepted |
-| 159-code registry and equal projections | repository-proven and independently checked | accepted |
-| Deterministic generator/check | Codex-reported test-validated; present host unavailable | accepted with evidence qualifier |
-| Drift v11 additive diagnostic ledger | repository-proven; Codex test-validated | accepted locally |
-| Visible renamed Retry and read-only failed inspection | repository-proven and test-validated | accepted |
-| Failed/notApplied execution absent | repository-proven | accepted |
-| Five named source-hazard corrections | source-inspected and Codex test-validated | accepted locally |
-| Complete ordinary Sync phase instrumentation | not proved by source | deferred corrective follow-up |
-| Complete parent/child correlation design | partially implemented | deferred corrective follow-up |
-| Public/internal API diagnostic separation | partially implemented | deferred corrective follow-up |
-| Live provider behavior | unavailable and intentionally unperformed | not accepted |
-| Gate 12.7 readiness | not yet established | held |
-| GCM02 closure | not established | open |
-
-### 6. Main reconciliation conclusion
-
-The round achieved the decisive structural objective:
-
-```text
-ERROR_CATALOGUE_SINGLE_OWNER_IMPLEMENTED
-ERROR_CATALOGUE_PROJECTIONS_ALIGNED
-ERROR_DOCUMENTATION_GENERATED
-DIAGNOSTIC_LEDGER_V11_IMPLEMENTED
-CURRENT_ACTION_DIAGNOSTICS_VISIBLE
-UNKNOWN_RETRY_SEMANTICS_VISIBLE
-FAILED_NOT_APPLIED_INSPECTION_READ_ONLY
-FIVE_NAMED_SOURCE_HAZARDS_LOCALLY_CORRECTED
-GENERIC_500_AUTORETRY_REJECTED
-```
-
-It did not complete:
-
-```text
-ORDINARY_SYNC_ALL_PHASE_MKS_EMISSION
-FULL_CHILD_REQUEST_CORRELATION
-FULL_DIAGNOSTIC_ENVELOPE_PROJECTION
-PUBLIC_FINGERPRINT_INTERNAL_EXCEPTION_SPLIT
-EVERY_REGISTRY_CODE_SOURCE_BOUNDARY_EMISSION
-WINDOWS_CORRECTED_CLIENT_BUILD
-FRESH_USER_DATABASE_READ_ONLY_INSPECTION
-GATE_12_7_AUTHORIZATION_PACKET
-CONTROLLED_PROVIDER_OPERATION
-POST_OPERATION_CONVERGENCE
-```
-
-The correct materialization classification is:
-
-```text
-C10_GCM02_S12_ERR_01=PARTIAL_ACCEPT_WITH_FOLLOW_UP
-SOURCE_STRUCTURE=IMPLEMENTED
-NAMED_HAZARD_FIXES=LOCALLY_TEST_VALIDATED
-DIAGNOSTIC_RUNTIME_COVERAGE=PARTIAL
-HOST_PROVIDER_VALIDATION=NOT_PERFORMED
-```
-
-### 7. Legacy and forward disposition
-
-This reconciliation belongs in `Legacy_Progress` because it records:
-
-- the exact published materialization commit and its parent;
-- the transformation of the J error catalogue into runtime-owned artifacts;
-- the evidence boundary between Codex validation and Main independent checks;
-- the accepted five-hazard correction;
-- the residual D/E/F conformance gap;
-- the reason Gate 12.7 remains held.
-
-The 159-row `System Diagnosis` catalogue remains historical provenance. It
-must not be manually maintained as a second runtime registry after this point.
-Future code/meaning changes begin in
-`contracts/shared_beta/diagnostics_v1/diagnostics.registry.json`, regenerate
-Dart/TypeScript/Markdown, and then return to J as reconciliation evidence.
-
-The next source unit should be bounded to the four conformance gaps above,
-followed by:
-
-1. a corrected Windows client build;
-2. the read-only failed/notApplied inspection only;
-3. cancellation without local mutation or provider contact;
-4. fresh sanitized Gate 12.7 baselines;
-5. an exact authorization packet;
-6. one controlled action only after explicit human approval;
-7. correlated post-operation client, server and provider comparison.
-
-The pre-existing Gate 12.7 rule remains authoritative:
-
-```text
-ANYTHING_OTHER_THAN_EXPLICIT_APPROVAL=NO_AUTHORIZATION
-NO_SECOND_ACTION_AFTER_AN_AMBIGUOUS_RESULT
-```
-
-### 8. Terminal state
-
-```text
-GATE_12_6=PASS
-C10_GCM02_S12_ERR_01=PARTIAL_ACCEPT_WITH_FOLLOW_UP
-DIAGNOSTIC_REGISTRY_SINGLE_OWNER=PASS
-DIAGNOSTIC_PROJECTION_CODE_SET=PASS
-FAILED_NOT_APPLIED_PREFLIGHT=IMPLEMENTED_READ_ONLY
-FAILED_NOT_APPLIED_EXECUTION=ABSENT
-FIVE_NAMED_SOURCE_HAZARDS=LOCALLY_TEST_VALIDATED
-ORDINARY_SYNC_PHASE_DIAGNOSTICS=PARTIAL
-PROVIDER_ACTION=NOT_PERFORMED
-GATE_12_7=HELD_FOR_CORRECTIVE_RECONCILIATION
-GCM02=OPEN
-```
-
----
-
-## C10-GCM02-S12-ERR-02 â€” post-Codex source and host reconciliation
-
-Sequence: FLX-PRM-04 â€” Promotion/Reconciliation
-Role: Main Chat [M]
-Round or unit: C10-GCM02-S12-ERR-02-HOST-HANDOFF
-Branch: `cycle10-intermid-grimoire`
-Baseline / inspected HEAD: `17e37eb8b83eb77e56c6421e09cb5ad768dbbfd4`
-Authority: human-directed G/H/I reconciliation and next-step preparation
-Writable surfaces: `[M]_STAGE/J_MAIN_STAGE.md` only
-Evidence boundary: repository inspection at `17e37eb`; Codex G/H/I evidence at
-`512f690`; human-reported Windows/Android observations; no provider mutation,
-failed/notApplied execution, Render deployment, live Sync, Retry, Repair, or
-Enroll
-
-### 1. Repository sequence recovered
-
-The remote branch contains the complete corrective sequence:
-
-```text
-0636c54  Main reconciliation and six-gap decision
-d56c3a6  active D/E/F implementation packet
-512f690  Codex source materialization and replacement G/H/I
-baaccfa  Android AVD startup automation
-17e37eb  local Android AVD coordinate alignment
-```
-
-The C10-GCM02-S12-ERR-02 D/E/F packet was active and bounded. Codex
-materialized the six requested conformance corrections and replaced G/H/I.
-No further source-conformance unit is required before the Windows host
-validation and read-only failed/notApplied inspection.
-
-### 2. PRC-01 claim reconciliation
-
-Claim: ordinary Sync now records the complete required phase evidence.
-
-Prior state: partial; authentication and terminal summaries existed, but the
-ordinary Sync path lacked full child-phase evidence.
-
-Evidence: `G_OPS_CODEX.md` records the tested order authentication, binding,
-failed-recovery, upload lease/transport/provider/result-persistence, download
-transport/provider/local-apply, acknowledgement, and terminal.
-
-Evidence boundary: repository-proven and locally test-validated by Codex;
-Windows/provider end-to-end execution was not part of that validation.
-
-Contradiction: none remaining at source-conformance level.
-
-Semantic owner: Operational domain.
-
-Target role: accepted implemented and locally validated source behavior.
-
-Resulting state: `ORDINARY_SYNC_PHASE_DIAGNOSTICS=IMPLEMENTED`.
-
-History disposition: the earlier partial state remains historical provenance.
-
-Claim: one ordinary Sync owns a top-level operation identity with deterministic
-child correlation identities and ordinals.
-
-Prior state: parent/child semantics were requested but incomplete.
-
-Evidence: G/H/I and the source at `512f690` record one random top-level
-operation identity, deterministic child ordinals, scoped child correlation IDs,
-and persisted terminal causal summaries.
-
-Evidence boundary: repository-proven and locally test-validated.
-
-Contradiction: none remaining.
-
-Semantic owner: Design domain.
-
-Target role: accepted implemented relationship boundary.
-
-Resulting state: `PARENT_CHILD_CORRELATION=IMPLEMENTED`.
-
-History disposition: prior incomplete correlation is superseded, not erased.
-
-Claim: diagnostic persistence, public projection, and UI causal meaning now
-conform to the approved v1 diagnostic model.
-
-Prior state: the runtime registry existed, but schema envelope, API
-public/internal separation, reachable-code attribution, and causal UI meaning
-remained incomplete.
-
-Evidence: Drift schema v12 and migration ledger
-`v11-to-v12-diagnostic-envelope-v1`; shared typed diagnostic projections;
-fingerprinted public failures without internal exception/SQL/raw-identifier
-material; narrower reachable MKS attribution; trusted-response and
-result-persistence UI state; recent child timeline.
-
-Evidence boundary: repository-proven and locally test-validated. Migration 007
-was already applied in the earlier provider sequence and is not to be rerun;
-this reconciliation authorizes no migration.
-
-Contradiction: none remaining at source-conformance level.
-
-Semantic owner: Operational, Didactic, and Design domains by their respective
-perspectives.
-
-Target role: accepted implementation evidence pending later permanent-domain
-promotion.
-
-Resulting state:
-
-```text
-DIAGNOSTIC_ENVELOPE_V1=IMPLEMENTED
-PUBLIC_INTERNAL_DIAGNOSTIC_SPLIT=IMPLEMENTED
-REACHABLE_MKS_ATTRIBUTION=VALIDATED
-CAUSAL_DIAGNOSTIC_MEANING=IMPLEMENTED
-```
-
-History disposition: G/H/I remain observational evidence; this J entry is the
-Main reconciliation cache.
-
-Claim: the failed/notApplied interface is now sufficient for the next
-investigative inner-step.
-
-Prior state: the UI exposed unknown-outcome Retry but lacked a bounded
-failed/notApplied preflight.
-
-Evidence: the Closure UI exposes `Inspect failed/notApplied recovery`; its
-query is local, read-only, network-free, and distinct from unknown-outcome
-Retry. No failed/notApplied execution callback exists.
-
-Evidence boundary: repository-proven and locally test-validated; the human
-Windows inspection has not yet been returned at this baseline.
-
-Contradiction: none at source level.
-
-Semantic owner: Gate 12.7 authorization preparation.
-
-Target role: accepted read-only preflight; mutation remains absent and
-unauthorized.
-
-Resulting state:
-
-```text
-FAILED_NOT_APPLIED_PREFLIGHT=READ_ONLY
-FAILED_NOT_APPLIED_EXECUTION=ABSENT
-```
-
-History disposition: the earlier action-interface block is superseded by the
-implemented preflight, while the no-execution boundary remains active.
-
-### 3. Validation reconciliation
-
-Codex validation at `512f690`:
-
-```text
-FLUTTER_ANALYZE=PASS
-FLUTTER_TEST=184_PASS_4_LAB_GATED_SKIP
-API_FORMAT_LINT_TYPECHECK_BUILD=PASS
-API_TEST=58_PASS
-DIAGNOSTIC_GENERATION_CHECK=PASS
-```
-
-The user subsequently proved the Android development environment, AVD boot,
-Markei installation, and visible application launcher on the Android virtual
-device. This is accepted as human-observed Android build/install/run
-conformance for the present Cycle 10 platform boundary.
-
-The same trial exposed a narrow PowerShell 5.1 post-boot selection defect in
-`GS-FLUTTER-AND`: after the correct AVD became available, the parsed Flutter
-device inventory could yield `windows` as `$AndroidDeviceId`, causing
-`adb -s windows`. This does not retract the human-observed Android
-build/install/run result and does not block Gate 12.7, whose controlled client
-is Windows. It remains a bounded operational follow-up for later correction.
-
-No new application refactor or D/E/F implementation packet is activated by
-this reconciliation. If the generic launcher must later provide an entirely
-clean automated Android result, Main should stage a separate narrow
-PowerShell-procedure correction with its own Windows PowerShell 5.1 regression
-evidence. It must not be mixed into Gate 12.7 preparation.
-
-Fresh Windows Closure validation from the current remote source remains
-required. Earlier Windows success proves the host/toolchain baseline but does
-not replace a build/run of the C10-GCM02-S12-ERR-02 materialization.
-
-### 4. Exact next investigative inner-steps
-
-#### Inner-step 4 â€” align and prove the Windows checkout
-
-From the Windows repository:
-
-```powershell
-git switch cycle10-intermid-grimoire
-git pull --ff-only origin cycle10-intermid-grimoire
-git status --short
-git rev-parse HEAD
-git merge-base --is-ancestor 512f6903535ce53f325660850709ac4bb254a0dc HEAD
-```
-
-Required:
-
-```text
-HEAD=17e37eb8b83eb77e56c6421e09cb5ad768dbbfd4_OR_DESCENDANT
-WORKTREE=CLEAN
-512f690=ANCESTOR
-```
-
-Stop on divergence, merge conflict, dirty overlap, or failed ancestry.
-
-#### Inner-step 5 â€” build and open the current Windows Closure client
-
-Run the canonical command:
-
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass `
-    -File ".\documentation\NEON_CHECK.ps1" `
-    -Procedure "GS-FLUTTER-WIN"
-```
-
-Required evidence:
-
-```text
-FLUTTER_ANALYZE=PASS
-FLUTTER_TEST=PASS
-WINDOWS_RELEASE_BUILD=PASS
-AUTH0FLUTTER_PROTOCOL_REGISTRATION=PASS
-FRESH_WINDOWS_CLOSURE_CLIENT=OPEN
-CLOSURE_DESTINATION=VISIBLE
-```
-
-Do not select Enroll, Query, Sync, Retry, Repair, or Clear diagnostic history.
-
-#### Inner-step 6 â€” perform only the read-only candidate inspection
-
-Inside the freshly built Windows Closure client:
-
-1. Open `Closure`.
-2. Select only `Inspect failed/notApplied recovery`.
-3. Record only the sanitized fields displayed by the preflight:
-   eligibility/result state, diagnostic code and native code, operation and
-   correlation fingerprints, failed/notApplied candidate count, pending-event
-   count, sequence range, event count, retryability, and safe action.
-4. Do not select `Retry unknown-outcome submission`.
-5. Do not select Sync, Enroll, Query, Repair, or Clear diagnostic history.
-6. If any confirmation or execution control appears, choose Cancel/close and
-   stop.
-
-This inner-step must perform no provider contact and no local mutation beyond
-the diagnostic observation written by the read-only inspection path itself.
-It is not Gate 12.7 authorization and is not the controlled recovery.
-
-#### Inner-step 7 â€” return the sanitized preflight evidence
-
-Return:
-
-```text
-INSPECTION_ACTION=Inspect failed/notApplied recovery
-ELIGIBLE=<sanitized displayed value>
-DIAGNOSTIC_CODE=<sanitized displayed value>
-NATIVE_CODE=<sanitized displayed value>
-OPERATION_FINGERPRINT=<bounded fingerprint only>
-CORRELATION_FINGERPRINT=<bounded fingerprint only>
-FAILED_NOT_APPLIED_CANDIDATE_COUNT=<count>
-PENDING_EVENT_COUNT=<count>
-SEQUENCE_RANGE=<bounded range>
-EVENT_COUNT=<count>
-RETRYABLE=<boolean>
-SAFE_ACTION=<sanitized displayed value>
-PROVIDER_CONTACT=NO
-FAILED_NOT_APPLIED_EXECUTION=NO
-CANCELLED_WITHOUT_MUTATION=YES
-```
-
-Do not return tokens, connection strings, complete UUIDs, complete hashes,
-payloads, purchase content, private paths, or provider secrets.
-
-#### Inner-step 8 â€” prepare, but do not execute, Gate 12.7
-
-Main reconciles the returned preflight with fresh Git/Windows, Render health,
-Auth0 metadata, and Neon/provider baseline evidence. Only then may Main present
-one exact Gate 12.7 authorization packet containing the eligible transition,
-expected HTTP operations, evidence-capture order, stop classifications, and
-the no-second-action rule.
-
-Anything other than explicit human approval of that exact packet is no
-authorization. Steps 12.8â€“12.10 remain held. No recovery execution or provider
-contact is authorized by this J entry.
-
-### 5. Terminal state
-
-```text
-C10_GCM02_S12_ERR_02=SOURCE_ACCEPTED
-SIX_CORRECTIVE_GAPS=PASS
-ORDINARY_SYNC_PHASE_DIAGNOSTICS=IMPLEMENTED
-PARENT_CHILD_CORRELATION=IMPLEMENTED
-DIAGNOSTIC_ENVELOPE_V1=IMPLEMENTED
-PUBLIC_INTERNAL_DIAGNOSTIC_SPLIT=IMPLEMENTED
-REACHABLE_MKS_ATTRIBUTION=VALIDATED
-CAUSAL_DIAGNOSTIC_MEANING=IMPLEMENTED
-ANDROID_BUILD_INSTALL_RUN=HUMAN_OBSERVED_PASS
-GS_FLUTTER_AND_POST_BOOT_SELECTION=DEFERRED_NARROW_FOLLOW_UP
-WINDOWS_CURRENT_SOURCE_BUILD_RUN=PENDING
-FAILED_NOT_APPLIED_PREFLIGHT=READ_ONLY
-FAILED_NOT_APPLIED_EXECUTION=ABSENT
-PROVIDER_ACTION=NOT_PERFORMED
-GATE_12_7=HELD
-GCM02=OPEN
-```
-
----
-
-## cycle 10 - guideline
-
-> Date: 2026-07-26
-> Sequence: FLX-PRM-04 â€” Promotion/Reconciliation
-> Role: Main Chat [M]
-> Branch: `cycle10-intermid-grimoire`
-> Reconciled remote baseline: `71bb73f88e88f3b94dd78fb5131bd6262ae7321f`
-> Authority: human-requested navigation reconciliation
-> Scope: Cycle 10 remaining work, GCM-02 conclusion, provisional GCM-03/GCM-04
-> organisation, and closure route
-> Materialization effect: J append only; no D/E/F activation, source change,
-> provider action, Sync, Retry, Repair, Enroll, recovery execution, or semantic
-> promotion
-
-### 1. Navigation grammar
-
-The following hierarchy is a provisional Cycle 10 navigation grammar. It
-organises existing work; it does not amend canonical methodology or silently
-activate an implementation unit.
-
-```text
-Cycle
-â””â”€ GCM / MCG phase
-   â”œâ”€ Sprint â€” bounded implementation or investigation package
-   â””â”€ Gate â€” mandatory evidence, decision, or authorization boundary
-      â””â”€ Gate/Sprint subphase â€” investigate, stage, materialize, validate,
-         authorize, execute, or reconcile
-         â””â”€ Step â€” one concrete human or agent action
-```
-
-`GCM` is retained as the current conversation/J spelling. Older operational
-artifacts may use `MCG` for the same phase level. A Gate controls mandatory
-ordering and authority. A Sprint packages major work. Neither is automatically
-inside the other; their order is declared by the active GCM plan.
-
-### 2. Documentary state-of-union
-
-The most current recovery surfaces are:
-
-1. the mutable Cycle 10 prefix and newest append-only entries in
-   `[M]_STAGE/J_MAIN_STAGE.md`;
-2. current D/E/F when an implementation unit is explicitly active;
-3. the newest G/H/I materialization evidence;
-4. targeted source or provider evidence only for unresolved claims.
-
-Current remote G/H/I at the Step 12 diagnostic materialization establish:
-
-```text
-ORDINARY_SYNC_PHASE_DIAGNOSTICS=IMPLEMENTED
-PARENT_CHILD_CORRELATION=IMPLEMENTED
-DIAGNOSTIC_ENVELOPE_V1=IMPLEMENTED
-PUBLIC_INTERNAL_DIAGNOSTIC_SPLIT=IMPLEMENTED
-REACHABLE_MKS_ATTRIBUTION=VALIDATED
-CAUSAL_DIAGNOSTIC_MEANING=IMPLEMENTED
-FAILED_NOT_APPLIED_PREFLIGHT=READ_ONLY
-FAILED_NOT_APPLIED_EXECUTION=ABSENT
-PROVIDER_ACTION=NOT_PERFORMED
-GCM02=OPEN
-```
-
-The repository also contains older state-of-union surfaces that have not kept
-pace with this sequence:
-
-- `00_PROJECT_STATE.md` remains a Cycle 09 closure checkpoint;
-- `06_SESSION_SCHEME.md` remains the pre-activation Cycle 10 plan;
-- permanent domain checkpoints and `operational/04_TODO.md` retain earlier
-  C10-S03A corrective-stop language;
-- `CYCLE_10_GCMS_STEP_SEQUENCE.md` preserves the earlier broad MCG-02 Gates
-  0â€“11 provider-proof scaffold and older branch/baseline references.
-
-These files remain useful provenance and closure debt. They must not rewind the
-active Step 12 state. Their reconciliation and refresh are mandatory before
-Cycle 10 closure.
-
-```text
-DOCUMENTARY_DRIFT=CONFIRMED
-ACTIVE_RECOVERY_SURFACE=J_PLUS_NEWEST_GHI
-PERMANENT_PROMOTION=PENDING
-MAIN_ROOT_REFRESH=PENDING
-```
-
-### 3. Cycle 10 expectations
-
-Cycle 10 is now a hosted synchronization, recovery, and operational acceptance
-cycle built on the earlier local reliability work. Its successful terminal
-requires all of the following:
-
-1. preserve the offline-first/local-authoritative application boundary;
-2. obtain a trustworthy GCM-02 hosted recovery/synchronization terminal with
-   correlated client, server, and provider evidence;
-3. define and complete one bounded GCM-03 from the actual GCM-02 residuals;
-4. define and complete one bounded GCM-04 from the actual GCM-03 residuals;
-5. reconcile source, G/H/I, human evidence, domain memory, and Main continuity;
-6. promote accepted Operational, Didactic, and Design claims through
-   FLX-PRM-04;
-7. refresh the stale Main-root and domain checkpoint surfaces;
-8. inventory migrations, schema/protocol versions, provider resources,
-   development/production distinctions, rollback boundaries, and deferrals;
-9. pass repository, secret, generated-artifact, and final platform hygiene;
-10. establish a clean, explicit Cycle 11 baseline.
-
-Cycle 11 UI/UX convergence and basic Analytics remain separate and cannot be
-used to bypass Cycle 10 closure.
-
-### 4. Phase organisation
-
-#### GCM-01 â€” development provider foundation
-
-State: accepted within its sanitized development boundary.
-
-Its accepted meaning includes the isolated Neon development foundation,
-separate migrator/runtime roles, TLS/channel binding, least-privilege checks,
-provider metadata/readiness preparation, and related development evidence.
-It does not prove production acceptance.
-
-```text
-GCM01=ACCEPTED_DEVELOPMENT_BOUNDARY
-PRODUCTION_ACCEPTANCE=ABSENT
-```
-
-#### GCM-02 â€” hosted synchronization and exact recovery proof
-
-State: active and open.
-
-Completed Sprint/evidence packages include the local convergence foundation,
-retention/rebootstrap foundation, hosted-auth/device foundation and corrections,
-GRIMOIRE human-operation procedures, Gate 12.6 copied-database/device-scoped
-classification, and the Step 12 diagnostic-runtime completion represented by
-the current G/H/I.
-
-The active mandatory Gate sequence is:
-
-| Gate | Purpose | Current state |
-| --- | --- | --- |
-| 12.1 | Render/API readiness | pass at inspected evidence |
-| 12.2 | Auth0 metadata/contract | pass at inspected evidence |
-| 12.3 | client/deployment alignment | pass at inspected checkpoint; refresh before action |
-| 12.4 | exact Account/Device binding | pass at inspected evidence; refresh before action |
-| 12.5 | provider pre-operation baseline | pass at inspected evidence; refresh before action |
-| 12.6 | copied-database and Device-scoped candidate correlation | pass |
-| pre-12.7 | fresh Windows build plus read-only failed/notApplied preflight | active next boundary |
-| 12.7 | exact one-action authorization and controlled action | held |
-| 12.8 | correlated post-action client/server evidence capture | held |
-| 12.9 | fresh provider baseline and allowlisted comparison | held |
-| 12.10 | terminal classification and Main reconciliation | held |
-
-The accepted Gate 12.6 candidate is a failed/notApplied hosted-scope lineage
-containing exactly two contiguous events at Device sequences 1â€“2, with no other
-pending event in that hosted scope. The six other pending events belong to
-non-hosted scopes. Ordinary Sync is therefore not an acceptable substitute.
-
-### 5. Current restart point â€” pre-12.7
-
-The human has reported the Windows checkout pulled, established, and clean.
-Treat repository alignment as human-observed and require the build output to
-carry the tested HEAD before accepting it as host evidence.
-
-Proceed in this order:
-
-#### Subphase A â€” fresh Windows host proof
-
-1. Run the current canonical `GS-FLUTTER-WIN` procedure through the dispatcher
-   named by the checked-out GRM documentation.
-2. Require Flutter analysis, the full Flutter tests, Windows Release build,
-   Auth0Flutter protocol registration, application launch, and visible Closure
-   destination.
-3. Do not select Enroll, Query, Sync, Retry, Repair, or Clear diagnostics.
-4. Stop on build, launch, configuration, authentication-surface, or Closure
-   initialization failure.
-
-#### Subphase B â€” read-only candidate inspection
-
-1. Open `Closure`.
-2. Select only `Inspect failed/notApplied recovery`.
-3. Capture only the sanitized displayed classification, MKS/native codes,
-   bounded operation/correlation fingerprints, candidate count, pending count,
-   sequence range, event count, retryability, and safe action.
-4. Cancel/close if any mutation or confirmation control appears.
-5. Do not select `Retry unknown-outcome submission`, ordinary Sync, Enroll,
-   Query, Repair, or Clear diagnostics.
-
-Required terminal:
-
-```text
-PROVIDER_CONTACT=NO
-FAILED_NOT_APPLIED_EXECUTION=NO
-ORDINARY_SYNC=NO
-CANCELLED_WITHOUT_MUTATION=YES
-```
-
-#### Subphase C â€” Main reconciliation and implementation decision
-
-Reconcile the read-only preflight against Gate 12.6 and the fresh Windows/Git
-evidence.
-
-- If the candidate is absent, ambiguous, differently classified, differently
-  scoped, or has different counts/ranges/fingerprints, stop. Keep GCM-02 open
-  and stage only the narrow diagnosis/correction justified by the evidence.
-- If the candidate matches and is eligible, do not execute it yet. Current
-  source evidence states `FAILED_NOT_APPLIED_EXECUTION=ABSENT`.
-- If execution remains absent, Main must prepare one narrow synchronized D/E/F
-  packet for the failed/notApplied controlled-action surface and its safety
-  guards. Codex then materializes and validates it and returns new G/H/I.
-- Main reconciles that new evidence before Gate 12.7 can be presented.
-
-Therefore:
-
-```text
-NEW_DEF_BEFORE_WINDOWS_PREFLIGHT=NO
-NEW_DEF_BEFORE_CONTROLLED_FAILED_NOT_APPLIED_EXECUTION=CONDITIONAL_YES
-CONDITION=ELIGIBLE_PREFLIGHT_AND_EXECUTION_STILL_ABSENT
-```
-
-This resolves the earlier J ambiguity: a prepared authorization concept is not
-an executable recovery capability.
-
-#### Subphase D â€” Gate 12.7 exact authorization
-
-Only after current-source conformance, fresh Git/Windows/Render/Auth0/Device/
-provider-baseline evidence, and a matching candidate may Main present one exact
-authorization packet.
-
-The packet must name:
-
-- the accepted 12.1â€“12.6 state and tested revisions;
-- the sanitized candidate fingerprint;
-- target Device scope, sequence range 1â€“2, and event count 2;
-- the exact coordinator/action boundary;
-- expected HTTP operations;
-- the one accepted provider transition;
-- duplicate-equivalent, rejected/notApplied, unknown, and unexpected rules;
-- evidence-capture order;
-- immediate stop conditions;
-- the no-second-action rule.
-
-Only explicit human approval of that complete packet authorizes exactly one
-controlled action. It does not authorize ordinary Sync, a second action,
-Enroll, Repair, provider-console mutation, database editing, or cleanup.
-
-#### Subphase E â€” Gates 12.8â€“12.10
-
-After an explicitly authorized one-action Gate 12.7 trial:
-
-1. Gate 12.8 captures the sanitized client terminal, server lifecycle
-   correlation, timestamps, and local post-state without issuing a second
-   action.
-2. Gate 12.9 runs the fresh approved provider/Neon comparison and compares only
-   allowlisted counts, sequence/cursor/acknowledgement measures, and lifecycle
-   state.
-3. Gate 12.10 classifies the result as exactly one of:
-   expected success, duplicate-equivalent, rejected/notApplied, unknown, or
-   unexpected mutation.
-
-GCM-02 closes only when the terminal is trustworthy across client
-classification, server lifecycle logs, and provider state. Unknown,
-out-of-allowlist, or contradictory evidence keeps GCM-02 open and activates
-only a narrow diagnostic correction. Do not issue another Sync or retry.
-
-### 6. GCM-03 provisional organisation
-
-GCM-03 is undefined and inactive until GCM-02 reconciles.
-
-Current planning candidate:
-
-```text
-bounded second-Device hosted convergence and acknowledgement proof
-```
-
-After GCM-02 closure, Main must:
-
-1. inventory the actual remaining gaps;
-2. choose one narrow GCM-03 objective and explicit non-goals;
-3. request A/B/C investigation when alternatives remain;
-4. reconcile J and issue synchronized D/E/F;
-5. run bounded implementation and/or human proof;
-6. receive and reconcile G/H/I;
-7. promote accepted evidence or retain a named blocker.
-
-Production deployment, broad retention/rebootstrap acceptance, backup/PITR,
-credential lifecycle, and Cycle 11 UI/UX are not silently absorbed.
-
-### 7. GCM-04 provisional organisation
-
-GCM-04 is undefined and inactive until GCM-03 reconciles.
-
-Candidate families, not authority:
-
-- authorization, revocation, and credential lifecycle;
-- outage, recovery, and retention acceptance;
-- reproducible deployment/release operational boundary;
-- provider cleanup, rollback, and final cross-platform acceptance.
-
-Main repeats the GCM-03 definition/staging/materialization/reconciliation route
-and must split the work if one terminal unit would otherwise become too broad.
-
-### 8. Cycle 10 closure work after GCM-04
-
-The closure sequence is:
-
-1. reconcile the final GCM terminal in J;
-2. run Operational, Didactic, and Design FLX-PRM-04 promotion;
-3. refresh each permanent domain checkpoint and derived TODO surface;
-4. refresh `00_PROJECT_STATE.md`, append `05_SESSION_LOG.md`, and refresh
-   `06_SESSION_SCHEME.md`;
-5. reconcile or retire stale planning surfaces without deleting provenance,
-   including the older `CYCLE_10_GCMS_STEP_SEQUENCE.md` scaffold;
-6. preserve J `Legacy_Progress` while keeping one compact current recovery
-   pointer;
-7. inventory migrations, Drift/PostgreSQL schemas, protocol and diagnostic
-   versions, provider resources, credentials/rotation boundaries, and deferred
-   production work;
-8. run final Flutter/API tests, Windows validation, the accepted Android
-   boundary, generated-document checks, `git diff --check`, and a secret/
-   artifact hygiene scan;
-9. resolve branch/local/remote continuity and require a clean terminal
-   worktree;
-10. declare the Cycle 10 terminal and establish the Cycle 11 entry baseline.
-
-### 9. Immediate terminal
-
-```text
-CYCLE10=OPEN
-GCM01=ACCEPTED_DEVELOPMENT_BOUNDARY
-GCM02=OPEN_ACTIVE
-GCM02_12_6=PASS
-WINDOWS_CURRENT_SOURCE_BUILD_RUN=PENDING
-FAILED_NOT_APPLIED_PREFLIGHT=READ_ONLY_PENDING_HUMAN_RUN
-FAILED_NOT_APPLIED_EXECUTION=ABSENT
-GATE_12_7=HELD
-GATES_12_8_TO_12_10=HELD
-GCM03=UNDEFINED_INACTIVE
-GCM04=UNDEFINED_INACTIVE
-PERMANENT_DOMAIN_PROMOTION=PENDING
-MAIN_ROOT_REFRESH=PENDING
-PROVIDER_ACTION=NOT_PERFORMED
-ORDINARY_SYNC=NOT_AUTHORIZED
-CONTROLLED_RECOVERY=NOT_AUTHORIZED
-```
-
----
-
-## 2026-07-26 â€” Gate 12.7 read-only inspection reconciliation and REC-01 staging
-
-Sequence: FLX-ORD-01 â€” Ordinary Sequence
-Role: Main Chat [M]
-Branch: `cycle10-intermid-grimoire`
-Reconciled repository baseline:
-`76540c45702b027d56b52fea05a8025f14496cdf`
-Evidence: five sanitized human-supplied Windows Closure screenshots plus
-targeted inspection of the current J, G/H/I, diagnostic registry, Closure
-runner/page, local diagnostic query, local recovery repository and ordinary
-Sync coordinator
-Disposition: **READ-ONLY PREFLIGHT PASS; NARROW D/E/F ACTIVATED; GATE 12.7
-EXECUTION STILL HELD**
-
-### 1. Scope and authority
-
-This entry is appended under `Legacy_Progress` and does not rewrite any prior
-entry. It reconciles only the human execution of:
-
-```text
-Inspect failed/notApplied recovery
-```
-
-No screenshot or source evidence establishes that the new controlled
-failed/notApplied recovery-and-upload action exists. No recovery, provider
-request, ordinary Sync, enrollment, repair, cleanup, database edit, or second
-action is accepted as performed.
-
-The human reported that the prescribed sequence was followed. The screenshots
-prove a fresh Windows Closure application was running and that the inspection
-completed. They do not contain the terminal output needed to independently
-accept every analysis/test/build subcommand. Retain that distinction:
-
-```text
-WINDOWS_CLOSURE_RUN=HUMAN_OBSERVED_PASS
-WINDOWS_FULL_BUILD_LOG=NOT_PRESENT_IN_SCREENSHOT_EVIDENCE
-```
-
-### 2. Before-inspection observations
-
-The first three screenshots preserve the pre-inspection state.
-
-Current-action surface:
-
-```text
-MKS_CODE=MKS-UI-003
-TITLE=Current action collapsed into historical result
-OUTCOME=blocked
-LAST_PROVED_PHASE=presentation
-LOCAL_MUTATION=none
-PROVIDER_CONTACT=not-started
-TRUSTED_RESPONSE=not-received
-OPERATION=not-recorded
-```
-
-This is a prior presentation-state observation. It must not be mistaken for
-the later failed/notApplied inspection terminal.
-
-Sync overview and local queue:
-
-```text
-AUTHENTICATION=authenticated
-ENROLLMENT=device-enrolled
-READINESS=failed-work-needs-review
-LAST_RESULT=sync-unavailable
-RECOVERY_GUIDANCE=review-local-sync-state-before-retry
-PENDING=0
-UPLOADING=0
-FAILED=2
-```
-
-Recent-attempt evidence retained:
-
-- the latest ordinary Sync remained `sync-unavailable /
-  provider-evidence-unavailable`;
-- it carried no observed HTTP status or response headers;
-- prior hosted-connection checks included ready responses;
-- no local diagnostic child events were shown before the inspection;
-- the current Device fingerprint was `#a43532d0`, enrolled, with next
-  sequence `3`;
-- two actionable `purchase.registered` events were failed at sequences `1`
-  and `2`.
-
-This confirms that the read-only action started from the expected Gate 12.6
-shape. It does not refresh the live provider baseline.
-
-### 3. After-inspection result
-
-The final screenshot shows one new current diagnostic child:
-
-```text
-DIAGNOSTIC_CODE=MKS-UI-004
-PHASE=failed-recovery-preflight
-OUTCOME=not-applied
-LAST_PROVED_PHASE=failed-recovery-preflight
-LOCAL_MUTATION=none
-PROVIDER_CONTACT=not-started
-TRUSTED_RESPONSE=not-received
-RESULT_PERSISTENCE=not-started
-OPERATION_FINGERPRINT=#4af181b3d7e7
-CORRELATION_FINGERPRINT=#0ebea2b44ec7
-SAFE_ACTION=hold for Gate 12.7 reconciliation; do not execute recovery
-```
-
-The Device remained enrolled with next sequence `3`, and the same two
-actionable events remained failed at sequences `1` and `2`.
-
-Targeted source inspection confirms that an eligible `MKS-UI-004` inspection
-requires exactly one current Account/Device failed/notApplied submission,
-complete contiguous membership, valid scoped events and hashes, all member
-states failed, no accepted member, no active overlap, no current-scope
-pending/uploading/unknown work, and a matching next sequence.
-
-The inspection runner records `mutation none`, `contact not-started`,
-`trusted not-received`, and `persist not-started`; it has no execution
-callback. Therefore:
-
-```text
-FAILED_NOT_APPLIED_CANDIDATE=ONE_ELIGIBLE
-CANDIDATE_MEMBER_COUNT=2
-CANDIDATE_SEQUENCE_RANGE=1-2
-CURRENT_DEVICE_NEXT_SEQUENCE=3
-READ_ONLY_INSPECTION=PASS
-LOCAL_MUTATION=ABSENT
-PROVIDER_CONTACT=ABSENT
-FAILED_NOT_APPLIED_EXECUTION=ABSENT
-ORDINARY_SYNC=ABSENT_DURING_INSPECTION
-```
-
-One source/meaning drift is confirmed. The eligible inspection emits
-`MKS-UI-004`, while the registry title and meaning still describe the older
-condition in which the failed/notApplied inspection action is missing. The
-action now exists. The state axes and safe action remain sufficient to accept
-the read-only preflight behavior, but the code cannot continue to mean both
-â€œaction missingâ€ and â€œeligible preflight.â€ REC-01 must preserve the historical
-UI code and emit a precise REC preflight code for the current condition.
-
-The bounded fingerprints are useful for reconciliation and later confirmation
-display. They are not authoritative database identities and must never be
-used alone to select the candidate.
-
-### 4. PRC-01 classification
-
-```text
-Claim: the Gate 12.7 failed/notApplied preflight is human-observed eligible
-Source: Windows Closure screenshots and current source
-Current state: validated within the read-only Windows inspection boundary
-Evidence: MKS-UI-004 event plus unchanged two-event failed lineage
-Evidence boundary: local UI/database observation; no live provider refresh
-Contradictions: none within the supplied evidence
-Semantic owner: Main GCM-02 Gate 12.7 reconciliation
-Target role: J continuity and synchronized D/E/F materialization authority
-History disposition: append; preserve earlier pending/blocked states
-Confidence: high within the named boundary
-Human/Main authority: reconciliation and staging requested
-Required regeneration: Codex replacement G/H/I after REC-01 materialization
-Result: preflight PASS; execution capability still absent
-```
-
-```text
-Claim: MKS-UI-004 correctly names the eligible preflight
-Source: current registry and Closure diagnostic query
-Current state: contradicted
-Evidence: runtime emits the code for eligibility; registry defines missing action
-Evidence boundary: repository/source semantic consistency
-Contradictions: direct code-to-registry mismatch
-Semantic owner: diagnostic registry plus detector boundary
-Target role: C10-GCM02-S12-REC-01 D/E/F
-History disposition: preserve historical code; stop current mis-emission
-Confidence: high
-Human/Main authority: correction staged, not yet materialized
-Required regeneration: registry projections, tests and replacement G/H/I
-Result: bounded REC-01 correction required
-```
-
-```text
-Claim: Gate 12.7 may now authorize a controlled recovery
-Source: preflight evidence
-Current state: blocked
-Evidence: source contains inspection only; no dedicated bounded executor
-Evidence boundary: repository/source and UI inspection
-Contradictions: older J wording assumed an executable action
-Semantic owner: Main Gate 12.7 authority
-Target role: D/E/F corrective materialization first
-History disposition: preserve and correct by this later entry
-Confidence: high
-Human/Main authority: no execution authorization granted
-Required regeneration: source implementation, tests, G/H/I, Main reconciliation
-Result: authorization remains held
-```
-
-### 5. Resolved Cycle 10 hierarchy
-
-The navigation grammar is now instantiated as follows:
-
-```text
-Cycle 10 â€” hosted synchronization and operational acceptance
-â”œâ”€ GCM-01 â€” development-provider foundation
-â”‚  â””â”€ Terminal: accepted within the sanitized development boundary
-â”œâ”€ GCM-02 â€” exact hosted recovery/synchronization proof [ACTIVE]
-â”‚  â”œâ”€ Gate 12.1 â€” Render/API readiness [PASS AT INSPECTED EVIDENCE]
-â”‚  â”œâ”€ Gate 12.2 â€” Auth0 metadata contract [PASS AT INSPECTED EVIDENCE]
-â”‚  â”œâ”€ Gate 12.3 â€” client/deployment alignment [PASS; REFRESH BEFORE ACTION]
-â”‚  â”œâ”€ Gate 12.4 â€” exact Account/Device binding [PASS; REFRESH BEFORE ACTION]
-â”‚  â”œâ”€ Gate 12.5 â€” provider baseline [PASS; REFRESH BEFORE ACTION]
-â”‚  â”œâ”€ Gate 12.6 â€” copied DB and Device-scope correlation [PASS]
-â”‚  â”œâ”€ Sprint S12-ERR-01/02 â€” diagnostic runtime tightening [SOURCE ACCEPTED]
-â”‚  â”œâ”€ Gate 12.7 â€” one controlled failed/notApplied recovery
-â”‚  â”‚  â”œâ”€ Phase A â€” current-source Windows Closure run [HUMAN OBSERVED PASS]
-â”‚  â”‚  â”œâ”€ Phase B â€” read-only candidate inspection [PASS]
-â”‚  â”‚  â”œâ”€ Phase C â€” Main reconciliation [THIS ENTRY: PASS]
-â”‚  â”‚  â”œâ”€ Sprint S12-REC-01 â€” bounded execution surface [D/E/F ACTIVE]
-â”‚  â”‚  â”œâ”€ Phase D â€” Codex materialization and local validation [PENDING]
-â”‚  â”‚  â”œâ”€ Phase E â€” G/H/I reconciliation [PENDING]
-â”‚  â”‚  â”œâ”€ Phase F â€” fresh Windows build and repeated preflight [PENDING]
-â”‚  â”‚  â”œâ”€ Phase G â€” Git/Render/Auth0/Device/provider freshness [PENDING]
-â”‚  â”‚  â”œâ”€ Phase H â€” exact authorization packet [PENDING]
-â”‚  â”‚  â””â”€ Phase I â€” explicit approval plus one action [HELD]
-â”‚  â”œâ”€ Gate 12.8 â€” correlated client/server evidence [HELD]
-â”‚  â”œâ”€ Gate 12.9 â€” provider comparison [HELD]
-â”‚  â””â”€ Gate 12.10 â€” terminal classification and GCM-02 reconciliation [HELD]
-â”œâ”€ GCM-03 â€” bounded second-Device convergence candidate [UNDEFINED/INACTIVE]
-â”œâ”€ GCM-04 â€” final operational acceptance families [UNDEFINED/INACTIVE]
-â””â”€ Cycle closure â€” promotion, continuity refresh, hygiene and Cycle 11 handoff
-   [HELD]
-```
-
-### 6. Activated D/E/F unit
-
-This reconciliation activates synchronized materialization unit:
-
-```text
-UNIT=C10-GCM02-S12-REC-01
-OBJECTIVE=separate bounded failed/notApplied recovery-and-upload surface
-SOURCE_ONLY=YES
-LIVE_PROVIDER_ACTION=NO
-GATE_12_7_AUTHORIZATION=NO
-```
-
-The unit must preserve inspection as read-only and introduce a distinct,
-confirmed coordinator that:
-
-1. revalidates exact Account/Device/candidate state immediately before
-   mutation;
-2. uses authoritative internal identity rather than a fingerprint selector;
-3. atomically recovers exactly the candidate member set;
-4. leases and uploads exactly that recovered set;
-5. stops after one upload terminal;
-6. never invokes download, acknowledgement or ordinary Sync;
-7. records the complete diagnostic evidence axes;
-8. prevents automatic or second execution;
-9. replaces the eligible-preflight `MKS-UI-004` emission with a precise REC
-   code without erasing the historical missing-action definition.
-
-The synchronized controlling files are:
-
-```text
-DEV_STAGE/D_OPS_STAGE.md
-DEV_STAGE/E_DDC_STAGE.md
-DEV_STAGE/F_DSN_STAGE.md
-```
-
-### 7. Resolved continuation sequence
-
-Proceed only in this order:
-
-1. publish this J plus synchronized D/E/F staging;
-2. send the exact seeding prompt below to Codex;
-3. Codex verifies the required ancestry and materializes only
-   C10-GCM02-S12-REC-01;
-4. Codex runs local/disposable validation and replaces G/H/I;
-5. Main reconciles source and G/H/I into a new append-only J entry;
-6. pull the accepted commit into the clean Windows checkout;
-7. run the canonical Windows validation/build/launch procedure;
-8. repeat `Inspect failed/notApplied recovery`;
-9. require the candidate fingerprint/count/range/next-sequence and all safety
-   booleans to match the accepted packet;
-10. refresh Git revision, Render readiness/revision, Auth0 metadata/principal,
-    exact Device binding and the allowlisted provider baseline;
-11. Main prepares one exact Gate 12.7 authorization packet;
-12. obtain explicit human authorization for exactly one named action;
-13. execute exactly one `Recover failed/notApplied candidate`;
-14. issue no second action and freeze the post-action local state;
-15. Gate 12.8 captures client terminal and correlated server lifecycle;
-16. Gate 12.9 captures and compares the fresh allowlisted provider state;
-17. Gate 12.10 classifies exactly one terminal and decides GCM-02 closure.
-
-Any mismatch, unknown result, out-of-allowlist mutation, ambiguous response,
-partial local transition, revision drift, or absent correlation stops the
-sequence. It does not authorize another attempt.
-
-### 8. Gate 12.8â€“12.10 expected terminal
-
-The controlled action may be classified only as:
-
-```text
-expected success
-duplicate-equivalent
-rejected/notApplied
-unknown
-unexpected mutation/failure
-```
-
-GCM-02 may close only when client state, server lifecycle evidence and
-provider state agree on a trustworthy terminal. An unknown or contradictory
-terminal keeps GCM-02 open with a narrow diagnostic follow-up and no second
-action.
-
-### 9. Current terminal
-
-```text
-CYCLE10=OPEN
-GCM01=ACCEPTED_DEVELOPMENT_BOUNDARY
-GCM02=OPEN_ACTIVE
-GCM02_12_6=PASS
-WINDOWS_CLOSURE_RUN=HUMAN_OBSERVED_PASS
-FAILED_NOT_APPLIED_PREFLIGHT=READ_ONLY_PASS
-FAILED_NOT_APPLIED_CANDIDATE=ONE_ELIGIBLE
-CANDIDATE_MEMBER_COUNT=2
-CANDIDATE_SEQUENCE_RANGE=1-2
-CURRENT_DEVICE_NEXT_SEQUENCE=3
-LOCAL_MUTATION=ABSENT
-PROVIDER_CONTACT=ABSENT
-FAILED_NOT_APPLIED_EXECUTION=ABSENT
-ELIGIBLE_PREFLIGHT_CODE_SEMANTICS=DRIFT_CONFIRMED
-C10_GCM02_S12_REC_01=STAGED_ACTIVE
-GATE_12_7=HELD_PENDING_CODEX_AND_RECONCILIATION
-GATES_12_8_TO_12_10=HELD
-GCM03=UNDEFINED_INACTIVE
-GCM04=UNDEFINED_INACTIVE
-ORDINARY_SYNC=NOT_AUTHORIZED
-CONTROLLED_RECOVERY=NOT_AUTHORIZED
-```
-
-## 2026-07-26 â€” REC-01 source reconciliation and Gate 12.7 host handoff
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04 â€” Promotion/Reconciliation
-Role: Main Chat [M]
-Branch: cycle10-intermid-grimoire
-Reconciled implementation commit: a63367763716e2769ac58d5adc19de0c41774b35
-Evidence: replacement G/H/I, changed-path inventory and reported validation
-Writable surface: J only
-Disposition: REC-01 SOURCE ACCEPTED; HOST VALIDATION PENDING; GATE 12.7 HELD
-```
-
-### Materialization reconciliation
-
-REC-01 is accepted within its repository and local/disposable test boundary.
-The implementation now separates four surfaces:
-
-```text
-Retry unknown-outcome submission
-Inspect failed/notApplied recovery
-Recover failed/notApplied candidate
-ordinary Sync
-```
-
-The new recovery action revalidates authentication, exact Account/Device
-binding and the complete authoritative candidate immediately before mutation.
-It retains full internal identity rather than selecting by a truncated
-fingerprint, atomically recovers and leases exactly the candidate members,
-sends at most one upload, persists the result and stops. Its dependency graph
-contains no download or acknowledgement path.
-
-The eligible read-only inspection now emits `MKS-REC-001`.
-`MKS-UI-004` remains reserved for its historical missing-action meaning.
-Generated Dart, TypeScript and Markdown projections were regenerated from the
-single registry owner.
-
-### PRC-01 claims
-
-```text
-Claim: REC-01 bounded failed/notApplied execution surface exists
-Prior state: staged; execution surface absent
-Evidence: a633677 source plus G/H/I and local/disposable tests
-Evidence boundary: repository-proven and locally test-validated; host-unvalidated
-Contradiction: none in replacement G/H/I
-Semantic owner: GCM-02 Gate 12.7 Main reconciliation
-Target role: J current state and continuation
-Resulting state: SOURCE ACCEPTED; WINDOWS/LIVE EXECUTION NOT ACCEPTED
-History disposition: append; supersede D/E/F-active wording
-```
-
-```text
-Claim: exact candidate, one upload and no download/ack boundaries hold
-Prior state: implementation requirement
-Evidence: focused Flutter tests, full 189-pass/4-skip suite, analysis, API 58-pass suite
-Evidence boundary: mocked/local/disposable transport and persistence boundaries
-Contradiction: none reported
-Semantic owner: REC-01 operational/design contract
-Target role: J accepted source capability
-Resulting state: LOCALLY VALIDATED; LIVE RESULT UNKNOWN
-History disposition: append; retain future host/provider proof requirement
-```
-
-```text
-Claim: Gate 12.7 may now execute
-Prior state: held
-Evidence: no fresh Windows build, repeated UI preflight or provider-freshness packet
-Evidence boundary: source materialization only
-Contradiction: capability exists, but authorization evidence is incomplete
-Semantic owner: human/Main Gate 12.7 authority
-Target role: prohibition and next-step boundary
-Resulting state: REJECTED; AUTHORIZATION HELD
-History disposition: append; no provider/user-database action accepted
-```
-
-### Validation absorbed
-
-```text
-generator update/check: PASS, including deterministic second check
-Dart format: PASS
-focused Flutter: 17 + 29 + 10 + 26 reported passing cases
-Flutter analyze: PASS
-full Flutter test: 189 passed, 4 skipped
-API diagnostics/format/lint/typecheck/build: PASS
-API tests: 58 passed
-git diff --check: PASS
-staged sensitive-pattern scan: no matches
-provider/live action: NOT PERFORMED
-user database inspection or mutation: NOT PERFORMED
-Drift migration: NOT ADDED
-```
-
-The reports preserve one command-location correction: an initial diagnostics
-check invoked from the repository root failed because no root
-`package.json` exists; the same command run from
-`services/markei_sync_api` passed. This is an invocation correction, not a
-product-test failure.
-
-### Separate dispatcher-rename boundary
-
-Codex preserved unrelated machine-local work:
-
-```text
-deleted: documentation/NEON_CHECK.ps1
-untracked: documentation/I_SCRIPTS.ps1
-```
-
-Therefore commit `a633677` does not publish or validate that rename. J must
-continue to regard the tracked dispatcher and its references as authoritative
-until the rename, all GRM/G_SCRIPTS references and dispatcher validation are
-published together in a separate isolated commit. This boundary must be
-resolved before relying on canonical Windows commands.
-
-### Hierarchical progress update
-
-```text
-Cycle 10 â€” hosted synchronization and operational acceptance [OPEN]
-â””â”€ GCM-02 â€” exact hosted recovery/synchronization proof [ACTIVE]
-   â””â”€ Gate 12.7 â€” one controlled failed/notApplied recovery [ACTIVE/HELD]
-      â”œâ”€ Phase A â€” Windows Closure and read-only inspection [PASS]
-      â”œâ”€ Phase B â€” Main candidate reconciliation [PASS]
-      â”œâ”€ Sprint S12-REC-01 â€” bounded execution surface [SOURCE ACCEPTED]
-      â”œâ”€ Phase C â€” G/H/I reconciliation [PASS: THIS ENTRY]
-      â”œâ”€ Phase D â€” dispatcher-name coherence [PENDING, SEPARATE]
-      â”œâ”€ Phase E â€” fresh Windows validation/build/launch [PENDING]
-      â”œâ”€ Phase F â€” repeated read-only MKS-REC-001 preflight [PENDING]
-      â”œâ”€ Phase G â€” recovery confirmation-surface cancel test [PENDING]
-      â”œâ”€ Phase H â€” Git/Render/Auth0/Device/provider freshness [PENDING]
-      â”œâ”€ Phase I â€” exact authorization packet [PENDING]
-      â””â”€ Phase J â€” explicit approval plus exactly one action [HELD]
-```
-
-Gates 12.8â€“12.10 remain held. GCM-03 and GCM-04 remain undefined and
-inactive. No new D/E/F packet is justified by REC-01 evidence alone; any new
-packet must be triggered by a concrete Windows/freshness defect or by a later
-Main-defined post-terminal unit.
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=OPEN_ACTIVE
-GCM02_12_6=PASS
-GCM02_12_7_READ_ONLY_PREFLIGHT=PASS
-C10_GCM02_S12_REC_01_SOURCE=ACCEPTED
-ELIGIBLE_PREFLIGHT_DIAGNOSTIC_CODE=CORRECTED
-EXACT_RECOVERED_BATCH=LOCALLY_VALIDATED
-ONE_UPLOAD_ONLY=LOCALLY_VALIDATED
-DOWNLOAD_ACK_ABSENT=LOCALLY_VALIDATED
-WINDOWS_POST_REC01_VALIDATION=PENDING
-DISPATCHER_RENAME=PENDING_SEPARATE_RECONCILIATION
-GATE_12_7=HELD
-CONTROLLED_RECOVERY=NOT_AUTHORIZED
-ORDINARY_SYNC=NOT_AUTHORIZED
-PROVIDER_ACTION=NOT_AUTHORIZED
-GATES_12_8_TO_12_10=HELD
-GCM03=UNDEFINED_INACTIVE
-GCM04=UNDEFINED_INACTIVE
-```
-
-## 2026-07-26 â€” Post-REC-01 ERR evidence reconciliation and SYNC-01 staging
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04 â†’ FLX-ORD-01
-Role: Main Chat [M]
-Branch: cycle10-intermid-grimoire
-Reconciled baseline: 3d1e82e5259cf51e8cd2d6baf694423494bab7a5
-Evidence: post-REC-01 Windows screenshots, supplied Render log window,
-          source inspection and human timing/semantic direction
-Writable surface: append-only J plus replacement D/E/F
-Disposition: SYNC-01 ACTIVATED; GATE 12.7 HELD
-```
-
-This entry belongs to `Legacy_Progress`. It preserves the assay sequence and
-activates one bounded source unit; it does not rewrite the earlier REC-01
-reconciliation or authorize a provider operation.
-
-### Evidence by observed step
-
-| ERR / observation | Step | Expected | Meaningful evidence | Reconciled meaning |
-| --- | --- | --- | --- | --- |
-| `sync-interrupted` | Historical ordinary Sync/Retry | trusted terminal within observation budget | client observation limit was 5000 ms; two events later remained failed | client stopped observing; server receipt/application remains unknown |
-| `timeout-before-response` | Earlier hosted communication | response headers or typed failure | about 30 seconds elapsed; no headers observed | stall occurred before observable headers; exact transport/API/auth/database boundary is unproved |
-| `hosted-connection-ready` | Post-REC-01 readiness check | prove readiness only | HTTP 200, headers received, under one second | hosted readiness passed; ordinary Sync not proved |
-| Render `/health/ready` | Supplied deployment window | readiness responses | 14 HTTP 200 responses, all under 250 ms | service readiness passed in that window |
-| exact Render correlation absent | Client/server comparison | shared request lineage | client terminal near 19:19:04Z; supplied logs ended near 19:13:53Z | evidence-window mismatch; client request is not server-correlated |
-| `MKS-REC-001` | failed/notApplied inspection | read-only eligible preflight | one candidate, two members, sequence 1-2, next sequence 3 | REC-01 diagnostic correction passed |
-| queue/candidate immobility | inspection and readiness | no mutation | failed=2; pending/uploading/unknown=0; next sequence=3 before and after | neither operation changed recovery state |
-| recovery confirmation | cancel-only UI assay | no execution | bounded confirmation displayed; no recovery terminal/request appeared | confirmation safety passed; recovery remains unexecuted |
-| â€œLast successful syncâ€ advanced | readiness assay | remain unchanged | 19:01:18Z became 19:19:04Z after readiness | definite projection defect: generic completed attempt impersonated Sync success |
-| `outcomeClass=completed` | source/projection inspection | classify within operation kind | readiness and Sync may both be completed | generic completion is insufficient for Sync-success projection |
-| 5-second Sync deadline | source inspection | adequate hosted observation budget | `HttpSyncTransport` default is 5 seconds; readiness uses 20 seconds | timing is a credible hypothesis requiring controlled relaxation, not a proved root cause |
-
-### PRC-01 claims
-
-```text
-Claim: hosted readiness passed without changing the failed recovery candidate
-Prior state: host validation pending
-Evidence: before/after Windows screenshots and readiness terminal
-Evidence boundary: client-observed; exact latest server request not correlated
-Contradiction: none in queue/candidate evidence
-Semantic owner: GCM-02 host observation
-Target role: J observational reconciliation
-Resulting state: ACCEPTED WITH SERVER-CORRELATION LIMIT
-History disposition: append
-```
-
-```text
-Claim: the displayed Last successful sync is semantically trustworthy
-Prior state: assumed UI projection
-Evidence: timestamp advanced immediately after hosted readiness
-Evidence boundary: repeatable UI/source observation
-Contradiction: readiness explicitly does not prove Sync
-Semantic owner: Closure diagnostic projection
-Target role: C10-GCM02-S12-SYNC-01
-Resulting state: REJECTED; SOURCE CORRECTION REQUIRED
-History disposition: append and supersede generic-completed predicate
-```
-
-```text
-Claim: the five-second ordinary-Sync deadline caused the historical failure
-Prior state: hypothesis
-Evidence: 5000 ms interruption plus fast readiness and missing Sync correlation
-Evidence boundary: no paired client/server ordinary-Sync terminal
-Contradiction: a 30-second pre-header timeout was also observed historically
-Semantic owner: SYNC-01 timing assay
-Target role: configurable bounded timing experiment
-Resulting state: PLAUSIBLE, UNPROVED
-History disposition: preserve until one controlled correlated assay
-```
-
-### Activated implementation unit
-
-```text
-UNIT=C10-GCM02-S12-SYNC-01
-
-Primary contract:
-  operationKind=ordinary-sync
-
-Client terminal resultCode:
-  sync-completed
-  sync-no-new-events
-  sync-rejected
-  sync-server-timeout
-  sync-failed
-
-Declaration scopes:
-  client-operation
-  server-request
-
-Initial timing experiment:
-  client ordinary-Sync deadline=35 seconds
-  server deadline=25 seconds only with authoritative cancellation/rollback
-  automatic retry=absent
-```
-
-The client owns the complete ordinary-Sync result. The server owns only each
-request/transaction result it observed. Correlation joins those declarations;
-it does not erase their different evidence scopes.
-
-The â€œLast successful syncâ€ predicate must become:
-
-```text
-operationKind = ordinary-sync
-outcomeClass = completed
-resultCode IN (sync-completed, sync-no-new-events)
-completedAt IS NOT NULL
-```
-
-`Recent sync attempts` becomes `Recent Closure attempts`. Hosted readiness
-retains its independent result and timestamp. No broad ERR list refactor is
-authorized in this unit.
-
-### Authority and held actions
-
-D/E/F now authorize only repository source, focused tests, generated
-diagnostic projections and replacement G/H/I. They do not authorize:
-
-```text
-deployment
-live hosted request
-ordinary Sync
-Retry
-failed/notApplied recovery
-provider/database mutation
-Gate 12.7 execution
-```
-
-After Codex materialization, Main must reconcile G/H/I before any manual
-assay. The first manual assay remains readiness-only and must prove that the
-readiness timestamp may advance while â€œLast successful syncâ€ does not. A later
-ordinary-Sync or recovery action requires a separate exact authorization
-packet.
-
-### Continuation
-
-```text
-SYNC-01 source materialization
-â†’ G/H/I reconciliation
-â†’ clean Windows build/launch
-â†’ one readiness-only projection regression
-â†’ exact UTC client/server log correlation
-â†’ refreshed Git/Render/Auth0/Device/Neon freshness
-â†’ Gate 12.7 authorization packet
-â†’ one explicitly authorized action
-â†’ Gates 12.8-12.10 reconciliation
-```
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=OPEN_ACTIVE
-C10_GCM02_S12_REC_01_SOURCE=ACCEPTED
-POST_REC01_WINDOWS_PREFLIGHT=PASS
-HOSTED_READINESS_CLIENT=PASS
-HOSTED_READINESS_EXACT_SERVER_CORRELATION=NOT_PROVED
-LAST_SUCCESSFUL_SYNC_PROJECTION=FAILED
-C10_GCM02_S12_SYNC_01=ACTIVE_STAGED
-ORDINARY_SYNC_FIVE_RESULT_CONTRACT=STAGED
-CLIENT_SERVER_DECLARATION_SCOPES=STAGED
-CLIENT_SYNC_DEADLINE_35S=STAGED_AS_ASSAY
-BROAD_ERR_REFACTOR=DEFERRED
-GATE_12_7=HELD
-CONTROLLED_RECOVERY=NOT_AUTHORIZED
-ORDINARY_SYNC=NOT_AUTHORIZED
-PROVIDER_ACTION=NOT_AUTHORIZED
-GATES_12_8_TO_12_10=HELD
-GCM03=UNDEFINED_INACTIVE
-GCM04=UNDEFINED_INACTIVE
-```
-
-## 2026-07-26 â€” ERR-03 source reconciliation and correlated assay preparation
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04 â€” Promotion/Reconciliation
-Role: Main Chat [M]
-Round or unit: C10-GCM02-S12-ERR-03 within C10-GCM02-S12-SYNC-01
-Branch: cycle10-intermid-grimoire
-Reconciled implementation commit: 3b7bbeaf076a5dc8454a7e09dbb61076d34f4b36
-Inputs: synchronized D/E/F, replacement G/H/I, source changed-path inventory,
-        local validation evidence and human direction for the next assay
-Writable surface: append-only J
-Evidence boundary: repository-proven and locally test-validated;
-                   Windows/host/provider/end-to-end unvalidated
-Disposition: ERR-03 SOURCE ACCEPTED; ASSAY PREPARED; GATE 12.7 HELD
-```
-
-This entry reconciles the bounded ERR-03 materialization. It accepts the
-implemented semantic and diagnostic contract only within the repository and
-local-test boundary. It does not reinterpret local validation as a hosted Sync
-result and does not authorize failed/notApplied recovery.
-
-### Materialization reconciliation
-
-The client ordinary-Sync terminal vocabulary is now:
-
-```text
-sync-completed
-sync-no-new-events
-sync-rejected
-sync-server-timeout
-sync-failed
-```
-
-The top-level Flutter action owns the aggregate ordinary-Sync result. Each API
-lifecycle record owns only one server request. The two scopes remain explicit:
-
-```text
-client declarationScope=client-operation
-server declarationScope=server-request
-```
-
-The client propagates full operation and child correlation identities only in
-internal request headers. The UI and server logs expose sanitized twelve-hex
-fingerprints. Correlation joins evidence but does not promote request success
-into aggregate Sync success.
-
-The client ordinary-Sync deadline is now an explicit 35000 ms client-owned
-budget. A 25000 ms server deadline was not implemented because the source did
-not establish authoritative cancellation or rollback for every database
-operation. A client deadline before a trusted response remains
-`sync-failed` with the provider/server outcome unknown. It must not be
-classified as `sync-server-timeout`.
-
-The corrected last-success predicate is:
-
-```text
-operationKind = ordinary-sync
-outcomeClass = completed
-resultCode IN (sync-completed, sync-no-new-events)
-completedAt IS NOT NULL
-```
-
-Therefore hosted readiness, failed/notApplied inspection, recovery
-confirmation, cancellation, Retry history and other Closure attempts cannot
-advance `Last successful sync`. The mixed list is now labelled
-`Recent Closure attempts`.
-
-### PRC-01 claims
-
-```text
-Claim: the five-result ordinary-Sync contract and client/server declaration
-       scopes exist
-Prior state: staged
-Evidence: implementation commit 3b7bbeaf, replacement G/H/I, focused and full
-          local tests
-Evidence boundary: repository and local tests; no Windows or hosted execution
-Contradiction: none reported
-Semantic owner: C10-GCM02-S12-ERR-03 source contract
-Target role: J accepted source capability
-Resulting state: IMPLEMENTED AND LOCALLY VALIDATED; HOST-UNVALIDATED
-History disposition: append; supersede ACTIVE_STAGED wording only
-```
-
-```text
-Claim: the historical five-second deadline caused the observed interruption
-Prior state: plausible and unproved
-Evidence: source now uses 35 seconds, but no post-change hosted ordinary Sync
-          has occurred
-Evidence boundary: causal assay absent
-Contradiction: the historical approximately 30-second pre-header timeout may
-               indicate a deeper transport/host/auth/database stall
-Semantic owner: correlated ordinary-Sync assay
-Target role: retained hypothesis
-Resulting state: PLAUSIBLE, STILL UNPROVED
-History disposition: retain until paired client/server evidence exists
-```
-
-```text
-Claim: Last successful sync is now truthful on Windows
-Prior state: failed projection with source correction staged
-Evidence: corrected query and local tests
-Evidence boundary: no fresh Windows build/launch or readiness regression
-Contradiction: none in source; host presentation remains unobserved
-Semantic owner: Closure UI projection
-Target role: next readiness-only regression
-Resulting state: SOURCE CORRECTED; WINDOWS/HOST VALIDATION PENDING
-History disposition: append; preserve the earlier failed observation
-```
-
-```text
-Claim: a single ordinary-Sync assay necessarily tests submission/upload
-Prior state: human-requested test objective
-Evidence: current recorded queue baseline has failed=2 and
-          pending/uploading/unknown=0/0/0; automatic retry is absent
-Evidence boundary: no new pending event has been authorized
-Contradiction: failed/notApplied events belong to the separately held recovery
-               surface and must not be silently reused by ordinary Sync
-Semantic owner: next assay authorization packet
-Target role: assay design
-Resulting state: REJECTED AS AN ASSUMPTION; REQUEST-LIFECYCLE CONTROL MAY RUN,
-                 SUBMISSION-BEARING ASSAY REQUIRES A BOUNDED PENDING CANDIDATE
-History disposition: append; prevent accidental Gate 12.7 crossover
-```
-
-### Validation absorbed
-
-```text
-diagnostic generator update/check: PASS
-deterministic second diagnostics check: PASS
-Dart formatting: PASS after formatting
-Flutter analyze: PASS
-focused Flutter tests: PASS
-full Flutter tests: 190 passed, 4 skipped
-targeted Prettier on changed TypeScript: PASS
-API lint/typecheck/build: PASS
-API tests: 58 passed
-git diff --check: PASS
-changed-content sensitive scan: no real secret reported
-live hosted/provider action: NOT PERFORMED
-```
-
-Full API `npm run format:check` remains unavailable as a clean repository-wide
-gate because of 37 pre-existing formatting warnings outside ERR-03. Changed
-TypeScript files passed the targeted Prettier check. This is a known
-repository-formatting debt, not evidence that ERR-03 failed its bounded
-validation.
-
-No Windows release, Android, Render, Auth0, Neon, live provider, user-database
-or live convergence validation was performed. Those states remain
-unvalidated.
-
-### Observable declaration surfaces
-
-The fresh Closure UI should expose, for ordinary Sync:
-
-```text
-Declaration scope = client-operation
-Operation kind = ordinary-sync
-Client result code = one of the five terminals
-Server request = not aggregate success
-Last proved phase
-Configured deadline = 35000ms client
-Operation = sanitized fingerprint
-Correlation = sanitized fingerprint
-```
-
-`Recent Closure attempts` should show operation kind, result code, outcome
-class, latest stage, client scope, client deadline owner, 35000 ms for ordinary
-Sync, sanitized correlation, HTTP status/header evidence and elapsed band.
-
-The API/Render structured lifecycle line should expose:
-
-```text
-declarationScope=server-request
-operationKind=server-request
-resultCode=request-completed | request-failed | typed internal code
-routeClass
-operationFingerprint
-correlationFingerprint
-elapsedBand
-status/result when available
-lastProvedPhase and providerTransactionOutcome when available
-```
-
-A server `request-completed` declaration proves only that request. Aggregate
-ordinary-Sync success still requires the client terminal.
-
-### Next assay sequence
-
-#### Assay A â€” fresh Windows and readiness projection regression
-
-1. Pull the reconciled branch and require a clean worktree at the new J commit.
-2. Produce or launch the fresh Windows client through the accepted local
-   procedure.
-3. Record the pre-action `Last successful sync` value and the newest Closure
-   attempt.
-4. Perform exactly one hosted readiness check.
-5. Require `hosted-connection-ready` or a typed readiness failure.
-6. Require a new hosted-readiness attempt while `Last successful sync`
-   remains byte-for-byte unchanged.
-7. Capture the client correlation fingerprint and the matching server-request
-   lifecycle line when available.
-8. Stop on projection drift, ambiguous lineage, untyped failure or any queue
-   mutation.
-
-Readiness remains non-Sync evidence. Passing Assay A does not prove the
-35-second ordinary-Sync hypothesis.
-
-#### Assay B â€” one ordinary-Sync request-lifecycle control
-
-Assay B may begin only after Assay A passes and the pre-action queue,
-authentication, Device binding, Git revision and hosted revision are freshly
-recorded.
-
-Exactly one ordinary-Sync action is allowed for the control. No Retry,
-failed/notApplied recovery, second click or automatic retry is allowed.
-Immediately freeze the UI and server evidence at the first terminal.
-
-Expected client terminals and meanings:
-
-| Terminal | Minimum meaning | Required follow-up |
-| --- | --- | --- |
-| `sync-no-new-events` | aggregate ordinary Sync completed with no new event work | correlate every server request and verify queue immobility |
-| `sync-completed` | aggregate ordinary Sync completed inside its proved scope | correlate requests and compare local/provider state before acceptance |
-| `sync-rejected` | trusted server response rejected the operation | record status, phase and typed diagnostic; do not retry |
-| `sync-failed` | client could not prove aggregate success | inspect trusted-response flag, last phase and server lineage; do not retry |
-| `sync-server-timeout` | only valid if a server-owned timeout is proved | unexpected in the current design; stop and inspect authoritative rollback evidence |
-
-Interpretation of elapsed time:
-
-```text
-terminal between 5 s and 35 s
-    -> the former five-second budget was materially causal
-
-server ingress followed by a typed failure/stall
-    -> timing exposed the next server/auth/database boundary
-
-no matching server ingress
-    -> client transport, routing or hosting ingress becomes primary
-
-server request completed but client lacks a trusted terminal
-    -> response delivery, correlation or client orchestration becomes primary
-
-terminal below 5 s
-    -> the old deadline was not exercised in this run; causal hypothesis remains
-       unproved rather than rejected
-```
-
-#### Assay C â€” submission-bearing control, separately bounded
-
-Assay B does not necessarily exercise upload/submission while the queue has no
-pending event. The two failed/notApplied events must not be converted into an
-implicit Retry or recovery.
-
-A true submission-bearing assay therefore requires a separately authorized,
-known test event or other bounded pending candidate, with:
-
-```text
-exact local candidate identity
-expected sequence
-expected payload class without sensitive content
-single upload limit
-no automatic retry
-pre/post local state
-allowlisted provider comparison
-client operation fingerprint
-all child correlation fingerprints
-matching server-request declarations
-explicit stop after the first terminal
-```
-
-Until that packet exists, do not manufacture a purchase event solely for
-diagnostics and do not use the existing failed/notApplied candidate. Gate 12.7
-remains held.
-
-### Hierarchical progress update
-
-```text
-Cycle 10 â€” hosted synchronization and operational acceptance [OPEN]
-â””â”€ GCM-02 â€” exact hosted recovery/synchronization proof [ACTIVE]
-   â”œâ”€ C10-GCM02-S12-REC-01 source [ACCEPTED]
-   â”œâ”€ C10-GCM02-S12-ERR-03 source [ACCEPTED, HOST-UNVALIDATED]
-   â”œâ”€ Assay A readiness projection regression [NEXT]
-   â”œâ”€ Assay B one ordinary-Sync lifecycle control [PREPARED/CONDITIONAL]
-   â”œâ”€ Assay C submission-bearing control [NOT YET AUTHORIZED]
-   â”œâ”€ Gate 12.7 failed/notApplied recovery [HELD]
-   â””â”€ Gates 12.8-12.10 terminal reconciliation [HELD]
-```
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=OPEN_ACTIVE
-C10_GCM02_S12_ERR_03_SOURCE=ACCEPTED
-ORDINARY_SYNC_FIVE_RESULT_CONTRACT=IMPLEMENTED_LOCALLY_VALIDATED
-CLIENT_OPERATION_DECLARATION=IMPLEMENTED_LOCALLY_VALIDATED
-SERVER_REQUEST_DECLARATION=IMPLEMENTED_LOCALLY_VALIDATED
-CLIENT_SERVER_CORRELATION=IMPLEMENTED_LOCALLY_VALIDATED
-CLIENT_SYNC_DEADLINE_35S=IMPLEMENTED_HOST_UNVALIDATED
-SERVER_DEADLINE_25S=NOT_IMPLEMENTED_WITH_REASON
-SYNC_SERVER_TIMEOUT=RESERVED_NOT_CURRENTLY_SERVER_EMITTED
-LAST_SUCCESSFUL_SYNC_PREDICATE=SOURCE_CORRECTED_WINDOWS_PENDING
-RECENT_CLOSURE_ATTEMPTS=SOURCE_CORRECTED_WINDOWS_PENDING
-HISTORICAL_FIVE_SECOND_CAUSAL_HYPOTHESIS=PLAUSIBLE_UNPROVED
-READINESS_PROJECTION_ASSAY=NEXT
-ORDINARY_SYNC_LIFECYCLE_ASSAY=PREPARED_CONDITIONAL
-SUBMISSION_BEARING_ASSAY=NOT_AUTHORIZED
-AUTOMATIC_RETRY=ABSENT
-BROAD_ERR_REFACTOR=DEFERRED
-GATE_12_7=HELD
-CONTROLLED_RECOVERY=NOT_AUTHORIZED
-PROVIDER_ACTION=NOT_YET_PERFORMED
-GATES_12_8_TO_12_10=HELD
-GCM03=UNDEFINED_INACTIVE
-GCM04=UNDEFINED_INACTIVE
-```
-
-## 2026-07-26 â€” Correlated live Sync reconciliation and ERR-04 staging
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04 â†’ FLX-ORD-01
-Role: Main Chat [M]
-Hierarchy: Cycle 10 â†’ GCM-02 â†’ Step 12 â†’ Gate 12.7 pre-authorization
-Reconciliation unit: C10-GCM02-S12-SYNC-01
-Activated implementation unit: C10-GCM02-S12-ERR-04
-Branch: cycle10-intermid-grimoire
-Required staging ancestor: 27e1b77b81f658b5e704e46923ea48cce2274b3a
-Evidence: supplied Windows Closure screenshots, supplied sanitized Render
-          lifecycle lines, ERR-03 G/H/I and current source inspection
-Writable surface: append-only J plus replacement D/E/F
-Disposition: LIVE SYNC REQUEST LIFECYCLE PASSED; RECOVERY BOUNDARY FAILED;
-             ERR-04 STAGED; FURTHER LIVE ACTIONS HELD
-```
-
-This entry belongs to `Legacy_Progress`. It appends the first correlated
-post-ERR-03 hosted ordinary-Sync lifecycle. It does not rewrite the earlier
-ERR-03 source reconciliation and does not convert the observed implicit
-recovery into Gate 12.7 authorization.
-
-### Complete hierarchical classification
-
-```text
-Cycle 10 â€” hosted synchronization and operational acceptance [OPEN]
-â””â”€ Phase GCM-02 â€” exact hosted recovery/synchronization proof [ACTIVE]
-   â””â”€ Step 12 â€” Closure diagnosis and bounded hosted assays [ACTIVE]
-      â”œâ”€ Gate 12.6 â€” diagnostic/readiness preparation [PASSED IN PRIOR SCOPE]
-      â”œâ”€ Gate 12.7 â€” failed/notApplied controlled recovery [HELD]
-      â”‚  â”œâ”€ REC-01 source and inspection surface [ACCEPTED]
-      â”‚  â”œâ”€ ERR-03 terminal/timing/correlation source [ACCEPTED]
-      â”‚  â”œâ”€ Readiness projection assay [PASSED]
-      â”‚  â”œâ”€ Ordinary-Sync correlated lifecycle assay [REQUEST LIFECYCLE PASS]
-      â”‚  â”œâ”€ Recovery authorization boundary [FAILED]
-      â”‚  â””â”€ ERR-04 boundary/observability correction [ACTIVE STAGED]
-      â”œâ”€ Gate 12.8 â€” post-action/provider reconciliation [HELD]
-      â”œâ”€ Gate 12.9 â€” second-device convergence proof [HELD]
-      â””â”€ Gate 12.10 â€” GCM-02 terminal acceptance [HELD]
-
-Cycle 10 â†’ GCM-03 [UNDEFINED / INACTIVE]
-Cycle 10 â†’ GCM-04 [UNDEFINED / INACTIVE]
-Cycle 10 closure [BLOCKED BY GCM-02]
-```
-
-No Sprint identity is invented for this work. The active hierarchy is a GCM
-phase, Step and Gate sequence.
-
-### Sanitized paired evidence
-
-Client evidence:
-
-```text
-action=ordinary Sync, pressed once
-operation fingerprint=cf23d2a09c74
-terminal=sync-completed
-completedAt=2026-07-26T22:50:27Z
-configured deadline=35000ms client-owned
-queue before=0 pending / 0 uploading / 2 failed / 0 unknown
-queue after=0 pending / 0 uploading / 0 failed / 0 unknown
-next Device sequence before=3
-next Device sequence after=3
-```
-
-Server evidence:
-
-| UTC terminal | Route / operation | Correlation | Auth | Result |
-| --- | --- | --- | --- | --- |
-| `22:50:25.708Z` | `POST /v1/sync/submissions` / upload-submission | `ddd649aa0aaa` | accepted | HTTP 200, `<3s` |
-| `22:50:26.064Z` | `GET /v1/sync/events` / download-events | `90539afaa945` | accepted | HTTP 200, `<250ms` |
-| `22:50:26.433Z` | `POST /v1/sync/acknowledgements` / acknowledgement | `d038eb15cd3f` | accepted | HTTP 200, `<250ms` |
-
-All protected requests share operation fingerprint `cf23d2a09c74`. The listed
-correlations are server-request fingerprints derived from Fastify request IDs;
-they distinguish Render requests but do not yet prove exact equality with the
-client's outbound child correlations. Interleaved `/health/ready` HTTP 200 lines have
-`operationFingerprint=not-provided` and remain readiness evidence only.
-
-### Reconciled success boundary
-
-The Sync was truly successful within the observed single-client protocol
-boundary:
-
-1. the client reached the aggregate `sync-completed` terminal;
-2. upload, download and acknowledgement reached the server;
-3. authentication was accepted on all protected routes;
-4. each server request returned HTTP 200;
-5. the client persisted a successful completion timestamp;
-6. the local queue ended without pending/uploading/failed/unknown work.
-
-This is stronger than readiness and stronger than a server-only request
-success. It is not yet full convergence acceptance. The evidence does not
-prove exact provider contents, second-device materialization, retention,
-rebootstrap, revocation, a server-owned timeout or exact client-child to
-server-request fingerprint equality. The parent operation join is proved.
-
-The 35-second relaxation did not explain this run causally: the aggregate run
-finished in roughly two seconds. It proves the new budget does not block the
-path, but the historical five-second hypothesis remains neither required nor
-disproved by this fast success.
-
-### Reconciled conflict
-
-The planned assay was described as an empty-queue ordinary-Sync control that
-must not touch the failed/notApplied candidate. It was not empty in the
-relevant sense.
-
-Source inspection proves:
-
-```text
-HostedSyncCoordinator.run()
-  â†’ unconditional recoverFailedNotApplied()
-  â†’ upload pending events
-  â†’ download/apply
-  â†’ acknowledgement
-```
-
-The live transition `failed=2 â†’ failed=0`, the recorded failed-recovery
-phases and the correlated submission upload prove that ordinary Sync executed
-the held recovery path. This was a legacy implicit recovery call, not the
-automatic retry added by ERR-03. Nevertheless it violates the accepted
-separation between ordinary Sync and explicitly confirmed controlled
-failed/notApplied recovery.
-
-The unchanged `Next Device sequence=3` is not a defect. The action replayed
-existing events with allocated sequences 1â€“2; it did not create a new local
-event. Sequence 3 remains the next allocation.
-
-### PRC-01 claims
-
-```text
-Claim: the post-ERR-03 ordinary-Sync request lifecycle succeeded
-Prior state: prepared/conditional; host-unvalidated
-Evidence: client sync-completed terminal plus correlated Render upload,
-          download and acknowledgement HTTP 200 terminals
-Evidence boundary: one Windows client and request-level server logs;
-                   no second-device/provider-content inspection
-Contradiction: none within the request lifecycle
-Semantic owner: C10-GCM02-S12-SYNC-01 hosted assay
-Target role: J observational reconciliation
-Resulting state: ACCEPTED WITH SINGLE-CLIENT/REQUEST BOUNDARY
-History disposition: append; supersede HOST_UNVALIDATED for this path
-```
-
-```text
-Claim: the assay was an empty-queue control and preserved the held recovery
-Prior state: required assay condition
-Evidence: failed count 2â†’0, failed-recovery phases, upload request and
-          unconditional source call
-Evidence boundary: client queue/source and paired server request
-Contradiction: explicit assay/Gate 12.7 prohibition
-Semantic owner: ordinary Sync versus controlled recovery command boundary
-Target role: C10-GCM02-S12-ERR-04
-Resulting state: REJECTED; SOURCE CORRECTION REQUIRED
-History disposition: append; preserve the accidental live action as evidence
-```
-
-```text
-Claim: unchanged Next Device sequence indicates Sync did not work
-Prior state: human concern
-Evidence: next sequence remained 3 while allocated sequences 1â€“2 were replayed
-Evidence boundary: local allocator and queue projection
-Contradiction: a Sync attempt is not a new event allocation
-Semantic owner: Device sequence invariant
-Target role: ERR-04 tests and J explanation
-Resulting state: REJECTED; UNCHANGED VALUE IS EXPECTED
-History disposition: append
-```
-
-```text
-Claim: current client UI/terminal evidence is fully coherent
-Prior state: ERR-03 locally validated declaration surface
-Evidence: Flutter terminal silence; aggregate attempt displays
-          status-not-observed/headers-not-received; newest phase can display
-          provider-contact-not-started after proved provider contact
-Evidence boundary: Windows screenshots and source projection
-Contradiction: paired Render evidence proves three trusted request terminals
-Semantic owner: client observability and aggregate/phase projection
-Target role: C10-GCM02-S12-ERR-04
-Resulting state: PARTIAL; CORRECTION REQUIRED
-History disposition: append; do not misclassify as transport failure
-```
-
-```text
-Claim: child correlation identity is exactly paired across client and server
-Prior state: locally validated correlation lineage
-Evidence: shared operation fingerprint is equal, but Render correlation uses
-          the Fastify request ID while the client sends x-correlation-id
-Evidence boundary: source inspection and supplied Render lifecycle fields
-Contradiction: no supplied client child fingerprint equals a proved Render
-               field by contract
-Semantic owner: paired client/server observability
-Target role: C10-GCM02-S12-ERR-04
-Resulting state: PARENT JOIN PASSED; EXACT CHILD PAIRING INCOMPLETE
-History disposition: append and correct field ownership
-```
-
-### Activated ERR-04 direction
-
-D/E/F now authorize one narrow source unit:
-
-```text
-UNIT=C10-GCM02-S12-ERR-04
-
-remove ordinary Sync â†’ failed/notApplied recovery invocation
-preserve explicit confirmed recovery entry point
-preserve ordinary pending upload/download/acknowledgement
-add sanitized injectable client-operation/client-phase terminal logging
-preserve structured server-request Render logging
-expose separate client-child and server-request fingerprints
-distinguish aggregate from phase-local and child-request evidence
-preserve five Sync terminals and 35000ms client deadline
-no migration
-no automatic retry
-no live provider action
-```
-
-The unit must not erase the successful live evidence or reinterpret technical
-success as Gate authorization. G/H/I must replace ERR-03 reports with ERR-04
-materialization evidence while identifying ERR-03 as the source baseline.
-
-### Subsequent actions
-
-```text
-Cycle 10
-â†’ GCM-02
-â†’ Step 12
-â†’ Gate 12.7 pre-authorization
-â†’ ERR-04 source materialization
-â†’ local G/H/I validation
-â†’ Main reconciliation
-â†’ fresh Windows build from the reconciled remote commit
-â†’ no-action diagnostics/terminal projection check
-â†’ one readiness control only if deployment freshness requires it
-â†’ one ordinary Sync no-recovery invariant assay
-â†’ explicit Gate 12.7 decision packet
-â†’ controlled recovery only if a new valid failed/notApplied candidate exists
-â†’ Gate 12.8 provider/result reconciliation
-â†’ Gate 12.9 second-device convergence proof
-â†’ Gate 12.10 GCM-02 acceptance
-â†’ define GCM-03/GCM-04 or close them explicitly
-â†’ Cycle 10 closure
-```
-
-The next ordinary-Sync assay must begin with failed=0 and must prove that
-ordinary Sync cannot consume failed work if a deterministic local test
-fixture contains it. Do not create a live failed candidate solely to test the
-boundary.
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=OPEN_ACTIVE
-STEP12=OPEN_ACTIVE
-GATE_12_6=PASSED_IN_PRIOR_SCOPE
-GATE_12_7=HELD
-C10_GCM02_S12_ERR_03_SOURCE=ACCEPTED
-READINESS_PROJECTION_ASSAY=PASS
-ORDINARY_SYNC_CORRELATED_LIFECYCLE=PASS_SINGLE_CLIENT_REQUEST_SCOPE
-UPLOAD_REQUEST=HTTP_200_AUTH_ACCEPTED
-DOWNLOAD_REQUEST=HTTP_200_AUTH_ACCEPTED
-ACKNOWLEDGEMENT_REQUEST=HTTP_200_AUTH_ACCEPTED
-CLIENT_AGGREGATE_TERMINAL=SYNC_COMPLETED
-CLIENT_SERVER_PARENT_OPERATION_CORRELATION=PASS
-CLIENT_SERVER_EXACT_CHILD_CORRELATION=INCOMPLETE_SOURCE_CORRECTION_STAGED
-CLIENT_SYNC_DEADLINE_35S=HOST_VALIDATED_NOT_STRESSED
-HISTORICAL_FIVE_SECOND_CAUSAL_HYPOTHESIS=UNRESOLVED_NOT_REQUIRED_THIS_RUN
-FAILED_NOT_APPLIED_COUNT=ZERO_AFTER_IMPLICIT_RECOVERY
-NEXT_DEVICE_SEQUENCE_THREE=EXPECTED
-EMPTY_QUEUE_CONTROL=NOT_PERFORMED
-RECOVERY_AUTHORIZATION_BOUNDARY=FAILED
-C10_GCM02_S12_ERR_04=ACTIVE_STAGED
-CLIENT_TERMINAL_LOGGING=SOURCE_CORRECTION_STAGED
-AGGREGATE_CHILD_PROJECTION=SOURCE_CORRECTION_STAGED
-FURTHER_LIVE_ACTIONS=HELD
-GATE_12_8=HELD
-GATE_12_9=HELD
-GATE_12_10=HELD
-GCM03=UNDEFINED_INACTIVE
-GCM04=UNDEFINED_INACTIVE
-CYCLE10_CLOSURE=BLOCKED_BY_GCM02
-```
-
-## 2026-07-26 â€” ERR-04 materialization reconciliation
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04
-Role: Main Chat [M]
-Hierarchy: Cycle 10 â†’ GCM-02 â†’ Step 12 â†’ Gate 12.7 pre-authorization
-Reconciliation unit: C10-GCM02-S12-ERR-04
-Branch: cycle10-intermid-grimoire
-Staging parent: a5d198daff698a14ba932579dd867de716ed1038
-Materialization commit: bb4e579612d36924e266872c351449bc0becc30f
-Evidence: exact remote ten-file patch, replacement G/H/I and reported local
-          validation
-Writable surface: mutable J recovery prefix plus append-only Legacy_Progress
-Disposition: SOURCE ACCEPTED; HOST-UNVALIDATED; GATE 12.7 HELD
-```
-
-### Repository and ancestry result
-
-The remote branch is identical to
-`bb4e579612d36924e266872c351449bc0becc30f`. The materialization is exactly
-one fast-forward commit after
-`a5d198daff698a14ba932579dd867de716ed1038`, with no divergence. Its patch
-contains exactly ten files: five Flutter source/test paths, two API source/test
-paths, and the three replacement G/H/I reports.
-
-### Directive classification
-
-| ERR-04 directive | Result | Evidence boundary |
-| --- | --- | --- |
-| Ordinary Sync must not invoke failed/notApplied recovery | IMPLEMENTED / TEST-VALIDATED | unconditional recovery phase and call removed; failed rows remain failed under ordinary Sync |
-| Explicit confirmed failed/notApplied recovery remains separate | PRESERVED / TEST-VALIDATED | dedicated runner/coordinator entry point and bounded recovery tests remain |
-| Genuine pending-event upload remains ordinary behavior | PRESERVED / TEST-VALIDATED | pending lease/upload path and focused test pass |
-| Sanitized Flutter terminal lifecycle output | IMPLEMENTED / TEST-VALIDATED | injectable sink, one-line JSON, client-operation/client-phase scopes, redaction and sink-isolation tests |
-| Aggregate versus child evidence wording | IMPLEMENTED / TEST-VALIDATED | aggregate HTTP/header values now point to child requests; misleading absent-contact projection removed |
-| Client-child versus server-request correlation ownership | IMPLEMENTED / TEST-VALIDATED | independent Fastify request IDs plus separately named fingerprints |
-| Five ordinary-Sync terminals and 35000 ms deadline | PRESERVED / TEST-VALIDATED | existing vocabulary retained; deadline emitted by client lifecycle |
-| No automatic retry, migration or provider action | PRESERVED / REPORTED | no schema change and no live action in materialization |
-| Replacement G/H/I reports | COMPLETE | G/H/I now describe ERR-04 rather than ERR-03 |
-
-No staged ERR-04 requirement is classified absent. The compatibility-retained
-`recoverFailedNotApplied` constructor field is not used by ordinary
-`HostedSyncCoordinator.run()`; removing that unused compatibility surface is
-optional later cleanup, not a Gate 12.7 blocker.
-
-### PRC-01 claims
-
-```text
-Claim: ERR-04 repairs the ordinary-Sync versus controlled-recovery boundary
-Prior state: confirmed live defect; correction staged
-Evidence: exact source patch, focused file-backed tests and full Flutter suite
-Evidence boundary: repository and local validation; no corrected hosted assay
-Contradiction: none found
-Semantic owner: C10-GCM02-S12-ERR-04
-Target role: J current state and append-only reconciliation history
-Resulting state: ACCEPTED, HOST-UNVALIDATED
-History disposition: append; preserve the accidental pre-fix live action
-```
-
-```text
-Claim: ERR-04 completes the requested observability correction
-Prior state: aggregate/child projection and exact child pairing incomplete
-Evidence: injectable client lifecycle JSON, scope-aware UI wording, independent
-          server request identity and paired sanitized fingerprints
-Evidence boundary: source and automated tests; fresh Flutter/Render capture absent
-Contradiction: none found
-Semantic owner: ERR-04 client/server observability contract
-Target role: J current state
-Resulting state: IMPLEMENTED AND LOCALLY VALIDATED; HOST-UNVALIDATED
-History disposition: append
-```
-
-```text
-Claim: Gate 12.7 may close solely because ERR-04 tests pass
-Prior state: gate held after unauthorized implicit recovery
-Evidence: strong local regression coverage but no corrected hosted revision assay
-Evidence boundary: local source/test evidence only
-Contradiction: Gate conclusion still requires the bounded post-deployment packet
-Semantic owner: Gate 12.7 acceptance
-Target role: subsequent Main reconciliation
-Resulting state: REJECTED FOR NOW; GATE REMAINS HELD
-History disposition: append
-```
-
-### Validation absorbed
-
-```text
-Flutter diagnostics test: 21 PASS
-Focused Flutter sync/diagnostics set: 59 PASS
-Full Flutter suite: 194 PASS / 4 lab-gated SKIP
-Flutter analyze: PASS
-Diagnostics generator/check: PASS
-Changed TypeScript Prettier: PASS
-API lint/typecheck/build: PASS
-API protocol/full tests: 58 PASS
-git diff --check: PASS
-changed-content sensitive scan: PASS
-live hosted/provider action: NOT PERFORMED
-```
-
-The repository-root diagnostics command is inapplicable because the root has no
-`package.json`. The broad API formatting check remains obstructed only by the
-pre-existing unrelated
-`test/sync_diagnostics_registry.test.ts` warning; both changed TypeScript
-files pass targeted formatting. Neither item invalidates the bounded ERR-04
-materialization.
-
-### Subsequent action hierarchy
-
-```text
-Cycle 10 â€” hosted synchronization and operational acceptance [OPEN]
-â””â”€ GCM-02 â€” exact hosted recovery/synchronization proof [ACTIVE]
-   â””â”€ Step 12 â€” Closure diagnosis and bounded hosted assays [ACTIVE]
-      â”œâ”€ Gate 12.6 â€” preparation/readiness evidence [PASSED IN PRIOR SCOPE]
-      â”œâ”€ Gate 12.7 â€” controlled recovery boundary [HELD]
-      â”‚  â”œâ”€ ERR-04 source materialization [ACCEPTED, HOST-UNVALIDATED]
-      â”‚  â”œâ”€ exact corrected Windows revision/build [NEXT]
-      â”‚  â”œâ”€ exact corrected Render revision/deployment [NEXT]
-      â”‚  â”œâ”€ readiness projection control [PENDING]
-      â”‚  â”œâ”€ ordinary Sync no-recovery control [PENDING]
-      â”‚  â””â”€ explicit Gate 12.7 conclusion packet [PENDING]
-      â”œâ”€ Gate 12.8 â€” provider/result reconciliation [HELD]
-      â”œâ”€ Gate 12.9 â€” second-device convergence proof [HELD]
-      â””â”€ Gate 12.10 â€” GCM-02 terminal acceptance [HELD]
-
-Cycle 10 â†’ GCM-03 [UNDEFINED / INACTIVE]
-Cycle 10 â†’ GCM-04 [UNDEFINED / INACTIVE]
-Cycle 10 closure [BLOCKED BY GCM-02]
-```
-
-### Controlled acceptance order
-
-1. Pull the reconciled branch by fast-forward and record the exact SHA.
-2. Build/run the Windows client from that exact lineage; do not reuse an older
-   binary.
-3. Deploy Render from the same lineage because the API logging contract changed.
-4. Record client SHA, deployed Render SHA, deployment-live UTC and clean initial
-   queue/diagnostic state.
-5. Perform one readiness control. Confirm readiness does not advance Last
-   successful Sync or mutate the queue.
-6. Perform one ordinary Sync control. Capture the UI terminal, Flutter JSON
-   lifecycle lines and matching Render lifecycle lines.
-7. Confirm ordinary Sync contains no failed-recovery phase and that
-   client-child fingerprints pair with the corresponding server declarations.
-8. Do not create a new failed candidate solely to demonstrate the fix; the local
-   deterministic tests own that invariant.
-9. Reconcile the resulting packet and issue the explicit Gate 12.7 decision.
-10. Only after that decision proceed to Gate 12.8 provider-state reconciliation
-    and Gate 12.9 second-device convergence.
-
-No Retry, failed/notApplied recovery, diagnostic-history clearing, migration,
-Auth0 mutation, Neon mutation or production action is authorized by this entry.
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=OPEN_ACTIVE
-STEP12=OPEN_ACTIVE
-GATE_12_6=PASSED_IN_PRIOR_SCOPE
-GATE_12_7=HELD
-C10_GCM02_S12_ERR_04_SOURCE=ACCEPTED_HOST_UNVALIDATED
-ERR_04_REMOTE_SHA=bb4e579612d36924e266872c351449bc0becc30f
-ERR_04_EXACT_TEN_FILE_PATCH=VERIFIED
-ORDINARY_SYNC_IMPLICIT_RECOVERY=REMOVED_LOCALLY_VALIDATED
-EXPLICIT_RECOVERY_ENTRYPOINT=PRESERVED_LOCALLY_VALIDATED
-ORDINARY_PENDING_UPLOAD=PRESERVED_LOCALLY_VALIDATED
-CLIENT_TERMINAL_LIFECYCLE_LOGS=IMPLEMENTED_LOCALLY_VALIDATED
-AGGREGATE_CHILD_PROJECTION=CORRECTED_LOCALLY_VALIDATED
-CLIENT_SERVER_CHILD_PAIRING=IMPLEMENTED_LOCALLY_VALIDATED
-CLIENT_SYNC_DEADLINE_35S=PRESERVED
-NO_SCHEMA_MIGRATION=PASS
-LIVE_CORRECTED_REVISION_ASSAY=NOT_PERFORMED
-CORRECTED_WINDOWS_REVISION=NEXT
-CORRECTED_RENDER_DEPLOYMENT=NEXT
-READINESS_CONTROL=PENDING
-ORDINARY_SYNC_NO_RECOVERY_CONTROL=PENDING
-GATE_12_8=HELD
-GATE_12_9=HELD
-GATE_12_10=HELD
-GCM03=UNDEFINED_INACTIVE
-GCM04=UNDEFINED_INACTIVE
-CYCLE10_CLOSURE=BLOCKED_BY_GCM02
-```
-
-## 2026-07-26 â€” Gate 12.7 conclusion and DIAG-01 activation
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04 â†’ FLX-ORD-01
-Role: Main Chat [M]
-Hierarchy: Cycle 10 â†’ GCM-02 â†’ Step 12 â†’ Gate 12.7 conclusion
-Next gate: Gate 12.8 read-only provider/result reconciliation
-Materialization unit: C10-GCM02-S12-DIAG-01
-Branch: cycle10-intermid-grimoire
-Inspected HEAD: cf405347b6fdc58bf0da698a1f07028e05ccd471
-Evidence: ERR-04 source/G/H/I; sanitized client screenshots;
-          REC_DIAGNOSTICS.md Records 004â€“006
-Writable surface: mutable J prefix, append-only Legacy_Progress, D/E/F
-Disposition: GATE 12.7 PASS AT CORRECTED SINGLE-CLIENT CONTROL SCOPE;
-             DIAG-01 ACTIVE; GATE 12.8 NEXT READ-ONLY
-```
-
-### Assay reconciliation
-
-The corrected client packet establishes:
-
-| Control or invariant | Result | Evidence boundary |
-| --- | --- | --- |
-| warm `Check hosted connection` | PASS | second warm attempt reached `hosted-connection-ready`, HTTP 200, headers received, response parsed, `<1s` |
-| cold readiness tolerance | OPEN | first attempt timed out before a trusted response; no exact Render correlation supplied |
-| ordinary Sync | PASS | one `sync-completed` client operation |
-| implicit failed/notApplied recovery | ABSENT IN NEWEST OPERATION | no `failed-recovery` phase under operation `d723c1f392f3` |
-| queue invariant | PASS | `0 pending / 0 uploading / 0 failed / 0 unknown` before and after |
-| Next Device sequence | PASS | remained `3` because no new local Device event was allocated |
-| Last successful Sync | PASS | unchanged by diagnostics/readiness; advanced only by ordinary Sync |
-| 35000 ms client deadline | PRESERVED | displayed by corrected client projection |
-| provider-row state | UNPROVED | belongs to Gate 12.8/12.9 evidence |
-| complete client-child/Render pairing | UNPROVED IN SCREENSHOT PACKET | carry to read-only result reconciliation |
-| second-Device convergence | UNPROVED | later gate; not Gate 12.7 |
-
-### PRC-01 classifications
-
-```text
-Claim: Gate 12.7 corrected single-client control may close
-Source: ERR-04 implementation/test evidence plus corrected Windows controls
-Current state: host-unvalidated before the assay
-Evidence: warm readiness terminal; one ordinary sync-completed terminal;
-          unchanged empty queue and Next Device sequence; advanced
-          Last successful Sync; no recovery phase in newest operation
-Evidence boundary: single Windows client and client-visible hosted control;
-                   no direct provider rows or second Device
-Contradictions: cold-start tolerance remains unresolved; full Render child
-                correlation not supplied
-Semantic owner: Main GCM-02 Gate 12.7
-Target role: J current recovery state and append-only Legacy_Progress
-History disposition: append; preserve prior held/defect entries
-Confidence: sufficient for revised Gate 12.7 single-client control boundary
-Human/Main authority: user requested conclusion and transition assessment
-Required regeneration: mutable J prefix and synchronized D/E/F
-Result: GATE 12.7 PASSED; bounded exclusions carried forward
-```
-
-```text
-Claim: the 13 displayed entries are 13 Sync errors
-Source: flat Recent diagnostic timeline presentation
-Current state: user-observed anomaly
-Evidence: all rows share the newest operation fingerprint, follow ordered
-          causal phases, contain paired pre-result/result declarations and end
-          in sync-completed; no failed-recovery phase occurs
-Evidence boundary: sanitized client screenshot packet and current source
-Contradictions: older preserved operations contain recovery rows but own a
-                different parent fingerprint
-Semantic owner: Closure diagnostic projection
-Target role: DIAG-01 UI correction
-History disposition: append; do not erase valid lifecycle rows
-Confidence: high
-Human/Main authority: explicit request to correct the presentation
-Required regeneration: D/E/F and later G/H/I
-Result: REJECTED AS FAILURE COUNT; ACCEPTED AS PRESENTATION DEFECT
-```
-
-```text
-Claim: Next Device sequence should advance when Sync succeeds
-Source: unchanged displayed value `3`
-Current state: suspected defect
-Evidence: queue empty; no new local event created; sequence is a local event
-          allocator rather than an action/request counter
-Evidence boundary: client state plus accepted sequence invariant
-Contradictions: none
-Semantic owner: local Device event allocation
-Target role: preserved invariant and concise UI guidance
-History disposition: append
-Confidence: high
-Human/Main authority: Main reconciliation
-Required regeneration: DIAG-01 tests/projection only
-Result: REJECTED; value `3` is correct
-```
-
-### DIAG-01 accepted implementation direction
-
-Main activates synchronized D/E/F for:
-
-```text
-UNIT=C10-GCM02-S12-DIAG-01
-TOP_LEVEL_CONTROLS=status + query + refresh diagnostics
-REPLACEMENT_CONTROL=Diagnostics
-DEFAULT_TIMELINE=operation-grouped compact phase summaries
-RAW_TIMELINE=preserved under expandable technical view
-READINESS=separate
-ORDINARY_SYNC=separate
-RETRY_AND_RECOVERY=separate
-SCHEMA_CHANGE=NO
-API_CHANGE=NO
-PROVIDER_ACTION=NO
-LIVE_ASSAY=NO
-```
-
-The consolidated Diagnostics action must preserve distinct authentication,
-enrollment/binding and local-snapshot subcheck results. Consolidation is a
-presentation/orchestration decision, not permission to collapse their meanings
-or to add a provider request.
-
-### Gate 12.8 transition
-
-Gate 12.8 may now open as the next read-only evidence gate:
-
-1. freeze the accepted Gate 12.7 client packet and exact branch lineage;
-2. correlate any already available sanitized Render lifecycle lines without
-   issuing a new client action;
-3. run only the separately approved read-only provider/result comparison;
-4. compare allowlisted counts, cursor/sequence/acknowledgement and lifecycle
-   state;
-5. preserve unknown or contradictory results without a second action;
-6. do not use Sync, Retry, failed/notApplied recovery, Enroll, migration,
-   provider-console mutation, or database editing.
-
-DIAG-01 source materialization may proceed before the Gate 12.8 provider read.
-It does not itself execute Gate 12.8 and must not alter the frozen assay
-evidence.
-
-### Next operational order
-
-```text
-1. publish J + D/E/F staging
-2. seed Codex on exact staging SHA
-3. Codex materializes DIAG-01 and replaces G/H/I
-4. Main reconciles the exact patch and validation
-5. preserve Gate 12.7 as passed; do not rerun it merely for UI presentation
-6. prepare the exact read-only Gate 12.8 evidence packet
-7. obtain explicit authorization for any connector/provider read that needs it
-8. collect and reconcile Gate 12.8 without a second Sync/Retry/recovery action
-```
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=OPEN_ACTIVE
-STEP12=OPEN_ACTIVE
-GATE_12_6=PASSED_IN_PRIOR_SCOPE
-GATE_12_7=PASSED_CORRECTED_SINGLE_CLIENT_CONTROL_SCOPE
-WARM_HOSTED_READINESS=PASS
-COLD_START_READINESS_TOLERANCE=OPEN
-CORRECTED_ORDINARY_SYNC=PASS
-NEWEST_OPERATION_IMPLICIT_RECOVERY=ABSENT
-QUEUE_INVARIANT=PASS
-NEXT_DEVICE_SEQUENCE_INVARIANT=PASS
-LAST_SUCCESSFUL_SYNC_INVARIANT=PASS
-THIRTEEN_ROWS=ORDERED_LIFECYCLE_NOT_THIRTEEN_ERRORS
-DIAG_01=ACTIVE_CODEX_AUTHORIZED
-DIAGNOSTICS_TOP_LEVEL_CONTROL=CONSOLIDATE_STATUS_QUERY_REFRESH
-READINESS_AND_SYNC=REMAIN_SEPARATE
-GATE_12_8=NEXT_READ_ONLY_PROVIDER_RESULT_RECONCILIATION
-GATE_12_9=HELD
-GATE_12_10=HELD
-GCM03=UNDEFINED_INACTIVE
-GCM04=UNDEFINED_INACTIVE
-CYCLE10_CLOSURE=BLOCKED_BY_GCM02
-```
-## 2026-07-28 â€” C10-GCM02-S12-ST08 exact-binding/provider reconciliation
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04
-Role: Main Chat [M]
-Round or unit: C10-GCM02-S12-ST08
-Branch: grm-guarded-provisioning-20260727
-Inspected baseline: 3cbc6d526a7a92da5306326acb9e809dbe13f3fa
-Question: Does the genuinely enrolled replacement-provider Device have an
-          exact hosted identity binding and one coherent read-only pre-Sync
-          provider baseline?
-Inputs: GRM-AUTH-02 sanitized terminal; GRM-NEON-08 inventory observations;
-        GRM-NEON-11 sanitized terminal; REC_DIAGNOSTICS Records 007â€“009;
-        targeted GRIMOIRE and provider-baseline source inspection
-Writable surfaces: REC_DIAGNOSTICS append; mutable J prefix; append-only
-                   Legacy_Progress
-Prohibited surfaces/actions: source, D/E/F, permanent domains, methodology,
-                            Sync, Retry, recovery, Enroll, migration, provider
-                            mutation, second Device, production
-Authority: explicit human-directed ST08 reconciliation
-Next sequence: C10-GCM02-S12-ST09 preparation
-Stop condition: no mutating action before a fresh local preflight, exact delta
-                contract, and explicit one-action authorization
-```
-
-### Reconstructed incident and correction boundary
-
-The first attempted ST08 evidence packet contained a stale local enrollment
-projection. `GRM-AUTH-02` reached the hosted Device-status route but returned
-HTTP 403, and `GRM-NEON-11` failed its exact-device guard for the entered UUIDs.
-`GRM-NEON-08` then returned no Device rows, proving that the replacement
-provider had no enrolled Device at that time.
-
-The client subsequently completed one genuine enrollment after a successful
-hosted-connection check. `GRM-NEON-08` then returned exactly one active Device
-with `next_expected_sequence=1`. The required restart and post-restart sign-in
-were completed. The full Device UUID and fresh access token remained local and
-were used only through masked prompts.
-
-This entry does not erase the stale-binding attempts. They remain useful
-observational history explaining why the final evidence required exact hosted
-and provider corroboration rather than accepting the UI projection alone.
-
-### GRIMOIRE improvements materialized and exercised during ST08
-
-The five-file GRIMOIRE system improved materially during this phase:
-
-| Improvement | GRIMOIRE ownership | ST08 effect |
-| --- | --- | --- |
-| Guarded branch handoff and exact clean-remote alignment | `GRM.md` index plus `G_SCRIPTS.md`/`I_SCRIPTS.ps1` Git procedures | Prevented provider work from an unproved or stale branch lineage |
-| Reusable Windows debug preparation and named VS Code launch path | `GRM-FLUTTER-DEBUG` and generated debug configuration | Made the persisted Device binding and fresh access token observable in one controlled run without adding a credential-export path |
-| Guarded development Account/membership provisioning | `GRM-AUTH-03`, `DBM-AUTO-12`, coordinates and launcher dispatch | Reconstructed the replacement-provider owner fixture only after hosted token verification and exact confirmation |
-| Cryptographic hosted token verification tightening | `GRM-AUTH-03` source correction | Prevented provisioning from relying on an unverified decoded subject |
-| Exact hosted identity/Device verification | `GRM-AUTH-02` | Distinguished token acceptance from exact enrolled-Device authorization and exposed stale UUIDs through the hosted 403 boundary |
-| Optional JWT `nbf` compatibility correction under PowerShell StrictMode | `G_SCRIPTS.md` `GS-AUTH-02` | Accepted legitimate tokens with no optional `nbf` while retaining fail-closed expiry and malformed-claim handling |
-| Sanitized Device inventory | `GRM-NEON-08` / `DBM-AUTO-07` | Proved first that no provider Device existed, then that one active Device existed after genuine enrollment, without printing UUIDs |
-| Atomic exact-Device provider snapshot | `GRM-NEON-11` / `DBM-AUTO-09` | Added a single repeatable read-only snapshot for six-table counts, cursor integrity, sequence/high-water consistency and sanitized replay fingerprints |
-| Fail-closed exact Device guard | `DBM-AUTO-09` | Prevented a zero-match UUID from producing a misleading provider-baseline PASS |
-| Sanitized non-secret coordinate refresh | `NS_COORDINATES.md` | Aligned development branch/database/host routing while keeping credentials and complete identifiers outside Git |
-
-These are materialized interface and evidence improvements. Their successful
-use in ST08 does not promote every GRIMOIRE procedure to production
-acceptance. `GRM-AUTH-03` remains a guarded development bridge;
-`GRM-NEON-11` proves read-only execution and returned values only; and the
-launcher still cannot independently prove the human-readable Neon branch alias.
-
-### Accepted sanitized evidence
-
-`GRM-AUTH-02` returned:
-
-```text
-IssuerMatches=True
-AudienceMatches=True
-AlgorithmMatches=True
-SubjectPresent=True
-TimeWindowValid=True
-IdentityStatus=200
-DeviceStatus=200
-TokenAccepted=True
-ExactDeviceBinding=True
-BindingClass=exact-binding-confirmed
-```
-
-`GRM-NEON-11` returned one internally consistent snapshot:
-
-```text
-exact Device matches/guard: 1/1
-global Account/Device/cursor: 1/1/1
-global submissions/events/acknowledgements: 0/0/0
-missing/orphan cursor rows: 0/0
-fixture Account/Device/cursor: 1/1/1
-fixture submissions/events/acknowledgements: 0/0/0
-fixture Device: active, next expected sequence 1
-Account cursor/high-water: 1/0, consistent
-Device next/high-water: 1/0, consistent
-submission/request fingerprints: none
-event/content fingerprints: none
-transaction terminal: ROLLBACK
-launcher terminal: PASS
-```
-
-No token, subject, Account identifier, Device UUID, password, connection
-string, payload, full request hash or full content hash was recorded.
-
-### PRC-01 claims
-
-```text
-Claim: the authenticated identity is exactly authorized for the genuinely
-       enrolled replacement-provider Device
-Source: GRM-AUTH-02 sanitized terminal
-Current state: open after stale UUID/HTTP 403 attempts
-Evidence: hosted identity 200; hosted exact Device-status 200;
-          ExactDeviceBinding true; exact-binding-confirmed
-Evidence boundary: one fresh token and one exact Device on the development host
-Contradictions: none in the final packet; earlier 403s belong to stale UUIDs
-Semantic owner: ST08 hosted identity/Device binding
-Target role: J staging plus REC_DIAGNOSTICS observational evidence
-History disposition: append; preserve failed stale-binding attempts
-Confidence: high
-Human/Main authority: explicit ST08 reconciliation request
-Required regeneration: J mutable prefix
-Result: ACCEPTED / PASS
-```
-
-```text
-Claim: the replacement provider is coherent before its first authorized Sync
-Source: GRM-NEON-11 sanitized repeatable read-only snapshot
-Current state: open after genuine enrollment
-Evidence: exact Device guard; 1/1/1 structural rows; zero payload rows; no
-          cursor defects; both next-after-high-water invariants true;
-          ROLLBACK and PASS
-Evidence boundary: one development database snapshot; launcher cannot
-                   independently prove the Neon branch alias
-Contradictions: none within the replacement-provider snapshot
-Semantic owner: ST08 provider baseline
-Target role: J staging plus REC_DIAGNOSTICS observational evidence
-History disposition: append
-Confidence: high
-Human/Main authority: explicit ST08 reconciliation request
-Required regeneration: J mutable prefix
-Result: ACCEPTED / PASS
-```
-
-```text
-Claim: the earlier client historical sync-completed terminal is corroborated
-       by the replacement provider
-Source: Record 008 client history compared with Record 009 provider snapshot
-Current state: candidate cross-time inference
-Evidence: provider has zero submissions, events and acknowledgements
-Evidence boundary: client history and replacement-provider baseline belong to
-                   different provider lifetimes
-Contradictions: no corresponding provider result exists
-Semantic owner: cross-provider evidence provenance
-Target role: ST08 evidence ceiling and ST09 clean-baseline contract
-History disposition: preserve both records with their original boundaries
-Confidence: high
-Human/Main authority: Main reconciliation
-Required regeneration: none beyond J/REC classification
-Result: REJECTED AS CORROBORATION; NOT A PROVIDER INVARIANT FAILURE
-```
-
-```text
-Claim: ST08 authorizes one ordinary Sync
-Source: completion of read-only exact-binding/provider checks
-Current state: proposed transition
-Evidence: preconditions are stronger, but current local queue/device state and
-          expected provider delta are not yet frozen
-Evidence boundary: no ST09 preflight or authorization packet exists
-Contradictions: explicit stop-before-Sync contract
-Semantic owner: human/Main action authorization
-Target role: future ST09 authorization packet
-History disposition: append
-Confidence: high
-Human/Main authority: not yet granted
-Required regeneration: ST09 preflight and exact transition contract
-Result: REJECTED FOR NOW; PREPARATION ONLY
-```
-
-### ST08 conclusion
-
-ST08 passes at the narrow read-only boundary it was designed to establish:
-
-```text
-EXACT_HOSTED_BINDING=PASS
-ATOMIC_PROVIDER_BASELINE=PASS
-REPLACEMENT_PROVIDER_STRUCTURE=PASS
-ACCOUNT_CURSOR_BASELINE=PASS
-DEVICE_SEQUENCE_BASELINE=PASS
-PROVIDER_PAYLOAD_BASELINE=EMPTY
-READ_ONLY_ROLLBACK=PASS
-PRIOR_CLIENT_HISTORY_SAME_PROVIDER_CORRELATION=UNPROVED
-ST08=PASSED_BOUNDED
-```
-
-The absence of provider payload rows is expected for this newly reconstructed
-and newly enrolled provider. It is not evidence that a Sync on this provider
-has failed, because none has yet been authorized.
-
-### C10-GCM02-S12-ST09 broad view
-
-ST09 should establish the first correlated same-Device transition on the clean
-replacement provider. It begins as investigation and preparation, not
-execution authority.
-
-Required evidence spine:
-
-```text
-fresh local sanitized preflight
-â†“
-exact expected member/sequence/cursor delta
-â†“
-one-action authorization packet
-â†“
-explicit human authorization
-â†“
-ordinary Sync exactly once
-â†“
-client + Render terminal capture
-â†“
-read-only GRM-NEON-11 postflight
-â†“
-before/after reconciliation
-```
-
-Expected ST09 outcomes must be calculated only after the local preflight. In
-particular, no entry should assume that the earlier screenshot-reported pending
-count, local Device ranks, or next sequence still describes the client at the
-moment of authorization.
-
-ST09 success would require:
-
-- the one authorized client action reaches one accepted terminal;
-- no implicit failed/notApplied recovery occurs;
-- the queue transition matches the frozen local member set;
-- provider submission/event counts and replay fingerprints match that member
-  set;
-- Device next expected sequence equals the accepted Device high-water plus one;
-- Account next cursor equals hosted high-water plus one;
-- acknowledgement state matches the client terminal and protocol contract;
-- the postflight ends in `ROLLBACK` and launcher `PASS`;
-- no second click or alternative action is used to repair ambiguous evidence.
-
-ST09 does not include second-Device convergence, production deployment,
-retention/rebootstrap acceptance, provider cleanup, credential rotation, or
-Cycle 11 UI/Analytics work.
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=OPEN_ACTIVE
-STEP12=OPEN_ACTIVE
-GATE_12_7=PASSED_CORRECTED_SINGLE_CLIENT_CONTROL_SCOPE
-DIAG_01=PASS_WINDOWS_CLIENT_UI_SCOPE
-ST08_EXACT_BINDING=PASS
-ST08_PROVIDER_BASELINE=PASS
-ST08=PASSED_BOUNDED
-ST09=NEXT_PREPARATION_ONLY
-ST09_LOCAL_PREFLIGHT=PASS_EMPTY_QUEUE
-ST09_TEST_EVENT_CREATION=NEXT_PREPARATION
-ST09_EXPECTED_DELTA=PENDING
-ST09_AUTHORIZATION_PACKET=PENDING
-ST09_MUTATING_ACTION=NOT_AUTHORIZED
-RETRY_OR_RECOVERY=NOT_AUTHORIZED
-ENROLLMENT_OR_MIGRATION=NOT_AUTHORIZED
-SECOND_DEVICE=NOT_AUTHORIZED
-GCM03=UNDEFINED_INACTIVE
-GCM04=UNDEFINED_INACTIVE
-CYCLE10_CLOSURE=BLOCKED_BY_REMAINING_GCM02_TRANSITION_AND_LATER_UNITS
-```
-
-## 2026-07-28 â€” C10-GCM02-S12-ST09 same-Device transition reconciliation
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04
-Role: Main Chat [M]
-Round or unit: C10-GCM02-S12-ST09
-Branch: grm-guarded-provisioning-20260727
-Inspected baseline: f54b9872daf37c26b33778a36f26f733c834401d
-Question: Did one explicitly authorized Windows ordinary Sync materialize the
-          exact frozen one-event transition on the replacement development
-          provider without local residue or cursor/sequence contradiction?
-Inputs: REC_DIAGNOSTICS Records 009-011; user-supplied Windows preflight and
-        post-Sync screenshots; GRM-HOST-01 sanitized health terminal;
-        GRM-NEON-11 sanitized provider postflight
-Writable surfaces: REC_DIAGNOSTICS append; mutable J prefix; append-only
-                   Legacy_Progress
-Prohibited actions: second Sync, Retry, recovery, Enroll, migration,
-                    provider mutation, Android/second Device, production claim
-Authority: explicit human-directed ST09 reconciliation
-Next sequence: C10-GCM02-S12-ST10 read-only server correlation and terminal
-               GCM02 classification
-```
-
-### Reconstructed assay sequence
-
-Record 010 froze a post-restart Windows state with one authenticated, enrolled
-Device, an empty local queue and next Device sequence 1. One controlled test
-purchase was then prepared. During that preparation, the Product page exposed
-two contained local defects:
-
-- Product lookup could rebuild the dropdown around a distinct Product object
-  and trigger Flutter's exactly-one-matching-item assertion;
-- one staged new-product reference could reach `resolveProduct` with an empty
-  required code, after which the purchase transaction rolled back without
-  creating a purchase or Sync event.
-
-The tester recovered through the existing-Product path and produced exactly one
-pending `purchase.registered` event at Device sequence 1. The queue was frozen
-at pending/uploading/failed/unknown `1/0/0/0`, with next sequence 2.
-
-The first hosted-connection check timed out before response during a cold
-Render start. `GRM-HOST-01` then returned live/ready HTTP 200, and the immediate
-client readiness check returned `hosted-connection-ready` in under three
-seconds. Main authorized exactly one ordinary Sync. No retry or alternative
-action was authorized.
-
-The Windows client reached `sync-completed`, drained the queue to `0/0/0/0`,
-retained next sequence 2, and displayed no actionable events. The newest
-lifecycle projection included accepted authentication/binding, upload lease,
-upload request, server acceptance, persisted upload result, download response
-and local application, acknowledgement, and terminal client success.
-
-The subsequent `GRM-NEON-11` postflight independently returned exactly one
-submission, one Sync event and one acknowledgement; Account cursor 2 after
-high-water 1; Device next expected sequence 2 after high-water 1; both
-consistency booleans true; one distinct sanitized replay lineage; `ROLLBACK`;
-and launcher `PASS`.
-
-### PRC-01 claims
-
-```text
-Claim: ST09 executed the exact authorized one-event same-Device transition
-Prior state: prepared and held after Record 010
-Evidence: one purchase.registered at Device sequence 1; exactly one ordinary
-          Sync; client sync-completed; queue 1 -> 0; provider 0/0/0 -> 1/1/1
-Evidence boundary: one Windows Device and one development provider lifetime
-Contradiction: none across client/local/provider evidence
-Semantic owner: C10-GCM02-S12-ST09 transition assay
-Target role: REC_DIAGNOSTICS observational record and J current recovery state
-Resulting state: ACCEPTED / PASS
-History disposition: append
-```
-
-```text
-Claim: cursor, sequence and acknowledgement state equal the frozen contract
-Prior state: provider cursor/sequence 1 after high-water 0; no acknowledgement
-Evidence: Account 2 after 1 consistent; Device 2 after 1 consistent;
-          acknowledgement count 1; local next sequence 2
-Evidence boundary: sanitized GRM-NEON-11 values plus Windows UI projection
-Contradiction: none
-Semantic owner: ST09 provider comparison
-Target role: J current recovery state
-Resulting state: ACCEPTED / PASS
-History disposition: append
-```
-
-```text
-Claim: the first cold hosted-connection timeout invalidates ST09
-Prior state: transport outcome unknown before readiness refresh
-Evidence: subsequent live/ready HTTP 200; client hosted readiness HTTP 200
-          before authorization; successful Sync and exact provider delta
-Evidence boundary: development Render cold-start behavior
-Contradiction: no later failure at the same operation boundary
-Semantic owner: operational readiness evidence
-Target role: future operational promotion candidate
-Resulting state: REJECTED AS ST09 FAILURE; RETAINED AS COLD-START SENSITIVITY
-History disposition: append
-```
-
-```text
-Claim: the Product-page defects or pre-auth local capture invalidate Sync
-Prior state: incidental member-preparation observations
-Evidence: failed resolution rolled back before event creation; later existing-
-          Product path created exactly one controlled member; provider delta
-          matches that member exactly
-Evidence boundary: local Windows workflow; no Cycle 11 account-boundary
-                   decision has been made
-Contradiction: none to the successful Sync transition
-Semantic owner: future UI/account-boundary investigation
-Target role: Cycle 11 candidate backlog after Cycle 10 closure
-Resulting state: DEFERRED NON-BLOCKING OBSERVATIONS
-History disposition: append; do not silently convert offline-first capture
-                     into an authentication requirement
-```
-
-```text
-Claim: GCM02 is fully closed by ST09
-Prior state: GCM02 requires trustworthy client, server and provider terminal
-Evidence: client and provider evidence agree; matching sanitized Render request
-          lifecycle has not yet been captured into the durable packet
-Evidence boundary: server correlation remains missing, not contradicted
-Contradiction: controlling Gate-12.10 contract requires server lifecycle
-Semantic owner: C10-GCM02 terminal reconciliation
-Target role: C10-GCM02-S12-ST10
-Resulting state: NOT YET; ONE READ-ONLY TERMINAL STEP REMAINS
-History disposition: append
-```
-
-### ST09 conclusion
-
-```text
-ST09_CONTROLLED_MEMBER=ONE_PURCHASE_REGISTERED_SEQUENCE_1
-ST09_AUTHORIZATION=EXACTLY_ONE_ORDINARY_SYNC
-ST09_CLIENT_TERMINAL=SYNC_COMPLETED
-ST09_LOCAL_QUEUE=PASS_1_TO_0
-ST09_PROVIDER_DELTA=PASS_0_0_0_TO_1_1_1
-ST09_ACCOUNT_CURSOR=PASS_1_AFTER_0_TO_2_AFTER_1
-ST09_DEVICE_SEQUENCE=PASS_1_AFTER_0_TO_2_AFTER_1
-ST09_ACKNOWLEDGEMENT=PASS_0_TO_1
-ST09_POSTFLIGHT=ROLLBACK_PASS
-ST09=PASSED_BOUNDED
-```
-
-### ST10 and GCM02 closure boundary
-
-ST10 does not rerun the assay. It inspects the already existing Render logs
-around `2026-07-28T20:25:55Z`, searches for only the sanitized operation
-fingerprint `d1cb6cb600a1` or client child-correlation fingerprint
-`6a53d7090d68`, and records:
-
-- request ingress and HTTP terminal;
-- authenticated Account/Device authorization result;
-- provider transaction/application result;
-- response/acknowledgement lifecycle;
-- absence or presence of exception, rejected/notApplied, duplicate-equivalent,
-  timeout or unknown classification.
-
-If those logs corroborate the client/provider packet, Gate 12.10 may classify
-the transition as expected success and GCM02 may close. If the matching logs
-are unavailable, contradictory, ambiguous or secret-bearing, stop without
-another Sync and retain GCM02 as evidence-blocked.
-
-Android enrollment and bounded inter-device download/convergence begin only
-after this classification, under GCM03.
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=OPEN_ONE_READ_ONLY_TERMINAL_STEP
-ST08=PASSED_BOUNDED
-ST09=PASSED_BOUNDED
-ST10=NEXT_READ_ONLY_SERVER_CORRELATION_AND_GATE_12_10_CLASSIFICATION
-NEW_SYNC_OR_RETRY=NOT_AUTHORIZED
-SECOND_DEVICE=HELD_FOR_GCM03
-GCM03=DEFINED_PROVISIONALLY_NOT_ACTIVE
-GCM04=UNDEFINED_INACTIVE
-```
-
-## 2026-07-28 â€” C10-GCM02-S12-ST10 Render correlation and terminal closure
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04
-Role: Main Chat [M]
-Round or unit: C10-GCM02-S12-ST10
-Branch: grm-guarded-provisioning-20260727
-Inspected baseline: f54b9872daf37c26b33778a36f26f733c834401d
-Question: Do the sanitized Render logs correlate the already accepted ST09
-          client/provider transition to authenticated HTTP success terminals
-          for upload, download and acknowledgement?
-Inputs: REC_DIAGNOSTICS Records 009-012; user-supplied Render JSON interval;
-        ST09 Windows terminal; GRM-NEON-11 provider postflight
-Writable surfaces: REC_DIAGNOSTICS append; mutable J prefix; append-only
-                   Legacy_Progress
-Prohibited actions: new Sync, Retry, recovery, Enroll, migration, provider
-                    mutation, Android/second Device, production claim
-Authority: explicit human-directed ST10 evidence submission and reconciliation
-Next sequence: GCM03 definition and read-only two-Device preflight
-```
-
-### Correlated server sequence
-
-The sanitized Render interval contains three children with the same ST09
-operation fingerprint:
-
-```text
-upload-submission
-  POST /v1/sync/submissions
-  request received
-  validation started
-  authentication accepted
-  response completed / HTTP 200 / request-completed
-
-download-events
-  GET /v1/sync/events
-  request received
-  validation started
-  authentication accepted
-  response completed / HTTP 200 / request-completed
-
-acknowledgement
-  POST /v1/sync/acknowledgements
-  request received
-  validation started
-  authentication accepted
-  response completed / HTTP 200 / request-completed
-```
-
-No matching request is rejected, failed, ambiguous, timed out, classified
-`notApplied`, completed with HTTP status `>=400`, or assigned an `MKS-*`
-server result. The final unrelated readiness request is cut off by the supplied
-log interval after ingress/validation; it is not part of the Sync operation and
-does not contradict the three completed children.
-
-### PRC-01 claims
-
-```text
-Claim: ST10 correlates the accepted ST09 operation across the Render boundary
-Prior state: client and provider transition passed; server lifecycle pending
-Evidence: one matching operation fingerprint on upload, download and
-          acknowledgement; each child has ingress, validation, accepted
-          authentication and HTTP 200 request-completed terminal
-Evidence boundary: sanitized Render interval for one development Sync
-Contradiction: none
-Semantic owner: C10-GCM02-S12-ST10 server correlation
-Target role: REC_DIAGNOSTICS observational record and J current recovery state
-Resulting state: ACCEPTED / PASS
-History disposition: append
-```
-
-```text
-Claim: Gate 12.10 may classify the ST09 transition as expected success
-Prior state: held for matching server lifecycle
-Evidence: client sync-completed and queue drained; all three server children
-          authenticated and completed HTTP 200; provider changed exactly
-          0/0/0 -> 1/1/1 with consistent cursor/sequence and ROLLBACK postflight
-Evidence boundary: one Account, one Windows Device, development provider
-Contradiction: none
-Semantic owner: Gate 12.10 terminal classification
-Target role: J current recovery state
-Resulting state: ACCEPTED / PASS EXPECTED SUCCESS
-History disposition: append
-```
-
-```text
-Claim: GCM02 closes
-Prior state: open for one read-only terminal step
-Evidence: exact binding and clean baseline passed in ST08; controlled
-          same-Device transition passed in ST09; matching three-child server
-          lifecycle passed in ST10
-Evidence boundary: hosted authenticated same-Device development scope;
-                   excludes second Device and production readiness
-Contradiction: none
-Semantic owner: C10 GCM02 closure
-Target role: J current recovery state and later permanent-domain promotion
-Resulting state: ACCEPTED / CLOSED BOUNDED
-History disposition: append
-```
-
-```text
-Claim: the newly reported unsynchronized purchase is already a controlled
-       GCM03 member
-Prior state: human observation after ST09 closure
-Evidence: report that one purchase exists and has not been synchronized
-Evidence boundary: no fresh Diagnostics member/sequence snapshot yet
-Contradiction: none, but queue identity and sequence are unproved
-Semantic owner: future GCM03 preflight
-Target role: GCM03 candidate member set
-Resulting state: PROVISIONAL; PRESERVE WITHOUT SYNC
-History disposition: append
-```
-
-### ST10 and GCM02 conclusion
-
-```text
-ST10_OPERATION_CORRELATION=PASS
-ST10_UPLOAD_SUBMISSION=AUTHENTICATED_HTTP_200_REQUEST_COMPLETED
-ST10_DOWNLOAD_EVENTS=AUTHENTICATED_HTTP_200_REQUEST_COMPLETED
-ST10_ACKNOWLEDGEMENT=AUTHENTICATED_HTTP_200_REQUEST_COMPLETED
-ST10_FAILURE_OR_AMBIGUITY=ABSENT
-ST10=PASSED_READ_ONLY
-GATE_12_10=PASS_EXPECTED_SUCCESS
-STEP12=CLOSED_THROUGH_GATE_12_10
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-```
-
-### Next boundary
-
-GCM03 may now be defined around Android enrollment and bounded inter-device
-convergence. Its first action remains read-only: freeze the new Windows pending
-member and inspect the Android client/device baseline before authorizing
-enrollment or Sync. The existing unsynchronized purchase must not be synced,
-recreated or discarded before that preflight.
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-STEP12=CLOSED_THROUGH_GATE_12_10
-ST08=PASSED_BOUNDED
-ST09=PASSED_BOUNDED
-ST10=PASSED_READ_ONLY
-GATE_12_10=PASS_EXPECTED_SUCCESS
-GCM03=READY_FOR_DEFINITION_AND_READ_ONLY_PREFLIGHT
-NEW_SYNC_OR_RETRY=NOT_AUTHORIZED
-ANDROID_ENROLLMENT=NOT_AUTHORIZED
-SECOND_DEVICE_CONVERGENCE=UNPROVED
-GCM04=UNDEFINED_INACTIVE
-```
-
-## 2026-07-28 â€” GCM02 final closure handoff and GCM03 Windows preflight
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04
-Role: Main Chat [M]
-Round or unit: C10-GCM02-CLOSURE / C10-GCM03-ST01
-Branch: grm-guarded-provisioning-20260727
-Inspected baseline: f54b9872daf37c26b33778a36f26f733c834401d
-Question: Is the bounded GCM02 closure packet complete, and does the new
-          Windows local event provide a frozen candidate member from which
-          Android readiness, enrollment and inter-device convergence may be
-          prepared under GCM03?
-Inputs: REC_DIAGNOSTICS Records 009-013; accepted ST08-ST10 client, Render and
-        GRM-NEON-11 evidence; user-supplied post-GCM02 Windows Diagnostics
-Writable surfaces: REC_DIAGNOSTICS append; mutable J recovery prefix;
-                   append-only Legacy_Progress
-Prohibited actions: Windows or Android Sync, Android enrollment, Retry,
-                    recovery, migration, provider mutation, production claim
-Authority: explicit human-directed final GCM02 reconciliation and GCM03 plan
-Next sequence: C10-GCM03 Android readiness and pre-enrollment preparation
-```
-
-### PRC-01 claims
-
-```text
-Claim: the GCM02 closure packet is final at its bounded scope
-Prior state: ST10 and Gate 12.10 passed; publication still pending
-Evidence: exact binding and clean baseline in ST08; one controlled same-Device
-          transition in ST09; correlated authenticated HTTP 200 upload,
-          download and acknowledgement lifecycles in ST10; exact provider
-          0/0/0 -> 1/1/1 delta and consistent cursor/sequence postflight
-Evidence boundary: one Account, one Windows Device, development hosted provider
-Contradiction: none
-Semantic owner: C10 GCM02 closure
-Target role: REC_DIAGNOSTICS and J closure handoff; later permanent promotion
-Resulting state: ACCEPTED / CLOSED BOUNDED
-History disposition: append
-```
-
-```text
-Claim: the new Windows purchase is a controlled GCM03 candidate member
-Prior state: provisionally reported but not frozen
-Evidence: Record 013 shows one pending purchase.registered event at Windows
-          Device sequence 2, next sequence 3, queue 1/0/0/0, same current
-          enrolled Device
-Evidence boundary: local Windows Diagnostics; no provider or Android action
-Contradiction: none
-Semantic owner: C10-GCM03-ST01 Windows candidate preflight
-Target role: GCM03 member set and authorization preparation
-Resulting state: ACCEPTED / PREFLIGHT PASS
-History disposition: append
-```
-
-```text
-Claim: Android enrollment or inter-device Sync is authorized by this plan
-Prior state: held for separate GCM03 preparation
-Evidence: Android environment, fresh local state, same-Account authentication,
-          enrollment delta and two-Device provider baseline remain unproved
-Evidence boundary: planning only
-Contradiction: mutation would skip required evidence and authorization gates
-Semantic owner: future GCM03 authorization packets
-Target role: human/Main action boundary
-Resulting state: REJECTED; PREPARATION ONLY
-History disposition: append
-```
-
-### GCM03 staged direction
-
-The controlling mutable prefix now holds the complete fourteen-item GCM03 TODO
-sequence. Android checks are explicitly positioned before authentication and
-enrollment:
-
-```text
-published closure checkout alignment
-read-only provider/host freshness as required
-GRM-FLUTTER-AND build/install/run
-Android local pre-enrollment Diagnostics
-same-Account Auth0 authentication
-exact one-click enrollment packet and authorization
-Android enrollment exactly once
-two-Device provider baseline
-Windows-to-Android controlled convergence
-Android-to-Windows controlled reverse convergence
-idempotent repeat
-client/Render/provider reconciliation
-```
-
-Each mutating step remains separately held. Record 013's Windows event must
-remain pending and unchanged through the Android readiness and enrollment
-preflight.
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-GCM02_FINAL_RECONCILIATION=READY_FOR_PUBLICATION
-GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
-GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
-GCM03_WINDOWS_NEXT_DEVICE_SEQUENCE=3
-GCM03=ACTIVE_PREPARATION_ANDROID_CHECKS_NEXT
-ANDROID_ENROLLMENT=NOT_AUTHORIZED
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-SECOND_DEVICE_CONVERGENCE=UNPROVED
-GCM04=UNDEFINED_INACTIVE
-```
-
-## 2026-07-28 â€” ST04-R1 Android GRM cascade contradiction
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04
-Role: Main Chat [M]
-Round or unit: C10-GCM03-ST04-R1 / C10-GCM03-ST04-R1-C1
-Branch: grm-guarded-provisioning-20260727
-Inspected baseline: 231a76281d0016ee47dd719d3ddc24d422b18c35
-Inputs: synchronized D/E/F; replacement G/H/I; commit diff; exact
-        GRM-FLUTTER-AND -> I_SCRIPTS -> GS-FLUTTER-AND cascade
-Writable surfaces: mutable J prefix; append-only Legacy_Progress; synchronized
-                   replacement D/E/F
-Prohibited actions: live Android procedure, authentication, enrollment, Sync,
-                    Retry, recovery, provider mutation, commit or push
-Authority: explicit human-directed reconciliation and downstream-code solution
-Next sequence: bounded Codex correction C10-GCM03-ST04-R1-C1
-```
-
-### Reconciliation
-
-The Flutter portion of ST04-R1 is accepted at its local evidence boundary:
-one shared Closure page, compact/wide tests, safe public provenance, a locally
-built debug APK with an explicit define, and no protocol/provider expansion.
-
-The Android procedure terminal is contradicted. Commit `231a762` placed
-`$Branch`, `$InspectedHead`, `$BuildProvenance`, containment and reporting
-producers in `GS-FLUTTER-WIN`, while `GS-FLUTTER-AND` owns the consumers.
-Because `I_SCRIPTS.ps1` extracts only the selected fence and executes it under
-strict mode, the Android procedure fails at its first undefined `$Branch`
-read; `$BuildProvenance` is independently undefined later.
-
-Parsing the fence was valid syntax evidence but not executable data-flow
-evidence. The correction therefore restores the Windows fence to `db17f47`,
-moves robust procedure-local producers into the Android fence before first
-use, and adds exact-fence, AST, producer-before-consumer and strict-mode-prefix
-validation.
-
-### Terminal
-
-```text
-C10_GCM03_ST04_R1_FLUTTER_SOURCE=ACCEPTED_LOCAL_VALIDATION
-C10_GCM03_ST04_R1_ANDROID_GRM=CONTRADICTED_VARIABLE_CASCADE
-C10_GCM03_ST04_R1_C1=ACTIVE
-ST04=BLOCKED_PENDING_CORRECTION_AND_RECONCILIATION
-LIVE_ANDROID_RETEST=NOT_AUTHORIZED_YET
-GCM03_ST05_AND_LATER=HELD
-ANDROID_ENROLLMENT=NOT_AUTHORIZED
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-```
-
-## 2026-07-28 â€” C10-GCM03 ST04/ST05 Android human-evidence reconciliation
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04
-Role: Main Chat [M]
-Round or unit: C10-GCM03-ST04-R1-C3 / ST04 / ST05
-Branch: grm-guarded-provisioning-20260727
-Inspected Android artifact lineage: 65c9ab56079c7a9866910db9037c28045efd1d34
-Inputs: user-supplied C3 Codex terminal; ten Android screenshots divided into
-        five before and five after one Diagnostics press; exact current
-        NativeClosurePage Diagnostics and enrollment paths; Record 013
-Writable surfaces: REC_DIAGNOSTICS append; mutable J recovery prefix
-Prohibited actions: Enroll, Windows or Android Sync, Retry, recovery, logout,
-                    clear history, provider mutation, secret capture
-Authority: explicit human-directed ST04/ST05 reconciliation
-Next sequence: C10-GCM03-ST06 read-only enrollment preflight
-```
-
-### Reconciled evidence
-
-The C3 Codex result closes the static/host validation gap left by C2:
-
-```text
-DEVSEL_CLASSIFICATION=DEVSEL-01
-ACTUAL_GS_FLUTTER_AND_FIXTURES=PASS
-ANDROID_DEVICE_ENUMERATION=CORRECTED
-NON_ANDROID_ID_REACHES_ADB=NO
-ADB_SERIAL_CARDINALITY=EXACTLY_ONE
-ANDROID_SIGN_IN_CLASSIFICATION=AUTHAND-06
-ST04=BLOCKED_PENDING_HUMAN_RETEST
-```
-
-The human rerun supplies the evidence Codex intentionally could not:
-
-- `DEV-GRM` is the visible Android target;
-- the installed Closure surface exposes build provenance `65c9ab56079c`;
-- the shared consolidated page is usable on the compact Android viewport;
-- one distinct Android local-only Device exists at local next sequence 1;
-- the Android queue is `0/0/0/0`;
-- no local Closure attempt, diagnostic lifecycle or actionable event exists;
-- ordinary Sign in returns an authenticated client projection;
-- enrollment remains required and no enrollment or Sync occurred;
-- one Diagnostics press returns `diagnostics-ready` without changing
-  authentication, enrollment, queue, Device sequence, attempts or history.
-
-This is Android-local evidence. The page reads the Android app's own
-Drift/SQLite store and current native authentication session. It does not read
-the Windows SQLite file. Because the canonical Android installer preserves
-application data, the record does not claim that the complete Android database
-was created by this exact installation. The clean hosted/sync projection is
-accepted; complete storage freshness remains unproved.
-
-### PRC-01 claims
-
-```text
-Claim: C10-GCM03-ST04-R1-C3 corrected and validated the Android target boundary
-Prior state: selector repair materialized; human runtime retest pending
-Evidence: actual-fence Windows PowerShell 5.1 fixtures; captured ADB vectors;
-          no non-Android ID; exactly one scalar ADB serial; matching-provenance
-          human launch on DEV-GRM
-Evidence boundary: static/host tests plus one Android build/install/launch
-Contradiction: none
-Semantic owner: Android GRM execution boundary
-Target role: ST04 terminal
-Resulting state: VALIDATED / PASSED BOUNDED
-History disposition: append; supersede prior ST04 blocker
-```
-
-```text
-Claim: the Android pre-enrollment state is safe to freeze
-Prior state: required fresh local observation
-Evidence: distinct local-only Device fingerprint, next 1, queue 0/0/0/0,
-          enrollment-required, no attempts/diagnostics/actionable events
-Evidence boundary: Android local client projection only
-Contradiction: installer preserves app data, so whole-database freshness is
-               not proved
-Semantic owner: C10-GCM03-ST04 pre-enrollment packet
-Target role: ST04 runtime closure and ST06 input
-Resulting state: ACCEPTED / PASSED WITH STORAGE-FRESHNESS QUALIFICATION
-History disposition: append
-```
-
-```text
-Claim: C10-GCM03-ST05 proves Android authentication
-Prior state: AUTHAND-06 pending human observation
-Evidence: ordinary native Sign in followed by visible authenticated projection
-Evidence boundary: client session; screenshots expose no Account identifier
-Contradiction: none for authentication; exact same-Account binding remains
-               outside screenshot evidence
-Semantic owner: C10-GCM03-ST05 authentication gate
-Target role: ST05 terminal and ST06 input
-Resulting state: PASSED CLIENT SCOPE; SAME-ACCOUNT EXACT BINDING OPEN
-History disposition: append
-```
-
-```text
-Claim: the persistent MKS-UI-003 card is an authentication or provider failure
-Prior state: runtime symptom unclassified
-Evidence: source fallback creates MKS-UI-003 when no recent diagnostic event
-          exists; Diagnostics changes the page terminal to diagnostics-ready
-          while provider contact/local mutation remain not-started/none
-Evidence boundary: client presentation and before/after screenshots
-Contradiction: card wording is misleading for a successful local snapshot
-Semantic owner: Closure empty-history current-action presentation
-Target role: non-blocking residual defect and enrollment evidence warning
-Resulting state: REJECTED AS AUTH/PROVIDER FAILURE; OBSERVED PRESENTATION DEFECT
-History disposition: append; defer source correction outside this assay
-```
-
-```text
-Claim: this reconciliation authorizes Android enrollment
-Prior state: held for an exact one-click packet
-Evidence: a fresh read-only hosted/provider baseline and warm readiness result
-          have not yet been reconciled
-Evidence boundary: no provider preflight after the Android observation
-Contradiction: immediate Enroll would skip ST06's expected-delta freeze
-Semantic owner: C10-GCM03-ST06 authorization packet
-Target role: next human action boundary
-Resulting state: NOT YET AUTHORIZED; READ-ONLY PREFLIGHT NEXT
-History disposition: append
-```
-
-### ST06 enrollment packet under preparation
-
-The pre-enrollment invariants already frozen are:
-
-```text
-Windows candidate member:
-  purchase.registered
-  local state pending
-  Device sequence 2
-  Windows next local sequence 3
-  queue 1/0/0/0
-
-Android:
-  authenticated at client scope
-  enrollment-required
-  distinct local-only Device
-  local next sequence 1
-  queue 0/0/0/0
-  no attempts or diagnostic events
-
-Accepted provider payload baseline from GCM02:
-  one Account
-  one active Windows Device
-  submissions/events/acknowledgements 1/1/1
-  Account next cursor 2 after high-water 1
-  Windows provider next expected sequence 2
-```
-
-Before authorization, ST06 must reconfirm:
-
-1. one warm `Check hosted connection` result with no enrollment or Sync;
-2. one read-only `GRM-NEON-11` baseline ending in explicit `ROLLBACK` and
-   `PASS`, still showing the expected one-Device GCM02 state;
-3. no new provider payload/cursor/acknowledgement delta;
-4. no change to either local queue.
-
-Only then may Main authorize one Android Enroll press. The expected enrollment
-delta is:
-
-```text
-accounts: unchanged
-external identities and active membership: unchanged
-active devices: 1 -> 2
-active device enrollments: 1 -> 2
-completed enrollment requests: +1 for the Android installation
-device-enrolled security events: +1
-Android provider next expected sequence: 1
-submissions: unchanged
-sync events: unchanged
-device acknowledgements: unchanged
-Account cursor/high-water: unchanged
-Windows provider next expected sequence: unchanged at 2
-Windows local pending member: unchanged
-```
-
-After the one click, any terminal other than a clearly applied/restart-required
-result is a stop. Do not click Enroll a second time. Preserve the page terminal,
-then follow the required restart and post-restart Sign in/Diagnostics packet.
-The MKS-UI-003 fallback card must not be used to decide whether enrollment
-should be repeated.
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
-GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
-C10_GCM03_ST04_R1_C3=VALIDATED
-C10_GCM03_ST04=PASSED_BOUNDED_ANDROID_RUNTIME_AND_LOCAL_PREFLIGHT
-C10_GCM03_ST05=PASSED_CLIENT_AUTHENTICATION_SCOPE
-ANDROID_SAME_ACCOUNT_EXACT_BINDING=OPEN
-ANDROID_DIAGNOSTICS=PASS_READ_ONLY_REFRESH
-MKS_UI_003_EMPTY_HISTORY_PRESENTATION=OBSERVED_NON_BLOCKING
-ANDROID_STORAGE_FRESHNESS=UNPROVED_PRESERVED_DATA_POSSIBLE
-C10_GCM03_ST06=ACTIVE_READ_ONLY_PREFLIGHT
-ANDROID_ENROLLMENT=NOT_AUTHORIZED_YET
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-SECOND_DEVICE_CONVERGENCE=UNPROVED
-GCM04=UNDEFINED_INACTIVE
-```
-
-## 2026-07-28 â€” C10-GCM03 ST06 Android hosted-readiness reconciliation
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04
-Role: Main Chat [M]
-Round or unit: C10-GCM03-ST06 read-only hosted-readiness preflight
-Branch: grm-guarded-provisioning-20260727
-Reconciliation baseline: 65c9ab56079c7a9866910db9037c28045efd1d34
-Inputs: one user-supplied Recent Closure attempts screenshot; Record 014
-Writable surfaces: REC_DIAGNOSTICS append; mutable J recovery prefix;
-                   append-only Legacy_Progress
-Prohibited actions: Android Enroll, Windows or Android Sync, Retry, recovery,
-                    logout, history clearing, provider mutation, secret capture
-Authority: explicit human-directed ST06 evidence registration and publication
-Next sequence: read-only GRM-NEON-11 pre-enrollment provider baseline
-```
-
-### Reconciled evidence
-
-The operator pressed `Check hosted connection` twice because the first
-cold-start attempt timed out before receiving a response. The Closure history
-preserves two distinct attempts:
-
-```text
-earlier #b6652cab
-  hosted-connection-check
-  timeout-before-response
-  unknown / transport-started
-  no applicable aggregate HTTP status or response headers
-  latency approximately 30 seconds
-
-later #03748b75
-  hosted-connection-check
-  hosted-connection-ready
-  completed / response-parsed
-  aggregate HTTP 200
-  aggregate response headers received
-  latency under 3 seconds
-```
-
-Different attempt and correlation fingerprints prove that the UI did not
-collapse the two presses into one row. Only the later attempt is a successful
-readiness result. The earlier unknown timeout remains valid historical
-transport evidence and must not be silently rewritten as success.
-
-The later ready terminal satisfies the bounded client hosted-readiness
-prerequisite. It proves neither ordinary Sync nor enrollment; the UI itself
-states `ready-does-not-prove-sync`. No third readiness press is required.
-
-### PRC-01 claims
-
-```text
-Claim: pressing the hosted-readiness control twice produced two successes
-Prior state: one warm hosted-readiness result required before enrollment
-Evidence: two distinct attempt rows; only the later row is completed,
-          response-parsed and HTTP 200
-Evidence boundary: Android client attempt history screenshot
-Contradiction: earlier row remains timeout-before-response with unknown outcome
-Semantic owner: ST06 client hosted-readiness preflight
-Target role: readiness terminal and cold-start operational history
-Resulting state: REJECTED AS TWO SUCCESSES; ONE READY PLUS ONE PRESERVED TIMEOUT
-History disposition: append
-```
-
-```text
-Claim: the ST06 client hosted-readiness prerequisite is satisfied
-Prior state: outstanding after Record 014
-Evidence: later hosted-connection-ready attempt completed with response parsed,
-          aggregate HTTP 200 and headers received in under three seconds
-Evidence boundary: readiness only; no child Sync protocol or provider delta
-Contradiction: cold attempt timed out before response
-Semantic owner: C10-GCM03-ST06
-Target role: enrollment authorization preflight
-Resulting state: PASSED AFTER COLD-START WARMUP
-History disposition: append; preserve cold timeout as sensitivity evidence
-```
-
-```text
-Claim: Android enrollment is now authorized
-Prior state: held for readiness plus fresh provider baseline
-Evidence: readiness is satisfied; GRM-NEON-11 pre-enrollment inventory has not
-          yet been supplied for this packet
-Evidence boundary: no fresh provider inventory in Record 015
-Contradiction: authorizing Enroll now would lose the exact provider delta
-Semantic owner: ST06 enrollment authorization packet
-Target role: next Main decision
-Resulting state: NOT AUTHORIZED; READ-ONLY PROVIDER BASELINE NEXT
-History disposition: append
-```
-
-### Current terminal
-
-```text
-C10_GCM03_ST06_CLIENT_HOSTED_READINESS=PASS_AFTER_COLD_START_WARMUP
-HOSTED_CONNECTION_HUMAN_ACTIVATIONS=2
-HOSTED_CONNECTION_ATTEMPTS_RECORDED=2
-HOSTED_CONNECTION_READY_RESULTS=1
-HOSTED_CONNECTION_TIMEOUT_BEFORE_RESPONSE=1_PRESERVED_UNKNOWN
-READY_PROVES_SYNC=NO
-C10_GCM03_ST06=ACTIVE_READ_ONLY_PROVIDER_BASELINE
-ANDROID_ENROLLMENT=NOT_AUTHORIZED_YET
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-SECOND_DEVICE_CONVERGENCE=UNPROVED
-```
-
-## 2026-07-28 â€” GCM03 S07 post-restart Android enrollment reconciliation
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04
-Role: Main Chat [M]
-Round or unit: C10-GCM03-S07 inner steps 1-5
-Branch: grm-guarded-provisioning-20260727
-Reconciliation baseline: 65c9ab56079c7a9866910db9037c28045efd1d34
-Inputs: REC_DIAGNOSTICS Records 014-016; user-supplied post-restart Android
-        Closure screenshots; inspected runtime-composition source
-Writable surfaces: REC_DIAGNOSTICS append; mutable J recovery prefix;
-                   append-only Legacy_Progress
-Prohibited actions: Android purchase, Windows or Android Sync, repeated
-                    enrollment, Retry, recovery, provider mutation
-Authority: explicit human-directed sanitized addition and check preparation
-Next sequence: GRM-AUTH-02 followed by post-enrollment GRM-NEON-11
-```
-
-### PRC-01 claims
-
-```text
-Claim: Android enrollment persisted through the required restart
-Prior state: enrollment accepted with hosted-restart-required; durability open
-Evidence: post-restart client projects authenticated, device-enrolled, queue
-          0/0/0/0, next Device sequence 1 and no actionable event
-Evidence boundary: Android client projection; exact hosted authorization open
-Contradiction: none
-Semantic owner: C10-GCM03-S07 post-restart client verification
-Target role: Record 016 and J current recovery state
-Resulting state: ACCEPTED / PASS BOUNDED AT CLIENT SCOPE
-History disposition: append
-```
-
-```text
-Claim: the changed Device fingerprint means enrollment was lost
-Prior state: pre-enrollment local-only fingerprint #2b75367e
-Evidence: post-restart fingerprint #a4d906aa is device-enrolled; source loads
-          hostedBinding.serverDeviceId after restart instead of the provisional
-          local Device identity
-Evidence boundary: source/UI relationship; exact hosted member still open
-Contradiction: none
-Semantic owner: local-to-hosted Device identity handoff
-Target role: S07 interpretation and AUTH-02/NEON-11 preflight
-Resulting state: REJECTED AS LOSS; EXPECTED HANDOFF SUPPORTED
-History disposition: append
-```
-
-```text
-Claim: an Android purchase may now be created
-Prior state: Android queue 0/0/0/0 and next sequence 1 frozen for exact
-             post-enrollment checks; Windows sequence-2 member already frozen
-Evidence: GRM-AUTH-02 exact binding and GRM-NEON-11 two-Device inventory have
-          not yet been supplied
-Evidence boundary: action authorization
-Contradiction: purchase creation would alter queue and sequence before the
-               clean baseline is reconciled and mix the reverse-direction
-               member into the Windows-to-Android assay
-Semantic owner: future GCM03 reverse-direction authorization
-Target role: human/Main action boundary
-Resulting state: REJECTED / HELD
-History disposition: append
-```
-
-### Current terminal
-
-```text
-C10_GCM03_S07_INNER_STEPS_1_TO_5=PASS_BOUNDED_CLIENT_SCOPE
-ANDROID_DURABLE_ENROLLMENT=PASS_CLIENT_SCOPE
-ANDROID_DEVICE_FINGERPRINT_HANDOFF=EXPECTED_LOCAL_TO_HOSTED
-EXACT_HOSTED_ANDROID_BINDING=OPEN_GRM_AUTH_02
-TWO_DEVICE_PROVIDER_BASELINE=OPEN_GRM_NEON_11
-C10_GCM03_S08=HELD_PENDING_READ_ONLY_CHECKS
-ANDROID_PURCHASE=HELD
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-```
-
-## 2026-07-29 â€” GCM03 S08 exact binding and two-Device provider reconciliation
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04
-Role: Main Chat [M]
-Round or unit: C10-GCM03-S08 read-only exact binding/provider baseline
-Branch: grm-guarded-provisioning-20260727
-Publication parent: e37f03b66e594a8dd54bbec0de94a42afb3fcecd
-Inputs: REC_DIAGNOSTICS Records 014-016; operator-supplied masked-session
-        GS-AUTH-02 terminal; operator-supplied GS-NEON-11 provider-baseline
-        terminal; launcher branch-alias caveat
-Writable surfaces: REC_DIAGNOSTICS append; mutable J recovery prefix;
-                   append-only Legacy_Progress
-Prohibited actions: Windows or Android Sync, Android purchase, repeated
-                    enrollment, Retry, recovery, migration, revocation,
-                    provider repair, secret persistence
-Authority: explicit human-directed sanitized reconciliation and publication
-Next sequence: GCM03.9 Windows-to-Android convergence authorization packet
-```
-
-### PRC-01 claims
-
-```text
-Claim: the post-restart Android token and hosted Device are exactly bound
-Prior state: authenticated/device-enrolled client projection; exact hosted
-             authorization open
-Evidence: issuer/audience/algorithm/time checks true; subject present; identity
-          and Device endpoints HTTP 200; TokenAccepted true;
-          ExactDeviceBinding true; exact-binding-confirmed
-Evidence boundary: fresh masked local token/UUID prompts and hosted
-                   authorization endpoints; no secret retained
-Contradiction: none
-Semantic owner: C10-GCM03-S08 exact hosted binding
-Target role: Record 017 and J current recovery state
-Resulting state: VALIDATED / PASS EXACT BINDING
-History disposition: append; supersede S07 exact-binding-open terminal
-```
-
-```text
-Claim: the post-enrollment provider baseline is clean and internally
-       consistent
-Prior state: Android enrollment durable at client scope; two-Device provider
-             inventory open
-Evidence: fixture match/guard 1/1; one Account; two Device rows; payload
-          1/1/1; cursor 2 after high-water 1; exact Android active at sequence
-          1 after high-water 0; exact Android submissions/events 0/0; explicit
-          BEGIN/ROLLBACK and PASS
-Evidence boundary: development database, selected exact Device and
-                   transactionally read-only inventory
-Contradiction: launcher cannot independently prove the human-readable branch
-               alias
-Semantic owner: C10-GCM03-S08 two-Device baseline
-Target role: Record 017 and GCM03.9 input
-Resulting state: VALIDATED / PASS WITH BRANCH-ALIAS PROVENANCE CEILING
-History disposition: append
-```
-
-```text
-Claim: S08 proves or authorizes inter-device convergence
-Prior state: both Sync actions held
-Evidence: no Windows or Android Sync occurred; exact Android owns no provider
-          submission or event; frozen Windows candidate remains unapplied to
-          Android
-Evidence boundary: read-only exact binding and inventory only
-Contradiction: convergence requires separately authorized upload/download and
-               cross-client apply evidence
-Semantic owner: GCM03.9/GCM03.10 action boundary
-Target role: next Main authorization packet
-Resulting state: REJECTED; CONVERGENCE UNPROVED AND BOTH SYNC ACTIONS HELD
-History disposition: append
-```
-
-### Next TODOs
-
-1. Reconfirm by local Diagnostics only that the Windows sequence-2 candidate
-   remains the sole pending upload and Android remains `0/0/0/0`, next 1.
-2. Inspect the implemented ordinary-Sync protocol and calculate exact
-   per-phase provider and local deltas; do not infer acknowledgement or cursor
-   increments.
-3. Freeze one Windows ordinary-Sync authorization with explicit stop
-   conditions and required client/Render/provider evidence.
-4. Reconcile that Windows phase before considering one Android ordinary-Sync
-   authorization.
-5. Prove Android download/application and matching purchase identity/content
-   without duplication or Android-local history loss.
-6. Keep the reverse Android purchase held until the first direction passes
-   and the catalogue dropdown identity defect is corrected and validated.
-
-### Current terminal
-
-```text
-C10_GCM03_S08=PASSED_READ_ONLY_EXACT_BINDING_TWO_DEVICE_BASELINE
-GCM03=ACTIVE_WINDOWS_TO_ANDROID_AUTHORIZATION_PACKET
-SECOND_DEVICE_CONVERGENCE=UNPROVED
-ANDROID_PURCHASE=HELD
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-GCM04=UNDEFINED_INACTIVE
-```
-
-## 2026-07-29 â€” GCM03 S09/S10 Android failed-apply containment, R01 conclusion and R02 activation
-
-### Sequence envelope
-
-```text
-Sequence: FLX-PRM-04 reconciliation -> FLX-ORD-01 materialization
-Role: Main Chat [M]
-Round or unit: C10-GCM03-S09/S10; C10-GCM02-S09-R01/R02 continuity labels
-GitHub branch: grm-guarded-provisioning-20260727
-Inspected remote HEAD: 716ae7f082714944b6b51042d98a56e685978c38
-Inputs: S09 hosted two-event state; one Android ordinary-Sync failure;
-        GS-SQLITE-05/06/07 frozen-snapshot evidence; Android History and
-        Diagnostics human projection; read-only GS-NEON-11 postflight;
-        Flutter assertion screenshot; exact remote source/blob inspection
-Writable surfaces: replacement D/E/F; append-only J reconciliation
-Prohibited actions: source materialization in this Main turn; Windows/Android
-                    Sync; Retry; recovery; repeated enrollment; provider
-                    mutation; migration; deployment; production action
-Authority: explicit human direction to preserve the record, activate R02
-           corrective staging, and publish D/E/F/J
-Next sequence: Codex FLX-ORD-01 materialization from controlling D/E/F
-Stop condition: any required migration, protocol/provider change, live action,
-                secret exposure, unrelated dirty overlap or branch-head race
-```
-
-### Branch namespace clarification
-
-The prior terminal:
-
-```text
-BRANCH PROVENANCE = CONFIRMED_MARKei-c10
-```
-
-was ambiguous and must not be interpreted as a GitHub operation.
-
-No GitHub branch named `CONFIRMED_MARKei-c10` was created. The repository branch
-remains:
-
-```text
-grm-guarded-provisioning-20260727
-```
-
-The current sanitized coordinates configure the Neon development branch alias:
-
-```text
-markei-c10
-```
-
-`GS-NEON-11` prints that configured target but explicitly cannot independently
-prove the human-readable Neon alias. New records therefore use:
-
-```text
-GITHUB_BRANCH=grm-guarded-provisioning-20260727
-CONFIGURED_PROVIDER_BRANCH_ALIAS=markei-c10
-PROVIDER_BRANCH_ALIAS_LAUNCHER_INDEPENDENT_PROOF=NO
-```
-
-The historical marker is preserved as history and superseded for current
-reporting vocabulary. This is a naming correction, not a provider or
-repository mutation.
-
-### S09 hosted transition carried into S10
-
-The previously frozen Windows sequence-2 candidate was uploaded under its
-separately authorized S09 action. By the S10 provider containment postflight,
-the Account-wide provider totals were:
-
-```text
-submissions = 2
-sync events = 2
-device acknowledgement rows = 1
-Account next cursor = 3
-hosted high-water = 2
-Account cursor relation = consistent
-```
-
-These totals include the completed Windows-origin transitions. They do not
-describe Android producer activity. The exact selected Android Device remained
-at next expected Device sequence 1 with zero selected-Device submissions,
-events and acknowledgements.
-
-The expected Windows-to-Android candidate therefore existed at the provider
-before the Android download assay.
-
-### S10 Innerstep 01 â€” one failed Android ordinary Sync
-
-Exactly one ordinary Android Sync progressed through:
-
-```text
-authentication-check-entered
-authenticated
-binding-check-entered
-binding-accepted
-upload-lease-entered
-no-pending-events
-download-request-started
-download-response-received
-closure-runner-exception
-```
-
-The terminal was:
-
-```text
-operation = ordinary-sync
-result = sync-failed
-outcome = failed
-phase/latest stage = unexpected-terminal
-recovery = local-exception-redacted
-sanitized exception class = DriftRemoteException
-```
-
-The causal child evidence proves a trusted download response was received.
-The later broad runner fallback incorrectly recorded
-`trusted_response_state=not-received`. This is an observability defect, not
-evidence that the provider response was absent.
-
-No second Sync, Retry or recovery action was selected.
-
-### S10 Innerstep 02 â€” frozen Android SQLite rollback proof
-
-`GS-SQLITE-05` created and verified one private Android database snapshot while
-Markei was force-stopped. The manifest, size and hash comparison passed. The
-live database was not queried or modified.
-
-`GS-SQLITE-06` and `GS-SQLITE-07` inspected that snapshot through distinct SQL
-programs embedded in `G_SCRIPTS.md`:
-
-```text
-GS-SQLITE-06 = general schema/state/diagnostic inventory
-GS-SQLITE-07 = cross-field correlation and final local-state classification
-```
-
-They intentionally share underlying facts. Neither currently dispatches a
-`DB_MGMT.sql` SQL block. That is a catalogue-organization observation, not an
-assay defect.
-
-Accepted snapshot evidence:
-
-```text
-schema table count = 13/13
-SQLite integrity = ok
-foreign-key check rows = 0
-
-enrollment = device-enrolled
-active Account scope count = 1
-current Device count = 1
-current Device next sequence = 1
-current Installation count = 0
-
-sync-state rows = 1
-Account cursor = null
-Account numeric cursor = null
-inbox rows = 0
-distinct inbox event/cursor counts = 0/0
-applied inbox rows = 0
-inbox high-water = 0
-hosted Purchase/Purchase-item rows = 0/0
-
-Android-originated events = 0
-Android submissions = 0
-pending/uploading/failed/unknown = 0/0/0/0
-
-trusted download response child count = 1
-acknowledgement-started count = 0
-sync-completed count = 0
-closure-runner-exception count = 1
-```
-
-Final classification:
-
-```text
-android_local_state_class=failed-download-empty-local-state
-C10_GCM03_S10_I02=PASS_LOCAL_TRANSACTION_ROLLBACK
-ANDROID_CURSOR_ADVANCED=NO
-ANDROID_ACKNOWLEDGEMENT_STARTED=NO
-ANDROID_BUSINESS_FACTS_RETAINED=NO
-LIVE_DATABASE_QUERIED=NO
-LOCAL_DATABASE_MODIFIED=NO
-```
-
-The snapshot proves complete local page rollback at this evidence boundary.
-It does not claim the provider contains zero Purchases.
-
-### S10 Innerstep 03 â€” human projection agreement
-
-The app was opened without reinstalling or rebuilding. Human inspection
-observed:
-
-```text
-Windows-origin candidate visible in Android History = no
-unexpected hosted-origin Purchases visible = no
-queue pending/uploading/failed/unknown = 0/0/0/0
-Android next Device sequence = 1
-latest ordinary Sync = sync-failed
-acknowledgement/completion = not observed
-```
-
-Diagnostics retained the `closure-runner-exception` terminal and the earlier,
-separate hosted-connection timeout. The latter is a different historical
-operation and does not contradict the failed ordinary-Sync chain.
-
-Gate:
-
-```text
-C10_GCM03_S10_I03=PASS_UI_PROJECTION_MATCHES_LOCAL_ROLLBACK
-ANDROID_HISTORY_CANDIDATE=ABSENT
-ANDROID_LAST_SUCCESSFUL_SYNC=NOT_ADVANCED
-```
-
-### S10 Innerstep 04 â€” read-only provider containment
-
-One `GS-NEON-11` repeatable read-only postflight selected the exact Android
-Device and returned:
-
-```text
-selected Device match/guard = 1/1
-selected Device state = active
-selected Device next expected sequence = 1
-selected Device high-water = 0
-selected Device submissions = 0
-selected Device events = 0
-selected Device acknowledgement rows = 0
-selected Device acknowledged cursor = 0
-selected Device consistency booleans = true
-Account next cursor / hosted high-water = 3/2, consistent
-transaction terminal = ROLLBACK
-launcher terminal = PASS
-```
-
-Account-wide totals `2/2/1` belong to the already hosted Windows history. They
-are not Android mutations.
-
-Gate:
-
-```text
-C10_GCM03_S10_I04_PROVIDER_CONTAINMENT=PASS
-ANDROID_PROVIDER_STATE_ADVANCED=NO
-TRANSACTION_ROLLED_BACK=YES
-```
-
-The configured provider alias is `markei-c10`; the launcher alias-proof ceiling
-remains explicit as recorded above.
-
-### S10 Innerstep 05 / R01 â€” actionable source diagnosis
-
-Exact remote blobs at HEAD matched the inspected local source for:
-
-```text
-PurchasePage
-Product domain model
-LocalQueryRepository
-RemotePurchaseFactWriter
-DriftRemoteEventApplier
-sync use cases
-HostedSyncCoordinator
-NativeAuthClosureRunner
-focused app and convergence tests
-```
-
-The source establishes:
-
-1. `RemotePurchaseFactWriter` resolves incoming Store and Product snapshots
-   only by incoming UUID.
-2. local Products also enforce Account-scoped uniqueness on normalized
-   user Product code and exact identity key.
-3. Purchase Items use incoming Product UUIDs directly.
-4. Purchases use incoming Store UUIDs directly.
-5. the receiving Android database was intentionally preserved and may already
-   contain equivalent catalogue rows under different local UUIDs.
-6. `DriftRemoteEventApplier.applyPage()` already provides the correct
-   page-wide facts/inbox/cursor transaction.
-7. a Drift exception can escape the application boundary and be collapsed by
-   the Closure runner into inaccurate hard-coded causal fields.
-
-This proves an implementation gap at the remote natural-identity boundary.
-It is a high-confidence actionable explanation for the observed failure. The
-exact runtime SQLite extended constraint code was not retained, so J does not
-claim that one particular constraint was proved in the live assay.
-
-R01 conclusion:
-
-```text
-C10_GCM03_S10_I05=PASS_ACTIONABLE_DIAGNOSIS
-C10_GCM02_S09_R01=CONCLUDED
-PRIMARY_GAP=REMOTE_NATURAL_IDENTITY_NOT_RECONCILED
-SECONDARY_GAP=LOCAL_APPLY_CAUSAL_EVIDENCE_COLLAPSED
-LIVE_RETRY_REQUIRED_FOR_DIAGNOSIS=NO
-```
-
-### Independent Purchase-page Product-selection defect
-
-The supplied Android screenshot records Flutter's
-`DropdownButton<Product?>` exactly-one-item assertion after a Catalogue Product
-is found by exact code from Purchase.
-
-The screenshot wording permits either zero matching items or multiple matching
-items. It does not prove duplicate database rows.
-
-Source inspection provides the exact zero-match path:
-
-```text
-_products
-  <- listProducts()
-  <- one set of Product object instances
-
-_findProductByCode()
-  <- productByCode()
-  <- a separately materialized Product object instance
-
-Product
-  <- no value equality override
-
-DropdownButton<Product?> value
-  <- selected lookup instance
-
-Dropdown menu values
-  <- list projection instances
-```
-
-Two objects representing the same Product UUID are not equal by Dart reference
-identity. The selected value can therefore match zero menu items even when
-SQLite contains one unique Product row.
-
-Correction boundary:
-
-```text
-selection key = stable Product ID scalar
-selected facts = exact Product resolved from current Account projection
-refresh = rebind by Product ID
-missing/ambiguous ID = safe invalidation and user recovery feedback
-global Product equality change = rejected
-```
-
-R02 must also guard repeated/conflicting Product IDs in the UI projection so
-that neither zero nor multiple menu matches can reach Flutter.
-
-This defect is independent from the failed remote download, but both expose
-the same architectural distinction between object instance, surrogate UUID
-and natural identity. They are one cohesive Product-identity correction unit.
-
-### PRC-01 claims
-
-```text
-Claim: CONFIRMED_MARKei-c10 is a newly created GitHub remote branch
-Source: historical terminal wording compared with remote repository branch and
-        NS_COORDINATES provider alias
-Current state: user uncertainty
-Evidence: GitHub branch is grm-guarded-provisioning-20260727;
-          configured Neon BranchAlias is markei-c10
-Evidence boundary: repository and configured provider coordinates; launcher
-                   cannot independently prove the human-readable Neon alias
-Contradictions: none
-Semantic owner: external-resource provenance vocabulary
-Target role: J history and D/E reporting contract
-History disposition: preserve old marker; supersede its ambiguous wording
-Confidence: high
-Human/Main authority: explicit clarification request
-Required regeneration: D/E/F vocabulary
-Result: REJECTED; NO GITHUB BRANCH WAS CREATED BY THE MARKER
-```
-
-```text
-Claim: the failed Android download left partially applied local facts or cursor
-Source: frozen GS-SQLITE-05/06/07 snapshot and Android UI projection
-Current state: open after DriftRemoteException
-Evidence: zero inbox/facts; null cursor; zero queue/provider producer state;
-          no acknowledgement; failed-download-empty-local-state
-Evidence boundary: captured Android snapshot and non-mutating UI inspection
-Contradictions: none
-Semantic owner: C10-GCM03-S10 local containment
-Target role: J R01 conclusion and R02 regression contract
-History disposition: append
-Confidence: high
-Human/Main authority: explicit evidence reconciliation
-Required regeneration: none
-Result: VALIDATED / COMPLETE LOCAL ROLLBACK
-```
-
-```text
-Claim: the failed Android assay advanced Android provider state
-Source: GS-NEON-11 selected-Device read-only postflight
-Current state: open after local failure
-Evidence: Android next expected sequence 1; submissions/events/acks 0/0/0;
-          acknowledged cursor 0; ROLLBACK/PASS
-Evidence boundary: exact selected Device on configured development target
-Contradictions: none
-Semantic owner: C10-GCM03-S10 provider containment
-Target role: J R01 conclusion
-History disposition: append
-Confidence: high
-Human/Main authority: explicit evidence reconciliation
-Required regeneration: none
-Result: VALIDATED / PROVIDER NON-ADVANCEMENT
-```
-
-```text
-Claim: one exact SQLite constraint caused the failed apply
-Source: source inspection and sanitized DriftRemoteException
-Current state: proposed
-Evidence: UUID-only writer conflicts with multiple possible local constraints
-Evidence boundary: exception extended result/message was not retained
-Contradictions: several constraint paths can produce the same observed class
-Semantic owner: R02 deterministic regression suite
-Target role: source correction and typed diagnostic categories
-History disposition: append without selecting an unproved constraint
-Confidence: high that the boundary is defective; insufficient for one exact
-            runtime constraint category
-Human/Main authority: Main diagnosis
-Required regeneration: deterministic test matrix
-Result: PARTIALLY ACCEPTED; BOUNDARY CONFIRMED, EXACT RUNTIME CONSTRAINT UNKNOWN
-```
-
-```text
-Claim: the Product dropdown screenshot proves duplicate Catalogue rows
-Source: screenshot plus exact Product/PurchasePage/query source
-Current state: proposed from assertion wording
-Evidence: source-confirmed distinct-object/zero-match path; assertion combines
-          zero and multiple matches
-Evidence boundary: no direct duplicate-row query accompanied the screenshot
-Contradictions: Products primary key and natural unique constraints exist
-Semantic owner: Purchase presentation identity
-Target role: R02 stable-ID correction and widget regressions
-History disposition: append
-Confidence: high
-Human/Main authority: explicit correction request
-Required regeneration: widget tests for zero and multiple projection classes
-Result: REJECTED AS DATABASE-DUPLICATE PROOF; UI IDENTITY DEFECT CONFIRMED
-```
-
-```text
-Claim: R02 may now materialize the bounded client corrections
-Source: R01 conclusion, contained live state, exact source inspection and human
-        implementation request
-Current state: staged
-Evidence: writable source boundary, regression matrix, transaction and
-          diagnostic invariants, live-action exclusions are explicit
-Evidence boundary: local source/tests only; corrected live convergence remains
-                   unvalidated
-Contradictions: none
-Semantic owner: D/E/F controlling materialization stage
-Target role: Codex FLX-ORD-01
-History disposition: append; D/E/F replace superseded active stage
-Confidence: high
-Human/Main authority: explicit
-Required regeneration: G/H/I after materialization
-Result: ACCEPTED / ACTIVE CODEX IMPLEMENTATION AUTHORITY
-```
-
-### Activated R02 materialization
-
-Controlling files:
-
-```text
-documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md
-documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md
-documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md
-```
-
-The cohesive correction owns:
-
-1. Product-ID-keyed Purchase dropdown selection and refresh rebinding.
-2. deterministic safe handling of missing or repeated Product IDs.
-3. Account-scoped Product reconciliation by UUID, normalized code and exact
-   identity.
-4. Account-scoped Store reconciliation by UUID and current stable display
-   identity.
-5. remote-to-local Store/Product reference maps for Purchases and Items.
-6. typed natural-identity conflict and sanitized SQLite failure categories.
-7. preserved page-wide facts/inbox/cursor atomicity.
-8. acknowledgement only after committed local cursor.
-9. causal diagnostic preservation after a trusted response.
-
-Explicit non-goals:
-
-```text
-no payload v4
-no Person/Payment Method remote exchange
-no migration or Drift schema change
-no hosted API/server/provider change
-no authentication or enrollment change
-no retention/snapshot/rebootstrap change
-no GRIMOIRE change
-no live Sync/Retry/recovery
-```
-
-### Post-Codex and later live sequence
-
-Codex must materialize and validate locally, replace G/H/I, and publish one
-focused source/evidence commit. Unit tests and a disposable local convergence
-lab may validate implementation, but they do not close real GCM03 convergence.
-
-After Main reconciles G/H/I and a corrected Android artifact with matching
-provenance is installed while preserving application data, a later human
-packet may authorize exactly one Android ordinary Sync.
-
-Expected later live result:
-
-```text
-both hosted Windows events materialize on Android
-one coherent local Product/Store identity per Account
-Purchase Items reference selected local Product IDs
-Android Account cursor advances to c10b:2
-one Android acknowledgement reaches cursor 2
-Android producer sequence remains 1
-Android producer queue remains empty
-History and Catalogue projection show no duplicate fact
-read-only local/provider postflights agree
-```
-
-None of those later live outcomes is claimed by the R02 staging commit.
-
-### Current terminal
-
-```text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-GCM03=ACTIVE_CORRECTIVE_MATERIALIZATION
-C10_GCM03_S10_I02=PASS_LOCAL_TRANSACTION_ROLLBACK
-C10_GCM03_S10_I03=PASS_UI_PROJECTION_MATCHES_LOCAL_ROLLBACK
-C10_GCM03_S10_I04=PASS_PROVIDER_CONTAINMENT
-C10_GCM03_S10_I05=PASS_ACTIONABLE_DIAGNOSIS
-C10_GCM02_S09_R01=CONCLUDED
-C10_GCM03_S10_R02=ACTIVE_CODEX_IMPLEMENTATION_AUTHORIZED
-PURCHASE_PRODUCT_DROPDOWN_IDENTITY_FIX=IN_SCOPE
-REMOTE_PRODUCT_STORE_IDENTITY_CONVERGENCE=IN_SCOPE
-LOCAL_APPLY_CAUSAL_DIAGNOSTICS=IN_SCOPE
-GITHUB_BRANCH=grm-guarded-provisioning-20260727
-CONFIGURED_PROVIDER_BRANCH_ALIAS=markei-c10
-PROVIDER_BRANCH_ALIAS_LAUNCHER_INDEPENDENT_PROOF=NO
-ANDROID_SNAPSHOT=PRESERVE
-WINDOWS_SYNC=HELD
-ANDROID_SYNC=HELD
-RETRY=HELD
-RECOVERY=HELD
-ENROLL=DO_NOT_REPEAT
-PROVIDER_MUTATION=NONE
-GCM04=UNDEFINED_INACTIVE
-```
-
-
-## 2026-07-29 â€” GCM03 S10 R02 post-Codex reconciliation and human-acceptance activation
-
-### Sequence envelope
-
-~~~text
-Sequence: FLX-PRM-04 after FLX-ORD-01 materialization
-Role: Main Chat [M]
-Round or unit: C10-GCM03-S10-R02
-Continuity alias: C10-GCM02-S09-R02
-GitHub branch: grm-guarded-provisioning-20260727
-Materialization parent: 9127a2e8a85ede3a6c881060b4ce47224f59e577
-Materialization commit: cf8dcc6377b54c4b6944b2dec6cd844721bd29b1
-Inputs: D/E/F controlling stage; G/H/I Codex reports; one-commit remote
-        comparison; changed Flutter source; focused widget/infrastructure tests;
-        existing GRM Android build/install procedure
-Writable surface in this reconciliation: append-only J_MAIN_STAGE
-Prohibited actions: Android/Windows Sync; Retry; Recovery; Enroll; Query;
-                    acknowledgement; provider mutation; schema/migration/API
-                    change; application-data clearing; snapshot replacement
-Authority: human return with the completed pushed R02 materialization and prior
-           instruction to reconcile before manual acceptance
-Next sequence: C10-GCM03-S10-R02-H01 artifact-preserving Android install and
-               offline Product-selection acceptance
-Stop condition: branch/provenance mismatch; dirty Flutter/GRM overlap; data loss;
-                automatic network action; missing authentication/enrollment;
-                queue/cursor/Device-sequence drift
-~~~
-
-### Remote lineage and scope reconciliation
-
-The remote comparison proves that R02 is exactly one fast-forward commit over
-the controlling stage:
-
-~~~text
-9127a2e8a85ede3a6c881060b4ce47224f59e577
-â†“
-cf8dcc6377b54c4b6944b2dec6cd844721bd29b1
-~~~
-
-Exactly nine paths changed:
-
-~~~text
-clients/markei_flutter/lib/app/pages/purchase_page.dart
-clients/markei_flutter/lib/application/sync/sync_use_cases.dart
-clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_event_applier.dart
-clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_fact_writer.dart
-clients/markei_flutter/test/app/markei_app_test.dart
-clients/markei_flutter/test/infrastructure/remote_purchase_event_applier_test.dart
-documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-~~~
-
-No migration, Drift schema, hosted API, payload contract, authentication,
-enrollment, dependency, provider configuration, D/E/F/J, permanent domain
-memory, methodology, DB_MGMT.sql, G_SCRIPTS.md or I_SCRIPTS.ps1 change entered
-the materialization commit. The published scope therefore conforms to the
-controlling R02 envelope.
-
-### Source reconciliation
-
-The Purchase UI now stores one nullable Product-ID scalar instead of a Product
-object as dropdown identity. It normalizes the current Account-scoped Product
-projection, resolves the selected Product only when exactly one current row
-matches that ID, rebinds Find-code results through their Product ID, collapses
-equivalent repeated IDs, rejects conflicting repetitions, and safely clears a
-missing or ambiguous selection with bounded feedback.
-
-This resolves the source-confirmed zero-match path from the original screenshot
-without asserting that SQLite contained duplicate Product rows and without
-globally redefining Product equality.
-
-The remote fact writer now:
-
-1. resolves Store by incoming UUID and existing Account-scoped display identity;
-2. resolves Product by incoming UUID, normalized user Product code and exact
-   identity key;
-3. reuses one coherent local identity when the remote UUID differs;
-4. rejects contradictory immutable/natural facts as a typed
-   RemoteIdentityConflict;
-5. maintains event-local incoming-to-local Product mapping;
-6. writes Purchase Items with the selected local Product ID;
-7. writes Purchases with the selected local Store ID.
-
-The remote applier continues to own one page-wide Drift transaction. Catalogue
-reconciliation, Purchase facts, Purchase Items, inbox rows and Account cursor
-therefore commit or roll back together. Identity conflicts and SQLite failures
-are translated only after rollback.
-
-The ordinary-Sync diagnostic path now preserves:
-
-~~~text
-phase = download-local-apply
-last proved phase = download-local-apply
-trusted response state = received
-local mutation state = rolled-back for conflict/SQLite failure
-safe SQLite protocol category = local-sqlite-apply-failed
-~~~
-
-A failed local apply exposes no committed cursor to the acknowledgement use
-case. The focused regression explicitly calls the acknowledgement boundary
-after a sanitized SQLite apply failure and observes a null result with zero
-transport acknowledgements.
-
-### Codex validation classification
-
-Codex reported:
-
-~~~text
-dart format lib/test = PASS
-flutter analyze = PASS
-focused Purchase widget test file = PASS
-native Closure diagnostic tests = PASS
-new remote event-applier tests = PASS
-local synchronization application tests = PASS
-full flutter test = PASS
-debug Android build with reviewed public placeholder defines = PASS
-merged manifest inspection = PASS
-git diff --check = PASS
-changed-content sensitive scan = PASS
-~~~
-
-The full Flutter suite skipped the disposable convergence lab because
-MARKEI_RUN_SYNC_LAB was not set. That is an explicit evidence ceiling, not a
-failure: the implementation stage prohibited a live lab/provider action.
-
-The placeholder-defined APK build proves compile/package compatibility. It is
-not the operator's final installed-artifact provenance and must not be used to
-claim that the preserved Android client has been updated.
-
-### PRC-01 claims
-
-~~~text
-Claim: R02 was materialized inside the controlling D/E/F scope
-Prior state: ACTIVE_CODEX_IMPLEMENTATION_AUTHORIZED
-Evidence: exact one-commit comparison, nine-path inventory and G/H/I reports
-Evidence boundary: remote commit and inspected client source
-Contradiction: none
-Semantic owner: C10-GCM03-S10-R02 materialization record
-Target role: J cross-domain reconciliation
-Resulting state: VALIDATED / IMPLEMENTED AND AUTOMATED-TESTED
-History disposition: append
-~~~
-
-~~~text
-Claim: the Purchase Find-code assertion is corrected
-Prior state: source-confirmed Product object-identity defect
-Evidence: stable Product-ID implementation plus widget regressions for a
-          separately materialized lookup object, refresh/removal, equivalent
-          repetitions and conflicting repetitions
-Evidence boundary: source and automated Flutter widget behavior
-Contradiction: no corrected APK has yet been manually exercised over the
-               preserved Android application data
-Semantic owner: Purchase presentation identity
-Target role: R02-H01 offline human acceptance
-Resulting state: ACCEPTED AT AUTOMATED EVIDENCE; HUMAN ANDROID ACCEPTANCE OPEN
-History disposition: append
-~~~
-
-~~~text
-Claim: remote Product/Store reconciliation and page atomicity are corrected
-Prior state: actionable R01 implementation gap
-Evidence: Account-scoped reconciliation, remote-to-local remapping, typed
-          conflicts, page-wide transaction and focused disposable-DB tests
-Evidence boundary: deterministic local Flutter/Drift tests
-Contradiction: corrected live Windows-to-Android download has not occurred
-Semantic owner: remote local-materialization boundary
-Target role: later single-operation live convergence assay
-Resulting state: ACCEPTED AT IMPLEMENTATION/TEST SCOPE; LIVE ACCEPTANCE HELD
-History disposition: append
-~~~
-
-~~~text
-Claim: failed local apply cannot acknowledge
-Prior state: frozen live failure showed acknowledgement not started
-Evidence: no committed cursor after failure; focused test observes null
-          acknowledgement result and zero transport acknowledgement calls
-Evidence boundary: deterministic local failure path and prior frozen live assay
-Contradiction: none
-Semantic owner: local-commit-to-acknowledgement ordering
-Target role: R02 regression evidence
-Resulting state: VALIDATED AT REGRESSION SCOPE
-History disposition: append
-~~~
-
-~~~text
-Claim: R02 closes GCM03 or proves practical inter-device Sync usability
-Prior state: GCM03 active; convergence unproved
-Evidence: no live Sync, Retry, provider mutation, Android install or launch was
-          executed during materialization
-Evidence boundary: source/build/test only
-Contradiction: practical usability requires preserved-state installation,
-               offline UI acceptance, one bounded inbound Sync and postflights
-Semantic owner: GCM03 live acceptance
-Target role: human acceptance ladder
-Resulting state: REJECTED / NOT YET PROVED
-History disposition: append
-~~~
-
-### Human acceptance ladder
-
-The remaining R02 acceptance is divided so one action cannot silently authorize
-the next.
-
-#### H01 â€” artifact-preserving install and offline preflight
-
-Use the existing GS-FLUTTER-AND procedure from a clean local checkout whose
-HEAD contains the reconciled J publication and R02 commit. It builds with the
-configured public Closure coordinates, installs through adb install -r,
-preserves application data, exposes build provenance, and launches Markei.
-
-H01 must stop before any Closure network control. Required observations:
-
-~~~text
-installed build provenance contains cf8dcc6377b or its J-only descendant
-Authentication remains authenticated
-Enrollment remains device-enrolled
-queue remains 0/0/0/0
-Android next Device sequence remains 1
-Android History still lacks the hosted candidate before corrected Sync
-no automatic Sync or acknowledgement occurs
-previous failed-operation evidence remains present or is safely retained
-~~~
-
-#### H02 â€” offline Purchase Product-selection acceptance
-
-Without registering a Purchase:
-
-1. open Purchase;
-2. invoke Find code for the existing Catalogue Product that previously raised
-   the Dropdown assertion;
-3. verify exactly one existing Product becomes selected;
-4. navigate away and return or trigger a harmless projection refresh;
-5. verify the selection remains coherent by Product ID;
-6. cancel/clear the draft without submission.
-
-Required observations:
-
-~~~text
-red Flutter assertion = absent
-selected Product = exactly one coherent existing Product
-duplicate Catalogue row created = no
-Purchase registered = no
-producer queue changed = no
-Device sequence changed = no
-~~~
-
-#### H03 â€” read-only pre-Sync baselines
-
-Only after H01/H02 pass, take a fresh Android snapshot using the published
-GS-SQLITE-05/06/07 sequence and one read-only GS-NEON-11 provider inventory.
-The preserved pre-R02 snapshot remains immutable historical evidence; a new
-snapshot must not overwrite it.
-
-Expected local/provider invariants remain:
-
-~~~text
-Android cursor = null/0
-Android inbox = empty
-Android hosted Purchase facts = 0
-Android queue = 0/0/0/0
-Android Device sequence = 1
-provider hosted high-water = 2
-Android-origin provider submissions/events = 0/0
-Android acknowledgement = absent/0
-~~~
-
-#### H04 â€” one corrected inbound Android ordinary Sync
-
-H04 remains held until H01-H03 evidence is reconciled. A later Main packet may
-authorize exactly one ordinary Sync, followed by immediate UI, SQLite and
-read-only provider postflights. Retry, Recovery, Enroll and concurrent Windows
-Sync remain prohibited.
-
-### Current terminal
-
-~~~text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-GCM03=ACTIVE_R02_HUMAN_ACCEPTANCE
-C10_GCM03_S10_R02=IMPLEMENTED_VALIDATED_AUTOMATED_SCOPE
-C10_GCM02_S09_R02=CONTINUITY_ALIAS_ONLY
-R02_REMOTE_COMMIT=cf8dcc6377b54c4b6944b2dec6cd844721bd29b1
-R02_SCOPE_RECONCILIATION=PASS
-PRODUCT_SELECTOR_IDENTITY=STABLE_PRODUCT_ID
-FIND_BY_CODE_AUTOMATED_REGRESSION=PASS
-REMOTE_PRODUCT_IDENTITY_RECONCILIATION=PASS_AUTOMATED_SCOPE
-REMOTE_STORE_IDENTITY_RECONCILIATION=PASS_AUTOMATED_SCOPE
-REMOTE_ITEM_ID_REMAP=PASS_AUTOMATED_SCOPE
-REMOTE_PAGE_ATOMICITY=PASS_AUTOMATED_SCOPE
-LOCAL_APPLY_CAUSAL_DIAGNOSTICS=PASS_AUTOMATED_SCOPE
-ACKNOWLEDGEMENT_AFTER_FAILED_LOCAL_APPLY=NOT_STARTED_VALIDATED
-LIVE_CONVERGENCE_ACCEPTANCE=HELD
-NEXT_GATE=C10_GCM03_S10_R02_H01
-ANDROID_SNAPSHOT_PRE_R02=PRESERVE
-WINDOWS_SYNC=HELD
-ANDROID_SYNC=HELD
-RETRY=HELD
-RECOVERY=HELD
-ENROLL=DO_NOT_REPEAT
-PROVIDER_MUTATION=NONE
-GCM04=UNDEFINED_INACTIVE
-~~~
-
-
----
-
-# Reconciliation â€” C10-GCM03-S10-R03 corrective staging
-
-Recorded: 2026-07-29  
-Primary unit: C10-GCM03-S10-R03  
-Human-assay continuity alias: C10-GCM03-S09-R03  
-Previous materialization: cf8dcc6377b54c4b6944b2dec6cd844721bd29b1  
-Pre-stage head: 1975bf0d216ff03a3ead6c47e0892df00d55d62e  
-Disposition: ACTIVE â€” CODEX IMPLEMENTATION AUTHORIZED; LIVE SYNC HELD
-
-## Historical sequence
-
-### H01 preserved installation
-
-~~~
-BUILD_PROVENANCE=1975bf0d216f
-AUTHENTICATION=AUTHENTICATED
-ENROLLMENT=DEVICE_ENROLLED
-QUEUE=0/0/0/0
-NEXT_DEVICE_SEQUENCE=1
-APP_DATA_CLEAR=NO
-AUTOMATIC_SYNC=NOT_SEPARATELY_PROVED
-~~~
-
-### H02 Purchase acceptance
-
-The prior Find Item assertion did not recur. Catalogue selection, review, and registration worked. The userâ€™s C10-GCM03-S09-R03-H02 alias is preserved; the implementation authority is normalized to S10.
-
-~~~
-FIND_ITEM_ASSERTION=ABSENT
-PURCHASE_REVIEW=PASS
-PURCHASE_REGISTRATION=PASS
-PENDING=0_TO_1
-NEXT_DEVICE_SEQUENCE=1_TO_2
-ACTIONABLE_EVENT_FINGERPRINT=e86df5c0
-DUPLICATE_PRODUCT_OBSERVED=NO
-~~~
-
-No Product display name or user code is retained.
-
-### Android attempts
-
-Operation b161b297b16b uploaded the new event with HTTP 200 and persisted its trusted provider result. Download also returned HTTP 200, but local apply returned remote-product-natural-identity-conflict. No acknowledgement began.
-
-Operation 5a3e6d18af89 had no pending upload, downloaded again, returned the same typed conflict, and did not acknowledge.
-
-The Android event is hosted and must not be registered again. Repeated Sync remains held.
-
-### Windows attempt
-
-Operation e6e918285640 uploaded its event, persisted the trusted result, and received a trusted download response. It then escaped as closure-runner-exception before a durable local-apply result.
-
-| UTC interval | Route | Child correlation | Result |
-|---|---|---|---|
-| 18:56:54.479â€“18:56:54.672 | POST /v1/sync/submissions | 013bbbc82c57 | authenticated; HTTP 200; under 250 ms |
-| 18:56:54.949â€“18:56:54.981 | GET /v1/sync/events | d4e57c134aca | authenticated; HTTP 200; under 250 ms |
-| absent | acknowledgement | none | correctly not started |
-
-A readiness request completed with HTTP 200 before the operation. A later readiness request began at 18:56:58.786 but its completion is absent from the supplied excerpt. Health records have no operation fingerprint and cannot be attributed to Sync.
-
-Windows lifecycle:
-
-| Phase | Event | Result |
-|---|---|---|
-| 1â€“2 | authentication | authenticated |
-| 3â€“4 | binding | accepted |
-| 5â€“6 | upload lease | committed |
-| 7â€“8 | upload transport/provider | server accepted |
-| 9â€“10 | upload result persistence | committed |
-| 11â€“12 | download transport/provider | trusted response received |
-| 13 | terminal | closure-runner-exception |
-
-Phase 13 claims trusted-response-not-received, contradicting phase 12. Stronger causal child evidence controls.
-
-## PRC-01 reconciliation
-
-~~~
-WINDOWS_UPLOAD_TRANSPORT=PASS
-WINDOWS_UPLOAD_PROVIDER=SERVER_ACCEPTED
-WINDOWS_UPLOAD_RESULT_PERSISTENCE=COMMITTED
-WINDOWS_DOWNLOAD_TRANSPORT=PASS
-WINDOWS_DOWNLOAD_PROVIDER=TRUSTED_RESPONSE_RECEIVED
-RENDER_REJECTION=FALSE
-WINDOWS_LOCAL_APPLY=UNPROVED
-WINDOWS_LOCAL_MUTATION=UNKNOWN
-WINDOWS_FACTS_INBOX_CURSOR_COMMIT=UNKNOWN
-WINDOWS_ACKNOWLEDGEMENT=NOT_STARTED
-~~~
-
-The evidence cannot distinguish an apply exception from diagnostic persistence failure after apply returned. No stronger claim is promoted.
-
-~~~
-ANDROID_TO_PROVIDER_UPLOAD=PASS
-WINDOWS_TO_PROVIDER_UPLOAD=PASS
-PROVIDER_TO_ANDROID_CONVERGENCE=FAIL_TYPED_PRODUCT_CONFLICT
-PROVIDER_TO_WINDOWS_CONVERGENCE=FAIL_POST_DOWNLOAD_UNCLASSIFIED
-INTER_DEVICE_SAME_ACCOUNT_SYNC=FAIL_OPEN
-MVP_SYNC_ACCEPTANCE=NOT_PROMOTED
-~~~
-
-## Source reconciliation
-
-- Product.identityKey excludes user code/raw display.
-- Remote reconciliation currently rejects exact identity under another code.
-- The applier rethrows unrecognized non-SQL exceptions.
-- DownloadAndApplyEvents can skip local-apply declaration on apply or diagnostic failure.
-- The coordinator catches only TimeoutException and StateError.
-- NativeAuthClosureRunner replaces causal evidence with generic terminal state.
-- The table stores sanitizedExceptionClass, but repository/application/UI projection drops it.
-
-R02 claims narrow to:
-
-~~~
-PRODUCT_SELECTOR_IDENTITY=PASS_AUTOMATED_AND_HUMAN
-REMOTE_PRODUCT_IDENTITY_RECONCILIATION=PASS_AUTOMATED_LIMITED
-LOCAL_APPLY_CAUSAL_DIAGNOSTICS=PASS_TYPED_PATHS_ONLY
-LOCAL_APPLY_CAUSAL_DIAGNOSTICS_UNCLASSIFIED_PATH=FAIL
-LIVE_INTER_DEVICE_CONVERGENCE=FAIL_OPEN
-~~~
-
-## R03 directives
-
-R03 shall implement asymmetric Product convergence, reference remapping, total after-rollback apply translation, diagnostic/core truth separation, pre-persistence causal snapshot, causal runner fallback, stored exception-class projection, atomic facts/inbox/cursor, acknowledgement ordering, and idempotent replay. Protocol v3, schema, provider, API, auth, enrollment, and dependencies remain unchanged.
-
-D controls. E/F constrain. Codex must replace G/H/I and perform no live Sync.
-
-## Current terminals
-
-~~~
-C10_GCM03_S10_R03=ACTIVE_CODEX_IMPLEMENTATION_AUTHORIZED
-CONTINUITY_ALIAS=C10_GCM03_S09_R03
-RENDER_SUBMISSION_RESPONSE=HTTP_200
-RENDER_DOWNLOAD_RESPONSE=HTTP_200
-RENDER_ACKNOWLEDGEMENT_REQUEST=ABSENT
-WINDOWS_LAST_PROVED_PHASE=DOWNLOAD_PROVIDER_RESPONSE_RECEIVED
-WINDOWS_TERMINAL_CLASSIFICATION=CONTRADICTS_CAUSAL_CHILD
-WINDOWS_LOCAL_MUTATION=UNKNOWN
-ANDROID_PRODUCT_CONFLICT=TYPED
-INTER_DEVICE_CONVERGENCE=FAIL_OPEN
-ANDROID_SYNC=HELD
-WINDOWS_SYNC=HELD
-RETRY_RECOVERY=HELD
-NEW_PURCHASE_REGISTRATION=HELD
-PROVIDER_MUTATION=NONE
-~~~
-
----
-
-# 2026-07-29 â€” Full handoff: C10-GCM03-S10-R03 corrective materialization launch
-
-## Sequence Handoff Envelope
-
-```text
-Outgoing sequence: FLX-PRM-04 diagnostic reconciliation and FLX-ORD-01 staging
-Receiving sequence: FLX-ORD-01 Codex corrective materialization
-Outgoing role: Main Chat [M], exhausted-session closure
-Receiving roles:
-  1. fresh Main Chat [M] for continuity and later reconciliation
-  2. Codex for the already-authorized corrective implementation
-Primary unit: C10-GCM03-S10-R03
-Human-assay continuity alias: C10-GCM03-S09-R03
-Repository: gus-i-gu/markei
-Existing GitHub branch: grm-guarded-provisioning-20260727
-Pre-handoff authority commit: b9882118b543cc9637af31f8343935bee94300de
-Required Codex starting head: the direct J-handoff descendant of b988211,
-                              pinned by the launch prompt
-Authority: human direction plus active D/E/F stage
-Writable surface of this handoff publication: append-only J_MAIN_STAGE.md
-Codex writable surface: exactly the source/test/G/H/I scope authorized by D
-Evidence boundary: D/E/F/J/REC_DIAGNOSTICS.md at b988211 plus inspected
-                   one-commit ancestry from 1975bf0
-Live operation authority: NONE
-```
-
-This handoff closes only the exhausted conversation. It does not close R03,
-GCM03 or Cycle 10, and it does not promote live synchronization acceptance.
-
-## 1. Recovery instruction for the fresh Main Chat
-
-Recover the project from repository memory rather than reconstructing the
-exhausted conversation.
-
-Read in this order:
-
-1. root `AGENTS.md`;
-2. `documentation/sketch_notebook/INDEX.md`;
-3. notebook `AGENTS.md`;
-4. the complete methodology route selected by `INDEX.md`:
-   `METHOD_FOUNDATIONS.md`, `FLUX.md`, `PROMOTION_RULES.md`,
-   `CHAT_PROTOCOL.md`;
-5. the newest section of this J file, including the R03 reconciliation
-   immediately above and this handoff;
-6. `documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md`;
-7. `documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md`;
-8. `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`;
-9. `documentation/REC_DIAGNOSTICS.md`, Appendix G / Records 018â€“020;
-10. G/H/I only after Codex publishes the R03 materialization.
-
-Use hierarchical recovery. Earlier J/REC history remains available when a
-claim requires provenance, but the current R03 sections are the controlling
-low-cost recovery surface.
-
-Do not redirect Codex through old A/B/C stages, prior R02 G/H/I reports,
-conversation screenshots, or a reconstructed prompt that weakens D/E/F.
-
-## 2. Authority and naming
-
-The controlling implementation unit is:
-
-```text
-C10-GCM03-S10-R03
-```
-
-The manual-assay label used during the live failure chain is retained as:
-
-```text
-C10-GCM03-S09-R03
-```
-
-The alias must not be erased because it connects the human H02/Sync evidence
-to the correction. It must not replace the primary S10 implementation unit in
-source reports, validation terminals or the final implementation commit.
-
-Authority order for the materialization is:
-
-```text
-D_OPS_STAGE.md = controlling operational scope and terminals
-E_DDC_STAGE.md = evidence and interpretation constraints
-F_DSN_STAGE.md = architecture and responsibility constraints
-J_MAIN_STAGE.md = Main reconciliation, continuity and launch envelope
-REC_DIAGNOSTICS.md = append-only sanitized human/provider evidence
-G/H/I = post-materialization observations, not canonical truth
-```
-
-If D/E/F are contradictory, missing, or insufficient, Codex must stop. Codex
-must not use J or REC_DIAGNOSTICS.md to expand the writable source scope.
-
-## 3. State that the receiving chat must retain
-
-R02 corrected and human-validated the Purchase Product-selector defect:
-
-```text
-PRODUCT_SELECTOR_IDENTITY=STABLE_PRODUCT_ID
-FIND_ITEM_ASSERTION=ABSENT_HUMAN_ASSAY
-PURCHASE_REVIEW=PASS
-PURCHASE_REGISTRATION=PASS
-```
-
-The subsequent live assays proved both hosted transport and a still-open local
-convergence defect:
-
-```text
-ANDROID_UPLOAD_PROVIDER=HTTP_200_TRUSTED
-ANDROID_UPLOAD_RESULT_PERSISTENCE=COMMITTED
-ANDROID_DOWNLOAD_PROVIDER=HTTP_200_TRUSTED
-ANDROID_LOCAL_APPLY=REMOTE_PRODUCT_NATURAL_IDENTITY_CONFLICT
-
-WINDOWS_UPLOAD_PROVIDER=SERVER_ACCEPTED
-WINDOWS_UPLOAD_RESULT_PERSISTENCE=COMMITTED
-WINDOWS_DOWNLOAD_PROVIDER=TRUSTED_RESPONSE_RECEIVED
-WINDOWS_LOCAL_APPLY=NO_DURABLE_RESULT
-WINDOWS_TERMINAL=CLOSURE_RUNNER_EXCEPTION
-
-ACKNOWLEDGEMENT_AFTER_BOTH_FAILED_DOWNLOADS=NOT_STARTED
-RENDER_REJECTION=FALSE
-```
-
-The Android page proves a Product reconciliation conflict. The Windows page
-proves a trusted download response followed by an exception escaping the
-typed local-apply boundary. The Windows terminal then incorrectly replaced
-the already-proved trusted response with a generic not-received state.
-
-The Android event and the later Windows event were already accepted by the
-provider. Neither purchase may be registered again merely to repeat the test.
-
-## 4. Evidence ceilings that must not be promoted
-
-The supplied Windows evidence does not prove whether facts, inbox and cursor
-committed or rolled back before diagnostic persistence or runner failure.
-
-Retain:
-
-```text
-WINDOWS_TRANSACTION_TRUTH=UNKNOWN
-WINDOWS_LOCAL_MUTATION=UNKNOWN
-WINDOWS_FACTS_INBOX_CURSOR_COMMIT=UNKNOWN
-```
-
-Do not infer rollback from the absence of acknowledgement. Do not infer commit
-from the successful provider download. Do not let diagnostic truth define
-transaction truth.
-
-R02 causal diagnostics are therefore classified as:
-
-```text
-LOCAL_APPLY_CAUSAL_DIAGNOSTICS=PASS_TYPED_PATHS_ONLY
-LOCAL_APPLY_CAUSAL_DIAGNOSTICS_UNCLASSIFIED_PATH=FAIL
-```
-
-Automated R03 validation will not prove live convergence. A passing Flutter
-suite or disposable local database test cannot promote GCM03 acceptance.
-
-## 5. Corrective mission already authorized by D/E/F
-
-Codex must implement the complete R03 correction, with D controlling exact
-requirements.
-
-The cohesive mission has six parts:
-
-1. For a previously unseen incoming Product UUID, reuse the one coherent
-   Account-scoped Product when exact semantic identity matches even if the two
-   clients chose different user Product codes. Preserve the selected local
-   code and display.
-2. Preserve conflicts for same code/different identity, split natural keys,
-   ambiguity, and established-UUID immutable mutation. Never use first-row
-   wins and never rewrite hosted events or existing Product identities.
-3. Maintain incoming-to-local Product identity mapping for Purchase Items and
-   preserve the already-correct Store mapping/reconciliation contract.
-4. Make the post-download local-apply boundary total: every exception must
-   leave the Drift transaction first, allow full rollback, and then become a
-   bounded sanitized result. No apply exception may escape into the UI runner.
-5. Separate synchronization truth from diagnostic truth. Update an in-memory
-   causal snapshot before fallible durable diagnostics; contain diagnostics
-   persistence failure without reversing a committed core result; make the
-   runner consume the strongest causal snapshot.
-6. Project the existing stored sanitized exception class through repository,
-   application summary and Closure UI without a migration or unsafe message,
-   SQL, payload, identifier, stack, token, secret or full-hash disclosure.
-
-The single page transaction must continue to own Product/Store reconciliation,
-Purchases, Purchase Items, inbox records and Account cursor. Acknowledgement
-may begin only from a committed cursor. Replay must remain idempotent.
-
-## 6. Required implementation boundaries
-
-Preserve:
-
-```text
-protocol payload version = 3
-Flutter/Drift schema = unchanged
-hosted API/server = unchanged
-Auth0 authentication = unchanged
-Device enrollment/binding = unchanged
-Store identity rules = unchanged unless a source-proved minimal correction is
-                       strictly required by D
-Person/Payment Method v3 remote restriction = unchanged
-dependencies = unchanged
-GitHub branch = existing guarded branch
-```
-
-Prohibited during Codex execution:
-
-```text
-Android or Windows Sync
-Retry, Recovery, Enroll or Query
-new Purchase registration
-acknowledgement or provider mutation
-database surgery or application-data clearing
-schema, migration, API, payload, authentication or dependency change
-branch creation, rename, rebase, force push, reset or clean
-methodology, permanent-domain, J or REC_DIAGNOSTICS edits
-DB_MGMT.sql, G_SCRIPTS.md or I_SCRIPTS.ps1 edits
-test weakening, exception swallowing or first-row-wins reconciliation
-```
-
-## 7. Codex validation and evidence return
-
-Codex must implement the D test matrix, including:
-
-- exact identity under another code for a new incoming UUID;
-- same code/different identity, split-key, ambiguity and established UUID
-  conflict cases;
-- local code/display preservation and remote-to-local Item remapping;
-- mixed Android/Windows cursor page convergence and poison-page recovery;
-- generic non-SQL failure with full facts/inbox/cursor rollback;
-- acknowledgement prohibition after failed or unproved apply;
-- committed apply with diagnostic-persistence degradation;
-- causal trusted-response preservation through apply/reporting/runner failures;
-- sanitized exception-class projection to Closure UI;
-- Product-selector, Store, queue, upload-result and v3 restriction regressions;
-- idempotent replay and unchanged hosted protocol.
-
-Required validation evidence is the exact D list: format, analysis, focused
-tests, full Flutter test suite, debug Android and Windows builds, manifest
-inspection where applicable, diff check, sensitive-content scan and exact
-changed-file inventory.
-
-Codex shall replace only:
-
-```text
-documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-```
-
-alongside the source/tests authorized by D.
-
-The Codex return must include:
-
-```text
-final commit SHA and parent
-remote branch read-back
-exact changed-file list
-implementation summary by D requirement
-focused and full validation outcomes
-skipped or environment-limited evidence
-G/H/I terminal states
-confirmation of zero live/client/provider mutation
-```
-
-## 8. Fresh Main Chat first responsibility
-
-The fresh Main Chat should not reopen the completed diagnosis before Codex
-starts. Its first responsibility is to verify the handoff publication at the
-remote branch head and issue the exact Codex prompt pinned to that commit.
-
-While Codex runs, Main may prepare the post-materialization reconciliation
-frame, but it must not issue any live Sync authorization.
-
-After Codex publishes:
-
-1. verify the materialization is one non-forced fast-forward descendant of the
-   handoff commit;
-2. compare the changed paths against D;
-3. read G/H/I as observational evidence;
-4. reconcile source decisions, tests, builds, terminals and residual limits;
-5. append the R03 post-Codex reconciliation to J;
-6. authorize a preserved-state build/install and offline preflight only;
-7. issue a new, separately numbered one-operation live assay only after the
-   installed artifact and read-only baselines pass.
-
-Neither the current handoff nor the future Codex success authorizes immediate
-Sync.
-
-## 9. Post-Codex human acceptance outline
-
-The exact manual packet must be derived from the implemented commit rather
-than copied blindly from R02. At minimum it must preserve existing Android and
-Windows application data and verify:
-
-1. both corrected binaries carry the reconciled R03 provenance;
-2. authentication, enrollment, queues and Device sequences remain coherent;
-3. no automatic Sync or acknowledgement occurred during installation/launch;
-4. offline Find Item and Purchase projection remain correct;
-5. current local/provider read-only baselines are frozen;
-6. exactly one client ordinary Sync is authorized first;
-7. UI, SQLite, Render and provider postflights agree before the other client
-   can Sync;
-8. one no-op replay proves idempotency and no duplicate Product, Store,
-   Purchase or Purchase Item.
-
-Retry and Recovery remain separate later decisions. They are not substitutes
-for the first corrected ordinary-Sync assay.
-
-## 10. Fresh-chat stop and escalation conditions
-
-Stop and preserve evidence if:
-
-- the remote head is not the handoff commit pinned by the prompt;
-- the branch diverged or a force update is required;
-- D/E/F disagree or their writable scope is insufficient;
-- implementation requires schema/provider/API/auth/dependency change;
-- unrelated work overlaps an authorized source or report file;
-- a validation failure is hidden by skipped tests or swallowed exceptions;
-- a secret, token, connection string, payload fact, SQL value or identifier
-  appears in a proposed report;
-- any live Sync, Retry, Recovery, Enroll, Query, acknowledgement or provider
-  mutation would be needed to claim success.
-
-Write a precise G/H/I blocker rather than improvising outside the envelope.
-
-## 11. Handoff terminals
-
-```text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-GCM03=ACTIVE_CORRECTIVE_MATERIALIZATION
-C10_GCM03_S10_R03=CODEX_IMPLEMENTATION_AUTHORIZED_NOT_STARTED
-C10_GCM03_S09_R03=HUMAN_ASSAY_CONTINUITY_ALIAS
-R03_STAGE_COMMIT=b9882118b543cc9637af31f8343935bee94300de
-R03_HANDOFF_COMMIT=PIN_FROM_PUBLICATION
-PRODUCT_SELECTOR_REGRESSION=PASS_AUTOMATED_AND_HUMAN
-ANDROID_PROVIDER_UPLOAD=PASS_TRUSTED
-WINDOWS_PROVIDER_UPLOAD=PASS_TRUSTED
-ANDROID_INBOUND_CONVERGENCE=FAIL_TYPED_PRODUCT_CONFLICT
-WINDOWS_INBOUND_CONVERGENCE=FAIL_POST_DOWNLOAD_UNCLASSIFIED
-WINDOWS_TRANSACTION_TRUTH=UNKNOWN
-ACKNOWLEDGEMENT_AFTER_FAILED_OR_UNPROVED_APPLY=NOT_STARTED
-RENDER_REJECTION=FALSE
-INTER_DEVICE_SAME_ACCOUNT_SYNC=FAIL_OPEN
-MVP_SYNC_ACCEPTANCE=NOT_PROMOTED
-ANDROID_SYNC=HELD
-WINDOWS_SYNC=HELD
-RETRY_RECOVERY=HELD
-NEW_PURCHASE_REGISTRATION=HELD
-DIAGNOSTIC_HISTORY=PRESERVE
-PROVIDER_MUTATION=NONE
-NEXT_ACTION=PIN_HANDOFF_COMMIT_AND_LAUNCH_CODEX_R03
-```
-
-This section is the recovery bridge for the fresh Main Chat. Detailed human
-evidence remains in `documentation/REC_DIAGNOSTICS.md`; executable correction
-authority remains in D/E/F.
-
-
----
-
-# 2026-07-29 â€” Post-Codex reconciliation: C10-GCM03-S10-R03
-
-## 1. Reconciliation envelope
-
-~~~text
-Sequence: FLX-PRM-04 post-materialization reconciliation
-Primary unit: C10-GCM03-S10-R03
-Human-assay continuity alias: C10-GCM03-S09-R03
-Repository: gus-i-gu/markei
-Branch: grm-guarded-provisioning-20260727
-Controlling handoff head: 8fb43654b3e93908530165c29e580a5f5c12c1f8
-Materialization commit: 23cd872848ebc0654a4d9de6f41a9ba3c09fe92c
-Materialization parent: 8fb43654b3e93908530165c29e580a5f5c12c1f8
-Remote branch read-back before J publication: identical to 23cd872
-Materialization distance: exactly one non-forced fast-forward commit
-Live operation authority during reconciliation: NONE
-~~~
-
-This entry reconciles the published R03 implementation against D/E/F, the
-actual source/test diff, G/H/I and the retained human/provider evidence. It does
-not erase the R03 diagnosis or accept the Codex terminal merely because the
-reported commands passed.
-
-## 2. Publication and writable-scope guard
-
-The materialization changed exactly fourteen paths:
-
-~~~text
-clients/markei_flutter/lib/app/native_auth_closure_runner.dart
-clients/markei_flutter/lib/app/pages/native_closure_page.dart
-clients/markei_flutter/lib/application/closure_diagnostics.dart
-clients/markei_flutter/lib/application/sync/sync_ports.dart
-clients/markei_flutter/lib/application/sync/sync_use_cases.dart
-clients/markei_flutter/lib/infrastructure/local/closure_diagnostics_repository.dart
-clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_event_applier.dart
-clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_fact_writer.dart
-clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
-clients/markei_flutter/test/infrastructure/closure_diagnostics_repository_test.dart
-clients/markei_flutter/test/infrastructure/remote_purchase_event_applier_test.dart
-documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-~~~
-
-Every changed path falls inside D's source/test/G/H/I writable envelope. No
-D/E/F, J, REC_DIAGNOSTICS, methodology, permanent domain memory, GRIMOIRE
-operator file, migration, schema, hosted API, authentication, enrollment,
-dependency or provider-configuration path entered the materialization commit.
-
-~~~text
-R03_FAST_FORWARD_GUARD=PASS
-R03_CHANGED_PATH_SCOPE=PASS
-R03_BRANCH_TOPOLOGY=PASS
-R03_LIVE_OPERATION_DURING_CODEX=NO_REPORTED
-R03_PROVIDER_MUTATION_DURING_CODEX=NONE_REPORTED
-~~~
-
-## 3. Source decisions accepted at implementation scope
-
-### Product identity and reference convergence
-
-RemotePurchaseFactWriter now distinguishes an established incoming UUID from a
-previously unseen incoming UUID.
-
-For an established UUID, full immutable coherence still includes user code and
-display fields. For a new UUID, resolution obtains all Account-scoped normalized
-code matches and exact-identity matches, rejects ambiguity and split keys, rejects
-same-code/different-identity, and reuses one exact-identity row despite another
-client-chosen code. The selected local code and display are preserved.
-
-The incoming Product UUID to selected local Product UUID map is then used for
-dependent Purchase Items. The Store path remains the prior Account-scoped
-incoming-UUID/display-identity rule.
-
-The implementation therefore corrects the source mechanism that produced the
-Android remote-product-natural-identity-conflict without introducing an alias
-table, hosted rewrite, migration or global Product equality override.
-
-### Page atomicity and local-apply translation
-
-DriftRemoteEventApplier still places validation, Product/Store reconciliation,
-Purchase facts, Purchase Items, inbox rows and Account cursor advancement inside
-one Drift transaction.
-
-RemoteIdentityConflict and every other thrown Object leave that transaction
-before translation. The outer boundary now maps identity, typed SQLite/Drift,
-payload-shape, local-invariant and residual unexpected failures to bounded
-SyncResult categories. The residual catch no longer rethrows into the UI runner.
-
-This is implementation evidence that the previously unclassified post-download
-apply path now has a total source boundary. It is not evidence that the frozen
-Windows operation rolled back, nor can it reconstruct that historical
-transaction truth.
-
-### Stored exception-class projection
-
-The existing sanitizedExceptionClass field now flows through SyncResult,
-diagnostic persistence, repository projection, application summary,
-current-action mapping and the Closure technical-details UI. No migration was
-introduced. The added repository and widget assertions establish the bounded
-class projection at automated scope.
-
-### Acknowledgement ordering
-
-The coordinator still stops on a blocked download result before calling
-AcknowledgeAppliedCursor. Acknowledgement eligibility still comes from the
-greatest committed contiguous local cursor. Focused failure tests observe no
-acknowledgement after SQLite and payload-shape apply failures.
-
-These source decisions are accepted as implemented. Their live behavior remains
-unproved.
-
-## 4. Validation evidence reported by Codex
-
-Codex reports:
-
-~~~text
-dart format check=PASS
-flutter analyze=PASS
-focused changed diagnostic/apply tests=48 PASS
-local sync application tests=29 PASS
-two-device local harness=1 PASS
-v3 contract tests=2 PASS
-catalogue/store identity tests=8 PASS
-markei_app widget tests=26 PASS
-full flutter test=215 PASS / 4 disposable labs skipped
-debug Android APK build=PASS
-Windows build=PASS after releasing a local executable lock
-merged Android manifest inspection=PASS
-git diff --check=PASS
-changed-content sensitive scan=PASS reported
-~~~
-
-The Windows build's first failure was an environment lock, followed by a passing
-retry. The disposable HTTP/PostgreSQL/provider labs were not run because
-MARKEI_RUN_SYNC_LAB was unset. No live client/provider assay occurred.
-
-Under PRC-01 this proves strong static, deterministic automated and packaging
-evidence. It does not prove installed preserved-state behavior, provider
-convergence, acknowledgement, inter-device usability or GCM03 acceptance.
-
-## 5. D-matrix reconciliation gaps
-
-Inspection of the actual test additions does not support every G/H/I terminal at
-the strength reported.
-
-The added remote-applier tests cover:
-
-- new UUID plus exact identity under another code;
-- same code plus different identity;
-- split natural keys;
-- two-event Item remapping;
-- page rollback on typed conflict;
-- SQLite failure with no acknowledgement;
-- payload-shape failure with bounded class and rollback.
-
-The R03 diff does not add direct tests for all D-required branches:
-
-- ambiguous normalized-code match;
-- ambiguous exact-identity match;
-- established UUID immutable mutation;
-- a mixed Android/Windows page reproducing distinct client codes and later
-  cursor progression without duplicates;
-- the previously rejected hosted event followed by later-page poison recovery;
-- the residual unexpected-local-apply-failed category itself, rather than a
-  TypeError translated as payload-shape failure;
-- diagnostic-persistence failure before apply;
-- diagnostic-persistence failure while recording a rolled-back result;
-- diagnostic-persistence failure after a committed apply;
-- committed apply remaining acknowledgement-eligible under diagnostic
-  degradation;
-- runner fallback after those injected persistence failures.
-
-The full suite contains prior replay, cursor and acknowledgement tests, but those
-do not substitute automatically for the precise R03 injection matrix.
-
-Therefore:
-
-~~~text
-PRODUCT_EXACT_ID_DIFFERENT_CODE=PASS_IMPLEMENTED_AND_FOCUSED_TESTED
-PRODUCT_CODE_DIFFERENT_IDENTITY_CONFLICT=PASS_IMPLEMENTED_AND_FOCUSED_TESTED
-REMOTE_ITEM_ID_REMAP=PASS_IMPLEMENTED_AND_FOCUSED_TESTED
-REMOTE_PAGE_ATOMICITY=PASS_IMPLEMENTED_AND_PARTIALLY_TESTED
-UNEXPECTED_LOCAL_APPLY_TRANSLATION=IMPLEMENTED_NOT_DIRECTLY_TESTED
-AMBIGUOUS_PRODUCT_MATCHES=IMPLEMENTED_NOT_DIRECTLY_TESTED
-ESTABLISHED_UUID_MUTATION=IMPLEMENTED_NOT_DIRECTLY_TESTED
-POISON_PAGE_RECOVERY=NOT_DIRECTLY_TESTED
-DIAGNOSTIC_PERSISTENCE_CONTAINMENT=PARTIAL_EVIDENCE
-SANITIZED_EXCEPTION_CLASS_UI=PASS_IMPLEMENTED_AND_FOCUSED_TESTED
-ACKNOWLEDGEMENT_AFTER_UNPROVED_APPLY=NOT_STARTED_FOCUSED_TESTED
-~~~
-
-## 6. Residual causal-snapshot defect
-
-The in-memory recorder updates its stored evidence before attempting a durable
-diagnostic write and contains recordDiagnosticEvent failures. That is a real
-improvement over R02.
-
-However, the current _preferStrongestEvidence function is not a cumulative
-operation snapshot. Except when the new candidate newly proves trusted response
-received, newly proves local mutation committed, or is a generic terminal, it
-replaces the previous evidence object.
-
-A later acknowledgement-request phase is non-terminal and normally declares:
-
-~~~text
-trustedResponseState=not-received
-localMutationState=none/default
-providerContactState=request-started
-~~~
-
-It can therefore replace an earlier download-local-apply declaration that had
-already proved:
-
-~~~text
-trustedResponseState=received
-localMutationState=committed
-lastProvedPhase=download-local-apply
-~~~
-
-If acknowledgement transport or later coordination then throws, the runner
-fallback can consume the weaker acknowledgement-request object and lose the
-proved committed local-apply/trusted-download facts. This conflicts with D
-sections 5 and 7 and F sections 4 and 6, which require a snapshot retaining
-provider, apply, local mutation and acknowledgement truth separately.
-
-There is a second observability gap: beginDiagnosticAttempt failure sets
-attemptId to null but does not mark diagnostic persistence degraded. Subsequent
-phase calls skip durable writes without necessarily exposing
-diagnostics-persistence-degraded, and the final operation lifecycle declaration
-does not establish that the degradation became visible.
-
-No added R03 test injects these exact sequences.
-
-Consequently the G/H/I claims CAUSAL_EVIDENCE_PRESERVATION=PASS and
-DIAGNOSTIC_PERSISTENCE_CONTAINMENT=PASS are not promoted by Main.
-
-~~~text
-CAUSAL_EVIDENCE_PRESERVATION=PARTIAL_FAIL_ACK_TRANSITION
-DIAGNOSTIC_BEGIN_FAILURE_DEGRADATION=NOT_PROVED
-DIAGNOSTIC_AFTER_COMMIT_DEGRADATION=NOT_PROVED
-RUNNER_FALLBACK_STRONGEST_CAUSE=PARTIAL
-~~~
-
-## 7. PRC-01 disposition
-
-~~~text
-Claim: R03 was published as one scoped fast-forward commit
-Result: ACCEPTED
-Evidence ceiling: GitHub ancestry and changed-path comparison
-
-Claim: exact Product identity under another client code is corrected
-Result: ACCEPTED_AT_IMPLEMENTATION_AND_FOCUSED_TEST_SCOPE
-Evidence ceiling: deterministic Flutter/Drift source and test; no live client
-
-Claim: every apply exception has a bounded post-rollback source translation
-Result: ACCEPTED_AT_SOURCE_SCOPE
-Evidence ceiling: residual unexpected category lacks a direct injected test
-
-Claim: transaction truth is independent of diagnostic persistence
-Result: PARTIALLY_ACCEPTED
-Evidence ceiling: production recorder contains row-write failures, but required
-                  before/after-commit injection evidence is incomplete
-
-Claim: the runner always preserves the strongest causal truth
-Result: REJECTED_AS_COMPLETE
-Evidence: later acknowledgement request can replace earlier committed apply state
-
-Claim: R03 satisfies the complete controlling D test matrix
-Result: REJECTED
-Evidence: named required cases above are absent from the materialization diff
-
-Claim: practical Android/Windows Sync is now solved
-Result: REJECTED / NOT YET PROVED
-Evidence: no corrected binaries were installed or exercised; one causal defect
-          and multiple D validation gaps remain
-
-Claim: the historical Windows transaction truth is now known
-Result: REJECTED
-Evidence: new source cannot retroactively classify the frozen operation
-~~~
-
-## 8. Main terminal and required corrective continuation
-
-The Codex report's IMPLEMENTED_VALIDATED terminal is retained as a Codex
-observation but is not promoted as the Main terminal.
-
-~~~text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-GCM03=ACTIVE_CORRECTIVE_MATERIALIZATION
-C10_GCM03_S10_R03=IMPLEMENTED_WITH_MAIN_RECONCILIATION_GAPS
-C10_GCM03_S09_R03=HUMAN_ASSAY_CONTINUITY_ALIAS
-R03_REMOTE_COMMIT=23cd872848ebc0654a4d9de6f41a9ba3c09fe92c
-R03_SCOPE_RECONCILIATION=PASS
-R03_D_MATRIX_RECONCILIATION=PARTIAL_FAIL
-PRODUCT_CONVERGENCE_CORRECTION=IMPLEMENTED_FOCUSED_TESTED
-TOTAL_APPLY_TRANSLATION=IMPLEMENTED_PARTIALLY_TESTED
-CAUSAL_SNAPSHOT_ACK_TRANSITION=FAIL_OPEN
-DIAGNOSTIC_DEGRADATION_VISIBILITY=FAIL_OPEN
-INTER_DEVICE_SAME_ACCOUNT_SYNC=FAIL_OPEN
-MVP_SYNC_ACCEPTANCE=NOT_PROMOTED
-ANDROID_SYNC=HELD
-WINDOWS_SYNC=HELD
-RETRY_RECOVERY=HELD
-NEW_PURCHASE_REGISTRATION=HELD
-DIAGNOSTIC_HISTORY=PRESERVE
-PROVIDER_MUTATION=NONE
-NEXT_ACTION=STAGE_ONE_FOCUSED_R03_COMPLETION_ROUND
-~~~
-
-A new implementation authority should use a fresh revision identifier rather
-than silently rewriting R03 success. Main's proposed identifier is:
-
-~~~text
-C10-GCM03-S10-R04
-continuity: C10-GCM03-S09-R04
-~~~
-
-Its scope should be limited to:
-
-1. replace the single strongest-evidence object with a cumulative causal state
-   that preserves download trust, apply commit/rollback and acknowledgement
-   state independently;
-2. surface begin/row/complete diagnostic persistence failure as bounded
-   degradation without changing core truth;
-3. add the missing D decision/injection tests listed above;
-4. preserve the R03 Product resolver, total transaction boundary, exception
-   projection, protocol v3, schema, hosted API, auth/enrollment and provider
-   immobility;
-5. replace G/H/I and publish one scoped fast-forward commit;
-6. perform no live Sync, Retry, Recovery, Query, Enroll, acknowledgement or new
-   Purchase registration.
-
-No preserved-state install or live S09 assay is authorized until this completion
-round is materialized and reconciled.
-
-## 9. Provisional S09 human-assay route after corrective closure
-
-The former GCM03 human plan may be recovered for exact labels and client order,
-but it is not needed to decide the present stop. After R04 passes Main
-reconciliation, the human-assay route should be restaged from the actual R04
-commit:
-
-1. build/install corrected Android and Windows binaries while preserving both
-   application data sets and diagnostic history;
-2. prove build provenance, authenticated state, existing enrollment, local queue
-   shape, Device sequences and absence of automatic Sync;
-3. run offline Product/History projections only, registering no new Purchase;
-4. capture fresh read-only Android SQLite, Windows SQLite and provider baselines;
-5. authorize exactly one ordinary Sync on one named client;
-6. reconcile UI, SQLite, Render and provider postflights before authorizing the
-   other client;
-7. prove acknowledgement only after committed cursor exposure;
-8. run one separately authorized no-op replay to prove idempotency and absence of
-   duplicate Product, Store, Purchase or Purchase Item.
-
-The exact first client and the prior human record labels must be reconciled from
-the former GCM03 plan or REC evidence before issuing the executable S09 packet.
-They must not be guessed from this implementation report.
-
-## 10. Answer to the overall Sync question
-
-R03 materially corrects the Product exact-identity conflict and makes the local
-apply boundary much safer. It does not yet establish the overall solution for
-Sync.
-
-The remaining layers are:
-
-~~~text
-source Product convergence: corrected at focused automated scope
-source local-apply totality: implemented, incomplete direct validation
-causal diagnostic continuity through acknowledgement: still defective
-preserved-state Android/Windows installation: not performed
-live provider-to-client convergence: not rerun
-acknowledgement and postflight agreement: not observed
-idempotent live replay: not observed
-GCM03 acceptance: not promoted
-~~~
-
-Accordingly, no live control is released by this reconciliation.
----
-
-# 2026-07-29 â€” Post-Codex reconciliation: C10-GCM03-S10-R04
-
-## 1. Reconciliation envelope
-
-~~~text
-Sequence: FLX-PRM-04 post-materialization reconciliation
-Primary unit: C10-GCM03-S10-R04
-Human-assay continuity alias: C10-GCM03-S09-R04
-Repository: gus-i-gu/markei
-Branch: grm-guarded-provisioning-20260727
-Controlling staging head: fac76dfb961a13e479e03849fc838c5aaa212a74
-Materialization commit: e740d9de8bcab28110f9e398b8a29101acbb3869
-Materialization parent: fac76dfb961a13e479e03849fc838c5aaa212a74
-Remote branch before J publication: identical to e740d9de
-Materialization distance: exactly one non-forced fast-forward commit
-Live operation authority during reconciliation: NONE
-~~~
-
-This entry reconciles R04 against the controlling D/E/F contract, the exact
-eight-file remote comparison, changed source and tests, replacement G/H/I and
-the retained preserved-state evidence. Codex terminals remain observational
-until Main checks whether the implementation represents the independent truth
-planes required by D, E and F.
-
-## 2. Publication and scope guard
-
-The materialization changed exactly eight paths:
-
-~~~text
-clients/markei_flutter/lib/app/native_auth_closure_runner.dart
-clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_event_applier.dart
-clients/markei_flutter/lib/infrastructure/local/sync/remote_purchase_fact_writer.dart
-clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
-clients/markei_flutter/test/infrastructure/remote_purchase_event_applier_test.dart
-documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-~~~
-
-This is exactly one commit after the R04 staging head. Every path is inside D's
-allowed production, test or G/H/I scope. The two fact-application production
-files were touched only to add the authorized deterministic test seams for an
-otherwise unreachable Product ambiguity and an arbitrary apply failure.
-
-No schema, migration, payload, hosted API, authentication, enrollment,
-dependency, provider configuration, D/E/F, J, REC_DIAGNOSTICS, methodology,
-permanent-domain or GRIMOIRE operator path entered the R04 commit.
-
-~~~text
-R04_FAST_FORWARD_GUARD=PASS
-R04_CHANGED_PATH_SCOPE=PASS
-R04_BRANCH_TOPOLOGY=PASS
-R04_LIVE_OPERATION_DURING_CODEX=NO_REPORTED
-R04_PROVIDER_MUTATION_DURING_CODEX=NONE_REPORTED
-~~~
-
-## 3. R04 improvements accepted at implementation and automated scope
-
-### Cumulative replacement of the R03 whole-object selector
-
-The R03 strongest-event selector was removed. The runner now owns an in-memory
-per-operation cumulative object and updates it before awaiting durable
-diagnostic writes.
-
-The merge retains important facts monotonically:
-
-- trusted response received is not erased by acknowledgement or terminal
-  defaults;
-- a committed download apply remains visible through an acknowledgement
-  transport exception;
-- a proved rollback is not silently rewritten by a later placeholder;
-- begin-attempt failure starts the recorder with persistence degradation active;
-- row-write and completion-write failure mark degradation without throwing
-  through core Sync;
-- terminal lifecycle output projects diagnostics-persistence-degraded when the
-  diagnostic plane failed.
-
-This directly corrects the R03 defect in which an acknowledgement-request event
-could replace an earlier trusted download and committed apply object.
-
-### Product/apply decision and replay evidence
-
-R04 adds direct deterministic evidence for:
-
-- ambiguous normalized-code resolution through a constrained test seam;
-- ambiguous exact-identity resolution through the same bounded seam;
-- production uniqueness keeping those ambiguous row shapes unreachable through
-  ordinary storage;
-- established incoming UUID immutable mutation;
-- arbitrary unexpected apply failure and complete rollback;
-- replay of the formerly rejected exact-identity/different-code event;
-- later cursor progress after that replay;
-- mixed two-client page application and idempotent replay without duplicate
-  Product, Store, Purchase, Purchase Item or inbox effects.
-
-The R03 Product resolver, remote-to-local Product map and one-Drift-transaction
-facts/inbox/cursor boundary remain unchanged.
-
-### Diagnostic degradation evidence
-
-Focused runner tests inject:
-
-- diagnostic-attempt begin failure;
-- diagnostic row failure with committed apply;
-- diagnostic row failure while reporting rollback;
-- diagnostic completion failure after committed apply;
-- acknowledgement transport exception after committed apply.
-
-Those tests establish that diagnostic durability is observational and cannot by
-itself flip the core result, manufacture provider success or prevent
-acknowledgement after an independently committed cursor.
-
-## 4. Validation absorbed under PRC-01
-
-Codex reports:
-
-~~~text
-dart format check=PASS; 98 files; 0 changed
-flutter analyze=PASS
-focused native diagnostics=33 PASS
-focused remote applier=18 PASS
-combined diagnostic/repository/applier=61 PASS
-local sync application=29 PASS
-two-device deterministic harness=1 PASS
-v3 contract=2 PASS
-catalogue/store/app regression=34 PASS
-full flutter test=228 PASS / 4 disposable labs skipped
-debug Android APK build=PASS
-Windows release build=PASS first attempt
-merged Android manifest inspection=PASS
-git diff --check=PASS
-diagnostics generator/check=PASS
-changed-content sensitive scan=PASS reported
-~~~
-
-The disposable hosted/provider labs were skipped because MARKEI_RUN_SYNC_LAB
-was absent. No live Android or Windows client, preserved application database,
-Render operation or provider mutation was exercised.
-
-These results are strong local implementation, deterministic test, regression
-and packaging evidence. They do not prove installed preserved-state behavior,
-live provider-to-client convergence, live acknowledgement, bidirectional
-inter-device usability, idempotent hosted replay or GCM03 closure.
-
-## 5. Main gap 1 â€” acknowledgement truth is not an independent cumulative plane
-
-D required the cumulative operation state to retain acknowledgement as an
-independent not-started, started and classified-result progression.
-
-The implemented cumulative type has no acknowledgement state or result field.
-The external SyncDiagnosticPhaseEvidence type also has no acknowledgement
-dimension. An acknowledgement is represented only by generic fields:
-
-~~~text
-phase
-nativeCode
-outcome
-providerContactState
-providerTransactionState
-trustedResponseState
-~~~
-
-Those generic fields are later overwritten or merged with upload, download and
-terminal evidence. The acknowledgement-exception test proves that trusted
-download and committed local apply survive, but it does not assert:
-
-~~~text
-acknowledgement started
-acknowledgement response absent or received
-acknowledgement outcome unknown, failed, rejected or applied
-~~~
-
-After the runner records a generic terminal exception, phase and nativeCode no
-longer preserve the acknowledgement-request identity in the cumulative
-snapshot. Durable event history may still contain the request row, but D
-explicitly required the runner/lifecycle cumulative snapshot to preserve the
-acknowledgement transition independently.
-
-The providerTransactionState field cannot substitute for this dimension. A
-previous successful upload may set it to committed. If acknowledgement later
-throws before a trusted response, the cumulative state can retain committed
-from the upload and offer no field showing that acknowledgement merely started
-and is uncertain. This can mislead a terminal consumer into reading an upload
-provider transaction as acknowledgement success.
-
-Therefore:
-
-~~~text
-ACK_TRANSITION_RETAINS_PRIOR_DOWNLOAD_APPLY=PASS
-ACK_INDEPENDENT_NOT_STARTED_STARTED_RESULT_STATE=FAIL_OPEN
-ACK_EXCEPTION_CLASSIFICATION_IN_CUMULATIVE_SNAPSHOT=PARTIAL
-ACK_TRANSITION_TRUTH_PRESERVED_TERMINAL=NOT_PROMOTED_AS_COMPLETE
-~~~
-
-## 6. Main gap 2 â€” distinct local transactions are collapsed into one mutation field
-
-The cumulative state owns one generic localMutationState. Ordinary Sync uses
-that same field for different local transactions:
-
-- upload lease/result persistence can emit committed;
-- inbound page application can emit committed or rolled-back;
-- diagnostic persistence is tracked separately.
-
-The merge classifies committed followed by rolled-back, or rolled-back followed
-by committed, as diagnostic-causal-invariant-conflict.
-
-That rule is valid only when two declarations contradict the same transaction.
-It is not valid when an upload-queue transaction commits and a later independent
-download-apply transaction rolls back. Both facts can be true in one ordinary
-Sync.
-
-The required preserved-state scenario makes this concrete. The earlier Android
-operation successfully uploaded its pending event and then failed while applying
-hosted inbound events. A corrected implementation must be able to represent:
-
-~~~text
-upload local persistence=committed
-download trusted response=received
-download local apply=rolled-back
-acknowledgement=not-started
-~~~
-
-R04 can instead merge the first two local-mutation declarations into
-diagnostic-invariant-conflict. The new rollback tests use no prior committed
-upload mutation. The mixed-client replay test calls the applier directly and
-does not exercise the coordinator sequence of successful upload followed by
-failed inbound apply.
-
-Consequently the broad G/H/I conclusion that every authoritative transaction
-plane is independently retained is too strong.
-
-~~~text
-UPLOAD_LOCAL_PERSISTENCE_PLANE=NOT_SEPARATED
-DOWNLOAD_LOCAL_APPLY_PLANE=NOT_SEPARATED
-LEGITIMATE_UPLOAD_COMMIT_PLUS_APPLY_ROLLBACK=UNTESTED_AND_MISCLASSIFIED
-CAUSAL_TRANSACTION_PARTITION=FAIL_OPEN
-~~~
-
-## 7. PRC-01 disposition
-
-~~~text
-Claim: R04 was one scoped fast-forward materialization
-Result: ACCEPTED
-Evidence ceiling: GitHub ancestry and exact path comparison
-
-Claim: R03 whole-object evidence replacement was corrected
-Result: ACCEPTED_AT_IMPLEMENTATION_AND_FOCUSED_TEST_SCOPE
-Evidence ceiling: trusted download and committed apply survive ack/terminal
-                  defaults in deterministic runner tests
-
-Claim: diagnostic begin, row and completion failures are contained
-Result: ACCEPTED_AT_DETERMINISTIC_TEST_SCOPE
-Evidence ceiling: local injected recorder failures; no preserved-state runtime
-
-Claim: the missing Product/apply/replay test categories were materialized
-Result: ACCEPTED_AT_DETERMINISTIC_APPLIER_SCOPE
-Evidence ceiling: constrained test seams and local Drift databases
-
-Claim: acknowledgement truth is retained independently
-Result: REJECTED_AS_COMPLETE
-Evidence: no acknowledgement field/result exists in cumulative or projected
-          state; generic provider fields conflate upload and acknowledgement
-
-Claim: local transaction truth is partitioned correctly
-Result: REJECTED_AS_COMPLETE
-Evidence: upload persistence and download apply share one mutation field;
-          legitimate commit then rollback becomes an invariant conflict
-
-Claim: all R04 D terminals may be promoted as PASS
-Result: REJECTED
-Evidence: ACK_TRANSITION_TRUTH_PRESERVED and CUMULATIVE_CAUSAL_STATE remain
-          partial because the required independent planes are absent
-
-Claim: overall Android/Windows Sync is solved
-Result: REJECTED / NOT YET PROVED
-Evidence: no corrected preserved-state clients or live assay; two source truth
-          partitions remain incomplete
-~~~
-
-## 8. Main terminal
-
-The Codex IMPLEMENTED_VALIDATED terminal is retained as Codex evidence. Main
-accepts the Product, apply/replay and diagnostic-degradation achievements but
-does not promote R04 as D-complete.
-
-~~~text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-GCM03=ACTIVE_CORRECTIVE_MATERIALIZATION
-C10_GCM03_S10_R04=IMPLEMENTED_WITH_MAIN_RECONCILIATION_GAPS
-C10_GCM03_S09_R04=HUMAN_ASSAY_CONTINUITY_ALIAS
-R04_REMOTE_COMMIT=e740d9de8bcab28110f9e398b8a29101acbb3869
-R04_SCOPE_RECONCILIATION=PASS
-R04_PRODUCT_APPLY_REPLAY_MATRIX=PASS_AUTOMATED_SCOPE
-R04_DIAGNOSTIC_DEGRADATION=PASS_AUTOMATED_SCOPE
-R04_TRUSTED_DOWNLOAD_AND_COMMITTED_APPLY_RETENTION=PASS_AUTOMATED_SCOPE
-R04_ACKNOWLEDGEMENT_INDEPENDENT_STATE=FAIL_OPEN
-R04_LOCAL_TRANSACTION_PARTITION=FAIL_OPEN
-CUMULATIVE_CAUSAL_STATE=PARTIAL
-ACK_TRANSITION_TRUTH_PRESERVED=PARTIAL_FAIL
-INTER_DEVICE_SAME_ACCOUNT_SYNC=FAIL_OPEN
-MVP_SYNC_ACCEPTANCE=NOT_PROMOTED
-ANDROID_SYNC=HELD
-WINDOWS_SYNC=HELD
-RETRY_RECOVERY=HELD
-QUERY=HELD
-ENROLL=DO_NOT_REPEAT
-NEW_PURCHASE_REGISTRATION=HELD
-DIAGNOSTIC_HISTORY=PRESERVE
-PROVIDER_MUTATION=NONE
-NEXT_ACTION=STAGE_C10_GCM03_S10_R05_TRUTH_PLANE_COMPLETION
-~~~
-
-## 9. R05 corrective directive frame
-
-The next implementation authority should be:
-
-~~~text
-Primary unit: C10-GCM03-S10-R05
-Human-assay continuity alias: C10-GCM03-S09-R05
-Starting implementation parent: a future Main D/E/F staging commit descended
-                                directly from this J reconciliation
-~~~
-
-R05 must remain narrower than R04.
-
-### Required state separation
-
-The recorder-owned cumulative model must retain independently:
-
-1. upload request/provider outcome;
-2. upload local lease/result-persistence outcome;
-3. download request and trusted-response outcome;
-4. inbound local-apply not-started/committed/rolled-back/unknown;
-5. acknowledgement not-started/request-started/response-received and classified
-   outcome;
-6. diagnostic persistence durable/degraded;
-7. latest entered phase, latest proved phase, bounded terminal result,
-   sanitized exception class and safe action.
-
-A state from one transaction must not satisfy or contradict another transaction.
-In particular:
-
-~~~text
-upload committed + inbound apply rolled-back = valid compound state
-upload committed + acknowledgement uncertain = valid compound state
-inbound apply committed + acknowledgement uncertain = valid compound state
-inbound apply failed/unproved + acknowledgement started = bounded invariant
-~~~
-
-The lifecycle and runner fallback must project the independent inbound-apply and
-acknowledgement facts. If the current public evidence model cannot represent
-them without ambiguity, R05 may extend the in-memory/application evidence type
-and bounded lifecycle fields inside the approved Flutter scope. It must not add
-a database migration, hosted payload field or provider contract change.
-
-### Required direct tests
-
-R05 must add coordinator/runner-level deterministic tests for:
-
-1. no upload, committed inbound apply, acknowledgement success;
-2. no upload, committed inbound apply, acknowledgement transport exception;
-3. successful upload persistence followed by inbound apply rollback;
-4. successful upload persistence followed by committed inbound apply and
-   acknowledgement transport exception;
-5. upload unknown/rejected followed by the existing early stop, with no download
-   or acknowledgement proof;
-6. failed/unproved inbound apply with acknowledgement not started;
-7. diagnostic begin/row/complete failure across the compound upload/download/ack
-   cases without altering any core plane;
-8. terminal projection preserving upload, inbound apply and acknowledgement
-   fields independently;
-9. no false diagnostic invariant for valid cross-phase transaction outcomes;
-10. a real contradiction within the same authoritative plane producing the
-    bounded invariant category;
-11. sanitized lifecycle output containing no payload, business fact, UUID,
-    token, SQL, exception message, stack, secret or full hash;
-12. regression of the accepted R03/R04 Product decision, poison-page and
-    idempotent replay behavior.
-
-Direct assertions must inspect independent fields rather than infer
-acknowledgement from providerTransactionState or infer inbound apply from a
-generic operation-wide localMutationState.
-
-### Frozen boundaries
-
-R05 must preserve:
-
-- the R03 Product resolver and remote-to-local reference map;
-- the R04 ambiguity, unexpected-apply, poison-page and mixed replay evidence;
-- one Drift transaction for facts/inbox/cursor;
-- acknowledgement eligibility from committed contiguous cursor only;
-- diagnostic persistence as best-effort observability;
-- Protocol v3, schema, hosted API, Auth0, enrollment, Account binding,
-  dependencies, Store rules and Person/Payment restrictions.
-
-R05 must perform no live Sync, Retry, Recovery, Query, Enroll, acknowledgement,
-new Purchase registration, preserved-state installation, provider mutation,
-diagnostic clearing, migration, rebase, branch creation, force push or PR.
-
-G/H/I must be replaced and must report any residual partial plane honestly.
-
-## 10. Post-R05 human route
-
-Only after R05 materialization and a separate Main reconciliation may the human
-assay line resume.
-
-The provisional order is:
-
-1. build and install R05-descended Android and Windows artifacts while preserving
-   both application databases and diagnostic history;
-2. prove exact build provenance, authentication, existing enrollment, queue
-   state, Device sequences and absence of automatic Sync;
-3. perform offline Product, Catalogue and History projection checks without
-   registering a new Purchase;
-4. freeze fresh read-only Android SQLite, Windows SQLite and provider baselines;
-5. choose exactly one first client from those actual baselines;
-6. authorize one ordinary Sync only;
-7. reconcile lifecycle, UI, SQLite, Render and provider results before the other
-   client may act;
-8. authorize the second client only after the first result is classified;
-9. run one separately authorized no-op repeat proving idempotency and no
-   duplicate Product, Store, Purchase or Purchase Item.
-
-The former GCM03 plan remains provenance, not executable authority. Both hosted
-Purchases already exist and must not be recreated. The historical Windows
-commit-versus-rollback truth remains unresolved; the current first-client order
-must therefore come from fresh read-only baselines rather than the old
-Windows-first sequence.
-
-Android is the provisional diagnostic preference because its earlier rollback
-was directly proved, while Windows transaction truth was not. This is not an
-authorization or final order. R05 reconciliation and fresh baselines control
-that decision.
-
-## 11. Held boundary
-
-Until R05 is staged, implemented and reconciled:
-
-~~~text
-ANDROID_SYNC=HELD
-WINDOWS_SYNC=HELD
-RETRY_RECOVERY=HELD
-QUERY=HELD
-ENROLL=DO_NOT_REPEAT
-NEW_PURCHASE_REGISTRATION=HELD
-PRESERVED_STATE_INSTALL=HELD
-DIAGNOSTIC_HISTORY=PRESERVE
-PROVIDER_MUTATION=NONE
-OVERALL_SYNC_ACCEPTANCE=NOT_PROMOTED
-~~~
-
-
----
-
-# 2026-07-29 â€” Post-Codex reconciliation: C10-GCM03-S10-R05 and S09-st05 Recoverytest entry
-
-## 1. Reconciliation envelope
-
-~~~text
-Sequence: FLX-PRM-04 post-materialization reconciliation
-Primary source unit: C10-GCM03-S10-R05
-Human-assay continuity alias: C10-GCM03-S09-R05
-Recovery line: C10-GCM03-S09-st05-Recoverytest
-Repository: gus-i-gu/markei
-Branch: grm-guarded-provisioning-20260727
-Controlling staging head: c186edccd0be03b6adca9d4d1609ec82372b82b6
-Materialization commit: 0ac34d0c4233b196b89f97d9b61d78e3dfb55ee2
-Materialization parent: c186edccd0be03b6adca9d4d1609ec82372b82b6
-Materialization distance: exactly one non-forced fast-forward commit
-Live operation authority during R05 and this reconciliation: NONE
-~~~
-
-Main reconciled the exact remote comparison, D/E/F, the R05 source changes,
-the direct compound tests, and replacement G/H/I. Codex terminals are accepted
-only at their actual evidence class. This entry does not itself authorize an
-installation, Sync, Retry, Recovery, Query, Enroll, new Purchase, diagnostic
-clearing, database repair, or provider mutation.
-
-## 2. Publication and scope guard
-
-R05 changed exactly eight paths:
-
-~~~text
-clients/markei_flutter/lib/app/native_auth_closure_runner.dart
-clients/markei_flutter/lib/application/hosted_sync_coordinator.dart
-clients/markei_flutter/lib/application/sync/sync_ports.dart
-clients/markei_flutter/lib/application/sync/sync_use_cases.dart
-clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
-documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
-documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-~~~
-
-Every path is inside D's authorized production, test, or report scope. No
-schema, migration, hosted API, payload, authentication, enrollment, dependency,
-configuration, Product resolver, remote fact writer, generated file, J, REC,
-methodology, permanent memory, GRM operator file, or provider resource entered
-the R05 materialization.
-
-~~~text
-R05_FAST_FORWARD_GUARD=PASS
-R05_CHANGED_PATH_SCOPE=PASS
-R05_BRANCH_TOPOLOGY=PASS
-R05_LIVE_OPERATION_DURING_CODEX=NO_REPORTED
-R05_PRESERVED_CLIENT_STATE_TOUCHED=NO_REPORTED
-R05_PROVIDER_MUTATION_DURING_CODEX=NONE_REPORTED
-~~~
-
-## 3. Source correction accepted at automated scope
-
-The runner-owned cumulative state now contains explicit, bounded fields for:
-
-- upload request, trusted response, provider outcome, lease state, and result
-  persistence;
-- download request and trusted response;
-- inbound apply and committed-cursor proof;
-- acknowledgement request, trusted response, and outcome;
-- diagnostic durability;
-- terminal result, latest entered/proved phase, safe action, retryability, and
-  sanitized exception class.
-
-The generic compatibility fields remain event-row projections, not the
-authoritative cumulative representation. The merge now operates within each
-transaction plane. Different transactions may therefore retain different
-outcomes without manufacturing a causal invariant.
-
-Direct tests establish at deterministic runner/coordinator scope:
-
-- no-upload committed apply followed by acknowledgement success;
-- acknowledgement transport exception retaining committed apply while recording
-  request-started, response-not-received, and unknown acknowledgement outcome;
-- successful upload persistence followed by inbound rollback, with
-  acknowledgement not started and no false invariant;
-- successful upload and committed inbound apply followed by acknowledgement
-  uncertainty;
-- rejected upload stopping before download and acknowledgement;
-- diagnostic begin, row, and completion degradation across compound operations;
-- a real same-plane committed/rolled-back contradiction producing the bounded
-  invariant;
-- sanitized lifecycle projection and frozen R03/R04 Product/apply/replay
-  regressions.
-
-Source inspection confirms that upload-local truth no longer satisfies or
-contradicts inbound-apply truth, and upload-provider truth no longer substitutes
-for acknowledgement truth.
-
-## 4. Validation absorbed under PRC-01
-
-Codex reports:
-
-~~~text
-dart format check=PASS; 98 files; 0 changed
-flutter analyze=PASS
-native closure diagnostics=39 PASS
-local sync application=29 PASS
-two-device deterministic harness=1 PASS
-v3 contract=2 PASS
-remote purchase applier regression=18 PASS
-catalogue/store/app regression=34 PASS
-full flutter test=234 PASS / 4 disposable labs skipped
-debug Android APK build=PASS
-Windows release build=PASS first attempt
-merged Android manifest inspection=PASS
-git diff --check=PASS
-diagnostics generator/check=PASS
-changed-content sensitive scan=PASS reported
-~~~
-
-The four hosted/provider labs were skipped because MARKEI_RUN_SYNC_LAB was
-absent. No preserved client, installed R05 binary, Render operation, live
-provider response, or live acknowledgement was exercised.
-
-Accordingly:
-
-~~~text
-R05_TRUTH_PLANE_PARTITION=ACCEPTED_AUTOMATED_SCOPE
-R05_UPLOAD_APPLY_ROLLBACK_COMPOUND=ACCEPTED_AUTOMATED_SCOPE
-R05_ACKNOWLEDGEMENT_INDEPENDENCE=ACCEPTED_AUTOMATED_SCOPE
-R05_DIAGNOSTIC_DEGRADATION=ACCEPTED_AUTOMATED_SCOPE
-R05_SAME_PLANE_INVARIANT=ACCEPTED_AUTOMATED_SCOPE
-R03_R04_REGRESSION=ACCEPTED_REPORTED_AUTOMATED_SCOPE
-INSTALLED_CLIENT_BEHAVIOR=UNPROVED
-PRESERVED_STATE_CONTINUITY=REQUIRES_FRESH_CHECKPOINT
-LIVE_INTER_DEVICE_CONVERGENCE=UNPROVED
-~~~
-
-## 5. Main disposition
-
-R05 satisfies the source-only corrective authority. Main does not identify a
-new source-model defect requiring an R06 before runtime recovery begins. This
-is not overall Sync acceptance: the evidence ceiling now moves from
-deterministic source validation to preserved-state observation.
-
-~~~text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-GCM03=ACTIVE_RECOVERY_ASSAY_PREPARATION
-C10_GCM03_S10_R05=IMPLEMENTED_RECONCILED_AUTOMATED_SCOPE
-C10_GCM03_S09_R05=HUMAN_ASSAY_CONTINUITY_ALIAS
-R05_REMOTE_COMMIT=0ac34d0c4233b196b89f97d9b61d78e3dfb55ee2
-TRUTH_PLANES_PARTITIONED=PASS_AUTOMATED_SCOPE
-ACKNOWLEDGEMENT_INDEPENDENT_PLANE=PASS_AUTOMATED_SCOPE
-VALID_UPLOAD_COMMIT_PLUS_APPLY_ROLLBACK=PASS_AUTOMATED_SCOPE
-DIAGNOSTIC_DEGRADATION_INDEPENDENT=PASS_AUTOMATED_SCOPE
-INTER_DEVICE_SAME_ACCOUNT_SYNC=FAIL_OPEN
-MVP_SYNC_ACCEPTANCE=NOT_PROMOTED
-ANDROID_SYNC=HELD
-WINDOWS_SYNC=HELD
-RETRY_RECOVERY=HELD
-QUERY=HELD
-ENROLL=DO_NOT_REPEAT
-NEW_PURCHASE_REGISTRATION=HELD
-PRESERVED_STATE_INSTALL=HELD
-DIAGNOSTIC_HISTORY=PRESERVE
-PROVIDER_MUTATION=NONE
-NEXT_ACTION=C10_GCM03_S09_ST05_01_PREINSTALL_READ_ONLY_CHECKPOINT
-~~~
-
-## 6. C10-GCM03-S09-st05-Recoverytest inner-step ladder
-
-The Recoverytest is serialized. A later step does not become executable merely
-because it appears here. Main must reconcile the evidence terminal of the
-current step before releasing the next mutation-bearing step.
-
-### st05.01 â€” Pre-install read-only preserved-state checkpoint
-
-Purpose: anchor the unchanged R02-descended WIN, Android, and provider state
-before either R05 binary is installed.
-
-Collect, using the established sanitized GS/GRM procedures:
-
-1. current branch and R05 commit provenance;
-2. visible installed build/app identity on WIN and Android without reinstalling;
-3. authentication and existing enrollment presentation;
-4. queue counts: pending, uploading, failed, and unknown;
-5. Device sequence, local cursor, inbox, and diagnostic-attempt summaries;
-6. last result, readiness, recovery guidance, and bounded lifecycle categories;
-7. sanitized read-only WIN SQLite and Android SQLite probes;
-8. sanitized read-only provider/Render baseline sufficient to compare account,
-   Device, hosted event, acknowledgement, and cursor state;
-9. timestamps and labels tying every capture to one checkpoint envelope.
-
-Prohibited during st05.01:
-
-~~~text
-Sync
-Retry
-Recovery
-Query
-Enroll
-new Purchase
-installation or launch caused by a new binary
-diagnostic clearing
-database repair/reset/surgery
-provider mutation
-hosted-event rewrite
-acknowledgement
-~~~
-
-Terminal:
-
-~~~text
-ST05_01_PREINSTALL_CHECKPOINT=COMPLETE | BLOCKED
-WIN_STATE_CAPTURED=YES | NO
-ANDROID_STATE_CAPTURED=YES | NO
-PROVIDER_STATE_CAPTURED=YES | NO
-UNEXPLAINED_STATE_DRIFT=NONE | PRESENT | UNRESOLVED
-CLIENT_MUTATION=NONE
-PROVIDER_MUTATION=NONE
-LIVE_SYNC_EXECUTED=NO
-~~~
-
-### st05.02 â€” Baseline reconciliation and client-order decision
-
-Main compares st05.01 with retained R02/R03/R04 evidence and classifies:
-
-- whether each preserved database and queue remains intelligible;
-- whether the hosted event and acknowledgement set agrees with the clients;
-- whether any state change occurred without an authorized operation;
-- whether the known failed events remain recoverable without clearing history;
-- which client has the strongest proved starting truth.
-
-If drift is unexplained, stop. Do not install or test through ambiguity.
-
-Only after a coherent checkpoint may Main choose the first client. Android
-remains a diagnostic preference because its prior rollback was directly proved;
-it is not preselected. The actual st05.01 evidence controls order.
-
-Terminal:
-
-~~~text
-ST05_02_BASELINE_RECONCILIATION=PASS | BLOCKED
-PRESERVED_STATE_COHERENT=YES | NO
-FIRST_CLIENT=ANDROID | WINDOWS | UNDECIDED
-INSTALLATION_AUTHORITY=HELD_PENDING_EXPLICIT_RELEASE
-~~~
-
-### st05.03 â€” R05 artifact provenance packet
-
-Prepare or verify Android and Windows artifacts descended exactly from the R05
-implementation/reconciliation line. Record source SHA, build command, artifact
-identity/fingerprint, configuration class, manifest/packaging checks, and zero
-automatic operation expectation.
-
-This step does not install or launch against preserved data.
-
-Terminal:
-
-~~~text
-ST05_03_ARTIFACT_PROVENANCE=PASS | BLOCKED
-ANDROID_ARTIFACT_R05_DESCENDED=YES | NO
-WINDOWS_ARTIFACT_R05_DESCENDED=YES | NO
-PRESERVED_CLIENT_STATE_TOUCHED=NO
-~~~
-
-### st05.04 â€” Preserved-data installation, one client at a time
-
-This is mutation-bearing and requires a fresh explicit Main packet after
-st05.01-st05.03 pass. Install only the selected first client's verified R05
-artifact without clearing application data or diagnostic history. Do not press
-Sync, Retry, Recovery, Query, or Enroll.
-
-After launch, capture offline/read-only identity, authentication/enrollment
-presentation, queue, cursor, Product, Catalogue, History, and diagnostics.
-Compare them to st05.01 before installing the second client.
-
-The second installation requires a separate gate. Any migration surprise,
-automatic Sync, data loss, queue rewrite, enrollment change, or diagnostic
-clearing stops the assay.
-
-### st05.05 â€” Post-install dual-client read-only checkpoint
-
-After both gated installations, prove:
-
-- both binaries descend from the accepted R05 line;
-- both preserved databases and diagnostic histories remain present;
-- no automatic Sync or acknowledgement occurred;
-- Product/Catalogue/History projections remain coherent;
-- local queues, cursors, inboxes, Device sequences, and provider baseline still
-  reconcile.
-
-No live operation is authorized by completion of this step alone.
-
-### st05.06 â€” First-client ordinary Sync
-
-Requires a new explicit one-operation packet naming the client chosen in
-st05.02. Authorize exactly one ordinary Sync on that client.
-
-Prohibit Retry, Recovery, Query, Enroll, new Purchase, second-client Sync,
-diagnostic clearing, or any automatic repeat. Immediately collect UI, lifecycle,
-SQLite, Render, and provider postflight evidence.
-
-### st05.07 â€” First-client postflight reconciliation
-
-Classify independently:
-
-- upload provider and local persistence;
-- download trusted response;
-- inbound apply and cursor proof;
-- acknowledgement request/response/outcome;
-- diagnostic durability;
-- Product/Store/Purchase/Purchase Item cardinality;
-- queue, inbox, cursor, and provider agreement.
-
-Do not release the second client if any plane is unknown, contradictory, or
-unsafe.
-
-### st05.08 â€” Second-client ordinary Sync
-
-Only after st05.07 passes, issue a separate one-operation packet for the other
-client and repeat the same evidence collection and prohibitions.
-
-### st05.09 â€” Two-client convergence postflight
-
-Reconcile both clients and the provider. Require equal intended facts, bounded
-local presentation differences, empty or classified queues, consistent cursors
-and acknowledgements, and no duplicate Product, Store, Purchase, Purchase Item,
-inbox, or hosted event effects.
-
-### st05.10 â€” Separately authorized no-op replay
-
-Only after st05.09 passes, authorize one named-client no-op ordinary Sync.
-Require idempotent result, no duplicate facts, no cursor regression, no new
-provider event, and no inappropriate acknowledgement or queue mutation.
-
-## 7. Current executable boundary
-
-Only st05.01 may now be prepared as the next operator packet. This J entry is a
-route definition, not a command to interact with the clients or provider.
-st05.02 is reconciliation work after evidence returns. st05.03 and every later
-step remain held until their preceding terminals pass and Main explicitly
-releases them.
-
-~~~text
-C10_GCM03_S09_ST05_RECOVERYTEST=ACTIVE_GATED
-CURRENT_INNERSTEP=ST05_01_PREINSTALL_READ_ONLY_CHECKPOINT
-LIVE_SYNC_AUTHORITY=NONE
-INSTALLATION_AUTHORITY=NONE
-RETRY_RECOVERY_AUTHORITY=NONE
-QUERY_AUTHORITY=NONE
-ENROLL_AUTHORITY=NONE
-NEW_PURCHASE_AUTHORITY=NONE
-DIAGNOSTIC_CLEARING_AUTHORITY=NONE
-PROVIDER_MUTATION_AUTHORITY=NONE
-OVERALL_SYNC_ACCEPTANCE=NOT_PROMOTED
-~~~
-
----
-
-# 2026-07-30 â€” GCM03 final human reconciliation and GCM04 definition entry
-
-## 1. Reconciliation envelope
-
-```text
-Sequence: FLX-PRM-04
-Unit: C10-GCM03-S09 final human acceptance
-Corrective source line: C10-GCM03-S10-R03 through R05
-Provenance/procedure line: C10-GCM03-S09-R06-CR02
-Repository: gus-i-gu/markei
-Branch: grm-guarded-provisioning-20260727
-Reconciled source head: 97cec7f733926f669d2a844feb2b5e6e0b7e6bce
-Client source revision: 97cec7f73392
-Client source-tree SHA-256: 3d2a62aed2536122af9a28746dba4c3e6ecae282fc75802c754ebe14ce1997ff
-Evidence: complete dual-client Closure/History/Catalogue screenshots,
-          operator observations, sanitized golden Render log window,
-          REC_DIAGNOSTICS Record 021
-Writable scope: append-only J and REC_DIAGNOSTICS
-```
-
-This entry reconciles the live preserved-state assay that the R03-R05 source
-corrections were designed to unblock. It does not alter source, D/E/F, G/H/I,
-methodology, permanent-domain memory, provider resources, authentication,
-enrollment, client data, or production configuration.
-
-## 2. Human acceptance result
-
-Both preserved clients ran the same source identity, remained authenticated and
-device-enrolled, and completed reciprocal same-Account synchronization.
-
-The observed functional result is:
-
-- Windows-originated facts converged to Android;
-- one controlled Android-originated Purchase converged to Windows;
-- the Catalogue converged on both clients;
-- the exact natural-identity Product that previously caused the Android typed
-  conflict was selected and merged instead of duplicated;
-- matching History projections retained five intended Purchase rows on each
-  client, including the controlled `BRL 10.00` member;
-- no duplicate Product, Purchase or Purchase Item was observed;
-- both queues settled at `0/0/0/0`;
-- Android next Device sequence is `3`;
-- Windows next Device sequence is `4`;
-- no Retry, Recovery, Query, repeated Enroll or repair action was needed.
-
-This is the missing preserved-state human evidence for the R03-R05 corrective
-line. It validates the Product reconciliation, transaction partition,
-acknowledgement ordering, diagnostic preservation and idempotent replay behavior
-at the practical two-client development boundary.
-
-## 3. Golden idempotent repeat
-
-After reciprocal convergence, one empty-queue ordinary Sync was executed on
-each Device.
-
-The supplied Render window contains two distinct operations:
-
-- `ff02a369a0f4` at 20:41:52Z;
-- `ca5bdb14ebef` at 20:42:38Z.
-
-Each operation produced:
-
-1. authenticated GET `/v1/sync/events`, HTTP 200;
-2. authenticated POST `/v1/sync/acknowledgements`, HTTP 200;
-3. response completion in the `lt-250ms` band.
-
-No submission request appears in the no-op window. Both queues remained
-`0/0/0/0`; History and Catalogue remained stable; no duplicate appeared; no
-recovery code was required.
-
-The client and Render evidence proves the no-op behavior relevant to GCM03.13.
-A fresh final transactional provider inventory was not supplied, so no exact
-new provider row counts are promoted by this entry.
-
-## 4. GCM03.9â€“14 disposition
-
-| Item | Final disposition | Evidence ceiling |
-| --- | --- | --- |
-| GCM03.9 authorization | PASS, historically consumed | The original ladder was compressed by later Main-authorized packets; no authority remains |
-| GCM03.10 Windows-to-Android | PASS | Preserved-client convergence and matching projections |
-| GCM03.11 Android reverse member | PASS | One controlled Android Purchase; queue advanced and later drained |
-| GCM03.12 Android-to-Windows | PASS | Controlled member appears once on Windows |
-| GCM03.13 idempotent repeat | PASS | One no-op per Device; no submission route; authenticated download/ack 200 |
-| GCM03.14 reconcile and close | PASS at bounded scope | Client + Render + retained provider baseline; final provider-table recount not collected |
-
-The absence of a fresh final provider inventory is retained as an evidence
-ceiling, not converted into an unexplained failure. Earlier read-only provider
-baselines established the exact Account/two-Device binding and consistent
-cursor/sequence foundation; the final live packet establishes practical
-reciprocal convergence and idempotent client/server behavior.
-
-## 5. PRC-01 promotion boundary
-
-```text
-Claim: R03-R05 corrected the original inbound convergence failures
-Result: ACCEPTED_AT_PRESERVED_TWO_CLIENT_DEVELOPMENT_SCOPE
-Evidence: former Android Product conflict converged; former Windows
-          post-download uncertainty did not recur
-
-Claim: ordinary Sync is reciprocal for two enrolled Devices on one Account
-Result: ACCEPTED_AT_DEVELOPMENT_SCOPE
-Evidence: Windows-to-Android and Android-to-Windows members converged
-
-Claim: exact natural identity prevents duplicate Catalogue Product creation
-Result: ACCEPTED_AT_HUMAN_ASSAY_SCOPE
-Evidence: conflict Product merged and Catalogue remained singular
-
-Claim: an empty-queue repeat is idempotent
-Result: ACCEPTED_AT_CLIENT_AND_RENDER_SCOPE
-Evidence: queues stable; no submission route; authenticated event download and
-          acknowledgement completed twice
-
-Claim: GCM03 proves production resilience and lifecycle completeness
-Result: REJECTED
-Evidence: revocation, cross-Account denial, outage/recovery,
-          retention/snapshot/rebootstrap and production operations remain open
-```
-
-## 6. GCM03 terminal
-
-```text
-CYCLE10=OPEN
-GCM01=ACCEPTED_DEVELOPMENT_BOUNDARY
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-GCM03=CLOSED_TWO_DEVICE_DEVELOPMENT_SCOPE
-C10_GCM03_S10_R03_R05=HUMAN_VALIDATED
-C10_GCM03_S09_R06_CR02_WINDOWS_BUILD=HUMAN_PASS
-DUAL_CLIENT_PROVENANCE=PASS
-DUAL_CLIENT_AUTHENTICATION_ENROLLMENT=PASS
-WINDOWS_TO_ANDROID_CONVERGENCE=PASS
-ANDROID_TO_WINDOWS_CONVERGENCE=PASS
-INTER_DEVICE_SAME_ACCOUNT_SYNC=PASS
-PRODUCT_NATURAL_IDENTITY_MERGE=PASS
-CATALOGUE_CONVERGENCE=PASS
-CLIENT_QUEUES_FINAL=PASS_0_0_0_0_BOTH
-IDEMPOTENT_REPEAT_PER_DEVICE=PASS
-NO_OP_SUBMISSION_REQUEST=ABSENT
-NO_OP_DOWNLOAD_ACK=PASS_HTTP_200
-MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_DEVELOPMENT_SCOPE
-PRODUCTION_ACCEPTANCE=ABSENT
-GCM04=READY_FOR_DEFINITION
-LIVE_SYNC_AUTHORITY=NONE
-PROVIDER_MUTATION_AUTHORITY=NONE
-```
-
-## 7. Broad GCM04 residual panorama
-
-GCM04 may now be defined from the actual GCM03 residuals. This section is a
-definition input, not D/E/F implementation authority.
-
-### A. Authorization, isolation and credential lifecycle
-
-- prove two-Account isolation and cross-Account denial;
-- prove disabled membership denial;
-- revoke one Device and prove immediate request denial plus safe restart;
-- prove logout and ephemeral token clearing;
-- classify JWT/JWKS rotation and expired-token behavior;
-- require zero unauthorized provider mutation on every denial.
-
-### B. Outage, timeout and exact-once recovery
-
-- preserve offline-first local Purchase registration during provider outage;
-- classify DNS/transport timeout, HTTP failure and malformed response;
-- retain actionable queue truth without duplicate upload;
-- restore connectivity and prove one exact recovery path;
-- prove acknowledgement uncertainty cannot manufacture success or replay facts;
-- require no cursor regression or duplicate Product/Purchase effects.
-
-### C. Retention, snapshot and rebootstrap acceptance
-
-- define the development retention and acknowledgement-floor contract;
-- validate snapshot creation/selection and retained-event cleanup boundaries;
-- bootstrap a fresh Device from snapshot plus event tail;
-- rebootstrap a stale or replaced Device without local/hosted duplication;
-- retain explicit limits for free-tier storage and production backup/PITR.
-
-### D. Reproducible hosted operations
-
-- reconcile environment-specific migration execution and object ownership;
-- confirm server-only secret injection and rotation procedure;
-- establish deployment, health, observability and rollback boundaries;
-- document provider cleanup without touching production inadvertently;
-- preserve a sanitized operator route for Render, Auth0 and Neon.
-
-### E. Final Cycle 10 acceptance and promotion
-
-- run the chosen bounded GCM04 human assay;
-- reconcile client, server and provider evidence;
-- promote accepted Operational, Didactic and Design claims;
-- refresh permanent checkpoints and Main-root continuity;
-- run final repository/platform/secret/generated-artifact hygiene;
-- establish the explicit Cycle 11 baseline.
-
-## 8. GCM04 definition gate
-
-The candidate umbrella is:
-
-```text
-hosted authorization, resilience and lifecycle acceptance
-```
-
-It is intentionally broader than one executable unit. Before source or live
-provider action, Main must select one narrow GCM04 objective, declare non-goals,
-identify required A/B/C investigation, and stage synchronized D/E/F only if
-materialization is actually required.
-
-Recommended ordering:
-
-1. authorization/revocation/isolation;
-2. outage and exact-once recovery;
-3. retention/snapshot/rebootstrap;
-4. hosted operational closure;
-5. final promotion and Cycle 11 handoff.
-
-Current boundary:
-
-```text
-GCM04=READY_FOR_DEFINITION
-GCM04_IMPLEMENTATION=NOT_ACTIVE
-GCM04_LIVE_ASSAY=NOT_AUTHORIZED
-D_E_F_REPLACEMENT=NOT_AUTHORIZED_BY_THIS_ENTRY
-NEXT_MAIN_ACTION=DEFINE_ONE_BOUNDED_GCM04_OBJECTIVE_FROM_RESIDUAL_PANORAMA
-```
+YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éí×Žyë¤èµ©hºÚn¶X§zÍHÈ—ÓPRS—ÔÕQÑH8 %ÞXÛHLXÝ]™H™XÛÛ˜Ú[X][Û‚‚ˆÙ\]Y[˜ÙNˆ“T“KLÌLQÐÓLÈÌ^XÝÜÝYš[™[™È[™ÛËQ]šXÙBˆ›ÝšY\‹X˜\Ù[[™H™XÛÛ˜Ú[X][Û‚ˆ›ÛNˆXZ[ˆÚ]ˆœ˜[˜ÚˆÜ›KYÝX\™Y\›Ýš\Ú[Ûš[™ËLŒŒÌØˆX›XØ][Ûˆ\™[ˆLÍÙŒØ™MNMNM˜™XÌNMM˜Y˜ŒÙ˜ÙXÙˆ]]Üš]Nˆ^XÚ][X[‹Y\™XÝYXZ[ˆ™XÛÛ˜Ú[X][Û‚ˆÜš]X›HÝ\™˜XÙNˆ‘P×ÑPQÓ“ÔÕPÔË›Y]]X›Hˆ™XÛÝ™\žH™Yš^[™ˆ\[™[Û›HYØXÞWÔ›ÙÜ™\ÜØˆ]šY[˜ÙH›Ý[™\žNˆXØÙ\YÐÓLˆØ[YKQ]šXÙHÛÜÝ\™NÈœ›Þ™[ˆÚ[™ÝÜÂˆÙ\]Y[˜ÙKLˆØ[™Y]NÈÌÈXÝX[Y™[˜ÙKÐQˆ˜[Y][ÛŽÈ[X[ˆ[™›ÚYˆZ[Ú[œÝ[Û][˜ÚÚ]š\ÚX›HX]Ú[™È›Ý™[˜[˜ÙNÈ[™›ÚYØØ[ˆ™KY[œ›ÛY[XYÛ›ÜÝXÜÈ™Y›Ü™H[™Y\ˆÛ™H™XY[Û›H™Yœ™\ÚÈÜ™[˜\žBˆ[™›ÚYÚYÛˆ[ˆÚ]]][XØ]YÛY[›Ú™XÝ[ÛŽÈÛÈ^XÚ]Bˆ[X[‹]šYÙÙ\™YÜÝYXÛÛ›™XÝ[ÛˆÚXÚÜÈY\ˆÛÛ›ÛÝ™\Ù\š[™ÈÛ™Bˆ[Y[Ý]X™Y›Ü™K\™\ÜÛœÙH[™Û™H]\ˆLŒÜÝYXÛÛ›™XÝ[Û‹\™XYBˆ\›Z[˜[ÈÛ™HXØÙ\Y[™›ÚY[œ›ÛY[›ÛÝÙYžHH™\]Z\™Yˆ\XØ][Ûˆ™\Ý\[™HÜÝ\™\Ý\]][XØ]YÙ]šXÙKY[œ›ÛYÛY[ˆ›Ú™XÝ[ÛˆÚ]]Y]YHÌÌÌ[™™^Ù\]Y[˜ÙHNÈœ™\ÚX\ÚÙY\Ù\ÜÚ[Û‚ˆÔËPUUL˜^XÝš[™[™ÎÈ™XY[Û›HÔËS‘SÓ‹LLXÛËQ]šXÙH›ÝšY\‚ˆ[™[ÜžHÚ]^XÚ]›Û˜XÚÎÈ›ÈÞ[˜ËÛÛ™\™Ù[˜ÙK[™›ÚY\˜Ú\ÙKˆ›ÙXÝ[Û‹™][[Û‹Û˜\ÚÝÜˆ™X›ÛÝÝ˜\ÛZ[BˆÝ]\Îˆ
+ŠÖPÓHLÔSŽÈÐÓLˆÓÔÑQUÔÕQÐSQKQU’PÑHÐÓÔNÂˆÐÓLÈÌÈS“‘TˆÕTÈx $ÍHTÔÑQU“ÕS‘QÓQS•ÐÓÔNÈS‘“ÒQˆS”“ÓQS•ÕT•’U‘Q‘TÕT•ÈÌVPÕÔÕQ’S‘S‘ÈS‘‘PQSÓ“BˆÓËQU’PÑH“Õ’QTˆTÑSS‘HTÔÑQÈÒS‘ÕÔËUËPS‘“ÒQUUÔ’VUSÓˆPÒÑUˆ‘VÈTÒTÑHS‘“ÕÖSÈPÕSÓ”ÈS
+Š‚‚ˆÈÈKˆ™XÛÝ™\žH[ž\Ú[‚•\È]]X›H™Yš^\ÈHÝ\œ™[XZ[ˆ™XÛÝ™\žHÝ\™˜XÙKˆ™XY]™Y›Ü™HB˜\[™[Û›HYØXÞWÔ›ÙÜ™\ÜØ\ÝÜžKˆ^[™[ÈHYØXÞH[šY\ËËÒÒKœ\›X[™[ÛXZ[œËÔ“KÜˆÛÝ\˜ÙHÛ›HÚ[ˆHÝ\œ™[\ÚÈ™\]Z\™\Â™Y\\ˆ]šY[˜ÙK‚‚“X[™]ÜžHY]ÙÛÙÞH›ÛÝ™[XZ[œÎ‚‚˜^QÑS•Ë›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÒS‘V›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÛY]ÙÛÙÞKÓQUÑÑ“ÕS‘USÓ”Ë›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÛY]ÙÛÙÞKÑ“V›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÛY]ÙÛÙÞKÔ“ÓSÕSÓ—Ô•STË›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÛY]ÙÛÙÞKÐÒUÔ“ÕÐÓÓ›Y˜‚”™]Z[ˆ\ÙHÝÛ™\œÚ\›Ý[™\šY\Î‚‚‹HXZ[ˆÞ[\Ú^™\È[™ÝYÙ\È]]Üš]K‚‹HKÐ‹ÐÈ\™H[˜Ý[Û˜[[™\ÝYØ][Ûˆ[™™XÛÛ˜Ú[X][Ûˆ[œ]Ë‚‹HÑKÑˆ\™HÞ[˜Ú›Ûš^™YÛÙ^X]\šX[^˜][Ûˆ]]Üš]K‚‹HËÒÒH\™HØœÙ\˜][Û˜[X]\šX[^˜][Ûˆ™\ÜË‚‹Hˆ\ÈXZ[ˆÝYÚ[™È[™ÛÛ[Z]K›Ý\›X[™[ÛXZ[ˆØ[›Û‹‚‹HYØXÞWÔ›ÙÜ™\ÜØ\È\[™[Û›H[™]\Ý›Ý™HÛÛ\XÝYÜˆ™]Üš][‹‚‹HÙ[X[XÈ›Û[Ý[Ûˆ[™\ÚXØ[X]\šX[^˜][Ûˆ™[XZ[ˆ\Ý[˜Ý‚‹H[X[‹Ü›ÝšY\ˆXÝ[ÛœÈ™\]Z\™H^XÚ]˜\œ›ÝÈ]]Üš^˜][Û‹‚‚ˆÈÈ‹ˆÝ\œ™[™\ÜÚ]ÜžHœ˜[YB‚˜^”™\ÜÚ]ÜžNˆÝ\ËZKYÝKÛX\šÙZBXÝ]™Hœ˜[˜ÚˆÜ›KYÝX\™Y\›Ýš\Ú[Ûš[™ËLŒŒÌÂÝ\œ™[X›XØ][Ûˆ\™[ˆLÍÙŒØ™MNMNM˜™XÌNMM˜Y˜ŒÙ˜ÙXÙÞXÛNˆLXÝ]™HÛÜÝ\™H[š]ˆPÑËLˆÈ\Ù\‹Y˜XÚ[™ÈÐÓKL‚“]\ÝÛÛ\]YÛÜœ™XÝ]™H[š]ˆÌLQÐÓL‹TÌL‹QT”‹L™XÛÝ™\žKX›Ý[™\žH[™›ØœÙ\˜Xš[]HÛÜœ™XÝ[Û‚“]\ÝXØÙ\YØ]NˆØ]HL‹ÈÛÜœ™XÝYÚ[™ÛKXÛY[ÛÛ›Û“]\ÝÛÛ\]Y™\Ù[][Ûˆ[š]ˆÌLQÐÓL‹TÌL‹QPQËLB“]\ÝÛÛ\]Y]šY[˜ÙH\ÙNˆÌLQÐÓL‹TÌL‹TÕLØ[š]^™Y™[™\‚˜ÛÜœ™[][Ûˆ[™Ø]KLL‹ŒL\›Z[˜[Û\ÜÚYšXØ][Û‚“]\ÝÛÛ\]YÛÜœ™XÝ[ÛŽˆÌLQÐÓLËTÕTŒKPÌÈXZ[‹[ÝÛ™Y[™›ÚYÙ[XÝÜ‚œ™\Z\ˆ˜[Y][Û‚“]\Ý[X[ˆ]šY[˜ÙNˆ[™›ÚYZ[Ú[œÝ[Û][˜Ú]š\ÚX›H›Ý™[˜[˜ÙBXÎXXMŒÎXËØØ[™KY[œ›ÛY[XYÛ›ÜÝXÜË]][XØ]YÛY[Ý]KšÜÝY™XY[™\ÜÈY\ˆÛ™H™\Ù\™YÛÛ\Ý\[Y[Ý][™Û™H]\ˆ™XYB’LŒ][\XØÙ\YÛ™K][YH[œ›ÛY[[™ÜÝ\™\Ý\\˜X›B˜]][XØ]YÙ]šXÙKY[œ›ÛY›Ú™XÝ[ÛˆÚ]HÛX[ˆ]Y]YH[™™^œÙ\]Y[˜ÙHNÈX\ÚÙY\Ù\ÜÚ[ÛˆÔËPUUL˜^XÝš[™[™ÎÈ[™˜[œØXÝ[Û˜[˜ÔËS‘SÓ‹LLX›ÝšY\‹X˜\Ù[[™HTÔÈÚ]^XÚ]›Û˜XÚÂXÝ]™H\ÙNˆÐÓLÈÌHÚ[™ÝÜË]ËP[™›ÚYÛÛ™\™Ù[˜ÙH]]Üš^˜][Û‹\XÚÙ]œ™\\˜][ÛŽÈHÚ[™ÝÜÈØ[™Y]HY[X™\ˆ™[XZ[œÈœ›Þ™[ˆ[™[™›ÚY\˜Ú\ÙB˜[™›ÝÞ[˜ÈXÝ[ÛœÈ\™H›ÝY]]]Üš^™Y˜‚•Hœ˜[˜ÚÛÛZ[œÈHÔ“H^XÝ][Ûˆ[\™˜XÙKÜÝYÞ[˜Âš[\[Y[][Ûˆ[™XYÛ›ÜÝXÜËXØÛÝ[XÝ\œÛÜˆ›Ýš\Ú[Ûš[™È™\Z\‹š[X[‹[Ü\˜]Y›ÝšY\ˆ]šY[˜ÙK[™H]\ÝØ]HL‹ˆÝYÚ[™Ë‚‚•HÛ[\›ZYXÞXÛK\™XÛÝ™\žXœ˜[˜ÚØ\œšYYX\›Y\ˆˆ™XÛÛ˜Ú[X][ÛœË‚•Z\ˆXØÙ\YYX[š[™È\È[™XYH™Y[ˆ™XÛÛ˜Ú[Y[È\Èœ˜[˜ÚˆÈ›Ý›Y\™ÙH]\ÝÜšXØ[œ˜[˜ÚY\™[HÈ™XÛÝ™\ˆˆÛÛ[‚‚•HX\›Y\ˆ\˜[[‹ÐÛÙ^[™Ô“K\™Y˜XÝÜˆ›Ý[™È\™H[YÜ˜]Y[ˆB˜Ý\œ™[œ˜[˜Ú˜\Ù[[™KˆÈ›Ý™\^HZ\ˆØØ[Y\]Z]˜[[ÛÛ[Z]ÈÛÈ\Â˜œ˜[˜Ú‚‚”‘PËLHØ\ÈX]\šX[^™Y]MŒÌÍÍÍŒÍÌM™LÍŽXXÍNXYÌNYLÍMÍÍŒÍX‚ÛÙ^^XÚ]H™\Ù\™YH[‹][œ™[]YØØ[\Ü]Ú\ˆ™[˜[YKˆBœÝXœÙ\]Y[\ÛÛ]YÔ“H[YÛ›Y[[š]X]\šX[^™\Â˜ØÝ[Y[][Û‹Ó‘SÓ—ÐÒPÒËœÌX\ÈØÝ[Y[][Û‹ÒWÔÐÔ’TËœÌX[™[YÛœÂ™]™\žH]™Hš]™KYš[KZ[\™˜XÙH™Y™\™[˜ÙKˆ\ÝÜšXØ[ØØÝ\œ™[˜Ù\È[™\‚˜YØXÞWÔ›ÙÜ™\ÜØ™[XZ[ˆØœÙ\˜][Û˜[]šY[˜ÙK‚‚•HÝXœÙ\]Y[ÙYN™MLNXÙLYNÙ™˜˜YŽMŒÍM˜XØMX˜˜\Ù[[™H™[˜[Y\ÈHÙ[™\˜]YXYÛ›ÜÝXÈ›Ú™XÝ[ÛˆÂ˜ØÝ[Y[][Û‹ÑT”—ÑPQÓ“ÔÕPÔË›Yˆ]™[˜[YH\ÈXØÙ\Y\È™\ÜÚ]ÜžBœÝ]KˆHœ›ØYT”‹XØ][ÙÝYH™Y˜XÝÜˆ™[XZ[œÈY™\œ™Y[[H™\Ù[›˜\œ›ÝÈ\ÜØ^\ÈÛÛ˜ÛYK‚‚ˆÈÈÈ‹ŒHÛÛ›Û[™ÈÕLÛÜÝ\™H[™ÐÓLÈ[žB‚•\ÈÝXœÙXÝ[Ûˆ\ÈH™]Ù\ÝÛÛ›Û[™È™XÛÝ™\žHÝ\™˜XÙKˆÚ[ˆ[ˆÛ\‚›]]X›K\™Yš^Ý][Y[ÛÛ™›XÝÈÚ]]\ÈÝXœÙXÝ[ÛˆÛÛ›ÛËˆB›Û\ˆ^™[XZ[œÈ]˜Z[X›H\È™KTÕHÝYÚ[™ÈÛÛ^[™HÛÛ\]B˜Ú›Û›ÛÙÞH™[XZ[œÈ\[™[Û›H[™\ˆYØXÞWÔ›ÙÜ™\ÜØ‚‚‘ÐÓLˆ›ÝÈ™XÛÛ˜Ú[\Èš]™H[YÛ™Y]šY[˜ÙH˜[Z[Y\Î‚‚˜^”™XÛÜ™ÈKLLˆ^XÝÜÝYš[™[™ÂˆÛX[ˆ›ÝšY\ˆ˜\Ù[[™HÌÌˆÚ[™ÝÜÈ[\H]Y]YH[™Ù\]Y[˜ÙH[YÛ›Y[‚˜ÛÛ›ÛYY[X™\ˆ™Y›YÚˆ]][XØ]Y[™]šXÙKY[œ›ÛYˆÛ™H[™[™È\˜Ú\ÙKœ™YÚ\Ý\™Y]™[]]šXÙHÙ\]Y[˜ÙHBˆØØ[™^]šXÙHÙ\]Y[˜ÙH‚ˆØ\›HÜÝY™XY[™\ÜÈŒY\ˆÛ™HÛÛ\Ý\[Y[Ý]‚˜]]Üš^™YÚ[™ÝÜÈÜ™[˜\žHÞ[˜Âˆ^XÝHÛ™HÛXÚÂˆÞ[˜ËXÛÛ\]Yˆ[™[™ÈHOˆˆ˜Z[YÝ[šÛ›ÝÛˆÌˆÝ\œ™[]šXÙH™^Ù\]Y[˜ÙH‚‚‘Ô“KS‘SÓ‹LLHÜÝ›YÚˆ^XÝ]šXÙHÝX\™BˆÝX›Z\ÜÚ[ÛœËÙ]™[ËØXÚÛ›ÝÛYÙ[Y[ÈKÌKÌBˆXØÛÝ[Ý\œÛÜˆˆY\ˆYÚ]Ø]\ˆKÛÛœÚ\Ý[ˆ]šXÙHÙ\]Y[˜ÙHˆY\ˆYÚ]Ø]\ˆKÛÛœÚ\Ý[ˆÛ™H\Ý[˜ÝØ[š]^™Y™\]Y\ÝØÛÛ[[™XYÙBˆ^XÚ]“ÓPÒÈ[™TÔÂ‚”ÕL™[™\ˆÛÜœ™[][Û‚ˆÛ™HX]Ú[™ÈÜ\˜][Ûˆš[™Ù\œš[XÜ›ÜÜÈ™YHÞ[˜ÈÚ[™[‚ˆ\ØY\ÝX›Z\ÜÚ[ÛˆÔÕ]][XØ]Y[™ÛÛ\]YŒˆÝÛ›ØYY]™[ÈÑU]][XØ]Y[™ÛÛ\]YŒˆXÚÛ›ÝÛYÙ[Y[ÔÕ]][XØ]Y[™ÛÛ\]YŒˆ›È™Z™XÝY˜Z[YM[Y[Ý][šÛ›ÝÛ‹[™^XÝYY\œ›ÜˆÜˆRÔÈ[™B˜‚”™XÛÛ˜Ú[YYX[š[™Î‚‚‹HHš\œÝÛÜœ™[]YØ[YKQ]šXÙH˜[œÚ][ÛˆÛˆH™\XÙ[Y[]™[ÜY[ˆ›ÝšY\ˆÝXØÙYYY]ÛY[ÛØØ[Ü›ÝšY\ˆØÛÜNÂ‹HHXÝX[›ÝšY\ˆ[H^XÝH\]X[ÈHœ›Þ™[ˆÛ™KY]™[ÛÛ˜XÝÂ‹H\™H\È›È˜Z[Y[šÛ›ÝÛˆÜˆXÝ[Û˜X›HØØ[™\ÚYYNÂ‹HXÚÛ›ÝÛYÙ[Y[XØÛÝ[Ý\œÛÜˆ[™]šXÙHÙ\]Y[˜ÙH›Ú™XÝ[ÛœÈYÜ™YNÂ‹HHÛÛ\Ý\™XY[™\ÜÈ[Y[Ý]\ÈÜ\˜][Û˜[Ù[œÚ]]š]K›ÝHÞ[˜ÂˆÛÛ˜YXÝ[Û‹™XØ]\ÙH›ÝÜÝ[™Ú[È[™H[[YYX][HÝXœÙ\]Y[ˆÛY[™XY[™\ÜÈÚXÚÈ\ÜÙY™Y›Ü™H]]Üš^˜][ÛŽÂ‹HH›ÙXÝÙ[XÝ[Û‹ÜÝYÚ[™ÈY™XÝÈØœÙ\™YÚ[HÜ™X][™ÈH\ÝY[X™\‚ˆÙ\™HÛÛZ[™YØØ[H[™Y›ÝÛÛ[Z[˜]HHÝXØÙ\ÜÙ[\ÜØ^NÂ‹HÕH\™Y›Ü™H\ÜÙ\È]HØ[YKQ]šXÙH˜[œÚ][Ûˆ›Ý[™\žNÂ‹HÕLÛÜœ™[]\ÈH^XÝØ[YHÜ\˜][ÛˆXÜ›ÜÜÈ[™YHÙ\™\ˆÚ[™[ŽÂ‹HHÛY[Ù\™\ˆ[™›ÝšY\ˆ\›Z[˜[ÈYÜ™YHÚ]Ý]ÛÛ˜YXÝ[ÛŽÂ‹HØ]HL‹ŒL\™Y›Ü™HÛ\ÜÚYšY\ÈHÜ\˜][Ûˆ\È^XÝYÝXØÙ\ÜÎÂ‹HÐÓLˆÛÜÙ\È]]ÈÜÝYØ[YKQ]šXÙHØÛÜNÂ‹HÙXÛÛ™Q]šXÙH[œ›ÛY[[™ÛÛ™\™Ù[˜ÙH™[XZ[ˆ[œ›Ý™Y[™™YÚ[ˆÛ›Bˆ[™\ˆHÙ\\˜][HYš[™Y[™]]Üš^™YÐÓLÈÙ\]Y[˜ÙK‚‚Ý\œ™[\›Z[˜[Î‚‚˜^ÖPÓLLSÔS‚‘ÐÓLPÓÔÑQÒÔÕQÔÐSQWÑU’PÑWÔÐÓÔB”ÕTLPÓÔÑQÕ“ÕQÒÑÐUWÌL—ÌL‘ÐUWÌL—ÍÏTTÔÑQÐÓÔ”‘PÕQÔÒS‘ÓWÐÓQS•ÐÓÓ•“ÓÔÐÓÔB”ÕTTÔÑQÑVPÕÐ’S‘S‘×ÐS‘ÐÓPS—Ô“Õ’QT—ÐTÑSS‘B”ÕWÓÐÐSÔ‘Q“QÒTTÔÂ”ÕWÐÓÓ•“ÓQÓQSP‘TSÓ‘WÔTÒTÑWÔ‘QÒTÕT‘QÔÑTUQSÑWÌB”ÕWÒÔÕQÔ‘PQS‘TÔÏTTÔ×ÐQ•T—ÐÓÓÔÕT•ÕÐT“UT”ÕWÓÓ‘WÐPÕSÓ—ÐUUÔ’VUSÓTÐUTÑ’QQ”ÕWÓÔ‘ST–WÔÖSÏTTÔ×ÑVPÕWÓÓÑB”ÕWÐÓQS•ÕT“RSSTÖS×ÐÓÓTUQ”ÕWÓÐÐSÔUQUQOTTÔ×ÑRS‘QÌWÕ×Ì”ÕWÔ“Õ’QT—ÐÓÕS•ÏTTÔ×ÌWÔÕP“RTÔÒSÓ—ÌWÑU‘S•ÌWÐPÒÂ”ÕWÐPÐÓÕS•ÐÕT”ÓÔPÓÓ”ÒTÕS•Ì—ÐQ•T—ÌB”ÕWÑU’PÑWÔÑTUQSÑOPÓÓ”ÒTÕS•Ì—ÐQ•T—ÌB”ÕWÔ“Õ’QT—ÔÔÕ“QÒT“ÓPÒ×ÔTÔÂ”ÕOTTÔÑQÔÐSQWÑU’PÑWÐÓQS•Ô“Õ’QT—ÕS”ÒUSÓ—ÔÐÓÔB”ÕLÔ‘S‘T—ÐÓÔ”‘SUSÓTTÔ×Õ‘QWÐUUS•PÐUQÒÌŒÕT“RSSÂ”ÕLÑRST‘WÓÔ—ÐSP’QÕRUOPP”ÑS•”ÕLTTÔÑQÔ‘PQÓÓ“B‘ÐUWÌL—ÌLTTÔ×ÑVPÕQÔÕPÐÑTÔÂ“‘U×ÔÖS×ÓÔ—Ô‘U–OS“ÕÐUUÔ’V‘Q‘S”“ÓQS•ÓÔ—ÓRQÔUSÓS“ÕÐUUÔ’V‘Q”ÑPÓÓ‘ÑU’PÑOUS”“Õ‘QÔ‘PQWÑ“Ô—ÑÐÓL×ÑQ’S’USÓ‚‘ÐÓLÏT‘PQWÑ“Ô—ÑQ’S’USÓ—ÐS‘Ô‘PQÓÓ“WÔ‘Q“QÒ˜‚•HÚÜ\Ý]šY[˜ÙKXÛÜœ™XÝÐÓLÈ[žH\Î‚‚ŒKˆ™\Ù\™HH™]ÛH™\ÜY[œÞ[˜Ú›Ûš^™Y\˜Ú\ÙHÚ]Ý][›Ý\ˆÞ[˜ÎÂŒ‹ˆ[ˆÚ[™ÝÜÈXYÛ›ÜÝXÜÈÛ˜ÙHÈœ™Y^™H]È]™[\K]Y]YHÛ\ÜË]šXÙBˆÙ\]Y[˜ÙH[™™^Ù\]Y[˜ÙNÂŒËˆ™XÛÛ™š\›HH›ÝšY\ˆ™[XZ[œÈ]HXØÙ\YÐÓLˆKÌKÌX˜\Ù[[™Bˆ™Y›Ü™H[žH™]ÈXÝ[Û‹Û›HYˆHÐÓLÈÛÛ˜XÝ™\]Z\™\È]Âˆ™\šYžH[™›ÚYÛÛÚZ[‹ØÛY[[™XYÙH[™\ÝX›\ÚHœ™\ÚÛX\›BˆY[YšYYØØ[]šXÙHÝ]NÂKˆÚYÛˆ[ˆÈHØ[YHXØÛÝ[Ú]Ý]™]\Ú[™ÈÜˆ^ÜÚ[™ÈÚÙ[œÎÂ‹ˆØ\\™H[™›ÚY™KY[œ›ÛY[XYÛ›ÜÝXÜÈ[™™\\™H[ˆ^XÝ[œ›ÛY[ˆ]]Üš^˜][ÛˆXÚÙ]ÂËˆ[œ›ÛH[™›ÚY]šXÙH^XÝHÛ˜ÙHÛ›HY\ˆ^XÚ]]]Üš^˜][ÛŽÂŽˆ™XÛÛ˜Ú[HHÛËQ]šXÙH›ÝšY\ˆ[™[ÜžH™Y›Ü™H]]Üš^š[™È[žH\ØYˆÜˆÝÛ›ØYØÛÛ™\™Ù[˜ÙHXÝ[Û‹‚‚”™XÛÜ™LÈ›ÝÈ›Ý™\È]H™]È[œÞ[˜Ú›Ûš^™YÚ[™ÝÜÈ\˜Ú\ÙH\ÈÛ™Bœ[™[™È\˜Ú\ÙKœ™YÚ\Ý\™Y]™[]]šXÙHÙ\]Y[˜ÙH‹Ú]œ[™[™ËÝ\ØY[™ËÙ˜Z[YÝ[šÛ›ÝÛˆKÌÌÌ[™™^]šXÙHÙ\]Y[˜ÙHËˆ]\ÂHœ›Þ™[ˆØ[™Y]HÚ[™ÝÜË]ËP[™›ÚYÛÛ™\™Ù[˜ÙHY[X™\‹ˆÈ›ÝÞ[˜Ëœ™XÜ™X]HÜˆ\ØØ\™]Ú[H[™›ÚY™XY[™\ÜÈ[™™KY[œ›ÛY[Ý]H\™Bœ™\\™Y‚‚ˆÈÈÈ‹ŒˆÐÓLÈÑÜÈ[™[™›ÚYÚXÚÈXÙ[Y[‚‘ÐÓLÈ\È[ˆ[™\ÝYØ]]™KÙ\\˜][H]]Üš^™Y[š]ˆ\È\ÝYš[™\È]Â™]šY[˜ÙHÜ™\ŽÈ]Ù\È›Ý]]Üš^™H[œ›ÛY[ÜˆÞ[˜Ë‚‚‹HÞH
+Š‘ÐÓLËŒH8 %œ™Y^™HÚ[™ÝÜÈØ[™Y]HY[X™\‹ŠŠˆ™XÛÜ™LÈ›Ý™\ÈÛ™Bˆ[™[™È\˜Ú\ÙKœ™YÚ\Ý\™Y]™[]Ú[™ÝÜÈ]šXÙHÙ\]Y[˜ÙH‹™^ˆÙ\]Y[˜ÙHË[™›È\ØY[™ËÙ˜Z[YÝ[šÛ›ÝÛˆ™\ÚYYK‚‹HÞH
+Š‘ÐÓLËŒˆ8 %™XÛÛ™š\›H™\ÜÚ]ÜžH[™›ÝšY\ˆ˜\Ù[[™KŠŠˆ˜\ÝY›ÜØ\™ˆHÚ[™ÝÜÈÚXÚÛÝ]ÈHX›\ÚYÐÓLˆÛÜÝ\™HÛÛ[Z]™\]Z\™HHÛX[‚ˆÛÜšÝ™YK[ˆ™XY[Û›HÜÝ™XY[™\ÜË[™\ÙHÔ“KS‘SÓ‹LLXÛ›HYˆXZ[‚ˆ™\]Z\™\ÈHœ™\Ú™KY[œ›ÛY[›ÝšY\ˆ[™[ÜžKˆ^XÝY™KY[œ›ÛY[ˆ^[ØY˜\Ù[[™H™[XZ[œÈHXØÙ\YÐÓLˆKÌKÌXÚ]Û™HXÝ]™H]šXÙK‚ˆ
+Š”\ÜÙY›ÝYÚHÜÝY[œ›ÛY[›Ý[™\žNŠŠˆ[™›ÚY\Y˜XÝ[™XYÙBˆXÎXXMŒÎXØ\È›Ý™YˆHÛY[ˆÜÝY\™XY[™\ÜÈ™\™\]Z\Ú]H\ÜÙYY\ˆÛ™H™\Ù\™YÛÛ\Ý\ˆ[Y[Ý]X™Y›Ü™K\™\ÜÛœÙX][\[™Û™H]\‚ˆÜÝYXÛÛ›™XÝ[Û‹\™XYXÒLŒ][\ˆ™XÛÜ™MÈYÈ^XÝÜÝYˆš[™[™È\ÈH˜[œØXÝ[Û˜[›ÝšY\ˆ˜\Ù[[™HÚ]Û™HXØÛÝ[ÛÈ]šXÙBˆ›ÝÜË^[ØYÛÝ[ÈKÌKÌXÛÛœÚ\Ý[XØÛÝ[Ý\œÛÜˆ˜Y\ˆYÚ]Ø]\‚ˆX^XÝ[™›ÚYÙ\]Y[˜ÙHXY\ˆYÚ]Ø]\ˆ[™›Û˜XÚËÔTÔË‚‹HÞH
+Š‘ÐÓLËŒÈ8 %[™›ÚY[š\›Û›Y[[™ÛY[ÚXÚËŠŠˆ[ˆØ[›ÛšXØ[ˆÔ“KQ“UT‹PS‘ÈÔËQ“UT‹PS‘œ›ÛHHØ[YHX›\ÚYÚXÚÛÝ]‚ˆ™\]Z\™H›]\‹Ð[™›ÚYÛÛÚZ[ˆ™XY[™\ÜË^XÝHÛ™HÝ\ÜY[™›ÚYˆ\™Ù]ÛÛ™šYÝ\™YU‘›ÛÝÚ\™H™YYYÝXØÙ\ÜÙ[ÛÜÝ\™HZ[Ú[œÝ[Âˆ][˜Ú[™HØ[YHX›XÈ]]Ô™[™\ˆÛÛÜ™[˜]H[™XYÙKˆ\ÈÝ\]\Ýˆ›ÝÚYÛˆ[‹[œ›ÛÜˆÞ[˜È[\XÚ]Kˆ
+Š”\ÜÙY›Ý[™YŠŠˆÌÈ˜[Y]YBˆ™\Z\™Y^XÝ™[˜ÙH[™Û™K\ØY™KPQ‹\Ù\šX[›Ý[™\žNÈH[X[ˆ™\[‚ˆ][˜ÚYU‹QÔ“XÚ]š\ÚX›HX]Ú[™È›Ý™[˜[˜ÙHXÎXXMŒÎXØ‚‹HÞH
+Š‘ÐÓLË8 %[™›ÚYØØ[™KY[œ›ÛY[Û˜\ÚÝŠŠˆÜ[ˆÛÜÝ\™HÛ‚ˆ[™›ÚY™\Ù\™HØ[š]^™YXYÛ›ÜÝXÜË[™›Ý™HÚ]\ˆHœ™\Úˆ[œÝ[][Ûˆ\È›È[œ›ÛYØØ[]šXÙKˆÝÜÛˆ[š\š]Y]šXÙHÝ]Kˆ[™^XÝY]Y]YHY[X™\œËÛÛ™šYÝ\˜][ÛˆZ\ÛX]Ú™]›ÚÙYÙ^\™YÝ]KÜ‚ˆ[žHÛÝ\˜ÙH]šXÙHš[™Ù\œš[ÛÛ\Ú[Û‹ˆ
+Š”\ÜÙYÚ]ÝÜ˜YÙKYœ™\Ú™\ÜÂˆ]X[YšXØ][ÛŽŠŠˆÛ™H\Ý[˜ÝØØ[[Û›H[™›ÚY]šXÙH]™^Ù\]Y[˜ÙHKˆ]Y]YHÌÌÌ›È][\ËXYÛ›ÜÝXÈ\ÝÜžHÜˆXÝ[Û˜X›H]™[Ë‚ˆÛÛ\]H]X˜\ÙHœ™\Ú™\ÜÈ\È[œ›Ý™Y™XØ]\ÙH[œÝ[][Ûˆ™\Ù\™\Âˆ[™›ÚY\]K‚‹HÞH
+Š‘ÐÓLËH8 %Ø[YKPXØÛÝ[]][XØ][Û‹ŠŠˆÚYÛˆ[ˆ›ÝYÚHÜ™[˜\žBˆ]]›ÝÈÈHØ[YH\ÝXØÛÝ[ˆØ\\™HÛ›HØ[š]^™Y]][XØ][Û‚ˆÝ]NÈ™]™\ˆÛÜHÚÙ[œËÝXš™XÝËÜ™Y[X[ÈÜˆÛÛ\]HY[YšY\œË‚ˆ
+Š”\ÜÙY]ÛY[ØÛÜNŠŠˆ[™›ÚY›Ú™XÝÈ]][XØ]Yˆ^XÝˆØ[YKPXØÛÝ[Ü›ÝšY\ˆš[™[™È™[XZ[œÈÈ™H›Ý™YžHH›Ý[™Y[œ›ÛY[ˆ[™›ÝšY\ˆÜÝ›YÚ˜]\ˆ[ˆžHØÜ™Y[œÚÝÈ[Û™K‚‹HÞH
+Š‘ÐÓLËˆ8 %^XÝ[™›ÚY[œ›ÛY[]]Üš^˜][ÛˆXÚÙ]ŠŠˆœ™Y^™HBˆ[[™YÛ™KXÛXÚÈ[œ›ÛXÝ[Û‹^XÝY™]ÈXÝ]™KQ]šXÙHÛÝ[ˆHOˆ˜^XÝY[™›ÚYØØ[[œ›ÛY[\›Z[˜[]šY[˜ÙKXØ\\™BˆÜ™\‹[™›Ë\ÙXÛÛ™XÛXÚËÝ[šÛ›ÝÛ‹[Ý]ÛÛYH[\ËˆØZ[ˆ^XÚ][X[‚ˆ]]Üš^˜][Ûˆ™Y›Ü™H[œ›ÛY[ˆ
+Š”\ÜÙYžHHš[Üˆ›Ý[™YÌÂˆ]]Üš^˜][ÛˆXÚÙ]È\ÝÜšXØ[XÝ[Ûˆ]]Üš]H\È^]\ÝYŠŠ‚‹HÞH
+Š‘ÐÓLËÈ8 %[œ›Û[™›ÚY^XÝHÛ˜ÙKŠŠˆ^XÝ]HÛ›HH]]Üš^™Yˆ[œ›ÛY[ˆ™\Ù\™HH[™›ÚY\›Z[˜[Ø[š]^™Y]šXÙHš[™Ù\œš[ˆ™[™\ˆ[œ›ÛY[Y™XÞXÛH[™™XY[Û›H›ÝšY\ˆ[™[ÜžKˆÈ›ÝÞ[˜ÂˆZ]\ˆÛY[[ˆ\ÈÝ\ˆ
+Š”\ÜÙY›Ý[™YŠŠˆÛ™HXØÙ\Y[œ›Û›ÛÝÙYˆžH™\]Z\™Y™\Ý\È›ÈÙXÛÛ™ÛXÚÈ[™›ÈÞ[˜Ë‚‹HÞH
+Š‘ÐÓLËŽ8 %ÛËQ]šXÙH˜\Ù[[™H™XÛÛ˜Ú[X][Û‹ŠŠˆ™\]Z\™HÛ™HXØÛÝ[ˆÛÈ\Ý[˜ÝXÝ]™H]šXÙ\ËÚ[™ÝÜÈ™^^XÝYÙ\]Y[˜ÙHˆÛˆBˆ›ÝšY\‹[™›ÚY™^^XÝYÙ\]Y[˜ÙH]]Èœ™\Ú˜\Ù[[™K[™›Âˆ^[ØYØÝ\œÛÜˆÚ[™Ù\ÈØ]\ÙYÛÛ[HžH[œ›ÛY[ˆ
+Š”\ÜÙY]HÛÛXš[™Yˆš[Ü‹UÚ[™ÝÜÈ\È™XÛÜ™LMÈ›Ý[™\žNŠŠˆÛÈ]šXÙH›ÝÜÎÈ^XÝ[™›ÚYˆ]šXÙHXÝ]™NÈXØÛÝ[^[ØYKÌKÌXÈÝ\œÛÜˆ˜Y\ˆXÈ[™›ÚYˆÙ\]Y[˜ÙHXY\ˆÈ›È[™›ÚYÝX›Z\ÜÚ[Û‹Ù]™[È›Û˜XÚËÔTÔËˆBˆ][˜Ú\ˆœ˜[˜ÚX[X\ÈØ]™X]™[XZ[œÈ^XÚ]‚‹HÈH
+Š‘ÐÓLËŽH8 %Ú[™ÝÜË]ËP[™›ÚYÛÛ™\™Ù[˜ÙH]]Üš^˜][Û‹ŠŠˆœ™Y^™HBˆ^\Ý[™ÈÚ[™ÝÜÈÙ\]Y[˜ÙKLˆ]™[\ÈHÛ›H\ØYY[X™\‹Ø[Ý[]HBˆ^XÝÝX›Z\ÜÚ[Û‹Ù]™[ØÝ\œÛÜ‹ØXÚÛ›ÝÛYÙ[Y[[K[™]]Üš^™HÛ™BˆÚ[™ÝÜÈÞ[˜È›ÛÝÙYžHÛ™H[™›ÚYÝÛ›ØYÞ[˜ÈÛ›HY\ˆ[ÝÜˆÛÛ™][ÛœÈ\™H^XÚ]‚‹HÈH
+Š‘ÐÓLËŒL8 %Ú[™ÝÜË]ËP[™›ÚYÛÛ™\™Ù[˜ÙH\ÜØ^KŠŠˆ›Ý™HÚ[™ÝÜÈ]Y]YBˆ˜Z[‹›ÝšY\ˆXØÙ\[˜ÙK[™›ÚYÝÛ›ØYØ\XØ][Û‹X]Ú[™È\˜Ú\ÙBˆY[]KØÛÛ[XÚÛ›ÝÛYÙ[Y[[™™\Ù\˜][ÛˆÙˆ[™›ÚY[ØØ[Ý]K‚‹HÈH
+Š‘ÐÓLËŒLH8 %[™›ÚY]ËUÚ[™ÝÜÈ™]™\œÙHY[X™\‹ŠŠˆÜ™X]H^XÝHÛ™BˆÛÛ›ÛY[™›ÚY\˜Ú\ÙHÛ›HY\ˆHš\œÝ\™XÝ[Ûˆ\ÜÙ\Ëœ™Y^™Bˆ]È[™›ÚY]Y]YKÜÙ\]Y[˜ÙK[™™\\™HH™]È^XÝ]]Üš^˜][ÛˆXÚÙ]‚‹HÈH
+Š‘ÐÓLËŒLˆ8 %™]™\œÙHÛÛ™\™Ù[˜ÙH\ÜØ^KŠŠˆ]]Üš^™H[™›Ý™H[™›ÚYˆ\ØY›ÛÝÙYžHÚ[™ÝÜÈÝÛ›ØYØ\XØ][Û‹Ú]^XÝ›ÝšY\ˆ[Bˆ[™›È\XØ][ÛˆÜˆØØ[Z\ÝÜžHÜÜË‚‹HÈH
+Š‘ÐÓLËŒLÈ8 %Y[\Ý[™\X]ŠŠˆÚ]›Ý]Y]Y\È[\H[™›ÝÛY[ÂˆÛÛ™\™ÙY]]Üš^™HÛ™H›Ý[™Y™\X]Þ[˜È\ˆ]šXÙH[™™\]Z\™H›È™]ÂˆÝX›Z\ÜÚ[ÛœËÙ]™[Ë›È\XØ]H\˜Ú\Ù\ËÝX›HÝ\œÛÜœËÜÙ\]Y[˜Ù\Ë[™ˆÝXØÙ\ÜÙ[XÚÛ›ÝÛYÙ[Y[Ë‚‹HÈH
+Š‘ÐÓLËŒM8 %™XÛÛ˜Ú[H[™ÛÜÙKŠŠˆÛÜœ™[]HÛY[™[™\ˆ[™›ÝšY\‚ˆ]šY[˜ÙNÈÛ\ÜÚYžH]™\žH[™^XÝYÙ\XØ]KÜ™Z™XÝYÝ[šÛ›ÝÛˆ™\Ý[Âˆ™\Ù\™H[™›ÚYÜ\˜][Û˜[š[™[™ÜÎÈ[™ÛÜÙHÐÓLÈÛ›H]H›Ý™[‚ˆÛËQ]šXÙH]™[ÜY[ØÛÜK‚‚‘ÐÓLÈÛØ˜[ÝÜÛÛ™][ÛœÎ‚‚˜^™\WÛÜ—Ù]™\™ÙYØÚXÚÛÝ]˜[™›ÚYÝ\™Ù]Ø[XšYÝ[Ý\×ÛÜ—Ý[œÝ\ÜY˜[™›ÚYØÛÛ™šYÝ\˜][Û—ÛÜ—Øš[™[™×ÛZ\ÛX]Ú[™^XÝYÚ[š\š]YØ[™›ÚYÙ]šXÙWÛÜ—Ü]Y]YWÜÝ]B˜]][XØ][Û—Ü™\]Z\™YÛÜ—Ü™Z™XÝY˜š[™[™×Ú[˜[Y™]šXÙWÜ™]›ÚÙYÛÜ—Ù^\™Y™[œ›ÛY[Ý[Y[Ý]Ý[šÛ›ÝÛ—ÛÜ—Ù\XØ]BœÞ[˜×Ý[Y[Ý]Ý[šÛ›ÝÛ—Ù˜Z[YÛÜ—Û›Ý\YY˜Ý\œÛÜ—ÛÜ—ÜÙ\]Y[˜ÙWÚ[˜ÛÛœÚ\Ý[˜ÞB[™^XÝYÜ›ÝšY\—Ù[B™\XØ]WÛÜ—ÛZ\ÜÚ[™×Ü\˜Ú\ÙWØY\—Ø\B˜‚“Ûˆ[žHÝÜÛÛ™][Û‹™\Ù\™HHš\ÚX›H\›Z[˜[[™È›Ý™\X]B˜XÝ[ÛˆY\™[HÈ[\›Ý™H]šY[˜ÙKˆ[œ›ÛY[Ú[™ÝÜÈÞ[˜Ë[™›ÚYÞ[˜Ë”™]žK™XÛÝ™\žKZYÜ˜][Û‹™]›ØØ][Ûˆ[™›ÝšY\ˆ™\Z\ˆXXÚ™\]Z\™HZ\‚›ÝÛˆ^XÚ]›Ý[™\žK‚‚•\]Y\›Z[˜[Î‚‚˜^ÖPÓLLSÔS‚‘ÐÓLPÓÔÑQÒÔÕQÔÐSQWÑU’PÑWÔÐÓÔB”ÕTLPÓÔÑQÕ“ÕQÒÑÐUWÌL—ÌL‘ÐUWÌL—ÌLTTÔ×ÑVPÕQÔÕPÐÑTÔÂ‘ÐÓL×ÕÒS‘ÕÔ×ÐÐS‘QUWÔ‘Q“QÒTTÔÂ‘ÐÓL×ÕÒS‘ÕÔ×ÔS‘S‘×ÓQSP‘TTTÒTÑWÔ‘QÒTÕT‘QÔÑTUQSÑWÌ‚‘ÐÓL×ÕÒS‘ÕÔ×ÔUQUQOTTÔ×ÌWÌÌÌ‘ÐÓL×ÕÒS‘ÕÔ×Ó‘VÑU’PÑWÔÑTUQSÑOLÂ‘ÐÓL×ÐS‘“ÒQÔÑSPÕÔ—ÐÌÏTTÔÂ‘ÐÓL×ÐS‘“ÒQÐ•RSÓS‘PQÑOTTÔ×ÍPÎPPMŒÎPÂ‘ÐÓL×ÐS‘“ÒQÔ‘WÑS”“ÓQS•TTÔ×ÓÐÐSÓÓ“WÓ‘VÌWÔUQUQWÌÌÌÌ‘ÐÓL×ÐS‘“ÒQÐUUS•PÐUSÓTTÔ×ÐÓQS•ÔÐÓÔB‘ÐÓL×ÐS‘“ÒQÔÐSQWÐPÐÓÕS•ÑVPÕÐ’S‘S‘ÏTTÔ×ÑVPÕÐ’S‘S‘×ÐÓÓ‘’T“QQ‘ÐÓL×ÐS‘“ÒQÒÔÕQÔ‘PQS‘TÔÏTTÔ×ÐQ•T—ÐÓÓÔÕT•ÕÐT“UT‘ÐÓL×ÐS‘“ÒQÒÔÕQÐUSTÏL—ÕÒUÌWÔ‘PQWÌWÕSQSÕUÔ‘TÑT•‘Q‘ÐÓL×ÐS‘“ÒQÑTP“WÑS”“ÓQS•TTÔ×ÐÓQS•ÔÐÓÔB‘ÐÓL×Ô“Õ’QT—ÑU’PÑWÐÓÕS•L‚‘ÐÓL×Ô“Õ’QT—ÔVSÐQÐÓÕS•ÏTTÔ×ÌWÌWÌB‘ÐÓL×Ô“Õ’QT—ÐPÐÓÕS•ÐÕT”ÓÔPÓÓ”ÒTÕS•Ì—ÐQ•T—ÌB‘ÐÓL×ÐS‘“ÒQÔ“Õ’QT—ÔÑTUQSÑOPÓÓ”ÒTÕS•ÌWÐQ•T—Ì‘ÐÓL×ÔÌTTÔÑQÔ‘PQÓÓ“WÑVPÕÐ’S‘S‘×ÕÓ×ÑU’PÑWÐTÑSS‘B‘ÐÓLÏPPÕU‘WÕÒS‘ÕÔ×Õ×ÐS‘“ÒQÐUUÔ’VUSÓ—ÔPÒÑUS‘“ÒQÑS”“ÓQS•PÓÓTUWÑ×Ó“ÕÔ‘TPU•ÒS‘ÕÔ×ÔÖSÏS“ÕÐUUÔ’V‘QS‘“ÒQÔÖSÏS“ÕÐUUÔ’V‘Q”ÑPÓÓ‘ÑU’PÑWÐÓÓ•‘T‘ÑSÑOUS”“Õ‘Q‘ÐÓLUS‘Q’S‘QÒSPÕU‘B˜‚ˆÈÈÈ‹ŒÈÕTŒHX]\šX[^˜][Ûˆ™XÛÛ˜Ú[X][Ûˆ[™[™›ÚYÔ“HÛÜœ™XÝ[Û‚‚ÛÛ[Z]ŒÌXMÍŒŽYM™YMÙÌNYÙÌŒ˜ŒNÌÍXX]\šX[^™YH›Ý[™Y[™›ÚYÛÜÝ\™H\š]KÜ›Ý™[˜[˜ÙH[š]ˆÑKÑˆÙ\™HÛÛ\\™YYØZ[œÝËÒÒKH[\[Y[][ÛˆY™‹[™H]™HÔ“H\Ü]Ú\ˆØ\ØØYK‚‚ˆÈÈÈÈËLHÛZ[\Â‚˜^ÛZ[NˆHÚ\™Y›]\ˆÛÜÝ\™H\š]H[™Z[\›Ý™[˜[˜ÙH[Ù[\ÜÙYBˆ]]Üš^™YØØ[X]\šX[^˜][Ûˆ›Ý[™\žB”š[ÜˆÝ]Nˆ[™›ÚY\Ü^YYHYØXÞHÛÜÝ\™HÝ\™˜XÙHÚ[HÝ\œ™[Ú\™YˆÛÝ\˜ÙH\X\™YÛÛœÛÛY]Y‘]šY[˜ÙNˆÛ™HÚ\™Y˜]]™PÛÜÝ\™TYÙNÈÛÛ\XÝÝÚYHÛÝ™\˜YÙNÈØ[š]^™YˆËLLˆÝÙ\˜Ø\ÙKZ^›Ý™[˜[˜ÙH›Ú™XÝ[ÛŽÈNNH\ÜÙYÈX‹YØ]Yˆ›]\ˆ\ÝÎÈÛX[ˆ›]\ˆ[˜[\Ú\ÎÈØØ[XYÈTÈZ[Ú]ˆ^XÚ]›Ý™[˜[˜ÙHYš[™B‘]šY[˜ÙH›Ý[™\žNˆ™\ÜÚ]ÜžKÚYÙ]\ÝË[˜[\Ú\È[™ØØ[Z[Û›BÛÛ˜YXÝ[ÛŽˆ›Û™H[œÚYHH›]\ˆ™\Ù[][Û‹Ü›Ý™[˜[˜ÙH›Ý[™\žB”Ù[X[XÈÝÛ™\ŽˆÌLQÐÓLËTÕTŒHØØ[ÛÝ\˜ÙH™\Ý[•\™Ù]›ÛNˆˆÝ\œ™[™XÛÝ™\žHÝ]B”™\Ý[[™ÈÝ]NˆPÐÑTQÈÐÐSHSQUQ’\ÝÜžH\ÜÜÚ][ÛŽˆ\[™˜‚˜^ÛZ[NˆH\ÚYÔ“KQ“UT‹PS‘›ØÙY\™H\È\™[™Y[™™XYH›ÜˆH[X[‚ˆ™\[‚”š[ÜˆÝ]NˆÈ™\ÜÈS‘“ÒQÑÔ“WÔ“Õ‘SSÑORT‘S‘Q[™ˆÕT‘PQWÑ“Ô—ÒSPS—Ô‘UTÕ‘]šY[˜ÙNˆ[\[Y[][ÛˆØØ[ˆÚÝÜÈÔËQ“UT‹PS‘™XYÈ	œ˜[˜Ú™Y›Ü™H[žBˆ\ÜÚYÛ›Y[[™]\ˆ™XYÈ	Z[›Ý™[˜[˜ÙHÚ]Ý]\ÜÚYÛ›Y[ÂˆZ\ˆ[[™Y›ÙXÙ\ˆ›ØÚÈØ\È[œÙ\Y[ÈÔËQ“UT‹UÒS‚‘]šY[˜ÙH›Ý[™\žNˆ^XÝ\ÚY×ÔÐÔ’TË›Y[™WÔÐÔ’TËœÌHÝšXÝ[[ÙKˆÛ™KY™[˜ÙH\Ü]Ú\ˆÙ[X[XÜÂÛÛ˜YXÝ[ÛŽˆÝÙ\”Ú[™[˜ÙH\œÙH\ÜÙY]\œÙHÙ\È›Ý˜[Y]Bˆ[[YH˜\šXX›H[š]X[^˜][Û‚”Ù[X[XÈÝÛ™\Žˆ[™›ÚYÔ“H^XÝ]X›H›ØÙY\™B•\™Ù]›ÛNˆÛÜœ™XÝYÑKÑˆ[™]\ˆ™\XÙ[Y[ËÒÒB”™\Ý[[™ÈÝ]NˆÓÓ•QPÕQÈ“ÐÒÑQT’PP“HÐTÐÐQB’\ÝÜžH\ÜÜÚ][ÛŽˆÝ\\œÙYHÛ›HHš[Üˆ[™›ÚYQÔ“H\™[š[™È\›Z[˜[˜‚˜^ÛZ[NˆÕÜˆ[žH]\ˆÐÓLÈXÝ[ÛˆX^H›ØÙYY™Y›Ü™HÛÜœ™XÝ[Û‚”š[ÜˆÝ]NˆÕ]ØZ]YH[X[ˆ™XZ[X\Y˜XÝ™]\Ý‘]šY[˜ÙNˆØ[›ÛšXØ[[™›ÚY›ØÙY\™H\›Z[˜]\È[™\ˆÝšXÝ[ÙH]Bˆš\œÝ[™Yš[™Y	œ˜[˜Ú™XYÈ	Z[›Ý™[˜[˜ÙH\È[ÛÈ[™Yš[™Y‘]šY[˜ÙH›Ý[™\žNˆ›È]™H[™›ÚY]][XØ][ÛˆÜˆ›ÝšY\ˆXÝ[Ûˆ™YYYÛÛ˜YXÝ[ÛŽˆ^XÝ][™ÈH›ØÙY\™HØ[››Ý›ÙXÙHH[[™Y\Y˜XÝ”Ù[X[XÈÝÛ™\ŽˆÐÓLÈXÝ[ÛˆØ]B•\™Ù]›ÛNˆXZ[ˆ]]Üš^˜][Ûˆ›Ý[™\žB”™\Ý[[™ÈÝ]Nˆ‘R‘PÕQÈÕS‘ÕJÈS’\ÝÜžH\ÜÜÚ][ÛŽˆ\[™˜‚ˆÈÈÈÈXØÙ\Y[™Ý\\œÙYY]šY[˜ÙB‚”™]Z[™Y‚‚˜^”ÒT‘QÐÓÔÕT‘WÔQÑOPÓÓ‘’T“QQS‘“ÒQÐÓÓTPÕÑPQÓ“ÔÕPÔÏUTÕÔTÔÂ•RSÔ“Õ‘SSÑORSTSQS•QTPÐUSÓ—ÑUWÔ‘TÑT•USÓQTÒQÓ‘QÐS‘ÔÓÕTÑWÔ‘TÑT•‘QUUÑS”“ÓÔÖS×Ô“Õ’QT—ÐPÕSÓPP”ÑS•˜‚”Ý\\œÙYY‚‚˜^S‘“ÒQÑÔ“WÔ“Õ‘SSÑORT‘S‘Q”ÕT‘PQWÑ“Ô—ÒSPS—Ô‘UTÕ˜‚Ý\œ™[‚‚˜^S‘“ÒQÑÔ“WÔ“Õ‘SSÑOP“ÐÒÑQÕT’PP“WÐÐTÐÐQB”ÕP“ÐÒÑQÔS‘S‘×ÐÌLÑÐÓL×ÔÕÔŒWÐÌB˜‚ˆÈÈÈÈÛÜœ™XÝ[ÛˆÛÛ˜XÝ‚”Þ[˜Ú›Ûš^™YÑKÑˆ›ÝÈ]]Üš^™HÛ™H˜\œ›ÝÈÛÜœ™XÝ[ÛŽ‚‚ŒKˆ™[[Ý™HHXØÚY[[H[œÙ\Y[™›ÚY][š]›ÙXÙ\‹Üš[›ØÚÈœ›ÛBˆÔËQ“UT‹UÒS˜™\ÝÜš[™È]›ØÙY\™HÈ]ÈŒMÙØ™Z]š[ÜŽÂŒ‹ˆYÚ[™ÝÜËTÝÙ\”Ú[XÛÛ\]X›H™\ÜÚ]ÜžHÛÛZ[›Y[	œ˜[˜Úˆ	[œÜXÝYXY[™	Z[›Ý™[˜[˜ÙX[š]X[^˜][Ûˆ[œÚYBˆÔËQ“UT‹PS‘™Y›Ü™H[žHÛÛœÝ[Y\ŽÂŒËˆ™\Ù\™HHXØÙ\Y›]\ˆÛÝ\˜ÙK[™›ÚYÛÛÜ™[˜]\ËXÚØYÙKˆ]K\™\Ù\š[™È[œÝ[\Y˜XÝ]šY[˜ÙH[™›Ë[]]][Ûˆ›Ý[™\šY\ÎÂˆ˜[Y]H^XÝY™[˜ÙH^˜XÝ[Û‹TÕÞ[^Ø[YKY™[˜ÙH›ÙXÙ\‹X™Y›Ü™KBˆÛÛœÝ[Y\ˆ]H›ÝË[™H[ØÚÙYÝ[˜Ø]YÝšXÝ[[ÙH™Yš^ÂKˆ›ÙXÙH™\XÙ[Y[ËÒÒHÚ]Ý][›š[™ÈH]™H[™›ÚY›ØÙY\™K‚‚•H[X[ˆÔ“KQ“UT‹PS‘™\[ˆ™XÛÛY\È[YÚX›HÛ›HY\ˆÛÜœ™XÝ[Û‚œ™]šY]ËÛÛ[Z]X›XØ][Ûˆ[™XZ[ˆ™XÛÛ˜Ú[X][Û‹ˆ]™[XZ[œÈ[ˆÕ˜\Y˜XÝ[[™XYÙH™]\Ý›Ý]][XØ][Û‹[œ›ÛY[ÜˆÞ[˜È]]Üš]K‚‚•\]Y\›Z[˜[Î‚‚˜^ÖPÓLLSÔS‚‘ÐÓLPÓÔÑQÒÔÕQÔÐSQWÑU’PÑWÔÐÓÔB‘ÐÓL×ÕÒS‘ÕÔ×ÐÐS‘QUWÔ‘Q“QÒTTÔÂ‘ÐÓL×ÕÒS‘ÕÔ×ÔS‘S‘×ÓQSP‘TTTÒTÑWÔ‘QÒTÕT‘QÔÑTUQSÑWÌ‚ÌLÑÐÓL×ÔÕÔŒWÑ“UT—ÔÓÕTÑOPPÐÑTQÓÐÐSÕSQUSÓ‚ÌLÑÐÓL×ÔÕÔŒWÐS‘“ÒQÑÔ“OPÓÓ•QPÕQÌLÑÐÓL×ÔÕÔŒWÐÌOPPÕU‘WÓPUT’PSVUSÓ—ÔÕQÑB”ÕP“ÐÒÑQÔS‘S‘×ÑÔ“WÐÐTÐÐQWÐÓÔ”‘PÕSÓ‚“U‘WÐS‘“ÒQÔ‘UTÕS“ÕÐUUÔ’V‘QÖQUS‘“ÒQÑS”“ÓQS•S“ÕÐUUÔ’V‘Q•ÒS‘ÕÔ×ÔÖSÏS“ÕÐUUÔ’V‘QS‘“ÒQÔÖSÏS“ÕÐUUÔ’V‘Q‘ÐÓL×ÔÕWÐS‘ÓUTRS”ÑPÓÓ‘ÑU’PÑWÐÓÓ•‘T‘ÑSÑOUS”“Õ‘Q‘ÐÓLUS‘Q’S‘QÒSPÕU‘B˜‚ˆÈÈÈ‹ÐÓLÈÌ^XÝš[™[™È[™›ÝšY\ˆ˜\Ù[[™B‚”™XÛÜ™MÈ™XÛÛ˜Ú[\ÈHX\ÚÙY\Ù\ÜÚ[ÛˆÔËPUUL˜[™˜[œØXÝ[Û˜[˜ÔËS‘SÓ‹LLX\›Z[˜[ÈYØZ[œÝ™XÛÜ™ÈM8 $ÌM‹‚‚•HÛÛXš[™Y]šY[˜ÙH›Ý™\Î‚‚‹HHœ™\Ú\Ù\ˆXØÙ\ÜÈÚÙ[ˆØ]\ÙšY\È\ÜÝY\‹]YY[˜ÙK[ÛÜš]KÝXš™XÝˆ[™[YK]Ú[™ÝÈÚXÚÜÎÂ‹HÜÝYY[]H[™]šXÙK\Ý]\È[™Ú[È›Ý™]\›ˆŒÂ‹HHÝ\YYÜÝY[™›ÚY]šXÙHURQ\È^XÝH›Ý[™ÈHÚÙ[ŽÂ‹HH›ÝšY\ˆÛÛZ[œÈÛ™HXØÛÝ[[™ÛÈ]šXÙH›ÝÜÎÂ‹HH^XÝ[™›ÚY]šXÙH\ÈXÝ]™H]™^^XÝYÙ\]Y[˜ÙHHY\‚ˆYÚ]Ø]\ˆÂ‹HXØÛÝ[[]™[ÝX›Z\ÜÚ[ÛœËÙ]™[ËØXÚÛ›ÝÛYÙ[Y[È™[XZ[ˆKÌKÌXÂ‹HHXØÛÝ[Ý\œÛÜˆ™[XZ[œÈˆY\ˆYÚ]Ø]\ˆH[™\ÈÛÛœÚ\Ý[Â‹HH[™›ÚY]šXÙHÝÛœÈ›ÈÝX›Z\ÜÚ[ÛˆÜˆÞ[˜È]™[Â‹HH›ÝšY\ˆ˜[œØXÝ[Ûˆ^XÚ]H›ÛÈ˜XÚÈ[™H›ØÙY\™H\ÜÙ\Ë‚‚•H\Ü^YY]™[ÜY[\™Ù]X™[\È™]Z[™Y\ÈH][˜Ú\ˆXÛ\˜][Û‹‚˜ÔËS‘SÓ‹LLXÙ\È›Ý[™\[™[H›Ý™HH[X[‹\™XYX›H™[Ûˆœ˜[˜Ú˜[X\Ëˆ\È›Ý™[˜[˜ÙHÙZ[[™ÈÙ\È›ÝÛÛ˜YXÝH]][XØ]Yœ›ÛKÙ]X˜\ÙKÕÈ\›Z[˜[ÜˆH™]\›™Y™XY[Û›H[™[ÜžK‚‚”ÌÛÜÙ\È^XÝÜÝYš[™[™È[™HÜÝY[œ›ÛY[ÛËQ]šXÙH˜\Ù[[™K‚’]Ù\È›Ý›Ý™HÛÛ™\™Ù[˜ÙH[™]]]Üš^™\È›ÈÞ[˜ËˆH™^ÛÛ›Û[™ÂÛÜšÈ\ÈÐÓLËŽNˆ\š]™H[™œ™Y^™HH^XÝÚ[™ÝÜË\Ù\]Y[˜ÙKLˆÈ[™›ÚY˜ÛÛ™\™Ù[˜ÙHXÝ[ÛˆXÚÙ]ˆ\ÈXÚÙ]]\ÝÙ\\˜]HHÚ[™ÝÜÈ\ØY\ÙKš]ÈÛY[Ô™[™\‹Ü›ÝšY\ˆÜÝ›YÚH]\ˆ[™›ÚYÝÛ›ØY\ÙK[™š]ÈÝÛˆÜÝ›YÚˆZ]\ˆ\ÙHÝÜÈÛˆ[Y[Ý][šÛ›ÝÛ‹˜Z[Y˜›Ý\YYš[™[™È™Z™XÝ[Û‹[™^XÝY[KÝ\œÛÜ‹ÜÙ\]Y[˜ÙBš[˜ÛÛœÚ\Ý[˜ÞKÜˆ\XØ]KÛZ\ÜÚ[™È\˜Ú\ÙK‚‚Ý\œ™[\›Z[˜[‚‚˜^ÌLÑÐÓL×ÔÌÐUUÐ’S‘S‘ÏTTÔ×ÑVPÕÐ’S‘S‘×ÐÓÓ‘’T“QQÌLÑÐÓL×ÔÌÔ“Õ’QT—ÐTÑSS‘OTTÔ×Ô“ÓPÒÂ‘ÐÓL×Ô“Õ’QT—ÑU’PÑWÐÓÕS•L‚‘ÐÓL×Ô“Õ’QT—ÔVSÐQÐÓÕS•ÏTTÔ×ÌWÌWÌB‘ÐÓL×Ô“Õ’QT—ÐPÐÓÕS•ÐÕT”ÓÔPÓÓ”ÒTÕS•Ì—ÐQ•T—ÌB‘ÐÓL×ÐS‘“ÒQÔ“Õ’QT—ÔÑTUQSÑOPÓÓ”ÒTÕS•ÌWÐQ•T—Ì‘ÐÓL×ÔÌTTÔÑQÔ‘PQÓÓ“WÑVPÕÐ’S‘S‘×ÕÓ×ÑU’PÑWÐTÑSS‘B‘ÐÓLÏPPÕU‘WÕÒS‘ÕÔ×Õ×ÐS‘“ÒQÐUUÔ’VUSÓ—ÔPÒÑU”ÑPÓÓ‘ÑU’PÑWÐÓÓ•‘T‘ÑSÑOUS”“Õ‘QS‘“ÒQÔTÒTÑORS•ÒS‘ÕÔ×ÔÖSÏS“ÕÐUUÔ’V‘QS‘“ÒQÔÖSÏS“ÕÐUUÔ’V‘Q˜‚ˆÈÈËˆ™]Z[™Y™KTÕ[›Ü˜[XB‚•H›ÛÝÚ[™ÈÙXÝ[ÛœÈ™\Ù\™HHÛÛ\XÝ™XÛÝ™\žH[›Ü˜[XH]ÛÛ›ÛY˜™Y›Ü™HÕˆ^H\™H›Ý™]Üš][ˆ\È\ÝÜšXØ[™XÛÜ™ËˆÙXÝ[Ûˆ‹ŒBœÝ\\œÙY\ÈZ\ˆÝ]\Ëœ˜[˜ÚØ]K[™™^XXÝ[ÛˆÝ][Y[ÈÚ\™]™\‚ÜÙHÝ][Y[ÈY™™\‹‚‚ÞXÛHL[Ý™YX\šÙZHœ›ÛHØØ[Þ[˜Ú›Ûš^˜][ÛˆÜ›Ý[™ÛÜšÈÝØ\™›Ý[™Y˜]][XØ]YÜÝY[\‹Y]šXÙHÛÛ™\™Ù[˜ÙKˆ]\È›ÝY]ÛÜÙY‚‚ˆÈÈÈËŒHXØÙ\Y[\[Y[][Ûˆ˜XÚÂ‚•HÛÝ\˜ÙH[™™XÛÛ˜Ú[Y™\ÜÈ\ÝX›\Ú‚‚‹HÙ™›[™KYš\œÝØØ[]H™[XZ[œÈš[X\žNÂ‹H[[]]X›H\[™[Û›HÞ[˜È]™[È[™]\›Z[š\ÝXÈ™\]Y\ÝÛÛ[^\ÝÂ‹HXØÛÝ[Ñ]šXÙK\ØÛÜYØØ[]Y]Y\ËÝÛ›ØYØ\KXÚÛ›ÝÛYÙ[Y[È[™ˆY[\Ý[\XØ][Ûˆ]È^\ÝÂ‹HÛËQ]šXÙH\ÜÜØX›HÛÛ™\™Ù[˜ÙH[™™XÛÝ™\žH\›™\ÜÙ\È^\ÝÂ‹HÜÝY]]ÓÒQÈ™\šYšXØ][Û‹Y[X™\œÚ\™\ÛÛ][Û‹]šXÙH[œ›ÛY[ˆ]Y\žKÜ™\^KÜÝ]\ËÜ™]›ØØ][Ûˆ[™˜[œØXÝ[Û‹\ØÛÜY]]Üš^˜][Ûˆ^\ÝÂ‹H“ÈÛÛ^[™[[YKÛZYÜ˜]Üˆš]š[YÙHÙ\\˜][Ûˆ^\ÝÂ‹H˜]]™HÛÜÝ\™H^ÜÙ\ÈÝX\™YÚYÛ‹Z[‹[œ›ÛY[]Y\žKÜÝYˆÛÛ›™XÝ[Û‹Þ[˜È[™XYÛ›ÜÝXËÜ™XÛÝ™\žHXÝ[ÛœÎÂ‹H\˜X›HÞ[˜ËX][\[™[šÛ›ÝÛ‹[Ý]ÛÛYHØœÙ\˜Xš[]H^\ÝÎÂ‹HHÙ\\˜]K^XÚ]HÛÛ™š\›YY˜Z[YÛ›Ý\YY™XÛÝ™\žHÝ\™˜XÙH›ÝÂˆ^\ÝË™\Ù\š[™È™XY[Û›H[œÜXÝ[Û‹[šÛ›ÝÛˆ™]žH[™Ü™[˜\žHÞ[˜È\Âˆ\Ý[˜ÝXÝ[ÛœÎÂ‹HH›Ý[™Y‘PËLHÛÛÜ™[˜]Üˆ™]˜[Y]\È^XÝ[\›˜[Ø[™Y]HY[]Kˆ]ÛZXØ[H™XÛÝ™\œÈ[™X\Ù\ÈÛ›H]ÈY[X™\œË\™›Ü›\È][ÜÝÛ™H\ØYˆ\œÚ\ÝÈ]™\Ý[[™ÛÛZ[œÈ›ÈÝÛ›ØYÜˆXÚÛ›ÝÛYÙ[Y[]Â‹H™][[Û‹Û˜\ÚÝ[™™X›ÛÝÝ˜\ÛÛ˜XÝÈ[™ØØ[\›™\ÜÈÜ›Ý[™ÛÜšÂˆ^\Ý‚‚•\ÙH\™H[\[Y[][Ûˆ[™›Ý[™Y˜[Y][ÛˆÛZ[\Ëˆ‘PËLHÜXÚYšXØ[Bœ™[XZ[œÈÜÝ][˜[Y]Y[™[™^XÝ]YYØZ[œÝH\Ù\ˆ[š\›Û›Y[ˆ^HÂ››ÝžH[\Ù[™\È\ÝX›\Ú›ÙXÝ[Ûˆ™XY[™\ÜË™X[][KY]šXÙB˜ÛÛ™\™Ù[˜ÙKÜÝY™][[Ûˆ^XÝ][Û‹˜XÚÝ\ÔUˆXØÙ\[˜ÙKÜˆ™[X\ÙB˜XØÙ\[˜ÙK‚‚ˆÈÈÈËŒˆXØÛÝ[Ý\œÛÜ‹\Ý]HÛÜœ™XÝ[Û‚‚•H›ÝXÝYÜÝYÝX›Z\ÜÚ[Ûˆ˜Z[\™HØ\È˜XÙYØØ[HÈ[ˆXØÛÝ[]™^\ÝYÚ]Ý]XØÛÝ[ØÝ\œÛÜ—ÜÝ]X‚‚•HXØÙ\YÛÜœ™XÝ[Ûˆ[™XYÙH[˜ÛY\Î‚‚‹H˜Z[XÛÜÙY[™[™È›ÜˆHZ\ÜÚ[™ÈÝ\œÛÜˆ›ÝÎÂ‹H^XÚ]Ù\šXÙK][˜]˜Z[X›HÈ›ÝX\YYÛ\ÜÚYšXØ][ÛŽÂ‹HZYÜ˜][ÛˆÈ›Ýš\Ú[Ûš[™È^XÝHÛ™HÝ\œÛÜ‹\Ý]H›ÝÈ›Üˆ™]ÈXØÛÝ[ÎÂ‹H˜XÚÙš[Û›H›ÜˆZ\ÜÚ[™È\ÝÜšXØ[›ÝÜÎÂ‹H™\Ù\˜][ÛˆÙˆ^\Ý[™ÈÝ\œÛÜˆ›ÝÜÎÂ‹HÜÝYYÚ]Ø]\‹Y\š]™Y[š]X[^˜][ÛŽÂ‹H™]›ØØ][ÛˆÙˆ[[YHÝ\œÛÜˆS”ÑT•ÑSUNÂ‹H™]Z[™YØÛÜY[[YHÑSPÕÕTUNÂ‹H™XY[™\ÜË]ŒˆZYÜ˜][ÛˆØ\Xš[]K‚‚“ZYÜ˜][ÛˆÈØ\È\YYÛ˜ÙHÈH]™[ÜY[™[Ûˆ\™Ù][™œÜÝ›YÚ]˜[Y]Yˆ]]\Ý›Ý™H™X\YY‚‚ˆÈÈÈËŒÈÜÝY™\\˜][ÛˆXØÙ\Y‚•Ú][ˆ]™[ÜY[\›ÝšY\ˆ›Ý[™\šY\ËXØÙ\Y[X[‹[Ü\˜]Y]šY[˜ÙBš[˜ÛY\Î‚‚‹HH[[™YÛÜœ™XÝY™[™\ˆ™]š\Ú[ÛˆØ\È\ÞYYÂ‹H]™H[™™XYH[™Ú[È™]\›™YZ\ˆ^XÝY™XYH™\Ý[ÎÂ‹H™XY[™\ÜË]ŒˆØ\ÈYNÂ‹H]]\ÜÝY\‹]YY[˜ÙH[™”ÌMˆY]Y]HX]ÚYÂ‹H[ˆ]][XØ]Yš^\™Hš[˜Ú\[™\ÛÛ™YÈXÝ]™HY[X™\œÚ\Â‹H^XÝ[œ›ÛY]šXÙHš[™[™ÈØ\ÈÛÛ™š\›YYÂ‹H›ÝšY\ˆÝ]H™[XZ[™Y[˜Ú[™ÙYXÜ›ÜÜÈH[œÜXÝY™KTÞ[˜ÈÚXÚÜÚ[Â‹HÙXÜ™]È[™ÛÛ\]HY[YšY\œÈÙ\™HÙ\Ý]Ùˆ›ÝX›ÛÚÈ]šY[˜ÙK‚‚•\ÈÙ\È›Ý]]Üš^™H›ÙXÝ[Ûˆ\Þ[Y[›ÝšY\ˆ]]][Û‹Ü™Y[X[œ›Ý][Û‹Ü™[˜\žHÞ[˜ËÜˆH™XÛÝ™\žHÜ\˜][Û‹‚‚ˆÈÈÈË˜[Y][Ûˆ™XÛÜ™™]Z[™Y‚•H]\ÝÛÛ\]HX]\šX[^˜][Ûˆ™XÛÜ™™Y›Ü™HHÝ\œ™[]šY[˜ÙK[Û›Bœ›Ý[™™]Z[™Y‚‚˜^TH›Ü›X]Û[Ý\XÚXÚËØZ[ˆTÔÂTH\ÝÎˆLÈÈLÂœ›ÙXÝ[Ûˆ\[™[˜ÞH]Y]ˆ[™\˜Xš[]Y\Â›ZYÜ˜][Û‹LÈ\ÜÜØX›HÜÝÜ™TÔS›Ø™NˆŽHÈŽBšÜÝYØØ[]]Üš^˜][ÛˆØ\Ù\ÎˆŽYHÈ[™[™Â‘›]\ˆ›Ü›X]Ø[˜[^™NˆTÔÂ‘›]\ˆ\ÝÎˆMÎ\ÜÙYÈX‹YØ]YÚÚ\Âœ™X[ÛÛ™\™Ù[˜ÙH\›™\ÜÎˆÈÈÂœ™X[™XÛÝ™\žH\›™\ÜÎˆHÈB•Ú[™ÝÜÈ™[X\ÙHZ[ˆTÔÂ[™›ÚYXYÈZ[ˆTÔÂœ›ÝXÝY]Ûˆ[š]\ÝÝZ]NˆHÈB˜‚“Û™HÛ\ˆYÙÜ™YØ]HÜ˜Ú\Ý˜]ÜˆØœÙ\˜][Ûˆ™]Z[™YB˜]Y\žK\™\^K\Ø[YK\™\]Y\ÝZY›]\‹\›ÙXÙ\ˆ˜Z[\™HÚ[HH\™XÝÝZ]B˜[™ÜZ[ˆ\›™\ÜÙ\È\ÜÙYˆÈ›ÝX\šÈ]YÙÜ™YØ]HØœÙ\˜][Ûˆ™\ÛÛ™YÚ]Ý]HÛÜœ™[]Y™\[‹‚‚ˆÈÈˆÝ\œ™[ÛÝ\˜ÙH[™Ü\˜][Û˜[X\‚•\ÙH\ÈX\›Üˆ\™Ù]Y™XÛÝ™\žH˜]\ˆ[ˆØØ[›š[™ÈH™\ÜÚ]ÜžBš[™\ØÜš[Z[˜][K‚‚ˆÈÈÈŒH[X[ˆ^XÝ][Ûˆ[\™˜XÙB‚˜^™ØÝ[Y[][Û‹ÑÔ“K›Y™ØÝ[Y[][Û‹Ñ×ÔÐÔ’TË›Y™ØÝ[Y[][Û‹Ó”×ÐÓÓÔ‘SUTË›Y™ØÝ[Y[][Û‹ÒWÔÐÔ’TËœÌB™ØÝ[Y[][Û‹Ñ—ÓQÓUœÜ[˜‚˜Ô“K›Y\ÈHÛÛ˜Ú\ÙH[™^Y[X[ˆ[žHÝ\™˜XÙKˆ]™\žHXÝ]™HÔ“KJ˜˜›ØÚÈ\Ü]Ú\È^XÝHÛ™HÔËJ˜›ØÙY\™H›ÝYÚWÔÐÔ’TËœÌX‚˜×ÔÐÔ’TË›YÝÛœÈ›ØÙY\™HÙÚXÈ[™[[YH™\]Y\ÝË˜”×ÐÓÓÔ‘SUTË›YÝÛœÈ™]šY]ÙY›Û‹\ÙXÜ™]˜[Y\Ë[™—ÓQÓUœÜ[ÝÛœÂ›X[X[ÔS\È[™^Y]]ÛX][Û‹\]Y\žH›ØÚÜËˆÛÛÜ™[˜]\È\™H]]X›H[™›]\Ý™Hœ™\ÚH™\šYšYY™Y›Ü™H›ÝšY\ˆXÝ[Û‹‚‚Ý\œ™[ÔS]H›Ý]N‚‚˜^‘Ô“KTÔSUKLHOˆÔS]HÓH]˜Z[Xš[]B‘Ô“KTÔSUKLˆOˆÛÜÙYX\\ØÛÝ™\žH[™™\šYšYY[\Ü˜\žHÛÜB‘Ô“KTÔSUKLÈOˆ™XY[Û›HØ[š]^™YÛÜYYY]X˜\ÙHÛ\ÜÚYšXØ][Û‚‘Ô“KTÔSUKLOˆX]\šX[^™Y™XY[Û›HØ[š]^™Y]šXÙK\ØÛÜHÛÜœ™[][Û‚˜‚[›Ý\ˆ›ØÙY\™\È\™HX]\šX[^™Y[™]™H[X[‹[ØœÙ\™Y™\Ý[Ë‚˜Ô“KTÔSUKL]Y\šYYÛ›HH™\Ù\™Y™\šYšYYÛÜH[™ÛÛ\]YB™]šXÙK\ØÛÜHÛÜœ™[][ÛˆÚ]Ý]™]žKÞ[˜Ë›ÝšY\ˆXÝ[Û‹]]][ÛˆÜ‚˜ÛX[\ˆ™\Ù\™HX\šÙZKYØ]KLL‹M‹XÝ\œ™[[˜Ú[™ÙY›ÝYÚHÛÛ›ÛY›Ü\˜][Ûˆ[™ÜÝ[Ü\˜][Ûˆ™XÛÛ˜Ú[X][Û‹‚‚ˆÈÈÈŒˆ›]\ˆÞ[˜Ú›Ûš^˜][Ûˆ]]Üš]Y\Â‚˜^˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ø\XØ][Û‹ÚÜÝYÜÞ[˜×ØÛÛÜ™[˜]Ü‹™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ú[™œ˜\ÝXÝ\™KÜ™[[ÝKÚÜÞ[˜×Ý˜[œÜÜ™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ú[™œ˜\ÝXÝ\™KÛØØ[ÜÞ[˜ËÛØØ[ÜÞ[˜×Ü™\ÜÚ]ÜšY\Ë™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹ÙÛXZ[‹ÜÞ[˜ËÜÞ[˜×Ù]™[™\˜‚˜ÜÝYÜÞ[˜×ØÛÛÜ™[˜]Ü‹™\ÝÛœÈÜ™[˜\žHÞ[˜ÉÜÂ˜]][XØ][Û‹]ËXš[™[™Ë]Ë\[™[™Ë]\ØY]ËYÝÛ›ØY]ËXXÚÛ›ÝÛYÙ[Y[˜[œÚ][Û‹ˆT”‹L™[[Ý™Y˜Z[YÛ›Ý\YY™XÛÝ™\žHœ›ÛH\ÈÜ™[˜\žH]‚˜˜Z[YÛ›ÝØ\YYÜ™XÛÝ™\žWØÛÛÜ™[˜]Ü‹™\ÝÛœÈ‘PËLIÜÈ˜\œ›ÝÙ\ˆ^XÝ˜Ø[™Y]H™XÛÝ™\žK]Ë[Û™K]\ØY\›Z[˜[[™[[[Û˜[H\È›ÈÝÛ›ØYÜ‚˜XÚÛ›ÝÛYÙ[Y[\[™[˜ÞKˆØØ[™\ÜÚ]ÜšY\ÈÝÛˆ\˜X›Bœ]Y]YKÜÝX›Z\ÜÚ[Û‹Ù]™[Ý]Kˆ˜[œÜÜÝÛœÈ›ÝØÛÛX\[™ËˆÛXZ[ˆÞ[˜Â›[Ù[ÈÝÛˆ]™[[™Ý]HÙ[X[XÜË‚‚ˆÈÈÈŒÈÜÝYTH]]Üš]Y\Â‚˜^œÙ\šXÙ\ËÛX\šÙZWÜÞ[˜×Ø\KÜÜ˜ËÂœÙ\šXÙ\ËÛX\šÙZWÜÞ[˜×Ø\KÛZYÜ˜][ÛœËÂœXÚØYÙ\ËÛX\šÙZWÜÞ[˜×ØÛÛ˜XÝÂ˜‚’[œÜXÝ^XÝš[\È›ÝYÚËÒÒHÜˆ\™Ù]YÙX\˜ÚÚ[ˆHXÝ]™H]Y\Ý[Û‚œ™\]Z\™\ÈÙ\™\ˆ™Z]š[Ü‹ˆÈ›Ý[™™\ˆÜÝYÝ]Hœ›ÛHÛÝ\˜ÙHØ\Xš[]K‚‚ˆÈÈKˆ™KTÕÐÓKLˆÝ]H™]Z[™Y›ÜˆÛÛ^‚‘ÐÓKLˆ™[XZ[œÈÜ[‹]Ø]HL‹È›ÝÈ\ÜÙ\È]HÛÜœ™XÝYÚ[™ÛKXÛY[˜ÛÛ›ÛØÛÜKˆT”‹L\ÈÛÝ\˜ÙKXXØÙ\Y[™ØØ[H˜[Y]YˆHÝXœÙ\]Y[•Ú[™ÝÜÈXÚÙ]›Ý™\ÈÛ™HØ\›HÜÝY\™XY[™\ÜÈ\›Z[˜[[™Û™HÜ™[˜\žHÞ[˜Â\›Z[˜[Ú]]Y]YHÌÌÌ™^]šXÙHÙ\]Y[˜ÙHØ\ÝÝXØÙ\ÜÙ[Þ[˜Â˜Y˜[˜ÙYÛ›HžHÜ™[˜\žHÞ[˜Ë[™›È˜Z[Y\™XÛÝ™\žH\ÙH[ˆH™]Ù\Ý›Ü\˜][Û‹ˆHš\œÝÛÛ™XY[™\ÜÈ][\™[XZ[œÈ[ˆ[œ™\ÛÛ™YØZÙK]\Û\˜[˜ÙHØœÙ\˜][Û‹‚‚‘Ø]HL‹ÈÙ\È›ÝÛZ[H\™XÝ›ÝšY\‹\›ÝÈÛÛ[ËÛÛ\]H™[™\‚˜Ú[\™\]Y\ÝÛÜœ™[][Û‹ÜˆÙXÛÛ™Q]šXÙHÛÛ™\™Ù[˜ÙKˆÜÙH]šY[˜ÙB™˜[Z[Y\È™[XZ[ˆ^XÚ]]\ˆØ]\ËˆØ]HL‹Ž\È\™Y›Ü™H™^\ÈBœ™XY[Û›H›ÝšY\‹Ü™\Ý[™XÛÛ˜Ú[X][Ûˆ[™]\Ý\ÜÝYH›ÈÙXÛÛ™Þ[˜Ë™]žKœ™XÛÝ™\žK[œ›ÛY[ZYÜ˜][Û‹Üˆ›ÝšY\ˆ]]][Û‹‚‚•H™]Ù\ÝÞ[˜ÉÜÈLÈ\Ü^YY›ÝÜÈ\™HÜ™\™YY™XÞXÛHXÛ\˜][ÛœË›ÝLÂ™\œ›ÜœËˆZ\ˆ›]™\Ù[][Ûˆ\ÈHRHÛÛ\™Z[œÚ[ÛˆY™XÝˆXZ[ˆXÝ]˜]\Â˜ÌLQÐÓL‹TÌL‹QPQËLXÈÛÛœÛÛY]HÝ]\Ë]Y\žK[™™Yœ™\ÚXYÛ›ÜÝXÜÂ˜[™ÈÜ›Ý\Y™XÞXÛH]šY[˜ÙHžH\™[Ü\˜][ÛˆÚ]Ý]Ú[™Ú[™È›ÝØÛÛœØÚ[XKTKÜˆ›ÝšY\ˆÝ]K‚‚ˆÈÈÈKŒHXØÙ\YØ]HL‹ˆÛÜYYY]X˜\ÙH]šY[˜ÙB‚•H[X[‹[Ü\˜]Y›ØÙY\™N‚‚‹HÛÛ™š\›YYX\šÙZH[™™[]˜[›]\ˆ^XÝ][ÛˆÙ\™HÛÜÙYÂ‹H›Ý[™^XÝHÛ™HØØ[]X˜\ÙHØ[™Y]NÂ‹H›Ý[™›ÈÐSÔÒHÚYXØ\œÎÂ‹HÜ™X]YHš^Y[˜[YHÛÜNÂ‹H™\šYšYYÛÜHÚ^™H[™\Ú\]X[]HÚ]Ý]š[[™È\Ú\ÎÂ‹H]Y\šYYÛ›HHÛÜHÚ]ÔS]H™XY[Û›H[™ˆQÓPH]Y\žWÛÛ›OSÓ˜Â‹H™]\›™YÔS]T]ZXÚÐÚXÚÎˆÚØÂ‹H\™›Ü›YY›È™]žKÜ™[˜\žHÞ[˜ÈÜˆ›ÝšY\ˆXÝ[Û‹‚‚”Ø[š]^™YÛ\ÜÚYšXØ][ÛŽ‚‚˜^œÝX›Z\ÜÚ[ÛœÎ‚ˆÝ\\œÙYYÈ›Ý\YYÈÛÛ™›XÝÈ[HBˆÝ\\œÙYYÈ›Ý\YYÈÛÛ™›XÝÈ[œ›ÛY[\™\]Z\™YHBˆ˜Z[YÈ›Ý\YYÈÛÛ™›XÝÈÙ\šXÙK][˜]˜Z[X›HHB‚™XXÚÝX›Z\ÜÚ[ÛŽ‚ˆÛÈY[X™\ˆ]™[Âˆ]™[Ù\]Y[˜Ù\Èx $Ì‚ˆ]™[Ý]H˜Z[YˆÜÚ][ÛœÈ8 $ÌB‚œ[™[™ËY]™[Ý[[X\žN‚ˆ˜Z[YH‹Ù\]Y[˜Ù\Èx $Ì‚ˆ[™[™ÈH‹Ù\]Y[˜Ù\Èx $ÍB‚›]\Ý][\‚ˆÞ[˜Ë][˜]˜Z[X›Bˆ›ÝšY\‹Y]šY[˜ÙK][˜]˜Z[X›Bˆ›ÈÝ]\Âˆ›È™\ÜÛœÙHXY\œÂ˜‚ˆÈÈÈKŒˆ™XÛÛ˜Ú[YÛÛ˜Û\Ú[ÛœÂ‚XØÙ\Y‚‚‹HÛÜYYY]X˜\ÙH›ØÙY\™NˆTÔÎÂ‹H]X˜\ÙHÛÜNˆX[H[™[\›˜[HÛÚ\™[Â‹H^XÝHÛ™HXÝ]™H˜Z[YÛ›Ý\YYÛËY]™[[™XYÙNˆÛÛ™š\›YYÂ‹HÛÈX\›Y\ˆÛËY]™[ÝX›Z\ÜÚ[ÛœÎˆÝ\\œÙYYÂ‹H[šÛ›ÝÛ‹\ÝX›Z\ÜÚ[Ûˆ™]žH]ˆ[˜\XØX›NÂ‹HX\›Y\ˆ[œÝY™šXÚY[Y]šY[˜ÙH]Y]YHÛ\ÜÚYšXØ][ÛŽˆÝ\\œÙYYÂ‹H›È\ÝÛÜH›ÝšY\ˆ™\Ý[^\ÝÈ›ÜˆH]\ÝÜ™[˜\žHÞ[˜ÎÂ‹HHÚ^Ý\ˆ[™[™È]™[ÈXZÙHÜ™[˜\žHÞ[˜È[ˆ[œØY™HÝXœÝ]]H›Ü‚ˆH›Ý[™Y™XÛÝ™\žH]Y\Ý[Û‹‚‚•HØœÙ\™YXÝ]™HYØXÞH›ÝÈÝÜ™\Î‚‚˜^œ™\ÜÛœÙWØÛÙHHÛÛ™›XÝ™\œ›Ü—ØÛÙHHÙ\šXÙK][˜]˜Z[X›B˜‚Ý\œ™[ÛÝ\˜ÙHX\ÈÙ\šXÙK][˜]˜Z[X›XÈÙ\šXÙU[˜]˜Z[X›XˆÚ]\ÝÜžBœÚÝÜÈ]^XÚ]X\[™ÈØ\ÈYY[‚˜ÍYÍØ™YÎYŽLØYŽLØX˜ŒÙYMYLLÙ™ÍÍÌØXÈHØœÙ\™Y]X˜\ÙH[Y\Ý[\œ™Y]\È]ÛÜœ™XÝ[Û‹ˆHZ\š[™È\È\ÝÜšXØ[HÛÚ\™[Ú]B›Û\ˆ˜[˜XÚË]\È\È›Ý^XÝ]X›H›ÝË[]™[›Ý™[˜[˜ÙH[™]\Ý›Ý˜™HÚ[[H™]Üš][‹‚‚ˆÈÈÈKŒÈØ]HL‹ˆ]šXÙK\ØÛÜYÛÜœ™[][Û‚‚’[X[ˆ^XÝ][ÛˆÙˆÔ“KTÔSUKLYØZ[œÝH™\Ù\™Y™\šYšYYÛÜBœ™]\›™Y‚‚˜^”ÔS]H]ZXÚÈÚXÚÎˆÚÂ›ØœÙ\™Y]šXÙHØÛÜ\ÎˆÂšÜÝYÙ[œ›ÛYØÛÜH˜[šÎˆÂšÜÝYØÛÜH™^ÜÙ\]Y[˜ÙNˆÂ™˜Z[YØ[™Y]HÝX›Z\ÜÚ[ÛŽˆ˜Z[YÈ›Ý\YY›YØXÞH™\ÜÛœÙKÙ\œ›ÜŽˆÛÛ™›XÝÈÙ\šXÙK][˜]˜Z[X›B˜Ø[™Y]HY[X™\œÎˆ‚˜Ø[™Y]HÜÚ][ÛœÎˆ8 $ÌKÛÛYÝ[Ý\Â˜Ø[™Y]HÙ\]Y[˜Ù\Îˆx $Ì‹ÛÛYÝ[Ý\Â˜Ø[™Y]HY[X™\ˆÝ]Nˆ˜Z[YœØ[YKZ\ÚÝ\\œÙYYÝX›Z\ÜÚ[ÛœÎˆœØ[YKZ\ÚXÝ]™HÝX›Z\ÜÚ[ÛœÎˆœÚ[][]Yš\œÝ\ØYÛÝ[ˆ‚˜Ø[™Y]H]™[È[ˆš\œÝ\ØYˆ‚›Ý\ˆ[™[™È]™[È[ˆÜÝYØÛÜNˆ™š\œÝ\ØYÛÛZ[œÈÛ›HØ[™Y]H]™[ÎˆYB›Ý\ˆ›Û‹ZÜÝY[™[™ÈÛÜšÎˆ˜[šÈHHNÈ˜[šÈˆHB›]\ÝÞ[˜ÎˆÞ[˜Ë][˜]˜Z[X›HÈ›ÝšY\‹Y]šY[˜ÙK][˜]˜Z[X›B˜‚•HÝ]]›Ý™\Î‚‚‹HHÜÝYÙ[œ›ÛY]šXÙHØÛÜH\È[›Ûž[Z^™Y˜[šÈÎÂ‹H]ÝÛœÈ^XÝHH˜Z[YÛËY]™[[™XYÙH]Ù\]Y[˜Ù\Èx $ÌŽÂ‹H]È™^ØØ[]šXÙHÙ\]Y[˜ÙH\ÈÎÂ‹HHÚ^Ý\ˆ[™[™È]™[È™[Û™ÈÛ›HÈ›Û‹ZÜÝY˜[šÜÈH[™ŽÂ‹H˜Z[Y™XÛÝ™\žHÛÝ[XZÙH^XÝHHÛÈØ[™Y]H]™[ÈHš\œÝˆ›Ý[™Y\ØYÂ‹H›ÈXÝ]™HÜˆÝ\\œÙYYÝX›Z\ÜÚ[ÛˆÚ\™\ÈHØ[™Y]H™\]Y\Ý\ÚÂ‹H›È]\Ý›ÝšY\ˆ™\Ý[^\ÝÈ™XØ]\ÙHH]\ÝÞ[˜ÈÝÜYÚ]Ý]ˆÝ]\ÈÜˆ™\ÜÛœÙHXY\œË‚‚•H›ØÙY\™H]Y\šYY›È]™H]X˜\ÙH[™Ù[XÝY›È™]žHÜˆÞ[˜ËˆØ]BŒL‹ˆ]šY[˜ÙHÛÛXÝ[Ûˆ[™ÛÜœ™[][Ûˆ\™HÛÛ\]KˆHØØ[ÔS]BœÛ˜\ÚÝ[™HX\›Y\ˆ™[ÛˆÚXÚÜÚ[\™H›ÝÛÛ˜YXÝÜžNˆ^H\ØÜšX™B™Y™™\™[ÚY\È[™[Y\ÈÙˆH˜Z[YÛ›Ý\YY›Ý[™\žKÚ[HH]\Ý”Þ[˜ÈØZ[™Y›Èœ™\Ú›ÝšY\ˆ]šY[˜ÙK‚‚ˆÈÈÈKØ]H\›Z[˜[Â‚˜^‘ÐÓL—ÌL—ÌWÔ‘S‘T—Ô‘PQWÔTÔÂ‘ÐÓL—ÌL—Ì—ÐUUÓQUQUWÔTÔÂ‘ÐÓL—ÌL—Ì×ÐSQÓ“QS•ÔTÔ×ÐUÒS”ÔPÕQÐÒPÒÔÒS•‘ÐÓL—ÌL—ÍÑVPÕÐ’S‘S‘×ÔTÔÂ‘ÐÓL—ÌL—ÍWÔ“Õ’QT—ÐTÑSS‘WÔTÔÂ‘ÐÓL—ÌL—Í—ÐÓÔQQÑUPTÑWÔ“Ð‘WÔTÔÂ‘ÐÓL—ÌL—Í—ÑU’PÑWÔÐÓÔQÐÓÔ”‘SUSÓ—ÔTÔÂ‘ÐÓL—ÌL—Í—ÔTÔÂ‘ÐÓL—ÌL—Í×Ô‘PQÓÓ“WÔ‘Q“QÒÔTÔÂ‘ÐÓL—ÔÌL—Ô‘P×ÌWÔÓÕTÑWÐPÐÑTQ‘ÐÓL—ÔÌL—Ô‘P×ÌWÕÒS‘ÕÔ×ÔÕT‘PÑWÔTÔÂ‘ÐÓL—ÔÌL—ÒÔÕQÔ‘PQS‘TÔ×ÐÓQS•ÔTÔÂ‘ÐÓL—ÔÌL—ÓTÕÔÕPÐÑTÔÑ•SÔÖS×Ô“Ò‘PÕSÓ—ÑRS‘ÐÓL—ÔÌL—ÔÖS×ÌWÑÑWÑ—ÐPÕU‘B‘ÐÓL—ÌL—Í×ÒSPS—ÐUUÔ’VUSÓ—ÒS‘ÐÓL—ÌL—ÎÐÓÓ•“ÓQÓÔTUSÓ—ÒS‘ÐÓL—ÌL—ÎWÔÔÕÓÔTUSÓ—ÐÓÓTT’TÓÓ—ÒS‘ÐÓL—ÌL—ÌLÔ‘PÓÓÒSPUSÓ—ÒS‘ÐÓL—ÓÔS‚˜‚ˆÈÈÈKHXÝ]™H›ÚXš][ÛœÂ‚•[[H™]ÈXZ[ˆ™XÛÛ˜Ú[X][Ûˆ^XÚ]HÚ[™Ù\È[N‚‚˜^”™]žNˆ“ÕUUÔ’V‘Q›Ü™[˜\žHÞ[˜Îˆ“ÕUUÔ’V‘Q‘[œ›ÛÜ™KY[œ›Ûˆ“ÕUUÔ’V‘Qœ›ÝšY\ˆ]Y\žHÜˆ]]][ÛŽˆ“ÕUUÔ’V‘Q™]X˜\ÙH™\Z\‹ÛX[\Üˆ[][ÛŽˆ“ÕUUÔ’V‘Q˜Ü™Y[X[[œÜXÝ[ÛˆÜˆ›Ý][ÛŽˆ“ÕUUÔ’V‘Q‘Ø]HL‹È]]Üš^˜][ÛŽˆ“ÕÔS•Q‘ÐÓKLˆÛÜÝ\™Nˆ“ÕÔS•Q˜‚’ÙY\X\šÙZHÛÜÙY[™™\Ù\™HHÛÜYY]X˜\ÙH[˜Ú[™ÙY[[HØ]BŒL‹ÈXÚÙ]\È™]šY]ÙYˆÈ›Ý^XÝ]HYØÈÔS‚‚ˆÈÈ‹ˆÝ\\œÙYY™KTÕÛÛ[X][Ûˆ8 %ÖSËLH™Y›Ü™H\ÙHL‹Â‚•HÚ[™ÝÜÈ™XY[Û›H™Y›YÚYXØ]Y™XÛÝ™\žKXÛÛ›Ûš\ÚXš[]H[™˜ÛÛ™š\›X][ÛˆØ[˜Ù[][Ûˆ\™H™XÛÛ˜Ú[Y\ÈTÔËˆH]\ˆ™XY[™\ÜÈ\ÜØ^B˜[ÛÈ™\Ù\™YHÛËY]™[˜Z[YØ[™Y]H[™]šXÙHÙ\]Y[˜ÙKˆ]Y›Ý™^XÝ]H™XÛÝ™\žHÜˆÜ™[˜\žHÞ[˜Ë‚‚•H™XY[™\ÜÈ\ÜØ^H^ÜÙYÛ™HÛÝ\˜ÙK\›Ý™[ˆ›Ú™XÝ[ÛˆY™XÝ[™Û™B˜Ü™YX›H[Z[™È\Ý\Ú\Î‚‚˜^œ›Ú™XÝ[ÛŽ‚ˆÛÛ\]Y™XY[™\ÜÈØ\ÈÙ[XÝY\È“\ÝÝXØÙ\ÜÙ[Þ[˜È‚‚[Z[™Î‚ˆ›ÝXÝYÞ[˜È™\]Y\ÝÈÝ\œ™[H\ÙHHš^YK\ÙXÛÛ™ÛY[XY[™BˆØ]\Ø[›ÛH[ˆH\ÝÜšXØ[˜Z[\™H™[XZ[œÈ[œ›Ý™Y˜‚”›ØÙYY[ˆ\ÈÜ™\Ž‚‚ŒKˆÛÙ^X]\šX[^™\ÈÞ[˜Ú›Ûš^™YÑKÑˆ[š]ˆÌLQÐÓL‹TÌL‹QT”‹LØÂŒ‹ˆ[\[Y[HÛÛ\]HÜ\˜][Û‹\ÜXÚYšXÈÛY[\›Z[˜[Ø][ÙÝYKˆ›Ý]K\ÜXÚYšXÈÙ\™\ˆ\›Z[˜[ÙÙÚ[™È[™Ø[š]^™YÛÜœ™[][Ûˆ›Ú[ŽÂŒËˆÛÜœ™XÝÜ™[˜\žKTÞ[˜È[™ÜÝY\™XY[™\ÜÈÝXØÙ\ÜÈ›Ú™XÝ[ÛœÎÂˆ™\XÙHHš^Yš]™K\ÙXÛÛ™Þ[˜È™\]Y\ÝXY[™HÚ]H›Ý[™YˆK\ÙXÛÛ™Ù\™\ˆÈÍK\ÙXÛÛ™ÛY[\ÜØ^HÛXÞNÂKˆ˜[Y]HÛ›H›ÝYÚØØ[Ù\ÜÜØX›H›]\ˆ[™TH\ÝÈ[™™\XÙBˆËÒÒNÂ‹ˆXZ[ˆ™XÛÛ˜Ú[\ÈÛÝ\˜ÙH]šY[˜ÙH™Y›Ü™H[žHÚ[™ÝÜÈÜˆÜÝYXÝ[ÛŽÂËˆH\Ù\ˆ[ÈHXØÙ\Y[\[Y[][Ûˆ[™\™›Ü›\ÈHØ[›ÛšXØ[ˆÚ[™ÝÜÈZ[Û][˜ÚÂŽˆ[ˆÛ™H™XY[™\ÜË[Û›H™YÜ™\ÜÚ[Ûˆ\ÜØ^Hš\œÝ›Ýš[™È™XY[™\ÜÈ[YHX^BˆY˜[˜ÙHÚ[HÜ™[˜\žKTÞ[˜È[YH[™H˜Z[YØ[™Y]H™[XZ[ˆ[˜Ú[™ÙYÂŽKˆØ\\™HHX]Ú[™È™[™\ˆÚ[™ÝÈ›ÝYÚØ[š]^™YÛÜœ™[][ÛˆÛ›NÂŒLˆÛ›HY\ˆHÙ\\˜]HXZ[ˆXÚÙ]X^HÛ™HÜ™[˜\žKTÞ[˜È\ÜØ^HÜˆBˆØ]HL‹È›Ý[™Y™XÛÝ™\žH™HÛÛœÚY\™YÈ™Z]\ˆ\È]]Üš^™YžH\ÂˆÝYÚ[™Ë‚‚•[šÛ›ÝÛ‹[Ý]ÛÛYH™]žKÜ™[˜\žHÞ[˜Ë›Ý[™Y™XÛÝ™\žK™\Z\‹[œ›Ûœ›ÝšY\‹XÛÛœÛÛH]]][Û‹]X˜\ÙHY][™È[™ÛX[\™[XZ[ˆ›ÚXš]Y™\š[™ÈX]\šX[^˜][Û‹ˆÖSËLH]\Ý›Ý\™›Ü›HHY™\œ™Yœ›ØYT”‚œ™Y˜XÝÜ‹‚‚ˆÈÈËˆÐÓKLÈ›Ýš\Ú[Û˜[›Ý[™\žB‚‘ÐÓKLÈ\È[™Yš[™Y[™[˜XÝ]™H[[ÐÓKLˆÛÜÙ\Ëˆ]ÈØÛÜH]\Ý™B™\š]™Yœ›ÛHHXÝX[ÐÓKLˆ\›Z[˜[›Ýœ›ÛHHÜ[Z\ÝXÈ^XÝ][Û‚›ÙˆÝXØÙ\ÜË‚‚Ý\œ™[›Ýš\Ú[Û˜[Ø[™Y]N‚‚˜^˜›Ý[™YÙXÛÛ™Q]šXÙHÜÝYÛÛ™\™Ù[˜ÙH[™XÚÛ›ÝÛYÙ[Y[›ÛÙ‚˜‚“XZ[ˆ]\Ýš\œÝ[œÜXÝÐÓKLˆÛÜÝ\™H]šY[˜ÙK[™[ÜžH™[XZ[š[™ÈXØÙ\Y™Ø\ËÙ[XÝÛ™H˜\œ›ÝÈØš™XÝ]™KÝYÙHœ™\ÚKÐ‹ÐÈ[™\ÝYØ][ÛˆYˆ™YYY[ˆÜ™X]H™]ÈÑKÑˆ]]Üš]K‚‚‘ÐÓKLÈ]\Ý›ÝÚ[[HXœÛÜ˜Ž‚‚‹H›ÙXÝ[Ûˆ\Þ[Y[Â‹Hœ›ØY™][[Û‹Ü™X›ÛÝÝ˜\XØÙ\[˜ÙNÂ‹H˜XÚÝ\ÔUˆXØÙ\[˜ÙNÂ‹HÜ™Y[X[[Y™XÞXÛHXØÙ\[˜ÙNÂ‹HÞXÛHLHRKÕVÛÜšË‚‚ˆÈÈˆÐÓKL›Ýš\Ú[Û˜[›Ý[™\žB‚‘ÐÓKL\È[™Yš[™Y[™[˜XÝ]™H[[X\›Y\ˆÛÜÝ\™H]šY[˜ÙH\ÝX›\Ú\ÂÚ]™[XZ[œËˆ]ÚÝ[ÛÛZ[ˆHš[˜[›Ý[™Y^\›˜[ÛÜ\˜][Û˜[˜XØÙ\[˜ÙH™YYY›ÜˆÞXÛHLÝ[X[H\][Û™YžHXZ[ˆYˆÛ™H[š]ÛÝ[Ý\Ú\ÙH™XÛÛYH›Û‹]\›Z[˜[‚‚Ý\œ™[Ø[™Y]H˜[Z[Y\Î‚‚˜^˜]]Üš^˜][Û‹™]›ØØ][Ûˆ[™Ü™Y[X[Y™XÞXÛB›Ý]YÙK™XÛÝ™\žH[™™][[ÛˆXØÙ\[˜ÙB™\Þ[Y[Ü™[X\ÙHÜ\˜][Û˜[›Ý[™\žB˜‚•\ÙH\™H[›š[™ÈØ[™Y]\Ë›Ý]]Üš]KˆXZ[ˆ]\Ý™XÛÛ˜Ú[HÐÓKLÂ™]šY[˜ÙH™Y›Ü™HÙ[XÝ[™ÈÐÓKL‚‚ˆÈÈKˆÞXÛHLÛÜÝ\™H›Ý]B‚ÞXÛHLÛÜÙ\ÈÛ›HY\Ž‚‚ŒKˆÐÓKLˆ™XXÚ\ÈH\ÝÛÜHÛÜœ™[]Y\›Z[˜[Üˆ[ˆ^XÚ]HXØÙ\Yˆ›Ý[™Y›ØÚÙ\ŽÂŒ‹ˆÐÓKLÈ\ÈYš[™YX]\šX[^™Y˜[Y]Y[™™XÛÛ˜Ú[YÂŒËˆÐÓKL\ÈYš[™YX]\šX[^™Y˜[Y]Y[™™XÛÛ˜Ú[YÂˆ™[XZ[š[™ÈÜÝÜ›ÝšY\‹Ü™[X\ÙHØ\È\™HÛ\ÜÚYšYYÂKˆÛÝ\˜ÙKËÒÒKÛXZ[ˆY[[ÜžH[™[X[ˆ]šY[˜ÙH\™H™XÛÛ˜Ú[YÂ‹ˆÜ\˜][Û˜[YXÝXÈ[™\ÚYÛˆ\›X[™[š[\È\™H›Û[ÝY›ÝYÚˆZ\ˆ]]Üš^™Y“T“KLÙ\]Y[˜Ù\ÎÂËˆÔ“Ò‘PÕÔÕUK›YWÔÑTÔÒSÓ—ÓÑË›Y[™ˆ—ÔÑTÔÒSÓ—ÔÐÒSQK›Y\™H™Yœ™\ÚY[™\ˆXZ[ˆ]]Üš]NÂŽˆÞXÛHLH™XÙZ]™\ÈHÛX[ˆ[žH˜\Ù[[™HÚ]ÞXÛHL™\ÚYX[È^XÚ]‚‚ÞXÛHLH™[XZ[œÈÙ\\˜]Kˆ]ÈRKÕV[™˜\ÚXÈ[˜[]XÜÈÛÜšÈ]\Ý›Ý™H\ÙYÈž\\ÜÈÞXÛHLÛÜÝ\™K‚‚ˆÈÈLˆ™KTÕËLHÛZ[\È™]Z[™Y›Üˆ›Ý™[˜[˜ÙB‚ŸÛZ[H™\Ý[[™]šY[˜ÙH›Ý[™\žHŸKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKHKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKHŸÞXÛHL[\[Y[][Ûˆ›Ý[™][Ûˆ^\ÝÈ[\[Y[Y[™ØØ[H˜[Y]YÚ][ˆ˜[YY™\ÜÈŸZYÜ˜][ÛˆÈ™\Z\™YÝ\œÛÜˆ›Ýš\Ú[Ûš[™È[\[Y[YÈ]™[ÜY[\›ÝšY\ˆ\XØ][Ûˆ[™ÜÝ›YÚXØÙ\YŸÜÝY™XY[™\ÜÈ[™^XÝš[™[™È\ÜÙY[X[‹[Ü\˜]YXØÙ\Y]™[ÜY[]šY[˜ÙHŸØ]HL‹ˆÛÜYYY]X˜\ÙH›Ø™H\ÜÙY[X[‹[Ü\˜]YXØÙ\Y™XY[Û›HÛÜYYY]X˜\ÙH]šY[˜ÙHŸ˜Z[YÛ›Ý\YY[™XYÙH\ÈÛ›ÝÛˆXØÙ\Yœ›ÛHØ[š]^™YÛÜYYY]X˜\ÙHÝ]]ŸYØXÞH™\ÜÛœÙHZ\š[™È\È^Z[™YÛÝ\˜ÙKÚ\ÝÜžKXÛÛœÚ\Ý[›Ý›ÝË\›Ý™[ˆŸ^XÝ]šXÙK\ØÛÜY™^˜[œÚ][Ûˆ\ÈÛ›ÝÛˆXØÙ\Yœ›ÛH[X[‹[Ü\˜]Y™XY[Û›HÔ“KTÔSUKL]šY[˜ÙHŸ™]žH\È[YÚX›H™Z™XÝYÈ[šÛ›ÝÛ‹\™]žH]\È[˜\XØX›HŸÜ™[˜\žHÞ[˜È\ÈHØY™HÝXœÝ]]H™Z™XÝYÈÚ^Ý\ˆ[™[™È]™[È^\ÝŸ‘PËLH›Ý[™Y^XÝ][ÛˆÝ\™˜XÙH^\ÝÈ[\[Y[Y[™ØØ[H˜[Y]Y]MŒÌÍÍØÈÜÝ][˜[Y]YŸ[YÚX›H™Y›YÚXYÛ›ÜÝXÈ\ÈÛÜœ™XÝYRÔËT‘PËLXÙ[™\˜]Y[™ØØ[H˜[Y]YÈÚ[™ÝÜÈ™\[ˆ[™[™ÈŸ^XÝ˜]Ú[™Û™K]\ØY›Ý[™\žHÛØØ[H\Ý]˜[Y]YÈ›È]™H^XÝ][Ûˆ\™›Ü›YYŸ‘PËLHÚ[™ÝÜÈ[œÜXÝ[ÛˆÝ\™˜XÙH\ÜÙY[X[‹[ØœÙ\™YÈ[œÜXÝ[Û‹ØØ[˜Ù[][ÛˆÛ›K›È^XÝ][ÛˆŸÜÝY™XY[™\ÜÈ›Ý]H\ÜÙY[X[‹[ØœÙ\™YŒÛY[]šY[˜ÙNÈ›ÝÜ™[˜\žHÞ[˜ÈŸ\ÝÝXØÙ\ÜÙ[Þ[˜È›Ú™XÝ[Ûˆ\ÈÛÜœ™XÝ™Z™XÝYÈ™XY[™\ÜÈY˜[˜ÙYH[Y\Ý[\Ÿš]™K\ÙXÛÛ™XY[™HØ]\ÙYš[Üˆ˜Z[\™H›Ýš\Ú[Û˜[\Ý\Ú\ÎÈ›Ý›Ý™YŸT”‹LÈ\›Z[˜[Ý[Z[™ÈXÚÙ]\ÈXÝ]™HXØÙ\YÑKÑˆX]\šX[^˜][Ûˆ]]Üš]H]˜\Ù[[™HÙYN™XŸØ]HL‹ÈXÚÙ]\È™XYH™Z™XÝYÈÖSËLH[™]\ˆœ™\Ú™\ÜÈ™XÛÛ˜Ú[X][Ûˆ™\]Z\™YŸØ]HL‹È\È]]Üš^™Y™Z™XÝYŸÐÓKLˆ\ÈÛÜÙY™Z™XÝYŸÐÓKLÈÜˆÐÓKL\ÈXÝ]™H™Z™XÝYŸÞXÛHL\ÈÛÜÙY™Z™XÝY‚ˆÈÈLKˆ[š[™È\ÜÜÚ][Û‚‚•\È™Yœ™\Ú™\XÙ\ÈH›Ü›Y\ˆ]]X›H™Yš^ÚXÚYXØÝ[][]Y‚‚‹HÝ\\œÙYYÝ\œÛÜ‹\Ý]H[\[Y[][Ûˆ[œÝXÝ[ÛœÎÂ‹H™K\›Ø™HØ]HL‹ˆØ[˜Ù[Ô™]žHXÚ\Ú[Ûˆ™Y\ÎÂ‹H™\X]Y™\ÜÚ]ÜžKY]ÙÛÙÞH[™˜[Y][Ûˆ[›Ü˜[X\ÎÂ‹HÛX\™Y›ÝšY\‹\™Y›YÚ[™\Þ[Y[Ý\ÎÂ‹HÝ[HÛ™K[[™HÛÛ[X][Ûˆ\›Z[˜[ÎÂ‹H\XØ]Y]\™HÐÓKLËÌ[™ÞXÛHLÛÜÝ\™H\ØÜš\[ÛœË‚‚•Z\ˆÛÛ[Z[™ÈYX[š[™È\ÈÛÛœÛÛY]YX›Ý™Kˆ\ÝÜšXØ[›ÙÜ™\ÜÚ[Ûˆ™[XZ[œÂ˜]˜Z[X›H[™\ˆYØXÞWÔ›ÙÜ™\ÜØÚXÚØ\È™\Ù\™Y[˜Ú[™ÙY‚‚Ý\œ™[™XÛÝ™\žHÚ[\Ž‚‚˜^œ™XY\È]]X›H™Yš^‹Oˆ™XYXÝ]™HT”‹LÈÑKÑˆ›ÜˆÛÙ^]]Üš]B‹Oˆ™XY‘PËLHËÒÒH›Üˆ™\Ù\™Y™XÛÝ™\žH]šY[˜ÙB‹Oˆ\ÙHHØ[›ÛšXØ[WÔÐÔ’TÈ\Ü]Ú\ˆ›Üˆ]\ˆÚ[™ÝÜÈÛÛ[X[™Â‹Oˆ^[™[ÈYØXÞWÔ›ÙÜ™\ÜÈÛ›H›Üˆ›Ý™[˜[˜ÙKÚ\ÝÜžB˜‚‹KKB‚ˆÈYØXÞWÔ›ÙÜ™\ÜÂ‚ˆ\œÚ\Ý[˜ÙH[Nˆ\ÈÙXÝ[Ûˆ\È\[™[Û›HXZ[‹\ÝYÙHÛÛ[Z]Kˆ[šY\Âˆ[™\ˆYØXÞWÔ›ÙÜ™\ÜØ]\ÝÝ\š]™H]\ˆˆ™Yœ™\Ú™XÛÛ˜Ú[X][Û‹ˆÛÛ\XÝ[Û‹ÜˆÝXÝ\˜[]]][Û‹ˆÛÜœ™XÝ[ÛœÈ\™H\[™Y\È™]È]Yˆ[šY\ÎÈš[Üˆ[šY\È\™H›Ý™[[Ý™YÜˆÚ[[H™]Üš][‹‚‚ˆÈÈŒ‹LËLŒÈ8 %Ô’SSÒT‘H[X[‹[Ü\˜][Û˜[\Ø][Ûˆ[›™\ˆÜš[[™Ø]HˆÛÜÝ\™B‚ˆÈÈÈÜš[Y[]B‚˜^”Ù\]Y[˜ÙNˆ“SÔ‘LH›Ý[™Y[X[‹\Ý\\š\ÙYÜ\˜][Û˜[X]\šX[^˜][Û‚ÞXÛNˆL”\ÙNˆÐÓKLˆÛÜÝ\™H™XÛÝ™\žB‘Ø]Nˆˆ8 %XØÛÝ[Ý\œÛÜˆ›Ýš\Ú[Ûš[™Â’[›™\ˆÜš[ˆÔ’SSÒT‘H[X[‹[Ü\˜][Û˜[\Ø][ÛˆÚXÚË]\[™Z[”™\ÜÚ]ÜžH˜\Ù[[™NˆÍÙNYLNÌ˜ŒYXØØŒ˜™˜Y˜Ì™ŽNŽYLXXÙŒB’[X[ˆ]]Üš]Nˆ^XÚ]˜‚ˆÈÈÈ\œÜÙH[™Þ\Ý[HYXÚ[šXÜÂ‚‘Ô’SSÒT‘H\ÈH[X[‹Y˜XÚ[™ÈÜ\˜][Û˜[[\™˜XÙH™]ÙY[ˆ›Ú™XÝ[[[™œ™]šY]ÙY]]ÛX][Û‹ˆ][\[Y[ÈH[ZKX]]ÛX]YÚZ[Ž‚‚˜^š[X[ˆÙ[XÝÈHZ[š[X[[™^YÛÛ[X[™¸¡¤ˆ™\œÚ[Û™YÝÙ\”Ú[][˜Ú\ˆ˜[Y]\ÈØØ[™\™\]Z\Ú]\È[™\™Ù]›ÛB¸¡¤ˆÛÛ[Z]YZ]YØ]Y\š\ÚÈÛÛÜ™[˜]\ÈÝ\H›Û‹\ÙXÜ™][™Ú[Y[]B¸¡¤ˆ\ÜÝÛÜ™\È[\™YÛ›H›ÝYÚHX\ÚÙY\›Z[˜[›Û\¸¡¤ˆØÚÙ\ˆÝ\Y\ÈH[›™YÜÝÜ™TÔSNÛY[¸¡¤ˆXœH™\]Z\™\ÈÈ[™Ú[›™[š[™[™Â¸¡¤ˆÔS™\šYšY\È]X˜\ÙH›ÛH[™]X˜\ÙHY[]B¸¡¤ˆ˜[YYÔSXÝ[ÛˆÜˆ^XÝ˜XÚÙYZYÜ˜][Ûˆ\ÈÙ[XÝY¸¡¤ˆ]]][Ûˆ™\]Z\™\È[ˆ^XÚ][X[ˆÛÛ™š\›X][Ûˆ›Ý[™\žB¸¡¤ˆØ[š]^™Y]šY[˜ÙH™]\›œÈÈHÜ\˜]Ü‚¸¡¤ˆXZ[‹ÓÜ\˜][Û˜[™XÛÛ˜Ú[X][Ûˆ™XÛÜ™ÈYX[š[™È[™™^]]Üš]B˜‚•HÜ\˜][Û˜[ÛÛXÝ[ÛˆÙ\\˜]\È™\ÜÛœÚXš[]Y\Î‚‚‹HÔ’SSÒT‘K›Y^Z[œÈ\˜Ú]XÝ\™KØY™]H›Ý[™\šY\ËÛÜšÙ›ÝË˜Z[\™BˆÛ\ÜÚYšXØ][Û‹›Ý™[ˆÚXÚÜÚ[Ë[™[™ÈÚ]HXÝ]™HZ[š[X[XÛÛ[X[™ˆ[™^Â‹HÑS‘TSÔÐÔ’TË›Y›ÝšY\È^[™YÜ\˜]ÜˆÛÛ[X[™È[™˜[Y][Û‚ˆÙ\]Y[˜Ù\ÎÂ‹H[Ù[ËÓ‘SÓ—ÐÒPÒËœÌXÝÛœÈX\ÚÙYÜ™Y[X[ËØÚÙ\ˆÜ[›ÛKÙ]X˜\ÙBˆ™Y›YÚËØÚ[›™[Xš[™[™È[™›Ü˜Ù[Y[XÝ[Ûˆ\Ü]Ú^XÝZYÜ˜][Û‚ˆ]ÛÛZ[›Y[Ú]˜XÚÚ[™ËØÛX[›[™\ÜÈÚXÚÜËÒKLMˆ\Ü^K[™ˆ^XÚ]]]][ÛˆÛÛ™š\›X][ÛŽÂ‹H[Ù[ËÓ‘SÓ—ÐPÕSÓ‹œÜ[ÝÛœÈ[[Z]Y˜[YY™YÛZ[˜[H™XY[Û›HÔSˆ]šY[˜ÙH›ØÚÜÎÂ‹H›ÛÝ‘SÓ—ÐPÕSÓ‹œÜ[‘SÓ—ÐÒPÒËœÌX[™‘SÓ—ÐÔ‘Q›Y™\Ù\™HBˆ\Ù\‹]\ØYYÜ\˜][Û˜[ÜšYÚ[˜[ÎÂ‹H‘SÓ—ÐÔ‘Q›Y\ÈÛÛ[Z]Y[™\ˆ[ˆ^XÚ]Z]YØ]Y\š\ÚÈXÚ\Ú[Û‹ˆÝÜ™\ÈÛ›H›Û‹\ÙXÜ™]\™Ù]ÛÛÜ™[˜]\È[™›ÛH˜[Y\Ë[™ÛÛZ[œÂˆ™Z]\ˆ\ÜÝÛÜ™È›ÜˆÛÛ\]HÛÛ›™XÝ[ÛˆT“ÎÂ‹HÑPÔ‘UÒS”UË›Y™[XZ[œÈHÛÛHYÛ›Ü™Yš]˜]H[œ]Ý\™˜XÙK‚‚‘^XÝ]X›HYXÚ[šXÜË™]\ØX›H[Ù[Ë[™Z[š[X[›Û‹\ÙXÜ™]ÛÛÜ™[˜]\È\™B™\œÚ[Û™YˆÙXÜ™][œ]È\™H›ÝˆZ[š[X[ÛÛ[X[™È\™H™X]Y\ÈÝX›Bš[\™˜XÙ\È[È™]šY]ÙY™\˜›ÜÙHYXÚ[šXÜÎÈÚ[ˆ[ˆXÝ[ÛˆÜˆ˜\šXX›H˜[YB˜Ú[™Ù\Ë]™\žH™Y™\™[˜ÙH]\Ý™H™XÛÛ˜Ú[Y[ˆHØ[YH›ØÝ\ÙYÚ[™ÙK‚‚ˆÈÈÈ˜Z[\™K]Ë\Þ\Ý[HX\›š[™Â‚•HÜš[™\ÛÛ™Y›Ý\ˆ™XÝ\œ™[Ü\˜]Ü‹ÝÛÛ[™ÈY™XÝÎ‚‚ŒKˆ™XÞXÛYÝÛ›ØYš[[˜[Y\È›ÙXÙYÝ[HØÜš\™]š\Ú[ÛœËÛÈ]™[ÜY[ˆ™]š\Ú[ÛœÈ\ÙH[š\]YH[[]]X›H˜[Y\È™Y›Ü™H›Û[Ý[ÛˆÈHØ[›ÛšXØ[ˆ™\ÜÚ]ÜžHš[[˜[YNÂŒ‹ˆ	ÔØÜš\›ÛÝØ\È[œØY™H[ˆ\˜[Y]\ˆY˜][ËÛÈÛÛ\[š[Ûˆ]È\™Bˆ™\ÛÛ™YY\ˆØÜš\[š]X[^˜][ÛŽÂŒËˆÙ\™\‹\ÚYH×ÜÝ]ÜÜÛ™Z[™™[Ûˆ›ÞZ[™ÈØ\È›Ý]]Üš]]]™H›Ü‚ˆHÛY[˜[œÜÜÛÈH][˜Ú\ˆ[œÝXY[™›Ü˜Ù\ÂˆÔÔÓSÑO\™\]Z\™X[™ÐÒS“‘S’S‘S‘Ï\™\]Z\™X[™™X]ÈÝXØÙ\ÜÙ[ˆXœH]][XØ][Ûˆ[™\ˆÜÙH™\]Z\™[Y[È\È˜[œÜÜ]šY[˜ÙNÂˆ^X[Ú[™ÝÜÈ]\™Yš^ÛÛ\\š\ÛÛˆØ\ÈÙ\\˜]Ü‹\Ù[œÚ]]™KÛÈ^XÝˆZYÜ˜][ÛˆÛÛZ[›Y[\Ù\ÈH\™[Y\™XÝÜžHØ[È™Y›Ü™HÚ]˜XÚÙYØÛX[‚ˆÚXÚÜË‚‚ˆÈÈÈØ]Hˆ\YY[™˜[Y]Y]šY[˜ÙB‚“ZYÜ˜][Ûˆ×ØXØÛÝ[ØÝ\œÛÜ—Ü›Ýš\Ú[Ûš[™ËœÜ[Ø\È\YYÛ˜ÙHÚ]‚‚˜^œ›ÛNˆX\šÙZWÛZYÜ˜]Ü‚™]X˜\ÙNˆX\šÙZWÜÞ[˜×Ù]‚˜ÛY[ËØÚ[›™[š[™[™Îˆ™\]Z\™Y™š[HÒKLMŽˆPPŒLLÌ‘ŽŽŒÍLPLPÍÍ‘‘QMŒÐLQMŒ‘‘MÐÐÌMPŒŒÍQQŽNPPÍ‚˜ÛÛ™š\›X][ÛŽˆTKSÓÑB˜[œØXÝ[Ûˆ\›Z[˜[ˆÓÓSRU˜‚”ÜÝ›YÚ™]\›™Y‚‚˜^›ZYÜ˜][Û—ÚYˆ×ØXØÛÝ[ØÝ\œÛÜ—Ü›Ýš\Ú[Ûš[™Â˜ÚXÚÜÝ[NˆÌL[XÙÌ‹XXØÛÝ[XÝ\œÛÜ‹\›Ýš\Ú[Ûš[™Ë]ŒBœ™XY[™\Ü×ÝŒŽˆYBœ›Ýš\Ú[Ûš[™È[˜Ý[ÛŽˆ™\Ù[œ›Ýš\Ú[Ûš[™ÈšYÙÙ\ˆÛÝ[ˆB˜XØÛÝ[ÛÝ[ˆB˜Ý\œÛÜ‹\Ý]HÛÝ[ˆB˜XØÛÝ[ÈZ\ÜÚ[™ÈÝ\œÛÜˆÝ]Nˆ›Üœ[ˆÝ\œÛÜ‹\Ý]H›ÝÜÎˆœ[[YHÑSPÕˆYBœ[[YHS”ÑT•ˆ˜[ÙBœ[[YHSUNˆ˜[ÙBœ[[YH™^ØÝ\œÛÜˆTUNˆYBœ[[YH™XY[™\ÜË]ŒˆVPÕUNˆYBœ[[YH›Ýš\Ú[Ûš[™ÈVPÕUNˆ˜[ÙBš[œÜXÝ[Ûˆ\›Z[˜[ˆ“ÓPÒÂ˜XÝ[Ûˆ\›Z[˜[ˆTÔÂ˜‚•H˜[ÙHš]š[YÙH˜[Y\È\™H[[™YX\Ý\š]š[YÙH›Ý[™\šY\È[™\™H›Ý˜Ø]\ÙYžHXœÙ[›]\ˆXÝ]š]KˆZYÜ˜][ÛˆÈ]\Ý›Ý™H™X\YY‚‚ˆÈÈÈ™\Ý[[™ÈÝ]H[™™^]]Üš]B‚˜^‘Ô’SSÒT‘WÐTÑSS‘WÑTÕP“TÒQ“RQÔUSÓ—Ì×ÐTQQÓÓÑB‘ÐUWÌ—ÔÔÕ“QÒÔTÔÂPÐÓÕS•ÐÕT”ÓÔ—ÒS•T’PS•ÔTÔÂ”•S•SQWÔ’U’SQÑWÔÒTWÔTÔ×Ð–WÓRQÔUÔ—ÒS”ÔPÕSÓ‚‘ÐUWÌ—ÐÓÔÑQ”•S•SQWÔ“ÓWÑT‘PÕÔ‘PQS‘TÔ×ÐÒPÒ×Ó‘V”‘S‘T—ÐÓÔ”‘PÕQÔ‘U’TÒSÓ—Ó“ÕÖQUÔ‘PÓÓÒSQ”‘PSÔÖS×Ô‘U–WÕSUUÔ’V‘Q‘ÐÓL—ÓÔS‚˜‚•H™^›Ý[™YÜ\˜][Ûˆ\ÈH\™XÝ[[YK\›ÛHÛÛ›™XÝ[Ûˆ[™˜X\šÙZWÚÜÝYÜ[[YWÜ™XYWÝŒŠ
+XØ[ˆY\ˆ]\ÜÙ\Ë™XÛÛ˜Ú[HÚ]X‚’PQ[™™[™\ˆ\Þ[Y[™]š\Ú[Û‹\ÞHÛ›H[ˆ^XÚ]H]]Üš^™Yœ™XÛÛ˜Ú[Y™]š\Ú[Û‹[™™\]Z\™H]™KÜ™XYHŒ]šY[˜ÙH™Y›Ü™H[žB˜ÛÛ›ÛYÞ[˜È][\‚‚ˆÈÈŒ‹LËLŒÈ8 %Ø[›ÛšXØ[š]™KYš[H™XÛÛ˜Ú[X][Ûˆ[™œ˜[˜Ú™[[Ù[[™Â‚ˆÈÈÈÜš[Y[]B‚˜^”Ù\]Y[˜ÙNˆ“T“‹LÈ[š[™È
+È“T“KL™XÛÛ˜Ú[X][Û‚ÞXÛNˆL”\ÙNˆÜÝ[ZYÜ˜][Û‹LÈÔ’SSÒT‘HÛÛœÛÛY][Û‚”ÛÝ\˜ÙHœ˜[˜Úˆ[\›ZYXÞXÛK\™XÛÝ™\žB”ÛÝ\˜ÙHPQˆÍÍÌÍLÌ™ÌÌŽMÎXÍØMMØÌYŒYŒØÍŒØÍLŒB•\™Ù]œ˜[˜ÚˆÞXÛLLZ[\›ZYYÜš[[Ú\™B’[X[ˆ]]Üš]Nˆ^XÚ]•Üš]HØÛÜNˆÔ’SSÒT‘Hš]™KYš[HÙ]ØœÛÛ]H\XØ]\Ë[™\È\[™˜‚ˆÈÈÈ™XÛÛ˜Ú[X][Ûˆ™\Ý[‚•Hš]™H]\Ý\ØYYš[\ÈÙ\™HÛÛ\\™YÚ]HÍÍÌÍX™YKˆB\ØYÈÙ\™H\ÙY[ÛÝ\˜ÙH]šY[˜ÙH]Ù\™H›ÝXØÙ\Y›[™H\ÈHš[˜[™YNˆH^\Ý[™È™\ÜÚ]ÜžHØÝ[Y[][ÛˆÛÛZ[™Y]\ˆØ]HˆÛÜÝ\™BšÛ›ÝÛYÙKÚ[HH›Ü›Y\ˆ[Ù[ËØ^Y\ˆÛÛZ[™YH][˜Ú\ˆ[™ÔS˜ÛÜœ™XÝ[ÛœÈ]Y™Y[ˆÜ\˜][Û˜[H›Ý™[‹‚‚•H]™H™\ÜÚ]ÜžH[\™˜XÙH\È›ÝÈÛ™HÛÛ[]]]]™[HXZ[Z[™YÙ]‚‚˜^™ØÝ[Y[][Û‹ÑÔ’SSÒT‘K›Y™ØÝ[Y[][Û‹ÑÑS‘TSÔÐÔ’TË›Y™ØÝ[Y[][Û‹Ó‘SÓ—ÐÒPÒËœÌB™ØÝ[Y[][Û‹Ó‘SÓ—ÐPÕSÓ‹œÜ[™ØÝ[Y[][Û‹Ó‘SÓ—ÐÔ‘Q›Y˜‚˜‘SÓ—ÐPÕSÓ‹œÜ[\ÈHØ[›ÛšXØ[š[[˜[YKˆHØØØ\Ú[Û˜[\˜[˜‘SÓ—ÐPÕSÓ”ËœÜ[[™H\ØYY[X™\™Yš[[˜[Y\È\™H™X]Y\È˜[Z[™Â››Ú\ÙK›ÝY][Û˜[™\ÜÚ]ÜžH[\™˜XÙ\Ë‚‚ˆÈÈÈ^XÚ][š[™È[™[š[™Â‚‹HÔ’SSÒT‘K›Y›ÝÈYš[™\ÈH›ÛÝš]™KYš[HÙ]\ÈØ[›ÛšXØ[™\Ù\™\ÈBˆ›Ý™[ˆØ]HˆÛÜÝ\™KÙY\ÈÔ’SSÒT‘WÒS‘V\È]Èš[˜[ÝXœÙXÝ[Û‹[™ˆÚ[È]™\žH][˜Ú\ˆÛÛ[X[™ÈØÝ[Y[][Û‹Ó‘SÓ—ÐÒPÒËœÌX‚‹HÑS‘TSÔÐÔ’TË›Y›ÝÈ\Ù\ÈHØ[YH›ÛÝ]ËY[YšY\ÂˆÞXÛLLZ[\›ZYYÜš[[Ú\™X\È]ÈÚ]X[YÛ›Y[œ˜[˜Ú[™™]Z[œÈZYÜ˜][Û‚ˆÈ\È\ÝÜšXØ[ÙË[›Ý\™\[ˆ]šY[˜ÙK‚‹H‘SÓ—ÐÒPÒËœÌX\ÈHÚ[™ÝÜË\›Ý™[ˆŽ][˜Ú\ˆ›Û[ÝYœ›ÛHH›Ü›Y\‚ˆ[Ù[^Y\‹ˆ]ÈÒKLMˆ™[XZ[œÂˆÍÌLLØÎØ˜LMÙLØØMLX™MÙÙØÙ™™ÌÌYŒ™ŒLØÍÌ™M™ŒYNŽN‚‹H‘SÓ—ÐPÕSÓ‹œÜ[\ÈH[YÛ™Y™XY[Û›HØ][ÙÝYH›Û[ÝYœ›ÛHH›Ü›Y\‚ˆ[Ù[^Y\‹ˆ]ÈÛÛ›™XÝ[ÛˆXÝ[Ûˆ™\ÜÈ›ÛK]X˜\ÙK[™™XY[Û›Bˆ˜[œØXÝ[ÛˆÝ]NÈ˜[œÜÜ\ÜÝ\˜[˜ÙH™[XZ[œÈÝÛ™YžHH][˜Ú\‰ÜÂˆ[™›Ü˜ÙYXœHÈ[™Ú[›™[Xš[™[™ÈÙ][™ÜÈ˜]\ˆ[ˆ›ÞK\Ù[œÚ]]™BˆÙ\™\‹\ÚYHÈÛÛ[[œË‚‹H‘SÓ—ÐÔ‘Q›Y™]Z[œÈH]\Ý\ØYYZ[š[X[›Û‹\ÙXÜ™]ÛÛÜ™[˜]\È[™ˆ›ÛK[˜[YH[\™˜XÙKˆ\ÜÝÛÜ™ËÚÙ[œËš]˜]HÙ^\Ë[™ÛÛ\]HÛÛ›™XÝ[Û‚ˆT“È™[XZ[ˆ›ÚXš]Y‚‹HØÝ[Y[][Û‹Û[Ù[ËÓ‘SÓ—ÐÒPÒËœÌXˆØÝ[Y[][Û‹Û[Ù[ËÓ‘SÓ—ÐPÕSÓ‹œÜ[[™ˆØÝ[Y[][Û‹Û[Ù[ËÓ‘SÓ—ÐÔ‘Q›YÙ\™H™[[Ý™YY\ˆ›Û[Ý[Ûˆ™XØ]\ÙHBˆÙXÛÛ™]™H^Y\ˆÛÝ[\XØ]HÙ[X[XÈ[™^XÝ]X›HÝÛ™\œÚ\‚‹HØÝ[Y[][Û‹ÛYØXÞKÑÑS‘TSÔÐÔ’TË›YØ\È™[[Ý™Y™XØ]\ÙHÚ][™XYBˆ™\Ù\™\È]È\ÝÜžH[™HÝ[HÛÜHÛÝ[™[XZ[ˆ\ØÛÝ™\˜X›H\ÈH˜[ÙBˆÜ\˜][Û˜[›Ý]KˆØÝ[Y[][Û‹ÛYØXÞKÔÒS•“Ë›YØ\È™]Z[™Y™XØ]\ÙH]ˆ\È[œ™[]YÈH™[Û‹ÑÔ’SSÒT‘H™XÛÛ˜Ú[X][Û‹‚‹HØÝ[Y[][Û‹ÔÑPÔ‘UÒS”UË›Y™[XZ[œÈYÛ›Ü™Y[™[˜XÚÙY\ÈHÛÛBˆš]˜]H[œ]Ý\™˜XÙK‚‚ˆÈÈÈËLHÛZ[\Â‚˜^ÛZ[NˆÍÍÌÍH\ÈH^XÝÛÝ\˜ÙHÛÛÜ™[˜]H›Üˆ\È™[[Ù[[™Â”š[ÜˆÝ]Nˆ™\]Y\ÝYÈ™[[Ý[H™\šYšYY‘]šY[˜ÙNˆÚ]XˆÛÛ\\š\ÛÛˆ™\ÜÈ[\›ZYXÞXÛK\™XÛÝ™\žHY[XØ[ÈÍÍÌÍB”Ù[X[XÈÝÛ™\ŽˆÚ]\ÝÜžB”™\Ý[[™ÈÝ]NˆXØÙ\Y‚ÛZ[NˆH[Ù[È›Û\ˆ\ÈÝ[™\]Z\™Y›ÜˆÝ\œ™[Ü\˜][Û‚”š[ÜˆÝ]NˆXØÙ\YžHHX\›Y\ˆŒ‹LËLŒÈYØXÞWÔ›ÙÜ™\ÜÈ[žB‘]šY[˜ÙNˆ]\Ý\ØYYŽ][˜Ú\ˆ\]X[ÈH›Ý™[ˆ[Ù[][˜Ú\ŽÈBˆÛÜœ™XÝY[Ù[ÔSØ[ˆ™H›Û[ÝYÚ]Ý]ÜÚ[™È™Z]š[Ü‚ÛÛ˜YXÝ[ÛŽˆ\XØ]H›ÛÝÛ[Ù[]ÈÜ™X]HÛÈÛÛ\][™È]™H[\™˜XÙ\Â”Ù[X[XÈÝÛ™\ŽˆÔ’SSÒT‘HÜ\˜][Û˜[ØÝ[Y[][Û‚”™\Ý[[™ÈÝ]NˆÝ\\œÙYYÈ[Ù[È[™YY\ˆ›Û[Ý[Û‚’\ÝÜžH\ÜÜÚ][ÛŽˆX\›Y\ˆ[žH™]Z[™Y[˜Ú[™ÙYÈ\È[žHÛÜœ™XÝÈ]‚ÛZ[NˆZYÜ˜][ÛˆÈÚÝ[™H\YY\š[™È\ÈÜš[”š[ÜˆÝ]Nˆ[™XYH\YYÛ˜ÙH[™ÜÝ›YÚ]˜[Y]Y‘]šY[˜ÙH›Ý[™\žNˆØÝ[Y[][Ûˆ[™Ý]XÈ™XÛÛ˜Ú[X][ÛˆÛ›B”™\Ý[[™ÈÝ]Nˆ™Z™XÝYÈÈ›Ý™\[ˆZYÜ˜][ÛˆÂ‚ÛZ[NˆÜ™X][™ÈÞXÛLLZ[\›ZYYÜš[[Ú\™H]]Üš^™\È™[™\ˆ™XÛÛ™šYÝ\˜][Û‚”š[ÜˆÝ]Nˆ›Ý]]Üš^™Y‘]šY[˜ÙNˆœ˜[˜ÚÛÜšÈ\ÈØÝ[Y[][Û‹ÑÚ]™XÛÛ˜Ú[X][Û‚”™\Ý[[™ÈÝ]NˆÝ[›Ý]]Üš^™Y˜‚ˆÈÈÈ^XÝY™^Ù\]Y[˜ÙH™Y›Ü™H™\Ý[Z[™ÈH›Ü›Y\ˆÝ\È8 $ÌM‚•HX\›Y\ˆ[]™[‹\Ý\›Ý]H\È›Ý™\^YY]\˜[H™XØ]\ÙHZYÜ˜][ÛˆÂ˜[™Ø]Hˆ]™HÚ[˜ÙHÛÛ\]Yˆ™\Ý[YH›ÝYÚ\ÙHÙ]™[ˆ›Ý[™YÝ\Î‚‚ŒKˆ[[™[œÜXÝÞXÛLLZ[\›ZYYÜš[[Ú\™XØØ[NÈ™\šYžHÛX[ˆˆ]™\™Ù[˜ÙH[™™]šY]È\Èš]™KYš[KÒˆ™XÛÛ˜Ú[X][ÛŽÂŒ‹ˆ[ˆH\™XÝ[[YK\›ÛHÛÛ›™XÝ[Ûˆ[™ˆX\šÙZWÚÜÝYÜ[[YWÜ™XYWÝŒŠ
+X™XY[Û›H›ÛÙŽÂŒËˆ™XÛÛ˜Ú[HH[[™Y\XØ][Ûˆ™]š\Ú[ÛˆYØZ[œÝHÝ\œ™[™[™\‚ˆ\Þ[Y[š[™Ù\œš[ÂˆXÚYH^XÚ]HÚ]\ˆH™]Èœ˜[˜Ú™[XZ[œÈØÝ[Y[][Û‹[Û›HÜ‚ˆ™XÛÛY\ÈHœ˜[˜Ú™[™\ˆ›ÛÝÜÎÈœ˜[˜ÚÜ™X][Ûˆ[Û™HÚ[™Ù\È›È™[™\‚ˆÙ][™ÎÂKˆ\ÞH^XÝHÛ™H]]Üš^™Y™XÛÛ˜Ú[Y\XØ][Ûˆ™]š\Ú[Ûˆ[™Ø\\™Bˆ]È[Ú]ÒH\È™[™\ˆ\Þ[Y[š[™Ù\œš[Â‹ˆ™\]Z\™HÚX[Û]™HHŒÚX[Ü™XYHHŒ[™Hœ™\Ú›ÝšY\‚ˆ[[[Øš[]H˜\Ù[[™NÂËˆÛ›H[ˆ]]Üš^™H][ÜÝÛ™H^XÝZY[]HÞ[˜È™\ÛÛ][Ûˆ][\[™ˆ™XÛÛ˜Ú[H]ÈÛÜœ™[]Y\›Z[˜[]šY[˜ÙK‚‚Ý\œ™[\›Z[˜[Î‚‚˜^‘Ô’SSÒT‘WÐÐS“Ó’PÐSÑ’U‘WÑ’SWÔÑUÔ‘PÓÓÒSQ“SÑS×ÓVQT—ÔÕTT”ÑQQÐS‘Ô•S‘Q“RQÔUSÓ—Ì×Ñ×Ó“ÕÔ‘T•S‚‘ÐUWÌ—Ô‘SPRS”×ÐÓÔÑQ”•S•SQWÔ“ÓWÑT‘PÕÔ‘PQS‘TÔ×ÐÒPÒ×Ó‘V”‘S‘T—Ð”SÒÐÒS‘ÑWÓ“ÕÐUUÔ’V‘Q”‘PSÔÖS×Ô‘U–WÕSUUÔ’V‘Q‘ÐÓL—ÓÔS‚˜‚ˆÈÈŒ‹LËLŒÈ8 %ÜÝY™KTÞ[˜ÈØ]HÛÜÝ\™H[™ÛÛ›ÛYTÞ[˜È[›š[™È›Ý[™\žB‚ˆÈÈÈÙ\]Y[˜ÙHY[]B‚˜^”Ù\]Y[˜ÙNˆÜÝQØ]KLˆÜÝY\Þ[Y[™\šYšXØ][Û‚ÞXÛNˆL”\ÙNˆÐÓKLˆÛÜÝ\™H™XÛÝ™\žBXÝ]™Hœ˜[˜ÚˆÞXÛLLZ[\›ZYYÜš[[Ú\™B]]Üš^™Y™]š\Ú[ÛŽˆ˜XXLÌŒÌXÌŽŽXŒXYŒ˜Ì˜Y™ŽMYNÌÌXØMÍ”™]š[Ý\ÈØœÙ\™Y™[™\ˆ™]š\Ú[ÛŽˆXŒÍŒB”›ÝšY\ˆ]X˜\ÙNˆX\šÙZWÜÞ[˜×Ù]‚‘]šY[˜ÙH]NˆŒ‹LËLŒÂ’[X[ˆ]]Üš]Nˆ^XÚ]“]]][Ûˆ›Ý[™\žNˆÛ™H™[™\ˆ\Þ[Y[È›ÈÞ[˜È™\]Y\Ý˜‚ˆÈÈÈ\œÜÙB‚•\ÈÙ\]Y[˜ÙH™\šYšYY]H™XÛÛ˜Ú[YÞXÛHLœ˜[˜ÚÛÝ[™XÛÛYHHXÝ]™H™[™\ˆœ˜[˜Ú]]È[[™Y™]š\Ú[ÛˆÛÝ[™H\ÞYY^XÝHÛ˜ÙK[™]HÜÝYÙ\šXÙHÛÝ[Ø]\ÙžH]È]™H[™™XYHÛÛ˜XÝÈÚ]Ý]Ú[™Ú[™ÈH[œÜXÝY™[ÛˆÛÛÜ™[˜][ÛˆÝ]K‚‚•HÙ\]Y[˜ÙH[ÛÈÛÛ\]YH\™XÝ[[YK\›ÛH™XY[™\ÜË]Œˆ›ÛÙˆ]™[XZ[™Y[™[™ÈY\ˆZYÜ˜][ÛˆË‚‚“›ÈÛÛ›ÛYÞ[˜È™\]Y\ÝØ\È\™›Ü›YYˆZYÜ˜][ÛˆÈØ\È›Ý™X\YYˆ›È™[ÛˆØÚ[XK›ÛK]]ÜÝYY[]KÜˆ™[™\ˆ[š\›Û›Y[]˜\šXX›HÚ[™ÙHØ\È\™›Ü›YY\š[™È\ÈØ]K‚‚ˆÈÈÈKˆØØ[Ú][YÛ›Y[8 %TÔÂ‚•HÚ[™ÝÜÈÚXÚÛÝ]Ø\ÈÛX[ˆ[™^XÝH[YÛ™YÚ]H™[[ÝHœ˜[˜Ú™Y›Ü™H\Þ[Y[‚‚˜^”™\ÜÚ]ÜžNˆÝ\ËZKYÝKÛX\šÙZBœ˜[˜ÚˆÞXÛLLZ[\›ZYYÜš[[Ú\™B“ØØ[PQˆ˜XXLÌŒÌXÌŽŽXŒXYŒ˜Ì˜Y™ŽMYNÌÌXØMÍ”™[[ÝHPQˆ˜XXLÌŒÌXÌŽŽXŒXYŒ˜Ì˜Y™ŽMYNÌÌXØMÍ“ØØ[Ü™[[ÝH]™\™Ù[˜ÙNˆÈ•ÛÜšÚ[™È™YNˆÛX[‚˜‚•\È\ÝX›\ÚY[ˆ[˜[XšYÝ[Ý\È\XØ][Ûˆ™]š\Ú[Ûˆ›ÜˆHÜÝYØ]K‚‚ˆÈÈÈ‹ˆ\™XÝ[[YK\›ÛH™XY[™\ÜË]Œˆ›ÛÙˆ8 %TÔÂ‚H\™XÝ™XY[Û›HÛÛ›™XÝ[ÛˆØ\ÈÜ[™Y\Ú[™ÈH™\ÝšXÝY[[YH›ÛK‚‚“ØœÙ\™Y]šY[˜ÙN‚‚˜^”›ÛNˆX\šÙZWÜ[[YB‘]X˜\ÙNˆX\šÙZWÜÞ[˜×Ù]‚•ÎˆXÝ]™B”›ÝØÛÛˆÈKŒÂÚ\\Žˆ×ÐQT×ÌM—ÑÐÓWÔÒLÎ”™XY[™\ÜÈ[˜Ý[ÛŽˆX›XË›X\šÙZWÚÜÝYÜ[[YWÜ™XYWÝŒŠ
+B”™XY[™\ÜÈ™\Ý[ˆYB•˜[œØXÝ[ÛŽˆ™XYÛ›B•\›Z[˜[ˆ“ÓPÒÂ˜‚•H›ÛÙˆ\ÝX›\Ú\È]H[[YHY[]HÛÝ[™XXÚH[[™Y]™[ÜY[]X˜\ÙH[™^XÝ]HH™XY[™\ÜË]ŒˆÛÛ˜XÝ‚‚’]Ù\È›ÝžH]Ù[ˆ›Ý™H\XØ][ÛˆÞ[˜ËÚÙ[ˆ˜[Y]K]šXÙHY[]H™\ÛÛ][Û‹Üˆ]™[ÛÛ™\™Ù[˜ÙK‚‚ˆÈÈÈËˆ™KY\Þ[Y[›ÝšY\ˆ˜\Ù[[™H8 %TÔÂ‚HØ[š]^™YYÙÜ™YØ]H˜\Ù[[™HØ\ÈØ\\™Y›ÝYÚHZYÜ˜]Üˆ[œÜXÝ[Ûˆ›ÛH[œÚYHH™XY[Û›H˜[œØXÝ[Û‹‚‚ŸYX\Ý\™H™Y›Ü™H\Þ[Y[ŸKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKHKKKKKKKKKKKKKKKNˆŸXØÛÝ[ÈHŸ]šXÙ\ÈHŸXØÛÝ[Ý\œÛÜˆÝ]\ÈHŸÝX›Z\ÜÚ[ÛœÈŸÞ[˜È]™[ÈŸ]šXÙHXÚÛ›ÝÛYÙ[Y[ÈŸÝ[HÙˆ™^Ý\œÛÜœÈHŸÝ[HÙˆ]šXÙH™^Y^XÝYÙ\]Y[˜Ù\ÈH‚•H˜[œØXÝ[Ûˆ[™YÚ]“ÓPÒØ‚‚•H]šY[˜ÙHÛÛZ[œÈ›ÈXØÛÝ[Q]šXÙHQÜ™Y[X[ÚÙ[‹ÛÛ›™XÝ[ÛˆÝš[™Ë]™[^[ØYÜˆÝX›Z\ÜÚ[ÛˆÛÛ[‚‚•HÝ]H\ÈÛÛœÚ\Ý[Ú]Û™H™]š[Ý\ÛH›Ýš\Ú[Û™YXØÛÝ[Ù]šXÙHš^\™H[™›ÈÝX›Z]YÜˆÞ[˜Ú›Ûš^™Y\XØ][Ûˆ]™[‚‚ˆÈÈÈˆ™[™\ˆ™]š\Ú[ÛˆÛÛ\\š\ÛÛˆ8 %TÔÂ‚•H™]š[Ý\ÈØœÙ\™Y™[™\ˆ\Þ[Y[Ø\Î‚‚˜^”™]š\Ú[ÛŽˆXŒÍŒB‘\ØÜš\[ÛŽˆ[\[Y[˜[œÜÜØœÙ\˜Xš[]HXYÛ›ÜÝXÜÂ”Ý\YˆŒ‹LËLŒHŒNŒMHØØ[\Ú›Ø\™[YB“]™NˆŒ‹LËLŒHŒNŒMˆØØ[\Ú›Ø\™[YB•šYÙÙ\ŽˆX[X[\Ú›Ø\™\Þ[Y[˜‚•H[[™Y™]š\Ú[Ûˆ›ÜˆH™]ÈØ]HØ\Î‚‚˜^˜˜XXLÌŒÌXÌŽŽXŒXYŒ˜Ì˜Y™ŽMYNÌÌXØMÍ˜‚•H[[™Y™]š\Ú[ÛˆY™™\™Yœ›ÛHH™]š[Ý\ÛHÜÝY™]š\Ú[Ûˆ[™™[Û™ÙYÈH™XÛÛ˜Ú[YÞXÛLLZ[\›ZYYÜš[[Ú\™Xœ˜[˜Ú‚‚•H™]Ù\ÝÛÛ[Z]š[X\š[H™XÛÛ˜Ú[YØÝ[Y[][Ûˆ[™Ô’SSÒT‘HÝXÝ\™HÚ[H[š\š][™ÈHÜÝY\XØ][Ûˆ[\[Y[][Ûˆœ›ÛH]È[˜Ù\ÝžKˆ\ÞZ[™ÈH^XÝ™]š\Ú[Ûˆ™]™\[\ÜÈ\ÝX›\ÚYÛ™H™\›ÙXÚX›HÚ]š[™Ù\œš[›ÜˆÝXœÙ\]Y[]šY[˜ÙK‚‚ˆÈÈÈKˆ™[™\ˆœ˜[˜Ú\ÝX›\ÚY[8 %TÔÂ‚•H™[™\ˆ]™[ÜY[Ù\šXÙHØ\ÈÛÛ™šYÝ\™YÈ›ÛÝÎ‚‚˜^”™\ÜÚ]ÜžNˆÝ\ËZKYÝKÛX\šÙZBœ˜[˜ÚˆÞXÛLLZ[\›ZYYÜš[[Ú\™B”Ù\šXÙH\Nˆ›ÙHÙXˆÙ\šXÙB’[œÝ[˜ÙHÛ\ÜÎˆœ™YH]™[ÜY[[œÝ[˜ÙB]]ËY\ÞH\š[™ÈØ]NˆÙ™‚˜‚“›È™[™\ˆ[š\›Û›Y[˜\šXX›KÙXÜ™]Z[ÛÛ[X[™Ý\ÛÛ[X[™™[ÛˆÛÛÜ™[˜]KÜˆ]]Ù][™ÈØ\ÈÚ[™ÙY\š[™Èœ˜[˜Ú\ÝX›\ÚY[‚‚ˆÈÈÈ‹ˆÚ[™ÛH]]Üš^™Y\Þ[Y[8 %TÔÂ‚‘^XÝHÛ™H\Þ[Y[ÙˆH]]Üš^™Y™]š\Ú[ÛˆØ\ÈØœÙ\™Y›Üˆ\ÈØ]N‚‚˜^”™]š\Ú[ÛŽˆ˜XXLÌŒÌXÌŽŽXŒXYŒ˜Ì˜Y™ŽMYNÌÌXØMÍ”ÚÜ™]š\Ú[ÛŽˆ˜XXLÌŒÂ‘\ØÜš\[ÛŽˆ™XÛÛ˜Ú[HÞXÛHLÔ’SSÒT‘H[\™˜XÙB•šYÙÙ\ŽˆX[X[\Ú›Ø\™\Þ[Y[”Ý\YˆŒ‹LËLŒÈŒŒNØØ[\Ú›Ø\™[YB‘š[˜[Ý]Nˆ]™B•[™^XÝYÙXÛÛ™\Þ[Y[ˆ›Û™HØœÙ\™Y˜‚Z[[™Ý\\]šY[˜ÙN‚‚˜^“›ÙKšœÎˆŒMŒBZ[ÛÛ[X[™ˆœHÚHKZ[˜ÛYOY]ˆ	‰ˆœH[ˆZ[”XÚØYÙ\È[œÝ[YˆŒ”XÚØYÙ\È]Y]YžHœH[œÝ[ˆŒB•\TØÜš\ÛÛ\[][ÛŽˆTÔÂZ[\ØYˆTÔÂ”[[YHÛÛ[X[™ˆœHÝ\’ÜÝY[žHÚ[ˆ›ÙH\ÝÜÜ˜ËÚÜÝYšœÂ”Ý\\X\šÙ\ŽˆPT’ÑRWÒÔÕQÔÖS×Ô‘PQB”™[™\ˆ\›Z[˜[ˆ]™B˜‚•HÙ\šXÙH™XØ[YHX›XÛH]˜Z[X›HY\ˆÝXØÙ\ÜÙ[ÛÛ\[][Û‹\Y˜XÝ\ØYÝ\\[™™XY[™\ÜÈ›Øš[™Ë‚‚”™[™\¸ &\È[š]X[]›Ü›H›Ø™\È[˜ÛYY[™Yš[™Y\›ÛÝPQØ[™ÑUØ™\]Y\ÝÈ™]\›š[™Èˆ\ÙHÙ\™H[˜Û\ÜÚYšYY›ÛÝ\›Ý]H™\]Y\ÝÈ[™Y›ÝÛÛ˜YXÝH\ÚYÛ˜]YX[ÛÛ˜XÝË‚‚ˆÈÈÈËˆÜÝYX[™\šYšXØ][Ûˆ8 %TÔÂ‚•H\ÞYYÙ\šXÙHØ\È]Y\šYY›ÝYÚ]ÈX›XÈ]™[ÜY[ÜšYÚ[‹‚‚Ÿ[™Ú[Ý]\ÈØ[š]^™Y™\ÜÛœÙHŸKKKKKKKKKKKKKKHKKKKNˆKKKKKKKKKKKKKKKKKKKHŸÚX[Û]™XŒÈœÝ]\ÈŽˆ›]™HŸXŸÚX[Ü™XYXŒÈœÝ]\ÈŽˆœ™XYHŸX‚”™[™\ˆÙÜÈ[™\[™[H™XÛÜ™YÚX[Ü™XYX™\]Y\ÝÈÚ]‚‚˜^”›Ý]HÛ\ÜÎˆÚX[Ü™XYB“Ü\˜][ÛŽˆX[\™XYB“Y]ÙˆÑU”Ý]\ÎˆŒ‘[\ÙY˜[™ˆ™[ÝÈL\Â˜‚•H\XØ][ÛˆÙÜÈ\ÙYÚÜÛÜœ™[][Ûˆš[™Ù\œš[È[™Y›Ý^ÜÙH˜]ÈÜ™Y[X[ÈÜˆY[]HX]\šX[‚‚ˆÈÈÈˆÜÝY\Þ[Y[›ÝšY\ˆ[[[Øš[]H8 %TÔÂ‚Y\ˆ\Þ[Y[[™X›XÈX[™\šYšXØ][Û‹H^XÝ™KY\Þ[Y[YÙÜ™YØ]H[œÜXÝ[ÛˆØ\È™\X]Y›ÝYÚHZYÜ˜]Üˆ›ÛH[ˆH™XY[Û›H˜[œØXÝ[Û‹‚‚“ØœÙ\™YÜÝY\Þ[Y[Ý]N‚‚ŸYX\Ý\™H™Y›Ü™HY\ˆY™™\™[˜ÙHŸKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKHKKKKNˆKKKNˆKKKKKKKKNˆŸXØÛÝ[ÈHHŸ]šXÙ\ÈHHŸXØÛÝ[Ý\œÛÜˆÝ]\ÈHHŸÝX›Z\ÜÚ[ÛœÈŸÞ[˜È]™[ÈŸ]šXÙHXÚÛ›ÝÛYÙ[Y[ÈŸÝ[HÙˆ™^Ý\œÛÜœÈHHŸÝ[HÙˆ]šXÙH™^Y^XÝYÙ\]Y[˜Ù\ÈHH‚ÛÛ›™XÝ[Ûˆ[™˜[œØXÝ[Ûˆ]šY[˜ÙN‚‚˜^”›ÛNˆX\šÙZWÛZYÜ˜]Ü‚‘]X˜\ÙNˆX\šÙZWÜÞ[˜×Ù]‚•ÎˆXÝ]™B”›ÝØÛÛˆÈKŒÂ•˜[œØXÝ[ÛŽˆ™XYÛ›B•\›Z[˜[ˆ“ÓPÒÂ˜‚[ZYÚ˜[Y\È^XÝHX]ÚYH™KY\Þ[Y[˜\Ù[[™K‚‚•Ú][ˆH[œÜXÝYÛÛÜ™[˜][Ûˆ›Ý[™\žKœ˜[˜Ú™]\™Ù][™Ë\Þ[Y[Ý\\™[™\ˆ™XY[™\ÜÈ›Ø™\Ë[™^XÚ]X›XÈX[™\]Y\ÝÈ›ÙXÙY›ÈØœÙ\˜X›H›ÝšY\ˆ]]][Û‹‚‚•\È]šY[˜ÙHÙ\È›ÝÛZ[H]›È[›ØœÙ\™Y›ÝšY\ˆY]šXÈÚ[™ÙYˆ]›Ý™\È[[[Øš[]HÛ›H›ÜˆHZYÚ[œÜXÝY]X˜\ÙHYÙÜ™YØ]\Ë‚‚ˆÈÈÈKˆ\Þ[Y[Ú[™Ý[\š]H8 %TÔÂ‚•H™[™\ˆ]™[\ÝÜžHÚÝÙYÛ™H\Þ[Y[Ùˆ˜XXLÌŒØ\š[™È\ÈØ]N‚‚˜^•Ø]ÚYœ˜[˜ÚˆÞXÛLLZ[\›ZYYÜš[[Ú\™B]]Üš^™Y™]š\Ú[ÛŽˆ˜XXLÌŒÌXÌŽŽXŒXYŒ˜Ì˜Y™ŽMYNÌÌXØMÍ‘\Þ[Y[ÛÝ[›Üˆ\ÈØ]NˆB‘š[˜[Ý]Nˆ]™B•[™^XÝY]\ˆ\Þ[Y[ˆ›Â˜‚•HX\›Y\ˆXŒÍŒX\Þ[Y[™[Û™ÜÈÈH™XÙY[™ÈŒ‹LËLŒHØœÙ\˜Xš[]H›Ý[™[™\È›ÝH\XØ]H\Þ[Y[ÙˆH™\Ù[™]š\Ú[Û‹‚‚ˆÈÈÈLˆÜÝY™KTÞ[˜ÈØ]HÛÛ˜Û\Ú[Ûˆ8 %TÔÂ‚˜^“ÐÐSÑÒUÐSQÓ“QS•ÔTÔÂ”•S•SQWÔ“ÓWÑT‘PÕÔ‘PQS‘TÔ×ÕŒ—ÔTÔÂ”‘WÑTÖSQS•Ô“Õ’QT—ÐTÑSS‘WÐÐTT‘Q”‘S‘T—Ô‘U’TÒSÓ—ÐÓÓTT’TÓÓ—ÔTÔÂ”‘S‘T—ÕÐUÒQÐ”SÒÑTÕP“TÒQ”ÒS‘ÓWÐUUÔ’V‘QÑTÖSQS•ÔTÔÂ’ÔÕQÓU‘S‘TÔ×ÒÌŒ’ÔÕQÔ‘PQS‘TÔ×ÒÌŒ”ÔÕÑTÖSQS•Ô“Õ’QT—ÒSSSÐ’SUWÔTÔÂ’ÔÕQÔ‘WÔÖS×ÑÐUWÐÓÔÑQ˜‚”™\Ù\™YÛÛœÝ˜Z[Î‚‚˜^“ZYÜ˜][ÛˆÈ™X\YYˆ“Â”Þ[˜È™\]Y\Ý\™›Ü›YYˆ“Â\XØ][Ûˆ]™[[[[Û˜[HÝX›Z]Yˆ“Â“™[ÛˆØÚ[XHY]Yˆ“Â“™[Ûˆ›Û\ÈY]Yˆ“Â]]ÛÛ™šYÝ\˜][ÛˆY]Yˆ“Â”™[™\ˆ[š\›Û›Y[˜\šXX›\ÈY]Yˆ“Â”›ÝšY\ˆYÙÜ™YØ]HY™™\™[˜ÙNˆ“Ó‘BÛÛ›ÛYÞ[˜È]]Üš^˜][ÛŽˆS‘S‘ÈÑTTUH‘U’QUÂ˜‚ˆÈÈÈLKˆ\[™[˜ÞKX]Y]ØœÙ\˜][Ûˆ8 %ÔSˆÈ“ÕQUPQÓ“ÔÑQ‚”™[™\¸ &\È\[™[˜ÞH[œÝ[][Ûˆ™\ÜY‚‚˜^“Û™HYÚ\Ù]™\š]H[™\˜Xš[]B˜‚•\È\È[ˆœH[œÝ[][YHYš\ÛÜžHØœÙ\˜][Û‹ˆ]Y›Ý™]™[ÛÛ\[][ÛˆÜˆ\Þ[Y[]]]\Ý›Ý™HÛ\ÜÚYšYY\ÈHÛX[ˆ\[™[˜ÞK\ÙXÝ\š]H™\Ý[‚‚•Hš\œÝØØ[›ÛÝË]\ÛÛ[X[™Ø\È^XÝ]Yœ›ÛHH™\ÜÚ]ÜžH›ÛÝ‚‚˜^›œH]Y]˜‚•]\™XÝÜžH\È›ÈœHØÚÙš[KˆœH\™Y›Ü™H™]\›™Y‚‚˜^ÛÙNˆS“ÓÐÒÂ“YX[š[™Îˆ]Y]™\]Z\™\È[ˆ^\Ý[™ÈØÚÙš[B˜‚•HÙ[™\˜]YœKX]Y]XÞXÛLLšœÛÛ˜ÛÛZ[œÈÛ›HHS“ÓÐÒØ\œ›Ü‹ˆ]\È›ÝH[™\˜Xš[]H™\Ü[™›ÝšY\È›ÈY™™XÝYXÚØYÙK[œÝ[Y™\œÚ[Û‹\[™[˜ÞH]^Ú]Xš[]KÜˆ™[YYX][Ûˆ˜[™ÙK‚‚”™\ÜÚ]ÜžH[œÜXÝ[ÛˆØØ]\ÈHXÝX[›ÙHXÚØYÙH[™ØÚÙš[H]‚‚˜^œÙ\šXÙ\ËÛX\šÙZWÜÞ[˜×Ø\KÜXÚØYÙKšœÛÛ‚œÙ\šXÙ\ËÛX\šÙZWÜÞ[˜×Ø\KÜXÚØYÙK[ØÚËšœÛÛ‚˜‚Ý\œ™[Û\ÜÚYšXØ][ÛŽ‚‚˜^”™[™\ˆœHYš\ÛÜžHØœÙ\˜][ÛŽˆÔS‚“ØØ[[™\˜Xš[]HXYÛ›ÜÚ\Îˆ“ÕQUT‘“Ô“QQ“ØØ[]Y]˜Z[\™HØ]\ÙNˆÔ“Ó‘ÈÓÔ’ÒS‘ÈT‘PÕÔ–HÈÐÒÑ’SHP”ÑS•T‘B‘\[™[˜ÞH™[YYX][Ûˆ]]Üš^™Yˆ“Â›œH]Y]š^]]Üš^™Yˆ“Â›œH]Y]š^KY›Ü˜ÙH]]Üš^™Yˆ“Â˜‚•H›ÛÝ[]™[”ÓÓˆ\Y˜XÝÚÝ[™[XZ[ˆÝ]ÚYHH™\ÜÚ]ÜžKˆHÛÜœ™XÝY™XY[Û›H]Y]]\Ý™H[ˆœ›ÛHÙ\šXÙ\ËÛX\šÙZWÜÞ[˜×Ø\X™Y›Ü™HÙ[XÝ[™È[žH\[™[˜ÞHÚ[™ÙK‚‚•H\[™[˜ÞHØœÙ\˜][Ûˆ\È˜XÚÙYÙ\\˜][Hœ›ÛHHÜÝY™KTÞ[˜ÈØ]H™XØ]\ÙH]Y›Ý[˜[Y]HÚ][YÛ›Y[[[YH™XY[™\ÜË\Þ[Y[Y[]KX[™Z]š[Ü‹Üˆ›ÝšY\ˆ[[[Øš[]Kˆ]ÈXÝX[[[YH™[]˜[˜ÙH™[XZ[œÈ[šÛ›ÝÛˆ[[HÛÜœ™XÝY]Y]\È[\œ™]Y‚‚ˆÈÈÈ\[™[˜ÞKX]Y]™[YYX][Ûˆ8 %TÔÂ‚•HÜÝY[œÝ[][ÛˆY™\ÜYÛ™HYÚ\Ù]™\š]HYš\ÛÜžHY™™XÝ[™Èš[™[^K]Ø^HNK‹Œ‚‚‘\[™[˜ÞH[œÜXÝ[Ûˆ\ÝX›\ÚY‚‚˜^‘\[™[˜ÞNˆš[™[^K]Ø^B’[œÝ[Y™Y›Ü™H™[YYX][ÛŽˆK‹Œ‘\[™[˜ÞH\Nˆ˜[œÚ]]™H›ÙXÝ[Ûˆ\[™[˜ÞB’[›ÙXÙYžNˆ˜\ÝYžHKŒLŒ‘\[™[˜ÞH]ˆX\šÙZKÜÞ[˜ËX\H8¡¤ˆ˜\ÝYžH8¡¤ˆš[™[^K]Ø^BYš\ÛÜžNˆÒÐKXÎM™‹^M‹YÜLÚYš\ÛÜžHÛ\ÜÎˆÌˆ[šX[ÙˆÙ\šXÙB‘]šY[˜ÙHÙˆ›ÙÝYH[œÝ[][ÛˆÜˆ™\ÜÚ]ÜžH[\Ú[ÛŽˆ“Ó‘B‚™š[™[^K]Ø^NˆK‹Œ8¡¤ˆKËŒœXÚØYÙKšœÛÛˆÚ[™ÙYˆ“Â‘›Ü˜ÙHÜˆXZ›Ü‹]™\œÚ[Ûˆ™[YYX][Ûˆ\ÙYˆ“Â‚›œHÈš[™[^K]Ø^NˆKËŒ›œH]Y]ˆ[™\˜Xš[]Y\Â™›Ü›X]˜ÚXÚÎˆTÔÂ›[ˆTÔÂ\XÚXÚÎˆTÔÂ\ÝÎˆLÈ\ÜÙY˜Z[Y˜Z[ˆTÔÂ˜‚ˆÈÈÈËLHÛ\ÜÚYšXØ][Û‚‚˜^ÛZ[Nˆ\™XÝ[[YH™XY[™\ÜË]Œˆ\È]˜Z[X›B”ÛÝ\˜ÙNˆ[[YK\›ÛH™XY[Û›H›ÝšY\ˆ[œÜXÝ[Û‚Ý\œ™[Ý]Nˆ˜[Y]Y‘]šY[˜ÙNˆX\šÙZWÚÜÝYÜ[[YWÜ™XYWÝŒŠ
+H™]\›™YYB‘]šY[˜ÙH›Ý[™\žNˆX\šÙZWÜ[[YHYØZ[œÝX\šÙZWÜÞ[˜×Ù]‚‘Ù\È›Ý›Ý™Nˆ]][XØ]YÞ[˜ÈÜˆ]™[ÛÛ™\™Ù[˜ÙB”Ù[X[XÈÝÛ™\ŽˆÜ\˜][Û˜[”™\Ý[ˆXØÙ\YÚ][ˆH˜[YY›Ý[™\žB‚ÛZ[Nˆ˜XXLÌŒÈØ\ÈÝXØÙ\ÜÙ[HÜÝY”ÛÝ\˜ÙNˆ™[™\ˆ\Þ[Y[]™[[™[[YHÙÜÂÝ\œ™[Ý]Nˆ˜[Y]Y‘]šY[˜ÙNˆZ[\ÜËÝ\\X\šÙ\‹]™H\›Z[˜[‘]šY[˜ÙH›Ý[™\žNˆ™[™\ˆ]™[ÜY[Ùœ™YHÙ\šXÙB‘Ù\È›Ý›Ý™Nˆ›ÙXÝ[ÛˆXØÙ\[˜ÙB”Ù[X[XÈÝÛ™\ŽˆÜ\˜][Û˜[”™\Ý[ˆXØÙ\YÚ][ˆH]™[ÜY[ZÜÝ›Ý[™\žB‚ÛZ[NˆHÜÝYÙ\šXÙHØ\È]™H[™™XYB”ÛÝ\˜ÙNˆ^XÚ]™\]Y\ÝÈ[™™[™\ˆ™XY[™\ÜÈÙÜÂÝ\œ™[Ý]Nˆ˜[Y]Y‘]šY[˜ÙNˆÚX[Û]™HŒ[™ÚX[Ü™XYHŒ‘Ù\È›Ý›Ý™NˆÞ[˜ÈÝXØÙ\ÜÂ”Ù[X[XÈÝÛ™\ŽˆÜ\˜][Û˜[”™\Ý[ˆXØÙ\Y‚ÛZ[NˆH\Þ[Y[]]]Y›È[œÜXÝYÛÛÜ™[˜][ÛˆÝ]B”ÛÝ\˜ÙNˆX]ÚY™KÜÜÝ™XY[Û›HYÙÜ™YØ]H[œÜXÝ[ÛœÂÝ\œ™[Ý]Nˆ˜[Y]Y‘]šY[˜ÙNˆ[ZYÚ[œÜXÝY˜[Y\È[˜Ú[™ÙY‘]šY[˜ÙH›Ý[™\žNˆ˜[YY™[ÛˆX›\È[™YÙÜ™YØ]HšY[Â‘Ù\È›Ý›Ý™Nˆ[š]™\œØ[›ÝšY\ˆ[[[Øš[]HÝ]ÚYH[œÜXÝYYX\Ý\™\Â”Ù[X[XÈÝÛ™\ŽˆÜ\˜][Û˜[”™\Ý[ˆXØÙ\YÚ][ˆH[œÜXÝY›Ý[™\žB‚ÛZ[Nˆ^XÝHÛ™H˜XXLÌŒÈ\Þ[Y[ØØÝ\œ™Y\š[™È\ÈØ]B”ÛÝ\˜ÙNˆ™[™\ˆ]™[\ÝÜžBÝ\œ™[Ý]Nˆ˜[Y]Y‘]šY[˜ÙNˆÛ™HX[X[HšYÙÙ\™Y˜XXLÌŒÈ\Þ[Y[ÈX\›Y\ˆXŒÍŒH]™[™[Û™ÜÈÈHY™™\™[›Ý[™”Ù[X[XÈÝÛ™\ŽˆÜ\˜][Û˜[”™\Ý[ˆXØÙ\Y‚ÛZ[NˆH›ÙH\[™[˜ÞH™YHÛÛZ[œÈHÛÛ™š\›YY^Ú]X›HYÚ\Ù]™\š]H[™\˜Xš[]B”ÛÝ\˜ÙNˆ™[™\ˆœH[œÝ[Ø\›š[™ÂÝ\œ™[Ý]NˆØ[™Y]HÈ[œ™\ÛÛ™Y‘]šY[˜ÙNˆYÙÜ™YØ]HYš\ÛÜžHÛÝ[Û›BÛÛ˜YXÝ[ÛŽˆØØ[œH]Y]Y›Ý[ˆYØZ[œÝHØÚÙš[B”Ù[X[XÈÝÛ™\ŽˆÜ\˜][Û˜[\[™[˜ÞH]šY[˜ÙB”™\Ý[ˆ™[XZ[ˆÜ[ˆ[™[™ÈÛÜœ™XÝYXÚØYÙK\›ÛÝ]Y]‚ÛZ[NˆHS“ÓÐÒÈ”ÓÓˆ\ÈH\[™[˜ÞH[™\˜Xš[]H™\Ü”ÛÝ\˜ÙNˆ›ÛÝ[]™[ØØ[œH]Y]][\Ý\œ™[Ý]NˆÛÛ˜YXÝY‘]šY[˜ÙNˆ”ÓÓˆÛÛZ[œÈÛ›HHS“ÓÐÒÈ\œ›Ü‚”™\Ý[ˆ™Z™XÝYÈÈ›Ý™\Ù\™H]\È]Y]]šY[˜ÙB‚ÛZ[NˆÛ™HÛÛ›ÛYÞ[˜È™\]Y\Ý\È›ÝÈ]]Üš^™Y”ÛÝ\˜ÙNˆÜÝY™KTÞ[˜ÈØ]H™\Ý[Ý\œ™[Ý]Nˆ›ÜÜÙY‘]šY[˜ÙNˆ™\™\]Z\Ú]H\Þ[Y[[™[[[Øš[]HØ]H\ÜÙY“Z\ÜÚ[™È]šY[˜ÙNˆ^XÝY[]KÚÙ[‹Ù\]Y[˜ÙK[™Ú[^XÝY]]][Û‹[™ÛÛZ[›Y[[‚”™\Ý[ˆ›ÝY]]]Üš^™Y˜‚ÛZ[NˆH™\ÜY\[™[˜ÞH[™\˜Xš[]HØ\ÈØY™[H™[YYX]Y”ÛÝ\˜ÙNˆ\[™[˜ÞH^[˜][Û‹ØÚÙš[H™\ÛÛ][Û‹œH]Y][™TH˜[Y][Û‚”Ý]Nˆ˜[Y]Y‘]šY[˜ÙH›Ý[™\žNˆÙ\šXÙ\ËÛX\šÙZWÜÞ[˜×Ø\H\[™[˜ÞH™YB”™\Ý[ˆXØÙ\Y‚ÛZ[Nˆš[™[^K]Ø^H™\™\Ù[Y[ˆ[˜]]Üš^™YÜˆ›ÙÝYH\[™[˜ÞB”Ý]NˆÛÛ˜YXÝY‘]šY[˜ÙNˆ›Ü›X[˜\ÝYžH\[™[˜ÞH]™XÛÜ™YžHœB”™\Ý[ˆ™Z™XÝY‚ˆÈÈÈL‹ˆÛÛ›ÛY^XÝZY[]HÞ[˜È][\8 %S“’S‘ÈÕT•QÈVPÕUSÓˆS‚•H™^Ù\]Y[˜ÙH\ÈHÚ[™ÛH›Ý[™Y]][XØ]YÞ[˜È^\š[Y[ˆ\ÜÚ[™ÈHÜÝY™KTÞ[˜ÈØ]HXZÙ\È[›š[™È\›ÜšX]H]Ù\È›Ý]]ÛX]XØ[H]]Üš^™H^XÝ][Û‹‚‚”[›š[™È]\Ý™\ÛÛ™Hš]™H]šY[˜ÙHÜ›Ý\È™Y›Ü™HH™\]Y\Ý\ÈÙ[‚‚ˆÈÈÈÈL‹ŒHY[]Hš[™[™Â‚‘\ÝX›\ÚÚ]Ý]™XÛÜ™[™È˜]ÈÙXÜ™]Î‚‚˜^]]\ÜÝY\ˆ^XÝYžHHÜÝYTB]]]YY[˜ÙH^XÝYžHHÜÝYTB•ÚÙ[ˆÝXš™XÝš[™Ù\œš[ÜˆØ[š]^™YÛÛ\\š\ÛÛˆY]Ù•ÚÙ[ˆ^\žH[™›ÝX™Y›Ü™H˜[Y]B‘š^\™HXØÛÝ[X\YÈH]][XØ]YÝXš™XÝ‘š^\™H]šXÙH[œ›ÛY[™\ˆ]Ø[YHXØÛÝ[‘]šXÙHXÝ]™KÜ™]›ÚÙYÝ]B˜‚H˜]ÈXØÙ\ÜÈÚÙ[‹ÛY[ÙXÜ™]\ÜÝÛÜ™ÛÛ\]HÛÛ›™XÝ[ÛˆÝš[™ËXØÛÝ[URQÜˆ]šXÙHURQ]\Ý›Ý™HÛÜYY[È‹‚‚ˆÈÈÈÈL‹Œˆ™\]Y\ÝÛÛ˜XÝ‚”™\ÛÛ™Hœ›ÛHHÛÛ[Z]Y[\[Y[][ÛŽ‚‚˜^‘^XÝX›XÈ[™Ú[’Y]Ù”™\]Z\™Y]]Üš^˜][ÛˆXY\ˆÚ\B”™\]Z\™Y™\]Y\Ý›ÙHØÚ[XB“Ü\˜][Ûˆ˜[YKÝ™\œÚ[Û‚”Ý\ÜY]™[\B’Y[\Ý[˜ÞHÜˆÝX›Z\ÜÚ[ÛˆY[YšY\ˆ™\]Z\™[Y[Â‘^XÝYÝXØÙ\ÜÈÝ]\È[™™\ÜÛœÙHØÚ[XB˜‚•H›ØÙY\™H]\Ý™H\š]™Yœ›ÛHH\ÞYY˜XXLÌŒØÛÝ\˜ÙHÛÛ˜XÝ˜]\ˆ[ˆ™XÛÛœÝXÝYœ›ÛHY[[ÜžK‚‚ˆÈÈÈÈL‹ŒÈÙ\]Y[˜ÙH[™Ý\œÛÜˆ™XÛÛ™][ÛœÂ‚Ø\\™HHØ[š]^™Y™XY[Û›H˜\Ù[[™H[[YYX][H™Y›Ü™HH™\]Y\Ý‚‚˜^XØÛÝ[™^Ý\œÛÜ‚‘]šXÙH™^^XÝYÙ\]Y[˜ÙB”ÝX›Z\ÜÚ[ÛˆÛÝ[”Þ[˜ËY]™[ÛÝ[XÚÛ›ÝÛYÙ[Y[ÛÝ[‘]šXÙH[œ›ÛY[Ý]BXØÛÝ[Ù]šXÙH™[][ÛœÚ\˜[Y˜‚•HÝ\œ™[YÙÜ™YØ]H˜\Ù[[™H[™XØ]\ÈÝ\œÛÜˆX[™]šXÙHÙ\]Y[˜ÙHX]^XÝZY[]H™XY[™\ÜÈ]\Ý™HÚXÚÙY]^XÝ][Ûˆ[YK‚‚ˆÈÈÈÈL‹^XÝYÚ[™ÛH˜[œÚ][Û‚‚™Y›Ü™H]]Üš^˜][Û‹ÜXÚYžH^XÝHÚXÚ˜[Y\ÈX^HÚ[™ÙHY\ˆÛ™H˜[Y™\]Y\Ý‚‚•H^XÝY˜[œÚ][Ûˆ]\ÝY[YžN‚‚˜^‘^XÝYÝX›Z\ÜÚ[ÛˆÛÝ[[B‘^XÝYÞ[˜ËY]™[ÛÝ[[B‘^XÝYXÚÛ›ÝÛYÙ[Y[™Z]š[Ü‚‘^XÝYXØÛÝ[XÝ\œÛÜˆ[B‘^XÝY]šXÙK\Ù\]Y[˜ÙH[B‘^XÝY™\ÜÛœÙB‘^XÝYÛÜœ™[]Y\›Z[˜[ÙÈ]™[Â‘^XÝYØØ[\XØ][ÛˆY™™XÝYˆ[žB˜‚[žH]]][ÛˆÝ]ÚYH][ÝÛ\Ý\ÈHÝÜÛÛ™][Û‹‚‚ˆÈÈÈÈL‹HÛÛZ[›Y[[™ÝÜ[\Â‚•Hš\œÝ™\]Y\Ý\È[Z]YÈÛ™H][\‚‚‘È›Ý]]ÛX]XØ[H™]žHÛŽ‚‚˜^HÜˆÈY[]H™Z™XÝ[Û‚HÙ\]Y[˜ÙHÜˆ™\^HÛÛ™›XÝ[™^XÝY™\ÜÛœÙB^™\ÜÛœÙB[Y[Ý]Ú][˜Ù\Z[ˆ›ÝšY\ˆÝ]ÛÛYB›Z\ÜÚ[™È\›Z[˜[ÛÜœ™[][Û‚[™^XÝY›ÝšY\‹\Ý]H[B˜‚H[Y[Ý]ÜˆÜÝ™\ÜÛœÙHÙ\È›Ý›Ý™H]H›ÝšY\ˆ™[XZ[™Y[˜Ú[™ÙYˆ[œÜXÝÛÜœ™[]YÙÜÈ[™›ÝšY\ˆÝ]H™Y›Ü™HXÚY[™ÈÚ]\ˆH™\]Y\ÝØ\ÈXØÙ\Y‚‚“›ÈÛX[\[][Û‹Ù\]Y[˜ÙHÛÜœ™XÝ[Û‹š^\™H™XÜ™X][Û‹ÙXÛÛ™ÝX›Z\ÜÚ[Û‹Ü™Y[X[›Ý][Û‹ÜˆZYÜ˜][Ûˆ\È]]Üš^™YY\™[H™XØ]\ÙHH][\˜Z[Ë‚‚ˆÈÈÈÈL‹ˆ[›™Y]šY[˜ÙHÜ™\‚‚˜^ŒKˆÛÛ\]HÛÜœ™XÝY™XY[Û›HœH]Y]XYÛ›ÜÚ\Ë‚Œ‹ˆ[œÜXÝH\ÞYYÞ[˜È›Ý]H[™]][XØ][ÛˆÛÛ˜XÝ‚ŒËˆ™\šYžHØ[š]^™Y]]\ÜÝY\‹Ø]YY[˜ÙH[™ÚÙ[ˆÛZ[HÛÛ\]Xš[]K‚ˆ™\šYžH^XÝš^\™HXØÛÝ[Ù]šXÙHš[™[™È™XY[Û›K‚KˆØ\\™H^XÝ™KX][\›ÝšY\ˆ˜\Ù[[™K‚‹ˆYš[™HHÛ™H[ÝÙYÝ]H˜[œÚ][Û‹‚Ëˆ™]šY]ÈH\ÜÙ[X›Y]šY[˜ÙH[™]]Üš^™HÜˆ™Z™XÝÛ™H™\]Y}çžº¶‰žËkºwµçH™XÛÛœÝXÝ[™ÈB™^]\ÝYÛÛ™\œØ][Û‹‚‚”™XY[ˆ\ÈÜ™\Ž‚‚ŒKˆ›ÛÝQÑS•Ë›YÂŒ‹ˆØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÒS‘V›YÂŒËˆ›ÝX›ÛÚÈQÑS•Ë›YÂˆHÛÛ\]HY]ÙÛÙÞH›Ý]HÙ[XÝYžHS‘V›Y‚ˆQUÑÑ“ÕS‘USÓ”Ë›Y“V›Y“ÓSÕSÓ—Ô•STË›YˆÒUÔ“ÕÐÓÓ›YÂKˆH™]Ù\ÝÙXÝ[ÛˆÙˆ\Èˆš[K[˜ÛY[™ÈHŒÈ™XÛÛ˜Ú[X][Û‚ˆ[[YYX][HX›Ý™H[™\È[™Ù™ŽÂ‹ˆØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÑÓÔ×ÔÕQÑK›YÂËˆØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÑWÑ×ÔÕQÑK›YÂŽˆØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÑ—ÑÓ—ÔÕQÑK›YÂŽKˆØÝ[Y[][Û‹Ô‘P×ÑPQÓ“ÔÕPÔË›Y\[™^ÈÈ™XÛÜ™ÈN8 $ÌŒÂŒLˆËÒÒHÛ›HY\ˆÛÙ^X›\Ú\ÈHŒÈX]\šX[^˜][Û‹‚‚•\ÙHY\˜\˜ÚXØ[™XÛÝ™\žKˆX\›Y\ˆ‹Ô‘PÈ\ÝÜžH™[XZ[œÈ]˜Z[X›HÚ[ˆB˜ÛZ[H™\]Z\™\È›Ý™[˜[˜ÙK]HÝ\œ™[ŒÈÙXÝ[ÛœÈ\™HHÛÛ›Û[™Â›ÝËXÛÜÝ™XÛÝ™\žHÝ\™˜XÙK‚‚‘È›Ý™Y\™XÝÛÙ^›ÝYÚÛKÐ‹ÐÈÝYÙ\Ëš[ÜˆŒˆËÒÒH™\ÜË˜ÛÛ™\œØ][ÛˆØÜ™Y[œÚÝËÜˆH™XÛÛœÝXÝY›Û\]ÙXZÙ[œÈÑKÑ‹‚‚ˆÈÈ‹ˆ]]Üš]H[™˜[Z[™Â‚•HÛÛ›Û[™È[\[Y[][Ûˆ[š]\Î‚‚˜^ÌLQÐÓLËTÌLTŒÂ˜‚•HX[X[X\ÜØ^HX™[\ÙY\š[™ÈH]™H˜Z[\™HÚZ[ˆ\È™]Z[™Y\Î‚‚˜^ÌLQÐÓLËTÌKTŒÂ˜‚•H[X\È]\Ý›Ý™H\˜\ÙY™XØ]\ÙH]ÛÛ›™XÝÈH[X[ˆ‹ÔÞ[˜È]šY[˜ÙBÈHÛÜœ™XÝ[Û‹ˆ]]\Ý›Ý™\XÙHHš[X\žHÌL[\[Y[][Ûˆ[š][‚œÛÝ\˜ÙH™\ÜË˜[Y][Ûˆ\›Z[˜[ÈÜˆHš[˜[[\[Y[][ÛˆÛÛ[Z]‚‚]]Üš]HÜ™\ˆ›ÜˆHX]\šX[^˜][Ûˆ\Î‚‚˜^‘ÓÔ×ÔÕQÑK›YHÛÛ›Û[™ÈÜ\˜][Û˜[ØÛÜH[™\›Z[˜[Â‘WÑ×ÔÕQÑK›YH]šY[˜ÙH[™[\œ™]][ÛˆÛÛœÝ˜Z[Â‘—ÑÓ—ÔÕQÑK›YH\˜Ú]XÝ\™H[™™\ÜÛœÚXš[]HÛÛœÝ˜Z[Â’—ÓPRS—ÔÕQÑK›YHXZ[ˆ™XÛÛ˜Ú[X][Û‹ÛÛ[Z]H[™][˜Ú[™[ÜB”‘P×ÑPQÓ“ÔÕPÔË›YH\[™[Û›HØ[š]^™Y[X[‹Ü›ÝšY\ˆ]šY[˜ÙB‘ËÒÒHHÜÝ[X]\šX[^˜][ÛˆØœÙ\˜][ÛœË›ÝØ[›ÛšXØ[]˜‚’YˆÑKÑˆ\™HÛÛ˜YXÝÜžKZ\ÜÚ[™ËÜˆ[œÝY™šXÚY[ÛÙ^]\ÝÝÜˆÛÙ^›]\Ý›Ý\ÙHˆÜˆ‘P×ÑPQÓ“ÔÕPÔË›YÈ^[™HÜš]X›HÛÝ\˜ÙHØÛÜK‚‚ˆÈÈËˆÝ]H]H™XÙZ]š[™ÈÚ]]\Ý™]Z[‚‚”ŒˆÛÜœ™XÝY[™[X[‹]˜[Y]YH\˜Ú\ÙH›ÙXÝ\Ù[XÝÜˆY™XÝ‚‚˜^”“ÑPÕÔÑSPÕÔ—ÒQS•UOTÕP“WÔ“ÑPÕÒQ‘’S‘ÒUSWÐTÔÑT•SÓPP”ÑS•ÒSPS—ÐTÔÐVB”TÒTÑWÔ‘U’QUÏTTÔÂ”TÒTÑWÔ‘QÒTÕUSÓTTÔÂ˜‚•HÝXœÙ\]Y[]™H\ÜØ^\È›Ý™Y›ÝÜÝY˜[œÜÜ[™HÝ[[Ü[ˆØØ[˜ÛÛ™\™Ù[˜ÙHY™XÝ‚‚˜^S‘“ÒQÕTÐQÔ“Õ’QTRÌŒÕ•TÕQS‘“ÒQÕTÐQÔ‘TÕSÔT”ÒTÕSÑOPÓÓSRUQS‘“ÒQÑÕÓ“ÐQÔ“Õ’QTRÌŒÕ•TÕQS‘“ÒQÓÐÐSÐTOT‘SSÕWÔ“ÑPÕÓUTSÒQS•UWÐÓÓ‘“PÕ‚•ÒS‘ÕÔ×ÕTÐQÔ“Õ’QTTÑT•‘T—ÐPÐÑTQ•ÒS‘ÕÔ×ÕTÐQÔ‘TÕSÔT”ÒTÕSÑOPÓÓSRUQ•ÒS‘ÕÔ×ÑÕÓ“ÐQÔ“Õ’QTU•TÕQÔ‘TÔÓ”ÑWÔ‘PÑRU‘Q•ÒS‘ÕÔ×ÓÐÐSÐTOS“×ÑTP“WÔ‘TÕS•ÒS‘ÕÔ×ÕT“RSSPÓÔÕT‘WÔ•S“‘T—ÑVÑTSÓ‚‚PÒÓ“ÕÓQÑSQS•ÐQ•T—Ð“ÕÑRSQÑÕÓ“ÐQÏS“ÕÔÕT•Q”‘S‘T—Ô‘R‘PÕSÓQSÑB˜‚•H[™›ÚYYÙH›Ý™\ÈH›ÙXÝ™XÛÛ˜Ú[X][ÛˆÛÛ™›XÝˆHÚ[™ÝÜÈYÙBœ›Ý™\ÈH\ÝYÝÛ›ØY™\ÜÛœÙH›ÛÝÙYžH[ˆ^Ù\[Ûˆ\ØØ\[™ÈB\YØØ[X\H›Ý[™\žKˆHÚ[™ÝÜÈ\›Z[˜[[ˆ[˜ÛÜœ™XÝH™\XÙYH[™XYK\›Ý™Y\ÝY™\ÜÛœÙHÚ]HÙ[™\šXÈ›Ý\™XÙZ]™YÝ]K‚‚•H[™›ÚY]™[[™H]\ˆÚ[™ÝÜÈ]™[Ù\™H[™XYHXØÙ\YžHBœ›ÝšY\‹ˆ™Z]\ˆ\˜Ú\ÙHX^H™H™YÚ\Ý\™YYØZ[ˆY\™[HÈ™\X]H\Ý‚‚ˆÈÈˆ]šY[˜ÙHÙZ[[™ÜÈ]]\Ý›Ý™H›Û[ÝY‚•HÝ\YYÚ[™ÝÜÈ]šY[˜ÙHÙ\È›Ý›Ý™HÚ]\ˆ˜XÝË[˜›Þ[™Ý\œÛÜ‚˜ÛÛ[Z]YÜˆ›ÛY˜XÚÈ™Y›Ü™HXYÛ›ÜÝXÈ\œÚ\Ý[˜ÙHÜˆ[›™\ˆ˜Z[\™K‚‚”™]Z[Ž‚‚˜^•ÒS‘ÕÔ×ÕS”ÐPÕSÓ—Õ•UUS’Ó“ÕÓ‚•ÒS‘ÕÔ×ÓÐÐSÓUUUSÓUS’Ó“ÕÓ‚•ÒS‘ÕÔ×ÑPÕ×ÒS“ÖÐÕT”ÓÔ—ÐÓÓSRUUS’Ó“ÕÓ‚˜‚‘È›Ý[™™\ˆ›Û˜XÚÈœ›ÛHHXœÙ[˜ÙHÙˆXÚÛ›ÝÛYÙ[Y[ˆÈ›Ý[™™\ˆÛÛ[Z]™œ›ÛHHÝXØÙ\ÜÙ[›ÝšY\ˆÝÛ›ØYˆÈ›Ý]XYÛ›ÜÝXÈ]Yš[™B˜[œØXÝ[Ûˆ]‚‚”ŒˆØ]\Ø[XYÛ›ÜÝXÜÈ\™H\™Y›Ü™HÛ\ÜÚYšYY\Î‚‚˜^“ÐÐSÐTWÐÐUTÐSÑPQÓ“ÔÕPÔÏTTÔ×ÕTQÔU×ÓÓ“B“ÐÐSÐTWÐÐUTÐSÑPQÓ“ÔÕPÔ×ÕSÓTÔÒQ’QQÔUQRS˜‚]]ÛX]YŒÈ˜[Y][ÛˆÚ[›Ý›Ý™H]™HÛÛ™\™Ù[˜ÙKˆH\ÜÚ[™È›]\‚œÝZ]HÜˆ\ÜÜØX›HØØ[]X˜\ÙH\ÝØ[››Ý›Û[ÝHÐÓLÈXØÙ\[˜ÙK‚‚ˆÈÈKˆÛÜœ™XÝ]™HZ\ÜÚ[Ûˆ[™XYH]]Üš^™YžHÑKÑ‚‚ÛÙ^]\Ý[\[Y[HÛÛ\]HŒÈÛÜœ™XÝ[Û‹Ú]ÛÛ›Û[™È^XÝœ™\]Z\™[Y[Ë‚‚•HÛÚ\Ú]™HZ\ÜÚ[Ûˆ\ÈÚ^\Î‚‚ŒKˆ›ÜˆH™]š[Ý\ÛH[œÙY[ˆ[˜ÛÛZ[™È›ÙXÝURQ™]\ÙHHÛ™HÛÚ\™[ˆXØÛÝ[\ØÛÜY›ÙXÝÚ[ˆ^XÝÙ[X[XÈY[]HX]Ú\È]™[ˆYˆHÛÂˆÛY[ÈÚÜÙHY™™\™[\Ù\ˆ›ÙXÝÛÙ\Ëˆ™\Ù\™HHÙ[XÝYØØ[ˆÛÙH[™\Ü^K‚Œ‹ˆ™\Ù\™HÛÛ™›XÝÈ›ÜˆØ[YHÛÙKÙY™™\™[Y[]KÜ]˜]\˜[Ù^\Ëˆ[XšYÝZ]K[™\ÝX›\ÚYUURQ[[]]X›H]]][Û‹ˆ™]™\ˆ\ÙHš\œÝ\›ÝÂˆÚ[œÈ[™™]™\ˆ™]Üš]HÜÝY]™[ÈÜˆ^\Ý[™È›ÙXÝY[]Y\Ë‚ŒËˆXZ[Z[ˆ[˜ÛÛZ[™Ë]Ë[ØØ[›ÙXÝY[]HX\[™È›Üˆ\˜Ú\ÙH][\È[™ˆ™\Ù\™HH[™XYKXÛÜœ™XÝÝÜ™HX\[™ËÜ™XÛÛ˜Ú[X][ÛˆÛÛ˜XÝ‚ˆXZÙHHÜÝYÝÛ›ØYØØ[X\H›Ý[™\žHÝ[ˆ]™\žH^Ù\[Ûˆ]\ÝˆX]™HHšY˜[œØXÝ[Ûˆš\œÝ[ÝÈ[›Û˜XÚË[™[ˆ™XÛÛYHBˆ›Ý[™YØ[š]^™Y™\Ý[ˆ›È\H^Ù\[ÛˆX^H\ØØ\H[ÈHRH[›™\‹‚KˆÙ\\˜]HÞ[˜Ú›Ûš^˜][Ûˆ]œ›ÛHXYÛ›ÜÝXÈ]ˆ\]H[ˆ[‹[Y[[ÜžBˆØ]\Ø[Û˜\ÚÝ™Y›Ü™H˜[X›H\˜X›HXYÛ›ÜÝXÜÎÈÛÛZ[ˆXYÛ›ÜÝXÜÂˆ\œÚ\Ý[˜ÙH˜Z[\™HÚ]Ý]™]™\œÚ[™ÈHÛÛ[Z]YÛÜ™H™\Ý[ÈXZÙHBˆ[›™\ˆÛÛœÝ[YHHÝ›Û™Ù\ÝØ]\Ø[Û˜\ÚÝ‚‹ˆ›Ú™XÝH^\Ý[™ÈÝÜ™YØ[š]^™Y^Ù\[ÛˆÛ\ÜÈ›ÝYÚ™\ÜÚ]ÜžKˆ\XØ][ÛˆÝ[[X\žH[™ÛÜÝ\™HRHÚ]Ý]HZYÜ˜][ÛˆÜˆ[œØY™HY\ÜØYÙKˆÔS^[ØYY[YšY\‹ÝXÚËÚÙ[‹ÙXÜ™]Üˆ[Z\Ú\ØÛÜÝ\™K‚‚•HÚ[™ÛHYÙH˜[œØXÝ[Ûˆ]\ÝÛÛ[YHÈÝÛˆ›ÙXÝÔÝÜ™H™XÛÛ˜Ú[X][Û‹”\˜Ú\Ù\Ë\˜Ú\ÙH][\Ë[˜›Þ™XÛÜ™È[™XØÛÝ[Ý\œÛÜ‹ˆXÚÛ›ÝÛYÙ[Y[›X^H™YÚ[ˆÛ›Hœ›ÛHHÛÛ[Z]YÝ\œÛÜ‹ˆ™\^H]\Ý™[XZ[ˆY[\Ý[‚‚ˆÈÈ‹ˆ™\]Z\™Y[\[Y[][Ûˆ›Ý[™\šY\Â‚”™\Ù\™N‚‚˜^œ›ÝØÛÛ^[ØY™\œÚ[ÛˆHÂ‘›]\‹ÑšYØÚ[XHH[˜Ú[™ÙYšÜÝYTKÜÙ\™\ˆH[˜Ú[™ÙY]]]][XØ][ÛˆH[˜Ú[™ÙY‘]šXÙH[œ›ÛY[Øš[™[™ÈH[˜Ú[™ÙY”ÝÜ™HY[]H[\ÈH[˜Ú[™ÙY[›\ÜÈHÛÝ\˜ÙK\›Ý™YZ[š[X[ÛÜœ™XÝ[Ûˆ\ÂˆÝšXÝH™\]Z\™YžH”\œÛÛ‹Ô^[Y[Y]ÙŒÈ™[[ÝH™\ÝšXÝ[ÛˆH[˜Ú[™ÙY™\[™[˜ÚY\ÈH[˜Ú[™ÙY‘Ú]Xˆœ˜[˜ÚH^\Ý[™ÈÝX\™Yœ˜[˜Ú˜‚”›ÚXš]Y\š[™ÈÛÙ^^XÝ][ÛŽ‚‚˜^[™›ÚYÜˆÚ[™ÝÜÈÞ[˜Â”™]žK™XÛÝ™\žK[œ›ÛÜˆ]Y\žB›™]È\˜Ú\ÙH™YÚ\Ý˜][Û‚˜XÚÛ›ÝÛYÙ[Y[Üˆ›ÝšY\ˆ]]][Û‚™]X˜\ÙHÝ\™Ù\žHÜˆ\XØ][Û‹Y]HÛX\š[™ÂœØÚ[XKZYÜ˜][Û‹TK^[ØY]][XØ][ÛˆÜˆ\[™[˜ÞHÚ[™ÙB˜œ˜[˜ÚÜ™X][Û‹™[˜[YK™X˜\ÙK›Ü˜ÙH\Ú™\Ù]ÜˆÛX[‚›Y]ÙÛÙÞK\›X[™[YÛXZ[‹ˆÜˆ‘P×ÑPQÓ“ÔÕPÔÈY]Â‘—ÓQÓUœÜ[×ÔÐÔ’TË›YÜˆWÔÐÔ’TËœÌHY]Â\ÝÙXZÙ[š[™Ë^Ù\[ÛˆÝØ[ÝÚ[™ÈÜˆš\œÝ\›ÝË]Ú[œÈ™XÛÛ˜Ú[X][Û‚˜‚ˆÈÈËˆÛÙ^˜[Y][Ûˆ[™]šY[˜ÙH™]\›‚‚ÛÙ^]\Ý[\[Y[H\ÝX]š^[˜ÛY[™Î‚‚‹H^XÝY[]H[™\ˆ[›Ý\ˆÛÙH›ÜˆH™]È[˜ÛÛZ[™ÈURQÂ‹HØ[YHÛÙKÙY™™\™[Y[]KÜ]ZÙ^K[XšYÝZ]H[™\ÝX›\ÚYURQˆÛÛ™›XÝØ\Ù\ÎÂ‹HØØ[ÛÙKÙ\Ü^H™\Ù\˜][Ûˆ[™™[[ÝK]Ë[ØØ[][H™[X\[™ÎÂ‹HZ^Y[™›ÚYÕÚ[™ÝÜÈÝ\œÛÜˆYÙHÛÛ™\™Ù[˜ÙH[™Ú\ÛÛ‹\YÙH™XÛÝ™\žNÂ‹HÙ[™\šXÈ›Û‹TÔS˜Z[\™HÚ][˜XÝËÚ[˜›ÞØÝ\œÛÜˆ›Û˜XÚÎÂ‹HXÚÛ›ÝÛYÙ[Y[›ÚXš][ÛˆY\ˆ˜Z[YÜˆ[œ›Ý™Y\NÂ‹HÛÛ[Z]Y\HÚ]XYÛ›ÜÝXË\\œÚ\Ý[˜ÙHYÜ˜Y][ÛŽÂ‹HØ]\Ø[\ÝY\™\ÜÛœÙH™\Ù\˜][Ûˆ›ÝYÚ\KÜ™\Ü[™ËÜ[›™\ˆ˜Z[\™\ÎÂ‹HØ[š]^™Y^Ù\[Û‹XÛ\ÜÈ›Ú™XÝ[ÛˆÈÛÜÝ\™HRNÂ‹H›ÙXÝ\Ù[XÝÜ‹ÝÜ™K]Y]YK\ØY\™\Ý[[™ŒÈ™\ÝšXÝ[Ûˆ™YÜ™\ÜÚ[ÛœÎÂ‹HY[\Ý[™\^H[™[˜Ú[™ÙYÜÝY›ÝØÛÛ‚‚”™\]Z\™Y˜[Y][Ûˆ]šY[˜ÙH\ÈH^XÝ\Ýˆ›Ü›X][˜[\Ú\Ë›ØÝ\ÙY\ÝË[›]\ˆ\ÝÝZ]KXYÈ[™›ÚY[™Ú[™ÝÜÈZ[ËX[šY™\Ýš[œÜXÝ[ÛˆÚ\™H\XØX›KY™ˆÚXÚËÙ[œÚ]]™KXÛÛ[ØØ[ˆ[™^XÝ˜Ú[™ÙYYš[H[™[ÜžK‚‚ÛÙ^Ú[™\XÙHÛ›N‚‚˜^™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÑ×ÓÔ×ÐÓÑV›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÒÑ×ÐÓÑV›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÒWÑÓ—ÐÓÑV›Y˜‚˜[Û™ÜÚYHHÛÝ\˜ÙKÝ\ÝÈ]]Üš^™YžH‚‚•HÛÙ^™]\›ˆ]\Ý[˜ÛYN‚‚˜^™š[˜[ÛÛ[Z]ÒH[™\™[œ™[[ÝHœ˜[˜Ú™XYX˜XÚÂ™^XÝÚ[™ÙYYš[H\Ýš[\[Y[][ÛˆÝ[[X\žHžH™\]Z\™[Y[™›ØÝ\ÙY[™[˜[Y][ÛˆÝ]ÛÛY\ÂœÚÚ\YÜˆ[š\›Û›Y[[[Z]Y]šY[˜ÙB‘ËÒÒH\›Z[˜[Ý]\Â˜ÛÛ™š\›X][ÛˆÙˆ™\›È]™KØÛY[Ü›ÝšY\ˆ]]][Û‚˜‚ˆÈÈˆœ™\ÚXZ[ˆÚ]š\œÝ™\ÜÛœÚXš[]B‚•Hœ™\ÚXZ[ˆÚ]ÚÝ[›Ý™[Ü[ˆHÛÛ\]YXYÛ›ÜÚ\È™Y›Ü™HÛÙ^œÝ\Ëˆ]Èš\œÝ™\ÜÛœÚXš[]H\ÈÈ™\šYžHH[™Ù™ˆX›XØ][Ûˆ]Bœ™[[ÝHœ˜[˜ÚXY[™\ÜÝYHH^XÝÛÙ^›Û\[›™YÈ]ÛÛ[Z]‚‚•Ú[HÛÙ^[œËXZ[ˆX^H™\\™HHÜÝ[X]\šX[^˜][Ûˆ™XÛÛ˜Ú[X][Û‚™œ˜[YK]]]\Ý›Ý\ÜÝYH[žH]™HÞ[˜È]]Üš^˜][Û‹‚‚Y\ˆÛÙ^X›\Ú\Î‚‚ŒKˆ™\šYžHHX]\šX[^˜][Ûˆ\ÈÛ™H›Û‹Y›Ü˜ÙY˜\ÝY›ÜØ\™\ØÙ[™[ÙˆBˆ[™Ù™ˆÛÛ[Z]ÂŒ‹ˆÛÛ\\™HHÚ[™ÙY]ÈYØZ[œÝÂŒËˆ™XYËÒÒH\ÈØœÙ\˜][Û˜[]šY[˜ÙNÂˆ™XÛÛ˜Ú[HÛÝ\˜ÙHXÚ\Ú[ÛœË\ÝËZ[Ë\›Z[˜[È[™™\ÚYX[[Z]ÎÂKˆ\[™HŒÈÜÝPÛÙ^™XÛÛ˜Ú[X][ÛˆÈŽÂ‹ˆ]]Üš^™HH™\Ù\™Y\Ý]HZ[Ú[œÝ[[™Ù™›[™H™Y›YÚÛ›NÂËˆ\ÜÝYHH™]ËÙ\\˜][H[X™\™YÛ™K[Ü\˜][Ûˆ]™H\ÜØ^HÛ›HY\ˆBˆ[œÝ[Y\Y˜XÝ[™™XY[Û›H˜\Ù[[™\È\ÜË‚‚“™Z]\ˆHÝ\œ™[[™Ù™ˆ›ÜˆH]\™HÛÙ^ÝXØÙ\ÜÈ]]Üš^™\È[[YYX]B”Þ[˜Ë‚‚ˆÈÈKˆÜÝPÛÙ^[X[ˆXØÙ\[˜ÙHÝ][™B‚•H^XÝX[X[XÚÙ]]\Ý™H\š]™Yœ›ÛHH[\[Y[YÛÛ[Z]˜]\‚[ˆÛÜYY›[™Hœ›ÛHŒ‹ˆ]Z[š[][H]]\Ý™\Ù\™H^\Ý[™È[™›ÚY[™•Ú[™ÝÜÈ\XØ][Ûˆ]H[™™\šYžN‚‚ŒKˆ›ÝÛÜœ™XÝYš[˜\šY\ÈØ\œžHH™XÛÛ˜Ú[YŒÈ›Ý™[˜[˜ÙNÂŒ‹ˆ]][XØ][Û‹[œ›ÛY[]Y]Y\È[™]šXÙHÙ\]Y[˜Ù\È™[XZ[ˆÛÚ\™[ÂŒËˆ›È]]ÛX]XÈÞ[˜ÈÜˆXÚÛ›ÝÛYÙ[Y[ØØÝ\œ™Y\š[™È[œÝ[][Û‹Û][˜ÚÂˆÙ™›[™Hš[™][H[™\˜Ú\ÙH›Ú™XÝ[Ûˆ™[XZ[ˆÛÜœ™XÝÂKˆÝ\œ™[ØØ[Ü›ÝšY\ˆ™XY[Û›H˜\Ù[[™\È\™Hœ›Þ™[ŽÂ‹ˆ^XÝHÛ™HÛY[Ü™[˜\žHÞ[˜È\È]]Üš^™Yš\œÝÂËˆRKÔS]K™[™\ˆ[™›ÝšY\ˆÜÝ›YÚÈYÜ™YH™Y›Ü™HHÝ\ˆÛY[ˆØ[ˆÞ[˜ÎÂŽˆÛ™H›Ë[Ü™\^H›Ý™\ÈY[\Ý[˜ÞH[™›È\XØ]H›ÙXÝÝÜ™Kˆ\˜Ú\ÙHÜˆ\˜Ú\ÙH][K‚‚”™]žH[™™XÛÝ™\žH™[XZ[ˆÙ\\˜]H]\ˆXÚ\Ú[ÛœËˆ^H\™H›ÝÝXœÝ]]\Â™›ÜˆHš\œÝÛÜœ™XÝYÜ™[˜\žKTÞ[˜È\ÜØ^K‚‚ˆÈÈLˆœ™\ÚXÚ]ÝÜ[™\ØØ[][ÛˆÛÛ™][ÛœÂ‚”ÝÜ[™™\Ù\™H]šY[˜ÙHYŽ‚‚‹HH™[[ÝHXY\È›ÝH[™Ù™ˆÛÛ[Z][›™YžHH›Û\Â‹HHœ˜[˜Ú]™\™ÙYÜˆH›Ü˜ÙH\]H\È™\]Z\™YÂ‹HÑKÑˆ\ØYÜ™YHÜˆZ\ˆÜš]X›HØÛÜH\È[œÝY™šXÚY[Â‹H[\[Y[][Ûˆ™\]Z\™\ÈØÚ[XKÜ›ÝšY\‹ÐTKØ]]Ù\[™[˜ÞHÚ[™ÙNÂ‹H[œ™[]YÛÜšÈÝ™\›\È[ˆ]]Üš^™YÛÝ\˜ÙHÜˆ™\Üš[NÂ‹HH˜[Y][Ûˆ˜Z[\™H\ÈY[ˆžHÚÚ\Y\ÝÈÜˆÝØ[ÝÙY^Ù\[ÛœÎÂ‹HHÙXÜ™]ÚÙ[‹ÛÛ›™XÝ[ÛˆÝš[™Ë^[ØY˜XÝÔS˜[YHÜˆY[YšY\‚ˆ\X\œÈ[ˆH›ÜÜÙY™\ÜÂ‹H[žH]™HÞ[˜Ë™]žK™XÛÝ™\žK[œ›Û]Y\žKXÚÛ›ÝÛYÙ[Y[Üˆ›ÝšY\‚ˆ]]][ÛˆÛÝ[™H™YYYÈÛZ[HÝXØÙ\ÜË‚‚•Üš]HH™XÚ\ÙHËÒÒH›ØÚÙ\ˆ˜]\ˆ[ˆ[\›Ýš\Ú[™ÈÝ]ÚYHH[™[ÜK‚‚ˆÈÈLKˆ[™Ù™ˆ\›Z[˜[Â‚˜^ÖPÓLLSÔS‚‘ÐÓLPÓÔÑQÒÔÕQÔÐSQWÑU’PÑWÔÐÓÔB‘ÐÓLÏPPÕU‘WÐÓÔ”‘PÕU‘WÓPUT’PSVUSÓ‚ÌLÑÐÓL×ÔÌLÔŒÏPÓÑVÒSTSQS•USÓ—ÐUUÔ’V‘QÓ“ÕÔÕT•QÌLÑÐÓL×ÔÌWÔŒÏRSPS—ÐTÔÐVWÐÓÓ•S•RUWÐSPTÂ”Œ×ÔÕQÑWÐÓÓSRUXŽNŒLNMØØÎMŒÍØYŒÌYŽÍÎLÍX™YNMÌB”Œ×ÒS‘Ñ‘—ÐÓÓSRUTS—Ñ”“ÓWÔP“PÐUSÓ‚”“ÑPÕÔÑSPÕÔ—Ô‘QÔ‘TÔÒSÓTTÔ×ÐUUÓPUQÐS‘ÒSPS‚S‘“ÒQÔ“Õ’QT—ÕTÐQTTÔ×Õ•TÕQ•ÒS‘ÕÔ×Ô“Õ’QT—ÕTÐQTTÔ×Õ•TÕQS‘“ÒQÒS“ÕS‘ÐÓÓ•‘T‘ÑSÑOQRSÕTQÔ“ÑPÕÐÓÓ‘“PÕ•ÒS‘ÕÔ×ÒS“ÕS‘ÐÓÓ•‘T‘ÑSÑOQRSÔÔÕÑÕÓ“ÐQÕSÓTÔÒQ’QQ•ÒS‘ÕÔ×ÕS”ÐPÕSÓ—Õ•UUS’Ó“ÕÓ‚PÒÓ“ÕÓQÑSQS•ÐQ•T—ÑRSQÓÔ—ÕS”“Õ‘QÐTOS“ÕÔÕT•Q”‘S‘T—Ô‘R‘PÕSÓQSÑB’S•T—ÑU’PÑWÔÐSQWÐPÐÓÕS•ÔÖSÏQRSÓÔS‚“U”ÔÖS×ÐPÐÑTSÑOS“ÕÔ“ÓSÕQS‘“ÒQÔÖSÏRS•ÒS‘ÕÔ×ÔÖSÏRS”‘U–WÔ‘PÓÕ‘T–ORS“‘U×ÔTÒTÑWÔ‘QÒTÕUSÓRS‘PQÓ“ÔÕP×ÒTÕÔ–OT‘TÑT•‘B”“Õ’QT—ÓUUUSÓS“Ó‘B“‘VÐPÕSÓTS—ÒS‘Ñ‘—ÐÓÓSRUÐS‘ÓUSÒÐÓÑVÔŒÂ˜‚•\ÈÙXÝ[Ûˆ\ÈH™XÛÝ™\žHœšYÙH›ÜˆHœ™\ÚXZ[ˆÚ]ˆ]Z[Y[X[‚™]šY[˜ÙH™[XZ[œÈ[ˆØÝ[Y[][Û‹Ô‘P×ÑPQÓ“ÔÕPÔË›YÈ^XÝ]X›HÛÜœ™XÝ[Û‚˜]]Üš]H™[XZ[œÈ[ˆÑKÑ‹‚‚‚‹KKB‚ˆÈŒ‹LËLŽH8 %ÜÝPÛÙ^™XÛÛ˜Ú[X][ÛŽˆÌLQÐÓLËTÌLTŒÂ‚ˆÈÈKˆ™XÛÛ˜Ú[X][Ûˆ[™[ÜB‚ŸŸŸ^”Ù\]Y[˜ÙNˆ“T“KLÜÝ[X]\šX[^˜][Ûˆ™XÛÛ˜Ú[X][Û‚”š[X\žH[š]ˆÌLQÐÓLËTÌLTŒÂ’[X[‹X\ÜØ^HÛÛ[Z]H[X\ÎˆÌLQÐÓLËTÌKTŒÂ”™\ÜÚ]ÜžNˆÝ\ËZKYÝKÛX\šÙZBœ˜[˜ÚˆÜ›KYÝX\™Y\›Ýš\Ú[Ûš[™ËLŒŒÌÂÛÛ›Û[™È[™Ù™ˆXYˆ˜ÍMŒÙNLÎLLÌMXÌŽYMNMYXÌL˜ÌYŽ“X]\šX[^˜][ÛˆÛÛ[Z]ˆŒØÙÌŽX˜ÌMMYM™XNX˜LØÌY™NL˜Â“X]\šX[^˜][Ûˆ\™[ˆ˜ÍMŒÙNLÎLLÌMXÌŽYMNMYXÌL˜ÌYŽ”™[[ÝHœ˜[˜Ú™XYX˜XÚÈ™Y›Ü™HˆX›XØ][ÛŽˆY[XØ[ÈŒØÙÌ‚“X]\šX[^˜][Ûˆ\Ý[˜ÙNˆ^XÝHÛ™H›Û‹Y›Ü˜ÙY˜\ÝY›ÜØ\™ÛÛ[Z]“]™HÜ\˜][Ûˆ]]Üš]H\š[™È™XÛÛ˜Ú[X][ÛŽˆ“Ó‘BŸŸŸ‚‚•\È[žH™XÛÛ˜Ú[\ÈHX›\ÚYŒÈ[\[Y[][ÛˆYØZ[œÝÑKÑ‹B˜XÝX[ÛÝ\˜ÙKÝ\ÝY™‹ËÒÒH[™H™]Z[™Y[X[‹Ü›ÝšY\ˆ]šY[˜ÙKˆ]Ù\Â››Ý\˜\ÙHHŒÈXYÛ›ÜÚ\ÈÜˆXØÙ\HÛÙ^\›Z[˜[Y\™[H™XØ]\ÙHBœ™\ÜYÛÛ[X[™È\ÜÙY‚‚ˆÈÈ‹ˆX›XØ][Ûˆ[™Üš]X›K\ØÛÜHÝX\™‚•HX]\šX[^˜][ÛˆÚ[™ÙY^XÝH›Ý\Y[ˆ]Î‚‚ŸŸŸ^˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ø\Û˜]]™WØ]]ØÛÜÝ\™WÜ[›™\‹™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ø\ÜYÙ\ËÛ˜]]™WØÛÜÝ\™WÜYÙK™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ø\XØ][Û‹ØÛÜÝ\™WÙXYÛ›ÜÝXÜË™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ø\XØ][Û‹ÜÞ[˜ËÜÞ[˜×ÜÜË™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ø\XØ][Û‹ÜÞ[˜ËÜÞ[˜×Ý\ÙWØØ\Ù\Ë™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ú[™œ˜\ÝXÝ\™KÛØØ[ØÛÜÝ\™WÙXYÛ›ÜÝXÜ×Ü™\ÜÚ]ÜžK™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ú[™œ˜\ÝXÝ\™KÛØØ[ÜÞ[˜ËÜ™[[ÝWÜ\˜Ú\ÙWÙ]™[Ø\Y\‹™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ú[™œ˜\ÝXÝ\™KÛØØ[ÜÞ[˜ËÜ™[[ÝWÜ\˜Ú\ÙWÙ˜XÝÝÜš]\‹™\˜ÛY[ËÛX\šÙZWÙ›]\‹Ý\ÝØ\Û˜]]™WØÛÜÝ\™WÙXYÛ›ÜÝXÜ×Ý\Ý™\˜ÛY[ËÛX\šÙZWÙ›]\‹Ý\ÝÚ[™œ˜\ÝXÝ\™KØÛÜÝ\™WÙXYÛ›ÜÝXÜ×Ü™\ÜÚ]ÜžWÝ\Ý™\˜ÛY[ËÛX\šÙZWÙ›]\‹Ý\ÝÚ[™œ˜\ÝXÝ\™KÜ™[[ÝWÜ\˜Ú\ÙWÙ]™[Ø\Y\—Ý\Ý™\™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÑ×ÓÔ×ÐÓÑV›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÒÑ×ÐÓÑV›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÒWÑÓ—ÐÓÑV›YŸŸŸ‚‚‘]™\žHÚ[™ÙY]˜[È[œÚYH	ÜÈÛÝ\˜ÙKÝ\ÝÑËÒÒHÜš]X›H[™[ÜKˆ›Â‘ÑKÑ‹‹‘P×ÑPQÓ“ÔÕPÔËY]ÙÛÙÞK\›X[™[ÛXZ[ˆY[[ÜžKÔ’SSÒT‘B›Ü\˜]Üˆš[KZYÜ˜][Û‹ØÚ[XKÜÝYTK]][XØ][Û‹[œ›ÛY[™\[™[˜ÞHÜˆ›ÝšY\‹XÛÛ™šYÝ\˜][Ûˆ][\™YHX]\šX[^˜][ÛˆÛÛ[Z]‚‚ŸŸŸ^”Œ×ÑTÕÑ“Ô•ÐT‘ÑÕPT‘TTÔÂ”Œ×ÐÒS‘ÑQÔUÔÐÓÔOTTÔÂ”Œ×Ð”SÒÕÔÓÑÖOTTÔÂ”Œ×ÓU‘WÓÔTUSÓ—ÑT’S‘×ÐÓÑVS“×Ô‘TÔ•Q”Œ×Ô“Õ’QT—ÓUUUSÓ—ÑT’S‘×ÐÓÑVS“Ó‘WÔ‘TÔ•QŸŸŸ‚‚ˆÈÈËˆÛÝ\˜ÙHXÚ\Ú[ÛœÈXØÙ\Y][\[Y[][ÛˆØÛÜB‚ˆÈÈÈ›ÙXÝY[]H[™™Y™\™[˜ÙHÛÛ™\™Ù[˜ÙB‚”™[[ÝT\˜Ú\ÙQ˜XÝÜš]\ˆ›ÝÈ\Ý[™ÝZ\Ú\È[ˆ\ÝX›\ÚY[˜ÛÛZ[™ÈURQœ›ÛHBœ™]š[Ý\ÛH[œÙY[ˆ[˜ÛÛZ[™ÈURQ‚‚‘›Üˆ[ˆ\ÝX›\ÚYURQ[[[]]X›HÛÚ\™[˜ÙHÝ[[˜ÛY\È\Ù\ˆÛÙH[™™\Ü^HšY[Ëˆ›ÜˆH™]ÈURQ™\ÛÛ][ÛˆØZ[œÈ[XØÛÝ[\ØÛÜY›Ü›X[^™Y˜ÛÙHX]Ú\È[™^XÝZY[]HX]Ú\Ë™Z™XÝÈ[XšYÝZ]H[™Ü]Ù^\Ë™Z™XÝÂœØ[YKXÛÙKÙY™™\™[ZY[]K[™™]\Ù\ÈÛ™H^XÝZY[]H›ÝÈ\Ü]H[›Ý\‚˜ÛY[XÚÜÙ[ˆÛÙKˆHÙ[XÝYØØ[ÛÙH[™\Ü^H\™H™\Ù\™Y‚‚•H[˜ÛÛZ[™È›ÙXÝURQÈÙ[XÝYØØ[›ÙXÝURQX\\È[ˆ\ÙY›Ü‚™\[™[\˜Ú\ÙH][\ËˆHÝÜ™H]™[XZ[œÈHš[ÜˆXØÛÝ[\ØÛÜYš[˜ÛÛZ[™ËUURQÙ\Ü^KZY[]H[K‚‚•H[\[Y[][Ûˆ\™Y›Ü™HÛÜœ™XÝÈHÛÝ\˜ÙHYXÚ[š\ÛH]›ÙXÙYB[™›ÚY™[[ÝK\›ÙXÝ[˜]\˜[ZY[]KXÛÛ™›XÝÚ]Ý][›ÙXÚ[™È[ˆ[X\ÂX›KÜÝY™]Üš]KZYÜ˜][ÛˆÜˆÛØ˜[›ÙXÝ\]X[]HÝ™\œšYK‚‚ˆÈÈÈYÙH]ÛZXÚ]H[™ØØ[X\H˜[œÛ][Û‚‚‘šY™[[ÝQ]™[\Y\ˆÝ[XÙ\È˜[Y][Û‹›ÙXÝÔÝÜ™H™XÛÛ˜Ú[X][Û‹”\˜Ú\ÙH˜XÝË\˜Ú\ÙH][\Ë[˜›Þ›ÝÜÈ[™XØÛÝ[Ý\œÛÜˆY˜[˜Ù[Y[[œÚYB›Û™HšY˜[œØXÝ[Û‹‚‚”™[[ÝRY[]PÛÛ™›XÝ[™]™\žHÝ\ˆ›ÝÛˆØš™XÝX]™H]˜[œØXÝ[Û‚˜™Y›Ü™H˜[œÛ][Û‹ˆHÝ]\ˆ›Ý[™\žH›ÝÈX\ÈY[]K\YÔS]KÑšYœ^[ØY\Ú\KØØ[Z[˜\šX[[™™\ÚYX[[™^XÝY˜Z[\™\ÈÈ›Ý[™Y”Þ[˜Ô™\Ý[Ø]YÛÜšY\ËˆH™\ÚYX[Ø]Ú›ÈÛ™Ù\ˆ™]›ÝÜÈ[ÈHRH[›™\‹‚‚•\È\È[\[Y[][Ûˆ]šY[˜ÙH]H™]š[Ý\ÛH[˜Û\ÜÚYšYYÜÝYÝÛ›ØY˜\H]›ÝÈ\ÈHÝ[ÛÝ\˜ÙH›Ý[™\žKˆ]\È›Ý]šY[˜ÙH]Hœ›Þ™[‚•Ú[™ÝÜÈÜ\˜][Ûˆ›ÛY˜XÚË›ÜˆØ[ˆ]™XÛÛœÝXÝ]\ÝÜšXØ[˜[œØXÝ[Ûˆ]‚‚ˆÈÈÈÝÜ™Y^Ù\[Û‹XÛ\ÜÈ›Ú™XÝ[Û‚‚•H^\Ý[™ÈØ[š]^™Y^Ù\[ÛÛ\ÜÈšY[›ÝÈ›ÝÜÈ›ÝYÚÞ[˜Ô™\Ý[™XYÛ›ÜÝXÈ\œÚ\Ý[˜ÙK™\ÜÚ]ÜžH›Ú™XÝ[Û‹\XØ][ÛˆÝ[[X\žK˜Ý\œ™[XXÝ[ÛˆX\[™È[™HÛÜÝ\™HXÚšXØ[Y]Z[ÈRKˆ›ÈZYÜ˜][ÛˆØ\Âš[›ÙXÙYˆHYY™\ÜÚ]ÜžH[™ÚYÙ]\ÜÙ\[ÛœÈ\ÝX›\ÚH›Ý[™Y˜Û\ÜÈ›Ú™XÝ[Ûˆ]]]ÛX]YØÛÜK‚‚ˆÈÈÈXÚÛ›ÝÛYÙ[Y[Ü™\š[™Â‚•HÛÛÜ™[˜]ÜˆÝ[ÝÜÈÛˆH›ØÚÙYÝÛ›ØY™\Ý[™Y›Ü™HØ[[™ÂXÚÛ›ÝÛYÙP\YYÝ\œÛÜ‹ˆXÚÛ›ÝÛYÙ[Y[[YÚXš[]HÝ[ÛÛY\Èœ›ÛHB™Ü™X]\ÝÛÛ[Z]YÛÛYÝ[Ý\ÈØØ[Ý\œÛÜ‹ˆ›ØÝ\ÙY˜Z[\™H\ÝÈØœÙ\™H›Â˜XÚÛ›ÝÛYÙ[Y[Y\ˆÔS]H[™^[ØY\Ú\H\H˜Z[\™\Ë‚‚•\ÙHÛÝ\˜ÙHXÚ\Ú[ÛœÈ\™HXØÙ\Y\È[\[Y[YˆZ\ˆ]™H™Z]š[Üˆ™[XZ[œÂ[œ›Ý™Y‚‚ˆÈÈˆ˜[Y][Ûˆ]šY[˜ÙH™\ÜYžHÛÙ^‚ÛÙ^™\ÜÎ‚‚ŸŸŸ^™\›Ü›X]ÚXÚÏTTÔÂ™›]\ˆ[˜[^™OTTÔÂ™›ØÝ\ÙYÚ[™ÙYXYÛ›ÜÝXËØ\H\ÝÏMTÔÂ›ØØ[Þ[˜È\XØ][Ûˆ\ÝÏLŽHTÔÂÛËY]šXÙHØØ[\›™\ÜÏLHTÔÂŒÈÛÛ˜XÝ\ÝÏLˆTÔÂ˜Ø][ÙÝYKÜÝÜ™HY[]H\ÝÏNTÔÂ›X\šÙZWØ\ÚYÙ]\ÝÏLˆTÔÂ™[›]\ˆ\ÝLŒMHTÔÈÈ\ÜÜØX›HXœÈÚÚ\Y™XYÈ[™›ÚYTÈZ[TTÔÂ•Ú[™ÝÜÈZ[TTÔÈY\ˆ™[X\Ú[™ÈHØØ[^XÝ]X›HØÚÂ›Y\™ÙY[™›ÚYX[šY™\Ý[œÜXÝ[ÛTTÔÂ™Ú]Y™ˆKXÚXÚÏTTÔÂ˜Ú[™ÙYXÛÛ[Ù[œÚ]]™HØØ[TTÔÈ™\ÜYŸŸŸ‚‚•HÚ[™ÝÜÈZ[	ÜÈš\œÝ˜Z[\™HØ\È[ˆ[š\›Û›Y[ØÚË›ÛÝÙYžHH\ÜÚ[™Âœ™]žKˆH\ÜÜØX›HÔÜÝÜ™TÔSÜ›ÝšY\ˆXœÈÙ\™H›Ý[ˆ™XØ]\ÙB“PT’ÑRWÔ•S—ÔÖS×ÓPˆØ\È[œÙ]ˆ›È]™HÛY[Ü›ÝšY\ˆ\ÜØ^HØØÝ\œ™Y‚‚•[™\ˆËLH\È›Ý™\ÈÝ›Û™ÈÝ]XË]\›Z[š\ÝXÈ]]ÛX]Y[™XÚØYÚ[™Â™]šY[˜ÙKˆ]Ù\È›Ý›Ý™H[œÝ[Y™\Ù\™Y\Ý]H™Z]š[Ü‹›ÝšY\‚˜ÛÛ™\™Ù[˜ÙKXÚÛ›ÝÛYÙ[Y[[\‹Y]šXÙH\ØXš[]HÜˆÐÓLÈXØÙ\[˜ÙK‚‚ˆÈÈKˆ[X]š^™XÛÛ˜Ú[X][ÛˆØ\Â‚’[œÜXÝ[ÛˆÙˆHXÝX[\ÝY][ÛœÈÙ\È›ÝÝ\Ü]™\žHËÒÒH\›Z[˜[]HÝ™[™Ý™\ÜY‚‚•HYY™[[ÝKX\Y\ˆ\ÝÈÛÝ™\Ž‚‚‹H™]ÈURQ\È^XÝY[]H[™\ˆ[›Ý\ˆÛÙNÂ‹HØ[YHÛÙH\ÈY™™\™[Y[]NÂ‹HÜ]˜]\˜[Ù^\ÎÂ‹HÛËY]™[][H™[X\[™ÎÂ‹HYÙH›Û˜XÚÈÛˆ\YÛÛ™›XÝÂ‹HÔS]H˜Z[\™HÚ]›ÈXÚÛ›ÝÛYÙ[Y[Â‹H^[ØY\Ú\H˜Z[\™HÚ]›Ý[™YÛ\ÜÈ[™›Û˜XÚË‚‚•HŒÈY™ˆÙ\È›ÝY\™XÝ\ÝÈ›Üˆ[\™\]Z\™Yœ˜[˜Ú\Î‚‚‹H[XšYÝ[Ý\È›Ü›X[^™YXÛÙHX]ÚÂ‹H[XšYÝ[Ý\È^XÝZY[]HX]ÚÂ‹H\ÝX›\ÚYURQ[[]]X›H]]][ÛŽÂ‹HHZ^Y[™›ÚYÕÚ[™ÝÜÈYÙH™\›ÙXÚ[™È\Ý[˜ÝÛY[ÛÙ\È[™]\‚ˆÝ\œÛÜˆ›ÙÜ™\ÜÚ[ÛˆÚ]Ý]\XØ]\ÎÂ‹HH™]š[Ý\ÛH™Z™XÝYÜÝY]™[›ÛÝÙYžH]\‹\YÙHÚ\ÛÛˆ™XÛÝ™\žNÂ‹HH™\ÚYX[[™^XÝY[ØØ[X\KY˜Z[YØ]YÛÜžH]Ù[‹˜]\ˆ[ˆBˆ\Q\œ›Üˆ˜[œÛ]Y\È^[ØY\Ú\H˜Z[\™NÂ‹HXYÛ›ÜÝXË\\œÚ\Ý[˜ÙH˜Z[\™H™Y›Ü™H\NÂ‹HXYÛ›ÜÝXË\\œÚ\Ý[˜ÙH˜Z[\™HÚ[H™XÛÜ™[™ÈH›ÛYX˜XÚÈ™\Ý[Â‹HXYÛ›ÜÝXË\\œÚ\Ý[˜ÙH˜Z[\™HY\ˆHÛÛ[Z]Y\NÂ‹HÛÛ[Z]Y\H™[XZ[š[™ÈXÚÛ›ÝÛYÙ[Y[Y[YÚX›H[™\ˆXYÛ›ÜÝXÂˆYÜ˜Y][ÛŽÂ‹H[›™\ˆ˜[˜XÚÈY\ˆÜÙH[š™XÝY\œÚ\Ý[˜ÙH˜Z[\™\Ë‚‚•H[ÝZ]HÛÛZ[œÈš[Üˆ™\^KÝ\œÛÜˆ[™XÚÛ›ÝÛYÙ[Y[\ÝË]ÜÙB™È›ÝÝXœÝ]]H]]ÛX]XØ[H›ÜˆH™XÚ\ÙHŒÈ[š™XÝ[ÛˆX]š^‚‚•\™Y›Ü™N‚‚ŸŸŸ^”“ÑPÕÑVPÕÒQÑQ‘‘T‘S•ÐÓÑOTTÔ×ÒSTSQS•QÐS‘Ñ“ÐÕTÑQÕTÕQ”“ÑPÕÐÓÑWÑQ‘‘T‘S•ÒQS•UWÐÓÓ‘“PÕTTÔ×ÒSTSQS•QÐS‘Ñ“ÐÕTÑQÕTÕQ”‘SSÕWÒUSWÒQÔ‘SPTTTÔ×ÒSTSQS•QÐS‘Ñ“ÐÕTÑQÕTÕQ”‘SSÕWÔQÑWÐUÓRPÒUOTTÔ×ÒSTSQS•QÐS‘ÔT•PSWÕTÕQ•S‘VPÕQÓÐÐSÐTWÕS”ÓUSÓRSTSQS•QÓ“ÕÑT‘PÕWÕTÕQSP’QÕSÕT×Ô“ÑPÕÓPUÒTÏRSTSQS•QÓ“ÕÑT‘PÕWÕTÕQ‘TÕP“TÒQÕURQÓUUUSÓRSTSQS•QÓ“ÕÑT‘PÕWÕTÕQ”ÒTÓÓ—ÔQÑWÔ‘PÓÕ‘T–OS“ÕÑT‘PÕWÕTÕQ‘PQÓ“ÔÕP×ÔT”ÒTÕSÑWÐÓÓ•RS“QS•TT•PSÑU’QSÑB”ÐS’UV‘QÑVÑTSÓ—ÐÓTÔ×ÕROTTÔ×ÒSTSQS•QÐS‘Ñ“ÐÕTÑQÕTÕQPÒÓ“ÕÓQÑSQS•ÐQ•T—ÕS”“Õ‘QÐTOS“ÕÔÕT•QÑ“ÐÕTÑQÕTÕQŸŸŸ‚‚ˆÈÈ‹ˆ™\ÚYX[Ø]\Ø[\Û˜\ÚÝY™XÝ‚•H[‹[Y[[ÜžH™XÛÜ™\ˆ\]\È]ÈÝÜ™Y]šY[˜ÙH™Y›Ü™H][\[™ÈH\˜X›B™XYÛ›ÜÝXÈÜš]H[™ÛÛZ[œÈ™XÛÜ™XYÛ›ÜÝXÑ]™[˜Z[\™\Ëˆ]\ÈH™X[š[\›Ý™[Y[Ý™\ˆŒ‹‚‚’ÝÙ]™\‹HÝ\œ™[Ü™Y™\”Ý›Û™Ù\Ý]šY[˜ÙH[˜Ý[Ûˆ\È›ÝHÝ[][]]™B›Ü\˜][ÛˆÛ˜\ÚÝˆ^Ù\Ú[ˆH™]ÈØ[™Y]H™]ÛH›Ý™\È\ÝY™\ÜÛœÙBœ™XÙZ]™Y™]ÛH›Ý™\ÈØØ[]]][ÛˆÛÛ[Z]YÜˆ\ÈHÙ[™\šXÈ\›Z[˜[]œ™\XÙ\ÈH™]š[Ý\È]šY[˜ÙHØš™XÝ‚‚H]\ˆXÚÛ›ÝÛYÙ[Y[\™\]Y\Ý\ÙH\È›Û‹]\›Z[˜[[™›Ü›X[HXÛ\™\Î‚‚ŸŸŸ^\ÝY™\ÜÛœÙTÝ]O[›Ý\™XÙZ]™Y›ØØ[]]][Û”Ý]O[›Û™KÙY˜][œ›ÝšY\ÛÛXÝÝ]O\™\]Y\Ý\Ý\YŸŸŸ‚‚’]Ø[ˆ\™Y›Ü™H™\XÙH[ˆX\›Y\ˆÝÛ›ØY[ØØ[X\HXÛ\˜][Ûˆ]Y˜[™XYH›Ý™Y‚‚ŸŸŸ^\ÝY™\ÜÛœÙTÝ]O\™XÙZ]™Y›ØØ[]]][Û”Ý]OXÛÛ[Z]Y›\Ý›Ý™Y\ÙOYÝÛ›ØY[ØØ[X\BŸŸŸ‚‚’YˆXÚÛ›ÝÛYÙ[Y[˜[œÜÜÜˆ]\ˆÛÛÜ™[˜][Ûˆ[ˆ›ÝÜËH[›™\‚™˜[˜XÚÈØ[ˆÛÛœÝ[YHHÙXZÙ\ˆXÚÛ›ÝÛYÙ[Y[\™\]Y\ÝØš™XÝ[™ÜÙHBœ›Ý™YÛÛ[Z]YØØ[X\KÝ\ÝYYÝÛ›ØY˜XÝËˆ\ÈÛÛ™›XÝÈÚ]œÙXÝ[ÛœÈH[™È[™ˆÙXÝ[ÛœÈ[™‹ÚXÚ™\]Z\™HHÛ˜\ÚÝ™]Z[š[™Âœ›ÝšY\‹\KØØ[]]][Ûˆ[™XÚÛ›ÝÛYÙ[Y[]Ù\\˜][K‚‚•\™H\ÈHÙXÛÛ™ØœÙ\˜Xš[]HØ\ˆ™YÚ[‘XYÛ›ÜÝXÐ][\˜Z[\™HÙ]Â˜][\YÈ[]Ù\È›ÝX\šÈXYÛ›ÜÝXÈ\œÚ\Ý[˜ÙHYÜ˜YYˆÝXœÙ\]Y[œ\ÙHØ[ÈÚÚ\\˜X›HÜš]\ÈÚ]Ý]™XÙ\ÜØ\š[H^ÜÚ[™Â™XYÛ›ÜÝXÜË\\œÚ\Ý[˜ÙKYYÜ˜YY[™Hš[˜[Ü\˜][ÛˆY™XÞXÛHXÛ\˜][Û‚™Ù\È›Ý\ÝX›\Ú]HYÜ˜Y][Ûˆ™XØ[YHš\ÚX›K‚‚“›ÈYYŒÈ\Ý[š™XÝÈ\ÙH^XÝÙ\]Y[˜Ù\Ë‚‚ÛÛœÙ\]Y[HHËÒÒHÛZ[\ÈÐUTÐSÑU’QSÑWÔ‘TÑT•USÓTTÔÈ[™‘PQÓ“ÔÕP×ÔT”ÒTÕSÑWÐÓÓ•RS“QS•TTÔÈ\™H›Ý›Û[ÝYžHXZ[‹‚‚ŸŸŸ^ÐUTÐSÑU’QSÑWÔ‘TÑT•USÓTT•PSÑRSÐPÒ×ÕS”ÒUSÓ‚‘PQÓ“ÔÕP×Ð‘QÒS—ÑRST‘WÑQÔQUSÓS“ÕÔ“Õ‘Q‘PQÓ“ÔÕP×ÐQ•T—ÐÓÓSRUÑQÔQUSÓS“ÕÔ“Õ‘Q”•S“‘T—ÑSPÒ×ÔÕ“Ó‘ÑTÕÐÐUTÑOTT•PSŸŸŸ‚‚ˆÈÈËˆËLH\ÜÜÚ][Û‚‚ŸŸŸ^ÛZ[NˆŒÈØ\ÈX›\ÚY\ÈÛ™HØÛÜY˜\ÝY›ÜØ\™ÛÛ[Z]”™\Ý[ˆPÐÑTQ‘]šY[˜ÙHÙZ[[™ÎˆÚ]Xˆ[˜Ù\ÝžH[™Ú[™ÙY\]ÛÛ\\š\ÛÛ‚‚ÛZ[Nˆ^XÝ›ÙXÝY[]H[™\ˆ[›Ý\ˆÛY[ÛÙH\ÈÛÜœ™XÝY”™\Ý[ˆPÐÑTQÐUÒSTSQS•USÓ—ÐS‘Ñ“ÐÕTÑQÕTÕÔÐÓÔB‘]šY[˜ÙHÙZ[[™Îˆ]\›Z[š\ÝXÈ›]\‹ÑšYÛÝ\˜ÙH[™\ÝÈ›È]™HÛY[‚ÛZ[Nˆ]™\žH\H^Ù\[Ûˆ\ÈH›Ý[™YÜÝ\›Û˜XÚÈÛÝ\˜ÙH˜[œÛ][Û‚”™\Ý[ˆPÐÑTQÐUÔÓÕTÑWÔÐÓÔB‘]šY[˜ÙHÙZ[[™Îˆ™\ÚYX[[™^XÝYØ]YÛÜžHXÚÜÈH\™XÝ[š™XÝY\Ý‚ÛZ[Nˆ˜[œØXÝ[Ûˆ]\È[™\[™[ÙˆXYÛ›ÜÝXÈ\œÚ\Ý[˜ÙB”™\Ý[ˆT•PSWÐPÐÑTQ‘]šY[˜ÙHÙZ[[™Îˆ›ÙXÝ[Ûˆ™XÛÜ™\ˆÛÛZ[œÈ›ÝË]Üš]H˜Z[\™\Ë]™\]Z\™Yˆ™Y›Ü™KØY\‹XÛÛ[Z][š™XÝ[Ûˆ]šY[˜ÙH\È[˜ÛÛ\]B‚ÛZ[NˆH[›™\ˆ[Ø^\È™\Ù\™\ÈHÝ›Û™Ù\ÝØ]\Ø[]”™\Ý[ˆ‘R‘PÕQÐT×ÐÓÓTUB‘]šY[˜ÙNˆ]\ˆXÚÛ›ÝÛYÙ[Y[™\]Y\ÝØ[ˆ™\XÙHX\›Y\ˆÛÛ[Z]Y\HÝ]B‚ÛZ[NˆŒÈØ]\ÙšY\ÈHÛÛ\]HÛÛ›Û[™È\ÝX]š^”™\Ý[ˆ‘R‘PÕQ‘]šY[˜ÙNˆ˜[YY™\]Z\™YØ\Ù\ÈX›Ý™H\™HXœÙ[œ›ÛHHX]\šX[^˜][ÛˆY™‚‚ÛZ[Nˆ˜XÝXØ[[™›ÚYÕÚ[™ÝÜÈÞ[˜È\È›ÝÈÛÛ™Y”™\Ý[ˆ‘R‘PÕQÈ“ÕQU“Õ‘Q‘]šY[˜ÙNˆ›ÈÛÜœ™XÝYš[˜\šY\ÈÙ\™H[œÝ[YÜˆ^\˜Ú\ÙYÈÛ™HØ]\Ø[Y™XÝˆ[™][\H˜[Y][ÛˆØ\È™[XZ[‚‚ÛZ[NˆH\ÝÜšXØ[Ú[™ÝÜÈ˜[œØXÝ[Ûˆ]\È›ÝÈÛ›ÝÛ‚”™\Ý[ˆ‘R‘PÕQ‘]šY[˜ÙNˆ™]ÈÛÝ\˜ÙHØ[››Ý™]›ØXÝ]™[HÛ\ÜÚYžHHœ›Þ™[ˆÜ\˜][Û‚ŸŸŸ‚‚ˆÈÈˆXZ[ˆ\›Z[˜[[™™\]Z\™YÛÜœ™XÝ]™HÛÛ[X][Û‚‚•HÛÙ^™\Ü	ÜÈSTSQS•QÕSQUQ\›Z[˜[\È™]Z[™Y\ÈHÛÙ^›ØœÙ\˜][Ûˆ]\È›Ý›Û[ÝY\ÈHXZ[ˆ\›Z[˜[‚‚ŸŸŸ^ÖPÓLLSÔS‚‘ÐÓLPÓÔÑQÒÔÕQÔÐSQWÑU’PÑWÔÐÓÔB‘ÐÓLÏPPÕU‘WÐÓÔ”‘PÕU‘WÓPUT’PSVUSÓ‚ÌLÑÐÓL×ÔÌLÔŒÏRSTSQS•QÕÒUÓPRS—Ô‘PÓÓÒSPUSÓ—ÑÐTÂÌLÑÐÓL×ÔÌWÔŒÏRSPS—ÐTÔÐVWÐÓÓ•S•RUWÐSPTÂ”Œ×Ô‘SSÕWÐÓÓSRULŒØÙÌŽX˜ÌMMYM™XNX˜LØÌY™NL˜Â”Œ×ÔÐÓÔWÔ‘PÓÓÒSPUSÓTTÔÂ”Œ×ÑÓPU’VÔ‘PÓÓÒSPUSÓTT•PSÑRS”“ÑPÕÐÓÓ•‘T‘ÑSÑWÐÓÔ”‘PÕSÓRSTSQS•QÑ“ÐÕTÑQÕTÕQ•ÕSÐTWÕS”ÓUSÓRSTSQS•QÔT•PSWÕTÕQÐUTÐSÔÓTÒÕÐPÒ×ÕS”ÒUSÓQRSÓÔS‚‘PQÓ“ÔÕP×ÑQÔQUSÓ—Õ’TÒP’SUOQRSÓÔS‚’S•T—ÑU’PÑWÔÐSQWÐPÐÓÕS•ÔÖSÏQRSÓÔS‚“U”ÔÖS×ÐPÐÑTSÑOS“ÕÔ“ÓSÕQS‘“ÒQÔÖSÏRS•ÒS‘ÕÔ×ÔÖSÏRS”‘U–WÔ‘PÓÕ‘T–ORS“‘U×ÔTÒTÑWÔ‘QÒTÕUSÓRS‘PQÓ“ÔÕP×ÒTÕÔ–OT‘TÑT•‘B”“Õ’QT—ÓUUUSÓS“Ó‘B“‘VÐPÕSÓTÕQÑWÓÓ‘WÑ“ÐÕTÑQÔŒ×ÐÓÓTUSÓ—Ô“ÕS‘ŸŸŸ‚‚H™]È[\[Y[][Ûˆ]]Üš]HÚÝ[\ÙHHœ™\Ú™]š\Ú[ÛˆY[YšY\ˆ˜]\‚[ˆÚ[[H™]Üš][™ÈŒÈÝXØÙ\ÜËˆXZ[‰ÜÈ›ÜÜÙYY[YšY\ˆ\Î‚‚ŸŸŸ^ÌLQÐÓLËTÌLTŒ˜ÛÛ[Z]NˆÌLQÐÓLËTÌKTŒŸŸŸ‚‚’]ÈØÛÜHÚÝ[™H[Z]YÎ‚‚ŒKˆ™\XÙHHÚ[™ÛHÝ›Û™Ù\ÝY]šY[˜ÙHØš™XÝÚ]HÝ[][]]™HØ]\Ø[Ý]Bˆ]™\Ù\™\ÈÝÛ›ØY\Ý\HÛÛ[Z]Ü›Û˜XÚÈ[™XÚÛ›ÝÛYÙ[Y[ˆÝ]H[™\[™[NÂŒ‹ˆÝ\™˜XÙH™YÚ[‹Ü›ÝËØÛÛ\]HXYÛ›ÜÝXÈ\œÚ\Ý[˜ÙH˜Z[\™H\È›Ý[™YˆYÜ˜Y][ÛˆÚ]Ý]Ú[™Ú[™ÈÛÜ™H]ÂŒËˆYHZ\ÜÚ[™ÈXÚ\Ú[Û‹Ú[š™XÝ[Ûˆ\ÝÈ\ÝYX›Ý™NÂˆ™\Ù\™HHŒÈ›ÙXÝ™\ÛÛ™\‹Ý[˜[œØXÝ[Ûˆ›Ý[™\žK^Ù\[Û‚ˆ›Ú™XÝ[Û‹›ÝØÛÛŒËØÚ[XKÜÝYTK]]Ù[œ›ÛY[[™›ÝšY\‚ˆ[[[Øš[]NÂKˆ™\XÙHËÒÒH[™X›\ÚÛ™HØÛÜY˜\ÝY›ÜØ\™ÛÛ[Z]Â‹ˆ\™›Ü›H›È]™HÞ[˜Ë™]žK™XÛÝ™\žK]Y\žK[œ›ÛXÚÛ›ÝÛYÙ[Y[Üˆ™]Âˆ\˜Ú\ÙH™YÚ\Ý˜][Û‹‚‚“›È™\Ù\™Y\Ý]H[œÝ[Üˆ]™HÌH\ÜØ^H\È]]Üš^™Y[[\ÈÛÛ\][Û‚œ›Ý[™\ÈX]\šX[^™Y[™™XÛÛ˜Ú[Y‚‚ˆÈÈKˆ›Ýš\Ú[Û˜[ÌH[X[‹X\ÜØ^H›Ý]HY\ˆÛÜœ™XÝ]™HÛÜÝ\™B‚•H›Ü›Y\ˆÐÓLÈ[X[ˆ[ˆX^H™H™XÛÝ™\™Y›Üˆ^XÝX™[È[™ÛY[Ü™\‹˜]]\È›Ý™YYYÈXÚYHH™\Ù[ÝÜˆY\ˆŒ\ÜÙ\ÈXZ[‚œ™XÛÛ˜Ú[X][Û‹H[X[‹X\ÜØ^H›Ý]HÚÝ[™H™\ÝYÙYœ›ÛHHXÝX[Œ˜ÛÛ[Z]‚‚ŒKˆZ[Ú[œÝ[ÛÜœ™XÝY[™›ÚY[™Ú[™ÝÜÈš[˜\šY\ÈÚ[H™\Ù\š[™È›Ýˆ\XØ][Ûˆ]HÙ]È[™XYÛ›ÜÝXÈ\ÝÜžNÂŒ‹ˆ›Ý™HZ[›Ý™[˜[˜ÙK]][XØ]YÝ]K^\Ý[™È[œ›ÛY[ØØ[]Y]YBˆÚ\K]šXÙHÙ\]Y[˜Ù\È[™XœÙ[˜ÙHÙˆ]]ÛX]XÈÞ[˜ÎÂŒËˆ[ˆÙ™›[™H›ÙXÝÒ\ÝÜžH›Ú™XÝ[ÛœÈÛ›K™YÚ\Ý\š[™È›È™]È\˜Ú\ÙNÂˆØ\\™Hœ™\Ú™XY[Û›H[™›ÚYÔS]KÚ[™ÝÜÈÔS]H[™›ÝšY\ˆ˜\Ù[[™\ÎÂKˆ]]Üš^™H^XÝHÛ™HÜ™[˜\žHÞ[˜ÈÛˆÛ™H˜[YYÛY[Â‹ˆ™XÛÛ˜Ú[HRKÔS]K™[™\ˆ[™›ÝšY\ˆÜÝ›YÚÈ™Y›Ü™H]]Üš^š[™ÈBˆÝ\ˆÛY[ÂËˆ›Ý™HXÚÛ›ÝÛYÙ[Y[Û›HY\ˆÛÛ[Z]YÝ\œÛÜˆ^ÜÝ\™NÂŽˆ[ˆÛ™HÙ\\˜][H]]Üš^™Y›Ë[Ü™\^HÈ›Ý™HY[\Ý[˜ÞH[™XœÙ[˜ÙHÙ‚ˆ\XØ]H›ÙXÝÝÜ™K\˜Ú\ÙHÜˆ\˜Ú\ÙH][K‚‚•H^XÝš\œÝÛY[[™Hš[Üˆ[X[ˆ™XÛÜ™X™[È]\Ý™H™XÛÛ˜Ú[Yœ›ÛBH›Ü›Y\ˆÐÓLÈ[ˆÜˆ‘PÈ]šY[˜ÙH™Y›Ü™H\ÜÝZ[™ÈH^XÝ]X›HÌHXÚÙ]‚•^H]\Ý›Ý™HÝY\ÜÙYœ›ÛH\È[\[Y[][Ûˆ™\Ü‚‚ˆÈÈLˆ[œÝÙ\ˆÈHÝ™\˜[Þ[˜È]Y\Ý[Û‚‚”ŒÈX]\šX[HÛÜœ™XÝÈH›ÙXÝ^XÝZY[]HÛÛ™›XÝ[™XZÙ\ÈHØØ[˜\H›Ý[™\žH]XÚØY™\‹ˆ]Ù\È›ÝY]\ÝX›\ÚHÝ™\˜[ÛÛ][Ûˆ›Ü‚”Þ[˜Ë‚‚•H™[XZ[š[™È^Y\œÈ\™N‚‚ŸŸŸ^œÛÝ\˜ÙH›ÙXÝÛÛ™\™Ù[˜ÙNˆÛÜœ™XÝY]›ØÝ\ÙY]]ÛX]YØÛÜBœÛÝ\˜ÙHØØ[X\HÝ[]Nˆ[\[Y[Y[˜ÛÛ\]H\™XÝ˜[Y][Û‚˜Ø]\Ø[XYÛ›ÜÝXÈÛÛ[Z]H›ÝYÚXÚÛ›ÝÛYÙ[Y[ˆÝ[Y™XÝ]™Bœ™\Ù\™Y\Ý]H[™›ÚYÕÚ[™ÝÜÈ[œÝ[][ÛŽˆ›Ý\™›Ü›YY›]™H›ÝšY\‹]ËXÛY[ÛÛ™\™Ù[˜ÙNˆ›Ý™\[‚˜XÚÛ›ÝÛYÙ[Y[[™ÜÝ›YÚYÜ™Y[Y[ˆ›ÝØœÙ\™YšY[\Ý[]™H™\^Nˆ›ÝØœÙ\™Y‘ÐÓLÈXØÙ\[˜ÙNˆ›Ý›Û[ÝYŸŸŸ‚‚XØÛÜ™[™ÛK›È]™HÛÛ›Û\È™[X\ÙYžH\È™XÛÛ˜Ú[X][Û‹‚‹KKB‚ˆÈŒ‹LËLŽH8 %ÜÝPÛÙ^™XÛÛ˜Ú[X][ÛŽˆÌLQÐÓLËTÌLTŒ‚ˆÈÈKˆ™XÛÛ˜Ú[X][Ûˆ[™[ÜB‚ŸŸŸ^”Ù\]Y[˜ÙNˆ“T“KLÜÝ[X]\šX[^˜][Ûˆ™XÛÛ˜Ú[X][Û‚”š[X\žH[š]ˆÌLQÐÓLËTÌLTŒ’[X[‹X\ÜØ^HÛÛ[Z]H[X\ÎˆÌLQÐÓLËTÌKTŒ”™\ÜÚ]ÜžNˆÝ\ËZKYÝKÛX\šÙZBœ˜[˜ÚˆÜ›KYÝX\™Y\›Ýš\Ú[Ûš[™ËLŒŒÌÂÛÛ›Û[™ÈÝYÚ[™ÈXYˆ˜XÍÍ™˜ŽMŒXLLÙMÎYLÎY˜ÎÎÍXXXLŒL˜MÍ“X]\šX[^˜][ÛˆÛÛ[Z]ˆMÍYN˜ØXŒŽLLŽYLÎNŽLŽLLXXØ˜ŒÎŽB“X]\šX[^˜][Ûˆ\™[ˆ˜XÍÍ™˜ŽMŒXLLÙMÎYLÎY˜ÎÎÍXXXLŒL˜MÍ”™[[ÝHœ˜[˜Ú™Y›Ü™HˆX›XØ][ÛŽˆY[XØ[ÈMÍYB“X]\šX[^˜][Ûˆ\Ý[˜ÙNˆ^XÝHÛ™H›Û‹Y›Ü˜ÙY˜\ÝY›ÜØ\™ÛÛ[Z]“]™HÜ\˜][Ûˆ]]Üš]H\š[™È™XÛÛ˜Ú[X][ÛŽˆ“Ó‘BŸŸŸ‚‚•\È[žH™XÛÛ˜Ú[\ÈŒYØZ[œÝHÛÛ›Û[™ÈÑKÑˆÛÛ˜XÝH^XÝ™ZYÚYš[H™[[ÝHÛÛ\\š\ÛÛ‹Ú[™ÙYÛÝ\˜ÙH[™\ÝË™\XÙ[Y[ËÒÒH[™H™]Z[™Y™\Ù\™Y\Ý]H]šY[˜ÙKˆÛÙ^\›Z[˜[È™[XZ[ˆØœÙ\˜][Û˜[[[XZ[ˆÚXÚÜÈÚ]\ˆH[\[Y[][Ûˆ™\™\Ù[ÈH[™\[™[]œ[™\È™\]Z\™YžHH[™‹‚‚ˆÈÈ‹ˆX›XØ][Ûˆ[™ØÛÜHÝX\™‚•HX]\šX[^˜][ÛˆÚ[™ÙY^XÝHZYÚ]Î‚‚ŸŸŸ^˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ø\Û˜]]™WØ]]ØÛÜÝ\™WÜ[›™\‹™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ú[™œ˜\ÝXÝ\™KÛØØ[ÜÞ[˜ËÜ™[[ÝWÜ\˜Ú\ÙWÙ]™[Ø\Y\‹™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ú[™œ˜\ÝXÝ\™KÛØØ[ÜÞ[˜ËÜ™[[ÝWÜ\˜Ú\ÙWÙ˜XÝÝÜš]\‹™\˜ÛY[ËÛX\šÙZWÙ›]\‹Ý\ÝØ\Û˜]]™WØÛÜÝ\™WÙXYÛ›ÜÝXÜ×Ý\Ý™\˜ÛY[ËÛX\šÙZWÙ›]\‹Ý\ÝÚ[™œ˜\ÝXÝ\™KÜ™[[ÝWÜ\˜Ú\ÙWÙ]™[Ø\Y\—Ý\Ý™\™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÑ×ÓÔ×ÐÓÑV›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÒÑ×ÐÓÑV›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÒWÑÓ—ÐÓÑV›YŸŸŸ‚‚•\È\È^XÝHÛ™HÛÛ[Z]Y\ˆHŒÝYÚ[™ÈXYˆ]™\žH]\È[œÚYH	ÜÂ˜[ÝÙY›ÙXÝ[Û‹\ÝÜˆËÒÒHØÛÜKˆHÛÈ˜XÝX\XØ][Ûˆ›ÙXÝ[Û‚™š[\ÈÙ\™HÝXÚYÛ›HÈYH]]Üš^™Y]\›Z[š\ÝXÈ\ÝÙX[\È›Üˆ[‚›Ý\Ú\ÙH[œ™XXÚX›H›ÙXÝ[XšYÝZ]H[™[ˆ\˜š]˜\žH\H˜Z[\™K‚‚“›ÈØÚ[XKZYÜ˜][Û‹^[ØYÜÝYTK]][XØ][Û‹[œ›ÛY[™\[™[˜ÞK›ÝšY\ˆÛÛ™šYÝ\˜][Û‹ÑKÑ‹‹‘P×ÑPQÓ“ÔÕPÔËY]ÙÛÙÞKœ\›X[™[YÛXZ[ˆÜˆÔ’SSÒT‘HÜ\˜]Üˆ][\™YHŒÛÛ[Z]‚‚ŸŸŸ^”ŒÑTÕÑ“Ô•ÐT‘ÑÕPT‘TTÔÂ”ŒÐÒS‘ÑQÔUÔÐÓÔOTTÔÂ”ŒÐ”SÒÕÔÓÑÖOTTÔÂ”ŒÓU‘WÓÔTUSÓ—ÑT’S‘×ÐÓÑVS“×Ô‘TÔ•Q”ŒÔ“Õ’QT—ÓUUUSÓ—ÑT’S‘×ÐÓÑVS“Ó‘WÔ‘TÔ•QŸŸŸ‚‚ˆÈÈËˆŒ[\›Ý™[Y[ÈXØÙ\Y][\[Y[][Ûˆ[™]]ÛX]YØÛÜB‚ˆÈÈÈÝ[][]]™H™\XÙ[Y[ÙˆHŒÈÚÛK[Øš™XÝÙ[XÝÜ‚‚•HŒÈÝ›Û™Ù\ÝY]™[Ù[XÝÜˆØ\È™[[Ý™YˆH[›™\ˆ›ÝÈÝÛœÈ[ˆ[‹[Y[[ÜžBœ\‹[Ü\˜][ÛˆÝ[][]]™HØš™XÝ[™\]\È]™Y›Ü™H]ØZ][™È\˜X›B™XYÛ›ÜÝXÈÜš]\Ë‚‚•HY\™ÙH™]Z[œÈ[\Ü[˜XÝÈ[Û›ÝÛšXØ[N‚‚‹H\ÝY™\ÜÛœÙH™XÙZ]™Y\È›Ý\˜\ÙYžHXÚÛ›ÝÛYÙ[Y[Üˆ\›Z[˜[ˆY˜][ÎÂ‹HHÛÛ[Z]YÝÛ›ØY\H™[XZ[œÈš\ÚX›H›ÝYÚ[ˆXÚÛ›ÝÛYÙ[Y[ˆ˜[œÜÜ^Ù\[ÛŽÂ‹HH›Ý™Y›Û˜XÚÈ\È›ÝÚ[[H™]Üš][ˆžHH]\ˆXÙZÛ\ŽÂ‹H™YÚ[‹X][\˜Z[\™HÝ\ÈH™XÛÜ™\ˆÚ]\œÚ\Ý[˜ÙHYÜ˜Y][ÛˆXÝ]™NÂ‹H›ÝË]Üš]H[™ÛÛ\][Û‹]Üš]H˜Z[\™HX\šÈYÜ˜Y][ÛˆÚ]Ý]›ÝÚ[™Âˆ›ÝYÚÛÜ™HÞ[˜ÎÂ‹H\›Z[˜[Y™XÞXÛHÝ]]›Ú™XÝÈXYÛ›ÜÝXÜË\\œÚ\Ý[˜ÙKYYÜ˜YYÚ[ˆBˆXYÛ›ÜÝXÈ[™H˜Z[Y‚‚•\È\™XÝHÛÜœ™XÝÈHŒÈY™XÝ[ˆÚXÚ[ˆXÚÛ›ÝÛYÙ[Y[\™\]Y\Ý]™[˜ÛÝ[™\XÙH[ˆX\›Y\ˆ\ÝYÝÛ›ØY[™ÛÛ[Z]Y\HØš™XÝ‚‚ˆÈÈÈ›ÙXÝØ\HXÚ\Ú[Ûˆ[™™\^H]šY[˜ÙB‚”ŒYÈ\™XÝ]\›Z[š\ÝXÈ]šY[˜ÙH›ÜŽ‚‚‹H[XšYÝ[Ý\È›Ü›X[^™YXÛÙH™\ÛÛ][Ûˆ›ÝYÚHÛÛœÝ˜Z[™Y\ÝÙX[NÂ‹H[XšYÝ[Ý\È^XÝZY[]H™\ÛÛ][Ûˆ›ÝYÚHØ[YH›Ý[™YÙX[NÂ‹H›ÙXÝ[Ûˆ[š\]Y[™\ÜÈÙY\[™ÈÜÙH[XšYÝ[Ý\È›ÝÈÚ\\È[œ™XXÚX›H›ÝYÚˆÜ™[˜\žHÝÜ˜YÙNÂ‹H\ÝX›\ÚY[˜ÛÛZ[™ÈURQ[[]]X›H]]][ÛŽÂ‹H\˜š]˜\žH[™^XÝY\H˜Z[\™H[™ÛÛ\]H›Û˜XÚÎÂ‹H™\^HÙˆH›Ü›Y\›H™Z™XÝY^XÝZY[]KÙY™™\™[XÛÙH]™[Â‹H]\ˆÝ\œÛÜˆ›ÙÜ™\ÜÈY\ˆ]™\^NÂ‹HZ^YÛËXÛY[YÙH\XØ][Ûˆ[™Y[\Ý[™\^HÚ]Ý]\XØ]Bˆ›ÙXÝÝÜ™K\˜Ú\ÙK\˜Ú\ÙH][HÜˆ[˜›ÞY™™XÝË‚‚•HŒÈ›ÙXÝ™\ÛÛ™\‹™[[ÝK]Ë[ØØ[›ÙXÝX\[™Û™KQšY]˜[œØXÝ[Û‚™˜XÝËÚ[˜›ÞØÝ\œÛÜˆ›Ý[™\žH™[XZ[ˆ[˜Ú[™ÙY‚‚ˆÈÈÈXYÛ›ÜÝXÈYÜ˜Y][Ûˆ]šY[˜ÙB‚‘›ØÝ\ÙY[›™\ˆ\ÝÈ[š™XÝ‚‚‹HXYÛ›ÜÝXËX][\™YÚ[ˆ˜Z[\™NÂ‹HXYÛ›ÜÝXÈ›ÝÈ˜Z[\™HÚ]ÛÛ[Z]Y\NÂ‹HXYÛ›ÜÝXÈ›ÝÈ˜Z[\™HÚ[H™\Ü[™È›Û˜XÚÎÂ‹HXYÛ›ÜÝXÈÛÛ\][Ûˆ˜Z[\™HY\ˆÛÛ[Z]Y\NÂ‹HXÚÛ›ÝÛYÙ[Y[˜[œÜÜ^Ù\[ÛˆY\ˆÛÛ[Z]Y\K‚‚•ÜÙH\ÝÈ\ÝX›\Ú]XYÛ›ÜÝXÈ\˜Xš[]H\ÈØœÙ\˜][Û˜[[™Ø[››ÝžBš]Ù[ˆ›\HÛÜ™H™\Ý[X[Y˜XÝ\™H›ÝšY\ˆÝXØÙ\ÜÈÜˆ™]™[˜XÚÛ›ÝÛYÙ[Y[Y\ˆ[ˆ[™\[™[HÛÛ[Z]YÝ\œÛÜ‹‚‚ˆÈÈˆ˜[Y][ÛˆXœÛÜ˜™Y[™\ˆËLB‚ÛÙ^™\ÜÎ‚‚ŸŸŸ^™\›Ü›X]ÚXÚÏTTÔÎÈNš[\ÎÈÚ[™ÙY™›]\ˆ[˜[^™OTTÔÂ™›ØÝ\ÙY˜]]™HXYÛ›ÜÝXÜÏLÌÈTÔÂ™›ØÝ\ÙY™[[ÝH\Y\LNTÔÂ˜ÛÛXš[™YXYÛ›ÜÝXËÜ™\ÜÚ]ÜžKØ\Y\MŒHTÔÂ›ØØ[Þ[˜È\XØ][ÛLŽHTÔÂÛËY]šXÙH]\›Z[š\ÝXÈ\›™\ÜÏLHTÔÂŒÈÛÛ˜XÝLˆTÔÂ˜Ø][ÙÝYKÜÝÜ™KØ\™YÜ™\ÜÚ[ÛLÍTÔÂ™[›]\ˆ\ÝLŒŽTÔÈÈ\ÜÜØX›HXœÈÚÚ\Y™XYÈ[™›ÚYTÈZ[TTÔÂ•Ú[™ÝÜÈ™[X\ÙHZ[TTÔÈš\œÝ][\›Y\™ÙY[™›ÚYX[šY™\Ý[œÜXÝ[ÛTTÔÂ™Ú]Y™ˆKXÚXÚÏTTÔÂ™XYÛ›ÜÝXÜÈÙ[™\˜]Ü‹ØÚXÚÏTTÔÂ˜Ú[™ÙYXÛÛ[Ù[œÚ]]™HØØ[TTÔÈ™\ÜYŸŸŸ‚‚•H\ÜÜØX›HÜÝYÜ›ÝšY\ˆXœÈÙ\™HÚÚ\Y™XØ]\ÙHPT’ÑRWÔ•S—ÔÖS×ÓP‚Ø\ÈXœÙ[ˆ›È]™H[™›ÚYÜˆÚ[™ÝÜÈÛY[™\Ù\™Y\XØ][Ûˆ]X˜\ÙK”™[™\ˆÜ\˜][ÛˆÜˆ›ÝšY\ˆ]]][ÛˆØ\È^\˜Ú\ÙY‚‚•\ÙH™\Ý[È\™HÝ›Û™ÈØØ[[\[Y[][Û‹]\›Z[š\ÝXÈ\Ý™YÜ™\ÜÚ[Û‚˜[™XÚØYÚ[™È]šY[˜ÙKˆ^HÈ›Ý›Ý™H[œÝ[Y™\Ù\™Y\Ý]H™Z]š[Ü‹›]™H›ÝšY\‹]ËXÛY[ÛÛ™\™Ù[˜ÙK]™HXÚÛ›ÝÛYÙ[Y[šY\™XÝ[Û˜[š[\‹Y]šXÙH\ØXš[]KY[\Ý[ÜÝY™\^HÜˆÐÓLÈÛÜÝ\™K‚‚ˆÈÈKˆXZ[ˆØ\H8 %XÚÛ›ÝÛYÙ[Y[]\È›Ý[ˆ[™\[™[Ý[][]]™H[™B‚‘™\]Z\™YHÝ[][]]™HÜ\˜][ÛˆÝ]HÈ™]Z[ˆXÚÛ›ÝÛYÙ[Y[\È[‚š[™\[™[›Ý\Ý\YÝ\Y[™Û\ÜÚYšYY\™\Ý[›ÙÜ™\ÜÚ[Û‹‚‚•H[\[Y[YÝ[][]]™H\H\È›ÈXÚÛ›ÝÛYÙ[Y[Ý]HÜˆ™\Ý[šY[‚•H^\›˜[Þ[˜ÑXYÛ›ÜÝXÔ\ÙQ]šY[˜ÙH\H[ÛÈ\È›ÈXÚÛ›ÝÛYÙ[Y[™[Y[œÚ[Û‹ˆ[ˆXÚÛ›ÝÛYÙ[Y[\È™\™\Ù[YÛ›HžHÙ[™\šXÈšY[Î‚‚ŸŸŸ^œ\ÙB›˜]]™PÛÙB›Ý]ÛÛYBœ›ÝšY\ÛÛXÝÝ]Bœ›ÝšY\•˜[œØXÝ[Û”Ý]B\ÝY™\ÜÛœÙTÝ]BŸŸŸ‚‚•ÜÙHÙ[™\šXÈšY[È\™H]\ˆÝ™\Üš][ˆÜˆY\™ÙYÚ]\ØYÝÛ›ØY[™\›Z[˜[]šY[˜ÙKˆHXÚÛ›ÝÛYÙ[Y[Y^Ù\[Ûˆ\Ý›Ý™\È]\ÝY™ÝÛ›ØY[™ÛÛ[Z]YØØ[\HÝ\š]™K]]Ù\È›Ý\ÜÙ\‚‚ŸŸŸ^˜XÚÛ›ÝÛYÙ[Y[Ý\Y˜XÚÛ›ÝÛYÙ[Y[™\ÜÛœÙHXœÙ[Üˆ™XÙZ]™Y˜XÚÛ›ÝÛYÙ[Y[Ý]ÛÛYH[šÛ›ÝÛ‹˜Z[Y™Z™XÝYÜˆ\YYŸŸŸ‚‚Y\ˆH[›™\ˆ™XÛÜ™ÈHÙ[™\šXÈ\›Z[˜[^Ù\[Û‹\ÙH[™˜]]™PÛÙH›Â›Û™Ù\ˆ™\Ù\™HHXÚÛ›ÝÛYÙ[Y[\™\]Y\ÝY[]H[ˆHÝ[][]]™BœÛ˜\ÚÝˆ\˜X›H]™[\ÝÜžHX^HÝ[ÛÛZ[ˆH™\]Y\Ý›ÝË]™^XÚ]H™\]Z\™YH[›™\‹ÛY™XÞXÛHÝ[][]]™HÛ˜\ÚÝÈ™\Ù\™HB˜XÚÛ›ÝÛYÙ[Y[˜[œÚ][Ûˆ[™\[™[K‚‚•H›ÝšY\•˜[œØXÝ[Û”Ý]HšY[Ø[››ÝÝXœÝ]]H›Üˆ\È[Y[œÚ[Û‹ˆBœ™]š[Ý\ÈÝXØÙ\ÜÙ[\ØYX^HÙ]]ÈÛÛ[Z]YˆYˆXÚÛ›ÝÛYÙ[Y[]\‚›ÝÜÈ™Y›Ü™HH\ÝY™\ÜÛœÙKHÝ[][]]™HÝ]HØ[ˆ™]Z[ˆÛÛ[Z]Y™œ›ÛHH\ØY[™Ù™™\ˆ›ÈšY[ÚÝÚ[™È]XÚÛ›ÝÛYÙ[Y[Y\™[HÝ\Y˜[™\È[˜Ù\Z[‹ˆ\ÈØ[ˆZ\ÛXYH\›Z[˜[ÛÛœÝ[Y\ˆ[È™XY[™È[ˆ\ØYœ›ÝšY\ˆ˜[œØXÝ[Ûˆ\ÈXÚÛ›ÝÛYÙ[Y[ÝXØÙ\ÜË‚‚•\™Y›Ü™N‚‚ŸŸŸ^PÒ×ÕS”ÒUSÓ—Ô‘URS”×Ô’SÔ—ÑÕÓ“ÐQÐTOTTÔÂPÒ×ÒS‘TS‘S•Ó“ÕÔÕT•QÔÕT•QÔ‘TÕSÔÕUOQRSÓÔS‚PÒ×ÑVÑTSÓ—ÐÓTÔÒQ’PÐUSÓ—ÒS—ÐÕSUSUU‘WÔÓTÒÕTT•PSPÒ×ÕS”ÒUSÓ—Õ•UÔ‘TÑT•‘QÕT“RSSS“ÕÔ“ÓSÕQÐT×ÐÓÓTUBŸŸŸ‚‚ˆÈÈ‹ˆXZ[ˆØ\ˆ8 %\Ý[˜ÝØØ[˜[œØXÝ[ÛœÈ\™HÛÛ\ÙY[ÈÛ™H]]][ÛˆšY[‚•HÝ[][]]™HÝ]HÝÛœÈÛ™HÙ[™\šXÈØØ[]]][Û”Ý]KˆÜ™[˜\žHÞ[˜È\Ù\Â]Ø[YHšY[›ÜˆY™™\™[ØØ[˜[œØXÝ[ÛœÎ‚‚‹H\ØYX\ÙKÜ™\Ý[\œÚ\Ý[˜ÙHØ[ˆ[Z]ÛÛ[Z]YÂ‹H[˜›Ý[™YÙH\XØ][ÛˆØ[ˆ[Z]ÛÛ[Z]YÜˆ›ÛYX˜XÚÎÂ‹HXYÛ›ÜÝXÈ\œÚ\Ý[˜ÙH\È˜XÚÙYÙ\\˜][K‚‚•HY\™ÙHÛ\ÜÚYšY\ÈÛÛ[Z]Y›ÛÝÙYžH›ÛYX˜XÚËÜˆ›ÛYX˜XÚÈ›ÛÝÙY˜žHÛÛ[Z]Y\ÈXYÛ›ÜÝXËXØ]\Ø[Z[˜\šX[XÛÛ™›XÝ‚‚•][H\È˜[YÛ›HÚ[ˆÛÈXÛ\˜][ÛœÈÛÛ˜YXÝHØ[YH˜[œØXÝ[Û‹‚’]\È›Ý˜[YÚ[ˆ[ˆ\ØY\]Y]YH˜[œØXÝ[ÛˆÛÛ[Z]È[™H]\ˆ[™\[™[™ÝÛ›ØYX\H˜[œØXÝ[Ûˆ›ÛÈ˜XÚËˆ›Ý˜XÝÈØ[ˆ™HYH[ˆÛ™HÜ™[˜\žB”Þ[˜Ë‚‚•H™\]Z\™Y™\Ù\™Y\Ý]HØÙ[˜\š[ÈXZÙ\È\ÈÛÛ˜Ü™]KˆHX\›Y\ˆ[™›ÚY›Ü\˜][ÛˆÝXØÙ\ÜÙ[H\ØYY]È[™[™È]™[[™[ˆ˜Z[YÚ[H\Z[™ÂšÜÝY[˜›Ý[™]™[ËˆHÛÜœ™XÝY[\[Y[][Ûˆ]\Ý™HX›HÈ™\™\Ù[‚‚ŸŸŸ^\ØYØØ[\œÚ\Ý[˜ÙOXÛÛ[Z]Y™ÝÛ›ØY\ÝY™\ÜÛœÙO\™XÙZ]™Y™ÝÛ›ØYØØ[\O\›ÛYX˜XÚÂ˜XÚÛ›ÝÛYÙ[Y[[›Ý\Ý\YŸŸŸ‚‚”ŒØ[ˆ[œÝXYY\™ÙHHš\œÝÛÈØØ[[]]][ÛˆXÛ\˜][ÛœÈ[Â™XYÛ›ÜÝXËZ[˜\šX[XÛÛ™›XÝˆH™]È›Û˜XÚÈ\ÝÈ\ÙH›Èš[ÜˆÛÛ[Z]Y\ØY]]][Û‹ˆHZ^YXÛY[™\^H\ÝØ[ÈH\Y\ˆ\™XÝH[™™Ù\È›Ý^\˜Ú\ÙHHÛÛÜ™[˜]ÜˆÙ\]Y[˜ÙHÙˆÝXØÙ\ÜÙ[\ØY›ÛÝÙYžB™˜Z[Y[˜›Ý[™\K‚‚ÛÛœÙ\]Y[HHœ›ØYËÒÒHÛÛ˜Û\Ú[Ûˆ]]™\žH]]Üš]]]™H˜[œØXÝ[Û‚œ[™H\È[™\[™[H™]Z[™Y\ÈÛÈÝ›Û™Ë‚‚ŸŸŸ^•TÐQÓÐÐSÔT”ÒTÕSÑWÔS‘OS“ÕÔÑTTUQ‘ÕÓ“ÐQÓÐÐSÐTWÔS‘OS“ÕÔÑTTUQ“QÒUSPUWÕTÐQÐÓÓSRUÔT×ÐTWÔ“ÓPÒÏUS•TÕQÐS‘ÓRTÐÓTÔÒQ’QQÐUTÐSÕS”ÐPÕSÓ—ÔT•USÓQRSÓÔS‚ŸŸŸ‚‚ˆÈÈËˆËLH\ÜÜÚ][Û‚‚ŸŸŸ^ÛZ[NˆŒØ\ÈÛ™HØÛÜY˜\ÝY›ÜØ\™X]\šX[^˜][Û‚”™\Ý[ˆPÐÑTQ‘]šY[˜ÙHÙZ[[™ÎˆÚ]Xˆ[˜Ù\ÝžH[™^XÝ]ÛÛ\\š\ÛÛ‚‚ÛZ[NˆŒÈÚÛK[Øš™XÝ]šY[˜ÙH™\XÙ[Y[Ø\ÈÛÜœ™XÝY”™\Ý[ˆPÐÑTQÐUÒSTSQS•USÓ—ÐS‘Ñ“ÐÕTÑQÕTÕÔÐÓÔB‘]šY[˜ÙHÙZ[[™Îˆ\ÝYÝÛ›ØY[™ÛÛ[Z]Y\HÝ\š]™HXÚËÝ\›Z[˜[ˆY˜][È[ˆ]\›Z[š\ÝXÈ[›™\ˆ\ÝÂ‚ÛZ[NˆXYÛ›ÜÝXÈ™YÚ[‹›ÝÈ[™ÛÛ\][Ûˆ˜Z[\™\È\™HÛÛZ[™Y”™\Ý[ˆPÐÑTQÐUÑUT“RS’TÕP×ÕTÕÔÐÓÔB‘]šY[˜ÙHÙZ[[™ÎˆØØ[[š™XÝY™XÛÜ™\ˆ˜Z[\™\ÎÈ›È™\Ù\™Y\Ý]H[[YB‚ÛZ[NˆHZ\ÜÚ[™È›ÙXÝØ\KÜ™\^H\ÝØ]YÛÜšY\ÈÙ\™HX]\šX[^™Y”™\Ý[ˆPÐÑTQÐUÑUT“RS’TÕP×ÐTQT—ÔÐÓÔB‘]šY[˜ÙHÙZ[[™ÎˆÛÛœÝ˜Z[™Y\ÝÙX[\È[™ØØ[šY]X˜\Ù\Â‚ÛZ[NˆXÚÛ›ÝÛYÙ[Y[]\È™]Z[™Y[™\[™[B”™\Ý[ˆ‘R‘PÕQÐT×ÐÓÓTUB‘]šY[˜ÙNˆ›ÈXÚÛ›ÝÛYÙ[Y[šY[Ü™\Ý[^\ÝÈ[ˆÝ[][]]™HÜˆ›Ú™XÝYˆÝ]NÈÙ[™\šXÈ›ÝšY\ˆšY[ÈÛÛ™›]H\ØY[™XÚÛ›ÝÛYÙ[Y[‚ÛZ[NˆØØ[˜[œØXÝ[Ûˆ]\È\][Û™YÛÜœ™XÝB”™\Ý[ˆ‘R‘PÕQÐT×ÐÓÓTUB‘]šY[˜ÙNˆ\ØY\œÚ\Ý[˜ÙH[™ÝÛ›ØY\HÚ\™HÛ™H]]][ÛˆšY[ÂˆYÚ][X]HÛÛ[Z][ˆ›Û˜XÚÈ™XÛÛY\È[ˆ[˜\šX[ÛÛ™›XÝ‚ÛZ[Nˆ[Œ\›Z[˜[ÈX^H™H›Û[ÝY\ÈTÔÂ”™\Ý[ˆ‘R‘PÕQ‘]šY[˜ÙNˆPÒ×ÕS”ÒUSÓ—Õ•UÔ‘TÑT•‘Q[™ÕSUSUU‘WÐÐUTÐSÔÕUH™[XZ[‚ˆ\X[™XØ]\ÙHH™\]Z\™Y[™\[™[[™\È\™HXœÙ[‚ÛZ[NˆÝ™\˜[[™›ÚYÕÚ[™ÝÜÈÞ[˜È\ÈÛÛ™Y”™\Ý[ˆ‘R‘PÕQÈ“ÕQU“Õ‘Q‘]šY[˜ÙNˆ›ÈÛÜœ™XÝY™\Ù\™Y\Ý]HÛY[ÈÜˆ]™H\ÜØ^NÈÛÈÛÝ\˜ÙH]ˆ\][ÛœÈ™[XZ[ˆ[˜ÛÛ\]BŸŸŸ‚‚ˆÈÈˆXZ[ˆ\›Z[˜[‚•HÛÙ^STSQS•QÕSQUQ\›Z[˜[\È™]Z[™Y\ÈÛÙ^]šY[˜ÙKˆXZ[‚˜XØÙ\ÈH›ÙXÝ\KÜ™\^H[™XYÛ›ÜÝXËYYÜ˜Y][ÛˆXÚY]™[Y[È]™Ù\È›Ý›Û[ÝHŒ\ÈXÛÛ\]K‚‚ŸŸŸ^ÖPÓLLSÔS‚‘ÐÓLPÓÔÑQÒÔÕQÔÐSQWÑU’PÑWÔÐÓÔB‘ÐÓLÏPPÕU‘WÐÓÔ”‘PÕU‘WÓPUT’PSVUSÓ‚ÌLÑÐÓL×ÔÌLÔŒRSTSQS•QÕÒUÓPRS—Ô‘PÓÓÒSPUSÓ—ÑÐTÂÌLÑÐÓL×ÔÌWÔŒRSPS—ÐTÔÐVWÐÓÓ•S•RUWÐSPTÂ”ŒÔ‘SSÕWÐÓÓSRUYMÍYN˜ØXŒŽLLŽYLÎNŽLŽLLXXØ˜ŒÎŽB”ŒÔÐÓÔWÔ‘PÓÓÒSPUSÓTTÔÂ”ŒÔ“ÑPÕÐTWÔ‘TVWÓPU’VTTÔ×ÐUUÓPUQÔÐÓÔB”ŒÑPQÓ“ÔÕP×ÑQÔQUSÓTTÔ×ÐUUÓPUQÔÐÓÔB”ŒÕ•TÕQÑÕÓ“ÐQÐS‘ÐÓÓSRUQÐTWÔ‘US•SÓTTÔ×ÐUUÓPUQÔÐÓÔB”ŒÐPÒÓ“ÕÓQÑSQS•ÒS‘TS‘S•ÔÕUOQRSÓÔS‚”ŒÓÐÐSÕS”ÐPÕSÓ—ÔT•USÓQRSÓÔS‚ÕSUSUU‘WÐÐUTÐSÔÕUOTT•PSPÒ×ÕS”ÒUSÓ—Õ•UÔ‘TÑT•‘QTT•PSÑRS’S•T—ÑU’PÑWÔÐSQWÐPÐÓÕS•ÔÖSÏQRSÓÔS‚“U”ÔÖS×ÐPÐÑTSÑOS“ÕÔ“ÓSÕQS‘“ÒQÔÖSÏRS•ÒS‘ÕÔ×ÔÖSÏRS”‘U–WÔ‘PÓÕ‘T–ORS”UQT–ORS‘S”“ÓQ×Ó“ÕÔ‘TPU“‘U×ÔTÒTÑWÔ‘QÒTÕUSÓRS‘PQÓ“ÔÕP×ÒTÕÔ–OT‘TÑT•‘B”“Õ’QT—ÓUUUSÓS“Ó‘B“‘VÐPÕSÓTÕQÑWÐÌLÑÐÓL×ÔÌLÔŒWÕ•UÔS‘WÐÓÓTUSÓ‚ŸŸŸ‚‚ˆÈÈKˆŒHÛÜœ™XÝ]™H\™XÝ]™Hœ˜[YB‚•H™^[\[Y[][Ûˆ]]Üš]HÚÝ[™N‚‚ŸŸŸ^”š[X\žH[š]ˆÌLQÐÓLËTÌLTŒB’[X[‹X\ÜØ^HÛÛ[Z]H[X\ÎˆÌLQÐÓLËTÌKTŒB”Ý\[™È[\[Y[][Ûˆ\™[ˆH]\™HXZ[ˆÑKÑˆÝYÚ[™ÈÛÛ[Z]\ØÙ[™Yˆ\™XÝHœ›ÛH\Èˆ™XÛÛ˜Ú[X][Û‚ŸŸŸ‚‚”ŒH]\Ý™[XZ[ˆ˜\œ›ÝÙ\ˆ[ˆŒ‚‚ˆÈÈÈ™\]Z\™YÝ]HÙ\\˜][Û‚‚•H™XÛÜ™\‹[ÝÛ™YÝ[][]]™H[Ù[]\Ý™]Z[ˆ[™\[™[N‚‚ŒKˆ\ØY™\]Y\ÝÜ›ÝšY\ˆÝ]ÛÛYNÂŒ‹ˆ\ØYØØ[X\ÙKÜ™\Ý[\\œÚ\Ý[˜ÙHÝ]ÛÛYNÂŒËˆÝÛ›ØY™\]Y\Ý[™\ÝY\™\ÜÛœÙHÝ]ÛÛYNÂˆ[˜›Ý[™ØØ[X\H›Ý\Ý\YØÛÛ[Z]YÜ›ÛYX˜XÚËÝ[šÛ›ÝÛŽÂKˆXÚÛ›ÝÛYÙ[Y[›Ý\Ý\YÜ™\]Y\Ý\Ý\YÜ™\ÜÛœÙK\™XÙZ]™Y[™Û\ÜÚYšYYˆÝ]ÛÛYNÂ‹ˆXYÛ›ÜÝXÈ\œÚ\Ý[˜ÙH\˜X›KÙYÜ˜YYÂËˆ]\Ý[\™Y\ÙK]\Ý›Ý™Y\ÙK›Ý[™Y\›Z[˜[™\Ý[ˆØ[š]^™Y^Ù\[ÛˆÛ\ÜÈ[™ØY™HXÝ[Û‹‚‚HÝ]Hœ›ÛHÛ™H˜[œØXÝ[Ûˆ]\Ý›ÝØ]\ÙžHÜˆÛÛ˜YXÝ[›Ý\ˆ˜[œØXÝ[Û‹‚’[ˆ\XÝ[\Ž‚‚ŸŸŸ^\ØYÛÛ[Z]Y
+È[˜›Ý[™\H›ÛYX˜XÚÈH˜[YÛÛ\Ý[™Ý]B\ØYÛÛ[Z]Y
+ÈXÚÛ›ÝÛYÙ[Y[[˜Ù\Z[ˆH˜[YÛÛ\Ý[™Ý]Bš[˜›Ý[™\HÛÛ[Z]Y
+ÈXÚÛ›ÝÛYÙ[Y[[˜Ù\Z[ˆH˜[YÛÛ\Ý[™Ý]Bš[˜›Ý[™\H˜Z[YÝ[œ›Ý™Y
+ÈXÚÛ›ÝÛYÙ[Y[Ý\YH›Ý[™Y[˜\šX[ŸŸŸ‚‚•HY™XÞXÛH[™[›™\ˆ˜[˜XÚÈ]\Ý›Ú™XÝH[™\[™[[˜›Ý[™X\H[™˜XÚÛ›ÝÛYÙ[Y[˜XÝËˆYˆHÝ\œ™[X›XÈ]šY[˜ÙH[Ù[Ø[››Ý™\™\Ù[[HÚ]Ý][XšYÝZ]KŒHX^H^[™H[‹[Y[[ÜžKØ\XØ][Ûˆ]šY[˜ÙH\B˜[™›Ý[™YY™XÞXÛHšY[È[œÚYHH\›Ý™Y›]\ˆØÛÜKˆ]]\Ý›ÝY˜H]X˜\ÙHZYÜ˜][Û‹ÜÝY^[ØYšY[Üˆ›ÝšY\ˆÛÛ˜XÝÚ[™ÙK‚‚ˆÈÈÈ™\]Z\™Y\™XÝ\ÝÂ‚”ŒH]\ÝYÛÛÜ™[˜]Ü‹Ü[›™\‹[]™[]\›Z[š\ÝXÈ\ÝÈ›ÜŽ‚‚ŒKˆ›È\ØYÛÛ[Z]Y[˜›Ý[™\KXÚÛ›ÝÛYÙ[Y[ÝXØÙ\ÜÎÂŒ‹ˆ›È\ØYÛÛ[Z]Y[˜›Ý[™\KXÚÛ›ÝÛYÙ[Y[˜[œÜÜ^Ù\[ÛŽÂŒËˆÝXØÙ\ÜÙ[\ØY\œÚ\Ý[˜ÙH›ÛÝÙYžH[˜›Ý[™\H›Û˜XÚÎÂˆÝXØÙ\ÜÙ[\ØY\œÚ\Ý[˜ÙH›ÛÝÙYžHÛÛ[Z]Y[˜›Ý[™\H[™ˆXÚÛ›ÝÛYÙ[Y[˜[œÜÜ^Ù\[ÛŽÂKˆ\ØY[šÛ›ÝÛ‹Ü™Z™XÝY›ÛÝÙYžHH^\Ý[™ÈX\›HÝÜÚ]›ÈÝÛ›ØYˆÜˆXÚÛ›ÝÛYÙ[Y[›ÛÙŽÂ‹ˆ˜Z[YÝ[œ›Ý™Y[˜›Ý[™\HÚ]XÚÛ›ÝÛYÙ[Y[›ÝÝ\YÂËˆXYÛ›ÜÝXÈ™YÚ[‹Ü›ÝËØÛÛ\]H˜Z[\™HXÜ›ÜÜÈHÛÛ\Ý[™\ØYÙÝÛ›ØYØXÚÂˆØ\Ù\ÈÚ]Ý][\š[™È[žHÛÜ™H[™NÂŽˆ\›Z[˜[›Ú™XÝ[Ûˆ™\Ù\š[™È\ØY[˜›Ý[™\H[™XÚÛ›ÝÛYÙ[Y[ˆšY[È[™\[™[NÂŽKˆ›È˜[ÙHXYÛ›ÜÝXÈ[˜\šX[›Üˆ˜[YÜ›ÜÜË\\ÙH˜[œØXÝ[ÛˆÝ]ÛÛY\ÎÂŒLˆH™X[ÛÛ˜YXÝ[ÛˆÚ][ˆHØ[YH]]Üš]]]™H[™H›ÙXÚ[™ÈBˆ›Ý[™Y[˜\šX[Ø]YÛÜžNÂŒLKˆØ[š]^™YY™XÞXÛHÝ]]ÛÛZ[š[™È›È^[ØY\Ú[™\ÜÈ˜XÝURQˆÚÙ[‹ÔS^Ù\[ÛˆY\ÜØYÙKÝXÚËÙXÜ™]Üˆ[\ÚÂŒL‹ˆ™YÜ™\ÜÚ[ÛˆÙˆHXØÙ\YŒËÔŒ›ÙXÝXÚ\Ú[Û‹Ú\ÛÛ‹\YÙH[™ˆY[\Ý[™\^H™Z]š[Ü‹‚‚‘\™XÝ\ÜÙ\[ÛœÈ]\Ý[œÜXÝ[™\[™[šY[È˜]\ˆ[ˆ[™™\‚˜XÚÛ›ÝÛYÙ[Y[œ›ÛH›ÝšY\•˜[œØXÝ[Û”Ý]HÜˆ[™™\ˆ[˜›Ý[™\Hœ›ÛHB™Ù[™\šXÈÜ\˜][Û‹]ÚYHØØ[]]][Û”Ý]K‚‚ˆÈÈÈœ›Þ™[ˆ›Ý[™\šY\Â‚”ŒH]\Ý™\Ù\™N‚‚‹HHŒÈ›ÙXÝ™\ÛÛ™\ˆ[™™[[ÝK]Ë[ØØ[™Y™\™[˜ÙHX\Â‹HHŒ[XšYÝZ]K[™^XÝYX\KÚ\ÛÛ‹\YÙH[™Z^Y™\^H]šY[˜ÙNÂ‹HÛ™HšY˜[œØXÝ[Ûˆ›Üˆ˜XÝËÚ[˜›ÞØÝ\œÛÜŽÂ‹HXÚÛ›ÝÛYÙ[Y[[YÚXš[]Hœ›ÛHÛÛ[Z]YÛÛYÝ[Ý\ÈÝ\œÛÜˆÛ›NÂ‹HXYÛ›ÜÝXÈ\œÚ\Ý[˜ÙH\È™\ÝYY™›ÜØœÙ\˜Xš[]NÂ‹H›ÝØÛÛŒËØÚ[XKÜÝYTK]][œ›ÛY[XØÛÝ[š[™[™Ëˆ\[™[˜ÚY\ËÝÜ™H[\È[™\œÛÛ‹Ô^[Y[™\ÝšXÝ[ÛœË‚‚”ŒH]\Ý\™›Ü›H›È]™HÞ[˜Ë™]žK™XÛÝ™\žK]Y\žK[œ›ÛXÚÛ›ÝÛYÙ[Y[›™]È\˜Ú\ÙH™YÚ\Ý˜][Û‹™\Ù\™Y\Ý]H[œÝ[][Û‹›ÝšY\ˆ]]][Û‹™XYÛ›ÜÝXÈÛX\š[™ËZYÜ˜][Û‹™X˜\ÙKœ˜[˜ÚÜ™X][Û‹›Ü˜ÙH\ÚÜˆ‹‚‚‘ËÒÒH]\Ý™H™\XÙY[™]\Ý™\Ü[žH™\ÚYX[\X[[™HÛ™\ÝK‚‚ˆÈÈLˆÜÝTŒH[X[ˆ›Ý]B‚“Û›HY\ˆŒHX]\šX[^˜][Ûˆ[™HÙ\\˜]HXZ[ˆ™XÛÛ˜Ú[X][ÛˆX^HH[X[‚˜\ÜØ^H[™H™\Ý[YK‚‚•H›Ýš\Ú[Û˜[Ü™\ˆ\Î‚‚ŒKˆZ[[™[œÝ[ŒKY\ØÙ[™Y[™›ÚY[™Ú[™ÝÜÈ\Y˜XÝÈÚ[H™\Ù\š[™Âˆ›Ý\XØ][Ûˆ]X˜\Ù\È[™XYÛ›ÜÝXÈ\ÝÜžNÂŒ‹ˆ›Ý™H^XÝZ[›Ý™[˜[˜ÙK]][XØ][Û‹^\Ý[™È[œ›ÛY[]Y]YBˆÝ]K]šXÙHÙ\]Y[˜Ù\È[™XœÙ[˜ÙHÙˆ]]ÛX]XÈÞ[˜ÎÂŒËˆ\™›Ü›HÙ™›[™H›ÙXÝØ][ÙÝYH[™\ÝÜžH›Ú™XÝ[ÛˆÚXÚÜÈÚ]Ý]ˆ™YÚ\Ý\š[™ÈH™]È\˜Ú\ÙNÂˆœ™Y^™Hœ™\Ú™XY[Û›H[™›ÚYÔS]KÚ[™ÝÜÈÔS]H[™›ÝšY\ˆ˜\Ù[[™\ÎÂKˆÚÛÜÙH^XÝHÛ™Hš\œÝÛY[œ›ÛHÜÙHXÝX[˜\Ù[[™\ÎÂ‹ˆ]]Üš^™HÛ™HÜ™[˜\žHÞ[˜ÈÛ›NÂËˆ™XÛÛ˜Ú[HY™XÞXÛKRKÔS]K™[™\ˆ[™›ÝšY\ˆ™\Ý[È™Y›Ü™HHÝ\‚ˆÛY[X^HXÝÂŽˆ]]Üš^™HHÙXÛÛ™ÛY[Û›HY\ˆHš\œÝ™\Ý[\ÈÛ\ÜÚYšYYÂŽKˆ[ˆÛ™HÙ\\˜][H]]Üš^™Y›Ë[Ü™\X]›Ýš[™ÈY[\Ý[˜ÞH[™›Âˆ\XØ]H›ÙXÝÝÜ™K\˜Ú\ÙHÜˆ\˜Ú\ÙH][K‚‚•H›Ü›Y\ˆÐÓLÈ[ˆ™[XZ[œÈ›Ý™[˜[˜ÙK›Ý^XÝ]X›H]]Üš]Kˆ›ÝÜÝY”\˜Ú\Ù\È[™XYH^\Ý[™]\Ý›Ý™H™XÜ™X]YˆH\ÝÜšXØ[Ú[™ÝÜÂ˜ÛÛ[Z]]™\œÝ\Ë\›Û˜XÚÈ]™[XZ[œÈ[œ™\ÛÛ™YÈHÝ\œ™[š\œÝXÛY[Ü™\‚›]\Ý\™Y›Ü™HÛÛYHœ›ÛHœ™\Ú™XY[Û›H˜\Ù[[™\È˜]\ˆ[ˆHÛ•Ú[™ÝÜËYš\œÝÙ\]Y[˜ÙK‚‚[™›ÚY\ÈH›Ýš\Ú[Û˜[XYÛ›ÜÝXÈ™Y™\™[˜ÙH™XØ]\ÙH]ÈX\›Y\ˆ›Û˜XÚÂØ\È\™XÝH›Ý™YÚ[HÚ[™ÝÜÈ˜[œØXÝ[Ûˆ]Ø\È›Ýˆ\È\È›Ý[‚˜]]Üš^˜][ÛˆÜˆš[˜[Ü™\‹ˆŒH™XÛÛ˜Ú[X][Ûˆ[™œ™\Ú˜\Ù[[™\ÈÛÛ›Û]XÚ\Ú[Û‹‚‚ˆÈÈLKˆ[›Ý[™\žB‚•[[ŒH\ÈÝYÙY[\[Y[Y[™™XÛÛ˜Ú[Y‚‚ŸŸŸ^S‘“ÒQÔÖSÏRS•ÒS‘ÕÔ×ÔÖSÏRS”‘U–WÔ‘PÓÕ‘T–ORS”UQT–ORS‘S”“ÓQ×Ó“ÕÔ‘TPU“‘U×ÔTÒTÑWÔ‘QÒTÕUSÓRS”‘TÑT•‘QÔÕUWÒS”ÕSRS‘PQÓ“ÔÕP×ÒTÕÔ–OT‘TÑT•‘B”“Õ’QT—ÓUUUSÓS“Ó‘B“Õ‘TSÔÖS×ÐPÐÑTSÑOS“ÕÔ“ÓSÕQŸŸŸ‚‚‚‹KKB‚ˆÈŒ‹LËLŽH8 %ÜÝPÛÙ^™XÛÛ˜Ú[X][ÛŽˆÌLQÐÓLËTÌLTŒH[™ÌK\ÝH™XÛÝ™\ž]\Ý[žB‚ˆÈÈKˆ™XÛÛ˜Ú[X][Ûˆ[™[ÜB‚ŸŸŸ^”Ù\]Y[˜ÙNˆ“T“KLÜÝ[X]\šX[^˜][Ûˆ™XÛÛ˜Ú[X][Û‚”š[X\žHÛÝ\˜ÙH[š]ˆÌLQÐÓLËTÌLTŒB’[X[‹X\ÜØ^HÛÛ[Z]H[X\ÎˆÌLQÐÓLËTÌKTŒB”™XÛÝ™\žH[™NˆÌLQÐÓLËTÌK\ÝKT™XÛÝ™\ž]\Ý”™\ÜÚ]ÜžNˆÝ\ËZKYÝKÛX\šÙZBœ˜[˜ÚˆÜ›KYÝX\™Y\›Ýš\Ú[Ûš[™ËLŒŒÌÂÛÛ›Û[™ÈÝYÚ[™ÈXYˆÌN™YØÙ™LØ˜YØNYMŒYXÎŒÍÌ˜Ž˜‚“X]\šX[^˜][ÛˆÛÛ[Z]ˆXÌÍÍŒÌØŒNM˜ŽYŽMÙXŒYÎLÙ˜MYYL‚“X]\šX[^˜][Ûˆ\™[ˆÌN™YØÙ™LØ˜YØNYMŒYXÎŒÍÌ˜Ž˜‚“X]\šX[^˜][Ûˆ\Ý[˜ÙNˆ^XÝHÛ™H›Û‹Y›Ü˜ÙY˜\ÝY›ÜØ\™ÛÛ[Z]“]™HÜ\˜][Ûˆ]]Üš]H\š[™ÈŒH[™\È™XÛÛ˜Ú[X][ÛŽˆ“Ó‘BŸŸŸ‚‚“XZ[ˆ™XÛÛ˜Ú[YH^XÝ™[[ÝHÛÛ\\š\ÛÛ‹ÑKÑ‹HŒHÛÝ\˜ÙHÚ[™Ù\ËH\™XÝÛÛ\Ý[™\ÝË[™™\XÙ[Y[ËÒÒKˆÛÙ^\›Z[˜[È\™HXØÙ\Y›Û›H]Z\ˆXÝX[]šY[˜ÙHÛ\ÜËˆ\È[žHÙ\È›Ý]Ù[ˆ]]Üš^™H[‚š[œÝ[][Û‹Þ[˜Ë™]žK™XÛÝ™\žK]Y\žK[œ›Û™]È\˜Ú\ÙKXYÛ›ÜÝXÂ˜ÛX\š[™Ë]X˜\ÙH™\Z\‹Üˆ›ÝšY\ˆ]]][Û‹‚‚ˆÈÈ‹ˆX›XØ][Ûˆ[™ØÛÜHÝX\™‚”ŒHÚ[™ÙY^XÝHZYÚ]Î‚‚ŸŸŸ^˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ø\Û˜]]™WØ]]ØÛÜÝ\™WÜ[›™\‹™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ø\XØ][Û‹ÚÜÝYÜÞ[˜×ØÛÛÜ™[˜]Ü‹™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ø\XØ][Û‹ÜÞ[˜ËÜÞ[˜×ÜÜË™\˜ÛY[ËÛX\šÙZWÙ›]\‹ÛX‹Ø\XØ][Û‹ÜÞ[˜ËÜÞ[˜×Ý\ÙWØØ\Ù\Ë™\˜ÛY[ËÛX\šÙZWÙ›]\‹Ý\ÝØ\Û˜]]™WØÛÜÝ\™WÙXYÛ›ÜÝXÜ×Ý\Ý™\™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÑ×ÓÔ×ÐÓÑV›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÒÑ×ÐÓÑV›Y™ØÝ[Y[][Û‹ÜÚÙ]ÚÛ›ÝX›ÛÚËÑU—ÔÕQÑKÒWÑÓ—ÐÓÑV›YŸŸŸ‚‚‘]™\žH]\È[œÚYH	ÜÈ]]Üš^™Y›ÙXÝ[Û‹\ÝÜˆ™\ÜØÛÜKˆ›ÂœØÚ[XKZYÜ˜][Û‹ÜÝYTK^[ØY]][XØ][Û‹[œ›ÛY[\[™[˜ÞK˜ÛÛ™šYÝ\˜][Û‹›ÙXÝ™\ÛÛ™\‹™[[ÝH˜XÝÜš]\‹Ù[™\˜]Yš[K‹‘PË›Y]ÙÛÙÞK\›X[™[Y[[ÜžKÔ“HÜ\˜]Üˆš[KÜˆ›ÝšY\ˆ™\ÛÝ\˜ÙH[\™YHŒHX]\šX[^˜][Û‹‚‚ŸŸŸ^”ŒWÑTÕÑ“Ô•ÐT‘ÑÕPT‘TTÔÂ”ŒWÐÒS‘ÑQÔUÔÐÓÔOTTÔÂ”ŒWÐ”SÒÕÔÓÑÖOTTÔÂ”ŒWÓU‘WÓÔTUSÓ—ÑT’S‘×ÐÓÑVS“×Ô‘TÔ•Q”ŒWÔ‘TÑT•‘QÐÓQS•ÔÕUWÕÕPÒQS“×Ô‘TÔ•Q”ŒWÔ“Õ’QT—ÓUUUSÓ—ÑT’S‘×ÐÓÑVS“Ó‘WÔ‘TÔ•QŸŸŸ‚‚ˆÈÈËˆÛÝ\˜ÙHÛÜœ™XÝ[ÛˆXØÙ\Y]]]ÛX]YØÛÜB‚•H[›™\‹[ÝÛ™YÝ[][]]™HÝ]H›ÝÈÛÛZ[œÈ^XÚ]›Ý[™YšY[È›ÜŽ‚‚‹H\ØY™\]Y\Ý\ÝY™\ÜÛœÙK›ÝšY\ˆÝ]ÛÛYKX\ÙHÝ]K[™™\Ý[ˆ\œÚ\Ý[˜ÙNÂ‹HÝÛ›ØY™\]Y\Ý[™\ÝY™\ÜÛœÙNÂ‹H[˜›Ý[™\H[™ÛÛ[Z]YXÝ\œÛÜˆ›ÛÙŽÂ‹HXÚÛ›ÝÛYÙ[Y[™\]Y\Ý\ÝY™\ÜÛœÙK[™Ý]ÛÛYNÂ‹HXYÛ›ÜÝXÈ\˜Xš[]NÂ‹H\›Z[˜[™\Ý[]\Ý[\™YÜ›Ý™Y\ÙKØY™HXÝ[Û‹™]žXXš[]K[™ˆØ[š]^™Y^Ù\[ÛˆÛ\ÜË‚‚•HÙ[™\šXÈÛÛ\]Xš[]HšY[È™[XZ[ˆ]™[\›ÝÈ›Ú™XÝ[ÛœË›ÝB˜]]Üš]]]™HÝ[][]]™H™\™\Ù[][Û‹ˆHY\™ÙH›ÝÈÜ\˜]\ÈÚ][ˆXXÚ˜[œØXÝ[Ûˆ[™KˆY™™\™[˜[œØXÝ[ÛœÈX^H\™Y›Ü™H™]Z[ˆY™™\™[›Ý]ÛÛY\ÈÚ]Ý]X[Y˜XÝ\š[™ÈHØ]\Ø[[˜\šX[‚‚‘\™XÝ\ÝÈ\ÝX›\Ú]]\›Z[š\ÝXÈ[›™\‹ØÛÛÜ™[˜]ÜˆØÛÜN‚‚‹H›Ë]\ØYÛÛ[Z]Y\H›ÛÝÙYžHXÚÛ›ÝÛYÙ[Y[ÝXØÙ\ÜÎÂ‹HXÚÛ›ÝÛYÙ[Y[˜[œÜÜ^Ù\[Ûˆ™]Z[š[™ÈÛÛ[Z]Y\HÚ[H™XÛÜ™[™Âˆ™\]Y\Ý\Ý\Y™\ÜÛœÙK[›Ý\™XÙZ]™Y[™[šÛ›ÝÛˆXÚÛ›ÝÛYÙ[Y[Ý]ÛÛYNÂ‹HÝXØÙ\ÜÙ[\ØY\œÚ\Ý[˜ÙH›ÛÝÙYžH[˜›Ý[™›Û˜XÚËÚ]ˆXÚÛ›ÝÛYÙ[Y[›ÝÝ\Y[™›È˜[ÙH[˜\šX[Â‹HÝXØÙ\ÜÙ[\ØY[™ÛÛ[Z]Y[˜›Ý[™\H›ÛÝÙYžHXÚÛ›ÝÛYÙ[Y[ˆ[˜Ù\Z[NÂ‹H™Z™XÝY\ØYÝÜ[™È™Y›Ü™HÝÛ›ØY[™XÚÛ›ÝÛYÙ[Y[Â‹HXYÛ›ÜÝXÈ™YÚ[‹›ÝË[™ÛÛ\][ÛˆYÜ˜Y][ÛˆXÜ›ÜÜÈÛÛ\Ý[™Ü\˜][ÛœÎÂ‹HH™X[Ø[YK\[™HÛÛ[Z]YÜ›ÛYX˜XÚÈÛÛ˜YXÝ[Ûˆ›ÙXÚ[™ÈH›Ý[™Yˆ[˜\šX[Â‹HØ[š]^™YY™XÞXÛH›Ú™XÝ[Ûˆ[™œ›Þ™[ˆŒËÔŒ›ÙXÝØ\KÜ™\^Bˆ™YÜ™\ÜÚ[ÛœË‚‚”ÛÝ\˜ÙH[œÜXÝ[ÛˆÛÛ™š\›\È]\ØY[ØØ[]›ÈÛ™Ù\ˆØ]\ÙšY\ÈÜ‚˜ÛÛ˜YXÝÈ[˜›Ý[™X\H][™\ØY\›ÝšY\ˆ]›ÈÛ™Ù\ˆÝXœÝ]]\Â™›ÜˆXÚÛ›ÝÛYÙ[Y[]‚‚ˆÈÈˆ˜[Y][ÛˆXœÛÜ˜™Y[™\ˆËLB‚ÛÙ^™\ÜÎ‚‚ŸŸŸ^™\›Ü›X]ÚXÚÏTTÔÎÈNš[\ÎÈÚ[™ÙY™›]\ˆ[˜[^™OTTÔÂ›˜]]™HÛÜÝ\™HXYÛ›ÜÝXÜÏLÎHTÔÂ›ØØ[Þ[˜È\XØ][ÛLŽHTÔÂÛËY]šXÙH]\›Z[š\ÝXÈ\›™\ÜÏLHTÔÂŒÈÛÛ˜XÝLˆTÔÂœ™[[ÝH\˜Ú\ÙH\Y\ˆ™YÜ™\ÜÚ[ÛLNTÔÂ˜Ø][ÙÝYKÜÝÜ™KØ\™YÜ™\ÜÚ[ÛLÍTÔÂ™[›]\ˆ\ÝLŒÍTÔÈÈ\ÜÜØX›HXœÈÚÚ\Y™XYÈ[™›ÚYTÈZ[TTÔÂ•Ú[™ÝÜÈ™[X\ÙHZ[TTÔÈš\œÝ][\›Y\™ÙY[™›ÚYX[šY™\Ý[œÜXÝ[ÛTTÔÂ™Ú]Y™ˆKXÚXÚÏTTÔÂ™XYÛ›ÜÝXÜÈÙ[™\˜]Ü‹ØÚXÚÏTTÔÂ˜Ú[™ÙYXÛÛ[Ù[œÚ]]™HØØ[TTÔÈ™\ÜYŸŸŸ‚‚•H›Ý\ˆÜÝYÜ›ÝšY\ˆXœÈÙ\™HÚÚ\Y™XØ]\ÙHPT’ÑRWÔ•S—ÔÖS×ÓPˆØ\Â˜XœÙ[ˆ›È™\Ù\™YÛY[[œÝ[YŒHš[˜\žK™[™\ˆÜ\˜][Û‹]™Bœ›ÝšY\ˆ™\ÜÛœÙKÜˆ]™HXÚÛ›ÝÛYÙ[Y[Ø\È^\˜Ú\ÙY‚‚XØÛÜ™[™ÛN‚‚ŸŸŸ^”ŒWÕ•UÔS‘WÔT•USÓPPÐÑTQÐUUÓPUQÔÐÓÔB”ŒWÕTÐQÐTWÔ“ÓPÒ×ÐÓÓTÕS‘PPÐÑTQÐUUÓPUQÔÐÓÔB”ŒWÐPÒÓ“ÕÓQÑSQS•ÒS‘TS‘SÑOPPÐÑTQÐUUÓPUQÔÐÓÔB”ŒWÑPQÓ“ÔÕP×ÑQÔQUSÓPPÐÑTQÐUUÓPUQÔÐÓÔB”ŒWÔÐSQWÔS‘WÒS•T’PS•PPÐÑTQÐUUÓPUQÔÐÓÔB”Œ×ÔŒÔ‘QÔ‘TÔÒSÓPPÐÑTQÔ‘TÔ•QÐUUÓPUQÔÐÓÔB’S”ÕSQÐÓQS•Ð‘RU’SÔUS”“Õ‘Q”‘TÑT•‘QÔÕUWÐÓÓ•S•RUOT‘TURT‘T×Ñ”‘TÒÐÒPÒÔÒS•“U‘WÒS•T—ÑU’PÑWÐÓÓ•‘T‘ÑSÑOUS”“Õ‘QŸŸŸ‚‚ˆÈÈKˆXZ[ˆ\ÜÜÚ][Û‚‚”ŒHØ]\ÙšY\ÈHÛÝ\˜ÙK[Û›HÛÜœ™XÝ]™H]]Üš]KˆXZ[ˆÙ\È›ÝY[YžHB›™]ÈÛÝ\˜ÙK[[Ù[Y™XÝ™\]Z\š[™È[ˆŒˆ™Y›Ü™H[[YH™XÛÝ™\žH™YÚ[œËˆ\Âš\È›ÝÝ™\˜[Þ[˜ÈXØÙ\[˜ÙNˆH]šY[˜ÙHÙZ[[™È›ÝÈ[Ý™\Èœ›ÛB™]\›Z[š\ÝXÈÛÝ\˜ÙH˜[Y][ÛˆÈ™\Ù\™Y\Ý]HØœÙ\˜][Û‹‚‚ŸŸŸ^ÖPÓLLSÔS‚‘ÐÓLPÓÔÑQÒÔÕQÔÐSQWÑU’PÑWÔÐÓÔB‘ÐÓLÏPPÕU‘WÔ‘PÓÕ‘T–WÐTÔÐVWÔ‘TTUSÓ‚ÌLÑÐÓL×ÔÌLÔŒORSTSQS•QÔ‘PÓÓÒSQÐUUÓPUQÔÐÓÔBÌLÑÐÓL×ÔÌWÔŒORSPS—ÐTÔÐVWÐÓÓ•S•RUWÐSPTÂ”ŒWÔ‘SSÕWÐÓÓSRULXÌÍÍŒÌØŒNM˜ŽYŽMÙXŒYÎLÙ˜MYYL‚••UÔS‘T×ÔT•USÓ‘QTTÔ×ÐUUÓPUQÔÐÓÔBPÒÓ“ÕÓQÑSQS•ÒS‘TS‘S•ÔS‘OTTÔ×ÐUUÓPUQÔÐÓÔB•SQÕTÐQÐÓÓSRUÔT×ÐTWÔ“ÓPÒÏTTÔ×ÐUUÓPUQÔÐÓÔB‘PQÓ“ÔÕP×ÑQÔQUSÓ—ÒS‘TS‘S•TTÔ×ÐUUÓPUQÔÐÓÔB’S•T—ÑU’PÑWÔÐSQWÐPÐÓÕS•ÔÖSÏQRSÓÔS‚“U”ÔÖS×ÐPÐÑTSÑOS“ÕÔ“ÓSÕQS‘“ÒQÔÖSÏRS•ÒS‘ÕÔ×ÔÖSÏRS”‘U–WÔ‘PÓÕ‘T–ORS”UQT–ORS‘S”“ÓQ×Ó“ÕÔ‘TPU“‘U×ÔTÒTÑWÔ‘QÒTÕUSÓRS”‘TÑT•‘QÔÕUWÒS”ÕSRS‘PQÓ“ÔÕP×ÒTÕÔ–OT‘TÑT•‘B”“Õ’QT—ÓUUUSÓS“Ó‘B“‘VÐPÕSÓPÌLÑÐÓL×ÔÌWÔÕWÌWÔ‘RS”ÕSÔ‘PQÓÓ“WÐÒPÒÔÒS•ŸŸŸ‚‚ˆÈÈ‹ˆÌLQÐÓLËTÌK\ÝKT™XÛÝ™\ž]\Ý[›™\‹\Ý\Y\‚‚•H™XÛÝ™\ž]\Ý\ÈÙ\šX[^™YˆH]\ˆÝ\Ù\È›Ý™XÛÛYH^XÝ]X›HY\™[B˜™XØ]\ÙH]\X\œÈ\™KˆXZ[ˆ]\Ý™XÛÛ˜Ú[HH]šY[˜ÙH\›Z[˜[ÙˆB˜Ý\œ™[Ý\™Y›Ü™H™[X\Ú[™ÈH™^]]][Û‹X™X\š[™ÈÝ\‚‚ˆÈÈÈÝKŒH8 %™KZ[œÝ[™XY[Û›H™\Ù\™Y\Ý]HÚXÚÜÚ[‚”\œÜÙNˆ[˜ÚÜˆH[˜Ú[™ÙYŒ‹Y\ØÙ[™YÒS‹[™›ÚY[™›ÝšY\ˆÝ]B˜™Y›Ü™HZ]\ˆŒHš[˜\žH\È[œÝ[Y‚‚ÛÛXÝ\Ú[™ÈH\ÝX›\ÚYØ[š]^™YÔËÑÔ“H›ØÙY\™\Î‚‚ŒKˆÝ\œ™[œ˜[˜Ú[™ŒHÛÛ[Z]›Ý™[˜[˜ÙNÂŒ‹ˆš\ÚX›H[œÝ[YZ[Ø\Y[]HÛˆÒSˆ[™[™›ÚYÚ]Ý]™Z[œÝ[[™ÎÂŒËˆ]][XØ][Ûˆ[™^\Ý[™È[œ›ÛY[™\Ù[][ÛŽÂˆ]Y]YHÛÝ[Îˆ[™[™Ë\ØY[™Ë˜Z[Y[™[šÛ›ÝÛŽÂKˆ]šXÙHÙ\]Y[˜ÙKØØ[Ý\œÛÜ‹[˜›Þ[™XYÛ›ÜÝXËX][\Ý[[X\šY\ÎÂ‹ˆ\Ý™\Ý[™XY[™\ÜË™XÛÝ™\žHÝZY[˜ÙK[™›Ý[™YY™XÞXÛHØ]YÛÜšY\ÎÂËˆØ[š]^™Y™XY[Û›HÒSˆÔS]H[™[™›ÚYÔS]H›Ø™\ÎÂŽˆØ[š]^™Y™XY[Û›H›ÝšY\‹Ô™[™\ˆ˜\Ù[[™HÝY™šXÚY[ÈÛÛ\\™HXØÛÝ[ˆ]šXÙKÜÝY]™[XÚÛ›ÝÛYÙ[Y[[™Ý\œÛÜˆÝ]NÂŽKˆ[Y\Ý[\È[™X™[ÈZ[™È]™\žHØ\\™HÈÛ™HÚXÚÜÚ[[™[ÜK‚‚”›ÚXš]Y\š[™ÈÝKŒN‚‚ŸŸŸ^”Þ[˜Â”™]žB”™XÛÝ™\žB”]Y\žB‘[œ›Û›™]È\˜Ú\ÙBš[œÝ[][ÛˆÜˆ][˜ÚØ]\ÙYžHH™]Èš[˜\žB™XYÛ›ÜÝXÈÛX\š[™Â™]X˜\ÙH™\Z\‹Ü™\Ù]ÜÝ\™Ù\žBœ›ÝšY\ˆ]]][Û‚šÜÝYY]™[™]Üš]B˜XÚÛ›ÝÛYÙ[Y[ŸŸŸ‚‚•\›Z[˜[‚‚ŸŸŸ^”ÕWÌWÔ‘RS”ÕSÐÒPÒÔÒS•PÓÓTUH“ÐÒÑQ•ÒS—ÔÕUWÐÐTT‘QVQTÈ“ÂS‘“ÒQÔÕUWÐÐTT‘QVQTÈ“Â”“Õ’QT—ÔÕUWÐÐTT‘QVQTÈ“Â•S‘VRS‘QÔÕUWÑ’Q•S“Ó‘H‘TÑS•S”‘TÓÓ‘QÓQS•ÓUUUSÓS“Ó‘B”“Õ’QT—ÓUUUSÓS“Ó‘B“U‘WÔÖS×ÑVPÕUQS“ÂŸŸŸ‚‚ˆÈÈÈÝKŒˆ8 %˜\Ù[[™H™XÛÛ˜Ú[X][Ûˆ[™ÛY[[Ü™\ˆXÚ\Ú[Û‚‚“XZ[ˆÛÛ\\™\ÈÝKŒHÚ]™]Z[™YŒ‹ÔŒËÔŒ]šY[˜ÙH[™Û\ÜÚYšY\Î‚‚‹HÚ]\ˆXXÚ™\Ù\™Y]X˜\ÙH[™]Y]YH™[XZ[œÈ[[YÚX›NÂ‹HÚ]\ˆHÜÝY]™[[™XÚÛ›ÝÛYÙ[Y[Ù]YÜ™Y\ÈÚ]HÛY[ÎÂ‹HÚ]\ˆ[žHÝ]HÚ[™ÙHØØÝ\œ™YÚ]Ý][ˆ]]Üš^™YÜ\˜][ÛŽÂ‹HÚ]\ˆHÛ›ÝÛˆ˜Z[Y]™[È™[XZ[ˆ™XÛÝ™\˜X›HÚ]Ý]ÛX\š[™È\ÝÜžNÂ‹HÚXÚÛY[\ÈHÝ›Û™Ù\Ý›Ý™YÝ\[™È]‚‚’YˆšY\È[™^Z[™YÝÜˆÈ›Ý[œÝ[Üˆ\Ý›ÝYÚ[XšYÝZ]K‚‚“Û›HY\ˆHÛÚ\™[ÚXÚÜÚ[X^HXZ[ˆÚÛÜÙHHš\œÝÛY[ˆ[™›ÚYœ™[XZ[œÈHXYÛ›ÜÝXÈ™Y™\™[˜ÙH™XØ]\ÙH]Èš[Üˆ›Û˜XÚÈØ\È\™XÝH›Ý™YÂš]\È›Ý™\Ù[XÝYˆHXÝX[ÝKŒH]šY[˜ÙHÛÛ›ÛÈÜ™\‹‚‚•\›Z[˜[‚‚ŸŸŸ^”ÕWÌ—ÐTÑSS‘WÔ‘PÓÓÒSPUSÓTTÔÈ“ÐÒÑQ”‘TÑT•‘QÔÕUWÐÓÒT‘S•VQTÈ“Â‘’T”ÕÐÓQS•PS‘“ÒQÒS‘ÕÔÈS‘PÒQQ’S”ÕSUSÓ—ÐUUÔ’UORSÔS‘S‘×ÑVPÒUÔ‘SPTÑBŸŸŸ‚‚ˆÈÈÈÝKŒÈ8 %ŒH\Y˜XÝ›Ý™[˜[˜ÙHXÚÙ]‚”™\\™HÜˆ™\šYžH[™›ÚY[™Ú[™ÝÜÈ\Y˜XÝÈ\ØÙ[™Y^XÝHœ›ÛHHŒBš[\[Y[][Û‹Ü™XÛÛ˜Ú[X][Ûˆ[™Kˆ™XÛÜ™ÛÝ\˜ÙHÒKZ[ÛÛ[X[™\Y˜XÝšY[]KÙš[™Ù\œš[ÛÛ™šYÝ\˜][ÛˆÛ\ÜËX[šY™\ÝÜXÚØYÚ[™ÈÚXÚÜË[™™\›Â˜]]ÛX]XÈÜ\˜][Ûˆ^XÝ][Û‹‚‚•\ÈÝ\Ù\È›Ý[œÝ[Üˆ][˜ÚYØZ[œÝ™\Ù\™Y]K‚‚•\›Z[˜[‚‚ŸŸŸ^”ÕWÌ×ÐT•QPÕÔ“Õ‘SSÑOTTÔÈ“ÐÒÑQS‘“ÒQÐT•QPÕÔŒWÑTÐÑS‘QVQTÈ“Â•ÒS‘ÕÔ×ÐT•QPÕÔŒWÑTÐÑS‘QVQTÈ“Â”‘TÑT•‘QÐÓQS•ÔÕUWÕÕPÒQS“ÂŸŸŸ‚‚ˆÈÈÈÝKŒ8 %™\Ù\™YY]H[œÝ[][Û‹Û™HÛY[]H[YB‚•\È\È]]][Û‹X™X\š[™È[™™\]Z\™\ÈHœ™\Ú^XÚ]XZ[ˆXÚÙ]Y\‚œÝKŒK\ÝKŒÈ\ÜËˆ[œÝ[Û›HHÙ[XÝYš\œÝÛY[	ÜÈ™\šYšYYŒB˜\Y˜XÝÚ]Ý]ÛX\š[™È\XØ][Ûˆ]HÜˆXYÛ›ÜÝXÈ\ÝÜžKˆÈ›Ý™\ÜÂ”Þ[˜Ë™]žK™XÛÝ™\žK]Y\žKÜˆ[œ›Û‚‚Y\ˆ][˜ÚØ\\™HÙ™›[™KÜ™XY[Û›HY[]K]][XØ][Û‹Ù[œ›ÛY[œ™\Ù[][Û‹]Y]YKÝ\œÛÜ‹›ÙXÝØ][ÙÝYK\ÝÜžK[™XYÛ›ÜÝXÜË‚ÛÛ\\™H[HÈÝKŒH™Y›Ü™H[œÝ[[™ÈHÙXÛÛ™ÛY[‚‚•HÙXÛÛ™[œÝ[][Ûˆ™\]Z\™\ÈHÙ\\˜]HØ]Kˆ[žHZYÜ˜][ÛˆÝ\œš\ÙK˜]]ÛX]XÈÞ[˜Ë]HÜÜË]Y]YH™]Üš]K[œ›ÛY[Ú[™ÙKÜˆXYÛ›ÜÝXÂ˜ÛX\š[™ÈÝÜÈH\ÜØ^K‚‚ˆÈÈÈÝKŒH8 %ÜÝZ[œÝ[X[XÛY[™XY[Û›HÚXÚÜÚ[‚Y\ˆ›ÝØ]Y[œÝ[][ÛœË›Ý™N‚‚‹H›Ýš[˜\šY\È\ØÙ[™œ›ÛHHXØÙ\YŒH[™NÂ‹H›Ý™\Ù\™Y]X˜\Ù\È[™XYÛ›ÜÝXÈ\ÝÜšY\È™[XZ[ˆ™\Ù[Â‹H›È]]ÛX]XÈÞ[˜ÈÜˆXÚÛ›ÝÛYÙ[Y[ØØÝ\œ™YÂ‹H›ÙXÝÐØ][ÙÝYKÒ\ÝÜžH›Ú™XÝ[ÛœÈ™[XZ[ˆÛÚ\™[Â‹HØØ[]Y]Y\ËÝ\œÛÜœË[˜›Þ\Ë]šXÙHÙ\]Y[˜Ù\Ë[™›ÝšY\ˆ˜\Ù[[™HÝ[ˆ™XÛÛ˜Ú[K‚‚“›È]™HÜ\˜][Ûˆ\È]]Üš^™YžHÛÛ\][ÛˆÙˆ\ÈÝ\[Û™K‚‚ˆÈÈÈÝKŒˆ8 %š\œÝXÛY[Ü™[˜\žHÞ[˜Â‚”™\]Z\™\ÈH™]È^XÚ]Û™K[Ü\˜][ÛˆXÚÙ]˜[Z[™ÈHÛY[ÚÜÙ[ˆ[‚œÝKŒ‹ˆ]]Üš^™H^XÝHÛ™HÜ™[˜\žHÞ[˜ÈÛˆ]ÛY[‚‚”›ÚXš]™]žK™XÛÝ™\žK]Y\žK[œ›Û™]È\˜Ú\ÙKÙXÛÛ™XÛY[Þ[˜Ë™XYÛ›ÜÝXÈÛX\š[™ËÜˆ[žH]]ÛX]XÈ™\X]ˆ[[YYX][HÛÛXÝRKY™XÞXÛK”ÔS]K™[™\‹[™›ÝšY\ˆÜÝ›YÚ]šY[˜ÙK‚‚ˆÈÈÈÝKŒÈ8 %š\œÝXÛY[ÜÝ›YÚ™XÛÛ˜Ú[X][Û‚‚Û\ÜÚYžH[™\[™[N‚‚‹H\ØY›ÝšY\ˆ[™ØØ[\œÚ\Ý[˜ÙNÂ‹HÝÛ›ØY\ÝY™\ÜÛœÙNÂ‹H[˜›Ý[™\H[™Ý\œÛÜˆ›ÛÙŽÂ‹HXÚÛ›ÝÛYÙ[Y[™\]Y\ÝÜ™\ÜÛœÙKÛÝ]ÛÛYNÂ‹HXYÛ›ÜÝXÈ\˜Xš[]NÂ‹H›ÙXÝÔÝÜ™KÔ\˜Ú\ÙKÔ\˜Ú\ÙH][HØ\™[˜[]NÂ‹H]Y]YK[˜›ÞÝ\œÛÜ‹[™›ÝšY\ˆYÜ™Y[Y[‚‚‘È›Ý™[X\ÙHHÙXÛÛ™ÛY[Yˆ[žH[™H\È[šÛ›ÝÛ‹ÛÛ˜YXÝÜžKÜ‚[œØY™K‚‚ˆÈÈÈÝKŒ8 %ÙXÛÛ™XÛY[Ü™[˜\žHÞ[˜Â‚“Û›HY\ˆÝKŒÈ\ÜÙ\Ë\ÜÝYHHÙ\\˜]HÛ™K[Ü\˜][ÛˆXÚÙ]›ÜˆHÝ\‚˜ÛY[[™™\X]HØ[YH]šY[˜ÙHÛÛXÝ[Ûˆ[™›ÚXš][ÛœË‚‚ˆÈÈÈÝKŒH8 %ÛËXÛY[ÛÛ™\™Ù[˜ÙHÜÝ›YÚ‚”™XÛÛ˜Ú[H›ÝÛY[È[™H›ÝšY\‹ˆ™\]Z\™H\]X[[[™Y˜XÝË›Ý[™Y›ØØ[™\Ù[][ÛˆY™™\™[˜Ù\Ë[\HÜˆÛ\ÜÚYšYY]Y]Y\ËÛÛœÚ\Ý[Ý\œÛÜœÂ˜[™XÚÛ›ÝÛYÙ[Y[Ë[™›È\XØ]H›ÙXÝÝÜ™K\˜Ú\ÙK\˜Ú\ÙH][Kš[˜›ÞÜˆÜÝY]™[Y™™XÝË‚‚ˆÈÈÈÝKŒL8 %Ù\\˜][H]]Üš^™Y›Ë[Ü™\^B‚“Û›HY\ˆÝKŒH\ÜÙ\Ë]]Üš^™HÛ™H˜[YYXÛY[›Ë[ÜÜ™[˜\žHÞ[˜Ë‚”™\]Z\™HY[\Ý[™\Ý[›È\XØ]H˜XÝË›ÈÝ\œÛÜˆ™YÜ™\ÜÚ[Û‹›È™]Âœ›ÝšY\ˆ]™[[™›È[˜\›ÜšX]HXÚÛ›ÝÛYÙ[Y[Üˆ]Y]YH]]][Û‹‚‚ˆÈÈËˆÝ\œ™[^XÝ]X›H›Ý[™\žB‚“Û›HÝKŒHX^H›ÝÈ™H™\\™Y\ÈH™^Ü\˜]ÜˆXÚÙ]ˆ\Èˆ[žH\ÈBœ›Ý]HYš[š][Û‹›ÝHÛÛ[X[™È[\˜XÝÚ]HÛY[ÈÜˆ›ÝšY\‹‚œÝKŒˆ\È™XÛÛ˜Ú[X][ÛˆÛÜšÈY\ˆ]šY[˜ÙH™]\›œËˆÝKŒÈ[™]™\žH]\‚œÝ\™[XZ[ˆ[[[Z\ˆ™XÙY[™È\›Z[˜[È\ÜÈ[™XZ[ˆ^XÚ]Bœ™[X\Ù\È[K‚‚ŸŸŸ^ÌLÑÐÓL×ÔÌWÔÕWÔ‘PÓÕ‘T–UTÕPPÕU‘WÑÐUQÕT”‘S•ÒS“‘T”ÕTTÕWÌWÔ‘RS”ÕSÔ‘PQÓÓ“WÐÒPÒÔÒS•“U‘WÔÖS×ÐUUÔ’UOS“Ó‘B’S”ÕSUSÓ—ÐUUÔ’UOS“Ó‘B”‘U–WÔ‘PÓÕ‘T–WÐUUÔ’UOS“Ó‘B”UQT–WÐUUÔ’UOS“Ó‘B‘S”“ÓÐUUÔ’UOS“Ó‘B“‘U×ÔTÒTÑWÐUUÔ’UOS“Ó‘B‘PQÓ“ÔÕP×ÐÓPT’S‘×ÐUUÔ’UOS“Ó‘B”“Õ’QT—ÓUUUSÓ—ÐUUÔ’UOS“Ó‘B“Õ‘TSÔÖS×ÐPÐÑTSÑOS“ÕÔ“ÓSÕQŸŸŸ‚‚‹KKB‚ˆÈŒ‹LËLÌ8 %ÐÓLÈš[˜[[X[ˆ™XÛÛ˜Ú[X][Ûˆ[™ÐÓLYš[š][Ûˆ[žB‚ˆÈÈKˆ™XÛÛ˜Ú[X][Ûˆ[™[ÜB‚˜^”Ù\]Y[˜ÙNˆ“T“KL•[š]ˆÌLQÐÓLËTÌHš[˜[[X[ˆXØÙ\[˜ÙBÛÜœ™XÝ]™HÛÝ\˜ÙH[™NˆÌLQÐÓLËTÌLTŒÈ›ÝYÚŒB”›Ý™[˜[˜ÙKÜ›ØÙY\™H[™NˆÌLQÐÓLËTÌKTŒ‹PÔŒ‚”™\ÜÚ]ÜžNˆÝ\ËZKYÝKÛX\šÙZBœ˜[˜ÚˆÜ›KYÝX\™Y\›Ýš\Ú[Ûš[™ËLŒŒÌÂ”™XÛÛ˜Ú[YÛÝ\˜ÙHXYˆMØÙXÍÙÌÌÎL™ŽY˜N™XŒ˜YM™LÙM˜˜ÙBÛY[ÛÝ\˜ÙH™]š\Ú[ÛŽˆMØÙXÍÙÌÌÎL‚ÛY[ÛÝ\˜ÙK]™YHÒKLMŽˆÙ˜MŒ˜YYLÍŒLŒ˜YŽXLŽÍ™˜MÌÙM™XØYLŽ™˜ÍÍN˜ÍÍMX™LMÙLNNMÙ™‚‘]šY[˜ÙNˆÛÛ\]HX[XÛY[ÛÜÝ\™KÒ\ÝÜžKÐØ][ÙÝYHØÜ™Y[œÚÝËˆÜ\˜]ÜˆØœÙ\˜][ÛœËØ[š]^™YÛÛ[ˆ™[™\ˆÙÈÚ[™ÝËˆ‘P×ÑPQÓ“ÔÕPÔÈ™XÛÜ™ŒB•Üš]X›HØÛÜNˆ\[™[Û›Hˆ[™‘P×ÑPQÓ“ÔÕPÔÂ˜‚•\È[žH™XÛÛ˜Ú[\ÈH]™H™\Ù\™Y\Ý]H\ÜØ^H]HŒËTŒHÛÝ\˜ÙB˜ÛÜœ™XÝ[ÛœÈÙ\™H\ÚYÛ™YÈ[˜›ØÚËˆ]Ù\È›Ý[\ˆÛÝ\˜ÙKÑKÑ‹ËÒÒK›Y]ÙÛÙÞK\›X[™[YÛXZ[ˆY[[ÜžK›ÝšY\ˆ™\ÛÝ\˜Ù\Ë]][XØ][Û‹™[œ›ÛY[ÛY[]KÜˆ›ÙXÝ[ÛˆÛÛ™šYÝ\˜][Û‹‚‚ˆÈÈ‹ˆ[X[ˆXØÙ\[˜ÙH™\Ý[‚›Ý™\Ù\™YÛY[È˜[ˆHØ[YHÛÝ\˜ÙHY[]K™[XZ[™Y]][XØ]Y[™™]šXÙKY[œ›ÛY[™ÛÛ\]Y™XÚ\›ØØ[Ø[YKPXØÛÝ[Þ[˜Ú›Ûš^˜][Û‹‚‚•HØœÙ\™Y[˜Ý[Û˜[™\Ý[\Î‚‚‹HÚ[™ÝÜË[ÜšYÚ[˜]Y˜XÝÈÛÛ™\™ÙYÈ[™›ÚYÂ‹HÛ™HÛÛ›ÛY[™›ÚY[ÜšYÚ[˜]Y\˜Ú\ÙHÛÛ™\™ÙYÈÚ[™ÝÜÎÂ‹HHØ][ÙÝYHÛÛ™\™ÙYÛˆ›ÝÛY[ÎÂ‹HH^XÝ˜]\˜[ZY[]H›ÙXÝ]™]š[Ý\ÛHØ]\ÙYH[™›ÚY\YˆÛÛ™›XÝØ\ÈÙ[XÝY[™Y\™ÙY[œÝXYÙˆ\XØ]YÂ‹HX]Ú[™È\ÝÜžH›Ú™XÝ[ÛœÈ™]Z[™Yš]™H[[™Y\˜Ú\ÙH›ÝÜÈÛˆXXÚˆÛY[[˜ÛY[™ÈHÛÛ›ÛY”“LŒY[X™\ŽÂ‹H›È\XØ]H›ÙXÝ\˜Ú\ÙHÜˆ\˜Ú\ÙH][HØ\ÈØœÙ\™YÂ‹H›Ý]Y]Y\ÈÙ]Y]ÌÌÌÂ‹H[™›ÚY™^]šXÙHÙ\]Y[˜ÙH\ÈØÂ‹HÚ[™ÝÜÈ™^]šXÙHÙ\]Y[˜ÙH\ÈÂ‹H›È™]žK™XÛÝ™\žK]Y\žK™\X]Y[œ›ÛÜˆ™\Z\ˆXÝ[ÛˆØ\È™YYY‚‚•\È\ÈHZ\ÜÚ[™È™\Ù\™Y\Ý]H[X[ˆ]šY[˜ÙH›ÜˆHŒËTŒHÛÜœ™XÝ]™B›[™Kˆ]˜[Y]\ÈH›ÙXÝ™XÛÛ˜Ú[X][Û‹˜[œØXÝ[Ûˆ\][Û‹˜XÚÛ›ÝÛYÙ[Y[Ü™\š[™ËXYÛ›ÜÝXÈ™\Ù\˜][Ûˆ[™Y[\Ý[™\^H™Z]š[Ü‚˜]H˜XÝXØ[ÛËXÛY[]™[ÜY[›Ý[™\žK‚‚ˆÈÈËˆÛÛ[ˆY[\Ý[™\X]‚Y\ˆ™XÚ\›ØØ[ÛÛ™\™Ù[˜ÙKÛ™H[\K\]Y]YHÜ™[˜\žHÞ[˜ÈØ\È^XÝ]YÛ‚™XXÚ]šXÙK‚‚•HÝ\YY™[™\ˆÚ[™ÝÈÛÛZ[œÈÛÈ\Ý[˜ÝÜ\˜][ÛœÎ‚‚‹H™Œ˜LÍŽXL]ŒNL–ŽÂ‹HØMX™ŒMX™Y˜]ŒŽŒÎ‹‚‚‘XXÚÜ\˜][Ûˆ›ÙXÙY‚‚ŒKˆ]][XØ]YÑUÝŒKÜÞ[˜ËÙ]™[ØŒÂŒ‹ˆ]][XØ]YÔÕÝŒKÜÞ[˜ËØXÚÛ›ÝÛYÙ[Y[ØŒÂŒËˆ™\ÜÛœÙHÛÛ\][Ûˆ[ˆHLL\Ø˜[™‚‚“›ÈÝX›Z\ÜÚ[Ûˆ™\]Y\Ý\X\œÈ[ˆH›Ë[ÜÚ[™ÝËˆ›Ý]Y]Y\È™[XZ[™Y˜ÌÌÌÈ\ÝÜžH[™Ø][ÙÝYH™[XZ[™YÝX›NÈ›È\XØ]H\X\™YÈ›Âœ™XÛÝ™\žHÛÙHØ\È™\]Z\™Y‚‚•HÛY[[™™[™\ˆ]šY[˜ÙH›Ý™\ÈH›Ë[Ü™Z]š[Üˆ™[]˜[ÈÐÓLËŒLË‚Hœ™\Úš[˜[˜[œØXÝ[Û˜[›ÝšY\ˆ[™[ÜžHØ\È›ÝÝ\YYÛÈ›È^XÝ›™]È›ÝšY\ˆ›ÝÈÛÝ[È\™H›Û[ÝYžH\È[žK‚‚ˆÈÈˆÐÓLËŽx $ÌM\ÜÜÚ][Û‚‚Ÿ][Hš[˜[\ÜÜÚ][Ûˆ]šY[˜ÙHÙZ[[™ÈŸKKHKKHKKHŸÐÓLËŽH]]Üš^˜][ÛˆTÔË\ÝÜšXØ[HÛÛœÝ[YYHÜšYÚ[˜[Y\ˆØ\ÈÛÛ\™\ÜÙYžH]\ˆXZ[‹X]]Üš^™YXÚÙ]ÎÈ›È]]Üš]H™[XZ[œÈŸÐÓLËŒLÚ[™ÝÜË]ËP[™›ÚYTÔÈ™\Ù\™YXÛY[ÛÛ™\™Ù[˜ÙH[™X]Ú[™È›Ú™XÝ[ÛœÈŸÐÓLËŒLH[™›ÚY™]™\œÙHY[X™\ˆTÔÈÛ™HÛÛ›ÛY[™›ÚY\˜Ú\ÙNÈ]Y]YHY˜[˜ÙY[™]\ˆ˜Z[™YŸÐÓLËŒLˆ[™›ÚY]ËUÚ[™ÝÜÈTÔÈÛÛ›ÛYY[X™\ˆ\X\œÈÛ˜ÙHÛˆÚ[™ÝÜÈŸÐÓLËŒLÈY[\Ý[™\X]TÔÈÛ™H›Ë[Ü\ˆ]šXÙNÈ›ÈÝX›Z\ÜÚ[Ûˆ›Ý]NÈ]][XØ]YÝÛ›ØYØXÚÈŒŸÐÓLËŒM™XÛÛ˜Ú[H[™ÛÜÙHTÔÈ]›Ý[™YØÛÜHÛY[
+È™[™\ˆ
+È™]Z[™Y›ÝšY\ˆ˜\Ù[[™NÈš[˜[›ÝšY\‹]X›H™XÛÝ[›ÝÛÛXÝY‚•HXœÙ[˜ÙHÙˆHœ™\Úš[˜[›ÝšY\ˆ[™[ÜžH\È™]Z[™Y\È[ˆ]šY[˜ÙB˜ÙZ[[™Ë›ÝÛÛ™\Y[È[ˆ[™^Z[™Y˜Z[\™KˆX\›Y\ˆ™XY[Û›H›ÝšY\‚˜˜\Ù[[™\È\ÝX›\ÚYH^XÝXØÛÝ[ÝÛËQ]šXÙHš[™[™È[™ÛÛœÚ\Ý[˜Ý\œÛÜ‹ÜÙ\]Y[˜ÙH›Ý[™][ÛŽÈHš[˜[]™HXÚÙ]\ÝX›\Ú\È˜XÝXØ[œ™XÚ\›ØØ[ÛÛ™\™Ù[˜ÙH[™Y[\Ý[ÛY[ÜÙ\™\ˆ™Z]š[Ü‹‚‚ˆÈÈKˆËLH›Û[Ý[Ûˆ›Ý[™\žB‚˜^ÛZ[NˆŒËTŒHÛÜœ™XÝYHÜšYÚ[˜[[˜›Ý[™ÛÛ™\™Ù[˜ÙH˜Z[\™\Â”™\Ý[ˆPÐÑTQÐUÔ‘TÑT•‘QÕÓ×ÐÓQS•ÑU‘SÔQS•ÔÐÓÔB‘]šY[˜ÙNˆ›Ü›Y\ˆ[™›ÚY›ÙXÝÛÛ™›XÝÛÛ™\™ÙYÈ›Ü›Y\ˆÚ[™ÝÜÂˆÜÝYÝÛ›ØY[˜Ù\Z[HY›Ý™XÝ\‚‚ÛZ[NˆÜ™[˜\žHÞ[˜È\È™XÚ\›ØØ[›ÜˆÛÈ[œ›ÛY]šXÙ\ÈÛˆÛ™HXØÛÝ[”™\Ý[ˆPÐÑTQÐUÑU‘SÔQS•ÔÐÓÔB‘]šY[˜ÙNˆÚ[™ÝÜË]ËP[™›ÚY[™[™›ÚY]ËUÚ[™ÝÜÈY[X™\œÈÛÛ™\™ÙY‚ÛZ[Nˆ^XÝ˜]\˜[Y[]H™]™[È\XØ]HØ][ÙÝYH›ÙXÝÜ™X][Û‚”™\Ý[ˆPÐÑTQÐUÒSPS—ÐTÔÐVWÔÐÓÔB‘]šY[˜ÙNˆÛÛ™›XÝ›ÙXÝY\™ÙY[™Ø][ÙÝYH™[XZ[™YÚ[™Ý[\‚‚ÛZ[Nˆ[ˆ[\K\]Y]YH™\X]\ÈY[\Ý[”™\Ý[ˆPÐÑTQÐUÐÓQS•ÐS‘Ô‘S‘T—ÔÐÓÔB‘]šY[˜ÙNˆ]Y]Y\ÈÝX›NÈ›ÈÝX›Z\ÜÚ[Ûˆ›Ý]NÈ]][XØ]Y]™[ÝÛ›ØY[™ˆXÚÛ›ÝÛYÙ[Y[ÛÛ\]YÚXÙB‚ÛZ[NˆÐÓLÈ›Ý™\È›ÙXÝ[Ûˆ™\Ú[Y[˜ÙH[™Y™XÞXÛHÛÛ\][™\ÜÂ”™\Ý[ˆ‘R‘PÕQ‘]šY[˜ÙNˆ™]›ØØ][Û‹Ü›ÜÜËPXØÛÝ[[šX[Ý]YÙKÜ™XÛÝ™\žKˆ™][[Û‹ÜÛ˜\ÚÝÜ™X›ÛÝÝ˜\[™›ÙXÝ[ÛˆÜ\˜][ÛœÈ™[XZ[ˆÜ[‚˜‚ˆÈÈ‹ˆÐÓLÈ\›Z[˜[‚˜^ÖPÓLLSÔS‚‘ÐÓLOPPÐÑTQÑU‘SÔQS•Ð“ÕS‘T–B‘ÐÓLPÓÔÑQÒÔÕQÔÐSQWÑU’PÑWÔÐÓÔB‘ÐÓLÏPÓÔÑQÕÓ×ÑU’PÑWÑU‘SÔQS•ÔÐÓÔBÌLÑÐÓL×ÔÌLÔŒ×ÔŒORSPS—ÕSQUQÌLÑÐÓL×ÔÌWÔŒ—ÐÔŒ—ÕÒS‘ÕÔ×Ð•RSRSPS—ÔTÔÂ‘PSÐÓQS•Ô“Õ‘SSÑOTTÔÂ‘PSÐÓQS•ÐUUS•PÐUSÓ—ÑS”“ÓQS•TTÔÂ•ÒS‘ÕÔ×Õ×ÐS‘“ÒQÐÓÓ•‘T‘ÑSÑOTTÔÂS‘“ÒQÕ×ÕÒS‘ÕÔ×ÐÓÓ•‘T‘ÑSÑOTTÔÂ’S•T—ÑU’PÑWÔÐSQWÐPÐÓÕS•ÔÖSÏTTÔÂ”“ÑPÕÓUTSÒQS•UWÓQT‘ÑOTTÔÂÐUSÑÕQWÐÓÓ•‘T‘ÑSÑOTTÔÂÓQS•ÔUQUQT×Ñ’SSTTÔ×ÌÌÌÌÐ“Õ’QSTÕS•Ô‘TPUÔT—ÑU’PÑOTTÔÂ““×ÓÔÔÕP“RTÔÒSÓ—Ô‘TUQTÕPP”ÑS•““×ÓÔÑÕÓ“ÐQÐPÒÏTTÔ×ÒÌŒ“U”ÔÖS×ÐPÐÑTSÑOTTÔ×ÕÓ×ÑU’PÑWÑU‘SÔQS•ÔÐÓÔB”“ÑPÕSÓ—ÐPÐÑTSÑOPP”ÑS•‘ÐÓLT‘PQWÑ“Ô—ÑQ’S’USÓ‚“U‘WÔÖS×ÐUUÔ’UOS“Ó‘B”“Õ’QT—ÓUUUSÓ—ÐUUÔ’UOS“Ó‘B˜‚ˆÈÈËˆœ›ØYÐÓL™\ÚYX[[›Ü˜[XB‚‘ÐÓLX^H›ÝÈ™HYš[™Yœ›ÛHHXÝX[ÐÓLÈ™\ÚYX[Ëˆ\ÈÙXÝ[Ûˆ\ÈB™Yš[š][Ûˆ[œ]›ÝÑKÑˆ[\[Y[][Ûˆ]]Üš]K‚‚ˆÈÈÈKˆ]]Üš^˜][Û‹\ÛÛ][Ûˆ[™Ü™Y[X[Y™XÞXÛB‚‹H›Ý™HÛËPXØÛÝ[\ÛÛ][Ûˆ[™Ü›ÜÜËPXØÛÝ[[šX[Â‹H›Ý™H\ØX›YY[X™\œÚ\[šX[Â‹H™]›ÚÙHÛ™H]šXÙH[™›Ý™H[[YYX]H™\]Y\Ý[šX[\ÈØY™H™\Ý\Â‹H›Ý™HÙÛÝ][™\[Y\˜[ÚÙ[ˆÛX\š[™ÎÂ‹HÛ\ÜÚYžH•ÕÒ•ÒÔÈ›Ý][Ûˆ[™^\™Y]ÚÙ[ˆ™Z]š[ÜŽÂ‹H™\]Z\™H™\›È[˜]]Üš^™Y›ÝšY\ˆ]]][ÛˆÛˆ]™\žH[šX[‚‚ˆÈÈÈ‹ˆÝ]YÙK[Y[Ý][™^XÝ[Û˜ÙH™XÛÝ™\žB‚‹H™\Ù\™HÙ™›[™KYš\œÝØØ[\˜Ú\ÙH™YÚ\Ý˜][Ûˆ\š[™È›ÝšY\ˆÝ]YÙNÂ‹HÛ\ÜÚYžH”ËÝ˜[œÜÜ[Y[Ý]˜Z[\™H[™X[›Ü›YY™\ÜÛœÙNÂ‹H™]Z[ˆXÝ[Û˜X›H]Y]YH]Ú]Ý]\XØ]H\ØYÂ‹H™\ÝÜ™HÛÛ›™XÝ]š]H[™›Ý™HÛ™H^XÝ™XÛÝ™\žH]Â‹H›Ý™HXÚÛ›ÝÛYÙ[Y[[˜Ù\Z[HØ[››ÝX[Y˜XÝ\™HÝXØÙ\ÜÈÜˆ™\^H˜XÝÎÂ‹H™\]Z\™H›ÈÝ\œÛÜˆ™YÜ™\ÜÚ[ÛˆÜˆ\XØ]H›ÙXÝÔ\˜Ú\ÙHY™™XÝË‚‚ˆÈÈÈËˆ™][[Û‹Û˜\ÚÝ[™™X›ÛÝÝ˜\XØÙ\[˜ÙB‚‹HYš[™HH]™[ÜY[™][[Ûˆ[™XÚÛ›ÝÛYÙ[Y[Y›ÛÜˆÛÛ˜XÝÂ‹H˜[Y]HÛ˜\ÚÝÜ™X][Û‹ÜÙ[XÝ[Ûˆ[™™]Z[™YY]™[ÛX[\›Ý[™\šY\ÎÂ‹H›ÛÝÝ˜\Hœ™\Ú]šXÙHœ›ÛHÛ˜\ÚÝ\È]™[Z[Â‹H™X›ÛÝÝ˜\HÝ[HÜˆ™\XÙY]šXÙHÚ]Ý]ØØ[ÚÜÝY\XØ][ÛŽÂ‹H™]Z[ˆ^XÚ][Z]È›Üˆœ™YK]Y\ˆÝÜ˜YÙH[™›ÙXÝ[Ûˆ˜XÚÝ\ÔU‹‚‚ˆÈÈÈˆ™\›ÙXÚX›HÜÝYÜ\˜][ÛœÂ‚‹H™XÛÛ˜Ú[H[š\›Û›Y[\ÜXÚYšXÈZYÜ˜][Ûˆ^XÝ][Ûˆ[™Øš™XÝÝÛ™\œÚ\Â‹HÛÛ™š\›HÙ\™\‹[Û›HÙXÜ™][š™XÝ[Ûˆ[™›Ý][Ûˆ›ØÙY\™NÂ‹H\ÝX›\Ú\Þ[Y[X[ØœÙ\˜Xš[]H[™›Û˜XÚÈ›Ý[™\šY\ÎÂ‹HØÝ[Y[›ÝšY\ˆÛX[\Ú]Ý]ÝXÚ[™È›ÙXÝ[Ûˆ[˜Y™\[NÂ‹H™\Ù\™HHØ[š]^™YÜ\˜]Üˆ›Ý]H›Üˆ™[™\‹]][™™[Û‹‚‚ˆÈÈÈKˆš[˜[ÞXÛHLXØÙ\[˜ÙH[™›Û[Ý[Û‚‚‹H[ˆHÚÜÙ[ˆ›Ý[™YÐÓL[X[ˆ\ÜØ^NÂ‹H™XÛÛ˜Ú[HÛY[Ù\™\ˆ[™›ÝšY\ˆ]šY[˜ÙNÂ‹H›Û[ÝHXØÙ\YÜ\˜][Û˜[YXÝXÈ[™\ÚYÛˆÛZ[\ÎÂ‹H™Yœ™\Ú\›X[™[ÚXÚÜÚ[È[™XZ[‹\›ÛÝÛÛ[Z]NÂ‹H[ˆš[˜[™\ÜÚ]ÜžKÜ]›Ü›KÜÙXÜ™]ÙÙ[™\˜]YX\Y˜XÝYÚY[™NÂ‹H\ÝX›\ÚH^XÚ]ÞXÛHLH˜\Ù[[™K‚‚ˆÈÈˆÐÓLYš[š][ÛˆØ]B‚•HØ[™Y]H[Xœ™[H\Î‚‚˜^šÜÝY]]Üš^˜][Û‹™\Ú[Y[˜ÙH[™Y™XÞXÛHXØÙ\[˜ÙB˜‚’]\È[[[Û˜[Hœ›ØY\ˆ[ˆÛ™H^XÝ]X›H[š]ˆ™Y›Ü™HÛÝ\˜ÙHÜˆ]™Bœ›ÝšY\ˆXÝ[Û‹XZ[ˆ]\ÝÙ[XÝÛ™H˜\œ›ÝÈÐÓLØš™XÝ]™KXÛ\™H›Û‹YÛØ[ËšY[YžH™\]Z\™YKÐ‹ÐÈ[™\ÝYØ][Û‹[™ÝYÙHÞ[˜Ú›Ûš^™YÑKÑˆÛ›HY‚›X]\šX[^˜][Ûˆ\ÈXÝX[H™\]Z\™Y‚‚”™XÛÛ[Y[™YÜ™\š[™Î‚‚ŒKˆ]]Üš^˜][Û‹Ü™]›ØØ][Û‹Ú\ÛÛ][ÛŽÂŒ‹ˆÝ]YÙH[™^XÝ[Û˜ÙH™XÛÝ™\žNÂŒËˆ™][[Û‹ÜÛ˜\ÚÝÜ™X›ÛÝÝ˜\ÂˆÜÝYÜ\˜][Û˜[ÛÜÝ\™NÂKˆš[˜[›Û[Ý[Ûˆ[™ÞXÛHLH[™Ù™‹‚‚Ý\œ™[›Ý[™\žN‚‚˜^‘ÐÓLT‘PQWÑ“Ô—ÑQ’S’USÓ‚‘ÐÓLÒSTSQS•USÓS“ÕÐPÕU‘B‘ÐÓLÓU‘WÐTÔÐVOS“ÕÐUUÔ’V‘Q‘ÑWÑ—Ô‘TPÑSQS•S“ÕÐUUÔ’V‘QÐ–WÕT×ÑS•–B“‘VÓPRS—ÐPÕSÓQQ’S‘WÓÓ‘WÐ“ÕS‘QÑÐÓLÓÐ’‘PÕU‘WÑ”“ÓWÔ‘TÒQPSÔS“ÔSPB˜‚‹KKB‚ˆÈŒ‹LËLÌ8 %ÞXÛHLš[˜[ØÛÜHÛÜÝ\™H[™ÞXÛHLH™\\˜][Û‚‚ˆÈÈKˆÙ\]Y[˜ÙH[™[ÜB‚˜^”Ù\]Y[˜ÙNˆ“T“KL”›ÛNˆXZ[ˆÚ]ÓWB”›Ý[™Üˆ[š]ˆÌLš[˜[ØÛÜH™XÛÛ˜Ú[X][ÛˆÈÌLH[žBœ˜[˜ÚˆÜ›KYÝX\™Y\›Ýš\Ú[Ûš[™ËLŒŒÌÂ˜\Ù[[™NˆYMŒÌÙ™LXLÎ˜˜ÍŒÍXÍLÎ˜NXØÌÎB”™XÛÛ˜Ú[YÛÝ\˜ÙNˆMØÙXÍÙÌÌÎL™ŽY˜N™XŒ˜YM™LÙM˜˜ÙB]]Üš]Nˆ^XÚ][X[ˆØÚY[H[™›ÙXÝ\ØÛÜH\™XÝ[Û‚’[œ]Îˆš[˜[ÐÓLÈŽÈ‘P×ÑPQÓ“ÔÕPÔÈ™XÛÜ™ŒNÈÝ\œ™[›]\ˆÛÝ\˜ÙNÂˆš]™HÌKTÌˆ™Y™\™[˜ÙH‘ÜÎÈ™XÛÝ™\™YØÝ[Y[][Û‹ÐSÑU‹›Y•Üš]X›HÝ\™˜XÙ\Îˆ‹XZ[‹\›ÛÝÛÛ[Z]KØÝ[Y[][Û‹ÐSÑU‹›Y‘]šY[˜ÙH›Ý[™\žNˆ]™[ÜY[ÛËQ]šXÙHÞ[˜ÎÈÛÝ\˜ÙKÜ™Y™\™[˜ÙH[œÜXÝ[ÛŽÂˆ›Èœ™\Ú›ÝšY\ˆ]]][ÛˆÜˆÌLH[\[Y[][Ûˆ]šY[˜ÙB˜‚ˆÈÈ‹ˆ›Û[Ý[Û‹Ü™XÛÛ˜Ú[X][ÛˆÛZ[\Â‚˜^ÛZ[NˆÞXÛHL™\]Z\™\ÈÐÓL™Y›Ü™HÛÜÝ\™B”š[ÜˆÝ]NˆÐÓL™XYH›ÜˆYš[š][ÛˆY\ˆÐÓLÂ‘]šY[˜ÙNˆÐÓL™[XZ[™Y[œÝ\YÈÐÓLÈ›Ý™YH[[™YÛËQ]šXÙBˆ]™[ÜY[U”›Ý[™\žNÈ[X[ˆ\™XÝ[ÛˆY™\œÈÐÓL‘]šY[˜ÙH›Ý[™\žNˆØÚY[KØÛÜÝ\™HÛ\ÜÚYšXØ][Û‹›Ý[\[Y[][Û‚ÛÛ˜YXÝ[ÛŽˆ›Û™HY\ˆ^XÚ][X[ˆ\™XÝ[Û‚”Ù[X[XÈÝÛ™\ŽˆXZ[ˆØÚY[H[™ÛØ˜[ÛÜÝ\™B•\™Ù]›ÛNˆXZ[ˆÛÛ[Z]H[™SÑUˆ›ÜØ\™Ø\Ý[B”™\Ý[[™ÈÝ]NˆÕTT”ÑQQÈQ‘T”‘QÈÌL‹TTÑL‚’\ÝÜžH\ÜÜÚ][ÛŽˆ™\Ù\™HX\›Y\ˆÐÓL[›Ü˜[XNÈ\[™ØÚY[HXÚ\Ú[Û‚˜‚˜^ÛZ[NˆÞXÛHLX^HÛÜÙH]ÐÓLÂ”š[ÜˆÝ]NˆÜ[‹ÐÓLÈÛÜÙYÐÓL™XYH›ÜˆYš[š][Û‚‘]šY[˜ÙNˆ™XÛÜ™ŒH[™š[˜[ÐÓLÈˆ\ÝX›\Ú™XÚ\›ØØ[ÛÛ™\™Ù[˜ÙKˆ˜]\˜[ZY[]HY\™ÙKÝX›H]Y]Y\È[™Y[\Ý[™\X]Â‘]šY[˜ÙH›Ý[™\žNˆÛÈ]šXÙ\ËÛ™HXØÛÝ[]™[ÜY[ÜÝY›ÝšY\‚ÛÛ˜YXÝ[ÛŽˆ›ÙXÝ[Ûˆ[™Y™XÞXÛHÛÛ\][™\ÜÈ™[XZ[ˆXœÙ[”Ù[X[XÈÝÛ™\ŽˆXZ[ˆÛØ˜[›Ú™XÝÝ]B•\™Ù]›ÛNˆÔ“Ò‘PÕÔÕUKWÔÑTÔÒSÓ—ÓÑË—ÔÑTÔÒSÓ—ÔÐÒSQB”™\Ý[[™ÈÝ]NˆPÐÑTQÈÓÔÑQUVPÒUU‘SÔQS•ÐÓÔB’\ÝÜžH\ÜÜÚ][ÛŽˆ\[™˜‚˜^ÛZ[NˆÌLHÚÝ[[\[Y[HÜÝÛ™YŒÈØ]\Ø[˜XÚÙ[™”š[ÜˆÝ]NˆŒÈØ\Ý[HÜÝÛ™Y[™›Û‹X]]Üš]]]™B‘]šY[˜ÙNˆÝ\œ™[]Y]ÔÙ][™ÜÈ›ÙXÝ™YYX^HÛÛœÝ[YH^\Ý[™È]Ú[Bˆ[X[ˆ\™XÝ[Ûˆ™\Ù\™\È˜XÚÙ[™š[™H[š[™ËÛ][K]\Ù\ˆ\ÜØ^\È›ÜˆÌL‚‘]šY[˜ÙH›Ý[™\žNˆ\˜Ú]XÝ\™H™\\˜][ÛˆÛ›BÛÛ˜YXÝ[ÛŽˆŒÈ[˜\šX[È›ÚXš]XÝ]˜][ÛˆY\™[H™XØ]\ÙHHš[H^\ÝÂ”Ù[X[XÈÝÛ™\Žˆ]\™HÌLH\ÚYÛˆ[™ÌL‹TˆXZ[ˆ[™\ÝYØ][Û‚•\™Ù]›ÛNˆSÑUˆØÚY[H\[™^[™ÌLH›ÜØ\™ÚXÚÜÚ[”™\Ý[[™ÈÝ]Nˆ‘R‘PÕQ“ÔˆÌLHÈÓÓ‘USÓSSˆÌL‹TTÑL‚’\ÝÜžH\ÜÜÚ][ÛŽˆ™\Ù\™HÜšYÚ[˜[Ø\Ý[B˜‚ˆÈÈËˆÛÝ\˜ÙKÜ™Y™\™[˜ÙH[œÜXÝ[Û‚‚Ý\œ™[ÛÝ\˜ÙH\ÝX›\Ú\Î‚‚‹H[˜[]XÜÈ˜]šYØ][ÛˆX\ÈÈH\ØX›YÔ[›™YYÙXÂ‹HZ[š[X[[˜[]XÜÔ™YÚ\ÝžJ
+X™]\›œÈÛ›HHXÙZÛ\ˆ™\›Ë]˜[YYˆ\˜Ú\ÙKÝ[ÛZ[›Ü—Ý[š]ØYš[š][ÛŽÂ‹H\ÝÜžH8 '[Ý™HÈ[˜[]XÜø 'H\È\ØX›YÂ‹HÙ][™ÜÈ\ÈX[™]ÜžH[ˆH\Ý[˜][Ûˆ\Ý]™[XZ[œÈHZ[š[X[ØØ[ˆ›Ü›H›Üˆ[ÜK^[Y[Y]ÙÈ[™ÚÜYÙH™\ÚÛÂ‹HÛÜÝ\™H\ÈÛÛ™][Û˜[H^ÜÙY[™ÛÛZ[œÈHÛÛ\]H˜]]™Bˆ]][XØ][Û‹Ù[œ›ÛY[ÔÞ[˜ËÙXYÛ›ÜÝXËÜ™XÛÝ™\žHÝ\™˜XÙNÂ‹HHÚ\™Y[YKØÛÛ\Û™[^Y\ˆ\ÈÛX[Â‹HHš]™H\˜Ú]™Y™Y™\™[˜ÙH‘ÜÈÛÝ™\ˆ\ÝËØ][ÙÝYKÛYK\˜Ú\ÙH[™ˆ\ÝÜžH]\ÚÝÜ[™ÛÛ\XÝÚYË‚‚•š\ÝX[™XÛÛ˜Ú[X][ÛˆÙˆHš]™H\™Ù]ÈY[YšY\ÈÛ™HÛÚ\™[[™ÝXYÙN‚‚‹H\œÚ\Ý[™\ÜÛœÚ]™H˜]šYØ][ÛŽÂ‹HØ\›HÝ\™˜XÙ\ÈÚ]Ü™Y[‹Ü\œHÙ[X[XÈY\˜\˜ÚNÂ‹H\ÚÝÜX›\È[™Ý[[X\šY\ÈY\Y[È[Øš[HØ\™ÎÂ‹Hš[\œËÙ[XÝ[ÛœË]Z[È[™XÝ[ÛœÈÚ]›ÙÜ™\ÜÚ]™H\ØÛÜÝ\™NÂ‹H^XÚ]ØY[™Ë[\K\œ›Üˆ[™[™›Ü›X][Û˜[Ý]\Ë‚‚•H\™Ù]ÈÈ›ÝYš[™HÙ][™ÜË]Y]Üˆ[˜[]XÜËˆÜÙHYÙ\È™\]Z\™B™œ™\ÚKÐ‹ÐÈ\ÚYÛˆÚ][ˆHØ[YH›ÙXÝ[™ÝXYÙK‚‚ˆÈÈˆÌLHÛÛ›Û[™ÈØš™XÝ]™B‚˜^ÞXÛHLH8 %›ÙXÝÝ\™˜XÙKV[™[˜Ý[Û˜[[˜[]XÜÂ˜‚“X[™]ÜžHÌLHÝ]ÛÛY\Î‚‚ŒKˆ™\ÜÛœÚ]™HÚ[[™Ú\™YXÛÛ\Û™[ÛÛ™\™Ù[˜ÙNÂŒ‹ˆX[™]ÜžK[Z]]™K[˜Ý[Û˜[Ù][™ÜÎÂŒËˆX[™]ÜžH]Y]™\XÚ[™ÈÛÜÝ\™H[ˆÜ™[˜\žH˜]šYØ][ÛŽÂˆØY™H\ÜÜÚ][ÛˆÙˆ]™\žHÝ\œ™[ÛÜÝ\™HØ\Xš[]NÂKˆ[˜Ý[Û˜[ØØ[ØXØÛÝ[\ØÛÜY[˜[]XÜÎÂ‹ˆ\ÝÜžK]ËP[˜[]XÜÈÛÛ^[™Ù™ŽÂËˆX]\šX[š\ÝX[ÛÛ™\™Ù[˜ÙH›ÜˆHš]™H\˜Ú]™YYÙH\™Ù]ÎÂŽˆVØXØÙ\ÜÚXš[]H[™Ú[™ÝÜËÐ[™›ÚY[X[ˆXØÙ\[˜ÙK‚‚•H]Y]™\XÙ[Y[\ÈH˜]šYØ][Û‹Ü›ÙXÝXÚ\Ú[Û‹›Ý\›Z\ÜÚ[ÛˆÂ™\˜\ÙHXYÛ›ÜÝXÈ]Üˆ™XÛÝ™\žHØ\Xš[]KˆKÐ‹ÐÈ]\ÝÛ\ÜÚYžHXXÚÛÜÝ\™H™X]\™H™Y›Ü™HÛÝ\˜ÙH™[[Ý˜[Üˆ™[ØØ][Û‹‚‚ˆÈÈKˆ›ÜØ\™ØÚY[B‚˜^ÌLBˆRKÕV[™›ÙXÝ\YÙH[˜Ý[Û˜[]B‚ÌL‹TTÑLBˆš[™H[š[™È[™Û\Ú[™Ë[ÜÝHRKÕV‚ÌL‹TTÑL‚ˆ˜XÚÙ[™š[™H[š[™È[™][K]\Ù\ˆ\ÜØ^\ÂˆY™\œ™YÐÓLˆÛÛ™][Û˜[ŒÈ™X\ÜÙ\ÜÛY[˜‚ˆÈÈ‹ˆ]]Üš]H[™™^›Ý]B‚“›ÈÌLHÛÝ\˜ÙHÜˆÑKÑˆ]]Üš]H\ÈÜ™X]YžH\È™XÛÛ˜Ú[X][Û‹‚‚“™^‚‚ŒKˆÙYYœ™\ÚÌLHÜ\˜][Û˜[YXÝXÈ[™\ÚYÛˆÚ]ÎÂŒ‹ˆ™\]Z\™H[™YHÈ™XYHš]™H‘È\™Ù]È[™™[]˜[Ý\œ™[ÛÝ\˜ÙNÂŒËˆ™XÛÛ˜Ú[HKÐ‹ÐÈ[ˆŽÂˆXÚYHHÙ][™ÜËÐ]Y]ÐÛÜÝ\™HÝÛ™\œÚ\›Ý[™\žH[™Z[š[][H[˜Ý[Û˜[ˆ[˜[]XÜÈÛÛ˜XÝÂKˆÝYÙHÞ[˜Ú›Ûš^™YÑKÑˆÛ›HY\ˆH[X[ˆXØÙ\È]Þ[\Ú\Ë‚‚˜^ÖPÓLLPÓÔÑQÐUÑÐÓL×ÕÓ×ÑU’PÑWÑU‘SÔQS•ÔÐÓÔB‘ÐÓLQQ‘T”‘QÕ×ÐÌL—ÔTÑL‚ÖPÓLLOT‘TT‘QÑ“Ô—ÐWÐ—Ð×ÒS•‘TÕQÐUSÓ‚ÌLWÔÑUS‘ÔÏSPS‘UÔ–BÌLWÐUQUSPS‘UÔ–WÔ‘TPÒS‘×ÐÓÔÕT‘WÓU’QÐUSÓ‚ÌLWÐSSUPÔÏQ•SÕSÓSÓÐÐSÔ“ÑPÕÐSSTÒTÂÌL—ÔTÑLOURWÕVÑ’S‘WÕS’S‘×ÐS‘ÔÓTÒS‘ÂÌL—ÔTÑLPPÒÑS‘ÓUSWÕTÑT—ÑÐÓLÌLWÔÓÕTÑWÐUUÔ’UOS“Ó‘BÌLWÑÑWÑS“ÕÔÕQÑQ”Œ×ÒSTSQS•USÓ—ÐUUÔ’V‘QS“Â“U‘WÔÖS×ÐUUÔ’UOS“Ó‘B˜

@@ -947,3 +947,61 @@ Main-root closure: refreshed
 Cycle 10: planning prepared; source authority inactive
 Cycle 11 UI/UX work: explicitly deferred
 ```
+
+---
+
+<!-- TEMPORAL_MARKER:C10-FINAL-MAIN-CLOSURE-C11-ENTRY-2026-07-30 -->
+
+# Cycle 10 Final Main Closure and Cycle 11 Entry
+
+> Date: 2026-07-30
+> Branch: `grm-guarded-provisioning-20260727`
+> Reconciled source implementation: `97cec7f733926f669d2a844feb2b5e6e0b7e6bce`
+> GCM03 closure publication: `05e630cfe04aa03846bc635c524278d4fa9b7c39`
+
+## Closure event
+
+Main reconciled the complete hosted-development result through GCM03:
+
+1. one-Device hosted Sync passed with aligned client/server/provider evidence;
+2. a second Android Device authenticated, enrolled and survived restart;
+3. Windows-to-Android and Android-to-Windows convergence passed;
+4. exact Product natural identity merged the prior conflict without duplicate
+   Catalogue or History facts;
+5. both clients drained to `0/0/0/0`;
+6. one empty-queue repeat per Device completed without a submission route;
+7. authenticated download and acknowledgement requests returned HTTP 200;
+8. the result was preserved in REC_DIAGNOSTICS Record 021 and final J.
+
+Cycle 10 closes at this explicit two-Device development boundary. Production,
+multi-Account authorization, revocation, outage/recovery,
+retention/snapshot/rebootstrap and reproducible hosted operations were not
+proved.
+
+## Schedule reconciliation
+
+Human/Main direction removes unstarted GCM04 from Cycle 10 and defers it to
+`C12-PHASE02`.
+
+Cycle 11 begins as product-surface and UX development:
+
+- five C09-S02 reference PNGs govern the visual/product direction;
+- Settings becomes a mandatory functional page;
+- Audit becomes a mandatory page and replaces Closure in ordinary navigation;
+- functional local Analytics replaces the planned placeholder;
+- responsive UI, interaction, state presentation and accessibility improve.
+
+The established non-authoritative R07 capsule is restored at
+`documentation/ALT_DEV.md` and extended append-only:
+
+- `C12-PHASE01` owns UI/UX fine tuning and polishing after C11;
+- `C12-PHASE02` owns backend fine tuning, multi-user assays, deferred GCM04 and
+  conditional R07 reassessment.
+
+```text
+CYCLE10=CLOSED_AT_GCM03_DEVELOPMENT_SCOPE
+GCM04=DEFERRED_TO_C12_PHASE02
+CYCLE11=PREPARED_FOR_FUNCTIONAL_INVESTIGATION
+CYCLE12_PHASE01=UI_UX_POLISH
+CYCLE12_PHASE02=BACKEND_MULTI_USER_GCM04
+```
