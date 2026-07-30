@@ -4914,7 +4914,7 @@ foreach ($FlutterCommandCandidate in $FlutterCommandCandidates) {
     }
 }
 if ($UsableFlutterCandidates.Count -eq 0) {
-    throw @" 
+    throw @"
 No usable Flutter SDK was resolved from PATH.
 The procedure requires flutter.bat whose SDK contains
 packages\flutter\lib\material.dart. Repair Flutter PATH/SDK installation,
@@ -5344,8 +5344,10 @@ root, client root, branch and inspected HEAD; rejects relevant dirty source
 overlap; loads and verifies the public coordinate surface without printing
 coordinate values; reuses exactly one selected supported Android target or
 starts the configured AVD with bounded availability and boot waits; forwards
-the Auth0 domain to the Android manifest without writing it elsewhere; binds one usable Flutter SDK for the complete run; cleans, regenerates and
-verifies the Flutter package configuration before analysis; validates; builds the debug APK, reports the artifact path, byte length and
+the Auth0 domain to the Android manifest without writing it elsewhere; binds
+one usable Flutter SDK for the complete run; cleans, regenerates, and verifies
+the Flutter package configuration before analysis; validates; builds the debug
+APK; and reports the artifact path, byte length, and
 SHA-256, installs the package `com.gusigu.markei` with replacement while
 preserving application data, prints non-secret target/package evidence, and
 launches the app with the mandatory Closure and build-provenance Dart
