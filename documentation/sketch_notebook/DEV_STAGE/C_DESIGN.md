@@ -1,328 +1,257 @@
-# C_DESIGN — Account Cursor-State Lifecycle Reconciliation
+# C_DESIGN — C11-PH01 Visual System and Core-Page Convergence
 
-> Sequence: FLX-PRM-04 / PRC-01 domain reconciliation
-> Role: Design/Architecture [D]
-> Branch / inspected HEAD: `intermid-cycle-recovery` / `75dc7bed0789d693af93abb3ed15e107fd77433a`
-> Source authority: `F_DSN_STAGE.md`, `I_DSN_CODEX.md`, current Design checkpoint and post-materialization J
-> Authority: Design staging and Main handoff only
+> Role: Design Chat [D]
+> Cycle / phase: C11 / C11-PH01
+> Date: 2026-07-30
+> Repository / branch: `gus-i-gu/markei` / `grm-guarded-provisioning-20260727`
+> Inspected remote HEAD: `861c27fdaf6ade2093d481af312d27ff895b8dc0`
+> Required baseline: `861c27fdaf6ade2093d481af312d27ff895b8dc0`
+> Authority: Design investigation and Main handoff only
 > Writable surface: `documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md`
-> Status: **PROVISIONAL DESIGN RECOMMENDATION — GCM02 OPEN; NO IMPLEMENTATION, PROVIDER MUTATION OR RETRY AUTHORITY**
+> Status: COMPLETE PH01 DESIGN REPORT — NO SOURCE, D/E/F, CODEX, R07 OR GCM04 AUTHORITY
 
-## 1. Reconciliation result
+## 1. Recovered state and evidence boundary
 
-The protected submission failure is architecturally localized. An otherwise authorized Account and
-Device reached `acceptSubmission`, but the Account had no `account_cursor_state` row. The previous
-implementation assumed that row existed after a zero-row update and threw before inserting a hosted
-event or Submission. Commit `75dc7be` now converts that missing prerequisite into a bounded
-`service-unavailable` / HTTP `503` / `not-applied` result and corrects misleading terminal logging.
+PRI-D and PMC-01 confirm this chat as Design [D]: it owns architectural interpretation, responsibility boundaries, dependency direction, invariants, alternatives, reversibility and design risks. The only active writable surface is this temporary C report. Permanent Design memory, source, methodology, Main continuity, D/E/F and Codex evidence remain prohibited.
 
-That correction is accepted only as safe failure classification. It does not establish the missing
-row, hosted readiness, provider convergence, GCM02 closure, or permission to retry events 1–2.
+The explicit branch resolved to the required SHA. Comparison from `861c27f` to the branch was `identical` (ahead 0, behind 0); no default or older branch supplied evidence.
 
-The unresolved architecture question is the lifecycle owner of the one-to-one state:
+Recovered direction:
 
-```text
-Account
-  -> exactly one account_cursor_state
-  -> zero or more memberships
-  -> zero or more enrolled Devices
-  -> zero or more synchronized Events
-```
+- Cycle 10 is closed at GCM03 two-Device development scope.
+- C11 is in fresh A/B/C investigation; source authority is inactive.
+- PH01 owns responsive foundations and the five core-page redesigns.
+- PH02 owns functional local/account-scoped Analytics.
+- PH03 owns mandatory Settings and Audit, Closure disposition and removal of Closure from ordinary navigation.
+- C12-PHASE02 retains GCM04, multiple-user assays and R07 reassessment.
 
-Design recommends that **Account provisioning owns creation of `account_cursor_state` in the same
-database transaction that creates the Account**. Enrollment consumes an already provisioned Account;
-Sync consumes and advances its cursor. Neither may become an implicit repair path.
+Evidence inspected: AGENTS, INDEX, PROMPT_COLLECTION (PRI-D/PMC-01), 00, 06, current Design checkpoint, latest C11 Main preparation in J, ALT_DEV 15.1–15.5, prior C report, all five target PNGs, named Flutter shell/theme/component/page/composition files, and the minimal Analytics registry. `I_DSN_CODEX.md` was not required: PH01 asks for current structure and the named source supplied it. No operational execution or visual parity is claimed.
 
-## 2. PRC-01 classification records
+## 2. Current UI topology
 
-### 2.1 Missing cursor state caused the protected-submission failure
+`MarkeiApp` owns navigation, page construction and a cross-page integer refresh signal inside one stateful root. At width >=600 it renders a scrollable labelled `NavigationRail`; below 600 it renders Home, Lists, Purchase and History plus a More sheet. Destination identity is positional. Pages live in an `IndexedStack`.
 
-```text
-Claim: Missing account_cursor_state caused the reproduced protected-submission failure.
-Source: I_DSN_CODEX; commit 75dc7be regression; post-materialization J.
-Current state: validated locally; accepted diagnosis within the correlated provider evidence boundary.
-Evidence: failing-before/passing-after synthetic route regression; provider final 500; zero hosted Sync rows.
-Evidence boundary: local disposable fixtures plus sanitized provider shape; provider internals were not inspected.
-Contradictions: none; historical client observation remains provider-evidence-unavailable at its deadline.
-Semantic owner: Design for responsibility boundary; Operational for execution evidence.
-Target role: Design staging now; permanent promotion deferred by human instruction.
-History disposition: preserve the historical 500 and client timeout; do not rewrite them as 503.
-Confidence: high for the local cause; bounded for exact provider internals.
-Human/Main authority: reconciliation requested; permanent files expressly blocked until GCM02 closure.
-Required regeneration: Main J append-only synthesis and later Design permanent memory after closure authority.
-Result: accepted staging claim; no provider or retry authority.
-```
+Current destinations mix stable product areas, planned placeholders, informational pages and a feature-gated native Closure page. Analytics and Household are disabled placeholders. Settings is present. Audit does not yet exist.
 
-### 2.2 Zero-row handling is corrected
+`MarkeiComposition` constructs application repositories, account/device scope, native authentication, enrollment, Sync, diagnostics and recovery coordinators. This is an application composition boundary and must not migrate into visual widgets.
 
-```text
-Claim: Missing cursor state now returns service-unavailable / 503 / not-applied without hosted fact insertion.
-Source: I_DSN_CODEX; implementation diff at 75dc7be; named API and Flutter tests.
-Current state: implemented and locally validated.
-Evidence: 51 API tests; 178 Flutter tests with four gated skips; platform builds and local harnesses passed.
-Evidence boundary: local and build evidence only; corrected commit is not provider-deployed or hosted-proved.
-Contradictions: deployment alone would still fail while the provider row remains absent.
-Semantic owner: Design error/transaction boundary; Operational validation record.
-Target role: staging; later Architecture/Decision Log/Design State if authorized.
-History disposition: append correction after the former defect; do not erase it.
-Confidence: high locally.
-Human/Main authority: no permanent promotion or deployment authorized here.
-Required regeneration: post-deployment evidence only after cursor lifecycle materialization and reconciliation.
-Result: accepted bounded correction; hosted prerequisite unresolved.
-```
+The theme currently owns five colors and a small set of Material themes. Shared widgets currently comprise `MarkeiCard`, `MarkeiStatePanel` and `MarkeiStatusChip`. Most pages directly compose raw Material widgets and local private components.
 
-### 2.3 Account provisioning owns cursor initialization
+The five pages already delegate business work to application/repository ports, but their presentation composition is page-local:
 
-```text
-Claim: Account provisioning must atomically establish account_cursor_state before membership/enrollment/Sync.
-Source: schema dependency, runtime grants, hosted flow inspection, fixtures that seed both rows, current failure.
-Current state: proposed Design decision.
-Evidence: accounts are prerequisite parents; runtime cannot create Accounts after migration 002; enrollment
-  requires an existing membership/Account and currently creates only Device/enrollment state.
-Evidence boundary: repository architecture; no canonical production Account-provisioning implementation exists yet.
-Contradictions: current provider Account exists without its cursor row, proving the provisioning invariant was not enforced.
-Semantic owner: Design canonical architecture.
-Target role: Main decision and a new D/E/F materialization boundary.
-History disposition: preserve the provider gap as evidence motivating the decision.
-Confidence: high for ownership; physical enforcement choice remains provisional.
-Human/Main authority: required before implementation.
-Required regeneration: Architecture, Decision Log, Model Overview and Design State only after accepted materialization.
-Result: recommended; not yet canonical or implemented.
-```
+- Home renders static `homeCards`.
+- Lists requests a transient account-scoped projection and switches Storage/Shortage/Market/All.
+- Purchase owns dense draft interaction state while registration/catalogue/reference facts remain application-owned.
+- Catalogue uses catalogue query/mutation boundaries.
+- History uses purchase-history/export boundaries.
+- Closure currently combines account/session actions, Sync, diagnostic evidence, recovery controls and build provenance.
 
-### 2.4 Existing Accounts require controlled repair
+Architectural debt: positional navigation, shell/page construction coupling, a global refresh counter, duplicated spacing/state presentation, monolithic Purchase/Closure presentation, and no shared responsive projection contract.
 
-```text
-Claim: Existing Accounts missing cursor state require one forward-only, transactionally validated repair.
-Source: sanitized Neon baseline (Account 1, Device 1, cursor state 0, no Sync facts); migrations 001-006.
-Current state: proposed and blocked pending Main authority.
-Evidence: provider prerequisite is absent; migrations 001-006 are immutable history.
-Evidence boundary: sanitized counts only; no provider mutation or exhaustive account scan was performed here.
-Contradictions: none; ad hoc enrollment or first-Sync repair would conflict with lifecycle ownership.
-Semantic owner: Design repair boundary; Operational owns execution/check procedure.
-Target role: new D/E/F and Codex materialization, then provider gate.
-History disposition: additive migration/repair evidence; never edit 001-006 or rewrite the earlier ledger.
-Confidence: high that repair is needed; exact data-set scope requires safe provider evidence.
-Human/Main authority: required before source or provider changes.
-Required regeneration: new G/H/I and Main reconciliation before deployment.
-Result: recommended controlled repair; provider action remains unauthorized.
-```
+## 3. Proposed responsive shell
 
-## 3. Canonical responsibility recommendation
+Introduce a presentation-only shell model with stable destination identifiers rather than array positions. The registry should describe label, icon, ordinary-navigation visibility, compact priority and page builder. It must reserve `analytics`, `settings` and `audit` now without implementing their PH02/PH03 internals.
 
-### 3.1 Account provisioning
+Recommended destination groups:
 
-Account provisioning owns the aggregate bootstrap transaction:
+1. Core: Home, Lists, Purchase, Catalogue, History.
+2. Insight: Analytics (reserved).
+3. Administration: Settings and Audit (reserved).
+4. Support: Guide and Documentation.
+5. Planned/feature-gated: Household, outside primary PH01 emphasis.
 
-```text
-BEGIN
-  create Account
-  create account_cursor_state(next_cursor = 1)
-  create initial identity/membership when that workflow owns it
-COMMIT
-```
+Wide layout should use a persistent labelled rail/sidebar and a bounded content canvas. Compact layout should retain four direct destinations plus More; Catalogue, Analytics, Settings and Audit remain discoverable in More. Destination IDs—not indexes—must preserve selection when feature gates or ordering change.
 
-The Account and cursor-state pair is one synchronization aggregate prerequisite. A successfully
-provisioned Account must never be externally visible without its cursor row. `next_cursor = 1`
-means no hosted Event has yet received a server cursor.
+Use breakpoint semantics rather than one magic width:
 
-Because no production Account-provisioning service is presently established, the next unit should
-make the invariant enforceable at the database boundary rather than depending on dashboard/manual
-discipline. The provisional preferred physical design is an additive migration after 006 that:
+- compact: single-column page, bottom navigation, cards and stacked actions;
+- medium: navigation rail, bounded content, adaptive two-column sections where safe;
+- wide: extended rail/sidebar, desktop tables, summary/action bands and optional supporting panes.
 
-1. installs a narrowly owned Account-initialization mechanism for future Account insertion;
-2. backfills missing cursor rows for existing Accounts;
-3. leaves existing cursor rows unchanged;
-4. records its own forward-only migration identity transactionally.
+Exact thresholds are an implementation choice to validate against available widths and text scaling; Design does not canonize 600 px. The shell owns navigation chrome, safe area, page title/action slot, content width and route selection. Pages own page-specific layout. Domain/application layers own truth and commands.
 
-A database trigger attached to Account insertion is the preferred enforcement candidate because all
-provisioning paths then receive the same atomic invariant. An explicit provisioning procedure is a
-valid alternative only if direct Account insertion is revoked from every other path and all current
-fixtures/provider setup are migrated to that procedure. Main must freeze the physical choice after
-Codex proves its privilege and upgrade behavior.
+## 4. Shared token and component model
 
-### 3.2 Enrollment
+Token ownership belongs under `app/design`; components consume semantic tokens without importing domain repositories.
 
-Enrollment owns identity-to-installation-to-Device binding. It may verify that the Account aggregate
-is provisioned and return a bounded unavailable result if not, but it must not insert cursor state.
-Making enrollment the creator would:
+Recommended token families:
 
-- couple Device lifecycle to Account synchronization bootstrap;
-- leave Accounts without Devices structurally incomplete;
-- create ambiguity under concurrent first enrollments;
-- hide defective provisioning instead of correcting it;
-- require runtime authority to repair Account-level infrastructure opportunistically.
+- semantic colors: primary/positive green, insight/accent purple, warning, danger, information, neutral ink, warm canvas and elevated surface;
+- type roles: display, page title, section title, body, label, metadata and numeric emphasis;
+- spacing scale, radii, borders/elevation, icon sizes, control heights;
+- content widths and responsive gutters;
+- motion/focus/disabled-state rules.
 
-Re-enrollment is likewise not a repair mechanism. It must not be used on the human Account merely to
-cause cursor initialization.
+Avoid page-specific literal colors and one-off font sizes. Semantic status colors must never determine meaning alone.
 
-### 3.3 Sync and recovery
+Recommended shared component taxonomy:
 
-Upload advances the existing Account cursor under its transaction and returns `service-unavailable`
-without applying facts when the prerequisite is absent. Download, acknowledgement and recovery must
-likewise treat absence as an invariant failure, not infer an empty Account where that could conceal
-corruption. No client component owns initialization.
+| Family | Responsibility |
+| --- | --- |
+| Shell | app frame, destination model, page header, compact More surface |
+| Layout | bounded content, responsive section/grid, desktop/mobile projection switch |
+| Surface | card, summary tile, section panel, disclosure panel |
+| Controls | filter bar/sheet, segmented selector, search, action group |
+| Data | desktop table frame, mobile record card, selection bar, key/value group |
+| State | loading skeleton/progress, empty, error, validation, partial/insufficient-history |
+| Feedback | semantic banner, status chip, confirmation surface |
+| Detail | expandable record/detail pane and metadata rows |
 
-## 4. Existing-Account repair boundary
+Shared components accept already-classified presentation data and callbacks. They must not query repositories, infer Sync outcomes, rebuild Analytics, or translate raw exceptions independently.
 
-The repair must be additive, idempotent and safe for more than the currently observed single Account.
-For each missing row, initialize:
+## 5. Five-page recomposition map
 
-```text
-next_cursor = max(existing sync_events.server_cursor for Account) + 1
-```
-
-with `1` when no Events exist. Although the current provider counts show zero Events, deriving from
-existing immutable facts prevents cursor reuse if another environment contains a partial historical
-state. Existing `account_cursor_state` values must never be reset, decreased or recomputed.
-
-Recommended migration transaction order:
-
-```text
-BEGIN
-  acquire the narrow locks required to exclude Account/cursor allocation races
-  install future Account-initialization enforcement
-  INSERT missing cursor rows from Accounts and per-Account event high-water
-    ON CONFLICT DO NOTHING
-  verify every Account has exactly one cursor row
-  record migration ledger entry
-COMMIT
-```
-
-The migration must fail and roll back if it detects an invalid high-water condition, duplicate
-server cursors, a non-positive next cursor, privilege/ownership drift, or an Account that remains
-without state. No destructive down migration, table reset, event rewrite, resequencing or manual
-one-row SQL patch is accepted as the canonical repair.
-
-## 5. Transaction, concurrency, RLS and privilege invariants
-
-The next design/materialization unit must preserve all of the following:
-
-- Account creation and initial cursor-state creation are atomic;
-- concurrent Account provisioning cannot create two states or expose a state-less committed Account;
-- concurrent first submissions serialize cursor allocation through the single Account row;
-- existing `next_cursor` never moves backward and each committed server cursor remains unique;
-- a failed provisioning or repair transaction leaves neither partial Account infrastructure nor a
-  false migration-ledger success;
-- runtime remains unable to create schema, roles or Accounts;
-- runtime may advance cursor state only inside authenticated, Account-scoped protected transactions;
-- RLS continues to bind `account_cursor_state.account_id` to transaction Account context;
-- the migration owner, not the hosted runtime identity, owns schema/repair materialization;
-- any trigger/function has a fixed safe `search_path`, qualified objects, minimal execute surface,
-  explicit owner and revoked `PUBLIC` access where applicable;
-- repair does not modify memberships, Devices, enrollments, submissions, events, acknowledgements,
-  local outbox rows or events 1–2.
-
-## 6. Alternatives and tradeoffs
-
-| Alternative | Benefit | Cost/risk | Design disposition |
+| Page | Desktop composition | Compact composition | Preserved owner |
 | --- | --- | --- | --- |
-| Provisioning transaction plus database trigger | Atomic invariant across insertion paths; smallest consumer coupling | Trigger ownership/search-path/upgrade behavior needs strong proof | Preferred candidate |
-| Exclusive provisioning procedure | Explicit API and auditable authority | Requires revoking/banning every direct insertion path and updating fixtures | Acceptable if comprehensively enforced |
-| Enrollment `INSERT ... ON CONFLICT` repair | Easy near the observed workflow | Wrong owner; races first enrollment; conceals provisioning defect | Rejected |
-| First Sync lazy initialization | Avoids separate provisioning work | Mixes repair with fact acceptance and complicates unknown/rollback semantics | Rejected |
-| One-off provider console insert | Fast for one Account | Non-repeatable, bypasses migration evidence and future invariant | Rejected as canonical route |
-| Edit migration 001 or replay 001-006 | Makes fresh schema appear complete | Rewrites forward history and does not safely repair deployed state | Rejected |
-| Additive backfill only | Repairs current Accounts | Future provisioning can regress | Insufficient alone |
+| Home | welcome header; two-column informational cards; wide “how it works” and developer/support rows | ordered single-column cards with concise copy | existing `home_content`; no invented telemetry or household facts |
+| Lists | view tabs; filter/sort/search/action band; summary tiles; selectable table; explanatory disclosure | view selector; summary cards; filter sheet; product cards and detail disclosure | `ProductListProjectionRepository`; projection remains transient/rebuildable |
+| Purchase | purchase-context band; find/select product; staged-item editor; classified feedback stack; staged-items table/review | explicit edit→review flow, stacked facts/items, fixed or prominent final action | registration, catalogue queries, local references and existing validation/application failures |
+| Catalogue | search/filter/sort/view band; dense product table; registration and similarity panels | search/filter controls, product cards, progressive registration/similarity surfaces | catalogue query/mutation boundaries and stable Product-ID selection |
+| History | filter band; selection/action band; expandable purchase rows with detail pane | stacked filters, selectable expandable cards, bottom/flow action group | purchase-history/export boundaries; Analytics handoff only reserved in PH01 |
 
-## 7. Contradictions and drift
+Desktop tables and mobile cards are two projections of the same page view model and stable record identity. They must not run different queries or compute different business classifications. Shared selection/filter state survives projection changes. Table column policy and card disclosure order belong to presentation adapters; fact derivation remains application-owned.
 
-1. Schema intent and fixture practice treat `account_cursor_state` as mandatory, but the foreign key
-   permits an Account without it and no current production provisioning boundary enforces total
-   participation.
-2. Local harnesses explicitly insert Account and cursor rows together, so they masked the missing
-   provider provisioning step until the real protected submission.
-3. Enrollment successfully created/recognized the Device while Account synchronization state was
-   absent. This proves enrollment completion is not sufficient hosted-Sync readiness evidence.
-4. Commit `75dc7be` corrects failure behavior, not the prerequisite. Treating its terminal
-   `CAUSE_CORRECTED` as GCM02 closure would collapse implemented classification into provider readiness.
-5. The historical Closure attempt did not observe response headers before its 1000 ms deadline. It
-   remains client-side observation loss even though server logs later recorded a 500; do not rewrite
-   either evidence owner.
+The PNGs are compositional targets only. Unsupported categories, images, edit/delete actions, totals or telemetry must not be synthesized merely because they appear visually.
 
-## 8. Evidence required before any provider deployment or retry
+## 6. Navigation reservations
 
-### 8.1 Local materialization evidence
+PH01 must create or define stable reservations for:
 
-- fresh 001-through-new-migration path creates the invariant;
-- upgrade 001-006 to the new migration repairs a missing row;
-- existing correct cursor rows remain byte/value equivalent;
-- missing row with no Events becomes `next_cursor = 1`;
-- missing row with existing Events becomes `max(server_cursor) + 1` without collision;
-- concurrent Account provisioning and concurrent repair are idempotent;
-- concurrent first submissions allocate distinct monotonic cursors;
-- forced failure rolls back DDL/data/ledger effects as designed;
-- trigger/procedure owner, mode, ACL, fixed search path and object-shadowing resistance pass;
-- runtime Account insertion and schema creation remain denied;
-- cross-Account RLS and transaction-context probes fail closed;
-- enrollment cannot create or repair cursor state;
-- upload/download/ack/recovery absence paths remain bounded and non-applied;
-- migrations 001-006 remain unchanged;
-- full API, Flutter, convergence/recovery, platform build, secret-scan and changed-path validations pass.
+- Analytics: ordinary destination, disabled/placeholder presentation allowed until PH02; no remote telemetry.
+- Settings: always-present ordinary destination; current settings behavior remains intact until PH03 recomposition.
+- Audit: always-present destination contract; its content can remain an explicit PH03 placeholder until ownership is materialized.
 
-### 8.2 Reconciliation and deployment evidence
+Closure remains untouched and feature-gated during PH01. PH01 must not claim that reserving Audit replaces or relocates Closure capability.
 
-New G/H/I must distinguish invariant materialization from provider deployment. Main and all domains
-must reconcile the new unit before provider action. Only then may a separately authorized deployment
-apply the forward migration with the migrator identity and deploy the corrected server/client.
+## 7. Provisional Closure capability matrix
 
-After deployment, gather only sanitized evidence:
+| Current capability | Provisional owner | PH01 disposition |
+| --- | --- | --- |
+| Sign in / Logout | Settings/Advanced | preserve; classify only |
+| Enroll or query Device | Settings/Advanced | preserve; separate configuration/lifecycle from observed health |
+| Check hosted connection | Settings/Advanced | preserve as user-invoked connection check; last observation may be linked to Audit |
+| Ordinary Sync | Settings/Advanced | preserve existing command boundary; do not reconstruct outcome |
+| Diagnostics snapshot / Sync overview | Audit | read existing diagnostic authority |
+| Local queue counts and actionable events | Audit | present observed local state with evidence boundaries |
+| Recent attempts and grouped diagnostic timeline | Audit | primary operation-history surface |
+| Device diagnostic summary | Audit, with Settings summary link | Audit owns detailed observations; Settings may show bounded configuration summary |
+| Current action result / MKS meaning | Audit | reuse existing registry/diagnostic truth |
+| Build provenance | development-only support | keep out of ordinary product emphasis; Advanced/support placement later |
+| Retry unknown-outcome submission | unresolved | retain capability and tests; requires Operational/Design decision before ordinary exposure |
+| Inspect failed/notApplied recovery | development-only support | preserve outside ordinary navigation pending PH03 authority |
+| Recover failed/notApplied candidate | development-only support | preserve gated/manual semantics; do not relocate in PH01 |
+| Clear diagnostic history | Audit | user-controlled local history action with confirmation; retention/export policy needed |
+| “Native Closure” page/container | deliberate retirement candidate | retire only after every retained capability has a tested owner in PH03 |
 
-1. deployed commit/migration identity and successful startup/readiness;
-2. Account count equals cursor-state count for the scoped development environment;
-3. the existing Account has one cursor row with the expected safe next cursor;
-4. submissions/events/acknowledgements remain unchanged before retry;
-5. runtime DDL/Account creation remains denied and RLS remains scoped;
-6. one harmless health correlation passes.
+Classification is COMPLETE as an inventory and PROVISIONAL as final product disposition. No capability is removed, relocated or reimplemented in PH01.
 
-Only Main/human authority after those checks may permit one exact-identity retry. A retry is not part
-of the repair migration, deployment, or health verification.
+## 8. Dependency and ownership rules
 
-## 9. Accepted invariants retained from I/J
+1. Shell and components depend inward on Flutter presentation primitives and semantic view data.
+2. Pages may depend on application ports and domain value types already required for interaction; shared visual widgets must not depend on repositories.
+3. Composition creates repositories/coordinators and injects them; navigation does not instantiate infrastructure.
+4. Business facts, validation, projections, exports, Sync outcomes and diagnostic categories remain owned by existing application/domain boundaries.
+5. Error adapters map typed application failures to presentation models once; widgets render severity, title, message and safe action.
+6. Unexpected exceptions remain sanitized and observable; visual widgets must not assign causal truth.
+7. Settings can invoke configuration/session commands and display bounded summaries, but cannot become diagnostic authority.
+8. Audit reads durable/local diagnostic projections and registry meanings; it cannot create an independent event model.
+9. Analytics in PH02 must use deterministic local/account-scoped query/calculation ports. Shared filters and surfaces may be reused, but PH01 must not add calculation behavior.
+10. No developer telemetry, remote behavioral collection or UI-derived Sync truth enters the dependency graph.
 
-- external subject, Account, membership, InstallationId and DeviceId remain distinct;
-- exact Submission identity, request hash, ordered events 1–2 and next local Device sequence 3 remain
-  unchanged;
-- immutable Event identity/content hash/device sequence and idempotent replay rules remain stable;
-- client-observed diagnostics and server-observed lifecycle logs remain separate evidence owners;
-- final `response-completed` owns terminal HTTP status; logging cannot affect transaction outcome;
-- an observed 503 is a server-declared not-applied failure, while a missed deadline remains unknown
-  until durable server evidence is reconciled;
-- JWT/JWKS, transaction-time authorization, callback validation, route inventory, runtime/migrator
-  separation and offline-first local operation are not weakened;
-- GCM02, MCG-03/04 and Cycle 11 remain outside this boundary.
+## 9. Implementation slices and reversibility
 
-## 10. Recommended next Design boundary
+Recommended PH01 sequence:
 
-Main should stage one bounded unit provisionally named:
+1. Characterization tests: destination reachability, current callbacks, refresh behavior and key page states.
+2. Semantic tokens: expand theme while retaining aliases for current colors.
+3. Shell registry: stable IDs, grouped destinations and responsive shell behind a reversible presentation boundary.
+4. Shared layout/state primitives: bounded content, page header, responsive projection, state panels and action/filter shells.
+5. Home recomposition: lowest domain risk; proves shell/card language.
+6. Lists recomposition: proves summary/table-card/state patterns without changing projection semantics.
+7. Catalogue recomposition: proves data projection, selection and similarity surfaces.
+8. History recomposition: proves filters, selection, expandable detail and reserved Analytics action.
+9. Purchase recomposition: highest interaction risk; last, with edit/review/registration regressions.
+10. Reserved Analytics/Settings/Audit destinations and cross-width/accessibility characterization.
+
+Keep existing repository interfaces and page public constructors stable where possible. Introduce adapters incrementally, preserve old components until all consumers migrate, and avoid a single wholesale rewrite. Each page slice should be independently revertible. No schema, migration, API, provider or domain-model change is justified by PH01 aesthetics.
+
+## 10. Risks, alternatives and tradeoffs
+
+| Risk/choice | Tradeoff and disposition |
+| --- | --- |
+| One 600 px breakpoint | simple but fragile under text scale/window resizing; use semantic compact/medium/wide policy |
+| One widget tree with extensive conditionals | less duplication but unreadable monoliths; share view model/state and use explicit table/card projections |
+| Separate desktop/mobile pages | clear layouts but behavior drift; reject separate business controllers/queries |
+| Global refresh integer | cheap but broad and implicit; preserve initially, request later bounded invalidation design rather than coupling PH01 to state-management replacement |
+| Indexed positional navigation | easy but feature gates shift indexes; replace with stable destination IDs |
+| Giant “design system” first | consistency but delays evidence; build only primitives demanded by the five pages and PH02/PH03 reuse |
+| Pixel-copying PNGs | quick visual resemblance but invents unsupported behavior/data; treat references as composition vocabulary |
+| Moving Closure early | reduces navigation clutter but risks losing authority and recovery controls; prohibit until PH03 ownership/test mapping |
+| Purchase first | visibly valuable but highest regression density; stage it after primitives and lower-risk pages |
+| Full state-management migration | may improve maintainability but expands scope; reject for PH01 unless Main stages a proven prerequisite |
+
+## 11. Recommendations to Main
+
+1. Accept stable destination identity and a semantic three-layout shell as PH01 architecture.
+2. Stage tokens, shell and shared state/data primitives before page-by-page recomposition.
+3. Preserve application/repository constructors and business ownership; require characterization tests before visual replacement.
+4. Require desktop-table/mobile-card parity tests from one view model.
+5. Reserve Analytics, Settings and Audit destinations now, but prohibit their PH02/PH03 functionality.
+6. Keep Closure intact and feature-gated throughout PH01.
+7. Sequence pages Home → Lists → Catalogue → History → Purchase.
+8. Require visual/manual acceptance at representative compact, medium and wide widths without calling it operational validation in Design evidence.
+
+## 12. Dependencies requested from Operational and Didactic
+
+Operational:
+
+- identify supported Windows/Android window sizes, resize/orientation paths and feasible screenshot/golden strategy;
+- define build/test commands and regression gates for shell navigation, text scale, keyboard/focus and page workflows;
+- measure whether large tables/cards require paging or virtualization before PH01 changes query behavior;
+- inventory current test keys and feature-flag behavior, especially Closure.
+
+Didactic:
+
+- establish user-facing terminology for Catalogue/Product, Lists modes, insufficient history, Purchase edit/review and History selection;
+- define progressive-disclosure copy for filters, status chips, errors and empty states;
+- distinguish Settings configuration, Audit observation and Analytics interpretation;
+- verify accessibility wording does not encode meaning solely through color or icons.
+
+## 13. Unresolved decisions
+
+- Exact compact/medium/wide thresholds and maximum content widths.
+- Whether medium uses compact cards or reduced desktop tables per page.
+- Which four compact destinations remain direct once Analytics/Audit are active.
+- Whether Guide and Documentation remain destinations or move under support/settings later.
+- Whether Household stays visible as planned during C11.
+- Stable presentation-state mechanism after the global refresh signal; no PH01-wide framework migration is presently justified.
+- Whether product images are available local assets; references alone do not authorize them.
+- Final exposure of Retry/recovery and build provenance.
+- Audit export/retention/filter contract and diagnostic-history clearing policy.
+- Settings’ exact split between account/session, Sync controls and Advanced diagnostics.
+- Analytics filter model and History context-handoff contract, deferred to PH02.
+- Keyboard double-click/detail behavior and destructive-action policy where the references exceed current capability.
+
+## 14. PRI-D / PMC-01 terminal
+
+Confirmed role: Design [D].
+Current workflow: C11-PH01 fresh functional investigation before Main J and D/E/F.
+Authorized scope: inspect architecture and replace only C_DESIGN.
+Prohibited: source, permanent Design, methodology, Main files, D/E/F, Codex authorization and operational claims.
+Files consulted: prescribed methodology/state/J/ALT/C sources, five PNGs and named Flutter files.
+Remaining uncertainty: implementation thresholds, compact priority and final Closure disposition require Main plus O/A evidence.
 
 ```text
-C10-MCG02-ACCOUNT-CURSOR-PROVISIONING-REPAIR
-```
-
-Its architecture objective is:
-
-```text
-Account provisioning
-  -> atomic cursor-state invariant
-  -> additive repair of existing missing state
-  -> enrollment consumes but does not create Account state
-  -> protected Sync advances or fails closed
-```
-
-Main must freeze before Codex starts:
-
-1. trigger-backed invariant versus exclusive provisioning procedure;
-2. additive migration identifier after 006 and ledger checksum policy;
-3. high-water-derived repair rule and locking strategy;
-4. exact privilege/RLS probes and producer case list;
-5. deployment as a later, separately authorized provider gate.
-
-Current terminals:
-
-```text
-C10_MCG02_SUBMISSION_500_CAUSE_CORRECTED
-C10_MCG02_CURSOR_STATE_PREREQUISITE_UNRESOLVED
-GCM02_OPEN
-REAL_SYNC_RETRY_UNAUTHORIZED
+CYCLE=C11
+PHASE=C11-PH01
+ROLE=DESIGN
+BASELINE_VERIFIED=YES
+C_REPORT_READY=YES
+CLOSURE_CLASSIFICATION=PROVISIONAL
+SOURCE_CHANGE_AUTHORIZED=NO
+D_E_F_AUTHORIZED=NO
+CODEX_AUTHORIZED=NO
+R07_AUTHORIZED=NO
+GCM04_AUTHORIZED=NO
+NEXT_MAIN_ACTION=Reconcile the completed C11-PH01 A/B/C reports into one append-only J_MAIN_STAGE section.
 ```
