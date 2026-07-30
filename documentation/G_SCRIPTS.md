@@ -4885,7 +4885,61 @@ if ($DirtyOverlap.Count -gt 0) {
     throw "Dirty source overlap affects Flutter or Android build-provenance inputs."
 }
 
-flutter doctor -v
+$FlutterCommandCandidates = @(
+    Get-Command flutter.bat `
+        -CommandType Application `
+        -All `
+        -ErrorAction SilentlyContinue |
+        ForEach-Object { [string]$_.Source } |
+        Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+        Select-Object -Unique
+)
+$UsableFlutterCandidates = @()
+foreach ($FlutterCommandCandidate in $FlutterCommandCandidates) {
+    if (-not (Test-Path -LiteralPath $FlutterCommandCandidate -PathType Leaf)) {
+        continue
+    }
+    $CandidateFlutterSdkRoot = Split-Path -Parent (
+        Split-Path -Parent $FlutterCommandCandidate
+    )
+    $CandidateMaterialLibrary = Join-Path `
+        $CandidateFlutterSdkRoot `
+        "packages\flutter\lib\material.dart"
+    if (Test-Path -LiteralPath $CandidateMaterialLibrary -PathType Leaf) {
+        $UsableFlutterCandidates += [pscustomobject]@{
+            Executable = $FlutterCommandCandidate
+            SdkRoot = $CandidateFlutterSdkRoot
+            MaterialLibrary = $CandidateMaterialLibrary
+        }
+    }
+}
+if ($UsableFlutterCandidates.Count -eq 0) {
+    throw @" 
+No usable Flutter SDK was resolved from PATH.
+The procedure requires flutter.bat whose SDK contains
+packages\flutter\lib\material.dart. Repair Flutter PATH/SDK installation,
+open a new terminal, and rerun GS-FLUTTER-AND.
+"@
+}
+
+$SelectedFlutter = $UsableFlutterCandidates[0]
+$FlutterExecutable = [string]$SelectedFlutter.Executable
+$FlutterSdkRoot = [string]$SelectedFlutter.SdkRoot
+$FlutterMaterialLibrary = [string]$SelectedFlutter.MaterialLibrary
+
+[pscustomobject][ordered]@{
+    FlutterCommandCandidates = $FlutterCommandCandidates.Count
+    UsableFlutterSdks = $UsableFlutterCandidates.Count
+    FlutterSdkSelected = $true
+    FlutterMaterialLibraryPresent = (
+        Test-Path -LiteralPath $FlutterMaterialLibrary -PathType Leaf
+    )
+}
+
+& $FlutterExecutable doctor -v
+if ($LASTEXITCODE -ne 0) {
+    throw "Selected Flutter SDK failed doctor inspection."
+}
 
 $ConfigurationReady = [ordered]@{
     Auth0Domain   = -not [string]::IsNullOrWhiteSpace($Auth0Domain)
@@ -4901,7 +4955,7 @@ if ($ConfigurationReady.Values -contains $false) {
 }
 
 function Get-SupportedAndroidDevices {
-    $FlutterDevicesJson = (& flutter devices --machine 2>&1 | Out-String)
+    $FlutterDevicesJson = (& $FlutterExecutable devices --machine 2>&1 | Out-String)
     if ($LASTEXITCODE -ne 0) {
         throw "Could not inspect Flutter devices."
     }
@@ -5105,19 +5159,96 @@ $env:ORG_GRADLE_PROJECT_MARKEI_AUTH0_DOMAIN = $Auth0Domain
 
 Push-Location $ResolvedClientRoot
 try {
-    flutter clean
+    & $FlutterExecutable clean
     if ($LASTEXITCODE -ne 0) { throw "flutter clean failed." }
 
-    flutter pub get
+    & $FlutterExecutable pub get
     if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
 
-    flutter analyze
+    $PackageConfigPath = Join-Path `
+        $ResolvedClientRoot `
+        ".dart_tool\package_config.json"
+    if (-not (Test-Path -LiteralPath $PackageConfigPath -PathType Leaf)) {
+        throw @"
+flutter pub get returned success without creating
+.dart_tool\package_config.json. Stop before analysis and repair the selected
+Flutter SDK/package cache.
+"@
+    }
+    try {
+        $PackageConfig = Get-Content -LiteralPath $PackageConfigPath -Raw |
+            ConvertFrom-Json
+    }
+    catch {
+        throw "Generated Flutter package_config.json is unreadable."
+    }
+    $ConfiguredFlutterPackages = @(
+        $PackageConfig.packages | Where-Object {
+            $_.name -is [string] -and $_.name -ceq "flutter"
+        }
+    )
+    if ($ConfiguredFlutterPackages.Count -ne 1) {
+        throw @"
+Generated package_config.json does not contain exactly one Flutter SDK
+package. Stop before analysis and repair Flutter dependency resolution.
+"@
+    }
+    $ConfiguredFlutterRootUri = [string]$ConfiguredFlutterPackages[0].rootUri
+    try {
+        $ConfiguredFlutterUri = [Uri]::new(
+            $ConfiguredFlutterRootUri,
+            [UriKind]::Absolute
+        )
+    }
+    catch {
+        throw "Generated Flutter SDK package root URI is invalid."
+    }
+    if (-not $ConfiguredFlutterUri.IsFile) {
+        throw "Generated Flutter SDK package root is not a local file URI."
+    }
+    $ConfiguredFlutterRoot = [IO.Path]::GetFullPath(
+        $ConfiguredFlutterUri.LocalPath
+    ).TrimEnd([char[]]@('\', '/'))
+    $ExpectedFlutterPackageRoot = [IO.Path]::GetFullPath(
+        (Join-Path $FlutterSdkRoot "packages\flutter")
+    ).TrimEnd([char[]]@('\', '/'))
+    if (-not [string]::Equals(
+        $ConfiguredFlutterRoot,
+        $ExpectedFlutterPackageRoot,
+        [StringComparison]::OrdinalIgnoreCase
+    )) {
+        throw @"
+Generated package_config.json points to a different Flutter SDK than the
+selected flutter.bat. Stop before analysis, remove the conflicting Flutter
+PATH entry, open a new terminal, and rerun GS-FLUTTER-AND.
+"@
+    }
+    $ConfiguredMaterialLibrary = Join-Path `
+        $ConfiguredFlutterRoot `
+        "lib\material.dart"
+    if (-not (
+        Test-Path -LiteralPath $ConfiguredMaterialLibrary -PathType Leaf
+    )) {
+        throw @"
+Generated Flutter package configuration does not resolve
+package:flutter/material.dart. Stop before analysis and repair the Flutter SDK.
+"@
+    }
+
+    [pscustomobject][ordered]@{
+        PackageConfigPresent = $true
+        FlutterPackageEntryCount = $ConfiguredFlutterPackages.Count
+        PackageConfigMatchesSelectedSdk = $true
+        MaterialImportResolvable = $true
+    }
+
+    & $FlutterExecutable analyze
     if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
 
-    flutter test
+    & $FlutterExecutable test
     if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
 
-    flutter build apk --debug @FlutterDefines
+    & $FlutterExecutable build apk --debug @FlutterDefines
     if ($LASTEXITCODE -ne 0) {
         throw "Android Closure debug build failed."
     }
@@ -5213,8 +5344,8 @@ root, client root, branch and inspected HEAD; rejects relevant dirty source
 overlap; loads and verifies the public coordinate surface without printing
 coordinate values; reuses exactly one selected supported Android target or
 starts the configured AVD with bounded availability and boot waits; forwards
-the Auth0 domain to the Android manifest without writing it elsewhere; cleans,
-validates, builds the debug APK, reports the artifact path, byte length and
+the Auth0 domain to the Android manifest without writing it elsewhere; binds one usable Flutter SDK for the complete run; cleans, regenerates and
+verifies the Flutter package configuration before analysis; validates; builds the debug APK, reports the artifact path, byte length and
 SHA-256, installs the package `com.gusigu.markei` with replacement while
 preserving application data, prints non-secret target/package evidence, and
 launches the app with the mandatory Closure and build-provenance Dart
