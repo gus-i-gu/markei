@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markei/app/build_provenance.dart';
 import 'package:markei/app/markei_app.dart';
 import 'package:markei/app/markei_composition.dart';
 import 'package:markei/domain/shared/ids.dart';
@@ -44,7 +45,7 @@ void main() {
       find.byKey(const Key('nativeClosure.buildProvenance')),
       findsOneWidget,
     );
-    expect(find.text('Build provenance unavailable'), findsOneWidget);
+    expect(find.text('Source identity unavailable'), findsOneWidget);
     expect(find.byKey(const Key('nativeClosure.Diagnostics')), findsOneWidget);
     expect(find.byKey(const Key('nativeClosure.Status')), findsNothing);
     expect(find.byKey(const Key('nativeClosure.Query')), findsNothing);
@@ -55,6 +56,38 @@ void main() {
     await tester.tap(find.byKey(const Key('nativeClosure.Diagnostics')));
     await tester.pumpAndSettle();
     expect(find.text('diagnostics-configuration-missing'), findsOneWidget);
+  });
+
+  testWidgets('MarkeiApp propagates boot identity to Closure', (tester) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final composition = _composition(enabled: true);
+    addTearDown(composition.database.close);
+
+    await tester.pumpWidget(
+      MarkeiApp(
+        composition: composition,
+        buildProvenance: BuildProvenance.fromRaw(
+          sourceRevision: 'abcdef123456abcdef123456abcdef123456abcd',
+          sourceTreeSha256:
+              'fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Closure'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Source revision #abcdef123456'), findsOneWidget);
+    expect(
+      find.text(
+        'Source tree SHA-256 '
+        'fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210',
+      ),
+      findsOneWidget,
+    );
   });
 }
 

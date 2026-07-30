@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'build_provenance.dart';
 import 'design/markei_theme.dart';
 import 'markei_composition.dart';
 import 'pages/home_page.dart';
@@ -11,9 +12,14 @@ import 'pages/purchase_page.dart';
 import 'pages/settings_page.dart';
 
 class MarkeiApp extends StatefulWidget {
-  const MarkeiApp({required this.composition, super.key});
+  const MarkeiApp({
+    required this.composition,
+    this.buildProvenance = BuildProvenance.unavailable,
+    super.key,
+  });
 
   final MarkeiComposition composition;
+  final BuildProvenance buildProvenance;
 
   @override
   State<MarkeiApp> createState() => _MarkeiAppState();
@@ -104,7 +110,10 @@ class _MarkeiAppState extends State<MarkeiApp> {
               onChanged: () => setState(() => _refreshSignal++),
             ),
             if (widget.composition.nativeClosureSurfaceEnabled)
-              NativeClosurePage(runner: widget.composition.nativeClosureRunner),
+              NativeClosurePage(
+                runner: widget.composition.nativeClosureRunner,
+                buildProvenance: widget.buildProvenance,
+              ),
           ];
           final destinations = _destinations;
 

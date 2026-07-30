@@ -1,100 +1,94 @@
-# G_OPS_CODEX - C10-GCM03-S10-R05
+# G_OPS_CODEX - C10-GCM03-S09-R06
 
-## Source Stage Files
-
-- `documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md`
-- `documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md`
-- `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`
-
-Read-only recovery context used:
-
-- `documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md`
-- `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
-- `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
-- `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
-
-## Branch Guard
-
-- Branch: `grm-guarded-provisioning-20260727`
-- Starting head: `c186edccd0be03b6adca9d4d1609ec82372b82b6`
-- Required direct parent: `0fdd2b9fbadbf935d8e20f09f597516a93f4e7dd`
-- Remote branch fetched and verified before editing.
-- Starting ancestry verified.
-- Staging commit inventory verified as only D/E/F.
-- Staging numstat verified: D 343/224, E 184/129, F 248/146.
-- Final implementation commit: the commit carrying this report; exact SHA is self-referential and is verified in the final Codex response after commit and remote read-back.
+Sequence: FLX-ORD-01
+Role: Codex operational evidence
+Round or unit: C10-GCM03-S09-R06
+Branch: grm-guarded-provisioning-20260727
+Baseline / inspected HEAD: 832c433896d9ba425e14891d9cbed9b58dcd8057
+Authority: D_OPS_STAGE.md, E_DDC_STAGE.md, F_DSN_STAGE.md
+Writable surfaces: D-approved source, procedure, focused test, helper, and G/H/I report paths only
+Evidence boundary: shared source identity, Closure presentation, focused tests, host builds, artifact hashes
 
 ## Files Changed
 
-- `clients/markei_flutter/lib/app/native_auth_closure_runner.dart`
-- `clients/markei_flutter/lib/application/hosted_sync_coordinator.dart`
-- `clients/markei_flutter/lib/application/sync/sync_ports.dart`
-- `clients/markei_flutter/lib/application/sync/sync_use_cases.dart`
-- `clients/markei_flutter/test/app/native_closure_diagnostics_test.dart`
-- `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
-- `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
-- `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
-
-No files were created or deleted. No branch was created or renamed.
+- clients/markei_flutter/lib/app/build_provenance.dart
+- clients/markei_flutter/lib/main.dart
+- clients/markei_flutter/lib/app/markei_app.dart
+- clients/markei_flutter/lib/app/pages/native_closure_page.dart
+- clients/markei_flutter/tool/resolve_markei_source_identity.ps1
+- clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
+- clients/markei_flutter/test/app/native_closure_surface_test.dart
+- documentation/G_SCRIPTS.md
+- documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+- documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+- documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
 
 ## Implementation Mapping
 
-- Added bounded optional truth-plane fields to `SyncDiagnosticPhaseEvidence`.
-- Updated upload producers to contribute upload request, trusted response, provider outcome, lease local state, and upload-result persistence only to the upload plane.
-- Updated download/apply producers to contribute download request, trusted response, inbound apply, and cursor-proof state only to the download/inbound plane.
-- Updated acknowledgement producer to contribute acknowledgement request, trusted response, and outcome only to the acknowledgement plane.
-- Replaced the R04 operation-wide cumulative interpretation with plane-scoped cumulative merging in `NativeAuthClosureRunner`.
-- Added lifecycle projection keys for upload, download, inbound apply, acknowledgement, diagnostic durability, terminal result, retryability, and safe action.
-- Preserved event-row compatibility: durable diagnostic rows still use the existing legacy generic fields as phase chronology.
-- Added a bounded test-only merge probe on the runner for same-plane invariant evidence.
-- Preserved R03/R04 Product, apply/replay, transaction, protocol, auth, enrollment, schema, API, dependency, and provider boundaries.
+- Full revision and tree digest validation now live in one immutable `BuildProvenance` value.
+- `main.dart` resolves `BuildProvenance.current` after binding initialization and before `runApp`.
+- `MarkeiApp` carries that immutable value through shared composition.
+- `NativeClosurePage` renders only the supplied value and no longer resolves identity on page load.
+- `resolve_markei_source_identity.ps1` owns Git HEAD/tree resolution, relevant dirty-tree refusal, and the domain-separated SHA-256 algorithm.
+- `GS-FLUTTER-WIN`, `GS-FLUTTER-DBW`, and `GS-FLUTTER-AND` consume the helper and inject `MARKEI_SOURCE_REVISION` plus `MARKEI_SOURCE_TREE_SHA256`.
 
-## Validation Results
+## Commands Run
 
-- `dart format --output=none --set-exit-if-changed lib test`: PASS, 98 files inspected, 0 changed.
-- `flutter analyze`: PASS, no issues found.
-- `flutter test test/app/native_closure_diagnostics_test.dart`: PASS, 39 tests.
-- `flutter test test/sync/local_sync_application_test.dart`: PASS, 29 tests.
-- `flutter test test/sync/two_device_system_harness_test.dart`: PASS, 1 test.
-- `flutter test test/sync/v3_contract_test.dart`: PASS, 2 tests.
-- `flutter test test/infrastructure/remote_purchase_event_applier_test.dart`: PASS, 18 tests.
-- `flutter test test/catalogue_store_repository_test.dart test/catalogue_identity_test.dart test/app/markei_app_test.dart`: PASS, 34 tests.
-- `flutter test`: PASS, 234 tests passed, 4 disposable labs skipped because `MARKEI_RUN_SYNC_LAB=1` was absent.
-- `flutter build apk --debug`: PASS, built `build\app\outputs\flutter-apk\app-debug.apk`; emitted existing Kotlin Gradle Plugin compatibility warning for `auth0_flutter`.
-- `flutter build windows`: PASS on first attempt, built `build\windows\x64\runner\Release\markei.exe`; emitted existing CMake/Boost policy warning.
-- Merged Android manifest inspection: PASS, debug manifest includes package `com.gusigu.markei`, `android.permission.INTERNET`, `com.gusigu.markei.MainActivity`, Auth0 RedirectActivity, and callback path prefixes.
-- `git diff --check`: PASS, no whitespace errors; Git emitted line-ending warnings for touched Flutter files.
-- `npm run diagnostics:check` from `services/markei_sync_api`: PASS.
-- Changed-content sensitive scan against current diff: PASS, no high-risk secret patterns matched.
+- `git fetch origin grm-guarded-provisioning-20260727` -> passed.
+- `git rev-parse HEAD` -> `832c433896d9ba425e14891d9cbed9b58dcd8057`.
+- `git status --short` -> clean before implementation.
+- Methodology boot and D/E/F reads -> completed.
+- `dart format ...` -> formatted changed Dart files.
+- `flutter analyze` from `clients/markei_flutter` -> passed, no issues.
+- `flutter test test\app\native_closure_surface_test.dart` -> passed, 3 tests.
+- `flutter test test\app\markei_app_test.dart` -> passed, 26 tests.
+- `flutter test test\app\native_closure_diagnostics_test.dart` -> first run timed out at 124s; rerun with longer timeout passed, 40 tests.
+- Source identity calculation for build defines -> revision `832c433896d9ba425e14891d9cbed9b58dcd8057`, tree `d62ea525584bdafa82aaee1b403c29e9e69d009d`, source-tree SHA-256 `73cd614674b574bd23d989f15c3105adaa241ef5e503e6f854048d51b26b4084`.
+- `flutter build apk --debug --dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true --dart-define=MARKEI_SOURCE_REVISION=832c433896d9ba425e14891d9cbed9b58dcd8057 --dart-define=MARKEI_SOURCE_TREE_SHA256=73cd614674b574bd23d989f15c3105adaa241ef5e503e6f854048d51b26b4084` -> passed.
+- `flutter build windows --release ...same R06 identity...` -> first run failed because existing `markei.exe` process locked the Release artifact.
+- `Get-Process -Name markei -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,Path` -> found PID 14548 at the local Release build path.
+- `Stop-Process -Id 14548` -> stopped the blocking local build process; no install or launch performed.
+- `flutter build windows --release --dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true --dart-define=MARKEI_SOURCE_REVISION=832c433896d9ba425e14891d9cbed9b58dcd8057 --dart-define=MARKEI_SOURCE_TREE_SHA256=73cd614674b574bd23d989f15c3105adaa241ef5e503e6f854048d51b26b4084` -> passed with existing CMake Boost policy warning.
+- `git diff --check` -> passed; line-ending warnings only.
+- Changed-path inspection -> only D-authorized implementation, procedure, helper, focused test, and G/H/I report paths changed.
 
-## Skips And Limits
+## Artifacts Built
 
-- Four disposable hosted/provider labs skipped because `MARKEI_RUN_SYNC_LAB=1` was absent.
-- No live client/provider assay was performed.
-- No preserved runtime checkpoint was collected by Codex.
-- R05 source validation does not promote MVP Sync acceptance or close GCM03.
+- Windows Release executable:
+  - Path: `H:\Users\Gus\source\repo\markei-mobile\clients\markei_flutter\build\windows\x64\runner\Release\markei.exe`
+  - Bytes: `97792`
+  - SHA-256: `d348ec4e6b0ccca3d235a3f953d7ee9414f44d8f7c3f88492e84d2949f7c7c3e`
+- Android Debug APK:
+  - Path: `H:\Users\Gus\source\repo\markei-mobile\clients\markei_flutter\build\app\outputs\flutter-apk\app-debug.apk`
+  - Bytes: `179200937`
+  - SHA-256: `0387852b35af60663dc27b5b9da42c4106584bcf7b3136c39349609da3b173b9`
 
-## Terminal Values
+## Skipped / Not Performed
 
-```text
-C10_GCM03_S10_R05=IMPLEMENTED_VALIDATED
-TRUTH_PLANES_PARTITIONED=PASS
-UPLOAD_PROVIDER_PLANE=PASS
-UPLOAD_LOCAL_PERSISTENCE_PLANE=PASS
-DOWNLOAD_TRUSTED_RESPONSE_PLANE=PASS
-INBOUND_APPLY_PLANE=PASS
-ACKNOWLEDGEMENT_INDEPENDENT_PLANE=PASS
-VALID_UPLOAD_COMMIT_PLUS_APPLY_ROLLBACK=PASS
-ACK_FAILURE_RETAINS_PRIOR_PLANES=PASS
-SAME_PLANE_CONTRADICTION_BOUNDED=PASS
-DIAGNOSTIC_DEGRADATION_INDEPENDENT=PASS
-R03_R04_ACCEPTED_BASELINE_REGRESSION=PASS
+- No complete GRIMOIRE, SQLite, Neon, Render, Auth0, hosted-provider, or preserved-state suite was run.
+- No install or launch against preserved Windows or Android clients was performed by Codex.
+- No live Sync, Retry, Recovery, Query, Enroll, new Purchase, provider mutation, database repair/reset/clear, or preserved-state action was performed.
+
+## Unresolved Risks
+
+- Codex host builds prove local package materialization only; final preserved-client visible identity remains a human check.
+- Final commit creation changes the repository HEAD/tree after pre-commit artifact builds; the final human procedure must rebuild from the exact pushed commit and compare visible source fields.
+- `GS-FLUTTER-DBA` still contains the older Android VS Code debug provenance field; D did not authorize changing that separate procedure in R06.
+
+## Terminals
+
+C10_GCM03_S09_R06=IMPLEMENTED_VALIDATED
+COMMON_BOOT_IDENTITY=PASS
+FULL_SOURCE_REVISION_VALIDATION=PASS
+COMMON_SOURCE_TREE_SHA256=PASS
+ANDROID_IDENTITY_INJECTION=PASS
+WINDOWS_RELEASE_IDENTITY_INJECTION=PASS
+WINDOWS_DEBUG_IDENTITY_INJECTION=PASS
+CLOSURE_COMMON_PRESENTATION=PASS
+WINDOWS_ARTIFACT_SHA256_REPORT=PASS
+ANDROID_ARTIFACT_SHA256_REPORT=PASS
+SYNC_SOURCE_CHANGED=NO
 PRESERVED_CLIENT_STATE_TOUCHED=NO
 LIVE_SYNC_EXECUTED=NO
 PROVIDER_MUTATION=NONE
-POST_R05_PRE_INSTALL_READ_ONLY_CHECKPOINT=REQUIRED_PENDING
-```
-
-## Prohibited Actions Confirmation
-
-No preserved client state, live Android or Windows Sync, Retry, Recovery, Query, enrollment, live acknowledgement, new Purchase registration, installation, launch against preserved data, diagnostic clearing, runtime-state collection, provider mutation, hosted-event rewrite, schema/API/auth/dependency/build-configuration change, rebase, force push, branch creation, or PR occurred.
+NEXT_HUMAN_CHECK=TWO_PLATFORM_VISIBLE_IDENTITY_ONLY

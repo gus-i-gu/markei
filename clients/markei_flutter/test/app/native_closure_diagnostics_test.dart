@@ -17,6 +17,10 @@ import 'package:markei/application/sync/sync_use_cases.dart';
 import 'package:markei/domain/sync/sync_event.dart';
 
 void main() {
+  const validSourceRevision = 'db17f47a11111111111111111111111111111111';
+  const validSourceTreeSha256 =
+      '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+
   testWidgets('Closure renders signed-out empty diagnostics', (tester) async {
     tester.view.physicalSize = const Size(1400, 2200);
     tester.view.devicePixelRatio = 1;
@@ -31,7 +35,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('signed-out'), findsOneWidget);
-    expect(find.text('Build provenance unavailable'), findsOneWidget);
+    expect(find.text('Source identity unavailable'), findsOneWidget);
     expect(find.text('device-enrolled'), findsOneWidget);
     expect(find.text('No locally recorded attempt history'), findsOneWidget);
     expect(find.text('No pending, failed or unknown events'), findsOneWidget);
@@ -107,7 +111,10 @@ void main() {
         MaterialApp(
           home: NativeClosurePage(
             runner: runner,
-            buildProvenance: BuildProvenance.fromRaw('db17f47'),
+            buildProvenance: BuildProvenance.fromRaw(
+              sourceRevision: validSourceRevision,
+              sourceTreeSha256: validSourceTreeSha256,
+            ),
           ),
         ),
       );
@@ -118,7 +125,11 @@ void main() {
         find.byKey(const Key('nativeClosure.buildProvenance')),
         findsOneWidget,
       );
-      expect(find.text('Build provenance #db17f47'), findsOneWidget);
+      expect(find.text('Source revision #db17f47a1111'), findsOneWidget);
+      expect(
+        find.text('Source tree SHA-256 $validSourceTreeSha256'),
+        findsOneWidget,
+      );
 
       for (final text in [
         'Sync overview',
@@ -176,17 +187,50 @@ void main() {
         home: NativeClosurePage(
           runner: runner,
           buildProvenance: BuildProvenance.fromRaw(
-            'DB17F47-with-path-H:/repo-and-token',
+            sourceRevision: 'DB17F47-with-path-H:/repo-and-token',
+            sourceTreeSha256: validSourceTreeSha256,
           ),
         ),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Build provenance unavailable'), findsOneWidget);
+    expect(find.text('Source identity unavailable'), findsOneWidget);
     expect(find.textContaining('DB17F47'), findsNothing);
     expect(find.textContaining('token'), findsNothing);
     expect(find.textContaining('H:/repo'), findsNothing);
+    expect(find.textContaining(validSourceTreeSha256), findsNothing);
+    expect(query.beginAttempts, 0);
+    expect(query.beginDiagnosticAttempts, 0);
+    expect(query.completedResults, isEmpty);
+  });
+
+  testWidgets('build provenance requires full revision and tree digest', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final query = _FakeDiagnosticsQuery();
+    final runner = _runner(query: query);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: NativeClosurePage(
+          runner: runner,
+          buildProvenance: BuildProvenance.fromRaw(
+            sourceRevision: validSourceRevision,
+            sourceTreeSha256: 'not-a-valid-tree-digest',
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Source identity unavailable'), findsOneWidget);
+    expect(find.textContaining('not-a-valid-tree-digest'), findsNothing);
+    expect(find.textContaining('db17f47a1111'), findsNothing);
     expect(query.beginAttempts, 0);
     expect(query.beginDiagnosticAttempts, 0);
     expect(query.completedResults, isEmpty);

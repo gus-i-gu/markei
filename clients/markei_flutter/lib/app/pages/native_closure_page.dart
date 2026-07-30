@@ -6,11 +6,11 @@ import '../build_provenance.dart';
 import '../native_auth_closure_runner.dart';
 
 class NativeClosurePage extends StatefulWidget {
-  NativeClosurePage({
+  const NativeClosurePage({
     required this.runner,
-    BuildProvenance? buildProvenance,
+    this.buildProvenance = BuildProvenance.unavailable,
     super.key,
-  }) : buildProvenance = buildProvenance ?? BuildProvenance.current;
+  });
 
   final NativeAuthClosureRunner runner;
   final BuildProvenance buildProvenance;
@@ -48,10 +48,7 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
       children: [
         Text('Native closure', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
-        Text(
-          widget.buildProvenance.displayLabel,
-          key: const Key('nativeClosure.buildProvenance'),
-        ),
+        _BuildProvenanceView(buildProvenance: widget.buildProvenance),
         const SizedBox(height: 12),
         Text(
           _running ? 'action-running' : _state,
@@ -419,6 +416,31 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
       _snapshot = snapshot;
       _running = false;
     });
+  }
+}
+
+final class _BuildProvenanceView extends StatelessWidget {
+  const _BuildProvenanceView({required this.buildProvenance});
+
+  final BuildProvenance buildProvenance;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!buildProvenance.isAvailable) {
+      return const Text(
+        'Source identity unavailable',
+        key: Key('nativeClosure.buildProvenance'),
+      );
+    }
+    return Column(
+      key: const Key('nativeClosure.buildProvenance'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(buildProvenance.sourceRevisionLabel),
+        const SizedBox(height: 4),
+        Text(buildProvenance.sourceTreeSha256Label),
+      ],
+    );
   }
 }
 

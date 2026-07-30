@@ -4345,6 +4345,24 @@ $Auth0Audience = Get-NsCoordinate "Auth0Audience"
 $WindowsClientId = Get-NsCoordinate "Auth0WindowsClientId"
 $HostedOrigin = Get-NsCoordinate "RenderPublicOrigin"
 
+$SourceIdentityHelper = Join-Path `
+    $ClientRoot `
+    "tool\resolve_markei_source_identity.ps1"
+if (-not (Test-Path -LiteralPath $SourceIdentityHelper -PathType Leaf)) {
+    throw "Shared Markei source identity helper is missing."
+}
+$SourceIdentity = & $SourceIdentityHelper `
+    -RepositoryRoot $RepositoryRoot `
+    -Json |
+    ConvertFrom-Json
+if ($LASTEXITCODE -ne 0) {
+    throw "Shared Markei source identity resolution failed."
+}
+if ($SourceIdentity.SourceRevision -notmatch '^[a-f0-9]{40}$' -or
+    $SourceIdentity.SourceTreeSha256 -notmatch '^[a-f0-9]{64}$') {
+    throw "Shared Markei source identity returned malformed fields."
+}
+
 flutter config --enable-windows-desktop
 if ($LASTEXITCODE -ne 0) {
     throw "Could not enable Flutter Windows desktop support."
@@ -4422,6 +4440,8 @@ if ($ConfigurationReady.Values -contains $false) {
 $RequiredClosureSurfaceDefine = "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
 $FlutterDefines = @(
     $RequiredClosureSurfaceDefine
+    "--dart-define=MARKEI_SOURCE_REVISION=$($SourceIdentity.SourceRevision)"
+    "--dart-define=MARKEI_SOURCE_TREE_SHA256=$($SourceIdentity.SourceTreeSha256)"
     "--dart-define=MARKEI_AUTH0_DOMAIN=$Auth0Domain"
     "--dart-define=MARKEI_AUTH0_AUDIENCE=$Auth0Audience"
     "--dart-define=MARKEI_AUTH0_WINDOWS_CLIENT_ID=$WindowsClientId"
@@ -4459,6 +4479,10 @@ try {
     if (-not (Test-Path $MarkeiExecutable)) {
         throw "markei.exe was not found at $MarkeiExecutable."
     }
+    $MarkeiExecutableItem = Get-Item -LiteralPath $MarkeiExecutable
+    $MarkeiExecutableHash = Get-FileHash `
+        -LiteralPath $MarkeiExecutable `
+        -Algorithm SHA256
 
     powershell.exe -NoProfile -ExecutionPolicy Bypass `
       -File ".\tool\register_windows_auth0flutter_protocol.ps1" `
@@ -4469,6 +4493,11 @@ try {
 
     Write-Host "Launching the freshly built Markei Windows Closure client."
     Write-Host "Required UI destination: Closure."
+    Write-Host "Windows release artifact: $MarkeiExecutable"
+    Write-Host "Windows release artifact bytes: $($MarkeiExecutableItem.Length)"
+    Write-Host "Windows release artifact SHA-256: $($MarkeiExecutableHash.Hash)"
+    Write-Host "Source revision visible in Closure: #$($SourceIdentity.DisplayRevision)"
+    Write-Host "Source tree SHA-256 visible in Closure: $($SourceIdentity.SourceTreeSha256)"
     & $MarkeiExecutable
 }
 finally {
@@ -4546,6 +4575,24 @@ $Auth0Domain = Get-NsCoordinate "Auth0TenantDomain"
 $Auth0Audience = Get-NsCoordinate "Auth0Audience"
 $WindowsClientId = Get-NsCoordinate "Auth0WindowsClientId"
 $HostedOrigin = Get-NsCoordinate "RenderPublicOrigin"
+
+$SourceIdentityHelper = Join-Path `
+    $ClientRoot `
+    "tool\resolve_markei_source_identity.ps1"
+if (-not (Test-Path -LiteralPath $SourceIdentityHelper -PathType Leaf)) {
+    throw "Shared Markei source identity helper is missing."
+}
+$SourceIdentity = & $SourceIdentityHelper `
+    -RepositoryRoot $RepositoryRoot `
+    -Json |
+    ConvertFrom-Json
+if ($LASTEXITCODE -ne 0) {
+    throw "Shared Markei source identity resolution failed."
+}
+if ($SourceIdentity.SourceRevision -notmatch '^[a-f0-9]{40}$' -or
+    $SourceIdentity.SourceTreeSha256 -notmatch '^[a-f0-9]{64}$') {
+    throw "Shared Markei source identity returned malformed fields."
+}
 
 $VcpkgRoot = "C:\vcpkg"
 $VcpkgExe = Join-Path $VcpkgRoot "vcpkg.exe"
@@ -4629,6 +4676,8 @@ $DebugDefinesPath = Join-Path `
     ".markei_dbw_defines.json"
 $DebugDefines = [ordered]@{
     MARKEI_NATIVE_CLOSURE_SURFACE = "true"
+    MARKEI_SOURCE_REVISION = $SourceIdentity.SourceRevision
+    MARKEI_SOURCE_TREE_SHA256 = $SourceIdentity.SourceTreeSha256
     MARKEI_AUTH0_DOMAIN = $Auth0Domain
     MARKEI_AUTH0_AUDIENCE = $Auth0Audience
     MARKEI_AUTH0_WINDOWS_CLIENT_ID = $WindowsClientId
@@ -4734,6 +4783,8 @@ finally {
 
 [pscustomobject][ordered]@{
     DebugPreparation = "ready"
+    SourceRevision = $SourceIdentity.DisplayRevision
+    SourceTreeSha256 = $SourceIdentity.SourceTreeSha256
     WindowsDevice = $true
     VcpkgToolchain = $true
     CppRestSdk = $true
@@ -4817,10 +4868,6 @@ $InspectedHead = (
 if ($LASTEXITCODE -ne 0 -or $InspectedHead -notmatch '^[a-f0-9]{40}$') {
     throw "Could not determine the inspected Git HEAD."
 }
-$BuildProvenance = $InspectedHead.Substring(0, 12)
-if ($BuildProvenance -notmatch '^[a-f0-9]{7,12}$') {
-    throw "Could not derive reviewed short HEAD for build provenance."
-}
 
 Write-Host "Repository root: $RepositoryRoot"
 Write-Host "Flutter client root: $ResolvedClientRoot"
@@ -4883,6 +4930,24 @@ $DirtyOverlap = @(
 if ($DirtyOverlap.Count -gt 0) {
     $DirtyOverlap | ForEach-Object { Write-Host $_ }
     throw "Dirty source overlap affects Flutter or Android build-provenance inputs."
+}
+
+$SourceIdentityHelper = Join-Path `
+    $ResolvedClientRoot `
+    "tool\resolve_markei_source_identity.ps1"
+if (-not (Test-Path -LiteralPath $SourceIdentityHelper -PathType Leaf)) {
+    throw "Shared Markei source identity helper is missing."
+}
+$SourceIdentity = & $SourceIdentityHelper `
+    -RepositoryRoot $RepositoryRoot `
+    -Json |
+    ConvertFrom-Json
+if ($LASTEXITCODE -ne 0) {
+    throw "Shared Markei source identity resolution failed."
+}
+if ($SourceIdentity.SourceRevision -notmatch '^[a-f0-9]{40}$' -or
+    $SourceIdentity.SourceTreeSha256 -notmatch '^[a-f0-9]{64}$') {
+    throw "Shared Markei source identity returned malformed fields."
 }
 
 $FlutterCommandCandidates = @(
@@ -5144,7 +5209,8 @@ $SelectedAndroidDeviceId = Assert-AdbTargetSerial `
 $RequiredClosureSurfaceDefine = "--dart-define=MARKEI_NATIVE_CLOSURE_SURFACE=true"
 $FlutterDefines = @(
     $RequiredClosureSurfaceDefine
-    "--dart-define=MARKEI_BUILD_PROVENANCE=$BuildProvenance"
+    "--dart-define=MARKEI_SOURCE_REVISION=$($SourceIdentity.SourceRevision)"
+    "--dart-define=MARKEI_SOURCE_TREE_SHA256=$($SourceIdentity.SourceTreeSha256)"
     "--dart-define=MARKEI_AUTH0_DOMAIN=$Auth0Domain"
     "--dart-define=MARKEI_AUTH0_AUDIENCE=$Auth0Audience"
     "--dart-define=MARKEI_AUTH0_ANDROID_CLIENT_ID=$AndroidClientId"
@@ -5266,7 +5332,8 @@ package:flutter/material.dart. Stop before analysis and repair the Flutter SDK.
     Write-Host $AndroidArtifact
     Write-Host "Android debug artifact bytes: $($AndroidArtifactItem.Length)"
     Write-Host "Android debug artifact SHA-256: $($AndroidArtifactHash.Hash)"
-    Write-Host "Build provenance visible in Closure: #$BuildProvenance"
+    Write-Host "Source revision visible in Closure: #$($SourceIdentity.DisplayRevision)"
+    Write-Host "Source tree SHA-256 visible in Closure: $($SourceIdentity.SourceTreeSha256)"
     Write-Host "Local APK hash alone does not prove installed-package identity."
     Write-Host "Installing package com.gusigu.markei with data preservation."
 
@@ -5322,7 +5389,8 @@ package:flutter/material.dart. Stop before analysis and repair the Flutter SDK.
     }
     Write-Host "Required human verification:"
     Write-Host "  Closure destination is visible."
-    Write-Host "  Build provenance shows #$BuildProvenance."
+    Write-Host "  Source revision shows #$($SourceIdentity.DisplayRevision)."
+    Write-Host "  Source tree SHA-256 shows $($SourceIdentity.SourceTreeSha256)."
     Write-Host "  Consolidated Diagnostics surface is visible."
     Write-Host "Do not Enroll, Sync, Retry, recover, clear storage, or sign out."
 }
@@ -5350,10 +5418,10 @@ the Flutter package configuration before analysis; validates; builds the debug
 APK; and reports the artifact path, byte length, and
 SHA-256, installs the package `com.gusigu.markei` with replacement while
 preserving application data, prints non-secret target/package evidence, and
-launches the app with the mandatory Closure and build-provenance Dart
+launches the app with the mandatory Closure and source-identity Dart
 definitions. The local APK hash identifies the generated file only; by itself
 it does not prove installed-package identity. If the `Closure` destination,
-visible build provenance, or consolidated `Diagnostics` surface is absent after
+visible source identity, or consolidated `Diagnostics` surface is absent after
 launch, this procedure has not passed and no Gate action may continue. The
 Auth0 Android application must already allow the callback/logout URI derived
 from package `com.gusigu.markei`; this procedure does not modify Auth0.

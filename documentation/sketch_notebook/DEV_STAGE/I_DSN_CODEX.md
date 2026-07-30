@@ -1,97 +1,65 @@
-# I_DSN_CODEX - C10-GCM03-S10-R05
+# I_DSN_CODEX - C10-GCM03-S09-R06
 
-## Architecture Summary
+Sequence: FLX-ORD-01
+Role: Codex design evidence
+Round or unit: C10-GCM03-S09-R06
+Branch: grm-guarded-provisioning-20260727
+Baseline / inspected HEAD: 832c433896d9ba425e14891d9cbed9b58dcd8057
+Authority: D executable; E evidence ceilings; F architecture ownership
+Evidence boundary: shared build provenance architecture only
 
-R05 partitions cumulative operation truth into upload, download/inbound-apply, acknowledgement, diagnostic, and terminal planes.
+## Architecture Materialized
 
-`SyncDiagnosticPhaseEvidence` remains the event compatibility boundary. It now also supports bounded optional plane fields used by the in-memory cumulative recorder. Durable `SyncDiagnosticEnvelope` rows still persist the legacy event-specific generic fields, so no Drift schema, migration, hosted payload, API, or provider contract changed.
+```text
+clean Git HEAD and tree
+  -> clients/markei_flutter/tool/resolve_markei_source_identity.ps1
+  -> MARKEI_SOURCE_REVISION / MARKEI_SOURCE_TREE_SHA256
+  -> BuildProvenance.current
+  -> main.dart boot resolution
+  -> MarkeiApp immutable transport
+  -> NativeClosurePage presentation
+```
 
-## State Vocabulary
+## Responsibility Confirmation
 
-- Upload request: `not-started`, `started`.
-- Upload trusted response: `not-received`, `received`.
-- Upload provider outcome: `not-started`, `unknown`, `committed`, `rejected`.
-- Upload lease local state: `not-started`, `committed`, `failed`, `unknown`.
-- Upload-result persistence: `not-started`, `started`, `committed`, `failed`, `unknown`.
-- Download request: `not-started`, `started`.
-- Download trusted response: `not-received`, `received`.
-- Inbound apply: `not-started`, `committed`, `rolled-back`, `unknown`.
-- Cursor proof: `available`, `unavailable`, `unknown`.
-- Acknowledgement request: `not-started`, `request-started`.
-- Acknowledgement trusted response: `not-received`, `received`.
-- Acknowledgement outcome: `not-started`, `unknown`, `applied`, `rejected`.
-- Diagnostic durability: `durable`, `degraded`.
-- Same-plane invariant: `diagnostic-invariant-conflict` / `diagnostic-causal-invariant-conflict`.
+- Git revision/tree resolution and source digest calculation belong to the shared helper.
+- Compile-time transport belongs to the documented Flutter procedures.
+- Identity validation and sanitization belong to `BuildProvenance`.
+- Boot initialization belongs to `main.dart`.
+- Application transport belongs to `MarkeiApp`.
+- Closure presentation belongs to `NativeClosurePage`.
+- APK and Windows executable SHA-256 values remain external artifact evidence.
+- Sync, Product reconciliation, applier, cursor, acknowledgement, recorder, provider, database, and Auth0 behavior were not changed.
 
-## Producer Ownership
+## Files Not Touched
 
-- `UploadPendingEvents` owns upload lease, upload request, upload provider, and upload-result persistence evidence.
-- `DownloadAndApplyEvents` owns download request, download trusted response, inbound apply, and cursor-proof evidence.
-- `AcknowledgeAppliedCursor` owns acknowledgement request, trusted response, and outcome evidence.
-- `HostedSyncCoordinator` preserves ordering and adds bounded terminal catch evidence where transport/auth/download errors occur.
-- `NativeAuthClosureRunner` owns cumulative merge, diagnostic durability containment, runner fallback, and lifecycle projection.
+- No Sync coordinator, Sync use case, Product resolver, inbound applier, cursor, acknowledgement, recorder, port, SQLite schema, Drift migration/generated code, hosted API, Render, Neon, Auth0 behavior, enrollment, Account/Device binding, dependency, `pubspec.lock`, methodology, permanent memory, J, REC_DIAGNOSTICS, or NS coordinate file was modified.
 
-## Merge Laws And Invariant Scope
+## Platform Design Evidence
 
-- Later defaults do not erase earlier proof within the same plane.
-- Trusted response receipt is monotonic per request plane.
-- Upload local persistence cannot satisfy or contradict inbound apply.
-- Upload provider outcome cannot satisfy or contradict acknowledgement.
-- Inbound apply cannot satisfy acknowledgement.
-- Diagnostic durability cannot establish provider, apply, cursor, or acknowledgement truth.
-- Terminal evidence adds bounded result and guidance without overwriting core planes.
-- Runner exceptions add terminal classification and sanitized class without rewriting proved planes.
-- Different transaction outcomes coexist without conflict.
-- Incompatible authoritative values within the same plane produce the bounded invariant.
-- Acknowledgement request with inbound apply not committed or cursor proof not available is a bounded invariant.
+- `GS-FLUTTER-WIN` uses the shared helper and injects `MARKEI_SOURCE_REVISION` plus `MARKEI_SOURCE_TREE_SHA256`.
+- `GS-FLUTTER-DBW` uses the shared helper and writes the same fields to the ignored debug define file.
+- `GS-FLUTTER-AND` uses the shared helper and injects the same fields for Android Debug.
+- Closure displays `Source revision #<12>` and `Source tree SHA-256 <64>` from one supplied immutable identity.
 
-## Event-Row Compatibility
+## Unresolved Design Risk
 
-Legacy generic event fields remain for durable phase chronology:
+- `GS-FLUTTER-DBA` remains on older provenance wording because it was outside D's R06 target list. If Android VS Code debug provenance must also be brought into the shared identity chain, Main should stage that as a separate authorized round.
 
-- `localMutationState`
-- `providerTransactionState`
-- `trustedResponseState`
-- `resultPersistenceState`
+## Terminals
 
-Those fields describe the emitting event row and remain available to existing repository/UI projections. They are no longer the canonical cumulative representation for the operation. The authoritative cumulative whole-operation view is the in-memory/lifecycle plane projection.
-
-Old durable rows are not reinterpreted as if they contain new R05 plane evidence.
-
-## Runner And Terminal Projection
-
-Both runner success and catch paths consume the cumulative snapshot. Lifecycle declarations expose:
-
-- upload request/provider/local persistence;
-- download trusted response;
-- inbound apply and cursor proof;
-- acknowledgement request/response/outcome;
-- diagnostic durability;
-- terminal result, safe action, retryability, and sanitized exception class.
-
-The operation-started lifecycle uses initialized plane defaults. Terminal declarations retain the same accumulated planes and add bounded terminal guidance.
-
-## Acknowledgement Eligibility
-
-Acknowledgement remains eligible only after committed inbound apply and committed contiguous cursor proof.
-
-Failed, rejected, rolled-back, or unproved inbound apply leaves acknowledgement not-started. Diagnostic degradation does not remove eligibility when inbound apply and cursor proof are independently available. Acknowledgement transport failure after committed apply leaves upload truth and inbound apply truth intact while acknowledgement remains request-started, trusted response not-received, and outcome unknown.
-
-## Frozen Boundaries
-
-R05 did not alter:
-
-- Product identity resolution or remote-to-local Product UUID mapping;
-- Store convergence;
-- Purchase/Purchase Item materialization;
-- facts/inbox/cursor Drift transaction boundary;
-- post-rollback apply exception translation;
-- poison-page and mixed-client replay behavior;
-- Protocol v3 Person/Payment restrictions;
-- hosted API, payloads, Auth0, enrollment, Account/Device binding, dependencies, generated files, schema, migrations, or provider configuration.
-
-## Residual Design Risk
-
-The remaining risk is evidence class. R05 proves source truth-plane partitioning through deterministic automated tests and builds. It does not prove preserved runtime state, installed-client behavior, live provider convergence, or overall Sync acceptance.
-
-After Main reconciles R05, the next possible sequence remains the separately authorized read-only preserved-state checkpoint before any installation or live assay.
+C10_GCM03_S09_R06=IMPLEMENTED_VALIDATED
+COMMON_BOOT_IDENTITY=PASS
+FULL_SOURCE_REVISION_VALIDATION=PASS
+COMMON_SOURCE_TREE_SHA256=PASS
+ANDROID_IDENTITY_INJECTION=PASS
+WINDOWS_RELEASE_IDENTITY_INJECTION=PASS
+WINDOWS_DEBUG_IDENTITY_INJECTION=PASS
+CLOSURE_COMMON_PRESENTATION=PASS
+WINDOWS_ARTIFACT_SHA256_REPORT=PASS
+ANDROID_ARTIFACT_SHA256_REPORT=PASS
+SYNC_SOURCE_CHANGED=NO
+PRESERVED_CLIENT_STATE_TOUCHED=NO
+LIVE_SYNC_EXECUTED=NO
+PROVIDER_MUTATION=NONE
+NEXT_HUMAN_CHECK=TWO_PLATFORM_VISIBLE_IDENTITY_ONLY
