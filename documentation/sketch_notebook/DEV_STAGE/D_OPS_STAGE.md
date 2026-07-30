@@ -1,289 +1,408 @@
-# D_OPS_STAGE — C10-GCM03-S10-R04 completion materialization
+# D_OPS_STAGE — C10-GCM03-S10-R05 truth-plane completion
 
 ## Active authority
 
 Authority state: ACTIVE — CODEX IMPLEMENTATION AUTHORIZED AFTER PUBLICATION
 
-Primary unit: C10-GCM03-S10-R04
+Sequence: FLX-ORD-01 entered from FLX-PRM-04 reconciliation
 
-Human-assay continuity alias: C10-GCM03-S09-R04
+Primary unit: C10-GCM03-S10-R05
 
-Previous unit: C10-GCM03-S10-R03
+Human-assay continuity alias: C10-GCM03-S09-R05
+
+Previous unit: C10-GCM03-S10-R04
 
 Repository: gus-i-gu/markei
 
 Existing branch: grm-guarded-provisioning-20260727
 
-Required pre-stage head: 5d7cd6c9784f0fa169a5ed6fb6ca8cb3db4037ce
+Required pre-stage head: 0fdd2b9fbadbf935d8e20f09f597516a93f4e7dd
 
-Required Codex starting head: the published R04 D/E/F staging commit, as pinned by Main.
+Required Codex starting head: the published R05 D/E/F staging commit, as pinned
+by Main.
 
-This is one bounded FLX-ORD-01 completion round entered from Main's R03
-post-materialization reconciliation. D controls implementation scope and
-terminals; E constrains evidence interpretation; F constrains architecture.
-J and REC_DIAGNOSTICS.md remain append-only and are not writable by Codex.
+D controls executable scope and terminals. E constrains evidence meaning. F
+controls responsibility and compatibility boundaries. J, REC_DIAGNOSTICS.md,
+preserved client data, and provider state are read-only.
 
-## 1. Entry diagnosis
+## 1. Entry state
 
-R03 corrected the observed Product exact-identity/different-code failure at
-source and focused-test scope, retained one-transaction page application,
-introduced bounded post-rollback translation, projected the sanitized exception
-class, and kept acknowledgement behind committed cursor exposure.
+R04 is accepted at implementation and automated scope for:
 
-Main did not promote R03 as complete because:
+- replacing whole-event strongest-evidence selection with cumulative merging;
+- retaining trusted download and committed apply through later defaults;
+- containing diagnostic begin, row, and completion persistence failures;
+- direct Product ambiguity, immutable-UUID, unexpected-apply, poison-page, and
+  mixed-client replay tests;
+- full Flutter regression and Android/Windows packaging.
 
-1. `_DiagnosticOperationRecorder` keeps one replaceable
-   `SyncDiagnosticPhaseEvidence`, not cumulative operation truth;
-2. an acknowledgement-request or later terminal phase can replace an earlier
-   trusted download and committed local apply with weaker defaults;
-3. `beginDiagnosticAttempt` failure becomes `attemptId == null` without marking
-   persistence degraded;
-4. row/complete diagnostic failures are not consistently reflected in the final
-   operation declaration;
-5. the exact R03 Product, apply, persistence-failure, replay, and runner-fallback
-   test matrix is incomplete.
+Main did not promote R04 as complete because the cumulative model still merges
+facts from different transactions into generic fields:
 
-No evidence indicates a schema, provider, API, authentication, enrollment,
-payload-v3, dependency, or hosted-event change is required.
+1. upload lease/result persistence and inbound page application share one
+   `localMutationState`;
+2. upload provider result and acknowledgement share one
+   `providerTransactionState` and one `trustedResponseState`;
+3. acknowledgement has no independent not-started/request-started/response/result
+   dimension;
+4. a valid `upload committed -> inbound apply rolled-back` sequence is classified
+   as `diagnostic-causal-invariant-conflict`;
+5. an earlier upload provider commit can remain visible when acknowledgement
+   later starts and fails without a trusted response, making acknowledgement
+   truth ambiguous in the cumulative and terminal projections.
 
-## 2. Accepted baseline that R04 must preserve
+These are source-proved modeling defects. No live client operation is required
+to justify R05.
 
-- A previously unseen remote Product UUID may reuse one exact semantic local
-  Product despite a different user code.
+## 2. Runtime checkpoint disposition
+
+R05 is source-only and may proceed without collecting a new WIN/AND/provider
+snapshot first because it is prohibited from touching installed clients,
+preserved databases, diagnostic history, or provider state.
+
+A read-only preserved-state checkpoint remains mandatory after R05 Main
+reconciliation and before any corrected-client installation or live assay.
+Taking that checkpoint after source materialization but before installation
+still anchors the unchanged pre-install runtime state.
+
+Codex shall not collect that checkpoint and shall not convert this source round
+into an operator round.
+
+```text
+PRE_R05_SOURCE_JUSTIFICATION=SOURCE_PROVED
+PRESERVED_RUNTIME_STATE_DURING_R05=UNTOUCHED
+POST_R05_PRE_INSTALL_READ_ONLY_CHECKPOINT=REQUIRED_PENDING
+LIVE_ASSAY_AUTHORITY=NONE
+```
+
+## 3. Accepted baseline to preserve
+
+- The R03 Product resolver and remote-to-local Product UUID map.
 - Same-code/different-identity, split-key, ambiguity, and established-UUID
-  mutation remain typed conflicts.
-- Local Product code/display is preserved and dependent Purchase Items use the
-  remote-to-local Product UUID map.
+  mutation remain bounded conflicts.
+- Local Product code/display remains preserved.
 - Product/Store reconciliation, Purchases/Items, inbox, and Account cursor remain
   in one Drift transaction.
-- Apply failures translate only outside the rolled-back transaction.
-- Acknowledgement is ineligible unless the local page and cursor committed.
-- Stored `sanitizedExceptionClass` reaches summary/current action/Closure UI.
-- Protocol v3, Store rules, Account scope, Person/Payment restrictions, and
-  stable Product selector behavior remain unchanged.
+- Apply exceptions translate only outside the rolled-back transaction.
+- R04 diagnostic persistence remains best-effort and cannot change core truth.
+- Acknowledgement remains ineligible without a committed contiguous cursor.
+- Protocol v3, hosted API, schema, Auth0, enrollment, Account/Device binding,
+  Store behavior, Person/Payment restrictions, and Product selector behavior
+  remain unchanged.
 
-If implementation discovers that one of these accepted properties is false,
-stop and report the exact blocker in G/H/I rather than redesigning silently.
+If direct source inspection proves one of these accepted properties false, stop
+and record the blocker in G/H/I instead of broadening or redesigning silently.
 
-## 3. Writable scope
+## 4. Writable scope
 
-Default production scope:
+Default production paths:
 
 - `clients/markei_flutter/lib/app/native_auth_closure_runner.dart`
 - `clients/markei_flutter/lib/application/sync/sync_ports.dart`
 - `clients/markei_flutter/lib/application/sync/sync_use_cases.dart`
 
-Use only when required by the diagnostic-persistence contract:
+Use only when required to preserve coordinator ordering or expose a bounded
+terminal result:
 
+- `clients/markei_flutter/lib/application/hosted_sync_coordinator.dart`
 - `clients/markei_flutter/lib/application/closure_diagnostics.dart`
-- `clients/markei_flutter/lib/infrastructure/local/closure_diagnostics_repository.dart`
 
-Default test scope:
+Default test paths:
 
 - `clients/markei_flutter/test/app/native_closure_diagnostics_test.dart`
-- `clients/markei_flutter/test/infrastructure/closure_diagnostics_repository_test.dart`
-- `clients/markei_flutter/test/infrastructure/remote_purchase_event_applier_test.dart`
 - `clients/markei_flutter/test/sync/local_sync_application_test.dart`
 - `clients/markei_flutter/test/sync/two_device_system_harness_test.dart`
 
-Minimal test-only seams may touch
-`remote_purchase_event_applier.dart` or `remote_purchase_fact_writer.dart` only
-when deterministic coverage cannot be achieved through existing public seams.
-Such a touch must preserve production decisions and be justified in G/H/I.
+Regression-only test paths may be updated only when an R05 evidence-model API
+change requires a mechanical fixture adaptation:
 
-Codex shall replace only `G_OPS_CODEX.md`, `H_DDC_CODEX.md`, and
-`I_DSN_CODEX.md`. No other Sketch Notebook or GRIMOIRE file is writable.
+- `clients/markei_flutter/test/infrastructure/closure_diagnostics_repository_test.dart`
+- `clients/markei_flutter/test/infrastructure/remote_purchase_event_applier_test.dart`
 
-Any additional production path, generated file, schema, migration, API,
-dependency, or configuration requirement is a stop condition.
+Do not touch the Product resolver, fact writer, page applier, database schema,
+migrations, hosted API, JavaScript service, generated files, dependencies, or
+configuration. A required path outside this list is a stop condition.
 
-## 4. Cumulative causal state
+Replace only:
 
-Replace single-object strongest-evidence selection with one per-operation
-cumulative causal state. It may be a dedicated immutable model or an equivalent
-recorder-owned structure, but it must retain these dimensions independently:
+- `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
+- `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
+- `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
 
+No other Sketch Notebook, GRM, script, or operator file is writable.
+
+## 5. Required truth-plane model
+
+Replace the operation-wide generic cumulative interpretation with independently
+owned planes. The exact Dart type layout is an implementation choice, but one
+coherent recorder snapshot must expose at least:
+
+### Upload plane
+
+- upload request not-started/started;
+- trusted upload response not-received/received;
+- upload provider outcome not-started/unknown/committed/rejected or equivalent;
+- upload lease local outcome not-started/committed/failed/unknown;
+- upload-result local persistence not-started/started/committed/failed/unknown.
+
+### Download and inbound-apply plane
+
+- download request not-started/started;
+- trusted download response not-received/received;
+- inbound apply not-started/committed/rolled-back/unknown;
+- committed cursor proof available/unavailable/unknown where required for
+  acknowledgement eligibility.
+
+### Acknowledgement plane
+
+- acknowledgement not-started/request-started;
+- acknowledgement trusted response not-received/received;
+- acknowledgement outcome not-started/unknown/applied/rejected or equivalent.
+
+### Diagnostic and terminal plane
+
+- diagnostic persistence durable/degraded;
 - latest entered phase;
 - latest proved phase;
-- provider contact;
-- provider transaction;
-- trusted response;
-- download/local-apply outcome;
-- local mutation commit/rollback/unknown;
-- result/diagnostic persistence;
-- acknowledgement not-started/started/result;
-- bounded outcome/result code;
-- retryability and safe action;
+- bounded terminal result/outcome;
+- safe action and retryability;
 - sanitized exception class/category;
-- safe queue/sequence/fingerprint metadata already authorized.
+- safe counts, sequences, timing bands, and fingerprints already authorized.
 
-Merge rules are monotonic:
+The cumulative snapshot and lifecycle projection must not require a consumer to
+infer acknowledgement from upload provider state or inbound apply from a
+generic operation-wide local mutation field.
 
-- `received` trusted-response proof cannot regress to `not-received`, a default,
-  `unknown`, or `see-causal-event`;
-- `committed` local mutation cannot be erased by an acknowledgement-request or
-  terminal declaration;
-- proved rollback cannot become committed without a later authoritative core
-  result, and contradictory authoritative core states must produce a bounded
-  invariant failure rather than first/last-writer wins;
-- acknowledgement-request may advance acknowledgement/provider-contact state
-  while retaining download/apply truth;
-- terminal placeholder fields cannot erase causal facts;
-- a generic runner exception may add its sanitized class and terminal outcome,
-  but cannot rewrite earlier provider, trusted-response, apply, or commit proof.
+## 6. Compatibility handling
 
-Update the cumulative state synchronously before any awaited durable diagnostic
-write. Do not retain payloads, business facts, UUIDs, SQL, tokens, messages,
-stacks, secrets, or full hashes.
+Existing generic fields on a single `SyncDiagnosticPhaseEvidence` or
+`SyncDiagnosticEnvelope` may remain for event-row compatibility. They describe
+that event only and must not act as the canonical cumulative representation of
+multiple transactions.
 
-## 5. Diagnostic-persistence containment
+R05 may add bounded optional application/in-memory evidence fields and lifecycle
+JSON keys. It must not:
 
-Treat begin, row/event, and completion persistence as best-effort observability:
+- add a Drift column or migration;
+- change the hosted protocol or payload;
+- alter provider logs or database contracts;
+- persist a new unsanitized identifier or business fact;
+- reinterpret old durable rows as proof they cannot contain.
 
-- begin failure initializes the operation recorder as persistence-degraded;
-- row/event failure marks degradation without throwing through the coordinator;
-- completion failure marks degradation after the core result is known;
-- final lifecycle/result projection exposes
-  `diagnostics-persistence-degraded` when any of those failures occurred;
-- degradation must not change committed versus rolled-back transaction truth;
-- degradation after committed apply must not make acknowledgement ineligible;
-- degradation must not manufacture acknowledgement or provider success;
-- do not recursively attempt to diagnose a failing diagnostic write.
+If durable event rows cannot store the new cumulative planes without migration,
+retain phase-specific legacy fields for durable chronology and project the
+independent cumulative state in memory/lifecycle. Report that compatibility
+boundary explicitly in G/H/I.
 
-If no durable attempt row exists, the in-memory/lifecycle declaration must still
-retain the bounded degradation state. If some durable writes remain possible,
-persist only the already-authorized sanitized degradation category.
+## 7. Merge laws
 
-Pure diagnostic failure must not turn an otherwise completed/no-new-events core
-Sync result into `sync-failed`.
+Merge authority is scoped to a plane.
 
-## 6. Runner and acknowledgement boundary
+- Later placeholders cannot erase earlier proof within the same plane.
+- Trusted response `received` cannot regress within its request plane.
+- Upload local persistence cannot satisfy or contradict inbound apply.
+- Upload provider outcome cannot satisfy or contradict acknowledgement.
+- Inbound apply cannot satisfy acknowledgement.
+- Diagnostic durability cannot establish provider, apply, cursor, or
+  acknowledgement truth.
+- Terminal evidence adds a result and guidance without overwriting core planes.
+- A runner exception may add a sanitized terminal category, but cannot rewrite
+  previously proved upload, download, apply, or acknowledgement facts.
+- A contradiction between authoritative declarations about the same transaction
+  must produce the bounded invariant category.
+- Different outcomes in different transactions are valid compound state.
 
-The runner safety catch must consume the cumulative snapshot after every phase.
-It must preserve any trusted download, committed/rolled-back local apply, and
-acknowledgement state already proved.
+Required valid compound states include:
 
-Acknowledgement may begin only from a committed contiguous cursor. A failed,
-rejected, rolled-back, or unproved apply prohibits it. A committed apply remains
-eligible even if diagnostics are degraded. An acknowledgement transport failure
-must retain the committed local-apply truth while recording acknowledgement as
-started/unknown or failed according to authoritative evidence.
+```text
+upload persistence committed + inbound apply rolled-back
+upload provider committed + acknowledgement unknown
+inbound apply committed + acknowledgement request-started/response-not-received
+diagnostics degraded + inbound apply committed + acknowledgement applied
+```
 
-## 7. Required deterministic tests
+Required bounded invariant:
 
-### Causal and persistence tests
+```text
+inbound apply failed or unproved + acknowledgement request-started
+```
 
-- committed download apply followed by acknowledgement-request preserves trusted
-  response and committed local mutation;
-- acknowledgement exception preserves committed apply and reports
-  acknowledgement uncertainty without rewriting transaction truth;
-- terminal declaration preserves all earlier causal facts;
-- runner fallback after apply/ack failure consumes the cumulative state;
-- begin-diagnostic failure is visible as degraded while core Sync continues;
-- row-write failure before apply is contained and visible;
-- row-write failure while reporting rollback preserves rollback truth;
-- row-write or completion failure after commit preserves commit truth;
-- committed apply with diagnostic degradation remains acknowledgement-eligible;
-- diagnostics cannot create provider, transaction, or acknowledgement proof;
-- sanitized output contains no message, SQL, value, payload, UUID, token, stack,
-  secret, or full hash.
+Do not infer plane identity from severity or arbitrary string strength alone.
+Use explicit fields, a typed internal event, or a deterministic phase-to-plane
+adapter covered directly by tests.
 
-### Product decision table completion
+## 8. Producer and runner behavior
 
-- ambiguous normalized-code match is a bounded conflict;
-- ambiguous exact-identity match is a bounded conflict;
-- established incoming UUID immutable mutation is a bounded conflict;
-- exact identity under another code still reuses and preserves local display;
-- same code/different identity and split-key conflicts remain;
-- every dependent Purchase Item uses the remote-to-local Product map.
+Update the phase producers so each upload, download/apply, and acknowledgement
+event contributes only to its owning plane.
 
-If a database uniqueness invariant makes an ambiguity impossible through normal
-rows, test the resolver branch through a minimal seam and separately prove the
-invariant; do not weaken or bypass production constraints.
+The recorder must update cumulative state synchronously before awaiting
+diagnostic persistence.
 
-### Apply, replay, and poison-page completion
+The runner success and catch paths must consume the same cumulative snapshot.
+Lifecycle declarations must expose the independent planes with bounded keys.
+The runner catch must preserve all prior proved planes while adding the terminal
+classification and sanitized exception class.
 
-- an arbitrary non-SQL/non-payload/non-invariant exception maps to
-  `unexpected-local-apply-failed` after total rollback;
-- facts, inbox, and cursor remain unchanged on every failed page;
-- no acknowledgement follows failed or unproved apply;
-- the formerly rejected exact-identity/different-code event can apply on replay;
-- a later page/event then advances without the earlier event poisoning progress;
-- mixed two-client events converge without duplicate Product, Store, Purchase,
-  Purchase Item, inbox, or cursor effects;
-- a repeated page remains idempotent.
+Acknowledgement begins only after committed inbound apply and a committed
+contiguous cursor. A failed, rejected, rolled-back, or unproved apply prohibits
+acknowledgement. Diagnostic degradation does not remove eligibility when cursor
+proof independently exists.
 
-### Regression
+If acknowledgement transport throws after committed apply:
 
-- stable Product-ID selection and Find Item;
-- Store convergence;
-- upload-result persistence and queue behavior;
-- v3 Person/Payment restrictions and contract;
-- prior local sync, two-device harness, and Closure UI diagnostics suites.
+- inbound apply remains committed;
+- acknowledgement remains request-started;
+- acknowledgement trusted response remains not-received unless proved;
+- acknowledgement outcome becomes unknown/failed according to authoritative
+  evidence;
+- upload state remains exactly what upload established;
+- no retry, recovery, query, or second operation starts automatically.
 
-## 8. Validation
+## 9. Required direct deterministic tests
+
+Add coordinator/runner-level tests that inspect independent fields, not only
+final result strings:
+
+1. no upload, committed inbound apply, acknowledgement success;
+2. no upload, committed inbound apply, acknowledgement transport exception;
+3. successful upload/result persistence followed by inbound apply rollback;
+4. successful upload/result persistence followed by committed inbound apply and
+   acknowledgement transport exception;
+5. upload unknown or rejected causes the existing early stop with no download or
+   acknowledgement proof;
+6. failed or unproved inbound apply keeps acknowledgement not-started;
+7. begin diagnostic failure across a compound upload/download/ack operation;
+8. diagnostic row failure across a compound upload/download/ack operation;
+9. diagnostic completion failure across a compound upload/download/ack
+   operation;
+10. terminal success and runner fallback preserve every independent plane;
+11. valid cross-plane outcomes do not create a false diagnostic invariant;
+12. a contradiction within one authoritative plane creates the bounded
+    invariant category;
+13. lifecycle and cumulative snapshots contain no payload, business fact, UUID,
+    token, SQL, exception message, stack, secret, path, or full hash;
+14. R03/R04 Product decision, unexpected apply, poison-page recovery, mixed
+    replay, and idempotency remain passing.
+
+Each applicable compound test must assert:
+
+- upload request, trusted response, provider outcome, lease, and result
+  persistence;
+- download request and trusted response;
+- inbound apply and cursor/eligibility truth;
+- acknowledgement request, trusted response, and outcome;
+- diagnostic durability;
+- latest entered/proved phase;
+- terminal result, safe action, retryability, and sanitized class;
+- absence of automatic second operations.
+
+## 10. Validation
 
 Run from `clients/markei_flutter` and report exact outcomes:
 
 1. `dart format --output=none --set-exit-if-changed lib test`
 2. `flutter analyze`
-3. focused R04 runner/diagnostic/Product/apply/replay tests
-4. `flutter test test/sync/local_sync_application_test.dart`
-5. `flutter test test/sync/two_device_system_harness_test.dart`
-6. `flutter test test/sync/v3_contract_test.dart`
-7. stable catalogue/Store/Product selector regression tests
-8. `flutter test`
-9. `flutter build apk --debug`
-10. `flutter build windows`
-11. merged Android manifest inspection where the existing procedure applies
-12. repository-root `git diff --check`
-13. changed-content sensitive scan
-14. exact changed-file inventory and ancestry guard
+3. focused R05 runner/coordinator/truth-plane tests
+4. `flutter test test/app/native_closure_diagnostics_test.dart`
+5. `flutter test test/sync/local_sync_application_test.dart`
+6. `flutter test test/sync/two_device_system_harness_test.dart`
+7. `flutter test test/sync/v3_contract_test.dart`
+8. focused R03/R04 Product/apply/replay regression tests
+9. stable catalogue/Store/Product-selector regression tests
+10. `flutter test`
+11. `flutter build apk --debug`
+12. `flutter build windows`
+13. inspect the merged Android manifest using the established procedure
+14. repository-root `git diff --check`
+15. established diagnostics generator/check
+16. changed-content sensitive scan
+17. exact changed-file inventory, ancestry, and branch guard
 
-Skipped disposable labs are environment-limited evidence, never live acceptance.
+Four disposable provider labs skipped because `MARKEI_RUN_SYNC_LAB=1` is absent
+remain skipped evidence. They are not live acceptance.
 
-## 9. Prohibited operations
+## 11. Prohibited operations
 
-No live client Sync, Retry, Recovery, Enroll, Query, acknowledgement, new
-Purchase registration, install/launch against preserved data, diagnostic
-clearing, data reset, database surgery, provider mutation, hosted event rewrite,
-schema/migration/API/auth/enrollment/dependency/configuration change, branch
-creation/rename, rebase, force push, or unrelated cleanup.
+Do not perform:
 
-Do not modify J, REC_DIAGNOSTICS.md, permanent notebook memory, methodology,
-D/E/F after starting, `DB_MGMT.sql`, `G_SCRIPTS.md`, or `I_SCRIPTS.ps1`.
+- live Android or Windows Sync;
+- Retry, Recovery, Query, enrollment, or live acknowledgement;
+- new Purchase registration;
+- app installation or launch against preserved data;
+- WIN/AND SQLite or provider-state collection;
+- diagnostic clearing or local database repair/reset;
+- provider mutation or hosted-event rewrite;
+- schema, migration, API, payload, auth, enrollment, dependency, build-config,
+  or environment change;
+- branch creation/rename, rebase, force push, PR, or unrelated cleanup.
 
-## 10. G/H/I evidence contract
+Do not modify J, REC_DIAGNOSTICS.md, permanent memory, methodology, D/E/F after
+implementation begins, `DB_MGMT.sql`, `G_SCRIPTS.md`, or `I_SCRIPTS.ps1`.
 
-G records starting/ending heads, exact paths, implementation mapping, commands,
-results, skips, builds, terminals, and confirmation of zero live/provider action.
+## 12. G/H/I contract
 
-H maps every required test and negative assertion to direct evidence and applies
-PRC-01 ceilings. Missing direct coverage is reported as missing, not inferred
-from the full-suite count.
+G records:
 
-I records the cumulative-state design, merge laws, recorder failure boundaries,
-acknowledgement ordering, preserved R03 architecture, compatibility, and any
-residual design risk.
+- starting and final heads;
+- exact changed paths;
+- implementation mapping to every D requirement;
+- exact commands, counts, skips, builds, and warnings;
+- terminals and zero runtime/provider mutation confirmation.
 
-## 11. Terminals and publication
+H records:
+
+- requirement-to-test mapping;
+- independent plane assertions for every compound case;
+- same-plane contradiction and cross-plane compatibility evidence;
+- negative and sensitive-content assertions;
+- PRC-01 ceilings and every partial/missing test.
+
+I records:
+
+- the truth-plane architecture and state vocabulary;
+- producer-to-plane ownership;
+- merge laws and invariant scope;
+- event-row compatibility;
+- runner/terminal projection;
+- acknowledgement eligibility;
+- frozen R03/R04 boundaries and residual design risks.
+
+## 13. Terminals
+
+Report exactly:
 
 ```text
-C10_GCM03_S10_R04=IMPLEMENTED_VALIDATED | BLOCKED
-CUMULATIVE_CAUSAL_STATE=PASS | FAIL
-ACK_TRANSITION_TRUTH_PRESERVED=PASS | FAIL
-DIAGNOSTIC_BEGIN_FAILURE_VISIBLE=PASS | FAIL
-DIAGNOSTIC_ROW_FAILURE_CONTAINED=PASS | FAIL
-DIAGNOSTIC_COMPLETE_FAILURE_CONTAINED=PASS | FAIL
-COMMITTED_APPLY_ACK_ELIGIBLE_WHEN_DIAGNOSTICS_DEGRADED=PASS | FAIL
-PRODUCT_DECISION_MATRIX_DIRECT_EVIDENCE=PASS | PARTIAL | FAIL
-UNEXPECTED_LOCAL_APPLY_DIRECT_EVIDENCE=PASS | FAIL
-POISON_PAGE_RECOVERY=PASS | FAIL
-MIXED_CLIENT_REPLAY_IDEMPOTENCY=PASS | FAIL
-R03_ACCEPTED_BASELINE_REGRESSION=PASS | FAIL
+C10_GCM03_S10_R05=IMPLEMENTED_VALIDATED | BLOCKED
+TRUTH_PLANES_PARTITIONED=PASS | FAIL
+UPLOAD_PROVIDER_PLANE=PASS | FAIL
+UPLOAD_LOCAL_PERSISTENCE_PLANE=PASS | FAIL
+DOWNLOAD_TRUSTED_RESPONSE_PLANE=PASS | FAIL
+INBOUND_APPLY_PLANE=PASS | FAIL
+ACKNOWLEDGEMENT_INDEPENDENT_PLANE=PASS | FAIL
+VALID_UPLOAD_COMMIT_PLUS_APPLY_ROLLBACK=PASS | FAIL
+ACK_FAILURE_RETAINS_PRIOR_PLANES=PASS | FAIL
+SAME_PLANE_CONTRADICTION_BOUNDED=PASS | FAIL
+DIAGNOSTIC_DEGRADATION_INDEPENDENT=PASS | FAIL
+R03_R04_ACCEPTED_BASELINE_REGRESSION=PASS | FAIL
+PRESERVED_CLIENT_STATE_TOUCHED=NO
 LIVE_SYNC_EXECUTED=NO
 PROVIDER_MUTATION=NONE
+POST_R05_PRE_INSTALL_READ_ONLY_CHECKPOINT=REQUIRED_PENDING
 ```
 
-Publish one non-forced fast-forward commit containing only authorized
-source/test/G/H/I paths. Do not open a competing branch or PR.
+## 14. Publication
+
+If and only if implementation and required validation succeed:
+
+1. replace G/H/I;
+2. confirm every changed path is authorized;
+3. create one intentional commit whose direct parent is the published R05
+   staging commit;
+4. push to the existing `grm-guarded-provisioning-20260727` branch;
+5. use a non-forced fast-forward;
+6. do not create a branch or PR;
+7. read the remote branch back and verify exact identity.
+
+R05 success does not promote practical Sync. Main must reconcile the commit
+before publishing any preserved-state checkpoint or operator packet.

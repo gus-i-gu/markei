@@ -1,202 +1,304 @@
-# F_DSN_STAGE — Architecture for C10-GCM03-S10-R04
+# F_DSN_STAGE — Architecture for C10-GCM03-S10-R05
 
 ## Objective
 
-Complete R03 by replacing event-selection diagnostics with cumulative causal
-state, containing every diagnostic-persistence failure, and closing the missing
-deterministic decision/replay evidence while preserving the accepted Product and
-transaction architecture.
+Complete the R04 causal recorder by partitioning transaction truth into upload,
+download/inbound-apply, acknowledgement, diagnostic, and terminal planes. Keep
+event-row compatibility, R03/R04 data convergence design, and all hosted
+contracts unchanged.
 
-Primary unit: C10-GCM03-S10-R04
+Sequence: FLX-ORD-01
 
-Continuity alias: C10-GCM03-S09-R04
+Primary unit: C10-GCM03-S10-R05
+
+Continuity alias: C10-GCM03-S09-R05
 
 ## 1. Responsibility map
 
 | Responsibility | Owner | Constraint |
 |---|---|---|
-| Product semantic identity | domain Product | identity excludes user code |
-| Incoming Product resolution | remote fact writer | retain R03 asymmetric table |
-| Remote-to-local references | page applier/fact writer | map before dependent facts |
-| Facts/inbox/cursor | Drift transaction | one atomic boundary |
-| Apply translation | outer local-apply boundary | only after rollback |
-| Causal operation state | operation recorder | cumulative, in memory first |
-| Diagnostic persistence | attempt/event repository | best effort, non-authoritative |
-| Core Sync result | coordinator | independent of diagnostic durability |
-| Acknowledgement | coordinator/transport | only from committed cursor |
-| Runner fallback | native runner | project cumulative truth, never overwrite it |
-| UI/lifecycle | application/app | bounded state and sanitized class only |
+| Upload request/provider result | UploadPendingEvents + transport | never used as ack proof |
+| Upload lease/result persistence | outbox repository/use case | never used as inbound-apply proof |
+| Download request/response | DownloadAndApplyEvents + transport | trusted response is page receipt only |
+| Facts/inbox/cursor | remote applier Drift transaction | one atomic inbound-apply boundary |
+| Acknowledgement | AcknowledgeAppliedCursor + transport | starts only from committed cursor |
+| Cumulative operation truth | diagnostic operation recorder | independent typed/explicit planes |
+| Durable diagnostic chronology | attempt/event repository | best effort; legacy row compatibility |
+| Core Sync orchestration | HostedSyncCoordinator | stop ordering and eligibility |
+| Runner fallback | NativeAuthClosureRunner | retain planes; add bounded terminal category |
+| Lifecycle projection | runner/application | sanitized independent fields |
+| Product identity/reference mapping | R03 fact writer/applier | frozen |
 
-## 2. Cumulative operation model
+## 2. Cumulative state shape
 
-Use one recorder-owned state with independent dimensions, conceptually:
+Conceptually:
 
 ```text
-phase: latestEntered + latestProved
-provider: contact + transaction + trustedResponse
-localApply: outcome + mutationState + cursorProof
-diagnostics: begin + events + completion + degradation
-acknowledgement: notStarted | started | classifiedResult
-terminal: boundedResult + safeAction + retryable + sanitizedClass
-metadata: already-authorized counts/sequences/fingerprints
+operation
+  phase
+    latestEntered
+    latestProved
+  upload
+    request
+    trustedResponse
+    providerOutcome
+    leasePersistence
+    resultPersistence
+  download
+    request
+    trustedResponse
+  inboundApply
+    transactionOutcome
+    cursorProof
+  acknowledgement
+    request
+    trustedResponse
+    outcome
+  diagnostics
+    durability
+  terminal
+    result
+    safeAction
+    retryable
+    sanitizedExceptionClass
+  metadata
+    authorized counts/sequences/fingerprints
 ```
 
-The implementation need not expose this exact type publicly. It must provide one
-coherent snapshot to the runner and deterministic tests.
+The code need not use these exact class or field names. The snapshot and tests
+must expose equivalent independent semantics.
 
-## 3. Merge laws
+## 3. Event evidence versus cumulative truth
 
-Merge each dimension according to authority and monotonic knowledge, not event
-arrival alone.
+`SyncDiagnosticPhaseEvidence` currently carries generic fields suitable for one
+phase event. `SyncDiagnosticEnvelope` stores those event rows.
+
+R05 separates two roles:
+
+1. event evidence describes the phase that emitted the row;
+2. cumulative state describes the whole operation without collapsing distinct
+   transactions.
+
+Allowed compatibility strategies:
+
+- add optional explicit plane fields to phase evidence and consume them in the
+  cumulative recorder;
+- introduce a recorder-internal typed event derived deterministically from phase
+  and bounded evidence;
+- use another equally explicit design with direct producer-to-plane tests.
+
+Not allowed:
+
+- continuing to treat one operation-wide `localMutationState` as both upload and
+  inbound apply;
+- continuing to treat one operation-wide `providerTransactionState` as both
+  upload and acknowledgement;
+- inferring acknowledgement success from the last generic provider value;
+- adding a database migration solely to store cumulative fields.
+
+## 4. Plane-scoped merge laws
+
+Each plane has its own monotonic merge.
 
 ```mermaid
 flowchart TD
-    A["Phase evidence"] --> B["Merge independent fields"]
-    B --> C["Update in-memory snapshot"]
-    C --> D["Attempt sanitized persistence"]
-    D -->|success| E["Emit bounded lifecycle"]
-    D -->|failure| F["Mark diagnostic degraded"]
-    F --> E
+    A["Phase evidence"] --> B{"Owning plane"}
+    B --> C["Upload merge"]
+    B --> D["Download/apply merge"]
+    B --> E["Acknowledgement merge"]
+    B --> F["Diagnostic/terminal merge"]
+    C --> G["Cumulative snapshot"]
+    D --> G
+    E --> G
+    F --> G
 ```
 
-Required laws:
+Within one plane:
 
-- later defaults/placeholders do not erase earlier proof;
-- `trustedResponse=received` is retained;
-- `localMutation=committed` or `rolled-back` is retained as transaction truth;
-- acknowledgement state advances separately from download/apply state;
-- terminal state adds a bounded result without replacing causal dimensions;
-- persistence degradation accumulates from begin/event/completion;
-- contradictory authoritative transaction claims produce a bounded invariant
-  state, not silent last-writer wins.
+- not-started may advance to started;
+- response not-received may advance to received;
+- unknown may advance to an authoritative result;
+- terminal/default evidence cannot regress proof;
+- incompatible authoritative results produce a bounded causal invariant.
 
-Phase ordering must be explicit or carried as entered/proved fields. Do not infer
-semantic strength from arbitrary strings or severity alone.
+Across different planes:
 
-## 4. Recorder lifecycle
+- outcomes coexist and never contradict merely because their strings differ;
+- upload commit plus inbound rollback is valid;
+- upload commit plus acknowledgement uncertainty is valid;
+- inbound commit plus acknowledgement uncertainty is valid;
+- diagnostic degradation adds observability state only.
 
-The operation recorder is created even if attempt creation fails.
+## 5. Invariant ownership
 
-```text
-begin succeeds -> durable attempt available
-begin fails    -> no attempt id + degraded=true
+An invariant requires two incompatible claims about the same authoritative
+object or transition.
 
-record phase:
-  merge state synchronously
-  attempt best-effort row write when possible
-  on write failure set degraded=true
-  emit lifecycle from cumulative state
+Valid invariant examples:
 
-complete:
-  retain core outcome
-  attempt best-effort completion
-  on failure set degraded=true
-  emit/project final cumulative state
-```
+- the same inbound page transaction is authoritatively both committed and
+  rolled-back;
+- acknowledgement starts when inbound apply/cursor eligibility is failed or
+  unproved;
+- the same acknowledgement response is authoritatively both received and
+  explicitly not received at the same completed transition.
 
-The sink must not recursively record its own failure. Diagnostic persistence may
-lag or be absent; the in-memory snapshot remains the runner's source for the
-current operation.
+Non-invariants:
 
-## 5. Coordinator and acknowledgement ordering
+- upload persistence commits, then inbound apply rolls back;
+- upload provider commits, then acknowledgement transport is unknown;
+- diagnostic persistence fails after inbound apply commits.
+
+The bounded invariant category remains a safety result. R05 narrows its scope;
+it does not remove it.
+
+## 6. Coordinator ordering
 
 The core order remains:
 
-1. upload classification;
-2. trusted download response;
-3. page application and committed cursor;
-4. acknowledgement eligibility;
-5. acknowledgement request/result;
-6. terminal projection.
+```text
+authentication/binding
+  -> upload lease/request/provider/result persistence
+  -> download request/trusted response
+  -> inbound apply facts/inbox/cursor transaction
+  -> committed-cursor eligibility
+  -> acknowledgement request/response/result
+  -> terminal projection
+```
 
-A failed/unproved page returns before acknowledgement. A committed page remains
-committed even if diagnostic rows cannot be written. An acknowledgement failure
-changes only acknowledgement/provider knowledge and terminal guidance; it does
-not reverse local facts/inbox/cursor.
+Early-stop behavior remains:
 
-Diagnostic recorder failure must not make a committed cursor unavailable to the
-coordinator. Conversely, diagnostic success cannot supply a cursor or authorize
-acknowledgement.
+- upload unknown/rejected blocks download and acknowledgement;
+- inbound apply failed/rejected/rolled-back/unproved blocks acknowledgement;
+- no later phase may manufacture skipped-phase proof.
 
-## 6. Product/apply architecture freeze
+Diagnostic failure never changes this ordering.
 
-R04 is not a new resolver design.
+## 7. Runner and lifecycle projection
 
-Preserve:
+The recorder updates in memory before attempting durable diagnostic writes.
 
-- established incoming UUID strict immutable coherence;
-- new UUID exact-identity convergence despite another local code;
-- same-code/different-identity, split-key, and ambiguity conflicts;
-- preserved local code/display;
-- remote Product UUID to local Product UUID mapping;
-- one Drift transaction and outer failure translation;
-- bounded `sanitizedExceptionClass`.
+Both runner success and catch paths consume one snapshot API. Avoid reconstructing
+truth from the caught exception or the last event.
 
-Minimal test seams may expose a resolver decision or inject a writer failure.
-They must not add an alias table, loosen a constraint, alter equality globally,
-rewrite hosted facts, or move catches inside the transaction.
+Lifecycle output should expose bounded independent keys sufficient to
+distinguish:
 
-## 7. Failure taxonomy
+- upload provider and local persistence;
+- download trusted response;
+- inbound apply;
+- acknowledgement request/response/outcome;
+- diagnostic durability;
+- terminal result and safe action.
 
-Keep the R03 bounded categories:
+Compatibility generic keys may remain, but they cannot be the only cumulative
+truth or contradict the explicit keys.
 
-- Product/Store identity conflict;
-- SQLite/Drift database failure;
-- payload/snapshot shape failure;
-- local invariant failure;
-- unexpected local-apply failure;
-- diagnostics-persistence degradation.
+## 8. Diagnostic persistence
 
-The first five classify core apply. The last classifies observability only.
-Never allow diagnostic degradation to masquerade as an apply category.
+R04 containment remains:
 
-## 8. Test architecture
+```text
+begin failure -> recorder exists, durability degraded
+row failure -> cumulative truth retained, durability degraded
+complete failure -> core outcome retained, durability degraded
+```
 
-Prefer public/coordinator-level assertions for core ordering. Use focused fakes
-for:
+No diagnostic failure:
 
-- attempt begin/event/completion failure;
-- acknowledgement transport exception/result;
-- arbitrary fact-writer exception;
-- Product resolver ambiguity;
-- two-page poison/replay sequence.
+- rolls back or commits business data;
+- changes provider evidence;
+- changes acknowledgement eligibility;
+- creates acknowledgement success;
+- triggers recursive logging;
+- starts Retry, Recovery, Query, or a second Sync.
 
-Every failure test should inspect, as applicable:
+## 9. Transaction and Product freeze
 
-| Plane | Required observation |
-|---|---|
-| facts | inserted or absent |
-| inbox | inserted or absent |
-| cursor | advanced or unchanged |
-| provider/trust | retained classification |
-| diagnostics | durable/degraded independently |
-| acknowledgement | not-started/started/result |
-| terminal | bounded result and safe action |
-| duplication | Product/Store/Purchase/Item cardinality |
+Do not modify:
 
-Avoid tests that pass only because a diagnostic exception is swallowed.
+- Product resolution decision table;
+- remote-to-local Product reference map;
+- Store convergence;
+- Purchase/Purchase Item fact rules;
+- facts/inbox/cursor Drift transaction;
+- post-rollback exception translation;
+- poison-page replay behavior;
+- protocol-v3 Person/Payment restrictions.
 
-## 9. Compatibility boundary
+R05 changes how operation truth is represented, not how remote facts converge.
+
+## 10. Compatibility boundary
 
 No change to:
 
-- Drift schema/tables/migrations;
-- hosted API, routes, payload v3, or event content;
-- Auth0, enrollment, account/device binding, or Render/Neon configuration;
-- dependencies or build configuration;
-- Product selector UI behavior;
-- Store convergence and Person/Payment restrictions;
-- preserved client/provider data.
+- Drift tables, schema version, or migrations;
+- hosted API routes, request/response bodies, event v3, or acknowledgement
+  contract;
+- Render/Neon/Auth0 configuration;
+- enrollment or Account/Device binding;
+- dependencies, generated code, or build configuration;
+- installed Android/Windows databases or diagnostic history.
 
-G/H/I must explicitly report these absences.
+Old diagnostic rows remain historical event evidence. R05 must not claim they
+contain newly introduced cumulative planes.
 
-## 10. Completion boundary
+## 11. Test architecture
 
-R04 ends at committed source, deterministic validation, builds, and G/H/I.
-Main must inspect and reconcile the actual commit before authorizing installation
-or any human assay.
+Use coordinator/runner-level fakes to execute complete compound sequences.
 
-Even a fully passing R04 does not itself prove overall Sync. Practical acceptance
-still requires corrected preserved-state clients, fresh read-only baselines,
-one-client-at-a-time ordinary Sync, acknowledgement/postflight agreement, and a
-separately authorized no-op replay.
+The primary matrix crosses:
+
+| Upload | Inbound apply | Acknowledgement | Diagnostics | Expected |
+|---|---|---|---|---|
+| none | committed | applied | durable | completed/no-new-events |
+| none | committed | throws | durable | apply retained; ack unknown |
+| committed | rolled-back | not-started | durable | bounded core failure; no false invariant |
+| committed | committed | throws | durable | upload/apply retained; ack unknown |
+| unknown/rejected | not-started | not-started | durable | early stop |
+| committed | committed | applied | degraded | core planes unchanged |
+| committed | rolled-back | not-started | degraded | rollback retained; no false invariant |
+
+Add a same-plane contradiction fixture separately. Do not manufacture it by
+mixing legitimate outcomes from two transactions.
+
+Every test should inspect downstream invocation counts and the independent
+snapshot/lifecycle fields.
+
+## 12. Security and diagnostic boundary
+
+The new state carries categories, not data.
+
+Never retain:
+
+- event payloads or business facts;
+- UUIDs or raw correlation/operation IDs;
+- SQL, database values, filesystem paths, messages, or stacks;
+- tokens, credentials, secrets, request hashes, or full hashes.
+
+Keep only allow-listed codes/states, sanitized class names, short fingerprints,
+safe counts/sequences, status classes, timing bands, and safe actions.
+
+## 13. Completion boundary
+
+R05 completes only:
+
+- source truth-plane partition;
+- direct compound deterministic evidence;
+- regression and package validation;
+- replacement G/H/I;
+- one scoped implementation commit.
+
+R05 does not complete practical Sync.
+
+After Main reconciles R05, the next possible sequence is:
+
+```text
+read-only preserved-state checkpoint
+  -> exact post-R05 build provenance
+  -> separately authorized preserved-data installation
+  -> second read-only post-install baseline
+  -> one-client-at-a-time live assay
+```
+
+No step in that route is authorized by this F file.

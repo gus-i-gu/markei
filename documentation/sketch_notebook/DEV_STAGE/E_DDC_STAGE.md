@@ -1,186 +1,241 @@
-# E_DDC_STAGE — Evidence contract for C10-GCM03-S10-R04
+# E_DDC_STAGE — Evidence contract for C10-GCM03-S10-R05
 
-D_OPS_STAGE.md is operational authority. This file defines evidence meaning and
-acceptance ceilings. F_DSN_STAGE.md assigns responsibilities.
+D_OPS_STAGE.md is executable authority. This file limits what evidence can
+establish. F_DSN_STAGE.md assigns architectural responsibility.
 
-Primary unit: C10-GCM03-S10-R04
+Sequence: FLX-ORD-01
 
-Continuity alias: C10-GCM03-S09-R04
+Primary unit: C10-GCM03-S10-R05
 
-Pre-stage head: 5d7cd6c9784f0fa169a5ed6fb6ca8cb3db4037ce
+Continuity alias: C10-GCM03-S09-R05
 
-## 1. R03 claims retained
+Pre-stage head: 0fdd2b9fbadbf935d8e20f09f597516a93f4e7dd
 
-At implementation and focused automated scope, R03 established:
+## 1. Accepted evidence entering R05
 
-- new remote UUID plus exact semantic identity under another code can converge;
-- same-code/different-identity and split-key cases conflict;
-- dependent Purchase Items receive the selected local Product UUID;
-- page apply remains one Drift transaction;
-- apply failures have an outer bounded translation path;
-- the sanitized exception class reaches the Closure UI;
-- acknowledgement stays behind committed cursor exposure.
+R04 is accepted at implementation and deterministic-test scope for cumulative
+retention of trusted download/apply facts, diagnostic-degradation containment,
+the Product decision matrix, unexpected apply rollback, poison-page recovery,
+mixed-client replay, idempotency, full Flutter regression, and both platform
+builds.
 
-These do not establish practical cross-device Sync. They are the regression
-baseline for R04, not conclusions to re-litigate without contrary source proof.
+R04 is not accepted as complete evidence for independent acknowledgement or
+transaction-plane truth.
 
-## 2. R04 evidence deficit
+Source inspection directly establishes:
 
-R04 exists because R03 did not directly prove:
+- one generic local-mutation field receives both upload and inbound-apply facts;
+- one generic provider/trusted-response field receives upload, download, and
+  acknowledgement facts;
+- acknowledgement lacks an independent cumulative transition/result;
+- a valid upload commit followed by inbound rollback can be classified as a
+  causal invariant conflict.
 
-- cumulative causal truth through acknowledgement and terminal transitions;
-- begin/row/complete diagnostic-persistence degradation;
-- committed apply remaining acknowledgement-eligible under degradation;
-- all Product ambiguity and established-UUID branches;
-- the residual unexpected local-apply category;
-- poison-page recovery and mixed-client replay without duplicates.
+These source facts are sufficient to authorize source correction. A live assay
+of the old installed binaries cannot invalidate them.
 
-One passing full suite cannot substitute for these named injections.
+## 2. Runtime checkpoint evidence boundary
 
-## 3. Independent truth planes
+No new runtime checkpoint is required to prove that R05 source work is
+necessary. R05 is prohibited from changing preserved runtime state.
 
-| Plane | Question | Authority |
+A read-only WIN/AND/provider checkpoint is still required after R05
+reconciliation and before corrected-client installation or live Sync. Because
+R05 cannot touch those surfaces, the later pre-install checkpoint anchors the
+same preserved runtime state without creating a source-evidence gap.
+
+```text
+SOURCE_CORRECTION_EVIDENCE=SUFFICIENT
+PRESERVED_RUNTIME_STATE_EVIDENCE=NOT_REFRESHED_BY_R05
+PRACTICAL_SYNC_EVIDENCE=ABSENT
+POST_R05_PRE_INSTALL_CHECKPOINT=MANDATORY
+```
+
+## 3. Independent evidence planes
+
+| Plane | Minimum direct question | Authoritative source |
 |---|---|---|
-| Provider | Was a request/response accepted or received? | trusted transport result |
-| Transaction | Did facts/inbox/cursor commit or roll back? | Drift transaction/result |
-| Diagnostic | Was an attempt/event/completion record persisted? | recorder repository |
-| Acknowledgement | Did ack start and receive a classified result? | coordinator/transport |
-| Presentation | What bounded state reached lifecycle/UI? | application projection |
+| Upload request | Did upload start? | upload use case/transport invocation |
+| Upload provider | Was a trusted response received and how was it classified? | upload transport result |
+| Upload local | Did lease/result persistence commit, fail, or remain unknown? | outbox repository result |
+| Download provider | Did download start and return a trusted page? | download transport result |
+| Inbound apply | Did facts/inbox/cursor commit or roll back? | applier transaction/result |
+| Acknowledgement | Did ack start, receive a response, and reach a classified outcome? | acknowledgement transport/result |
+| Diagnostic | Were begin/event/completion records durable or degraded? | recorder repository |
+| Terminal | What bounded state and safe action reached the runner/lifecycle? | cumulative projection |
 
-Failure or absence in one plane cannot invent or erase truth in another.
+Truth in one row cannot be substituted by another row.
 
-Examples:
+## 4. Required compound-state proof
 
-- diagnostic begin failure does not imply transaction rollback;
-- diagnostic completion success does not prove provider acceptance;
-- acknowledgement-request does not erase a committed local apply;
-- trusted HTTP response does not itself prove local convergence;
-- a built binary does not prove preserved-state client behavior.
+R05 passes only if tests inspect the separate fields that coexist in one
+ordinary operation.
 
-## 4. Cumulative evidence semantics
+Required valid state:
 
-Evidence is cumulative when each authoritative phase contributes to independent
-fields instead of replacing the entire operation snapshot.
+```text
+upload provider=committed
+upload local result persistence=committed
+download trusted response=received
+inbound apply=rolled-back
+acknowledgement=not-started
+```
 
-The required proof is not merely that one “strongest” event is selected. Tests
-must show that:
+This is not an invariant conflict.
 
-- trusted-response proof survives later weaker/default values;
-- committed or rolled-back apply truth survives acknowledgement and terminal
-  phases;
-- acknowledgement state advances independently;
-- latest entered phase can advance while latest proved phase and earlier facts
-  remain available;
-- diagnostic degradation is additive and never presented as transaction truth;
-- contradictory authoritative core states are bounded explicitly.
+Required acknowledgement-failure state:
 
-Tests that assert only the final result string are insufficient. Assert the
-separate provider, local mutation, persistence, acknowledgement, phase, and
-sanitized-class fields.
+```text
+inbound apply=committed
+ack request=request-started
+ack trusted response=not-received
+ack outcome=unknown
+```
 
-## 5. Diagnostic degradation
+Earlier upload state may be committed or absent; neither value may be presented
+as acknowledgement success.
 
-`diagnostics-persistence-degraded` means core execution truth exists but some
-authorized diagnostic persistence failed.
+Required invariant state:
 
-It may be established by:
+```text
+inbound apply=failed-or-unproved
+ack request=request-started
+```
 
-- begin-attempt failure;
-- phase/event-row failure;
-- attempt-completion failure.
+The test must prove that the contradiction is within one authority boundary,
+not merely that two different transactions ended differently.
 
-Required negative conclusions:
+## 5. Direct-test adequacy
 
-- it does not mean `rolled-back`;
-- it does not mean `committed`;
-- it does not mean provider response received;
-- it does not authorize acknowledgement;
-- it does not prohibit acknowledgement when committed cursor truth independently
-  authorizes it;
-- it does not convert a successful core Sync into a failed core Sync.
+A test is direct only when it:
 
-When durable storage is unavailable, a bounded in-memory/lifecycle declaration is
-valid diagnostic evidence at runtime-observation scope only.
+- executes the relevant coordinator/runner sequence;
+- controls upload, download/apply, acknowledgement, and diagnostics through
+  bounded fakes or repositories;
+- inspects independent cumulative and terminal fields;
+- asserts forbidden downstream calls;
+- distinguishes core truth from diagnostic durability.
 
-## 6. Product and replay evidence
+Insufficient substitutes include:
 
-Each Product decision-table branch needs a deterministic assertion over:
+- asserting only `sync-completed` or `sync-failed`;
+- asserting only event order;
+- inspecting only the final generic `providerTransactionState`;
+- inspecting only the final generic `localMutationState`;
+- calling the page applier without the upload/coordinator sequence;
+- relying on the full-suite count to infer a named compound case;
+- swallowing a diagnostic exception without asserting core planes.
 
-- selected/conflict result;
-- local Product cardinality and preserved code/display;
-- remote-to-local reference mapping;
-- facts/inbox/cursor outcome;
-- acknowledgement eligibility.
+## 6. Compatibility evidence
 
-If ambiguity is structurally unreachable in the production database, prove the
-constraint and test the resolver branch through a safe seam. Do not report an
-unreachable branch as tested merely because ordinary insertion rejects the
-fixture.
+Legacy generic event fields may remain as phase-row chronology. Their continued
+existence does not prove the cumulative model is partitioned.
 
-Poison-page recovery requires a sequence, not two isolated unit tests:
+If R05 adds in-memory or lifecycle fields without a database migration, H and I
+must establish:
 
-1. the formerly rejected exact-identity/different-code event is replayed;
-2. it applies once;
-3. a later event/page progresses;
-4. replay creates no duplicate facts or cursor effects.
+- which event-specific legacy fields remain;
+- which independent fields are cumulative authority;
+- how each producer maps into its own plane;
+- that old durable rows are not reinterpreted beyond their recorded phase;
+- that no schema, payload, API, or provider contract changed.
 
-The two-device harness remains deterministic local evidence, not provider or live
-Android/Windows evidence.
+Event-row compatibility and cumulative correctness are separate conclusions.
 
-## 7. PRC-01 disposition rules
+## 7. Diagnostic degradation evidence
+
+Begin, row, and completion failures must be injected across compound operations.
+
+Required conclusions:
+
+- diagnostic degradation is visible;
+- upload truth remains unchanged;
+- download/apply truth remains unchanged;
+- acknowledgement eligibility and outcome remain unchanged;
+- the core result is not manufactured or reversed;
+- no recursive diagnostic write occurs;
+- no automatic retry/recovery operation begins.
+
+One injection at an isolated phase is not sufficient for the compound R05
+claim. At least one committed upload + committed apply + acknowledgement case
+and the committed upload + rolled-back apply case must experience diagnostic
+degradation directly.
+
+## 8. Negative and sanitization evidence
+
+Directly assert that cumulative state, lifecycle JSON, UI/repository projection
+when touched, test failure output, and G/H/I do not retain or emit:
+
+- payload or serialized business facts;
+- Product, Purchase, Store, Person, or Payment values;
+- UUIDs or raw operation/correlation identifiers;
+- request hashes or full hashes;
+- tokens, credentials, secrets, paths, SQL, or database values;
+- exception messages, `toString()` output, or stacks.
+
+Allowed evidence remains bounded codes, allow-listed/sanitized class names,
+short fingerprints, counts, sequences, state names, status classes, and timing
+bands already authorized by D.
+
+## 9. PRC-01 ceilings
 
 | Evidence | Maximum conclusion |
 |---|---|
-| Source inspection | implemented |
-| Focused deterministic test | modeled branch validated |
+| Source inspection | R05 model implemented |
+| Focused compound deterministic test | named truth-plane sequence validated |
 | Full Flutter suite | repository regression evidence |
 | APK/Windows build | package materialized |
-| Disposable lab skipped | no lab conclusion |
-| No live client/provider action | no practical Sync conclusion |
-| Future preserved-state assay | only its prescribed client/provider scope |
+| Manifest inspection | expected packaged configuration present |
+| Disposable lab skipped | no provider-lab conclusion |
+| No live operation | no practical convergence conclusion |
+| Future read-only checkpoint | preserved-state description only |
+| Future one-client live assay | only that authorized client/provider operation |
 
-Codex may conclude `IMPLEMENTED_VALIDATED` only if every D terminal has direct
-evidence or is honestly marked partial/blocked. Main alone reconciles GCM03 and
-MVP Sync acceptance.
+`IMPLEMENTED_VALIDATED` may be reported only when every D terminal has direct
+evidence. Any residual field inference, missing compound case, or unclassified
+same-plane contradiction must be `PARTIAL` or `BLOCKED`, not inferred from the
+full suite.
 
-## 8. Safety and sanitization evidence
+## 10. R03/R04 regression ceiling
 
-Directly assert that diagnostic models, lifecycle output, repository projection,
-and reports exclude:
+Passing existing Product/apply/replay tests preserves their previously accepted
+automated scope. It does not create new live Product or Sync evidence.
 
-- exception messages and `toString()` output;
-- SQL and database values;
-- Product/Purchase/Store/person/payment facts;
-- UUIDs and raw operation/correlation identifiers;
-- payloads, tokens, credentials, stacks, secrets, and full hashes.
+The R05 diff should not touch Product resolution or transaction application
+code. If it does, D's stop condition applies unless the change is a strictly
+mechanical evidence-model fixture adaptation in an already authorized path.
 
-Allow only bounded codes, allow-listed/sanitized class names, counts, sequence
-numbers, short fingerprints, timing bands, and states already authorized by D.
+## 11. Acceptance boundary
 
-## 9. Acceptance boundary
+A fully passing R05 may establish:
 
-R04 automated success can authorize Main to inspect the diff and consider a
-preserved-state build/install plus read-only preflight. It cannot authorize or
-prove:
+- source and deterministic-test truth-plane separation;
+- no false cross-transaction invariant;
+- bounded same-plane invariant detection;
+- independent acknowledgement terminal truth;
+- regression and package viability.
 
-- Android or Windows live Sync;
+It cannot establish or authorize:
+
+- current WIN/AND/provider preserved-state freshness;
+- installation against preserved data;
+- live Android or Windows Sync;
 - Retry, Recovery, Query, enrollment, or new Purchase registration;
 - hosted acknowledgement;
-- inter-device same-account convergence;
-- idempotent provider replay;
+- bidirectional same-account convergence;
 - GCM03 closure or MVP Sync acceptance.
 
-Both clients remain held until Main publishes a separate post-R04 operator
-packet derived from the actual implementation commit and fresh read-only
-baselines.
+Main must reconcile R05. The next authorized operation, if reconciliation
+passes, is a read-only preserved-state checkpoint before installation.
 
-## 10. Review questions
+## 12. Review questions
 
-- Is causal state merged field-by-field rather than replaced event-by-event?
-- Can acknowledgement-request or terminal phases erase download/apply proof?
-- Are begin, row, and completion persistence failures visible and contained?
-- Can diagnostic degradation change the core result or ack eligibility?
-- Are all missing Product/apply/replay branches directly tested?
-- Does the poison-page sequence advance without duplicates?
-- Are R03 Product, transaction, protocol, and UI properties preserved?
-- Did any live/provider/schema/API/auth/dependency action occur?
+- Are upload local persistence and inbound apply represented separately?
+- Are upload provider and acknowledgement represented separately?
+- Does acknowledgement expose request, trusted response, and result?
+- Does a valid upload-commit/apply-rollback sequence avoid false invariant?
+- Does a same-plane contradiction still fail closed?
+- Do runner success and catch project the same cumulative snapshot?
+- Do diagnostic failures leave every core plane unchanged?
+- Are R03/R04 accepted tests still passing?
+- Did any preserved client/provider state or prohibited contract change?
