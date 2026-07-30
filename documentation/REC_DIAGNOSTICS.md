@@ -3441,3 +3441,106 @@ RETRY_RECOVERY=HELD
 NEW_PURCHASE_REGISTRATION=HELD
 DIAGNOSTIC_HISTORY=PRESERVE
 ~~~
+
+---
+
+# Appendix H — GCM03 reciprocal convergence and idempotent closure
+
+This appendix preserves the sanitized human/client/Render evidence that closes
+GCM03 at the proved two-Device development scope. It records no Product names
+or user codes, UUIDs, tokens, subjects, connection strings, private URLs, SQL,
+or provider credentials.
+
+## Record 021 — Reciprocal Android/Windows convergence and golden no-op repeats
+
+Date: 2026-07-30  
+Branch: `grm-guarded-provisioning-20260727`  
+Visible source revision on both clients: `97cec7f73392`  
+Visible source-tree SHA-256 on both clients:
+`3d2a62aed2536122af9a28746dba4c3e6ecae282fc75802c754ebe14ce1997ff`
+
+### Evidence packet
+
+The operator supplied complete Closure screenshots for both preserved clients,
+matching History projections, the final local-queue views, and a sanitized
+Render log window. The operator reports that the controlled convergence assay
+completed reciprocally and commutatively:
+
+- the previously hosted Windows member converged to Android;
+- one controlled Android member uploaded successfully and converged to Windows;
+- Catalogue projection converged on both clients;
+- the same natural-identity Product involved in the former conflict was merged;
+- no duplicate Product or duplicate Purchase appeared;
+- both clients retained the intended local History;
+- both queues settled at pending/uploading/failed/unknown `0/0/0/0`;
+- Android displayed next Device sequence `3`;
+- Windows displayed next Device sequence `4`;
+- no Retry, Recovery, Query, repeated Enroll, database repair, or provider
+  repair was used.
+
+The final matching History screenshots show five intended Purchase rows on each
+client, including the controlled `BRL 10.00` member, with no duplicate row.
+
+### Golden no-op Render window
+
+Two later empty-queue ordinary Sync operations were recorded:
+
+| UTC start | Operation fingerprint | Download | Acknowledgement | Result |
+| --- | --- | --- | --- | --- |
+| 20:41:52.145 | `ff02a369a0f4` | GET `/v1/sync/events`, HTTP 200 | POST `/v1/sync/acknowledgements`, HTTP 200 | completed |
+| 20:42:38.289 | `ca5bdb14ebef` | GET `/v1/sync/events`, HTTP 200 | POST `/v1/sync/acknowledgements`, HTTP 200 | completed |
+
+For both operations:
+
+- request receipt, operation validation and authentication acceptance are
+  present for each child request;
+- every response completed in the `lt-250ms` band;
+- no `/v1/sync/submissions` request appears in the supplied no-op window;
+- the client queues remained `0/0/0/0`;
+- no actionable event remained;
+- History and Catalogue remained unchanged;
+- no duplicate Purchase or Product appeared;
+- no recovery code or recovery action was required.
+
+The absent submission route directly supports that the no-op repeats did not
+attempt an upload. The supplied logs do not expose response bodies or a fresh
+transactional Neon inventory; therefore this record does not claim an
+independent final provider-table count.
+
+### Record 021 assessment
+
+| Claim | Assessment | Evidence boundary |
+| --- | --- | --- |
+| Android and Windows run one shared source identity | PASS | Matching visible revision and source-tree SHA |
+| Windows-to-Android convergence | PASS | Human/client History and Closure packet |
+| Android-to-Windows controlled member | PASS | Matching controlled Purchase on both clients |
+| Product natural-identity reconciliation | PASS | Former conflict converged as one Catalogue Product |
+| Duplicate Product/Purchase prevention | PASS OBSERVED | Matching Catalogue/History; no duplicate row |
+| Both queues drained | PASS | Both clients `0/0/0/0` |
+| One no-op repeat per Device completed | PASS | Two distinct operation fingerprints |
+| No upload was attempted in the no-op window | PASS | No submission route in supplied Render window |
+| Download and acknowledgement were accepted | PASS | Four authenticated HTTP 200 child responses |
+| Fresh final provider-table inventory | NOT COLLECTED | No final `GS-NEON-11` terminal supplied |
+| Production, outage, revocation, retention or rebootstrap | NOT PROVED | Outside GCM03 assay scope |
+
+Terminal classification:
+
+```text
+CYCLE10=OPEN
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=CLOSED_TWO_DEVICE_DEVELOPMENT_SCOPE
+C10_GCM03_S09_RECIPROCAL_CONVERGENCE=PASS
+WINDOWS_TO_ANDROID_CONVERGENCE=PASS
+ANDROID_TO_WINDOWS_CONVERGENCE=PASS
+PRODUCT_NATURAL_IDENTITY_MERGE=PASS
+CATALOGUE_CONVERGENCE=PASS
+DUPLICATE_PRODUCT_PURCHASE_OBSERVED=NO
+CLIENT_QUEUES_FINAL=0_0_0_0_BOTH
+IDEMPOTENT_REPEAT_PER_DEVICE=PASS
+NO_OP_SUBMISSION_REQUEST=ABSENT
+NO_OP_DOWNLOAD_ACK=HTTP_200_AUTHENTICATED
+FINAL_PROVIDER_TABLE_INVENTORY=NOT_COLLECTED
+MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_DEVELOPMENT_SCOPE
+PRODUCTION_ACCEPTANCE=ABSENT
+GCM04=READY_FOR_DEFINITION
+```

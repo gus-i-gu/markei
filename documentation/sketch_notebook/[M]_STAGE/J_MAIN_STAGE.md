@@ -9569,3 +9569,229 @@ DIAGNOSTIC_CLEARING_AUTHORITY=NONE
 PROVIDER_MUTATION_AUTHORITY=NONE
 OVERALL_SYNC_ACCEPTANCE=NOT_PROMOTED
 ~~~
+
+---
+
+# 2026-07-30 — GCM03 final human reconciliation and GCM04 definition entry
+
+## 1. Reconciliation envelope
+
+```text
+Sequence: FLX-PRM-04
+Unit: C10-GCM03-S09 final human acceptance
+Corrective source line: C10-GCM03-S10-R03 through R05
+Provenance/procedure line: C10-GCM03-S09-R06-CR02
+Repository: gus-i-gu/markei
+Branch: grm-guarded-provisioning-20260727
+Reconciled source head: 97cec7f733926f669d2a844feb2b5e6e0b7e6bce
+Client source revision: 97cec7f73392
+Client source-tree SHA-256: 3d2a62aed2536122af9a28746dba4c3e6ecae282fc75802c754ebe14ce1997ff
+Evidence: complete dual-client Closure/History/Catalogue screenshots,
+          operator observations, sanitized golden Render log window,
+          REC_DIAGNOSTICS Record 021
+Writable scope: append-only J and REC_DIAGNOSTICS
+```
+
+This entry reconciles the live preserved-state assay that the R03-R05 source
+corrections were designed to unblock. It does not alter source, D/E/F, G/H/I,
+methodology, permanent-domain memory, provider resources, authentication,
+enrollment, client data, or production configuration.
+
+## 2. Human acceptance result
+
+Both preserved clients ran the same source identity, remained authenticated and
+device-enrolled, and completed reciprocal same-Account synchronization.
+
+The observed functional result is:
+
+- Windows-originated facts converged to Android;
+- one controlled Android-originated Purchase converged to Windows;
+- the Catalogue converged on both clients;
+- the exact natural-identity Product that previously caused the Android typed
+  conflict was selected and merged instead of duplicated;
+- matching History projections retained five intended Purchase rows on each
+  client, including the controlled `BRL 10.00` member;
+- no duplicate Product, Purchase or Purchase Item was observed;
+- both queues settled at `0/0/0/0`;
+- Android next Device sequence is `3`;
+- Windows next Device sequence is `4`;
+- no Retry, Recovery, Query, repeated Enroll or repair action was needed.
+
+This is the missing preserved-state human evidence for the R03-R05 corrective
+line. It validates the Product reconciliation, transaction partition,
+acknowledgement ordering, diagnostic preservation and idempotent replay behavior
+at the practical two-client development boundary.
+
+## 3. Golden idempotent repeat
+
+After reciprocal convergence, one empty-queue ordinary Sync was executed on
+each Device.
+
+The supplied Render window contains two distinct operations:
+
+- `ff02a369a0f4` at 20:41:52Z;
+- `ca5bdb14ebef` at 20:42:38Z.
+
+Each operation produced:
+
+1. authenticated GET `/v1/sync/events`, HTTP 200;
+2. authenticated POST `/v1/sync/acknowledgements`, HTTP 200;
+3. response completion in the `lt-250ms` band.
+
+No submission request appears in the no-op window. Both queues remained
+`0/0/0/0`; History and Catalogue remained stable; no duplicate appeared; no
+recovery code was required.
+
+The client and Render evidence proves the no-op behavior relevant to GCM03.13.
+A fresh final transactional provider inventory was not supplied, so no exact
+new provider row counts are promoted by this entry.
+
+## 4. GCM03.9–14 disposition
+
+| Item | Final disposition | Evidence ceiling |
+| --- | --- | --- |
+| GCM03.9 authorization | PASS, historically consumed | The original ladder was compressed by later Main-authorized packets; no authority remains |
+| GCM03.10 Windows-to-Android | PASS | Preserved-client convergence and matching projections |
+| GCM03.11 Android reverse member | PASS | One controlled Android Purchase; queue advanced and later drained |
+| GCM03.12 Android-to-Windows | PASS | Controlled member appears once on Windows |
+| GCM03.13 idempotent repeat | PASS | One no-op per Device; no submission route; authenticated download/ack 200 |
+| GCM03.14 reconcile and close | PASS at bounded scope | Client + Render + retained provider baseline; final provider-table recount not collected |
+
+The absence of a fresh final provider inventory is retained as an evidence
+ceiling, not converted into an unexplained failure. Earlier read-only provider
+baselines established the exact Account/two-Device binding and consistent
+cursor/sequence foundation; the final live packet establishes practical
+reciprocal convergence and idempotent client/server behavior.
+
+## 5. PRC-01 promotion boundary
+
+```text
+Claim: R03-R05 corrected the original inbound convergence failures
+Result: ACCEPTED_AT_PRESERVED_TWO_CLIENT_DEVELOPMENT_SCOPE
+Evidence: former Android Product conflict converged; former Windows
+          post-download uncertainty did not recur
+
+Claim: ordinary Sync is reciprocal for two enrolled Devices on one Account
+Result: ACCEPTED_AT_DEVELOPMENT_SCOPE
+Evidence: Windows-to-Android and Android-to-Windows members converged
+
+Claim: exact natural identity prevents duplicate Catalogue Product creation
+Result: ACCEPTED_AT_HUMAN_ASSAY_SCOPE
+Evidence: conflict Product merged and Catalogue remained singular
+
+Claim: an empty-queue repeat is idempotent
+Result: ACCEPTED_AT_CLIENT_AND_RENDER_SCOPE
+Evidence: queues stable; no submission route; authenticated event download and
+          acknowledgement completed twice
+
+Claim: GCM03 proves production resilience and lifecycle completeness
+Result: REJECTED
+Evidence: revocation, cross-Account denial, outage/recovery,
+          retention/snapshot/rebootstrap and production operations remain open
+```
+
+## 6. GCM03 terminal
+
+```text
+CYCLE10=OPEN
+GCM01=ACCEPTED_DEVELOPMENT_BOUNDARY
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=CLOSED_TWO_DEVICE_DEVELOPMENT_SCOPE
+C10_GCM03_S10_R03_R05=HUMAN_VALIDATED
+C10_GCM03_S09_R06_CR02_WINDOWS_BUILD=HUMAN_PASS
+DUAL_CLIENT_PROVENANCE=PASS
+DUAL_CLIENT_AUTHENTICATION_ENROLLMENT=PASS
+WINDOWS_TO_ANDROID_CONVERGENCE=PASS
+ANDROID_TO_WINDOWS_CONVERGENCE=PASS
+INTER_DEVICE_SAME_ACCOUNT_SYNC=PASS
+PRODUCT_NATURAL_IDENTITY_MERGE=PASS
+CATALOGUE_CONVERGENCE=PASS
+CLIENT_QUEUES_FINAL=PASS_0_0_0_0_BOTH
+IDEMPOTENT_REPEAT_PER_DEVICE=PASS
+NO_OP_SUBMISSION_REQUEST=ABSENT
+NO_OP_DOWNLOAD_ACK=PASS_HTTP_200
+MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_DEVELOPMENT_SCOPE
+PRODUCTION_ACCEPTANCE=ABSENT
+GCM04=READY_FOR_DEFINITION
+LIVE_SYNC_AUTHORITY=NONE
+PROVIDER_MUTATION_AUTHORITY=NONE
+```
+
+## 7. Broad GCM04 residual panorama
+
+GCM04 may now be defined from the actual GCM03 residuals. This section is a
+definition input, not D/E/F implementation authority.
+
+### A. Authorization, isolation and credential lifecycle
+
+- prove two-Account isolation and cross-Account denial;
+- prove disabled membership denial;
+- revoke one Device and prove immediate request denial plus safe restart;
+- prove logout and ephemeral token clearing;
+- classify JWT/JWKS rotation and expired-token behavior;
+- require zero unauthorized provider mutation on every denial.
+
+### B. Outage, timeout and exact-once recovery
+
+- preserve offline-first local Purchase registration during provider outage;
+- classify DNS/transport timeout, HTTP failure and malformed response;
+- retain actionable queue truth without duplicate upload;
+- restore connectivity and prove one exact recovery path;
+- prove acknowledgement uncertainty cannot manufacture success or replay facts;
+- require no cursor regression or duplicate Product/Purchase effects.
+
+### C. Retention, snapshot and rebootstrap acceptance
+
+- define the development retention and acknowledgement-floor contract;
+- validate snapshot creation/selection and retained-event cleanup boundaries;
+- bootstrap a fresh Device from snapshot plus event tail;
+- rebootstrap a stale or replaced Device without local/hosted duplication;
+- retain explicit limits for free-tier storage and production backup/PITR.
+
+### D. Reproducible hosted operations
+
+- reconcile environment-specific migration execution and object ownership;
+- confirm server-only secret injection and rotation procedure;
+- establish deployment, health, observability and rollback boundaries;
+- document provider cleanup without touching production inadvertently;
+- preserve a sanitized operator route for Render, Auth0 and Neon.
+
+### E. Final Cycle 10 acceptance and promotion
+
+- run the chosen bounded GCM04 human assay;
+- reconcile client, server and provider evidence;
+- promote accepted Operational, Didactic and Design claims;
+- refresh permanent checkpoints and Main-root continuity;
+- run final repository/platform/secret/generated-artifact hygiene;
+- establish the explicit Cycle 11 baseline.
+
+## 8. GCM04 definition gate
+
+The candidate umbrella is:
+
+```text
+hosted authorization, resilience and lifecycle acceptance
+```
+
+It is intentionally broader than one executable unit. Before source or live
+provider action, Main must select one narrow GCM04 objective, declare non-goals,
+identify required A/B/C investigation, and stage synchronized D/E/F only if
+materialization is actually required.
+
+Recommended ordering:
+
+1. authorization/revocation/isolation;
+2. outage and exact-once recovery;
+3. retention/snapshot/rebootstrap;
+4. hosted operational closure;
+5. final promotion and Cycle 11 handoff.
+
+Current boundary:
+
+```text
+GCM04=READY_FOR_DEFINITION
+GCM04_IMPLEMENTATION=NOT_ACTIVE
+GCM04_LIVE_ASSAY=NOT_AUTHORIZED
+D_E_F_REPLACEMENT=NOT_AUTHORIZED_BY_THIS_ENTRY
+NEXT_MAIN_ACTION=DEFINE_ONE_BOUNDED_GCM04_OBJECTIVE_FROM_RESIDUAL_PANORAMA
+```
