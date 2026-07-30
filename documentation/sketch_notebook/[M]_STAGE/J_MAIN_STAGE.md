@@ -1,1040 +1,445 @@
-# J_MAIN_STAGE — Cycle 10 active reconciliation
+# J_MAIN_STAGE — C11-PH01 active reconciliation
 
-> Sequence: FLX-PRM-04 C10-GCM03 S08 exact hosted binding and two-Device
-> provider-baseline reconciliation
-> Role: Main Chat
+> Sequence: FLX-ORD-01, entered from completed C11-PH01 A/B/C investigation
+> Role: Main Chat [M]
+> Cycle / phase / active unit: C11 / C11-PH01 / C11-PH01-S01
+> Repository: `gus-i-gu/markei`
 > Branch: `grm-guarded-provisioning-20260727`
-> Publication parent: `e37f03b66e594a8dd54bbec0de94a42afb3fcecd`
-> Authority: explicit human-directed Main reconciliation
-> Writable surface: `REC_DIAGNOSTICS.md`, mutable J recovery prefix, and
-> append-only `Legacy_Progress`
-> Evidence boundary: accepted GCM02 same-Device closure; frozen Windows
-> sequence-2 candidate; C3 actual-fence/ADB validation; human Android
-> build/install/launch with visible matching provenance; Android local
-> pre-enrollment Diagnostics before and after one read-only refresh; ordinary
-> Android Sign in with authenticated client projection; two explicitly
-> human-triggered hosted-connection checks after cold boot, preserving one
-> timeout-before-response and one later HTTP-200 hosted-connection-ready
-> terminal; one accepted Android enrollment followed by the required
-> application restart and a post-restart authenticated/device-enrolled client
-> projection with queue 0/0/0/0 and next sequence 1; fresh masked-session
-> `GS-AUTH-02` exact binding; read-only `GS-NEON-11` two-Device provider
-> inventory with explicit rollback; no Sync, convergence, Android purchase,
-> production, retention, snapshot or rebootstrap claim
-> Status: **CYCLE 10 OPEN; GCM02 CLOSED AT HOSTED SAME-DEVICE SCOPE;
-> GCM03 S07 INNER STEPS 1–5 PASSED AT BOUNDED CLIENT SCOPE; ANDROID
-> ENROLLMENT SURVIVED RESTART; S08 EXACT HOSTED BINDING AND READ-ONLY
-> TWO-DEVICE PROVIDER BASELINE PASSED; WINDOWS-TO-ANDROID AUTHORIZATION PACKET
-> NEXT; PURCHASE AND BOTH SYNC ACTIONS HELD**
+> Cycle-entry baseline: `861c27fdaf6ade2093d481af312d27ff895b8dc0`
+> Reconciled A/B/C head: `4b1abc01a93351f5910ea8af5001782b59a784f7`
+> Authority: explicit human-directed Main pruning, reconciliation and
+> materialization staging
+> Writable surfaces: mutable J recovery prefix, append-only
+> `documentation/REC_DIAGNOSTICS.md`, and synchronized D/E/F
+> Protected history: the complete `# Legacy_Progress` section
+> Evidence boundary: repository and reference inspection plus completed
+> C11-PH01 Operational, Didactic and Design reports; no C11 source,
+> test/build, human-platform or provider evidence yet
+> Status: **CYCLE 10 CLOSED AT GCM03 TWO-DEVICE DEVELOPMENT SCOPE;
+> C11-PH01 ACTIVE; S01 D/E/F ACTIVE; CODEX IMPLEMENTATION AUTHORIZED;
+> PROVIDER MUTATION NONE**
 
 ## 1. Recovery entrypoint
 
-This mutable prefix is the current Main recovery surface. Read it before the
-append-only `Legacy_Progress` history. Expand into the legacy entries, G/H/I,
-permanent domains, GRM, or source only when the current task requires
-deeper evidence.
+Read this mutable prefix before `Legacy_Progress`.
 
-Mandatory methodology boot remains:
+Ordinary recovery:
 
 ```text
 AGENTS.md
 documentation/sketch_notebook/INDEX.md
-documentation/sketch_notebook/methodology/METHOD_FOUNDATIONS.md
-documentation/sketch_notebook/methodology/FLUX.md
-documentation/sketch_notebook/methodology/PROMOTION_RULES.md
-documentation/sketch_notebook/methodology/CHAT_PROTOCOL.md
+documentation/sketch_notebook/00_PROJECT_STATE.md
+documentation/sketch_notebook/06_SESSION_SCHEME.md
+this J prefix
+documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md
 ```
 
-Retain these ownership boundaries:
-
-- Main synthesizes and stages authority.
-- A/B/C are functional investigation and reconciliation inputs.
-- D/E/F are synchronized Codex materialization authority.
-- G/H/I are observational materialization reports.
-- J is Main staging and continuity, not permanent domain canon.
-- `Legacy_Progress` is append-only and must not be compacted or rewritten.
-- Semantic promotion and physical materialization remain distinct.
-- Human/provider actions require explicit, narrow authorization.
-
-## 2. Current repository frame
+For active evidence after Codex:
 
 ```text
-Repository: gus-i-gu/markei
-Active branch: grm-guarded-provisioning-20260727
-Current publication parent: e37f03b66e594a8dd54bbec0de94a42afb3fcecd
-Cycle: 10
-Active closure unit: MCG-02 / user-facing GCM-02
-Latest completed corrective unit: C10-GCM02-S12-ERR-04 recovery-boundary and
-observability correction
-Latest accepted gate: Gate 12.7 corrected single-client control
-Latest completed presentation unit: C10-GCM02-S12-DIAG-01
-Latest completed evidence phase: C10-GCM02-S12-ST10 sanitized Render
-correlation and Gate-12.10 terminal classification
-Latest completed correction: C10-GCM03-ST04-R1-C3 Main-owned Android selector
-repair validation
-Latest human evidence: Android build/install/launch at visible provenance
-65c9ab56079c, local pre-enrollment Diagnostics, authenticated client state,
-hosted readiness after one preserved cold-start timeout and one later ready
-HTTP-200 attempt, accepted one-time enrollment, and post-restart durable
-authenticated/device-enrolled projection with a clean queue and next
-sequence 1; masked-session `GS-AUTH-02` exact binding; and transactional
-`GS-NEON-11` provider-baseline PASS with explicit rollback
-Active phase: GCM03 S09 Windows-to-Android convergence authorization-packet
-preparation; the Windows candidate member remains frozen and Android purchase
-and both Sync actions are not yet authorized
+DEV_STAGE/G_OPS_CODEX.md
+DEV_STAGE/H_DDC_CODEX.md
+DEV_STAGE/I_DSN_CODEX.md
 ```
 
-The branch contains the GRM execution interface, hosted Sync
-implementation and diagnostics, account-cursor provisioning repair,
-human-operated provider evidence, and the latest Gate 12.6 staging.
-
-The old `intermid-cycle-recovery` branch carried earlier J reconciliations.
-Their accepted meaning has already been reconciled into this branch. Do not
-merge that historical branch merely to recover J content.
-
-The earlier parallel J/Codex and GRM-refactor rounds are integrated in the
-current branch baseline. Do not replay their local-equivalent commits onto this
-branch.
-
-REC-01 was materialized at `a63367763716e2769ac58d5adc19de0c41774b35`.
-Codex explicitly preserved the then-unrelated local dispatcher rename. The
-subsequent isolated GRM alignment unit materializes
-`documentation/NEON_CHECK.ps1` as `documentation/I_SCRIPTS.ps1` and aligns
-every live five-file-interface reference. Historical occurrences under
-`Legacy_Progress` remain observational evidence.
-
-The subsequent `3d1e82e5259cf51e8cd2d6baf694423494bab7a5`
-baseline renames the generated diagnostic projection to
-`documentation/ERR_DIAGNOSTICS.md`. That rename is accepted as repository
-state. The broad ERR-catalogue refactor remains deferred until the present
-narrow assays conclude.
-
-### 2.1 Controlling ST10 closure and GCM03 entry
-
-This subsection is the newest controlling recovery surface. When an older
-mutable-prefix statement conflicts with it, this subsection controls. The
-older text remains available as pre-ST09 staging context, and the complete
-chronology remains append-only under `Legacy_Progress`.
-
-GCM02 now reconciles five aligned evidence families:
+For human/provider chronology:
 
 ```text
-Records 009-010
-  exact hosted binding
-  clean provider baseline 0/0/0
-  Windows empty queue and sequence alignment
-
-controlled member preflight
-  authenticated and device-enrolled
-  one pending purchase.registered event at Device sequence 1
-  local next Device sequence 2
-  warm hosted readiness HTTP 200 after one cold-start timeout
-
-authorized Windows ordinary Sync
-  exactly one click
-  sync-completed
-  pending 1 -> 0
-  failed/unknown 0/0
-  current Device next sequence 2
-
-GRM-NEON-11 postflight
-  exact Device guard 1
-  submissions/events/acknowledgements 1/1/1
-  Account cursor 2 after high-water 1, consistent
-  Device sequence 2 after high-water 1, consistent
-  one distinct sanitized request/content lineage
-  explicit ROLLBACK and PASS
-
-ST10 Render correlation
-  one matching operation fingerprint across three Sync children
-  upload-submission POST authenticated and completed HTTP 200
-  download-events GET authenticated and completed HTTP 200
-  acknowledgement POST authenticated and completed HTTP 200
-  no rejected, failed, >=400, timeout, unknown, unexpected-error or MKS line
+documentation/REC_DIAGNOSTICS.md
 ```
 
-Reconciled meaning:
+Expand into `Legacy_Progress` only for provenance, superseded gates, corrective
+lineage or exact historical decisions.
 
-- the first correlated same-Device transition on the replacement development
-  provider succeeded at client/local/provider scope;
-- the actual provider delta exactly equals the frozen one-event contract;
-- there is no failed, unknown or actionable local residue;
-- acknowledgement, Account cursor and Device sequence projections agree;
-- the cold-start readiness timeout is operational sensitivity, not a Sync
-  contradiction, because both host endpoints and the immediately subsequent
-  client readiness check passed before authorization;
-- the Product selection/staging defects observed while creating the test member
-  were contained locally and did not contaminate the successful assay;
-- ST09 therefore passes at the same-Device transition boundary;
-- ST10 correlates the exact same operation across all three server children;
-- the client, server and provider terminals agree without contradiction;
-- Gate 12.10 therefore classifies the operation as expected success;
-- GCM02 closes at its hosted same-Device scope;
-- second-Device enrollment and convergence remain unproved and begin only
-  under a separately defined and authorized GCM03 sequence.
+Retain the authority split:
 
-Current terminals:
+- A/B/C are functional investigation reports.
+- J reconciles and compresses cross-domain structure.
+- D/E/F are the controlling implementation instruction layer.
+- G/H/I are observational materialization evidence.
+- permanent domain memory belongs to Operational, Didactic and Design.
+- REC preserves sanitized human/client/server/provider observations.
+- materialization does not itself promote permanent knowledge.
+
+## 2. Current project terminal
 
 ```text
-CYCLE10=OPEN
+CYCLE10=CLOSED_AT_GCM03_TWO_DEVICE_DEVELOPMENT_SCOPE
+GCM01=ACCEPTED_DEVELOPMENT_BOUNDARY
 GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-STEP12=CLOSED_THROUGH_GATE_12_10
-GATE_12_7=PASSED_CORRECTED_SINGLE_CLIENT_CONTROL_SCOPE
-ST08=PASSED_EXACT_BINDING_AND_CLEAN_PROVIDER_BASELINE
-ST09_LOCAL_PREFLIGHT=PASS
-ST09_CONTROLLED_MEMBER=ONE_PURCHASE_REGISTERED_SEQUENCE_1
-ST09_HOSTED_READINESS=PASS_AFTER_COLD_START_WARMUP
-ST09_ONE_ACTION_AUTHORIZATION=SATISFIED
-ST09_ORDINARY_SYNC=PASS_EXACTLY_ONCE
-ST09_CLIENT_TERMINAL=SYNC_COMPLETED
-ST09_LOCAL_QUEUE=PASS_DRAINED_1_TO_0
-ST09_PROVIDER_COUNTS=PASS_1_SUBMISSION_1_EVENT_1_ACK
-ST09_ACCOUNT_CURSOR=CONSISTENT_2_AFTER_1
-ST09_DEVICE_SEQUENCE=CONSISTENT_2_AFTER_1
-ST09_PROVIDER_POSTFLIGHT=ROLLBACK_PASS
-ST09=PASSED_SAME_DEVICE_CLIENT_PROVIDER_TRANSITION_SCOPE
-ST10_RENDER_CORRELATION=PASS_THREE_AUTHENTICATED_HTTP_200_TERMINALS
-ST10_FAILURE_OR_AMBIGUITY=ABSENT
-ST10=PASSED_READ_ONLY
-GATE_12_10=PASS_EXPECTED_SUCCESS
-NEW_SYNC_OR_RETRY=NOT_AUTHORIZED
-ENROLLMENT_OR_MIGRATION=NOT_AUTHORIZED
-SECOND_DEVICE=UNPROVED_READY_FOR_GCM03_DEFINITION
-GCM03=READY_FOR_DEFINITION_AND_READ_ONLY_PREFLIGHT
+GCM03=CLOSED_TWO_DEVICE_DEVELOPMENT_SCOPE
+MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_ONE_ACCOUNT_DEVELOPMENT_SCOPE
+PRODUCTION_ACCEPTANCE=ABSENT
+GCM04=DEFERRED_TO_C12_PHASE02
+R07_IMPLEMENTATION_AUTHORIZED=NO
+
+CYCLE11=ACTIVE
+C11_PHASE=C11-PH01
+C11_UNIT=C11-PH01-S01
+C11_PH01_A_B_C=RECONCILED
+C11_PH01_S01_D_E_F=ACTIVE_CODEX_IMPLEMENTATION_AUTHORIZED
+C11_SOURCE_EVIDENCE=NOT_YET_PRODUCED
+LIVE_SYNC_AUTHORITY=NONE
+PROVIDER_MUTATION_AUTHORITY=NONE
 ```
 
-The shortest evidence-correct GCM03 entry is:
-
-1. preserve the newly reported unsynchronized purchase without another Sync;
-2. run Windows Diagnostics once to freeze its event type, queue class, Device
-   sequence and next sequence;
-3. reconfirm the provider remains at the accepted GCM02 `1/1/1` baseline
-   before any new action, only if the GCM03 contract requires it;
-4. verify Android toolchain/client lineage and establish a fresh, clearly
-   identified local Device state;
-5. sign in to the same Account without reusing or exposing tokens;
-6. capture Android pre-enrollment Diagnostics and prepare an exact enrollment
-   authorization packet;
-7. enroll the Android Device exactly once only after explicit authorization;
-8. reconcile the two-Device provider inventory before authorizing any upload
-   or download/convergence action.
-
-Record 013 now proves that the new unsynchronized Windows purchase is one
-pending `purchase.registered` event at Device sequence 2, with
-pending/uploading/failed/unknown `1/0/0/0` and next Device sequence 3. It is
-the frozen candidate Windows-to-Android convergence member. Do not Sync,
-recreate or discard it while Android readiness and pre-enrollment state are
-prepared.
-
-### 2.2 GCM03 TODOs and Android check placement
-
-GCM03 is an investigative, separately authorized unit. This list defines its
-evidence order; it does not authorize enrollment or Sync.
-
-- [x] **GCM03.1 — Freeze Windows candidate member.** Record 013 proves one
-  pending `purchase.registered` event at Windows Device sequence 2, next
-  sequence 3, and no uploading/failed/unknown residue.
-- [x] **GCM03.2 — Reconfirm repository and provider baseline.** Fast-forward
-  the Windows checkout to the published GCM02 closure commit, require a clean
-  worktree, run read-only host readiness, and use `GRM-NEON-11` only if Main
-  requires a fresh pre-enrollment provider inventory. Expected pre-enrollment
-  payload baseline remains the accepted GCM02 `1/1/1`, with one active Device.
-  **Passed through the post-enrollment boundary:** Android artifact lineage
-  `65c9ab56079c` is proved. The client
-  hosted-readiness prerequisite passed after one preserved cold-start
-  `timeout-before-response` attempt and one later
-  `hosted-connection-ready`/HTTP-200 attempt. Record 017 adds exact hosted
-  binding plus a transactional provider baseline with one Account, two Device
-  rows, payload counts `1/1/1`, consistent Account cursor `2` after high-water
-  `1`, exact Android sequence `1` after high-water `0`, and rollback/PASS.
-- [x] **GCM03.3 — Android environment and client check.** Run canonical
-  `GRM-FLUTTER-AND` / `GS-FLUTTER-AND` from the same published checkout.
-  Require Flutter/Android toolchain readiness, exactly one supported Android
-  target, configured AVD boot where needed, successful Closure build/install/
-  launch, and the same public Auth0/Render coordinate lineage. This step must
-  not sign in, enroll or Sync implicitly. **Passed bounded:** C3 validated the
-  repaired exact fence and one-safe-ADB-serial boundary; the human rerun
-  launched `DEV-GRM` with visible matching provenance `65c9ab56079c`.
-- [x] **GCM03.4 — Android local pre-enrollment snapshot.** Open Closure on
-  Android, preserve sanitized diagnostics, and prove whether the fresh
-  installation has no enrolled local Device. Stop on inherited Device state,
-  unexpected queue members, configuration mismatch, revoked/expired state, or
-  any source Device fingerprint collision. **Passed with storage-freshness
-  qualification:** one distinct local-only Android Device at next sequence 1,
-  queue `0/0/0/0`, no attempts, diagnostic history or actionable events.
-  Complete database freshness is unproved because installation preserves
-  Android app data.
-- [x] **GCM03.5 — Same-Account authentication.** Sign in through the ordinary
-  Auth0 flow to the same test Account. Capture only sanitized authentication
-  state; never copy tokens, subjects, credentials or complete identifiers.
-  **Passed at client scope:** Android projects `authenticated`. Exact
-  same-Account/provider binding remains to be proved by the bounded enrollment
-  and provider postflight rather than by screenshots alone.
-- [x] **GCM03.6 — Exact Android enrollment authorization packet.** Freeze the
-  intended one-click Enroll action, expected new active-Device count
-  `1 -> 2`, expected Android local enrollment terminal, evidence-capture
-  order, and no-second-click/unknown-outcome rules. Obtain explicit human
-  authorization before enrollment. **Passed by the prior bounded S07
-  authorization packet; historical action authority is exhausted.**
-- [x] **GCM03.7 — Enroll Android exactly once.** Execute only the authorized
-  enrollment. Preserve the Android terminal, sanitized Device fingerprint,
-  Render enrollment lifecycle and read-only provider inventory. Do not Sync
-  either client in this step. **Passed bounded:** one accepted Enroll followed
-  by required restart; no second click and no Sync.
-- [x] **GCM03.8 — Two-Device baseline reconciliation.** Require one Account,
-  two distinct active Devices, Windows next expected sequence 2 on the
-  provider, Android next expected sequence at its fresh baseline, and no
-  payload/cursor changes caused solely by enrollment. **Passed at the combined
-  prior-Windows plus Record-017 boundary:** two Device rows; exact Android
-  Device active; Account payload `1/1/1`; cursor `2` after `1`; Android
-  sequence `1` after `0`; no Android submission/event; rollback/PASS. The
-  launcher branch-alias caveat remains explicit.
-- [ ] **GCM03.9 — Windows-to-Android convergence authorization.** Freeze the
-  existing Windows sequence-2 event as the only upload member, calculate the
-  exact submission/event/cursor/acknowledgement delta, and authorize one
-  Windows Sync followed by one Android download Sync only after all stop
-  conditions are explicit.
-- [ ] **GCM03.10 — Windows-to-Android convergence assay.** Prove Windows queue
-  drain, provider acceptance, Android download/application, matching purchase
-  identity/content, acknowledgement, and preservation of Android-local state.
-- [ ] **GCM03.11 — Android-to-Windows reverse member.** Create exactly one
-  controlled Android purchase only after the first direction passes, freeze
-  its Android queue/sequence, and prepare a new exact authorization packet.
-- [ ] **GCM03.12 — Reverse convergence assay.** Authorize and prove Android
-  upload followed by Windows download/application, with exact provider delta
-  and no duplication or local-history loss.
-- [ ] **GCM03.13 — Idempotent repeat.** With both queues empty and both clients
-  converged, authorize one bounded repeat Sync per Device and require no new
-  submissions/events, no duplicate purchases, stable cursors/sequences, and
-  successful acknowledgements.
-- [ ] **GCM03.14 — Reconcile and close.** Correlate client, Render and provider
-  evidence; classify every unexpected/duplicate/rejected/unknown result;
-  preserve Android operational findings; and close GCM03 only at the proven
-  two-Device development scope.
-
-GCM03 global stop conditions:
+Cycle schedule:
 
 ```text
-dirty_or_diverged_checkout
-android_target_ambiguous_or_unsupported
-android_configuration_or_binding_mismatch
-unexpected_inherited_android_device_or_queue_state
-authentication_required_or_rejected
-binding_invalid
-device_revoked_or_expired
-enrollment_timeout_unknown_or_duplicate
-sync_timeout_unknown_failed_or_notApplied
-cursor_or_sequence_inconsistency
-unexpected_provider_delta
-duplicate_or_missing_purchase_after_apply
+C11-PH01
+  visual system and five core-page convergence
+
+C11-PH02
+  functional deterministic local/account-scoped Analytics
+
+C11-PH03
+  mandatory Settings and Audit
+  complete Closure capability disposition
+  Closure removal from ordinary navigation only after tested ownership
+
+C12-PHASE01
+  UI/UX fine tuning and polishing
+
+C12-PHASE02
+  backend fine tuning, multiple-user assays, deferred GCM04
+  conditional R07 reassessment
 ```
 
-On any stop condition, preserve the visible terminal and do not repeat the
-action merely to improve evidence. Enrollment, Windows Sync, Android Sync,
-Retry, recovery, migration, revocation and provider repair each require their
-own explicit boundary.
+## 3. Cycle 10 accepted capsule
 
-Updated terminals:
+Cycle 10 established and human-validated, within the stated development
+boundary:
+
+- local-first event creation and durable queue truth;
+- hosted same-Device submission/download/acknowledgement;
+- exact account/Device binding for two enrolled Devices;
+- Windows-to-Android and Android-to-Windows convergence on one Account;
+- exact natural Product identity reconciliation without observed duplicate
+  Product or Purchase;
+- transaction truth separated from diagnostic-persistence truth;
+- acknowledgement ordered after committed local apply/cursor truth;
+- preserved diagnostic history and typed/sanitized lifecycle evidence;
+- one no-op ordinary Sync per Device with no submission route and stable
+  `0/0/0/0` queues.
+
+Evidence ceiling:
+
+- two Devices, one Account, development provider;
+- final practical client/Render convergence accepted;
+- no fresh terminal provider-table recount after the golden no-op repeats;
+- cross-Account denial, revocation, outage recovery, retention,
+  snapshot/rebootstrap, production deployment and lifecycle completeness not
+  proved;
+- those residuals belong to C12-PHASE02, not C11.
+
+Detailed sanitized chronology is in REC Records 001–021. Corrective source and
+Main history remain traceable through the relevant G/H/I reports and protected
+`Legacy_Progress`.
+
+## 4. Diagnostic ownership after J pruning
+
+The former J `System Diagnosis` catalogue is historical provenance. It must
+not become a second maintained runtime registry.
+
+Current responsibility:
+
+| Semantic role | Owner |
+| --- | --- |
+| Stable runtime diagnostic code registry | `contracts/shared_beta/diagnostics_v1/diagnostics.registry.json` |
+| Generated/readable registry projection | `documentation/ERR_DIAGNOSTICS.md` |
+| Sanitized human/client/server/provider chronology | `documentation/REC_DIAGNOSTICS.md` |
+| Main sequence decisions and evidence ceilings | this J prefix |
+| Historical catalogue and corrective progression | `Legacy_Progress` |
+| Domain interpretation | permanent Operational, Didactic and Design files |
+
+The REC appendix added by this reconciliation indexes Cycle 10 progression and
+the later extraction route. It creates no new runtime code or accepted
+provider fact.
+
+## 5. Ordered Cycle 10 permanent-domain extraction
+
+Cycle 10 staging and evidence are not yet a substitute for permanent domain
+memory. After the active Codex unit returns G/H/I, run one bounded FLX-PRM-04
+domain reconciliation in this publication order:
 
 ```text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-STEP12=CLOSED_THROUGH_GATE_12_10
-GATE_12_10=PASS_EXPECTED_SUCCESS
-GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
-GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
-GCM03_WINDOWS_QUEUE=PASS_1_0_0_0
-GCM03_WINDOWS_NEXT_DEVICE_SEQUENCE=3
-GCM03_ANDROID_SELECTOR_C3=PASS
-GCM03_ANDROID_BUILD_LINEAGE=PASS_65C9AB56079C
-GCM03_ANDROID_PRE_ENROLLMENT=PASS_LOCAL_ONLY_NEXT_1_QUEUE_0_0_0_0
-GCM03_ANDROID_AUTHENTICATION=PASS_CLIENT_SCOPE
-GCM03_ANDROID_SAME_ACCOUNT_EXACT_BINDING=PASS_EXACT_BINDING_CONFIRMED
-GCM03_ANDROID_HOSTED_READINESS=PASS_AFTER_COLD_START_WARMUP
-GCM03_ANDROID_HOSTED_ATTEMPTS=2_WITH_1_READY_1_TIMEOUT_PRESERVED
-GCM03_ANDROID_DURABLE_ENROLLMENT=PASS_CLIENT_SCOPE
-GCM03_PROVIDER_DEVICE_COUNT=2
-GCM03_PROVIDER_PAYLOAD_COUNTS=PASS_1_1_1
-GCM03_PROVIDER_ACCOUNT_CURSOR=CONSISTENT_2_AFTER_1
-GCM03_ANDROID_PROVIDER_SEQUENCE=CONSISTENT_1_AFTER_0
-GCM03_S08=PASSED_READ_ONLY_EXACT_BINDING_TWO_DEVICE_BASELINE
-GCM03=ACTIVE_WINDOWS_TO_ANDROID_AUTHORIZATION_PACKET
-ANDROID_ENROLLMENT=COMPLETE_DO_NOT_REPEAT
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-SECOND_DEVICE_CONVERGENCE=UNPROVED
-GCM04=UNDEFINED_INACTIVE
+1. Operational
+2. Didactic
+3. Design
+4. Main final reconciliation
 ```
 
-### 2.3 ST04-R1 materialization reconciliation and Android GRM correction
-
-Commit `231a76281d0016ee47dd719d3ddc24d422b18c35` materialized the bounded
-Android Closure parity/provenance unit. D/E/F were compared against G/H/I,
-the implementation diff, and the live GRM dispatcher cascade.
-
-#### PRC-01 claims
+Each domain follows:
 
 ```text
-Claim: the shared Flutter Closure parity and build-provenance model passed the
-       authorized local materialization boundary
-Prior state: Android displayed a legacy Closure surface while current shared
-             source appeared consolidated
-Evidence: one shared NativeClosurePage; compact/wide coverage; sanitized
-          7-12 lowercase-hex provenance projection; 199 passed / 4 lab-gated
-          Flutter tests; clean Flutter analysis; local debug APK build with
-          explicit provenance define
-Evidence boundary: repository, widget tests, analysis and local build only
-Contradiction: none inside the Flutter presentation/provenance boundary
-Semantic owner: C10-GCM03-ST04-R1 local source result
-Target role: J current recovery state
-Resulting state: ACCEPTED / LOCALLY VALIDATED
-History disposition: append
+observational append
+→ canonical acceptance/correction
+→ derived regeneration
+→ checkpoint refresh last
 ```
+
+### 5.1 Operational extraction
+
+Primary inputs:
+
+- REC Records 001–021 and the Cycle 10 extraction appendix;
+- accepted Cycle 10 G reports and exact materialization commits named there;
+- current GRM/G_SCRIPTS/NS_COORDINATES/I_SCRIPTS/DB_MGMT execution topology;
+- the Cycle 10 closure entry in `Legacy_Progress`;
+- the new S01 `G_OPS_CODEX.md` only for C11 implementation evidence.
+
+Ordered destinations:
+
+1. append execution/assay chronology and evidence boundaries to
+   `operational/11_OPERATIONAL_RECORD.md`;
+2. reconcile stable repeatable execution rules, stop conditions and evidence
+   distinctions into `operational/12_OPERATIONAL_MODEL.md`;
+3. regenerate current work/deferred residuals in `operational/04_TODO.md`;
+4. refresh `operational/10_OPERATIONAL_STATE.md` last.
+
+Required separation:
+
+- implemented versus automated-test-validated versus human-validated;
+- same-Device versus two-Device;
+- local/client versus Render versus provider;
+- development versus production;
+- completed GCM03 versus C12-PHASE02 residuals;
+- no live operation or provider mutation during documentation extraction.
+
+### 5.2 Didactic extraction
+
+Primary inputs:
+
+- accepted H reports across Cycle 10;
+- REC progression, especially readable current-action versus historical-result
+  lessons and Records 018–021;
+- the runtime registry and generated ERR documentation by reference;
+- the C11 S01 `H_DDC_CODEX.md` only for new product-comprehension evidence.
+
+Ordered destinations:
+
+1. append Cycle 10 learning/evidence events to
+   `didactics/13_LECTURE_REGISTER.md`;
+2. change `didactics/02_KANBAN.md` only where explicit learner-maturity
+   evidence satisfies the existing rubric;
+3. regenerate `didactics/07_GLOSSARY.md` only from accepted canonical owners;
+4. refresh `didactics/08_CONCEPT_MAP.md` last.
+
+Concept distinctions to classify:
+
+- Product natural identity versus user code/local UUID;
+- local-first truth versus hosted coordination;
+- transaction outcome versus diagnostic persistence;
+- current action versus prior operation history;
+- blocked, not-applied, applied, duplicate-equivalent and unknown;
+- acknowledgement after committed apply;
+- build/test evidence versus practical human acceptance;
+- development acceptance versus production acceptance.
+
+Do not copy 159 registry rows into Didactic canon and do not infer a KANBAN
+transition from passing tests or project completion.
+
+### 5.3 Design extraction
+
+Primary inputs:
+
+- accepted I reports and the exact source boundaries they describe;
+- REC Records 018–021 and the final GCM03 closure;
+- Cycle 10 architectural decisions retained in `Legacy_Progress`;
+- ALT_DEV R07/C12 boundaries;
+- the new S01 `I_DSN_CODEX.md` for the visual-system architecture only.
+
+Ordered destinations:
+
+1. append accepted decisions, supersessions and deferred questions to
+   `design/03_DECISION_LOG.md`;
+2. reconcile stable responsibility/dependency rules into
+   `design/01_ARCHITECTURE.md`;
+3. regenerate `design/14_MODEL_OVERVIEW.md`;
+4. refresh `design/09_DESIGN_STATE.md` last.
+
+Architecture claims to classify:
+
+- local database as product truth and hosted service as coordination channel;
+- Account/Device identity and membership boundaries;
+- natural Product identity reconciliation;
+- transaction partition and diagnostic containment;
+- acknowledgement dependency on committed local cursor;
+- runtime diagnostics registry versus Audit projection authority;
+- Settings as configuration, Audit as observation, Analytics as local
+  interpretation;
+- GCM04 and R07 remaining deferred to C12-PHASE02.
+
+Do not activate R07, multi-user behavior or a new Audit causal engine through
+documentation promotion.
+
+### 5.4 Main final reconciliation
+
+After all three domain commits and the C11 S01 G/H/I/domain absorption exist:
+
+1. verify each domain changed only its own permanent folder;
+2. verify observational history was preserved;
+3. verify checkpoints point to unique canonical owners;
+4. compare permanent memory against source and G/H/I;
+5. refresh this mutable J prefix;
+6. update `00_PROJECT_STATE.md`, append `05_SESSION_LOG.md`, and refresh
+   `06_SESSION_SCHEME.md` only when the accepted global state requires it;
+7. select the next PH01 slice.
+
+That later round is the full J/domain reconciliation requested after
+permanent-domain registration and G/H/I. It is not pre-claimed by this stage.
+
+## 6. C11-PH01 A/B/C reconciliation
+
+### 6.1 Accepted cross-domain findings
+
+A/B/C agree that:
+
+- the five PNGs are one coherent visual family, not pixel/data authority;
+- PH01 needs shared semantic tokens, a responsive shell and reusable
+  presentation primitives before page-specific redesign;
+- tables and compact cards are two projections of one view state and stable
+  record identity;
+- existing application/domain/repository owners must remain intact;
+- green is primary/current; purple is secondary guidance/insight; color never
+  carries meaning alone;
+- loading, first-use empty, filtered empty, insufficient history, error, retry,
+  partial and success states must be explicit and readable;
+- destination identity must survive width and feature-gate changes;
+- Analytics, Settings and Audit must be reserved without implementing PH02/PH03;
+- Closure remains intact and feature-gated throughout PH01;
+- Purchase is the highest-risk page and must not be the first recomposition;
+- Windows/Android human acceptance remains distinct from automated/build
+  evidence.
+
+### 6.2 Main-resolved choices
+
+| Question | Main resolution for PH01 |
+| --- | --- |
+| Implementation size | bounded cumulative slices, not one indivisible five-page rewrite |
+| First slice | tokens/components + stable shell + Home + Lists |
+| Layout classes | compact `<600`; medium `600–1023`; wide `>=1024` logical pixels |
+| Compact direct destinations | Home, Lists, Purchase, History, plus More |
+| Home purpose | task-oriented overview, not roadmap/developer dashboard |
+| Catalogue user label | `Catalogue` |
+| Market vocabulary | retain `Market` for PH01 |
+| Guide/Documentation | retain as secondary More destinations |
+| Household | retain as clearly planned/secondary |
+| Analytics/Audit | honest reserved placeholders only |
+| Settings | preserve current behavior until PH03 |
+| Closure | preserve feature gate and all current behavior |
+| New dependency | prohibited in S01 |
+| Golden evidence | optional only when deterministic; behavior/semantics remain mandatory |
+
+Unresolved choices for later slices remain:
+
+- Catalogue registration surface and Store-management emphasis;
+- History filtering, opening and Analytics-context contract;
+- Purchase compact edit/review composition;
+- final compact destination priority after PH02/PH03;
+- final Closure capability placement, Audit export/retention and recovery
+  exposure.
+
+## 7. Active materialization
+
+Controlling stages:
 
 ```text
-Claim: the pushed GRM-FLUTTER-AND procedure is hardened and ready for a human
-       rerun
-Prior state: G reports ANDROID_GRM_PROVENANCE=HARDENED and
-             ST04=READY_FOR_HUMAN_RETEST
-Evidence: implementation scan shows GS-FLUTTER-AND reads $Branch before any
-          assignment and later reads $BuildProvenance without assignment;
-          their intended producer block was inserted into GS-FLUTTER-WIN
-Evidence boundary: exact pushed G_SCRIPTS.md and I_SCRIPTS.ps1 strict-mode,
-                   one-fence dispatcher semantics
-Contradiction: PowerShell fence parse passed, but parse does not validate
-               runtime variable initialization
-Semantic owner: Android GRM executable procedure
-Target role: corrected D/E/F and later replacement G/H/I
-Resulting state: CONTRADICTED / BLOCKED VARIABLE CASCADE
-History disposition: supersede only the prior Android-GRM hardening terminal
+documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md
+documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md
 ```
+
+Active unit:
 
 ```text
-Claim: ST04 or any later GCM03 action may proceed before correction
-Prior state: ST04 awaited a human rebuilt-artifact retest
-Evidence: canonical Android procedure terminates under strict mode at the
-          first undefined $Branch read; $BuildProvenance is also undefined
-Evidence boundary: no live Android, authentication or provider action needed
-Contradiction: executing the procedure cannot produce the intended artifact
-Semantic owner: GCM03 action gate
-Target role: Main authorization boundary
-Resulting state: REJECTED; ST04 AND ST05+ HELD
-History disposition: append
+C11-PH01-S01
+  characterization tests
+  semantic tokens and shared components
+  stable compact/medium/wide shell
+  Home recomposition
+  Lists recomposition
+  Analytics/Settings/Audit navigation reservation
 ```
 
-#### Accepted and superseded evidence
-
-Retained:
+Later PH01 slices, not yet authorized:
 
 ```text
-SHARED_CLOSURE_PAGE=CONFIRMED
-ANDROID_COMPACT_DIAGNOSTICS=TEST_PASS
-BUILD_PROVENANCE=IMPLEMENTED
-APPLICATION_DATA_PRESERVATION=DESIGNED_AND_SOURCE_PRESERVED
-AUTH_ENROLL_SYNC_PROVIDER_ACTION=ABSENT
+C11-PH01-S02
+  Catalogue and History recomposition
+
+C11-PH01-S03
+  Purchase recomposition
+
+C11-PH01-S04
+  five-page convergence, accessibility and Windows/Android human acceptance
 ```
 
-Superseded:
+D/E/F are synchronized and marked:
 
 ```text
-ANDROID_GRM_PROVENANCE=HARDENED
-ST04=READY_FOR_HUMAN_RETEST
+ACTIVE — CODEX IMPLEMENTATION AUTHORIZED
 ```
 
-Current:
+No source outside D’s exact writable scope is authorized.
 
-```text
-ANDROID_GRM_PROVENANCE=BLOCKED_VARIABLE_CASCADE
-ST04=BLOCKED_PENDING_C10_GCM03_ST04_R1_C1
-```
+## 8. Validation and stop boundary
 
-#### Correction contract
+Codex must distinguish:
 
-Synchronized D/E/F now authorize one narrow correction:
+- source exists;
+- focused tests pass;
+- full Flutter suite passes;
+- Windows/Android builds pass or are host-unvalidated;
+- human Windows/Android acceptance not performed.
 
-1. remove the accidentally inserted Android-unit producer/print block from
-   `GS-FLUTTER-WIN`, restoring that procedure to its `db17f47` behavior;
-2. add Windows-PowerShell-compatible repository containment, `$Branch`,
-   `$InspectedHead`, and `$BuildProvenance` initialization inside
-   `GS-FLUTTER-AND` before any consumer;
-3. preserve the accepted Flutter source, Android coordinates, package,
-   data-preserving install, artifact evidence and no-mutation boundaries;
-4. validate exact-fence extraction, AST syntax, same-fence producer-before-
-   consumer data flow, and a mocked/truncated strict-mode prefix;
-5. produce replacement G/H/I without running the live Android procedure.
+Stop on:
 
-The human `GRM-FLUTTER-AND` rerun becomes eligible only after correction
-review, commit, publication and Main reconciliation. It remains an ST04
-artifact-lineage retest, not authentication, enrollment or Sync authority.
+- business/query/schema/provider change;
+- new dependency;
+- Analytics calculation or Settings/Audit/Closure migration;
+- destination state loss;
+- responsive views producing different facts;
+- unrelated worktree or remote drift;
+- any required path outside D.
 
-Updated terminals:
+No live Sync, Retry, Recovery, Query, Enroll, provider operation, credential
+inspection or preserved-client installation is authorized.
 
-```text
-CYCLE10=OPEN
-GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
-GCM03_WINDOWS_CANDIDATE_PREFLIGHT=PASS
-GCM03_WINDOWS_PENDING_MEMBER=PURCHASE_REGISTERED_SEQUENCE_2
-C10_GCM03_ST04_R1_FLUTTER_SOURCE=ACCEPTED_LOCAL_VALIDATION
-C10_GCM03_ST04_R1_ANDROID_GRM=CONTRADICTED
-C10_GCM03_ST04_R1_C1=ACTIVE_MATERIALIZATION_STAGE
-ST04=BLOCKED_PENDING_GRM_CASCADE_CORRECTION
-LIVE_ANDROID_RETEST=NOT_AUTHORIZED_YET
-ANDROID_ENROLLMENT=NOT_AUTHORIZED
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-GCM03_ST05_AND_LATER=HELD
-SECOND_DEVICE_CONVERGENCE=UNPROVED
-GCM04=UNDEFINED_INACTIVE
-```
+## 9. Pruning disposition
 
-### 2.4 GCM03 S08 exact binding and provider baseline
+This refresh replaces the stale mutable Cycle 10 prefix with one current C11
+recovery surface.
 
-Record 017 reconciles the masked-session `GS-AUTH-02` and transactional
-`GS-NEON-11` terminals against Records 014–016.
+Pruned from the mutable prefix:
 
-The combined evidence proves:
+- superseded Gate 12.6/12.7 action packets;
+- stale GCM03 TODOs and prohibitions;
+- repeated provider and build panoramas;
+- obsolete GCM04-before-Cycle-10-closure rule;
+- duplicate diagnostic catalogue interpretation;
+- inactive Cycle 10 D/E/F pointers.
 
-- the fresh user access token satisfies issuer, audience, algorithm, subject
-  and time-window checks;
-- hosted identity and Device-status endpoints both return HTTP 200;
-- the supplied hosted Android Device UUID is exactly bound to the token;
-- the provider contains one Account and two Device rows;
-- the exact Android Device is active at next expected sequence 1 after
-  high-water 0;
-- Account-level submissions/events/acknowledgements remain `1/1/1`;
-- the Account cursor remains 2 after high-water 1 and is consistent;
-- the Android Device owns no submission or Sync event;
-- the provider transaction explicitly rolls back and the procedure passes.
+Preserved:
 
-The displayed development target label is retained as a launcher declaration.
-`GS-NEON-11` does not independently prove the human-readable Neon branch
-alias. This provenance ceiling does not contradict the authenticated
-role/database/TLS terminal or the returned read-only inventory.
-
-S08 closes exact hosted binding and the post-enrollment two-Device baseline.
-It does not prove convergence and it authorizes no Sync. The next controlling
-work is GCM03.9: derive and freeze the exact Windows-sequence-2 to Android
-convergence action packet. This packet must separate the Windows upload phase,
-its client/Render/provider postflight, the later Android download phase, and
-its own postflight. Either phase stops on timeout, unknown, failed,
-`notApplied`, binding rejection, unexpected delta, cursor/sequence
-inconsistency, or duplicate/missing purchase.
-
-Current terminal:
-
-```text
-C10_GCM03_S08_AUTH0_BINDING=PASS_EXACT_BINDING_CONFIRMED
-C10_GCM03_S08_PROVIDER_BASELINE=PASS_ROLLBACK
-GCM03_PROVIDER_DEVICE_COUNT=2
-GCM03_PROVIDER_PAYLOAD_COUNTS=PASS_1_1_1
-GCM03_PROVIDER_ACCOUNT_CURSOR=CONSISTENT_2_AFTER_1
-GCM03_ANDROID_PROVIDER_SEQUENCE=CONSISTENT_1_AFTER_0
-GCM03_S08=PASSED_READ_ONLY_EXACT_BINDING_TWO_DEVICE_BASELINE
-GCM03=ACTIVE_WINDOWS_TO_ANDROID_AUTHORIZATION_PACKET
-SECOND_DEVICE_CONVERGENCE=UNPROVED
-ANDROID_PURCHASE=HELD
-WINDOWS_SYNC=NOT_AUTHORIZED
-ANDROID_SYNC=NOT_AUTHORIZED
-```
-
-## 3. Retained pre-ST08 panorama
-
-The following sections preserve the compact recovery panorama that controlled
-before ST08. They are not rewritten as historical records. Section 2.1
-supersedes their status, branch, gate, and next-action statements wherever
-those statements differ.
-
-Cycle 10 moved Markei from local synchronization groundwork toward bounded,
-authenticated, hosted inter-device convergence. It is not yet closed.
-
-### 3.1 Accepted implementation track
-
-The source and reconciled reports establish:
-
-- offline-first local data remains primary;
-- immutable append-only Sync events and deterministic request content exist;
-- Account/Device-scoped local queues, download/apply, acknowledgements and
-  idempotent application paths exist;
-- two-Device disposable convergence and recovery harnesses exist;
-- hosted Auth0/OIDC verification, membership resolution, Device enrollment,
-  query/replay/status/revocation and transaction-scoped authorization exist;
-- RLS context and runtime/migrator privilege separation exist;
-- Native Closure exposes guarded sign-in, enrollment, query, hosted
-  connection, Sync and diagnostic/recovery actions;
-- durable Sync-attempt and unknown-outcome observability exists;
-- a separate, explicitly confirmed failed/notApplied recovery surface now
-  exists, preserving read-only inspection, unknown Retry and ordinary Sync as
-  distinct actions;
-- the bounded REC-01 coordinator revalidates exact internal candidate identity,
-  atomically recovers and leases only its members, performs at most one upload,
-  persists that result, and contains no download or acknowledgement path;
-- retention, snapshot and rebootstrap contracts and local harness groundwork
-  exist.
-
-These are implementation and bounded validation claims. REC-01 specifically
-remains host-unvalidated and unexecuted against the user environment. They do
-not by themselves establish production readiness, real multi-device
-convergence, hosted retention execution, backup/PITR acceptance, or release
-acceptance.
-
-### 3.2 Account cursor-state correction
-
-The protected hosted submission failure was traced locally to an Account that
-existed without `account_cursor_state`.
-
-The accepted correction lineage includes:
-
-- fail-closed handling for a missing cursor row;
-- explicit `service-unavailable / not-applied` classification;
-- migration 007 provisioning exactly one cursor-state row for new Accounts;
-- backfill only for missing historical rows;
-- preservation of existing cursor rows;
-- hosted high-water-derived initialization;
-- revocation of runtime cursor INSERT/DELETE;
-- retained scoped runtime SELECT/UPDATE;
-- readiness-v2 migration capability.
-
-Migration 007 was applied once to the development Neon target and
-postflight-validated. It must not be reapplied.
-
-### 3.3 Hosted preparation accepted
-
-Within development-provider boundaries, accepted human-operated evidence
-includes:
-
-- the intended corrected Render revision was deployed;
-- live and ready endpoints returned their expected ready results;
-- readiness-v2 was true;
-- Auth0 issuer, audience and RS256 metadata matched;
-- an authenticated fixture principal resolved to active membership;
-- exact enrolled Device binding was confirmed;
-- provider state remained unchanged across the inspected pre-Sync checkpoint;
-- secrets and complete identifiers were kept out of notebook evidence.
-
-This does not authorize production deployment, provider mutation, credential
-rotation, ordinary Sync, or a recovery operation.
-
-### 3.4 Validation record retained
-
-The latest complete materialization record before the current evidence-only
-round retained:
-
-```text
-API format/lint/typecheck/build: PASS
-API tests: 53 / 53
-production dependency audit: 0 vulnerabilities
-migration-007 disposable PostgreSQL probe: 29 / 29
-hosted local authorization cases: 28 true / 0 pending
-Flutter format/analyze: PASS
-Flutter tests: 178 passed / 4 lab-gated skips
-real convergence harness: 3 / 3
-real recovery harness: 1 / 1
-Windows release build: PASS
-Android debug build: PASS
-protected Python unittest suite: 5 / 5
-```
-
-One older aggregate orchestrator observation retained a
-`query-replay-same-request-id` Flutter-producer failure while the direct suite
-and opt-in harnesses passed. Do not mark that aggregate observation resolved
-without a correlated rerun.
-
-## 4. Current source and operational map
-
-Use this map for targeted recovery rather than scanning the repository
-indiscriminately.
-
-### 4.1 Human execution interface
-
-```text
-documentation/GRM.md
-documentation/G_SCRIPTS.md
-documentation/NS_COORDINATES.md
-documentation/I_SCRIPTS.ps1
-documentation/DB_MGMT.sql
-```
-
-`GRM.md` is the concise indexed human entry surface. Every active `GRM-*`
-block dispatches exactly one `GS-*` procedure through `I_SCRIPTS.ps1`.
-`G_SCRIPTS.md` owns procedure logic and runtime requests,
-`NS_COORDINATES.md` owns reviewed non-secret values, and `DB_MGMT.sql` owns
-manual SQL plus indexed automation-query blocks. Coordinates are mutable and
-must be freshly verified before provider action.
-
-Current SQLite route:
-
-```text
-GRM-SQLITE-01 -> SQLite CLI availability
-GRM-SQLITE-02 -> closed-app discovery and verified temporary copy
-GRM-SQLITE-03 -> read-only sanitized copied-database classification
-GRM-SQLITE-04 -> materialized read-only sanitized device-scope correlation
-```
-
-All four procedures are materialized and have human-observed results.
-`GRM-SQLITE-04` queried only the preserved verified copy and completed the
-device-scope correlation without Retry, Sync, provider action, mutation or
-cleanup. Preserve `markei-gate-12-6-current` unchanged through the controlled
-operation and post-operation reconciliation.
-
-### 4.2 Flutter synchronization authorities
-
-```text
-clients/markei_flutter/lib/application/hosted_sync_coordinator.dart
-clients/markei_flutter/lib/infrastructure/remote/http_sync_transport.dart
-clients/markei_flutter/lib/infrastructure/local/sync/local_sync_repositories.dart
-clients/markei_flutter/lib/domain/sync/sync_event.dart
-```
-
-`hosted_sync_coordinator.dart` owns ordinary Sync's
-authentication-to-binding-to-pending-upload-to-download-to-acknowledgement
-transition. ERR-04 removed failed/notApplied recovery from this ordinary path.
-`failed_not_applied_recovery_coordinator.dart` owns REC-01's narrower exact
-candidate recovery-to-one-upload terminal and intentionally has no download or
-acknowledgement dependency. Local repositories own durable
-queue/submission/event state. Transport owns protocol mapping. Domain Sync
-models own event and state semantics.
-
-### 4.3 Hosted API authorities
-
-```text
-services/markei_sync_api/src/
-services/markei_sync_api/migrations/
-packages/markei_sync_contract/
-```
-
-Inspect exact files through G/H/I or targeted search when the active question
-requires server behavior. Do not infer hosted state from source capability.
-
-## 5. Pre-ST08 GCM-02 state retained for context
-
-GCM-02 remains open, but Gate 12.7 now passes at the corrected single-client
-control scope. ERR-04 is source-accepted and locally validated. The subsequent
-Windows packet proves one warm hosted-readiness terminal and one ordinary Sync
-terminal with queue `0/0/0/0`, Next Device sequence `3`, Last successful Sync
-advanced only by ordinary Sync, and no failed-recovery phase in the newest
-operation. The first cold readiness attempt remains an unresolved wake-up
-tolerance observation.
-
-Gate 12.7 does not claim direct provider-row contents, complete Render
-child-request correlation, or second-Device convergence. Those evidence
-families remain explicit later gates. Gate 12.8 is therefore next as a
-read-only provider/result reconciliation and must issue no second Sync, Retry,
-recovery, enrollment, migration, or provider mutation.
-
-The newest Sync's 13 displayed rows are ordered lifecycle declarations, not 13
-errors. Their flat presentation is a UI comprehension defect. Main activates
-`C10-GCM02-S12-DIAG-01` to consolidate Status, Query, and Refresh diagnostics
-and to group lifecycle evidence by parent operation without changing protocol,
-schema, API, or provider state.
-
-### 5.1 Accepted Gate 12.6 copied-database evidence
-
-The human-operated procedure:
-
-- confirmed Markei and relevant Flutter execution were closed;
-- found exactly one local database candidate;
-- found no WAL/SHM sidecars;
-- created a fixed-name copy;
-- verified copy size and hash equality without printing hashes;
-- queried only the copy with SQLite read-only and
-  `PRAGMA query_only=ON`;
-- returned `SQLiteQuickCheck: ok`;
-- performed no Retry, ordinary Sync or provider action.
-
-Sanitized classification:
-
-```text
-submissions:
-  superseded / notApplied / conflict / null                  = 1
-  superseded / notApplied / conflict / enrollment-required   = 1
-  failed     / notApplied / conflict / service-unavailable   = 1
-
-each submission:
-  two member events
-  event sequences 1–2
-  event state failed
-  positions 0–1
-
-pending-event summary:
-  failed  = 2, sequences 1–2
-  pending = 6, sequences 1–5
-
-latest attempt:
-  sync-unavailable
-  provider-evidence-unavailable
-  no HTTP status
-  no response headers
-```
-
-### 5.2 Reconciled conclusions
-
-Accepted:
-
-- copied-database procedure: PASS;
-- database copy: healthy and internally coherent;
-- exactly one active failed/notApplied two-event lineage: confirmed;
-- two earlier two-event submissions: superseded;
-- unknown-submission Retry path: inapplicable;
-- earlier insufficient-evidence queue classification: superseded;
-- no trustworthy provider result exists for the latest ordinary Sync;
-- the six other pending events make ordinary Sync an unsafe substitute for
-  the bounded recovery question.
-
-The observed active legacy row stores:
-
-```text
-response_code = conflict
-error_code = service-unavailable
-```
-
-Current source maps `service-unavailable` to `serviceUnavailable`. Git history
-shows that explicit mapping was added in
-`75dc7bed0789d693af93abb3ed15e107fd77433a`; the observed database timestamp
-predates that correction. The pairing is historically coherent with the
-older fallback, but this is not executable row-level provenance and must not
-be silently rewritten.
-
-### 5.3 Gate 12.6 device-scoped correlation
-
-Human execution of `GRM-SQLITE-04` against the preserved verified copy
-returned:
-
-```text
-SQLite quick check: ok
-observed Device scopes: 3
-hosted/enrolled scope rank: 3
-hosted scope next_sequence: 3
-failed candidate submission: failed / notApplied
-legacy response/error: conflict / service-unavailable
-candidate members: 2
-candidate positions: 0–1, contiguous
-candidate sequences: 1–2, contiguous
-candidate member state: failed
-same-hash superseded submissions: 0
-same-hash active submissions: 0
-simulated first upload count: 2
-candidate events in first upload: 2
-other pending events in hosted scope: 0
-first upload contains only candidate events: true
-other non-hosted pending work: rank 1 = 1; rank 2 = 5
-latest Sync: sync-unavailable / provider-evidence-unavailable
-```
-
-The output proves:
-
-- the hosted/enrolled Device scope is anonymized rank 3;
-- it owns exactly the failed two-event lineage at sequences 1–2;
-- its next local Device sequence is 3;
-- the six other pending events belong only to non-hosted ranks 1 and 2;
-- failed recovery would make exactly the two candidate events the first
-  bounded upload;
-- no active or superseded submission shares the candidate request hash;
-- no latest provider result exists because the latest Sync stopped without
-  HTTP status or response headers.
-
-The procedure queried no live database and selected no Retry or Sync. Gate
-12.6 evidence collection and correlation are complete. The local SQLite
-snapshot and the earlier Neon checkpoint are not contradictory: they describe
-different sides and times of a failed/notApplied boundary, while the latest
-Sync obtained no fresh provider evidence.
-
-### 5.4 Gate terminals
-
-```text
-GCM02_12_1_RENDER_READY_PASS
-GCM02_12_2_AUTH0_METADATA_PASS
-GCM02_12_3_ALIGNMENT_PASS_AT_INSPECTED_CHECKPOINT
-GCM02_12_4_EXACT_BINDING_PASS
-GCM02_12_5_PROVIDER_BASELINE_PASS
-GCM02_12_6_COPIED_DATABASE_PROBE_PASS
-GCM02_12_6_DEVICE_SCOPED_CORRELATION_PASS
-GCM02_12_6_PASS
-GCM02_12_7_READ_ONLY_PREFLIGHT_PASS
-GCM02_S12_REC_01_SOURCE_ACCEPTED
-GCM02_S12_REC_01_WINDOWS_SURFACE_PASS
-GCM02_S12_HOSTED_READINESS_CLIENT_PASS
-GCM02_S12_LAST_SUCCESSFUL_SYNC_PROJECTION_FAIL
-GCM02_S12_SYNC_01_D_E_F_ACTIVE
-GCM02_12_7_HUMAN_AUTHORIZATION_HELD
-GCM02_12_8_CONTROLLED_OPERATION_HELD
-GCM02_12_9_POST_OPERATION_COMPARISON_HELD
-GCM02_12_10_RECONCILIATION_HELD
-GCM02_OPEN
-```
-
-### 5.5 Active prohibitions
-
-Until a new Main reconciliation explicitly changes them:
-
-```text
-Retry: NOT AUTHORIZED
-ordinary Sync: NOT AUTHORIZED
-Enroll/re-enroll: NOT AUTHORIZED
-provider query or mutation: NOT AUTHORIZED
-database repair, cleanup or deletion: NOT AUTHORIZED
-credential inspection or rotation: NOT AUTHORIZED
-Gate 12.7 authorization: NOT GRANTED
-GCM-02 closure: NOT GRANTED
-```
-
-Keep Markei closed and preserve the copied database unchanged until the Gate
-12.7 packet is reviewed. Do not execute ad hoc SQL.
-
-## 6. Superseded pre-ST08 continuation — SYNC-01 before Phase 12.7
-
-The Windows read-only preflight, dedicated recovery-control visibility and
-confirmation cancellation are reconciled as PASS. The later readiness assay
-also preserved the two-event failed candidate and Device sequence. It did not
-execute recovery or ordinary Sync.
-
-The readiness assay exposed one source-proven projection defect and one
-credible timing hypothesis:
-
-```text
-projection:
-  completed readiness was selected as "Last successful sync"
-
-timing:
-  protected Sync requests currently use a fixed 5-second client deadline
-  causal role in the historical failure remains unproved
-```
-
-Proceed in this order:
-
-1. Codex materializes synchronized D/E/F unit
-   `C10-GCM02-S12-ERR-03`;
-2. implement the complete operation-specific client terminal catalogue,
-   route-specific server terminal logging and sanitized correlation join;
-3. correct ordinary-Sync and hosted-readiness success projections;
-4. replace the fixed five-second Sync request deadline with the bounded
-   25-second server / 35-second client assay policy;
-5. validate only through local/disposable Flutter and API tests and replace
-   G/H/I;
-6. Main reconciles source evidence before any Windows or hosted action;
-7. the user pulls the accepted implementation and performs the canonical
-   Windows build/launch;
-8. run one readiness-only regression assay first, proving readiness time may
-   advance while ordinary-Sync time and the failed candidate remain unchanged;
-9. capture the matching Render window through sanitized correlation only;
-10. only after a separate Main packet may one ordinary-Sync assay or the
-    Gate 12.7 bounded recovery be considered; neither is authorized by this
-    staging.
-
-Unknown-outcome Retry, ordinary Sync, bounded recovery, Repair, Enroll,
-provider-console mutation, database editing and cleanup remain prohibited
-during materialization. SYNC-01 must not perform the deferred broad ERR
-refactor.
-
-## 7. GCM-03 provisional boundary
-
-GCM-03 is undefined and inactive until GCM-02 closes. Its scope must be
-derived from the actual GCM-02 terminal, not from the optimistic expectation
-of success.
-
-Current provisional candidate:
-
-```text
-bounded second-Device hosted convergence and acknowledgement proof
-```
-
-Main must first inspect GCM-02 closure evidence, inventory remaining accepted
-gaps, select one narrow objective, stage fresh A/B/C investigation if needed,
-then create new D/E/F authority.
-
-GCM-03 must not silently absorb:
-
-- production deployment;
-- broad retention/rebootstrap acceptance;
-- backup/PITR acceptance;
-- credential-lifecycle acceptance;
-- Cycle 11 UI/UX work.
-
-## 8. GCM-04 provisional boundary
-
-GCM-04 is undefined and inactive until earlier closure evidence establishes
-what remains. It should contain the final bounded external/operational
-acceptance needed for Cycle 10, potentially partitioned by Main if one unit
-would otherwise become non-terminal.
-
-Current candidate families:
-
-```text
-authorization, revocation and credential lifecycle
-outage, recovery and retention acceptance
-deployment/release operational boundary
-```
-
-These are planning candidates, not authority. Main must reconcile GCM-03
-evidence before selecting GCM-04.
-
-## 9. Cycle 10 closure route
-
-Cycle 10 closes only after:
-
-1. GCM-02 reaches a trustworthy correlated terminal or an explicitly accepted
-   bounded blocker;
-2. GCM-03 is defined, materialized, validated and reconciled;
-3. GCM-04 is defined, materialized, validated and reconciled;
-4. remaining host/provider/release gaps are classified;
-5. source, G/H/I, domain memory and human evidence are reconciled;
-6. Operational, Didactic and Design permanent files are promoted through
-   their authorized FLX-PRM-04 sequences;
-7. `00_PROJECT_STATE.md`, `05_SESSION_LOG.md` and
-   `06_SESSION_SCHEME.md` are refreshed under Main authority;
-8. Cycle 11 receives a clean entry baseline with Cycle 10 residuals explicit.
-
-Cycle 11 remains separate. Its UI/UX and basic Analytics work must not be used
-to bypass Cycle 10 closure.
-
-## 10. Pre-ST08 PRC-01 claims retained for provenance
-
-| Claim                                        | Result and evidence boundary                                          |
-| -------------------------------------------- | --------------------------------------------------------------------- |
-| Cycle 10 implementation foundation exists    | Implemented and locally validated within named reports                |
-| Migration 007 repaired cursor provisioning   | Implemented; development-provider application and postflight accepted |
-| Hosted readiness and exact binding passed    | Human-operated accepted development evidence                          |
-| Gate 12.6 copied-database probe passed       | Human-operated accepted, read-only copied-database evidence           |
-| Failed/notApplied lineage is known           | Accepted from sanitized copied-database output                        |
-| Legacy response pairing is explained         | Source/history-consistent, not row-proven                             |
-| Exact device-scoped next transition is known | Accepted from human-operated read-only `GRM-SQLITE-04` evidence       |
-| Retry is eligible                            | Rejected; unknown-retry path is inapplicable                          |
-| Ordinary Sync is a safe substitute           | Rejected; six other pending events exist                              |
-| REC-01 bounded execution surface exists      | Implemented and locally validated at `a633677`; host-unvalidated       |
-| Eligible preflight diagnostic is corrected   | `MKS-REC-001` generated and locally validated; Windows rerun pending   |
-| Exact batch and one-upload boundary hold      | Locally test-validated; no live execution performed                    |
-| REC-01 Windows inspection surface passed     | Human-observed; inspection/cancellation only, no execution              |
-| Hosted readiness route passed                | Human-observed HTTP 200 client evidence; not ordinary Sync              |
-| Last successful Sync projection is correct  | Rejected; readiness advanced the timestamp                              |
-| Five-second deadline caused prior failure    | Provisional hypothesis; not proved                                     |
-| ERR-03 terminal/timing packet is active      | Accepted D/E/F materialization authority at baseline `3d1e82e`          |
-| Gate 12.7 packet is ready                    | Rejected; SYNC-01 and later freshness reconciliation required           |
-| Gate 12.7 is authorized                      | Rejected                                                              |
-| GCM-02 is closed                             | Rejected                                                              |
-| GCM-03 or GCM-04 is active                   | Rejected                                                              |
-| Cycle 10 is closed                           | Rejected                                                              |
-
-## 11. Pruning disposition
-
-This refresh replaces the former mutable prefix, which had accumulated:
-
-- superseded cursor-state implementation instructions;
-- pre-probe Gate 12.6 Cancel/Retry decision trees;
-- repeated repository, methodology and validation panoramas;
-- cleared provider-preflight and deployment steps;
-- stale one-line continuation terminals;
-- duplicated future GCM-03/04 and Cycle 10 closure descriptions.
-
-Their continuing meaning is consolidated above. Historical progression remains
-available under `Legacy_Progress`, which was preserved unchanged.
+- accepted Cycle 10 meaning in section 3;
+- explicit evidence ceilings and C12 deferrals;
+- diagnostic ownership pointers;
+- ordered permanent-domain extraction;
+- complete `Legacy_Progress` byte-for-byte;
+- complete REC Records 001–021 with an appended extraction bridge.
 
 Current recovery pointer:
 
 ```text
-read this mutable prefix
--> read active ERR-03 D/E/F for Codex authority
--> read REC-01 G/H/I for preserved recovery evidence
--> use the canonical I_SCRIPTS dispatcher for later Windows commands
--> expand into Legacy_Progress only for provenance/history
+read this prefix
+→ read active C11-PH01-S01 D/E/F
+→ after Codex read G/H/I
+→ use REC for human/provider chronology
+→ use permanent domain files after their ordered extraction round
+→ expand Legacy_Progress only for historical provenance
 ```
 
 ---

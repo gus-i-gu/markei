@@ -3544,3 +3544,150 @@ MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_DEVELOPMENT_SCOPE
 PRODUCTION_ACCEPTANCE=ABSENT
 GCM04=READY_FOR_DEFINITION
 ```
+
+---
+
+# Appendix I — Cycle 10 Diagnostic Progression and Domain-Extraction Bridge
+
+Date: 2026-07-30
+Sequence: FLX-PRN-03 Main J pruning bridge
+Branch: `grm-guarded-provisioning-20260727`
+Inspected A/B/C head: `4b1abc01a93351f5910ea8af5001782b59a784f7`
+
+## Purpose and evidence boundary
+
+This appendix transfers the current retrieval responsibility for sanitized
+Cycle 10 diagnostic progression out of J’s mutable recovery prefix and into
+the existing REC observational record.
+
+It does not:
+
+- add a runtime diagnostic code;
+- replace Records 001–021;
+- turn J history into canonical domain knowledge;
+- claim a new client, Render or provider observation;
+- activate a provider action, R07, GCM04 or C12;
+- authorize semantic promotion by itself.
+
+The full J `Legacy_Progress` remains preserved as historical provenance.
+
+## System Diagnosis disposition
+
+The 159-row `System Diagnosis` catalogue retained under J
+`Legacy_Progress` was an investigation-time source inventory. It was later
+materialized into runtime-owned diagnostic artifacts and must not be manually
+maintained as a second registry.
+
+Current ownership:
+
+| Role | Current owner |
+| --- | --- |
+| Runtime diagnostic definitions | `contracts/shared_beta/diagnostics_v1/diagnostics.registry.json` |
+| Registry schema and generation contract | `contracts/shared_beta/diagnostics_v1/diagnostics.schema.json` and `README.md` |
+| Human-readable generated projection | `documentation/ERR_DIAGNOSTICS.md` |
+| Sanitized assay/observation chronology | this `REC_DIAGNOSTICS.md` |
+| Historical investigation catalogue | J `Legacy_Progress` |
+| Cross-domain interpretation | permanent Operational, Didactic and Design memory after FLX-PRM-04 |
+
+Future diagnostic definition changes begin in the runtime registry, regenerate
+the readable projection, and return through G/H/I evidence. They must not begin
+by editing the historical J catalogue or this REC chronology.
+
+## Ordered Cycle 10 diagnostic progression
+
+| Records | Progression | Accepted meaning |
+| --- | --- | --- |
+| 001–003 | initial failed/notApplied evidence, hosted readiness and blocked action comprehension | current action, prior Sync result and provider contact could not be inferred from one flat UI |
+| 004–006 | corrected client control, cold/warm readiness and ordinary Sync control | readiness and Sync are different operations; one current-action projection and grouped lifecycle are required |
+| 007–008 | consolidated diagnostics, durable binding and current-action correction | diagnostic grouping became readable; authentication/enrollment presentation remained evidence-bounded |
+| 009–012 | exact binding, clean provider baseline, one same-Device operation and Render correlation | GCM02 closed at hosted same-Device scope with client/server/provider agreement |
+| 013–017 | Windows candidate freeze, Android pre-enrollment/authentication, durable enrollment and two-Device baseline | one Account/two Device development fixture existed without Android payload mutation |
+| 018–020 | preserved-client acceptance followed by Android typed Product conflict and Windows post-download uncertainty | R03–R05 corrective source line was justified; trusted provider response could not be erased by a later local terminal |
+| 021 | reciprocal convergence, natural-identity merge and two golden no-op repeats | GCM03 closed at the two-Device/one-Account development scope; production/lifecycle evidence remained absent |
+
+## Material evidence ceiling
+
+Accepted:
+
+```text
+SAME_DEVICE_HOSTED_SYNC=PASS_DEVELOPMENT
+TWO_DEVICE_SAME_ACCOUNT_CONVERGENCE=PASS_DEVELOPMENT
+PRODUCT_NATURAL_IDENTITY_MERGE=PASS_HUMAN_ASSAY
+CLIENT_QUEUES_FINAL=0_0_0_0_BOTH
+NO_OP_REPEAT_PER_DEVICE=PASS_CLIENT_RENDER
+DIAGNOSTIC_HISTORY_PRESERVED=YES
+```
+
+Not proved:
+
+```text
+FINAL_POST_NO_OP_PROVIDER_TABLE_RECOUNT
+TWO_ACCOUNT_ISOLATION
+MEMBERSHIP_DISABLE_AND_DEVICE_REVOCATION
+OUTAGE_AND_ACKNOWLEDGEMENT_UNCERTAINTY_RECOVERY
+RETENTION_SNAPSHOT_REBOOTSTRAP
+PRODUCTION_DEPLOYMENT_AND_LIFECYCLE_ACCEPTANCE
+```
+
+The unproved families are deferred to C12-PHASE02. They are not C11 PH01
+requirements.
+
+## Domain-extraction routing
+
+This appendix is an observational index. Domain chats must interpret rather
+than copy it.
+
+### Operational
+
+Extract in this order:
+
+1. assay chronology into `operational/11_OPERATIONAL_RECORD.md`;
+2. repeatable execution, evidence and stop rules into
+   `operational/12_OPERATIONAL_MODEL.md`;
+3. remaining C12 residuals into `operational/04_TODO.md`;
+4. current recovery state into `operational/10_OPERATIONAL_STATE.md` last.
+
+Keep development/production, local/Render/provider, implemented/validated and
+same-Device/two-Device distinctions explicit.
+
+### Didactic
+
+Extract in this order:
+
+1. learning/interpretation events into `didactics/13_LECTURE_REGISTER.md`;
+2. only evidence-qualified learner maturity into `didactics/02_KANBAN.md`;
+3. regenerate `didactics/07_GLOSSARY.md` from accepted owners;
+4. refresh `didactics/08_CONCEPT_MAP.md` last.
+
+Teach the distinctions among current action/history, transaction/diagnostic
+truth, local/hosted truth, natural identity/user code, and
+blocked/not-applied/applied/duplicate-equivalent/unknown. Do not copy the
+registry row-by-row.
+
+### Design
+
+Extract in this order:
+
+1. accepted/superseded decisions into `design/03_DECISION_LOG.md`;
+2. stable boundaries into `design/01_ARCHITECTURE.md`;
+3. regenerate `design/14_MODEL_OVERVIEW.md`;
+4. refresh `design/09_DESIGN_STATE.md` last.
+
+Preserve the local-truth/coordination boundary, transaction partition,
+diagnostic containment, natural-identity merge, acknowledgement ordering and
+deferred GCM04/R07 boundary.
+
+## Next reconciliation
+
+After the active C11-PH01 Codex unit writes G/H/I, publish permanent-domain
+reconciliation in the serialized order:
+
+```text
+Operational
+→ Didactic
+→ Design
+→ Main J and Main-root continuity reconciliation
+```
+
+Documentation extraction performs no live Sync, Retry, Recovery, Query,
+Enroll, provider mutation, credential inspection or database repair.

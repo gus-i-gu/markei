@@ -1,146 +1,214 @@
-# E_DDC_STAGE - C10-GCM03-S09-R06-CR02
+# E_DDC_STAGE — C11-PH01-S01 Meaning and Evidence Contract
 
-Sequence: FLX-ORD-01
-Role: Main didactic/evidence stage
-Round or unit: C10-GCM03-S09-R06-CR02
-Branch: grm-guarded-provisioning-20260727
-CR01 implementation baseline / required staging parent: 5fef8a51ccb61dff00e773b3c8759062560d27da
-Codex starting HEAD: the final CR02 staging tip named by the seeding prompt
-Authority: Human-supervised Main Chat
-Evidence boundary: Windows procedure correction only
+> Sequence: FLX-ORD-01
+> Role: Main didactic/evidence stage
+> Cycle / phase / unit: C11 / C11-PH01 / C11-PH01-S01
+> Branch: `grm-guarded-provisioning-20260727`
+> Reconciled A/B/C head: `4b1abc01a93351f5910ea8af5001782b59a784f7`
+> Codex starting HEAD: the synchronized D/E/F publication commit pinned by the
+> seeding prompt
+> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
+> Evidence boundary: visual foundation, shell, Home and Lists only
 
-## 1. Incident Classification
+## 1. Purpose
 
-The new evidence does not show project-wide drift, sabotage, dependency
-incompatibility, or a Windows build failure.
+Constrain the S01 implementation so the new visual system improves
+comprehension without overstating capability, erasing distinctions or turning
+the reference PNGs into false product truth.
 
-It shows two assertions that are stronger than their evidence:
+The five PNGs are compositional references. They do not authorize unsupported
+data, actions, images, categories, filters, telemetry or later-phase behavior.
 
-```text
-dart process name
-!= proof of Markei/client/file-lock ownership
+## 2. Shared page language
 
-windows/flutter/ephemeral/generated_plugins.cmake
-!= the repository's Windows generated-plugin manifest path
-```
+S01 establishes this reading order:
 
-The correct repository contract is:
+1. stable page noun and one-sentence purpose;
+2. optional qualified summary;
+3. search/filter/sort controls;
+4. primary content;
+5. contextual actions;
+6. explanation or safe recovery disclosure.
 
-```text
-Generated plugin manifest:
-clients/markei_flutter/windows/flutter/generated_plugins.cmake
+Across widths, the semantic order remains the same even when controls stack or
+tables become cards.
 
-Generated plugin symlink:
-clients/markei_flutter/windows/flutter/ephemeral/
-  .plugin_symlinks/auth0_flutter
-```
+Action hierarchy:
 
-The word `ephemeral` applies to the plugin symlink and other generated native
-state, not to the location of `generated_plugins.cmake`.
+- one visually dominant next action;
+- secondary actions are tonal/outlined;
+- dangerous/destructive actions are absent from S01;
+- disabled actions are absent unless their presence teaches a real dependency;
+- icon-only controls have an accessible name and pointer tooltip.
 
-## 2. Evidence Ceiling
+## 3. Color and surface meaning
 
-The human log proves:
+- Green: current, available, selected, confirmed or primary action.
+- Purple: secondary explanation, guidance, comparison or future-context
+  handoff.
+- Warm neutral/cream: page ground.
+- Warm/white surface: grouped content.
+- Orange: qualified warning.
+- Red: error or destructive/failed meaning.
 
-- Flutter 3.44.6 and the Windows toolchain were available;
-- `flutter clean` and bounded cleanup completed in the displayed rerun;
-- dependency resolution completed;
-- the procedure reached the manifest assertion;
-- compilation was not reached.
+Text and iconography must carry every meaning without color. Green must not
+invent success; purple must not become a second primary-action color.
 
-Repository inspection proves:
+## 4. Navigation vocabulary
 
-- the non-ephemeral manifest exists at the Windows scaffold path;
-- it contains one `auth0_flutter` plugin entry;
-- no ephemeral manifest exists in the repository;
-- CR01 uses the wrong manifest path;
-- CR01 selects owners from process names alone.
-
-This does not prove:
-
-- a Windows Release build succeeds from the CR02 commit;
-- the produced executable has final CR02 identity;
-- the preserved Windows client launches or retains data;
-- Auth0 callback behavior;
-- Sync, convergence, cursor, acknowledgement, or provider correctness.
-
-## 3. Required Vocabulary
-
-Use:
-
-- `process candidate` for a name match without attribution;
-- `definite relevant owner` only when path/command/client evidence exists;
-- `cleanup postcondition failure` for actual remaining generated state;
-- `generated-plugin manifest` for
-  `windows/flutter/generated_plugins.cmake`;
-- `generated plugin symlink` for the `ephemeral/.plugin_symlinks` target.
-
-Do not state:
-
-- `ownership detected` from name alone;
-- `Windows build failed` when compilation was not reached;
-- `manifest was not regenerated` while checking a nonexistent/wrong path;
-- `dependency drift` merely because newer incompatible versions are listed;
-- `Chrome failure` as a Windows desktop blocker.
-
-## 4. Dependency and Tooling Interpretation
-
-The package output:
+Use ordinary product labels:
 
 ```text
-Got dependencies!
-25 packages have newer versions incompatible with dependency constraints.
+Home
+Lists
+Purchase
+Catalogue
+History
+Analytics
+Settings
+Audit
 ```
 
-means the lock/constraint resolution succeeded. The newer-version notice is
-informational and does not authorize an upgrade.
+Do not expose `PIN` maturity terminology to ordinary users. `Catalogue` is the
+page/library; `Product` is an entry. `Audit` is not `Closure`.
 
-The missing Chrome executable affects Chrome web development, not the Windows
-desktop build target used here.
+During S01:
 
-The mojibake sequence `ÔÇó` is console encoding of Flutter's bullet separator
-and is not evidence of source or binary corruption.
+- Analytics copy says it is planned for C11-PH02 and does not imply current
+  calculations or telemetry.
+- Audit copy says it is planned for C11-PH03 and does not imply current
+  diagnostic migration.
+- Settings remains current and functional.
+- Closure remains feature-gated and unchanged.
+- Household remains clearly planned and secondary.
 
-## 5. Promotion Rules
+## 5. Home comprehension contract
 
-CR02 source inspection may promote only:
+Home must answer:
 
 ```text
-PROCESS_ATTRIBUTION_CONTRACT=CORRECTED
-GENERATED_PLUGIN_MANIFEST_PATH=CORRECTED
-PROCEDURE_READY_FOR_HUMAN_RERUN=YES
+What is Markei for now?
+What can I do next?
+Where do I inspect results?
 ```
 
-Only an actual subsequent Windows build from the pushed CR02 implementation
-commit may promote:
+Required meaning:
+
+- purchases are registered locally first;
+- Lists are estimates derived from Purchase history;
+- Catalogue contains reusable Products;
+- History contains registered Purchases;
+- the primary next action is `Register purchase`.
+
+Do not claim:
+
+- Sync is future work;
+- Sync/provider state without a current projection;
+- Household is functional;
+- Analytics or Audit is functional;
+- developer usage telemetry exists;
+- public distribution/release status as a primary user task.
+
+Secondary navigation actions should use `View lists`, `Browse catalogue` and
+`Open purchase history` or equally clear wording.
+
+## 6. Lists comprehension contract
+
+The four terms remain:
 
 ```text
-WINDOWS_RELEASE_BUILD=PASS
-WINDOWS_ARTIFACT_IDENTITY=RECORDED
+Storage
+Shortage
+Market
+All
 ```
 
-Only visible preserved-client observation may promote retained state or visible
-identity. Live Sync remains separately authorized.
+They are projections, not recorded inventory locations.
 
-## 6. Frozen Claims
+Required distinctions:
 
-- R06 source identity semantics remain unchanged.
-- CR01's bounded cleanup intent remains valid.
-- CR01's name-only process attribution and manifest-path assertion are not
-  accepted.
-- No dependency or native plugin change is justified.
-- R07 remains held and discussion-only.
-- `ERR-*` and MKS runtime semantics are outside this round.
+- recorded Product identity versus derived cycle estimate;
+- projection-empty versus search-filtered empty;
+- Product-level `Not enough history` versus an empty page;
+- approximate next-purchase total versus a recorded total;
+- `Market` projection membership versus an `Expected ended` item status;
+- Search changes visible membership; Sort changes order.
 
-## 7. Required G/H/I Evidence
+All forecasts must visibly use `Estimate`, `Approximate` or equivalent
+qualification. Money includes currency. Dates remain locale-readable and
+estimated dates are marked as estimated.
 
-Reports must distinguish:
+Safe Retry means re-reading Lists only. It must not resemble automatic Sync,
+unknown-outcome Retry or recovery.
 
-- observed human output;
-- repository-backed source evidence;
-- static correction validation;
-- any disposable-host execution;
-- skipped preserved-client actions;
-- remaining human checkpoint.
+## 7. Readable-state contract
 
-Reports must not upgrade static validation into a build or runtime claim.
+Required states:
+
+- loading: name what is loading;
+- first-use empty: explain what is absent and point to Purchase when useful;
+- filtered empty: say that the current search produced no result and offer
+  clear search removal;
+- insufficient history: keep the Product visible and explain why an estimate
+  is unavailable;
+- error: name the failed Lists read, state that local data is unchanged and
+  offer one explicit read Retry;
+- partial/unavailable: keep available facts while qualifying unavailable
+  derived detail.
+
+User input, selected view and search/sort state should survive safe Retry and
+responsive resizing.
+
+## 8. Accessibility evidence
+
+Implementation evidence must cover:
+
+- usable reflow at 200% text scale;
+- minimum 48-logical-pixel touch targets where controls are interactive;
+- accessible names for navigation and icon-only actions;
+- visible keyboard focus;
+- semantic reading order matching page anatomy;
+- independent announcement of selected destination, selected Lists view and
+  state changes;
+- no horizontal page overflow at representative compact, medium and wide
+  widths.
+
+Automated semantics/widget evidence is distinct from human Windows Narrator,
+Android TalkBack, real device and visual-comparison evidence. The latter remain
+not performed in this Codex unit.
+
+## 9. Evidence and promotion ceiling
+
+Codex may report:
+
+```text
+implemented
+test-validated
+build-validated
+host-unvalidated
+blocked
+```
+
+Do not report:
+
+- pixel parity from source inspection;
+- Windows/Android human acceptance from widget tests;
+- PH01 completion from S01;
+- Analytics, Settings/Audit redesign or Closure migration;
+- KANBAN/learner maturity change;
+- provider, Sync, production or multi-user acceptance.
+
+No KANBAN transition is authorized.
+
+## 10. Required H report
+
+`H_DDC_CODEX.md` must name:
+
+- wording and labels changed;
+- stale or misleading copy removed;
+- state distinctions implemented;
+- navigation terms implemented;
+- color semantics represented without color-only meaning;
+- accessibility assertions added and their limits;
+- copy/behavior requested but not implemented;
+- exact automated, build and human evidence boundaries.

@@ -1,229 +1,343 @@
-# D_OPS_STAGE - C10-GCM03-S09-R06-CR02
+# D_OPS_STAGE — C11-PH01-S01 Visual Foundation, Shell, Home and Lists
 
-Sequence: FLX-ORD-01
-Role: Main operational materialization stage
-Round or unit: C10-GCM03-S09-R06-CR02
-Branch: grm-guarded-provisioning-20260727
-CR01 implementation baseline / required staging parent: 5fef8a51ccb61dff00e773b3c8759062560d27da
-Codex starting HEAD: the final CR02 staging tip named by the seeding prompt
-Authority: Human-supervised Main Chat
-Scope: Windows procedure attribution and generated-plugin manifest correction only
+> Sequence: FLX-ORD-01
+> Role: Main operational materialization stage
+> Cycle / phase / unit: C11 / C11-PH01 / C11-PH01-S01
+> Repository: `gus-i-gu/markei`
+> Branch: `grm-guarded-provisioning-20260727`
+> Cycle-entry baseline: `861c27fdaf6ade2093d481af312d27ff895b8dc0`
+> Reconciled A/B/C head: `4b1abc01a93351f5910ea8af5001782b59a784f7`
+> Codex starting HEAD: the direct descendant commit publishing this synchronized
+> D/E/F packet, pinned by the seeding prompt
+> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
+> Provider mutation authority: none
 
 ## 1. Purpose
 
-Correct two false guards introduced by CR01 in the canonical
-`GS-FLUTTER-WIN` procedure:
+Materialize the first reversible unit of C11-PH01:
 
-1. name-only process detection classifies every `dart.exe` process as an owner
-   of this Flutter client;
-2. plugin verification checks
-   `windows\flutter\ephemeral\generated_plugins.cmake`, while the repository
-   Windows scaffold and Flutter-generated manifest use
-   `windows\flutter\generated_plugins.cmake`.
+1. characterize the existing shell, Home, Lists and retained page state;
+2. establish a semantic visual token and shared-component foundation;
+3. replace positional navigation identity with stable destination identity;
+4. implement compact, medium and wide presentation policies;
+5. recompose Home into a truthful task-oriented entry surface;
+6. recompose Lists into responsive table/card projections with readable states;
+7. reserve Analytics, Settings and Audit destinations without implementing
+   PH02 Analytics or PH03 Settings/Audit behavior.
 
-This round does not diagnose or change application, dependency, Auth0, CMake,
-Sync, provider, or database behavior.
+This unit proves the shared visual language before Catalogue, History and
+Purchase are recomposed. It is not the whole of C11-PH01.
 
-## 2. Established Evidence
+## 2. Reconciled implementation decisions
 
-The human CR01 reruns established:
+### 2.1 Responsive policy
 
-- a plain Dart PID was enough to stop pre-clean without repository, command
-  line, file-lock, or client-path attribution;
-- after that PID was manually stopped, `flutter clean` completed;
-- bounded generated-state cleanup completed;
-- `flutter pub get` completed with `Got dependencies!`;
-- `.dart_tool/package_config.json`, the `auth0_flutter` package entry, the
-  Windows plugin symlink, and its `windows/CMakeLists.txt` passed the existing
-  checks;
-- the procedure then failed only at
-  `Windows generated_plugins.cmake was not regenerated`;
-- repository inspection proves
-  `clients/markei_flutter/windows/flutter/generated_plugins.cmake` exists and
-  contains one `auth0_flutter` plugin entry;
-- the repository has no
-  `clients/markei_flutter/windows/flutter/ephemeral/generated_plugins.cmake`.
-
-Therefore:
+Use semantic layout classes:
 
 ```text
-WINDOWS_TOOLCHAIN=AVAILABLE
-DEPENDENCY_RESOLUTION=PASS
-PLUGIN_SYMLINK_REGENERATION=PASS
-GENERATED_PLUGIN_MANIFEST_ASSERTION=FALSE_PATH
-PROCESS_OWNERSHIP_ASSERTION=UNATTRIBUTED
-WINDOWS_COMPILATION=NOT_REACHED
+compact: width < 600 logical pixels
+medium: 600 <= width < 1024 logical pixels
+wide: width >= 1024 logical pixels
 ```
 
-## 3. Writable Scope
+The implementation may centralize these thresholds as presentation tokens.
+Tests must cover immediately below, at and immediately above both boundaries.
 
-Implementation:
+- Compact uses a bottom navigation bar with Home, Lists, Purchase and History
+  directly available plus More.
+- Medium uses a compact rail with accessible labels/tooltips.
+- Wide uses a persistent labelled or extended rail/sidebar and bounded content
+  canvas.
+- Resizing must preserve the selected destination, Home/Lists page state and
+  hidden-page state already retained by the application.
+- Destination identity must not depend on an array index that changes when a
+  feature-gated destination appears.
 
-- `documentation/G_SCRIPTS.md`
+### 2.2 Destination contract
 
-Reports to replace:
+Stable IDs must exist for at least:
 
-- `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
-- `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
-- `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
+```text
+home
+lists
+purchase
+catalogue
+history
+analytics
+household
+guide
+documentation
+settings
+audit
+closure
+```
 
-An existing directly relevant procedure-test file may change only if it already
-provides a focused extraction or PowerShell validation surface. Do not create a
-new test framework for this round.
+Current ordinary labels:
 
-## 4. Required Correction
+- `Catalogue`, not `Products`;
+- `Analytics`, not `Analytics (PIN)`;
+- `Settings`;
+- `Audit`;
+- `Closure` only while its existing feature gate is enabled.
 
-### 4.1 Process attribution
+Analytics remains an honest disabled/planned presentation until C11-PH02.
+Audit is an honest C11-PH03 placeholder. Settings retains its current
+functionality. Closure remains feature-gated, reachable when enabled, and
+behaviorally unchanged. Household remains planned and secondary. Guide and
+Documentation remain secondary More destinations during PH01.
 
-Replace name-only ownership classification with evidence-backed attribution.
+Reservation must not imply that Analytics or Audit is functional, that Closure
+has been migrated, or that PH03 ownership has been materialized.
 
-The procedure must:
+### 2.3 Shared visual foundation
 
-- inspect process ID, process name, executable path, and command line through a
-  read-only Windows process query where available;
-- classify a process as a definite relevant owner only when evidence connects
-  it to Markei, this repository/client path, the Markei Windows build output,
-  or a Flutter run/build command operating on this client;
-- classify Dart/Flutter analysis or language-server activity as non-owning
-  unless separate evidence connects it to a relevant build/run or target lock;
-- never claim that process ownership was detected from process name alone;
-- never terminate a process automatically;
-- avoid printing secrets or full raw command lines; diagnostics must show only
-  bounded fields needed for attribution;
-- preserve fail-closed behavior when a definite relevant owner is found;
-- if process metadata is unavailable or ambiguous, rely on actual cleanup and
-  cleanup-postcondition failure as the blocking evidence rather than declaring
-  ownership pre-emptively;
-- on cleanup failure, report bounded candidate process diagnostics and instruct
-  the operator to inspect or close the relevant activity manually.
+Expand `app/design` and shared widgets only as demanded by this unit:
 
-The procedure must not require closing VS Code merely because its Dart analysis
-server exists.
+- semantic colors: primary/current green, insight/accent purple, warning,
+  danger, information, neutral ink, warm canvas and elevated surface;
+- type roles: page title, section title, body, label, metadata and numeric
+  emphasis;
+- spacing, radius, border/elevation, control-height, content-width, responsive
+  gutter, focus and disabled-state tokens;
+- bounded page content and shared page header;
+- summary/stat surface;
+- responsive section/collection support;
+- action/filter grouping;
+- state presentation for loading, first-use empty, filtered empty, error,
+  insufficient history and partial/unavailable content;
+- semantic banner/status presentation whose text carries meaning without color.
 
-### 4.2 Generated-plugin verification
+Shared widgets accept presentation data and callbacks. They must not query
+repositories, infer product-cycle or Sync truth, translate arbitrary raw
+exceptions, or own navigation/application composition.
 
-Correct the generated manifest contract:
+No new package is authorized. Prefer Flutter/Material primitives.
 
-- verify the manifest at
-  `windows\flutter\generated_plugins.cmake`;
-- verify that it is a file;
-- verify exactly one `auth0_flutter` entry using a bounded parse;
-- keep the plugin symlink check at
-  `windows\flutter\ephemeral\.plugin_symlinks\auth0_flutter`;
-- keep the plugin CMake check under that symlink;
-- do not move, recreate manually, or edit generated native files;
-- do not add the non-ephemeral manifest to the bounded deletion set;
-- do not treat a missing nonexistent ephemeral manifest as a Flutter failure.
+## 3. Home requirements
 
-If the corrected manifest is missing or incoherent after `flutter pub get`,
-stop with a message that names the correct path and does not claim compilation
-was attempted.
+Home becomes a task-oriented overview rather than a developer roadmap.
 
-### 4.3 Preserved CR01/R06 behavior
+Required:
 
-Preserve:
+- one page header with a concise current-purpose sentence;
+- one primary `Register purchase` action navigating to Purchase;
+- clear secondary routes to Lists, Catalogue and History;
+- truthful local-first language based only on current accepted capability;
+- green for current/primary meaning and purple for secondary explanation;
+- compact one-column and medium/wide card/grid composition;
+- retained `home.page` key and stable keys for the primary/secondary actions;
+- layout and semantics that remain usable at 200% text scale.
 
-- exact-path containment for `.dart_tool`,
-  `windows\flutter\ephemeral`, and `build\windows`;
-- `flutter clean` exit-code check;
-- cleanup postcondition checks;
-- `flutter pub get` gating;
-- no automatic process termination;
-- R06 source identity resolution and definitions;
-- analysis, tests, Windows Release build, artifact hashing, callback
-  registration, exact-executable launch, and visible-identity instructions.
+Remove or rewrite stale claims that Sync is future work. Do not show provider,
+queue, account, household or telemetry state without an existing projection.
+Developer and roadmap material must not dominate the page.
 
-## 5. Prohibited Scope
+`application/home_content.dart` may change only to supply truthful static
+presentation copy/descriptors. It must not gain repository, telemetry or
+provider behavior.
+
+## 4. Lists requirements
+
+Preserve the existing account-scoped
+`ProductListProjectionRepository.productListProjection` query and the four
+views:
+
+```text
+Storage
+Shortage
+Market
+All
+```
+
+Do not rename `Market` in this unit.
+
+Required composition:
+
+- page header and qualified explanation that Lists are estimates;
+- responsive view selector;
+- immediate search over currently available Product code, name and brand;
+- deterministic presentation sort options using only fields already present;
+- summary surfaces derived from the current returned projection;
+- qualified approximate total when present;
+- wide desktop comparison table;
+- compact/appropriate-medium Product cards;
+- one shared record identity and selection/detail meaning across projections;
+- readable first-use empty, filtered empty, loading, error/retry and
+  Product-level insufficient-history states;
+- a safe Retry that repeats only the Lists read;
+- stable existing keys where present and additional stable keys for new states,
+  filters, summaries, rows/cards and Retry.
+
+The wide table and compact cards must consume the same projection and
+presentation classifications. They must not issue different repository queries
+or calculate different cycle truth.
+
+Do not invent categories, Store/Person filters, Product images, inventory
+facts, edit/delete actions or recorded totals absent from current data.
+
+## 5. Characterization and regression requirements
+
+Before replacing presentation, add or retain tests that prove:
+
+- all existing destinations remain reachable;
+- conditional Closure presence does not shift the selected destination;
+- compact More reaches Catalogue, Analytics, Household, Guide, Documentation,
+  Settings, Audit and feature-gated Closure as applicable;
+- resizing below/at/above both boundaries preserves destination identity;
+- Home primary/secondary callbacks navigate correctly;
+- Lists preserves its selected view across responsive recomposition;
+- Lists uses one account-scoped projection per refresh/view request;
+- search/sort operate only on the returned presentation collection;
+- loading, first-use empty, filtered empty, error/retry, insufficient-history
+  and data states are distinguishable;
+- long names and 200% text scaling produce no overflow at representative
+  compact, medium and wide sizes;
+- icon-only controls have accessible names/tooltips;
+- focus order and semantics separate navigation, filtering and content;
+- existing Purchase, Catalogue, History, Settings and Closure behaviors are not
+  changed by the shell.
+
+Keep existing widget keys used by current regressions unless an exact duplicate
+key defect requires a documented correction.
+
+## 6. Writable scope
+
+Handwritten implementation:
+
+```text
+clients/markei_flutter/lib/application/home_content.dart
+clients/markei_flutter/lib/app/markei_app.dart
+clients/markei_flutter/lib/app/design/markei_theme.dart
+clients/markei_flutter/lib/app/widgets/markei_components.dart
+clients/markei_flutter/lib/app/pages/home_page.dart
+clients/markei_flutter/lib/app/pages/lists_page.dart
+```
+
+Codex may create these presentation-only files when they keep the above owners
+smaller and explicit:
+
+```text
+clients/markei_flutter/lib/app/navigation/markei_destination.dart
+clients/markei_flutter/lib/app/widgets/markei_shell.dart
+```
+
+Tests:
+
+```text
+clients/markei_flutter/test/app/markei_app_test.dart
+clients/markei_flutter/test/app/markei_visual_foundation_test.dart
+clients/markei_flutter/test/app/lists_page_test.dart
+clients/markei_flutter/test/application/lists_and_export_test.dart
+```
+
+The three new named test files may be created only when useful. Existing
+relevant test helpers may be adjusted inside the named files.
+
+Codex reports to replace:
+
+```text
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+```
+
+Stop if another handwritten source path is materially required. Report the
+dependency to Main instead of silently expanding scope.
+
+## 7. Prohibited scope
 
 Do not modify:
 
-- Flutter/Dart application source or behavior;
-- `pubspec.yaml`, `pubspec.lock`, dependency constraints, or packages;
-- native CMake files, generated plugin files, plugin source, vcpkg, or
-  cpprestsdk;
-- `documentation/I_SCRIPTS.ps1`, unless a dispatcher defect is proved; if
-  proved, stop and report rather than expanding scope;
-- Android procedures or Windows Debug procedures;
-- Sync, Product, inbound apply, cursor, acknowledgement, diagnostics, Settings,
-  Audit, SQLite, migrations, hosted API, Render, Neon, Auth0, or enrollment;
-- A/B/C, J, `REC_DIAGNOSTICS.md`, permanent memory, methodology, GRM, DB_MGMT,
-  or NS coordinates;
-- R07 or `ALT_DEV.md`.
+- Catalogue, History, Purchase, Settings or Native Closure page behavior;
+- application/domain/repository interfaces except the static Home descriptors
+  explicitly named above;
+- Analytics calculations, registry or History handoff;
+- authentication, enrollment, Sync, diagnostics, recovery or provider logic;
+- schema, migrations, API, contracts, generated source or platform manifests;
+- `pubspec.yaml`, lockfiles or dependencies;
+- reference PNGs;
+- A/B/C, J, REC diagnostics, permanent domain memory, Main continuity,
+  methodology, ALT_DEV, GRM or operator scripts;
+- R07, GCM04 or C12 scope.
 
-Do not execute:
+Do not execute live Sync, Retry, Recovery, Query, Enroll, provider operations,
+database repair, credential inspection, installation against preserved app
+data or human acceptance actions.
 
-- Sync, Retry, Recovery, Query, Enroll, or new Purchase;
-- provider mutation or database repair/reset/clear;
-- preserved-client installation or live application launch;
-- automatic process termination;
-- `flutter upgrade`, dependency upgrade, pub-cache purge, or broad recursive
-  deletion.
+## 8. Validation ladder
 
-## 6. Validation
+From `clients/markei_flutter`:
 
-Codex must:
+1. `flutter pub get`.
+2. Do not run code generation unless a generator input unexpectedly and
+   legitimately changes; none is expected.
+3. `dart format --output=none --set-exit-if-changed lib test`.
+4. `flutter analyze`.
+5. focused shell/Home/Lists tests, including the new files that exist.
+6. existing `test/app/markei_app_test.dart`.
+7. `flutter test`.
+8. `flutter build windows --release` when the host supports Windows; otherwise
+   mark host-unvalidated.
+9. `flutter build apk --debug` when Android tooling is available; otherwise
+   mark host-unvalidated.
+10. repository-root `git diff --check`.
+11. exact changed-path audit against this stage.
 
-1. Extract `GS-FLUTTER-WIN` through the existing dispatcher-compatible heading
-   and fence contract.
-2. Parse the extracted PowerShell body successfully.
-3. Prove no automatic process termination command exists.
-4. Prove name alone cannot classify `dart` or `flutter` as a definite owner.
-5. Prove analysis/language-server activity is not a definite owner without
-   additional attributable evidence.
-6. Prove diagnostics do not emit raw command lines or coordinate values.
-7. Prove cleanup and postcondition gates remain before `flutter pub get`.
-8. Prove the plugin symlink uses the ephemeral path.
-9. Prove `generated_plugins.cmake` uses the non-ephemeral
-   `windows\flutter\generated_plugins.cmake` path.
-10. Prove the manifest contains exactly one `auth0_flutter` entry.
-11. Prove the three bounded cleanup targets remain exact and unchanged.
-12. Prove the R06 identity/build/artifact/callback/launch tail remains present.
-13. If safe on Codex's disposable host, run a focused clean/pub-get
-    regeneration exercise without installing, launching, logging in, or
-    touching a preserved client. If unavailable, mark it skipped explicitly.
-14. Run `git diff --check`.
-15. Confirm the complete changed-path set is authorized.
+Do not add or rebaseline golden images in S01 because the repository does not
+yet own a pinned font/locale/DPR review contract. G/H/I should recommend the
+smallest later golden boundary if the new shell proves stable. Behavioral and
+semantic tests plus later Windows/Android human review remain controlling.
 
-## 7. Reporting Terminals
+## 9. Stop conditions
 
-G/H/I must include:
+Stop and report without improvising when:
+
+- destination identity cannot be stabilized without changing application or
+  domain ownership;
+- Home or Lists requires new data/query fields;
+- a new dependency appears necessary;
+- responsive projection changes business facts;
+- hidden pages lose retained interaction state;
+- Closure capability or feature gating changes;
+- tests expose an existing functional defect requiring out-of-scope repair;
+- generated/source drift appears;
+- remote branch moved or the worktree contains unrelated changes.
+
+## 10. Required G/H/I terminals
 
 ```text
-C10_GCM03_S09_R06_CR02
-CR01_PROCESS_ATTRIBUTION
-NAME_ONLY_DART_OWNERSHIP
-ANALYSIS_SERVER_FALSE_POSITIVE
-GENERATED_PLUGIN_MANIFEST_PATH
-PLUGIN_SYMLINK_PATH
-PUB_GET_GATED_BY_VERIFIED_CLEANUP
-AUTOMATIC_PROCESS_TERMINATION
-R06_IDENTITY_CHAIN_PRESERVED
-WINDOWS_BUILD_REACHED_BY_CODEX
-WINDOWS_BUILD_PROCEDURE_READY_FOR_HUMAN_RERUN
-SYNC_SOURCE_CHANGED
-PRESERVED_CLIENT_STATE_TOUCHED
-LIVE_SYNC_EXECUTED
-PROVIDER_MUTATION
-R07_IMPLEMENTATION
-NEXT_HUMAN_CHECK
+CYCLE=C11
+PHASE=C11-PH01
+UNIT=C11-PH01-S01
+STAGING_BASELINE=<exact staging commit>
+VISUAL_FOUNDATION=IMPLEMENTED | PARTIAL | BLOCKED
+STABLE_DESTINATION_IDENTITY=PASS | FAIL | BLOCKED
+COMPACT_MEDIUM_WIDE_SHELL=PASS | FAIL | BLOCKED
+HOME_RECOMPOSITION=PASS | FAIL | BLOCKED
+LISTS_RECOMPOSITION=PASS | FAIL | BLOCKED
+ANALYTICS_RESERVATION=PASS | FAIL
+SETTINGS_PRESERVED=PASS | FAIL
+AUDIT_RESERVATION=PASS | FAIL
+CLOSURE_BEHAVIOR_CHANGED=NO | YES
+BUSINESS_OR_SYNC_SOURCE_CHANGED=NO | YES
+FOCUSED_TESTS=<result>
+FLUTTER_TEST=<result>
+FLUTTER_ANALYZE=<result>
+WINDOWS_BUILD=<result or HOST_UNVALIDATED>
+ANDROID_BUILD=<result or HOST_UNVALIDATED>
+HUMAN_WINDOWS_ACCEPTANCE=NOT_PERFORMED
+HUMAN_ANDROID_ACCEPTANCE=NOT_PERFORMED
+PROVIDER_MUTATION=NONE
+NEXT_MAIN_ACTION=<one exact action>
 ```
 
-## 8. Publication
+## 11. Publication
 
-If implementation and focused validation succeed:
+If the implementation and available validations succeed:
 
-- commit only authorized paths;
-- make the implementation commit a direct child of the CR02 staging commit;
+- commit only the authorized implementation, tests and G/H/I paths;
+- make the implementation commit a direct child of the staging commit;
 - push by non-forced fast-forward to
   `grm-guarded-provisioning-20260727`;
 - do not create another branch or pull request;
 - verify the remote branch equals the implementation commit.
-
-If attribution cannot be made safe without broad process termination or
-unbounded inspection, report:
-
-```text
-C10_GCM03_S09_R06_CR02=BLOCKED
-```
-
-and do not improvise.

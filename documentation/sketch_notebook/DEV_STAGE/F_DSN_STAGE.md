@@ -1,150 +1,229 @@
-# F_DSN_STAGE - C10-GCM03-S09-R06-CR02
+# F_DSN_STAGE — C11-PH01-S01 Responsive Presentation Architecture
 
-Sequence: FLX-ORD-01
-Role: Main design stage
-Round or unit: C10-GCM03-S09-R06-CR02
-Branch: grm-guarded-provisioning-20260727
-CR01 implementation baseline / required staging parent: 5fef8a51ccb61dff00e773b3c8759062560d27da
-Codex starting HEAD: the final CR02 staging tip named by the seeding prompt
-Authority: Human-supervised Main Chat
-Architecture boundary: Windows preparation and verification procedure only
+> Sequence: FLX-ORD-01
+> Role: Main design stage
+> Cycle / phase / unit: C11 / C11-PH01 / C11-PH01-S01
+> Branch: `grm-guarded-provisioning-20260727`
+> Reconciled A/B/C head: `4b1abc01a93351f5910ea8af5001782b59a784f7`
+> Codex starting HEAD: the synchronized D/E/F publication commit pinned by the
+> seeding prompt
+> Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
+> Architecture boundary: presentation shell, shared visual foundation, Home
+> and Lists only
 
-## 1. Design Correction
+## 1. Accepted architecture
 
-CR01 conflated three different kinds of evidence:
-
-```text
-process name
-generated-state ownership
-actual cleanup failure
-```
-
-CR02 must separate them:
+S01 introduces a presentation architecture with this dependency direction:
 
 ```text
-process observation
--> attributable owner classification
--> cleanup attempt
--> filesystem postcondition
--> package/plugin regeneration verification
--> analysis/test/build
+Flutter/Material primitives
+        ↓
+semantic design tokens
+        ↓
+shared presentation components and responsive shell
+        ↓
+page presentation adapters
+        ↓ callbacks / already-classified view data
+application ports and domain value types
 ```
 
-A name match is an observation. It is not ownership.
+Shared visual code must not depend on repositories, infrastructure,
+authentication, Sync coordinators, diagnostic authorities or provider state.
 
-An ownership claim requires an attributable relationship to the client, its
-build output, or an active Flutter build/run command.
+## 2. Stable navigation identity
 
-The filesystem postcondition remains the authoritative gate: if exact generated
-targets cannot be removed or reappear, the procedure stops regardless of
-process classification.
+Replace index-as-identity with a stable destination identifier.
 
-## 2. Windows Generated-State Topology
-
-The procedure must preserve this distinction:
+A destination descriptor may own:
 
 ```text
-clients/markei_flutter/
-├── .dart_tool/                              generated; bounded cleanup target
-├── build/windows/                           generated; bounded cleanup target
-└── windows/flutter/
-    ├── generated_plugins.cmake              generated manifest; verify here
-    └── ephemeral/                           generated; bounded cleanup target
-        └── .plugin_symlinks/
-            └── auth0_flutter/               generated plugin target; verify here
+id
+label
+icon
+group
+compact priority
+ordinary-navigation visibility
+feature availability
+page builder
 ```
 
-`generated_plugins.cmake` must not be relocated conceptually into `ephemeral`.
-The procedure verifies Flutter's output; it does not manually author generated
-native state.
+The exact Dart representation is Codex’s bounded implementation choice. The
+following invariants are mandatory:
 
-## 3. Process Attribution Contract
+- selection is stored by stable ID;
+- feature-gated Closure insertion/removal cannot redirect another selection;
+- compact and rail presentations consume one destination registry;
+- the More surface is derived from the same registry;
+- page builders receive dependencies from `MarkeiComposition`;
+- navigation does not instantiate repositories or infrastructure;
+- each `IndexedStack` child has stable identity;
+- hidden focus/semantics do not leak into the active page.
 
-The classifier should expose at least:
+Retain `IndexedStack` for S01 unless characterization proves an actual blocker.
+A state-management or routing-framework migration is not authorized.
+
+## 3. Responsive shell ownership
+
+The shell owns:
+
+- layout-class resolution;
+- navigation chrome;
+- safe area;
+- bounded content canvas and responsive gutters;
+- destination selection;
+- page title/action slot only when consumed consistently;
+- compact More presentation.
+
+Pages own:
+
+- page-specific composition;
+- local presentation state;
+- table/card field priority;
+- contextual controls;
+- callbacks into existing application ports.
+
+Application/domain owners retain:
+
+- Product and Purchase identity;
+- cycle calculations and projection membership;
+- money, quantity and date semantics;
+- validation and registration;
+- exports;
+- Sync, diagnostics and recovery truth.
+
+The semantic thresholds are compact `<600`, medium `600–1023`, wide `>=1024`
+logical pixels. Threshold constants belong to presentation design, not page
+business logic.
+
+## 4. Token and component boundaries
+
+Tokens belong under `app/design`. Avoid page-local literal spacing, colors and
+type sizes when a semantic token exists.
+
+Shared components may cover:
+
+| Family | Responsibility |
+| --- | --- |
+| Shell | app frame, navigation registry consumption, More surface |
+| Layout | bounded content, page header, responsive sections |
+| Surface | card, summary tile, section/disclosure panel |
+| Controls | search/sort/action group wrappers |
+| Data | table frame, mobile record card, key/value group |
+| State | loading, first-use empty, filtered empty, error, insufficient history |
+| Feedback | semantic banner, status chip |
+
+Components render already-classified presentation models and callbacks. A
+component must not infer a Product cycle, query a repository, translate an
+arbitrary exception or decide whether an operation is retryable.
+
+## 5. Home boundary
+
+Home remains driven by truthful static content plus navigation callbacks.
+
+It may:
+
+- arrange orientation/task cards;
+- invoke stable destination callbacks;
+- use shared headers/surfaces.
+
+It may not:
+
+- query provider/Sync/queue state;
+- synthesize Household or Analytics facts;
+- become a developer telemetry surface;
+- instantiate application dependencies.
+
+Changing `home_content.dart` is limited to static presentation descriptors and
+copy. If a live summary is desired later, it requires a separately designed
+application projection.
+
+## 6. Lists boundary
+
+`ProductListProjectionRepository` remains the sole source of Lists projection
+truth in S01.
+
+Recommended internal flow:
 
 ```text
-Candidate
-DefiniteRelevantOwner
-BenignAnalysisActivity
-UnknownMetadata
+selected Lists view + refresh signal
+        ↓
+one repository projection request
+        ↓
+page-local presentation adapter
+        ↓
+search/sort over returned items
+        ↓
+wide table or compact/medium cards
 ```
 
-Rules:
+Both collection projections use:
 
-- `markei.exe` whose executable path is inside the client's Windows build output
-  is a definite relevant owner;
-- a Flutter/Dart process whose bounded command metadata connects it to this
-  client and a build/run action may be a definite relevant owner;
-- Dart analysis/language-server activity is not a definite owner merely because
-  it analyzes the repository;
-- missing metadata is unknown, not proof of ownership;
-- unknown candidates may be reported after an actual cleanup failure but must
-  not create a universal pre-clean veto;
-- no raw full command line should be printed;
-- no process may be terminated automatically.
+- the same returned item set;
+- the same stable Product ID;
+- the same qualified cycle classification;
+- the same search/sort state.
 
-If implementation needs platform-specific process inspection, it belongs
-inside the canonical `GS-FLUTTER-WIN` body and must remain Windows-only,
-read-only, bounded, and failure-tolerant.
+Search and sort are presentation operations. Adding category, Store or Person
+filtering would require new projection facts and is prohibited in S01.
 
-## 4. Preparation State Machine
+## 7. Reservation boundaries
 
-The corrected state machine is:
+S01 reserves navigation identity only:
 
-```text
-coordinates and R06 identity validated
--> definite relevant-owner preflight
--> flutter clean
--> exact bounded cleanup
--> exact absence proof
--> flutter pub get
--> package_config auth0 entry proof
--> ephemeral auth0 symlink/CMake proof
--> non-ephemeral generated_plugins.cmake proof
--> analyze
--> tests
--> Windows Release build
--> artifact hash
--> callback registration
--> exact executable launch
-```
+- Analytics: PH02 owns deterministic local/account-scoped query/calculation
+  ports and History context handoff.
+- Settings: current behavior stays intact; PH03 owns recomposition.
+- Audit: PH03 owns durable diagnostic projection and readable operational
+  history.
+- Closure: existing feature-gated page and all capabilities stay intact.
 
-Failure at any earlier stage must not be described as failure of a later stage.
+Audit/Settings must not create independent diagnostic authority. Visual widgets
+must not reconstruct Sync truth. No Closure capability is removed, moved or
+renamed in S01.
 
-## 5. Authority Boundaries
+## 8. Reversibility
 
-- Flutter owns dependency and generated-plugin materialization.
-- `GS-FLUTTER-WIN` owns bounded orchestration and verification.
-- The human owns manual closure of genuinely relevant activity.
-- PowerShell process inspection supplies hints and attribution evidence, not
-  transaction truth.
-- Filesystem postconditions decide whether cleanup succeeded.
-- The Windows scaffold owns the manifest location.
-- R06 provenance owns source/artifact identity.
-- Application, Auth0, Sync, database, provider, and R07 architectures are
-  unchanged.
+Implement in this order:
 
-## 6. Safety Invariants
+1. characterization tests;
+2. semantic tokens with compatibility aliases for existing consumers;
+3. stable destination registry;
+4. responsive shell;
+5. shared layout/state primitives;
+6. Home;
+7. Lists;
+8. reserved destination tests;
+9. full regression/build evidence.
 
-```text
-AUTOMATIC_PROCESS_TERMINATION=NO
-PROCESS_NAME_ALONE_PROVES_OWNERSHIP=NO
-ANALYSIS_SERVER_REQUIRES_VSCODE_CLOSURE=NO
-RAW_COMMAND_LINE_OUTPUT=NO
-CLEANUP_OUTSIDE_CLIENT=NO
-BROAD_WILDCARD_DELETION=NO
-GENERATED_NATIVE_FILE_MANUAL_EDIT=NO
-DEPENDENCY_UPGRADE=NO
-SYNC_AUTHORIZATION=NO
-```
+Keep old shared component APIs as compatibility wrappers when inexpensive.
+Avoid a wholesale rewrite. If a step fails, later steps must remain removable
+without touching application/domain state.
 
-## 7. Acceptance
+## 9. Rejected alternatives
 
-CR02 architecture is accepted only if:
+- separate desktop and mobile business controllers or repository queries;
+- page-local copies of shell/breakpoint logic;
+- full routing or state-management framework migration;
+- Product-cycle recomputation in widgets;
+- PNG pixel copying that invents unsupported fields/actions;
+- dependency addition for convenience;
+- Closure migration during PH01;
+- Analytics calculations or Audit event modelling during S01.
 
-- process classification is evidence-backed;
-- name-only Dart/Flutter false positives are removed;
-- actual cleanup failure remains fail-closed;
-- the plugin symlink and manifest use their distinct correct paths;
-- all R06 identity and final build-tail responsibilities remain intact;
-- G/H/I preserve evidence ceilings and name the remaining human rerun.
+## 10. Design acceptance
+
+S01 Design evidence passes only when:
+
+- stable destination identity survives feature-gate and width changes;
+- one registry feeds rail, bar and More;
+- semantic tokens/components are presentation-only;
+- Home and Lists consume the shared system;
+- Lists table/cards remain two projections of one view state;
+- current application/repository ownership is preserved;
+- Closure behavior is unchanged;
+- later Catalogue, History, Purchase, Analytics, Settings and Audit work can
+  reuse the foundation without depending on S01 page internals;
+- I reports any architectural deviation or required new owner explicitly.
+
+`I_DSN_CODEX.md` must include the final component/dependency map, new files,
+reversibility notes, deviations, and residual risks.
