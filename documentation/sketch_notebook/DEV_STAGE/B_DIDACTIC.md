@@ -1,546 +1,767 @@
-# B_DIDACTIC — C11-PH01 Visual System and Core-Page Convergence
-
-> Cycle: C11  
-> Phase: C11-PH01  
-> Role: Didactic Chat [A]  
-> Repository: `gus-i-gu/markei`  
-> Required branch: `grm-guarded-provisioning-20260727`  
-> Verified inspection baseline: `861c27fdaf6ade2093d481af312d27ff895b8dc0`  
-> Writable surface: this file only  
-> Status: DIDACTIC INVESTIGATION — MAIN RECONCILIATION REQUIRED  
-> Authority: no source change, permanent promotion, D/E/F activation or Codex authorization
-
-## 1. Recovered state and evidence boundary
-
-The remote branch comparison established that
-`grm-guarded-provisioning-20260727` resolves exactly to `861c27f`; the required
-baseline is the remote head and merge base, with zero divergence. Inspection
-explicitly used that ref. No default-branch or older-branch source was
-substituted.
-
-PRI-A and PMC-01 confirm that Didactic owns learner-facing concepts,
-relationships, vocabulary, evidence-based maturity and learning history.
-This investigation may replace only this active staging report. It does not
-select architecture, claim operational acceptance, change KANBAN maturity,
-edit Flutter or permanent Didactic memory, activate D/E/F or authorize Codex.
-
-Recovered authority:
-
-- Cycle 10 is closed at the two-Device, one-Account development boundary.
-- C11-PH01 owns visual-system and Home, Lists, Purchase, Catalogue and History
-  convergence.
-- C11-PH02 owns functional local/account-scoped Analytics.
-- C11-PH03 owns mandatory Settings and Audit, including removal of Closure from
-  ordinary navigation only after capability disposition.
-- C12-PHASE02 retains GCM04, multi-user/backend assays and conditional R07
-  reassessment.
-
-`06_SESSION_SCHEME.md` contains an older suggested six-phase order. The latest
-human/Main C11 preparation and this invocation supersede that ordering. Its
-product boundaries remain useful; its phase numbers do not control this report.
-
-Evidence inspected:
-
-- `00_PROJECT_STATE.md`, `06_SESSION_SCHEME.md`,
-  `didactics/08_CONCEPT_MAP.md`, the latest C11 preparation in
-  `J_MAIN_STAGE.md`, `ALT_DEV.md` section 15 and the prior
-  `B_DIDACTIC.md`;
-- all five target PNGs under `DEV_STAGE/references/c09_s02/`;
-- current `home_page.dart`, `lists_page.dart`, `products_page.dart`,
-  `purchase_page.dart`, `history_page.dart`, `markei_app.dart`,
-  `design/markei_theme.dart` and `widgets/markei_components.dart`.
-
-`H_DDC_CODEX.md` was not required. Current source directly establishes the
-implemented interaction vocabulary; PH01 has no new Codex evidence yet.
-The PNGs establish product intent, not pixel-perfect or data-contract authority.
-
-## 2. Reference-by-reference interpretation
-
-### 2.1 Lists
-
-The Lists target teaches a prediction workspace, not merely four database
-queries. Its comprehension order is:
-
-1. choose the projection: Storage, Shortage, Market or All;
-2. understand the aggregate situation through status counts and approximate
-   next-purchase total;
-3. narrow the result by category, store, person, search and sort;
-4. scan product rows/cards;
-5. disclose product detail only when needed;
-6. learn how projections work and where the shortage threshold is configured.
-
-Desktop uses a comparison table because simultaneous column reading matters.
-Mobile preserves the same meaning through cards: product identity, status,
-time remaining, price/package reference and detail affordance. Mobile is not a
-narrow table.
-
-The target distinguishes four prediction outcomes: in storage, ending soon,
-expected ended/market, and not enough history. These must remain semantic
-states rather than decorative colors. “Approximate” and “derived” must remain
-visible wherever a forecast could be mistaken for a recorded fact.
-
-Current source provides projection tabs, a history explanation, an optional
-approximate total and simple cards. It lacks search, filters, summaries,
-sorting, explicit retry and a desktop comparison representation. Its empty
-copy, “Not enough history,” conflates an empty projection with insufficient
-history for an individual product.
-
-### 2.2 Catalogue
-
-The Catalogue target teaches that the page is the reusable product reference
-library. Browsing is primary; registration is a contextual secondary task.
-The desktop hierarchy is search/filter/sort, product comparison table, then
-registration and similarity resolution. Compact mode first exposes browseable
-cards and moves registration/similarity guidance behind explicit actions.
-
-Product identity should be read in this order: visible Product code, Product
-and Brand, packaged/bulk mode, quantity and unit, then purchase-derived facts
-such as latest price, change and remaining cycle. Category is descriptive
-metadata, never identity.
-
-“Similar product found” is a decision point, not an error. “Use existing” is
-the safe/default action; “Create anyway” is explicit divergence. The interface
-must explain that choosing an existing Product prevents accidental duplicates
-without implying fuzzy matches are authoritative identity.
-
-Current `ProductsPage` combines Store creation, Store listing, Product search,
-Product selection/detail, Product creation, retry and similarity messages in
-one long list. This blurs page purpose and makes the dangerous “Create anyway”
-action permanently prominent. The source title “Products” for sections and
-`ProductsPage` for implementation may remain internal, but user-facing
-navigation and headings should consistently say “Catalogue.”
-
-### 2.3 Home
-
-The Home target teaches orientation: what Markei is, what it can do now, what
-is planned, and its local-first trust boundary. Green cards describe current
-value; purple cards describe scheduled or prospective capability. This is a
-semantic present/future distinction, not alternating decoration.
-
-The target’s prose contains stale product language for C11: “Household,”
-optional synchronization, and developer-facing roadmap content should not be
-copied blindly. Home should become an action-oriented overview of current
-truth: register a purchase, understand Lists, revisit History/Catalogue, and
-see concise local/sync state only where an existing projection supports it.
-Planned Analytics, Settings or Audit claims must not appear as already
-functional during PH01.
-
-Current Home renders “Markei” plus generic cards from `homeCards`, with no
-page-level primary action, summary, present/future legend or responsive
-composition. PH01 should preserve the target’s orientation hierarchy while
-rewriting copy against current accepted capability.
-
-### 2.4 Purchase
-
-The Purchase target teaches a staged transaction:
-
-```text
-Purchase context
-→ find or describe Product
-→ enter quantity and price facts
-→ add staged Item
-→ review staged Items
-→ confirm Purchase
-→ receive durable success or corrective feedback
-```
-
-The desktop target supports the complete working set on one screen. Mobile
-separates editing and read-only review so confirmation is deliberate. Store,
-occurrence date/time, optional Person and optional Payment Method belong to
-Purchase context; Product identity and quantity belong to each staged Item.
-
-Feedback has distinct meanings: informational lookup result, similarity
-decision, validation correction, operation error and success. Technical codes
-such as `product-selection-invalidated:` and `item-required:` are diagnostic
-identifiers and should not lead user-facing sentences. Each message must name
-what happened, what was preserved, and the next safe action.
-
-“Register purchase” means commit the reviewed Purchase. “Add staged item”
-means local draft composition and must never resemble final registration.
-“Register new product” transfers the user to Catalogue or clearly opens a
-Catalogue-owned subflow; it must not imply the Purchase is already registered.
-
-Current Purchase implements much of the staged behavior, editing, review,
-submission gating and typed outcomes, but concentrates all comprehension in a
-1,217-line page. Its language inconsistently capitalizes domain nouns, exposes
-diagnostic prefixes, uses generic catch-all failures and does not yet express
-the target’s desktop/mobile task staging clearly.
-
-### 2.5 History
-
-The History target teaches retrieval and inspection of registered Purchases:
-choose a grouping/filter mode, narrow the history, select Purchases, inspect
-one Purchase, then perform contextual export or Analytics handoff.
-
-Selection and opening are different actions. A checkbox selects for batch
-actions. “Open” or row/card disclosure reveals detail. Double-click may be a
-desktop accelerator but cannot be the only discoverable path; mobile needs an
-explicit control. Edit/Delete shown disabled in the PNG are not authority to
-implement mutation of registered Purchases.
-
-The target provides the clearest state grammar: filtered empty state with
-“Adjust filters,” loading skeleton/progress, and error state with “Retry.”
-Those states should become the shared page model.
-
-Current History provides loading, empty, error/retry, multi-selection,
-CSV/PDF actions, tap/double-click/long-press detail and local price comparison.
-It lacks filtering/grouping, visually conflates tap selection with detail
-opening, exposes disabled Edit/Delete actions without explanatory value, and
-leaves “Move to Analytics” disabled. PH01 must prepare that handoff’s visible
-language but not implement PH02 Analytics.
-
-## 3. Shared visual and interaction vocabulary
-
-### 3.1 Page anatomy
-
-Every core page should use the same reading order:
-
-1. page header: stable noun plus one-sentence purpose;
-2. optional summary: recorded or derived totals with qualification;
-3. search/filter/sort controls;
-4. primary content collection or form;
-5. contextual actions tied to selection or current step;
-6. explanatory or recovery disclosure.
-
-Desktop may align header, summary and controls horizontally. Compact layouts
-stack them without changing their semantic order. A top app bar saying only
-“Markei” must not compete with an unstructured second title.
-
-### 3.2 Search and filters
-
-- Search is immediate text narrowing and must name its searchable concepts.
-- Filters narrow by explicit attributes and show active state/count.
-- Sort changes order, not membership.
-- “Apply” is used only when filters are staged; immediate controls should not
-  pretend a second confirmation is required.
-- “Clear filters” restores the unfiltered result. Bare “Clear” is reserved for
-  clearing a local field or selection when context is unambiguous.
-- Compact layouts may place secondary filters in a sheet, but active filters
-  remain visible and removable.
-
-### 3.3 Tables and cards
-
-Desktop tables are for comparison across repeated fields. Mobile cards preserve
-the same semantic fields in priority order and may defer secondary facts under
-“View details.” Neither representation may hide status, primary identity,
-money/time qualification or the action required to continue.
-
-Keyboard and screen-reader semantics must follow the data model rather than the
-visual grid: column headers label cells; each card has one coherent accessible
-name; selection and expansion are announced independently.
-
-### 3.4 Status chips
-
-Chips are concise, non-interactive classifications unless they are visibly
-implemented as filters. Their text carries meaning without color:
-
-- recorded/product mode: Packaged, Bulk;
-- prediction: In storage, Ending soon, Expected ended, Not enough history;
-- process: Loading, Saved, Needs attention, Unavailable only when persistent
-  process state must be summarized.
-
-Use sentence case. Avoid status synonyms for the same state across pages.
-“Market” is a projection/list destination, while “Expected ended” is an item
-status; they must not be used interchangeably.
-
-### 3.5 Contextual actions
-
-Each surface has one visually dominant next action. Secondary actions are
-tonal/outlined; destructive actions use error semantics and confirmation.
-Disabled actions should be absent unless their presence teaches a dependency;
-when present, a label or accessible description explains what enables them.
-
-Batch actions appear only with selection or clearly show “0 selected.” Detail
-actions belong to the opened record. Overflow menus hold infrequent actions,
-not the page’s primary task.
-
-### 3.6 Forms and confirmation
-
-Forms group by user decision, not storage model:
-
-- Purchase context;
-- Product identity;
-- quantity/package and price;
-- staged Items;
-- review and confirmation.
-
-Required fields show requirement in label and validation, not color alone.
-Validation appears next to the affected field and in a concise summary when
-multiple fields fail. User input and staged Items remain intact after
-correctable failure. Success identifies the saved object and gives the next
-useful route.
-
-### 3.7 Loading, empty, error and retry
-
-All five pages inherit one readable state contract:
-
-- loading: name what is loading; preserve stable layout where practical;
-- empty-first-use: explain what is absent and offer the creation/registration
-  action;
-- empty-filtered: say that filters produced no result and offer “Adjust
-  filters” or “Clear filters”;
-- insufficient history: explain that a derived value is unavailable while
-  retaining the Product/Purchase;
-- validation: point to correctable input without discarding it;
-- success: identify completed action and preserved result;
-- error: name the failed operation, state what remains safe, and offer Retry
-  only when repeating that operation is appropriate;
-- retrying: prevent duplicate activation and expose progress;
-- partial/unavailable: distinguish unavailable derived detail from failure to
-  load the whole page.
-
-Automatic Sync Retry/Recovery remains excluded. This UI “Retry” contract covers
-safe re-reading or explicitly idempotent local operations only.
-
-### 3.8 Color and surfaces
-
-- Green means current, available, selected, confirmed, or primary action. It
-  must not imply success for an unvalidated operation.
-- Purple means secondary guidance, comparison, explanation, derived insight or
-  future-context handoff. It must not become a second primary-action color.
-- Warm neutral/cream is the page ground; white/warm surface cards group content.
-- Orange means time-sensitive warning; red means error, overdue/destructive or
-  failed state. Neither can rely on hue alone.
-- Borders, icons, labels and text must preserve meaning in monochrome,
-  high-contrast and color-vision-deficiency conditions.
-
-## 4. Page-specific comprehension requirements
-
-### Home
-
-- Explain current purpose in one sentence without unsupported Household or
-  telemetry claims.
-- Offer one clear entry to “Register purchase.”
-- Summarize current local value and route to Lists/History/Catalogue.
-- Mark planned or later-phase capabilities as unavailable without presenting
-  them as product promises.
-- Keep developer/project documentation secondary to household purchase tasks.
-
-### Lists
-
-- Preserve the four projection names and explain their relationship.
-- Separate projection-empty, filtered-empty and insufficient-history states.
-- Label every forecast as estimate/approximation and show the observation date.
-- Provide summaries and filters without implying nonexistent category data.
-- Keep threshold configuration as a Settings link for PH03, not an inline
-  duplicate setting.
-
-### Catalogue
-
-- Use “Catalogue” consistently for the page and “Product” for an entry.
-- Make browsing/searching primary and Product/Store creation secondary.
-- Separate Store management from Product registration enough that their
-  different identities are evident.
-- Treat similarity as advisory; present “Use existing” before “Create anyway.”
-- Do not present derived latest price/cycle fields when source data is absent.
-
-### Purchase
-
-- Make staged Item versus registered Purchase unmistakable.
-- Keep occurrence date/time distinct from insertion or Sync time.
-- Present Person and Payment Method as optional Purchase references.
-- Preserve draft/staged state through validation and submission failure.
-- Give read-only review on compact layouts and a clear “Back to edit” route.
-- Translate typed/diagnostic errors into plain language while retaining codes
-  only in expandable technical detail where later Audit/Support policy permits.
-
-### History
-
-- Separate filtering, batch selection and detail disclosure.
-- Provide explicit Open/View details on every input mode; double-click remains
-  only an accelerator.
-- Use “Purchase history” consistently; use “Purchase” for a registered record.
-- Do not expose Edit/Delete as inert ordinary actions.
-- Keep export labels format-specific and report destination/outcome clearly.
-- Prepare “View in Analytics” or “Analyze selection” vocabulary for PH02, but
-  keep it disabled/absent until the handoff exists.
-
-## 5. Terminology risks
-
-| Risky term or pattern | Required distinction |
+# B_DIDACTIC — C11-PH02 Analytics comprehension investigation
+
+> Role: Didactic Chat [A]
+> Cycle / phase: C11 / C11-PH02
+> Sequence: MSU-02
+> Repository: `gus-i-gu/markei`
+> Branch: `grm-guarded-provisioning-20260727`
+> Inspected remote HEAD: `f6566a407c2215c1ade61444a7f97994994d93f8`
+> Date: 2026-07-31
+> Writable surface: this file only
+> Status: proposed for Main reconciliation
+
+## 1. Recovered state and authority
+
+Cycle 10 is accepted only at the two-Device, one-Account development boundary.
+Production, multiple-Account, revocation, outage-recovery, retention and
+rebootstrap claims remain deferred. None supplies Analytics authority.
+
+C11-PH01-S01 is implemented and validated at the automated/build boundary. It
+established stable destination identity, compact/medium/wide shell behavior,
+shared presentation primitives, Home and Lists recomposition, and a reserved
+Analytics destination. Human visual, screen-reader, keyboard-only and
+real-device acceptance is absent.
+
+C11-PH01-S02 is not materialized on the inspected branch. The branch contains
+the synchronized S02 D/E/F packet and repinning continuity, but no later
+five-page source/test/G–I implementation. PH01 is therefore classified
+`PARTIAL`. PH02 proceeds independently, inheriting only the verified S01
+shell/Home/Lists vocabulary and qualifying all other visual inheritance.
+
+This report proposes learner-facing meanings, distinctions, labels, states,
+accessibility requirements and evidence gates. It does not select technical
+architecture, change KANBAN maturity, authorize charts, or implement source.
+
+## 2. Recovery route and justified deeper reads
+
+Required recovery:
+
+1. `AGENTS.md`
+2. `documentation/sketch_notebook/INDEX.md`
+3. `methodology/PROMPT_COLLECTION.md` — PRI-A, PMC-01 and MSU-02
+4. latest `J_MAIN_STAGE.md` reconciliation
+5. `00_PROJECT_STATE.md`
+6. latest relevant `05_SESSION_LOG.md` segment
+7. active `06_SESSION_SCHEME.md`
+8. `didactics/08_CONCEPT_MAP.md`
+9. current G/H/I
+
+Deeper permanent read:
+
+- `didactics/08_CONCEPT_MAP.md` was required as the Didactic checkpoint and was
+  sufficient. No other permanent Didactic file was needed.
+
+Repository descent was justified because Analytics implementation truth,
+field authority, Account scoping, History handoff and test coverage could not
+be established from the checkpoint:
+
+- `clients/markei_flutter/lib/app/markei_app.dart`
+- `clients/markei_flutter/lib/app/markei_composition.dart`
+- `clients/markei_flutter/lib/app/pages/history_page.dart`
+- `clients/markei_flutter/lib/application/purchase_history.dart`
+- `clients/markei_flutter/lib/domain/purchase/purchase.dart`
+- `clients/markei_flutter/lib/domain/catalogue/product.dart`
+- `clients/markei_flutter/lib/infrastructure/local/local_database.dart`
+- `clients/markei_flutter/lib/infrastructure/local/local_query_repository.dart`
+- `clients/markei_flutter/test/app/markei_app_test.dart`
+
+Two guessed test paths were unavailable and were not treated as evidence:
+`test/app/history_page_test.dart` and
+`test/application/purchase_history_test.dart`.
+
+## 3. PH01 evidence classification
+
+| Evidence class | Classification | Evidence and limit |
+| --- | --- | --- |
+| S01 implementation | validated | `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`; shell, Home and Lists only |
+| S02 five-page implementation | absent | no descendant source/test/G–I materialization after S01 |
+| Automated checks | validated | focused/full Flutter tests and analysis reported in G/H/I for S01 |
+| Build checks | validated | Windows release and Android debug builds reported in G/H/I for S01 |
+| Rendered reference parity | absent | PNGs were composition references; no approved golden/pixel boundary |
+| Accessibility automation | validated | breakpoint and Home 200% text-scale widget evidence only |
+| Screen-reader/keyboard/real-device | absent | Narrator, TalkBack, keyboard-only and real-device evidence not performed |
+| Human acceptance | absent | no recorded Windows/Android human acceptance |
+
+PH01 conclusion: `PARTIAL`. Analytics may inherit the validated S01 layout
+classes, content canvas, page header, state panel, summary surface, calm
+green/purple/neutral semantics and equivalent wide/compact information rule.
+Catalogue, History and Purchase visual convergence is unavailable and must not
+be described as inherited.
+
+## 4. Analytics current state of union
+
+Analytics is implemented as a reserved destination and reserved page. Its copy
+correctly states that no calculation or telemetry is active. No Analytics
+card, calculation, evidence matrix, filter, History context handoff or
+Analytics-specific test exists.
+
+Current local evidence is accepted as the only PH02 truth source:
+
+- composition supplies one active `AccountId`;
+- recent Purchase and Purchase detail reads filter by that Account;
+- Product and Store records are Account-scoped;
+- Purchase details expose Product, Brand, Store, optional Person, optional
+  Payment Method, quantity/unit and line total;
+- Purchase occurrence time is distinct from insertion and Sync time;
+- Purchase total is a Purchase-level stored result;
+- an existing Product price comparison derives compatible unit price and a
+  two-observation percentage change.
+
+Current limitations:
+
+- `listRecentPurchases` is limited to 50, so it cannot supply the required
+  complete matrix;
+- `purchased for` is absent;
+- `promotion` is absent;
+- unit price is derived, not a stored fact;
+- current History handoff is disabled;
+- current price comparison is Product-specific and does not implement the
+  retained Analytics constitution.
+
+## 5. Retained Analytics constitution
+
+Analytics means a deterministic, local, Account-scoped way to ask a factual
+question of recorded Purchase evidence and inspect the rows supporting the
+answer.
+
+Each card has:
+
+- exactly one determinant: Product, Purchase, Store or Time;
+- one or more relational variables;
+- exactly one operation: Sum, Mean, Difference or Percentage;
+- optional conditions, including Time;
+- an explicit selected or filtered evidence scope;
+- result value or values;
+- factual interpretation;
+- evidence count;
+- applicable period.
+
+Cards appear above one complete supporting evidence matrix. Selecting a matrix
+row initializes a card from that evidence. Focusing a card focuses its
+supporting rows without removing non-supporting rows. Reset restores all
+evidence and the neutral matrix state.
+
+History may transfer selected-Purchase or filtered-History context. Analytics
+performs the calculation locally; History never calculates Analytics.
+
+## 6. Twelve-field authority and label matrix
+
+| Learner label | Current authority | Analytics role | Availability and wording |
+| --- | --- | --- | --- |
+| Purchase | `PurchaseId`; stored Purchase total and item membership | determinant; evidence identity; condition | implemented. Label `Purchase`; expose a human-readable date/store companion, not the opaque ID alone |
+| Date and time | `Purchase.occurrenceTime` | Time determinant; period; condition | implemented. Label `Purchase date and time`; never call insertion or Sync time |
+| Product | `ProductId`, Product code and display name | determinant; condition; row identity | implemented. Label `Product`; show code as supporting identity |
+| Brand | Product display brand | relational categorical variable; condition | implemented but may be blank. Label `Brand`; blank becomes `Unavailable`, not an invented brand |
+| Store | Account-scoped Store identity and display name | determinant; condition | implemented. Label `Store`; grouping and comparison remain distinct |
+| Purchased by | optional historical Person label | relational categorical variable; condition | implemented when recorded. Label `Purchased by`; it does not mean Account owner or Household |
+| Purchased for | no current field or relation | unavailable relational variable | blocked. Show `Purchased for — Unavailable in recorded data`; do not substitute `Purchased by` |
+| Payment method | optional historical Payment Method label | relational categorical variable; condition | implemented when recorded. Label `Payment method`; it is not proof of payment processing |
+| Quantity | Purchase Item amount and canonical unit | numeric relational variable | implemented. Label `Quantity`; results require compatible units or separate values by unit |
+| Unit price | line total divided by positive purchased quantity with currency/unit basis | derived numeric relational variable | provisional. Label `Unit price`; disclose currency and basis such as `BRL per kg`; zero/missing quantity makes it unavailable |
+| Line total | stored Purchase Item line total and currency | numeric relational variable | implemented. Label `Line total`; never call it Purchase total |
+| Promotion | no current field or relation | unavailable relational variable | blocked. Show `Promotion — Unavailable in recorded data`; do not infer from price differences |
+
+Purchase total remains a valid Purchase-level fact but is not one of the
+twelve matrix fields requested for each Item row. When shown, label it
+`Purchase total`. It must be counted once per Purchase and must never be
+re-summed once for every Item row.
+
+## 7. Concise vocabulary
+
+| Term | Meaning |
 | --- | --- |
-| Product / Item | Product is reusable Catalogue identity; Item is a line in a staged or registered Purchase. |
-| Purchase / staged Item / draft | Only final confirmation registers a Purchase. |
-| Catalogue / Products | Catalogue is the page/library; Product is one record. |
-| Storage / Shortage / Market | Projection destinations, not recorded inventory locations. |
-| Expected ended / Market | Item status versus projection membership. |
-| Estimate / latest fact | Forecasts are derived; latest purchase/price are recorded facts. |
-| Purchase date / created time / Sync time | User occurrence, local insertion and coordination observations are separate. |
-| Person / Household | Person is an optional local reference; Household remains unimplemented. |
-| Payment Method | Optional reference, not proof of payment processing. |
-| Share list (PDF) | History exports selected Purchases; “list” can be confused with Lists projections. Prefer “Share purchases (PDF).” |
-| Analytics (PIN) | “PIN” implies a maturity scheme or lock. Ordinary users need “Analytics”; availability comes from implementation state. |
-| Product capitalization in prose | Use ordinary sentence case in UI; reserve type-style capitalization for technical documentation. |
-| Technical error prefixes | Diagnostic codes must not precede user copy. |
+| Analytics | Local, deterministic calculation over the active Account’s recorded Purchase evidence, with inspectable support |
+| Card | A repeatable saved-on-screen analysis definition and its current result; deletion removes the card, not Purchase evidence |
+| Determinant | The single axis that separates results into Product, Purchase, Store or Time groups |
+| Relational variable | A recorded or explicitly derived field related to the determinant and used as a value, comparison, grouping detail or condition |
+| Operation | The one calculation applied by a card: Sum, Mean, Difference or Percentage |
+| Condition | An optional rule that narrows eligible evidence without changing the determinant |
+| Evidence row | One matrix row that identifies a Purchase Item and carries its related Purchase, Product, Store, time and available reference facts |
+| Selected evidence | Rows explicitly chosen by the user |
+| Filtered evidence | All rows remaining after active conditions or transferred History filters |
+| Period | Earliest through latest Purchase occurrence time represented by the evidence; a single-time result states that one date/time |
+| Result | The calculated value or values produced from eligible evidence |
+| Interpretation | A factual sentence that restates the result, determinant, scope and period without cause, advice or prediction |
 
-## 6. Accessibility and readable-state requirements
+## 8. Required conceptual distinctions
 
-- Text scaling through at least 200% must not clip headings, chip labels,
-  monetary values, form help or actions; layouts must reflow rather than force
-  horizontal page scrolling.
-- Touch targets should be at least 48 logical pixels; compact tables/cards must
-  not create tiny icon-only actions.
-- Every icon-only control needs an accessible name and tooltip where pointer
-  use exists.
-- Keyboard order follows visual/semantic order: header controls, filters,
-  content, contextual actions. Focus remains visible on warm, green and purple
-  surfaces.
-- Enter/Space activate the focused control; Escape closes sheets/dialogs;
-  predictable shortcuts may focus search, but no task depends on a shortcut.
-- After validation failure, focus moves to the first invalid field; after an
-  asynchronous error, focus/announcement reaches the error summary without
-  destroying entered data.
-- Loading, success and error changes use live-region semantics without repeated
-  announcements. Color, icon and text jointly identify state.
-- Table headers, selection counts, expansion state and disabled reasons are
-  screen-reader-readable.
-- Money includes currency; dates/times use a consistent locale-visible format;
-  derived dates retain “estimated.”
-- Cards and controls must keep adequate contrast in light/dark or
-  high-contrast themes if those themes are supported; unsupported theme modes
-  must not be implied.
+### Determinant versus condition
 
-## 7. PH01 learning and acceptance criteria
+The determinant answers “results by what?” A condition answers “which evidence
+is included?” `Store` as determinant produces one result per Store. `Store is
+Central Market` as a condition narrows rows while Product, Purchase or Time
+remains the determinant. The UI must not label conditions as determinants or
+silently change one into the other.
 
-PH01 is Didactically acceptable when evidence shows:
+### Purchase versus Item
 
-1. A user can name the purpose and primary action of each of the five pages
-   from its header and first viewport.
-2. The same concepts, labels and action hierarchy are preserved across desktop
-   and compact layouts, while tables adapt into cards where comparison density
-   changes.
-3. Green, purple and neutral surfaces follow the semantic contract above; color
-   is never the only state carrier.
-4. Search, filter, sort, selection, detail and primary actions remain distinct.
-5. Lists distinguishes facts, forecasts, projection membership, insufficient
-   history and empty results.
-6. Catalogue distinguishes browsing, Product identity, Store identity,
-   registration and advisory similarity.
-7. Purchase distinguishes context, staged Items, review, registration and
-   corrective feedback; correctable failures preserve work.
-8. History distinguishes filtering, selection, detail, export and future
-   Analytics handoff.
-9. Each page exhibits designed loading, empty, error and retry behavior
-   appropriate to its operations, with readable success/validation states
-   where mutation exists.
-10. Keyboard-only navigation, visible focus, 200% text scaling, accessible
-    names and state announcements are evidenced at representative desktop and
-    compact widths.
-11. Existing functional boundaries remain truthful: no invented category,
-    Household, remote telemetry, destructive Purchase mutation or automatic
-    Retry/Recovery behavior appears.
-12. Automated widget/golden/semantics evidence and human Windows/Android
-    walkthrough evidence are reported separately; neither is inferred from
-    screenshots alone.
+A Purchase is the registered event with Store, occurrence time, optional
+references, currency and total. An evidence row represents one Purchase Item
+joined to that Purchase and Product. Several rows may belong to one Purchase.
+Purchase-level values must be deduplicated before Purchase-level calculation.
 
-No KANBAN transition is proposed. These are product-comprehension acceptance
-criteria, not learner-maturity evidence.
+### Purchase total versus line total
 
-## 8. Inherited constraints for PH02 and PH03
+`Purchase total` is the total of the registered Purchase. `Line total` is the
+recorded total for one Item. Summing line totals may reproduce a Purchase total
+only within exactly that Purchase and currency; the labels remain different.
 
-### PH02 Analytics
+### Difference versus change
 
-- Reuse the PH01 header, filter, summary, card/table, loading/empty/error and
-  color vocabulary.
-- “Analytics” means deterministic local/account-scoped analysis of user-owned
-  Purchase data, never developer telemetry.
-- History handoff must carry understandable visible context: selected
-  Purchases or active filters, not an opaque internal identifier alone.
-- Derived totals/trends show currency, period, comparison basis and
-  insufficient-history conditions.
-- Purple may identify derived insight; green remains current selection/primary
-  action.
+`Difference` means value B minus value A between two explicitly named,
+comparable endpoints. Positive and negative signs are factual direction, not a
+trend. `Change` is broader language and must not be used unless the two
+endpoints and their order are visible.
 
-### PH03 Settings and Audit
+### Percentage versus percentage change
 
-- Settings owns configuration (“what should happen”); Audit owns understandable
-  observed history/state (“what happened”). Neither reconstructs provider
-  truth.
-- Settings inherits grouped forms, help text, validation preservation and
-  success/error confirmation.
-- Audit inherits History’s filter, selection, detail disclosure and
-  readable-state grammar.
-- Closure must not remain ordinary user vocabulary. Existing capabilities need
-  retain/move/development-only/remove classification before navigation change.
-- Technical codes and raw diagnostics belong only in explicit advanced/support
-  disclosure when Operational and Design establish safe ownership.
-- Automatic Retry/Recovery remains excluded; dangerous actions cannot be made
-  prominent merely to match PH01 visual language.
+`Percentage` means a selected or grouped part divided by an explicitly named
+whole. `Percentage change` is a different operation based on an earlier value
+as denominator. PH02’s retained operation is `Percentage`; percentage change
+is blocked unless Main separately defines and authorizes that meaning.
 
-## 9. Recommendations to Main
+### Store grouping versus Store comparison
 
-1. Adopt the shared vocabulary in section 3 as the PH01 Didactic contract for
-   E staging.
-2. Require one page-anatomy and responsive-state matrix covering all five pages
-   before Codex scope is activated.
-3. Treat `ProductsPage` as user-facing Catalogue and forbid route/header
-   vocabulary drift.
-4. Require diagnostic-code-to-user-copy separation in Purchase while
-   preserving typed evidence internally.
-5. Remove inert Edit/Delete affordances from ordinary History PH01 scope unless
-   a later authorized capability supplies them.
-6. Keep Analytics handoff language visible in planning but do not present a
-   functional action until PH02.
-7. Require shared state components to support action, qualification and
-   accessibility, not only an icon plus message.
-8. Ask human reviewers to evaluate task comprehension at desktop and compact
-   widths, not pixel similarity alone.
+Store grouping lists one result per Store. Store comparison requires two
+explicit Store results and an operation that relates them. A grouped Store
+table must not imply that the first Store ranks above the next.
 
-## 10. Dependencies requested from Operational and Design
+### Raw fact versus derived interpretation
 
-### From Operational
+An evidence row carries recorded facts and clearly marked derived values such
+as Unit price. An interpretation is generated from a result. It may say what
+was greater, lower, equal or represented a stated share. It cannot repair raw
+facts, infer causes, recommend action or import external facts.
 
-- Evidence matrix for loading, filtered-empty, first-use empty, validation,
-  success, failure and safe retry on each page.
-- Windows and Android test widths, 200% text-scale procedure, keyboard/focus
-  checks and screen-reader feasibility.
-- Confirmation of which local reads/mutations are safe to retry and how
-  duplicate submission is prevented.
-- Measured constraints for large Catalogue/History/Lists collections and
-  responsive performance.
-- Export/share destination and failure-state truth for History copy.
+### Explanation versus recommendation
 
-### From Design
+An explanation defines how a result was calculated and which evidence it used.
+A recommendation tells the user what to do. PH02 authorizes explanations, not
+recommendations.
 
-- One shared responsive breakpoint/component responsibility map.
-- Semantic owners for page header, summary, filter bar, state panel, status
-  chip, responsive data collection and contextual action group.
-- Boundary between Catalogue browsing, Product registration and Store
-  management.
-- Boundary between Purchase edit, staged Item review and final confirmation.
-- Selection/detail state ownership in History and context contract for PH02.
-- Confirmation that visual tokens remain presentation semantics and never
-  become domain-state sources.
+## 9. Operation explanations and compatibility
 
-## 11. Unresolved human choices
+### Sum
 
-1. Should Home be a task dashboard with current summaries, or remain a concise
-   orientation/guide surface?
-2. Should compact Catalogue registration open a dedicated page, a bottom
-   sheet, or an inline progressive section?
-3. Should Store creation remain in Catalogue during PH01, and if so under which
-   secondary label?
-4. Should mobile Purchase review be a separate route/step or an in-page mode
-   with explicit step indication?
-5. Should History use “View in Analytics” for one Purchase and “Analyze
-   selection” for multiple Purchases?
-6. Should “Market” remain the projection name, or would a more explicit label
-   such as “To buy” better match the intended mental model? A change requires
-   cross-page and permanent-vocabulary reconciliation.
-7. Should the Home page expose developer/documentation links at all in ordinary
-   navigation, or move them to PH03 Settings/About?
+Meaning: “Add the eligible values.”
 
-## 12. Terminal
+Minimum evidence:
+
+- one eligible numeric value;
+- compatible currency for money;
+- compatible unit for quantity.
+
+Valid variables:
+
+- Quantity, separated by canonical unit when more than one unit is present;
+- Line total, separated by currency;
+- Purchase total only at one value per Purchase.
+
+Invalid combinations:
+
+- categorical variables;
+- Unit price, because adding rates does not produce a useful factual total;
+- mixed currencies in one value;
+- mixed quantity units in one value;
+- repeated Purchase totals across Item rows.
+
+Missing and zero:
+
+- missing values are excluded and the excluded count is disclosed;
+- recorded zero is included;
+- no eligible values produces `Not enough evidence`.
+
+Multiple variables:
+
+- show one separately labelled result per variable;
+- never combine quantity and money into one value.
+
+Factual template:
+
+`Sum of {variable} by {determinant}: {value}. Based on {count} evidence rows from {period}.`
+
+### Mean
+
+Meaning: “Add eligible values and divide by their eligible evidence count.”
+
+Minimum evidence:
+
+- one eligible numeric value;
+- compatible currency/unit basis.
+
+Valid variables:
+
+- Quantity by compatible unit;
+- Unit price by compatible currency and unit basis;
+- Line total by currency;
+- Purchase total once per Purchase.
+
+Invalid combinations:
+
+- categorical variables;
+- mixed currency or unit basis in one mean;
+- Purchase totals repeated per Item.
+
+Missing and zero:
+
+- missing values are excluded and disclosed;
+- recorded zero is included;
+- no eligible values produces `Not enough evidence`.
+
+Multiple variables:
+
+- each variable has its own mean, unit, eligible count and missing count.
+
+Factual template:
+
+`Mean {variable} for {determinant}: {value}. Based on {count} eligible values from {period}.`
+
+### Difference
+
+Meaning: “Subtract explicitly named value A from explicitly named value B.”
+
+Minimum evidence:
+
+- two comparable values or two comparable aggregate groups;
+- visible A/B labels and order;
+- matching currency and unit basis.
+
+Valid use:
+
+- two Products, Purchases, Stores or Time groups selected explicitly;
+- Quantity, Unit price, Line total or deduplicated Purchase total.
+
+Invalid combinations:
+
+- fewer or more than two unresolved endpoints;
+- mixed currency/unit basis;
+- categorical variables;
+- implicit “first versus last” without visible Time order;
+- causal or predictive wording.
+
+Missing and zero:
+
+- either missing endpoint produces `Not enough comparable evidence`;
+- zero values are valid;
+- equality produces `No difference in the selected evidence`.
+
+Multiple variables:
+
+- show one A, B and signed difference block per variable.
+
+Factual template:
+
+`{B label} was {difference} {higher/lower/equal} than {A label} for {variable}. Based on {count} evidence rows from {period}.`
+
+### Percentage
+
+Meaning: “Show an explicitly named part as a share of an explicitly named
+whole.”
+
+Minimum evidence:
+
+- a numerator scope;
+- a denominator scope containing that numerator;
+- one compatible count or numeric variable;
+- a denominator greater than zero.
+
+Valid use:
+
+- selected evidence as a share of filtered evidence;
+- one Product, Purchase, Store or Time group as a share of the card’s complete
+  eligible scope;
+- evidence count, Quantity, Line total or deduplicated Purchase total with
+  compatible units/currency.
+
+Invalid combinations:
+
+- numerator outside the denominator scope;
+- mixed currency/unit basis;
+- categorical values without count semantics;
+- zero denominator;
+- percentage-change wording.
+
+Missing and zero:
+
+- missing eligible values are excluded and disclosed;
+- zero numerator with positive denominator produces `0%`;
+- zero denominator produces `Percentage unavailable — the total is zero`.
+
+Multiple variables:
+
+- show one percentage and denominator basis per variable.
+
+Factual template:
+
+`{part label} represented {percentage} of {whole label} for {variable}. Based on {count} evidence rows from {period}.`
+
+## 10. Time, evidence and History language
+
+### Time
+
+`Purchase date and time` always means recorded occurrence time. It never means
+local insertion, export, Sync, upload, acknowledgement or provider time.
+
+Time as determinant requires a visible grouping such as day, month or year.
+Time as condition uses an explicit From/To range. The result period is derived
+from eligible occurrence times, not from the current clock. A single
+occurrence states its one date/time.
+
+Proposed labels:
+
+- `Group by time`
+- `Time grouping`
+- `Purchase date range`
+- `From`
+- `To`
+- `Period: {start}–{end}`
+- `Period: {date/time}` for one occurrence
+
+### Evidence scope and focus
+
+Proposed labels:
+
+- `All evidence`
+- `Filtered evidence`
+- `Selected evidence`
+- `{count} evidence rows`
+- `Focus supporting evidence`
+- `Show all evidence`
+- `Reset evidence`
+
+Focus changes matrix emphasis and position, not dataset membership. Reset
+clears row selection, card focus and transient matrix filters, then restores
+the full Account-scoped evidence matrix. Reset does not delete cards or facts.
+
+### History handoff
+
+Proposed History actions:
+
+- `Analyze selected purchases`
+- `Analyze filtered history`
+
+Transferred context must visibly identify selected Purchase count or active
+History conditions. Analytics confirms:
+
+`Using {count} purchases from History. Analytics will calculate from their local evidence.`
+
+History does not send a calculated result. If transferred context resolves to
+no eligible evidence:
+
+`No eligible Purchase evidence was transferred. Return to History or show all Analytics evidence.`
+
+## 11. Card creation, management and result templates
+
+Proposed creation labels:
+
+- `New analysis card`
+- `Determinant`
+- `Variables`
+- `Operation`
+- `Conditions (optional)`
+- `Evidence scope`
+- `Create card`
+- `Cancel`
+
+Matrix selection initializes a provisional card:
+
+`Card started from {count} selected evidence rows. Review its determinant, variables and operation.`
+
+Deletion:
+
+- action: `Delete card`;
+- confirmation: `Delete this analysis card? Purchase evidence will not be changed.`;
+- result: `Analysis card deleted. Purchase evidence was not changed.`
+
+Optional reordering:
+
+- actions: `Move card earlier`, `Move card later`;
+- compact alternative: `Reorder analysis cards`;
+- semantics announce the new position;
+- order affects presentation only, never calculation.
+
+Generic result structure:
+
+1. `{Operation} of {variable} by {determinant}`
+2. result value or separate values with currency/unit;
+3. factual interpretation;
+4. `{count} evidence rows`;
+5. `Period: {period}`;
+6. missing/unavailable disclosure when applicable;
+7. `Focus supporting evidence`.
+
+Equality template:
+
+`The compared values were equal in the selected evidence.`
+
+Unavailable-field template:
+
+`{field} is unavailable in the recorded data and was not used.`
+
+Partial-evidence template:
+
+`Result calculated from {eligible} of {total} evidence rows. {excluded} rows did not contain a compatible {field} value.`
+
+## 12. State, feedback and error wording
+
+| State/action | Proposed label or message |
+| --- | --- |
+| Retry | `Retry local evidence read` |
+| Retry explanation | `Try loading the local evidence again. No Purchase data will be changed.` |
+| Retrying | `Loading local evidence again…` |
+| Loading | `Loading local Purchase evidence…` |
+| First use | `No Purchase evidence yet. Register a Purchase to begin local Analytics.` |
+| No data | `No Purchase evidence is available for this Account.` |
+| Filtered empty | `No evidence matches these conditions.` Actions: `Adjust conditions`, `Clear conditions` |
+| Selected empty | `No evidence rows are selected.` Action: `Show all evidence` |
+| Insufficient evidence | `Not enough comparable evidence for this operation.` |
+| Invalid configuration | `This determinant, variable and operation cannot be combined.` |
+| Unavailable field | `{field} is unavailable in the recorded data.` |
+| Zero denominator | `Percentage unavailable — the total is zero.` |
+| Calculation error | `This result could not be calculated. The evidence and card were preserved.` |
+| Read error | `Local Purchase evidence could not be loaded. No Purchase data was changed.` |
+| Partial evidence | `Result calculated from {eligible} of {total} evidence rows.` |
+| History handoff | `Using {count} purchases from History.` |
+| Matrix-row initiation | `Analysis card started from the selected evidence.` |
+| Focus | `Showing support for {card title}. All evidence remains available.` |
+| Reset | `All evidence is shown. Cards and Purchase data were not changed.` |
+| Card created | `Analysis card created from {count} evidence rows.` |
+| Card deleted | `Analysis card deleted. Purchase evidence was not changed.` |
+
+Errors must not lead with technical codes. If a stable code is retained for
+later Audit/support policy, it belongs in optional technical detail after the
+plain-language meaning.
+
+## 13. Wide and compact reading order
+
+### Wide
+
+1. page header and local/Account-scoped qualification;
+2. transferred History context, period and evidence scope;
+3. analysis cards in user order;
+4. card creation/editor controls;
+5. complete evidence matrix with column headers;
+6. state, missing-field and calculation explanations.
+
+Cards remain above the matrix. The matrix may use horizontal scrolling only
+inside its bounded region, with frozen row identity where implemented. All
+twelve field labels and unavailable states remain reachable.
+
+### Compact
+
+1. page header and qualification;
+2. History context/evidence-scope summary;
+3. cards as a vertical list;
+4. one-card editor with progressive sections;
+5. complete evidence rows as expandable cards;
+6. focus/reset and state explanations.
+
+Compact evidence cards preserve the same facts and availability markers as
+wide matrix rows. Secondary fields may be collapsed but must remain reachable;
+no field disappears because of width.
+
+### State parity
+
+Wide and compact views must consume the same card definitions, eligible row
+set, operation results, counts, periods, unavailable fields and errors.
+Layout may change; meaning and result may not.
+
+## 14. Accessibility findings and requirements
+
+- Keyboard focus follows header/context, cards, card actions, editor, evidence
+  controls, matrix rows and reset.
+- Selecting a row and opening row detail are separate keyboard/screen-reader
+  actions.
+- Card focus announces card title, result, evidence count, period and focused
+  row count.
+- Focus remains visible on green, purple and neutral surfaces.
+- Reordering has buttons and keyboard actions; drag is never the only method.
+- Matrix headers label every cell. Compact evidence cards expose one coherent
+  accessible name plus expandable detail.
+- Loading, retry, calculation result and error updates use restrained live
+  announcements without repeatedly reading the full matrix.
+- Color never carries operation, positive/negative difference, selection,
+  unavailable state or error alone. Text, icon and sign are retained.
+- At 200% text, cards, result values, controls and evidence rows reflow without
+  clipping or page-level horizontal scrolling.
+- Currency, quantity unit, Unit-price basis, signs and percentage denominator
+  are included in accessible values.
+- `Unavailable`, `Not enough evidence`, `0`, and blank are never represented as
+  the same state.
+
+S01 provides validated automated breakpoint and Home 200% text-scale evidence.
+Analytics-specific keyboard, semantics, compact/wide parity and 200% text
+evidence remain proposed.
+
+## 15. Decisions for Main
+
+1. Accept an evidence row as one Purchase Item joined to its Purchase, Product,
+   Store and available local references.
+2. Accept `Purchase total` as a separate Purchase-level fact that is
+   deduplicated for calculations.
+3. Accept `Percentage` as part-of-whole; keep percentage change blocked.
+4. Accept `Purchased by` as the current Person reference meaning; keep
+   `Purchased for` unavailable.
+5. Keep `Promotion` unavailable rather than infer it from price.
+6. Require a complete Account-scoped Analytics evidence read; the current
+   recent-50 History query is insufficient.
+7. Accept History transfer as selected Purchase IDs or visible filter context,
+   followed by local Analytics calculation.
+8. Decide the smallest supported Time grouping set; proposed labels are day,
+   month and year.
+9. Decide whether cards are transient per app session or locally persisted.
+   This report defines deletion/reordering meaning but does not select lifetime.
+10. Accept charts, forecasting, recommendations and rankings as deferred.
+
+## 16. Smallest teachable slices
+
+### Slice 1 — Evidence before calculation
+
+Teach Purchase versus Item, the twelve fields, unavailable values, selected
+versus filtered evidence, and Account scope. Materialization target: complete
+read-only matrix, selection, focus and reset without cards calculating yet.
+
+### Slice 2 — One card, one operation
+
+Teach determinant, relational variable, condition, operation, result, count and
+period through Sum and Mean. Materialization target: one card with compatible
+money/quantity rules and factual interpretation.
+
+### Slice 3 — Explicit comparison
+
+Teach grouping versus comparison and Difference with visible A/B endpoints.
+Materialization target: deterministic two-endpoint Difference and equality.
+
+### Slice 4 — Part of a named whole
+
+Teach Percentage, numerator, denominator and zero-denominator behavior.
+Materialization target: selected/filtered part-of-whole Percentage only.
+
+### Slice 5 — Context and parity
+
+Teach History handoff, multiple cards, optional ordering, deletion and
+wide/compact evidence equivalence.
+
+## 17. Exact later H evidence required
+
+Later `H_DDC_CODEX.md` must report:
+
+1. Analytics destination is functional and no longer reserved.
+2. No remote/Sync/provider/telemetry source is used.
+3. Every Analytics query is scoped to the active Account.
+4. The evidence matrix is complete for the active scope and is not capped by
+   History’s recent-50 query.
+5. Each of the twelve fields is mapped to implemented, derived or unavailable
+   authority exactly as section 6 states.
+6. Purchase totals are not duplicated across Item rows.
+7. Quantity, currency and Unit-price compatibility rules are tested.
+8. Sum, Mean, Difference and Percentage each have valid, invalid, missing,
+   zero and multiple-variable evidence.
+9. Percentage is part-of-whole and no percentage-change wording appears.
+10. Result values, factual interpretations, counts and periods agree with
+    matrix evidence.
+11. Matrix selection initializes a provisional card; card focus preserves the
+    complete matrix; reset restores all evidence.
+12. History transfers context but performs no calculation.
+13. Loading, Retry, first-use, no-data, filtered/selected empty, insufficient,
+    invalid, unavailable, zero-denominator, read/calculation and partial states
+    use the accepted wording boundary.
+14. Wide and compact layouts expose identical card/evidence/result state.
+15. Keyboard order, focus restoration, semantics, non-color meaning,
+    reordering alternatives and 200% text are validated by focused tests.
+16. Rendered compact, medium and wide evidence is reported separately from
+    automated semantics and human acceptance.
+17. Human Windows/Android, Narrator/TalkBack, keyboard-only and real-device
+    results are reported separately and remain host-unvalidated when absent.
+18. No charts, prediction, recommendation, ranking, causal claim, external
+    fact or raw-fact repair is introduced.
+
+## 18. Non-goals
+
+- forecasting or predictive Analytics;
+- recommendations, rankings or goals;
+- advanced statistics;
+- charts or graph libraries;
+- telemetry or usage analytics;
+- remote, provider or Sync-derived Analytics;
+- causal claims;
+- external facts, prices or benchmarks;
+- repair, merge or mutation of recorded facts;
+- Product, Purchase, Store or reference mutation;
+- schema/dependency selection by Didactic Chat;
+- PH03 Settings/Audit/Closure work;
+- KANBAN maturity change;
+- PH01 redesign.
+
+## 19. Claim/evidence matrix
+
+| Claim | Classification | Evidence |
+| --- | --- | --- |
+| Analytics exists as a destination | implemented | `markei_app.dart`; stable destination ID |
+| Analytics calculations exist | absent | reserved-page copy explicitly says none are active |
+| Analytics uses telemetry | absent | reserved-page copy and composition inspection |
+| Local Account scope exists | implemented | composition `AccountId`; local queries filter Purchase/Product/Store |
+| Current History read is complete Analytics authority | contradicted | `listRecentPurchases` has `limit(50)` |
+| Purchase/Item/Product/Store/time facts are available | implemented | domain types, History port and local query repository |
+| Purchased by and Payment method are available | implemented | optional historical labels in Purchase history/detail |
+| Purchased for is available | absent | no inspected source field, relation or projection |
+| Promotion is available | absent | no inspected source field, relation or projection |
+| Unit price is a raw fact | contradicted | current model stores quantity and line total; unit price is derived |
+| Narrow Product price comparison exists | implemented | `priceChangeForProduct` and History detail presentation |
+| Narrow price comparison proves PH02 operations | contradicted | Product-only two-observation behavior is not the retained card/matrix contract |
+| History handoff exists | absent | disabled `Move to Analytics` action |
+| S01 visual vocabulary is inheritable | validated | S01 source plus G/H/I automated/build evidence |
+| Full PH01 visual vocabulary is inheritable | contradicted | S02 materialization absent |
+| Analytics-specific accessibility is validated | absent | no Analytics implementation or tests |
+
+## 20. Proposed E gates
+
+1. Preserve the retained constitution verbatim in user-visible meaning.
+2. Keep one determinant and one operation per card.
+3. Supply a complete local Account-scoped evidence matrix.
+4. Represent unavailable `Purchased for` and `Promotion` honestly.
+5. Derive Unit price only with positive quantity and visible currency/unit
+   basis.
+6. Enforce the compatibility and missing/zero rules in section 9.
+7. Keep Percentage as part-of-whole.
+8. Make selected/filtered evidence, count and period visible in every result.
+9. Implement History context transfer without History calculation.
+10. Preserve complete matrix visibility during card focus and reset.
+11. Require wide/compact semantic parity, keyboard operation, non-color
+    meaning, semantics and 200% text.
+12. Separate automated, rendered, accessibility and human evidence in H.
+13. Keep charts, prediction, recommendation, ranking, telemetry, remote truth,
+    causes and fact repair out of scope.
+
+## 21. Main handoff
+
+Main should reconcile this B with PH02 A/C while carrying PH01 as `PARTIAL`.
+The smallest coherent PH02 materialization is a read-only, complete,
+Account-scoped evidence matrix plus one-card Sum/Mean foundation, provided
+Main resolves matrix authority, Time grouping and card lifetime. Difference,
+Percentage and History handoff may follow as bounded slices without weakening
+the retained constitution.
 
 ```text
-CYCLE=C11
-PHASE=C11-PH01
-ROLE=DIDACTIC
-BASELINE_VERIFIED=YES
-B_REPORT_READY=YES
-KANBAN_TRANSITION_PROPOSED=NO
-SOURCE_CHANGE_AUTHORIZED=NO
-D_E_F_AUTHORIZED=NO
-CODEX_AUTHORIZED=NO
-NEXT_MAIN_ACTION=Reconcile C11-PH01 A_OPERATIONAL.md, B_DIDACTIC.md and C_DESIGN.md into one J_MAIN_STAGE.md PH01 synthesis.
+INSPECTED_REMOTE_HEAD=f6566a407c2215c1ade61444a7f97994994d93f8
+PH01_IMPLEMENTATION_COMMIT=1c7df53c095f4e7c1d85f278ba16c21fd95b25e6
+PH01_MATERIALIZATION_GATE=PARTIAL
+PH01_HUMAN_ACCEPTANCE=ABSENT
+ANALYTICS_CURRENT_STATE=IMPLEMENTED_AS_RESERVED_PAGE
+LOCAL_ANALYTICS_AUTHORITY=PROPOSED_COMPLETE_ACCOUNT_SCOPED_LOCAL_EVIDENCE
+ACCOUNT_SCOPING=ACCEPTED
+EVIDENCE_MATRIX_FIELD_AUTHORITY=PARTIAL
+OPERATION_COMPATIBILITY=PROPOSED
+TIME_SEMANTICS=PROPOSED
+HISTORY_HANDOFF=PROPOSED
+WIDE_COMPACT_STATE_PARITY=PROPOSED
+STAGE_STATUS=PROPOSED
+MAIN_DECISIONS_REQUIRED=EVIDENCE_READ_AUTHORITY_TIME_GROUPING_CARD_LIFETIME
+NEXT_MAIN_ACTION=Reconcile C11-PH02 A_OPERATIONAL.md, B_DIDACTIC.md and C_DESIGN.md with PH01 classified PARTIAL, then decide the bounded PH02 materialization slices.
+CHARTS_AUTHORIZED=NO
+PREDICTIVE_ANALYTICS_AUTHORIZED=NO
+REMOTE_ANALYTICS_AUTHORITY=NO
+SOURCE_CHANGED=NO
+PERMANENT_MEMORY_CHANGED=NO
+METHODOLOGY_CHANGED=NO
 ```
