@@ -1,44 +1,90 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markei/app/pages/analytics_page.dart';
 import 'package:markei/application/analytics.dart';
 import 'package:markei/application/analytics_workspace.dart';
 import 'package:markei/domain/analytics/analytics_models.dart';
 import 'package:markei/domain/analytics/analytics_registry.dart';
 import 'package:markei/domain/shared/ids.dart';
 import 'package:markei/domain/shared/quantity.dart';
-import 'package:markei/app/pages/analytics_page.dart';
 
 void main() {
-  testWidgets('Analytics page renders cards above evidence matrix', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(1200, 900);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    final controller = AnalyticsWorkspaceController(
-      accountId: const AccountId('account-1'),
-      repository: const _Repository(),
-      registry: localAnalyticsRegistry(),
-    );
+  testWidgets(
+    'Analytics page renders PH04 composer records result and variables',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final controller = AnalyticsWorkspaceController(
+        accountId: const AccountId('account-1'),
+        repository: const _Repository(),
+        registry: localAnalyticsRegistry(),
+        clock: () => DateTime.utc(2026, 7, 31, 12),
+      );
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: AnalyticsPage(
-          controller: controller,
-          launchContext: null,
-          visible: true,
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AnalyticsPage(
+              controller: controller,
+              launchContext: null,
+              visible: true,
+            ),
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('analytics.page')), findsOneWidget);
-    expect(find.text('Supporting evidence matrix'), findsOneWidget);
-    await tester.tap(find.byKey(const Key('analytics.card.create')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('analytics.card.1')), findsOneWidget);
-  });
+      expect(find.byKey(const Key('analytics.page')), findsOneWidget);
+      expect(find.text('Create analysis'), findsOneWidget);
+      expect(find.text('Saved analyses — this session'), findsOneWidget);
+      expect(find.text('Variables'), findsOneWidget);
+      expect(find.text('Supporting evidence matrix'), findsNothing);
+
+      await tester.tap(find.byKey(const Key('analytics.choose.product-1')));
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('analytics.measure.lineTotal')));
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('analytics.runSave')));
+      await tester.pumpAndSettle();
+
+      expect(controller.snapshot.records, hasLength(1));
+      expect(find.textContaining('Record #'), findsWidgets);
+      await tester.drag(
+        find.byKey(const Key('analytics.page')),
+        const Offset(0, -700),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('analytics.result')), findsOneWidget);
+      expect(find.byKey(const Key('analytics.export.csv')), findsOneWidget);
+      expect(find.byKey(const Key('analytics.export.pdf')), findsOneWidget);
+      final fingerprint = controller.snapshot.selectedRecord!.fingerprint
+          .toLowerCase();
+      final csvFile = File(
+        '${Directory.systemTemp.path}/markei-analytics-$fingerprint.csv',
+      );
+      final pdfFile = File(
+        '${Directory.systemTemp.path}/markei-analytics-$fingerprint.pdf',
+      );
+      await tester.tap(find.byKey(const Key('analytics.export.csv')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(csvFile.existsSync(), isTrue);
+      await tester.tap(find.byKey(const Key('analytics.export.pdf')));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(pdfFile.existsSync(), isTrue);
+      await tester.drag(
+        find.byKey(const Key('analytics.page')),
+        const Offset(0, -900),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('analytics.items.table')), findsOneWidget);
+      expect(find.byTooltip('Delete card'), findsNothing);
+      expect(find.byTooltip('Move card earlier'), findsNothing);
+    },
+  );
 }
 
 final class _Repository implements AnalyticsEvidenceRepository {

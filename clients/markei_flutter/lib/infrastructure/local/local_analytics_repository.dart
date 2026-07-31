@@ -75,15 +75,17 @@ final class LocalAnalyticsRepository implements AnalyticsEvidenceRepository {
               productBrand: product.displayBrand ?? '',
               storeId: StoreId(store.id),
               storeName: store.displayName,
-              purchasedBy: _referenceLabel(
-                person?.visibleCode,
-                person?.nickname,
-                person?.active,
+              purchasedBy: _reference(
+                id: person?.id,
+                visibleCode: person?.visibleCode,
+                nickname: person?.nickname,
+                active: person?.active,
               ),
-              paymentMethod: _referenceLabel(
-                payment?.visibleCode,
-                payment?.nickname,
-                payment?.active,
+              paymentMethod: _reference(
+                id: payment?.id,
+                visibleCode: payment?.visibleCode,
+                nickname: payment?.nickname,
+                active: payment?.active,
               ),
               quantity: quantity,
               lineTotal: AnalyticsMoneyAmount(
@@ -122,8 +124,17 @@ CanonicalUnit _canonicalUnit(String value) {
 
 int _parseMicrounits(String value) => parseDisplayDecimalMicrounits(value);
 
-String? _referenceLabel(String? visibleCode, String? nickname, bool? active) {
-  if (visibleCode == null || nickname == null) return null;
-  final suffix = active == false ? ' (archived)' : '';
-  return '$visibleCode $nickname$suffix';
+AnalyticsReference? _reference({
+  required String? id,
+  required String? visibleCode,
+  required String? nickname,
+  required bool? active,
+}) {
+  if (id == null || visibleCode == null || nickname == null) return null;
+  return AnalyticsReference(
+    id: id,
+    code: visibleCode,
+    label: nickname,
+    archived: active == false,
+  );
 }

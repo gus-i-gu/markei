@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import '../../application/analytics.dart';
 import '../../application/analytics_workspace.dart';
 import '../../domain/analytics/analytics_models.dart';
+import '../../domain/shared/ids.dart';
 import '../design/markei_theme.dart';
 import '../widgets/analytics_components.dart';
 import '../widgets/markei_components.dart';
@@ -25,6 +28,9 @@ class AnalyticsPage extends StatefulWidget {
 
 class _AnalyticsPageState extends State<AnalyticsPage> {
   late Future<AnalyticsWorkspaceSnapshot> _loadFuture;
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _composerKey = GlobalKey();
+  int explicitExportFileWrites = 0;
 
   @override
   void initState() {
@@ -47,10 +53,14 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (!widget.visible) {
-      return const SizedBox.shrink();
-    }
+    if (!widget.visible) return const SizedBox.shrink();
     return FutureBuilder<AnalyticsWorkspaceSnapshot>(
       future: _loadFuture,
       builder: (context, snapshot) {
@@ -62,6 +72,17 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
             final state = snapshot.connectionState == ConnectionState.waiting
                 ? (snapshot.data ?? widget.controller.snapshot)
                 : widget.controller.snapshot;
+            if (state.scrollToComposer) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                final current = _composerKey.currentContext;
+                if (current != null) {
+                  Scrollable.ensureVisible(
+                    current,
+                    duration: const Duration(milliseconds: 120),
+                  );
+                }
+              });
+            }
             return _body(state, layoutClass);
           },
         );
@@ -76,6 +97,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     final wide = layoutClass == MarkeiLayoutClass.wide;
     return ListView(
       key: const Key('analytics.page'),
+      controller: _scrollController,
       children: [
         MarkeiPageHeader(
           title: 'Analytics',
@@ -83,7 +105,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               'Deterministic local calculations over this Account\'s recorded Purchase evidence.',
           icon: Icons.analytics_outlined,
           trailing: Text(
-            '${state.rows.length} evidence row(s)',
+            '${state.rows.length} contained item(s)',
             style: MarkeiText.metadata,
           ),
         ),
@@ -91,7 +113,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
         MarkeiSection(
           title: 'Local evidence scope',
           subtitle:
-              'Loaded once from local Account evidence. Visible evidence is paged at 100 rows.',
+              'Loaded once from local Account evidence. Analyses are session-only and not synchronized.',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -104,81 +126,149 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 Text(state.message!, key: const Key('analytics.message')),
               ],
               const SizedBox(height: MarkeiSpacing.sm),
-              Wrap(
-                spacing: MarkeiSpacing.sm,
-                children: [
-                  FilledButton.icon(
-                    key: const Key('analytics.card.create'),
-                    onPressed: state.rows.isEmpty ? null : _createDefaultCard,
-                    icon: const Icon(Icons.add),
-                    label: const Text('New analysis card'),
-                  ),
-                  OutlinedButton.icon(
-                    key: const Key('analytics.showAllEvidence'),
-                    onPressed: () =>
-                        setState(widget.controller.showAllEvidence),
-                    icon: const Icon(Icons.visibility),
-                    label: const Text('Show all evidence'),
-                  ),
-                  OutlinedButton.icon(
-                    key: const Key('analytics.resetEvidence'),
-                    onPressed: () => setState(widget.controller.resetEvidence),
-                    icon: const Icon(Icons.restart_alt),
-                    label: const Text('Reset evidence'),
-                  ),
-                  OutlinedButton.icon(
-                    key: const Key('analytics.retry'),
-                    onPressed: _retry,
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('Retry local evidence read'),
-                  ),
-                ],
+              OutlinedButton.icon(
+                key: const Key('analytics.retry'),
+                onPressed: _retry,
+                icon: const Icon(Icons.refresh),
+                label: const Text('Retry local evidence read'),
               ),
             ],
           ),
         ),
         const SizedBox(height: MarkeiSpacing.md),
-        AnalyticsCardsView(
-          cards: state.cards,
-          results: state.results,
-          onMoveEarlier: (id) =>
-              setState(() => widget.controller.moveCardEarlier(id)),
-          onMoveLater: (id) =>
-              setState(() => widget.controller.moveCardLater(id)),
-          onFocus: (id) =>
-              setState(() => widget.controller.focusSupportingEvidence(id)),
-          onDelete: (id) => setState(() => widget.controller.deleteCard(id)),
+        KeyedSubtree(
+          key: _composerKey,
+          child: AnalyticsComposerView(
+            draft: state.draft,
+            validation: state.validation,
+            options: state.options,
+            onDeterminantChanged: (value) =>
+                setState(() => widget.controller.setDeterminant(value)),
+            onToggleDeterminantKey: (value) =>
+                setState(() => widget.controller.toggleDeterminantKey(value)),
+            onToggleBreakdown: (value) =>
+                setState(() => widget.controller.toggleBreakdown(value)),
+            onToggleMeasure: (value) =>
+                setState(() => widget.controller.toggleMeasure(value)),
+            onOperationChanged: (value) =>
+                setState(() => widget.controller.setOperation(value)),
+            onTimeframeChanged: (value) =>
+                setState(() => widget.controller.setTimeframe(value)),
+            onRun: () => setState(widget.controller.runAndSave),
+            onClear: () => setState(widget.controller.clearDraft),
+          ),
         ),
         const SizedBox(height: MarkeiSpacing.md),
-        MarkeiSection(
-          title: 'Supporting evidence matrix',
-          subtitle:
-              'Twelve recorded fields. Purchased for and Promotion are unavailable in recorded data.',
-          child: AnalyticsEvidenceMatrix(
-            rows: state.visibleRows,
-            selectedRowIds: state.selectedRowIds,
-            wide: wide,
-            onSelectionChanged: (ids) =>
-                setState(() => widget.controller.selectRows(ids)),
+        SavedAnalysisBrowser(
+          records: state.records,
+          selected: state.selectedRecord,
+          onOlder: () => setState(widget.controller.selectOlderRecord),
+          onNewer: () => setState(widget.controller.selectNewerRecord),
+        ),
+        const SizedBox(height: MarkeiSpacing.md),
+        AnalyticsResultView(
+          record: state.selectedRecord,
+          presentation: state.presentation,
+          onPresentationChanged: (value) =>
+              setState(() => widget.controller.setPresentation(value)),
+          onExportCsv: _exportCsv,
+          onExportPdf: _exportPdf,
+        ),
+        const SizedBox(height: MarkeiSpacing.md),
+        if (state.selectedRecord != null)
+          MarkeiSection(
+            title: 'Result interpretation',
+            subtitle: 'Timeframe and evidence counts',
+            child: Text(state.selectedRecord!.interpretation),
           ),
+        const SizedBox(height: MarkeiSpacing.xl),
+        AnalyticsVariablesView(
+          state: state.variables,
+          wide: wide,
+          onProjectionChanged: (value) =>
+              setState(() => widget.controller.setVariablesProjection(value)),
+          onSearchChanged: (value) =>
+              setState(() => widget.controller.setVariablesSearch(value)),
+          onSortChanged: (value) =>
+              setState(() => widget.controller.setVariablesSort(value)),
+          onPreviousPage: () =>
+              setState(widget.controller.variablesPreviousPage),
+          onNextPage: () => setState(widget.controller.variablesNextPage),
+          onTogglePurchase: (value) => setState(
+            () => widget.controller.togglePurchaseSelection(PurchaseId(value)),
+          ),
+          onToggleItem: (value) =>
+              setState(() => widget.controller.toggleItemSelection(value)),
+          onUseSelectedRows: () => setState(widget.controller.useSelectedRows),
+          onShowAll: () => setState(widget.controller.showAllVariables),
         ),
       ],
     );
-  }
-
-  void _createDefaultCard() {
-    setState(() {
-      widget.controller.addCard(
-        determinant: AnalyticsDeterminantKind.product,
-        variables: {AnalyticsVariable.lineTotal},
-        operation: AnalyticsOperation.sum,
-      );
-    });
   }
 
   void _retry() {
     setState(() {
       _loadFuture = widget.controller.retry();
     });
+  }
+
+  Future<void> _exportCsv() async {
+    final record = widget.controller.snapshot.selectedRecord;
+    if (record == null) return;
+    try {
+      final csv = analyticsRecordCsv(
+        record,
+        AnalyticsDataset(
+          accountId: const AccountId('export-snapshot'),
+          rows: widget.controller.snapshot.rows,
+        ),
+      );
+      final file = File(
+        '${Directory.systemTemp.path}/markei-analytics-${record.fingerprint.toLowerCase()}.csv',
+      );
+      await file.writeAsString(csv);
+      explicitExportFileWrites++;
+      setState(() {
+        widget.controller.updateDraft(widget.controller.snapshot.draft);
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Exported CSV to ${file.path}')));
+      }
+    } on Object {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('CSV export failed. Record was preserved.'),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _exportPdf() async {
+    final record = widget.controller.snapshot.selectedRecord;
+    if (record == null) return;
+    try {
+      final file = File(
+        '${Directory.systemTemp.path}/markei-analytics-${record.fingerprint.toLowerCase()}.pdf',
+      );
+      await file.writeAsBytes(analyticsRecordPdfBytes(record));
+      explicitExportFileWrites++;
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Exported PDF to ${file.path}')));
+      }
+    } on Object {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('PDF export failed. Record was preserved.'),
+          ),
+        );
+      }
+    }
   }
 }

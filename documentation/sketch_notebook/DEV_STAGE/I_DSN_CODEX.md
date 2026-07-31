@@ -1,101 +1,69 @@
-# I_DSN_CODEX - C11 PH03 Architecture Evidence
+# C11-PH04-R01 Design Codex Evidence
 
-Source stages:
+Activation marker: `<!-- ACTIVATION_MARKER:C11-PH04-R01-2026-07-31 -->`
 
-- `documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md`
-- `documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md`
-- `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`
+## Architecture Result
 
-Activation marker:
+PH04 stayed inside the D section 34 Analytics allowlist. The dependency direction is:
 
-```text
-<!-- ACTIVATION_MARKER:C11-PH03-R01-2026-07-31 -->
-```
+- `AnalyticsPage` owns the one vertical page scroll, visibility, focus handoff and explicit temp-file export sink.
+- `analytics_components.dart` renders typed snapshots for composer, saved-record browser, Chart/Table and Variables projections.
+- `AnalyticsWorkspaceController` owns the loaded dataset, draft, validation, immutable session records, selected record, presentation choice, Variables projection/filter/sort/page/selection, History context and request count.
+- `AnalyticsRegistry` remains the operation compatibility/fixed-point authority.
+- `LocalAnalyticsRepository` remains one Account-scoped joined read and now carries stored Person/Payment Method reference identities already available from that read.
+- Pure export builders produce CSV string and PDF bytes from the selected immutable record.
 
-Architecture implemented:
+No widget imports Drift, HTTP, Auth, Sync, provider or diagnostics. The workspace imports domain/application types, registry and crypto only. The local adapter imports the database and domain/application evidence types only. No second Analytics controller, repository read path or persisted record truth was added.
 
-- `application/audit.dart` owns the read-only Audit port, persisted projection
-  identities, composite cursor, request clamping, controller generations,
-  stale completion suppression and state transitions.
-- `infrastructure/local/closure_diagnostics_repository.dart` implements the
-  Audit read port using existing diagnostic attempt and event tables without
-  schema changes.
-- Audit page loading uses exactly one attempt query plus one child event query
-  per rendered page, with Account and environment predicates on the attempt
-  query and child event loading restricted to the selected attempt IDs.
-- The Audit cursor is an exclusive pair of UTC `startedAt` and attempt ID,
-  ordered descending to keep equal-timestamp paging stable.
-- The Audit projection reads the generated diagnostic registry only as safe
-  meaning authority; the registry is not regenerated or edited.
-- `app/pages/audit_page.dart` and `app/widgets/audit_components.dart` own
-  presentation only and do not import broad Closure/Auth/Sync capabilities.
-- `markei_app.dart` removes Closure from ordinary destinations and passes
-  visible destination state into Audit.
-- `markei_composition.dart` owns one Audit controller and idempotent
-  composition closure.
-- `settings_page.dart` remains presentation/controller logic over existing
-  local repositories and capability-narrow Account and Sync/Device ports.
-- `application/closure_diagnostics.dart` defines Settings-only capability
-  ports without changing Auth or Sync contracts.
+## Closed Types And Transitions
 
-Closure capability disposition:
+The Analytics model now includes closed draft, timeframe, option, breakdown, measure, record, group key, grouped result, purchase projection, variables state and presentation types. Public snapshot and record collections are defensively copied/unmodifiable.
 
-- Ordinary product navigation exposes no Closure destination with
-  `MARKEI_NATIVE_CLOSURE_SURFACE` false.
-- Ordinary product navigation exposes no Closure destination with
-  `MARKEI_NATIVE_CLOSURE_SURFACE` true.
-- Broad `NativeAuthClosureRunner`, Recovery, Retry, delete-history, raw
-  diagnostics and hosted/protocol maintenance capabilities remain absent from
-  Audit.
-- Native Closure diagnostic pages and tests remain present as development
-  material where already authorized, but are not reachable from ordinary
-  navigation.
+Record identity is a monotonic session sequence plus a canonical SHA-256-derived uppercase fingerprint prefix. Collision handling lengthens the visible prefix or disambiguates deterministically. Fingerprints are display references, not object identity or authenticity proof.
 
-Forbidden-surface audit:
+Grouped execution order follows the PH04 design: active Account dataset, half-open UTC timeframe, selected Item scope, selected determinant keys, determinant plus relational breakdown groups, operation/measure compatibility, checked fixed-point calculation per compatibility key, typed unavailable preservation and immutable record creation. Difference remains comparison B minus baseline A. Percentage remains part/whole. Purchase totals are deduplicated per Purchase for purchase-total measures.
 
-- No schema or migration changed.
-- `local_database.dart` and generated Drift output did not change.
-- No dependency, pubspec, lockfile, font or asset changed.
-- Diagnostic contracts, generator and generated registry did not change.
-- Server/API, Auth, Sync contracts, providers, hosted resources, environment
-  configuration and secrets did not change.
-- Analytics and Purchase History calculation behavior did not change.
-- The former R07 causal/backend engine, new diagnostic ledger, hosted Audit,
-  provider observability, new Sync instrumentation, retention/export/restore,
-  GCM04, multiple-user work and Device revocation were not implemented.
+Variables derives Purchases in memory from contained Item rows and uses repeated Purchase-level fact consistency checks rather than choosing arbitrary conflicting rows. Purchase selection expands to stable Item IDs; Item selection uses exact Item IDs. Search/sort/page/filter transitions are local and deterministic.
 
-Rollback:
+Chart and Table are projections of one frozen grouped-result list. Chart is CustomPainter presentation only; mixed incompatible keys fall back to Table. CSV/PDF builders are pure; only explicit page export writes a temp file.
 
-- The PH03 implementation is bounded to the authorized app, application,
-  infrastructure-local, test and G/H/I paths. Reverting the single
-  implementation commit returns ordinary navigation, Settings and Audit to the
-  `256ee4dbbcb790419b816862ee42933a115ddd87` state.
+## Request, Rollback And Forbidden Surface
 
-Evidence limits:
+Repository request count is initial:1, retry:+1 and local transitions:+0. Analytics network requests and database writes are 0. Successful explicit CSV/PDF exports write one temp file each.
 
-- Architecture evidence is automated through focused tests, full tests,
-  generator drift check, analysis, builds and path audits.
-- Human architecture review was not performed.
-- Live provider operations were not performed.
+Rollback is one implementation commit because no schema, migration, generated source, dependency, platform code or persistence conversion was introduced.
+
+Forbidden-surface audit found no changes to schema/migrations, `local_database.dart`, generated Drift output, pubspec/lockfiles, dependencies, platform code, API, Auth, Sync, provider, diagnostic contracts/generated registry, Settings/Audit/Closure, Lists, History, shell/composition/navigation, D/E/F, A/B/C, J, Main-root, permanent memory, methodology, environment configuration or secrets.
+
+## Validation Evidence
+
+Focused tests, full suite, analysis, Windows release build, Android debug build, diagnostic-generator check and `git diff --check` passed. Performance measurements were captured in `analytics_workspace_test.dart`: ordinary 1,000 Purchases / 5,000 Items with 58 ms load and 66 ms grouped record creation; stress 10,000 Purchases / 50,000 Items with 263 ms load and 586 ms grouped record creation.
 
 ## Terminal
 
 ```text
-AUDIT_DEPENDENCY_DIRECTION=PASS
-AUDIT_PERSISTED_IDENTITY=PASS
-AUDIT_COMPOSITE_CURSOR=PASS
-AUDIT_QUERIES_PER_PAGE=2
-ACCOUNT_ENVIRONMENT_PREDICATES=PASS
-AUDIT_SANITIZED_PROJECTION=PASS
-AUDIT_CONTROLLER_LIFETIME=PASS
-SETTINGS_CAPABILITY_BOUNDARIES=PASS
-CLOSURE_CAPABILITY_DISPOSITION=PASS
-CLOSURE_DESTINATION_RETIRED=PASS
-COMPOSITION_DISPOSAL=PASS
+CYCLE=C11
+PHASE=C11-PH04
+ROUND=C11-PH04-R01
+ANALYTICS_DEPENDENCY_DIRECTION=PASS
+COMPOSER_CLOSED_TYPES=PASS
+IMMUTABLE_RECORD_IDENTITY=PASS
+CANONICAL_FINGERPRINT=PASS
+GROUPED_RESULT_MODEL=PASS
+PH02_FIXED_POINT_COMPATIBILITY=PASS
+PURCHASE_PROJECTION_DEDUPLICATION=PASS
+VARIABLES_STABLE_SELECTION=PASS
+CHART_TABLE_SINGLE_SOURCE=PASS
+EXPORT_PURE_BOUNDARY=PASS
+SESSION_ONLY_LIFETIME=PASS
+RESPONSIVE_SHARED_STATE=PASS
+REPOSITORY_REQUEST_COUNT=initial:1; retry:+1; local_transitions:+0
 SCHEMA_MIGRATION=NONE
 GENERATED_SOURCE_CHANGED=NO
 DEPENDENCY_CHANGED=NO
-API_AUTH_SYNC_PROVIDER_CHANGED=NO
-R07_ACTIVATED=NO
-NEXT_DESIGN_REVIEW=Reconcile PH03 architecture evidence into Design memory.
+SECOND_TRUTH_OR_CONTROLLER=ABSENT
+API_AUTH_SYNC_PROVIDER_DIAGNOSTIC_IMPORTS=ABSENT
+PH03_ARCHITECTURE_CHANGED=NO
+ROLLBACK=ONE_COMMIT
+NEXT_DESIGN_REVIEW=Reconcile PH04 I evidence and retain human visual/real-device gates.
 ```

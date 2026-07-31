@@ -19,6 +19,16 @@ enum AnalyticsVariable {
   evidenceCount,
 }
 
+enum AnalyticsMeasure {
+  quantity,
+  unitPrice,
+  lineTotal,
+  purchaseTotal,
+  evidenceCount,
+}
+
+enum AnalyticsRelationalBreakdown { purchasedBy, paymentMethod, purchasedFor }
+
 enum AnalyticsOperation { sum, mean, difference, percentage }
 
 enum AnalyticsUnavailableReason {
@@ -30,6 +40,20 @@ enum AnalyticsUnavailableReason {
   overflow,
   staleContext,
   calculationFailure,
+  contradiction,
+}
+
+enum AnalyticsTimeframeKind { allRecordedTime, customUtc }
+
+enum AnalyticsResultPresentation { chart, table }
+
+enum AnalyticsVariablesProjection { purchases, containedItems }
+
+enum AnalyticsVariablesSort {
+  timeAscending,
+  timeDescending,
+  labelAscending,
+  totalDescending,
 }
 
 final class AnalyticsCompatibilityKey {
@@ -60,6 +84,26 @@ final class AnalyticsUnitPrice {
   final int minorUnitsPerCanonicalUnit;
   final MeasurementKind kind;
   final CanonicalUnit unit;
+}
+
+final class AnalyticsReference {
+  const AnalyticsReference({
+    required this.id,
+    required this.label,
+    this.code,
+    this.archived = false,
+  });
+
+  final String id;
+  final String? code;
+  final String label;
+  final bool archived;
+
+  String get displayLabel {
+    final prefix = code == null ? '' : '$code ';
+    final suffix = archived ? ' (archived)' : '';
+    return '$prefix$label$suffix';
+  }
 }
 
 final class AnalyticsEvidenceRow {
@@ -93,15 +137,21 @@ final class AnalyticsEvidenceRow {
   final String productBrand;
   final StoreId storeId;
   final String storeName;
-  final String? purchasedBy;
-  final String? paymentMethod;
+  final AnalyticsReference? purchasedBy;
+  final AnalyticsReference? paymentMethod;
   final NormalizedQuantity quantity;
   final AnalyticsMoneyAmount lineTotal;
   final AnalyticsUnitPrice? unitPrice;
+
+  String? get purchasedByLabel => purchasedBy?.displayLabel;
+  String? get paymentMethodLabel => paymentMethod?.displayLabel;
 }
 
 final class AnalyticsDataset {
-  const AnalyticsDataset({required this.accountId, required this.rows});
+  AnalyticsDataset({
+    required this.accountId,
+    required List<AnalyticsEvidenceRow> rows,
+  }) : rows = List.unmodifiable(rows);
 
   final AccountId accountId;
   final List<AnalyticsEvidenceRow> rows;
@@ -184,6 +234,119 @@ final class AnalyticsCardRevision {
   const AnalyticsCardRevision(this.value);
 
   final int value;
+}
+
+typedef AnalyticsRecordId = AnalyticsCardId;
+
+typedef AnalyticsRecordFingerprint = String;
+
+final class AnalyticsTimeframe {
+  const AnalyticsTimeframe.all()
+    : kind = AnalyticsTimeframeKind.allRecordedTime,
+      startUtc = null,
+      endUtc = null,
+      invalidDraft = null;
+
+  const AnalyticsTimeframe.custom({
+    required DateTime this.startUtc,
+    required DateTime this.endUtc,
+  }) : kind = AnalyticsTimeframeKind.customUtc,
+       invalidDraft = null;
+
+  const AnalyticsTimeframe.invalid(this.invalidDraft)
+    : kind = AnalyticsTimeframeKind.customUtc,
+      startUtc = null,
+      endUtc = null;
+
+  final AnalyticsTimeframeKind kind;
+  final DateTime? startUtc;
+  final DateTime? endUtc;
+  final String? invalidDraft;
+
+  bool get isValid {
+    if (kind == AnalyticsTimeframeKind.allRecordedTime) return true;
+    final start = startUtc;
+    final end = endUtc;
+    return start != null && end != null && end.isAfter(start);
+  }
+
+  List<AnalyticsCondition> toConditions() {
+    if (kind == AnalyticsTimeframeKind.allRecordedTime || !isValid) {
+      return const [];
+    }
+    return [
+      AnalyticsUtcPeriodCondition(
+        start: startUtc!.toUtc(),
+        end: endUtc!.toUtc(),
+      ),
+    ];
+  }
+
+  String get label {
+    if (kind == AnalyticsTimeframeKind.allRecordedTime) {
+      return 'All recorded time';
+    }
+    if (!isValid) return invalidDraft ?? 'Invalid custom timeframe';
+    return '${startUtc!.toUtc().toIso8601String()} to ${endUtc!.toUtc().toIso8601String()}';
+  }
+}
+
+final class AnalyticsOption {
+  const AnalyticsOption({required this.key, required this.label});
+
+  final String key;
+  final String label;
+}
+
+final class AnalyticsComposerDraft {
+  const AnalyticsComposerDraft({
+    this.determinant = AnalyticsDeterminantKind.product,
+    this.selectedDeterminantKeys = const {},
+    this.breakdowns = const {},
+    this.measures = const {},
+    this.operation = AnalyticsOperation.sum,
+    this.timeframe = const AnalyticsTimeframe.all(),
+    this.scope = const FilteredAnalyticsEvidenceScope(),
+  });
+
+  final AnalyticsDeterminantKind determinant;
+  final Set<String> selectedDeterminantKeys;
+  final Set<AnalyticsRelationalBreakdown> breakdowns;
+  final Set<AnalyticsMeasure> measures;
+  final AnalyticsOperation operation;
+  final AnalyticsTimeframe timeframe;
+  final AnalyticsEvidenceScope scope;
+
+  AnalyticsComposerDraft copyWith({
+    AnalyticsDeterminantKind? determinant,
+    Set<String>? selectedDeterminantKeys,
+    Set<AnalyticsRelationalBreakdown>? breakdowns,
+    Set<AnalyticsMeasure>? measures,
+    AnalyticsOperation? operation,
+    AnalyticsTimeframe? timeframe,
+    AnalyticsEvidenceScope? scope,
+  }) {
+    return AnalyticsComposerDraft(
+      determinant: determinant ?? this.determinant,
+      selectedDeterminantKeys:
+          selectedDeterminantKeys ?? this.selectedDeterminantKeys,
+      breakdowns: breakdowns ?? this.breakdowns,
+      measures: measures ?? this.measures,
+      operation: operation ?? this.operation,
+      timeframe: timeframe ?? this.timeframe,
+      scope: scope ?? this.scope,
+    );
+  }
+}
+
+final class AnalyticsDraftValidation {
+  const AnalyticsDraftValidation({
+    required this.canRun,
+    required this.explanation,
+  });
+
+  final bool canRun;
+  final String explanation;
 }
 
 final class AnalyticsCardConfiguration {
@@ -271,20 +434,59 @@ final class AnalyticsUnavailableResultValue extends AnalyticsResultValue {
   final String message;
 }
 
+final class AnalyticsGroupKey {
+  AnalyticsGroupKey({
+    required this.value,
+    required this.determinantLabel,
+    Map<AnalyticsRelationalBreakdown, String> breakdownLabels = const {},
+  }) : breakdownLabels = Map.unmodifiable(breakdownLabels);
+
+  final String value;
+  final String determinantLabel;
+  final Map<AnalyticsRelationalBreakdown, String> breakdownLabels;
+}
+
+final class AnalyticsGroupedResultEntry {
+  AnalyticsGroupedResultEntry({
+    required this.groupKey,
+    required this.measure,
+    required this.operation,
+    required this.compatibilityKey,
+    required this.value,
+    required this.eligibleCount,
+    required this.totalCount,
+    required this.excludedCount,
+    Set<AnalyticsEvidenceRowId> contributingRowIds = const {},
+  }) : contributingRowIds = Set.unmodifiable(contributingRowIds);
+
+  final AnalyticsGroupKey groupKey;
+  final AnalyticsMeasure measure;
+  final AnalyticsOperation operation;
+  final AnalyticsCompatibilityKey compatibilityKey;
+  final AnalyticsResultValue value;
+  final int eligibleCount;
+  final int totalCount;
+  final int excludedCount;
+  final Set<AnalyticsEvidenceRowId> contributingRowIds;
+
+  bool get isPlottable => value is AnalyticsIntegerResultValue;
+}
+
 final class AnalyticsResultEnvelope {
-  const AnalyticsResultEnvelope({
+  AnalyticsResultEnvelope({
     required this.registryIdentifier,
     required this.registryVersion,
     required this.configuration,
-    required this.values,
-    required this.contributingRowIds,
+    required List<AnalyticsResultValue> values,
+    required Set<AnalyticsEvidenceRowId> contributingRowIds,
     required this.eligibleCount,
     required this.totalCount,
     required this.excludedCount,
     required this.periodStartUtc,
     required this.periodEndUtc,
     required this.interpretation,
-  });
+  }) : values = List.unmodifiable(values),
+       contributingRowIds = Set.unmodifiable(contributingRowIds);
 
   final String registryIdentifier;
   final int registryVersion;
@@ -297,4 +499,101 @@ final class AnalyticsResultEnvelope {
   final DateTime? periodStartUtc;
   final DateTime? periodEndUtc;
   final String interpretation;
+}
+
+final class AnalyticsRecord {
+  AnalyticsRecord({
+    required this.id,
+    required this.fingerprint,
+    required this.executedAtUtc,
+    required this.registryIdentifier,
+    required this.registryVersion,
+    required this.draft,
+    required List<AnalyticsOption> selectedValues,
+    required List<AnalyticsGroupedResultEntry> entries,
+    required Set<AnalyticsEvidenceRowId> contributingRowIds,
+    required this.eligibleCount,
+    required this.totalCount,
+    required this.excludedCount,
+    required this.interpretation,
+  }) : selectedValues = List.unmodifiable(selectedValues),
+       entries = List.unmodifiable(entries),
+       contributingRowIds = Set.unmodifiable(contributingRowIds);
+
+  final AnalyticsRecordId id;
+  final AnalyticsRecordFingerprint fingerprint;
+  final DateTime executedAtUtc;
+  final String registryIdentifier;
+  final int registryVersion;
+  final AnalyticsComposerDraft draft;
+  final List<AnalyticsOption> selectedValues;
+  final List<AnalyticsGroupedResultEntry> entries;
+  final Set<AnalyticsEvidenceRowId> contributingRowIds;
+  final int eligibleCount;
+  final int totalCount;
+  final int excludedCount;
+  final String interpretation;
+}
+
+final class AnalyticsPurchaseProjectionRow {
+  AnalyticsPurchaseProjectionRow({
+    required this.purchaseId,
+    required this.occurrenceTime,
+    required this.storeId,
+    required this.storeName,
+    required this.purchasedBy,
+    required this.paymentMethod,
+    required this.itemCount,
+    required this.purchaseTotal,
+    required Set<AnalyticsEvidenceRowId> itemIds,
+    this.unavailableReason,
+  }) : itemIds = Set.unmodifiable(itemIds);
+
+  final PurchaseId purchaseId;
+  final DateTime occurrenceTime;
+  final StoreId storeId;
+  final String storeName;
+  final AnalyticsReference? purchasedBy;
+  final AnalyticsReference? paymentMethod;
+  final int itemCount;
+  final AnalyticsMoneyAmount purchaseTotal;
+  final Set<AnalyticsEvidenceRowId> itemIds;
+  final AnalyticsUnavailableResultValue? unavailableReason;
+}
+
+final class AnalyticsVariablesState {
+  AnalyticsVariablesState({
+    required this.projection,
+    required this.search,
+    required this.sort,
+    required this.pageIndex,
+    required this.pageSize,
+    required List<AnalyticsPurchaseProjectionRow> purchaseRows,
+    required List<AnalyticsEvidenceRow> itemRows,
+    required Set<AnalyticsEvidenceRowId> selectedRowIds,
+    this.focusedRecord,
+    this.message,
+  }) : purchaseRows = List.unmodifiable(purchaseRows),
+       itemRows = List.unmodifiable(itemRows),
+       selectedRowIds = Set.unmodifiable(selectedRowIds);
+
+  final AnalyticsVariablesProjection projection;
+  final String search;
+  final AnalyticsVariablesSort sort;
+  final int pageIndex;
+  final int pageSize;
+  final List<AnalyticsPurchaseProjectionRow> purchaseRows;
+  final List<AnalyticsEvidenceRow> itemRows;
+  final Set<AnalyticsEvidenceRowId> selectedRowIds;
+  final AnalyticsRecord? focusedRecord;
+  final String? message;
+
+  int get selectedCount => selectedRowIds.length;
+  bool get hasPrevious => pageIndex > 0;
+  bool get hasNext {
+    final length = projection == AnalyticsVariablesProjection.purchases
+        ? purchaseRows.length
+        : itemRows.length;
+    return (pageIndex + 1) * pageSize < length;
+  }
 }

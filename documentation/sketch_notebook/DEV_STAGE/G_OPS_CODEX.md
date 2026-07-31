@@ -1,143 +1,113 @@
-# G_OPS_CODEX - C11 PH03 Settings Audit and Closure Evidence
+# C11-PH04-R01 Operational Codex Evidence
 
-Source stages:
+Activation marker: `<!-- ACTIVATION_MARKER:C11-PH04-R01-2026-07-31 -->`
 
-- `documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md`
-- `documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md`
-- `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`
+Starting remote HEAD: `35cf23602060fd3a186a2470d7ac322c795e5fce`.
+Required PH03 ancestor: `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`.
 
-Activation marker:
+## Changed Paths
 
-```text
-<!-- ACTIVATION_MARKER:C11-PH03-R01-2026-07-31 -->
-```
+- `clients/markei_flutter/lib/domain/analytics/analytics_models.dart`
+- `clients/markei_flutter/lib/application/analytics.dart`
+- `clients/markei_flutter/lib/application/analytics_workspace.dart`
+- `clients/markei_flutter/lib/infrastructure/local/local_analytics_repository.dart`
+- `clients/markei_flutter/lib/app/pages/analytics_page.dart`
+- `clients/markei_flutter/lib/app/widgets/analytics_components.dart`
+- `clients/markei_flutter/test/application/analytics_workspace_test.dart`
+- `clients/markei_flutter/test/app/analytics_page_test.dart`
+- `clients/markei_flutter/test/app/analytics_components_test.dart`
+- `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
+- `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
+- `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
 
-Starting remote HEAD:
+## Operational Result
 
-```text
-256ee4dbbcb790419b816862ee42933a115ddd87
-```
+Analytics now uses a functional `Create analysis` composer instead of hard-coded card creation. It exposes Group by, Choose, Variables, Operation, Timeframe, Run & save analysis, and Clear draft. Determinant choices are derived from the active Account dataset with stable keys, including duplicate-label coverage. Invalid custom UTC intervals, missing determinant values, missing measures, unavailable Purchased for, unsupported operations, stale/foreign selections, invalid Difference operands, and invalid Percentage containment block Run with explicit explanations.
 
-Pre-mutation guard:
+`Run & save analysis` appends and selects an immutable session-local record. Records are newest-first, fingerprinted with the existing crypto dependency, retained only by the Analytics workspace, and not serialized, synchronized, edited, deleted, or reordered. The browser uses `Saved analyses — this session` and older/newer navigation.
 
-- fetched `origin/grm-guarded-provisioning-20260727` without pull, merge,
-  rebase, reset, clean or stash;
-- local HEAD and remote branch HEAD were both
-  `256ee4dbbcb790419b816862ee42933a115ddd87`;
-- `e8723bec10836e37bc1a7cf22fcb6de21dd03cf4` remained an ancestor;
-- worktree was synchronized before PH03 mutation.
+Grouped calculation now applies Account dataset, timeframe, selected Item scope, determinant selection, determinant-plus-breakdown grouping, compatibility validation, checked fixed-point calculation, typed unavailable entries, and immutable record freezing. Difference remains comparison B minus baseline A. Percentage remains part/whole, not percentage change.
 
-Implementation evidence:
+The selected record owns Chart/Table and export behavior. Chart and Table consume the same frozen grouped entries. Chart uses Flutter `CustomPainter`, bounded height, horizontal accommodation, units/currencies, semantics, and zero baseline for signed Difference. Table remains available for all results and is the fallback for mixed or unplottable compatibility keys. CSV/PDF export writes exactly one temp file per explicit successful export and preserves the record on sanitized failure.
 
-- Settings keeps the existing local repositories and Account scope, loads the
-  persisted shortage threshold, validates whole threshold values from 0 through
-  365, preserves invalid draft input, distinguishes loading, empty, read-error,
-  save-error and saved states, refreshes reference lists after archive, and
-  blocks duplicate asynchronous Settings actions.
-- Settings now exposes capability-narrow Account and Sync/Device sections.
-  Ordinary sign-in, sign-out, local device status, device connection and Sync
-  actions delegate through existing Auth/enrollment/Sync behavior only; tests
-  use fakes.
-- Audit replaces the reserved page with a functional local activity-history
-  projection over persisted diagnostic attempts and child events.
-- Audit first load is visibility-gated, Retry repeats only the local read,
-  stale asynchronous completions are suppressed, one controller/state is shared
-  across responsive layouts, and Audit performs no network call or write.
-- Audit uses one attempt query and one child diagnostic-event query per page.
-  Default page size is 20 attempts and the request hard maximum is 50.
-- Audit uses persisted attempt/event identities and an exclusive composite
-  cursor of `startedAtUtc` plus attempt ID.
-- Audit states include loading, ready, empty, stale, bounded-window and
-  unavailable wording.
-- Audit projection is Account/environment scoped and sanitized from
-  credentials, tokens, raw payload details, SQL text, paths, stack traces, full
-  hashes, raw identifiers, private URLs and raw exceptions.
-- Closure is absent from ordinary wide, medium and compact navigation with
-  `MARKEI_NATIVE_CLOSURE_SURFACE` false and true.
-- Dangerous or highly technical Closure capabilities remain development-only
-  or absent from ordinary product UI.
-- Composition owns Audit controller disposal and database closure with an
-  idempotent `close()` method.
+The lower surface is now `Variables` with the subtitle `Registered Purchase evidence available locally for analysis.` It includes Purchase and Contained item projections, search, deterministic sort, 20-row pagination, selected-row counts, Purchase-to-Item expansion, exact Item selection, and `Use selected rows` handoff back to the composer without calculation.
 
-Counts and operational observations:
+## Counts And Evidence
 
-- Audit initial visible page load: 2 local database queries, 0 network calls,
-  0 writes.
-- Audit Retry: 2 local database queries, 0 network calls, 0 writes.
-- Audit local filtering/ready rendering/state transitions tested in controller
-  and widget state without additional repository requests.
-- No Audit HTTP client, broad closure runner, access-token authority, Auth
-  mutation, enrollment coordinator, Sync coordinator, Retry, Recovery or
-  delete-history capability was imported into Audit.
+- Repository requests: initial visible Analytics load = 1; explicit Retry adds +1; composer, Run, record selection, Chart/Table switch, export builders, Variables filter/sort/page/selection/focus and Clear draft add +0.
+- Analytics database writes: 0, except explicit CSV/PDF temp-file writes outside the database.
+- Analytics network requests: 0.
+- Export file writes measured in widget test: CSV = 1, PDF = 1, total = 2.
+- Ordinary fixture: 1,000 Purchases / 5,000 Items; rendered Variables page size = 20; load = 58 ms; grouped record creation = 66 ms; chart build proxy = 16 ms; table build proxy = 18 ms.
+- Stress fixture: 10,000 Purchases / 50,000 Items; selected scope = 500 Item IDs; load = 263 ms; grouped record creation = 586 ms.
 
-Validation evidence:
+## Validation
 
-- `flutter pub get`: PASS; no dependency or lockfile change.
-- `dart format --output=none --set-exit-if-changed lib test`: PASS; 119 files,
-  0 changed.
-- `flutter analyze`: PASS; no issues found.
-- `flutter test test/app/settings_page_test.dart`: PASS; 2 tests.
-- `flutter test test/app/audit_page_test.dart`: PASS; 1 test.
-- `flutter test test/application/audit_test.dart`: PASS; 2 tests.
-- `flutter test test/infrastructure/closure_diagnostics_repository_test.dart`:
-  PASS; 11 tests.
-- `flutter test test/app/native_closure_surface_test.dart`: PASS; 3 tests.
-- `flutter test test/app/native_closure_diagnostics_test.dart`: PASS; 40
-  tests.
-- `flutter test test/app/markei_app_test.dart`: PASS; 26 tests.
-- `flutter test test/app/markei_visual_foundation_test.dart`: PASS; 6 tests.
-- `flutter test test/infrastructure/native_auth_composition_test.dart`: PASS;
-  17 tests.
-- `flutter test test/infrastructure/native_closure_sync_path_test.dart`: PASS;
-  3 tests, with existing Drift multiple-database debug warnings from the
-  pre-existing file-backed harness.
-- `flutter test --concurrency=1`: PASS; 264 tests passed and 4 lab-only tests
-  skipped, wall time 88.4 seconds.
-- `flutter build windows --release`: PASS; built
-  `build\windows\x64\runner\Release\markei.exe` in 49.9 seconds, with the
-  existing Boost CMake developer warning.
-- `flutter build apk --debug`: PASS; built
-  `build\app\outputs\flutter-apk\app-debug.apk` in 80.4 seconds, with the
-  existing `auth0_flutter` Kotlin Gradle Plugin migration warning.
+- `flutter pub get`: PASS.
+- `git diff --exit-code -- pubspec.yaml pubspec.lock`: PASS.
+- `dart format --output=none --set-exit-if-changed lib test`: PASS after formatting five carried Dart files.
+- `flutter analyze`: PASS.
+- `flutter test test/analytics_registry_test.dart`: PASS, 5 tests.
+- `flutter test test/application/analytics_test.dart`: PASS, 1 test.
+- `flutter test test/application/analytics_workspace_test.dart`: PASS, 11 tests.
+- `flutter test test/infrastructure/local_analytics_repository_test.dart`: PASS, 1 test.
+- `flutter test test/app/analytics_page_test.dart`: PASS, 1 test.
+- `flutter test test/app/analytics_components_test.dart`: PASS, 2 tests.
+- `flutter test test/app/history_analytics_handoff_test.dart`: PASS, 1 test.
+- `flutter test test/app/markei_visual_foundation_test.dart`: PASS, 6 tests.
+- `flutter test test/app/markei_app_test.dart`: PASS, 26 tests.
+- `flutter test --concurrency=1`: PASS, 272 passed / 4 skipped in about 92 seconds; existing Drift multiple-database debug warnings appeared in Sync tests.
+- `flutter build windows --release`: PASS; produced `build\windows\x64\runner\Release\markei.exe`; existing Boost/CMake developer warning only.
+- `flutter build apk --debug`: PASS; produced `build\app\outputs\flutter-apk\app-debug.apk`; Flutter emitted existing Kotlin Gradle Plugin migration warning for `auth0_flutter`.
 - `node scripts/generate_sync_diagnostics.mjs --check`: PASS.
-- `git diff --check`: PASS with line-ending warnings only.
+- `git diff --check`: PASS; CRLF normalization warnings only.
 
-Evidence limits:
+## Audits
 
-- Automated evidence includes focused tests, full tests, analysis, generator
-  drift check, formatting, diff check and platform builds.
-- Rendered evidence is limited to widget and app-shell assertions; no
-  screenshots were collected.
-- Build evidence covers Windows release and Android debug artifacts only.
-- Live Sign in, enrollment, hosted connection, Sync, Retry, Recovery, Auth0,
-  Neon and Render operations were not performed.
-- Human acceptance, screen-reader review, real-device review and locale review
-  were not performed.
+Changed paths are within D section 34. No schema, migration, generated Drift, dependency, lockfile, platform, API, Auth, Sync, provider, diagnostic, Settings, Audit, Closure, Lists, History, shell/composition/navigation, D/E/F, A/B/C, J, Main-root, permanent memory, methodology, environment or secret surface was changed. Live Sign in, enrollment, hosted connection, Sync, Retry, Recovery, Auth0, Neon, Render and provider operations were not performed.
+
+Human rendered screenshot review, assistive-technology acceptance, locale review, real-device review and learner comprehension review were not performed.
+
+Publication was not performed because the final pre-commit fetch advanced
+`origin/grm-guarded-provisioning-20260727` from
+`35cf23602060fd3a186a2470d7ac322c795e5fce` to
+`7d9b82cb7ed7c1abb9788b553e71d245f3189662`. The publication gate required the
+remote to still equal the recorded starting head exactly.
 
 ## Terminal
 
 ```text
 CYCLE=C11
-PHASE=C11-PH03
-ROUND=C11-PH03-R01
-SETTINGS_FUNCTIONAL=PASS
-AUDIT_FUNCTIONAL=PASS
-AUDIT_LOCAL_READ_ONLY=PASS
-AUDIT_NETWORK_CALLS=0
-AUDIT_WRITE_CALLS=0
-AUDIT_QUERIES_PER_PAGE=2
-ACCOUNT_ENVIRONMENT_ISOLATION=PASS
-SANITIZATION=PASS
-CLOSURE_ORDINARY_NAVIGATION=ABSENT
-DANGEROUS_PRODUCT_CONTROLS=ABSENT
-SETTINGS_REGRESSION=PASS
-RESOURCE_DISPOSAL=PASS
+PHASE=C11-PH04
+ROUND=C11-PH04-R01
+PH03_IMPLEMENTATION_ANCESTOR=0924e743931ea7aba2c9cc5d2e28063e737b2ff5
+STARTING_HEAD=35cf23602060fd3a186a2470d7ac322c795e5fce
+ANALYTICS_COMPOSER=PASS
+DETERMINANT_VALUE_SELECTION=PASS
+VARIABLE_OPERATION_VALIDATION=PASS
+IMMUTABLE_SESSION_RECORDS=PASS
+RECORD_FINGERPRINT=PASS
+CHART_TABLE_PARITY=PASS
+CSV_EXPORT=PASS
+PDF_EXPORT=PASS
+VARIABLES_PURCHASE_ITEM_PROJECTIONS=PASS
+VARIABLES_SELECTION_HANDOFF=PASS
+ANALYTICS_REPOSITORY_REQUESTS=initial:1; retry:+1; local_ui:+0
+ANALYTICS_DATABASE_WRITES=0
+ANALYTICS_NETWORK_REQUESTS=0
+EXPLICIT_EXPORT_FILE_WRITES=2
+ACCOUNT_ISOLATION=PASS
+PH02_CALCULATION_REGRESSION=PASS
+RESPONSIVE_ACCESSIBILITY=PASS
+FOCUSED_TESTS=PASS
+FULL_FLUTTER_TEST=PASS
+WINDOWS_RELEASE_BUILD=PASS
+ANDROID_DEBUG_BUILD=PASS
 SCHEMA_MIGRATION=NONE
 GENERATED_SOURCE_CHANGED=NO
 DEPENDENCY_CHANGED=NO
-AUTH_SYNC_PROVIDER_CONTRACT_CHANGED=NO
+PH03_SURFACES_CHANGED=NO
 LIVE_PROVIDER_OPERATIONS=NOT_PERFORMED
-WINDOWS_RELEASE_BUILD=PASS
-ANDROID_DEBUG_BUILD=PASS
-NEXT_OPERATIONAL_REVIEW=Reconcile PH03 G/H/I evidence into permanent Operational memory.
+PUBLICATION=NOT_PUSHED
+NEXT_MAIN_ACTION=Reconcile C11-PH04 G/H/I evidence and schedule human rendered review.
 ```

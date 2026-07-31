@@ -1,91 +1,51 @@
-# H_DDC_CODEX - C11 PH03 Learner-Facing Evidence
+# C11-PH04-R01 Didactic Codex Evidence
 
-Source stages:
+Activation marker: `<!-- ACTIVATION_MARKER:C11-PH04-R01-2026-07-31 -->`
 
-- `documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md`
-- `documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md`
-- `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`
+## Learner-Facing Result
 
-Activation marker:
+Analytics remains described as deterministic calculation over local Purchase evidence for the active Account. PH04 changes the learner workflow from passive cards to an explicit `Create analysis` draft: Group by, Choose, Variables, Operation, Timeframe, Run & save analysis, and Clear draft.
 
-```text
-<!-- ACTIVATION_MARKER:C11-PH03-R01-2026-07-31 -->
-```
+The Variables control distinguishes relational breakdowns from numeric measures. `Purchased by` and `Payment method` label/subdivide evidence; their identifiers are never treated as numeric values. `Purchased for` remains visible but disabled as unavailable in recorded data. Run requires at least one measure and one selected determinant value.
 
-Learner-visible Settings result:
+Disabled explanations are explicit and adjacent to the composer: missing determinant value, missing measure, unavailable Purchased for, unsupported operation/measure, invalid custom UTC interval, empty or stale selection, invalid Difference operands, and invalid Percentage containment.
 
-- Settings remains the place for local app preferences and Account/device
-  readiness, not a recovery or destructive maintenance console.
-- The shortage threshold is loaded from persistence and saved only after whole
-  values from 0 through 365 validate.
-- Invalid threshold drafts remain visible so the learner can correct the value
-  without losing input.
-- Reference archives refresh the displayed lists, making the completed local
-  action visible.
-- Account, Device and Sync actions describe whether they are local status
-  checks, sign-in/sign-out delegation, device connection or manual Sync.
-- Duplicate asynchronous Settings actions are blocked while one action is
-  pending.
+Saved records use `Saved analyses — this session`. A record fingerprint is presented only as a compact session reference, not as a security, authenticity, causality or persistence proof. Saved record navigation selects older/newer records without mutation. Ordinary enabled edit/delete/reorder controls are absent.
 
-Learner-visible Audit result:
+Chart and Table are presented as two views of one frozen result. Chart includes a semantic summary, categories, series, units and evidence count; Table exposes the full exact result rows including typed unavailable reasons. Switching presentation does not imply recalculation. CSV/PDF export language identifies local temp-file output and does not imply cloud upload or sharing.
 
-- Audit is reachable from ordinary navigation as recent local activity history
-  for the active Account and environment.
-- Audit is distinct from Purchase History: Purchase History shows purchase
-  facts, while Audit shows local diagnostic attempts and events.
-- Audit is distinct from current Settings/Sync status: status explains the
-  present state, while Audit shows a bounded historical projection.
-- Audit copy is explicit about local scope, bounded windows, freshness and
-  unavailable states.
-- Diagnostic codes are presented as technical classifications and safe next
-  action guidance, not as full causal explanations.
-- Sanitized details avoid credentials, tokens, raw payloads, SQL, paths, stack
-  traces, private URLs, full hashes, raw identifiers and raw exceptions.
-- Empty, loading, stale and unavailable states are distinct and honest.
+The lower surface is `Variables` with the qualification `Registered Purchase evidence available locally for analysis.` The `Purchases` projection is one row/card per Purchase and expands selection to contained Item IDs. `Contained items` is one row/card per persisted Purchase Item. `Use selected rows` prepares scope for a draft and performs no calculation.
 
-Responsive and accessibility evidence:
+## Evidence Limits
 
-- Audit shares one controller/state across responsive layouts.
-- Audit remains reachable from wide and medium navigation and compact More.
-- Closure is absent from ordinary navigation and semantics under both feature
-  flag values.
-- Existing app-shell and visual foundation tests cover 599, 600, 1023 and 1024
-  logical-pixel boundary behavior, retained selected destination, compact More
-  semantics and 200 percent text scale.
-- Focus and keyboard behavior are covered by widget/app-shell focused tests.
-- No color-only state indication was introduced.
+Automated widget tests covered compact/wide reachable facts, responsive breakpoints, 200-percent text regressions from existing visual foundation coverage, focus/semantics keys for chart and disabled controls, export actions, History handoff, and PH03 app-shell regressions. Human screenshot fidelity, assistive technology acceptance, locale/real-device review and comprehension evidence were not performed.
 
-Evidence limits:
-
-- Automated evidence covers learner-facing wording, state distinctions,
-  navigation reachability, Closure absence, Settings validation and Audit
-  local/bounded copy.
-- Screenshot review was not performed.
-- Human assistive-technology acceptance, real-device review, locale review and
-  human comprehension review were not performed.
-- KANBAN maturity transitions were not performed by Codex.
-- Hosted Audit, cross-device Audit, causal explanations, provider telemetry,
-  automatic Retry/Recovery and destructive controls were not introduced.
+No prediction, recommendation, ranking, causal explanation, hosted truth, telemetry, repair, Sync or provider claim was added.
 
 ## Terminal
 
 ```text
-SETTINGS_PURPOSE_LEGIBLE=PASS
-AUDIT_PURPOSE_LEGIBLE=PASS
-AUDIT_VS_PURCHASE_HISTORY=PASS
-CURRENT_STATUS_VS_HISTORY=PASS
-LOCAL_BOUNDED_FRESHNESS_COPY=PASS
-EVIDENCE_STATE_VOCABULARY=PASS
-ACTION_EFFECT_LANGUAGE=PASS
-DANGEROUS_ACTIONS_ORDINARY_UI=ABSENT
+CYCLE=C11
+PHASE=C11-PH04
+ROUND=C11-PH04-R01
+GROUP_BY_AND_CHOOSE_VOCABULARY=PASS
+VARIABLES_BREAKDOWN_MEASURE_DISTINCTION=PASS
+UNSUPPORTED_COMBINATION_EXPLANATIONS=PASS
+SESSION_RECORD_MEANING=PASS
+FINGERPRINT_CLAIM_CEILING=PASS
+CHART_TABLE_SEMANTIC_PARITY=PASS
+RESULT_TRACEABILITY_LANGUAGE=PASS
+PURCHASE_CONTAINED_ITEM_DISTINCTION=PASS
+UNAVAILABLE_FIELD_LANGUAGE=PASS
+EXPORT_LANGUAGE=PASS
 WIDE_COMPACT_SEMANTIC_PARITY=PASS
 KEYBOARD_FOCUS_SEMANTICS=PASS
 TEXT_SCALE_200=PASS
-PH03_SCREENSHOTS=NOT_PERFORMED
+SCREENSHOT_FIDELITY_REVIEW=NOT_PERFORMED
 HUMAN_ASSISTIVE_TECH_ACCEPTANCE=NOT_PERFORMED
 LOCALE_REAL_DEVICE_REVIEW=NOT_PERFORMED
 HUMAN_COMPREHENSION=NOT_ESTABLISHED
 KANBAN_TRANSITIONS=NONE
-CAUSAL_TELEMETRY_COMPLETE_AUDIT_CLAIMS=ABSENT
-NEXT_DIDACTIC_REVIEW=Classify PH03 H evidence for permanent Didactic absorption.
+PREDICTION_CAUSAL_RECOMMENDATION_CLAIMS=ABSENT
+NEXT_DIDACTIC_REVIEW=Reconcile PH04 H evidence and run human rendered comparison against the approved plates.
 ```
