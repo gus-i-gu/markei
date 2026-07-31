@@ -1527,3 +1527,924 @@ CODEX_STATUS=INACTIVE
 Codex remains explicitly inactive. No source, test, schema, dependency,
 provider, Sync, permanent-memory, methodology, Main-root, J, A/C, D/E/F or
 G/H/I change is authorized by this round.
+
+---
+
+<!-- ROUND_MARKER:C11-PH05-R01-A-2026-07-31 -->
+# Cycle C11 PH05 Round 01 — Didactic Investigation
+
+## 1. Identity and authority
+
+Role: established Didactic Chat [A].
+
+Round: `C11-PH05-R01`.
+
+Sequence: `SEQ-INV-02 -> ERI-01 -> FCA-02`.
+
+This is an investigative B-stage append. It owns learner-facing meaning,
+vocabulary, misconceptions, claim ceilings, comprehension gates and proposed
+Didactic evidence gates. It does not select architecture, authorize source
+materialization, modify permanent memory, change KANBAN maturity or activate
+Codex.
+
+Claim classes remain separate:
+
+- `REMOTE_REPOSITORY_FACT` — observed at the named remote branch HEAD;
+- `ACTIVE_PH04_AUTHORITY` — controlling D/E/F meaning not yet remotely
+  materialized;
+- `WORKTREE_CANDIDATE` — local draft work, if visible, without repository-fact
+  status;
+- `PH05_PROPOSAL` — learner-facing recommendation from this investigation;
+- `VALIDATED_RESULT` — a named check passed within its stated scope;
+- `HUMAN_OBSERVATION` — a separately recorded human review.
+
+Round-delta labels:
+
+- **retained** — still supported and carried forward;
+- **new** — first established by this round;
+- **corrected** — earlier wording narrowed by current evidence;
+- **superseded** — prior provisional meaning replaced for current use;
+- **contradicted** — repository evidence opposes the claim;
+- **unresolved** — Main or human judgment remains necessary;
+- **prospective** — proposed PH05 behavior or wording, not implementation;
+- **deferred** — explicitly outside the PH05 boundary.
+
+`KANBAN_TRANSITIONS=NONE`. Represented, executable, automatically tested,
+human-reviewed and learner-understood evidence remain distinct.
+
+## 2. Inputs and repository HEAD
+
+Repository: `gus-i-gu/markei`.
+
+Required branch: `grm-guarded-provisioning-20260727`.
+
+Starting inspected remote HEAD:
+`7d9b82cb7ed7c1abb9788b553e71d245f3189662`.
+
+Required PH04 activation ancestor:
+`35cf23602060fd3a186a2470d7ac322c795e5fce`.
+
+The activation ancestor remains the merge base and the branch is one commit
+ahead. The only descendant is the accepted documentation-only Main continuity
+commit `7d9b82cb7ed7c1abb9788b553e71d245f3189662`, which changes only:
+
+- `documentation/sketch_notebook/00_PROJECT_STATE.md`;
+- `documentation/sketch_notebook/05_SESSION_LOG.md`;
+- `documentation/sketch_notebook/06_SESSION_SCHEME.md`;
+- `documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md`.
+
+No source, test, D/E/F, G/H/I, schema, dependency, environment or unrelated
+change intervenes.
+
+No local Git checkout was visible in the current workspace. Consequently there
+is no observable local branch, HEAD or dirty-path inventory and no
+`WORKTREE_CANDIDATE` claim is made. No user worktree was reset, cleaned,
+stashed, restored, staged, rebased, committed or overwritten.
+
+Required recovery was completed in order through `AGENTS.md`, `INDEX.md`,
+`PROMPT_COLLECTION.md`, PRI-A, PMC-01, `FLX-SEQ-00`, `FLX-INV-02`, PRC-01,
+the Didactic checkpoint, latest J section 12, all three active PH04 D/E/F
+tails, the preceding B round, current H, and the exact source/test surfaces
+listed below. PMC-02 was not triggered because routing, authority and promotion
+state were unambiguous.
+
+## 3. New repository evidence
+
+### 3.1 Inspected topology and surfaces
+
+| Path | Relevant responsibility | Evidence classification |
+| --- | --- | --- |
+| `clients/markei_flutter/lib/app/markei_app.dart` | destinations, page composition, Guide static copy, History-to-Analytics callback | `REMOTE_REPOSITORY_FACT` |
+| `lib/application/home_content.dart` | four existing Home task descriptors | `REMOTE_REPOSITORY_FACT` |
+| `lib/app/pages/home_page.dart` | Home hierarchy and responsive task grid | `REMOTE_REPOSITORY_FACT` |
+| `lib/app/pages/purchase_page.dart` | Store/time, optional Person/Payment, draft validation and layout | `REMOTE_REPOSITORY_FACT` |
+| `lib/app/pages/products_page.dart` | Catalogue row/card activation and detail | `REMOTE_REPOSITORY_FACT` |
+| `lib/app/pages/history_page.dart` | filters, selection, Analytics handoff, CSV/PDF file writes | `REMOTE_REPOSITORY_FACT` |
+| `lib/application/purchase_history.dart` | History entry/detail contracts | `REMOTE_REPOSITORY_FACT` |
+| `lib/infrastructure/local/local_query_repository.dart` | recent-50 History query and visible-code allocation | `REMOTE_REPOSITORY_FACT` |
+| `lib/application/analytics.dart` | typed Account/Purchase-ID launch context | `REMOTE_REPOSITORY_FACT` |
+| `lib/application/analytics_workspace.dart` | selected evidence scope and History context message | `REMOTE_REPOSITORY_FACT` |
+| `lib/app/pages/analytics_page.dart` | current PH02 card UI and local evidence scope | `REMOTE_REPOSITORY_FACT` |
+| `lib/app/pages/audit_page.dart` | visible local Audit page and visibility-gated loading | `REMOTE_REPOSITORY_FACT` |
+| `lib/app/widgets/audit_components.dart` | bounded attempt/event cards and state copy | `REMOTE_REPOSITORY_FACT` |
+| `lib/application/audit.dart` | local Audit page/cursor/state model | `REMOTE_REPOSITORY_FACT` |
+| `lib/app/pages/settings_page.dart` | current Settings information order and actions | `REMOTE_REPOSITORY_FACT` |
+| `lib/domain/references/local_reference.dart` | visible short-code/reference labels | `REMOTE_REPOSITORY_FACT` |
+| `test/app/history_analytics_handoff_test.dart` | one-Purchase typed handoff without calculation | `VALIDATED_RESULT` limited to existing named widget test evidence |
+| `test/app/audit_page_test.dart` | visibility gate, one local read, local Retry, no network/write | `VALIDATED_RESULT` from existing PH03 H/test record |
+| `test/app/settings_page_test.dart` | threshold, archive refresh and fake support actions | `VALIDATED_RESULT` from existing PH03 H/test record |
+| `test/app/markei_app_test.dart` | integrated page flows and responsive shell cases | existing automated evidence, not PH05 validation |
+| `test/app/markei_visual_foundation_test.dart` | breakpoints, compact More, Home 200% text | existing automated evidence, not PH05 validation |
+
+The path prefix for unqualified Flutter paths in this table is
+`clients/markei_flutter/`.
+
+### 3.2 Home
+
+`homeCards` contains Register purchases, View lists, Browse catalogue and Open
+purchase history. `HomePage` omits the Purchase descriptor from its secondary
+grid because Register purchase is already the primary button. There is no News
+card, Updates Follow-up card, release feed, network news source or milestone
+model.
+
+Therefore:
+
+- **new repository fact:** News and Updates Follow-up are absent;
+- **contradicted:** any claim that the remote app currently publishes live news
+  or release status;
+- **prospective:** two concise local informational cards may be added without
+  implying a live service.
+
+### 3.3 Purchase
+
+`PurchasePage` currently presents `Store and time` and `Optional local labels`
+as two consecutive full-width sections. Store, Purchase date and Time are
+required context. Person and Payment Method are independent optional references;
+the registration command stores their independent nullable IDs.
+
+The current subtitle `Person and payment references are presentation context
+only` is too weak: the references are optional metadata attached to the
+Purchase, not merely decorative copy. The grouping must not suggest that Person
+and Payment Method form one stored object.
+
+### 3.4 Catalogue
+
+`ProductsPage` contains no checkbox. Wide rows and compact cards retain an
+active selection/detail state, `View details`, and row/card activation. The
+selected Product highlight is not bulk selection and does not delete, archive
+or remove the Product.
+
+This corrects the PH05 premise from “checkbox removal to implement” to
+“checkbox absence to preserve and obsolete selection wording to audit.” No
+focused test currently states that Catalogue checkboxes and bulk-action copy are
+absent.
+
+### 3.5 History selection
+
+History owns two separate states:
+
+- `_selectedIds`: zero, one or many Purchases chosen for set actions;
+- `_selectedPurchaseId`: one Purchase whose detail is open.
+
+Every row/card checkbox toggles membership. The last selected Purchase can be
+unchecked, so the selected set can return to zero. Current actions are disabled
+when the set is empty. `Clear` empties the set.
+
+Current `Select all` clears prior selection and selects every filtered entry in
+the loaded list. The repository loads at most 50 recent Purchases, and History
+has no page control. Therefore `Select all` does not mean every matching
+Purchase in persistence and does not currently mean “current page.” The only
+focused handoff test selects one Purchase; it does not establish multi-select,
+zero-after-uncheck, select-all scope, selected-count announcements, disabled
+reasons or export failure behavior.
+
+### 3.6 Analytics context handoff
+
+History currently labels the action `Analyze selected purchases` and hands a
+typed `Set<PurchaseId>` to app composition. Analytics matches those IDs to local
+Purchase Item evidence and exposes a selected evidence scope. The focused test
+correctly proves an ID handoff without History-side calculation.
+
+Current Analytics copy says `Using N purchases from History. Analytics will
+calculate from their local evidence.` This can be read as automatic execution.
+The active, unmaterialized PH04 authority instead requires a draft followed by
+`Run & save analysis`; it does not authorize describing that behavior as a
+remote fact yet.
+
+### 3.7 History exports
+
+History currently:
+
+- requests an Account-scoped selected-Purchase export bundle;
+- writes CSV to `Directory.systemTemp/markei-selected-purchases.csv`;
+- writes PDF to `Directory.systemTemp/markei-selected-list.pdf`;
+- reports the temporary path after the write;
+- tells the learner to share the PDF manually;
+- has no visible busy state, permission failure, unavailable-directory failure
+  or write-failure classification around these methods.
+
+This is export creation, not native sharing and not verified Downloads-folder
+delivery. A file must not be claimed before the final write succeeds.
+
+### 3.8 Guide
+
+Guide is a `_StaticPage` with one sentence. It has no sections, anchors,
+search, expandable topics, task sequence, claim boundaries or feature-specific
+completion evidence. Navigation identity exists, but a functional learning
+surface does not.
+
+### 3.9 Audit
+
+Remote Audit is a visibility-gated, Account/environment-scoped, read-only local
+window of attempts and diagnostic events. It supports loading, empty,
+unavailable, stale, retry and older-page states. The default page limit is 20
+and maximum is 50.
+
+It does not contain separate System, Health or Diagnostics interpretation
+cards. Current attempt titles expose operation kind/result code and the detail
+exposes code, title, meaning, guidance, phase, severity and outcome. Audit
+remains recent local history, not provider status, a causal engine or automatic
+repair.
+
+### 3.10 Settings and short codes
+
+Settings currently orders:
+
+1. Preferences — People, Payment Methods and shortage threshold;
+2. Account;
+3. Sync and Device;
+4. a collapsible Advanced support section containing Connect this Device and
+   Sync now.
+
+The proposed PH05 order differs: Account first, then local references and
+threshold, then Sync/devices, then visible non-collapsible Advanced actions.
+
+`LocalReference.visibleCode` is stored and displayed with the nickname.
+`LocalQueryRepository._allocateReferenceCode` allocates:
+
+- Person: `@` plus a zero-padded three-digit Account-local sequence;
+- Payment Method: `#` plus a zero-padded three-digit Account-local sequence.
+
+These are stored visible reference codes and presentation identity, not
+cryptographic hashes. `$NNN` is neither allocated nor established in remote
+source. Existing `#NNN` entries must remain readable and stable if any future
+prefix choice changes.
+
+## 4. Component, function, object and vocabulary additions
+
+| Component / function / object | Current responsibility | PH05 learner-facing consequence |
+| --- | --- | --- |
+| `HomeCardDescriptor` | title, body, destination ID | informational cards need an explicit non-navigation or safe destination model |
+| `PurchasePage._storeSection` | required Store/date/time | compact required-context group; no optional implication |
+| `PurchasePage._referenceSection` | nullable Person/Payment references | two optional metadata fields, not one compound object |
+| `ProductsPage._selectedProduct` | active row/card context | use “Open/View details,” never selection-count or bulk-action language |
+| `HistoryPage._selectedIds` | selected Purchase set | zero/one/many semantics and set-action scope |
+| `HistoryPage._selectedPurchaseId` | open detail | must remain distinct from checkbox selection |
+| `HistoryPage._toggleSelection` | adds/removes one ID | final row remains uncheckable; announce updated count |
+| `HistoryPage._actionBand` | selected-set actions | labels and disabled reasons must name exact scope |
+| `HistoryPage._exportCsv/_sharePdf` | temporary file creation | success only after final write; classify destination/failure |
+| `AnalyticsPurchaseSelectionLaunchContext` | Account plus Purchase IDs | context handoff, not record movement or calculation |
+| `AnalyticsWorkspaceController._applyLaunchContext` | maps Purchases to Item rows | destination must expose matched/unavailable counts |
+| `_StaticPage` Guide | one sentence | insufficient for the proposed eight-part sequence |
+| `AuditPageResult` | bounded local window | Audit history, not complete operational truth |
+| `AuditWorkspaceKind` | idle/loading/ready/empty/stale/unavailable | basis for honest state cards, not provider health |
+| `SettingsPage` sections | preferences/readiness/actions | proposed order must preserve distinct Account/reference/Device concepts |
+| `LocalReference.visibleCode` | stable stored short reference | say short code/reference code; never hash |
+
+## 5. Retained conclusions
+
+1. **Retained:** Purchase History and Audit history are different concepts.
+2. **Retained:** local state, hosted fact, recorded event, interpretation and
+   causal explanation remain distinct.
+3. **Retained:** Person is a Purchase reference, not an Account identity.
+4. **Retained:** Payment Method is a nickname/reference, never financial
+   credentials.
+5. **Retained:** History may transfer typed context but must not calculate
+   Analytics.
+6. **Retained:** Analytics scope transfer must not mutate Purchase records.
+7. **Retained:** Audit is local, sanitized, bounded and read-only.
+8. **Retained:** diagnostic codes classify recorded evidence and safe guidance;
+   they do not prove a cause.
+9. **Retained:** passing tests or builds do not establish learner comprehension
+   or KANBAN maturity.
+10. **Retained:** wide/compact parity, keyboard/focus, non-color meaning and
+    200-percent text require feature-specific evidence.
+11. **Retained:** prediction, recommendation, causal claims, provider detail,
+    automatic repair and raw diagnostic overload are outside this teaching
+    boundary.
+12. **Retained:** PH04 is active authority but unmaterialized at the inspected
+    remote HEAD.
+
+## 6. Corrections
+
+1. **Corrected:** Catalogue checkbox removal is already represented remotely;
+   PH05 must preserve that absence and clarify row activation.
+2. **Corrected:** current History already supports multiple selection and a
+   zero-item selected set, but focused automated evidence is incomplete.
+3. **Corrected:** `Select all` currently means all filtered entries in the
+   loaded recent-50 window, not all persistent results and not a page.
+4. **Corrected:** `Analyze selected purchases` is a handoff action, not an
+   instruction to calculate inside History.
+5. **Corrected:** current CSV/PDF operations create temporary files; they do
+   not prove Downloads delivery or native sharing.
+6. **Corrected:** Guide is represented as a destination but is not yet a
+   structured learning surface.
+7. **Corrected:** remote Audit has attempt/event cards, not System/Health/
+   Diagnostics interpretation cards.
+8. **Corrected:** current Settings keeps Advanced support collapsible; PH05's
+   visible non-collapsible order is prospective.
+9. **Corrected:** `#NNN` is current stored Payment Method compatibility truth.
+10. **Superseded:** wording that Person/Payment are “presentation context only.”
+    They are optional local Purchase metadata references.
+11. **Contradicted:** `$NNN` as current Payment Method code.
+12. **Contradicted:** “all systems operational” from absence of recent local
+    diagnostic errors.
+
+## 7. Confrontation with latest J
+
+J section 12 establishes PH03 permanent closure and unconsumed PH04
+Analytics-only authority. PH05 does not reopen either boundary.
+
+Agreement with J:
+
+- Settings and Audit meanings remain as permanently reconciled in PH03;
+- Closure remains retired from ordinary navigation;
+- PH04 source is not remotely materialized;
+- no new schema, dependency, Auth, Sync, provider or diagnostic authority is
+  available;
+- human assistive-technology, locale, real-device and comprehension evidence
+  remains unestablished;
+- `KANBAN_TRANSITIONS=NONE` remains required.
+
+PH05 is therefore a new prospective presentation/learning investigation. Its
+Home, Purchase, Catalogue, History, Downloads, Guide, Audit-card and Settings
+recommendations are not accepted product truth merely because this round
+records them.
+
+## 8. Confrontation with active PH04 D/E/F
+
+The active PH04 packet requires:
+
+- explicit `Create analysis` composition;
+- `Run & save analysis` before an immutable session record exists;
+- selected-record Chart/Table parity and export;
+- Variables Purchase/contained-Item projections;
+- a typed History selection scope;
+- no automatic analysis, record persistence or Purchase mutation.
+
+Those statements are `ACTIVE_PH04_AUTHORITY`, not remote implementation facts.
+PH05 should preserve the learner model and avoid wording that conflicts with it.
+
+The current remote History-to-Analytics message must eventually be corrected
+from “Analytics will calculate” to a draft/scope statement. PH05 must not claim
+that this correction already exists.
+
+No PH05 recommendation modifies D/E/F. D/E/F and Codex remain inactive for this
+investigative round.
+
+## 9. Cross-domain consequences
+
+### 9.1 Page-by-page vocabulary table
+
+| Page / area | Current term or copy | Proposed learner-facing term | Intended meaning | Prohibited implication | Evidence needed | Unresolved choice |
+| --- | --- | --- | --- | --- | --- | --- |
+| Home | no News card | `News` with `Pre-release notice` | local product-status notice bundled with this build | live feed, public launch, store availability | exact static source, no-network test, compact/200% render | final title: News or About this preview |
+| Home | no follow-up card | `Updates follow-up` | dated local list of completed/in-progress/planned milestones | live tracker or validated completion without evidence | claim-source mapping and date semantics | card vs link to Guide/Documentation |
+| Purchase | `Store and time` | `Purchase details` or retain `Store and time` | required Store, date and time | optional context | validation/focus tests | final group title |
+| Purchase | `Optional local labels` | `Optional purchase details` | independent optional Person and Payment Method metadata | one stored object; Account/credential identity | registration/model tests and comprehension | retain “Tags” as secondary helper only? |
+| Catalogue | selected Product | `Open Product details` | one active detail context | checkbox/bulk selection or deletion | absence, activation and focus tests | row click vs explicit button |
+| History | `N selected` | `N purchases selected` | exact selected set | open detail or filtered count | semantic announcements | singular copy |
+| History | `Select all` | `Select all shown` | every filtered Purchase in the loaded window | complete database or unseen results | recent-50 scope test | later page/all-filtered pair |
+| History | `Clear` | `Clear selection` | selected set becomes zero | clearing filters/history | zero-state test | none |
+| History | `Analyze selected purchases` | `Use in Analytics` | send selected Purchase IDs as a new Analytics scope | moving records or automatic analysis | handoff/count/no-mutation tests | Main chooses final label |
+| History | `Export CSV` | `Export selected as CSV` | create one file from selected Purchases | sharing or pre-existing file | destination/write/failure tests | shorter label on compact |
+| History | `Share list (PDF)` | `Export selected as PDF` | create one PDF from selected Purchases | native share or completed delivery before write | platform-destination tests | whether native Share is later separate |
+| Guide | one sentence | `Guide` with eight task sections | bounded in-app learning sequence | complete manual or live support | content/source/link/accessibility review | anchors only vs search/expanders |
+| Audit | attempt/event list | `Activity history` within Audit | persisted bounded local attempts/events | complete ledger | cap/cursor/source tests | retain page title Audit |
+| Audit | proposed `System` | `System` | local app, Account and environment context already available | provider/system-wide status | provenance and source mapping | exact included fields |
+| Audit | proposed `Health` | `Health` or `Readiness summary` | bounded interpretation of already observed local readiness | provider health or “all operational” | state mapping and comprehension | recommend Readiness summary if ambiguity persists |
+| Audit | proposed `Diagnostics` | `Diagnostics` | sanitized recent classifications and evidence availability | causal engine, test action or repair | registry mapping/no-action tests | expanded by default? |
+| Settings | Preferences first | `Account` first | current sign-in state and Account-scoped choices | Person identity | section-order/focus tests | exact sign-out placement |
+| Settings | People | `People` | optional Purchase references | Account users or permissions | code/selection/history tests | singular field label `Person` |
+| Settings | Payment Methods | `Payment methods` | nicknamed Purchase references | card/bank credentials | persistence/comprehension tests | `#NNN` retained |
+| Settings | threshold | `Shortage timeframe` | whole-number day threshold | forecast guarantee | 0–365 validation and helper copy | exact range visibility |
+| Settings | `Sync and Device` | `Sync and devices` | local readiness, Device references and distinct actions | one combined action or hosted truth | action/state mapping | singular current Device vs list |
+| Settings | collapsible Advanced | `Advanced` | visible rare explicit actions with consequences | hidden recovery or automatic repair | reachability/disabled-reason tests | exact controls admitted |
+
+### 9.2 Home claim ceilings
+
+Recommended pre-release copy:
+
+> `Markei is still in a development preview. Features and stored-data behavior
+> may change before a public release. This notice is bundled with the app and is
+> not a live availability update.`
+
+Permitted update states:
+
+| State | Meaning | Example form |
+| --- | --- | --- |
+| Completed | named work has accepted evidence at a stated boundary | `Completed — Settings and local Audit are available in this build.` |
+| In progress | work is actively authorized or being reviewed | `In progress — Analytics presentation is being refined.` |
+| Planned | no implementation claim | `Planned — additional interface polish.` |
+
+Dates should mean `Status recorded for this build on {local date}` or use an
+explicit UTC date if technical reproducibility requires it. A milestone label
+identifies project sequence, not a release channel, release date or user-facing
+version guarantee. Do not use `Launched`, `Available now`, `Latest news`,
+`Released`, `Validated` or store-distribution language without matching
+evidence.
+
+Compact/200-percent copy should show one status sentence plus at most three
+short milestone rows, with a link or expansion only if a destination exists.
+
+### 9.3 History selection vocabulary and semantics
+
+Required selected-set states:
+
+| State | Visible copy | Semantic announcement | Action behavior |
+| --- | --- | --- | --- |
+| zero | `No purchases selected` | `No purchases selected` | set actions disabled with named reason |
+| one | `1 purchase selected` | announce after toggle | actions apply to that Purchase |
+| many | `{N} purchases selected` | announce exact new count | actions apply to the complete selected set |
+| cleared | `Selection cleared. No purchases selected.` | live-region announcement | selected set is zero |
+
+The open-detail state should say `Details open` or use a separate non-checkbox
+visual marker. Opening details must not select the Purchase for set actions.
+
+If pagination is introduced, the actions must be distinct:
+
+- `Select current page` — only visible rows on the current page;
+- `Select all filtered results` — all matching results in the declared loaded or
+  repository scope, with the exact count and any cap disclosed.
+
+For the current recent-50 unpaged implementation, use `Select all shown` and
+qualify `Selects all filtered purchases in this loaded recent-history window.`
+Do not render a misleading all-filtered-results action until its scope exists.
+
+Disabled reasons:
+
+- `Select at least one purchase to use it in Analytics.`
+- `Select at least one purchase to export a CSV file.`
+- `Select at least one purchase to export a PDF file.`
+- `All shown purchases are already selected.`
+- `There is no selection to clear.`
+
+Every checkbox requires a label such as
+`Select purchase from {Store} on {date/time}` or `Deselect …`, plus selected-set
+position/count where useful. The final selected row remains uncheckable.
+
+### 9.4 Analytics-handoff alternatives and recommendation
+
+| Candidate | Strength | Risk | Recommendation |
+| --- | --- | --- | --- |
+| `Move to Analytics` | mirrors human wording | implies record movement/mutation | reject for ordinary copy |
+| `Analyze selected` | concise | may imply immediate calculation | acceptable only with adjacent explanation |
+| `Use in Analytics` | accurately describes context use | slightly less explicit about selection | recommended |
+| `Prepare analysis from selection` | precise | long on compact layouts | best extended/semantic label |
+
+Recommended button: `Use in Analytics`.
+
+Required result/destination copy:
+
+> `Received {N} selected purchases from History. They define this analysis
+> draft's evidence scope. No analysis has run, and History records are
+> unchanged.`
+
+Before `Run & save analysis`:
+
+> `Complete the draft, then run it to create a saved analysis for this session.`
+
+The destination must expose requested, matched and unavailable Purchase counts
+when they differ. No saved analysis exists merely because context arrived.
+
+### 9.5 Downloads export wording
+
+Export creation and sharing remain separate:
+
+- `Export selected as CSV/PDF` creates a file;
+- `Share` invokes an actual platform share action only if implemented and
+  observed separately.
+
+Success is reported only after the final write succeeds:
+
+- Windows: `CSV exported to Downloads: {safe filename}.` Optionally expose the
+  full path in secondary copy.
+- Android: `PDF saved to Downloads as {safe filename}.` If Android uses a
+  platform document picker or another user-visible destination, name that exact
+  destination instead.
+
+Do not say `saved`, `created` or `available` before final write completion.
+
+Required failure vocabulary:
+
+| Failure | Primary copy | Next step |
+| --- | --- | --- |
+| permission denied | `Markei does not have permission to save this export.` | `Choose another destination or allow file access, then try again.` |
+| directory unavailable | `The Downloads destination is unavailable.` | `Choose another available destination.` |
+| write failed | `The export could not be written.` | `No completed export file was created by this attempt. Try again.` |
+| source/export build failed | `The selected purchases could not be prepared for export.` | preserve selection; expose sanitized reference if available |
+
+File names may contain a local date/time, file type and non-private short export
+reference. Do not include raw Account, Device, Purchase or person identifiers.
+If a fingerprint is displayed, call it an `export reference`, explain its
+scope, and do not imply security/authenticity.
+
+### 9.6 Guide minimum learning sequence
+
+| Section | Learner goal | Required concepts and actions | Optional/unavailable behavior | Common misconception | Claim ceiling | Link vocabulary | Completion evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1. Getting started | understand local-first navigation | Home, local Account/device scope, primary Register action | Sync may be unavailable | local means cloud backup | explain current build only | `Open Home`, `Open Settings` | destination and copy tests; comprehension assay |
+| 2. Registering a purchase | create one local Purchase safely | choose Store/date/time; optional Person/Payment; add Items; review; register | optional metadata may remain unassigned | Product, Item and Purchase are interchangeable | no unknown-result guarantee | `Register a purchase` | happy/failure/draft-preservation tests plus human sequence |
+| 3. Catalogue and History | reuse Products and review Purchases | open Product details; filter History; open detail; select zero/one/many | Catalogue has no bulk checkbox | opening detail selects for action | loaded recent-window scope only | `Browse Catalogue`, `Open Purchase history` | checkbox-absence, detail/selection and scope tests |
+| 4. Lists | interpret estimates | Storage/Shortage/Market/All; estimate vocabulary | insufficient history/unavailable | Lists are measured inventory | local historical estimate only | `View Lists` | state/copy tests and learner comparison |
+| 5. Analytics | configure and inspect factual calculations | scope, Group by, variables, operation, timeframe, Run & save, Chart/Table | combinations may be unavailable | automatic insight/prediction | deterministic local evidence only | `Use in Analytics`, `Open Analytics` | PH04 implementation evidence plus human comprehension |
+| 6. Settings, Account and devices | distinguish configuration and readiness | Account, references, threshold, Refresh, Enroll/Connect, Sync | actions depend on sign-in/readiness | Person is Account; Refresh is Sync | locally observed state, no hosted guarantee | `Open Settings`, `Refresh local status` | state/action/disabled copy and comprehension |
+| 7. Audit and local diagnostics | read bounded local evidence | System context, readiness summary, diagnostics, activity history | details may be unavailable/stale | Audit explains cause or provider health | sanitized bounded local record only | `Open Audit`, `Show technical details` | caps/source/state tests plus terminology assay |
+| 8. Local data, export and Sync boundaries | know where evidence/files go | local data, Downloads export, sharing distinction, explicit Sync | export/Sync may fail or be unavailable | export is backup; Sync is guaranteed | exact observed destination/action only | `Export selected`, `Sync now` | platform export, Sync boundary and human consequence review |
+
+Smallest useful Guide structure: one scrollable page with a contents list and
+eight anchored headings. Search is unnecessary for the initial bounded content.
+Expandable topics are optional only for technical details; core action sequences
+must remain visible and keyboard/screen-reader reachable. This avoids hidden
+learning order and keeps implementation reversible.
+
+### 9.7 Audit System, Health, Diagnostics and history distinctions
+
+| Card / section | Permitted meaning | Required states | Prohibited claims |
+| --- | --- | --- | --- |
+| System | local app/build, active Account reference, environment alias and Device context already available | Available, Unavailable, Not yet checked | provider-wide environment truth; security certification |
+| Health / Readiness summary | bounded interpretation of already observed local prerequisites and recorded result | Ready, Attention needed, Unknown, Stale, Not yet checked, Unavailable | `All systems operational`; provider health; future Sync success |
+| Diagnostics | sanitized recent technical classifications and evidence availability | No recent records, Attention needed, Unknown, Stale, Unavailable | cause, live test, repair, Retry/Recovery/enrollment action |
+| Activity history | persisted bounded local attempts/events | Loading, Empty/No recent records, Stale, Unavailable | complete ledger or current status |
+
+Honest state language:
+
+- `Ready` — named local prerequisites currently appear ready; does not predict a
+  successful Sync.
+- `Attention needed` — recorded local evidence requires review; does not prove a
+  provider fault.
+- `Unavailable` — the value cannot be obtained or presented now.
+- `Unknown` — available evidence cannot classify the state.
+- `Not yet checked` — no qualifying observation has been requested/recorded.
+- `Stale` — the card shows a dated older observation after a newer read failed
+  or passed its freshness boundary.
+- `No recent records` — no records exist in the displayed bounded local window;
+  it does not prove no event occurred elsewhere.
+
+Audit interpretation cards remain read-only. Do not include Sign in, Enroll,
+Sync, Retry submission, Recovery or clear-history controls in them. Audit Retry
+may only repeat the local Audit read and must say so.
+
+### 9.8 Settings conceptual hierarchy
+
+Proposed reading order:
+
+1. `Account` — current sign-in state and explicit sign-in/sign-out actions;
+2. `Purchase references and shortage timeframe` — People, Payment methods and
+   whole-number day threshold;
+3. `Sync and devices` — current local readiness, Device references, Refresh,
+   Connect/Enroll and Sync as distinct actions;
+4. `Advanced` — visible, non-collapsible rare actions admitted by Main, each
+   with consequence and disabled-reason copy.
+
+Required distinctions:
+
+- Account is authentication scope; Person is a Purchase reference.
+- Payment Method is a local nickname/reference; never request credentials,
+  account numbers or card secrets.
+- Shortage timeframe is a whole-number day threshold, not a prediction.
+- Device identity is the stable installation identity used by coordination;
+  Device display reference is a learner-safe label.
+- Refresh reads current local status; Connect/Enroll establishes Device
+  coordination; Sync exchanges eligible facts. They are not aliases.
+- loading, success, failed, unavailable and already-in-progress are separate
+  visible results.
+
+Proposed action wording:
+
+- `Refresh local status` — local read only;
+- `Connect this device` — establish/confirm this installation's Device record;
+- `Sync now` — perform eligible Sync work;
+- `Action already in progress` — preserve the current action; do not silently
+  start a duplicate;
+- `Current local status is unavailable` — do not infer hosted failure.
+
+### 9.9 `@NNN`, `#NNN`, `$NNN` compatibility interpretation
+
+| Form | Remote truth | Learner term | Decision |
+| --- | --- | --- | --- |
+| `@NNN` | stored Person visible code, Account-local sequential allocation | Person short code/reference code | preserve |
+| `#NNN` | stored Payment Method visible code, Account-local sequential allocation | Payment Method short code/reference code | preserve while compatibility unresolved |
+| `$NNN` | absent from inspected allocator and model | proposed visual alternative only | do not introduce as current truth |
+
+The code is both stored reference identity and visible presentation reference;
+it is not the database's only internal identity. Never call it a hash,
+fingerprint or security code. Existing codes remain legible and stable across
+archiving, History display and future UI changes. If Main later selects `$NNN`,
+it must decide migration-free display compatibility for existing `#NNN`
+entries; Didactic recommends retaining `#NNN` in PH05.
+
+### 9.10 Accessibility and comprehension gates
+
+Required automated gates:
+
+1. every History checkbox exposes select/deselect semantics with Purchase
+   context;
+2. selected-count changes are announced and not color-only;
+3. set actions expose disabled reasons;
+4. focus remains visible and returns predictably after selection, handoff,
+   export and Guide navigation;
+5. Catalogue row/detail activation is distinct from checkbox selection;
+6. Home status labels include text/icon meaning, not color alone;
+7. Guide headings form a logical semantic hierarchy and anchored navigation
+   moves focus to the heading;
+8. Audit card summary semantics include card name, state, evidence source and
+   observation time;
+9. wide/compact reading order and information are equivalent;
+10. all controls and state copy remain reachable at 200-percent text;
+11. export busy/success/failure is announced without claiming success early;
+12. Settings actions announce already-in-progress and final result states.
+
+Automated semantics/widget tests do not establish screen-reader quality or
+human comprehension. Later evidence must include Narrator, TalkBack, keyboard-
+only traversal, locale/long-string review, Windows/Android real-device review,
+and comprehension assays for selection scope, Analytics handoff, Downloads,
+Audit claim ceilings, Account/Person distinction and short-code meaning.
+
+## 10. Prospective additions
+
+### A. Static Home status cards
+
+- **Problem:** no learner-visible pre-release/news or update follow-up surface.
+- **Proposed responsibility:** build-bundled local status copy with explicit
+  completion/in-progress/planned states.
+- **Likely owner/layer:** Home content descriptors/presentation.
+- **Affected structures:** `home_content.dart`, `home_page.dart`, Home tests.
+- **Dependency consequence:** none; live network feed prohibited.
+- **Schema/migration consequence:** none.
+- **Validation:** claim-source mapping, no-network behavior, compact and 200%.
+- **Reversibility:** high.
+- **Alternative:** put all status copy in Guide/Documentation.
+- **Provisional reason:** requested Home visibility without false live-news
+  implications.
+
+### B. History selection and handoff vocabulary
+
+- **Problem:** current selection scope and `Select all` are ambiguous; focused
+  evidence covers only one Purchase.
+- **Proposed responsibility:** precise zero/one/many, loaded-window scope,
+  disabled reasons and `Use in Analytics` handoff.
+- **Likely owner/layer:** History presentation over existing ID set/callback.
+- **Affected structures:** `history_page.dart`, handoff and app tests.
+- **Dependency consequence:** none proposed.
+- **Schema/migration consequence:** none.
+- **Validation:** multi-select, final-uncheck, all-shown, detail distinction,
+  matched count and no mutation/calculation.
+- **Reversibility:** high.
+- **Alternative:** keep current labels with explanatory subtitle.
+- **Provisional reason:** removes action-scope ambiguity.
+
+### C. User-visible export destination
+
+- **Problem:** current temporary-file success is not Downloads delivery and
+  lacks classified failure copy.
+- **Proposed responsibility:** explicit platform destination, final-write
+  success, sanitized failures and separate sharing.
+- **Likely owner/layer:** History export presentation/file sink.
+- **Affected structures:** History page, platform/file helpers and tests as
+  Design/Operational permit.
+- **Dependency consequence:** unresolved; stop if a new package is required
+  without authority.
+- **Schema/migration consequence:** none.
+- **Validation:** Windows and Android destination/permission/write cases.
+- **Reversibility:** medium/high.
+- **Alternative:** retain temporary export and label it accurately.
+- **Provisional reason:** learner-visible completion must name where the file
+  actually became available.
+
+### D. Initial anchored Guide
+
+- **Problem:** Guide is one sentence.
+- **Proposed responsibility:** eight visible task sections with a contents list
+  and anchored focus navigation.
+- **Likely owner/layer:** static Guide presentation/content.
+- **Affected structures:** app composition/static page or a dedicated Guide
+  page, plus navigation/accessibility tests.
+- **Dependency consequence:** none.
+- **Schema/migration consequence:** none.
+- **Validation:** content claim audit, headings, focus, links, 200%, locale and
+  human task completion.
+- **Reversibility:** high.
+- **Alternative:** plain eight sections without anchors.
+- **Provisional reason:** smallest coherent teaching sequence.
+
+### E. Read-only Audit interpretation cards
+
+- **Problem:** raw attempt/event list requires too much interpretation.
+- **Proposed responsibility:** System context, bounded readiness summary and
+  sanitized Diagnostics above Activity history.
+- **Likely owner/layer:** Audit presentation/controller projection over existing
+  evidence only.
+- **Affected structures:** Audit application/presentation/tests if evidence
+  already exists.
+- **Dependency consequence:** no provider or parallel registry.
+- **Schema/migration consequence:** none; stop if missing facts require schema.
+- **Validation:** source/time/state mapping, read-only counts and claim ceiling.
+- **Reversibility:** high.
+- **Alternative:** one compact summary plus current history.
+- **Provisional reason:** reduces raw diagnostic overload without inventing
+  cause or provider health.
+
+### F. Settings order and code explanation
+
+- **Problem:** current conceptual order starts with Preferences and hides
+  Advanced actions; code semantics are unexplained.
+- **Proposed responsibility:** Account-first hierarchy, explicit action
+  differences and short-code helper copy.
+- **Likely owner/layer:** Settings presentation using existing ports.
+- **Affected structures:** `settings_page.dart` and focused tests.
+- **Dependency consequence:** none proposed.
+- **Schema/migration consequence:** none; preserve `@NNN`/`#NNN`.
+- **Validation:** state/action/disabled copy, focus order, 200%, comprehension.
+- **Reversibility:** high.
+- **Alternative:** retain current order and add a contents summary.
+- **Provisional reason:** aligns navigation meaning without changing identity.
+
+## 11. Risks and non-goals
+
+### Risks
+
+1. News may imply a live feed, public release or current availability.
+2. Completed/in-progress/planned labels may overstate evidence or become stale.
+3. visual regrouping may make required Store/time appear optional.
+4. “Optional Tags” may imply one object or arbitrary taxonomy.
+5. removing Catalogue checkboxes may be mistaken for losing Product activation.
+6. `Select all` may silently exceed or understate the learner's intended scope.
+7. open detail and selected-for-action state may remain confused.
+8. “Analyze” may imply immediate calculation or Purchase mutation.
+9. export success may be announced before a durable user-visible write.
+10. Android “Downloads” may be inaccurate for the actual platform sink.
+11. Guide text may claim PH04/PH05 completeness before evidence exists.
+12. Health may imply provider health or complete-system certainty.
+13. Diagnostics may imply causal diagnosis or an executable repair.
+14. visible Advanced actions may invite unsafe repetition without consequences.
+15. `$NNN` may break recognition/history compatibility with `#NNN`.
+
+### Non-goals and deferred work
+
+- source implementation in this round;
+- PH04 materialization or acceptance;
+- live News, remote release feed or telemetry;
+- chart, prediction, ranking, recommendation or causal explanation;
+- provider health, hosted Audit or complete operational ledger;
+- a second diagnostic registry;
+- automatic Retry, Recovery, enrollment or repair inside Audit;
+- raw-fact repair;
+- schema, migration, generated-source or dependency change;
+- native sharing unless separately authorized and proved;
+- permanent-memory or KANBAN change;
+- production, provider or live Sync acceptance.
+
+## 12. Human decisions
+
+Main or the human must decide:
+
+1. Home title `News`, `Preview notice` or `About this preview`.
+2. whether Updates Follow-up is a static Home card or links to Guide/
+   Documentation.
+3. which evidence source authorizes each Completed milestone.
+4. Purchase group title: `Optional purchase details`, `Optional Tags`, or
+   another concise label.
+5. Catalogue row activation: row click, explicit View details, or both.
+6. current History selection label: `Select all shown` vs a future paginated
+   current-page/all-filtered model.
+7. final Analytics-handoff label: recommended `Use in Analytics` vs
+   `Analyze selected`.
+8. exact Windows and Android export destinations and whether native sharing is
+   separately required.
+9. export filename and short-reference policy.
+10. whether initial Guide uses plain anchors only or optional expandable
+    technical topics.
+11. Audit card title `Health` vs recommended narrower `Readiness summary`.
+12. which existing local facts are sufficient for System and readiness cards.
+13. which Advanced Settings actions remain ordinarily visible.
+14. exact sign-out, Connect/Enroll and Sync consequence wording.
+15. whether `#NNN` remains final Payment Method vocabulary; Didactic recommends
+    preservation until compatibility is explicitly resolved.
+16. the human comprehension threshold for selection scope, handoff, export,
+    Audit state and short codes.
+
+Evidence still required after any implementation:
+
+- exact changed-path and copy audit;
+- focused model/widget/app tests for every PH05 surface;
+- compact/medium/wide screenshots and 200-percent text;
+- keyboard-only traversal and focus return;
+- semantics-tree inspection;
+- Narrator and TalkBack;
+- locale/date/time/long-string review;
+- Windows/Android real-device export destination review;
+- permission/directory/write-failure observations;
+- human comprehension and task-completion assays;
+- PH04 materialization/evidence before Guide describes it as complete.
+
+## 13. Recommendation to Main
+
+### Proposed capability and vocabulary disposition
+
+- Add build-bundled Home `Preview notice`/News and `Updates follow-up` cards with
+  explicit static/non-live claim ceilings.
+- Keep Store/date/time required; group Person and Payment Method as independent
+  `Optional purchase details`, not one tag object.
+- Preserve Catalogue's checkbox absence and retain `View/Open Product details`.
+- Use exact History zero/one/many copy, `Select all shown`, `Clear selection`,
+  and named disabled reasons.
+- Prefer `Use in Analytics`; state selected count, draft scope, no automatic
+  analysis, no saved record before Run & save, and unchanged History facts.
+- Name the actual user-visible export destination only after a completed write;
+  separate export from share.
+- Implement the initial Guide as eight visible anchored sections without search.
+- Keep Audit read-only: System context, narrower Readiness summary, Diagnostics
+  classifications and bounded Activity history.
+- Reorder Settings Account-first and preserve distinct Refresh, Connect/Enroll
+  and Sync meanings.
+- Preserve `@NNN` and `#NNN` as stored short/reference codes; reject `$NNN` as
+  current truth.
+
+### Proposed Didactic E gates
+
+1. Home status copy is static/local and never implies live News or release.
+2. every update status has an evidence source and date interpretation.
+3. Store/date/time remain visibly required after regrouping.
+4. Person and Payment Method remain independent optional metadata.
+5. Catalogue contains no checkbox, selection count or bulk-action copy.
+6. Catalogue detail activation remains reachable and semantically distinct.
+7. History supports and announces zero, one and many selected Purchases.
+8. the final selected row can be unchecked.
+9. select-all scope names loaded page/window/filtered boundaries exactly.
+10. selected-set actions name scope and disabled reason.
+11. open detail does not imply selected-for-action.
+12. Analytics handoff transfers typed IDs/scope only and exposes counts.
+13. no analysis runs and no record exists until `Run & save analysis`.
+14. Purchase records remain unchanged by handoff.
+15. export busy/success/failure waits for final write and names destination.
+16. export and sharing are distinct actions.
+17. filenames expose no private raw identifier.
+18. Guide includes all eight sections and current feature claim ceilings.
+19. Guide headings/anchors preserve reading and focus order.
+20. Audit cards use existing local evidence and introduce no second registry.
+21. Ready/Attention/Unknown/Not checked/Stale/Unavailable/No records remain
+    distinct and non-color.
+22. Audit contains no provider-health, causal, repair or action implication.
+23. Settings order and action meanings remain non-overlapping.
+24. Person is not Account identity; Payment Method is not a credential.
+25. threshold is a whole-number day setting, not a forecast.
+26. `@NNN` and `#NNN` remain stable short/reference codes; `$NNN` is absent
+    unless Main resolves compatibility explicitly.
+27. wide/compact parity, visible focus, semantics, non-color and 200-percent
+    reachability have focused automated evidence.
+28. H later separates represented, executable, automated, rendered, build,
+    platform, human and learner evidence.
+29. `KANBAN_TRANSITIONS=NONE` unless independent learner evidence satisfies the
+    existing rubric.
+30. prediction, causal claims, provider detail and raw overload remain absent.
+
+### KANBAN confirmation
+
+`KANBAN_TRANSITIONS=NONE`.
+
+Rationale: this investigation records repository facts and PH05 proposals.
+Existing PH03 tests and the one History handoff test establish limited project
+behavior, not direct learner explanation, comparison, prediction, debugging,
+transfer or comprehension. PH04 and PH05 are not remotely validated results at
+the inspected HEAD.
+
+### Performance improvement achieved
+
+This round reduces investigation cost by:
+
+- classifying eight PH05 page areas against exact remote source;
+- correcting Catalogue and History assumptions before implementation staging;
+- isolating the recent-50 `Select all` scope ambiguity;
+- separating temporary export creation from Downloads and sharing;
+- converting the Guide request into eight bounded teaching sections;
+- bounding four Audit meanings without a new evidence authority;
+- resolving current short-code truth in favor of `@NNN`/`#NNN`;
+- reducing sixteen broad product questions to explicit Main/human decisions and
+  thirty proposed Didactic gates.
+
+## 14. Next route
+
+Main should wait for the paired PH05 Operational A and Design C appends, then
+reconcile A/B/C. Main must decide vocabulary, export/platform scope, Audit card
+evidence, Guide structure and short-code compatibility before any D/E/F packet
+is frozen.
+
+### Sequence Handoff Envelope
+
+```text
+SEQUENCE=FLX-INV-02
+ROUND=C11-PH05-R01
+ROLE=A
+STARTING_REMOTE_HEAD=7d9b82cb7ed7c1abb9788b553e71d245f3189662
+PH04_ACTIVATION_ANCESTOR=35cf23602060fd3a186a2470d7ac322c795e5fce
+STAGE_PATH=documentation/sketch_notebook/DEV_STAGE/B_DIDACTIC.md
+REMOTE_SOURCE_STATE=PH03_IMPLEMENTED_PH04_NOT_MATERIALIZED
+CLAIMS_RETAINED=LOCAL_FIRST;AUDIT_LOCAL_BOUNDED_READ_ONLY;HISTORY_HANDOFF_NO_CALCULATION;NO_KANBAN_PROMOTION
+CLAIMS_NEW=HOME_STATIC_STATUS_CEILING;HISTORY_RECENT50_SCOPE;DOWNLOADS_FAILURE_VOCABULARY;EIGHT_SECTION_GUIDE;AUDIT_CARD_DISTINCTIONS;SHORT_CODE_COMPATIBILITY
+CLAIMS_CORRECTED=CATALOGUE_CHECKBOX_ALREADY_ABSENT;HISTORY_MULTISELECT_ALREADY_EXECUTABLE;SELECT_ALL_IS_LOADED_FILTERED_WINDOW;EXPORT_IS_TEMP_FILE
+CLAIMS_SUPERSEDED=OPTIONAL_REFERENCES_AS_PRESENTATION_ONLY;MOVE_TO_ANALYTICS_AS_PREFERRED_COPY
+CLAIMS_CONTRADICTED=LIVE_NEWS;COMPLETE_SELECT_ALL;CURRENT_DOWNLOADS_DELIVERY;AUDIT_PROVIDER_HEALTH;PAYMENT_CODE_DOLLAR_PREFIX
+CLAIMS_UNRESOLVED=HOME_LABELS;OPTIONAL_GROUP_LABEL;SELECTION_SCOPE_MODEL;HANDOFF_LABEL;EXPORT_DESTINATIONS;AUDIT_HEALTH_LABEL;ADVANCED_ACTIONS
+CLAIMS_PROSPECTIVE=HOME_CARDS;PURCHASE_REGROUPING;HISTORY_COPY;DOWNLOADS_EXPORT;ANCHORED_GUIDE;AUDIT_INTERPRETATION_CARDS;SETTINGS_REORDER
+CLAIMS_DEFERRED=LIVE_NEWS;PREDICTION;CAUSALITY;PROVIDER_HEALTH;AUTOMATIC_REPAIR;SCHEMA;DEPENDENCY;PRODUCTION_ACCEPTANCE
+KANBAN_TRANSITIONS=NONE
+D_E_F_STATUS=INACTIVE_FOR_PH05
+CODEX_STATUS=INACTIVE
+PERFORMANCE_IMPROVEMENT=AMBIGUITY_AND_VALIDATION_SCOPE_REDUCED
+NEXT_MAIN_ACTION=Wait for PH05 A and C, then reconcile A/B/C and decide the bounded PH05 vocabulary and implementation boundary.
+```
+
+Codex remains explicitly inactive. This round changes no source, tests, J,
+D/E/F, G/H/I, permanent memory, methodology, KANBAN, schema, dependency,
+provider or Sync surface.

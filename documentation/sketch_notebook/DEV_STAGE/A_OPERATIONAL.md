@@ -948,3 +948,730 @@ NEXT_MAIN_ACTION=RECONCILE_PH03_A_B_C_AND_RESOLVE_PLACEMENT_RETENTION_PAGING_SUP
 ```
 
 D/E/F and Codex remain explicitly inactive.
+
+---
+
+<!-- ROUND_MARKER:C11-PH05-R01-O-2026-07-31 -->
+
+# Cycle C11 PH05 Round 01 — Operational Investigation
+
+## 1. Identity and authority
+
+```text
+SEQUENCE=FLX-INV-02
+PROCEDURES=ERI-01,FCA-02
+ROLE=Operational Chat [O]
+REPOSITORY=gus-i-gu/markei
+BRANCH=grm-guarded-provisioning-20260727
+ROUND=C11-PH05-R01
+OUTPUT=documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
+STARTING_REMOTE_HEAD=7d9b82cb7ed7c1abb9788b553e71d245f3189662
+PH04_ACTIVATION_ANCESTOR=35cf23602060fd3a186a2470d7ac322c795e5fce
+SOURCE_AUTHORITY=NONE
+LIVE_OPERATION_AUTHORITY=NONE
+```
+
+This is one cumulative Operational investigation append. It changes no source,
+test, schema, dependency, generated file, provider, environment, J, D/E/F,
+G/H/I, permanent memory or methodology. D/E/F and Codex remain inactive for
+PH05.
+
+The evidence classes used below are strict:
+
+- **retained** — still-valid permanent or earlier staged Operational meaning;
+- **new** — repository fact first classified by this round;
+- **corrected** — earlier or human wording narrowed by repository truth;
+- **superseded** — no longer current because committed PH03/Main truth replaced
+  it;
+- **contradicted** — repository evidence conflicts with a proposed claim;
+- **unresolved** — Main/human choice or absent platform authority prevents a
+  safe conclusion;
+- **prospective** — bounded later implementation or validation candidate;
+- **deferred** — explicitly outside PH05.
+
+## 2. Inputs, repository HEAD and dirty-worktree boundary
+
+Remote preflight established:
+
+- `35cf23602060fd3a186a2470d7ac322c795e5fce` remains the merge base and
+  ancestor of the named branch;
+- the branch is exactly one commit ahead at
+  `7d9b82cb7ed7c1abb9788b553e71d245f3189662`;
+- that commit is `Reconcile C11 PH03 Main continuity` and changes only
+  `00_PROJECT_STATE.md`, `05_SESSION_LOG.md`, `06_SESSION_SCHEME.md` and
+  `[M]_STAGE/J_MAIN_STAGE.md`;
+- no committed source, test, D/E/F, G/H/I, schema, dependency, provider,
+  environment or unrelated advancement follows the PH04 activation ancestor.
+
+No local Git checkout exists in the available workspace. Therefore:
+
+```text
+LOCAL_CHECKOUT=NOT_VISIBLE
+LOCAL_BRANCH=NOT_AVAILABLE
+LOCAL_HEAD=NOT_AVAILABLE
+LOCAL_DIRTY_PATH_INVENTORY=NOT_AVAILABLE
+WORKTREE_CANDIDATE_EVIDENCE=NONE_OBSERVED
+LOCAL_WORKTREE_MUTATED=NO
+```
+
+This is not evidence that the operator's PH04 checkout is clean. Any PH04
+source/test work visible elsewhere remains **WORKTREE_CANDIDATE**, not completed
+implementation or validated result. This round uses only committed remote source
+as `REMOTE_REPOSITORY_FACT`, D/E/F activation-marker tails as
+`ACTIVE_PH04_AUTHORITY`, and current G/H/I only as committed PH03 evidence.
+
+Recovered authority:
+
+- J section 12 and the refreshed Main continuity classify PH03 as permanently
+  absorbed and PH04 Analytics-only D/E/F authority as active/unconsumed;
+- PH04 is not materialized in the remote repository and has produced no PH04
+  G/H/I;
+- the active PH04 contract may change Analytics composer, session record,
+  Variables and export surfaces, but not History, Settings, Audit, shell or
+  source outside its Analytics allowlist;
+- PH05 is a proposal only and cannot overwrite, assume or complete PH04.
+
+## 3. New repository evidence
+
+### 3.1 Page and capability inventory
+
+| Page/capability | Current owner and symbols | Current effect | Classification |
+| --- | --- | --- | --- |
+| Home | `app/pages/home_page.dart`; `HomePage`; `application/home_content.dart`; `homeCards` | Static descriptors and navigation callbacks; no repository, network or file operation | retained local/static base; two requested cards new/prospective |
+| Purchase context | `app/pages/purchase_page.dart`; `_storeSection`, `_referenceSection`, `_selectedStoreId`, `_selectedPerson`, `_selectedPaymentMethod`, date/time controllers | Store/Product/reference load at page refresh; local draft mutation only until registration | retained behavior; redistribution prospective presentation-only |
+| Catalogue | `app/pages/products_page.dart`; `_selectedProduct`, `_selectedDetail`, `_ProductTable`, `_ProductCards` | `DataRow.onSelectChanged` creates automatic checkbox/selected state; compact tap selects; detail is separate | corrected: no bulk model exists, but selection chrome/state does |
+| History | `app/pages/history_page.dart`; `_selectedIds`, `_selectedPurchaseId`, `_actionBand`, `_toggleSelection`, `_HistoryRows`, `_HistoryCards` | Stable `PurchaseId` set already supports multiple selection and clear-to-zero; detail identity is separate | retained functional core with wide-row semantic defect and stale-selection gaps |
+| History load | `LocalQueryRepository.listRecentPurchases` | Two local queries: one Account-scoped Purchase/reference join limited to 50, then one grouped item-count query | new exact read budget; bounded loaded window, not complete history |
+| History exports | `_exportCsv`, `_sharePdf`; `PurchaseExportRepository.exportBundle`; `purchaseBundleCsv`; `purchaseBundlePdfBytes` | N selected purchases cause N `getPurchaseDetail` calls, each with two queries; fixed temp filenames are overwritten | contradicted as user-visible Downloads and as bounded non-N+1 export |
+| History handoff | `MarkeiApp._openAnalyticsForPurchases`; `AnalyticsLaunchContext.purchaseSelection`; `AnalyticsWorkspaceController._applyLaunchContext` | Transfers typed Account + Purchase IDs; current workspace expands matching purchases to `PurchaseItemId` selection | retained typed boundary; PH05 semantics must follow committed PH04 model |
+| Guide | `MarkeiApp._pages`; `_StaticPage` | One short local paragraph; no separate page/controller or functional sections | new finding: reachable but placeholder-level |
+| Audit | `AuditPage`, `AuditController`, `AuditPageResult`, `AuditStateView` | Visibility-gated two-query local page; zero network and writes; attempts/events already sanitized and bounded | retained PH03 truth; interpretation cards can be pure projections |
+| Settings | `SettingsPage`; local reference/preference ports; capability-narrow Account/Sync ports | Three configuration reads plus two status calls on load; local writes for references/threshold; explicit support actions may contact network | retained functional base with PH05 distribution and refresh corrections |
+| Payment identity | `LocalQueryRepository._allocateReferenceCode`; `PaymentMethods.visibleCode`; Sync/persistence models | `#NNN` is allocated and stored, not merely painted by presentation | corrected: `$NNN` is an identity change, not harmless copy |
+
+### 3.2 Current state ownership and lifetime
+
+- `HomePage` is stateless and reads `homeCards`; its cards live only for the
+  widget build and navigate through `MarkeiApp._selectDestination`.
+- `PurchasePage` owns its draft and text controllers for the page state's
+  lifetime. Responsive changes rebuild presentation without changing the page
+  state because `MarkeiApp` retains it in one `IndexedStack`.
+- `ProductsPage` owns search, sort, selected Product and detail Product. The
+  Product selection has no downstream bulk operation; it exists only to paint
+  selection and announce a selected row.
+- `HistoryPage` owns two distinct states: `_selectedIds` for actions and
+  `_selectedPurchaseId` for detail. Both survive filters and responsive changes.
+  A refreshed dataset does not currently intersect stale selected IDs.
+- `AnalyticsWorkspaceController` is composition-owned. The committed pre-PH04
+  controller expands Purchase IDs only after the Account dataset loads and caps
+  selected Item IDs at 500. Active PH04 authority intends to replace mutable
+  cards with session-only immutable records and a composer draft.
+- `AuditController` and database disposal are composition-owned and already
+  validated. Interpretation widgets must not acquire a new controller.
+- `SettingsPage` owns text, load-generation and global `_busy` state. Every
+  visible async action is disabled while `_busy` is true.
+
+### 3.3 Failure and duplicate-action behavior
+
+- Home and Guide are deterministic local content; their only ordinary failure
+  is layout/route regression.
+- Purchase redistribution can preserve every controller, validation method,
+  focus target and registration operation. Any new repository call or changed
+  draft value is a failure.
+- Catalogue removal must delete automatic row selection, selection highlight,
+  selected counter/copy and callbacks together. Hiding the checkbox while
+  retaining `_selectedProduct` would leave hidden selection state and fails.
+- History selection is synchronous/local. Export actions have no busy guard,
+  preflight state or caught I/O/repository failure; repeated taps can overlap and
+  fixed names can race/overwrite.
+- Current History `Select all` means all currently filtered entries inside the
+  already-loaded 50-Purchase window. It clears the old set before adding those
+  entries. Manual selections hidden by a filter otherwise remain selected.
+- `_runSupportAction` sets Settings `_busy=true` and then calls
+  `_refreshLocalStatus`; that method returns immediately while `_busy` is true.
+  Thus the action result is shown but the intended post-action status refresh is
+  suppressed. PH05 must preserve delegation while using an internal refresh
+  path that does not re-enter the public duplicate-action guard.
+- Reference save trims blank names and reports a sanitized failure, but current
+  schema uniqueness covers `(account_id, visible_code)`, not normalized
+  nickname. Concurrent creates are serialized by the page `_busy` flag and
+  code allocation transaction, yet duplicate nicknames remain possible unless
+  product meaning explicitly forbids them.
+
+## 4. Component, function and object additions
+
+The smallest prospective component boundary is:
+
+1. extend `homeCards` or add two explicit local `MarkeiCard` descriptors for
+   `News` and `Updates follow-up`; neither is actionable network content;
+2. compose `_storeSection` and `_referenceSection` in one responsive context
+   band while retaining the same Purchase controllers and callbacks;
+3. replace Catalogue selected-row state with direct row/detail activation;
+4. retain one History `Set<PurchaseId>` and add explicit selection
+   reconciliation, export busy/result state and destination injection;
+5. adapt the post-PH04 Analytics launch transition so selected Purchase IDs
+   expand to stable Item IDs and initialize only the new composer evidence
+   scope;
+6. add one capability-narrow, injected user-export destination shared by
+   History and Analytics pure CSV/PDF builders;
+7. replace Guide `_StaticPage` with a local scrollable `GuidePage` containing
+   fixed sections; no search/index controller is necessary in the minimum unit;
+8. add pure Audit interpretation widgets over the already-loaded
+   `AuditPageResult`;
+9. reorganize Settings into Preferences, References, Account, Device/Sync and
+   Advanced sections without broadening support ports.
+
+No new persistent entity, schema, migration, generated source, provider port,
+remote feed, telemetry source or second Analytics/Audit truth is required.
+
+## 5. Retained conclusions
+
+The following earlier conclusions remain valid:
+
+- ordinary product facts and analysis authority remain local and
+  Account-scoped;
+- responsive compact/medium/wide views share one page state;
+- Audit remains local, read-only, sanitized, bounded, two-query, zero-network
+  and zero-write;
+- Settings threshold remains a whole number from 0 through 365;
+- Closure, Retry, Recovery, provider health and causal diagnostics remain absent
+  from ordinary navigation;
+- History owns selection and factual Purchase review, not Analytics
+  calculation;
+- Analytics owns Item-scope expansion and calculation after a typed handoff;
+- no live Sign in, enrollment, Sync, Retry, Recovery, Auth0, Neon or Render
+  operation is authorized;
+- formal screenshots, keyboard-only, Narrator/TalkBack, locale, Android storage,
+  real-device and comprehension evidence are not performed by this
+  investigation.
+
+## 6. Corrections
+
+1. **Catalogue checkbox language — corrected.** The committed Catalogue has no
+   explicit bulk checkbox object, select-all control, selected counter or bulk
+   action. Flutter `DataTable` generates selection chrome because each
+   `DataRow` has `onSelectChanged`; `_selectedProduct` preserves row state.
+   Complete removal means eliminating this selection authority, not merely
+   setting `showCheckboxColumn:false`.
+2. **History functionality — corrected.** Stable multiple selection and
+   clear-to-zero already exist. PH05 should repair wide-row semantics, selection
+   reconciliation, action safety and exported destination rather than rebuild
+   selection from scratch.
+3. **History completeness — corrected.** Select-all cannot mean all Account
+   History while `listRecentPurchases` remains limited to 50. It can mean only
+   `Select filtered results in this loaded History window` unless paging is
+   separately authorized.
+4. **PDF sharing — corrected.** The button says `Share list (PDF)`, but no share
+   dependency or platform share action exists. It writes a temp file and asks
+   for manual sharing. PH05 should label the actual `Export PDF` effect.
+5. **Downloads — corrected.** `Directory.systemTemp` is not a user-visible
+   Downloads destination and fixed filenames overwrite prior exports.
+6. **Payment prefix — corrected.** `#NNN` is stored identity and appears in
+   historical labels. `$NNN` would require compatibility, migration and Sync
+   decisions. Retain `#NNN`; defer `$NNN`.
+7. **Audit interpretation — corrected.** System/Health/Diagnostics cards can
+   interpret only the current loaded Audit projection. They cannot truthfully
+   claim provider or current Sync health.
+
+## 7. Confrontation with latest J
+
+J section 12 and commit `7d9b82cb...` say PH04 is active/unconsumed and not yet
+materialized. This round agrees. It does not classify any PH04 composer, record,
+chart, Variables or export behavior as implemented.
+
+J's PH03 state is retained: functional Settings, functional Audit, Closure
+retired from ordinary navigation, unchanged provider/Sync contracts, and no live
+operation. PH05 redistribution may use those surfaces but cannot reopen PH03
+capability disposition.
+
+The Main continuity schedules PH04 materialization before later general polish.
+Therefore PH05 may be reconciled at A/B/C while PH04 runs, but any PH05 D/E/F
+activation that touches Analytics or its export boundary must wait for the exact
+committed PH04 implementation and G/H/I. Otherwise the proposed handoff would be
+based on superseded pre-PH04 objects.
+
+## 8. Confrontation with active PH04 D/E/F
+
+PH04 requires:
+
+- one composition-owned Analytics workspace;
+- selected History Purchases expanded to contained `PurchaseItemId`s;
+- `Use selected rows` to prepare a draft without calculation;
+- immutable session records after explicit Run only;
+- pure record-to-CSV/PDF builders and one explicit page sink write;
+- zero extra repository reads for local composer/record/chart/table/export
+  preparation before the explicit sink;
+- no History, shell, Settings, Audit, dependency or platform changes.
+
+PH05 is compatible only if it adapts to the final committed PH04 types. The
+pre-PH04 `_applyLaunchContext` already expands Purchase IDs but its message says
+Analytics will calculate and the old workspace can recalculate retained cards on
+load. PH05 requires the narrower final transition:
+
+```text
+History selected PurchaseIds
+-> active-Account validation
+-> contained stable PurchaseItemIds in loaded Analytics dataset
+-> cap/stale-selection result
+-> composer evidence scope initialized
+-> no Run
+-> no record
+-> no calculation
+-> no History mutation
+```
+
+Stop if PH04 does not expose a safe composer-scope transition, if the final
+Analytics export builder is not pure, or if PH05 would need a second workspace,
+repository read or result model.
+
+## 9. Cross-domain consequences
+
+- Didactic must distinguish launch notice from a live News feed, loaded-window
+  History selection from complete Account History, `Export PDF` from sharing,
+  local Audit interpretation from provider health, and stored `#NNN` identity
+  from display decoration.
+- Design must own the final export-destination port placement, post-PH04
+  composer handoff, selection/detail separation, Settings device-read boundary
+  and platform-specific Downloads adapter decision.
+- Main must prevent PH04/PH05 overlapping Analytics writes and must not activate
+  PH05 D/E/F from pre-PH04 source.
+- No KANBAN maturity, permanent-domain promotion or methodology change follows
+  from this investigation.
+
+## 10. Prospective additions
+
+### 10.1 Home
+
+Prospective behavior:
+
+- `News`: fixed local launch notice such as “Markei is preparing its first app
+  launch”; no timestamped feed, HTTP, telemetry or provider check;
+- `Updates follow-up`: fixed local explanation of where future release changes
+  will be summarized; no inferred update state and no background polling.
+
+Budget: initial reads `0`; refresh reads `0`; writes `0`; network `0`; file
+writes `0`. Responsive projection only reflows existing descriptors.
+
+Candidate paths: `application/home_content.dart`, `app/pages/home_page.dart`,
+`test/app/markei_visual_foundation_test.dart` and app-shell tests.
+
+### 10.2 Purchase redistribution
+
+Place compact Store/date/time controls alongside Optional Person/Payment controls
+inside one responsive band on medium/wide; compact stacks in logical focus order:
+Store, date, time, Person, Payment. Reuse `_selectedStoreId`, date/time
+controllers, `_selectedPerson` and `_selectedPaymentMethod` unchanged.
+
+Budget: initial capability calls remain four (`listProducts`, `listStores`,
+People, Payment Methods); Retry remains `+4`; local layout/focus changes `+0`;
+registration writes remain exactly the existing explicit registration path;
+network `0`; file writes `0`.
+
+Failure/rollback: any changed validation, lost value, changed registration
+payload, reordered semantic focus or additional read blocks publication. One
+presentation commit can be reverted without data repair.
+
+Candidate paths: `app/pages/purchase_page.dart`, app-shell focused tests and
+visual-foundation tests.
+
+### 10.3 Catalogue selection removal
+
+Remove `_selectedProduct`, selected-row painting, `DataRow.onSelectChanged` as
+selection, compact selection border, the selected message band and all related
+callbacks. Preserve `_selectedDetail`. Wide row cells and compact cards activate
+detail directly; explicit `View details` remains keyboard reachable. Search,
+sort, create Product/Store and retry behavior remain unchanged. No hidden
+selection survives.
+
+Budget: initial reads remain two (`listProducts`, `listStores`); Retry `+2`;
+search/sort/detail activation `+0`; create operations retain their existing one
+explicit local write/transaction; network/file writes `0`.
+
+### 10.4 History multi-selection and actions
+
+Retain `_selectedIds` as the sole action-selection authority and
+`_selectedPurchaseId` as detail authority. On wide layout suppress automatic
+`DataTable` checkbox chrome and let the explicit checkbox toggle only selection;
+row/detail activation opens detail only. Compact uses the same identities.
+
+Required transitions:
+
+```text
+zero -> one -> many -> one -> zero
+manual toggle -> only named Purchase changes
+Clear -> zero
+Select filtered results -> replace with all rows in current filtered loaded window
+filter change -> existing explicit selection retained and count remains truthful
+successful/retry reload -> intersect selection and detail with newly loaded Account rows
+Account/widget change -> clear foreign selection before actions
+```
+
+No delete, archive, mutation or implicit registration action is authorized.
+CSV, PDF and Move to Analytics operate on one frozen copy of the selected ID set
+captured when the explicit action begins. Each action has its own busy/result
+state or a single mutually exclusive export guard; repeated taps cannot overlap.
+
+History initial read remains two local queries over at most 50 Purchases. Filter,
+sort, responsive changes and selection each add zero reads/writes/network/file
+operations. Detail opening retains its current separate read behavior. Main must
+choose whether 50 loaded Purchases is acceptable; complete Account-wide
+selection requires a separate paged History authority and is not inferred here.
+
+### 10.5 History-to-Analytics
+
+Move to Analytics accepts a non-empty frozen `Set<PurchaseId>`, Account ID and a
+handoff generation. Analytics validates Account, intersects against the loaded
+dataset, expands to stable Item IDs, reports stale/missing Purchases, enforces
+the post-PH04 maximum scope and initializes only composer scope. No record exists
+and no operation runs before explicit `Run & save analysis`.
+
+Budget: History transition reads/writes/network/file writes `0`; Analytics may
+perform only its ordinary visibility-gated dataset load (`1` Account-scoped
+joined read) if not already loaded; scope expansion and composer initialization
+add `0`; no History mutation. A stale or over-cap handoff remains visible and
+non-destructive.
+
+Candidate paths must be selected after PH04 materialization from the final
+versions of `application/analytics.dart`, `application/analytics_workspace.dart`,
+`app/pages/analytics_page.dart`, `app/markei_app.dart`, `app/pages/history_page.dart`
+and their focused tests.
+
+### 10.6 User-visible Downloads export
+
+Current pure CSV/PDF builders are reusable, but current sinks are not. A later
+typed destination must be injected into History and Analytics so tests never
+touch the operator's real Downloads directory.
+
+Required sink contract:
+
+- preflight resolves one destination and safe filename before any write;
+- explicit successful export creates exactly one final file;
+- preview, selection, navigation, disabled action and failed preflight create
+  zero files;
+- filenames use fixed extension, lower-case ASCII slug characters
+  `[a-z0-9._-]`, collapse separators, reject traversal/reserved names, cap the
+  base length, and include a stable purchase/record cue plus UTC timestamp;
+- collision uses an exclusive-create suffix `-2`, `-3`, ... without overwrite;
+- permission denial, unavailable directory, full disk and write error produce a
+  sanitized unavailable/failure state and never claim success;
+- a failed partial write is cleaned up when safely attributable to the current
+  attempt; no unrelated file is deleted;
+- one selected frozen export object feeds one pure builder and one sink write;
+- History export repository must replace the current N-times-two detail-query
+  loop with one Account-scoped Purchase/reference query plus one Item/Product
+  query for the complete selected set.
+
+Windows feasibility is **prospective/feasible** with the existing direct
+`path_provider` dependency and `getDownloadsDirectory`, subject to actual host
+preflight and a fake adapter in tests. No permission or platform edit is implied.
+
+Android public Downloads feasibility is **blocked under the current no-platform
+change boundary**. The manifest declares no storage export capability, and
+`path_provider` alone does not establish a public, uninstall-independent
+Downloads/document write under target SDK 36 scoped storage. A truthful Android
+solution needs an approved MediaStore Downloads or system document-create
+adapter (or an approved dependency that provides it). App-specific external
+storage must not be labelled user-visible Downloads. Main must either authorize
+that platform/dependency boundary, narrow PH05 export acceptance to Windows, or
+select a user-mediated document-save design. Do not request broad all-files
+permission.
+
+Export budgets:
+
+| Transition | Local reads | DB writes | Network | Final file writes |
+| --- | ---: | ---: | ---: | ---: |
+| select/preview/navigation | 0 | 0 | 0 | 0 |
+| History explicit export preflight failure | 0 export-data reads | 0 | 0 | 0 |
+| History explicit successful CSV/PDF | 2 set-based queries | 0 | 0 | 1 |
+| Analytics explicit successful CSV/PDF after PH04 record selection | 0 repository reads | 0 | 0 | 1 |
+| collision-name probing | bounded metadata checks only | 0 | 0 | 1 successful create |
+
+Candidate existing paths: `application/history_export.dart`,
+`infrastructure/local/local_query_repository.dart`, final PH04
+`application/analytics.dart`, `app/pages/history_page.dart`, final PH04
+`app/pages/analytics_page.dart`, `markei_composition.dart`, `pubspec.yaml` only
+for audit (no edit unless Main authorizes a missing adapter), Android platform
+files only after explicit Main authority.
+
+### 10.7 Guide
+
+Minimum offline Guide is one local `GuidePage` with headings and scrollable
+sections: Start here, Register a Purchase, Catalogue, History selection and
+exports, Analytics, Lists, Settings, Audit, local-first limits and support
+boundaries. Static sections are sufficient. Search, remote content, CMS,
+versioned feed and external links are deferred. Expansion controls are optional
+and should be omitted unless they materially reduce compact reading cost.
+
+Budget: all reads/writes/network/file writes `0`; scrolling and responsive
+changes `0`. Tests cover route reachability, heading order, scrolling to the
+last section, keyboard traversal, 200-percent text and compact/wide overflow.
+
+Candidate paths: prospective `app/pages/guide_page.dart`, `markei_app.dart`,
+app-shell and visual-foundation tests. Main/Design must authorize the new source
+path before materialization.
+
+### 10.8 Audit System, Health and Diagnostics interpretation
+
+All three cards must be pure projections from the already-loaded
+`AuditPageResult`:
+
+- `System`: local Account/environment scope, bounded recent-history meaning and
+  loaded timestamp without raw identifiers;
+- `Health`: local Audit availability/loading/stale/unavailable state, query
+  count, visible attempt count and whether an older cursor exists;
+- `Diagnostics`: counts/grouping of sanitized attempt outcomes and diagnostic
+  classifications already present in the loaded page, with safe next-action
+  guidance and no causal claim.
+
+Budget: Audit visible load remains exactly `2` local queries; Retry `+2`; card
+projection, expansion and responsive changes `+0`; DB writes `0`; network `0`;
+file writes `0`. Do not call Settings status ports, Closure runner, Auth, Sync,
+Retry, Recovery, enrollment, provider health or a second ledger.
+
+Candidate paths: `app/pages/audit_page.dart`,
+`app/widgets/audit_components.dart`, `application/audit.dart` only if a pure
+derived view type is needed, and focused Audit/app-shell tests.
+
+### 10.9 Settings redistribution and bounded management
+
+Retain persisted threshold, reference repositories and capability-narrow
+support ports. Redistribute as:
+
+1. local Preferences/shortage threshold;
+2. bounded People and Payment Method reference management;
+3. Account session;
+4. current Device and Sync status;
+5. Advanced explicit existing Connect/Sync actions.
+
+Reference lists require bounded scroll/paging or a fixed-height scroll region,
+clear blank/duplicate/concurrent-add outcomes, archive refresh and non-color
+busy/error states. Main must decide whether duplicate normalized nicknames are
+allowed labels or rejected; repository truth currently allows them.
+
+Device truth currently exposes one `deviceReference` plus queue/readiness
+summary, not a complete Device-management collection. The smallest safe PH05
+meaning is current-Device status plus existing Connect/Refresh/Sync delegation.
+If Main requires a list, authorize one capability-narrow Account-scoped local
+Device read, sanitized and capped (proposed maximum 20), with view-only rows;
+revocation, delete and remote Device management remain deferred.
+
+Correct the post-action refresh by separating an internal status reload from the
+public `_busy` guard. Keep one global duplicate-action guard or per-section guards
+that cannot overlap conflicting Account/Sync actions.
+
+Base Settings load budget remains five capability calls: People, Payment
+Methods, threshold, Account status and local Sync/Device status; network `0`.
+Local status Refresh is `+2` calls and network `0`. An authorized Device-list
+port would make initial load `6` and Refresh `+3`. Reference save/archive is one
+local write plus two reference refresh reads; threshold save is one local write;
+layout/scroll changes are `0`. Sign in, Connect and Sync retain their explicit
+existing may-contact-network behavior and are never invoked by page load,
+layout, reference management or status cards.
+
+Retain stored Payment Method codes as `#NNN`. `$NNN` is deferred unless Main
+authorizes identity compatibility, migration and Sync consequences in a later
+unit.
+
+## 11. Risks and non-goals
+
+Principal risks:
+
+1. activating PH05 Analytics changes against uncommitted/unreconciled PH04;
+2. hiding Catalogue checkbox chrome but retaining hidden selection state;
+3. conflating History detail selection with action selection;
+4. claiming Account-wide select-all over the 50-Purchase loaded window;
+5. stale/foreign selected IDs surviving reload or Account change;
+6. N+1 export reads and concurrent fixed-name overwrite;
+7. labelling temp or app-specific Android storage as public Downloads;
+8. adding broad storage permission, platform code or dependency without Main
+   authority;
+9. allowing one export success to create multiple final files;
+10. turning Audit interpretation into current provider/Sync health;
+11. widening Settings into Device revocation or support recovery;
+12. rewriting stored `#NNN` identities for display preference;
+13. breaking Purchase focus/validation while moving presentation;
+14. treating static Home notices as live status or telemetry.
+
+Non-goals: PH04 implementation, saved-analysis persistence, charts beyond PH04,
+provider health, telemetry, forecasting, recommendations, causal inference,
+batch deletion, History mutation, remote Guide/CMS, schema/migration/generated
+change, Auth/Sync redesign, Device revocation, Closure restoration, R07, GCM04
+and production acceptance.
+
+## 12. Human/Main decisions and validation outlook
+
+Main/human decisions that repository truth cannot infer:
+
+1. Must PH05 wait for PH04 materialization and Main reconciliation, or only its
+   exact implementation commit and G/H/I? Operational recommends at least the
+   committed implementation identity and final PH04 types before D/E/F.
+2. Does `Select filtered results` cover only the loaded 50-Purchase window, or
+   must History paging become PH05 scope?
+3. When filters change, should hidden manual selections persist (recommended)
+   or be pruned immediately?
+4. Is Android public Downloads mandatory in PH05? If yes, which approved scoped
+   storage mechanism may be added?
+5. May Windows Downloads ship while Android export remains blocked, or must the
+   feature gate remain unavailable until parity exists?
+6. Are duplicate normalized Person/Payment nicknames allowed?
+7. Is current-Device status sufficient, or is a bounded read-only Device list
+   mandatory?
+8. Is a new `guide_page.dart` path authorized?
+9. Exact News/Updates copy and whether either card has a local navigation target.
+
+Exact later validation commands:
+
+```text
+cd clients/markei_flutter
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test test/app/settings_page_test.dart
+flutter test test/app/audit_page_test.dart
+flutter test test/application/audit_test.dart
+flutter test test/application/analytics_workspace_test.dart
+flutter test test/infrastructure/local_analytics_repository_test.dart
+flutter test test/app/analytics_page_test.dart
+flutter test test/app/markei_app_test.dart
+flutter test test/app/markei_visual_foundation_test.dart
+flutter test --concurrency=1
+flutter build windows --release
+flutter build apk --debug
+cd ../..
+node scripts/generate_sync_diagnostics.mjs --check
+git diff --check
+```
+
+Focused tests must additionally cover Home local cards and zero requests;
+Purchase values/focus/registration parity; Catalogue absence of checkbox and
+hidden selection semantics; History zero/one/many/zero, filtered select-all,
+reload intersection and action busy guards; set-based two-query export;
+filename sanitization/collision/failure injection; fake Downloads destinations;
+post-PH04 scope-only Analytics handoff; Guide reachability/scroll; Audit cards
+with unchanged two-query/zero-write/network budget; Settings blank/duplicate/
+concurrent add, bounded lists and corrected post-action refresh.
+
+Required audits:
+
+- compare `pubspec.yaml`/lockfile and reject unauthorized dependency drift;
+- compare schema/migrations/local database/generated Drift output;
+- compare Android manifest/Gradle and Windows platform files;
+- compare API/Auth/Sync/provider/diagnostic contracts and registry generator;
+- instrument repository, network and file sinks for every budget above;
+- run compact `599`, medium `600`/`1023`, wide `1024`, 200-percent text and
+  long-label/locale fixtures;
+- classify screenshots, keyboard-only, Narrator/TalkBack, Android scoped
+  storage, real-device and comprehension as `NOT_PERFORMED` unless observed.
+
+## 13. Recommendation to Main
+
+### Capability-disposition recommendation
+
+- Home notices: accept as static local information only.
+- Purchase redistribution: accept as presentation-only with zero new calls.
+- Catalogue: remove selection authority completely; preserve direct detail
+  activation.
+- History: retain and harden stable multi-selection; name filtered loaded-window
+  semantics; no mutation.
+- Analytics handoff: defer source authority until PH04 final types; initialize
+  composer scope only.
+- Exports: accept one shared injected sink and set-based History reads; Windows
+  feasible; Android public Downloads blocked pending explicit storage authority.
+- Guide: accept minimum offline sections without search/CMS.
+- Audit cards: accept pure loaded-projection interpretation with zero extra
+  operations.
+- Settings: accept redistribution, bounded references/current Device status and
+  corrected async refresh; defer revocation and `$NNN`.
+
+### Proposed Operational D gates
+
+1. exact PH04 committed implementation/G/H/I identity before any Analytics or
+   Analytics-export edit;
+2. one allowlist separating PH05 source from PH04 overlap;
+3. all page request/write/network/file budgets instrumented;
+4. Purchase presentation parity and zero added calls;
+5. Catalogue selection owner removed, not hidden;
+6. History selection/detail identities separated and stale IDs reconciled;
+7. History export uses two set-based Account-scoped queries, no N+1;
+8. one explicit export produces one final file; zero implicit writes;
+9. Windows and Android destination adapters separately proved; Android blocks
+   rather than falling back to app-private/temp storage;
+10. History handoff initializes PH04 composer scope only, with cap/stale/Account
+    checks and no calculation/record;
+11. Guide/Home remain offline/static;
+12. Audit interpretation reuses loaded page with two queries, zero writes and
+    zero network;
+13. Settings retains 0–365, Account scope and support delegation; async refresh
+    and duplicate actions are tested;
+14. `#NNN` retained; no identity rewrite;
+15. full tests, analysis, drift checks and both builds pass before publication;
+16. screenshots/accessibility/locale/real-device/storage evidence remains
+    separately classified.
+
+### Evidence still required
+
+- committed PH04 implementation identity and PH04 G/H/I;
+- exact final Analytics composer/scope/export symbols;
+- Windows Downloads host proof;
+- approved Android shared-document mechanism and real-device proof;
+- large selected-set export time/memory and collision fixtures;
+- human compact/wide reading, keyboard and assistive-technology evidence;
+- Main decisions listed above.
+
+### Performance improvement achieved by the investigation
+
+No runtime changed. The investigation reduced the future query target from the
+current `2N` History detail queries to a measurable two-query selected-set
+export, fixed zero-operation budgets for presentation/selection/Audit cards,
+identified the suppressed Settings status refresh, and prevented PH05 from
+binding to pre-PH04 Analytics types. These are staging/search-space improvements,
+not validated application performance gains.
+
+## 14. Next route
+
+### Exit gate for Main reconciliation
+
+Main may reconcile when paired C11-PH05 B and C rounds are published with their
+markers, PH04 remote/worktree status is known, and the Android Downloads plus
+History-window decisions are explicit. Main must not activate cleanse-dependent
+PH05 D/E/F until PH04's committed implementation boundary is available and A/B/C
+are reconciled.
+
+### Sequence Handoff Envelope
+
+```text
+SEQUENCE=FLX-INV-02
+CYCLE=C11
+PHASE=C11-PH05
+ROUND=C11-PH05-R01
+ROLE=O
+STARTING_REMOTE_HEAD=7d9b82cb7ed7c1abb9788b553e71d245f3189662
+OUTPUT=documentation/sketch_notebook/DEV_STAGE/A_OPERATIONAL.md
+REMOTE_REPOSITORY_FACT=PRE_PH04_SOURCE
+ACTIVE_PH04_AUTHORITY=ACTIVE_UNCONSUMED
+WORKTREE_CANDIDATE=NOT_VISIBLE
+PH04_VALIDATED_RESULT=NOT_ESTABLISHED
+HOME_LOCAL_CARDS=FEASIBLE_ZERO_IO
+PURCHASE_REDISTRIBUTION=PRESENTATION_ONLY
+CATALOGUE_SELECTION=REMOVE_OWNER_NOT_ONLY_CHROME
+HISTORY_MULTI_SELECTION=IMPLEMENTED_REQUIRES_HARDENING
+HISTORY_SELECT_ALL=FILTERED_LOADED_WINDOW_MAX_50
+HISTORY_ANALYTICS_HANDOFF=WAIT_FOR_FINAL_PH04_TYPES
+HISTORY_EXPORT_QUERY_TARGET=2_SET_BASED
+WINDOWS_DOWNLOADS=PROSPECTIVE_FEASIBLE
+ANDROID_PUBLIC_DOWNLOADS=BLOCKED_PENDING_EXPLICIT_STORAGE_AUTHORITY
+GUIDE=LOCAL_OFFLINE_MINIMUM_FEASIBLE
+AUDIT_INTERPRETATION=PURE_LOADED_PROJECTION_ZERO_EXTRA_IO
+PAYMENT_METHOD_PREFIX=RETAIN_HASH_NNN
+LIVE_OPERATION_PERFORMED=NO
+SOURCE_CHANGED=NO
+J_CHANGED=NO
+D_E_F_CHANGED=NO
+G_H_I_CHANGED=NO
+PERMANENT_MEMORY_CHANGED=NO
+METHODOLOGY_CHANGED=NO
+D_E_F_STATUS=INACTIVE_FOR_PH05
+CODEX_STATUS=INACTIVE_FOR_PH05
+NEXT_MAIN_ACTION=WAIT_FOR_B_AND_C_THEN_RECONCILE_PH05_A_B_C_AFTER_RESOLVING_PH04_OVERLAP_AND_ANDROID_DOWNLOADS_AUTHORITY
+```
+
+D/E/F and Codex remain explicitly inactive for PH05.
