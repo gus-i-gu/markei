@@ -242,99 +242,109 @@ Recovery: Architecture §21; Decision Log Event 21; checkpoint `09_DESIGN_STATE.
 
 <!-- TEMPORAL_MARKER:C10-RECOVERED-PROMOTION-2026-07-15 -->
 > Temporal boundary retained; the rebuildable current model below supersedes the
-> earlier Cycle 10/C11-S01 derived segment.
+> earlier Cycle 10/C11-PH01/PH02 derived segment.
 
-# Current Model Overview — C11 PH01-R01 and PH02
+# Current Model Overview — C11 PH03
 
-> Branch: `grm-guarded-provisioning-20260727`
-> Implementation head: `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`
-> J reconciliation head: `0bfc02e8363d8119469a5e8627d8350fa97790b4`
-> Publication parent: `43a3d6af3e254a6e22092203c424ead2f5300821`
-> Canonical owners: `design/01_ARCHITECTURE.md` §§23–25
-> Evidence: complete `DEV_STAGE/I_DSN_CODEX.md`
-> Main reconciliation: `[M]_STAGE/J_MAIN_STAGE.md` section 9
+> Branch: \`grm-guarded-provisioning-20260727\`
+> Implementation head: \`0924e743931ea7aba2c9cc5d2e28063e737b2ff5\`
+> J reconciliation head: \`33dc1002b4a7b00fa67e863dfe98a43c97d66cee\`
+> Evidence: complete \`DEV_STAGE/I_DSN_CODEX.md\`
+> Main reconciliation: \`[M]_STAGE/J_MAIN_STAGE.md\` section 11
+> Canonical owners: \`design/01_ARCHITECTURE.md\` §§23–26
 
-## 1. Current dependency topology
+## 1. Current product topology
 
 ~~~text
 compact / medium / wide shell
 → stable destination IDs + IndexedStack retention
-→ Analytics page/widgets
-→ one application Analytics workspace
-→ read-only evidence port + typed History launch context
-→ Analytics domain models + local.*@1 registry
-← LocalAnalyticsRepository
-← Account-predicated SQLite join
+├─ Settings
+│  → local reference/preference ports
+│  → narrow Account and Sync/Device support ports
+├─ Audit
+│  → one page-session AuditController
+│  → AuditReadPort
+│  → local diagnostic projection adapter
+│  → persisted attempts/events + safe registry meaning
+├─ Analytics
+│  → application workspace + versioned registry
+│  → Account-predicated local evidence adapter
+└─ Purchase / Catalogue / History / Home / Lists
 
-History selected Purchase IDs
-→ MarkeiApp typed handoff
-→ Analytics workspace selection
+Closure product destination
+  retired from ordinary navigation
 
-Sync / provider / diagnostics
-  remain outside Analytics authority
+broad probes / recovery / delete-history / provider maintenance
+  development-only where retained; outside ordinary UI
 ~~~
 
-## 2. Responsibility map
+## 2. Audit responsibility map
 
 | Layer/surface | Current owner |
 | --- | --- |
-| Domain models | evidence/card identities, datasets, scopes, compatibility and typed outcomes |
-| Versioned registry | Sum, Mean, Difference and Percentage v1 semantics |
-| Application | read port, launch context, complete session workspace and state transitions |
-| Local infrastructure | one Account-predicated complete joined evidence read |
-| Composition/app | dependency supply, destination, visibility and typed handoff |
-| History | Purchase selection and handoff only |
-| Analytics presentation | cards/matrix projection and callbacks only |
+| Application types | attempt/event identities, cursor, page request/result and typed states |
+| Audit controller | visibility-triggered local load, retry, paging, generation and disposal |
+| Read port | bounded Account/environment page request |
+| Local adapter | one attempt query plus one child-event query and sanitized mapping |
+| Persisted truth | existing Sync attempts and diagnostic events |
+| Registry | read-only safe meaning for diagnostic codes |
+| Audit presentation | responsive state rendering and callbacks only |
+| Composition | one controller, dependency supply and idempotent database/controller disposal |
 
-## 3. Evidence and calculation model
+Persisted IDs own identity. Attempts use descending UTC-start-plus-ID ordering
+and an exclusive composite cursor. Each page uses two local queries, zero
+network calls and zero writes. Device attribution remains unavailable when the
+persisted record cannot support it.
 
-Persisted Purchase Item identity is the evidence-row identity. Purchase identity
-supports History handoff and Purchase-total deduplication. Line total stays
-item-row-owned.
+## 3. Settings and Closure boundaries
 
-~~~text
-complete Account dataset
-→ UTC/field conditions
-→ filtered or selected evidence scope
-→ versioned operation
-→ independent compatibility-keyed values
-→ contributing row IDs + counts + UTC period + interpretation inputs
-~~~
+Settings continues to own local People, Payment Methods and shortage threshold
+through existing Account-scoped repositories. Capability-narrow ports expose
+current Account and Sync/Device readiness/actions without moving Auth, Sync or
+provider authority into presentation.
 
-Money and quantities remain integer/fixed-point. Compatibility prevents implicit
-currency/unit mixing. Mean declares its contribution unit. Difference is B
-minus A. Percentage is part of whole in basis points. Zero denominator and
-overflow are typed unavailable outcomes.
+Closure is absent from ordinary destination identity and navigation under both
+former flag values. Existing Closure pages, runners, diagnostic infrastructure
+and focused tests may remain unreachable development/support implementation.
+Raw diagnostics, hosted probes, recovery, delete-history and provider
+maintenance do not appear in Audit or ordinary Settings.
 
-## 4. Session and responsive state
+## 4. State and lifecycle
 
-One session-local workspace owns dataset, filters, selection, focus, cards,
-order, revisions and results. Cards are not persisted or synchronized. Wide and
-compact layouts are projections of this same state; widgets do not query or
-calculate.
+Audit begins in idle state while hidden. Visibility triggers the first local
+read. One controller supplies wide, medium and compact projections. Generation
+tokens suppress stale completions; disposal invalidates pending work. Retry is
+manual and local-only. No timer, stream, listener, background refresh or
+automatic recovery belongs to Audit.
 
-Analytics loading is visibility-gated inside retained `IndexedStack`
-composition. The request model is one initial visible load, one request per
-Retry and zero requests for local transitions. Rendering exposes at most 100
-rows per page; selected evidence is capped at 500 IDs.
+Composition close is idempotent: it disposes the single Audit controller and
+closes the app-private database once.
 
-## 5. Current page and phase topology
+## 5. Retained PH01/PH02 and Cycle 10 topology
 
-| Boundary | Current state |
-| --- | --- |
-| Home / Lists | accepted PH01 shared presentation foundation |
-| Purchase / Catalogue / History | PH01-R01 corrections implemented and validated at automated/build ceiling |
-| Analytics | local Account-scoped PH02 implemented and validated at automated/build ceiling |
-| Audit / Settings / Closure | PH03 disposition deferred |
-| Cycle 10 Sync topology | unchanged; two Devices, one Account, development only |
+PH01 responsive shell and five-page corrections remain implemented and
+validated. PH02 Analytics remains deterministic, local, read-only,
+active-Account-scoped and session-local. Purchase History still owns purchase
+selection/handoff only.
 
-## 6. Validation and remaining acceptance
+Cycle 10 hosted coordination remains accepted only for two Devices, one Account
+and development. PH03 does not change schema, migration, generated source,
+dependencies, API/Auth/Sync/provider contracts, diagnostic registry or
+Analytics behavior.
 
-Focused tests, the 258-test suite with four lab-gated skips, analyze, Windows
-release build, Android debug build and ordinary/stress fixtures validate the
-named implementation scope. Fixture timing is Windows-host evidence only.
+The PH03 rollback boundary is implementation parent
+`256ee4dbbcb790419b816862ee42933a115ddd87`; no schema, data, generated-source
+or dependency rollback is required.
 
-Screenshot, assistive-technology, keyboard-only, locale, real-device and human
-visual/comprehension acceptance remain host-unvalidated. No schema, migration,
-dependency, generated-source, API, Auth, Sync, provider or diagnostic change
-was introduced.
+## 6. Evidence and forward boundary
+
+Focused tests, the 264-test suite with four lab-gated skips, analysis, Windows
+release build, Android debug build, registry drift check and lifecycle/path
+audits validate the PH03 implementation at the automated/build ceiling. Bounded
+human UI verification is accepted for continuation.
+
+Screenshot-set, assistive-technology, locale, real-device, keyboard-only,
+learner-comprehension and human architecture acceptance remain
+host-unvalidated. Minor UI polish is deferred to C12-PH01. GCM04, conditional
+R07, production, resilience, multiple-Account, revocation, retention and
+rebootstrap remain deferred.

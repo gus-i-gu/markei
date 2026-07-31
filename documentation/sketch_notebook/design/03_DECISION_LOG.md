@@ -1529,3 +1529,119 @@ deferred
   PH03 Audit/Settings/Closure disposition
   all unchanged Cycle 10 production/resilience boundaries
 ~~~
+
+# Event 26 — 2026-07-31 — C11-PH03 Settings, Audit and Closure Disposition
+
+## Decision boundary and provenance
+
+This event absorbs the Design evidence at implementation commit
+\`0924e743931ea7aba2c9cc5d2e28063e737b2ff5\`, complete
+\`DEV_STAGE/I_DSN_CODEX.md\`, and J reconciliation section 11 at
+\`33dc1002b4a7b00fa67e863dfe98a43c97d66cee\`. It supersedes Events 24–25
+only where they reserved or deferred PH03. It does not change the accepted
+PH01/PH02 architecture or any Cycle 10 production/resilience boundary.
+
+## Accepted and materialized decisions
+
+- Audit is an ordinary product destination backed by a read-only application
+  boundary. \`AuditReadPort\` owns the local page request; \`AuditController\`
+  owns page-session loading, retry, paging, generation-based stale-completion
+  suppression and disposal.
+- Persisted Sync attempt and diagnostic event IDs are Audit projection
+  identities. Paging uses the deterministic exclusive composite cursor
+  \`(startedAtUtc, attemptId)\` in descending order.
+- \`DriftClosureDiagnosticsRepository\` adapts existing persisted attempts and
+  events through one attempt query plus one child-event query per page.
+  Account and environment predicates constrain attempts; child events are
+  constrained to the selected persisted attempt IDs.
+- Audit presentation consumes sanitized typed projections and safe generated
+  registry meaning. It receives no broad Closure runner, HTTP, Auth, enrollment,
+  Sync, Recovery, delete-history or provider authority.
+- Ordinary Audit loading is visibility-gated, local-only, zero-network and
+  zero-write. Retry repeats the same local read. Idle, loading, ready, empty,
+  stale and unavailable states remain distinct.
+- Settings retains existing Account-scoped reference and preference ports.
+  Account and Sync/Device status/actions are exposed only through
+  \`SettingsAccountSupportPort\` and \`SettingsSyncDeviceSupportPort\`, whose
+  composition adapters delegate to existing behavior without changing Auth or
+  Sync contracts.
+- Closure is removed from ordinary destination identity, wide/medium navigation
+  and compact More under both former feature-flag values. Existing native
+  Closure page, runner and diagnostic infrastructure may remain unreachable
+  development/support implementation; they define no product destination.
+- Raw diagnostics, hosted probes, unknown-outcome recovery, failed/notApplied
+  recovery, diagnostic-history deletion and provider maintenance remain outside
+  ordinary UI. No equivalent capability moved into Audit.
+- \`MarkeiComposition\` owns one Audit controller. Its idempotent close path
+  disposes that controller and closes the app-private database once.
+
+## Alternatives, deviations and rationale
+
+A narrow Audit read port was selected over injecting
+\`ClosureDiagnosticsQuery\` or \`NativeAuthClosureRunner\` because the broad
+interfaces combine read, mutation, network, Auth, Sync and recovery authority.
+A bounded projection over existing persisted facts was selected over a new
+diagnostic/causal ledger because PH03 requires recent local evidence, not a new
+causal backend.
+
+The implementation keeps current Account, Device and Sync readiness/actions in
+Settings through narrow ports. This resolves the investigative placement
+question without making Settings or presentation the authority for provider,
+Auth or Sync truth. Development-only support remains unreachable from ordinary
+navigation rather than becoming a second product destination.
+
+The following alternatives remain rejected within PH03:
+
+- independent Settings or Audit reconstruction of Sync/diagnostic truth;
+- network-backed, hosted or cross-Device Audit;
+- automatic Retry or Recovery;
+- raw payload, credential, token, exception or sensitive-identifier rendering;
+- schema/index, migration, generated-registry, dependency, API/Auth/Sync or
+  provider expansion;
+- reactivation of the former R07 causal/backend engine.
+
+## Reversibility, deviations and evidence ceiling
+
+The rollback boundary is the implementation parent
+\`256ee4dbbcb790419b816862ee42933a115ddd87\`. Reverting the single PH03
+implementation commit removes the additive Audit application/presentation
+surfaces, restores the preceding navigation and Settings composition, and
+requires no schema, data or dependency rollback.
+
+Focused tests, the 264-test Flutter suite with four lab-gated skips,
+\`flutter analyze\`, Windows release build, Android debug build, registry drift
+check, path audit and disposal evidence validate the implemented architecture at
+the automated/build ceiling. Bounded human UI verification is accepted for
+continuation. Screenshot-set, assistive-technology, locale, real-device,
+keyboard-only, learner-comprehension and human architecture acceptance remain
+host-unvalidated.
+
+Minor visual refinement is deferred to C12-PH01. It does not reopen PH03
+responsibility or dependency direction. GCM04, conditional R07, production,
+multiple-Account, revocation, retention, rebootstrap and resilience work remain
+deferred.
+
+## Decision disposition
+
+~~~text
+accepted
+  narrow local read-only Audit boundary
+  persisted attempt/event identities and composite cursor
+  two-query Account/environment-scoped sanitized projection
+  capability-narrow Settings Account and Sync/Device ports
+  Closure retirement from ordinary navigation
+  development-only retention of existing technical infrastructure
+  one composition-owned Audit controller and idempotent disposal
+
+implemented and validated
+  Settings, Audit and Closure disposition at automated/build ceiling
+
+host-unvalidated
+  screenshot-set, assistive-technology, locale, real-device, keyboard-only,
+  learner-comprehension and human architecture acceptance
+
+deferred
+  C12-PH01 minor UI polish
+  GCM04, conditional R07 and unchanged production/resilience families
+~~~
+

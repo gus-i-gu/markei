@@ -226,85 +226,93 @@ Recovery: Architecture §21; Decision Log Event 21; Model Overview current Cycle
 <!-- TEMPORAL_MARKER:C10-RECOVERED-PROMOTION-2026-07-15 -->
 > Temporal boundary retained; this is the single current Design checkpoint.
 
-# C11-PH01-R01 and C11-PH02 Design Checkpoint
+# C11-PH03 Design Checkpoint
 
 > Sequence: FLX-PRM-04 / PDR2-D
-> Branch: `grm-guarded-provisioning-20260727`
-> Inspected implementation head: `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`
-> J reconciliation head: `0bfc02e8363d8119469a5e8627d8350fa97790b4`
-> Publication parent: `43a3d6af3e254a6e22092203c424ead2f5300821`
-> Evidence: complete `DEV_STAGE/I_DSN_CODEX.md`
-> Main reconciliation: `[M]_STAGE/J_MAIN_STAGE.md` section 9
+> Branch: \`grm-guarded-provisioning-20260727\`
+> Inspected implementation head: \`0924e743931ea7aba2c9cc5d2e28063e737b2ff5\`
+> J reconciliation head: \`33dc1002b4a7b00fa67e863dfe98a43c97d66cee\`
+> Evidence: complete \`DEV_STAGE/I_DSN_CODEX.md\`
+> Main reconciliation: \`[M]_STAGE/J_MAIN_STAGE.md\` section 11
 
 ## Current accepted architecture
 
-PH01-R01 completes the bounded Purchase, Catalogue and History corrections while
-preserving the responsive shell. PH02 Analytics is deterministic, read-only,
-local and active-Account-scoped.
+PH01-R01 and PH02 remain permanently absorbed. PH03 implements mandatory
+Settings, mandatory Audit and complete retirement of Closure from ordinary
+product navigation.
 
 ~~~text
-presentation
-→ application workspace / read port / launch context
-→ Analytics domain models / versioned registry
-← Account-predicated local joined adapter
-← app-private SQLite Product and Purchase truth
+Audit presentation
+→ one page-session AuditController
+→ capability-narrow AuditReadPort
+→ local diagnostic projection repository
+→ existing persisted attempts/events + read-only safe registry meaning
+
+Settings presentation
+→ existing Account-scoped reference/preference repositories
+→ capability-narrow Account and Sync/Device support ports
 ~~~
 
-Hosted coordination, Sync, provider state and diagnostics are not Analytics
-authority.
+## PH03 ownership and invariants
 
-## Ownership and invariants
-
-- persisted `PurchaseItemId` is evidence-row identity;
-- Purchase total is deduplicated by Purchase; Line total remains item-row-owned;
-- `local.sum@1`, `local.mean@1`, `local.difference@1` and
-  `local.percentage@1` own typed compatible calculation semantics;
-- Difference is B minus A; Percentage is part of whole;
-- checked integer/fixed-point boundaries yield typed zero/overflow outcomes;
-- application owns the complete session workspace and session-local cards;
-- one controller supplies wide and compact views;
-- local repository owns one Account-predicated complete join;
-- one initial visible read, one per Retry and zero local-transition rereads;
-- composition/app own dependency supply, visibility and typed launch context;
-- History owns Purchase selection/handoff only;
-- Analytics page/widgets are repository-free and calculation-free.
+- persisted attempt/event IDs own Audit projection identity;
+- paging uses an exclusive UTC-start-time-plus-attempt-ID cursor;
+- each page uses one attempt query plus one child-event query;
+- reads are Account/environment-predicated and sanitized;
+- Audit performs zero network calls and zero writes;
+- visibility gates first load; generation suppresses stale completions;
+- Retry is manual and local-only;
+- one controller supplies every responsive layout and is composition-owned;
+- Settings preserves existing local repository authority;
+- Account and Sync/Device behavior reaches presentation only through narrow
+  support ports;
+- Closure is absent from ordinary destination identity and navigation;
+- broad probes, recovery, delete-history and provider maintenance remain outside
+  ordinary UI and development-only where retained;
+- composition close is idempotent and disposes the controller/database once.
 
 ## Evidence state
 
 | Claim | State |
 | --- | --- |
-| PH01-R01 presentation corrections | implemented and validated |
-| PH02 Analytics topology and behavior | implemented and validated |
-| focused/full tests and analyze | validated |
+| PH03 Settings/Audit/Closure topology | implemented and validated |
+| focused/full tests, analysis and path audits | validated |
 | Windows release / Android debug builds | validated |
-| request-count and ordinary/stress fixtures | validated on one Windows host |
-| screenshot/rendered human review | host-unvalidated |
-| assistive technology / keyboard-only | host-unvalidated |
-| locale / real-device review | host-unvalidated |
-| human visual/comprehension acceptance | host-unvalidated |
-| PH03 Audit/Settings/Closure disposition | deferred |
-| schema/Sync/provider/diagnostic changes | absent |
+| registry drift and resource disposal | validated |
+| bounded human UI verification for continuation | accepted |
+| screenshot-set / assistive technology / locale | host-unvalidated |
+| real-device / keyboard-only / comprehension | host-unvalidated |
+| human architecture acceptance | host-unvalidated |
+| minor UI polish | deferred to C12-PH01 |
+| schema/generated/dependency/API/Auth/Sync/provider change | deferred and not implemented |
+| former R07 causal/backend engine | deferred and not implemented |
 
-## Preserved boundaries
+## Preserved boundaries and rollback
 
-Cards are session-local and unsynchronized. No schema, migration, generated
-source, dependency, API, Auth, Sync, provider or diagnostic source changed.
-Charts, forecasting, recommendations, rankings, telemetry, external facts and
-raw-fact repair remain outside the accepted Analytics boundary. Cycle 10 remains
-accepted only for two Devices, one Account and development; its production and
-resilience families remain deferred.
+The rollback boundary is
+\`256ee4dbbcb790419b816862ee42933a115ddd87\`. Reverting the one PH03
+implementation commit restores the prior product surface without schema, data,
+generated-source or dependency rollback.
+
+PH03 changes no schema, migration, generated source, dependency, API/Auth/Sync
+or provider contract, diagnostic registry or Analytics behavior. Existing
+Closure implementation may remain unreachable development/support
+infrastructure; it defines no ordinary product authority.
 
 ## Next valid route
 
-Main should reconcile the completed Operational, Didactic and Design permanent
-absorptions, retain the human evidence gates, and select one bounded C11-PH03
-entry. This checkpoint authorizes no source work, PH03 materialization, GCM04
-or R07.
+Main should verify the completed Operational, Didactic and Design PH03
+reconciliations, then refresh \`00_PROJECT_STATE.md\`, \`05_SESSION_LOG.md\` and
+\`06_SESSION_SCHEME.md\` before opening C12-PH01 bounded UI polish. Do not
+reopen PH03 architecture or restage C11 D/E/F for minor visual refinements.
+
+GCM04, conditional R07, production, resilience, multiple-Account, Device
+revocation, retention and rebootstrap remain deferred.
 
 ## Recovery pointers
 
-- Canonical: `design/01_ARCHITECTURE.md`, §§23–25.
-- Derived: `design/14_MODEL_OVERVIEW.md`, current C11 model.
-- Observational: `design/03_DECISION_LOG.md`, Events 23–25.
-- Evidence: complete `DEV_STAGE/I_DSN_CODEX.md`.
-- Main: `[M]_STAGE/J_MAIN_STAGE.md`, section 9.
+- Canonical: \`design/01_ARCHITECTURE.md\`, §§23–26.
+- Derived: \`design/14_MODEL_OVERVIEW.md\`, current C11-PH03 model.
+- Observational: \`design/03_DECISION_LOG.md\`, Events 23–26.
+- Evidence: complete \`DEV_STAGE/I_DSN_CODEX.md\`.
+- Main: \`[M]_STAGE/J_MAIN_STAGE.md\`, section 11.

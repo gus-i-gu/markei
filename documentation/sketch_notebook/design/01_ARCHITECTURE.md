@@ -1221,3 +1221,140 @@ Host-unvalidated and still required for human acceptance:
 
 These limits do not contradict the accepted responsibility topology, but they
 prevent broader presentation, accessibility or device acceptance claims.
+
+# 26. C11-PH03 Settings, Audit and Closure Architecture
+
+Evidence boundary: implementation commit
+\`0924e743931ea7aba2c9cc5d2e28063e737b2ff5\`, complete
+\`DEV_STAGE/I_DSN_CODEX.md\`, J section 11 at
+\`33dc1002b4a7b00fa67e863dfe98a43c97d66cee\`, and the named PH03 source and
+tests. The topology is implemented and validated at the automated/build ceiling.
+Bounded human UI verification is accepted for continuation; broader human and
+platform evidence remains host-unvalidated.
+
+## 26.1 Audit authority and dependency direction
+
+Audit presents recent sanitized local activity history for one Account and
+environment. It is not Purchase History, current Sync status, hosted
+observability or causal authority.
+
+~~~text
+Audit page/widgets
+→ page-session AuditController
+→ AuditReadPort
+→ DriftClosureDiagnosticsRepository
+→ existing SyncAttempts + SyncDiagnosticEvents
+→ generated diagnostic registry as read-only safe meaning
+~~~
+
+Presentation renders state and callbacks only. The controller owns local load
+state and lifetime. The read port owns the bounded application request.
+Infrastructure maps existing persisted facts. The generated registry supplies
+safe diagnostic meaning without becoming a ledger or being regenerated.
+
+## 26.2 Identity, ordering and paging invariants
+
+Persisted Sync attempt ID is \`AuditAttemptId\`; persisted diagnostic event ID
+is \`AuditEventId\`. Display order, registry code and correlation reference are
+not identities.
+
+Attempts order by UTC \`startedAt\` descending and persisted ID descending.
+The exclusive composite cursor \`(startedAtUtc, attemptId)\` preserves stable
+paging when timestamps are equal. Child events order deterministically within
+their selected attempts.
+
+Each page performs exactly:
+
+~~~text
+1 Account/environment-predicated attempt query
++ 1 child-event query constrained to selected attempt IDs
+= 2 local queries
+~~~
+
+The default page size is 20 and the hard maximum is 50. Audit performs zero
+network calls and zero writes. Retry repeats the same local read; it does not
+trigger Sync, recovery or provider contact.
+
+## 26.3 Scope and sanitization invariants
+
+Account and environment are mandatory request predicates. Device attribution is
+shown only when supported by persisted evidence; Audit does not infer the
+current Device for records that lack it.
+
+The projection exposes allowlisted typed fields and safe registry meaning.
+Tokens, credentials, raw payloads, SQL, stack traces, private URLs, complete
+hashes, raw exceptions and sensitive identifiers do not cross the presentation
+boundary. An unknown registry code yields bounded unavailable meaning rather
+than raw technical content or an invented cause.
+
+## 26.4 Controller and responsive lifetime
+
+One \`AuditController\` owns idle, loading, ready, empty, stale and unavailable
+state for the page session. The first load is visibility-gated inside the
+retained \`IndexedStack\`. A monotonically increasing generation suppresses
+stale asynchronous completions; disposal invalidates pending completions.
+
+Wide, medium and compact navigation reach the same Audit destination and
+controller. Layout changes do not create another repository, controller or
+historical truth. Local Retry is explicit and manual; Audit owns no timer,
+stream, listener, background refresh or automatic recovery.
+
+## 26.5 Settings capability boundaries
+
+Settings retains the existing \`LocalReferenceRepository\` and
+\`AccountPreferenceRepository\` responsibilities for Account-scoped People,
+Payment Methods and shortage threshold. Persisted values are loaded before
+editing; validation, save/archive refresh, local failures and duplicate-action
+blocking remain Settings behavior.
+
+Account and Sync/Device sections depend on capability-narrow
+\`SettingsAccountSupportPort\` and \`SettingsSyncDeviceSupportPort\`.
+Composition adapters may delegate to existing Auth, enrollment and Sync
+behavior, but presentation does not own those contracts or reconstruct their
+truth. Raw diagnostics, hosted probes, recovery, delete-history and provider
+maintenance are not ordinary Settings capabilities.
+
+## 26.6 Closure disposition
+
+Closure is not an ordinary destination. It is absent from destination identity,
+wide/medium navigation, compact More and the ordinary page map, independent of
+the former feature flag.
+
+Existing \`NativeClosurePage\`, \`NativeAuthClosureRunner\`, diagnostic tables,
+registry and focused development tests may remain as unreachable
+development/support infrastructure where already present. This retention does
+not grant product visibility, Audit authority or new lifecycle meaning.
+
+No Closure capability is silently duplicated:
+
+| Capability class | Accepted owner/disposition |
+| --- | --- |
+| local preferences and references | Settings |
+| current Account, Device and Sync readiness/actions already supported | Settings through narrow ports |
+| recent sanitized attempt/event history | Audit |
+| local Audit Retry | Audit controller/read port only |
+| broad probes, raw diagnostics, recovery, delete-history, provider maintenance | outside ordinary UI; development-only where retained |
+| Closure product destination | retired |
+| former R07 causal/backend engine | deferred and not implemented |
+
+## 26.7 Composition, rollback and unchanged boundaries
+
+\`MarkeiComposition\` owns one Audit controller and the app-private database.
+Its close path is idempotent, disposes the controller, and closes the database
+once. Audit widgets and Settings widgets do not own infrastructure disposal.
+
+The rollback boundary is implementation parent
+\`256ee4dbbcb790419b816862ee42933a115ddd87\`. Reverting the single PH03
+implementation commit restores the prior navigation and composition without a
+schema, data, generated-source or dependency rollback.
+
+PH03 changes no schema, migration, generated source, dependency, lockfile,
+API/Auth/Sync/provider contract, diagnostic registry or Analytics behavior.
+It does not authorize GCM04, R07, hosted Audit, provider observability,
+multiple-Account work, Device revocation, retention or rebootstrap.
+
+Minor UI polish is deferred to C12-PH01 without reopening these responsibilities
+or dependency boundaries. Screenshot-set, assistive-technology, locale,
+real-device, keyboard-only, learner-comprehension and human architecture
+acceptance remain host-unvalidated.
+
