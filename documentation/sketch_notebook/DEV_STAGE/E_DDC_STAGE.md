@@ -4,7 +4,7 @@
 > Role: Main didactic/evidence materialization stage
 > Cycle / phase / unit: C11 / C11-PH01 / C11-PH01-S02
 > Required branch: `grm-guarded-provisioning-20260727`
-> Reconciled Main head: `1422731e512ce073e7fda09451415803d12f3a4e`
+> Reconciled Main head: `ec8953fbea4e9a80a712118665c2549a4d21528b`
 > Codex starting HEAD: the synchronized D/E/F publication commit pinned by the
 > initiation prompt
 > Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
