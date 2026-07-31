@@ -763,3 +763,205 @@ Manual provider observations become durable only through sanitized evidence, exp
 C10-S03A_CONTRADICTED_STOP
 MCG-02_HOSTED_PROOF_NOT_PERFORMED
 ```
+---
+
+# 23. Cycle 10 Accepted Coordination and Convergence Architecture
+
+Evidence boundary: `documentation/REC_DIAGNOSTICS.md` Records 009–021 and
+Appendix I; `documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md`
+mutable-prefix sections 2–5.4 and 8; protected J `Legacy_Progress` GCM02,
+GCM03 and R03–R05 lineage. The accepted terminal is development-only:
+
+```text
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=CLOSED_TWO_DEVICE_DEVELOPMENT_SCOPE
+MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_ONE_ACCOUNT_DEVELOPMENT_SCOPE
+PRODUCTION_ACCEPTANCE=ABSENT
+```
+
+## 23.1 Local and hosted authority
+
+Each client installation's app-private SQLite database is autonomous Product
+and Purchase truth. It owns local catalogue identity, Purchase aggregates,
+Device sequence allocation, immutable local event creation, queue state,
+downloaded-event application, local cursor progress and rebuildable local
+projections.
+
+The hosted service is a bounded Account-scoped coordination channel. It owns
+authentication/authorization enforcement, idempotent submission acceptance,
+Account-ordered event materialization, download cursors and Device
+acknowledgements. It is not:
+
+- Product authority;
+- a permanent analytics store;
+- a general client backup;
+- a replacement for local ownership.
+
+Stable dependency direction:
+
+```text
+Flutter presentation
+→ application commands and Sync/authentication ports
+→ domain facts, identity and protocol contracts
+← app-private Drift/SQLite and HTTP adapters
+→ authenticated hosted API
+→ constrained PostgreSQL runtime transactions
+```
+
+Presentation and diagnostics do not reconstruct transaction truth. The hosted
+provider does not own local analytical interpretation.
+
+## 23.2 Account, membership, Installation and Device
+
+The identity roles remain distinct:
+
+| Identity | Stable responsibility |
+| --- | --- |
+| External principal | proves authentication subject only |
+| Account | owns the synchronization and data-sharing scope |
+| Membership | authorizes a principal within an Account and carries membership lifecycle |
+| Installation | preserves app-local installation continuity and the selected binding |
+| Device | enrolled Sync actor authorized for one Account; owns one monotonic creation sequence and acknowledgement progress |
+
+A Device is not derived from hardware identity, Product data, email or a UI
+label. Authentication alone does not imply membership, enrollment or Device
+authorization. Protected hosted operations depend on current Account,
+membership and Device authorization, not merely on possession of a previously
+accepted subject.
+
+Evidence pointer: REC 008–009 and 014–017; J section 3 and the S07/S08
+`Legacy_Progress` entries.
+
+## 23.3 Product and protocol identity
+
+Product identity has four non-interchangeable roles:
+
+| Identity | Responsibility |
+| --- | --- |
+| Versioned natural Product identity | exact semantic reconciliation selector |
+| User-visible Product code | local Account-scoped display and exact-lookup identity |
+| Local Product UUID | local persistence and foreign-reference identity |
+| Event/submission identity | immutable retry/idempotency and protocol-order identity |
+
+During remote apply, exact compatible natural identity may select an existing
+local Product even when sender and receiver use different local codes and
+UUIDs. Remote Purchase references map to the selected local Product UUID.
+Historical local identifiers and observations are not rewritten. Fuzzy
+similarity remains advisory and cannot merge automatically.
+
+Evidence pointer: REC 018–021; J R03–R05 corrective entries and section 3.
+
+## 23.4 Append-only event and submission responsibility
+
+Local Purchase registration owns one transaction that persists the Purchase
+aggregate, required local references, one immutable `purchase.registered`
+event, its Device sequence and pending queue entry. Network work occurs only
+after that commit.
+
+The hosted service accepts submissions idempotently and materializes immutable
+Account-ordered Sync events. Retry reuses stable event/request identity and
+must not create a second Purchase event. Device sequence orders local creation
+by one Device; Account cursor orders hosted delivery. Neither is a count of UI
+actions or diagnostic rows.
+
+Evidence pointer: REC 010–012, 019 and 021; J sections 3 and 5.4.
+
+## 23.5 Transaction partition and diagnostic containment
+
+The following are distinct causal boundaries:
+
+1. local event creation and enqueue;
+2. upload lease;
+3. trusted provider submission result persistence;
+4. download response acceptance;
+5. downloaded-event local apply;
+6. local cursor commit;
+7. Device acknowledgement;
+8. diagnostic persistence and presentation.
+
+A failure in diagnostic persistence cannot reverse or redefine an already
+committed causal boundary. A trusted authenticated/parsed provider response
+remains true when a later local apply, diagnostic write or runner terminal
+fails. Each transaction records its own mutation/result state; one cumulative
+field must not collapse independent transactions.
+
+Evidence pointer: REC 019–020; J post-Codex R03, R04 and R05 entries.
+
+## 23.6 Apply, cursor and acknowledgement ordering
+
+Downloaded events and the resulting local cursor progress commit together.
+Acknowledgement may be sent only after that durable local commit. If apply
+rolls back, the cursor does not advance and acknowledgement does not begin.
+Duplicate-equivalent local apply is an idempotent success classification only
+when the required local fact and cursor outcome are durable.
+
+```text
+trusted download
+→ reconcile/map local identities
+→ apply local facts
+→ commit local cursor progress
+→ acknowledge Device progress
+```
+
+Evidence pointer: REC 019–021; J section 3 and R03–R05 entries.
+
+## 23.7 Development convergence topology
+
+Two topology claims remain separate:
+
+- **GCM02:** one enrolled Device proved local/client, hosted API/Render and
+  provider agreement for the same-Device path.
+- **GCM03:** two enrolled Devices under one Account proved reciprocal
+  Windows-to-Android and Android-to-Windows convergence, exact natural Product
+  reconciliation, no observed duplicate Product/Purchase, drained queues and
+  one idempotent no-op repeat per Device.
+
+Hosted readiness, enrollment, an empty queue, one successful Device or a no-op
+operation does not independently prove reciprocal convergence.
+
+Evidence pointer: REC 009–012, 013–017 and 021; J sections 2 and 3.
+
+## 23.8 Diagnostic ownership
+
+Diagnostic ownership is singular and directional:
+
+```text
+contracts/shared_beta/diagnostics_v1/diagnostics.registry.json
+→ schema/generation contract
+→ documentation/ERR_DIAGNOSTICS.md readable projection
+
+runtime evidence
+→ sanitized REC_DIAGNOSTICS.md chronology
+→ Design/Operational/Didactic interpretation
+
+J Legacy_Progress
+→ historical investigation provenance only
+```
+
+REC, J history, generated documentation, Audit UI and permanent domain memory
+must not become independent diagnostic registries or causal engines. Audit may
+project runtime-owned evidence; Settings may configure behavior; Analytics may
+interpret local/account-scoped Product facts. None may reconstruct Sync truth.
+
+Evidence pointer: REC Appendix I; J section 4.
+
+## 23.9 Explicit evidence ceiling and deferred boundaries
+
+Cycle 10 accepts only the one-Account/two-Device development topology described
+above. It does not accept:
+
+- multiple-Account isolation;
+- membership disablement;
+- Device revocation;
+- outage, timeout or acknowledgement-uncertainty recovery;
+- retention;
+- snapshot or rebootstrap;
+- production deployment or lifecycle;
+- GCM04;
+- R07.
+
+GCM04 and conditional R07 reassessment remain deferred to C12-PHASE02. Their
+alternatives and reversibility remain open; no Cycle 10 result preselects a
+production lifecycle or resilience design.
+
+Evidence pointer: REC 021 and Appendix I; J sections 2, 3, 5.4 and 8.
