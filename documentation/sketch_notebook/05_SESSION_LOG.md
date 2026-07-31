@@ -1005,3 +1005,77 @@ CYCLE11=PREPARED_FOR_FUNCTIONAL_INVESTIGATION
 CYCLE12_PHASE01=UI_UX_POLISH
 CYCLE12_PHASE02=BACKEND_MULTI_USER_GCM04
 ```
+
+---
+
+<!-- TEMPORAL_MARKER:C10-PERMANENT-EXTRACTION-EXHAUSTED-C11-S02-REPUBLISHED-2026-07-30 -->
+
+# Cycle 10 Permanent-Documentation Exhaustion and C11-PH01-S02 Handoff
+
+> Date: 2026-07-30
+> Branch: `grm-guarded-provisioning-20260727`
+> Reconciliation input head: `526e0de6e294c5fb969d8ee1f35e6eb53914902b`
+> Publication: this Main reconciliation commit followed by one synchronized
+> D/E/F-only C11-PH01-S02 staging commit
+
+## Final Cycle 10 reconciliation
+
+Main compared J and Main-root continuity with the completed Operational,
+Didactic and Design permanent-memory rounds.
+
+The reconciliation established:
+
+1. Operational Historical, Canonical, Derived and Checkpoint memory are current.
+2. Didactic Historical, Canonical, Derived and Checkpoint memory are current.
+3. Design Historical, Canonical, Derived and Checkpoint memory are current.
+4. No Didactic maturity transition was justified or recorded.
+5. The Design contradicted stop remains historical and is explicitly
+   superseded by the accepted two-Device development topology.
+6. C11-PH01-S01 was absorbed separately by all three domains without broadening
+   Cycle 10 evidence.
+7. No further full Cycle 10 domain registration round is justified.
+
+J’s mutable prefix was reduced to a compact terminal, permanent-file ownership
+map, achievement ledger, deferred-boundary list and current C11 authority.
+Obsolete Cycle 10 corrective routes and reusable staging narratives were
+removed. The complete `Legacy_Progress` section was preserved byte-for-byte.
+
+## Main-root and forward-state correction
+
+`00_PROJECT_STATE.md` and `06_SESSION_SCHEME.md` were refreshed from “Cycle 11
+prepared” to the actual C11-PH01-S02 state.
+
+The accepted schedule is:
+
+```text
+C11-PH01  shared visual system and five core-page convergence
+C11-PH02  deterministic local/account-scoped Analytics
+C11-PH03  mandatory Settings/Audit and Closure disposition
+C12-PHASE01  UI/UX fine tuning and polishing
+C12-PHASE02  backend/multiple-user/GCM04 work and conditional R07 reassessment
+```
+
+The previously published S02 D/E/F packet had become non-executable because
+later permanent-domain commits displaced its required starting head. Main
+therefore republished the same synchronized authority as a D/E/F-only child of
+this reconciliation. Codex must use that exact branch head from the initiation
+prompt and stop on any later unreviewed descendant.
+
+## Evidence ceiling
+
+Cycle 10 remains accepted only for two Devices, one Account and development.
+Production, multiple-Account isolation, revocation, outage recovery,
+retention/rebootstrap and final production lifecycle are absent. The missing
+boundaries are future work, not incomplete Cycle 10 documentation.
+
+```text
+CYCLE10_PERMANENT_INFORMATION=EXHAUSTED
+CYCLE10_DOMAIN_RERUN=NOT_REQUIRED
+KANBAN_TRANSITIONS=NONE
+J_FINAL_PRUNING=COMPLETE
+MAIN_ROOT_RECOVERY=REFRESHED
+C11_CURRENT_UNIT=C11-PH01-S02
+LIVE_OPERATION_PERFORMED=NO
+PROVIDER_MUTATION=NO
+SOURCE_CHANGED=NO
+```

@@ -1,28 +1,25 @@
-# J_MAIN_STAGE — C11-PH01 post-registration reconciliation
+# J_MAIN_STAGE — Cycle 10 final reconciliation / C11-PH01-S02 handoff
 
-> Sequence: FLX-PRM-04 / PRC-01 conflictive reconciliation
+> Sequence: FLX-PRM-04 / PRC-01 final conflictive reconciliation
 > Role: Main Chat [M]
-> Cycle / phase / active unit: C11 / C11-PH01 / permanent-memory completion
+> Cycle / phase / active unit: C11 / C11-PH01 / C11-PH01-S02
 > Repository: `gus-i-gu/markei`
 > Branch: `grm-guarded-provisioning-20260727`
-> Cycle-entry baseline: `861c27fdaf6ade2093d481af312d27ff895b8dc0`
-> C11-PH01-S01 materialization head:
+> Cycle 10 accepted implementation boundary:
+> `97cec7f733926f669d2a844feb2b5e6e0b7e6bce`
+> GCM03 closure publication:
+> `05e630cfe04aa03846bc635c524278d4fa9b7c39`
+> Cycle 10 permanent-memory reconciliation inspected through:
+> `526e0de6e294c5fb969d8ee1f35e6eb53914902b`
+> C11-PH01-S01 materialization:
 > `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
-> Cycle 10 domain-registration head:
-> `d99f3e39894b9f34eec085014a23d990578b5bce`
-> Authority: explicit human-directed Main pruning, conflictive reconciliation
-> and corrective permanent-domain routing
-> Writable surface for this reconciliation: mutable J recovery prefix only
+> Authority: explicit human-directed Main final reconciliation
+> Mutable surface: this prefix only
 > Protected history: the complete `# Legacy_Progress` section
-> Evidence boundary: repository and permanent-file comparison; no live client,
-> provider, source, methodology or permanent-domain mutation
-> Status: **CYCLE 10 CLOSED AT GCM03 TWO-DEVICE DEVELOPMENT SCOPE;
-> CYCLE 10 HISTORY/CANON SUBSTANTIALLY REGISTERED; PERMANENT RECOVERY SURFACES
-> NOT COMPLETELY UPDATED; C11-PH01-S01 PERMANENT ABSORPTION NOT COMPLETE**
+> Status: **CYCLE 10 PERMANENT EXTRACTION EXHAUSTED; C11-PH01-S02 IS THE
+> CURRENT FORWARD UNIT**
 
 ## 1. Recovery entrypoint
-
-Read this mutable prefix before `Legacy_Progress`.
 
 Ordinary global recovery:
 
@@ -34,33 +31,29 @@ documentation/sketch_notebook/06_SESSION_SCHEME.md
 this J prefix
 ```
 
-For C11-PH01-S01 materialization evidence:
+Current domain checkpoints:
 
 ```text
-DEV_STAGE/G_OPS_CODEX.md
-DEV_STAGE/H_DDC_CODEX.md
-DEV_STAGE/I_DSN_CODEX.md
+operational/10_OPERATIONAL_STATE.md
+didactics/08_CONCEPT_MAP.md
+design/09_DESIGN_STATE.md
 ```
 
-For Cycle 10 human/client/server/provider chronology:
+Current C11 implementation authority:
 
 ```text
-documentation/REC_DIAGNOSTICS.md
+DEV_STAGE/D_OPS_STAGE.md
+DEV_STAGE/E_DDC_STAGE.md
+DEV_STAGE/F_DSN_STAGE.md
 ```
 
-Expand into `Legacy_Progress` only for provenance, superseded gates,
-corrective lineage or exact historical decisions. D/E/F were consumed by the
-C11-PH01-S01 implementation and are not ordinary recovery entrypoints or fresh
-implementation authority.
+Use G/H/I for C11-PH01-S01 materialization evidence. Use
+`documentation/REC_DIAGNOSTICS.md` only for exact Cycle 10 sanitized
+human/client/server/provider chronology. Expand into `Legacy_Progress` only for
+historical lineage, superseded gates or exact prior Main decisions.
 
-Retain the authority split:
-
-- J reconciles cross-domain structure and publishes bounded routes.
-- permanent domain files own promoted Operational, Didactic and Design memory.
-- REC owns sanitized assay chronology.
-- G/H/I own materialization evidence.
-- source owns implementation truth.
-- `Legacy_Progress` owns historical Main lineage.
+The mutable prefix contains no reusable Cycle 10 D/E/F packet, corrective
+domain prompt or unpromoted Cycle 10 narrative.
 
 ## 2. Current project terminal
 
@@ -74,36 +67,164 @@ PRODUCTION_ACCEPTANCE=ABSENT
 GCM04=DEFERRED_TO_C12_PHASE02
 R07_IMPLEMENTATION_AUTHORIZED=NO
 
+CYCLE10_PERMANENT_INFORMATION=EXHAUSTED_WITHIN_RECORDS_001_021
+OPERATIONAL_PERMANENT_MEMORY=COMPLETE
+DIDACTIC_PERMANENT_MEMORY=COMPLETE
+DESIGN_PERMANENT_MEMORY=COMPLETE
+KANBAN_TRANSITIONS=NONE
+NEW_CYCLE10_DOMAIN_REGISTRATION_ROUND=NOT_REQUIRED
+
 CYCLE11=ACTIVE
 C11_PHASE=C11-PH01
-C11_UNIT=C11-PH01-S01
-C11_PH01_S01_IMPLEMENTATION_HEAD=1c7df53c095f4e7c1d85f278ba16c21fd95b25e6
-C11_SOURCE_EVIDENCE=PUBLISHED_G_H_I
-C11_AUTOMATED_AND_BUILD_EVIDENCE=PASS
-C11_HUMAN_WINDOWS_ACCEPTANCE=NOT_PERFORMED
-C11_HUMAN_ANDROID_ACCEPTANCE=NOT_PERFORMED
-
-CYCLE10_OPERATIONAL_HISTORY_CANON=REGISTERED
-CYCLE10_DIDACTIC_HISTORY=REGISTERED
-CYCLE10_DIDACTIC_CANON=NOT_COMPLETELY_UPDATED
-CYCLE10_DESIGN_HISTORY_CANON=SUBSTANTIALLY_REGISTERED
-CYCLE10_DESIGN_SUPERSESSION_CLARITY=NOT_COMPLETELY_UPDATED
-DOMAIN_DERIVED_AND_CHECKPOINTS=NOT_COMPLETELY_UPDATED
-C11_S01_PERMANENT_DOMAIN_ABSORPTION=NOT_COMPLETELY_UPDATED
+C11_COMPLETED_UNIT=C11-PH01-S01
+C11_CURRENT_UNIT=C11-PH01-S02
+C11_S01_PERMANENT_DOMAIN_ABSORPTION=COMPLETE
+C11_S02_AUTHORITY=CONDITIONAL_ON_SYNCHRONIZED_D_E_F_BRANCH_HEAD
 
 LIVE_SYNC_AUTHORITY=NONE
 PROVIDER_MUTATION_AUTHORITY=NONE
-SOURCE_IMPLEMENTATION_AUTHORITY=NONE
 ```
 
-Schedule remains:
+## 3. Cycle 10 permanent extraction boundary
+
+Cycle 10 is no longer staged in this mutable prefix. Its meaning is owned by
+the permanent record:
+
+| Layer | Current permanent owners |
+| --- | --- |
+| Main state and history | `00_PROJECT_STATE.md`, `05_SESSION_LOG.md` |
+| Operational | `11_OPERATIONAL_RECORD.md`, `12_OPERATIONAL_MODEL.md`, `04_TODO.md`, `10_OPERATIONAL_STATE.md` |
+| Didactic | `13_LECTURE_REGISTER.md`, `02_KANBAN.md`, `07_GLOSSARY.md`, `08_CONCEPT_MAP.md` |
+| Design | `03_DECISION_LOG.md`, `01_ARCHITECTURE.md`, `14_MODEL_OVERVIEW.md`, `09_DESIGN_STATE.md` |
+| Sanitized assay chronology | `documentation/REC_DIAGNOSTICS.md` |
+| Runtime diagnostic authority | `contracts/shared_beta/diagnostics_v1/diagnostics.registry.json` |
+
+The accepted boundary is reciprocal Windows/Android convergence for two
+enrolled Devices on one Account in development, including exact natural
+Product identity reconciliation, durable local apply/cursor progress before
+acknowledgement, drained queues and one ordinary no-op Sync per Device.
+
+The permanent record does not claim a final provider-table recount after the
+golden no-op repeats, production acceptance, multiple-Account isolation,
+membership disablement, Device revocation, outage/acknowledgement-uncertainty
+recovery, retention, snapshot or rebootstrap.
+
+No later chat should reconstruct Cycle 10 truth from superseded staging when
+the permanent files above are sufficient.
+
+## 4. Diagnostic ownership
+
+| Semantic role | Owner |
+| --- | --- |
+| Stable runtime diagnostic registry | `contracts/shared_beta/diagnostics_v1/diagnostics.registry.json` |
+| Generated readable projection | `documentation/ERR_DIAGNOSTICS.md` |
+| Sanitized assay chronology | `documentation/REC_DIAGNOSTICS.md` |
+| Domain interpretation | permanent Operational, Didactic and Design files |
+| Global sequence and evidence ceiling | this J prefix |
+| Historical corrective lineage | `Legacy_Progress` |
+
+No Main, domain or UI document may create a second diagnostic registry or
+causal engine.
+
+## 5. Permanent-memory achievement ledger
+
+### 5.1 Operational
+
+Complete:
+
+- Records 001–021 and the ordered GCM02/GCM03 assay chronology;
+- stable execution, validation, evidence-ceiling and diagnostic rules;
+- current/deferred work regenerated from the accepted terminal;
+- checkpoint refreshed away from `C10-S03A_CONTRADICTED_STOP`;
+- C11-PH01-S01 absorbed separately at the automated/build-only ceiling.
+
+No further Cycle 10 Operational append or canonical restatement is justified.
+
+### 5.2 Didactic
+
+Complete:
+
+- Cycle 10 learning history, misconceptions and vocabulary;
+- KANBAN reconciliation for readiness, identity, outcome, diagnostic,
+  acknowledgement, convergence and evidence distinctions;
+- Glossary and Concept Map regeneration;
+- C11-PH01-S01 meaning/accessibility absorption.
+
+All maturity states remain unchanged because direct learner-mastery evidence
+was not produced.
+
+### 5.3 Cross-domain C11-PH01-S01 absorption
+
+Operational, Didactic and Design permanent memory separately record:
+
+- stable destination identity;
+- compact, medium and wide shell policies;
+- shared presentation foundation;
+- Home and Lists recomposition;
+- read-only local Lists Retry;
+- passed focused/full tests, analysis and Windows/Android builds;
+- unchanged business, Sync, diagnostics, recovery and provider behavior;
+- absent human Windows/Android visual, screen-reader, keyboard-only and
+  real-device acceptance.
+
+This is a C11 event and must not be folded into Cycle 10 acceptance.
+
+### 5.4 Design
+
+Complete:
+
+- Cycle 10 local/hosted authority, identity, event/submission, transaction,
+  diagnostic and acknowledgement boundaries;
+- reciprocal development convergence topology;
+- explicit canonical supersession of the historical §22 stop by the accepted
+  §23 boundary;
+- derived topology and current checkpoint regeneration;
+- C11-PH01-S01 responsibility/dependency absorption.
+
+The historical contradicted stop remains traceable but is not current
+architecture. No further Cycle 10 Design chronology is justified.
+
+## 6. Deferred boundaries, not documentation gaps
+
+The following remain deliberately unresolved and must not reopen Cycle 10:
+
+- multiple-Account isolation;
+- membership disablement and Device revocation;
+- outage and acknowledgement-uncertainty recovery;
+- retention, snapshot and rebootstrap;
+- reproducible production lifecycle and production acceptance;
+- deferred GCM04;
+- conditional R07 reassessment.
+
+They belong to `C12-PHASE02` unless later human/Main direction changes the
+schedule. Their absence is an evidence boundary, not incomplete Cycle 10
+promotion.
+
+## 7. Current C11-PH01-S02 boundary
+
+C11-PH01-S01 established the reversible shell, token/component foundation and
+first Home/Lists composition. S02 is the bounded five-page presentation
+convergence unit for:
+
+```text
+Home
+Lists
+Catalogue
+History
+Purchase
+```
+
+The synchronized D/E/F packet owns the exact page priorities, target-image
+references, responsive rules, writable paths, tests and stop conditions.
+
+Accepted phase order:
 
 ```text
 C11-PH01
-  visual system and five core-page convergence
+  shared visual system and five core-page convergence
 
 C11-PH02
-  functional deterministic local/account-scoped Analytics
+  deterministic local/account-scoped Analytics
 
 C11-PH03
   mandatory Settings and Audit
@@ -117,222 +238,28 @@ C12-PHASE02
   conditional R07 reassessment
 ```
 
-## 3. Pruned Cycle 10 capsule
+S02 source authority exists only when the branch head is the synchronized
+D/E/F-only publication descended from this Main reconciliation and explicitly
+named by the Codex initiation prompt. Any later unrelated descendant invalidates
+that starting-head guard until Main republishes or reauthorizes the packet.
 
-Detailed Cycle 10 chronology and interpretation have moved to permanent memory:
+S02 does not authorize Analytics functionality, Settings/Audit redesign,
+Closure relocation, provider mutation, live Sync, GCM04, R07, production claims
+or a new diagnostic authority.
 
-- Operational chronology:
-  `operational/11_OPERATIONAL_RECORD.md`;
-- Operational canon:
-  `operational/12_OPERATIONAL_MODEL.md`;
-- Didactic learning history:
-  `didactics/13_LECTURE_REGISTER.md`;
-- Design decision history:
-  `design/03_DECISION_LOG.md`;
-- Design canon:
-  `design/01_ARCHITECTURE.md`;
-- sanitized source chronology:
-  `documentation/REC_DIAGNOSTICS.md`.
-
-J retains only the global accepted boundary:
-
-- reciprocal Windows/Android convergence for two enrolled Devices on one
-  Account in development;
-- exact natural Product identity reconciliation without an observed duplicate;
-- transaction truth separated from diagnostic-persistence truth;
-- acknowledgement after durable local apply/cursor progress;
-- drained `0/0/0/0` queues and one no-op ordinary Sync per Device;
-- no final provider-table recount after the golden no-op repeats;
-- no production, cross-Account, revocation, outage-recovery,
-  retention/rebootstrap or lifecycle acceptance.
-
-Do not copy the full Cycle 10 progression back into this mutable prefix.
-
-## 4. Diagnostic ownership
-
-| Semantic role | Owner |
-| --- | --- |
-| Stable runtime diagnostic registry | `contracts/shared_beta/diagnostics_v1/diagnostics.registry.json` |
-| Generated readable projection | `documentation/ERR_DIAGNOSTICS.md` |
-| Sanitized human/client/server/provider chronology | `documentation/REC_DIAGNOSTICS.md` |
-| Global sequence and evidence ceiling | this J prefix |
-| Historical corrective lineage | `Legacy_Progress` |
-| Domain interpretation | permanent domain files |
-
-No permanent-domain correction may create another diagnostic registry or causal
-engine.
-
-## 5. Permanent-memory conflictive reconciliation
-
-The comparison baseline is
-`f3bfd3e6829d0f42951e306c449564fb05d7cc9c`; the reconciled domain head is
-`d99f3e39894b9f34eec085014a23d990578b5bce`.
-
-All five domain-file changes since the baseline were append-only:
-797 additions, zero deletions. No earlier Historical material was rewritten.
-
-### 5.1 Operational
-
-Registered and not to be duplicated:
-
-- Cycle 10 execution/assay chronology in `11_OPERATIONAL_RECORD.md`;
-- Cycle 10 stable execution, evidence and diagnostic rules in
-  `12_OPERATIONAL_MODEL.md`.
-
-Not completely updated:
-
-- `04_TODO.md` still routes to the earlier C10-S03A corrective/provider gates;
-- `10_OPERATIONAL_STATE.md` still declares Cycle 10 open at
-  `C10-S03A_CONTRADICTED_STOP`;
-- C11-PH01-S01 Operational evidence has not been absorbed into permanent
-  Operational memory.
-
-Corrective route:
-
-1. do not append another Cycle 10 chronology or duplicate Cycle 10 canon;
-2. append only a distinct C11-PH01-S01 Operational event where evidence
-   justifies it;
-3. regenerate current/deferred work from accepted Cycle 10 closure and C11 S01
-   evidence;
-4. rewrite the compact checkpoint last.
-
-### 5.2 Didactic
-
-Registered and not to be duplicated:
-
-- Cycle 10 learning progression, misconceptions, terminology and evidence
-  ceilings in `13_LECTURE_REGISTER.md`;
-- no Cycle 10 learner-maturity transition was proved.
-
-Not completely updated:
-
-- `02_KANBAN.md` has no Cycle 10 canonical reconciliation for readiness,
-  natural identity, transaction/diagnostic separation, result-state vocabulary,
-  acknowledgement ordering, same-Device/two-Device proof or
-  development/production acceptance;
-- `07_GLOSSARY.md` and `08_CONCEPT_MAP.md` still recover the earlier
-  contradicted Cycle 10 state;
-- C11-PH01-S01 wording, state distinctions and accessibility evidence have not
-  been absorbed into permanent Didactic memory.
-
-Corrective route:
-
-1. preserve all maturity statuses unless direct learner evidence satisfies the
-   existing rubric;
-2. map Cycle 10 distinctions to existing concept identifiers before creating
-   any new identity;
-3. append only a distinct C11-PH01-S01 learning/meaning event where justified;
-4. regenerate the derivative glossary;
-5. refresh the checkpoint last.
-
-### 5.3 Design
-
-Registered and not to be duplicated:
-
-- Cycle 10 decision progression in `03_DECISION_LOG.md`;
-- Cycle 10 local/hosted authority, identity, transaction, acknowledgement,
-  convergence and diagnostic boundaries in `01_ARCHITECTURE.md`.
-
-Not completely updated:
-
-- `01_ARCHITECTURE.md` still exposes the earlier
-  `C10-S03A_CONTRADICTED_STOP` terminal immediately before the accepted Cycle 10
-  section without explicitly marking the former as historical and superseded;
-- `14_MODEL_OVERVIEW.md` and `09_DESIGN_STATE.md` still recover an older
-  architecture/checkpoint;
-- C11-PH01-S01 stable destination identity, three-layout shell, shared visual
-  primitives, Home/Lists composition and scope boundaries have not been
-  absorbed into permanent Design memory.
-
-Corrective route:
-
-1. do not append another Cycle 10 decision chronology;
-2. add one explicit canonical supersession note without erasing the older
-   terminal;
-3. absorb C11-PH01-S01 only at its implemented/tested/build-validated evidence
-   ceiling;
-4. regenerate the derived model;
-5. refresh the checkpoint last.
-
-## 6. Main-owned corrective release order
-
-Publication order is Main-owned and must not be copied into individual role
-prompts:
+## 8. Authority terminal
 
 ```text
-1. Operational corrective completion
-2. verify its bounded permanent-file commit
-3. Didactic corrective completion
-4. verify its bounded permanent-file commit
-5. Design corrective completion
-6. verify its bounded permanent-file commit
-7. Main final J/Main-root reconciliation
-```
-
-Each role receives the current remote HEAD at execution time, verifies this J
-commit remains an ancestor and writes only its own permanent files.
-
-The semantic write order remains:
-
-```text
-observational append, only for a genuinely new C11 event
-→ canonical reconciliation
-→ derived regeneration
-→ checkpoint refresh last
-```
-
-Cycle 10 Historical/Canonical content already registered must not be duplicated.
-Promotion remains evidence-qualified. Passing implementation tests does not
-establish human platform acceptance or learner mastery.
-
-## 7. C11-PH01-S01 evidence capsule for domain absorption
-
-Accepted evidence:
-
-- stable destination identifiers replaced positional selected-index state;
-- compact `<600`, medium `600–1023`, and wide `>=1024` shell policies exist;
-- compact direct destinations remain Home, Lists, Purchase, History and More;
-- retained page state through `IndexedStack` remains;
-- a shared warm-neutral/green/purple visual foundation and reusable
-  presentation primitives exist;
-- Home and Lists were recomposed;
-- Lists wide table and compact cards consume the same local projection/search/
-  sort state;
-- Lists distinguishes loading, read error, first-use empty, filtered empty,
-  insufficient history and populated data;
-- read-only Lists Retry repeats only the local projection request;
-- Analytics and Audit destinations are reserved without implementing PH02/PH03;
-- Settings and Closure behavior remain unchanged;
-- business, Sync, diagnostics, recovery and provider behavior remain unchanged;
-- focused tests, full Flutter tests, analyze, Windows build and Android build
-  passed.
-
-Evidence ceiling:
-
-- no human Windows or Android visual acceptance;
-- no Narrator, TalkBack, keyboard-only or real-device acceptance;
-- no pixel-parity or approved golden boundary;
-- Catalogue, Purchase and History recomposition remains later PH01 work;
-- Analytics calculations remain PH02;
-- Settings/Audit redesign and Closure disposition remain PH03;
-- no provider mutation or live Sync evidence.
-
-## 8. Current executable boundary
-
-This J release authorizes permanent-domain reconciliation only. It does not
-authorize source changes, D/E/F replacement, another Codex implementation
-round, live client operations, provider mutation, GCM04, R07 or production
-claims.
-
-```text
-J_PRUNING=COMPLETE
-CYCLE10_DOMAIN_HISTORY_CANON=SUBSTANTIALLY_REGISTERED
-PERMANENT_RECOVERY_SURFACES=NOT_COMPLETELY_UPDATED
-C11_S01_PERMANENT_ABSORPTION=NOT_COMPLETELY_UPDATED
-NEXT_ROUTE=BOUNDED_O_A_D_PERMANENT_COMPLETION
-SOURCE_AUTHORITY=NONE
+J_CYCLE10_FINAL_PRUNING=COMPLETE
+CYCLE10_PERMANENT_EXTRACTION=EXHAUSTED
+CYCLE10_STAGING_AUTHORITY=NONE
+CYCLE10_DOMAIN_RERUN=NOT_REQUIRED
+C11_S01_PERMANENT_ABSORPTION=COMPLETE
+C11_CURRENT_UNIT=C11-PH01-S02
+C11_S02_SOURCE_AUTHORITY=CONDITIONAL_ON_D_E_F_ONLY_BRANCH_HEAD
 LIVE_SYNC_AUTHORITY=NONE
 PROVIDER_MUTATION_AUTHORITY=NONE
+METHODOLOGY_MUTATION=NONE
 ```
 
 ---

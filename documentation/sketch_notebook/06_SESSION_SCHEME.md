@@ -1,49 +1,90 @@
 # 06_SESSION_SCHEME.md
 
-> Version: Cycle 11 forward checkpoint 3.0
-> Status: Active Forward Checkpoint — preparation only
+> Version: C11-PH01-S02 active checkpoint 4.0
+> Status: Active Forward Checkpoint — synchronized S02 staging
 > Persistence Class: Forward Checkpoint
 > Knowledge Class: Main / Prospective
 > Authority: Main Chat [M]
 > Branch: `grm-guarded-provisioning-20260727`
-> Cycle 10 source baseline: `97cec7f733926f669d2a844feb2b5e6e0b7e6bce`
+> Cycle 10 accepted implementation boundary: `97cec7f733926f669d2a844feb2b5e6e0b7e6bce`
 > Cycle 10 GCM03 closure: `05e630cfe04aa03846bc635c524278d4fa9b7c39`
+> C11-PH01-S01 materialization: `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
+> Permanent-memory reconciliation inspected through: `526e0de6e294c5fb969d8ee1f35e6eb53914902b`
 > Current-state source: `00_PROJECT_STATE.md`
 
 ---
 
-<!-- TEMPORAL_MARKER:C11-PREPARATION-2026-07-30 -->
+<!-- TEMPORAL_MARKER:C11-PH01-S02-ACTIVE-2026-07-30 -->
 
-# Cycle 11 — Product Surface, UX and Functional Analytics
+# Cycle 11 — C11-PH01-S02 Five-Page Visual Convergence
 
-## 1. Status and activation route
+## 1. Status and activation
 
-Cycle 10 is closed at the GCM03 two-Device development scope. Cycle 11 is
-prepared for fresh A/B/C investigation; source authority is inactive.
+Cycle 10 is closed and permanently reconciled. C11-PH01-S01 is implemented,
+automated/build validated and absorbed into all permanent domains.
+
+C11-PH01-S02 is the current bounded forward unit:
 
 ```text
-INDEX and methodology boot
-→ Cycle 10 Main closure and current domain checkpoints
-→ inspect five reference PNGs and current Flutter pages
-→ fresh A/B/C C11 investigation
-→ Main J reconciliation
-→ synchronized D/E/F
-→ bounded Codex materialization
-→ G/H/I plus Windows/Android human validation
+Home
+Lists
+Catalogue
+History
+Purchase
 ```
 
-Old Cycle 10 D/E/F must not be reused.
+Source authority is active only when the exact synchronized D/E/F-only
+publication is the guarded branch head named by the initiation prompt.
 
-## 2. Mission
+```text
+AGENTS.md and INDEX boot
+→ current Main state and J
+→ synchronized D/E/F
+→ five target PNGs and current five-page source
+→ bounded Codex materialization
+→ G/H/I replacement
+→ automated/build evidence
+→ separately recorded human-platform evidence
+```
 
-> Make Markei’s Flutter product surface coherent, intuitive and functional on
-> desktop and mobile by applying the archived visual language, improving UX,
-> introducing mandatory Settings and Audit pages, and implementing local
-> Analytics without reopening postponed backend lifecycle scope.
+No Cycle 10 D/E/F or corrective permanent-domain prompt remains reusable.
 
-## 3. Controlling reference set
+## 2. Accepted baseline
 
-Read and compare all five files:
+S01 established:
+
+- stable destination IDs independent of positional navigation;
+- compact `<600`, medium `600–1023` and wide `>=1024` policies;
+- retained `IndexedStack` page state;
+- shared theme/tokens and presentation-only components;
+- first Home and Lists recomposition;
+- equivalent wide table and compact card data;
+- read-only Lists Retry over local projection truth;
+- reserved Analytics and Audit identities without PH02/PH03 functionality.
+
+S01 did not change business, persistence, Sync, diagnostics, recovery, provider,
+Settings or Closure behavior.
+
+## 3. S02 mission
+
+> Make the five current product pages read as one compact, calm and responsive
+> information workspace while preserving every current application boundary.
+
+S02 must:
+
+- correct remaining shell, typography, palette, spacing and density mismatch;
+- keep Home and Lists aligned with the shared visual system;
+- recompose Catalogue, History and Purchase;
+- preserve one business/data state across compact, medium and wide projections;
+- preserve Product/Purchase identity, Lists truth, Catalogue similarity,
+  History export/detail and Purchase draft/review/register behavior;
+- report target-image elements omitted because current data or behavior does not
+  support them.
+
+The synchronized D/E/F packet owns the exact page priorities, writable paths,
+tests, evidence terminals and stop rules.
+
+## 4. Controlling visual references
 
 ```text
 DEV_STAGE/references/c09_s02/01_lists_target.png
@@ -53,146 +94,80 @@ DEV_STAGE/references/c09_s02/04_purchase_target.png
 DEV_STAGE/references/c09_s02/05_history_target.png
 ```
 
-They establish:
+The PNGs control composition, density and visual hierarchy. Repository
+contracts control meaning and behavior. They are not authority to invent data,
+actions, telemetry, provider truth or destructive lifecycle.
 
-- responsive desktop rail and compact mobile navigation;
-- green/purple semantic hierarchy and warm surfaces;
-- reusable cards, filters, summaries, status chips and action groups;
-- table-to-card adaptation rather than simple widget shrinking;
-- explicit loading, empty, error and selection states;
-- readable information density and progressive disclosure.
+## 5. Evidence boundary
 
-They are design targets, not authority to invent unsupported data, remote
-telemetry, Household behavior or destructive edit/delete operations.
+S02 automated/build evidence may establish implementation, regression and
+bounded rendering behavior. It cannot establish:
 
-## 4. Mandatory product pages
+- human Windows or Android visual acceptance;
+- Narrator, TalkBack or keyboard-only acceptance;
+- real-device/density acceptance;
+- approved pixel/golden parity;
+- user comprehension or Didactic maturity;
+- provider, Sync, production or resilience acceptance.
 
-### Settings
+These claims must remain separately qualified in G/H/I and later permanent
+absorption.
 
-Settings must be always available in ordinary navigation and reorganize current
-People, Payment Methods and shortage-threshold controls into intuitive
-sections. A/B/C must decide the bounded placement of:
-
-- local preferences and list thresholds;
-- People and Payment Method lifecycle;
-- account/authentication and enrolled Device summary;
-- Sync controls and safe connection state;
-- data/export/privacy/support;
-- Advanced diagnostics only where appropriate.
-
-Settings must distinguish configuration from last-observed health and must not
-reconstruct provider truth in widgets.
-
-### Audit
-
-Audit is always available and replaces the ordinary Closure navigation page.
-It should present understandable operation history, Sync outcomes, queue
-state, grouped causal/lifecycle detail and safe filtering/export from existing
-truth.
-
-Fresh Design/Operational investigation must classify each current Closure
-action:
+## 6. Phase order
 
 ```text
-retain in Audit
-move to Settings/Advanced
-keep development-only
-remove from ordinary product navigation
+C11-PH01
+  shared visual system and five core-page convergence
+
+C11-PH02
+  functional deterministic local/account-scoped Analytics
+  History-to-Analytics context handoff
+
+C11-PH03
+  mandatory Settings and Audit
+  complete Closure capability disposition
+
+C12-PHASE01
+  measured UI/UX fine tuning and polishing
+
+C12-PHASE02
+  backend fine tuning, multiple-user assays, deferred GCM04
+  conditional R07 reassessment
 ```
-
-The replacement must not delete required diagnostics, authentication,
-enrollment, Sync or recovery capabilities before their new owner and tests are
-defined.
-
-### Analytics
-
-Analytics becomes functional and local/account-scoped. At minimum investigate:
-
-- total spending over selectable periods;
-- spending by Store, Product/category, Person and Payment Method where data
-  exists;
-- price and purchase-frequency trends;
-- reusable filters and empty/insufficient-history states;
-- History “Move to Analytics” selection/context handoff;
-- deterministic calculations with explicit currency and time boundaries.
-
-Analytics is user-owned product analysis. It is not remote usage telemetry and
-must not introduce developer-side behavioral collection.
-
-## 5. Existing page recomposition and UX
-
-C11 includes Home, Lists, Purchase, Catalogue and History convergence toward
-their archived targets, plus shared shell/component adoption.
-
-Investigation must preserve implemented facts and explicitly decide:
-
-- adaptive navigation and information architecture;
-- desktop tables versus mobile cards;
-- filtering, sorting, selection and detail disclosure;
-- Purchase staging/review/error presentation;
-- Catalogue similarity/identity interactions;
-- History filtering, double-click, export/share and Analytics handoff;
-- loading, empty, validation, partial and retry states;
-- keyboard, focus, text-scale and screen-reader behavior.
-
-## 6. Suggested bounded phases
-
-```text
-C11-PH01  Baseline, information architecture and shared responsive shell
-C11-PH02  Settings and Audit ownership/design, including Closure disposition
-C11-PH03  Functional local Analytics and History handoff
-C11-PH04  Home/Lists/Purchase/Catalogue/History target convergence
-C11-PH05  UX, accessibility and cross-platform human acceptance
-C11-PH06  Reconciliation, domain promotion and C12 handoff
-```
-
-Main may reorder these after A/B/C if dependency evidence supports a safer
-sequence. Settings/Audit ownership should be settled before deleting or
-renaming the Closure page.
 
 ## 7. Explicit non-goals
 
-- GCM04 live or implementation work;
-- a second Account or multi-user assay;
-- membership/Device revocation;
-- provider outage or exact-once recovery assay;
-- retention, snapshot or rebootstrap;
-- production release or hosted operational acceptance;
+- Analytics calculations or History handoff during PH01;
+- Settings/Audit redesign or Closure relocation during PH01;
+- GCM04, multiple-Account or provider-lifecycle work;
 - R07 causal-engine activation;
-- Household implementation;
-- automatic Retry/Recovery;
-- external analytics/telemetry;
-- unrelated schema/provider mutation.
+- provider/account/enrollment mutation;
+- live Sync, Retry, Recovery, Query or Enroll;
+- new telemetry or diagnostic authority;
+- new dependency, font download or asset pipeline without explicit authority;
+- production release or hosted operational acceptance.
 
-## 8. C11 exit direction
-
-Cycle 11 may close only when:
-
-- Settings, Audit, Analytics and the existing core pages are reachable through
-  one coherent responsive shell;
-- Settings and Audit have tested truth/ownership boundaries;
-- functional Analytics derives deterministically from local accepted data;
-- the five target pages materially converge at desktop and compact widths;
-- existing Purchase, Sync and local-data invariants retain regression evidence;
-- Windows and Android human workflows are recorded;
-- accessibility and unresolved visual gaps are explicit;
-- C12-PH01 receives measured polishing work rather than vague redesign;
-- C12-PH02 retains GCM04/backend multi-user work without accidental activation.
-
-## 9. Entry terminal
+## 8. Entry and stop terminal
 
 ```text
-CYCLE10=CLOSED_GCM03_DEVELOPMENT_SCOPE
-CYCLE11=PREPARED_FOR_A_B_C
-C11_SOURCE_AUTHORITY=INACTIVE
-C11_SETTINGS=MANDATORY
-C11_AUDIT=MANDATORY_REPLACES_CLOSURE_NAVIGATION
-C11_ANALYTICS=FUNCTIONAL_LOCAL
-C11_REFERENCE_SET=FIVE_C09_S02_PNGS
+CYCLE10=CLOSED_AND_PERMANENTLY_RECONCILED
+CYCLE11=ACTIVE
+C11_PHASE=C11-PH01
+C11_UNIT=C11-PH01-S02
+C11_S01=IMPLEMENTED_TESTED_BUILD_VALIDATED_AND_PERMANENTLY_ABSORBED
+C11_S02_SOURCE_AUTHORITY=CONDITIONAL_ON_SYNCHRONIZED_D_E_F_BRANCH_HEAD
+C11_ANALYTICS=DEFERRED_TO_PH02
+C11_SETTINGS_AUDIT_CLOSURE=DEFERRED_TO_PH03
 GCM04=DEFERRED_TO_C12_PHASE02
 R07_IMPLEMENTATION_AUTHORIZED=NO
 LIVE_SYNC_AUTHORITY=NONE
+PROVIDER_MUTATION_AUTHORITY=NONE
 ```
+
+Stop before source mutation if the branch head is not the exact D/E/F-only
+publication named by the initiation prompt, if ancestry diverges, if unrelated
+changes exist, or if the target appearance requires new domain/repository/
+provider ownership.
 
 ---
 
