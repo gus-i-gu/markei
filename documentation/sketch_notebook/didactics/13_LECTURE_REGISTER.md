@@ -1067,4 +1067,116 @@ destructive product control or raw diagnostic overload was introduced.
 This event records represented and executable project meaning plus bounded UI
 acceptance. It does not establish learner mastery. No KANBAN maturity transition
 is authorized.
+# Observation 014 — C11-PH05 Learner-Facing Integration and Defect Registration
 
+```text
+Date: 2026-07-31
+Branch: grm-guarded-provisioning-20260727
+Class: implementation/evidence learning event
+Implementation: 426235d8b67ac719e494b53cfb23a6c3b06fb489
+Evidence: DEV_STAGE/H_DDC_CODEX.md
+Main reconciliation: J section 14 at e6ced7fe3945925bf5f314ee11c4538029e18d44
+KANBAN transition: NONE
+```
+
+## Ordered learning event
+
+1. Purchase now groups Person and Payment Method under `Optional purchase
+   details`. Each remains independent optional metadata; Store, date and time
+   remain required Purchase context.
+2. Catalogue no longer presents checkbox, selection-count or bulk-action
+   vocabulary. Opening Product details remains a separate ordinary activation.
+3. History distinguishes a Purchase opened for detail from zero, one or many
+   Purchases selected for action. The final selected row can be unchecked.
+4. `Select all shown` means only the current filtered, loaded recent-History
+   window. It does not claim every matching Purchase in persistence.
+5. `Use in Analytics` hands off Purchase scope. Requested, matched and
+   unavailable Purchase counts expose reconciliation of that scope; no
+   calculation, saved analysis or Purchase mutation occurs merely because of
+   the handoff.
+6. Export and sharing remain different actions. An export success is reported
+   only after the destination supplies the final path; History and Analytics
+   do not claim sharing from file creation.
+7. Audit now says `Readiness summary`, avoiding a provider-Health claim.
+   Settings begins with Account, then Purchase references and shortage
+   timeframe, Sync and Device, and Advanced actions.
+8. Person and Payment Method reference codes remain `@NNN` and `#NNN`.
+   They are visible local reference codes, not credentials or provider
+   identities.
+9. The Guide implements eight local anchored sections and focusable contents
+   navigation. Its committed order is Home, Purchase, Catalogue, History,
+   Analytics, Exports, Audit and Settings.
+10. That Guide order does not fully implement the accepted learner sequence:
+    Lists is not its own teaching boundary, while Getting started and the
+    local-data/export/Sync-limit boundary were redistributed. The structure is
+    implemented and automated; sequence fidelity is partially contradicted.
+11. Automated evidence covers the named breakpoint boundaries, compact More,
+    Home at 200-percent text, Guide anchors, History selection semantics,
+    explicit non-color meaning and focus semantics.
+12. Later human screenshots exposed an Analytics result that may use or display
+    a Quantity value/unit unrelated to the requested Variables and Operation.
+    Current tests did not detect this learner-facing mismatch.
+
+## Misconceptions corrected
+
+| Tempting interpretation | Evidence-qualified correction |
+| --- | --- |
+| Optional purchase details is one combined tag | Person and Payment Method are independent nullable Purchase metadata. |
+| Opening Catalogue detail selects a Product for bulk action | Detail activation opens one Product; ordinary Catalogue selection vocabulary is absent. |
+| Opening History detail selects the Purchase for an action | Detail state and selected-for-action state are independent. |
+| Select all shown means every matching Purchase | It means the filtered loaded recent-History window only. |
+| Use in Analytics calculates immediately | It transfers scope only; execution remains an explicit Analytics action. |
+| Every requested Purchase must match | Requested, matched and unavailable counts preserve reconciliation gaps. |
+| Exporting a file shares it | Export creates a file at the named destination; sharing is a separate action. |
+| Readiness summary proves provider health or successful Sync | It summarizes bounded local readiness evidence only. |
+| Eight Guide sections prove the accepted learner sequence | The structure exists, but the committed sequence redistributes or omits accepted teaching boundaries. |
+| Passing Analytics tests proves the requested variable was calculated and displayed | Current tests did not detect the observed wrong-variable/unit mismatch. |
+
+## Analytics defect and accepted correction direction
+
+The human-observed mismatch is active learner-facing defective state. The
+wrong-variable cause is not established and must not be described as visual
+only or as calculation corruption without end-to-end evidence.
+
+The accepted correction direction is not implemented:
+
+- a compact `Create analysis` composer;
+- one typed `Variables` control instead of separate breakdown/measure pill
+  banks;
+- two custom date fields using `dd-mm-yyyy`;
+- learner-visible Date-Time of purchase and Store name while stable identifiers
+  remain internal.
+
+No calculation-integrity or comprehension claim is promoted from this
+direction.
+
+## Evidence classification
+
+Implemented, automatically tested and built are separate from human-understood.
+PH05 has named automated/build evidence for the implemented scope. Human
+screenshots are partial defect-finding evidence, not complete acceptance.
+
+Still unestablished:
+
+- a complete screenshot-fidelity set;
+- keyboard-only human review;
+- Narrator and TalkBack;
+- locale and long-string review;
+- Windows/Android real-device behavior;
+- direct learner explanation, application, debugging or transfer.
+
+## Stable exclusions and next learning boundary
+
+PH05 adds no prediction, causal explanation, provider Health, telemetry,
+automatic calculation on handoff, schema authority or maturity evidence.
+
+The next learning boundary is to trace a requested Analytics draft through
+validation, immutable record, grouped execution, result, Chart/Table,
+interpretation and CSV/PDF, then verify that every visible value and unit
+belongs to the selected typed Variable. Separately, a human Guide assay must
+test whether the redistributed sequence still teaches Lists and local/Sync
+limits adequately.
+
+This event records represented, automated, built and partially human-observed
+project evidence. It does not establish learner mastery. No KANBAN maturity
+transition is authorized. `KANBAN_TRANSITIONS=NONE`. `KANBAN_TRANSITIONS=NONE`.

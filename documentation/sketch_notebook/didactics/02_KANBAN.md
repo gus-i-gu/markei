@@ -1160,4 +1160,39 @@ Stable PH03 boundaries:
   learner mastery.
 
 All 39 KANBAN maturity values remain unchanged.
+# C11-PH05 Canonical Absorption
 
+> Reconciliation date: 2026-07-31
+> Evidence: implementation commit `426235d8b67ac719e494b53cfb23a6c3b06fb489`;
+> complete `DEV_STAGE/H_DDC_CODEX.md`; J section 14 at
+> `e6ced7fe3945925bf5f314ee11c4538029e18d44`; relevant UI and focused tests
+> Evidence class: implemented, automated-test and Windows/Android build evidence,
+> plus partial human screenshot defect evidence
+> Maturity result: no transition
+
+PH05 extends stable learner-facing meaning without creating a new KANBAN
+identity or proving learner mastery.
+
+| Existing concept identifier | Stable canonical identity or dependency | Evidence-qualified PH05 absorption | Maturity before → after |
+| --- | --- | --- | --- |
+| `&&&03`, `&&&10` | Required and optional Purchase facts remain distinct. | `Optional purchase details` contains independent optional Person and Payment Method metadata; Store, date and time remain required context. | Yellow / Red → unchanged |
+| `&&&03`, `&&&05`, `%%%07` | Activation, detail and action selection must use distinct vocabulary. | Catalogue detail activation remains without ordinary selection vocabulary. History detail state remains separate from zero/one/many selected-for-action Purchase IDs. | Yellow / Red / Red → unchanged |
+| `&&&02`, `&&&05`, `&%%17` | History supplies factual scope; Analytics owns calculation. | `Select all shown` is the filtered loaded recent-History window. `Use in Analytics` transfers scope only and reports requested, matched and unavailable Purchase counts without automatic calculation. | Yellow / Red / Red → unchanged |
+| `&&&03`, `&&&05` | Learner wording must not claim an effect before it occurs. | Export and sharing are distinct. Export success follows the final destination result and does not itself claim sharing. | Yellow / Red → unchanged |
+| `&&&03`, `&&&05`, `&%%14` | Readiness is bounded evidence, not provider or Sync success. | Audit uses `Readiness summary`; Settings is Account-first. Person `@NNN` and Payment Method `#NNN` remain local reference codes. | Yellow / Red / Red → unchanged |
+| `&&&03`, `&&&05`, `%%%07` | A learning structure and an accepted learner sequence require separate evidence. | The Guide has eight local anchored sections and focusable contents navigation, but its committed sequence omits Lists as its own teaching boundary and redistributes Getting started and local-data/export/Sync-limit concepts. | Yellow / Red / Red → unchanged |
+| `&&&05`, `&%%17`, `%%%07` | Automated behavior does not prove semantic or learner correctness. | Human screenshots expose a possible unrelated Quantity value/unit in an Analytics result. The cause is unknown and current tests did not detect the mismatch. | Red / Red / Red → unchanged |
+
+Canonical evidence boundaries:
+
+- the Guide structure is implemented and automated;
+- the accepted Guide learner sequence is partially contradicted;
+- the Analytics wrong-variable/unit mismatch is an active learner-facing defect;
+- the accepted compact composer, unified typed Variables, two
+  `dd-mm-yyyy` dates, Date-Time of purchase and Store name are not implemented;
+- screenshot fidelity, keyboard-only review, Narrator/TalkBack, locale,
+  real-device review and learner comprehension remain unestablished;
+- implementation, automation and builds authorize no calculation-integrity or
+  maturity claim.
+
+All 39 KANBAN maturity values remain unchanged. `KANBAN_TRANSITIONS=NONE`.

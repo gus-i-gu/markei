@@ -183,13 +183,13 @@ production acceptance, Analytics behavior or Audit/Closure migration.
 
 <!-- TEMPORAL_MARKER:C11-PH02-DIDACTIC-2026-07-31 -->
 
-# Current Didactic Checkpoint — C11-PH03
+# Current Didactic Checkpoint — C11-PH05
 
 > Status: current conceptual checkpoint
 > Branch: `grm-guarded-provisioning-20260727`
-> Implementation: `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`
-> Evidence: `DEV_STAGE/H_DDC_CODEX.md`
-> Main reconciliation: `33dc1002b4a7b00fa67e863dfe98a43c97d66cee` section 11
+> Implementation: `426235d8b67ac719e494b53cfb23a6c3b06fb489`
+> Evidence: complete `DEV_STAGE/H_DDC_CODEX.md`
+> Main reconciliation: `e6ced7fe3945925bf5f314ee11c4538029e18d44` section 14
 > Sequence: SEQ-PRM-04 / PDR2-A
 > Learner maturity: unchanged
 
@@ -198,114 +198,85 @@ production acceptance, Analytics behavior or Audit/Closure migration.
 ```text
 C11_PH01_R01=PERMANENTLY_ABSORBED
 C11_PH02=PERMANENTLY_ABSORBED
-C11_PH03=IMPLEMENTED_VALIDATED_AUTOMATED_BUILD_CEILING
-SETTINGS_PURPOSE=LOCAL_CONFIGURATION_AND_BOUNDED_READINESS
-AUDIT_PURPOSE=RECENT_SANITIZED_LOCAL_ACTIVITY_HISTORY
-PURCHASE_HISTORY_PURPOSE=RECORDED_PURCHASE_FACTS
-CLOSURE_ORDINARY_NAVIGATION=ABSENT
-HUMAN_UI_VERIFICATION=ACCEPTED_WITH_MINOR_C12_PH01_CARRYOVER
+C11_PH03=PERMANENTLY_ABSORBED
+C11_PH05=IMPLEMENTED_AUTOMATED_AND_BUILT
+GUIDE_STRUCTURE=IMPLEMENTED_AND_AUTOMATED
+GUIDE_ACCEPTED_LEARNER_SEQUENCE=PARTIALLY_CONTRADICTED
+ANALYTICS_LEARNER_DEFECT=ACTIVE
+ANALYTICS_WRONG_VARIABLE_ROOT_CAUSE=NOT_ESTABLISHED
+ANALYTICS_CORRECTION_DIRECTION=ACCEPTED_NOT_IMPLEMENTED
 KANBAN_TRANSITIONS=NONE
 ```
 
-## Concept dependency
+## Current learner-visible distinctions
 
-```text
-Settings
-  -> local preferences and reference management
-  -> bounded Account, Device and Sync-readiness information/actions
+- `Optional purchase details` contains independent optional Person and Payment
+  Method metadata; required Store/date/time remain outside that optional group.
+- Catalogue detail activation is not ordinary selection.
+- History detail opening is independent from zero/one/many action selection.
+- `Select all shown` means the current filtered loaded recent-History window.
+- `Use in Analytics` transfers scope only; requested, matched and unavailable
+  counts expose reconciliation without automatic calculation.
+- Export creates a file after a final destination result; sharing is separate.
+- Audit uses `Readiness summary`, not provider Health.
+- Settings is Account-first.
+- Person codes are `@NNN`; Payment Method codes are `#NNN`.
 
-Audit
-  -> active Account and environment
-  -> recent sanitized local attempts and events
-  -> bounded read-only historical evidence
+## Guide correction
 
-Purchase History
-  -> recorded Purchase facts
+The Guide has eight local anchored sections and focusable contents navigation.
+Its committed order is Home, Purchase, Catalogue, History, Analytics, Exports,
+Audit and Settings.
 
-Current status
-  -> latest locally observed readiness
+The accepted learner sequence is not fully implemented: Lists is not preserved
+as its own teaching boundary, while Getting started and
+local-data/export/Sync-limit concepts are redistributed. Structure is
+implemented/automated; sequence fidelity is partially contradicted; Guide
+comprehension is unestablished.
 
-Closure
-  -> retired ordinary product vocabulary
-```
+## Active Analytics learner defect
 
-Settings does not own Recovery, provider maintenance or destructive diagnostic
-controls. Audit does not own Purchase facts, current status, hosted truth,
-telemetry or causal explanation.
+Human screenshots expose a result that may use or display a Quantity value/unit
+unrelated to the requested Variables and Operation. Current Analytics tests did
+not detect the mismatch. The wrong-variable cause is unknown; no calculation-integrity claim is
+authorized.
 
-## Learner-visible evidence states
+Accepted but not implemented correction direction:
 
-- local: read from on-device persistence for the active Account/environment;
-- bounded window: only the displayed recent evidence is claimed;
-- loading: the local read is in progress;
-- empty: no records exist in the loaded window;
-- stale: prior evidence remains visible after a later read failed;
-- unavailable: the requested local evidence could not be provided.
-
-A diagnostic code supplies a technical classification and safe guidance. It
-does not prove why an event occurred. Audit Retry repeats only the same local
-read and changes neither Purchase facts nor Sync/provider state.
-
-## Product vocabulary and reachability
-
-- Settings remains ordinary configuration and bounded readiness.
-- Audit means recent local activity history and is reachable from wide/medium
-  navigation and compact More.
-- Purchase History remains the chronology of recorded Purchase facts.
-- Closure is absent from ordinary navigation and semantics under both feature
-  flag values.
-- Retained native Closure runners and diagnostic infrastructure remain
-  unreachable development/support implementation, not product vocabulary.
+- compact `Create analysis`;
+- unified typed `Variables`;
+- two `dd-mm-yyyy` date fields;
+- Date-Time of purchase and Store name in learner-facing evidence.
 
 ## Evidence ceiling
 
-Implemented and validated within the named automated/build boundary:
-
-- Settings persistence, validation, correction and duplicate-action behavior;
-- Audit loading, empty, stale, unavailable, pagination, sanitization and
-  read-only Retry behavior;
-- Audit versus Purchase History and current-status wording;
-- wide/compact reachability and shared meaning;
-- focus semantics, non-color meaning and 200-percent text behavior;
-- Closure absence from ordinary navigation;
-- Windows release and Android debug build completion.
-
-Human direction accepted the visible PH03 result for documentation closure.
-Minor non-blocking UI polish is deferred to C12-PH01.
+Implemented, automated and built are not learner-understood. Automated evidence
+covers the named responsive boundaries, compact More, Home 200-percent text,
+Guide anchors, History selection, focus semantics and non-color meaning.
 
 Still unestablished:
 
-- a formal PH03 screenshot set;
+- complete screenshot-fidelity review;
+- keyboard-only human review;
 - Narrator and TalkBack;
 - locale and long-string review;
-- keyboard-only human acceptance;
 - real-device review;
 - direct learner comprehension or transfer.
 
-Passing tests, builds and bounded UI acceptance do not establish KANBAN
-maturity.
-
-## Stable exclusions
-
-No causal/backend R07 engine, hosted Audit, provider telemetry, automatic
-Recovery, destructive product maintenance, raw diagnostic overload, chart,
-prediction or recommendation entered PH03.
-
-## Remaining Main and human questions
-
-1. Main must verify all three permanent-domain reconciliations before refreshing
-   00/05/06 and opening C12-PH01.
-2. Human review must establish the still-absent accessibility, locale,
-   keyboard-only and real-device evidence if required.
-3. Direct learner assays must distinguish Settings from status, Audit from
-   Purchase History, local from hosted evidence, and technical classification
-   from causal explanation before any maturity promotion.
+No KANBAN maturity transition follows from PH05.
 
 ## Recovery pointers
 
-1. `02_KANBAN.md` — stable concept identities and unchanged maturity.
-2. `07_GLOSSARY.md` — current Settings/Audit/Closure vocabulary.
-3. `13_LECTURE_REGISTER.md` Observation 013 — PH03 implementation/evidence event.
-4. `DEV_STAGE/H_DDC_CODEX.md` — learner-visible automated evidence and limits.
-5. J section 11 — Main reconciliation and documentation-closure boundary.
+1. `02_KANBAN.md` — stable concept identity and unchanged maturity.
+2. `07_GLOSSARY.md` — concise PH05 terminology and evidence distinctions.
+3. `13_LECTURE_REGISTER.md` Observation 014 — PH05 chronology and defect.
+4. `DEV_STAGE/H_DDC_CODEX.md` — automated/build evidence and limits.
+5. J section 14 — Guide deviation, Analytics defect and next authority boundary.
+6. Relevant UI/tests — implementation truth at `426235d8…`.
 
+## Next authority boundary
+
+Main must first verify the Operational, Didactic and Design PH05 permanent
+reconciliations. The Analytics correction requires a separate read-only
+end-to-end state-of-union before any new D/E/F authority. Human accessibility,
+locale, real-device and comprehension evidence remains a later gate.

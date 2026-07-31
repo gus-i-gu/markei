@@ -329,16 +329,18 @@ Breakpoint, reachability and text-scale widget tests are automated evidence.
 Narrator, TalkBack, keyboard-only and real-device acceptance require separate
 human/platform evidence.
 
-## Reserved destinations
+## Analytics and evidence
 
 ### Local Analytics
 
 **KANBAN IDs:** `&&&03`, `&&&05`, `&%%17`
 
 A deterministic, local and Account-scoped interpretation of recorded Purchase
-evidence. It produces repeatable session-local cards above a complete supporting
-evidence matrix. It does not forecast, recommend, rank, repair raw facts, use
-telemetry or claim remote authority.
+evidence. It produces session-local records and typed results over supporting
+Variables. A human-observed wrong-variable/unit mismatch remains active, so
+current implementation does not establish calculation-variable integrity. It
+does not forecast, recommend, rank, repair raw facts, use telemetry or claim
+remote authority.
 
 ### Analysis card
 
@@ -559,3 +561,109 @@ learner comprehension.
   real-device acceptance and direct learner comprehension remain unestablished.
 - Minor PH03 visual polish is deferred to C12-PH01.
 - Learner maturity: unchanged.
+## C11-PH05 current learner vocabulary
+
+### Optional purchase details
+
+Independent optional Person and Payment Method metadata attached to a Purchase.
+The label does not make Store, date or time optional and does not combine both
+references into one tag.
+
+### Catalogue detail activation
+
+Opening one Product's details without selecting it for an ordinary set or bulk
+action. Catalogue no longer uses checkbox, selection-count or selected-action
+vocabulary.
+
+### History detail and action selection
+
+History detail opens one Purchase for inspection. Action selection is a separate
+set containing zero, one or many Purchase IDs. Either state may exist without
+the other.
+
+### Select all shown
+
+Select every Purchase in the current filtered loaded recent-History window. It
+does not mean every matching Purchase in local persistence.
+
+### Use in Analytics
+
+Transfer selected Purchase IDs as an Analytics scope. It does not calculate,
+save an analysis, mutate History or change Purchase facts.
+
+### Requested, matched and unavailable Purchases
+
+Requested counts the Purchase IDs handed off. Matched counts those resolved to
+eligible local evidence. Unavailable counts requested IDs that could not be
+matched. The three counts expose scope reconciliation rather than hiding gaps.
+
+### Export and sharing
+
+Export writes a file to an explicit destination and reports success only after a
+final path exists. Sharing hands an existing artifact to another application or
+person. Creating an export does not prove it was shared.
+
+### Readiness summary
+
+A bounded summary of locally available readiness evidence. It is not provider
+Health, a causal diagnosis, a successful-Sync guarantee or a complete system
+status.
+
+### Account-first Settings
+
+A reading order that begins with Account, then Purchase references and shortage
+timeframe, Sync and Device, and Advanced actions. It is a conceptual order, not
+a claim that every action has the same effect.
+
+### Person and Payment Method reference codes
+
+`@NNN` is the visible Person reference code. `#NNN` is the visible Payment
+Method reference code. Both are local references, not credentials, hashes,
+provider identities or substitutes for stable internal identity.
+
+### Anchored Guide structure
+
+Eight local sections with a focusable contents navigation. This structure is
+implemented and automatically tested.
+
+### Accepted Guide learner sequence
+
+The intended teaching progression, including Lists as its own boundary plus
+Getting started and local-data/export/Sync-limit concepts. The committed Guide
+redistributes these concepts and therefore only partially realizes the accepted
+sequence.
+
+### Analytics learner-facing defect
+
+A human-observed result may use or display a Quantity variable/unit unrelated to
+the requested Variables and Operation. The cause is not established, and current
+tests did not detect the mismatch.
+
+### Accepted Analytics correction direction
+
+A compact `Create analysis` composer with a unified typed `Variables`
+control, two `dd-mm-yyyy` date fields, and learner-visible Date-Time of
+purchase and Store name. This direction is accepted but not implemented.
+
+### Evidence classes
+
+- **Represented:** learner-facing meaning exists in code or copy.
+- **Automated:** a named test checks a bounded behavior.
+- **Built:** a named platform build completed.
+- **Human-observed:** a person recorded a bounded runtime observation.
+- **Learner-understood:** direct comprehension or transfer evidence exists.
+
+These classes are not interchangeable.
+
+## Current PH05 evidence boundary
+
+- PH05 implementation is `426235d8b67ac719e494b53cfb23a6c3b06fb489`.
+- H and J section 14 establish the automated/build ceiling and preserved
+  accessibility limits.
+- Guide structure is implemented/automated; accepted sequence fidelity is
+  partially contradicted.
+- Analytics has an active learner-facing wrong-variable/unit defect with unknown
+  cause; its accepted correction direction is not implemented.
+- A complete screenshot set, keyboard-only review, Narrator/TalkBack, locale,
+  real-device review and learner comprehension remain unestablished.
+- Learner maturity remains unchanged.\n\n`KANBAN_TRANSITIONS=NONE`.
