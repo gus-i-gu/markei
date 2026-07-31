@@ -1,137 +1,161 @@
-# C11 Final Correction and C12 Entry Scheme
+# C12 Entry and Guarded Recovery Scheme
 
-> Version: 0.8
+> Version: 0.9
 > Status: Active forward checkpoint
 > Persistence Class: Main-root continuity
 > Knowledge Class: Predictive / next-session recovery
 > Authority: Main Chat
 > Branch: grm-guarded-provisioning-20260727
-> Latest Main reconciliation: d6c565edcd0504f382262a3f2c7018e2c63cd47b, J section 15
-> Analytics correction activation: 0e647e76aa8275bda48cea1e9d08427e3d949134
+> Final C11 J reconciliation: 35881bdf076ed1dcfebb0b7cbd35486d3116899e, section 17
+> Final C11 permanent-domain head: 9359200464b9218d336850225445fb40ea055763
 
 ---
 
-## 1. Next-session focus
+## 1. Entry state
 
-The next bounded unit is C11-ANALYTICS-CORRECTION-R01. It is the final planned
-source adjustment before C11 closure.
+Cycle 11 is closed at its recorded implementation and automated/build evidence
+ceiling. The final Analytics correction is permanently absorbed and no C11
+source, Codex, provider or live-operation authority remains active.
 
-Codex must materialize only the controlling D/E/F Analytics correction sections
-published at 0e647e76. The later compatible G_SCRIPTS, J and Main-root commits do
-not change the source contract or writable allowlist.
+Cycle 12 is in entry preparation. No C12 phase or implementation unit is active
+until Main/human direction selects one bounded target.
 
 ## 2. Required recovery
 
-Read economically:
+Recover economically:
 
-1. AGENTS.md;
-2. documentation/sketch_notebook/INDEX.md;
-3. PRI-CODEX and PMC-01 in PROMPT_COLLECTION.md;
-4. J_MAIN_STAGE.md section 15;
-5. the latest C11-ANALYTICS-CORRECTION-R01 sections in D/E/F;
-6. only the Analytics source/tests named in D section 45;
-7. PH05 G/H/I only as the pre-correction evidence baseline.
+1. `AGENTS.md`;
+2. `documentation/sketch_notebook/INDEX.md`;
+3. PRI-M and PMC-01 in `PROMPT_COLLECTION.md`;
+4. `00_PROJECT_STATE.md`;
+5. J section 17;
+6. the relevant Operational, Didactic or Design checkpoint only when the
+   selected C12 question needs domain depth;
+7. source only after the first C12 unit is bounded.
 
-Do not recover from the default branch. Require 0e647e76, 74638c33,
-e6ced7fe, 426235d8 and b59b2ecd to remain ancestors. Accept later advancement
-only when it is the compatible G_SCRIPTS/J/Main-root documentation chain
-described here and does not overlap source, D/E/F or G/H/I.
+Do not recover from the default branch. Require final C11 domain head
+`93592004…`, J section 17 `35881bdf…`, implementation `17fd6529…` and correction
+authority `0e647e76…` to remain ancestors.
 
-## 3. Controlling correction outcomes
+## 3. First procedural prerequisite
 
-Codex must preserve one Analytics workspace, one live draft and immutable
-session-only saved records while implementing:
+The guarded Windows launch command is currently location-sensitive:
 
-- compact responsive Group by / Variables / Operation / Timeframe composition;
-- one typed multi-select Variables owner;
-- explicit blocking without implicit count or variable substitution;
-- strict inclusive Initial date / Final date in dd-mm-yyyy;
-- local-calendar conversion to the existing UTC half-open interval;
-- human-scale quantity, money, unit-price, percentage and Difference values;
-- no raw compatibility keys or ordinary visible UUIDs;
-- Date-Time of purchase and Store name in evidence;
-- identical frozen-record meaning across Chart, Table, interpretation, CSV/PDF;
-- the ten-case D-section regression matrix;
-- unchanged Account scope, request counts, zero Analytics database/network
-  effects, selected-scope cap, pure exports and one-write destination behavior.
+- the GRM copy command uses a relative path to
+  `documentation/I_SCRIPTS.ps1`;
+- from `clients/markei_flutter`, PowerShell resolves that path beneath the
+  Flutter subdirectory and fails before the launcher executes;
+- `I_SCRIPTS.ps1` correctly resolves the repository root after launch;
+- `G_SCRIPTS.md` correctly owns the serial `GS-FLUTTER-WIN` procedure.
 
-## 4. Validation and build/run rule
+The next bounded procedural solution must make the outer GRM invocation
+repository-root-independent or explicitly establish repository-root execution.
+It must preserve procedure identifiers and dispatch unless fresh evidence
+contradicts this diagnosis.
 
-The controlling full-suite command is:
+No solution is authorized by this checkpoint alone. Main must stage or directly
+authorize the exact documentation surface before mutation.
 
-~~~powershell
-flutter test --concurrency=1 --no-pub
-~~~
+## 4. C12 phase boundaries
 
-Codex must also run the focused Analytics suite, formatting, analysis, Windows
-release build, Android debug build and diagnostics-registry check specified in
-D/E/F. A platform build unavailable on the host is NOT_PERFORMED, not PASS.
+### C12-PHASE01 — product and human acceptance
 
-G_SCRIPTS.md now uses --concurrency=1 --no-pub in GS-BUILD-02,
-GS-FLUTTER-WIN and GS-FLUTTER-AND. GRM.md and I_SCRIPTS.ps1 are unchanged.
-The earlier procedure blocker is resolved. The explicit D/E/F validation remains
-mandatory; a guarded GRM build/run may follow but does not replace its report.
+Preserved candidate scope:
 
-Do not suppress Drift multi-database warnings or change production database
-behavior for the earlier bare-parallel symptom.
+- bounded UI/UX fine tuning and visual polish;
+- wide/compact screenshot review;
+- keyboard-only and assistive-technology review;
+- locale and long-string review;
+- Windows application launch and manual export acceptance;
+- Android real-device behavior;
+- Guide sequence disposition and learner-comprehension investigation.
 
-## 5. Codex stop conditions
+This phase must not silently broaden into schema, provider, Sync or production
+work.
 
-Stop before writing or publication if:
+### C12-PHASE02 — distributed/backend resilience
 
-- named ancestry is missing;
-- source or D/E/F changed after activation;
-- schema, migration, generated, dependency or native-platform change is needed;
-- a second Analytics controller, repository, persistence owner or calculation
-  path is needed;
-- a new source/test file outside the allowlist is needed;
-- J, Main-root, permanent-domain, methodology, GRM/GS or unrelated-page edits
-  appear necessary;
-- the branch advances incompatibly.
+Preserved scope:
 
-Replace G/H/I with exact evidence. Commit and push one focused correction without
-force or pull request, then verify the remote ref and changed-path boundary.
+- GCM04;
+- multiple-Account and provider isolation;
+- membership disablement and Device revocation;
+- outage and acknowledgement-uncertainty recovery;
+- retention, snapshot and rebootstrap;
+- production deployment, lifecycle and acceptance;
+- conditional former R07 reassessment under fresh evidence.
 
-## 6. Post-Codex reconciliation
+This scope remains inactive until explicitly selected and guarded.
 
-After Codex publication:
+## 5. C11 evidence carried without reopening
 
-1. Main reconciles replacement G/H/I and bounded human wide/compact evidence into
-   a new J section.
-2. Operational, Didactic and Design run final PDR2 only for claims changed by the
-   correction.
-3. Main verifies the resulting permanent-domain path boundary.
-4. Main records the final C11 evidence ceiling, including any remaining Guide,
-   Android Downloads, accessibility, locale, real-device and comprehension limits.
-5. Main refreshes 00/05/06 for C11 closure.
-6. The project enters C12.
+The following remain accepted at their named ceiling:
 
-No Didactic KANBAN transition is expected without independent learner evidence.
+- one Analytics workspace and typed Variables owner;
+- one immutable record controlling every projection and export;
+- automated calculation-selection integrity;
+- formatted values and hidden ordinary UUIDs;
+- ten-case regression matrix;
+- focused 24-test and full 286-pass/4-skip serial suites;
+- Windows release and Android debug builds;
+- initial Analytics read `1`, Retry `+1`, other actions `+0`, writes `0`,
+  network `0`;
+- unchanged schema, dependencies, native platform and provider contracts;
+- `KANBAN_TRANSITIONS=NONE`.
 
-## 7. C12 preserved boundary
+New C12 work must not reinterpret those claims as human, provider or production
+acceptance.
 
-C12 begins from the final reconciled C11 head. C12-PHASE02 retains GCM04,
-multiple-Account/provider isolation, revocation, backend resilience, outage
-recovery, retention/rebootstrap and production lifecycle. None is reactivated by
-the Analytics correction.
+## 6. Preserved residual gates
 
-The first C12 Main action must verify the final C11 head and select the bounded
-C12 entry phase before preparing new A/B/C or D/E/F authority.
+- Guide learner sequence remains partially contradicted.
+- Android public Downloads remains typed unavailable with zero writes.
+- Human screenshot, keyboard, Narrator/TalkBack, locale, Windows launch,
+  Android real-device, manual Windows export and learner-comprehension evidence
+  remains absent.
+- Live Auth0, Neon, Render, provider and Sync validation remains absent.
 
-## 8. Exit criteria
+These are selection inputs for C12, not automatic defects or source authority.
 
-C11 may close when the bounded correction is published within its allowlist,
-replacement G/H/I records exact evidence, the regression matrix passes or is
-explicitly dispositioned, bounded human review confirms the corrected result or
-records a blocker, permanent domains absorb changed truth, J/Main continuity
-agree, and no active C11 source authority remains.
+## 7. C12 activation sequence
+
+1. Verify the live branch and final C11 ancestry.
+2. Resolve or explicitly defer the GRM launcher invocation defect.
+3. Select one C12 phase and one bounded unit.
+4. Run the required Operational, Didactic and Design state-of-union only for
+   that unit.
+5. Reconcile A/B/C in Main before staging any D/E/F.
+6. Issue exact writable paths, validation gates and stop conditions.
+7. Materialize, reconcile G/H/I, update permanent domains and refresh Main
+   continuity through the ordinary sequence.
+
+## 8. Stop conditions
+
+Stop before mutation if:
+
+- final C11 ancestry is missing;
+- the branch advanced with source, staging, methodology or permanent-domain
+  overlap not yet reconciled;
+- the selected C12 phase is ambiguous;
+- a GRM solution would change G/I dispatch or Flutter procedure content without
+  contradicting evidence;
+- backend/provider work is proposed under a PHASE01 authority;
+- human acceptance, build success and production acceptance are collapsed;
+- new source, schema, dependency, generated or platform files are needed
+  outside the explicit C12 allowlist.
+
+## 9. Entry terminal
 
 ~~~text
-CURRENT_UNIT=C11-ANALYTICS-CORRECTION-R01
-ACTIVATION=0e647e76aa8275bda48cea1e9d08427e3d949134
-G_SCRIPTS_SERIAL_GATE=CORRECTED
-CODEX_AUTHORITY=ACTIVE_BOUNDED
-POST_CODEX_ROUTE=J_THEN_PDR2_THEN_MAIN_CLOSURE
-C11_EXIT=NOT_YET_REACHED
-C12_ENTRY=AFTER_FINAL_C11_RECONCILIATION
+CYCLE11=CLOSED_AT_RECORDED_AUTOMATED_BUILD_EVIDENCE_CEILING
+FINAL_C11_IMPLEMENTATION=17fd65296e960112787b870363b40339f535f5b6
+FINAL_C11_DOMAIN_HEAD=9359200464b9218d336850225445fb40ea055763
+FINAL_C11_J=35881bdf076ed1dcfebb0b7cbd35486d3116899e
+C11_SOURCE_AUTHORITY=NONE
+GRM_FLUTTER_WIN_LAUNCHER_PATH=DIAGNOSED_UNRESOLVED
+C12=ENTRY_PREPARATION
+C12_ACTIVE_PHASE=UNSELECTED
+C12_ACTIVE_UNIT=UNSELECTED
+C12_SOURCE_AUTHORITY=NONE
+NEXT_MAIN_ACTION=Bound and solve or defer the GRM launcher invocation, then select the first C12 phase.
 ~~~
