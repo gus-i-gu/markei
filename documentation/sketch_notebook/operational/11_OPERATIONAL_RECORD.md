@@ -1251,3 +1251,52 @@ Guide ownership, navigation, anchors and zero-I/O structure are implemented. Its
 
 Screenshots were defect-finding rather than complete acceptance. Keyboard-only review, Narrator/TalkBack, locale behavior, real-device behavior, manual Windows export and broader comprehension remain unvalidated. These limits do not reopen the accepted automated/build PH05 boundary.
 
+---
+
+## 2026-07-31 — C11 Analytics correction materialization
+
+Sequence: `FLX-PRM-04` post-evidence Operational absorption  
+Role: Operational Chat [O]  
+Activation authority: `0e647e76aa8275bda48cea1e9d08427e3d949134`  
+Implementation parent: `2cdb8a66bfa75918acbbcae324e8315e0b7b2658`  
+Implementation commit: `17fd65296e960112787b870363b40339f535f5b6`  
+Main reconciliation: `J_MAIN_STAGE.md` section 16 at `34eb4b60fd4f9c6455c1774c055c1615581623af`  
+Evidence: complete `DEV_STAGE/G_OPS_CODEX.md`, implementation diff, relevant Analytics source and tests  
+Evidence boundary: automated/widget evidence, static analysis, Windows release build and Android debug build; no screenshot review, assistive-technology acceptance, locale review, Windows launch, Android real-device review, learner-comprehension evidence or live provider/Sync operation
+
+### Corrected execution evidence
+
+- One typed `AnalyticsVariable` selection owner now drives visible Variables selection; categorical breakdown and numeric-measure sets are derived views rather than competing mutable owners.
+- Purchased by and Payment method derive categorical breakdowns; Purchased for remains typed unavailable. Quantity, Unit price, Price paid, Purchase total and Evidence count derive numeric measures.
+- Categorical-only selection blocks with guidance and inserts neither Quantity nor Evidence count. Unsupported operation-variable combinations block with selection-specific guidance.
+- `Run & save` freezes determinant, variables, operation, timeframe, evidence scope, labels and grouped entries into one immutable session record. Chart, Table, interpretation, CSV and PDF consume that record; later draft changes and record selection do not mutate it.
+- Incompatible numeric axes retain typed Table/CSV/PDF evidence while Chart is unavailable by default.
+- Initial date and Final date accept strict `dd-mm-yyyy`. Both dates are inclusive and are converted through local-calendar boundaries to the existing start-inclusive/end-exclusive UTC interval.
+- Shared presentation/export conversion exposes readable decimal quantity and canonical unit, money, unit price, percent, signed Difference and integer Evidence count. Raw fixed-point storage integers and compatibility keys are absent from asserted ordinary projections.
+- Purchase, Product, Store and Item UUIDs remain internal for identity, selection, handoff, paging, fingerprints and reconstruction but are removed from ordinary Analytics presentation.
+- The previously observed wrong-variable/result symptom is no longer an active automated-evidence defect. The confirmed raw-value/internal-key presentation defect is corrected, and the ten-case regression matrix establishes calculation-selection integrity at the automated boundary.
+- No silent default-Quantity insertion or second calculation path was evidenced.
+
+### Validation and effects
+
+- `flutter pub get`: PASS; dependency and lockfile diff guard: PASS.
+- Dart formatting: PASS.
+- `flutter analyze`: PASS.
+- Focused serial Analytics suite: PASS, 24 tests.
+- Ten-case regression matrix: PASS.
+- `flutter test --concurrency=1 --no-pub`: PASS, 286 tests passed and 4 lab-gated tests skipped.
+- `flutter build windows --release`: PASS.
+- `flutter build apk --debug`: PASS.
+- Sync-diagnostics generation check: PASS.
+- Analytics effects remain initial Account-local evidence read `1`, Retry `+1`, all other Analytics actions `+0`, database writes `0`, network calls `0`.
+- Schema, migrations, generated source, dependencies, lockfile, native platform files, GRM/GS procedures and unrelated systems remained unchanged.
+- The serial `G_SCRIPTS.md` gate correction was already satisfied before implementation and was not part of this change.
+- Codex correction authority is consumed.
+
+### Warning disposition and evidence ceiling
+
+Existing Drift multiple-database warnings appeared during the full suite and were not suppressed. The existing Windows Boost/CMake developer warning and existing Android Auth0 Kotlin Gradle compatibility warning also remained. None was classified as a correction failure.
+
+Still unperformed: wide/compact screenshot review; keyboard-only human review; Narrator and TalkBack; locale and long-string review; Windows application launch; Android real-device behavior; learner comprehension; manual Windows export; and any live Auth0, Neon, Render, provider or Sync operation.
+
+PH05 Guide sequence deviation remains out of scope. Android public Downloads remains typed unavailable. GCM04, conditional former R07, multiple-Account hosted isolation, revocation, outage recovery, retention/rebootstrap and production lifecycle remain C12-PHASE02 work.

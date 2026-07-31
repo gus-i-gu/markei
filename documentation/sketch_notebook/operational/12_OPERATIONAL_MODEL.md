@@ -574,10 +574,19 @@ Local Analytics implementation and validation do not alter Sync, provider, produ
 - Android public Downloads must fail as a typed unavailable result with zero writes until an explicitly authorized public-document mechanism exists. Temporary or app-specific storage must not be labelled public Downloads.
 - Export failures expose sanitized unavailable/failure state and must not overwrite an existing file or claim success.
 
+## Analytics composition and presentation integrity
+
+- One typed Variables selection owner must derive categorical breakdowns and numeric measures; visible selection must not be duplicated across competing mutable owners.
+- Categorical-only and unsupported operation-variable combinations must block with typed guidance and must not insert an implicit Quantity, Evidence count or substitute measure.
+- One immutable saved Analytics record must control Chart, Table, interpretation, CSV and PDF. Draft mutation and saved-record selection must not relabel or mutate an existing record.
+- Custom date input uses strict inclusive local calendar dates and maps them to the existing UTC start-inclusive/end-exclusive interval by constructing the local day after the final date before UTC conversion.
+- Fixed-point aggregation and internal compatibility identity remain exact and internal. Shared pure conversion at presentation/export boundaries owns readable quantity, money, unit-price, percent, signed Difference and Evidence-count output.
+- Stable UUID identity remains available internally for Account scope, selection, History handoff, paging, fingerprints and reconstruction; ordinary Analytics presentation must not expose raw UUIDs.
+- Calculation-selection integrity requires end-to-end regression evidence across the frozen record and every result/export projection; isolated calculation tests alone remain insufficient.
+
 ## Evidence integrity and acceptance
 
-- Automated Analytics calculation tests do not establish that a composed variable/operation request is faithfully represented end to end in the human-visible result. A runtime wrong-variable/result observation remains a defect until its draft-to-result/export path is traced and corrected.
-- Accepted corrective UI direction is not implementation evidence. Composer compactness, unified variable selection, date-entry format and evidence-label changes require their own materialization and validation.
+- A corrected automated Analytics path removes the active defect classification only at its evidenced automated/build boundary; screenshot, launch, keyboard, assistive-technology, locale, real-device and comprehension gates remain independent.
 - A local Guide's section count, anchors and zero-I/O behavior do not establish faithful learner sequencing or comprehension. Content-contract and learner evidence remain separate gates.
 - Formatting, analysis, automated tests and platform builds remain distinct from manual Downloads, keyboard, assistive-technology, locale, real-device and comprehension acceptance.
 

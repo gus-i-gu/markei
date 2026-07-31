@@ -1,51 +1,42 @@
 # 04_TODO.md
 
-> Version: C11-PH05 Operational derived work view
+> Version: C11 Analytics correction Operational derived work view
 > Branch: `grm-guarded-provisioning-20260727`
-> Inspected implementation: `426235d8b67ac719e494b53cfb23a6c3b06fb489`
-> Latest Main reconciliation: `J_MAIN_STAGE.md` section 14 at `e6ced7fe3945925bf5f314ee11c4538029e18d44`
-> Status: Current corrective, validation and deferred gates
+> Inspected implementation: `17fd65296e960112787b870363b40339f535f5b6`
+> Latest Main reconciliation: `J_MAIN_STAGE.md` section 16 at `34eb4b60fd4f9c6455c1774c055c1615581623af`
+> Status: Remaining executable human, host and deferred gates
 
 # Current and Deferred Work
 
 ## Closed automated/build boundary
 
-C11-PH05 product-surface and local-export implementation is complete at the recorded automated/build ceiling: 278 tests passed with 4 lab-gated skips; formatting, analysis, diagnostic-registry drift check, Windows release build and Android debug build passed. Do not reopen this boundary for unperformed host acceptance or minor polish.
+C11 Analytics correction is complete at the recorded automated/build ceiling: the ten-case regression matrix, focused serial 24-test Analytics suite, full serial 286-pass/4-lab-skip suite, formatting, analysis, diagnostic-registry check, Windows release build and Android debug build passed. Calculation-selection integrity is automated-validated; no silent default-Quantity insertion is evidenced. Do not reopen the correction for the superseded wrong-variable/result defect classification.
 
-## P0 — Analytics corrective investigation
+## P0 — Human Analytics acceptance
 
-1. Run the requested read-only end-to-end trace from composer draft and validation through immutable record, grouped execution, Chart/Table, interpretation and CSV/PDF.
-2. Establish the wrong-variable/result root cause before authorizing source correction; do not classify it as visual-only.
-3. Add regression evidence proving requested variables, operation, timeframe and result/export integrity rather than relying on existing passing Analytics tests.
-4. Materialize only after Main freezes the compact composer, unified Variables control, two `dd-mm-yyyy` fields and Date-Time/Store evidence contract.
-5. Preserve one Account-scoped evidence load, fixed-point semantics, session-only records and the request budget unless the corrective authority explicitly changes them.
+1. Review wide and compact Analytics screenshots against the accepted composer/result/evidence direction.
+2. Complete keyboard-only review across Variables selection, custom dates, Run & save, saved records, Chart/Table and export actions.
+3. Complete Narrator and TalkBack review, including typed unavailable and validation guidance.
+4. Review locale-sensitive dates, currency/unit labels, percent/Difference formatting and long strings.
+5. Establish learner comprehension of categorical versus numeric Variables, frozen saved records and Chart unavailability.
+6. Preserve automated budgets during any human-only inspection: initial read `1`, Retry `+1`, other actions `+0`, writes `0`, network `0`.
 
-## P0 — Export host and platform gates
+## P0 — Host and device gates
 
-1. Manually validate one Windows CSV and one PDF export in the real Downloads directory, including visible final path, collision suffix, content, permission denial and sanitized failure state.
-2. Confirm one explicit successful action creates one final file and failed/unavailable actions create none.
-3. Record real-host behavior separately from automated destination tests and successful builds.
-4. Keep Android public Downloads typed unavailable with zero writes until Main/human authorizes a MediaStore or user-mediated document-save boundary.
-5. If Android public Downloads becomes required, validate on a real supported Device without broad all-files permission or app-private/temp mislabelling.
+1. Launch the Windows release application and exercise the corrected Analytics flow without live provider or Sync actions.
+2. Manually validate one Windows CSV and one PDF export in Downloads, including visible final path, collision suffix, content and sanitized failure behavior.
+3. Exercise the corrected Analytics flow on a supported Android real Device; Android public Downloads must remain typed unavailable with zero writes.
+4. Record build success, application launch, export behavior and real-device behavior as separate evidence classes.
 
-## P0 — Guide and human acceptance
+## P1 — Preserved PH05 human gates
 
-1. Main/human must decide whether the missing Lists and redistributed getting-started/local-data/export/Sync-limit teaching boundaries belong to the Analytics corrective unit or a later bounded Guide correction.
-2. Validate Guide keyboard traversal, focus movement, 200-percent text, compact/wide scrolling, Narrator/TalkBack and learner comprehension.
-3. Validate Home, History selection/actions, Audit projections and Settings post-action status/result behavior on representative Windows and Android layouts.
-4. Review locale-sensitive dates, long labels, density/orientation and real-device behavior.
-5. Preserve screenshots as defect evidence; do not restate them as complete human acceptance.
+1. Resolve the Guide learner-sequence deviation and validate comprehension without reopening its implemented zero-I/O structure.
+2. Complete representative Home, History, Audit and Settings keyboard, assistive-technology, locale and real-device review.
+3. Preserve PH05 History, Audit and Settings budgets and duplicate-action/lifecycle behavior during any later correction.
+4. Keep minor visual polish bounded to its authorized C12-PH01 unit.
 
-## P1 — Operational regression and portability
+## Deferred to C12-PHASE02
 
-1. Re-run focused export, History, Analytics, Guide, Audit and Settings tests after any corrective unit.
-2. Re-run formatting, analysis, full Flutter suite, diagnostic-registry drift check, Windows release build and Android debug build.
-3. Re-audit schema, migrations, generated source, dependencies, native platform files and API/Auth/Sync/provider contracts.
-4. Confirm Home/Guide zero I/O; History two-read/zero-write/zero-network export; Analytics, Audit and Settings budgets; and duplicate-action/lifecycle behavior remain unchanged.
-
-## Deferred to C12
-
-- Minor visual refinement outside the active Analytics defect and accepted corrective contract.
 - Android public Downloads mechanism unless separately authorized.
 - GCM04, conditional former R07, multiple-Account hosted isolation, revocation, outage recovery, retention/rebootstrap and production lifecycle.
 - Live Auth0, Neon, Render, provider and Sync operations under separate guarded authority.

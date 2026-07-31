@@ -67,79 +67,79 @@ Read in this order:
 
 No source, client, database or provider mutation is authorized by this checkpoint.
 
-<!-- TEMPORAL_MARKER:C11-PH05-OPERATIONAL-2026-07-31 -->
-> Temporal boundary — Operational checkpoint after C11-PH05 implementation and Main section 14 reconciliation. Content above preserves earlier recovery context. Content below is the sole current compact Operational state and authorizes no source, provider, live-operation, Main-root, staging or methodology change.
+<!-- TEMPORAL_MARKER:C11-ANALYTICS-CORRECTION-OPERATIONAL-2026-07-31 -->
+> Temporal boundary — Operational checkpoint after C11 Analytics correction implementation and Main section 16 reconciliation. Content above preserves earlier recovery context. Content below is the sole current compact Operational state and authorizes no source, provider, live-operation, Main-root, staging or methodology change.
 
-# Current Operational State — C11-PH05
+# Current Operational State — C11 Analytics Correction
 
 > Branch: `grm-guarded-provisioning-20260727`
-> Inspected remote head: `e6ced7fe3945925bf5f314ee11c4538029e18d44`
-> Implementation evidence head: `426235d8b67ac719e494b53cfb23a6c3b06fb489`
-> Rollback authority: `b59b2ecdfb69ca98c431b9f36694f011332fbef3`
+> Inspected remote head: `34eb4b60fd4f9c6455c1774c055c1615581623af`
+> Implementation evidence head: `17fd65296e960112787b870363b40339f535f5b6`
+> Implementation parent: `2cdb8a66bfa75918acbbcae324e8315e0b7b2658`
+> Correction authority: `0e647e76aa8275bda48cea1e9d08427e3d949134` — consumed
 > Evidence report: complete `DEV_STAGE/G_OPS_CODEX.md`
-> Latest Main reconciliation: `J_MAIN_STAGE.md` section 14
+> Latest Main reconciliation: `J_MAIN_STAGE.md` section 16
 > Status: Active compact Operational checkpoint
 
 ## Accepted terminal
 
 ```text
 CYCLE10=CLOSED_AT_GCM03_TWO_DEVICE_DEVELOPMENT_SCOPE
-C11_PH01_PH03=IMPLEMENTED_VALIDATED_AT_RECORDED_BOUNDARIES
-C11_PH05_SOURCE=IMPLEMENTED
-C11_PH05_AUTOMATED_BUILD_EVIDENCE=VALIDATED
-PH05_HUMAN_ACCEPTANCE=PARTIAL_DEFECT_FINDING
-ANALYTICS_WRONG_VARIABLE_RESULT=DEFECTIVE
-ANALYTICS_ROOT_CAUSE=NOT_ESTABLISHED
-ANDROID_PUBLIC_DOWNLOADS=BLOCKED_TYPED_UNAVAILABLE
+C11_PH01_PH03_PH05=IMPLEMENTED_VALIDATED_AT_RECORDED_BOUNDARIES
+ANALYTICS_CORRECTION=IMPLEMENTED
+CALCULATION_SELECTION_INTEGRITY=VALIDATED_AUTOMATED
+DEFAULT_QUANTITY_INSERTION=NOT_EVIDENCED
+RAW_FIXED_POINT_PRESENTATION=REMOVED
+VISIBLE_ORDINARY_ANALYTICS_UUIDS=NO
+ANALYTICS_EFFECTS=initial_read:1;retry:+1;other:+0;writes:0;network:0
 PRODUCTION_ACCEPTANCE=DEFERRED
 LIVE_OPERATION_AUTHORITY=NONE
 ```
 
-Cycle 10 remains closed at its two-Device, one-Account development boundary. PH05 performed no live provider or Sync operation and does not reopen production acceptance.
+Cycle 10 remains closed at its two-Device, one-Account development boundary. The correction performed no live provider or Sync operation and does not reopen production acceptance.
 
 ## Implemented and validated
 
-- Home and Guide are local zero-I/O surfaces.
-- History owns stable action selection separately from detail and reconstructs a selected export with two set-based Account-scoped reads, zero database writes and zero network calls.
-- A successful explicit export produces one final collision-safe file.
-- Windows Downloads is implemented at automated/build ceiling. Android public Downloads returns typed unavailable and writes zero files.
-- Analytics budgets are initial request `1`, Retry `+1`, and handoff/export/local UI `+0`; Analytics writes no database state and makes no network call.
-- Audit budgets are initial `2` queries, Retry `+2`, projections `+0`, writes `0`, network `0`.
-- Settings performs five initial capability calls and local Refresh `+2`; duplicate actions are blocked and completed support actions refresh status without losing the action result.
-- Focused tests, formatting, analysis, 278-pass/4-lab-skip full suite, Windows release build, Android debug build, diagnostic-registry check and diff check passed.
-- Schema, migrations, generated source, dependencies, lockfile, native platform files and API/Auth/Sync/provider contracts were unchanged.
-- Rollback is one implementation commit to `b59b2ecdfb69ca98c431b9f36694f011332fbef3`.
+- One typed Variables owner derives categorical breakdowns and numeric measures. Categorical-only and unsupported combinations block without inserting an implicit measure.
+- One immutable session record controls Chart, Table, interpretation, CSV and PDF; later draft and record selection do not mutate it.
+- Strict inclusive `dd-mm-yyyy` dates map from local-calendar boundaries to the existing UTC half-open interval.
+- Quantity, money, unit-price, percent, signed Difference and Evidence count use readable shared presentation/export conversion.
+- Raw compatibility keys and ordinary Purchase, Product, Store and Item UUID presentation are removed while internal identities remain.
+- The ten-case regression matrix and focused serial Analytics suite passed with 24 tests.
+- The full serial suite passed with 286 tests and 4 lab-gated skips.
+- Formatting, analysis, diagnostic-registry check, Windows release build and Android debug build passed.
+- Analytics retains initial local read `1`, Retry `+1`, other actions `+0`, database writes `0` and network calls `0`.
+- Schema, migrations, generated source, dependencies, lockfile, native platform files, GRM/GS and unrelated systems remained unchanged.
+- The serial `G_SCRIPTS.md` gate correction was satisfied before implementation. Codex correction authority is consumed.
 
-## Defective, blocked and host-unvalidated
+## Warnings and evidence ceiling
 
-- Human runtime evidence exposes an Analytics wrong-variable/result defect. Root cause is unknown; passing Analytics tests do not prove calculation-variable integrity.
-- The compact composer, unified Variables control, two `dd-mm-yyyy` fields and Date-Time/Store evidence presentation are accepted correction direction, not implementation.
-- Guide structure, navigation and zero-I/O behavior are implemented, but its accepted learner sequence is only partially faithful and comprehension is not established.
-- Windows Downloads has no manual real-host export, permission/full-disk or visible-file acceptance.
-- Android public Downloads remains intentionally unavailable; no public-storage write or real-device acceptance exists.
-- Keyboard-only review, Narrator/TalkBack, locale, real-device behavior and complete human comprehension remain unvalidated.
-- No live Sign in, enrollment, hosted connection, Sync, Retry, Recovery, Auth0, Neon, Render or provider operation was performed.
+Existing Drift multiple-database warnings were observed and not suppressed. The existing Windows Boost/CMake warning and Android Auth0 Kotlin Gradle compatibility warning remained. None is a correction failure.
+
+Still unperformed: wide/compact screenshot review; keyboard-only human review; Narrator and TalkBack; locale and long-string review; Windows application launch; Android real-device behavior; learner comprehension; and manual Windows Downloads export.
+
+No live Auth0, Neon, Render, provider or Sync operation was performed. PH05 Guide sequence deviation remains out of scope. Android public Downloads remains typed unavailable. GCM04, conditional former R07, multiple-Account hosted work, revocation, outage recovery, retention/rebootstrap and production lifecycle remain C12-PHASE02 work.
 
 ## Current Operational work
 
-1. Complete the read-only Analytics draft-to-result/export state-of-union and establish root cause before corrective authority.
-2. Validate manual Windows Downloads and decide whether Android public Downloads receives a separately authorized mechanism.
-3. Resolve Guide learner-sequence disposition and complete keyboard, assistive-technology, locale, real-device and comprehension gates.
-4. Preserve all PH05 operation budgets and unchanged schema/dependency/provider boundaries through any corrective unit.
-5. Keep GCM04, conditional R07, multiple-Account hosted work, revocation, outage recovery, retention/rebootstrap and production lifecycle in C12-PHASE02.
+1. Complete wide/compact screenshot, keyboard, assistive-technology, locale/long-string and learner-comprehension review.
+2. Launch the Windows release application and manually validate CSV/PDF Downloads behavior.
+3. Validate corrected Analytics behavior on an Android real Device while retaining typed-unavailable public Downloads.
+4. Preserve the correction's local-only effect budget and unchanged schema/dependency/provider boundary.
+5. Resolve the PH05 Guide sequence deviation separately; keep C12-PHASE02 backend work deferred.
 
 ## Recovery
 
 Read in this order:
 
 1. this checkpoint segment;
-2. `04_TODO.md` for corrective, host-validation and deferred gates;
-3. `11_OPERATIONAL_RECORD.md`, “C11-PH05 local product-surface and export materialization”;
-4. `12_OPERATIONAL_MODEL.md`, “C11 Local Product-Surface and Export Operational Rules”;
+2. `04_TODO.md` for remaining executable and deferred gates;
+3. `11_OPERATIONAL_RECORD.md`, “C11 Analytics correction materialization”;
+4. `12_OPERATIONAL_MODEL.md`, “C11 Deterministic Local Analytics Operational Rules” and “Analytics composition and presentation integrity”;
 5. complete `DEV_STAGE/G_OPS_CODEX.md`;
-6. `J_MAIN_STAGE.md` section 14;
-7. implementation commit `426235d8b67ac719e494b53cfb23a6c3b06fb489` only when execution detail is required.
+6. `J_MAIN_STAGE.md` section 16;
+7. implementation commit `17fd65296e960112787b870363b40339f535f5b6` only when execution detail is required.
 
-Next valid route: Main verifies the Operational, Didactic and Design PH05 permanent reconciliations; separately complete the read-only Analytics correction state-of-union before any new D/E/F or Codex authority.
+Next valid route: complete parallel Didactic and Design correction reconciliation, then Main verifies the twelve-file domain delta and performs final C11 permanent absorption before opening C12.
 
 No source, client, database, provider, Main-root, staging or methodology mutation is authorized by this checkpoint.
