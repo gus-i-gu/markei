@@ -880,3 +880,95 @@ C11-PH01-S01 supplies a stable presentation vocabulary and automated evidence
 for the shell, Home and Lists. It does not complete PH01, establish learner
 mastery, prove human platform acceptance, activate Analytics/Audit, or broaden
 Cycle 10 synchronization acceptance.
+
+# Observation 012 — C11-PH01-R01 and C11-PH02 Meaning Registration
+
+```text
+Date: 2026-07-31
+Branch: grm-guarded-provisioning-20260727
+Class: implementation/evidence learning event
+Implementation: 20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6
+Main reconciliation: 0bfc02e8363d8119469a5e8627d8350fa97790b4 section 9
+KANBAN transition: NONE
+```
+
+## Ordered learning event
+
+1. The five learner destinations became reachable with unambiguous History
+   selection and detail meaning.
+2. History learned only to transfer typed Purchase-ID context; calculation
+   remained owned by Analytics.
+3. Analytics became deterministic, local and Account-scoped, with session-local
+   cards above a complete supporting evidence matrix.
+4. Each card named one determinant—Product, Purchase, Store or UTC Time—one or
+   more relational variables, one operation and optional Time conditions.
+5. The learner-visible evidence vocabulary stabilized at twelve fields:
+   Purchase, date/time, Product, Brand, Store, purchased by, purchased for,
+   payment method, quantity, unit price, line total and promotion.
+6. Unsupported or invalid facts stayed visibly unavailable. The implementation
+   did not repair missing raw facts or import remote/external facts.
+7. Evidence traceability stabilized: matrix selection initializes a card, card
+   evidence focuses the matrix, and reset restores all current evidence.
+8. Wide and compact arrangements preserved semantic parity while changing
+   density and reading order.
+
+## Operation meanings and corrected misconceptions
+
+| Tempting interpretation | Evidence-qualified correction |
+| --- | --- |
+| Sum means a Purchase total | Sum is the total contribution of the named variable in the named scope. Purchase total and line total remain distinct. |
+| Mean is an estimate | Mean is the arithmetic average of valid named contributions; unavailable inputs do not become estimates. |
+| Difference means change | Difference is comparison B minus baseline A. It is not change unless A and B explicitly define such a comparison. |
+| Percentage means percentage change | Percentage is a named part of a named containing whole. Percentage change is outside this contract. |
+| A zero denominator is zero percent | It is a typed unavailable outcome. |
+| Overflow can be clipped or approximated | It is a typed unavailable outcome; the factual input is not repaired. |
+| Product and Purchase are interchangeable determinants | Product groups Item contribution; Purchase retains transaction context. |
+| Store grouping already compares Stores | Grouping forms Store evidence sets; comparison requires an explicit operation and A/B meaning. |
+| An interpretation explains why something happened | It states the factual result, scope, evidence count and period. It does not infer cause or recommend action. |
+| History calculates before opening Analytics | History transfers typed Purchase IDs only. |
+
+## Scope and traceability learned
+
+- evidence pages contain 100 rows;
+- selected scope is bounded to 500 Purchase IDs;
+- cards are session-local and leave recorded Purchase facts unchanged;
+- selected and filtered evidence are distinct scopes;
+- Time can be the determinant or an optional UTC condition;
+- every available result names its evidence count and applicable period;
+- partial, missing and unavailable evidence remains visible rather than silently
+  disappearing.
+
+## Evidence classification
+
+The implementation commit, focused tests and Windows/Android builds establish
+representation and execution of the named contract. They separately establish:
+
+- automated operation/state behavior;
+- automated wide/compact semantic parity and keyboard/focus behavior;
+- build completion for the recorded targets.
+
+They do not establish screenshots, Narrator, TalkBack, locale variation,
+keyboard-only human use, real-device acceptance or learner comprehension.
+Those evidence classes are `NOT_PERFORMED`.
+
+## Stable exclusions
+
+No charts, forecasting, prediction, rankings, recommendations, causal claims,
+telemetry, remote/Sync-derived Analytics, external facts or raw-fact repair were
+introduced. Analytics does not broaden Cycle 10 provider or production
+acceptance.
+
+## Remaining learning questions
+
+- Can a learner explain determinant versus condition without relying on the UI?
+- Can a learner predict the result of Difference B minus A and identify the
+  baseline correctly?
+- Can a learner identify the containing whole for Percentage and reject
+  percentage-change language?
+- Can a learner trace a card result back to the correct Purchase/item evidence
+  across both wide and compact layouts?
+- Do screen-reader, locale, real-device and human comprehension assays preserve
+  these distinctions?
+
+This event records concept representation and project execution, not learner
+mastery. No KANBAN maturity transition is authorized.

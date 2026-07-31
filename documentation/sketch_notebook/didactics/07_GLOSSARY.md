@@ -1,7 +1,7 @@
 # 07_GLOSSARY.md
 
 > Domain: Didactic
-> Status: Current derivative — reconciled through C11-PH01-S01
+> Status: Current derivative — reconciled through C11-PH01-R01 and C11-PH02
 > Authority source: `didactics/02_KANBAN.md`
 > Purpose: Compact terminology retrieval; no independent truth or maturity change
 > Maturity: unchanged
@@ -331,12 +331,146 @@ human/platform evidence.
 
 ## Reserved destinations
 
-### Analytics reservation
+### Local Analytics
 
 **KANBAN IDs:** `&&&03`, `&&&05`, `&%%17`
 
-A destination reserved for C11-PH02. Its presence does not imply active
-calculations or telemetry.
+A deterministic, local and Account-scoped interpretation of recorded Purchase
+evidence. It produces repeatable session-local cards above a complete supporting
+evidence matrix. It does not forecast, recommend, rank, repair raw facts, use
+telemetry or claim remote authority.
+
+### Analysis card
+
+**KANBAN IDs:** `&&&02`, `&&&05`, `&%%17`
+
+A session-local result containing one determinant, one or more relational
+variables, one operation, optional Time conditions, value or typed unavailable
+outcome, factual interpretation, evidence count and applicable period.
+
+### Determinant
+
+**KANBAN IDs:** `&&&02`, `&%%17`
+
+The named dimension that organizes an analysis: Product, Purchase, Store or UTC
+Time. It is not merely a filter.
+
+### Relational variable
+
+**KANBAN IDs:** `&&&02`, `&%%17`
+
+A learner-visible Purchase evidence field whose contribution is related within
+the determinant groups and operation.
+
+### Condition
+
+**KANBAN IDs:** `&&&05`, `&%%17`
+
+An optional restriction, including a UTC Time interval, applied to the evidence
+scope. A condition narrows evidence; it does not become the determinant.
+
+### Evidence row
+
+**KANBAN IDs:** `&&&02`, `&&&10`
+
+A traceable Purchase/item fact row supporting a card. The matrix exposes
+Purchase, date/time, Product, Brand, Store, purchased by, purchased for, payment
+method, quantity, unit price, line total and promotion with honest unavailable
+states.
+
+### Selected, filtered and focused evidence
+
+**KANBAN IDs:** `&&&05`, `&%%17`
+
+Selected evidence is the explicit Purchase-ID scope, bounded to 500 IDs.
+Filtered evidence is the current query scope. Focused evidence is the subset
+supporting one card. Reset restores the complete current evidence scope.
+
+### Period
+
+**KANBAN IDs:** `&&&05`, `&%%17`
+
+The applicable UTC Time interval reported with a result. Time may instead be
+the determinant; those meanings are not interchangeable.
+
+### Result and interpretation
+
+**KANBAN IDs:** `&&&03`, `&&&05`, `&%%17`
+
+The result is the calculated value or typed unavailable outcome. The
+interpretation is a factual sentence naming what that result means, its
+determinant, evidence count and period. It is not an explanation of causes or a
+recommendation.
+
+### Sum
+
+**KANBAN IDs:** `&&&03`, `&%%17`
+
+The total contribution of the named variable over the evidence scope.
+
+### Mean
+
+**KANBAN IDs:** `&&&03`, `&%%17`
+
+The arithmetic average contribution of the named variable over valid evidence.
+
+### Difference
+
+**KANBAN IDs:** `&&&03`, `&%%17`
+
+Comparison B minus baseline A. Difference does not mean change over time unless
+the named A and B comparisons explicitly make Time the comparison.
+
+### Percentage
+
+**KANBAN IDs:** `&&&03`, `&&&05`, `&%%17`
+
+A named part divided by its named containing whole. It is never percentage
+change. A zero denominator produces a typed unavailable outcome.
+
+### Typed unavailable outcome
+
+**KANBAN IDs:** `&&&05`, `&%%17`
+
+An explicit non-result carrying its reason, such as a missing field, invalid
+combination, insufficient evidence, zero denominator, read failure or numeric
+overflow. It must not invent or repair a raw fact.
+
+### Purchase and Item
+
+**KANBAN IDs:** `&%%10`, `&&&10`
+
+A Purchase is the transaction context. An Item is one Product contribution
+inside it. They are not interchangeable evidence units.
+
+### Purchase total and line total
+
+**KANBAN IDs:** `&%%10`, `&%%17`
+
+Purchase total covers the Purchase; line total covers one Item. Summing line
+totals can support a Purchase total only where the evidence contract permits it.
+
+### Store grouping and Store comparison
+
+**KANBAN IDs:** `&&&03`, `&%%17`
+
+Store grouping collects evidence by Store. Store comparison applies a named
+operation to explicit Store groups. Grouping alone is not a comparison.
+
+### History handoff
+
+**KANBAN IDs:** `&&&02`, `&&&10`, `&%%17`
+
+History transfers typed Purchase-ID context to Analytics. History does not
+calculate, interpret or persist an Analytics card.
+
+### Responsive semantic parity
+
+**KANBAN IDs:** `%%%07`, `&&&05`
+
+Wide tables and compact cards preserve the same field meanings, evidence scope,
+selection, focus/reset behavior and reachable actions even when reading order
+and density differ.
 
 ### Audit reservation
 
@@ -349,10 +483,9 @@ of the runtime diagnostic registry or imply diagnostic migration.
 
 - Cycle 10: same-Device hosted scope and reciprocal two-Device/one-Account
   development scope are closed; production acceptance is absent.
-- C11-PH01-S01: shell, Home and Lists vocabulary/state contracts are
-  implemented, widget-tested and Windows/Android build-validated.
-- Remaining PH01: Catalogue, Purchase and History recomposition plus human
-  Windows/Android visual and accessibility acceptance.
-- Later phases: functional Analytics in PH02; Settings/Audit and Closure
-  disposition in PH03.
+- C11-PH01-R01 and C11-PH02: the five-page presentation and deterministic local
+  Analytics contract are implemented with focused automated and build evidence.
+- Human screenshots, assistive technology, locale, keyboard-only practical use,
+  real-device acceptance and direct learner comprehension remain not performed.
+- Later phase: Settings/Audit and Closure disposition in PH03.
 - Learner maturity: unchanged.

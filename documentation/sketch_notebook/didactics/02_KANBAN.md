@@ -1,7 +1,7 @@
 # 02_KANBAN.md
 
 > Domain: Didactic
-> Status: Canonical concept register — reconciled through Cycle 10 and C11-PH01-S01
+> Status: Canonical concept register — reconciled through Cycle 10, C11-PH01-R01 and C11-PH02
 > Authority: Didactic Chat [A], reconciled through Main reference
 > Reconciliation sources: permanent observations, current J reconciliation, H evidence, and repository-backed concept history
 > Scope: Stable concepts evidenced by the contemporary Markei repository
@@ -1085,3 +1085,40 @@ recovery, retention/rebootstrap or production lifecycle readiness.
 
 No learner explanation, page-comprehension assay or transfer evidence was
 recorded. All maturity values remain exactly as before this reconciliation.
+
+# C11-PH01-R01 and C11-PH02 Canonical Absorption
+
+> Reconciliation date: 2026-07-31
+> Evidence: implementation commit `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`;
+> `DEV_STAGE/H_DDC_CODEX.md`; J section 9 at
+> `0bfc02e8363d8119469a5e8627d8350fa97790b4`; focused presentation and domain tests
+> Evidence class: implemented, automated-test and Windows/Android build evidence
+> Maturity result: no transition
+
+The implementation represents and executes the following existing concepts.
+It does not prove that a learner can explain, compare, predict, debug or
+transfer them. No new concept identifier is required.
+
+| Existing concept identifier | Stable canonical identity or dependency | Evidence-qualified C11 absorption | Maturity before → after |
+| --- | --- | --- | --- |
+| `&&&02`, `&&&10`, `&%%17` | Purchase history is the factual basis for derived local projections. | Analytics reads Account-scoped local Purchase evidence. History may hand off typed Purchase IDs, but History performs no calculation. | Yellow / Red / Red → unchanged |
+| `&&&03`, `&&&05` | Learner-facing names and evidence limits must remain honest. | Twelve evidence fields are visible: Purchase, date/time, Product, Brand, Store, purchased by, purchased for, payment method, quantity, unit price, line total and promotion. Unsupported values remain explicitly unavailable rather than repaired or invented. | Yellow / Red → unchanged |
+| `&&&05`, `&&&09`, `&%%14` | Claims are bounded by their actual local authority. | Analytics is deterministic, local, Account-scoped and non-remote. It does not use Sync, telemetry, provider facts or external facts. | Red / Red / Red → unchanged |
+| `&&&02`, `&%%05`, `&%%17` | A derived view depends on named factual inputs and valid operations. | Each session-local card has one determinant—Product, Purchase, Store or UTC Time—one or more relational variables, one operation, an optional Time condition and traceable selected or filtered evidence. | Yellow / Red / Red → unchanged |
+| `&&&03`, `&&&05`, `&%%17` | Terms must distinguish grouping, comparison and scope. | Sum is total contribution; Mean is average contribution; Difference is comparison B minus baseline A; Percentage is a part of a named containing whole and never percentage change. | Yellow / Red / Red → unchanged |
+| `&&&05`, `&%%05`, `&%%17` | Invalid derivations must not masquerade as facts. | Missing facts, invalid combinations, zero denominators and numeric overflow produce typed unavailable outcomes with factual explanations. No raw fact is repaired. | Red / Red / Red → unchanged |
+| `%%%07`, `&&&05` | Responsive/accessibility evidence is distinct from semantic parity. | Wide tables and compact cards preserve field meaning, selection, focus/reset and card evidence traceability. Automated breakpoint, keyboard/focus and 200-percent text evidence does not establish assistive-technology, locale, screenshot, real-device or human comprehension acceptance. | Red / Red → unchanged |
+
+Stable operating boundaries:
+
+- evidence pages contain 100 rows;
+- selected scope is bounded to 500 Purchase IDs;
+- cards are session-local and repeatable;
+- selecting matrix evidence initializes a card, card evidence focuses the matrix,
+  and reset restores all evidence;
+- Analytics contains no charts, forecasting, prediction, rankings,
+  recommendations, causal claims or telemetry.
+
+All 39 KANBAN maturity values remain unchanged. Implementation, tests and build
+artifacts establish project execution only; the direct learner evidence required
+by the standing promotion rubric is absent.
