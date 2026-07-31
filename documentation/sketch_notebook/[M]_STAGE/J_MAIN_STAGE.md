@@ -1421,3 +1421,212 @@ MAIN_ROOT_REFRESH=AFTER_THREE_DOMAIN_COMMITS
 NEXT_MAIN_ACTION=Run PH05 Operational Didactic and Design PDR2 reconciliations, then verify all three commits; separately complete the read-only Analytics correction state-of-union before any new D/E/F authority.
 ```
 
+---
+
+<!-- RECONCILIATION_MARKER:C11-PH05-PERMANENT-ABSORPTION-ANALYTICS-CORRECTION-ACTIVATION-2026-07-31 -->
+
+# Cycle 11 PH05 Permanent Absorption and Analytics Correction Activation
+
+## 15.1 Identity and verified repository boundary
+
+~~~text
+ROLE=Main Chat [M]
+SEQUENCE=FLX-PRM-04
+REPOSITORY=gus-i-gu/markei
+BRANCH=grm-guarded-provisioning-20260727
+PH05_J_RECONCILIATION=e6ced7fe3945925bf5f314ee11c4538029e18d44
+PH05_IMPLEMENTATION=426235d8b67ac719e494b53cfb23a6c3b06fb489
+PH05_AUTHORITY=b59b2ecdfb69ca98c431b9f36694f011332fbef3
+PH05_PERMANENT_DOMAIN_HEAD=74638c33a71eb4bc4e5e16aca49526496d3a3610
+ANALYTICS_CORRECTION_ACTIVATION=0e647e76aa8275bda48cea1e9d08427e3d949134
+CURRENT_REMOTE_HEAD_AT_RECONCILIATION=0e647e76aa8275bda48cea1e9d08427e3d949134
+~~~
+
+Main verified the linear boundary after J section 14:
+
+1. three compatible PDR2 commits advance e6ced7fe to 74638c33;
+2. those commits modify exactly the four Operational, four Design and four
+   Didactic permanent-domain files;
+3. no source, J, Main-root, methodology, A/B/C, D/E/F or G/H/I path is present
+   in that three-commit domain delta;
+4. the next commit, 0e647e76, modifies only D_OPS_STAGE.md, E_DDC_STAGE.md and
+   F_DSN_STAGE.md;
+5. no source change follows PH05 implementation 426235d8.
+
+The PH05 permanent-domain chain is therefore compatible, complete and accepted
+for Main continuity. The later D/E/F activation is a separate bounded authority;
+it does not invalidate or reopen the PH05 permanent record.
+
+## 15.2 Permanent-domain absorption result
+
+Operational permanent memory now owns the PH05 execution boundary:
+
+- Home and Guide zero-I/O behavior;
+- History two-read, zero-write, zero-network selected export;
+- one final write per successful explicit export;
+- Windows Downloads at automated/build ceiling;
+- Android public Downloads as typed unavailable with zero writes;
+- Analytics, Audit and Settings request/query/call budgets;
+- 278 passed tests, four lab-gated skips, analysis and both platform builds;
+- unchanged schema, migration, generated, dependency, native and provider
+  surfaces;
+- manual host, real-device, accessibility, locale and provider gates retained as
+  unvalidated or deferred.
+
+Didactic permanent memory now owns the learner distinctions and evidence ceiling:
+
+- Optional purchase details;
+- Catalogue detail activation without selection;
+- History action selection versus detail opening;
+- Select all shown as the filtered loaded recent-History window;
+- Use in Analytics as scope handoff;
+- export versus sharing;
+- Readiness summary;
+- Account-first Settings and @NNN / #NNN references;
+- implemented/automated/built remaining distinct from human comprehension;
+- KANBAN transitions remain NONE.
+
+Design permanent memory now owns the PH05 architecture:
+
+- one ExportDestinationPort and one composition-injected
+  LocalExportDestination;
+- pure History and Analytics builders separated from filesystem effects;
+- two set-based Account-scoped History reconstruction reads;
+- separate stable History action-selection and detail identities;
+- typed scope-only Analytics handoff to one composition-owned workspace;
+- unchanged fixed-point, fingerprint, schema and provider boundaries;
+- one local typed Guide owner, loaded-state-only Audit projection and retained
+  Settings controller ownership.
+
+These domain summaries do not replace the twelve permanent files. Their current
+checkpoints remain the recovery entry points.
+
+## 15.3 Preserved contradictions and evidence ceilings
+
+The Guide has eight local anchored sections, focusable contents navigation and
+zero I/O. Its committed learner sequence remains partially contradictory to the
+accepted PH05 teaching contract: Lists is absent as its own teaching boundary,
+and Getting started plus local-data/export/Sync-limit responsibilities are
+redistributed. This is a single-owner content-contract deviation. Human
+comprehension is not established.
+
+The Analytics runtime finding is corrected in classification, not erased.
+Read-only source tracing found no evidenced default-Quantity insertion: grouping
+iterates the selected measures and the immutable saved record feeds Chart,
+Table, interpretation, CSV and PDF. The confirmed defect is user-facing raw
+fixed-point values and internal compatibility keys, while end-to-end
+calculation-variable integrity remains a regression obligation because the
+existing suite did not assert all projections together.
+
+The human serial diagnostic:
+
+~~~powershell
+flutter test --concurrency=1 --no-pub -r expanded
+~~~
+
+completed with TestExit=0. This disproves a general PH05 source failure for the
+reported build/run symptom. It identifies drift between the bare parallel test
+commands in G_SCRIPTS.md and the serial gate used for PH05 validation. The
+procedure correction is Main-owned and remains outside Codex source authority.
+GRM.md and I_SCRIPTS.ps1 require no identifier or dispatch change.
+
+## 15.4 PRC-01 classification records
+
+### PH05 permanent absorption
+
+~~~text
+Claim: PH05 implementation and its stated evidence ceiling are permanently absorbed.
+Source: 426235d8, G/H/I, J section 14 and the twelve PDR2 domain files.
+Current state: implemented and validated at named automated/build boundaries.
+Evidence: three-commit exact twelve-file domain delta ending at 74638c33.
+Evidence boundary: no complete human, real-device, provider or production acceptance.
+Contradictions: Guide sequence deviation and Analytics human defect preserved.
+Semantic owner: paired Operational, Didactic and Design permanent files.
+Target role: Main continuity summary.
+History disposition: J section 14 and all domain observational records retained.
+Confidence: high within the named boundary.
+Human/Main authority: explicit human continuation plus completed PDR2 route.
+Required regeneration: J section 15 and Main-root 00/05/06.
+Result: permanently absorbed; PH05 D/E/F remain consumed.
+~~~
+
+### Analytics correction diagnosis and authority
+
+~~~text
+Claim: raw fixed-point/internal-key presentation is confirmed; silent default-Quantity insertion is not evidenced.
+Source: human runtime evidence, read-only source trace and D/E/F at 0e647e76.
+Current state: accepted diagnosis plus active bounded correction authority.
+Evidence: selected measures feed grouping and one frozen record feeds all projections.
+Evidence boundary: required end-to-end no-leak tests and human UI acceptance are pending.
+Contradictions: earlier wrong-variable wording is narrowed, not erased.
+Semantic owner: current J synthesis and active Analytics D/E/F; later permanent ownership follows post-Codex PDR2.
+Target role: Codex materialization evidence, then domain reconciliation.
+History disposition: original defect observation retained as chronology.
+Confidence: high for presentation defect; provisional for complete variable integrity.
+Human/Main authority: accepted human correction direction and Main activation.
+Required regeneration: replace G/H/I after materialization; later domain and Main closure.
+Result: C11-ANALYTICS-CORRECTION-R01 is active at 0e647e76.
+~~~
+
+### Build/run procedure drift
+
+~~~text
+Claim: the serial full suite passes while the bare parallel procedure produced one earlier failure.
+Source: human Windows diagnostic and PH05 validation record.
+Current state: validated diagnostic; procedure documentation correction pending.
+Evidence: TestExit=0 under --concurrency=1 --no-pub.
+Evidence boundary: this does not identify or suppress Drift harness warnings.
+Contradictions: no Analytics source regression follows from the failed bare run.
+Semantic owner: documentation/G_SCRIPTS.md procedure family under Main authority.
+Target role: separate Main-owned documentation correction.
+History disposition: preserve both the failed bare run and passing serial rerun.
+Confidence: high.
+Human/Main authority: explicit request to keep GRM-family changes outside Codex.
+Required regeneration: GS-BUILD-02, GS-FLUTTER-WIN and GS-FLUTTER-AND commands.
+Result: pending Main procedure edit; not part of Codex writable paths.
+~~~
+
+## 15.5 Current authority and next sequence
+
+C11 remains open only for the bounded Analytics correction and final
+reconciliation. C11-ANALYTICS-CORRECTION-R01 is controlling at 0e647e76. Codex
+may edit only the Analytics source/tests and G/H/I paths named by the active
+D/E/F sections. It must use explicit serial validation and must not edit
+G_SCRIPTS.md, GRM.md, I_SCRIPTS.ps1, J, Main-root files, permanent domains,
+methodology, schema, dependencies, generated files or platform files.
+
+After Codex publication:
+
+1. reconcile new G/H/I and any bounded human UI evidence into J;
+2. run final Operational, Didactic and Design PDR2 updates only where the
+   correction changes permanent truth;
+3. disposition the Guide sequence deviation, Android Downloads limitation,
+   accessibility/locale/real-device gates and procedure drift without inflating
+   the C11 claim ceiling;
+4. refresh Main continuity for final C11 closure;
+5. enter C12 while keeping GCM04, multiple-Account/provider resilience,
+   revocation, outage recovery, retention/rebootstrap and production lifecycle
+   in C12-PHASE02.
+
+## 15.6 Terminal
+
+~~~text
+CYCLE=C11
+PH05_PERMANENT_ABSORPTION=COMPLETE
+PH05_DOMAIN_COMMITS=3
+PH05_DOMAIN_FILES=12
+PH05_PERMANENT_HEAD=74638c33a71eb4bc4e5e16aca49526496d3a3610
+KANBAN_TRANSITIONS=NONE
+GUIDE_SEQUENCE=PARTIALLY_CONTRADICTED
+ANALYTICS_CONFIRMED_DEFECT=RAW_FIXED_POINT_AND_INTERNAL_KEY_PRESENTATION
+DEFAULT_QUANTITY_INSERTION=NOT_EVIDENCED
+CALCULATION_VARIABLE_INTEGRITY=REQUIRES_END_TO_END_REGRESSION
+SERIAL_FULL_FLUTTER_TEST=PASS
+G_SCRIPTS_SERIAL_GATE_CORRECTION=PENDING_MAIN
+C11_ANALYTICS_CORRECTION_AUTHORITY=ACTIVE_AT_0e647e76
+CODEX_AUTHORITY=ACTIVE_BOUNDED
+C11_CLOSURE=PENDING_CORRECTION_AND_FINAL_RECONCILIATION
+C12_PHASE02_BACKEND_SCOPE=DEFERRED_AND_PRESERVED
+NEXT_MAIN_ACTION=Refresh 00_PROJECT_STATE, append 05_SESSION_LOG, refresh 06_SESSION_SCHEME, then initiate Codex from 0e647e76.
+~~~
+
