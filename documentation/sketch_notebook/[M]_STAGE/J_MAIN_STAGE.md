@@ -1832,3 +1832,188 @@ NEXT_ACTION=PDR2-O_PDR2-A_PDR2-D_FROM_J_SECTION_16
 C11_CLOSURE=PENDING_DOMAIN_AND_FINAL_MAIN_RECONCILIATION
 ~~~
 
+---
+
+<!-- TEMPORAL_MARKER:C11-ANALYTICS-CORRECTION-PERMANENT-CLOSURE-C12-ENTRY-2026-07-31 -->
+
+# 17. C11 Analytics Correction Permanent Closure and C12 Entry
+
+> Sequence: FLX-PRM-04 / final Main permanent-memory reconciliation
+> Cycle / unit: C11 / C11-ANALYTICS-CORRECTION-R01 closure
+> Repository: `gus-i-gu/markei`
+> Branch: `grm-guarded-provisioning-20260727`
+> Post-materialization J boundary: `34eb4b60fd4f9c6455c1774c055c1615581623af`, section 16
+> Implementation: `17fd65296e960112787b870363b40339f535f5b6`
+> Didactic reconciliation: `e125b241fe8d4705d041aa50b2ccba0d2052caf5`
+> Design reconciliation: `b3185e9d6447533db1be615a57ebda371d6a9c71`
+> Operational reconciliation / permanent-domain head: `9359200464b9218d336850225445fb40ea055763`
+
+## 17.1 Permanent-domain publication audit
+
+The final PDR2 chain is exactly three commits ahead of J section 16 and changes
+exactly the twelve authorized permanent-domain files: four Didactic, four
+Design and four Operational. The chain contains no source, J, Main-root,
+methodology, A/B/C, D/E/F, G/H/I, GRM/GS, schema, dependency, generated, native
+platform or unrelated change.
+
+Didactic completed first at `e125b241…`, Design followed at `b3185e9d…`, and
+Operational completed the chain at `93592004…`. Each commit changes only the
+four files owned by its role. The current checkpoint segments remain economical:
+Didactic 111 lines, Design 87 lines and Operational 77 lines after their active
+temporal boundaries.
+
+## 17.2 Permanently absorbed correction truth
+
+The correction is now classified consistently across Main and all permanent
+domains:
+
+- `AnalyticsComposerDraft.variables` is the single typed visible selection
+  owner; categorical breakdowns and numeric measures are derived views;
+- categorical-only and unsupported operation-variable combinations block with
+  typed guidance and insert no implicit Quantity, Evidence count or substitute
+  measure;
+- one immutable session-only `AnalyticsRecord` freezes the complete composed
+  meaning and controls Chart, Table, interpretation, CSV and PDF;
+- strict inclusive `dd-mm-yyyy` local dates map through local start and
+  day-after-final boundaries to the existing UTC half-open interval;
+- fixed-point aggregation and internal stable identity remain unchanged, while
+  presentation/export boundaries expose readable quantity, money, unit price,
+  percent, signed Difference and integer Evidence count;
+- raw compatibility keys and ordinary Purchase, Product, Store and Item UUIDs
+  are absent from ordinary Analytics presentation; stable IDs remain internal;
+- incompatible axes retain Table/export evidence and expose Chart as typed
+  unavailable;
+- the ten-case regression matrix, focused serial 24-test Analytics suite and
+  full serial 286-pass/4-lab-skip suite passed;
+- Windows release and Android debug builds passed;
+- Analytics retains initial local read `1`, Retry `+1`, other actions `+0`,
+  database writes `0` and network calls `0`.
+
+The confirmed raw fixed-point/internal-key presentation defect is corrected at
+the automated evidence boundary. End-to-end calculation-selection integrity is
+automated-validated. Silent default-Quantity insertion and a second calculation
+path remain not evidenced. The former screenshot observation remains historical
+defect-finding evidence and is superseded only as the current automated
+implementation classification.
+
+## 17.3 Didactic, Design and Operational disposition
+
+Didactic permanently owns the visible Variables vocabulary, categorical versus
+numeric distinction, typed unavailability, immutable saved-record meaning,
+readable scales and the difference between automated representation and learner
+comprehension. `KANBAN_TRANSITIONS=NONE`.
+
+Design permanently owns the single workspace/controller, one request-counted
+Account-local load, derived compatibility views, immutable record, single
+grouping/calculation path, pure display/export conversion, internal identity
+boundary, pure CSV/PDF builders and rollback to `2cdb8a66…` without schema,
+data, dependency or provider-contract conversion.
+
+Operational permanently owns the serial validation/build evidence, warnings and
+effect counts. Existing Drift multiple-database, Windows Boost/CMake and Android
+Auth0 Kotlin Gradle compatibility warnings were observed and not suppressed;
+none is classified as a correction failure.
+
+## 17.4 Evidence ceiling and carried work
+
+C11 closes at its recorded implementation and automated/build ceiling. Closure
+does not claim wide/compact screenshot acceptance, keyboard-only acceptance,
+Narrator/TalkBack acceptance, locale or long-string acceptance, Windows
+application launch, Android real-device behavior, manual Windows Downloads
+export, learner comprehension, live Auth0/Neon/Render/provider/Sync operation or
+production acceptance.
+
+The PH05 Guide learner-sequence deviation remains partially contradicted and
+unrepaired. Android public Downloads remains typed unavailable with zero writes.
+GCM04, conditional former R07, multiple-Account/provider isolation, revocation,
+outage recovery, retention/rebootstrap and production lifecycle remain assigned
+to C12-PHASE02.
+
+## 17.5 GRM launcher-path diagnosis
+
+A later read-only Windows diagnosis identified a separate procedure-interface
+defect. Invoking `documentation/I_SCRIPTS.ps1` through the GRM copy command from
+`clients/markei_flutter` resolves the relative path beneath that subdirectory,
+so PowerShell fails before `I_SCRIPTS.ps1`, `GS-FLUTTER-WIN` or Flutter starts.
+
+`I_SCRIPTS.ps1` correctly derives the repository root after launch and maps the
+procedure. `G_SCRIPTS.md` contains the corrected serial `GS-FLUTTER-WIN`
+procedure. The remaining defect is the location-sensitive outer invocation in
+`GRM.md`, whose wording does not establish a repository-root-independent
+launcher path. Diagnosis is complete; no solution or repository change was
+authorized in that diagnostic round. Carry this as the first bounded procedural
+correction before relying on guarded Windows run evidence in C12.
+
+## 17.6 PRC-01 closure records
+
+### Analytics correction permanent absorption
+
+~~~text
+Claim: C11-ANALYTICS-CORRECTION-R01 is permanently absorbed.
+Current state: implemented and validated at the recorded automated/build boundary.
+Evidence: 17fd6529, replacement G/H/I, J section 16 and the exact twelve-file PDR2 chain.
+Semantic owners: paired Operational, Didactic and Design permanent files.
+Contradictions: human/runtime acceptance remains absent; Guide deviation remains.
+History disposition: earlier defect observations and section 16 are preserved.
+Main authority: explicit human-directed final reconciliation and C12 transition.
+Result: accepted permanent closure; correction D/E/F and Codex authority consumed.
+~~~
+
+### C11 cycle closure
+
+~~~text
+Claim: Cycle 11 may close without inflating its evidence ceiling.
+Current state: accepted at recorded implementation and automated/build boundaries.
+Evidence boundary: residual human, host, provider and production gates are carried.
+Semantic owner: Main 00/05/06 continuity plus permanent domain checkpoints.
+Contradictions: none requires reopening C11 source authority.
+History disposition: all J and domain chronology remains recoverable.
+Result: C11 closed; C12 entry authorized with no active source packet.
+~~~
+
+### GRM launcher invocation
+
+~~~text
+Claim: guarded Windows invocation is location-sensitive before launcher execution.
+Current state: diagnosed; solution not yet materialized.
+Evidence: PowerShell -File path resolution from clients/markei_flutter.
+Semantic owner: Main procedural continuity pending bounded documentation correction.
+Contradictions: G_SCRIPTS procedure and I_SCRIPTS dispatch are not the failure point.
+History disposition: preserve the failed command and read-only diagnosis.
+Result: open C12-entry procedural task; not an Analytics regression.
+~~~
+
+## 17.7 Authority and next route
+
+All C11 source and correction authority is consumed. J section 17 and refreshed
+Main-root continuity are the final C11 global boundary. No new D/E/F, source,
+provider or live-operation authority is created by this closure.
+
+C12 begins in entry preparation. Main must first disposition the bounded GRM
+launcher invocation correction, then select the first C12 phase before issuing
+new A/B/C or D/E/F. C12-PHASE01 retains bounded UI/UX fine tuning and human
+acceptance work; C12-PHASE02 retains distributed/backend and production-lifecycle
+work. The exact active C12 unit remains unselected.
+
+## 17.8 Terminal
+
+~~~text
+CYCLE11=CLOSED_AT_RECORDED_AUTOMATED_BUILD_EVIDENCE_CEILING
+C11_ANALYTICS_CORRECTION=PERMANENTLY_ABSORBED
+C11_IMPLEMENTATION=17fd65296e960112787b870363b40339f535f5b6
+C11_FINAL_DOMAIN_HEAD=9359200464b9218d336850225445fb40ea055763
+C11_DOMAIN_COMMITS=3
+C11_DOMAIN_FILES=12
+CALCULATION_SELECTION_INTEGRITY=VALIDATED_AUTOMATED
+DEFAULT_QUANTITY_INSERTION=NOT_EVIDENCED
+KANBAN_TRANSITIONS=NONE
+HUMAN_UI_ACCESSIBILITY_LOCALE_DEVICE_COMPREHENSION=NOT_PERFORMED
+LIVE_PROVIDER_SYNC_VALIDATION=NOT_PERFORMED
+GUIDE_SEQUENCE_DEVIATION=RETAINED
+ANDROID_PUBLIC_DOWNLOADS=TYPED_UNAVAILABLE
+GRM_FLUTTER_WIN_LAUNCHER_PATH=DIAGNOSED_UNRESOLVED
+C11_SOURCE_AUTHORITY=NONE
+C12=ENTRY_PREPARATION
+C12_ACTIVE_UNIT=UNSELECTED
+NEXT_MAIN_ACTION=Refresh 00_PROJECT_STATE, append 05_SESSION_LOG, refresh 06_SESSION_SCHEME, then bound the GRM launcher correction and select the first C12 phase.
+~~~
