@@ -991,4 +991,44 @@ Acceptance is limited to **two Devices, one Account, development environment**. 
 - J `Legacy_Progress`: append-only Main sequence provenance, superseded gates and corrective progression.
 
 This registration reproduces neither the runtime diagnostic registry nor J's historical catalogue.
+---
 
+## 2026-07-30 — C11-PH01-S01 visual foundation materialization
+
+Sequence: `FLX-PRM-04` post-evidence Operational absorption  
+Role: Operational Chat [O]  
+Unit: `C11-PH01-S01`  
+Materialization head: `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`  
+Evidence: `DEV_STAGE/G_OPS_CODEX.md` and the current mutable J evidence capsule  
+Evidence boundary: source, focused/full automated tests, static analysis and Windows/Android builds; no preserved-client launch, live provider operation or human-platform acceptance
+
+### Implemented and validated evidence
+
+- Stable `MarkeiDestinationId` selection replaced positional selected-index state.
+- The shell implements compact `<600`, medium `600–1023` and wide `>=1024` policies while retaining page state through `IndexedStack`.
+- Compact direct navigation remains Home, Lists, Purchase, History and More.
+- Home and Lists were recomposed on the shared visual foundation.
+- Lists wide-table and compact-card presentations consume the same local projection/search/sort state.
+- Lists exposes distinct loading, read-error, first-use-empty, filtered-empty, insufficient-history and populated states.
+- Lists Retry is read-only and repeats only `ProductListProjectionRepository.productListProjection`; it does not execute protocol Retry or Sync.
+- Focused visual/List tests, the existing 26-test application suite, the full Flutter suite, `flutter analyze`, Windows release build and Android debug build passed.
+- Business, Sync, diagnostics, recovery, provider, Settings and Closure behavior were unchanged. Analytics and Audit were reserved only as later-phase destinations.
+
+The full Flutter suite reported 245 passing and four skipped tests. The Windows artifact was built at `build/windows/x64/runner/Release/markei.exe`; the Android debug artifact was built at `build/app/outputs/flutter-apk/app-debug.apk`. Exact artifact sizes and SHA-256 values remain in G rather than being duplicated here.
+
+### Validation ceiling and remaining acceptance
+
+Automated widget evidence and successful builds establish implemented/test/build evidence only. They do not establish visual parity or human usability on either platform.
+
+Not performed:
+
+- preserved-client installation or launch;
+- Windows or Android human visual acceptance;
+- Windows keyboard-only and Narrator acceptance;
+- Android TalkBack, density and real-device acceptance;
+- approved golden-image or pixel-parity acceptance;
+- live Sync, Enroll, Query, Retry, Recovery or provider mutation.
+
+Catalogue, Purchase and History recomposition remains later C11-PH01 work. Analytics calculations remain C11-PH02. Settings/Audit redesign and Closure capability disposition remain C11-PH03. GCM04, multiple-Account work, revocation, outage recovery, retention/rebootstrap and production lifecycle remain deferred to C12-PHASE02.
+
+No Cycle 10 terminal, chronology or Canon is restated by this event.
