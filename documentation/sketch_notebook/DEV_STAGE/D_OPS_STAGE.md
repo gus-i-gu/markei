@@ -848,3 +848,351 @@ WINDOWS_RELEASE_BUILD=PASS | FAIL | NOT_PERFORMED
 ANDROID_DEBUG_BUILD=PASS | FAIL | NOT_PERFORMED
 NEXT_OPERATIONAL_REVIEW=<one exact action>
 ~~~
+
+<!-- ACTIVATION_MARKER:C11-PH04-R01-2026-07-31 -->
+
+# C11-PH04-R01 — Analytics Fine-Tuning Operational Authority
+
+> Status: ACTIVE — CONTROLLING C11-PH04 CORRECTIVE IMPLEMENTATION AUTHORITY
+> Phase type: exceptional, human-directed corrective phase
+> Required implementation ancestry: `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`
+> Pairing: the E and F appends carrying this exact activation marker
+
+## 27. Precedence, activation and retained truth
+
+This append activates one Analytics-only correction after the implemented PH02
+workspace and the implemented PH03 Settings/Audit/Closure round. It does not
+reopen or reinterpret PH03. Permanent PH03 reconciliation may still occur
+afterward from its existing G/H/I evidence.
+
+The human C11-PH04 direction recorded on 2026-07-31 supersedes J section 11's
+earlier scheduling of all UI fine-tuning to C12-PH01, but only for this bounded
+Analytics correction. J's completed PH03 result, evidence ceiling, capability
+disposition and requirement that PH03 source remain closed are retained. The
+intervening PH03 permanent-domain/J reconciliation commits are compatible
+publication ancestry when they leave D/E/F and implementation surfaces unchanged.
+
+For Analytics behavior, this append and its paired E/F append supersede the
+earlier PH02 presentation and card-transition instructions where they conflict.
+They retain PH02's implemented evidence, calculation and isolation foundation:
+
+- visibility-gated one-request local loading and explicit local-read Retry;
+- active-Account-predicated joined evidence with no N+1 reads;
+- Product, Purchase, Store and Time determinants;
+- Sum, Mean, Difference and Percentage semantics;
+- fixed-point/integer calculation, compatibility partitions, typed unavailable
+  results, overflow protection and Purchase-total deduplication;
+- stable Purchase Item evidence identity and History Purchase-ID handoff;
+- one shared workspace/controller across compact, medium and wide layouts;
+- no Analytics network, Auth, Sync, provider, diagnostic or causal authority.
+
+The following earlier PH02 behaviors are corrected and must not survive in the
+ordinary Analytics UI:
+
+- creating a hard-coded default Product/Sum/Line-total card;
+- passive determinant fields that do not let the user choose determinant values;
+- every card expanding into a result and action stack at once;
+- active edit, delete, manual reorder or destructive card controls;
+- `Supporting evidence matrix` as the primary lower-section vocabulary;
+- absence of Chart/Table presentation and Analytics CSV/PDF export;
+- presentation in which the evidence matrix competes with the selected result in
+  the initial viewport.
+
+The approved visual proposal is a composition target, not a bitmap specification.
+Codex must reuse the actual Lists-page theme, typography, spacing, content width,
+cards, tables, control bands and responsive breakpoints. Do not copy literal
+mockup colors, fonts, pixel coordinates, operating-system chrome or sample data.
+
+## 28. Required page order and scroll ownership
+
+`AnalyticsPage` owns one vertical `ListView`/scroll controller. The ordinary
+reading and scroll order is:
+
+1. existing Analytics page header and local/Account qualification;
+2. `Create analysis` composer;
+3. enlarged `Saved analyses — this session` record browser;
+4. dominant selected-analysis result with `Chart` / `Table` switch and exports;
+5. a truthful interpretation, timeframe and evidence-count summary;
+6. `Variables` below the initial viewport;
+7. Variables scope switch, controls, result-linked evidence and pagination.
+
+Wide layouts must make items 2–4 the clear initial-viewport focus where ordinary
+window height permits. The Variables section must remain reachable by the same
+vertical page scroll, never by a competing nested vertical scroll. A compact
+`Variables continue below` affordance may scroll to the Variables heading.
+
+## 29. Functional analysis composer
+
+Replace `New analysis card` with an explicit composer. It must expose:
+
+- `Group by`: Product, Purchase, Store or Time;
+- `Choose`: one or more Product, Purchase or Store values; for Time, a punctual
+  date or period plus day/month grouping where supported;
+- `Variables`: one or more relational breakdowns and quantitative measures;
+- `Operation`: Sum, Mean, Difference or Percentage;
+- `Timeframe`: All recorded time or a valid custom half-open UTC interval;
+- selected-row scope when initialized from History or the lower Variables view;
+- one primary `Run & save analysis` action;
+- one `Clear draft` action that affects only the composer.
+
+The Variables menu is one user-facing control with two disclosed groups:
+
+- breakdowns: Purchased by, Payment method and Purchased for;
+- measures: Quantity, Unit price, Price paid/Line total, Purchase total and
+  Evidence count.
+
+`Purchased for` remains visible but disabled as `Unavailable in recorded data`.
+Purchased by and Payment method subdivide/label evidence; an operation is never
+applied numerically to their identifiers or labels. At least one quantitative
+measure is required. Empty, foreign or unavailable determinant choices, invalid
+time intervals and unsupported operation/measure/scope combinations disable Run
+and provide an adjacent explanation. No invalid combination may execute
+silently.
+
+Sum/Mean may group every selected determinant value. Difference requires exactly
+two explicit comparable determinant groups or row scopes and remains comparison B
+minus baseline A. Percentage requires a named part contained by a named whole and
+remains part/whole, not percentage change. The composer must disclose the A/B or
+part/whole selection it requires when those operations are chosen.
+
+The user can type or choose a custom interval without losing an invalid draft.
+All recorded time remains a distinct choice. A custom period applies as a
+condition to Product, Purchase and Store analyses and as the grouping range for a
+Time analysis.
+
+## 30. Immutable session analysis records
+
+`Run & save analysis` validates, executes and appends one immutable in-memory
+record. The record freezes:
+
+- creation/execution time in UTC;
+- a short stable uppercase record fingerprint;
+- registry identifier/version;
+- determinant, chosen determinant values and labels;
+- selected breakdowns, measures and operation;
+- applied timeframe and explicit comparison/percentage operand meaning;
+- evidence scope and stable contributing Purchase Item IDs;
+- grouped result series/table values;
+- eligible, total and excluded counts plus unavailable outcomes;
+- factual interpretation.
+
+Use the existing direct `crypto` dependency to derive the fingerprint from a
+canonical representation of the frozen record. It is a compact record reference,
+not a security, authenticity or causal proof. Collision handling within the
+session must extend the displayed prefix or append a stable disambiguator.
+
+Records are newest-first and remain available only for the lifetime of the
+retained Analytics workspace. The UI must say `Saved analyses — this session` and
+must not imply restart persistence, Sync or hosted storage. No schema, file-backed
+record repository, preferences payload or migration is authorized.
+
+Creating a record selects it. Previous/next arrow controls move between saved
+records without changing them. The browser exposes scan-sized cards containing
+date/time, fingerprint, Group by, variables and timeframe. The selected card has
+non-color selection meaning. Remove active edit, delete and manual reorder
+actions. A lock/`Saved record` indicator may be shown; any Edit/Delete control
+that is rendered must be disabled and semantically explain immutability.
+
+Repository Retry or Variables filtering must not recalculate, revise or delete
+an existing record. A newly run record uses the then-current loaded evidence.
+
+## 31. Selected result: Chart, Table and exports
+
+Only the selected saved record owns the dominant result surface.
+
+- `Chart` and `Table` are two projections of the same frozen grouped result;
+- switching projection performs no repository read, calculation or record write;
+- Chart is the default when the result has plottable compatible values;
+- Table is always available and is the default/fallback for unplottable or typed
+  unavailable results;
+- the result header includes fingerprint, determinant/variables, created time,
+  timeframe and evidence count;
+- the explanation below states operation meaning, eligible/total/excluded counts,
+  period and any compatibility partition.
+
+Implement the chart with Flutter SDK primitives/`CustomPainter`; add no chart
+dependency. Provide labelled determinant categories, legend, units/currencies,
+zero baseline when relevant and non-color series distinction. Mixed incompatible
+units/currencies must use separate explicitly labelled series/axes or remain in
+the Table projection; never normalize or plot them as one scale. Long category
+sets use a bounded-height horizontally scrollable plot rather than silent
+truncation. No chart animation may block interaction or change evidence.
+
+`Export CSV` and `Export PDF` export the selected frozen record, not the mutable
+current Variables view. CSV contains metadata, grouped result rows and exact
+contributing evidence rows. PDF contains the same factual metadata and result
+table; including a raster/vector chart is optional and must not block the PDF.
+Reuse the existing pure export/PDF approach and explicit temporary-file behavior;
+add no dependency. Only a deliberate export may write a temporary file. Report
+success path or sanitized failure while preserving the record.
+
+Operational counts for ordinary Analytics are therefore:
+
+- initial visible load: exactly one local evidence request;
+- explicit Retry: exactly one additional local evidence request;
+- composer, Run, record selection, Chart/Table, Variables scope/filter/sort/page,
+  row selection and navigation: zero repository requests;
+- Analytics database writes: zero;
+- Analytics network requests: zero;
+- export temporary-file writes: exactly one per successful explicit export.
+
+## 32. Variables below the fold
+
+Rename the lower surface `Variables`, qualified as registered Purchase evidence
+available locally for analysis. It provides one shared selection state and two
+projections:
+
+- `Purchases`: one row/card per distinct Purchase, with Purchase ID, occurrence
+  time, Store, Purchased by, Purchased for unavailable, Payment method, item
+  count, Purchase total and currency;
+- `Contained items`: one row/card per persisted Purchase Item, with Purchase ID,
+  date/time, Product ID/code/name/brand, Store ID/name, Purchased-by
+  ID/code/nickname when available, Purchased-for unavailable, Payment Method
+  ID/code/nickname when available, quantity/unit, Unit price, Line total and
+  Promotion unavailable.
+
+Wide uses the Lists-page dense table language with horizontal accommodation;
+compact/medium use readable evidence cards. Do not compress the desktop table
+into a phone-width table.
+
+Both projections provide search, available categorical filters, deterministic
+sort, selection count, 20-row default pagination and previous/next controls.
+Sorting/filtering/paging never rereads the repository. Purchase selection expands
+to that Purchase's stable Item IDs; contained-item selection uses exact Item IDs.
+`Use selected rows` initializes a new composer scope and returns focus/scroll to
+the composer without guessing determinant, variables or operation.
+
+When a saved record is selected, Variables initially shows its contributing
+evidence and a selected-record banner. `Show all variables` removes only that
+record focus. Selection and filter changes never alter the frozen record.
+
+## 33. State, accessibility and performance gates
+
+Required states include loading, first use, no Account data, ready with no saved
+records, invalid draft, saved record selected, Chart unavailable/Table available,
+Variables filtered empty, Variables selection empty, export busy/success/failure,
+local read failure and stale async completion.
+
+At 599, 600, 1023 and 1024 logical pixels, and after crossing those widths:
+
+- one controller, draft, record list, selected record, result projection,
+  Variables scope/filter/sort/page and selection survive;
+- compact reading order matches the wide meaning;
+- controls remain reachable at 200-percent text scale;
+- keyboard traversal, focus, semantics and non-color state remain coherent;
+- chart semantics summarize title, categories, series, units and evidence count;
+- the Table projection remains an accessible equivalent.
+
+Retain the PH02 ordinary/stress fixtures. Record load, record creation, grouped
+calculation, Chart build and Table build elapsed time. No N+1 query, unbounded
+widget creation, synchronous visible hang or category-label overlap at tested
+sizes may pass silently. Render only the current Variables page and selected
+record result; do not build every historical result chart.
+
+## 34. Authorized writable paths
+
+Only these paths may change:
+
+```text
+clients/markei_flutter/lib/domain/analytics/analytics_models.dart
+clients/markei_flutter/lib/domain/analytics/analytics_registry.dart
+clients/markei_flutter/lib/application/analytics.dart
+clients/markei_flutter/lib/application/analytics_workspace.dart
+clients/markei_flutter/lib/infrastructure/local/local_analytics_repository.dart
+clients/markei_flutter/lib/app/pages/analytics_page.dart
+clients/markei_flutter/lib/app/widgets/analytics_components.dart
+clients/markei_flutter/test/analytics_registry_test.dart
+clients/markei_flutter/test/application/analytics_test.dart
+clients/markei_flutter/test/application/analytics_workspace_test.dart
+clients/markei_flutter/test/infrastructure/local_analytics_repository_test.dart
+clients/markei_flutter/test/app/analytics_page_test.dart
+clients/markei_flutter/test/app/analytics_components_test.dart
+clients/markei_flutter/test/app/history_analytics_handoff_test.dart
+clients/markei_flutter/test/app/markei_app_test.dart
+clients/markei_flutter/test/app/markei_visual_foundation_test.dart
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+```
+
+Codex may omit a new authorized test when the responsibility is covered cleanly
+by another authorized test. It may not invent a source, test or artifact path.
+
+Do not modify `markei_theme.dart`, Lists, History, app shell/composition,
+`local_database.dart`, generated Drift source, schema, migrations, pubspec,
+lockfiles, dependencies, assets, fonts, platform code, API, Auth, Sync, provider,
+diagnostic, PH03 source/tests, D/E/F, A/B/C, J, Main-root, permanent memory or
+methodology. Stop if the result requires any forbidden path.
+
+## 35. Validation, publication and required G report
+
+Run from `clients/markei_flutter`:
+
+```text
+flutter pub get
+git diff --exit-code -- pubspec.yaml pubspec.lock
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test test/analytics_registry_test.dart
+flutter test test/application/analytics_test.dart
+flutter test test/application/analytics_workspace_test.dart
+flutter test test/infrastructure/local_analytics_repository_test.dart
+flutter test test/app/analytics_page_test.dart
+flutter test test/app/analytics_components_test.dart
+flutter test test/app/history_analytics_handoff_test.dart
+flutter test test/app/markei_visual_foundation_test.dart
+flutter test test/app/markei_app_test.dart
+flutter test --concurrency=1
+flutter build windows --release
+flutter build apk --debug
+```
+
+If an authorized optional test file is not created, record `NOT_CREATED` and run
+the owning alternate focused test. Also run the repository diagnostic-generator
+drift check, exact changed-path audit, forbidden-import audit, secret audit and
+`git diff --check`. A missing host tool/build is `NOT_PERFORMED`, never PASS.
+
+Replace G with a C11-PH04 report containing exact changed paths; retained PH02
+invariants; composer options and validation; saved-record metadata/fingerprint,
+immutability and session lifetime; grouped result behavior; Chart/Table parity;
+CSV/PDF file-write counts; Variables Purchase/Item behavior; repository/network/
+database-write counts; performance; responsive/accessibility evidence; commands;
+builds; forbidden-surface audit; deviations and residual risk.
+
+Required terminal:
+
+```text
+CYCLE=C11
+PHASE=C11-PH04
+ROUND=C11-PH04-R01
+PH03_IMPLEMENTATION_ANCESTOR=0924e743931ea7aba2c9cc5d2e28063e737b2ff5
+STARTING_HEAD=<C11-PH04 D/E/F activation commit>
+ANALYTICS_COMPOSER=PASS | FAIL | BLOCKED
+DETERMINANT_VALUE_SELECTION=PASS | FAIL | BLOCKED
+VARIABLE_OPERATION_VALIDATION=PASS | FAIL | BLOCKED
+IMMUTABLE_SESSION_RECORDS=PASS | FAIL | BLOCKED
+RECORD_FINGERPRINT=PASS | FAIL | BLOCKED
+CHART_TABLE_PARITY=PASS | FAIL | BLOCKED
+CSV_EXPORT=PASS | FAIL | BLOCKED
+PDF_EXPORT=PASS | FAIL | BLOCKED
+VARIABLES_PURCHASE_ITEM_PROJECTIONS=PASS | FAIL | BLOCKED
+VARIABLES_SELECTION_HANDOFF=PASS | FAIL | BLOCKED
+ANALYTICS_REPOSITORY_REQUESTS=initial:1; retry:+1; local_ui:+0
+ANALYTICS_DATABASE_WRITES=0
+ANALYTICS_NETWORK_REQUESTS=0
+EXPLICIT_EXPORT_FILE_WRITES=<exact count>
+ACCOUNT_ISOLATION=PASS | FAIL | BLOCKED
+PH02_CALCULATION_REGRESSION=PASS | FAIL | BLOCKED
+RESPONSIVE_ACCESSIBILITY=PASS | FAIL | BLOCKED
+FOCUSED_TESTS=PASS | FAIL | BLOCKED
+FULL_FLUTTER_TEST=PASS | FAIL | BLOCKED_TIMEOUT
+WINDOWS_RELEASE_BUILD=PASS | FAIL | NOT_PERFORMED
+ANDROID_DEBUG_BUILD=PASS | FAIL | NOT_PERFORMED
+SCHEMA_MIGRATION=NONE | CONTRADICTED
+GENERATED_SOURCE_CHANGED=NO | YES
+DEPENDENCY_CHANGED=NO | YES
+PH03_SURFACES_CHANGED=NO | YES
+LIVE_PROVIDER_OPERATIONS=NOT_PERFORMED | CONTRADICTED
+PUBLICATION=PUSHED | NOT_PUSHED
+NEXT_MAIN_ACTION=Reconcile C11-PH04 G/H/I evidence and schedule human rendered review.
+```

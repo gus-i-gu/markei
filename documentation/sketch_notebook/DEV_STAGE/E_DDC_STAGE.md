@@ -628,3 +628,277 @@ KANBAN_TRANSITIONS=NONE | CONTRADICTED
 CAUSAL_TELEMETRY_COMPLETE_AUDIT_CLAIMS=ABSENT | CONTRADICTED
 NEXT_DIDACTIC_REVIEW=<one exact action>
 ~~~
+
+<!-- ACTIVATION_MARKER:C11-PH04-R01-2026-07-31 -->
+
+# C11-PH04-R01 — Analytics Fine-Tuning Didactic Authority
+
+> Status: ACTIVE — CONTROLLING C11-PH04 LEARNER-FACING AUTHORITY
+> Pairing: the D and F appends carrying this exact activation marker
+> KANBAN_TRANSITIONS: NONE
+
+## 26. Corrected learner model
+
+Analytics remains deterministic calculation over locally registered Purchase
+evidence for the active Account. PH04 changes how a learner composes, saves,
+revisits and inspects a calculation; it does not add prediction, recommendation,
+causality, telemetry, hosted truth or data repair.
+
+Use these page concepts:
+
+| Learner term | Meaning | Must not imply |
+| --- | --- | --- |
+| Create analysis | Complete a draft configuration before calculation | automatic or inferred analysis |
+| Group by | Choose the primary evidence category: Product, Purchase, Store or Time | causal determinant |
+| Choose | Choose the actual products, purchases, stores, date or period | hidden selection |
+| Variables | Choose relational breakdowns and numeric measures | every field is numerically summable |
+| Operation | Sum, Mean, Difference or Percentage with explicit operands | advanced statistics |
+| Timeframe | All recorded time or a custom UTC interval applied to the record | live or hosted time |
+| Saved analyses — this session | Immutable records retained while this workspace lives | persistence across restart or Sync |
+| Record fingerprint | Short reference for one frozen session record | security, signature or authenticity proof |
+| Chart | Visual projection of a frozen result | a different calculation from Table |
+| Table | Exact accessible projection of the same frozen result | raw database dump |
+| Variables | Registered Purchase evidence used or available for analysis | causal explanation or repaired facts |
+| Purchases | One deduplicated view per registered Purchase | one row per contained item |
+| Contained items | Persisted Purchase Items belonging to Purchases | product catalogue inventory |
+
+Do not use `determinant variable` in ordinary copy. `Group by` is the accepted
+learner-facing label; code may retain `AnalyticsDeterminantKind`. Do not call the
+lower surface `Evidence` alone. `Variables` must be qualified at first use as
+registered Purchase evidence available locally for analysis.
+
+## 27. Composer language and compatibility disclosure
+
+The composer uses this reading order:
+
+1. Group by;
+2. Choose values;
+3. Variables;
+4. Operation;
+5. Timeframe;
+6. scope/operand explanation;
+7. Run & save analysis;
+8. Clear draft.
+
+The Variables menu groups choices semantically:
+
+- `Break down the result`: Purchased by, Payment method, Purchased for;
+- `Measure`: Quantity, Unit price, Price paid (line total), Purchase total,
+  Evidence count.
+
+`Purchased for` is visible and disabled with `Unavailable in recorded data`.
+Purchased by and Payment method are labels used to subdivide evidence. Copy must
+never suggest adding, averaging or subtracting a person or payment method. Run is
+disabled until at least one measure exists.
+
+Use operation meanings:
+
+| Operation | Required meaning |
+| --- | --- |
+| Sum | Adds compatible recorded values within each chosen group |
+| Mean | Compatible total divided by the disclosed contribution count |
+| Difference | Comparison B minus baseline A for exactly two comparable scopes |
+| Percentage | Named part divided by a named containing whole; not percentage change |
+
+Retain the PH02 compatibility contract. Unsupported choices are disabled where
+possible and otherwise blocked before execution with a specific explanation.
+Required messages include:
+
+- `Choose at least one Product, Purchase, Store, date or period.`
+- `Choose at least one measure.`
+- `Purchased for is unavailable in recorded data.`
+- `This operation is unavailable for the selected measure.`
+- `Difference needs exactly two comparable groups: baseline A and comparison B.`
+- `Percentage needs a named part contained in a named whole.`
+- `The end of the custom timeframe must be after its start.`
+- `Run & save analysis becomes available when the draft is complete.`
+
+`Clear draft` means only the composer. It must not clear registered Purchases,
+Variables selection imported from History, or saved analysis records without an
+explicit explanation of which provisional selection is released.
+
+## 28. Saved-record meaning
+
+The record browser is a chronological track of analyses executed in the current
+workspace. Its heading must include `this session`. Every card exposes:
+
+- created date/time;
+- `Record #…` fingerprint;
+- Group by and chosen variables;
+- timeframe;
+- selection state;
+- a lock or `Saved record` meaning.
+
+New records appear first and become selected. Previous/next buttons must have
+semantic labels such as `Select older saved analysis` and `Select newer saved
+analysis`; disabled boundary buttons explain that no older/newer record exists.
+Selection cannot be communicated only by border color.
+
+Do not display enabled Edit, Delete or Reorder actions. If disabled Edit/Delete
+controls remain for discoverability, their accessible description is `Saved
+analyses cannot be edited/deleted in this version.` A saved record is a frozen
+calculation snapshot; it is not a durable audit log, database history, legal
+record, Sync fact or guarantee that current Purchase evidence is unchanged.
+
+Use `record fingerprint` or `record reference`, not `hash`, in explanatory copy.
+The visible `#ABC123` form is acceptable. State that it helps distinguish records
+in this session and proves nothing about authenticity.
+
+## 29. Result language: Chart, Table and traceability
+
+The selected-result heading combines, in a readable order:
+
+```text
+{Group by} · {measures/breakdowns} · Record #{fingerprint}
+{created time} · {timeframe} · {evidence count}
+```
+
+Chart and Table are presentation choices, not analysis choices. Switching must
+retain the exact interpretation, categories, results, units, counts and period.
+
+Chart requirements:
+
+- visible title and explicit x/category meaning;
+- every series named in a legend and directly distinguishable without color;
+- currency/unit shown with the series or axis;
+- negative/zero meaning where applicable;
+- semantic summary naming categories, series and values;
+- no decorative trend line, extrapolation or `insight` copy;
+- no silent omission when categories require horizontal scrolling.
+
+Table requirements:
+
+- one row per grouped result entry;
+- Group by label, relational breakdown labels, measure, operation, value,
+  unit/currency, eligible count and excluded count;
+- typed unavailable rows remain visible with their reason;
+- same ordering and record identity as the Chart.
+
+The explanation below the result must state factual calculation meaning, applied
+period and evidence counts. Example form:
+
+`Mean Unit price and Quantity grouped by Product from 1–31 July 2026. Calculated
+from 42 contained items; 2 incompatible values were excluded and are listed in
+Table.`
+
+Do not use causal phrasing such as `Product caused price`, evaluative phrasing
+such as `best`, or predictive phrasing such as `will cost`.
+
+Export actions are `Export CSV` and `Export PDF`. Success copy identifies the
+temporary file location; failure copy is sanitized. Export never means cloud
+upload or native share unless the existing platform behavior actually performs
+it. The exported artifact must identify the record fingerprint, timeframe,
+operation, evidence counts and local-snapshot limitation.
+
+## 30. Variables language and Purchase/Item distinction
+
+Use this heading:
+
+```text
+Variables
+Registered Purchase evidence available locally for analysis.
+```
+
+When focused on a record, add:
+
+`Showing variables that contributed to Record #{fingerprint}.`
+
+`Show all variables` removes that focus without changing the saved record.
+
+The `Purchases` and `Contained items` switch changes representation only:
+
+- Purchases summarizes each Purchase once and reports its item count and recorded
+  Purchase total;
+- Contained items shows each persisted Purchase Item and its Product, quantity,
+  price and relational Purchase context;
+- selecting a Purchase selects its contained Item identities for analysis;
+- selecting a contained item selects only that item;
+- `Use selected rows` prepares a new draft and performs no calculation.
+
+Purchased-for and Promotion remain `Unavailable in recorded data`, never `None`,
+`No`, zero or empty. Missing Person/Payment Method is `Not assigned`; an archived
+reference keeps its historical label and archived qualification. Product, Store,
+Person and Payment Method references should show readable labels with stable
+codes/IDs where available, without presenting raw internal identifiers as the
+primary meaning.
+
+Search, Filter, Sort, selected count and pagination must use ordinary, concise
+labels. Empty distinctions:
+
+- `No Purchase evidence yet. Register a Purchase to begin local Analytics.`
+- `No Purchase evidence is available for this Account.`
+- `No variables match these filters.`
+- `No variable rows are selected.`
+- `Select rows, then use them to prepare a new analysis draft.`
+
+## 31. Responsive, accessibility and human-evidence ceiling
+
+Wide and compact have the same semantic sections and state. Wide may use a dense
+table and horizontal saved-card strip. Compact stacks the composer, permits
+horizontal saved-card browsing, preserves a readable Chart/Table result and uses
+evidence cards rather than a compressed data table.
+
+Required automated evidence:
+
+- logical keyboard/focus order and visible focus;
+- semantic names for composer controls, disabled reasons, record selection,
+  previous/next navigation, Chart/Table, exports and Variables actions;
+- Chart semantic summary plus Table alternative;
+- non-color selection, series, unavailable, error and busy meaning;
+- 200-percent text reflow without clipped controls or page-level horizontal
+  overflow;
+- stable reading order and state at 599/600/1023/1024 widths;
+- compact cards expose the same Purchase/Item facts as the wide table.
+
+The two approved mockup plates establish intended hierarchy and responsive
+composition, not proof of rendered implementation. Codex widget tests and builds
+cannot establish visual fidelity, Narrator/TalkBack quality, locale behavior,
+physical-device usability or human comprehension. These remain
+`NOT_PERFORMED` unless separately observed after implementation.
+
+## 32. Prohibited claims and required H report
+
+No PH04 UI, export or report may claim:
+
+- analysis-record persistence across app restart;
+- Sync/hosted storage of records;
+- causal explanation;
+- forecasting, recommendations, rankings or automatic market comparison;
+- statistical significance or advanced statistics;
+- repaired missing data;
+- complete truth beyond the loaded active-Account local dataset;
+- chart insight beyond the exact Table values.
+
+Do not change Didactic KANBAN maturity. Replace H with a PH04 learner-facing
+report covering composer vocabulary, all compatibility/disabled explanations,
+session-record meaning, fingerprint ceiling, Chart/Table parity, exports,
+Variables Purchase/Item distinction, missing/unavailable language, responsive/
+accessibility evidence and the human evidence ceiling.
+
+Required terminal:
+
+```text
+CYCLE=C11
+PHASE=C11-PH04
+ROUND=C11-PH04-R01
+GROUP_BY_AND_CHOOSE_VOCABULARY=PASS | FAIL | BLOCKED
+VARIABLES_BREAKDOWN_MEASURE_DISTINCTION=PASS | FAIL | BLOCKED
+UNSUPPORTED_COMBINATION_EXPLANATIONS=PASS | FAIL | BLOCKED
+SESSION_RECORD_MEANING=PASS | FAIL | BLOCKED
+FINGERPRINT_CLAIM_CEILING=PASS | FAIL | BLOCKED
+CHART_TABLE_SEMANTIC_PARITY=PASS | FAIL | BLOCKED
+RESULT_TRACEABILITY_LANGUAGE=PASS | FAIL | BLOCKED
+PURCHASE_CONTAINED_ITEM_DISTINCTION=PASS | FAIL | BLOCKED
+UNAVAILABLE_FIELD_LANGUAGE=PASS | FAIL | BLOCKED
+EXPORT_LANGUAGE=PASS | FAIL | BLOCKED
+WIDE_COMPACT_SEMANTIC_PARITY=PASS | FAIL | BLOCKED
+KEYBOARD_FOCUS_SEMANTICS=PASS | FAIL | BLOCKED
+TEXT_SCALE_200=PASS | FAIL | BLOCKED
+SCREENSHOT_FIDELITY_REVIEW=NOT_PERFORMED | PERFORMED
+HUMAN_ASSISTIVE_TECH_ACCEPTANCE=NOT_PERFORMED | PERFORMED
+LOCALE_REAL_DEVICE_REVIEW=NOT_PERFORMED | PERFORMED
+HUMAN_COMPREHENSION=NOT_ESTABLISHED | ESTABLISHED
+KANBAN_TRANSITIONS=NONE | CONTRADICTED
+PREDICTION_CAUSAL_RECOMMENDATION_CLAIMS=ABSENT | CONTRADICTED
+NEXT_DIDACTIC_REVIEW=Reconcile PH04 H evidence and run human rendered comparison against the approved plates.
+```
