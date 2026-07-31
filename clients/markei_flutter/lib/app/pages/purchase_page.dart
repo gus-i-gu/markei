@@ -13,6 +13,8 @@ import '../../domain/shared/ids.dart';
 import '../../domain/shared/money.dart';
 import '../../domain/shared/quantity.dart';
 import '../../domain/store/store.dart';
+import '../design/markei_theme.dart';
+import '../widgets/markei_components.dart';
 
 class PurchasePage extends StatefulWidget {
   const PurchasePage({
@@ -631,61 +633,482 @@ class _PurchasePageState extends State<PurchasePage> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Center(
-        child: Text(
-          'Loading Products and Stores...',
-          key: Key('purchase.loading'),
-        ),
+      return const MarkeiStatePanel(
+        key: Key('purchase.loading'),
+        title: 'Loading purchase setup',
+        message: 'Loading Products, Stores and optional local labels.',
+        icon: Icons.hourglass_empty,
       );
     }
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        const Text('Purchase draft', style: TextStyle(fontSize: 22)),
-        const SizedBox(height: 8),
-        const Text(
-          'Data is stored on this device. Synchronization is not active, and export or restore is not yet provided.',
-          key: Key('purchase.localNotice'),
-        ),
-        const SizedBox(height: 16),
-        _storeSection(),
-        const SizedBox(height: 12),
-        _referenceSection(),
-        const Divider(height: 32),
-        if (!_reviewing) ...[
-          _productSection(),
-          const SizedBox(height: 12),
-          _quantitySection(),
-          const SizedBox(height: 12),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final layoutClass = MarkeiLayoutClass.fromWidth(constraints.maxWidth);
+        final wide = layoutClass == MarkeiLayoutClass.wide;
+        return ListView(
+          key: const Key('purchase.page'),
+          children: [
+            const MarkeiPageHeader(
+              title: 'New purchase',
+              purpose:
+                  'Stage local Purchase Items, review the draft and register once.',
+              icon: Icons.add_shopping_cart_outlined,
+            ),
+            const SizedBox(height: MarkeiSpacing.sm),
+            const Text(
+              'Purchases are registered locally first on this device. After an unknown result, check History before retrying.',
+              key: Key('purchase.localNotice'),
+              style: MarkeiText.metadata,
+            ),
+            const SizedBox(height: MarkeiSpacing.md),
+            _storeSection(),
+            const SizedBox(height: MarkeiSpacing.md),
+            _referenceSection(),
+            const SizedBox(height: MarkeiSpacing.md),
+            if (!_reviewing)
+              if (wide)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(flex: 3, child: _productSection()),
+                    const SizedBox(width: MarkeiSpacing.md),
+                    Expanded(flex: 2, child: _quantitySection()),
+                  ],
+                )
+              else ...[
+                _productSection(),
+                const SizedBox(height: MarkeiSpacing.md),
+                _quantitySection(),
+              ]
+            else
+              _reviewSection(),
+            const SizedBox(height: MarkeiSpacing.md),
+            if (!_reviewing) _editActionBand(),
+            if (_feedback != null) ...[
+              const SizedBox(height: MarkeiSpacing.sm),
+              _feedbackPanel(),
+            ],
+            if (_warnings.isNotEmpty) ...[
+              const SizedBox(height: MarkeiSpacing.sm),
+              _similarityWarningSection(),
+            ],
+            const SizedBox(height: MarkeiSpacing.md),
+            _stagedLinesSection(layoutClass),
+            const SizedBox(height: MarkeiSpacing.md),
+            _totalActionBand(),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _referenceSection() {
+    return MarkeiSection(
+      title: 'Optional local labels',
+      subtitle: 'Person and payment references are presentation context only.',
+      child: MarkeiControlBand(
+        children: [
+          SizedBox(
+            width: 280,
+            child: DropdownButton<LocalReference?>(
+              key: const Key('purchase.person.select'),
+              value: _selectedPerson,
+              isExpanded: true,
+              items: [
+                const DropdownMenuItem(
+                  value: null,
+                  child: Text('Person not assigned'),
+                ),
+                for (final person in _people)
+                  DropdownMenuItem(
+                    value: person,
+                    child: Text(person.displayLabel),
+                  ),
+              ],
+              onChanged: (value) => setState(() => _selectedPerson = value),
+            ),
+          ),
+          SizedBox(
+            width: 280,
+            child: DropdownButton<LocalReference?>(
+              key: const Key('purchase.payment.select'),
+              value: _selectedPaymentMethod,
+              isExpanded: true,
+              items: [
+                const DropdownMenuItem(
+                  value: null,
+                  child: Text('Payment not assigned'),
+                ),
+                for (final payment in _paymentMethods)
+                  DropdownMenuItem(
+                    value: payment,
+                    child: Text(payment.displayLabel),
+                  ),
+              ],
+              onChanged: (value) =>
+                  setState(() => _selectedPaymentMethod = value),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _storeSection() {
+    final selectedStore = _selectedStore();
+    return MarkeiSection(
+      title: 'Store and time',
+      subtitle: 'Required context for this Purchase draft.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (_stores.isEmpty)
+            const Text(
+              'No Stores yet. Create one in Catalogue before registering a purchase.',
+              key: Key('purchase.store.required'),
+            )
+          else
+            DropdownButton<String>(
+              key: const Key('purchase.store.select'),
+              value: selectedStore == null ? null : _selectedStoreId,
+              hint: const Text('Select Store'),
+              isExpanded: true,
+              items: [
+                for (final store in _stores)
+                  DropdownMenuItem(
+                    value: store.id.value,
+                    child: Text(store.displayName),
+                  ),
+              ],
+              onChanged: (value) => setState(() {
+                _selectedStoreId = value;
+                _feedback = value == null
+                    ? null
+                    : _PurchaseFeedback.success('store-selected');
+              }),
+            ),
+          if (selectedStore != null) ...[
+            const SizedBox(height: MarkeiSpacing.xs),
+            Text(
+              'Selected Store: ${selectedStore.displayName}',
+              key: const Key('purchase.store.selected'),
+              style: MarkeiText.metadata,
+            ),
+          ],
+          const SizedBox(height: MarkeiSpacing.sm),
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: MarkeiSpacing.md,
+            runSpacing: MarkeiSpacing.sm,
             children: [
-              FilledButton(
-                key: const Key('item.add'),
-                onPressed: _editingKey == null
-                    ? () => _stageNewProduct(createAnyway: false)
-                    : _saveEditedLine,
-                child: Text(
-                  _editingKey == null ? 'Add staged Item' : 'Save staged Item',
+              SizedBox(
+                width: 220,
+                child: TextField(
+                  key: const Key('purchase.date'),
+                  controller: _purchaseDateController,
+                  decoration: const InputDecoration(
+                    labelText: 'Purchase date',
+                    helperText: 'dd/mm/yyyy',
+                  ),
                 ),
               ),
-              if (_editingKey == null)
-                FilledButton.tonal(
-                  key: const Key('product.createAnyway'),
-                  onPressed: () => _stageNewProduct(createAnyway: true),
-                  child: const Text('Create anyway'),
+              SizedBox(
+                width: 180,
+                child: TextField(
+                  key: const Key('purchase.time'),
+                  controller: _purchaseTimeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Time',
+                    helperText: 'HH:mm',
+                  ),
                 ),
-              OutlinedButton(
-                key: const Key('purchase.review'),
-                onPressed: _submitting ? null : _reviewPurchase,
-                child: const Text('Review purchase'),
               ),
             ],
           ),
-        ] else ...[
-          const Text('Review purchase', style: TextStyle(fontSize: 18)),
-          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  Widget _productSection() {
+    final selectedProduct = _selectedProduct();
+    return MarkeiSection(
+      title: 'Product',
+      subtitle: 'Find an existing Product or stage a new reusable Product.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MarkeiControlBand(
+            children: [
+              SizedBox(
+                width: 320,
+                child: TextField(
+                  key: const Key('product.code'),
+                  controller: _codeController,
+                  readOnly: selectedProduct != null,
+                  decoration: const InputDecoration(
+                    labelText: 'Product code',
+                    helperText: 'Required and immutable',
+                  ),
+                ),
+              ),
+              OutlinedButton(
+                key: const Key('product.findByCode'),
+                onPressed: _editingKey == null ? _findProductByCode : null,
+                child: const Text('Find code'),
+              ),
+            ],
+          ),
+          const SizedBox(height: MarkeiSpacing.sm),
+          if (_products.isEmpty)
+            const Text('No Products yet. Create a Product to stage an Item.')
+          else
+            DropdownButton<String?>(
+              key: const Key('purchase.product.select'),
+              value: selectedProduct?.id.value,
+              hint: const Text('Use existing Product'),
+              isExpanded: true,
+              items: [
+                const DropdownMenuItem(
+                  value: null,
+                  child: Text('Create new Product'),
+                ),
+                for (final product in _products)
+                  DropdownMenuItem(
+                    value: product.id.value,
+                    child: Text(
+                      '${product.userProductCode.displayValue} · ${product.displayName}',
+                    ),
+                  ),
+              ],
+              onChanged: (value) => setState(() {
+                if (value == null) {
+                  _clearSelectedProduct();
+                  _codeController.clear();
+                  _nameController.clear();
+                  _brandController.clear();
+                } else {
+                  final selected = _selectProductId(value);
+                  if (selected == null) {
+                    _feedback = _PurchaseFeedback.error(
+                      'product-selection-invalidated: Selected Product is not available. Choose a Product again.',
+                    );
+                  }
+                }
+              }),
+            ),
+          const SizedBox(height: MarkeiSpacing.sm),
+          if (selectedProduct != null) ...[
+            TextField(
+              key: const Key('product.name'),
+              controller: _nameController,
+              readOnly: true,
+              decoration: const InputDecoration(labelText: 'Product name'),
+            ),
+            TextField(
+              key: const Key('product.brand'),
+              controller: _brandController,
+              readOnly: true,
+              decoration: const InputDecoration(labelText: 'Brand'),
+            ),
+            const SizedBox(height: MarkeiSpacing.xs),
+            Text(
+              'Mode: ${selectedProduct.mode.name.toUpperCase()} · ${selectedProduct.measurementKind.name}',
+              key: const Key('product.immutableFacts'),
+              style: MarkeiText.metadata,
+            ),
+            const SizedBox(height: MarkeiSpacing.sm),
+            FilledButton.tonal(
+              key: const Key('product.useSelected'),
+              onPressed: () => _stageExistingProduct(selectedProduct),
+              child: const Text('Add selected Product'),
+            ),
+          ] else ...[
+            SegmentedButton<bool>(
+              segments: const [
+                ButtonSegment(value: false, label: Text('Packaged')),
+                ButtonSegment(value: true, label: Text('Bulk')),
+              ],
+              selected: {_bulk},
+              onSelectionChanged: (value) =>
+                  setState(() => _bulk = value.single),
+            ),
+            const SizedBox(height: MarkeiSpacing.sm),
+            TextField(
+              key: const Key('product.name'),
+              controller: _nameController,
+              decoration: const InputDecoration(labelText: 'Product name'),
+            ),
+            TextField(
+              key: const Key('product.brand'),
+              controller: _brandController,
+              decoration: const InputDecoration(labelText: 'Brand'),
+            ),
+            if (!_bulk)
+              Wrap(
+                spacing: MarkeiSpacing.md,
+                runSpacing: MarkeiSpacing.sm,
+                children: [
+                  SizedBox(
+                    width: 180,
+                    child: TextField(
+                      key: const Key('product.packageAmount'),
+                      controller: _packageAmountController,
+                      decoration: const InputDecoration(
+                        labelText: 'Package size',
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 180,
+                    child: TextField(
+                      key: const Key('product.packageUnit'),
+                      controller: _packageUnitController,
+                      decoration: const InputDecoration(
+                        labelText: 'Package unit',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _quantitySection() {
+    return MarkeiSection(
+      title: 'Quantity and price',
+      subtitle: 'Stage the amount bought and recorded line total.',
+      child: Wrap(
+        spacing: MarkeiSpacing.md,
+        runSpacing: MarkeiSpacing.sm,
+        children: [
+          SizedBox(
+            width: 180,
+            child: TextField(
+              key: const Key('item.quantity'),
+              controller: _purchasedAmountController,
+              decoration: const InputDecoration(labelText: 'Total bought'),
+              onChanged: (_) => _previewBulkTotal(),
+            ),
+          ),
+          SizedBox(
+            width: 140,
+            child: TextField(
+              key: const Key('item.unit'),
+              controller: _purchasedUnitController,
+              decoration: const InputDecoration(labelText: 'Unit'),
+              onChanged: (_) => _previewBulkTotal(),
+            ),
+          ),
+          if (!_bulk)
+            SizedBox(
+              width: 180,
+              child: TextField(
+                key: const Key('item.packageCount'),
+                controller: _packageCountController,
+                decoration: const InputDecoration(labelText: 'Packages bought'),
+              ),
+            ),
+          SizedBox(
+            width: 180,
+            child: TextField(
+              key: const Key('item.lineTotal'),
+              controller: _lineTotalController,
+              readOnly: _bulk,
+              decoration: InputDecoration(
+                labelText: _bulk ? 'Calculated line total' : 'Line total',
+              ),
+            ),
+          ),
+          if (_bulk)
+            SizedBox(
+              width: 220,
+              child: TextField(
+                key: const Key('item.pricePerUnit'),
+                controller: _pricePerUnitController,
+                decoration: InputDecoration(
+                  labelText:
+                      'Price per ${_purchasedUnitController.text.trim().isEmpty ? 'selected unit' : _purchasedUnitController.text.trim()}',
+                ),
+                onChanged: (_) => _previewBulkTotal(),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _editActionBand() {
+    return MarkeiActionBand(
+      leading: Text(
+        _editingKey == null ? 'Editing new Item' : 'Editing staged Item',
+        style: MarkeiText.label,
+      ),
+      children: [
+        FilledButton(
+          key: const Key('item.add'),
+          onPressed: _editingKey == null
+              ? () => _stageNewProduct(createAnyway: false)
+              : _saveEditedLine,
+          child: Text(_editingKey == null ? 'Add staged Item' : 'Save Item'),
+        ),
+        if (_editingKey == null)
+          FilledButton.tonal(
+            key: const Key('product.createAnyway'),
+            onPressed: () => _stageNewProduct(createAnyway: true),
+            child: const Text('Create anyway'),
+          ),
+        OutlinedButton(
+          key: const Key('purchase.review'),
+          onPressed: _submitting ? null : _reviewPurchase,
+          child: const Text('Review purchase'),
+        ),
+      ],
+    );
+  }
+
+  Widget _reviewSection() {
+    final selectedStore = _selectedStore();
+    return MarkeiSection(
+      title: 'Review purchase',
+      subtitle: 'This draft is read-only until you go back to edit.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: MarkeiSpacing.lg,
+            runSpacing: MarkeiSpacing.xs,
+            children: [
+              MarkeiFact(
+                label: 'Store',
+                value: selectedStore?.displayName ?? 'Required',
+              ),
+              MarkeiFact(
+                label: 'Date',
+                value: _purchaseDateController.text.trim().isEmpty
+                    ? 'Today'
+                    : _purchaseDateController.text.trim(),
+              ),
+              MarkeiFact(
+                label: 'Time',
+                value: _purchaseTimeController.text.trim().isEmpty
+                    ? 'Now'
+                    : _purchaseTimeController.text.trim(),
+              ),
+              if (_selectedPerson != null)
+                MarkeiFact(
+                  label: 'Person',
+                  value: _selectedPerson!.displayLabel,
+                ),
+              if (_selectedPaymentMethod != null)
+                MarkeiFact(
+                  label: 'Payment',
+                  value: _selectedPaymentMethod!.displayLabel,
+                ),
+            ],
+          ),
+          const SizedBox(height: MarkeiSpacing.sm),
           FilledButton.tonal(
             key: const Key('purchase.backToEdit'),
             onPressed: _submitting
@@ -694,43 +1117,30 @@ class _PurchasePageState extends State<PurchasePage> {
             child: const Text('Back to edit'),
           ),
         ],
-        const SizedBox(height: 16),
-        _stagedLinesSection(),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Text(
-              'Staged total BRL ${(_stagedTotalMinorUnits / 100).toStringAsFixed(2)}',
-              key: const Key('purchase.stagedTotal'),
-            ),
-            FilledButton(
-              key: const Key('purchase.register'),
-              onPressed: _reviewing && !_submitting ? _registerPurchase : null,
-              child: Text(_submitting ? 'Registering...' : 'Register purchase'),
-            ),
-          ],
-        ),
-        if (_feedback != null) ...[
-          const SizedBox(height: 12),
-          Text(
-            _feedback!.message,
-            key: const Key('purchase.message'),
-            style: TextStyle(
-              color: _feedback!.isError
-                  ? Theme.of(context).colorScheme.error
-                  : null,
-            ),
-          ),
-        ],
-        if (_warnings.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          const Text(
-            'Similar Product found',
-            key: Key('product.similarityWarning'),
-          ),
+      ),
+    );
+  }
+
+  Widget _feedbackPanel() {
+    return MarkeiStatePanel(
+      key: const Key('purchase.message'),
+      title: _feedback!.isError
+          ? 'Purchase needs attention'
+          : 'Purchase update',
+      message: _feedback!.message,
+      icon: _feedback!.isError
+          ? Icons.error_outline
+          : Icons.check_circle_outline,
+    );
+  }
+
+  Widget _similarityWarningSection() {
+    return MarkeiSection(
+      title: 'Similar Product found',
+      key: const Key('product.similarityWarning'),
+      subtitle: 'Choose an existing Product or explicitly create anyway.',
+      child: Column(
+        children: [
           for (final warning in _warnings)
             ListTile(
               title: Text(warning.existingProduct.displayName),
@@ -742,351 +1152,211 @@ class _PurchasePageState extends State<PurchasePage> {
               ),
             ),
         ],
-      ],
+      ),
     );
   }
 
-  Widget _referenceSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _totalActionBand() {
+    return MarkeiActionBand(
+      leading: Text(
+        'Staged total BRL ${(_stagedTotalMinorUnits / 100).toStringAsFixed(2)}',
+        key: const Key('purchase.stagedTotal'),
+        style: MarkeiText.numeric,
+      ),
       children: [
-        const Text('Optional local labels', style: TextStyle(fontSize: 18)),
-        DropdownButton<LocalReference?>(
-          key: const Key('purchase.person.select'),
-          value: _selectedPerson,
-          isExpanded: true,
-          items: [
-            const DropdownMenuItem(value: null, child: Text('Not assigned')),
-            for (final person in _people)
-              DropdownMenuItem(value: person, child: Text(person.displayLabel)),
-          ],
-          onChanged: (value) => setState(() => _selectedPerson = value),
-        ),
-        DropdownButton<LocalReference?>(
-          key: const Key('purchase.payment.select'),
-          value: _selectedPaymentMethod,
-          isExpanded: true,
-          items: [
-            const DropdownMenuItem(value: null, child: Text('Not assigned')),
-            for (final payment in _paymentMethods)
-              DropdownMenuItem(
-                value: payment,
-                child: Text(payment.displayLabel),
-              ),
-          ],
-          onChanged: (value) => setState(() => _selectedPaymentMethod = value),
+        FilledButton(
+          key: const Key('purchase.register'),
+          onPressed: _reviewing && !_submitting ? _registerPurchase : null,
+          child: Text(_submitting ? 'Registering...' : 'Register purchase'),
         ),
       ],
     );
   }
 
-  Widget _storeSection() {
-    final selectedStore = _selectedStore();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Choose Store', style: TextStyle(fontSize: 18)),
-        if (_stores.isEmpty)
-          const Text(
-            'No Stores yet. Create one in Catalogue before registering a purchase.',
-            key: Key('purchase.store.required'),
-          )
-        else
-          DropdownButton<String>(
-            key: const Key('purchase.store.select'),
-            value: selectedStore == null ? null : _selectedStoreId,
-            hint: const Text('Select Store'),
-            isExpanded: true,
-            items: [
-              for (final store in _stores)
-                DropdownMenuItem(
-                  value: store.id.value,
-                  child: Text(store.displayName),
-                ),
-            ],
-            onChanged: (value) => setState(() {
-              _selectedStoreId = value;
-              _feedback = value == null
-                  ? null
-                  : _PurchaseFeedback.success('store-selected');
-            }),
-          ),
-        if (selectedStore != null)
-          Text(
-            'Selected Store: ${selectedStore.displayName}',
-            key: const Key('purchase.store.selected'),
-          ),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                key: const Key('purchase.date'),
-                controller: _purchaseDateController,
-                decoration: const InputDecoration(
-                  labelText: 'Purchase date',
-                  helperText: 'dd/mm/yyyy',
-                ),
-              ),
+  Widget _stagedLinesSection(MarkeiLayoutClass layoutClass) {
+    if (_lines.isEmpty) {
+      return const MarkeiStatePanel(
+        key: Key('purchase.emptyDraft'),
+        title: 'No staged Items yet',
+        message: 'Add at least one Item before reviewing this Purchase.',
+        icon: Icons.shopping_basket_outlined,
+      );
+    }
+    return MarkeiSection(
+      title: 'Staged Items',
+      subtitle: _reviewing
+          ? 'Review these Items before registration.'
+          : 'Items staged in the current editable draft.',
+      child: layoutClass == MarkeiLayoutClass.wide
+          ? _StagedLineTable(
+              lines: _lines,
+              submitting: _submitting,
+              onEdit: _editLine,
+              onRemove: _removeLine,
+            )
+          : _StagedLineCards(
+              lines: _lines,
+              submitting: _submitting,
+              onEdit: _editLine,
+              onRemove: _removeLine,
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: TextField(
-                key: const Key('purchase.time'),
-                controller: _purchaseTimeController,
-                decoration: const InputDecoration(
-                  labelText: 'Time',
-                  helperText: 'HH:mm',
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
+}
 
-  Widget _productSection() {
-    final selectedProduct = _selectedProduct();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Find or create Product', style: TextStyle(fontSize: 18)),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                key: const Key('product.code'),
-                controller: _codeController,
-                readOnly: selectedProduct != null,
-                decoration: const InputDecoration(
-                  labelText: 'Product code',
-                  helperText: 'Required and immutable',
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            OutlinedButton(
-              key: const Key('product.findByCode'),
-              onPressed: _editingKey == null ? _findProductByCode : null,
-              child: const Text('Find code'),
-            ),
-          ],
-        ),
-        if (_products.isEmpty)
-          const Text('No Products yet. Create a Product to stage an Item.')
-        else
-          DropdownButton<String?>(
-            key: const Key('purchase.product.select'),
-            value: selectedProduct?.id.value,
-            hint: const Text('Use existing Product'),
-            isExpanded: true,
-            items: [
-              const DropdownMenuItem(
-                value: null,
-                child: Text('Create new Product'),
-              ),
-              for (final product in _products)
-                DropdownMenuItem(
-                  value: product.id.value,
-                  child: Text(
-                    '${product.userProductCode.displayValue} · ${product.displayName}',
-                  ),
-                ),
-            ],
-            onChanged: (value) => setState(() {
-              if (value == null) {
-                _clearSelectedProduct();
-                _codeController.clear();
-                _nameController.clear();
-                _brandController.clear();
-              } else {
-                final selected = _selectProductId(value);
-                if (selected == null) {
-                  _feedback = _PurchaseFeedback.error(
-                    'product-selection-invalidated: Selected Product is not available. Choose a Product again.',
-                  );
-                }
-              }
-            }),
-          ),
-        if (selectedProduct != null) ...[
-          TextField(
-            key: const Key('product.name'),
-            controller: _nameController,
-            readOnly: true,
-            decoration: const InputDecoration(labelText: 'Product name'),
-          ),
-          TextField(
-            key: const Key('product.brand'),
-            controller: _brandController,
-            readOnly: true,
-            decoration: const InputDecoration(labelText: 'Brand'),
-          ),
-          Text(
-            'Mode: ${selectedProduct.mode.name.toUpperCase()} · ${selectedProduct.measurementKind.name}',
-            key: const Key('product.immutableFacts'),
-          ),
-          FilledButton.tonal(
-            key: const Key('product.useSelected'),
-            onPressed: () => _stageExistingProduct(selectedProduct),
-            child: const Text('Add selected Product'),
-          ),
-        ] else ...[
-          SegmentedButton<bool>(
-            segments: const [
-              ButtonSegment(value: false, label: Text('Packaged')),
-              ButtonSegment(value: true, label: Text('Bulk')),
-            ],
-            selected: {_bulk},
-            onSelectionChanged: (value) => setState(() => _bulk = value.single),
-          ),
-          TextField(
-            key: const Key('product.name'),
-            controller: _nameController,
-            decoration: const InputDecoration(labelText: 'Product name'),
-          ),
-          TextField(
-            key: const Key('product.brand'),
-            controller: _brandController,
-            decoration: const InputDecoration(labelText: 'Brand'),
-          ),
-          if (!_bulk)
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    key: const Key('product.packageAmount'),
-                    controller: _packageAmountController,
-                    decoration: const InputDecoration(
-                      labelText: 'Package size',
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    key: const Key('product.packageUnit'),
-                    controller: _packageUnitController,
-                    decoration: const InputDecoration(
-                      labelText: 'Package unit',
-                    ),
+class _StagedLineTable extends StatelessWidget {
+  const _StagedLineTable({
+    required this.lines,
+    required this.submitting,
+    required this.onEdit,
+    required this.onRemove,
+  });
+
+  final List<_DraftLine> lines;
+  final bool submitting;
+  final ValueChanged<_DraftLine> onEdit;
+  final ValueChanged<_DraftLine> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: DataTable(
+        columns: const [
+          DataColumn(label: Text('Product')),
+          DataColumn(label: Text('Mode')),
+          DataColumn(label: Text('Quantity')),
+          DataColumn(label: Text('Line total')),
+          DataColumn(label: Text('Actions')),
+        ],
+        rows: [
+          for (final line in lines)
+            DataRow(
+              key: ValueKey('purchase.line.${line.keyValue}'),
+              cells: [
+                DataCell(Text(line.productLabel)),
+                DataCell(Text(line.productMode.name.toUpperCase())),
+                DataCell(Text(_quantityLabel(line))),
+                DataCell(Text(_lineTotalLabel(line))),
+                DataCell(
+                  _LineActions(
+                    line: line,
+                    submitting: submitting,
+                    onEdit: onEdit,
+                    onRemove: onRemove,
                   ),
                 ),
               ],
             ),
         ],
-      ],
+      ),
     );
   }
+}
 
-  Widget _quantitySection() {
+class _StagedLineCards extends StatelessWidget {
+  const _StagedLineCards({
+    required this.lines,
+    required this.submitting,
+    required this.onEdit,
+    required this.onRemove,
+  });
+
+  final List<_DraftLine> lines;
+  final bool submitting;
+  final ValueChanged<_DraftLine> onEdit;
+  final ValueChanged<_DraftLine> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                key: const Key('item.quantity'),
-                controller: _purchasedAmountController,
-                decoration: const InputDecoration(
-                  labelText: 'Total amount bought',
-                ),
-                onChanged: (_) => _previewBulkTotal(),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: TextField(
-                key: const Key('item.unit'),
-                controller: _purchasedUnitController,
-                decoration: const InputDecoration(labelText: 'Unit'),
-                onChanged: (_) => _previewBulkTotal(),
-              ),
-            ),
-          ],
-        ),
-        Row(
-          children: [
-            if (!_bulk)
-              Expanded(
-                child: TextField(
-                  key: const Key('item.packageCount'),
-                  controller: _packageCountController,
-                  decoration: const InputDecoration(
-                    labelText: 'Packages bought',
-                  ),
-                ),
-              ),
-            if (!_bulk) const SizedBox(width: 12),
-            Expanded(
-              child: TextField(
-                key: const Key('item.lineTotal'),
-                controller: _lineTotalController,
-                readOnly: _bulk,
-                decoration: InputDecoration(
-                  labelText: _bulk ? 'Calculated line total' : 'Line total',
-                ),
-              ),
-            ),
-          ],
-        ),
-        if (_bulk)
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  key: const Key('item.pricePerUnit'),
-                  controller: _pricePerUnitController,
-                  decoration: InputDecoration(
-                    labelText:
-                        'Price per ${_purchasedUnitController.text.trim().isEmpty ? 'selected unit' : _purchasedUnitController.text.trim()}',
-                  ),
-                  onChanged: (_) => _previewBulkTotal(),
-                ),
-              ),
-            ],
-          ),
-      ],
-    );
-  }
-
-  Widget _stagedLinesSection() {
-    if (_lines.isEmpty) {
-      return const Text(
-        'No staged Items yet.',
-        key: Key('purchase.emptyDraft'),
-      );
-    }
-    return Column(
-      children: [
-        for (final line in _lines)
-          ListTile(
+        for (final line in lines) ...[
+          MarkeiCard(
             key: Key('purchase.line.${line.keyValue}'),
-            title: Text(line.productLabel),
-            subtitle: Text(
-              '${line.item.packageCount == null ? 'BULK' : '${line.item.packageCount} package(s)'} · ${line.item.purchasedQuantity.decimalText} ${line.item.purchasedQuantity.unit.name}',
-            ),
-            trailing: Wrap(
-              spacing: 4,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                  key: Key('purchase.line.edit.${line.keyValue}'),
-                  tooltip: 'Edit staged Item',
-                  onPressed: _submitting ? null : () => _editLine(line),
-                  icon: const Icon(Icons.edit),
+                Text(line.productLabel, style: MarkeiText.sectionTitle),
+                const SizedBox(height: MarkeiSpacing.sm),
+                Wrap(
+                  spacing: MarkeiSpacing.lg,
+                  runSpacing: MarkeiSpacing.xs,
+                  children: [
+                    MarkeiFact(
+                      label: 'Mode',
+                      value: line.productMode.name.toUpperCase(),
+                    ),
+                    MarkeiFact(label: 'Quantity', value: _quantityLabel(line)),
+                    MarkeiFact(
+                      label: 'Line total',
+                      value: _lineTotalLabel(line),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  key: Key('purchase.line.remove.${line.keyValue}'),
-                  tooltip: 'Remove staged Item',
-                  onPressed: _submitting ? null : () => _removeLine(line),
-                  icon: const Icon(Icons.delete_outline),
+                const SizedBox(height: MarkeiSpacing.sm),
+                _LineActions(
+                  line: line,
+                  submitting: submitting,
+                  onEdit: onEdit,
+                  onRemove: onRemove,
                 ),
               ],
             ),
           ),
+          if (line != lines.last) const SizedBox(height: MarkeiSpacing.sm),
+        ],
       ],
     );
   }
+}
+
+class _LineActions extends StatelessWidget {
+  const _LineActions({
+    required this.line,
+    required this.submitting,
+    required this.onEdit,
+    required this.onRemove,
+  });
+
+  final _DraftLine line;
+  final bool submitting;
+  final ValueChanged<_DraftLine> onEdit;
+  final ValueChanged<_DraftLine> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: MarkeiSpacing.xs,
+      children: [
+        IconButton(
+          key: Key('purchase.line.edit.${line.keyValue}'),
+          tooltip: 'Edit staged Item',
+          onPressed: submitting ? null : () => onEdit(line),
+          icon: const Icon(Icons.edit),
+        ),
+        IconButton(
+          key: Key('purchase.line.remove.${line.keyValue}'),
+          tooltip: 'Remove staged Item',
+          onPressed: submitting ? null : () => onRemove(line),
+          icon: const Icon(Icons.delete_outline),
+        ),
+      ],
+    );
+  }
+}
+
+String _quantityLabel(_DraftLine line) {
+  final item = line.item;
+  final packageLabel = item.packageCount == null
+      ? 'BULK'
+      : '${item.packageCount} package(s)';
+  return '$packageLabel · ${item.purchasedQuantity.decimalText} ${item.purchasedQuantity.unit.name}';
+}
+
+String _lineTotalLabel(_DraftLine line) {
+  final total = line.item.lineTotal;
+  return '${total.currencyCode} ${(total.minorUnits / 100).toStringAsFixed(2)}';
 }
 
 final class _DraftLine {

@@ -29,7 +29,11 @@ class MarkeiShell extends StatelessWidget {
 
         if (layoutClass == MarkeiLayoutClass.compact) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Markei')),
+            appBar: AppBar(
+              title: Text(_selectedDestination.label),
+              centerTitle: true,
+              scrolledUnderElevation: 0,
+            ),
             body: contentCanvas,
             bottomNavigationBar: Builder(
               builder: (barContext) => NavigationBar(
@@ -125,6 +129,13 @@ class MarkeiShell extends StatelessWidget {
       return destination.id == selectedId;
     });
     return index < 0 ? 0 : index;
+  }
+
+  MarkeiDestination get _selectedDestination {
+    return destinations.firstWhere(
+      (destination) => destination.id == selectedId,
+      orElse: () => destinations.first,
+    );
   }
 
   void _selectDestination(MarkeiDestination destination) {

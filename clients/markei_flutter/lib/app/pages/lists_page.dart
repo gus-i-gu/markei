@@ -72,6 +72,10 @@ class _ListsPageState extends State<ListsPage> {
                   purpose:
                       'Estimate Storage, Shortage, Market and All Products from registered Purchase history.',
                   icon: Icons.checklist_outlined,
+                  trailing: Text(
+                    'Updated from purchase history',
+                    style: MarkeiText.metadata,
+                  ),
                 ),
                 const SizedBox(height: MarkeiSpacing.md),
                 _ViewSelector(
@@ -163,7 +167,7 @@ class _ProjectionView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _SummaryBand(projection: projection),
+        _SummaryBand(projection: projection, layoutClass: layoutClass),
         const SizedBox(height: MarkeiSpacing.md),
         _Controls(
           controller: searchController,
@@ -306,9 +310,10 @@ class _ViewSelector extends StatelessWidget {
 }
 
 class _SummaryBand extends StatelessWidget {
-  const _SummaryBand({required this.projection});
+  const _SummaryBand({required this.projection, required this.layoutClass});
 
   final ProductListProjection projection;
+  final MarkeiLayoutClass layoutClass;
 
   @override
   Widget build(BuildContext context) {
@@ -322,47 +327,56 @@ class _SummaryBand extends StatelessWidget {
             projection.approximateTotalCurrencyCode,
             projection.approximateTotalMinorUnits,
           );
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final layoutClass = MarkeiLayoutClass.fromWidth(constraints.maxWidth);
-        return MarkeiResponsiveGrid(
-          layoutClass: layoutClass,
-          minTileWidth: 220,
+    final tiles = [
+      MarkeiSummaryTile(
+        key: const Key('lists.summary.count'),
+        icon: Icons.inventory_2_outlined,
+        label: _viewLabel(projection.view),
+        value: projection.items.length.toString(),
+        detail: 'Returned Products',
+      ),
+      MarkeiSummaryTile(
+        key: const Key('lists.summary.estimated'),
+        icon: Icons.event_available_outlined,
+        label: 'With estimates',
+        value: available.toString(),
+        detail: 'Derived cycle available',
+        tone: MarkeiSummaryTone.info,
+      ),
+      MarkeiSummaryTile(
+        key: const Key('lists.summary.insufficient'),
+        icon: Icons.info_outline,
+        label: 'Not enough history',
+        value: unavailable.toString(),
+        detail: 'Product remains visible',
+        tone: MarkeiSummaryTone.secondary,
+      ),
+      MarkeiSummaryTile(
+        key: const Key('lists.approxTotal'),
+        icon: Icons.payments_outlined,
+        label: 'Approximate next purchase',
+        value: total,
+        detail: 'Estimate, not a recorded total',
+        tone: MarkeiSummaryTone.warning,
+      ),
+    ];
+    if (layoutClass == MarkeiLayoutClass.wide) {
+      return MarkeiSummaryStrip(children: tiles);
+    }
+    return Column(
+      children: [
+        Row(
           children: [
-            MarkeiSummaryTile(
-              key: const Key('lists.summary.count'),
-              icon: Icons.inventory_2_outlined,
-              label: 'Returned Products',
-              value: projection.items.length.toString(),
-              detail: _viewLabel(projection.view),
-            ),
-            MarkeiSummaryTile(
-              key: const Key('lists.summary.estimated'),
-              icon: Icons.event_available_outlined,
-              label: 'With estimates',
-              value: available.toString(),
-              detail: 'Derived cycle available',
-              tone: MarkeiSummaryTone.info,
-            ),
-            MarkeiSummaryTile(
-              key: const Key('lists.summary.insufficient'),
-              icon: Icons.info_outline,
-              label: 'Not enough history',
-              value: unavailable.toString(),
-              detail: 'Product remains visible',
-              tone: MarkeiSummaryTone.secondary,
-            ),
-            MarkeiSummaryTile(
-              key: const Key('lists.approxTotal'),
-              icon: Icons.payments_outlined,
-              label: 'Approximate next purchase',
-              value: total,
-              detail: 'Estimate, not a recorded total',
-              tone: MarkeiSummaryTone.warning,
-            ),
+            for (final tile in tiles.take(3)) ...[
+              Expanded(child: tile),
+              if (tile != tiles.take(3).last)
+                const SizedBox(width: MarkeiSpacing.xs),
+            ],
           ],
-        );
-      },
+        ),
+        const SizedBox(height: MarkeiSpacing.sm),
+        tiles.last,
+      ],
     );
   }
 }

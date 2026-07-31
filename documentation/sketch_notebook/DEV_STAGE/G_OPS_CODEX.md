@@ -1,110 +1,93 @@
-# G_OPS_CODEX — C11-PH01-S01 Operational Evidence
+# G_OPS_CODEX - C11 PH01 S02 Preliminary Codex Evidence
 
-## Classification
+## Status
 
-```text
 CYCLE=C11
 PHASE=C11-PH01
-UNIT=C11-PH01-S01
-STAGING_BASELINE=1e4cd0aa8e6f0eabd856decfadba21f67d04426c
-VISUAL_FOUNDATION=IMPLEMENTED
-STABLE_DESTINATION_IDENTITY=PASS
-COMPACT_MEDIUM_WIDE_SHELL=PASS
-HOME_RECOMPOSITION=PASS
-LISTS_RECOMPOSITION=PASS
-ANALYTICS_RESERVATION=PASS
-SETTINGS_PRESERVED=PASS
-AUDIT_RESERVATION=PASS
-CLOSURE_BEHAVIOR_CHANGED=NO
-BUSINESS_OR_SYNC_SOURCE_CHANGED=NO
-FOCUSED_TESTS=PASS
-FLUTTER_TEST=PASS
-FLUTTER_ANALYZE=PASS
-WINDOWS_BUILD=PASS
-ANDROID_BUILD=PASS
-HUMAN_WINDOWS_ACCEPTANCE=NOT_PERFORMED
-HUMAN_ANDROID_ACCEPTANCE=NOT_PERFORMED
-PROVIDER_MUTATION=NONE
-NEXT_MAIN_ACTION=human Windows and Android visual acceptance for C11-PH01-S01
-```
+UNIT=C11-PH01-S02
+S02_STAGING_PACKET=e587872d1b231205a83dbd30c46fae84a21831ee
+IMPLEMENTATION_BASE=526e0de6e294c5fb969d8ee1f35e6eb53914902b
 
-## Changed Paths
+Publication was not performed. The implementation remains uncommitted because required app-level Purchase review validation did not complete on this host.
 
-Implementation:
+## Changed Files
 
-- `clients/markei_flutter/lib/application/home_content.dart`
-- `clients/markei_flutter/lib/app/markei_app.dart`
-- `clients/markei_flutter/lib/app/design/markei_theme.dart`
-- `clients/markei_flutter/lib/app/navigation/markei_destination.dart`
-- `clients/markei_flutter/lib/app/widgets/markei_components.dart`
-- `clients/markei_flutter/lib/app/widgets/markei_shell.dart`
-- `clients/markei_flutter/lib/app/pages/home_page.dart`
-- `clients/markei_flutter/lib/app/pages/lists_page.dart`
-
-Tests:
-
-- `clients/markei_flutter/test/app/markei_visual_foundation_test.dart`
-- `clients/markei_flutter/test/app/lists_page_test.dart`
-
-Reports:
-
-- `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
-- `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
-- `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
-
-No files were deleted. No generated source, pubspec, lockfile, schema, platform manifest, provider, Sync, diagnostics, recovery, Purchase, Catalogue, History, Settings or Closure implementation file was changed.
-
-## Operational Mapping
-
-- Characterized and guarded current shell behavior with tests for compact More, boundary resizing, Closure gate insertion and existing destination reachability.
-- Replaced selected array index state with stable `MarkeiDestinationId` state.
-- Added compact `<600`, medium `600-1023`, wide `>=1024` shell policies.
-- Kept compact direct destinations as Home, Lists, Purchase, History and More.
-- Preserved `IndexedStack` retained page state.
-- Kept Settings page and Native Closure page implementations unchanged.
-- Preserved `ProductListProjectionRepository.productListProjection` as the only Lists projection read.
-- Added read-only Lists Retry that only repeats the Lists projection request.
+- clients/markei_flutter/lib/app/design/markei_theme.dart
+- clients/markei_flutter/lib/app/pages/history_page.dart
+- clients/markei_flutter/lib/app/pages/home_page.dart
+- clients/markei_flutter/lib/app/pages/lists_page.dart
+- clients/markei_flutter/lib/app/pages/products_page.dart
+- clients/markei_flutter/lib/app/pages/purchase_page.dart
+- clients/markei_flutter/lib/app/widgets/markei_components.dart
+- clients/markei_flutter/lib/app/widgets/markei_shell.dart
+- documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+- documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+- documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
 
 ## Commands And Results
 
-- `git fetch origin grm-guarded-provisioning-20260727`: pass.
-- `git rev-parse HEAD`: `1e4cd0aa8e6f0eabd856decfadba21f67d04426c`.
-- `git rev-parse origin/grm-guarded-provisioning-20260727`: `1e4cd0aa8e6f0eabd856decfadba21f67d04426c`.
-- `git rev-list --count 4b1abc01a93351f5910ea8af5001782b59a784f7..1e4cd0aa8e6f0eabd856decfadba21f67d04426c`: `1`.
-- `git merge-base --is-ancestor 861c27fdaf6ade2093d481af312d27ff895b8dc0 1e4cd0aa8e6f0eabd856decfadba21f67d04426c`: pass.
-- `git diff-tree --no-commit-id --name-only -r 1e4cd0aa8e6f0eabd856decfadba21f67d04426c`: exactly the five staging files named by the prompt.
-- `git rev-list --left-right --count HEAD...origin/grm-guarded-provisioning-20260727`: `0 0`.
-- `flutter pub get`: pass; dependencies resolved, no dependency changes.
-- `dart format --output=none --set-exit-if-changed lib test`: pass, `Formatted 102 files (0 changed)`.
-- `flutter analyze`: pass, `No issues found!`.
-- `flutter test test/app/markei_visual_foundation_test.dart test/app/lists_page_test.dart`: pass, `All tests passed!`.
-- `flutter test test/app/markei_app_test.dart`: pass, `All tests passed!` with 26 tests.
-- `flutter test`: pass, `All tests passed!` with 245 passing and 4 skipped tests. The suite printed existing local Sync diagnostic/unit-test logs; no preserved client, live provider workflow or manual Sync action was executed by Codex.
-- `flutter build windows --release`: pass; built `build\windows\x64\runner\Release\markei.exe`. CMake emitted existing Boost policy warning.
-- `flutter build apk --debug`: pass; built `build\app\outputs\flutter-apk\app-debug.apk`. Flutter emitted existing Auth0 Kotlin Gradle Plugin future-warning.
-- `git diff --check`: pass; only Git LF-to-CRLF working-copy warnings were printed.
-- `git diff --name-status` plus `git ls-files --others --exclude-standard`: changed paths match D-authorized source/test/report scope.
+- Initial branch/remote/ancestry/reference guards: PASS before mutation.
+- Repository PNG reference inspection: PASS, all five opened at original detail.
+- `flutter pub get`: PASS.
+- pubspec/lock unchanged check: PASS.
+- `dart format --output=none --set-exit-if-changed lib test`: PASS, 102 files, 0 changed.
+- `flutter analyze`: PASS, no issues.
+- `flutter test test/app/markei_visual_foundation_test.dart`: PASS, 6 tests.
+- `flutter test test/app/lists_page_test.dart`: PASS, 3 tests.
+- `flutter test test/application/lists_and_export_test.dart`: PASS, 2 tests.
+- `flutter test test/application/purchase_contracts_test.dart`: PASS, 3 tests.
+- `flutter test test/app/markei_app_test.dart --plain-name "history separates loading, error, and empty states"`: PASS, 1 test.
+- `flutter test test/app/markei_app_test.dart --plain-name "explicit selection with one Store"`: PASS, 1 test.
+- `flutter test test/app/markei_app_test.dart --plain-name "registers a multi-item purchase and shows history"`: BLOCKED, timed out after 240s and again after 600s.
+- `flutter test test/app/markei_app_test.dart --plain-name "Purchase requires an existing Store"`: BLOCKED, timed out after 180s.
+- `flutter test test/app/markei_app_test.dart --plain-name "Store selected plus no Item reports item-required"`: BLOCKED, timed out after 180s.
+- `flutter test`: NOT_RUN because required focused app Purchase review cases were already blocked.
+- Windows Release build: NOT_RUN because validation was blocked before build stage.
+- Android Debug build: NOT_RUN because validation was blocked before build stage.
+- Visual screenshot review: HOST_UNVALIDATED.
+- `git diff --check`: PASS, only CRLF normalization warnings.
+- Changed-path audit: PASS for source scope plus replacement G/H/I.
 
-During validation, one timed-out Flutter widget-test run left Dart/flutter_tester processes holding `build/native_assets/windows/sqlite3.dll`. Codex stopped only those stale validation-tool PIDs before rerunning tests. No preserved client process was launched or terminated.
+Timed-out Flutter test processes were inspected by command line and stopped only when attributable to the current validation command.
 
-## Built Artifacts
+## Operational Evidence
 
-- Windows Release executable: `clients/markei_flutter/build/windows/x64/runner/Release/markei.exe`
-  - Size: `97792` bytes
-  - SHA-256: `23C0A337594ECC51437FD6F950F1F8BEC04C40DE7737130DFBFB5EF62EAA3523`
-- Android Debug APK: `clients/markei_flutter/build/app/outputs/flutter-apk/app-debug.apk`
-  - Size: `179239697` bytes
-  - SHA-256: `B55E0FB4AAB70F5C08AC2E4826D7930AC79204B5F9B7F1BA45C3AD897F604983`
+Implemented shared neutral/forest visual grammar, denser shell navigation, responsive shared headers/action bands, Lists summary strip/cards, Catalogue search/sort/table/cards, History loaded-entry filters/table/cards, and Purchase grouped edit/review/staged item surfaces.
 
-## Skipped Or Not Performed
+No Sync, Recovery, Query, Enroll, provider mutation, database repair, preserved-client installation, Settings behavior, Closure behavior, repository interface, generated source, pubspec or lockfile changes were performed.
 
-- No golden images were added or rebaselined.
-- No Windows or Android human acceptance was performed.
-- No preserved-client installation or launch was performed.
-- No live provider mutation, credential inspection, database repair/reset/cleanup, Enroll, Query, Recovery or human acceptance action was performed.
+## Terminals
 
-## Operational Risks
-
-- Visual parity with PNG references remains human-review evidence, not Codex-claimed pixel parity.
-- Full `flutter test` includes existing local Sync test files and diagnostic output because D required the command; this is not promoted to live Sync success.
-- Real Windows Narrator, Android TalkBack, device density and preserved-data acceptance remain human evidence.
+SHARED_VISUAL_GRAMMAR=PARTIAL
+SHELL_DENSITY_AND_HIERARCHY=PARTIAL
+HOME_CONVERGENCE=PARTIAL
+LISTS_CONVERGENCE=PARTIAL
+CATALOGUE_CONVERGENCE=PARTIAL
+HISTORY_CONVERGENCE=PARTIAL
+PURCHASE_CONVERGENCE=PARTIAL
+FIVE_PAGE_CONVERGENCE=PARTIAL
+TABLE_CARD_FACT_PARITY=PASS
+RESPONSIVE_STATE_PRESERVATION=BLOCKED
+UNSUPPORTED_REFERENCE_FEATURES_ADDED=NO
+PRODUCT_IMAGE_AUTHORITY_ADDED=NO
+REPOSITORY_INTERFACES_CHANGED=NO
+DOMAIN_OR_INFRASTRUCTURE_CHANGED=NO
+NEW_DEPENDENCY_OR_ASSET_PIPELINE=NO
+ANALYTICS_BEHAVIOR_CHANGED=NO
+SETTINGS_BEHAVIOR_CHANGED=NO
+AUDIT_BEHAVIOR_ADDED=NO
+CLOSURE_BEHAVIOR_CHANGED=NO
+BUSINESS_OR_SYNC_SOURCE_CHANGED=NO
+FOCUSED_TESTS=PARTIAL_PASS_WITH_APP_PURCHASE_REVIEW_BLOCKED
+FLUTTER_TEST=NOT_RUN_BLOCKED
+FLUTTER_ANALYZE=PASS
+WINDOWS_BUILD=NOT_RUN_BLOCKED
+ANDROID_BUILD=NOT_RUN_BLOCKED
+WIDE_VISUAL_REVIEW=HOST_UNVALIDATED
+MEDIUM_VISUAL_REVIEW=HOST_UNVALIDATED
+COMPACT_VISUAL_REVIEW=HOST_UNVALIDATED
+HUMAN_WINDOWS_ACCEPTANCE=NOT_PERFORMED
+HUMAN_ANDROID_ACCEPTANCE=NOT_PERFORMED
+HUMAN_ACCESSIBILITY_ACCEPTANCE=NOT_PERFORMED
+PROVIDER_MUTATION=NONE
+NEXT_MAIN_ACTION=Investigate the hanging Purchase review cases in test/app/markei_app_test.dart before publication.

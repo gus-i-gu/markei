@@ -5,6 +5,8 @@ import '../../domain/catalogue/product.dart';
 import '../../domain/shared/ids.dart';
 import '../../domain/shared/quantity.dart';
 import '../../domain/store/store.dart';
+import '../design/markei_theme.dart';
+import '../widgets/markei_components.dart';
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({
@@ -37,6 +39,7 @@ class _ProductsPageState extends State<ProductsPage> {
   List<ProductSimilarityWarning> _warnings = const [];
   bool _loading = true;
   bool _bulk = false;
+  _ProductSort _sort = _ProductSort.az;
   Product? _selectedProduct;
   Product? _selectedDetail;
   String? _message;
@@ -212,195 +215,443 @@ class _ProductsPageState extends State<ProductsPage> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return const Center(
-        child: Text('Loading Products...', key: Key('products.loading')),
+      return const MarkeiStatePanel(
+        key: Key('products.loading'),
+        title: 'Loading Catalogue',
+        message: 'Loading Products and Stores.',
+        icon: Icons.hourglass_empty,
       );
     }
     final query = _searchController.text.trim().toLowerCase();
-    final visible = _products
-        .where((product) {
-          if (query.isEmpty) {
-            return true;
-          }
-          return product.displayName.toLowerCase().contains(query) ||
-              product.displayBrand.toLowerCase().contains(query) ||
-              product.userProductCode.displayValue.toLowerCase().contains(
-                query,
-              );
-        })
-        .toList(growable: false);
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        const Text('Catalogue', style: TextStyle(fontSize: 22)),
-        const SizedBox(height: 8),
-        const Text('Stores', style: TextStyle(fontSize: 18)),
-        if (_stores.isEmpty)
-          const Text('No Stores yet.', key: Key('stores.empty'))
-        else
-          for (final store in _stores)
-            ListTile(
-              key: Key('stores.store.${store.id.value}'),
-              title: Text(store.displayName),
-            ),
-        TextField(
-          key: const Key('stores.create.name'),
-          controller: _storeNameController,
-          decoration: const InputDecoration(labelText: 'Store name'),
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
+    final visible = _products.where((product) {
+      if (query.isEmpty) {
+        return true;
+      }
+      return product.displayName.toLowerCase().contains(query) ||
+          product.displayBrand.toLowerCase().contains(query) ||
+          product.userProductCode.displayValue.toLowerCase().contains(query);
+    }).toList();
+    visible.sort((left, right) {
+      final comparison = left.displayName.toLowerCase().compareTo(
+        right.displayName.toLowerCase(),
+      );
+      if (comparison != 0) {
+        return _sort == _ProductSort.az ? comparison : -comparison;
+      }
+      return left.id.value.compareTo(right.id.value);
+    });
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final layoutClass = MarkeiLayoutClass.fromWidth(constraints.maxWidth);
+        final wide = layoutClass == MarkeiLayoutClass.wide;
+        return ListView(
+          key: const Key('products.page'),
           children: [
-            FilledButton(
-              key: const Key('stores.create'),
-              onPressed: _createStore,
-              child: const Text('Create Store'),
-            ),
-          ],
-        ),
-        const Divider(height: 32),
-        const Text('Products', style: TextStyle(fontSize: 18)),
-        const SizedBox(height: 8),
-        TextField(
-          key: const Key('products.search'),
-          controller: _searchController,
-          decoration: const InputDecoration(labelText: 'Product code or name'),
-          onChanged: (_) => setState(() {}),
-        ),
-        const SizedBox(height: 12),
-        if (_products.isEmpty)
-          const Text('No Products yet.', key: Key('products.empty'))
-        else if (visible.isEmpty)
-          const Text(
-            'No matching Product. Create a Product below.',
-            key: Key('products.noMatch'),
-          )
-        else
-          for (final product in visible)
-            GestureDetector(
-              onDoubleTap: () => setState(() {
-                _selectedProduct = product;
-                _selectedDetail = product;
-              }),
-              child: ListTile(
-                key: Key('products.product.${product.id.value}'),
-                selected: _selectedProduct?.id.value == product.id.value,
-                title: Text(product.displayName),
-                subtitle: Text(
-                  '${product.displayBrand} · ${product.userProductCode.displayValue}',
-                ),
-                trailing: TextButton(
-                  key: Key('products.view.${product.id.value}'),
-                  onPressed: () => setState(() {
-                    _selectedProduct = product;
-                    _selectedDetail = product;
-                  }),
-                  child: const Text('View details'),
-                ),
-                onTap: () => setState(() => _selectedProduct = product),
-                onLongPress: () => setState(() => _selectedDetail = product),
+            MarkeiPageHeader(
+              title: 'Catalogue',
+              purpose:
+                  'Manage reusable Products and supporting Stores for purchase registration.',
+              icon: Icons.inventory_2_outlined,
+              trailing: Text(
+                '${_products.length} Product(s)',
+                style: MarkeiText.metadata,
               ),
             ),
-        if (_selectedProduct != null) ...[
-          const SizedBox(height: 8),
-          Text(
-            'Selected ${_selectedProduct!.userProductCode.displayValue} · ${_selectedProduct!.displayName}',
-            key: const Key('products.selected'),
+            const SizedBox(height: MarkeiSpacing.md),
+            _catalogueControls(wide: wide),
+            const SizedBox(height: MarkeiSpacing.md),
+            if (_products.isEmpty)
+              MarkeiStatePanel(
+                key: const Key('products.empty'),
+                title: 'No Products yet',
+                message: _stores.isEmpty
+                    ? 'Create a Store and reusable Product before registering purchases.'
+                    : 'Create a reusable Product below.',
+                icon: Icons.inventory_2_outlined,
+              )
+            else if (visible.isEmpty)
+              const MarkeiStatePanel(
+                key: Key('products.noMatch'),
+                title: 'No matching Product',
+                message:
+                    'The current search produced no Product in this Catalogue.',
+                icon: Icons.search_off,
+              )
+            else if (wide)
+              _ProductTable(
+                products: visible,
+                selectedProduct: _selectedProduct,
+                onSelect: (product) =>
+                    setState(() => _selectedProduct = product),
+                onDetail: _showProductDetail,
+              )
+            else
+              _ProductCards(
+                products: visible,
+                selectedProduct: _selectedProduct,
+                onSelect: (product) =>
+                    setState(() => _selectedProduct = product),
+                onDetail: _showProductDetail,
+              ),
+            if (_selectedProduct != null) ...[
+              const SizedBox(height: MarkeiSpacing.md),
+              MarkeiActionBand(
+                leading: Text(
+                  'Selected ${_selectedProduct!.userProductCode.displayValue} · ${_selectedProduct!.displayName}',
+                  key: const Key('products.selected'),
+                  style: MarkeiText.label,
+                ),
+                children: const [],
+              ),
+            ],
+            if (_selectedDetail != null) ...[
+              const SizedBox(height: MarkeiSpacing.md),
+              _ProductDetail(product: _selectedDetail!),
+            ],
+            const SizedBox(height: MarkeiSpacing.md),
+            if (wide)
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(flex: 3, child: _createProductSection()),
+                  const SizedBox(width: MarkeiSpacing.md),
+                  Expanded(flex: 2, child: _similaritySection()),
+                ],
+              )
+            else ...[
+              _createProductSection(),
+              const SizedBox(height: MarkeiSpacing.md),
+              _similaritySection(),
+            ],
+            const SizedBox(height: MarkeiSpacing.md),
+            _storesSection(),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _catalogueControls({required bool wide}) {
+    return MarkeiControlBand(
+      children: [
+        SizedBox(
+          width: wide ? 420 : double.infinity,
+          child: TextField(
+            key: const Key('products.search'),
+            controller: _searchController,
+            decoration: const InputDecoration(
+              prefixIcon: Icon(Icons.search),
+              labelText: 'Search Products',
+            ),
+            onChanged: (_) => setState(() {}),
           ),
-        ],
-        if (_selectedDetail != null) ...[
-          const Divider(height: 32),
-          _ProductDetail(product: _selectedDetail!),
-        ],
-        const Divider(height: 32),
-        const Text('Create Product', style: TextStyle(fontSize: 18)),
-        SegmentedButton<bool>(
-          segments: const [
-            ButtonSegment(value: false, label: Text('Packaged')),
-            ButtonSegment(value: true, label: Text('Bulk')),
-          ],
-          selected: {_bulk},
-          onSelectionChanged: (value) => setState(() => _bulk = value.single),
         ),
-        TextField(
-          key: const Key('products.create.code'),
-          controller: _codeController,
-          decoration: const InputDecoration(labelText: 'Product code'),
+        SizedBox(
+          width: wide ? 180 : double.infinity,
+          child: DropdownButtonFormField<_ProductSort>(
+            key: const Key('products.sort'),
+            initialValue: _sort,
+            isExpanded: true,
+            decoration: const InputDecoration(labelText: 'Sort'),
+            items: const [
+              DropdownMenuItem(value: _ProductSort.az, child: Text('A-Z')),
+              DropdownMenuItem(value: _ProductSort.za, child: Text('Z-A')),
+            ],
+            onChanged: (value) {
+              if (value != null) {
+                setState(() => _sort = value);
+              }
+            },
+          ),
         ),
-        TextField(
-          key: const Key('products.create.name'),
-          controller: _nameController,
-          decoration: const InputDecoration(labelText: 'Product name'),
-        ),
-        TextField(
-          key: const Key('products.create.brand'),
-          controller: _brandController,
-          decoration: const InputDecoration(labelText: 'Brand'),
-        ),
-        if (!_bulk)
-          Row(
+      ],
+    );
+  }
+
+  Widget _createProductSection() {
+    return MarkeiSection(
+      title: 'Register product',
+      subtitle: 'Create reusable Product facts for future Purchases.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SegmentedButton<bool>(
+            segments: const [
+              ButtonSegment(value: false, label: Text('Packaged')),
+              ButtonSegment(value: true, label: Text('Bulk')),
+            ],
+            selected: {_bulk},
+            onSelectionChanged: (value) => setState(() => _bulk = value.single),
+          ),
+          const SizedBox(height: MarkeiSpacing.sm),
+          TextField(
+            key: const Key('products.create.code'),
+            controller: _codeController,
+            decoration: const InputDecoration(labelText: 'Product code'),
+          ),
+          TextField(
+            key: const Key('products.create.name'),
+            controller: _nameController,
+            decoration: const InputDecoration(labelText: 'Product name'),
+          ),
+          TextField(
+            key: const Key('products.create.brand'),
+            controller: _brandController,
+            decoration: const InputDecoration(labelText: 'Brand'),
+          ),
+          if (!_bulk)
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    key: const Key('products.create.packageAmount'),
+                    controller: _packageAmountController,
+                    decoration: const InputDecoration(
+                      labelText: 'Package size',
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    key: const Key('products.create.packageUnit'),
+                    controller: _packageUnitController,
+                    decoration: const InputDecoration(
+                      labelText: 'Package unit',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          const SizedBox(height: 12),
+          MarkeiControlBand(
             children: [
-              Expanded(
-                child: TextField(
-                  key: const Key('products.create.packageAmount'),
-                  controller: _packageAmountController,
-                  decoration: const InputDecoration(labelText: 'Package size'),
-                ),
+              FilledButton(
+                key: const Key('products.create'),
+                onPressed: () => _createProduct(createAnyway: false),
+                child: const Text('Create Product'),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: TextField(
-                  key: const Key('products.create.packageUnit'),
-                  controller: _packageUnitController,
-                  decoration: const InputDecoration(labelText: 'Package unit'),
-                ),
+              FilledButton.tonal(
+                key: const Key('products.createAnyway'),
+                onPressed: () => _createProduct(createAnyway: true),
+                child: const Text('Create anyway'),
+              ),
+              OutlinedButton(
+                key: const Key('products.retry'),
+                onPressed: _loadProducts,
+                child: const Text('Retry'),
               ),
             ],
           ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            FilledButton(
-              key: const Key('products.create'),
-              onPressed: () => _createProduct(createAnyway: false),
-              child: const Text('Create Product'),
-            ),
-            FilledButton.tonal(
-              key: const Key('products.createAnyway'),
-              onPressed: () => _createProduct(createAnyway: true),
-              child: const Text('Create anyway'),
-            ),
-            OutlinedButton(
-              key: const Key('products.retry'),
-              onPressed: _loadProducts,
-              child: const Text('Retry'),
+          if (_message != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              _message!,
+              key: const Key('products.message'),
+              style: TextStyle(
+                color: _messageIsError
+                    ? Theme.of(context).colorScheme.error
+                    : null,
+              ),
             ),
           ],
-        ),
-        if (_message != null) ...[
-          const SizedBox(height: 12),
-          Text(
-            _message!,
-            key: const Key('products.message'),
-            style: TextStyle(
-              color: _messageIsError
-                  ? Theme.of(context).colorScheme.error
-                  : null,
+        ],
+      ),
+    );
+  }
+
+  Widget _similaritySection() {
+    return MarkeiSection(
+      title: 'Similar product found',
+      subtitle: 'Choose an existing Product or explicitly create anyway.',
+      child: _warnings.isEmpty
+          ? const Text(
+              'No unresolved similarity decision.',
+              key: Key('products.similar.empty'),
+            )
+          : Column(
+              key: const Key('products.similar'),
+              children: [
+                for (final warning in _warnings)
+                  ListTile(
+                    title: Text(warning.existingProduct.displayName),
+                    subtitle: Text(warning.existingProduct.displayBrand),
+                  ),
+              ],
             ),
+    );
+  }
+
+  Widget _storesSection() {
+    return MarkeiSection(
+      title: 'Stores',
+      subtitle: 'Supporting local Store names used by Purchases.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (_stores.isEmpty)
+            const Text('No Stores yet.', key: Key('stores.empty'))
+          else
+            Wrap(
+              spacing: MarkeiSpacing.xs,
+              runSpacing: MarkeiSpacing.xs,
+              children: [
+                for (final store in _stores)
+                  Chip(
+                    key: Key('stores.store.${store.id.value}'),
+                    label: Text(store.displayName),
+                  ),
+              ],
+            ),
+          const SizedBox(height: MarkeiSpacing.sm),
+          TextField(
+            key: const Key('stores.create.name'),
+            controller: _storeNameController,
+            decoration: const InputDecoration(labelText: 'Store name'),
+          ),
+          const SizedBox(height: MarkeiSpacing.sm),
+          FilledButton(
+            key: const Key('stores.create'),
+            onPressed: _createStore,
+            child: const Text('Create Store'),
           ),
         ],
-        if (_warnings.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          const Text('Similar Product found', key: Key('products.similar')),
-          for (final warning in _warnings)
-            ListTile(
-              title: Text(warning.existingProduct.displayName),
-              subtitle: Text(warning.existingProduct.displayBrand),
+      ),
+    );
+  }
+
+  void _showProductDetail(Product product) {
+    setState(() {
+      _selectedProduct = product;
+      _selectedDetail = product;
+    });
+  }
+}
+
+enum _ProductSort { az, za }
+
+class _ProductTable extends StatelessWidget {
+  const _ProductTable({
+    required this.products,
+    required this.selectedProduct,
+    required this.onSelect,
+    required this.onDetail,
+  });
+
+  final List<Product> products;
+  final Product? selectedProduct;
+  final ValueChanged<Product> onSelect;
+  final ValueChanged<Product> onDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    return MarkeiCard(
+      padding: const EdgeInsets.all(MarkeiSpacing.xs),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          columns: const [
+            DataColumn(label: Text('Product code')),
+            DataColumn(label: Text('Product / Brand')),
+            DataColumn(label: Text('Mode')),
+            DataColumn(label: Text('Package')),
+            DataColumn(label: Text('Measurement')),
+            DataColumn(label: Text('Details')),
+          ],
+          rows: [
+            for (final product in products)
+              DataRow(
+                key: ValueKey('products.row.${product.id.value}'),
+                selected: selectedProduct?.id.value == product.id.value,
+                onSelectChanged: (_) => onSelect(product),
+                cells: [
+                  DataCell(Text(product.userProductCode.displayValue)),
+                  DataCell(
+                    Text('${product.displayName}\n${product.displayBrand}'),
+                  ),
+                  DataCell(Text(_modeLabel(product))),
+                  DataCell(Text(_packageLabel(product))),
+                  DataCell(Text(product.measurementKind.name)),
+                  DataCell(
+                    TextButton(
+                      key: Key('products.view.${product.id.value}'),
+                      onPressed: () => onDetail(product),
+                      child: const Text('View details'),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProductCards extends StatelessWidget {
+  const _ProductCards({
+    required this.products,
+    required this.selectedProduct,
+    required this.onSelect,
+    required this.onDetail,
+  });
+
+  final List<Product> products;
+  final Product? selectedProduct;
+  final ValueChanged<Product> onSelect;
+  final ValueChanged<Product> onDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (final product in products) ...[
+          MarkeiCard(
+            key: Key('products.product.${product.id.value}'),
+            borderColor: selectedProduct?.id.value == product.id.value
+                ? MarkeiColors.green
+                : null,
+            child: InkWell(
+              onTap: () => onSelect(product),
+              onLongPress: () => onDetail(product),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.userProductCode.displayValue,
+                    style: MarkeiText.metadata,
+                  ),
+                  const SizedBox(height: MarkeiSpacing.xxs),
+                  Text(product.displayName, style: MarkeiText.sectionTitle),
+                  Text(product.displayBrand),
+                  const SizedBox(height: MarkeiSpacing.sm),
+                  Wrap(
+                    spacing: MarkeiSpacing.lg,
+                    runSpacing: MarkeiSpacing.xs,
+                    children: [
+                      MarkeiFact(label: 'Mode', value: _modeLabel(product)),
+                      MarkeiFact(
+                        label: 'Package',
+                        value: _packageLabel(product),
+                      ),
+                      MarkeiFact(
+                        label: 'Measurement',
+                        value: product.measurementKind.name,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: MarkeiSpacing.sm),
+                  OutlinedButton(
+                    key: Key('products.view.${product.id.value}'),
+                    onPressed: () => onDetail(product),
+                    child: const Text('View details'),
+                  ),
+                ],
+              ),
             ),
+          ),
+          if (product != products.last)
+            const SizedBox(height: MarkeiSpacing.sm),
         ],
       ],
     );
@@ -415,25 +666,48 @@ class _ProductDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final package = product.packageQuantity;
-    return Card(
+    return MarkeiCard(
       key: const Key('products.detail'),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.zero,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Product details', style: TextStyle(fontSize: 18)),
-            Text('Product code: ${product.userProductCode.displayValue}'),
-            Text('Name: ${product.displayName}'),
-            Text('Brand: ${product.displayBrand}'),
-            Text('Mode: ${product.mode.name.toUpperCase()}'),
-            if (package != null)
-              Text(
-                'Package quantity: ${package.decimalText} ${package.unit.name}',
-              ),
+            const Text('Product details', style: MarkeiText.sectionTitle),
+            const SizedBox(height: MarkeiSpacing.sm),
+            Wrap(
+              spacing: MarkeiSpacing.lg,
+              runSpacing: MarkeiSpacing.xs,
+              children: [
+                MarkeiFact(
+                  label: 'Code',
+                  value: product.userProductCode.displayValue,
+                ),
+                MarkeiFact(label: 'Name', value: product.displayName),
+                MarkeiFact(label: 'Brand', value: product.displayBrand),
+                MarkeiFact(label: 'Mode', value: _modeLabel(product)),
+                if (package != null)
+                  MarkeiFact(
+                    label: 'Package',
+                    value: '${package.decimalText} ${package.unit.name}',
+                  ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
+}
+
+String _modeLabel(Product product) {
+  return product.mode == ProductMode.bulk ? 'Bulk' : 'Packaged';
+}
+
+String _packageLabel(Product product) {
+  final package = product.packageQuantity;
+  if (package == null) {
+    return 'Bulk';
+  }
+  return '${package.decimalText} ${package.unit.name}';
 }

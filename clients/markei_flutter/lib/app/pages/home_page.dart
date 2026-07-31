@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: MarkeiSpacing.lg),
             MarkeiResponsiveGrid(
               layoutClass: layoutClass,
-              minTileWidth: 300,
+              minTileWidth: layoutClass == MarkeiLayoutClass.wide ? 520 : 300,
               children: [
                 for (final card in homeCards.where((card) {
                   return card.destinationId != 'purchase';
@@ -50,7 +50,7 @@ class HomePage extends StatelessWidget {
               key: Key('home.localFirst'),
               title: 'Local-first workspace',
               message:
-                  'Markei keeps normal purchase registration available on this device. Lists are estimates derived from registered Purchase history.',
+                  'Markei keeps purchase registration available on this device. Lists are estimates derived from registered Purchase history, and Catalogue keeps reusable Products and Stores.',
               icon: Icons.verified_outlined,
             ),
           ],

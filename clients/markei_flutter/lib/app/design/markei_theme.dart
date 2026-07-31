@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
 
 abstract final class MarkeiColors {
-  static const cream = Color(0xfff6f1e8);
-  static const surface = Color(0xfffffcf6);
+  static const cream = Color(0xfffcfbfa);
+  static const surface = Color(0xffffffff);
   static const elevatedSurface = Color(0xffffffff);
-  static const green = Color(0xff1f5f4b);
-  static const lavender = Color(0xff8270c8);
-  static const warning = Color(0xffb45f06);
-  static const danger = Color(0xffb3261e);
-  static const information = Color(0xff386a8c);
-  static const ink = Color(0xff1d2a24);
-  static const mutedInk = Color(0xff64736b);
-  static const outline = Color(0xffd8d0c4);
+  static const secondarySurface = Color(0xfff7f6f3);
+  static const green = Color(0xff105028);
+  static const greenTint = Color(0xffe7f0e9);
+  static const navigationSelected = Color(0xffe8e9e6);
+  static const lavender = Color(0xff6554b2);
+  static const lavenderTint = Color(0xfff0ecf8);
+  static const warning = Color(0xffc96816);
+  static const warningTint = Color(0xfffbf1e7);
+  static const danger = Color(0xffb43a32);
+  static const dangerTint = Color(0xfffaeceb);
+  static const information = Color(0xff3f6f8f);
+  static const informationTint = Color(0xffedf4f8);
+  static const ink = Color(0xff1e2622);
+  static const mutedInk = Color(0xff66706a);
+  static const outline = Color(0xffdfe2dd);
 }
 
 enum MarkeiLayoutClass {
@@ -43,11 +50,14 @@ abstract final class MarkeiSpacing {
   static const double lg = 24;
   static const double xl = 32;
   static const double controlHeight = 48;
-  static const double compactGutter = 12;
-  static const double mediumGutter = 20;
-  static const double wideGutter = 28;
-  static const double maxContentWidth = 1180;
-  static const double navRailExtendedWidth = 192;
+  static const double visibleControlHeight = 40;
+  static const double compactGutter = 16;
+  static const double mediumGutter = 24;
+  static const double wideGutter = 32;
+  static const double maxContentWidth = 1220;
+  static const double navRailExtendedWidth = 232;
+  static const double tableHeadingHeight = 42;
+  static const double tableRowHeight = 46;
 }
 
 abstract final class MarkeiRadius {
@@ -58,18 +68,40 @@ abstract final class MarkeiRadius {
 abstract final class MarkeiText {
   static const pageTitle = TextStyle(
     fontSize: 26,
-    fontWeight: FontWeight.w800,
-    height: 1.15,
+    fontWeight: FontWeight.w700,
+    height: 32 / 26,
   );
   static const sectionTitle = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w700,
-    height: 1.2,
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    height: 22 / 16,
   );
-  static const body = TextStyle(fontSize: 14, height: 1.35);
-  static const label = TextStyle(fontSize: 13, fontWeight: FontWeight.w700);
-  static const metadata = TextStyle(fontSize: 12, color: MarkeiColors.mutedInk);
-  static const numeric = TextStyle(fontSize: 22, fontWeight: FontWeight.w800);
+  static const body = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    height: 20 / 14,
+  );
+  static const label = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w600,
+    height: 16 / 13,
+  );
+  static const tableLabel = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w600,
+    height: 16 / 12,
+  );
+  static const metadata = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    height: 16 / 12,
+    color: MarkeiColors.mutedInk,
+  );
+  static const numeric = TextStyle(
+    fontSize: 23,
+    fontWeight: FontWeight.w700,
+    height: 28 / 23,
+  );
 }
 
 ThemeData markeiTheme() {
@@ -78,6 +110,7 @@ ThemeData markeiTheme() {
     primary: MarkeiColors.green,
     secondary: MarkeiColors.lavender,
     surface: MarkeiColors.surface,
+    error: MarkeiColors.danger,
   );
   return ThemeData(
     useMaterial3: true,
@@ -91,6 +124,7 @@ ThemeData markeiTheme() {
     scaffoldBackgroundColor: MarkeiColors.cream,
     cardTheme: const CardThemeData(
       color: MarkeiColors.surface,
+      elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(8)),
@@ -101,6 +135,7 @@ ThemeData markeiTheme() {
       filled: true,
       fillColor: MarkeiColors.surface,
       constraints: BoxConstraints(minHeight: MarkeiSpacing.controlHeight),
+      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
     ),
     segmentedButtonTheme: SegmentedButtonThemeData(
       style: ButtonStyle(
@@ -121,6 +156,8 @@ ThemeData markeiTheme() {
     ),
     navigationRailTheme: NavigationRailThemeData(
       backgroundColor: MarkeiColors.surface,
+      useIndicator: true,
+      indicatorColor: MarkeiColors.navigationSelected,
       selectedIconTheme: const IconThemeData(color: MarkeiColors.green),
       selectedLabelTextStyle: const TextStyle(
         color: MarkeiColors.green,
@@ -129,7 +166,16 @@ ThemeData markeiTheme() {
     ),
     navigationBarTheme: const NavigationBarThemeData(
       backgroundColor: MarkeiColors.surface,
-      indicatorColor: Color(0xffdfeee4),
+      indicatorColor: MarkeiColors.navigationSelected,
+    ),
+    dividerTheme: const DividerThemeData(color: MarkeiColors.outline),
+    dataTableTheme: const DataTableThemeData(
+      headingRowHeight: MarkeiSpacing.tableHeadingHeight,
+      dataRowMinHeight: MarkeiSpacing.tableRowHeight,
+      dataRowMaxHeight: 64,
+      dividerThickness: 1,
+      headingTextStyle: MarkeiText.tableLabel,
+      dataTextStyle: MarkeiText.body,
     ),
   );
 }
