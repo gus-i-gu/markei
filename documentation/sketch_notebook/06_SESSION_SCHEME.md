@@ -1,21 +1,154 @@
 # 06_SESSION_SCHEME.md
 
-> Version: C11-PH03 investigation checkpoint 5.0
-> Status: Active Forward Checkpoint — PH03 functional investigation
+> Version: C11-PH03 permanent closure / C11-PH04 authority 6.0
+> Status: Active Forward Checkpoint — PH04 Analytics fine-tuning materialization
 > Persistence Class: Forward Checkpoint
 > Knowledge Class: Main / Prospective
 > Authority: Main Chat [M]
 > Branch: `grm-guarded-provisioning-20260727`
-> C11-PH01/PH02 implementation: `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`
-> Post-materialization J: `0bfc02e8363d8119469a5e8627d8350fa97790b4`
-> Permanent-domain head: `7ca62a06e3dd7b48c28bee93be51a42f66c1aad9`
+> C11-PH03 implementation: `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`
+> PH03 post-materialization J: `33dc1002b4a7b00fa67e863dfe98a43c97d66cee`
+> PH03 permanent-domain head: `cc53e6ef063d43342394a55165dd188ddd4ce491`
+> C11-PH04 D/E/F activation: `35cf23602060fd3a186a2470d7ac322c795e5fce`
 > Current-state source: `00_PROJECT_STATE.md`
 
 ---
 
-<!-- TEMPORAL_MARKER:C11-PH03-INVESTIGATION-ACTIVE-2026-07-31 -->
+<!-- TEMPORAL_MARKER:C11-PH03-CLOSED-C11-PH04-ACTIVE-2026-07-31 -->
 
-# Cycle 11 — C11-PH03 Settings, Audit and Closure Disposition Investigation
+# Cycle 11 — C11-PH04 Analytics Fine-Tuning
+
+## 1. Status and authority
+
+C11-PH01-R01, C11-PH02 and C11-PH03 are permanently absorbed by all three
+functional domains. PH03 remains closed to corrective source work.
+
+C11-PH04-R01 is active through the synchronized D/E/F append carrying:
+
+```text
+ACTIVATION_MARKER:C11-PH04-R01-2026-07-31
+```
+
+The activation commit is `35cf23602060fd3a186a2470d7ac322c795e5fce`.
+Later PH03 domain and Main-only continuity commits are compatible ancestry when
+they leave D/E/F, source, tests and G/H/I unchanged.
+
+## 2. Product mission
+
+> Fine-tune the implemented Analytics page into the approved functional
+> composer, saved-session-record, result-projection and Variables composition
+> without changing its local deterministic authority.
+
+The controlling product direction is:
+
+- an explicit `Create analysis` composer with Group by, chosen determinant
+  values, variables, operation, timeframe and valid operand disclosure;
+- immutable newest-first `Saved analyses — this session` records with bounded
+  fingerprint meaning and previous/next browsing;
+- one dominant selected result with Chart/Table semantic parity and explicit
+  CSV/PDF export;
+- factual interpretation, timeframe, contribution and exclusion counts;
+- a lower `Variables` surface separating Purchases from contained Items and
+  retaining stable selection handoff;
+- one shared responsive workspace and one page-owned vertical scroll.
+
+The approved proposal is a composition target, not a literal bitmap or
+hard-coded aesthetic. Lists supplies the current theme, typography, spacing,
+content width, cards, tables and control-band vocabulary.
+
+## 3. Materialization and evidence outputs
+
+Codex must materialize only the PH04 activation-marker tails in D/E/F and
+replace G/H/I with PH04 evidence. Required evidence includes:
+
+- composer option/compatibility and determinant-value selection;
+- immutable record identity, canonical fingerprint and session lifetime;
+- Chart/Table shared-source parity and exact export boundaries;
+- Purchase/contained-Item projections and stable Variables selection;
+- retained PH02 calculations, Account isolation and request-count invariants;
+- responsive, keyboard/focus, 200-percent text and build evidence;
+- exact changed paths, forbidden-surface audits and rollback classification.
+
+After materialization, Main reconciles G/H/I and schedules bounded human
+rendered comparison. No KANBAN transition follows from implementation or tests.
+
+## 4. Stable constraints
+
+PH04 must not become a second Analytics implementation or a backend feature.
+Explicit non-goals:
+
+- prediction, recommendation, ranking, causality or advanced statistics;
+- persisted, hosted or synchronized analysis records;
+- a second dataset, controller, calculation or result truth;
+- schema, migration, generated-source or dependency change;
+- new chart libraries;
+- Auth, Sync, provider, diagnostic or hosted Analytics authority;
+- PH03 Settings, Audit or Closure source changes;
+- GCM04 or production acceptance.
+
+Existing PH02 calculation, fixed-point, compatibility, Account-scope,
+single-load, History-handoff and evidence-identity rules remain unchanged.
+
+## 5. Evidence boundary carried forward
+
+C11-PH03 passed focused tests, a 264-pass/4-lab-skip full Flutter suite,
+analysis, Windows release build, Android debug build, registry drift and
+resource-disposal checks. Bounded human UI verification accepted PH03 for
+documentation closure.
+
+Formal screenshot-set, assistive-technology, locale, real-device, complete
+keyboard-only and comprehension evidence remain unestablished. They must not be
+misreported as passed during PH04 materialization.
+
+## 6. Handoff sequence
+
+```text
+PH03 implementation and G/H/I
+-> J section 11
+-> Operational / Didactic / Design permanent absorption
+-> Main J/00/05/06 closure
+-> PH04 D/E/F authority at 35cf236
+-> Codex PH04 implementation and G/H/I
+-> Main PH04 reconciliation
+-> bounded human rendered review
+```
+
+Do not reuse PH03 G/H/I as PH04 evidence after materialization. Do not restage
+PH03 or broaden the PH04 Analytics-only changed-path boundary.
+
+## 7. Entry and stop terminal
+
+```text
+CYCLE10=CLOSED_AT_GCM03_DEVELOPMENT_SCOPE
+C11=ACTIVE
+C11_COMPLETED_THROUGH=C11-PH03_PERMANENT_CLOSURE
+C11_CURRENT_UNIT=C11-PH04-R01
+PH03_PERMANENT_MEMORY=COMPLETE
+PH03_SOURCE_AUTHORITY=CONSUMED
+PH04_SCOPE=ANALYTICS_FINE_TUNING_ONLY
+PH04_D_E_F_ACTIVATION=35cf23602060fd3a186a2470d7ac322c795e5fce
+PH04_D_E_F_AUTHORITY=ACTIVE
+PH04_CODEX_AUTHORITY=ACTIVE
+R07_IMPLEMENTATION_AUTHORIZED=NO
+GCM04=DEFERRED_TO_C12_PHASE02
+LIVE_SYNC_AUTHORITY=NONE
+PROVIDER_MUTATION_AUTHORITY=NONE
+```
+
+Stop and return to Main on branch divergence, an unexplained descendant, a path
+outside the PH04 D/E/F allowlist, schema/migration/dependency/generated change,
+PH03 source change, provider operation, live Sync or a requirement for a new
+notebook file or methodology change.
+
+---
+
+<!-- TEMPORAL_MARKER:C11-PH03-INVESTIGATION-SUPERSEDED-2026-07-31 -->
+
+# Historical Checkpoint — C11-PH03 Settings, Audit and Closure Investigation
+
+> Superseded by the current PH03-closure/PH04-authority checkpoint above. This
+> segment preserves the prior investigation route and authorizes no current
+> staging or source work.
 
 ## 1. Status and activation
 

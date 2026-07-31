@@ -1,8 +1,8 @@
-# J_MAIN_STAGE — Cycle 11 PH03 post-materialization reconciliation
+# J_MAIN_STAGE — Cycle 11 PH03 permanent closure and PH04 authority
 
-> Sequence: FLX-PRM-04 / PRC-01 final conflictive reconciliation
+> Sequence: FLX-PRM-04 / Main continuity reconciliation
 > Role: Main Chat [M]
-> Cycle / phase / active unit: C11 / C11-PH03 / permanent-domain reconciliation
+> Cycle / phase / active unit: C11 / C11-PH04 / implementation authority
 > Repository: `gus-i-gu/markei`
 > Branch: `grm-guarded-provisioning-20260727`
 > Cycle 10 accepted implementation boundary:
@@ -13,10 +13,16 @@
 > `526e0de6e294c5fb969d8ee1f35e6eb53914902b`
 > C11-PH01-S01 materialization:
 > `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
+> C11-PH03 implementation:
+> `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`
+> C11-PH03 permanent-domain head:
+> `cc53e6ef063d43342394a55165dd188ddd4ce491`
+> C11-PH04 D/E/F authority:
+> `35cf23602060fd3a186a2470d7ac322c795e5fce`
 > Authority: explicit human-directed Main final reconciliation
 > Mutable surface: this file
 > Extracted Cycle 10 history: `documentation/REC_LEGACY.md`
-> Status: **C11-PH03 IMPLEMENTED AND AUTOMATED/BUILD-VALIDATED; PERMANENT-DOMAIN ABSORPTION PENDING**
+> Status: **C11-PH03 PERMANENTLY ABSORBED; C11-PH04 ANALYTICS AUTHORITY ACTIVE**
 
 ## 1. Recovery entrypoint
 
@@ -46,7 +52,9 @@ DEV_STAGE/E_DDC_STAGE.md
 DEV_STAGE/F_DSN_STAGE.md
 ```
 
-Use G/H/I for C11-PH01-S01 materialization evidence. Use
+Use current G/H/I for C11-PH03 evidence until PH04 materialization replaces
+them. Use the latest PH04 activation-marker tails in D/E/F as current
+implementation authority. Use
 `documentation/REC_LEGACY.md` only for exact Cycle 10 sanitized
 human/client/server/provider chronology. Use `documentation/REC_LEGACY.md` for historical lineage, superseded gates,
 normalized Records 001–021, and exact prior Main decision boundaries.
@@ -74,13 +82,15 @@ KANBAN_TRANSITIONS=NONE
 NEW_CYCLE10_DOMAIN_REGISTRATION_ROUND=NOT_REQUIRED
 
 CYCLE11=ACTIVE
-C11_PHASE=C11-PH03
-C11_COMPLETED_UNIT=C11-PH02
-C11_CURRENT_UNIT=C11-PH03-INVESTIGATION
+C11_PHASE=C11-PH04
+C11_COMPLETED_UNIT=C11-PH03-PERMANENT-CLOSURE
+C11_CURRENT_UNIT=C11-PH04-R01
 C11_S01_PERMANENT_DOMAIN_ABSORPTION=COMPLETE
 C11_PH01_R01_PH02_PERMANENT_DOMAIN_ABSORPTION=COMPLETE
-C11_PH03_STAGING_AUTHORITY=A_B_C_ONLY
-C11_PH03_SOURCE_AUTHORITY=NONE
+C11_PH03_PERMANENT_DOMAIN_ABSORPTION=COMPLETE
+C11_PH03_SOURCE_AUTHORITY=CONSUMED
+C11_PH04_D_E_F_AUTHORITY=ACTIVE_AT_35CF236
+C11_PH04_SOURCE_AUTHORITY=ANALYTICS_ONLY
 
 LIVE_SYNC_AUTHORITY=NONE
 PROVIDER_MUTATION_AUTHORITY=NONE
@@ -858,4 +868,150 @@ PERMANENT_DOMAIN_ABSORPTION=PENDING_PDR_O_A_D
 C12_PH01=NEXT_AFTER_DOMAIN_AND_MAIN_CLOSURE
 C12_PHASE02=BACKEND_GCM04_AND_CONDITIONAL_R07_DEFERRED
 NEXT_MAIN_ACTION=Run Operational Didactic and Design permanent reconciliations from J section 11, then verify all three commits before refreshing 00/05/06.
+~~~
+
+---
+
+<!-- TEMPORAL_MARKER:C11-PH03-PERMANENT-CLOSURE-PH04-ACTIVE-2026-07-31 -->
+> Temporal boundary — Main verified complete C11-PH03 permanent-domain
+> absorption and refreshed Main continuity. Section 12 is the latest
+> chronological J orientation. The later PH04 D/E/F packet is preserved as
+> separate, unconsumed Analytics-only implementation authority.
+
+## 12. C11-PH03 permanent closure and C11-PH04 authority
+
+### 12.1 Verified reconciliation chain
+
+~~~text
+PH03_IMPLEMENTATION=0924e743931ea7aba2c9cc5d2e28063e737b2ff5
+PH03_POST_MATERIALIZATION_J=33dc1002b4a7b00fa67e863dfe98a43c97d66cee
+OPERATIONAL_RECONCILIATION=f8fa5b57829255ff3734a9eebf683f43aaec07cb
+DIDACTIC_RECONCILIATION=dc09265a09bc7746b708a5bc93d428d105c3978b
+DESIGN_RECONCILIATION=cc53e6ef063d43342394a55165dd188ddd4ce491
+PH04_D_E_F_AUTHORITY=35cf23602060fd3a186a2470d7ac322c795e5fce
+~~~
+
+Main verified that this is one strict linear descendant chain from section 11.
+The three domain commits change exactly their twelve owned permanent files:
+
+- Operational: 04, 10, 11 and 12;
+- Didactic: 02, 07, 08 and 13;
+- Design: 01, 03, 09 and 14.
+
+The PH04 authority commit changes only D_OPS_STAGE.md, E_DDC_STAGE.md and
+F_DSN_STAGE.md. No source, test, G/H/I, Main-root, J, methodology, schema,
+migration, generated source, dependency, API/Auth/Sync/provider or diagnostic
+surface changed in these four documentation commits.
+
+### 12.2 Permanent PH03 state of union
+
+Operational permanent memory accepts:
+
+- persisted Settings threshold loading and 0–365 whole-value validation;
+- correction-preserving failure states, reference refresh and duplicate-action
+  prevention;
+- local read-only sanitized Account/environment Audit;
+- deterministic 20-default/50-maximum composite-cursor paging;
+- two local queries per Audit page, zero Audit network calls and zero writes;
+- resource disposal, focused/full tests, analysis and Windows/Android builds;
+- remaining human/platform gates and live provider/Sync work as unperformed.
+
+Didactic permanent memory accepts:
+
+- Settings as local configuration and bounded readiness, not Recovery;
+- Audit as recent sanitized local activity history, distinct from Purchase
+  History and current status;
+- local, bounded-window, loading, empty, stale and unavailable distinctions;
+- diagnostic classification as safe guidance, not causal explanation;
+- Closure as retired ordinary product vocabulary;
+- automated accessibility evidence and bounded human UI continuation without a
+  learner-maturity transition.
+
+Design permanent memory accepts:
+
+- Audit presentation -> controller/read port -> local diagnostic projection;
+- persisted attempt/event identity and exclusive UTC-time-plus-ID cursor;
+- Account/environment predicates, sanitized projection and fixed two-query
+  loading;
+- capability-narrow Settings ports and idempotent composition disposal;
+- Closure navigation retirement with retained unreachable development/support
+  infrastructure;
+- unchanged schema, generated, dependency, API/Auth/Sync/provider and former
+  R07 boundaries;
+- rollback to PH03 authority parent `256ee4dbbcb790419b816862ee42933a115ddd87`.
+
+The three domains agree. No unresolved PH03 cross-domain contradiction remains.
+No KANBAN maturity changed.
+
+### 12.3 Evidence ceiling and deferrals
+
+C11-PH03 is permanently closed as implemented and validated at the recorded
+automated/build ceiling. The full Flutter result remains 264 passes with four
+lab-only skips. Human UI verification is accepted for documentation closure.
+
+The following remain unestablished, not failed or implicitly passed:
+
+- formal screenshot-set evidence;
+- Narrator and TalkBack;
+- locale and long-string review;
+- real-device, density and orientation review;
+- complete keyboard-only acceptance;
+- learner comprehension or transfer;
+- live Sign in, enrollment, hosted connection, Sync, Recovery or provider work.
+
+GCM04, multiple-Account/provider assays, revocation, outage recovery,
+retention/rebootstrap, conditional R07 and production lifecycle remain deferred
+to C12-PHASE02.
+
+### 12.4 PH04 scheduling correction and authority boundary
+
+Human direction activated C11-PH04-R01 after PH03 domain absorption. This
+supersedes section 11's deferral of every UI refinement to C12-PH01 only for the
+bounded Analytics correction in the synchronized D/E/F activation-marker tails.
+
+PH04 is authorized to improve the existing Analytics composition through:
+
+- explicit analysis composition and determinant-value selection;
+- immutable session-only saved analysis records and bounded fingerprints;
+- one selected result with Chart/Table parity and explicit CSV/PDF export;
+- truthful interpretation, timeframe and evidence counts;
+- Purchase and contained-Item Variables projections below the initial viewport;
+- shared wide/compact state, accessibility and rendered-review evidence.
+
+PH04 retains PH02 local Account scope, fixed-point operation semantics,
+single-load/request-count rules, History handoff and evidence identity. It does
+not reopen PH03 and authorizes no analysis-record persistence, second Analytics
+truth, schema/migration/generated/dependency change, Auth, Sync, provider,
+diagnostic, causal, predictive or recommendation work.
+
+The current D/E/F authority is unconsumed. PH04 implementation must replace
+G/H/I with new evidence, after which Main must reconcile the result and schedule
+bounded human rendered comparison. Other UI/UX polish remains in C12-PH01.
+
+### 12.5 Current terminal
+
+~~~text
+CYCLE=C11
+C11_PH01_R01=PERMANENTLY_ABSORBED
+C11_PH02=PERMANENTLY_ABSORBED
+C11_PH03=PERMANENTLY_ABSORBED
+PH03_PERMANENT_DOMAIN_FILES=12_OF_12
+PH03_CROSS_DOMAIN_CONTRADICTIONS=NONE
+PH03_HUMAN_UI_ACCEPTANCE=ACCEPTED_BOUNDED
+PH03_ASSISTIVE_TECH_LOCALE_REAL_DEVICE_COMPREHENSION=NOT_ESTABLISHED
+KANBAN_TRANSITIONS=NONE
+C11_CURRENT_UNIT=C11-PH04-R01
+PH04_SCOPE=ANALYTICS_FINE_TUNING_ONLY
+PH04_D_E_F_ACTIVATION_COMMIT=35cf23602060fd3a186a2470d7ac322c795e5fce
+PH04_D_E_F_AUTHORITY=ACTIVE_UNCONSUMED
+PH04_IMPLEMENTATION=NOT_YET_MATERIALIZED
+PH04_G_H_I=NOT_YET_PRODUCED
+PH03_SOURCE_REOPENED=NO
+LIVE_SYNC_AUTHORITY=NONE
+PROVIDER_MUTATION_AUTHORITY=NONE
+GCM04=DEFERRED_TO_C12_PHASE02
+R07_IMPLEMENTATION_AUTHORIZED=NO
+C12_PH01=REMAINING_UI_UX_POLISH_AFTER_PH04
+C12_PHASE02=BACKEND_GCM04_AND_CONDITIONAL_R07_DEFERRED
+NEXT_MAIN_ACTION=Materialize C11-PH04 from the 35cf236 D/E/F authority, then reconcile PH04 G/H/I and bounded human rendered evidence.
 ~~~

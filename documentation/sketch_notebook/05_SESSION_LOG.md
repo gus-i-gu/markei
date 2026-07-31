@@ -1,11 +1,11 @@
 # 05_SESSION_LOG.md
 
-> Version: Global history 0.5
+> Version: Global history 0.6
 > Status: Active Global Observational History
 > Persistence Class: Observational
 > Knowledge Class: Main / Global
 > Authority: Main Chat [M]
-> Branch: `cycle-07-mobile-preparation`
+> Branch: `grm-guarded-provisioning-20260727`
 > Current-state source: `00_PROJECT_STATE.md`
 > Domain-history sources: `operational/11_OPERATIONAL_RECORD.md`, `didactics/13_LECTURE_REGISTER.md`, and `design/03_DECISION_LOG.md`
 > Scope: Main-level chronology, reconciliation events, corrections, and cycle continuity
@@ -1145,3 +1145,58 @@ PH03_SOURCE_AUTHORITY=NONE
 NEXT_MAIN_ACTION=SEED_PH03_OPERATIONAL_DIDACTIC_DESIGN_INVESTIGATIONS
 ```
 
+---
+
+<!-- TEMPORAL_MARKER:C11-PH03-PERMANENT-CLOSURE-PH04-ACTIVATION-2026-07-31 -->
+
+# C11-PH03 Permanent Closure and C11-PH04 Activation
+
+> Date: 2026-07-31
+> Branch: `grm-guarded-provisioning-20260727`
+> PH03 implementation: `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`
+> PH03 J reconciliation: `33dc1002b4a7b00fa67e863dfe98a43c97d66cee`, section 11
+> PH04 authority: `35cf23602060fd3a186a2470d7ac322c795e5fce`
+
+## Closure chronology
+
+1. Operational reconciled PH03 into its four permanent files at
+   `f8fa5b57829255ff3734a9eebf683f43aaec07cb`.
+2. Didactic reconciled PH03 into its four permanent files at
+   `dc09265a09bc7746b708a5bc93d428d105c3978b` without changing KANBAN maturity.
+3. Design reconciled PH03 into its four permanent files at
+   `cc53e6ef063d43342394a55165dd188ddd4ce491`.
+4. Main verified the linear ancestry and exact twelve-file domain ownership.
+5. Human-directed PH04 Analytics fine-tuning authority was then staged only in
+   D/E/F at `35cf23602060fd3a186a2470d7ac322c795e5fce`.
+
+## Accepted PH03 balance
+
+PH03 is permanently closed at the implemented automated/build ceiling and the
+bounded human UI acceptance already recorded in J section 11. Settings is
+functional local configuration and bounded readiness. Audit is sanitized,
+Account/environment-scoped, local, read-only activity history with deterministic
+two-query paging. Closure is absent from ordinary navigation.
+
+The permanent record retains zero Audit network/write calls, the
+264-pass/4-lab-skip suite, analysis and Windows/Android builds, unchanged
+schema/dependency/API/Auth/Sync/provider boundaries and the absence of live
+provider or Sync operations. Formal screenshot-set, assistive-technology,
+locale, real-device, complete keyboard-only and comprehension evidence remain
+unestablished.
+
+## Forward correction
+
+The exceptional C11-PH04 authority supersedes the earlier plan to defer every
+UI refinement to C12-PH01 only for the bounded Analytics correction described
+in the synchronized D/E/F tails. PH04 does not reopen PH03 and does not broaden
+Analytics into persistence, hosted truth, prediction, recommendation, causality
+or backend work.
+
+```text
+C11_PH03=PERMANENTLY_CLOSED
+C11_PH03_DOMAIN_FILES=12_OF_12_RECONCILED
+KANBAN_TRANSITIONS=NONE
+C11_CURRENT_UNIT=C11-PH04-R01
+C11_PH04_AUTHORITY=ACTIVE_D_E_F_AT_35CF236
+NEXT_MAIN_ACTION=MATERIALIZE_PH04_THEN_RECONCILE_G_H_I_AND_HUMAN_RENDERED_EVIDENCE
+```
