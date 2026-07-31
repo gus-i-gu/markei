@@ -972,3 +972,99 @@ acceptance.
 
 This event records concept representation and project execution, not learner
 mastery. No KANBAN maturity transition is authorized.
+
+# Observation 013 — C11-PH03 Settings, Audit and Closure Meaning Registration
+
+```text
+Date: 2026-07-31
+Branch: grm-guarded-provisioning-20260727
+Class: implementation/evidence learning event
+Implementation: 0924e743931ea7aba2c9cc5d2e28063e737b2ff5
+Main reconciliation: 33dc1002b4a7b00fa67e863dfe98a43c97d66cee section 11
+KANBAN transition: NONE
+```
+
+## Ordered learning event
+
+1. Settings became functional configuration plus bounded Account, Device and
+   Sync-readiness information and actions. Recovery, provider maintenance and
+   destructive diagnostic controls did not enter Settings.
+2. The persisted shortage threshold is loaded and accepts only whole values from
+   0 through 365. Invalid drafts remain visible for correction; reference
+   archives refresh their local lists; duplicate asynchronous actions are
+   blocked.
+3. Audit became ordinary product activity history, reachable in wide and medium
+   navigation and compact More.
+4. Audit reads recent sanitized local attempts and events for the active Account
+   and environment. It is read-only, bounded and local; it is not hosted truth,
+   telemetry or a complete ledger.
+5. Audit became explicitly distinct from Purchase History and current
+   Settings/Sync status. Purchase History shows Purchase facts; current status
+   describes the latest locally observed readiness; Audit shows historical
+   operational evidence.
+6. Loading, empty, stale and unavailable retained different meanings. A stale
+   view may preserve prior evidence after a failed refresh; unavailable does not
+   invent an explanation.
+7. Diagnostic codes became learner-visible technical classifications with safe
+   guidance, not causal explanations.
+8. Audit Retry repeats only the same local read. It does not Sync, recover,
+   mutate provider state or change Purchase facts.
+9. Closure disappeared from ordinary navigation and semantics under both feature
+   flag values. Existing diagnostic implementation may remain unreachable for
+   development/support without preserving Closure as product vocabulary.
+10. Wide/compact reachability, focus semantics, non-color meaning and
+    200-percent text behavior received focused automated evidence. Windows and
+    Android builds separately established compilation for their named targets.
+11. Bounded human UI verification accepted PH03 for documentation closure.
+    Minor non-blocking visual polish moved to C12-PH01 rather than reopening
+    PH03 implementation.
+
+## Misconceptions corrected
+
+| Tempting interpretation | Evidence-qualified correction |
+| --- | --- |
+| Settings is a recovery console | Settings owns local configuration and bounded readiness/actions, not Recovery or provider maintenance. |
+| Audit is Purchase History | Purchase History records Purchase facts; Audit projects local application operations. |
+| Audit shows current Sync status | Current status is the latest locally observed state; Audit is bounded historical evidence. |
+| Audit is a complete or hosted ledger | Audit is a recent local Account/environment-scoped projection. |
+| A diagnostic code explains the cause | It classifies evidence and supplies safe guidance; it does not prove cause. |
+| Retry repairs or synchronizes | Audit Retry repeats only the same read-only local query. |
+| Closure remains a hidden product destination | Closure is absent from ordinary navigation; retained implementation is development/support-only and unreachable. |
+| UI acceptance proves accessibility or comprehension | The bounded acceptance closes documentation only; assistive technology, locale, real-device and learner evidence remain absent. |
+
+## Evidence classification
+
+The implementation, focused tests and recorded builds establish representation,
+execution, state distinctions, navigation reachability, Closure absence,
+responsive parity and named compilation boundaries. Human direction establishes
+only that the visible PH03 result is accepted for documentation closure with
+minor polish deferred.
+
+The following remain unestablished:
+
+- a formal PH03 screenshot set;
+- Narrator and TalkBack behavior;
+- locale and long-string behavior;
+- keyboard-only human traversal;
+- real-device review;
+- direct learner explanation, comparison, prediction, debugging or transfer.
+
+No causal/backend engine, hosted Audit, provider telemetry, automatic recovery,
+destructive product control or raw diagnostic overload was introduced.
+
+## Remaining learning questions
+
+- Can a learner distinguish Settings configuration from last-observed status?
+- Can a learner distinguish Audit from Purchase History without relying on page
+  location?
+- Can a learner explain why local and bounded evidence does not prove hosted
+  truth or successful Sync?
+- Can a learner interpret stale and unavailable without reading either as a
+  causal explanation?
+- Do assistive technology, locale, keyboard-only and real-device review preserve
+  the implemented distinctions?
+
+This event records represented and executable project meaning plus bounded UI
+acceptance. It does not establish learner mastery. No KANBAN maturity transition
+is authorized.
+

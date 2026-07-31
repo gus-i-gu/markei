@@ -1122,3 +1122,42 @@ Stable operating boundaries:
 All 39 KANBAN maturity values remain unchanged. Implementation, tests and build
 artifacts establish project execution only; the direct learner evidence required
 by the standing promotion rubric is absent.
+
+# C11-PH03 Canonical Absorption
+
+> Reconciliation date: 2026-07-31
+> Evidence: implementation commit `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`;
+> complete `DEV_STAGE/H_DDC_CODEX.md`; J section 11 at
+> `33dc1002b4a7b00fa67e863dfe98a43c97d66cee`; focused presentation,
+> application and repository tests
+> Evidence class: implemented, automated-test and Windows/Android build evidence,
+> plus bounded human UI verification accepted for documentation closure
+> Maturity result: no transition
+
+PH03 represents and executes existing concept identities. It does not establish
+that a learner can independently explain the distinctions, use assistive
+technology successfully, or transfer the concepts. No new concept identifier is
+required.
+
+| Existing concept identifier | Stable canonical identity or dependency | Evidence-qualified PH03 absorption | Maturity before → after |
+| --- | --- | --- | --- |
+| `&&&03`, `&&&05` | Learner-facing names must match bounded authority. | Settings means local configuration plus bounded Account and Device/Sync readiness. It is not Recovery, provider maintenance or a destructive console. | Yellow / Red → unchanged |
+| `&&&02`, `&&&10` | Factual Purchase history and operational evidence have different subjects. | Purchase History shows recorded Purchase facts. Audit shows recent sanitized local application activity for the active Account and environment. Neither replaces the other. | Yellow / Red → unchanged |
+| `&&&05`, `&%%14` | Current readiness and historical evidence are distinct evidence classes. | Settings/Sync status describes the current locally observed state. Audit is a bounded historical projection with separate loading, empty, stale and unavailable states; it does not guarantee successful Sync or hosted truth. | Red / Red → unchanged |
+| `&&&03`, `&&&05` | Technical vocabulary must not imply stronger explanation than the evidence supports. | A diagnostic code is a technical classification with safe guidance, not a causal explanation. Local, bounded and sanitized Audit copy does not imply telemetry, a complete ledger or raw diagnostic access. | Yellow / Red → unchanged |
+| `&&&03`, `%%%07` | Ordinary navigation and responsive presentations preserve product meaning. | Audit is reachable in wide/medium navigation and compact More; Closure is retired from ordinary product vocabulary and navigation. Automated reachability, focus, semantics, non-color and 200-percent text evidence remains distinct from human acceptance. | Yellow / Red → unchanged |
+| `&&&05`, `%%%07` | Human direction and automated evidence have separate ceilings. | Bounded UI verification is accepted for PH03 documentation closure, with minor polish deferred to C12-PH01. Screenshots as a formal set, assistive technology, locale, real-device review and learner comprehension remain unestablished. | Red / Red → unchanged |
+
+Stable PH03 boundaries:
+
+- Audit is local, read-only, Account/environment-scoped, sanitized and bounded;
+- Audit Retry repeats only the same local read;
+- Closure diagnostic infrastructure may remain unreachable for development or
+  support, but Closure is not an ordinary destination;
+- causal explanation, hosted Audit, provider telemetry, automatic recovery,
+  destructive maintenance and the former R07 engine remain absent;
+- implementation, tests, builds and bounded UI verification do not establish
+  learner mastery.
+
+All 39 KANBAN maturity values remain unchanged.
+

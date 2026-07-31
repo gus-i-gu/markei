@@ -183,121 +183,129 @@ production acceptance, Analytics behavior or Audit/Closure migration.
 
 <!-- TEMPORAL_MARKER:C11-PH02-DIDACTIC-2026-07-31 -->
 
-# Current Didactic Checkpoint — C11-PH01-R01 and C11-PH02
+# Current Didactic Checkpoint — C11-PH03
 
 > Status: current conceptual checkpoint
 > Branch: `grm-guarded-provisioning-20260727`
-> Implementation: `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`
-> Main reconciliation: `0bfc02e8363d8119469a5e8627d8350fa97790b4` section 9
+> Implementation: `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`
+> Evidence: `DEV_STAGE/H_DDC_CODEX.md`
+> Main reconciliation: `33dc1002b4a7b00fa67e863dfe98a43c97d66cee` section 11
 > Sequence: SEQ-PRM-04 / PDR2-A
 > Learner maturity: unchanged
 
 ## Current terminal
 
 ```text
-CYCLE10=CLOSED_AT_GCM03_TWO_DEVICE_DEVELOPMENT_SCOPE
-PRODUCTION_ACCEPTANCE=ABSENT
-C11_PH01_FIVE_PAGE_REACHABILITY=IMPLEMENTED
-C11_PH02_LOCAL_ANALYTICS=IMPLEMENTED
-ANALYTICS_AUTHORITY=LOCAL_ACCOUNT_SCOPED_PURCHASE_EVIDENCE
-HISTORY_CALCULATION_AUTHORITY=NONE
+C11_PH01_R01=PERMANENTLY_ABSORBED
+C11_PH02=PERMANENTLY_ABSORBED
+C11_PH03=IMPLEMENTED_VALIDATED_AUTOMATED_BUILD_CEILING
+SETTINGS_PURPOSE=LOCAL_CONFIGURATION_AND_BOUNDED_READINESS
+AUDIT_PURPOSE=RECENT_SANITIZED_LOCAL_ACTIVITY_HISTORY
+PURCHASE_HISTORY_PURPOSE=RECORDED_PURCHASE_FACTS
+CLOSURE_ORDINARY_NAVIGATION=ABSENT
+HUMAN_UI_VERIFICATION=ACCEPTED_WITH_MINOR_C12_PH01_CARRYOVER
 KANBAN_TRANSITIONS=NONE
 ```
 
 ## Concept dependency
 
-Recorded Account-scoped Purchase facts support a complete evidence matrix.
-Selected or filtered evidence supplies a session-local card. A card combines:
+```text
+Settings
+  -> local preferences and reference management
+  -> bounded Account, Device and Sync-readiness information/actions
 
-- one determinant: Product, Purchase, Store or UTC Time;
-- one or more relational variables;
-- one operation: Sum, Mean, Difference or Percentage;
-- optional UTC Time conditions;
-- a value or typed unavailable outcome;
-- a factual interpretation, evidence count and applicable period.
+Audit
+  -> active Account and environment
+  -> recent sanitized local attempts and events
+  -> bounded read-only historical evidence
 
-History may transfer typed Purchase IDs into this dependency. It does not
-calculate or interpret.
+Purchase History
+  -> recorded Purchase facts
 
-## Twelve-field evidence authority
+Current status
+  -> latest locally observed readiness
 
-| Field | Learner-visible meaning |
-| --- | --- |
-| Purchase | transaction context and identifier |
-| Date/time | recorded UTC Purchase time |
-| Product | Item subject |
-| Brand | recorded Product brand when available |
-| Store | recorded Purchase Store when available |
-| Purchased by | recorded purchaser when available |
-| Purchased for | explicit unavailable state when absent |
-| Payment method | recorded Purchase payment method when available |
-| Quantity | recorded Item quantity |
-| Unit price | recorded or evidence-qualified derived unit value |
-| Line total | recorded Item contribution |
-| Promotion | explicit unavailable state when absent |
+Closure
+  -> retired ordinary product vocabulary
+```
 
-Unavailable fields remain unavailable; Analytics does not create or repair a
-raw fact.
+Settings does not own Recovery, provider maintenance or destructive diagnostic
+controls. Audit does not own Purchase facts, current status, hosted truth,
+telemetry or causal explanation.
 
-## Operation checkpoint
+## Learner-visible evidence states
 
-- Sum: total contribution of the named variable.
-- Mean: average contribution of valid named evidence.
-- Difference: comparison B minus baseline A.
-- Percentage: named part of a named containing whole, never percentage change.
-- zero denominator and numeric overflow: typed unavailable outcomes.
+- local: read from on-device persistence for the active Account/environment;
+- bounded window: only the displayed recent evidence is claimed;
+- loading: the local read is in progress;
+- empty: no records exist in the loaded window;
+- stale: prior evidence remains visible after a later read failed;
+- unavailable: the requested local evidence could not be provided.
 
-## Presentation and traceability checkpoint
+A diagnostic code supplies a technical classification and safe guidance. It
+does not prove why an event occurred. Audit Retry repeats only the same local
+read and changes neither Purchase facts nor Sync/provider state.
 
-- evidence pages contain 100 rows;
-- selected scope is bounded to 500 Purchase IDs;
-- matrix selection initializes a card;
-- card evidence focuses the matrix;
-- reset restores all current evidence;
-- cards are session-local;
-- wide tables and compact cards preserve meaning, scope and actions;
-- PH01 navigation makes History selection/detail meaning reachable and
-  unambiguous.
+## Product vocabulary and reachability
+
+- Settings remains ordinary configuration and bounded readiness.
+- Audit means recent local activity history and is reachable from wide/medium
+  navigation and compact More.
+- Purchase History remains the chronology of recorded Purchase facts.
+- Closure is absent from ordinary navigation and semantics under both feature
+  flag values.
+- Retained native Closure runners and diagnostic infrastructure remain
+  unreachable development/support implementation, not product vocabulary.
 
 ## Evidence ceiling
 
-Automated tests establish named state, calculation, traceability, breakpoint,
-keyboard/focus and 200-percent text behavior. Windows/Android build artifacts
-establish compilation for their named targets.
+Implemented and validated within the named automated/build boundary:
 
-The following remain `NOT_PERFORMED`:
+- Settings persistence, validation, correction and duplicate-action behavior;
+- Audit loading, empty, stale, unavailable, pagination, sanitization and
+  read-only Retry behavior;
+- Audit versus Purchase History and current-status wording;
+- wide/compact reachability and shared meaning;
+- focus semantics, non-color meaning and 200-percent text behavior;
+- Closure absence from ordinary navigation;
+- Windows release and Android debug build completion.
 
-- screenshots and rendered visual acceptance;
+Human direction accepted the visible PH03 result for documentation closure.
+Minor non-blocking UI polish is deferred to C12-PH01.
+
+Still unestablished:
+
+- a formal PH03 screenshot set;
 - Narrator and TalkBack;
-- locale variation;
+- locale and long-string review;
 - keyboard-only human acceptance;
-- real-device acceptance;
-- direct learner explanation, comparison, prediction, debugging or transfer.
+- real-device review;
+- direct learner comprehension or transfer.
 
-Passing tests and builds do not establish learner understanding or KANBAN
+Passing tests, builds and bounded UI acceptance do not establish KANBAN
 maturity.
 
-## Exclusions
+## Stable exclusions
 
-Charts, forecasting, prediction, rankings, recommendations, causal explanation,
-telemetry, remote/Sync-derived Analytics, external facts and raw-fact repair
-remain absent. Audit/Settings remains PH03; no Analytics evidence selects that
-architecture or claims production acceptance.
+No causal/backend R07 engine, hosted Audit, provider telemetry, automatic
+Recovery, destructive product maintenance, raw diagnostic overload, chart,
+prediction or recommendation entered PH03.
 
 ## Remaining Main and human questions
 
-1. Main must choose the bounded PH03 Settings/Audit route without moving
-   Analytics calculation into History.
-2. Human evidence must test screenshots, assistive technology, locale,
-   keyboard-only use and real devices.
-3. Direct learner assays must test determinant/condition, Purchase/Item,
-   Difference baseline and Percentage containing-whole distinctions before any
-   maturity promotion.
+1. Main must verify all three permanent-domain reconciliations before refreshing
+   00/05/06 and opening C12-PH01.
+2. Human review must establish the still-absent accessibility, locale,
+   keyboard-only and real-device evidence if required.
+3. Direct learner assays must distinguish Settings from status, Audit from
+   Purchase History, local from hosted evidence, and technical classification
+   from causal explanation before any maturity promotion.
 
 ## Recovery pointers
 
-1. `02_KANBAN.md` — stable identities and unchanged maturity.
-2. `07_GLOSSARY.md` — concise current vocabulary.
-3. `13_LECTURE_REGISTER.md` Observation 012 — implementation/evidence event.
-4. `DEV_STAGE/H_DDC_CODEX.md` — focused implementation/test/build evidence.
-5. J section 9 — Main reconciliation and evidence ceiling.
+1. `02_KANBAN.md` — stable concept identities and unchanged maturity.
+2. `07_GLOSSARY.md` — current Settings/Audit/Closure vocabulary.
+3. `13_LECTURE_REGISTER.md` Observation 013 — PH03 implementation/evidence event.
+4. `DEV_STAGE/H_DDC_CODEX.md` — learner-visible automated evidence and limits.
+5. J section 11 — Main reconciliation and documentation-closure boundary.
+

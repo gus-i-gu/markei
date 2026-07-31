@@ -1,7 +1,7 @@
 # 07_GLOSSARY.md
 
 > Domain: Didactic
-> Status: Current derivative — reconciled through C11-PH01-R01 and C11-PH02
+> Status: Current derivative — reconciled through C11-PH03
 > Authority source: `didactics/02_KANBAN.md`
 > Purpose: Compact terminology retrieval; no independent truth or maturity change
 > Maturity: unchanged
@@ -472,20 +472,90 @@ Wide tables and compact cards preserve the same field meanings, evidence scope,
 selection, focus/reset behavior and reachable actions even when reading order
 and density differ.
 
-### Audit reservation
+## Settings, Audit and product vocabulary
+
+### Settings
 
 **KANBAN IDs:** `&&&03`, `&&&05`
 
-A destination reserved for C11-PH03. Its presence does not transfer ownership
-of the runtime diagnostic registry or imply diagnostic migration.
+Local configuration and bounded Account, Device and Sync-readiness information
+and actions. Settings is not Recovery, provider maintenance or a destructive
+diagnostic console.
+
+### Audit
+
+**KANBAN IDs:** `&&&03`, `&&&05`, `&&&10`
+
+Recent sanitized local application activity for the active Account and
+environment. Audit is read-only and bounded; it is not Purchase History, current
+status, hosted truth, telemetry, a complete ledger or a causal explanation.
+
+### Purchase History
+
+**KANBAN IDs:** `&&&02`, `&&&10`
+
+Recorded Purchase facts and their learner-visible details. Purchase History does
+not become operational Audit merely because both surfaces are chronological.
+
+### Current status
+
+**KANBAN IDs:** `&&&05`, `&%%14`
+
+The latest locally observed Account, Device or Sync-readiness state. Current
+status is configuration-adjacent present information; Audit is historical
+evidence.
+
+### Local activity window
+
+**KANBAN IDs:** `&&&05`, `&&&10`
+
+The bounded set of Audit attempts and events loaded from local persistence. A
+window may be ready, empty, stale or unavailable and does not claim completeness
+outside its displayed scope.
+
+### Loading, empty, stale and unavailable
+
+**KANBAN ID:** `&&&05`
+
+Loading means the local read is in progress. Empty means no records exist in the
+loaded window. Stale means prior records remain visible after a later read
+failed. Unavailable means the requested local evidence could not be provided.
+These states are not interchangeable.
+
+### Diagnostic code
+
+**KANBAN IDs:** `&&&03`, `&&&05`
+
+A sanitized technical classification linked to safe guidance. It does not prove
+the cause of an event or authorize repair.
+
+### Closure
+
+**KANBAN IDs:** `&&&03`, `&&&05`
+
+Retired ordinary product vocabulary. Existing native Closure runners and
+diagnostic infrastructure may remain unreachable for development or support;
+their presence does not create a learner-facing destination.
+
+### Bounded UI verification
+
+**KANBAN IDs:** `&&&05`, `%%%07`
+
+Human direction accepted the visible PH03 result for documentation closure and
+deferred minor polish to C12-PH01. It does not establish a formal screenshot
+set, assistive-technology behavior, locale coverage, real-device behavior or
+learner comprehension.
 
 ## Current evidence boundary
 
 - Cycle 10: same-Device hosted scope and reciprocal two-Device/one-Account
   development scope are closed; production acceptance is absent.
-- C11-PH01-R01 and C11-PH02: the five-page presentation and deterministic local
-  Analytics contract are implemented with focused automated and build evidence.
-- Human screenshots, assistive technology, locale, keyboard-only practical use,
-  real-device acceptance and direct learner comprehension remain not performed.
-- Later phase: Settings/Audit and Closure disposition in PH03.
+- C11-PH01-R01 and C11-PH02 remain implemented with focused automated and build
+  evidence.
+- C11-PH03 Settings, local Audit and Closure navigation retirement are
+  implemented with focused automated/build evidence and bounded UI verification
+  accepted for documentation closure.
+- Formal screenshots, assistive technology, locale, keyboard-only practical use,
+  real-device acceptance and direct learner comprehension remain unestablished.
+- Minor PH03 visual polish is deferred to C12-PH01.
 - Learner maturity: unchanged.
