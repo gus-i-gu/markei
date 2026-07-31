@@ -1630,3 +1630,205 @@ C12_PHASE02_BACKEND_SCOPE=DEFERRED_AND_PRESERVED
 NEXT_MAIN_ACTION=Refresh 00_PROJECT_STATE, append 05_SESSION_LOG, refresh 06_SESSION_SCHEME, then initiate Codex from 0e647e76.
 ~~~
 
+---
+
+<!-- TEMPORAL_MARKER:C11-ANALYTICS-CORRECTION-R01-RECONCILIATION-2026-07-31 -->
+
+# 16. C11 Analytics Correction Materialization Reconciliation
+
+> Sequence: FLX-PRM-04 / Main post-Codex evidence reconciliation
+> Cycle / unit: C11 / C11-ANALYTICS-CORRECTION-R01
+> Repository: `gus-i-gu/markei`
+> Branch: `grm-guarded-provisioning-20260727`
+> Activation authority: `0e647e76aa8275bda48cea1e9d08427e3d949134`
+> Pre-implementation reconciled head: `2cdb8a66bfa75918acbbcae324e8315e0b7b2658`
+> Implementation and evidence commit: `17fd65296e960112787b870363b40339f535f5b6`
+> Implementation parent: `2cdb8a66bfa75918acbbcae324e8315e0b7b2658`
+> Evidence: complete `DEV_STAGE/G_OPS_CODEX.md`,
+> `DEV_STAGE/H_DDC_CODEX.md` and `DEV_STAGE/I_DSN_CODEX.md`
+
+## 16.1 Publication boundary
+
+The correction materialized as one focused commit from the reconciled Main
+boundary. Its delta contains six handwritten Analytics source files, three
+Analytics test files and replacement G/H/I evidence only. The activation
+authority, PH05 implementation and earlier C11 ancestry remain preserved.
+
+No schema, migration, generated source, dependency, lockfile, native platform,
+GRM/GS, J, A/B/C, permanent-domain, methodology, Auth/API/Sync/provider,
+diagnostic, PH03, Closure or unrelated-page surface changed in the implementation
+commit. The branch was published directly without force or a pull request, every
+changed remote blob was verified, and the implementation worktree was clean and
+synchronized.
+
+## 16.2 Reconciled correction truth
+
+One typed `AnalyticsVariable` selection owner now controls the visible
+Variables choice and derives both categorical breakdowns and numeric measures:
+
+- Purchased by and Payment method map to categorical breakdowns;
+- Purchased for is represented as typed unavailable evidence;
+- Quantity, Unit price, Price paid, Purchase total and Evidence count map to
+  numeric measures.
+
+Categorical-only selections block with guidance and insert no implicit measure.
+Unsupported operation-variable combinations block with selection-specific
+guidance. Incompatible numeric series retain Table, CSV and PDF evidence while
+Chart becomes typed unavailable by default.
+
+`Run & save` freezes determinant, variables, operation, timeframe, evidence
+scope, labels and grouped entries into one immutable session-only
+`AnalyticsRecord`. The frozen record controls Chart, Table, interpretation,
+CSV and PDF. Later draft changes and saved-record selection do not mutate or
+reuse another record. The existing workspace remains the sole controller and
+calculation path.
+
+Custom time uses Initial date and Final date in strict `dd-mm-yyyy`. Both
+calendar dates are inclusive; the application constructs local midnight at the
+start and local midnight after the final day before converting to the existing
+UTC half-open interval. Missing, invalid, overflow-normalized and reversed
+ranges are rejected.
+
+Pure shared display conversion now presents decimal quantity with canonical
+unit, decimal currency, currency per canonical unit, percent, signed Difference
+and integer Evidence count. Raw fixed-point storage values and compatibility
+keys such as `quantity:mass:kg` are absent from asserted learner-facing
+projections and exports. Ordinary Analytics wide and compact presentation hides
+Purchase, Product, Store and Item UUIDs while internal stable identity remains
+available for selection, History handoff, paging, fingerprints and
+reconstruction. Variables evidence exposes Date-Time of purchase and Store name.
+
+This resolves the previously confirmed raw-value/internal-key presentation
+defect at automated evidence level. It also supplies the previously missing
+end-to-end regression evidence for calculation-selection integrity. The earlier
+human screenshot observation remains valid chronology; it is no longer the
+current implementation classification. No second calculation path or silent
+default-Quantity insertion was found.
+
+## 16.3 Validation and effect boundary
+
+The ten-case regression matrix passed, covering:
+
+1. Product with Price paid and Quantity under Mean;
+2. Store with Price paid under Sum;
+3. Time by month with Quantity under Sum;
+4. mixed categorical and numeric selection;
+5. Purchase total counted once per Purchase;
+6. an inclusive one-day custom range;
+7. invalid and reversed dates;
+8. incompatible units with Table/export retained;
+9. categorical-only blocking without implicit count;
+10. History-selected Purchase scope and reconciliation counts.
+
+Validation passed:
+
+- `flutter pub get`;
+- unchanged `pubspec.yaml` and `pubspec.lock`;
+- Dart formatting;
+- `flutter analyze`;
+- focused serial Analytics suite, 24 tests;
+- serial full Flutter suite, 286 passed and 4 lab-gated skips;
+- Windows release build;
+- Android debug APK build;
+- sync-diagnostics generation check.
+
+Existing Drift multiple-database test warnings, the existing Windows
+Boost/CMake developer warning and the existing Android Auth0 Kotlin Gradle
+future-compatibility warning were observed and not suppressed. They are not
+classified as correction failures.
+
+Analytics retains one initial Account-local evidence read, Retry +1, all other
+Analytics local actions +0 reads, zero database writes and zero network calls.
+The serial guarded commands in `documentation/G_SCRIPTS.md` had already been
+corrected at the pre-implementation Main boundary and remained unchanged. The
+older section 15 `PENDING_MAIN` terminal is historical and superseded on this
+specific procedure point.
+
+## 16.4 Evidence ceiling and retained boundaries
+
+Promotable now:
+
+- unified typed Variables ownership and visible choice mapping;
+- one frozen-record projection path;
+- automated calculation-selection integrity;
+- formatted-value and UUID-hiding behavior;
+- strict inclusive local-date input mapped to UTC half-open filtering;
+- ten-case regression coverage;
+- preserved local-only request/write/network budget;
+- successful Windows and Android builds without dependency or platform change.
+
+Still host- or human-unvalidated:
+
+- wide and compact screenshot-fidelity review;
+- keyboard-only human review;
+- Narrator and TalkBack review;
+- locale and long-string review;
+- Windows application launch;
+- Android real-device behavior;
+- learner comprehension.
+
+The automated semantics and 200-percent text-scale assertions do not establish
+those human gates. Live Auth0, Neon, Render, provider and Sync operations were
+not performed and are not implied by the local Analytics correction.
+
+PH05's Guide content-sequence deviation remains partially contradicted and was
+outside this correction. Android shared-document/native-sharing work remains
+deferred; Android public Downloads remains typed unavailable. C12-PHASE02
+continues to own GCM04, multiple-Account/provider resilience, revocation, outage
+recovery, retention/rebootstrap and production lifecycle.
+
+## 16.5 Permanent-domain routing
+
+Operational [O] should promote the exact serial test/build results, local effect
+budget, warning disposition, zero-change protected surfaces and remaining human
+runtime gates. It should replace the active Analytics-defect TODO with only
+unperformed executable acceptance gates.
+
+Didactic [A] should promote the unified Variables language, categorical versus
+numeric distinction, typed unavailability, no-implicit-variable rule, readable
+value scales, custom-date correction guidance, frozen saved-record meaning and
+UUID-hidden evidence presentation. Automated representation is not learner
+comprehension; `KANBAN_TRANSITIONS=NONE` unless independent explicit evidence
+supports a narrow change.
+
+Design [D] should promote the single typed selection owner, derived
+breakdown/measure compatibility views, immutable record boundary, single
+workspace/calculation path, pure shared display conversion, local-calendar to
+UTC half-open boundary, internal identity/presentation separation and typed
+unavailable Chart behavior. Fixed-point aggregation, pure export builders,
+schema, dependencies, platform and provider contracts remain unchanged.
+
+Each domain must preserve PH05's already-promoted non-Analytics truth without
+duplicating it. After all three PDR2 commits, Main must verify the twelve-file
+domain delta, perform final C11 permanent absorption and refresh 00/05/06 before
+opening C12.
+
+## 16.6 Terminal
+
+~~~text
+CYCLE=C11
+UNIT=C11-ANALYTICS-CORRECTION-R01
+IMPLEMENTATION_COMMIT=17fd65296e960112787b870363b40339f535f5b6
+IMPLEMENTATION_PARENT=2cdb8a66bfa75918acbbcae324e8315e0b7b2658
+CORRECTION_IMPLEMENTATION=COMPLETE
+CALCULATION_SELECTION_INTEGRITY=VALIDATED_AUTOMATED
+DEFAULT_QUANTITY_INSERTION=NOT_EVIDENCED
+RAW_FIXED_POINT_PRESENTATION=REMOVED
+INTERNAL_COMPATIBILITY_KEYS_VISIBLE=NO
+VISIBLE_ORDINARY_UUIDS=NO
+TEN_CASE_REGRESSION=PASS
+FOCUSED_ANALYTICS_TESTS=24_PASS
+FULL_FLUTTER_TESTS=286_PASS_4_SKIP
+WINDOWS_RELEASE_BUILD=PASS
+ANDROID_DEBUG_BUILD=PASS
+ANALYTICS_EFFECTS=initial_read:1;retry:+1;other:+0;writes:0;network:0
+G_SCRIPTS_SERIAL_GATE_CORRECTION=SATISFIED_BEFORE_IMPLEMENTATION
+KANBAN_TRANSITIONS=NONE
+HUMAN_UI_ACCESSIBILITY_LOCALE_DEVICE_COMPREHENSION=NOT_PERFORMED
+LIVE_PROVIDER_SYNC_VALIDATION=NOT_PERFORMED
+GUIDE_SEQUENCE_DEVIATION=RETAINED_OUT_OF_SCOPE
+CODEX_AUTHORITY=CONSUMED
+NEXT_ACTION=PDR2-O_PDR2-A_PDR2-D_FROM_J_SECTION_16
+C11_CLOSURE=PENDING_DOMAIN_AND_FINAL_MAIN_RECONCILIATION
+~~~
+
