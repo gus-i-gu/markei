@@ -7,16 +7,16 @@
 > Branch: `grm-guarded-provisioning-20260727`
 > Cycle-entry baseline: `861c27fdaf6ade2093d481af312d27ff895b8dc0`
 > Reconciled A/B/C head: `4b1abc01a93351f5910ea8af5001782b59a784f7`
+> S01 materialization head: `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
 > Authority: explicit human-directed Main pruning, reconciliation and
-> materialization staging
-> Writable surfaces: mutable J recovery prefix, append-only
-> `documentation/REC_DIAGNOSTICS.md`, and synchronized D/E/F
+> materialization staging; explicit human-directed domain-prompt correction
+> Writable surface for this correction: mutable J recovery prefix only
 > Protected history: the complete `# Legacy_Progress` section
 > Evidence boundary: repository and reference inspection plus completed
-> C11-PH01 Operational, Didactic and Design reports; no C11 source,
-> test/build, human-platform or provider evidence yet
+> C11-PH01 A/B/C, source materialization and G/H/I; automated tests and
+> Windows/Android builds passed; no C11 human-platform or provider evidence
 > Status: **CYCLE 10 CLOSED AT GCM03 TWO-DEVICE DEVELOPMENT SCOPE;
-> C11-PH01 ACTIVE; S01 D/E/F ACTIVE; CODEX IMPLEMENTATION AUTHORIZED;
+> C11-PH01 ACTIVE; S01 G/H/I PUBLISHED; DOMAIN REGISTRATION READY;
 > PROVIDER MUTATION NONE**
 
 ## 1. Recovery entrypoint
@@ -79,8 +79,12 @@ CYCLE11=ACTIVE
 C11_PHASE=C11-PH01
 C11_UNIT=C11-PH01-S01
 C11_PH01_A_B_C=RECONCILED
-C11_PH01_S01_D_E_F=ACTIVE_CODEX_IMPLEMENTATION_AUTHORIZED
-C11_SOURCE_EVIDENCE=NOT_YET_PRODUCED
+C11_PH01_S01_D_E_F=CONSUMED_BY_CODEX
+C11_PH01_S01_IMPLEMENTATION_HEAD=1c7df53c095f4e7c1d85f278ba16c21fd95b25e6
+C11_SOURCE_EVIDENCE=PUBLISHED_G_H_I
+C11_AUTOMATED_AND_BUILD_EVIDENCE=PASS
+C11_HUMAN_PLATFORM_ACCEPTANCE=NOT_PERFORMED
+CYCLE10_DOMAIN_REGISTRATION=READY_UNDER_J_RELEASE_ORDER
 LIVE_SYNC_AUTHORITY=NONE
 PROVIDER_MUTATION_AUTHORITY=NONE
 ```
@@ -158,20 +162,47 @@ The REC appendix added by this reconciliation indexes Cycle 10 progression and
 the later extraction route. It creates no new runtime code or accepted
 provider fact.
 
-## 5. Ordered Cycle 10 permanent-domain extraction
+## 5. Cycle 10 permanent-domain registration authority and prompts
 
-Cycle 10 staging and evidence are not yet a substitute for permanent domain
-memory. After the active Codex unit returns G/H/I, run one bounded FLX-PRM-04
-domain reconciliation in this publication order:
+Cycle 10 staging and evidence are not substitutes for permanent domain memory.
+S01 G/H/I now exist, so the registration gate is open. This section owns both
+the cross-chat release order and the bounded prompt supplied to each chat.
+
+### 5.1 Main-owned release order
+
+The publication dependency is stated once here:
 
 ```text
-1. Operational
-2. Didactic
-3. Design
-4. Main final reconciliation
+1. release Operational packet
+2. verify the Operational commit changed only its four permanent files
+3. release Didactic packet
+4. verify the Didactic commit changed only its four permanent files
+5. release Design packet
+6. verify the Design commit changed only its four permanent files
+7. run Main final reconciliation
 ```
 
-Each domain follows:
+The dependency belongs to Main routing. It must not be copied into the
+individual domain prompts. A domain prompt describes only the receiving chat's
+task; it does not summarize, assign or supervise another domain chat.
+
+Before releasing any packet, Main supplies the exact current remote HEAD as
+`RELEASE_HEAD`. The receiving chat verifies that HEAD, the branch, ancestry and
+its own release gate. It does not infer publication authority from another
+chat's task description.
+
+Every domain packet uses:
+
+```text
+SEQ-PRM-04
+→ FLX-PRM-04
+→ PRC-01
+→ applicable PDR2 role
+→ PDR2-00
+```
+
+Every domain reviews all four of its permanent files and writes them in this
+semantic order:
 
 ```text
 observational append
@@ -180,116 +211,440 @@ observational append
 → checkpoint refresh last
 ```
 
-### 5.1 Operational extraction
+Promotion is evidence-qualified. A valid result may contain no canonical
+change. Passing implementation tests, Main preference, or project completion
+does not automatically promote a claim.
 
-Primary inputs:
+### 5.2 Operational authority and promotable content
 
-- REC Records 001–021 and the Cycle 10 extraction appendix;
-- accepted Cycle 10 G reports and exact materialization commits named there;
-- current GRM/G_SCRIPTS/NS_COORDINATES/I_SCRIPTS/DB_MGMT execution topology;
-- the Cycle 10 closure entry in `Legacy_Progress`;
-- the new S01 `G_OPS_CODEX.md` only for C11 implementation evidence.
+Authority:
+
+- classify execution, environment, procedure, validation and failure truth;
+- promote evidence-qualified stable Operational rules;
+- append Operational chronology;
+- regenerate present and deferred Operational work;
+- refresh the Operational checkpoint last;
+- commit and push only the four Operational permanent files.
+
+Promotable content:
+
+- Cycle 10 execution and assay chronology from REC Records 001–021;
+- GCM02/GCM03 validation boundaries and accepted development terminals;
+- stable GRM/G_SCRIPTS/NS_COORDINATES/I_SCRIPTS/DB_MGMT execution topology;
+- distinctions among implemented, automated-test-validated, build-validated,
+  human-validated and host-unvalidated;
+- same-Device/two-Device, client/Render/provider and development/production
+  evidence boundaries;
+- repeatable stop, recovery-safety and validation rules;
+- C12-PHASE02 residual Operational work;
+- S01 G evidence as a separate C11 event, without rewriting Cycle 10 chronology.
+
+Not promotable by this packet:
+
+- a fresh human-platform claim;
+- a fresh provider fact or final provider-table recount;
+- production, two-Account, revocation, outage-recovery,
+  retention/rebootstrap or lifecycle acceptance;
+- source changes, live operations, provider mutation, or work outside the four
+  Operational permanent files.
 
 Ordered destinations:
 
-1. append execution/assay chronology and evidence boundaries to
-   `operational/11_OPERATIONAL_RECORD.md`;
-2. reconcile stable repeatable execution rules, stop conditions and evidence
-   distinctions into `operational/12_OPERATIONAL_MODEL.md`;
-3. regenerate current work/deferred residuals in `operational/04_TODO.md`;
-4. refresh `operational/10_OPERATIONAL_STATE.md` last.
+1. `operational/11_OPERATIONAL_RECORD.md` — observational;
+2. `operational/12_OPERATIONAL_MODEL.md` — canonical;
+3. `operational/04_TODO.md` — derived;
+4. `operational/10_OPERATIONAL_STATE.md` — checkpoint.
 
-Required separation:
+#### Operational copy-ready prompt
 
-- implemented versus automated-test-validated versus human-validated;
-- same-Device versus two-Device;
-- local/client versus Render versus provider;
-- development versus production;
-- completed GCM03 versus C12-PHASE02 residuals;
-- no live operation or provider mutation during documentation extraction.
+```text
+You are the established Operational Chat [O].
 
-### 5.2 Didactic extraction
+TASK
 
-Primary inputs:
+Perform the bounded Cycle 10 permanent Operational registration and separately
+absorb C11-PH01-S01 Operational evidence.
 
-- accepted H reports across Cycle 10;
-- REC progression, especially readable current-action versus historical-result
-  lessons and Records 018–021;
-- the runtime registry and generated ERR documentation by reference;
-- the C11 S01 `H_DDC_CODEX.md` only for new product-comprehension evidence.
+REPOSITORY
 
-Ordered destinations:
+gus-i-gu/markei
 
-1. append Cycle 10 learning/evidence events to
-   `didactics/13_LECTURE_REGISTER.md`;
-2. change `didactics/02_KANBAN.md` only where explicit learner-maturity
-   evidence satisfies the existing rubric;
-3. regenerate `didactics/07_GLOSSARY.md` only from accepted canonical owners;
-4. refresh `didactics/08_CONCEPT_MAP.md` last.
+REQUIRED BRANCH
 
-Concept distinctions to classify:
+grm-guarded-provisioning-20260727
+
+REQUIRED ANCESTORS
+
+861c27fdaf6ade2093d481af312d27ff895b8dc0
+1c7df53c095f4e7c1d85f278ba16c21fd95b25e6
+
+RELEASE HEAD
+
+Use the exact RELEASE_HEAD supplied with this prompt. Verify the remote branch
+equals it before inspection and immediately before publication. Stop on drift,
+unrelated local changes or substituted default/older-branch content.
+
+METHOD
+
+Read AGENTS.md, documentation/sketch_notebook/INDEX.md and
+documentation/sketch_notebook/methodology/PROMPT_COLLECTION.md.
+Invoke PRI-O, run PMC-01, SEQ-PRM-04, PRC-01, PDR2-O and PDR2-00.
+
+RECOVER
+
+Start from operational/10_OPERATIONAL_STATE.md. Then read
+DEV_STAGE/G_OPS_CODEX.md, the current mutable J section,
+DEV_STAGE/A_OPERATIONAL.md, REC_DIAGNOSTICS Records 001–021 and its extraction
+appendix, and the remaining Operational files from their latest temporal
+markers. Inspect source, tests, reports or execution topology only where
+Operational truth or drift requires it.
+
+AUTHORITY
+
+Classify and promote only execution, environment, procedure, validation,
+failure, evidence-ceiling and executable-gate truth.
+
+Register the accepted Cycle 10 development terminals without expanding them to
+production, multiple-Account, revocation, outage recovery,
+retention/rebootstrap or lifecycle acceptance. Keep deferred C12-PHASE02 work
+explicit. Absorb C11-PH01-S01 G evidence as a separate C11 event and preserve
+the distinction among implemented, automated-test-validated, build-validated,
+human-validated and host-unvalidated.
+
+UPDATE IN THIS ORDER
+
+1. operational/11_OPERATIONAL_RECORD.md
+2. operational/12_OPERATIONAL_MODEL.md
+3. operational/04_TODO.md
+4. operational/10_OPERATIONAL_STATE.md
+
+Review all four files even if one remains unchanged. Apply the PDR2 temporal
+marker rules and rewrite the compact checkpoint last.
+
+DO NOT
+
+Edit source, staging, J, REC, methodology, Main-root files or any file outside
+the four Operational destinations. Do not execute Sync, Retry, Recovery,
+Query, Enroll, credential inspection, database mutation or provider action.
+Do not force-push.
+
+PUBLICATION
+
+Audit the four-file diff, recheck RELEASE_HEAD, commit only changed
+Operational permanent files, and push by non-forced fast-forward through the
+connected GitHub workflow. Report commit SHA, complete changed-file inventory,
+marker actions, promoted/deferred claims, evidence ceilings and clean status.
+
+FINISH
+
+CYCLE10_OPERATIONAL_REGISTER=COMPLETE | BLOCKED
+C11_S01_OPERATIONAL_ABSORPTION=COMPLETE | BLOCKED
+FILES_REVIEWED=4
+FILES_CHANGED=<count>
+SOURCE_CHANGED=NO
+LIVE_OPERATION_PERFORMED=NO
+PROVIDER_MUTATION=NO
+COMMIT_SHA=<sha or NONE>
+REMOTE_HEAD=<sha>
+NEXT_MAIN_ACTION=Return the commit SHA to Main for release-gate verification
+```
+
+### 5.3 Didactic authority and promotable content
+
+Authority:
+
+- classify learner-facing meaning, concept identity, misconception and maturity
+  evidence;
+- promote a KANBAN change only when the existing evidence rubric is satisfied;
+- append learning/evidence chronology;
+- regenerate accepted terminology;
+- refresh the Didactic checkpoint last;
+- commit and push only the four Didactic permanent files.
+
+Promotable content:
 
 - Product natural identity versus user code/local UUID;
-- local-first truth versus hosted coordination;
+- local-first product truth versus hosted coordination;
 - transaction outcome versus diagnostic persistence;
-- current action versus prior operation history;
+- current action result versus prior operation history;
 - blocked, not-applied, applied, duplicate-equivalent and unknown;
-- acknowledgement after committed apply;
+- acknowledgement after committed local application;
+- same-Device versus reciprocal two-Device evidence;
 - build/test evidence versus practical human acceptance;
-- development acceptance versus production acceptance.
+- development acceptance versus production acceptance;
+- S01 H evidence about represented navigation, Home/Lists meaning, state
+  distinctions and accessibility limits as a separate C11 event.
 
-Do not copy 159 registry rows into Didactic canon and do not infer a KANBAN
-transition from passing tests or project completion.
+Not promotable by this packet:
 
-### 5.3 Design extraction
-
-Primary inputs:
-
-- accepted I reports and the exact source boundaries they describe;
-- REC Records 018–021 and the final GCM03 closure;
-- Cycle 10 architectural decisions retained in `Legacy_Progress`;
-- ALT_DEV R07/C12 boundaries;
-- the new S01 `I_DSN_CODEX.md` for the visual-system architecture only.
+- learner maturity inferred only from implementation or passing tests;
+- human comprehension or platform acceptance without direct evidence;
+- runtime diagnostic registry rows duplicated as Didactic canon;
+- source changes, architectural selection, operational acceptance, or work
+  outside the four Didactic permanent files.
 
 Ordered destinations:
 
-1. append accepted decisions, supersessions and deferred questions to
-   `design/03_DECISION_LOG.md`;
-2. reconcile stable responsibility/dependency rules into
-   `design/01_ARCHITECTURE.md`;
-3. regenerate `design/14_MODEL_OVERVIEW.md`;
-4. refresh `design/09_DESIGN_STATE.md` last.
+1. `didactics/13_LECTURE_REGISTER.md` — observational;
+2. `didactics/02_KANBAN.md` — canonical;
+3. `didactics/07_GLOSSARY.md` — derived;
+4. `didactics/08_CONCEPT_MAP.md` — checkpoint.
 
-Architecture claims to classify:
+#### Didactic copy-ready prompt
+
+```text
+You are the established Didactic Chat [A].
+
+TASK
+
+Perform the bounded Cycle 10 permanent Didactic registration and separately
+absorb C11-PH01-S01 Didactic evidence.
+
+REPOSITORY
+
+gus-i-gu/markei
+
+REQUIRED BRANCH
+
+grm-guarded-provisioning-20260727
+
+REQUIRED ANCESTORS
+
+861c27fdaf6ade2093d481af312d27ff895b8dc0
+1c7df53c095f4e7c1d85f278ba16c21fd95b25e6
+
+RELEASE HEAD
+
+Use the exact RELEASE_HEAD supplied with this prompt. Verify the remote branch
+equals it before inspection and immediately before publication. Stop on drift,
+unrelated local changes or substituted default/older-branch content.
+
+METHOD
+
+Read AGENTS.md, documentation/sketch_notebook/INDEX.md and
+documentation/sketch_notebook/methodology/PROMPT_COLLECTION.md.
+Invoke PRI-A, run PMC-01, SEQ-PRM-04, PRC-01, PDR2-A and PDR2-00.
+
+RECOVER
+
+Start from didactics/08_CONCEPT_MAP.md. Then read
+DEV_STAGE/H_DDC_CODEX.md, the current mutable J section,
+DEV_STAGE/B_DIDACTIC.md, relevant REC_DIAGNOSTICS Cycle 10 records and its
+extraction appendix, and the remaining Didactic files from their latest
+temporal markers. Inspect source, tests, contracts or generated readable
+diagnostic documentation only where learner-facing representation or drift
+requires it.
+
+AUTHORITY
+
+Classify and promote only learner-facing meaning, concept identity,
+misconception, terminology and evidence-backed maturity.
+
+Register Cycle 10 concept distinctions without converting implementation,
+tests or project completion into automatic learner maturity. Preserve the
+development evidence ceiling and all unproved production/lifecycle boundaries.
+Absorb C11-PH01-S01 H evidence as a separate C11 event. Attribute no human
+comprehension or human-platform acceptance without direct evidence.
+
+UPDATE IN THIS ORDER
+
+1. didactics/13_LECTURE_REGISTER.md
+2. didactics/02_KANBAN.md
+3. didactics/07_GLOSSARY.md
+4. didactics/08_CONCEPT_MAP.md
+
+Review all four files even if one remains unchanged. Apply the PDR2 temporal
+marker rules, provide exact evidence for every KANBAN change, and rewrite the
+compact checkpoint last.
+
+DO NOT
+
+Edit source, staging, J, REC, methodology, Main-root files or any file outside
+the four Didactic destinations. Do not select architecture, claim operational
+or human acceptance, duplicate the runtime registry, perform live operations
+or mutate a provider. Do not force-push.
+
+PUBLICATION
+
+Audit the four-file diff, recheck RELEASE_HEAD, commit only changed Didactic
+permanent files, and push by non-forced fast-forward through the connected
+GitHub workflow. Report commit SHA, complete changed-file inventory, marker
+actions, KANBAN evidence, promoted/deferred concepts, misconceptions, evidence
+ceilings and clean status.
+
+FINISH
+
+CYCLE10_DIDACTIC_REGISTER=COMPLETE | BLOCKED
+C11_S01_DIDACTIC_ABSORPTION=COMPLETE | BLOCKED
+KANBAN_TRANSITIONS=<identifiers or NONE>
+FILES_REVIEWED=4
+FILES_CHANGED=<count>
+SOURCE_CHANGED=NO
+LIVE_OPERATION_PERFORMED=NO
+PROVIDER_MUTATION=NO
+COMMIT_SHA=<sha or NONE>
+REMOTE_HEAD=<sha>
+NEXT_MAIN_ACTION=Return the commit SHA to Main for release-gate verification
+```
+
+### 5.4 Design authority and promotable content
+
+Authority:
+
+- classify stable responsibilities, invariants, topology and dependency
+  direction;
+- promote evidence-qualified accepted architecture;
+- append decisions, alternatives, deviations and supersessions;
+- regenerate the accepted model overview;
+- refresh the Design checkpoint last;
+- commit and push only the four Design permanent files.
+
+Promotable content:
 
 - local database as product truth and hosted service as coordination channel;
-- Account/Device identity and membership boundaries;
+- Account, membership, Installation and Device identity boundaries;
 - natural Product identity reconciliation;
 - transaction partition and diagnostic containment;
-- acknowledgement dependency on committed local cursor;
+- trusted provider response versus later local terminal;
+- acknowledgement dependency on committed local apply/cursor progress;
+- same-Device versus reciprocal two-Device topology;
 - runtime diagnostics registry versus Audit projection authority;
-- Settings as configuration, Audit as observation, Analytics as local
+- Settings as configuration, Audit as observation and Analytics as local
   interpretation;
-- GCM04 and R07 remaining deferred to C12-PHASE02.
+- GCM04/R07 as deferred C12-PHASE02 boundaries;
+- S01 I evidence about semantic tokens, presentation components, destination
+  identity, responsive shell and Home/Lists projection as a separate C11 event.
 
-Do not activate R07, multi-user behavior or a new Audit causal engine through
-documentation promotion.
+Not promotable by this packet:
 
-### 5.4 Main final reconciliation
+- production, multi-Account, lifecycle or resilience acceptance;
+- implemented Analytics, Audit or later Settings behavior inferred from
+  reserved destinations;
+- Closure relocation, R07 activation or a new Audit causal engine;
+- source changes, operational validation, learner maturity, or work outside
+  the four Design permanent files.
 
-After all three domain commits and the C11 S01 G/H/I/domain absorption exist:
+Ordered destinations:
 
-1. verify each domain changed only its own permanent folder;
+1. `design/03_DECISION_LOG.md` — observational;
+2. `design/01_ARCHITECTURE.md` — canonical;
+3. `design/14_MODEL_OVERVIEW.md` — derived;
+4. `design/09_DESIGN_STATE.md` — checkpoint.
+
+#### Design copy-ready prompt
+
+```text
+You are the established Design Chat [D].
+
+TASK
+
+Perform the bounded Cycle 10 permanent Design registration and separately
+absorb C11-PH01-S01 Design evidence.
+
+REPOSITORY
+
+gus-i-gu/markei
+
+REQUIRED BRANCH
+
+grm-guarded-provisioning-20260727
+
+REQUIRED ANCESTORS
+
+861c27fdaf6ade2093d481af312d27ff895b8dc0
+1c7df53c095f4e7c1d85f278ba16c21fd95b25e6
+
+RELEASE HEAD
+
+Use the exact RELEASE_HEAD supplied with this prompt. Verify the remote branch
+equals it before inspection and immediately before publication. Stop on drift,
+unrelated local changes or substituted default/older-branch content.
+
+METHOD
+
+Read AGENTS.md, documentation/sketch_notebook/INDEX.md and
+documentation/sketch_notebook/methodology/PROMPT_COLLECTION.md.
+Invoke PRI-D, run PMC-01, SEQ-PRM-04, PRC-01, PDR2-D and PDR2-00.
+
+RECOVER
+
+Start from design/09_DESIGN_STATE.md. Then read
+DEV_STAGE/I_DSN_CODEX.md, the current mutable J section,
+DEV_STAGE/C_DESIGN.md, relevant REC_DIAGNOSTICS Cycle 10 records and its
+extraction appendix, ALT_DEV schedule boundaries, and the remaining Design
+files from their latest temporal markers. Inspect handwritten topology,
+contracts, ports, repositories, transactions, projections and tests only where
+architectural truth or drift requires it.
+
+AUTHORITY
+
+Classify and promote only stable responsibilities, invariants, topology,
+ownership, dependency direction, alternatives, deviations and reversibility.
+
+Register Cycle 10 architecture at the two-Device/one-Account development
+boundary without expanding it to production, multi-Account, lifecycle or
+resilience acceptance. Keep GCM04 and R07 deferred. Absorb C11-PH01-S01 I
+evidence as a separate C11 event. Do not infer implemented Analytics, Audit or
+later Settings behavior from reserved navigation destinations.
+
+UPDATE IN THIS ORDER
+
+1. design/03_DECISION_LOG.md
+2. design/01_ARCHITECTURE.md
+3. design/14_MODEL_OVERVIEW.md
+4. design/09_DESIGN_STATE.md
+
+Review all four files even if one remains unchanged. Apply the PDR2 temporal
+marker rules, preserve superseded decisions in observational history, and
+rewrite the compact checkpoint last.
+
+DO NOT
+
+Edit source, staging, J, REC, methodology, Main-root files or any file outside
+the four Design destinations. Do not claim operational validation or learner
+maturity, activate R07/GCM04, create a new Audit causal engine, relocate
+Closure, perform live operations or mutate a provider. Do not force-push.
+
+PUBLICATION
+
+Audit the four-file diff, recheck RELEASE_HEAD, commit only changed Design
+permanent files, and push by non-forced fast-forward through the connected
+GitHub workflow. Report commit SHA, complete changed-file inventory, marker
+actions, promoted/deferred decisions, evidence ceilings, conflicts and clean
+status.
+
+FINISH
+
+CYCLE10_DESIGN_REGISTER=COMPLETE | BLOCKED
+C11_S01_DESIGN_ABSORPTION=COMPLETE | BLOCKED
+R07_AUTHORIZED=NO
+GCM04_AUTHORIZED=NO
+AUDIT_CAUSAL_ENGINE_CREATED=NO
+FILES_REVIEWED=4
+FILES_CHANGED=<count>
+SOURCE_CHANGED=NO
+LIVE_OPERATION_PERFORMED=NO
+PROVIDER_MUTATION=NO
+COMMIT_SHA=<sha or NONE>
+REMOTE_HEAD=<sha>
+NEXT_MAIN_ACTION=Return the commit SHA to Main for release-gate verification
+```
+
+### 5.5 Main final reconciliation
+
+After the three released domain packets have produced verified commits:
+
+1. verify each commit changed only the releasing chat's four permanent files;
 2. verify observational history was preserved;
 3. verify checkpoints point to unique canonical owners;
 4. compare permanent memory against source and G/H/I;
 5. refresh this mutable J prefix;
 6. update `00_PROJECT_STATE.md`, append `05_SESSION_LOG.md`, and refresh
-   `06_SESSION_SCHEME.md` only when the accepted global state requires it;
+   `06_SESSION_SCHEME.md` only when accepted global state requires it;
 7. select the next PH01 slice.
 
-That later round is the full J/domain reconciliation requested after
-permanent-domain registration and G/H/I. It is not pre-claimed by this stage.
+That later round is the full post-registration Main reconciliation. It is not
+pre-claimed by this prompt-correction entry.
 
 ## 6. C11-PH01 A/B/C reconciliation
 
@@ -342,9 +697,9 @@ Unresolved choices for later slices remain:
 - final Closure capability placement, Audit export/retention and recovery
   exposure.
 
-## 7. Active materialization
+## 7. S01 materialization result and later boundary
 
-Controlling stages:
+Consumed controlling stages:
 
 ```text
 documentation/sketch_notebook/DEV_STAGE/D_OPS_STAGE.md
@@ -352,16 +707,27 @@ documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md
 documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md
 ```
 
-Active unit:
+Published evidence:
 
 ```text
-C11-PH01-S01
-  characterization tests
-  semantic tokens and shared components
-  stable compact/medium/wide shell
-  Home recomposition
-  Lists recomposition
-  Analytics/Settings/Audit navigation reservation
+implementation commit
+  1c7df53c095f4e7c1d85f278ba16c21fd95b25e6
+
+DEV_STAGE/G_OPS_CODEX.md
+DEV_STAGE/H_DDC_CODEX.md
+DEV_STAGE/I_DSN_CODEX.md
+
+format/analyze/focused/full tests
+  PASS
+
+Windows release build
+  PASS
+
+Android debug build
+  PASS
+
+human Windows/Android acceptance
+  NOT PERFORMED
 ```
 
 Later PH01 slices, not yet authorized:
@@ -377,33 +743,34 @@ C11-PH01-S04
   five-page convergence, accessibility and Windows/Android human acceptance
 ```
 
-D/E/F are synchronized and marked:
+D/E/F remain the historical instruction authority for S01 but are consumed.
+They do not authorize another implementation pass. The active route is:
 
 ```text
-ACTIVE — CODEX IMPLEMENTATION AUTHORIZED
+Cycle 10 permanent-domain registration
+→ Main verification of the three narrow domain commits
+→ Main final reconciliation
+→ next PH01 slice selection
 ```
 
-No source outside D’s exact writable scope is authorized.
+No new source change is authorized by this J correction.
 
-## 8. Validation and stop boundary
+## 8. Evidence and stop boundary
 
-Codex must distinguish:
+Permanent-domain registration must distinguish:
 
-- source exists;
-- focused tests pass;
-- full Flutter suite passes;
-- Windows/Android builds pass or are host-unvalidated;
+- S01 source exists;
+- focused and full Flutter tests passed;
+- Windows/Android builds passed;
 - human Windows/Android acceptance not performed.
 
 Stop on:
 
-- business/query/schema/provider change;
-- new dependency;
-- Analytics calculation or Settings/Audit/Closure migration;
-- destination state loss;
-- responsive views producing different facts;
+- any attempted source, business/query/schema/provider change;
+- any attempted new dependency;
+- any attempted Analytics calculation or Settings/Audit/Closure migration;
 - unrelated worktree or remote drift;
-- any required path outside D.
+- any required path outside the releasing chat's four permanent files.
 
 No live Sync, Retry, Recovery, Query, Enroll, provider operation, credential
 inspection or preserved-client installation is authorized.
@@ -435,10 +802,11 @@ Current recovery pointer:
 
 ```text
 read this prefix
-→ read active C11-PH01-S01 D/E/F
-→ after Codex read G/H/I
+→ read consumed C11-PH01-S01 D/E/F for instruction provenance
+→ read published G/H/I for materialization evidence
 → use REC for human/provider chronology
-→ use permanent domain files after their ordered extraction round
+→ run the section 5 domain packets under Main release order
+→ use permanent domain files after the verified registration round
 → expand Legacy_Progress only for historical provenance
 ```
 
