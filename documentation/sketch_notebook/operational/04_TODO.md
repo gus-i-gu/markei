@@ -1,43 +1,52 @@
 # 04_TODO.md
 
-> Version: Cycle 10 recovered Operational actions
-> Evidence: `75fbba66d19df722820b8667ac7886c09b64fb2b`
+> Version: C11-PH01 Operational work view
+> Branch: `grm-guarded-provisioning-20260727`
+> Evidence: Cycle 10 permanent registration plus `DEV_STAGE/G_OPS_CODEX.md`
 > Status: Active derived Operational view
 
-# Remaining Actions
+# Current and Deferred Work
 
-## Completed within accepted local evidence
+## Closed evidence boundary
 
-- C10-S01B: disposable local Drift → HTTP → Fastify → PostgreSQL → HTTP → Drift convergence, including durable retry identity, ordered download, atomic remote application and acknowledgement.
-- C10-S02: disposable local retention, compatible snapshot publication, coverage-gated cleanup, typed cursor expiry, interrupted/resumed rebootstrap, catch-up, acknowledgement and reopen comparison.
-- C10-S03A components: forward-only migration 004 exists; Drift v7 hosted-identity state is additive; a compiled hosted entrypoint without fixture-auth fallback exists; basic synthetic identity, membership, enrollment, sync, acknowledgement and sequential revocation paths were locally exercised.
-- MCG-01: sanitized isolated-development-environment evidence passed for separate migration/runtime identities, TLS, rollback, explicit runtime CRUD, runtime DDL denial and cleanup.
+- Cycle 10 is closed at `GCM03=CLOSED_TWO_DEVICE_DEVELOPMENT_SCOPE`.
+- Accepted Sync evidence remains limited to two Devices, one Account and the development environment.
+- Production acceptance and a final provider-table recount after the golden no-op repeats remain absent.
+- C11-PH01-S01 implemented stable destination identity, compact/medium/wide shell policies, the shared visual foundation, and Home/Lists recomposition.
+- Focused tests, the full Flutter suite, analysis, Windows release build and Android debug build passed for S01.
+- Lists Retry repeats only its local projection read; no live Sync/provider behavior was changed or exercised.
 
-These completions are bounded local or sanitized manual evidence. They do not establish hosted authentication readiness, provider acceptance or production operation.
+## P0 — C11-PH01-S01 human-platform acceptance
 
-## P0 — Corrective C10-S03A-R1
+- Review Home, Lists and shell behavior on Windows at compact, medium and wide boundaries.
+- Review compact Android layout on a real Device, including density, orientation and retained destination/page state.
+- Exercise Windows keyboard-only navigation and Narrator.
+- Exercise Android TalkBack.
+- Check loading, read-error, first-use-empty, filtered-empty, insufficient-history and populated Lists states.
+- Confirm that visual review does not activate Sync, protocol Retry, Recovery, Query or Enroll.
+- Record any platform defect as new evidence; do not promote build success into human acceptance.
 
-- Recheck membership, enrollment and Device authority inside the same transaction as every protected sync/recovery mutation.
-- Complete JWT/JWKS adversarial, rotation, outage, timeout, malformed/oversized response and refresh-concurrency evidence.
-- Prove the decisive HTTP topology under a separate least-privilege runtime identity after migrator-owned setup.
-- Add two-Account, cross-Account, membership disable/removal, concurrent enrollment/revocation, restart and route-wide recovery cases.
-- Resolve the missing Flutter hosted-auth laboratory composition without implying provider readiness.
-- Preserve `C10-S03A_CONTRADICTED_STOP` until new G/H/I and Main reconciliation supersede it.
+## P0 — Remaining C11-PH01 page convergence
 
-## P0 — Manual/provider gates
+- Recompose Catalogue, Purchase and History within the accepted shared visual language.
+- Preserve their existing business commands, local persistence, selection, projection and export behavior.
+- Add focused responsive/widget coverage and rerun the full test, analysis and Windows/Android build gates.
+- Perform human Windows/Android visual, keyboard and assistive-technology acceptance after each bounded implementation unit.
+- Treat approved golden coverage as a separate future gate; none exists from S01.
 
-- Reconfirm the isolated development branch expiry before further provider activity.
-- Keep MCG-02 at `MCG-02_PROVIDER_DASHBOARD_PREPARATION_PARTIAL` and `MCG-02_HOSTED_PROOF_NOT_PERFORMED`.
-- Do not migrate Neon, deploy Render, inject hosted secrets, provision real identities or start Android/Windows hosted proof until corrective C10-S03A-R1 is accepted by Main.
-- When MCG-02 is reactivated, capture only sanitized environment aliases, versions, migration identifiers/checksums, counts, timings, statuses and exclusions.
+## Later C11 work retained
 
-## Earlier product and platform work retained
+- C11-PH02: implement and validate deterministic local/account-scoped Analytics and History-to-Analytics context handoff.
+- C11-PH03: make Settings and Audit functional and complete the tested disposition of Closure capabilities.
+- Keep Analytics/Audit destination reservation distinct from implemented functionality.
 
-- Complete visual convergence, responsive composition, manual Windows workflow and accessibility checks.
-- Complete Android lifecycle, physical-device, signing and distribution gates separately from existing build/local evidence.
-- Preserve deterministic PDF/export fallback; native sharing remains separate.
-- Measure Lists, lookup/search, History and export before performance changes.
+## Deferred to C12-PHASE02
 
-Deferred: production authentication/deployment, MCG-03/04 definition, Cycle 10 closure, Product correction, persisted drafts, registered Purchase mutation, Analytics, Household, iOS, signing, distribution and PySide6 retirement.
+- GCM04 and conditional R07 reassessment.
+- Multiple-Account isolation.
+- Membership disablement and Device revocation.
+- Outage, timeout and acknowledgement-uncertainty recovery.
+- Retention, snapshot and rebootstrap.
+- Production deployment, lifecycle and release acceptance.
 
-No source, provider or host mutation authority is active through this file.
+No source, client, provider, database or live-operation authority is active through this file.
