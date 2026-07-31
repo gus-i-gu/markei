@@ -1,305 +1,428 @@
 # A_OPERATIONAL.md
 
 > Cycle: C11
-> Phase: C11-PH01
+> Phase: C11-PH02
 > Role: Operational Chat [O]
-> Status: COMPLETE OPERATIONAL INVESTIGATION — A/B/C INPUT ONLY
-> Repository: `gus-i-gu/markei`
-> Branch: `grm-guarded-provisioning-20260727`
-> Required baseline: `861c27fdaf6ade2093d481af312d27ff895b8dc0`
-> Publication base: documented descendant of `861c27f` containing only the parallel C11-PH01 Design report
-> Date: 2026-07-30
+> Status: PROVISIONAL OPERATIONAL INVESTIGATION — A/B/C INPUT ONLY
+> Repository: gus-i-gu/markei
+> Branch: grm-guarded-provisioning-20260727
+> Inspected remote HEAD: ca380632f5714ce4007d694a954568c3a57828cd
+> Date: 2026-07-31
 > Writable scope: this file only
 
 ---
 
-<!-- RECONCILIATION_MARKER:C11-PH01-O-2026-07-30 -->
+<!-- RECONCILIATION_MARKER:C11-PH02-O-2026-07-31 -->
 
-# C11-PH01 — Visual System and Core-Page Convergence
+# C11-PH02 — Deterministic Local Analytics
 
-## 1. Recovered state and evidence boundary
+## 1. Identity, authority and recovered state
 
-The selected GitHub connector explicitly resolved
-`grm-guarded-provisioning-20260727`. Initial preflight reported the branch
-identical to `861c27fdaf6ade2093d481af312d27ff895b8dc0`
-(`ahead=0`, `behind=0`, merge base `861c27f`). Before publication the
-branch advanced by one documented descendant changing only
-`DEV_STAGE/C_DESIGN.md`; it remains `behind=0` with merge base
-`861c27f`. That descendant is preserved. No default/older branch was used.
+MSU-02 was run through AGENTS.md, INDEX.md, PROMPT_COLLECTION.md, PRI-O,
+PMC-01 and the complete MSU-02 route. PMC-02 was not required because role,
+routing, promotion state and A-only authority were explicit and consistent.
 
-The required route was followed through `AGENTS.md`, `INDEX.md`,
-`PROMPT_COLLECTION.md`, PRI-O and PMC-01, then the named Main, Operational,
-J, ALT_DEV section 15 and staging surfaces. Cycle 10 is closed at its
-two-Device development boundary. PH01 owns the shared visual system and five
-core-page redesigns; PH02 owns local Analytics; PH03 owns Settings, Audit and
-Closure disposition. GCM04, multi-user assays and backend resilience remain
-in C12-PHASE02.
+Operational [O] observes execution, reproducibility, persistence, query cost,
+validation, failure states and evidence ceilings. This investigation replaces
+only DEV_STAGE/A_OPERATIONAL.md. Source, tests, schemas, dependencies,
+generated files, B/C, D-J, Main-root continuity, permanent memory, methodology
+and operator files remain unchanged.
 
-Evidence classification:
+All named commits remain ancestors with zero divergence:
+1422731e512ce073e7fda09451415803d12f3a4e,
+1c7df53c095f4e7c1d85f278ba16c21fd95b25e6,
+e587872d1b231205a83dbd30c46fae84a21831ee and
+526e0de6e294c5fb969d8ee1f35e6eb53914902b.
 
-| Class | Boundary |
+The initial inspected head was f6566a407c2215c1ade61444a7f97994994d93f8.
+Before publication the branch advanced compatibly to ca380632f5714ce4007d694a954568c3a57828cd
+through three commits changing only PH02 B/C and the explained PH01-S02-R01
+corrective D/E/F packet. Those siblings are preserved.
+
+Recovered Main state:
+
+- Cycle 10 is accepted only at the two-Device, one-Account development
+  boundary; production and later backend resilience remain deferred.
+- C11-PH01-S01 is implemented and validated at automated/build scope.
+- C11-PH01-S02 source publication remains absent from the inspected ancestry;
+  a corrective D/E/F packet now describes retained local worktree evidence.
+- C11-PH02 owns deterministic local Account-scoped Analytics.
+- C11-PH03 owns Settings, Audit and Closure disposition.
+- live Sync and provider mutation authority are absent.
+
+## 2. Hierarchical recovery and deeper reads
+
+Required recovery used J_MAIN_STAGE.md, 00_PROJECT_STATE.md, the latest C11
+segment of 05_SESSION_LOG.md, the active 06_SESSION_SCHEME.md checkpoint,
+operational/10_OPERATIONAL_STATE.md and PH01 G/H/I.
+
+Deeper reads were justified because those surfaces do not establish Analytics
+field authority, operation compatibility, row identity, query shape, time
+boundaries, pagination or History handoff:
+
+- markei_app.dart: Analytics is a reserved page and stable destination only.
+- markei_composition.dart: local application ports and Account identity.
+- history_page.dart and purchase_history.dart: current selection, detail and
+  price-comparison behavior.
+- local_database.dart: authoritative local tables, fields and stable IDs.
+- local_query_repository.dart: joins, Account predicates, History limit,
+  detail queries and price comparison.
+- history_export.dart: selected-Purchase export shape and N+1 detail loop.
+- quantity.dart and money.dart: fixed-point quantity and minor-unit money.
+- markei_app_test.dart and markei_visual_foundation_test.dart: navigation,
+  registration, History and responsive coverage.
+- pubspec.yaml: no Analytics dependency.
+
+Generated local_database.g.dart was not read; Drift generator ownership is
+preserved.
+
+## 3. PH01 classification
+
+PH01 is PARTIAL, and that qualifies rather than blocks PH02.
+
+The available PH01 implementation commit is
+1c7df53c095f4e7c1d85f278ba16c21fd95b25e6. G/H/I establish stable
+destination identity, compact/medium/wide shell behavior, shared presentation,
+Home and Lists recomposition, reserved Analytics identity, focused tests,
+245-test full Flutter suite with four skips, analysis, Windows release build
+and Android debug build.
+
+Human Windows/Android, Narrator, TalkBack, keyboard-only and real-device
+acceptance are absent. The descendants after 526e0de6 contain documentation,
+staging and legacy consolidation but no final S02 Flutter source, tests or
+replacement G/H/I. The later S02-R01 D/E/F packet explicitly identifies
+preliminary S02 work as local worktree state, not remote implementation.
+
+| PH01 evidence | Classification |
 | --- | --- |
-| Existing and verified | Source plus named carried automated/build evidence |
-| Source-represented, host-unvalidated | Readable implementation not executed in this connector-only investigation |
-| Visual-reference expectation | Product composition shown by the five archived PNGs; not pixel/data authority |
-| Implementation gap | PH01 proof or behavior absent/not evidenced |
-| Human acceptance | Requires actual Windows/Android rendering and interaction |
+| S01 source | implemented |
+| S01 automation, analysis and builds | validated |
+| S01 rendered reference comparison | host-unvalidated |
+| S01 human platform acceptance | absent |
+| S02 remote source/test/G/H/I materialization | absent |
+| PH01 closure | blocked |
+| PH02 investigation and A publication | accepted |
 
-No Flutter, Windows, Android, emulator, device, screen-reader or golden command
-was run here. Prior green evidence remains bounded to its recorded commit/host.
+PH02 inherits the S01 neutral white/forest-green system, compact controls,
+bordered semantic surfaces, shell bounds and one page state across breakpoints.
+It also carries the absent S02 publication and human acceptance as
+qualifications. It does not reopen PH01 design.
 
-## 2. Present implementation inventory
+## 4. Analytics current state and proposed authority
 
-### Shell, composition and theme
+Analytics currently has a stable destination and reserved page only. No
+calculation port, page, result model, repository method, state reducer, History
+handoff or Analytics-specific test is implemented.
 
-`markei_app.dart` uses an adaptive shell: wide layout has a labelled,
-scrollable `NavigationRail`; compact layout has Home, Lists, Purchase,
-History and More in a `NavigationBar`, with remaining destinations in a
-modal sheet. Pages are retained in an `IndexedStack`. Present destinations
-include the five pages, planned Analytics/Household, Guide, Documentation,
-Settings and conditional Closure. PH01 must not activate or dispose PH02/PH03.
+The proposed authority is one read-only local application port backed by the
+local Drift adapter. Every request requires AccountId and reads only purchases,
+purchase_items, products, stores, people and payment_methods. Sync tables,
+diagnostics, hosted events, provider state, telemetry and external facts are
+excluded.
 
-`markei_composition.dart` injects local application repositories and identity.
-UI changes must continue through these ports and must not reconstruct database,
-provider, authentication, enrollment or Sync truth.
+A request carries exactly one determinant—Product, Purchase, Store or Time—one
+or more relational variables, exactly one operation—Sum, Mean, Difference or
+Percentage—a filtered-dataset or selected-row scope, optional half-open time
+bounds, and stable cursor-page parameters.
 
-`markei_theme.dart` provides Material 3, cream/surface/green/lavender colors,
-eight-pixel cards, filled outlined inputs and rail styling.
-`markei_components.dart` contains only `MarkeiCard`,
-`MarkeiStatePanel` and `MarkeiStatusChip`. Shared responsive page shells,
-headers, action areas, collection/detail patterns, state panels, density,
-typography, focus and accessibility contracts are not yet represented.
+A result carries exact value or comparable pair, factual interpretation,
+evidence count, applicable period, compatibility/exclusion counts and a stable
+local query fingerprint.
 
-### Five pages
+## 5. Twelve-field authority matrix
 
-| Page | Present implementation |
-| --- | --- |
-| Home | 24-line stateless list; reachable but materially below the target dashboard |
-| Lists | async Storage/Shortage/Market/All projection; loading/error/empty, approximate total and Product-cycle rows in one linear list |
-| Purchase | 1,217-line stateful monolith: Catalogue load, exact-code lookup, similarity handling, new/existing Product staging, packaged/bulk calculation, Person/Payment/Store, manual date/time, edit/remove, review/register and feedback |
-| Catalogue | 440 lines: Store list/create, search, Product create, similarity override, selection/detail and retry/error/empty states |
-| History | 331 lines: history/detail/price views, multi-selection, CSV export, PDF share; Analytics/Edit/Delete disabled; tap-based row interaction |
-
-The five reference artifacts were inspected as one coherent visual family:
-cream/green/lavender surfaces, stronger headings, rounded groups, denser desktop
-information, filters/segments and clear primary actions. Operationally they
-demand wide comparison plus compact scanability. They do not establish
-breakpoints, focus order, semantics, text scaling, loading/error states or
-availability of mock-up data.
-
-## 3. Feature-preservation matrix
-
-| Page | Functions that must survive | PH01 regression gate |
-| --- | --- | --- |
-| Home | reachability, local-only truth, refresh after Purchase changes | compact/wide reachability; no unsupported live/Analytics claim |
-| Lists | four views, refresh, loading/error/empty, approximate total, Product-cycle facts | same projection/result identity across widths; no clipping/lost state |
-| Purchase | code lookup/autofill, similarity override, staging, packaged/bulk values, derived total, optional Person/Payment, Store, occurrence time, edit/remove, review/register, typed feedback | preserve keys and invariants; draft survives resize/navigation; single register; focus/scroll to error; no implicit Product/Item creation |
-| Catalogue | Store list/create, Product search/create, immutable facts, similarity, selection/detail, retry | preserve identity rules; pointer/keyboard/touch access; no edit/delete implication |
-| History | load/retry/empty, selection, detail/price, select-all/clear, CSV/PDF | selected IDs and deterministic artifacts preserved; no gesture-triggered export; disabled future actions stay disabled |
-
-Global invariants: Account/local scope; immutable registered Purchase facts;
-Product identity; fixed-point money/quantity; manual occurrence time;
-deterministic selected export; no automatic Retry/Recovery or provider mutation.
-
-## 4. Desktop/mobile execution constraints
-
-The exact current shell breakpoint must be recorded from source and tested
-immediately below, at and above it. Required representative logical sizes:
-
-| Class | Cases |
-| --- | --- |
-| narrow phone | 320×568, 360×800 portrait |
-| ordinary phone | 412×915 portrait and landscape |
-| intermediate | 600×800 plus both sides of the shell threshold |
-| desktop | 1024×768, 1366×768, 1920×1080 |
-| stress | critical widths with long content and 200% text scaling where supported |
-
-Windows requires resize, pointer/hover, wheel, keyboard traversal,
-Enter/Space/Escape, visible focus, display scaling, long labels and native
-export/share verification. Android requires touch targets, system insets,
-keyboard avoidance, Back, rotation/recreation, background/foreground and
-scroll-to-error. Build success is not device or human acceptance.
-
-`IndexedStack` preserves state but can retain hidden focus/semantics and
-increase build/memory cost. This must be tested; Design owns the final choice.
-
-## 5. Automated coverage and gaps
-
-Carried Cycle 10 evidence records a green Flutter suite (latest ledger: 178
-tests with four lab-gated skips) and successful Windows release and Android
-debug builds at their named boundaries. Existing widget keys provide useful
-anchors. That evidence does not prove PH01 visuals.
-
-Missing or not evidenced:
-
-- compact/wide/boundary shell widget tests;
-- page tests at narrow, intermediate and wide widths;
-- overflow tests with long content and maximum supported text scale;
-- Windows keyboard/focus tests and semantic reading order;
-- enabled/disabled semantics and touch-target checks;
-- Android Back, modal, keyboard-inset and lifecycle tests;
-- page state preservation on destination changes and resizing;
-- deterministic compact/wide goldens for five pages and important
-  loading/empty/error/data states;
-- pinned golden font/locale/DPR and reviewed baseline-update procedure;
-- accepted Catalogue/History double-click plus keyboard/touch equivalents;
-- native export/share acceptance;
-- pre-recomposition Purchase regression coverage for every critical state.
-
-Goldens should detect drift; target PNGs must not be copied as literal goldens
-or used instead of functional/semantic assertions.
-
-## 6. Proposed validation ladder
-
-From `clients/markei_flutter`:
-
-1. `flutter pub get`.
-2. Run `dart run build_runner build --delete-conflicting-outputs` only when
-   generator inputs change; fail on unexpected generated drift.
-3. `dart format --output=none --set-exit-if-changed lib test`.
-4. `flutter analyze` and repository-root `git diff --check`.
-5. Focused shell and five-page widget/application regressions.
-6. New breakpoint, overflow, text-scale, semantics, focus and reviewed golden tests.
-7. `flutter test`, reporting every skip and decisive producer.
-8. `flutter build windows --release`.
-9. `flutter build apk --debug` (build evidence only).
-10. Deterministic Windows and Android human acceptance.
-
-Never hand-edit Drift `*.g.dart`, generated plugin registrants,
-`.dart_tool/**`, `build/**` or platform ephemeral outputs.
-
-## 7. Automated and human acceptance matrix
-
-| Concern | Automated | Windows human | Android human |
+| Field | Repository authority | Classification | Qualification |
 | --- | --- | --- | --- |
-| shell | rail/bar/More, boundary resize, retained state | resize, mouse, wheel, keyboard/focus | touch, Back, rotation, insets |
-| Home | local states, overflow | hierarchy/readability | compact scanning/targets |
-| Lists | four views and all state variants | dense comparison/scroll | no sideways information loss |
-| Purchase | complete draft/register/validation regression | tab order, date/time, review, single submit | keyboard inset, scroll-to-error, rotation |
-| Catalogue | search/create/similarity/detail | pointer + accepted keyboard/double-click | touch selection/detail |
-| History | select/detail/price/export/share state | multi-select and native dialogs | touch selection/share/back |
-| accessibility | semantics, focus, text scale | Narrator/high contrast/200% spot check | TalkBack/font-scale spot check |
-| convergence | reviewed compact/wide goldens | compare desktop targets | responsive interpretation, not clone |
-| invariants | full domain/application/persistence suite | local end-to-end workflow | same workflow plus reopen/lifecycle |
+| Purchase | purchases.id / PurchaseId | accepted | Purchase identity; Item evidence retains purchase_id |
+| date/time | purchases.occurrence_time | accepted | instant stored; named time zone absent |
+| Product | purchase_items.product_id to products.id | accepted | local Account Product authority |
+| Brand | products.display_brand with normalized fallback | accepted | Product fact, not an Item snapshot |
+| Store | purchases.store_id to stores.id | accepted | scoped through Purchase |
+| purchased by | purchases.person_id to people | provisional | optional Person exists; meaning requires confirmation |
+| purchased for | absent | absent | no field or relation |
+| payment method | purchases.payment_method_id | accepted | optional; archived label remains resolvable |
+| quantity | measurement_kind, purchased_amount, purchased_unit | accepted | fixed six-decimal canonical quantity |
+| unit price | line total divided by canonical quantity | provisional | derived; per-package price is not equivalent |
+| line total | line_total_minor_units and currency_code | accepted | exact minor units; mixed currency blocked |
+| promotion | absent | absent | no promotion fact |
 
-Use a sanitized deterministic fixture containing empty state, long names,
-packaged/bulk Products, optional/assigned references, multiple dates, sufficient
-Lists/price history and an explicit export selection.
+Purchase total remains available for validation and Purchase summaries but must
+not be counted once per joined Item.
 
-## 8. Risks and stop conditions
+Stable matrix identity is purchase_items.id represented as PurchaseItemId.
+PurchaseDetailItem currently omits it, so History detail objects cannot be the
+Analytics evidence authority without a bounded contract change.
 
-| Risk | Consequence / control |
+## 6. Operations, combinations and minimum evidence
+
+Definitions:
+
+- Sum: exact addition of compatible values.
+- Mean: exact Sum divided by included evidence count; display-only rounding.
+- Difference: comparison minus baseline.
+- Percentage: proposed signed Difference divided by absolute non-zero baseline,
+  represented in basis points.
+- Interpretation: increased, decreased, unchanged, total or mean only.
+
+| Operation | Minimum evidence | Compatibility gate |
+| --- | --- | --- |
+| Sum | one row | one currency or one quantity class |
+| Mean | one row | non-zero divisor |
+| Difference | two ordered determinant values/buckets | comparable aggregate values |
+| Percentage | two ordered determinant values/buckets | comparable values and non-zero baseline |
+
+| Determinant | Executable findings |
 | --- | --- |
-| UI crosses application boundary | stop if query/identity/money logic moves into widgets |
-| Purchase monolith | add focused regressions before extraction/recomposition |
-| breakpoint coupling | test below/at/above threshold before acceptance |
-| retained pages | test focus, semantics, stale state and memory |
-| screenshot literalism | stop on invented data/capability |
-| weak shared system | stage shared foundation before five independent rewrites |
-| unstable goldens | pin environment; require reviewed rebaseline |
-| generated edits | edit generators/handwritten inputs only |
-| inflated evidence | keep build, runtime and human proof distinct |
-| scope leak | stop on PH02/PH03, schema/provider, R07 or GCM04 work |
+| Product | Sum/Mean line total or compatible quantity; rate Mean only for positive canonical quantity; Difference/Percentage require two ordered rows, periods or explicit Product A/B totals |
+| Purchase | Sum Item line totals or compatible quantity; Mean per included Item; Difference/Percentage require two explicit Purchases and same currency/unit class |
+| Store | Sum/Mean by Store; rate requires the same Product and unit class; Difference/Percentage require explicit Store A/B order |
+| Time | Sum/Mean by stable bucket; Difference/Percentage use two chronological buckets |
 
-Also stop on dirty/overlapping A changes, remote divergence, unapproved
-dependency, database/migration change, provider/account/enrollment/live Sync
-access, automatic recovery, Edit/Delete activation or Household behavior.
+Invalid findings:
 
-## 9. Implementation cost and recommendation to Main
+- mixed currency money arithmetic;
+- mixed MeasurementKind or canonical unit quantity arithmetic;
+- non-positive quantity for unit-rate derivation;
+- unit-rate comparison across Products unless Main explicitly accepts it;
+- Difference/Percentage without exactly two ordered groups;
+- Percentage with zero baseline;
+- purchased-for or promotion variables;
+- Sum of unit prices;
+- arithmetic on IDs, labels or instants;
+- repeated Purchase totals after an Item join;
+- current History's 50-row limit as complete evidence.
 
-Operationally safest order:
+Main must decide whether Percentage is relative change only or also share of
+total. Only relative change is proposed for PH02.
 
-1. freeze critical keys and acceptance fixture;
-2. add responsive/overflow/semantics/focus/golden harness;
-3. materialize shared tokens/components and shell;
-4. recompose Home and Lists;
-5. recompose Catalogue and History;
-6. recompose Purchase last with stronger regressions;
-7. run full automated and two-platform human acceptance.
+## 7. Time, identity and reproducibility
 
-| Unit | Cost/risk |
-| --- | --- |
-| test/golden harness | medium, prerequisite |
-| theme/components/shell | medium-high, broad blast radius |
-| Home | low-medium |
-| Lists | medium |
-| Catalogue | medium-high |
-| History | medium-high, selection/native artifacts |
-| Purchase | high, large state machine |
-| human platform acceptance | medium, environment-dependent |
+occurrence_time is the factual time authority. created_at, Sync event time and
+diagnostic time are excluded.
 
-Do not make all five pages one indivisible Codex change. PH01 can remain one
-semantic phase while using bounded cumulative implementation units.
+The schema stores an instant but no named time-zone identity. UTC half-open
+bounds [start, end) are proposed as the deterministic default. Applicable
+periods must display UTC. End dates resolve to the exclusive start of the next
+UTC day. Proposed buckets are UTC day and UTC month.
 
-## 10. Dependencies requested from Didactic and Design
+Device-local calendar-day claims are blocked across host time-zone changes.
+Week, locale calendar and daylight-saving local buckets remain deferred. Main
+must accept UTC or authorize a later time-zone policy/schema unit.
 
-Didactic [A] should provide state/action vocabulary; progressive disclosure;
-honest local-only/disabled language; Product/Purchase/Item/estimate terminology;
-screen-reader labels; and wording that does not imply Analytics, Sync or
-edit/delete capability.
+Stable evidence ordering is occurrence_time, purchase_id, purchase_item_id.
+Time uses chronological baseline/comparison order; non-Time determinants
+require explicit A/B order.
 
-Design [D] should provide breakpoint and responsive ownership; shared
-component/dependency boundaries; desktop-table/compact-card contract; state
-ownership under resize/navigation; `IndexedStack` disposition;
-selection/detail/double-click/keyboard contract; safe extraction boundaries;
-generated ownership; and confirmation of the PH01/PH02/PH03 boundary.
+## 8. Matrix, cards, selection and breakpoint parity
 
-## 11. Exact files likely requiring later inspection
+One page state survives compact, medium and wide layouts. Breakpoint changes
+must not requery, reset filters/card/selection/cursor or duplicate results.
 
-Handwritten implementation:
+Proposed state route:
 
-- `clients/markei_flutter/pubspec.yaml`
-- `clients/markei_flutter/lib/app/markei_app.dart`
-- `clients/markei_flutter/lib/app/markei_composition.dart`
-- `clients/markei_flutter/lib/app/design/markei_theme.dart`
-- `clients/markei_flutter/lib/app/widgets/markei_components.dart`
-- `clients/markei_flutter/lib/app/pages/home_page.dart`
-- `clients/markei_flutter/lib/app/pages/lists_page.dart`
-- `clients/markei_flutter/lib/app/pages/purchase_page.dart`
-- `clients/markei_flutter/lib/app/pages/products_page.dart`
-- `clients/markei_flutter/lib/app/pages/history_page.dart`
+1. Reset restores all Account evidence and clears filter, card, result,
+   selection and cursor.
+2. Filters define the complete logical dataset; the matrix exposes it through
+   stable pages.
+3. Matrix selection initializes the card's selected-row scope using
+   PurchaseItemId values but does not infer an operation.
+4. A complete card validates and calculates.
+5. Card evidence focuses the matrix to the exact included rows.
+6. Clearing the card restores the filtered matrix.
+7. A request generation token discards stale async results.
 
-Behavioral dependencies when affected, not for redesign:
+Wide uses a dense bordered twelve-field table. Compact projects time,
+Purchase, Product/Brand, Store, quantity, line total and selection, with detail
+expansion for remaining fields. Both consume the same records, IDs and result.
 
-- `clients/markei_flutter/lib/application/catalogue_queries.dart`
-- `clients/markei_flutter/lib/application/product_lists.dart`
-- `clients/markei_flutter/lib/application/register_purchase.dart`
-- `clients/markei_flutter/lib/application/purchase_history.dart`
-- `clients/markei_flutter/lib/application/history_export.dart`
-- relevant `clients/markei_flutter/test/**` located by page keys and port names;
-- `clients/markei_flutter/integration_test/**` if present;
-- Windows/Android host manifests only for evidenced platform problems.
+## 9. Typed History handoff
 
-Generated outputs are inspected through generator/schema unless runtime drift
-requires direct reading.
+History must not calculate Analytics. It may emit one immutable typed handoff
+containing AccountId, selected PurchaseId values, optional History time filter
+when implemented, and History origin.
 
-## 12. Unresolved questions
+MarkeiApp owns navigation and transfers the handoff. Analytics revalidates IDs
+against the active Account and resolves Items through its own query port.
+Stale or foreign IDs are excluded and counted.
 
-1. What exact breakpoint(s) and minimum logical width does Design accept?
-2. Which reference elements map to existing local data versus decoration/deferment?
-3. Are Catalogue/History double-click requirements Windows-only, and what are
-   keyboard/touch equivalents?
-4. Which page/draft/scroll state must survive destination changes and resize?
-5. What maximum text scale closes PH01?
-6. Which font, locale, DPR and fixture stabilize goldens?
-7. Must PH01 remain SDK-first, or may Main authorize a dependency?
-8. Which existing tests cover every Purchase state before recomposition?
-9. Which Android API/device and Windows display scales are mandatory?
-10. How are native export artifacts cleaned after human acceptance?
-11. What bounded first materialization unit will Main select?
-12. Which gaps belong to C12-PHASE01 polish rather than PH01 convergence?
+Current History has selected Purchase IDs, but Move to Analytics is disabled
+and no callback exists. The proposed handoff focuses the matrix to selected
+Purchases and preselects no operation. With no selection, the action is
+proposed disabled; Main may instead accept opening the complete dataset.
 
-## 13. Operational terminal
+## 10. Query shape, N+1 risk and limits
 
-```text
-CYCLE=C11
-PHASE=C11-PH01
-ROLE=OPERATIONAL
-BASELINE_VERIFIED=YES
-A_REPORT_READY=YES
-SOURCE_CHANGE_AUTHORIZED=NO
-D_E_F_AUTHORIZED=NO
-CODEX_AUTHORIZED=NO
-PROVIDER_MUTATION_AUTHORITY=NONE
-NEXT_MAIN_ACTION=Reconcile C11-PH01 A_OPERATIONAL.md with B_DIDACTIC.md and C_DESIGN.md into one bounded J synthesis before drafting D/E/F.
-```
+Current evidence:
+
+- listRecentPurchases uses one Purchase join, a grouped count query and limit 50.
+- getPurchaseDetail uses one Purchase join and one Item/Product join.
+- exportBundle loops over IDs and calls getPurchaseDetail, creating N+1 risk.
+- priceChangeForProduct uses one Account-scoped join and fixed quantity
+  normalization.
+- no explicit Analytics-supporting indexes were observed for
+  purchases(account_id, occurrence_time), purchase_items(purchase_id) or
+  purchase_items(product_id).
+
+Analytics needs one Account-scoped joined evidence query family. It must not
+call getPurchaseDetail per row/Purchase. Aggregate and evidence selection must
+share one normalized predicate so results and rows cannot drift.
+
+Proposed limits:
+
+- page size 100;
+- stable keyset cursor, not offset-only pagination;
+- UI memory limited to current page, result, filters and selected IDs;
+- provisional selected-row cap 500 IDs;
+- calculations cover the complete filtered/selected set;
+- ordinary fixture: 1,000 Purchases / 5,000 Items;
+- stress fixture: 10,000 Purchases / 50,000 Items;
+- proposed warm targets: first page and simple card below 250 ms; stress result
+  below one second on the validation host.
+
+Failure to meet the fixture target blocks acceptance and triggers an explicit
+index/migration decision. No hidden unbounded cache is accepted.
+
+SQLite sums can overflow signed 64-bit range. Exact checked accumulation or
+explicit preflight is required; floating-point aggregation is contradicted.
+Unit rates remain rational internally, with deterministic display rounding.
+
+## 11. States, failures and local Retry
+
+Required states: initial, loading, complete, empty, incomplete card,
+calculating, calculated, insufficient evidence, incompatible currency,
+incompatible quantity, zero Percentage baseline, overflow, stale handoff,
+query failure and superseded async result.
+
+Retry repeats only the failed local Analytics read with the same Account,
+filters, selection and card. It must not run Sync, Recovery, provider access,
+migration, repair or mutation.
+
+Failures preserve selection/card/filter unless Reset is explicit. Empty is not
+failure. Excluded rows remain counted; silent dropping is contradicted.
+
+## 12. Validation ladder
+
+No command was run in this connector-only investigation.
+
+Proposed commands from clients/markei_flutter:
+
+1. flutter pub get
+2. dart format --output=none --set-exit-if-changed lib test
+3. flutter analyze
+4. flutter test test/application/analytics_test.dart test/infrastructure/local_analytics_repository_test.dart
+5. flutter test test/app/analytics_page_test.dart test/app/history_analytics_handoff_test.dart
+6. flutter test test/app/markei_visual_foundation_test.dart test/app/markei_app_test.dart
+7. flutter test
+8. flutter build windows --release
+9. flutter build apk --debug
+10. repository-root git diff --check
+
+build_runner is required only if authorized Drift inputs change:
+dart run build_runner build --delete-conflicting-outputs. Generated output
+must be audited and never hand-edited.
+
+Automated gates cover every combination, Account isolation, selected versus
+filtered scope, pagination completeness, UTC boundaries, currency/unit/zero/
+overflow failures, stale/foreign handoff IDs, card focus/Reset, stale async
+suppression, local Retry without Sync, 599/600/1023/1024 widths, 200 percent
+text scale, query count, performance fixtures and the full regression suite.
+
+Rendered and human acceptance remain separate: Windows resizing, keyboard and
+dense evidence; Android compact projection, TalkBack, Back, rotation and
+insets; factual interpretation; stable state across breakpoints; and absence
+of chart, forecast, recommendation, telemetry or remote facts.
+
+## 13. Bounded slices by execution risk
+
+| Slice | Proposed outcome | Risk | Gate |
+| --- | --- | --- | --- |
+| 1 | pure request/result and operation compatibility | low | exhaustive fixed-point tests |
+| 2 | Account query, stable Item ID, cursor page and shared predicate | high | isolation, query count, completeness, performance |
+| 3 | page state, matrix, cards, focus and Reset | high | reducer and responsive widget tests |
+| 4 | typed History handoff and navigation | medium | no History calculation; stale/foreign ID tests |
+| 5 | regression, builds and human platform acceptance | high | automated/rendered/human gates separated |
+
+No schema migration or dependency is proposed initially. A failed stress gate
+requires a separate index-migration decision.
+
+## 14. Main/human decisions
+
+1. UTC half-open periods or a named time-zone policy.
+2. Confirmation that purchased by maps to optional Person.
+3. purchased for and promotion remain absent or move to a later schema unit.
+4. canonical-unit rate only versus a separately defined package price.
+5. Percentage as relative change only.
+6. explicit A/B ordering for non-Time comparisons.
+7. 100-row page and provisional 500-ID selection cap.
+8. no-selection History handoff disabled or complete dataset.
+9. UTC day/month buckets; week/local calendar deferred.
+10. whether stress failure authorizes a later index migration.
+
+## 15. Non-goals
+
+Forecasting, recommendations, rankings, advanced statistics, charts,
+telemetry, hosted/Sync/provider Analytics, external facts, raw-fact repair,
+fact mutation, schema/dependency change in this stage, PH01 redesign, PH03,
+live operations, installation, migration, repair and packaging are excluded.
+
+## 16. Claim/evidence matrix
+
+| Claim | Classification | Evidence |
+| --- | --- | --- |
+| Analytics calculations are absent | validated | reserved page and composition |
+| Account-scoped facts exist locally | implemented | local schema/query adapter |
+| all twelve fields are not authoritative | validated | purchased-for/promotion absent; unit price derived |
+| stable Item ID is not projected | validated | PurchaseItems.id versus PurchaseDetailItem |
+| History is incomplete Analytics authority | validated | limit 50 and detail contract |
+| export has N+1 risk | validated | exportBundle detail loop |
+| fixed money/quantity exist | implemented | minor units and microunits |
+| S01 visual/navigation foundation exists | validated | G/H/I and tests |
+| final S02 remote implementation is absent | validated | ancestry and path audit |
+| UTC periods preserve current determinism | proposed | named time zone absent |
+| one local query port avoids N+1 | proposed | current joined Drift patterns |
+| 100-row keyset pages bound UI memory | proposed | Operational cost analysis |
+| human Analytics acceptance | absent | no implementation or assay |
+
+## 17. Proposed D gates and Main handoff
+
+D must require exact ancestry; one Account-scoped local port; twelve-field
+authority; PurchaseItemId evidence; exhaustive compatibility; one predicate
+for result and matrix; no N+1; resolved time policy; paging, memory, query-count
+and performance gates; local-only Retry; exact failure states; one page state;
+IDs-only History handoff; full validation; separate automated/rendered/human
+evidence; and stop on schema, dependency, Sync, provider, charts or prediction.
+
+PH02 is executable without schema/dependency change if Main accepts UTC,
+relative-change Percentage, canonical-unit rate and explicit comparison order.
+The highest risks are predicate parity, Account isolation, stable Item
+identity, N+1 avoidance and bounded matrix memory.
+
+PH01 is PARTIAL: S01 is implemented and automated/build validated; final S02
+remote materialization and human acceptance are absent. Main should reconcile
+PH01 and PH02 together without suppressing PH02 staging.
+
+## 18. Terminal
+
+~~~text
+INSPECTED_REMOTE_HEAD=ca380632f5714ce4007d694a954568c3a57828cd
+PH01_IMPLEMENTATION_COMMIT=1c7df53c095f4e7c1d85f278ba16c21fd95b25e6
+PH01_MATERIALIZATION_GATE=PARTIAL
+PH01_HUMAN_ACCEPTANCE=ABSENT
+ANALYTICS_CURRENT_STATE=ABSENT
+LOCAL_ANALYTICS_AUTHORITY=PROPOSED
+ACCOUNT_SCOPING=ACCEPTED
+EVIDENCE_MATRIX_FIELD_AUTHORITY=PARTIAL
+OPERATION_COMPATIBILITY=PROPOSED
+TIME_SEMANTICS=BLOCKED
+HISTORY_HANDOFF=PROPOSED
+WIDE_COMPACT_STATE_PARITY=ACCEPTED
+STAGE_STATUS=PROVISIONAL
+MAIN_DECISIONS_REQUIRED=UTC_PERIODS;PERSON_MEANING;UNIT_RATE;PERCENTAGE;A_B_ORDER;PAGE_SELECTION_LIMIT;EMPTY_HISTORY_HANDOFF
+NEXT_MAIN_ACTION=Reconcile the published C11-PH02 A/B/C reports while carrying PH01 PARTIAL qualifications, then resolve the named Analytics decisions before any D/E/F staging.
+CHARTS_AUTHORIZED=NO
+PREDICTIVE_ANALYTICS_AUTHORIZED=NO
+REMOTE_ANALYTICS_AUTHORITY=NO
+SOURCE_CHANGED=NO
+PERMANENT_MEMORY_CHANGED=NO
+METHODOLOGY_CHANGED=NO
+~~~
