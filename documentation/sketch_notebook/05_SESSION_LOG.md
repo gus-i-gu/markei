@@ -1342,3 +1342,85 @@ C11_CORRECTION_AUTHORITY=ACTIVE_D_E_F_AT_0e647e76
 C11_FINAL_CLOSURE=PENDING
 NEXT_MAIN_ACTION=Initiate Codex, reconcile replacement G/H/I and human evidence, run final domain absorption, then close C11 and enter C12.
 ~~~
+
+---
+
+<!-- TEMPORAL_MARKER:C11-FINAL-PERMANENT-CLOSURE-C12-ENTRY-2026-07-31 -->
+
+# C11 Final Analytics Correction Permanent Closure and C12 Entry
+
+> Date: 2026-07-31
+> Branch: `grm-guarded-provisioning-20260727`
+> Correction implementation: `17fd65296e960112787b870363b40339f535f5b6`
+> Post-materialization J: `34eb4b60fd4f9c6455c1774c055c1615581623af`, section 16
+> Final permanent-domain head: `9359200464b9218d336850225445fb40ea055763`
+> Final Main J reconciliation: `35881bdf076ed1dcfebb0b7cbd35486d3116899e`, section 17
+
+## Closure chronology
+
+1. Codex materialized the bounded Analytics correction at `17fd6529…` from
+   reconciled parent `2cdb8a66…`, changing only authorized Analytics
+   source/tests and replacement G/H/I.
+2. Main classified the implementation and evidence ceiling in J section 16 at
+   `34eb4b60…`.
+3. Didactic reconciled its four permanent files at `e125b241…` with no KANBAN
+   transition.
+4. Design reconciled its four permanent files at `b3185e9d…`.
+5. Operational reconciled its four permanent files at `93592004…`.
+6. Main verified the chain as exactly three commits and twelve permanent-domain
+   paths with no source, staging, Main-root, methodology or procedure overlap.
+7. J section 17 permanently absorbed the correction and closed C11 at its
+   recorded automated/build evidence ceiling.
+
+## Accepted result
+
+The final correction established one typed Variables owner, explicit blocking
+without implicit measures, one immutable saved-record projection path, strict
+inclusive local dates, readable fixed-point presentation, hidden ordinary UUIDs
+and projection/export parity. The ten-case regression matrix, focused serial
+24-test suite, serial full 286-pass/4-skip suite, analysis, formatting, Windows
+release build, Android debug build and diagnostics check passed.
+
+Analytics retains one initial local read, Retry plus one, all other local actions
+plus zero, zero database writes and zero network calls. No schema, dependency,
+native platform, Auth/API/Sync/provider or production boundary changed.
+
+Didactic maturity remained unchanged. Human screenshot, keyboard, assistive
+technology, locale, Windows launch, Android real-device, manual Windows export,
+learner-comprehension and live-provider evidence remains absent and is carried
+without reopening C11 source authority.
+
+## Preserved deviations and deferrals
+
+The PH05 Guide learner sequence remains partially contradicted. Android public
+Downloads remains typed unavailable. GCM04, multiple-Account/provider
+isolation, revocation, outage recovery, retention/rebootstrap and production
+lifecycle remain C12-PHASE02 work.
+
+## Post-domain Windows launcher diagnosis
+
+After the domain chain, a read-only diagnosis established that the copied GRM
+command uses `./documentation/I_SCRIPTS.ps1` relative to the current directory.
+From `clients/markei_flutter`, PowerShell therefore stops on a nonexistent
+nested path before the launcher or Flutter runs.
+
+`I_SCRIPTS.ps1` dispatch and the serial `GS-FLUTTER-WIN` procedure are correct.
+The unresolved interface defect is the location-sensitive outer GRM invocation.
+No fix was authorized in the diagnostic round. It is carried as the first
+bounded C12-entry procedural task.
+
+## Transition
+
+Cycle 11 is closed with no active source authority. Cycle 12 is in entry
+preparation; its first phase must be selected by Main/human direction before
+new A/B/C or D/E/F is issued.
+
+~~~text
+CYCLE11=CLOSED
+C11_CORRECTION_PERMANENTLY_ABSORBED=YES
+C11_DOMAIN_FILES=12_OF_12
+KANBAN_TRANSITIONS=NONE
+GRM_LAUNCHER_PATH_DIAGNOSIS=OPEN_FOR_BOUNDED_SOLUTION
+C12_ENTRY=PREPARED
+C12_ACTIVE_UNIT=UNSELECTED
+~~~
