@@ -1276,3 +1276,69 @@ G_SCRIPTS_SERIAL_GATE_ALIGNMENT=COMPLETE
 C11_CLOSURE=PENDING_FINAL_CORRECTION_RECONCILIATION
 NEXT_MAIN_ACTION=MATERIALIZE_CORRECTION_THEN_RECONCILE_G_H_I_DOMAIN_DELTA_AND_C11_CLOSURE
 ```
+
+---
+
+<!-- TEMPORAL_MARKER:C11-PH05-PERMANENT-ABSORPTION-ANALYTICS-CORRECTION-ACTIVATION-2026-07-31 -->
+
+# C11-PH05 Permanent Absorption and Final Analytics Correction Entry
+
+> Date: 2026-07-31
+> Branch: grm-guarded-provisioning-20260727
+> PH05 implementation: 426235d8b67ac719e494b53cfb23a6c3b06fb489
+> PH05 J evidence reconciliation: e6ced7fe3945925bf5f314ee11c4538029e18d44, section 14
+> PH05 permanent-domain head: 74638c33a71eb4bc4e5e16aca49526496d3a3610
+> Analytics correction activation: 0e647e76aa8275bda48cea1e9d08427e3d949134
+> Main absorption reconciliation: d6c565edcd0504f382262a3f2c7018e2c63cd47b, section 15
+
+## Reconciliation chronology
+
+1. PH05 materialized at 426235d8 with final PH05 G/H/I and its named
+   automated/build evidence.
+2. Main classified the result, Guide deviation and human Analytics defect in J
+   section 14 at e6ced7fe.
+3. Operational, Design and Didactic completed a linear three-commit PDR2 chain
+   ending at 74638c33.
+4. Main verified that the chain changed exactly the twelve paired permanent
+   domain files and no source, staging, methodology or Main file.
+5. Read-only Analytics tracing narrowed the confirmed defect to raw
+   fixed-point/internal-key presentation. It found no evidenced silent
+   default-Quantity insertion and retained full no-leak projection testing.
+6. The human Windows serial diagnostic passed with TestExit=0, separating the
+   earlier bare-parallel procedure failure from source behavior.
+7. Main staged the bounded Analytics correction in D/E/F only at 0e647e76.
+8. J section 15 permanently absorbed PH05 and preserved the correction as a
+   separate, still-unmaterialized C11 unit.
+9. Main corrected the three G_SCRIPTS guarded test commands to
+   --concurrency=1 --no-pub; GRM.md and I_SCRIPTS.ps1 remained unchanged.
+
+## Accepted session balance
+
+PH05 is permanently absorbed, not universally human-accepted. Operational memory
+owns the execution counts and host ceilings; Didactic memory owns learner
+distinctions, unchanged KANBAN maturity and comprehension ceiling; Design memory
+owns export, selection, Analytics, Guide, Audit and Settings responsibilities.
+
+The Guide sequence deviation, Android Downloads limitation and absent manual
+accessibility/locale/real-device/provider evidence remain recoverable. None was
+silently converted into completion.
+
+The Analytics correction is active but not implemented. It is restricted to the
+controlling D/E/F allowlist, one workspace/controller, fixed-point presentation,
+compact typed composition, inclusive local-calendar dates, visible evidence
+cleanup and end-to-end projection/export parity.
+
+~~~text
+C11_PH05=PERMANENTLY_ABSORBED
+PH05_DOMAIN_FILES=12_OF_12_RECONCILED
+KANBAN_TRANSITIONS=NONE
+GUIDE_SEQUENCE=PARTIALLY_CONTRADICTED
+ANALYTICS_PRESENTATION_DEFECT=CONFIRMED
+DEFAULT_QUANTITY_INSERTION=NOT_EVIDENCED
+SERIAL_FULL_FLUTTER_TEST=PASS
+G_SCRIPTS_SERIAL_GATE=CORRECTED
+C11_CURRENT_UNIT=C11-ANALYTICS-CORRECTION-R01
+C11_CORRECTION_AUTHORITY=ACTIVE_D_E_F_AT_0e647e76
+C11_FINAL_CLOSURE=PENDING
+NEXT_MAIN_ACTION=Initiate Codex, reconcile replacement G/H/I and human evidence, run final domain absorption, then close C11 and enter C12.
+~~~
