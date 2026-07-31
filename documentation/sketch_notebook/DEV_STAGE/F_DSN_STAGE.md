@@ -6,7 +6,7 @@
 > Required branch: `grm-guarded-provisioning-20260727`
 > Required S01 implementation ancestor:
 > `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
-> Reconciled Main head: `ec8953fbea4e9a80a712118665c2549a4d21528b`
+> Reconciled Main head: `9147e59341ce5e59f60ba51756aa524f788410ac`
 > Codex starting HEAD: the synchronized D/E/F publication commit pinned by the
 > initiation prompt
 > Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**

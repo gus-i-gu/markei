@@ -6,7 +6,7 @@
 > Repository: `gus-i-gu/markei`
 > Required branch: `grm-guarded-provisioning-20260727`
 > Required ancestor: `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
-> Reconciled Main head: `ec8953fbea4e9a80a712118665c2549a4d21528b`
+> Reconciled Main head: `9147e59341ce5e59f60ba51756aa524f788410ac`
 > Codex starting HEAD: the direct descendant commit publishing this synchronized
 > D/E/F packet, pinned by the initiation prompt
 > Authority: **ACTIVE — CODEX IMPLEMENTATION AND NON-FORCED PUBLICATION AUTHORIZED**
@@ -40,7 +40,7 @@ Before editing:
 
 1. explicitly target `grm-guarded-provisioning-20260727`;
 2. resolve and report the exact remote HEAD;
-3. verify `ec8953fbea4e9a80a712118665c2549a4d21528b` is an ancestor;
+3. verify `9147e59341ce5e59f60ba51756aa524f788410ac` is an ancestor;
 4. verify `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6` is an ancestor;
 5. verify the staging commit is the remote HEAD named by the initiation prompt;
 6. inspect the complete staging-commit diff and accept only D/E/F changes;
