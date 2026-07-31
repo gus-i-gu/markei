@@ -1,229 +1,487 @@
-# F_DSN_STAGE — C11-PH01-S01 Responsive Presentation Architecture
+# F_DSN_STAGE — C11-PH01-S02 Responsive Five-Page Presentation Architecture
 
 > Sequence: FLX-ORD-01
-> Role: Main design stage
-> Cycle / phase / unit: C11 / C11-PH01 / C11-PH01-S01
-> Branch: `grm-guarded-provisioning-20260727`
-> Reconciled A/B/C head: `4b1abc01a93351f5910ea8af5001782b59a784f7`
+> Role: Main design materialization stage
+> Cycle / phase / unit: C11 / C11-PH01 / C11-PH01-S02
+> Required branch: `grm-guarded-provisioning-20260727`
+> Required S01 implementation ancestor:
+> `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
+> Reconciled Main head: `1422731e512ce073e7fda09451415803d12f3a4e`
 > Codex starting HEAD: the synchronized D/E/F publication commit pinned by the
-> seeding prompt
+> initiation prompt
 > Authority: **ACTIVE — CODEX IMPLEMENTATION AUTHORIZED**
-> Architecture boundary: presentation shell, shared visual foundation, Home
-> and Lists only
+> Architecture boundary: presentation shell, shared visual system and five
+> current product pages only
 
-## 1. Accepted architecture
+## 1. Accepted S02 architecture
 
-S01 introduces a presentation architecture with this dependency direction:
-
-```text
-Flutter/Material primitives
-        ↓
-semantic design tokens
-        ↓
-shared presentation components and responsive shell
-        ↓
-page presentation adapters
-        ↓ callbacks / already-classified view data
-application ports and domain value types
-```
-
-Shared visual code must not depend on repositories, infrastructure,
-authentication, Sync coordinators, diagnostic authorities or provider state.
-
-## 2. Stable navigation identity
-
-Replace index-as-identity with a stable destination identifier.
-
-A destination descriptor may own:
+Retain the S01 dependency direction:
 
 ```text
-id
-label
-icon
-group
-compact priority
-ordinary-navigation visibility
-feature availability
-page builder
+MarkeiApp composition
+  → stable MarkeiDestination registry
+    → MarkeiShell responsive navigation
+      → page-owned responsive composition
+        → shared presentation-only components
+          → semantic tokens / Flutter primitives
 ```
 
-The exact Dart representation is Codex’s bounded implementation choice. The
-following invariants are mandatory:
+Repository/application ports supply facts and commands. Page state classifies
+those facts for presentation. Shared components render data and callbacks.
 
-- selection is stored by stable ID;
-- feature-gated Closure insertion/removal cannot redirect another selection;
-- compact and rail presentations consume one destination registry;
-- the More surface is derived from the same registry;
-- page builders receive dependencies from `MarkeiComposition`;
-- navigation does not instantiate repositories or infrastructure;
-- each `IndexedStack` child has stable identity;
-- hidden focus/semantics do not leak into the active page.
+Forbidden dependency direction:
 
-Retain `IndexedStack` for S01 unless characterization proves an actual blocker.
-A state-management or routing-framework migration is not authorized.
+```text
+shared widget
+  → repository / database / provider / Sync coordinator
+```
 
-## 3. Responsive shell ownership
+S02 is not a state-management migration. Preserve current constructors,
+repository ports, global refresh behavior and `IndexedStack` retention unless a
+small presentation adapter is needed inside an authorized file.
 
-The shell owns:
+## 2. Visual-system architecture
 
-- layout-class resolution;
-- navigation chrome;
-- safe area;
-- bounded content canvas and responsive gutters;
-- destination selection;
-- page title/action slot only when consumed consistently;
-- compact More presentation.
+### 2.1 Token ownership
 
-Pages own:
+`app/design/markei_theme.dart` owns:
 
-- page-specific composition;
-- local presentation state;
-- table/card field priority;
-- contextual controls;
-- callbacks into existing application ports.
+- forest-green and neutral palette;
+- semantic status colors and soft tints;
+- type roles;
+- 4/8 spacing rhythm;
+- compact/medium/wide gutters;
+- radii, one-pixel borders and shadow policy;
+- visible control height and minimum hit target;
+- maximum content width;
+- navigation dimensions;
+- table density;
+- focus and disabled-state defaults.
 
-Application/domain owners retain:
+Pages must not reproduce these values as local design systems.
 
-- Product and Purchase identity;
-- cycle calculations and projection membership;
-- money, quantity and date semantics;
-- validation and registration;
-- exports;
-- Sync, diagnostics and recovery truth.
+### 2.2 Shared component ownership
 
-The semantic thresholds are compact `<600`, medium `600–1023`, wide `>=1024`
-logical pixels. Threshold constants belong to presentation design, not page
-business logic.
+`markei_components.dart` and optional explicitly authorized component files may
+own:
 
-## 4. Token and component boundaries
-
-Tokens belong under `app/design`. Avoid page-local literal spacing, colors and
-type sizes when a semantic token exists.
-
-Shared components may cover:
-
-| Family | Responsibility |
+| Component family | Responsibility |
 | --- | --- |
-| Shell | app frame, navigation registry consumption, More surface |
-| Layout | bounded content, page header, responsive sections |
-| Surface | card, summary tile, section/disclosure panel |
-| Controls | search/sort/action group wrappers |
-| Data | table frame, mobile record card, key/value group |
-| State | loading, first-use empty, filtered empty, error, insufficient history |
-| Feedback | semantic banner, status chip |
+| Content canvas | responsive gutter and maximum width |
+| Page header | noun, purpose, provenance and page-level action |
+| Section surface | one bounded meaningful group |
+| Summary strip/tile | desktop unified summary and compact peer summaries |
+| Control band | search/filter/sort/action reflow |
+| Record table | wide dense comparison structure |
+| Record card | compact ordered fact projection |
+| Selection band | selected count and contextual actions |
+| Disclosure | explanation, detail or subordinate management |
+| State panel | loading, empty, filtered empty, error and partial state |
+| Feedback banner | classified operation result with safe action |
+| Form section | label, controls, helper/error and action grouping |
 
-Components render already-classified presentation models and callbacks. A
-component must not infer a Product cycle, query a repository, translate an
-arbitrary exception or decide whether an operation is retryable.
+Shared widgets accept display-ready values, stable keys and callbacks. They do
+not own query timing, selection truth, filtering rules, validation, business
+classification or navigation decisions.
 
-## 5. Home boundary
+### 2.3 Surface rules
 
-Home remains driven by truthful static content plus navigation callbacks.
+- The page canvas is not a Card.
+- Toolbars and ordinary rows are not Cards.
+- One Card/section surface represents one meaningful group.
+- Summary peers may share one desktop strip rather than four cards.
+- Compact records may each use one card.
+- Cards use one-pixel neutral borders, `8 dp` radius and no decorative shadow.
+- Status tint is local and subtle; it must not color the entire page.
 
-It may:
+## 3. Responsive projection contract
 
-- arrange orientation/task cards;
-- invoke stable destination callbacks;
-- use shared headers/surfaces.
-
-It may not:
-
-- query provider/Sync/queue state;
-- synthesize Household or Analytics facts;
-- become a developer telemetry surface;
-- instantiate application dependencies.
-
-Changing `home_content.dart` is limited to static presentation descriptors and
-copy. If a live summary is desired later, it requires a separately designed
-application projection.
-
-## 6. Lists boundary
-
-`ProductListProjectionRepository` remains the sole source of Lists projection
-truth in S01.
-
-Recommended internal flow:
+Breakpoints remain:
 
 ```text
-selected Lists view + refresh signal
-        ↓
-one repository projection request
-        ↓
-page-local presentation adapter
-        ↓
-search/sort over returned items
-        ↓
-wide table or compact/medium cards
+compact: width < 600
+medium: 600 <= width < 1024
+wide: width >= 1024
 ```
 
-Both collection projections use:
+### Compact
 
-- the same returned item set;
-- the same stable Product ID;
-- the same qualified cycle classification;
-- the same search/sort state.
+- bottom navigation plus More;
+- page-aware compact app bar;
+- `16 dp` gutter;
+- stacked control/form sections;
+- record cards;
+- no desktop DataTable squeezed horizontally;
+- primary actions remain in normal flow and above the bottom-navigation safe
+  area.
 
-Search and sort are presentation operations. Adding category, Store or Person
-filtering would require new projection facts and is prohibited in S01.
+### Medium
 
-## 7. Reservation boundaries
+- compact rail;
+- `24 dp` gutter;
+- bounded content;
+- two-column sections only where controls and text remain readable;
+- per-page table/card choice based on fact density;
+- no unconditional wide table merely because width exceeds 600.
 
-S01 reserves navigation identity only:
+### Wide
 
-- Analytics: PH02 owns deterministic local/account-scoped query/calculation
-  ports and History context handoff.
-- Settings: current behavior stays intact; PH03 owns recomposition.
-- Audit: PH03 owns durable diagnostic projection and readable operational
-  history.
-- Closure: existing feature-gated page and all capabilities stay intact.
+- `224–240 dp` labelled navigation;
+- `32 dp` gutter;
+- `1200–1240 dp` content maximum;
+- dense tables, unified summary/action bands and two-column workspaces where
+  supported;
+- content must not stretch indefinitely on large windows.
 
-Audit/Settings must not create independent diagnostic authority. Visual widgets
-must not reconstruct Sync truth. No Closure capability is removed, moved or
-renamed in S01.
+At boundary changes:
 
-## 8. Reversibility
+- destination ID remains stable;
+- page widget/state identity remains stable;
+- selected record/view/search/sort/filter/draft/review state remains stable;
+- a table row and compact card refer to the same record identity and facts.
+
+## 4. Shell architecture
+
+`MarkeiShell` owns:
+
+- responsive navigation chrome;
+- safe areas;
+- page-aware compact title presentation;
+- primary/More destination access;
+- selected-destination semantics;
+- content-canvas placement.
+
+It does not own:
+
+- page title/purpose content beyond shell coordination;
+- page filters, summaries, selections or drafts;
+- application repository construction;
+- destination behavior;
+- feature-gate decisions.
+
+Retain stable destination IDs and current availability. Do not move Catalogue
+into direct compact navigation in S02. Do not activate Analytics or Audit. Do
+not remove Closure or change its feature gate.
+
+## 5. Home architecture
+
+Home remains a static presentation projection over `home_content.dart` and
+navigation callbacks.
+
+Required structure:
+
+```text
+Home header
+→ primary Register purchase action
+→ current-capability card collection
+→ local-first/how-it-works explanation
+→ low-emphasis support/developer disclosure when truthful
+```
+
+Wide uses two columns for peer capability cards. Compact uses one ordered
+column. No repository, telemetry, account, provider or Sync dependency may be
+introduced.
+
+## 6. Lists architecture
+
+Lists retains one page controller/state and one projection request route:
+
+```text
+selected ProductListView
+→ ProductListProjectionRepository.productListProjection
+→ presentation classification/search/sort
+→ wide table OR compact cards
+```
+
+Wide and compact projections consume the same returned items and shared helper
+functions for:
+
+- status;
+- remaining/expected wording;
+- approximate money;
+- insufficient history;
+- stable Product identity.
+
+Required visual structure:
+
+```text
+header/provenance
+→ view selector
+→ search/sort band
+→ wide unified summary strip OR compact 3+1 summary
+→ table OR cards
+→ how-it-works disclosure
+```
+
+Do not add selection/export/Analytics actions to Lists in S02.
+
+## 7. Catalogue architecture
+
+Catalogue page state continues to own:
+
+- loaded Products and Stores;
+- local Product search/sort state;
+- selected/detail Product;
+- Product draft;
+- packaged/bulk state;
+- similarity warnings;
+- Store draft;
+- messages/loading.
+
+Use one Product presentation collection:
+
+```text
+loaded Products
+→ current search
+→ deterministic local sort
+→ wide rows OR compact cards
+```
+
+No query is allowed per row/card or per layout change.
+
+Required wide structure:
+
+```text
+header + search/sort
+→ Product table/list
+→ selected detail
+→ Register product form | Similar-product decision
+→ subordinate Stores disclosure
+```
+
+Required compact structure:
+
+```text
+header
+→ search/sort
+→ Product cards
+→ details disclosure
+→ Register product disclosure
+→ similarity decision adjacent to form
+→ Stores disclosure
+```
+
+Keep existing Product and Store repository calls exactly bounded. Catalogue may
+not derive latest Purchase, price, cycle or category facts.
+
+## 8. History architecture
+
+History retains:
+
+- one `listRecentPurchases` read per refresh/retry;
+- page-local presentation filters over returned entries only;
+- selected Purchase IDs;
+- one active detail Purchase ID;
+- existing export/share calls;
+- detail and price-change reads through existing ports.
+
+Required flow:
+
+```text
+returned PurchaseHistoryEntry collection
+→ optional local filter adapters
+→ wide rows OR compact cards
+→ stable selection/detail IDs
+```
+
+Filters must be pure and deterministic. They cannot call the repository.
+Selection identity must not depend on filtered list index.
+
+Wide detail may be inline or adjacent. Compact detail is an expansion/disclosure
+associated with the selected card. Both use the existing detail repository and
+must avoid duplicate detail reads caused only by responsive rebuild.
+
+Analytics/Edit/Delete remain unavailable. Their architecture is not introduced
+by visual placement.
+
+## 9. Purchase architecture
+
+Purchase retains one stateful draft controller. S02 may extract
+presentation-only widgets but must not split the business workflow into
+separate repository-owning pages.
+
+State machine remains:
+
+```text
+edit draft
+  → validate context and staged Items
+    → review read-only projection
+      → register once
+        → known success | known failure | unknown result
+```
+
+Responsive layout is a projection of the same state:
+
+```text
+wide edit workspace / compact edit stack
+          share one draft
+wide review panel / compact review stack
+          share one review state
+```
+
+Required ownership:
+
+- Store/date/time/reference state stays in Purchase page state;
+- Product selection and Product draft stay in Purchase page state;
+- quantity/price calculations remain current implementation behavior;
+- staged lines remain the one source for table/cards and total;
+- validation and operation-result classification remain current behavior;
+- `onRegistered` remains the refresh boundary.
+
+Do not create separate desktop/mobile controllers, new repository adapters or
+duplicated form state.
+
+## 10. Page-specific priority and fidelity matrix
+
+| Page | Fidelity anchor | Highest preserved behavior | Explicit visual omission |
+| --- | --- | --- | --- |
+| Home | target card rhythm and calm hierarchy | destination callbacks and truthful copy | scheduled/household/Analytics promises |
+| Lists | unified desktop summary, compact 3+1, dense table/cards | one projection query and estimate states | photos, unsupported filters/actions |
+| Catalogue | dense Product collection plus lower form/similarity workspace | Product/Store creation and stable identity | category/price/cycle/image facts |
+| History | filter/selection/detail hierarchy and compact expandable cards | selection, exports, detail and Retry | Analytics/Edit/Delete implementation |
+| Purchase | compact context/editor/table and explicit mobile review | full draft/edit/review/register semantics | new Store/person/payment/provider behavior |
+
+Visual fidelity is highest where the reference represents current facts. Where
+the reference exceeds current authority, structural rhythm is retained while
+the unsupported control or fact is omitted.
+
+## 11. Data and behavior invariants
+
+S02 must preserve:
+
+1. local SQLite as product truth;
+2. existing account scoping;
+3. stable Product and Purchase IDs;
+4. Lists projection semantics;
+5. Product natural-identity and similarity behavior;
+6. History export/detail behavior;
+7. Purchase validation, draft preservation and registration semantics;
+8. destination identity and feature gating;
+9. Settings and Native Closure behavior;
+10. Sync/diagnostic authority outside the five-page visual layer.
+
+No UI widget may infer provider, Sync, inventory, price, cycle or operation
+truth beyond the current application values supplied to it.
+
+## 12. Optional local presentation behavior
+
+S02 may add only:
+
+- deterministic A–Z/Z–A sorting over already loaded Lists/Catalogue
+  presentation collections;
+- History filtering over already returned entries;
+- disclosure/open state;
+- view-density choice when it affects presentation only;
+- neutral glyphs/initials as non-factual Product placeholders.
+
+These behaviors:
+
+- default to a state equivalent to current behavior;
+- do not persist to the database;
+- do not trigger provider/API work;
+- do not alter repository contracts;
+- preserve stable record identity;
+- are covered by focused tests.
+
+## 13. Error and feedback architecture
+
+Use classified presentation models or bounded page helpers for:
+
+- read loading/error/retry;
+- first-use and filtered empty;
+- insufficient history;
+- Product similarity;
+- form validation;
+- known success;
+- known failure;
+- unknown registration result.
+
+Shared feedback widgets render a supplied severity/title/message/action. They
+must not parse arbitrary exception strings, assign causal codes or decide that
+an operation succeeded.
+
+Unexpected exceptions remain sanitized. Do not expose stack traces or raw
+provider messages.
+
+## 14. Reversibility and implementation order
 
 Implement in this order:
 
-1. characterization tests;
-2. semantic tokens with compatibility aliases for existing consumers;
-3. stable destination registry;
-4. responsive shell;
-5. shared layout/state primitives;
-6. Home;
-7. Lists;
-8. reserved destination tests;
-9. full regression/build evidence.
+1. characterize existing behavior and keys;
+2. correct tokens/theme;
+3. correct shared shell and components;
+4. correct Home;
+5. correct Lists;
+6. recompose Catalogue;
+7. recompose History;
+8. recompose Purchase;
+9. consolidate only genuinely shared presentation primitives;
+10. run full regression and changed-path audit;
+11. replace G/H/I.
 
-Keep old shared component APIs as compatibility wrappers when inexpensive.
-Avoid a wholesale rewrite. If a step fails, later steps must remain removable
-without touching application/domain state.
+Each page diff should remain reviewable independently. Do not mix unrelated
+cleanup, rename public page classes or migrate repositories.
 
-## 9. Rejected alternatives
+## 15. Architecture tests
 
-- separate desktop and mobile business controllers or repository queries;
-- page-local copies of shell/breakpoint logic;
-- full routing or state-management framework migration;
-- Product-cycle recomputation in widgets;
-- PNG pixel copying that invents unsupported fields/actions;
-- dependency addition for convenience;
-- Closure migration during PH01;
-- Analytics calculations or Audit event modelling during S01.
+Tests must prove:
 
-## 10. Design acceptance
+- semantic tokens are consumed rather than page-local style systems;
+- shell selection is stable across feature-gated destination lists;
+- page state survives compact/medium/wide transitions;
+- table and card projections use the same record IDs and facts;
+- responsive rebuild does not introduce duplicate repository requests;
+- local Catalogue sort and History filters are pure presentation transforms;
+- Purchase edit/review layouts share one draft state;
+- shared widgets import no repository/infrastructure layer;
+- Analytics, Settings, Audit and Closure behavior remains unchanged;
+- no new dependency or asset authority exists.
 
-S01 Design evidence passes only when:
+## 16. Design stop boundary
 
-- stable destination identity survives feature-gate and width changes;
-- one registry feeds rail, bar and More;
-- semantic tokens/components are presentation-only;
-- Home and Lists consume the shared system;
-- Lists table/cards remain two projections of one view state;
-- current application/repository ownership is preserved;
-- Closure behavior is unchanged;
-- later Catalogue, History, Purchase, Analytics, Settings and Audit work can
-  reuse the foundation without depending on S01 page internals;
-- I reports any architectural deviation or required new owner explicitly.
+Stop when:
 
-`I_DSN_CODEX.md` must include the final component/dependency map, new files,
-reversibility notes, deviations, and residual risks.
+- a target field lacks a current application source;
+- a shared widget requires a repository;
+- page convergence requires a domain/repository interface change;
+- desktop/mobile projections require separate business state;
+- a new package, font or image pipeline appears necessary;
+- page state cannot survive responsive switching;
+- the requested look requires moving Closure capability or activating
+  Analytics/Audit;
+- the authorized paths are insufficient.
+
+Report the missing design decision rather than silently expanding ownership.
+
+## 17. Required I report
+
+`I_DSN_CODEX.md` must include:
+
+1. final dependency direction;
+2. token/component changes;
+3. shell changes;
+4. one architecture summary per page;
+5. table/card shared-identity evidence;
+6. repository-call parity evidence;
+7. optional presentation behavior introduced;
+8. target features omitted by authority;
+9. changed-path inventory;
+10. deviations and residual debt.
+
+Required terminal:
+
+```text
+CYCLE=C11
+PHASE=C11-PH01
+UNIT=C11-PH01-S02
+PRESENTATION_ARCHITECTURE=PASS | PARTIAL | FAIL | BLOCKED
+SHARED_TOKEN_OWNERSHIP=PASS | FAIL | BLOCKED
+SHARED_COMPONENT_BOUNDARY=PASS | FAIL | BLOCKED
+RESPONSIVE_PROJECTION_PARITY=PASS | FAIL | BLOCKED
+PAGE_STATE_PRESERVED=PASS | FAIL | BLOCKED
+REPOSITORY_INTERFACES_CHANGED=NO | YES
+DOMAIN_OR_INFRASTRUCTURE_CHANGED=NO | YES
+NEW_DEPENDENCY_OR_ASSET_PIPELINE=NO | YES
+ANALYTICS_SETTINGS_AUDIT_CLOSURE_BOUNDARY=PRESERVED | CONTRADICTED
+NEXT_DESIGN_REVIEW=<one exact action>
+```
