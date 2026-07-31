@@ -241,110 +241,115 @@ Recovery: Architecture §21; Decision Log Event 21; checkpoint `09_DESIGN_STATE.
 ---
 
 <!-- TEMPORAL_MARKER:C10-RECOVERED-PROMOTION-2026-07-15 -->
+
 > Temporal boundary retained; the rebuildable current model below supersedes the
-> earlier Cycle 10/C11-PH01/PH02 derived segment.
+> earlier Cycle 10/C11-PH01/PH02/PH03 derived segment.
 
-# Current Model Overview — C11 PH03
+# Current Model Overview — C11 PH05
 
-> Branch: \`grm-guarded-provisioning-20260727\`
-> Implementation head: \`0924e743931ea7aba2c9cc5d2e28063e737b2ff5\`
-> J reconciliation head: \`33dc1002b4a7b00fa67e863dfe98a43c97d66cee\`
-> Evidence: complete \`DEV_STAGE/I_DSN_CODEX.md\`
-> Main reconciliation: \`[M]_STAGE/J_MAIN_STAGE.md\` section 11
-> Canonical owners: \`design/01_ARCHITECTURE.md\` §§23–26
+> Branch: `grm-guarded-provisioning-20260727`
+> Implementation head: `426235d8b67ac719e494b53cfb23a6c3b06fb489`
+> J reconciliation head: `e6ced7fe3945925bf5f314ee11c4538029e18d44`
+> PH05 authority / rollback: `b59b2ecdfb69ca98c431b9f36694f011332fbef3`
+> Evidence: complete `DEV_STAGE/I_DSN_CODEX.md`
+> Main reconciliation: `[M]_STAGE/J_MAIN_STAGE.md` section 14
+> Canonical owners: `design/01_ARCHITECTURE.md` §§23–27
 
-## 1. Current product topology
+## 1. Current responsibility topology
 
 ~~~text
-compact / medium / wide shell
-→ stable destination IDs + IndexedStack retention
-├─ Settings
-│  → local reference/preference ports
-│  → narrow Account and Sync/Device support ports
-├─ Audit
-│  → one page-session AuditController
-│  → AuditReadPort
-│  → local diagnostic projection adapter
-│  → persisted attempts/events + safe registry meaning
-├─ Analytics
-│  → application workspace + versioned registry
-│  → Account-predicated local evidence adapter
-└─ Purchase / Catalogue / History / Home / Lists
+History
+├─ stable selected-for-action Set<PurchaseId>
+├─ separate detail PurchaseId
+├─ two set-based Account-scoped export reads
+├─ pure CSV/PDF builders
+└─ typed Purchase-scope handoff to Analytics
 
-Closure product destination
-  retired from ordinary navigation
+Analytics
+├─ one composition-owned session workspace
+├─ existing fixed-point registry and record fingerprints
+├─ Chart/Table + interpretation + CSV/PDF projections
+└─ shared ExportDestinationPort for explicit file effects
 
-broad probes / recovery / delete-history / provider maintenance
-  development-only where retained; outside ordinary UI
+ExportDestinationPort
+← one LocalExportDestination
+→ Windows Downloads: collision-safe single final write
+→ Android public Downloads: typed unavailable, zero writes
+
+Guide
+└─ one local typed presentation owner + page-local anchors/focus
+
+Audit
+└─ System/Readiness/Diagnostics projections of loaded bounded local state
+
+Settings
+└─ existing page-local state + narrow ports + guarded async status refresh
 ~~~
 
-## 2. Audit responsibility map
+## 2. Export and History model
 
-| Layer/surface | Current owner |
-| --- | --- |
-| Application types | attempt/event identities, cursor, page request/result and typed states |
-| Audit controller | visibility-triggered local load, retry, paging, generation and disposal |
-| Read port | bounded Account/environment page request |
-| Local adapter | one attempt query plus one child-event query and sanitized mapping |
-| Persisted truth | existing Sync attempts and diagnostic events |
-| Registry | read-only safe meaning for diagnostic codes |
-| Audit presentation | responsive state rendering and callbacks only |
-| Composition | one controller, dependency supply and idempotent database/controller disposal |
+Pure builders own content; the shared destination adapter owns availability,
+name sanitization, collision avoidance and the one final write. Non-empty
+History selected export performs exactly one joined Purchase read plus one
+joined Item read, with Account predicates, zero database writes and zero network
+calls.
 
-Persisted IDs own identity. Attempts use descending UTC-start-plus-ID ordering
-and an exclusive composite cursor. Each page uses two local queries, zero
-network calls and zero writes. Device attribution remains unavailable when the
-persisted record cannot support it.
+Purchase IDs own selected action identity. Detail identity is separate. Filter
+and refresh prune unavailable IDs; sort and responsive layout preserve the set.
+History transfers Purchase scope only. Analytics resolves stable Purchase Item
+evidence internally and neither calculation nor saved-record creation occurs
+during navigation.
 
-## 3. Settings and Closure boundaries
+## 3. Analytics model and active defect
 
-Settings continues to own local People, Payment Methods and shortage threshold
-through existing Account-scoped repositories. Capability-narrow ports expose
-current Account and Sync/Device readiness/actions without moving Auth, Sync or
-provider authority into presentation.
+One session workspace continues to own dataset, draft, records, selection and
+responsive projections. Fixed-point/rational arithmetic, operation registry,
+fingerprints, Chart/Table parity, stable internal Purchase/Product/Item IDs and
+schema boundaries are unchanged.
 
-Closure is absent from ordinary destination identity and navigation under both
-former flag values. Existing Closure pages, runners, diagnostic infrastructure
-and focused tests may remain unreachable development/support implementation.
-Raw diagnostics, hosted probes, recovery, delete-history and provider
-maintenance do not appear in Audit or ordinary Settings.
+Human runtime evidence indicates that selected variables or operation may not
+control the displayed result correctly. Root cause is unresolved. The next
+read-only route is:
 
-## 4. State and lifecycle
+~~~text
+draft → validation → immutable record → grouping → operation
+→ Chart/Table → interpretation → CSV/PDF
+~~~
 
-Audit begins in idle state while hidden. Visibility triggers the first local
-read. One controller supplies wide, medium and compact projections. Generation
-tokens suppress stale completions; disposal invalidates pending work. Retry is
-manual and local-only. No timer, stream, listener, background refresh or
-automatic recovery belongs to Audit.
+The compact composer, unified Variables control and two custom date fields are
+accepted direction but are not implemented architecture. No second controller,
+schema change or persistence owner is justified without evidence.
 
-Composition close is idempotent: it disposes the single Audit controller and
-closes the app-private database once.
+## 4. Guide deviation and local projections
 
-## 5. Retained PH01/PH02 and Cycle 10 topology
+Guide structurally owns eight local typed sections and page-local anchor/focus
+lifecycle with zero I/O. Its content does not fully match E section 35: Lists is
+absent as a separate section, and getting-started, local-data/export and
+Sync-limit responsibilities are redistributed. This is one owner's
+content-contract deviation.
 
-PH01 responsive shell and five-page corrections remain implemented and
-validated. PH02 Analytics remains deterministic, local, read-only,
-active-Account-scoped and session-local. Purchase History still owns purchase
-selection/handoff only.
+Audit summary cards derive only from the loaded bounded local result and add no
+I/O. Settings preserves its existing controller and ports; support-action
+refresh now completes while the busy guard remains active.
 
-Cycle 10 hosted coordination remains accepted only for two Devices, one Account
-and development. PH03 does not change schema, migration, generated source,
-dependencies, API/Auth/Sync/provider contracts, diagnostic registry or
-Analytics behavior.
+## 5. Preserved contracts and evidence ceiling
 
-The PH03 rollback boundary is implementation parent
-`256ee4dbbcb790419b816862ee42933a115ddd87`; no schema, data, generated-source
-or dependency rollback is required.
+PH05 changes no schema, migration, generated source, dependency, native host,
+API/Auth/Sync/provider contract, diagnostic registry or stored identity.
+Rollback to `b59b2ecd...` restores the prior PH05 behavior without data
+conversion.
 
-## 6. Evidence and forward boundary
+Automated tests, analysis, Windows release build and Android debug build validate
+the implemented topology at the recorded ceiling. Android public Downloads is
+blocked by authority and returns typed unavailable with zero writes. Android
+shared-document/native-sharing work, provider/real-device evidence,
+assistive-technology, keyboard-only, locale, learner comprehension and broad
+human acceptance remain deferred or host-unvalidated.
 
-Focused tests, the 264-test suite with four lab-gated skips, analysis, Windows
-release build, Android debug build, registry drift check and lifecycle/path
-audits validate the PH03 implementation at the automated/build ceiling. Bounded
-human UI verification is accepted for continuation.
+## 6. Recovery and next route
 
-Screenshot-set, assistive-technology, locale, real-device, keyboard-only,
-learner-comprehension and human architecture acceptance remain
-host-unvalidated. Minor UI polish is deferred to C12-PH01. GCM04, conditional
-R07, production, resilience, multiple-Account, revocation, retention and
-rebootstrap remain deferred.
+Use Architecture §27 for stable rules, Decision Log Event 27 for chronology and
+alternatives, and `09_DESIGN_STATE.md` for the compact checkpoint. Main must
+preserve the Analytics defect and Guide deviation, complete the requested
+read-only Analytics state-of-union, and only then decide whether new corrective
+D/E/F authority is justified.

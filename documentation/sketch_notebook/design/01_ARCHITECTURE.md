@@ -1358,3 +1358,111 @@ or dependency boundaries. Screenshot-set, assistive-technology, locale,
 real-device, keyboard-only, learner-comprehension and human architecture
 acceptance remain host-unvalidated.
 
+# 27. C11-PH05 Export, Selection, Guide and Projection Architecture
+
+Evidence boundary: implementation commit
+`426235d8b67ac719e494b53cfb23a6c3b06fb489`, complete
+`DEV_STAGE/I_DSN_CODEX.md`, J section 14 at
+`e6ced7fe3945925bf5f314ee11c4538029e18d44`, and the named handwritten source
+and tests. These rules are accepted as implemented at the automated/build
+ceiling; the Guide deviation and Analytics defect below limit broader
+acceptance.
+
+## 27.1 Export dependency direction
+
+~~~text
+History / Analytics presentation
+→ pure CSV/PDF builders
+→ ExportDestinationPort
+← composition-injected LocalExportDestination
+→ one explicit collision-safe final file write
+~~~
+
+`ExportDestinationPort` is the single application boundary for export
+destination effects. Builders own deterministic content and do not select
+directories or write files. The adapter owns platform availability, safe
+filename construction, collision avoidance and the final write. A successful
+explicit export performs exactly one final write.
+
+Windows Downloads uses the existing dependency boundary. Android public
+Downloads is a typed unavailable outcome with zero writes. App-private or
+temporary storage must not be represented as public Downloads. Shared-document,
+native-sharing, MediaStore or document-provider work requires separate
+platform authority.
+
+## 27.2 History export and identity invariants
+
+For a non-empty selected set, History export performs one set-based
+Account-scoped joined Purchase read and one set-based joined Item read. It
+performs zero database writes and zero network calls. Purchase identity controls
+deduplication; Item identity controls contained line evidence.
+
+History owns one stable `Set<PurchaseId>` for selected-for-action state.
+Detail focus remains a separate optional `PurchaseId`. Final uncheck and clear
+may produce the empty set; filters and refresh intersect selection with the
+currently loaded Account-scoped result; sorting and breakpoint changes preserve
+identity. Checkbox action never implies detail activation.
+
+History hands only Account scope and immutable Purchase IDs to
+`AnalyticsLaunchContext`. Analytics owns Item-evidence expansion and later
+calculation. Navigation performs no calculation, persistence, export or
+Purchase mutation.
+
+## 27.3 Analytics ownership and preserved boundaries
+
+One composition-owned `AnalyticsWorkspaceController` remains the session owner.
+History does not create a second controller. Record fingerprinting,
+fixed-point/rational arithmetic, the versioned operation registry, Chart/Table
+projection parity and schema boundaries remain unchanged.
+
+Human runtime evidence establishes a defective variable-integrity boundary:
+selected variables or operation may not control the displayed result correctly.
+Root cause is unresolved. The mandatory next investigation traces draft,
+validation, immutable record, grouping, operation, Chart/Table, interpretation
+and CSV/PDF without presuming which layer failed.
+
+Purchase, Product and Purchase Item IDs remain internal identities even when
+UUIDs are absent from presentation. The compact composer, unified Variables
+control and two custom date fields are accepted correction direction, not
+implemented architecture. No second controller, new persistence owner, schema
+change or calculation-semantic change is accepted without evidence.
+
+## 27.4 Guide, Audit and Settings ownership
+
+Guide has one local presentation owner: immutable typed sections in
+`guide_page.dart`, with page-local anchor keys, focus nodes, scroll state and
+disposal. It owns no repository, database, network, provider or content-service
+authority.
+
+The committed Guide has eight sections but does not fully match E section 35:
+Lists has no separate learner section, while getting-started,
+local-data/export and Sync-limit responsibilities are redistributed. This is a
+content-contract deviation within the single owner, not justification for
+another owner or infrastructure.
+
+Audit System, Readiness summary and Diagnostics cards depend only on the loaded
+bounded local `AuditPageResult`. Projection adds zero reads, writes and network
+calls and cannot infer provider-wide or causal truth.
+
+Settings retains its page-local controller/state and the existing narrow
+Account, reference, preference and Sync/Device ports. Support actions refresh
+local status while the duplicate-action guard remains active. No new Settings
+repository, lifecycle owner or provider contract is introduced.
+
+## 27.5 Composition, unchanged contracts and rollback
+
+Composition injects one `LocalExportDestination` and continues to own one
+Analytics workspace. Page-local Guide and Settings resources dispose within
+their existing presentation lifetimes. Audit continues to project its existing
+bounded controller state.
+
+PH05 changes no schema, migration, generated source, dependency, native platform
+file, API/Auth/Sync/provider contract, diagnostic registry or persisted
+identity. Reverting the PH05 implementation chain to
+`b59b2ecdfb69ca98c431b9f36694f011332fbef3` restores prior behavior without
+data conversion or contract rollback.
+
+Provider, real-device, assistive-technology, keyboard-only, locale, learner-
+comprehension and broad human acceptance remain host-unvalidated. Android
+shared-document/native-sharing integration and the Analytics corrective
+materialization remain deferred.

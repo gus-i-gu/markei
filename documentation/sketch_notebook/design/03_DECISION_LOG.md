@@ -1645,3 +1645,142 @@ deferred
   GCM04, conditional R07 and unchanged production/resilience families
 ~~~
 
+# Event 27 — 2026-07-31 — C11-PH05 Product-Surface and Export Architecture
+
+## Decision boundary and provenance
+
+This event reconciles implementation commit
+`426235d8b67ac719e494b53cfb23a6c3b06fb489`, complete
+`DEV_STAGE/I_DSN_CODEX.md`, J section 14 at
+`e6ced7fe3945925bf5f314ee11c4538029e18d44`, the PH05 Design investigation,
+and the named handwritten source and tests. The accepted implementation
+authority is `b59b2ecdfb69ca98c431b9f36694f011332fbef3`.
+
+The PH05 topology is implemented and validated at the recorded automated/build
+ceiling. Human runtime evidence identifies an unresolved Analytics
+variable-integrity defect and a Guide content-contract deviation, so PH05 is not
+accepted as complete human or learner validation.
+
+## Accepted and implemented decisions
+
+1. `ExportDestinationPort` is the single application export-effect boundary.
+   One composition-injected `LocalExportDestination` owns filesystem
+   destination resolution, safe naming, collision handling and the final write.
+   History and Analytics retain pure CSV/PDF builders and request effects only
+   after an explicit export action.
+2. A successful explicit export performs one collision-safe final write.
+   Windows resolves Downloads within the existing dependency boundary. Android
+   public Downloads returns a typed unavailable result before destination work
+   and performs zero writes.
+3. Non-empty selected History export reconstructs evidence with two set-based,
+   Account-scoped reads: one joined Purchase query and one joined Item query.
+   It performs no database write and no network call.
+4. History owns one page-session `Set<PurchaseId>` for selected-for-action
+   identity. Detail identity remains a separate `PurchaseId`. Final uncheck,
+   clear, filter pruning, reload intersection, sorting and responsive layout do
+   not introduce another selection owner.
+5. History-to-Analytics navigation transfers only immutable Purchase IDs and the
+   Account scope through the typed launch context. Analytics expands that scope
+   against its already loaded Account-predicated Item evidence; navigation
+   neither calculates nor creates a saved record.
+6. One composition-owned Analytics workspace remains the calculation/session
+   owner across responsive layouts. Record fingerprints, fixed-point/rational
+   arithmetic, Chart/Table parity, schema boundaries and zero Analytics
+   database/network writes remain unchanged.
+7. Guide has one presentation owner in `guide_page.dart`: an immutable local
+   typed section list plus page-local keys, focus nodes and scroll lifecycle.
+   It owns no database, network, provider or content-service dependency.
+8. Audit System, Readiness summary and Diagnostics cards are pure projections of
+   the already loaded bounded `AuditPageResult`. They add no query, write,
+   network, broad Closure, recovery or causal authority.
+9. Settings retains one page-local controller/state owner and its existing
+   narrow Account, reference, preference and Sync/Device ports. The support
+   action now refreshes local status while the duplicate-action busy guard
+   remains active.
+10. Home static information, Purchase responsive regrouping and Catalogue
+    selection removal remain presentation-local changes. Stored `@NNN` and
+    `#NNN` reference codes and stable internal identities remain unchanged.
+
+## Deviations and defect classification
+
+The Guide structurally owns eight sections, but its committed section sequence
+does not fully implement the accepted learner content contract in E section 35.
+Lists is absent as a separate section. Getting-started, local-data/export and
+Sync-limit responsibilities are redistributed across Home, Exports, Audit and
+Settings. This is an implemented content-contract deviation. It is not evidence
+for a second Guide owner, remote content infrastructure or a platform defect.
+
+Human runtime evidence indicates that selected Analytics variables or operation
+may not control the displayed result correctly. The root cause is not
+established. It must not be assigned speculatively to draft state, validation,
+grouping, fixed-point display, record reuse or projection.
+
+The next authorized investigation is read-only and must trace:
+
+~~~text
+composer draft
+→ validation
+→ immutable Analytics record
+→ grouping
+→ operation execution
+→ Chart/Table projection
+→ interpretation
+→ CSV/PDF export
+~~~
+
+Stable Purchase, Product and Purchase Item IDs remain internal evidence and
+traceability identities even when UUIDs are removed from user-facing
+presentation. The accepted compact composer, unified Variables control and two
+custom date fields are human-approved correction direction, not implemented
+architecture. No second Analytics controller, persistence owner, schema change
+or calculation-semantic change is accepted without evidence.
+
+## Alternatives, rationale and reversibility
+
+Rejected or deferred alternatives include page-owned filesystem writes,
+separate History and Analytics destinations, Android temporary storage
+presented as public Downloads, automatic export, a second Analytics workspace,
+History-side calculation, a Guide repository/CMS, extra Audit reads and a
+second Settings truth owner.
+
+The selected design is narrow and reversible because application callers depend
+on one export port, builders remain pure, selection and detail identities are
+separate, Guide content is bundled presentation data, and Audit cards consume
+loaded state. Reverting the PH05 implementation chain to
+`b59b2ecdfb69ca98c431b9f36694f011332fbef3` restores the previous page/export
+behavior. No schema, data migration, generated source, dependency, native host,
+API/Auth/Sync/provider or diagnostic-contract rollback is required.
+
+Android public Downloads remains blocked by the authorized platform boundary.
+Shared-document selection, native sharing and any MediaStore/document-provider
+integration remain deferred pending separate Main/human authority. Provider,
+real-device, assistive-technology, keyboard-only, locale and learner-
+comprehension evidence remains host-unvalidated.
+
+## Decision disposition
+
+~~~text
+accepted + implemented + automated/build validated
+  single export port and adapter
+  pure builders plus explicit one-write export
+  two set-based Account-scoped History reads
+  stable History action selection and typed scope handoff
+  one Analytics workspace and unchanged calculation/schema boundaries
+  local typed Guide owner and page-local focus lifecycle
+  loaded-state-only Audit projections
+  unchanged Settings ownership with corrected refresh
+
+implemented deviation
+  eight-section Guide does not fully match E section 35
+
+defective + root cause unresolved
+  Analytics selected-variable/operation integrity
+
+blocked
+  Android public Downloads under current authority
+
+deferred
+  Android shared-document/native-sharing platform work
+  compact composer correction materialization
+  provider and broad human/real-device acceptance
+~~~
