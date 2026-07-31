@@ -67,16 +67,16 @@ Read in this order:
 
 No source, client, database or provider mutation is authorized by this checkpoint.
 
-<!-- TEMPORAL_MARKER:C11-PH02-OPERATIONAL-2026-07-31 -->
-> Temporal boundary — Operational checkpoint after C11-PH01-R01 and C11-PH02 materialization. Content above preserves the earlier C11-PH01-S01 recovery checkpoint. Content below is the current compact Operational recovery state and authorizes no source, provider, live-operation or production change.
+<!-- TEMPORAL_MARKER:C11-PH03-OPERATIONAL-2026-07-31 -->
+> Temporal boundary — Operational checkpoint after C11-PH03 materialization and Main section 11 reconciliation. Content above preserves earlier recovery checkpoints. Content below is the sole current compact Operational state and authorizes no source, provider, live-operation, Main-root, staging or methodology change.
 
-
-# Current Operational State — C11-PH02
+# Current Operational State — C11-PH03
 
 > Branch: `grm-guarded-provisioning-20260727`
-> Inspected repository head: `0bfc02e8363d8119469a5e8627d8350fa97790b4`
-> Implementation evidence head: `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`
-> Latest Main reconciliation: `J_MAIN_STAGE.md` section 9
+> Inspected remote head: `33dc1002b4a7b00fa67e863dfe98a43c97d66cee`
+> Implementation evidence head: `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`
+> Evidence report: complete `DEV_STAGE/G_OPS_CODEX.md`
+> Latest Main reconciliation: `J_MAIN_STAGE.md` section 11
 > Status: Active compact Operational checkpoint
 
 ## Accepted terminal
@@ -85,61 +85,61 @@ No source, client, database or provider mutation is authorized by this checkpoin
 CYCLE10=CLOSED_AT_GCM03_TWO_DEVICE_DEVELOPMENT_SCOPE
 C11_PH01_R01=IMPLEMENTED_VALIDATED_AUTOMATED_BUILD_CEILING
 C11_PH02=IMPLEMENTED_VALIDATED_AUTOMATED_BUILD_CEILING
-PRODUCTION_ACCEPTANCE=ABSENT
+C11_PH03=IMPLEMENTED_VALIDATED_AUTOMATED_BUILD_CEILING
+PH03_HUMAN_UI_ACCEPTANCE=ACCEPTED_BOUNDED
+PRODUCTION_ACCEPTANCE=DEFERRED
 LIVE_OPERATION_AUTHORITY=NONE
 ```
 
-Cycle 10 acceptance remains limited to two Devices, one Account and the development environment. GCM04, multiple-Account isolation, revocation, outage recovery, retention/rebootstrap and production lifecycle remain deferred to C12-PHASE02.
+Cycle 10 remains closed at the accepted two-Device, one-Account development boundary. No C11 work reopens production, provider or Sync acceptance.
 
 ## Implemented and validated
 
-- Purchase and Catalogue constrained-height reachability and field geometry corrections.
-- One History checkbox selection affordance with separate detail activation.
-- R02 tester-owned bounded scrolling and visibility-gated hidden Analytics loading.
-- Deterministic read-only local Analytics scoped by the active Account.
-- One complete joined evidence load; no History 50-row reuse and no N+1 detail path.
-- Initial request count 1; each local Retry +1; filtering, selection, execution, focus, reset and reorder +0.
-- Typed History Purchase-ID handoff; History does not calculate Analytics.
-- Sum, Mean, B-minus-A Difference and part-of-whole Percentage with checked fixed-point/rational behavior.
-- Typed unavailable outcomes for zero denominator and overflow.
-- One workspace state across wide and compact layouts; 100-row rendered page and 500-ID selected-scope bound.
-- Focused tests, 26 app-shell tests, full 258-pass/4-skip suite, analysis, Windows release build and Android debug build.
+- Settings loads persisted Account-scoped shortage threshold state, validates whole values from 0 through 365, preserves invalid drafts, separates local failure states, refreshes archived references and blocks duplicate asynchronous actions.
+- Capability-narrow Settings Account and Sync/Device adapters preserve existing behavior and expose action effects; no live support action was executed in PH03 validation.
+- Audit is local, read-only, Account/environment-scoped and sanitized.
+- Each Audit page and local Retry issue exactly two local queries, zero network calls and zero writes.
+- Audit uses a default 20-attempt page, hard maximum 50 and deterministic exclusive UTC-time-plus-attempt-ID cursor paging.
+- Visibility-gated loading, stale-completion suppression and disposal are validated.
+- Closure is absent from ordinary wide, medium and compact navigation under both feature-flag values.
+- Retained Closure implementation remains unreachable development/support material.
+- Full validation passed: focused tests; 264-pass/4-lab-skip Flutter suite; analysis; Windows release build; Android debug build; diagnostic-registry drift check; formatting and diff checks.
+- Schema, migration, generated source, dependencies, API, Auth, Sync and provider contracts remained unchanged.
 
-## Measured evidence boundary
+## Evidence ceiling and remaining gates
 
-On one Windows validation host:
+Bounded human UI verification is accepted for PH03 permanent absorption. Minor non-blocking visual refinements are deferred to C12-PH01 and do not reopen PH03.
 
-- ordinary 1,000-Purchase/5,000-Item Sum fixture: complete load 2 ms, calculation 22 ms;
-- stress 10,000-Purchase/50,000-Item Mean fixture with selected scope 500: complete load 6 ms, calculation 302 ms.
+Still host-unvalidated or unperformed:
 
-These are committed fixture measurements, not universal Windows or Android performance guarantees.
+- screenshot-set evidence;
+- complete keyboard-only and assistive-technology acceptance;
+- Narrator and TalkBack review;
+- locale-sensitive presentation review;
+- real Windows/Android Device and density/orientation review;
+- live Sign in, enrollment, hosted connection, Sync, protocol Retry, Recovery or provider operation.
 
-No schema, migration, dependency, lockfile, generated-source, platform, API, Auth, Sync, provider or diagnostic surface changed. No live Sync/provider operation occurred, and no Cycle 10 or production acceptance boundary reopened.
+These are remaining evidence gates, not failed PH03 implementation.
 
-## Remaining gates
+## Current Operational work
 
-- screenshot-based compact/medium/wide review;
-- Narrator, TalkBack and other assistive-technology review;
-- keyboard-only human acceptance;
-- real Windows/Android device and density/orientation review;
-- locale review;
-- human comprehension and visual acceptance;
-- representative slower-device performance confirmation when Main authorizes a target.
-
-These are unperformed acceptance gates, not implementation failures.
+1. Complete the remaining human accessibility, locale and real-device gates.
+2. Confirm preserved-database Settings behavior and representative offline Audit portability without provider activity.
+3. Carry only minor visual refinement into C12-PH01.
+4. Keep GCM04, multiple-Account hosted work, revocation, outage recovery, retention/rebootstrap, conditional R07 and production lifecycle in C12-PHASE02.
 
 ## Recovery
 
 Read in this order:
 
 1. this checkpoint segment;
-2. `04_TODO.md` for executable and deferred gates;
-3. `11_OPERATIONAL_RECORD.md`, “C11-PH01-R01 and C11-PH02 combined materialization”;
-4. `12_OPERATIONAL_MODEL.md`, “C11 Deterministic Local Analytics Operational Rules”;
+2. `04_TODO.md` for remaining executable and deferred gates;
+3. `11_OPERATIONAL_RECORD.md`, “C11-PH03 Settings, Audit, and Closure disposition materialization”;
+4. `12_OPERATIONAL_MODEL.md`, “C11 Settings, Audit, and Closure Operational Rules”;
 5. complete `DEV_STAGE/G_OPS_CODEX.md`;
-6. `J_MAIN_STAGE.md` section 9;
-7. implementation commit `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6` only when execution detail is required.
+6. `J_MAIN_STAGE.md` section 11;
+7. implementation commit `0924e743931ea7aba2c9cc5d2e28063e737b2ff5` only when execution detail is required.
 
-Next valid route: after Operational, Didactic and Design permanent reconciliations are published, Main reconciles the results and selects the bounded C11-PH03 entry.
+Next valid route: preserve compatible Didactic and Design permanent reconciliations, then Main verifies all three domain commits and refreshes `00_PROJECT_STATE.md`, `05_SESSION_LOG.md` and `06_SESSION_SCHEME.md` before C12-PH01.
 
 No source, client, database, provider, Main-root, staging or methodology mutation is authorized by this checkpoint.

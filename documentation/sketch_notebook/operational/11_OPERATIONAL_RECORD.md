@@ -1089,3 +1089,63 @@ No schema, migration, dependency, lockfile, generated-source, platform, API, Aut
 
 Still unperformed: screenshot-based rendered review; Narrator, TalkBack and other assistive-technology review; keyboard-only human acceptance; real Windows/Android device review; locale review; and human comprehension/visual acceptance. These are remaining validation gates, not failed implementation.
 
+---
+
+## 2026-07-31 — C11-PH03 Settings, Audit, and Closure disposition materialization
+
+Sequence: `FLX-PRM-04` post-evidence Operational absorption  
+Role: Operational Chat [O]  
+Implementation parent: `256ee4dbbcb790419b816862ee42933a115ddd87`  
+Implementation commit: `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`  
+Main reconciliation: `J_MAIN_STAGE.md` section 11 at `33dc1002b4a7b00fa67e863dfe98a43c97d66cee`  
+Evidence: complete `DEV_STAGE/G_OPS_CODEX.md`, implementation diff, relevant source and tests  
+Evidence boundary: automated/widget evidence, static analysis, one Windows release build, one Android debug build, and bounded human UI acceptance; no screenshot set, assistive-technology acceptance, locale review, real-device review, hosted operation or Sync operation
+
+### Settings execution evidence
+
+- Persisted shortage threshold is loaded and accepts only whole values from 0 through 365.
+- Invalid threshold drafts remain available for correction; loading, empty, read-error, save-error and saved states are distinct.
+- People and Payment Method lists refresh after archive, and completed archive actions remain visible.
+- One pending asynchronous Settings action blocks duplicate actions.
+- Local preference and reference operations remain Account-scoped and local.
+- Account and Sync/Device sections use capability-narrow adapters over existing behavior. Focused tests use fakes; no live Sign in, sign-out, enrollment, connection check or Sync action was executed.
+- Failure handling preserves entered values where applicable and exposes bounded local failure messages rather than silently losing input.
+
+### Audit execution evidence
+
+- Audit is an ordinary local, read-only, Account/environment-scoped and sanitized projection over persisted diagnostic attempts and child events.
+- Initial visible load and local Retry each issue exactly one attempt query plus one child-event query: two local reads, zero network calls and zero writes.
+- Default page size is 20 attempts and the hard maximum is 50.
+- Paging is deterministic and exclusive by UTC start time plus persisted attempt ID; equal timestamps retain stable descending order.
+- Visibility-gated first load, generation checks and disposal suppress hidden or stale completion ownership.
+- Loading, ready, empty, stale, bounded-window and unavailable states are distinct.
+- Audit imports no broad Closure runner, access-token authority, Auth mutation, enrollment coordinator, Sync coordinator, protocol Retry, Recovery or delete-history capability.
+- Repository tests validated Account/environment isolation and exclusion of credentials, tokens, raw payloads, SQL, paths, stack traces, private URLs, full hashes, raw identifiers and raw exceptions.
+
+### Closure disposition and lifecycle evidence
+
+- Closure is absent from ordinary wide, medium and compact navigation with `MARKEI_NATIVE_CLOSURE_SURFACE` false and true.
+- Native Closure pages, runner methods and diagnostic infrastructure remain only as unreachable development/support implementation where already present.
+- No destructive or highly technical Closure action entered ordinary product UI.
+- Composition owns one Audit controller and closes the controller and database through an idempotent `close()`.
+
+### Validation chronology and unchanged surfaces
+
+- `flutter pub get`: validated; no dependency or lockfile change.
+- `dart format --output=none --set-exit-if-changed lib test`: validated; 119 files, zero changed.
+- `flutter analyze`: validated; no issues.
+- Focused Settings, Audit, repository, Closure-navigation, app-shell, visual-foundation, composition and Sync-path tests: validated.
+- `flutter test --concurrency=1`: validated; 264 tests passed, 4 lab-only tests skipped, 88.4 seconds.
+- `flutter build windows --release`: validated in 49.9 seconds with the existing Boost CMake developer warning.
+- `flutter build apk --debug`: validated in 80.4 seconds with the existing `auth0_flutter` Kotlin Gradle Plugin migration warning.
+- `node scripts/generate_sync_diagnostics.mjs --check`: validated.
+- `git diff --check`: validated with line-ending warnings only.
+- Schema, migration, generated Drift source, dependency, API, Auth, Sync and provider contracts remained unchanged.
+- No live Sign in, enrollment, hosted connection, Sync, Retry, Recovery, Auth0, Neon, Render or provider operation was performed.
+
+### Evidence ceiling and deferrals
+
+Human UI verification accepted PH03 as sufficient for documentation and permanent-domain absorption. Minor non-blocking visual refinements are deferred to C12-PH01 and do not reopen PH03.
+
+Screenshot sets, Narrator, TalkBack, locale coverage, real-device coverage, complete keyboard-only acceptance and broader human accessibility acceptance remain unvalidated. Build and widget evidence do not substitute for those gates. Cycle 10 production, GCM04, multiple-Account, revocation, outage recovery, retention/rebootstrap and provider acceptance remain deferred to C12-PHASE02.
+

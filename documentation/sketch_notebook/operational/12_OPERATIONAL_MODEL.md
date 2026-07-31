@@ -526,3 +526,33 @@ Performance claims must name fixture size, operation, rendered-page size, select
 
 Local Analytics implementation and validation do not alter Sync, provider, production or Cycle 10 acceptance. No live operation or remote authority may be inferred from local analysis evidence. Evidence: G forbidden-surface audit and J §9.5.
 
+# C11 Settings, Audit, and Closure Operational Rules
+
+## Settings persistence and action boundaries
+
+- Settings must load persisted Account-scoped preferences before presenting an editable value.
+- Bounded numeric preferences must validate their complete accepted range before persistence and must preserve an invalid draft for correction.
+- Local read, save and archive failures must remain distinct from empty and successful states.
+- A successful reference archive must refresh the visible Account-scoped list.
+- While one asynchronous Settings action is pending, duplicate actions must remain blocked.
+- Local status refresh must remain distinct from actions that may contact a network or write local Auth, Device or Sync state. Capability-narrow adapters must expose those effects explicitly.
+
+## Ordinary Audit read boundary
+
+- Ordinary Audit is a sanitized, local, read-only projection for one Account and environment; it is not Purchase History, current System Health, hosted observability or Sync authority.
+- One Audit page is bounded to one attempt query and one child-event query. Ordinary load and local Retry must perform zero Audit network calls and zero Audit writes.
+- Account and environment predicates apply before projection. Child events are restricted to the selected attempt identities.
+- Paging uses persisted identity and an exclusive composite cursor of UTC start time plus attempt ID. The default page is bounded and callers cannot exceed the hard maximum.
+- Audit states must distinguish loading, ready, empty, stale, bounded-window and unavailable meaning.
+- Audit projection must exclude credentials, tokens, raw payloads, SQL, filesystem paths, stack traces, private URLs, full hashes, raw identifiers and raw exceptions.
+- Audit lifecycle must visibility-gate its initial read, suppress stale completions and become inert after disposal.
+- Broad Closure, Auth mutation, enrollment, Sync, protocol Retry, Recovery and delete-history capabilities must remain outside ordinary Audit.
+
+## Closure retirement and evidence gates
+
+- Closure is not an ordinary product destination under either development-flag value.
+- Retained Closure pages, runners and diagnostics are development/support implementation only while unreachable from ordinary navigation; their existence does not establish product acceptance.
+- Composition owns idempotent disposal of the Audit controller and local database.
+- Automated tests, analysis and platform builds establish only their named execution boundary. Screenshot, assistive-technology, locale, real-device and keyboard-only acceptance require separate evidence.
+- Bounded human UI acceptance may close the implemented phase while explicitly deferring non-blocking visual refinements; it must not silently establish unperformed accessibility or platform gates.
+
