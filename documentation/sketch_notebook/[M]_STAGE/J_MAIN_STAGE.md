@@ -1015,3 +1015,180 @@ C12_PH01=REMAINING_UI_UX_POLISH_AFTER_PH04
 C12_PHASE02=BACKEND_GCM04_AND_CONDITIONAL_R07_DEFERRED
 NEXT_MAIN_ACTION=Materialize C11-PH04 from the 35cf236 D/E/F authority, then reconcile PH04 G/H/I and bounded human rendered evidence.
 ~~~
+
+---
+
+<!-- RECONCILIATION_MARKER:C11-PH05-R01-2026-07-31 -->
+
+# Cycle 11 PH05 Round 01 — Main Reconciliation and Codex Activation
+
+## 13.1 Identity, authority and branch state
+
+```text
+ROLE=Main Chat [M]
+SEQUENCE=FLX-INV-02_TO_ACTIVATED_MATERIALIZATION
+REPOSITORY=gus-i-gu/markei
+BRANCH=grm-guarded-provisioning-20260727
+STARTING_REMOTE_HEAD=42cb6fcac60a5033c72864201786f7fcfab9a35b
+PH04_ACTIVATION=35cf23602060fd3a186a2470d7ac322c795e5fce
+PH04_IMPLEMENTATION=1aea7a5b531b56484e999aa8989978902b8db2c0
+PH04_PH05_RECONCILIATION_MERGE=42cb6fcac60a5033c72864201786f7fcfab9a35b
+PH05_OPERATIONAL=c4ebbdc2a8957f132f2a97aeed66d1c7e06dabef
+PH05_DIDACTIC=611943a4f18cf34f0f1ca5ea58b8b69401c07abe
+PH05_DESIGN=837d988715835be13ab7a2657adce06336f5bb2c
+```
+
+This section reconciles the three C11-PH05 investigative A/B/C appends against
+the final committed PH04 implementation and activates the paired PH05 D/E/F
+packet. It authorizes no permanent-domain, Main-root or methodology change.
+
+## 13.2 PH04 reconciliation correction
+
+PH04 is no longer an unmaterialized worktree candidate. The human-supervised
+recovery created implementation commit `1aea7a5b531b56484e999aa8989978902b8db2c0`
+and reconciliation merge `42cb6fcac60a5033c72864201786f7fcfab9a35b`.
+The remote branch now contains the final Analytics composer, immutable
+session-record model, Chart/Table projections, Variables Purchase/Item views,
+pure CSV/PDF builders and PH04 G/H/I evidence.
+
+The G terminal value `PUBLICATION=NOT_PUSHED` remains truthful about Codex's
+blocked attempt at the time that report was written. It is not the current
+repository publication state. Current repository truth is:
+
+```text
+PH04_CODEX_PUBLICATION_ATTEMPT=NOT_PUSHED
+PH04_RECOVERY_PUBLICATION=PUSHED
+PH04_IMPLEMENTATION_REMOTE_ANCESTOR=YES
+PH04_AUTOMATED_AND_BUILD_EVIDENCE=PASS_AT_RECORDED_CEILING
+PH04_HUMAN_RENDERED_ASSISTIVE_TECH_LOCALE_REAL_DEVICE_COMPREHENSION=NOT_ESTABLISHED
+```
+
+PH04 does not require source correction before PH05. PH05 may modify the final
+Analytics handoff wording and explicit export sink while preserving one
+workspace, one local evidence load, session-only records and pure builders.
+
+## 13.3 A/B/C verification and corrections
+
+All three C11-PH05 markers exist once in their paired append-only files. Their
+commits are compatible and their conclusions are sufficiently complementary for
+Main synthesis. They inspected pre-PH04 source, so their PH04 status statements
+are superseded by section 13.2.
+
+| Area | Reconciled repository fact | Main disposition |
+| --- | --- | --- |
+| Home | Four destination cards; no News/feed/status model | add two build-bundled information cards; zero I/O |
+| Purchase | `Store and time` plus independent nullable Person/Payment references | responsive regrouping only; rename optional group |
+| Catalogue | `_selectedProduct` plus `DataRow.onSelectChanged` creates automatic checkbox/selected chrome | Operational/Design are correct; Didactic checkbox-absent claim is corrected; remove the complete unused selection owner |
+| History | `_selectedIds` already supports zero/one/many/final-uncheck; `_selectedPurchaseId` separately owns detail | harden semantics, stale/filter reconciliation and action safety; no second selection controller |
+| History scope | repository returns at most 50 recent Purchases | `Select all shown` means the current filtered loaded window only |
+| Analytics handoff | stable Purchase IDs already expand to final PH04 Item scope; current message wrongly says Analytics will calculate | retain typed boundary; change message/copy only where possible; no automatic Run or record |
+| Exports | History performs N detail reads; History and Analytics write fixed temp paths | add one shared injected destination; set-based History reads; one final write per explicit success |
+| Guide | destination exists as one-sentence `_StaticPage` | dedicated local `GuidePage`, eight sections, contents/anchors, no search |
+| Audit | already-loaded bounded local attempts/events; two local queries | add pure System/Readiness summary/Diagnostics projections; no new read or truth owner |
+| Settings | one page state; five initial calls; `_runSupportAction` suppresses intended refresh through `_busy` re-entry | Account-first recomposition; visible Advanced; internal refresh correction; current Device only |
+| short codes | `@NNN` and `#NNN` are stored visible references; UUIDs remain stable object identity | preserve both; `$NNN` deferred |
+
+## 13.4 Human/Main decisions resolved for PH05
+
+1. Home uses the visible titles `News` and `Updates follow-up`. Both are static,
+   local and labelled as preview information; neither links to a live service.
+2. `Updates follow-up` exposes only completed/in progress/planned labels whose
+   statements are supported by committed repository state. Its date is the
+   build-content date, not a remote publication timestamp.
+3. Purchase uses `Optional purchase details`. Person and Payment Method remain
+   independent optional Purchase metadata; Store/date/time remain required.
+4. Catalogue removes automatic checkboxes, selection state, selected copy and
+   highlight. Explicit `View details` remains mandatory; identifying cells/cards
+   may also open the same detail state.
+5. History filters prune action selection to the newly shown filtered set. A
+   successful reload intersects selection and detail with returned Account rows.
+6. History uses `Select all shown`, `Clear selection`, and `N purchases selected`.
+   It does not introduce paging or Account-wide selection in PH05.
+7. The History handoff label is `Use in Analytics`.
+8. A handoff initializes PH04 composer scope only. It performs no calculation,
+   creates no saved record and changes no Purchase fact. Analytics reports
+   requested, matched and unavailable Purchase counts.
+9. Guide is a dedicated local page with a contents list and anchored/focusable
+   sections. Search, CMS and expandable technical topics are deferred.
+10. Audit uses `Readiness summary`, not `Health`. It is a pure interpretation of
+    the already-loaded bounded local Audit window.
+11. Settings order is Account; Purchase references and shortage timeframe; Sync
+    and Device; visible non-collapsible Advanced. The current Device summary is
+    sufficient; no Device list/revocation work is added.
+12. Duplicate reference nicknames remain governed by existing repository truth;
+    PH05 adds no new uniqueness rule.
+13. `@NNN` and `#NNN` remain the visible stored short codes. `$NNN` is not used.
+14. The shared export port and adapter paths are accepted. Windows exports to
+    the user-visible Downloads directory through the existing `path_provider`
+    dependency. Android public Downloads is not authorized in this packet;
+    Android returns a typed unavailable result and never labels temp or
+    app-private storage as Downloads. Native sharing remains deferred.
+
+## 13.5 Activated implementation slices
+
+The PH05 packet is one bounded schema-free implementation, but Codex should work
+and validate in these internal slices:
+
+1. Home, Purchase and Catalogue presentation correction.
+2. History multi-selection, set-based export bundle and typed Analytics handoff.
+3. Shared export destination plus final PH04 Analytics sink integration.
+4. Guide, Audit interpretation and Settings recomposition/refresh correction.
+5. focused validation, full regression/build validation and G/H/I replacement.
+
+Codex may use multiple local commits when useful, but publication must present
+one coherent descendant chain on the named branch and no unrelated cleanup.
+
+## 13.6 Cross-domain accepted invariants
+
+- local-first Account scope and registered Purchase immutability remain intact;
+- PH04 Analytics calculation, compatibility, session-record identity and one
+  workspace remain intact;
+- presentation and selection transitions add zero repository/network writes;
+- History detail state remains distinct from selected-for-action state;
+- explicit export is distinct from sharing and from temporary artifact creation;
+- Audit remains local, sanitized, bounded, read-only and non-causal;
+- Settings retains existing narrow ports and explicit action coordinators;
+- Closure remains absent from ordinary product navigation;
+- no schema, migration, generated source, dependency, Auth, Sync, provider,
+  diagnostic-registry or production-lifecycle expansion is authorized;
+- `KANBAN_TRANSITIONS=NONE`.
+
+## 13.7 Evidence and claim ceiling
+
+PH04 automated tests and builds may be cited only for the final committed PH04
+scope. They do not validate PH05. PH05 requires fresh focused tests, the full
+Flutter suite, analysis, Windows release build, Android debug build, diagnostic
+registry check, exact-path audit and forbidden-surface audit.
+
+Rendered screenshots, keyboard-only review, Narrator/TalkBack, locale/long-copy,
+real-device Downloads behavior and human comprehension remain distinct evidence.
+Codex must record them as `NOT_PERFORMED` unless directly observed.
+
+## 13.8 Current terminal
+
+```text
+CYCLE=C11
+PHASE=C11-PH05
+ROUND=C11-PH05-R01
+STARTING_REMOTE_HEAD=42cb6fcac60a5033c72864201786f7fcfab9a35b
+PH04_IMPLEMENTATION=1aea7a5b531b56484e999aa8989978902b8db2c0
+PH04_RECONCILIATION_MERGE=42cb6fcac60a5033c72864201786f7fcfab9a35b
+PH04_REMOTE_STATE=IMPLEMENTED_AND_AUTOMATED_BUILD_VALIDATED
+PH04_HUMAN_EVIDENCE=PARTIAL_NOT_CLOSED
+PH05_A_B_C=VERIFIED_RECONCILED
+CATALOGUE_CHECKBOX_FACT=AUTOMATIC_CHROME_PRESENT_AND_AUTHORIZED_FOR_REMOVAL
+HISTORY_SELECTION=RETAIN_ONE_STABLE_ID_SET_AND_HARDEN
+HISTORY_SELECT_ALL=FILTERED_LOADED_WINDOW_ONLY
+ANALYTICS_HANDOFF=USE_IN_ANALYTICS_SCOPE_ONLY
+EXPORT_WINDOWS_DOWNLOADS=AUTHORIZED
+EXPORT_ANDROID_PUBLIC_DOWNLOADS=UNAVAILABLE_DEFERRED
+GUIDE=EIGHT_LOCAL_ANCHORED_SECTIONS
+AUDIT_CARD_LABEL=READINESS_SUMMARY
+SETTINGS_ORDER=ACCOUNT_REFERENCES_SYNC_ADVANCED
+REFERENCE_CODES=RETAIN_AT_AND_HASH
+KANBAN_TRANSITIONS=NONE
+LIVE_PROVIDER_OPERATIONS=NONE
+PH05_D_E_F_AUTHORITY=ACTIVE
+CODEX_AUTHORITY=ACTIVE_AFTER_THIS_COMMIT
+NEXT_MAIN_ACTION=Wait for Codex PH05 implementation and G/H/I, then perform bounded human review and post-materialization reconciliation.
+```

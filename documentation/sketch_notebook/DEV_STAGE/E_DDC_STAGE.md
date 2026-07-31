@@ -902,3 +902,252 @@ KANBAN_TRANSITIONS=NONE | CONTRADICTED
 PREDICTION_CAUSAL_RECOMMENDATION_CLAIMS=ABSENT | CONTRADICTED
 NEXT_DIDACTIC_REVIEW=Reconcile PH04 H evidence and run human rendered comparison against the approved plates.
 ```
+
+---
+
+<!-- ACTIVATION_MARKER:C11-PH05-R01-2026-07-31 -->
+
+# C11-PH05-R01 — Didactic Materialization Authority
+
+> Status: ACTIVE — AUTHORIZED FOR CODEX
+> Source reconciliation: J section 13
+> Required starting remote ancestor: `42cb6fcac60a5033c72864201786f7fcfab9a35b`
+
+## 33. Learner model and vocabulary
+
+PH05 clarifies existing local capabilities. It must not imply public release,
+live News, complete History, automatic Analytics, provider health, causal
+diagnosis, native sharing or Android public Downloads.
+
+### 33.1 Page vocabulary
+
+| Surface | Required learner term | Meaning | Must not imply |
+| --- | --- | --- | --- |
+| Home | `News` | build-bundled preview notice | live feed, store availability, public release |
+| Home | `Updates follow-up` | local completed/in progress/planned summary dated as bundled copy | remote tracker, automatic freshness |
+| Purchase | `Purchase details` | required Store, purchase date and time | optional context |
+| Purchase | `Optional purchase details` | independent optional Person and Payment Method references | one tag object, Account identity, credentials |
+| Catalogue | `View details` / `Open Product details` | open one Product detail | selection count, bulk action, deletion |
+| History | `No purchases selected` | selected action set is empty | no detail is open |
+| History | `1 purchase selected` | one Purchase is in the action set | only one Purchase exists |
+| History | `{N} purchases selected` | exact action-set size | filtered-result count |
+| History | `Select all shown` | select filtered rows in the loaded recent History window | entire Account History or unseen results |
+| History | `Clear selection` | selected action set becomes empty | filters or Purchase facts are cleared |
+| History | `Use in Analytics` | transfer selected Purchase context to the Analytics composer | move/mutate records or run calculation |
+| Export | `Export CSV` / `Export PDF` | explicitly create one file at a supported destination | native share or cloud upload |
+| Audit | `System` | local Account/environment and bounded-window context | complete system/provider truth |
+| Audit | `Readiness summary` | interpretation of loaded local Audit availability and outcomes | successful future Sync or provider health |
+| Audit | `Diagnostics` | sanitized recorded classifications and guidance | proven cause or automatic repair |
+| Audit | `Activity history` | bounded persisted local attempts/events | complete ledger |
+
+## 34. Exact copy and claim ceilings
+
+### 34.1 Home
+
+Use concise static copy. Recommended intent:
+
+- News: `Preview notice` followed by wording that Markei is being prepared and
+  tested locally. Do not say it is released, available in stores or validated on
+  all devices.
+- Updates follow-up: show explicit `Completed`, `In progress` and `Planned`
+  labels only for statements supported by committed repository state. Use a
+  visible qualification such as `Bundled update · 31 Jul 2026` so the date is
+  understood as content packaged with the build.
+
+The two cards are information, not actionable live destinations. Their status
+must use words/icons, not color alone, and remain concise at 200-percent text.
+
+### 34.2 Purchase and Catalogue
+
+Store/date/time remain visibly required. Person and Payment Method are optional
+metadata saved as separate nullable references on the Purchase. Payment Method
+is a nickname/reference and never financial credentials.
+
+Catalogue checkbox removal must not say Products were removed. No selection
+count or bulk-action copy may remain. `View details` stays keyboard reachable.
+
+### 34.3 History selection and disabled reasons
+
+Selected count and semantics are independent from open detail. Every explicit
+checkbox names its Purchase context and whether the action will select or
+deselect it. The last selected row can be unchecked.
+
+Disabled controls require an adjacent or semantic reason:
+
+- `Select at least one purchase to use it in Analytics.`
+- `Select at least one purchase to export a CSV.`
+- `Select at least one purchase to export a PDF.`
+- `All purchases currently shown are selected.`
+- `No selected purchases to clear.`
+- `An export is already in progress.`
+
+Filters prune the action set. After a filter change, announce the new selected
+count. `Select all shown` always means the current filtered rows within the
+loaded recent-50 window.
+
+### 34.4 Analytics handoff
+
+Use `Use in Analytics`. Destination copy must communicate:
+
+```text
+Received {requested} purchases from History.
+{matched} are available in this Account and prepared as the analysis scope.
+{unavailable} could not be matched and were not used.
+Choose the remaining analysis settings, then Run & save analysis.
+```
+
+Omit the unavailable sentence when the count is zero. Do not say `Analytics will
+calculate`. The handoff performs no calculation, creates no saved record and
+does not change History. Analytics owns the selected Item scope and retains the
+PH04 maximum of 500 Item IDs.
+
+### 34.5 Export destination and failures
+
+Success is announced only after the final write succeeds and must name the
+actual user-visible destination:
+
+- Windows: `Exported {format} to Downloads: {final path}.`
+- unsupported Android: `Public Downloads export is unavailable on this Android build. No file was created.`
+
+Do not display success after resolving a path but before writing. Do not call a
+temporary or app-private path Downloads.
+
+Sanitized failure classes:
+
+- destination unavailable: `Downloads is unavailable. No file was created.`
+- permission denied: `Markei could not write to Downloads. Check access and try again.`
+- name/collision exhaustion: `A safe export name could not be created. No existing file was replaced.`
+- write failure: `The export could not be completed. No completed file is available.`
+- already in progress: `An export is already in progress.`
+
+Export and sharing remain different. There is no `Share list (PDF)` action in
+PH05. Filenames may include format, UTC timestamp and a sanitized record or set
+cue. They must not reveal Account, Device or raw database IDs.
+
+## 35. Guide learning sequence
+
+Create a local Guide with a contents list and eight focusable anchored sections.
+No search, remote content or expandable topics are required.
+
+| Section | Learner goal | Required concepts and action | Common misconception / claim ceiling |
+| --- | --- | --- | --- |
+| 1. Getting started | understand local-first navigation | Account scope, Home, ordinary pages | local app is not public/hosted truth |
+| 2. Register a Purchase | record one immutable Purchase | Store/date/time, Products, optional Person/Payment, validation | optional references are not Account identity or credentials |
+| 3. Catalogue and History | reuse Products and review facts | open Product details, filters, detail vs selection | Catalogue is not bulk selection; History window is bounded |
+| 4. Lists | read derived Storage/Shortage/Market/All projections | projections from recorded Purchase history | projections are not inventory mutation or prediction |
+| 5. Analytics | create and save one session analysis | Group by, Choose, Variables, Operation, Timeframe, Run & save | no automatic calculation, causality, prediction or restart persistence |
+| 6. Settings, Account and devices | configure local references and distinguish support actions | Account, Person, Payment Method, threshold, Refresh/Connect/Sync | Person is not Account; Refresh is not Sync |
+| 7. Audit and local diagnostics | interpret bounded local evidence | System, Readiness summary, Diagnostics, Activity history | no provider health, complete ledger, cause or repair |
+| 8. Local data, export and Sync limits | understand storage and evidence boundaries | local data, Windows Downloads, Android unavailable state, explicit Sync | export is not share/upload; tests/builds are not production acceptance |
+
+Every section must identify unavailable/deferred behavior honestly and avoid
+calling a feature complete without named implementation/test/build evidence.
+Anchored navigation moves keyboard focus to the section heading.
+
+## 36. Audit state language
+
+Use these meanings consistently:
+
+- `Ready`: named local prerequisites appear ready in the bounded observation;
+  it does not predict successful Sync.
+- `Attention needed`: recorded local evidence warrants review; it does not prove
+  a provider fault.
+- `Unavailable`: a value or projection cannot be obtained now.
+- `Unknown`: present evidence cannot classify the state.
+- `Not yet checked`: no qualifying observation was requested or recorded.
+- `Stale`: an older dated observation remains visible after a newer read failed
+  or passed its accepted freshness boundary.
+- `No recent records`: none exist in the displayed bounded local window; it does
+  not prove nothing occurred elsewhere.
+
+Audit cards are read-only. They contain no Sign in, Enroll, Sync, protocol Retry,
+Recovery, clear-history or repair action. Existing Audit Retry repeats only the
+same local read and must say that no Purchase or Sync fact is changed.
+
+## 37. Settings meaning and short codes
+
+Required reading order:
+
+1. Account;
+2. Purchase references and shortage timeframe;
+3. Sync and Device;
+4. Advanced.
+
+Advanced is visible and non-collapsible. It contains only the existing explicit
+`Connect this Device` and `Sync now` actions with consequence copy. Hosted probes,
+Recovery and diagnostic deletion remain development-only/absent.
+
+Distinct action language:
+
+- `Refresh local status`: read local Account/Device/queue status only;
+- `Connect this Device`: establish or confirm this installation's coordination
+  record through the existing coordinator;
+- `Sync now`: exchange eligible facts through the existing coordinator;
+- `Action already in progress`: no duplicate starts;
+- `Current local status is unavailable`: no provider-cause inference.
+
+`@NNN` is the Person short/reference code. `#NNN` is the Payment Method
+short/reference code. Both are sequential stored visible references; neither is
+a hash, fingerprint, credential or complete internal identity. Existing codes
+remain stable and legible. `$NNN` is absent and must not appear.
+
+## 38. Accessibility and evidence gates
+
+Automated evidence must cover:
+
+- checkbox select/deselect semantics with Purchase context;
+- selected-count announcements and disabled reasons;
+- visible keyboard focus and predictable return after handoff/export/Guide jump;
+- Catalogue detail activation without selection semantics;
+- Guide heading hierarchy and anchor focus;
+- Audit card summary naming card, state, bounded source and observation time;
+- Settings action/loading/already-in-progress/final-result announcements;
+- non-color state meaning and 200-percent-text reachability;
+- equivalent compact/medium/wide meaning at 599/600/1023/1024.
+
+Automated semantics tests do not establish Narrator/TalkBack quality or learner
+comprehension. H must distinguish represented, executable, automated, rendered,
+build, platform, human-observed and learner-understood evidence.
+
+## 39. Prohibited claims and H report
+
+Do not claim live News, public release, complete History, Account-wide select-all,
+automatic Analytics, Purchase mutation, native sharing, Android public Downloads,
+provider health, causal diagnosis, repair, prediction, ranking, recommendation,
+production acceptance or KANBAN maturity.
+
+`KANBAN_TRANSITIONS=NONE`.
+
+Replace H with exact final vocabulary, copy decisions, disabled/failure states,
+Guide sections, Audit meanings, Settings distinctions, short-code interpretation,
+accessibility evidence and the human/learner evidence ceiling.
+
+Required terminal:
+
+```text
+CYCLE=C11
+PHASE=C11-PH05
+ROUND=C11-PH05-R01
+HOME_STATIC_CLAIM_CEILING=PASS | FAIL | BLOCKED
+PURCHASE_REQUIRED_OPTIONAL_MEANING=PASS | FAIL | BLOCKED
+CATALOGUE_SELECTION_VOCABULARY_REMOVED=PASS | FAIL | BLOCKED
+HISTORY_ZERO_ONE_MANY_VOCABULARY=PASS | FAIL | BLOCKED
+HISTORY_SELECT_ALL_SHOWN_SCOPE=PASS | FAIL | BLOCKED
+USE_IN_ANALYTICS_COPY=PASS | FAIL | BLOCKED
+NO_AUTOMATIC_ANALYSIS_OR_RECORD=PASS | FAIL | BLOCKED
+EXPORT_DESTINATION_COPY=PASS | FAIL | BLOCKED
+EXPORT_SHARING_DISTINCTION=PASS | FAIL | BLOCKED
+GUIDE_EIGHT_SECTIONS=PASS | FAIL | BLOCKED
+AUDIT_READINESS_CLAIM_CEILING=PASS | FAIL | BLOCKED
+SETTINGS_CONCEPTUAL_ORDER=PASS | FAIL | BLOCKED
+REFERENCE_CODE_LANGUAGE=PASS | FAIL | BLOCKED
+TEXT_SCALE_200=PASS | FAIL | BLOCKED
+KEYBOARD_FOCUS_SEMANTICS=PASS | FAIL | BLOCKED
+SCREENSHOT_REVIEW=NOT_PERFORMED | PERFORMED
+ASSISTIVE_TECH_REVIEW=NOT_PERFORMED | PERFORMED
+LOCALE_REAL_DEVICE_REVIEW=NOT_PERFORMED | PERFORMED
+HUMAN_COMPREHENSION=NOT_ESTABLISHED | ESTABLISHED
+KANBAN_TRANSITIONS=NONE | CONTRADICTED
+PROHIBITED_CLAIMS=ABSENT | CONTRADICTED
+NEXT_DIDACTIC_REVIEW=Reconcile PH05 H and run bounded human comprehension/accessibility review.
+```

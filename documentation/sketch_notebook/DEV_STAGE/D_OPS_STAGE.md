@@ -1196,3 +1196,323 @@ LIVE_PROVIDER_OPERATIONS=NOT_PERFORMED | CONTRADICTED
 PUBLICATION=PUSHED | NOT_PUSHED
 NEXT_MAIN_ACTION=Reconcile C11-PH04 G/H/I evidence and schedule human rendered review.
 ```
+
+---
+
+<!-- ACTIVATION_MARKER:C11-PH05-R01-2026-07-31 -->
+
+# C11-PH05-R01 — Operational Materialization Authority
+
+> Status: ACTIVE — AUTHORIZED FOR CODEX
+> Source reconciliation: J section 13
+> Required starting remote ancestor: `42cb6fcac60a5033c72864201786f7fcfab9a35b`
+> Required PH04 implementation ancestor: `1aea7a5b531b56484e999aa8989978902b8db2c0`
+
+## 36. Mission and stop boundary
+
+Materialize the schema-free PH05 UI/UX and local-export correction described in
+the synchronized D/E/F tails. Do not modify permanent memory, methodology,
+Main-root continuity, A/B/C, J or D/E/F. Replace G/H/I only after source work and
+validation.
+
+Stop before editing if:
+
+- the branch is not `grm-guarded-provisioning-20260727`;
+- either named ancestor is missing;
+- remote HEAD advanced beyond the PH05 activation commit with unrelated paths;
+- the worktree contains unrelated changes that cannot be preserved;
+- the solution requires schema, migration, generated Drift, a dependency or
+  lockfile change, Android/Windows platform-file changes, Auth, Sync, provider,
+  diagnostic registry or Closure expansion;
+- a truthful Android public Downloads implementation is treated as mandatory.
+
+Android public Downloads is deliberately unavailable in this packet. Do not
+substitute `Directory.systemTemp`, app-private storage or broad storage
+permission and call it Downloads.
+
+## 37. Operational work units
+
+### 37.1 Home, Purchase and Catalogue
+
+Home adds two static local information cards: `News` and `Updates follow-up`.
+Their build, refresh, layout and navigation budgets are zero repository calls,
+zero writes and zero network. They are not a feed and should not poll.
+
+Purchase recomposes Store/date/time beside independent optional Person and
+Payment Method controls at medium/wide widths and stacks them in the same logical
+order on compact. Preserve all existing draft values, validation, focus targets,
+load calls and registration payload. Layout changes add zero calls.
+
+Catalogue removes `_selectedProduct`, generated `DataTable` checkbox chrome,
+selection highlighting, selected copy and selection callbacks as one complete
+responsibility. Preserve `_selectedDetail`, filters, sorting, create operations,
+Retry and explicit `View details`. Hiding chrome while retaining dormant state
+is a failure.
+
+### 37.2 History selection and handoff
+
+Retain exactly one `Set<PurchaseId>` for selected-for-action state and keep it
+separate from open-detail identity. Required transitions:
+
+```text
+zero -> one -> many -> one -> zero
+toggle one -> only that stable ID changes
+final uncheck -> zero is allowed
+clear selection -> zero
+select all shown -> exactly the current filtered loaded window
+filter change -> prune selection to rows now shown
+successful reload -> intersect selection and detail with returned Account rows
+Account/repository replacement -> no foreign or stale action identity
+```
+
+Wide rows must not render an automatic DataTable checkbox column in addition to
+the explicit selection checkbox. Checkbox activation must not open detail.
+Detail activation must not alter the selected set.
+
+All set actions capture one immutable copy of selected IDs when started. Export
+and handoff actions expose busy, disabled, success and sanitized failure states;
+repeated taps cannot overlap. `Use in Analytics` performs no History read/write,
+no calculation and no record creation.
+
+The final PH04 `AnalyticsWorkspaceController._applyLaunchContext` already maps
+Purchase IDs to stable Item IDs. Preserve it and change only what is necessary
+to report requested, matched and unavailable Purchase counts and to remove the
+misleading `Analytics will calculate` message. The selected scope cap remains
+500 Item IDs. No second controller or dataset request is allowed.
+
+### 37.3 Set-based History export
+
+Replace the current per-ID `getPurchaseDetail` loop with two set-based,
+Account-scoped queries:
+
+1. selected Purchase/Store/Person/Payment rows;
+2. selected Purchase Item/Product rows.
+
+Reject or omit foreign IDs through Account predicates and preserve deterministic
+Purchase and Item ordering. For N selected IDs, export data reads remain exactly
+two when N is non-zero, not `2N`. Empty selection starts no export.
+
+Keep `purchaseBundleCsv` and `purchaseBundlePdfBytes` pure. Capture one frozen
+bundle before writing. No database write or network request is allowed.
+
+### 37.4 Shared export destination
+
+Create one application port and one composition-injected adapter used by both
+History and final PH04 Analytics exports. Required transition:
+
+```text
+explicit action
+-> validate selected frozen export object
+-> resolve supported destination
+-> generate safe unique filename
+-> create one file exclusively
+-> write complete bytes/text
+-> report user-visible destination
+```
+
+Success creates exactly one final file. Preview, selection, navigation, disabled
+actions, unsupported platform, destination failure and builder failure create
+zero final files. Collision handling must never overwrite: append `-2`, `-3`,
+and so on with a bounded search. Remove only an attributable incomplete file
+after a failed current write.
+
+Filename base rules: lower-case ASCII `[a-z0-9._-]`, collapsed separators, no
+path separators/traversal/reserved device names, bounded length, correct `.csv`
+or `.pdf`, a non-private stable cue and UTC timestamp. Do not expose Account,
+Device or raw database identifiers.
+
+Windows uses `getDownloadsDirectory()` from the existing direct
+`path_provider` dependency and reports the final path only after write success.
+Android and unsupported platforms return a typed unavailable result with zero
+write. Native sharing is not implemented.
+
+### 37.5 Guide, Audit and Settings
+
+Guide is local/static. It performs zero repository calls, writes and network
+requests. Its eight sections must remain reachable on compact/wide and at
+200-percent text.
+
+Audit System, Readiness summary and Diagnostics cards are pure projections of
+the already-loaded `AuditPageResult`. Initial visible load stays exactly two
+local queries; local Retry adds two; card build/expand/reflow adds zero. Audit
+database writes and network requests remain zero.
+
+Settings retains one page state and the existing five initial capability calls:
+People, Payment Methods, threshold, Account status and local Sync/Device status.
+No Device collection read is added. Recompose sections, bound reference-list
+height where needed and keep Advanced visible/non-collapsible. Fix support-action
+post-refresh through an internal status load that may run while the public busy
+guard remains held; do not permit duplicate actions or stale completion.
+
+Reference save/archive/threshold behavior and 0–365 validation remain unchanged.
+Duplicate nicknames remain allowed by current repository truth. `@NNN` and
+`#NNN` allocation and stored values remain unchanged.
+
+## 38. Exact writable path allowlist
+
+Codex may change only these source and existing test paths:
+
+```text
+clients/markei_flutter/lib/application/home_content.dart
+clients/markei_flutter/lib/app/pages/home_page.dart
+clients/markei_flutter/lib/app/pages/purchase_page.dart
+clients/markei_flutter/lib/app/pages/products_page.dart
+clients/markei_flutter/lib/app/pages/history_page.dart
+clients/markei_flutter/lib/application/history_export.dart
+clients/markei_flutter/lib/infrastructure/local/local_query_repository.dart
+clients/markei_flutter/lib/app/markei_app.dart
+clients/markei_flutter/lib/application/analytics.dart
+clients/markei_flutter/lib/application/analytics_workspace.dart
+clients/markei_flutter/lib/app/pages/analytics_page.dart
+clients/markei_flutter/lib/app/markei_composition.dart
+clients/markei_flutter/lib/application/audit.dart
+clients/markei_flutter/lib/app/pages/audit_page.dart
+clients/markei_flutter/lib/app/widgets/audit_components.dart
+clients/markei_flutter/lib/app/pages/settings_page.dart
+clients/markei_flutter/test/app/history_analytics_handoff_test.dart
+clients/markei_flutter/test/application/analytics_workspace_test.dart
+clients/markei_flutter/test/app/analytics_page_test.dart
+clients/markei_flutter/test/app/settings_page_test.dart
+clients/markei_flutter/test/app/audit_page_test.dart
+clients/markei_flutter/test/app/markei_app_test.dart
+clients/markei_flutter/test/app/markei_visual_foundation_test.dart
+```
+
+These new paths are explicitly authorized when needed:
+
+```text
+clients/markei_flutter/lib/application/export_destination.dart
+clients/markei_flutter/lib/infrastructure/platform/local_export_destination.dart
+clients/markei_flutter/lib/app/pages/guide_page.dart
+clients/markei_flutter/test/application/export_destination_test.dart
+clients/markei_flutter/test/app/history_page_test.dart
+clients/markei_flutter/test/app/guide_page_test.dart
+clients/markei_flutter/test/infrastructure/local_query_repository_export_test.dart
+```
+
+Codex may omit a new focused test path only when its full responsibility is
+proved clearly in an existing authorized test. Do not invent another path.
+
+After implementation, replace exactly:
+
+```text
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+```
+
+## 39. Forbidden surfaces
+
+Do not change:
+
+```text
+pubspec.yaml / pubspec.lock / dependencies
+android/, windows/, ios/, linux/, macos/ platform files
+local_database.dart / generated Drift files / schema / migrations
+Analytics registry, fixed-point calculation or record identity semantics
+Purchase persistence models or registration repository
+Auth / API / Sync / provider / diagnostics registry and generator
+Closure implementation or ordinary navigation disposition
+theme, assets or fonts unless an existing authorized page cannot compile
+A/B/C, D/E/F, J, Main-root, permanent memory or methodology
+environment files, credentials or secrets
+```
+
+## 40. Validation and failure injection
+
+Run from `clients/markei_flutter`:
+
+```text
+flutter pub get
+git diff --exit-code -- pubspec.yaml pubspec.lock
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test test/application/export_destination_test.dart
+flutter test test/app/history_page_test.dart
+flutter test test/app/history_analytics_handoff_test.dart
+flutter test test/application/analytics_workspace_test.dart
+flutter test test/app/analytics_page_test.dart
+flutter test test/app/guide_page_test.dart
+flutter test test/app/settings_page_test.dart
+flutter test test/app/audit_page_test.dart
+flutter test test/app/markei_visual_foundation_test.dart
+flutter test test/app/markei_app_test.dart
+flutter test --concurrency=1
+flutter build windows --release
+flutter build apk --debug
+```
+
+If an optional authorized focused test was not created, record `NOT_CREATED`
+and run the exact alternate owner test. Also run from repository root:
+
+```text
+node scripts/generate_sync_diagnostics.mjs --check
+git diff --check
+```
+
+Instrument and prove:
+
+- zero Home/Guide I/O;
+- unchanged Purchase/Catalogue request and write budgets;
+- History zero/one/many/final-uncheck/filter-prune/reload-intersection;
+- no checkbox-to-detail coupling;
+- History export reads `2`, database writes `0`, network `0`;
+- each successful explicit export writes `1` final file;
+- unsupported Android export writes `0`;
+- collision, unavailable directory and write failure;
+- Analytics initial request `1`, Retry `+1`, handoff/export/local UI `+0`;
+- Audit initial queries `2`, Retry `+2`, projection `+0`, writes/network `0`;
+- Settings initial calls `5`, local refresh `+2`, duplicate action blocked and
+  post-action status actually refreshed;
+- 599/600/1023/1024 widths, 200-percent text, long copy, keyboard focus,
+  semantics and non-color meaning.
+
+Keep screenshot, Narrator/TalkBack, locale, real-device and comprehension
+evidence separate and mark unperformed unless observed.
+
+## 41. Publication and G report
+
+Before committing, fetch the branch again and accept advancement only when it is
+a compatible documentation-only descendant explicitly authorized by Main. Stop
+on source overlap. Require every changed path to match section 38. Do not rebase,
+force-push or open a pull request.
+
+Replace G with exact changed paths, commands, results, request/write counts,
+Windows Downloads and Android-unavailable evidence, performance measurements,
+failure injection, build artifacts, forbidden-surface audit, deviations and
+residual human gates.
+
+Required terminal:
+
+```text
+CYCLE=C11
+PHASE=C11-PH05
+ROUND=C11-PH05-R01
+STARTING_HEAD=<PH05 D/E/F activation commit>
+PH04_IMPLEMENTATION_ANCESTOR=1aea7a5b531b56484e999aa8989978902b8db2c0
+HOME_LOCAL_INFORMATION=PASS | FAIL | BLOCKED
+PURCHASE_REDISTRIBUTION=PASS | FAIL | BLOCKED
+CATALOGUE_SELECTION_REMOVAL=PASS | FAIL | BLOCKED
+HISTORY_MULTI_SELECTION=PASS | FAIL | BLOCKED
+HISTORY_SET_EXPORT_READS=2 | CONTRADICTED
+ANALYTICS_SCOPE_HANDOFF=PASS | FAIL | BLOCKED
+WINDOWS_DOWNLOADS_EXPORT=PASS | FAIL | NOT_PERFORMED
+ANDROID_PUBLIC_DOWNLOADS=UNAVAILABLE_BY_AUTHORITY | CONTRADICTED
+EXPORT_FINAL_WRITE_COUNT=1_PER_SUCCESS | CONTRADICTED
+GUIDE=PASS | FAIL | BLOCKED
+AUDIT_PROJECTION_IO=initial:2; retry:+2; projection:+0; writes:0; network:0
+SETTINGS_INITIAL_CALLS=5 | CONTRADICTED
+SETTINGS_POST_ACTION_REFRESH=PASS | FAIL | BLOCKED
+REFERENCE_CODES=UNCHANGED | CONTRADICTED
+FOCUSED_TESTS=PASS | FAIL | BLOCKED
+FULL_FLUTTER_TEST=PASS | FAIL | BLOCKED_TIMEOUT
+WINDOWS_RELEASE_BUILD=PASS | FAIL | NOT_PERFORMED
+ANDROID_DEBUG_BUILD=PASS | FAIL | NOT_PERFORMED
+SCHEMA_MIGRATION=NONE | CONTRADICTED
+GENERATED_SOURCE_CHANGED=NO | YES
+DEPENDENCY_CHANGED=NO | YES
+PLATFORM_FILES_CHANGED=NO | YES
+LIVE_PROVIDER_OPERATIONS=NOT_PERFORMED | CONTRADICTED
+PUBLICATION=PUSHED | NOT_PUSHED
+NEXT_MAIN_ACTION=Reconcile PH05 G/H/I and perform bounded human UI/export review.
+```

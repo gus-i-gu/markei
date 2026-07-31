@@ -1074,3 +1074,280 @@ PH03_ARCHITECTURE_CHANGED=NO | YES
 ROLLBACK=ONE_COMMIT | CONTRADICTED
 NEXT_DESIGN_REVIEW=Reconcile PH04 I evidence and retain human visual/real-device gates.
 ```
+
+---
+
+<!-- ACTIVATION_MARKER:C11-PH05-R01-2026-07-31 -->
+
+# C11-PH05-R01 — Design Materialization Authority
+
+> Status: ACTIVE — AUTHORIZED FOR CODEX
+> Source reconciliation: J section 13
+> Required starting remote ancestor: `42cb6fcac60a5033c72864201786f7fcfab9a35b`
+> Required PH04 implementation ancestor: `1aea7a5b531b56484e999aa8989978902b8db2c0`
+
+## 37. Dependency and ownership map
+
+Preserve this direction:
+
+```text
+presentation pages/widgets
+-> existing page state or composition-owned controller
+-> narrow application ports/pure builders
+-> local repository or platform destination adapter
+```
+
+Do not add a new domain truth, page-wide service locator, second Analytics
+workspace, second Audit controller, release repository or generic diagnostic
+engine.
+
+| Capability | Current owner | PH05 owner/disposition |
+| --- | --- | --- |
+| Home cards | `home_content.dart` + `HomePage` | retain file; add typed non-navigation information descriptors |
+| Purchase draft | `_PurchasePageState` | unchanged; presentation-only reflow |
+| Catalogue detail | `_selectedDetail` | retained as sole active Product context |
+| Catalogue selection | `_selectedProduct` + table/card callbacks | remove completely |
+| History selection | `_HistoryPageState._selectedIds` | retained stable `PurchaseId` set, page lifetime |
+| History detail | `_selectedPurchaseId` | retained and independent |
+| Analytics handoff | `AnalyticsLaunchContext` + composition callback + workspace | retained; final PH04 scope initialization only |
+| export content | existing pure History/Analytics builders | retained pure functions |
+| export destination | none/shared owner missing | new neutral application port + one platform adapter injected by composition |
+| Guide | shell `_StaticPage` | dedicated local `GuidePage`, presentation-owned immutable sections |
+| Audit truth | composition-owned `AuditController` and loaded page result | pure card projections only |
+| Settings | one page state plus narrow ports | same owner; responsive section decomposition |
+| reference identity | UUID plus stored visible code | unchanged; presentation explains, never migrates |
+
+## 38. Component boundaries and transitions
+
+### 38.1 Home and Purchase
+
+`HomeCardDescriptor` may be generalized or paired with a new typed local
+descriptor so informational cards have no fake destination. Keep content in the
+existing `application/home_content.dart` path for this round to avoid a
+relocation-only change. Home owns layout; no repository or controller is added.
+
+Purchase keeps all controllers, selected values, draft, validation and
+registration command in `_PurchasePageState`. Extract private presentation
+widgets only within the authorized file if needed. Responsive layout reads the
+existing `MarkeiLayoutClass`/constraints and never recreates state at 599, 600,
+1023 or 1024.
+
+### 38.2 Catalogue
+
+Remove `_selectedProduct` and its transitive constructor parameters/callbacks
+from `_ProductTable` and `_ProductCards`. Remove `DataRow.onSelectChanged` so
+Flutter does not synthesize checkbox chrome. Product-identifying cells/cards may
+open `_selectedDetail`; the explicit `View details` control remains the
+accessible guaranteed route. No dormant selection highlight/copy remains.
+
+### 38.3 History selection lifecycle
+
+Use `PurchaseId.value` equality consistently when intersecting/pruning IDs.
+Selection remains a presentation/application-context concern and never becomes
+domain entity state.
+
+Filtering uses the loaded entries already owned by the page. On every filter
+transition, compute the next visible stable-ID set and intersect action
+selection with it. On successful load/retry/account change, reconcile action
+selection and detail before enabling actions. Avoid calling `setState` during
+build; perform reconciliation in the load completion/state transition or a safe
+post-frame transition with stale-generation checks.
+
+The explicit Checkbox owns only `_toggleSelection`. Non-checkbox cells and the
+detail button own only `_openDetail`. Do not use `DataRow.onSelectChanged` for
+detail because it recreates automatic checkbox semantics.
+
+### 38.4 Analytics scope handoff
+
+Retain `AnalyticsPurchaseSelectionLaunchContext(AccountId, Set<PurchaseId>)` and
+`MarkeiApp._openAnalyticsForPurchases`. Do not move Item expansion into History.
+
+Final PH04 workspace behavior remains:
+
+```text
+stable Purchase IDs
+-> active Account check
+-> match loaded AnalyticsEvidenceRow.purchaseId
+-> stable PurchaseItemId set
+-> cap at 500
+-> SelectedAnalyticsEvidenceScope
+-> draft validation only
+```
+
+Extend the history-context projection/message to expose requested, matched and
+unavailable Purchase counts. This may be a small immutable result/value owned by
+the workspace or a derived message from existing context/dataset. It must not
+run the registry, append a record, change saved records or trigger another load.
+
+### 38.5 Export architecture
+
+Create `application/export_destination.dart` with closed request/result/failure
+types and one interface such as `ExportDestinationPort`. The request owns a safe
+base-name cue, extension/media kind and bytes. The success result owns the final
+user-visible path/destination label. Failures distinguish unsupported platform,
+destination unavailable, permission denied, safe-name exhaustion and write
+failure without leaking internals.
+
+Create `infrastructure/platform/local_export_destination.dart` as the sole
+filesystem adapter. It may import `dart:io`, `path_provider` and the application
+port. It must not import History or Analytics models. Windows resolves Downloads
+and performs exclusive unique creation. Android/unsupported platforms return a
+typed unavailable result without a write. No platform channel or manifest edit
+is authorized.
+
+Inject one adapter instance through `MarkeiComposition` into History and
+Analytics pages. Pages select the pure builder, freeze bytes, call the port once
+and project result copy. Builders never resolve paths or write files; the adapter
+never queries repositories or calculates Analytics.
+
+History `LocalQueryRepository.exportBundle` becomes one set-based aggregate
+read boundary: one Account-predicated Purchase/reference/store query and one
+Item/Product query. Preserve stable ordering and reconstruct immutable
+`PurchaseDetail`s. Do not modify schema or reuse a method that causes N+1 reads.
+
+### 38.6 Guide
+
+`GuidePage` owns an immutable list/closed set of eight sections, heading keys and
+focus nodes. It may use a page-local `ScrollController` and `Scrollable.ensureVisible`
+for contents navigation. Dispose controllers/focus nodes deterministically. It
+has no repository, remote link, CMS, search index or provider state.
+
+### 38.7 Audit projections
+
+Add System, Readiness summary and Diagnostics presentation components above the
+existing Activity history. Inputs are the current `AuditWorkspaceSnapshot` /
+`AuditPageResult` already passed to `AuditStateView`. A narrow pure derived view
+type in `application/audit.dart` is allowed only if it prevents duplicated
+interpretation across widgets.
+
+Do not call Settings status ports, the Closure runner, diagnostic generator,
+Auth, Sync or provider APIs. Cards do not own freshness beyond existing loaded
+time/state. Empty, stale and unavailable remain closed existing states.
+
+### 38.8 Settings
+
+Retain `_SettingsPageState` as the single lifetime owner. Compose private section
+widgets in Account; references/threshold; Sync/Device; Advanced order. Advanced
+is an ordinary visible section, not `ExpansionTile` state.
+
+Keep one outer page scroll. People and Payment Method lists may use a bounded
+inner height/scroll only when content requires it; avoid unconstrained nested
+vertical lists. Draft controllers and invalid shortage input survive reflow.
+
+Split local status loading into:
+
+- a public action that acquires/releases the busy guard;
+- an internal capability load callable after a support action while that guard
+  remains held.
+
+Use generation/stale-completion checks and `mounted`. The support result remains
+visible or is combined with refresh outcome without being silently overwritten.
+No duplicate action starts. Existing Sign in, Sign out, Connect and Sync
+coordinators remain the only side-effect owners.
+
+## 39. Responsive and accessibility ownership
+
+Every touched page keeps one state/controller owner across 599, 600, 1023 and
+1024 logical pixels and breakpoint changes. Compact cards replace compressed
+tables where appropriate. Page-level horizontal overflow is forbidden; bounded
+table/chart horizontal accommodation remains allowed.
+
+Require visible keyboard focus, semantic checkbox/action names, selected-count
+announcements, disabled reasons, non-color meaning, 200-percent-text reachability
+and deterministic disposal. Guide anchor jumps move focus to the heading.
+Audit summaries name their bounded source/time. Stale async completions never
+replace newer state.
+
+## 40. Allowed paths, consequences and rollback
+
+Use exactly the D section 38 allowlist. The three new source paths are accepted
+because they fill otherwise missing single owners:
+
+```text
+application/export_destination.dart
+infrastructure/platform/local_export_destination.dart
+app/pages/guide_page.dart
+```
+
+No other new source path is authorized. New tests named by D are optional only
+under D's alternate-coverage rule.
+
+Consequences:
+
+```text
+schema/migration/generated source: none
+pubspec/lock/dependency: none
+Android/Windows native platform files: none
+API/Auth/Sync/provider/diagnostic contracts: none
+saved Analytics record persistence: none
+reference-code migration: none
+```
+
+Rollback is one PH05 implementation chain back to the PH05 D/E/F activation
+commit. No data conversion, provider repair or migration rollback exists.
+
+## 41. Design tests and stop conditions
+
+Prove:
+
+- no second state/controller owner at breakpoints;
+- complete Catalogue selection-owner removal;
+- stable-ID History transitions and detail isolation;
+- filter/reload/account stale-ID reconciliation;
+- typed handoff, Account check, cap and no-calculation/no-record behavior;
+- pure builders and one shared destination instance;
+- History two-query set reconstruction and deterministic order;
+- exclusive filename collision handling and unsupported Android zero-write;
+- Guide single local content owner and deterministic disposal;
+- Audit zero-new-read dependency direction;
+- Settings capability disposition, busy/stale completion and post-action refresh;
+- `@NNN`/`#NNN` stability;
+- no forbidden imports or path changes.
+
+Stop if implementation requires:
+
+- a second Analytics/Audit/Settings controller;
+- History-side Item expansion or calculation;
+- a generic service that mixes export building, repository reads and file I/O;
+- separate History and Analytics filesystem writers;
+- provider/readiness inference from Audit history;
+- Device list/revocation or broad Closure dependency;
+- `$NNN` conversion;
+- schema, dependency or native platform expansion.
+
+## 42. Required I report
+
+Replace I with the final responsibility/dependency map, changed paths, state
+owners/lifetimes, History transitions, Analytics handoff, export port/adapter,
+set-based query reconstruction, Guide owner, Audit projections, Settings
+disposition/async correction, responsive state, tests, rollback and forbidden
+surface audit.
+
+Required terminal:
+
+```text
+CYCLE=C11
+PHASE=C11-PH05
+ROUND=C11-PH05-R01
+HOME_PRESENTATION_OWNER=PASS | FAIL | BLOCKED
+PURCHASE_DRAFT_OWNER_UNCHANGED=PASS | FAIL | BLOCKED
+CATALOGUE_SELECTION_OWNER=REMOVED | PRESENT
+HISTORY_SELECTION_OWNER=SINGLE_STABLE_ID_SET | CONTRADICTED
+HISTORY_DETAIL_SELECTION_ISOLATION=PASS | FAIL | BLOCKED
+ANALYTICS_TYPED_HANDOFF=PASS | FAIL | BLOCKED
+ANALYTICS_SECOND_CONTROLLER=ABSENT | PRESENT
+EXPORT_DESTINATION_OWNER=SINGLE_SHARED_PORT | CONTRADICTED
+HISTORY_EXPORT_QUERY_BOUNDARY=TWO_SET_BASED | CONTRADICTED
+ANDROID_EXPORT_WRITES=0 | CONTRADICTED
+GUIDE_CONTENT_OWNER=SINGLE_LOCAL_TYPED | CONTRADICTED
+AUDIT_PROJECTION_DEPENDENCY=LOADED_LOCAL_STATE_ONLY | CONTRADICTED
+SETTINGS_CONTROLLER_OWNER=UNCHANGED | CONTRADICTED
+SETTINGS_ASYNC_REFRESH=PASS | FAIL | BLOCKED
+REFERENCE_IDENTITY=UUID_PLUS_STABLE_AT_HASH_CODES | CONTRADICTED
+RESPONSIVE_SHARED_STATE=PASS | FAIL | BLOCKED
+SCHEMA_MIGRATION=NONE | CONTRADICTED
+DEPENDENCY_PLATFORM_CHANGE=NONE | CONTRADICTED
+API_AUTH_SYNC_PROVIDER_DIAGNOSTIC_IMPORTS=ABSENT | PRESENT
+ROLLBACK=PH05_IMPLEMENTATION_CHAIN | CONTRADICTED
+NEXT_DESIGN_REVIEW=Reconcile PH05 I and retain deferred Android/human evidence gates.
+```
