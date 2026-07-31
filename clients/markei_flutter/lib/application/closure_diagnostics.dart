@@ -401,3 +401,72 @@ final class ClosureDiagnosticsScope {
   final DeviceId deviceId;
   final String environmentAlias;
 }
+
+abstract interface class SettingsAccountSupportPort {
+  bool get signInMayContactNetwork;
+  bool get signOutMayWriteLocalState;
+
+  Future<SettingsAccountStatus> accountStatus();
+  Future<SettingsActionResult> signInToSync();
+  Future<SettingsActionResult> signOutOnThisDevice();
+}
+
+abstract interface class SettingsSyncDeviceSupportPort {
+  bool get refreshMayContactNetwork;
+  bool get connectMayContactNetwork;
+  bool get syncMayContactNetwork;
+
+  Future<SettingsSyncDeviceStatus> localStatus();
+  Future<SettingsActionResult> connectThisDevice();
+  Future<SettingsActionResult> syncNow();
+}
+
+final class SettingsAccountStatus {
+  const SettingsAccountStatus({
+    required this.authenticationState,
+    required this.updatedAtUtc,
+  });
+
+  final String authenticationState;
+  final DateTime updatedAtUtc;
+}
+
+final class SettingsSyncDeviceStatus {
+  const SettingsSyncDeviceStatus({
+    required this.enrollmentState,
+    required this.syncReadiness,
+    required this.lastResult,
+    required this.lastSuccessfulSyncAtUtc,
+    required this.deviceReference,
+    required this.pending,
+    required this.uploading,
+    required this.failed,
+    required this.unknown,
+    required this.updatedAtUtc,
+  });
+
+  final String enrollmentState;
+  final String syncReadiness;
+  final String lastResult;
+  final DateTime? lastSuccessfulSyncAtUtc;
+  final String? deviceReference;
+  final int pending;
+  final int uploading;
+  final int failed;
+  final int unknown;
+  final DateTime updatedAtUtc;
+}
+
+final class SettingsActionResult {
+  const SettingsActionResult({
+    required this.state,
+    required this.message,
+    required this.contactedNetwork,
+    required this.mayHaveWritten,
+  });
+
+  final String state;
+  final String message;
+  final bool contactedNetwork;
+  final bool mayHaveWritten;
+}

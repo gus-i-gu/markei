@@ -45,10 +45,10 @@ void main() {
       'Documentation',
       'Settings',
       'Audit',
-      'Closure',
     ]) {
       expect(find.text(label), findsWidgets);
     }
+    expect(find.text('Closure'), findsNothing);
     expect(find.textContaining('PIN'), findsNothing);
 
     await tester.tap(find.text('Analytics').last);
@@ -153,7 +153,7 @@ void main() {
   });
 
   testWidgets(
-    'Closure feature gate does not shift another selected destination',
+    'Closure feature gate remains absent and does not shift another selected destination',
     (tester) async {
       tester.view.physicalSize = const Size(1200, 900);
       tester.view.devicePixelRatio = 1;

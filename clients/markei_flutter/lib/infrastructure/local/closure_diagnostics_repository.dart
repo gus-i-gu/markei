@@ -5,13 +5,15 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart';
 
+import '../../application/audit.dart';
 import '../../application/closure_diagnostics.dart';
 import '../../domain/shared/ids.dart';
 import '../../domain/sync/canonical_json.dart';
+import '../../domain/sync/sync_diagnostic_registry.g.dart';
 import 'local_database.dart';
 
 final class DriftClosureDiagnosticsRepository
-    implements ClosureDiagnosticsQuery, SyncAttemptRecorder {
+    implements ClosureDiagnosticsQuery, SyncAttemptRecorder, AuditReadPort {
   DriftClosureDiagnosticsRepository(
     this._db, {
     required AccountId accountId,
@@ -28,6 +30,95 @@ final class DriftClosureDiagnosticsRepository
   final String _deviceId;
   final String _environmentAlias;
   final DateTime Function() _now;
+
+  @override
+  Future<AuditPageResult> loadPage(AuditPageRequest request) async {
+    final limit = request.limit.clamp(1, AuditPageRequest.maxLimit);
+    final cursor = request.cursor;
+    final attemptsQuery = _db.select(_db.syncAttempts)
+      ..where((table) {
+        final cursorPredicate = cursor == null
+            ? const Constant(true)
+            : table.startedAt.isSmallerThanValue(cursor.startedAtUtc) |
+                  (table.startedAt.equals(cursor.startedAtUtc) &
+                      table.id.isSmallerThanValue(cursor.attemptId.value));
+        return table.accountId.equals(request.accountId.value) &
+            table.environmentAlias.equals(request.environmentAlias) &
+            cursorPredicate;
+      })
+      ..orderBy([
+        (table) => OrderingTerm.desc(table.startedAt),
+        (table) => OrderingTerm.desc(table.id),
+      ])
+      ..limit(limit + 1);
+    final attemptRows = await attemptsQuery.get();
+    final retainedAttempts = attemptRows.take(limit).toList(growable: false);
+    final attemptIds = retainedAttempts.map((row) => row.id).toList();
+    final eventRows = attemptIds.isEmpty
+        ? <SyncDiagnosticEvent>[]
+        : await (_db.select(_db.syncDiagnosticEvents)
+                ..where((table) => table.attemptId.isIn(attemptIds))
+                ..orderBy([
+                  (table) => OrderingTerm.asc(table.attemptId),
+                  (table) => OrderingTerm.asc(table.recordedAt),
+                  (table) => OrderingTerm.asc(table.id),
+                ]))
+              .get();
+    final eventsByAttempt = <int, List<SyncDiagnosticEvent>>{};
+    for (final event in eventRows) {
+      eventsByAttempt.putIfAbsent(event.attemptId, () => []).add(event);
+    }
+    final records = [
+      for (final row in retainedAttempts)
+        AuditAttemptProjection(
+          id: AuditAttemptId(row.id),
+          startedAtUtc: row.startedAt.toUtc(),
+          completedAtUtc: row.completedAt?.toUtc(),
+          operationKind: _safeAuditCode(row.operationKind ?? 'sync'),
+          resultCode: _safeAuditCode(row.resultCode),
+          outcomeClass: _safeAuditCode(row.outcomeClass),
+          latestStage: _safeAuditCode(row.latestStage ?? row.phase),
+          correlationReference: _shortReference(row.correlationFingerprint),
+          deviceReference: null,
+          events: [
+            for (final event
+                in eventsByAttempt[row.id] ?? const <SyncDiagnosticEvent>[])
+              _auditEvent(event),
+          ],
+        ),
+    ];
+    return AuditPageResult(
+      records: records,
+      nextCursor: attemptRows.length > limit && records.isNotEmpty
+          ? AuditCursor(
+              startedAtUtc: records.last.startedAtUtc,
+              attemptId: records.last.id,
+            )
+          : null,
+      loadedAtUtc: _now().toUtc(),
+      isPartialWindow: attemptRows.length > limit,
+      queryCount: 2,
+      networkCallCount: 0,
+      writeCallCount: 0,
+    );
+  }
+
+  AuditEventProjection _auditEvent(SyncDiagnosticEvent row) {
+    final definition = syncDiagnosticByCode(row.code);
+    return AuditEventProjection(
+      id: AuditEventId(row.id),
+      recordedAtUtc: row.recordedAt.toUtc(),
+      code: _safeAuditCode(row.code),
+      title: _safeAuditText(definition?.title ?? row.code),
+      meaning: _safeAuditText(
+        definition?.meaning ?? 'Diagnostic meaning unavailable.',
+      ),
+      guidance: _safeAuditText(definition?.safeAction ?? row.safeAction),
+      severity: _safeAuditCode(row.severity),
+      outcome: _safeAuditCode(row.outcome),
+      phase: _safeAuditCode(row.phase),
+    );
+  }
 
   @override
   Future<int> beginSyncAttempt() async {
@@ -1021,4 +1112,51 @@ String _sanitizeSummary(String value) {
       .trim();
   if (sanitized.isEmpty) return 'preserve evidence and inspect diagnostics';
   return sanitized.length <= 160 ? sanitized : sanitized.substring(0, 160);
+}
+
+String _safeAuditCode(String value) {
+  final sanitized = value
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9._:-]+'), '-')
+      .replaceAll(RegExp('-+'), '-')
+      .replaceAll(RegExp('^-|-\$'), '')
+      .trim();
+  if (sanitized.isEmpty) return 'unavailable';
+  return sanitized.length <= 64 ? sanitized : sanitized.substring(0, 64);
+}
+
+String _safeAuditText(String value) {
+  final redacted = value
+      .replaceAll(RegExp(r'https?://\S+', caseSensitive: false), '[url]')
+      .replaceAll(RegExp(r'[A-Za-z]:\\[^\s]+'), '[path]')
+      .replaceAll(RegExp(r'(/[A-Za-z0-9._-]+){2,}'), '[path]')
+      .replaceAll(RegExp(r'\b[A-Fa-f0-9]{17,}\b'), '[reference]')
+      .replaceAll(
+        RegExp(r'\b(token|credential|secret|password)\b', caseSensitive: false),
+        'redacted',
+      )
+      .replaceAll(
+        RegExp(
+          r'\bselect\b|\binsert\b|\bupdate\b|\bdelete\b',
+          caseSensitive: false,
+        ),
+        'statement',
+      )
+      .replaceAll(RegExp(r'[\r\n\t]+'), ' ')
+      .trim();
+  if (redacted.isEmpty) return 'This technical detail was not recorded.';
+  return redacted.length <= 180 ? redacted : redacted.substring(0, 180);
+}
+
+String? _shortReference(String? value) {
+  if (value == null || value.trim().isEmpty) return null;
+  final sanitized = value
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '')
+      .trim();
+  if (sanitized.isEmpty) return null;
+  final shortened = sanitized.length <= 8
+      ? sanitized
+      : sanitized.substring(0, 8);
+  return '#$shortened';
 }

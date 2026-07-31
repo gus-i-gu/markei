@@ -12,7 +12,6 @@ enum MarkeiDestinationId {
   documentation,
   settings,
   audit,
-  closure,
 }
 
 enum MarkeiDestinationGroup { primary, secondary }

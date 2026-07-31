@@ -8,9 +8,9 @@ import 'markei_composition.dart';
 import 'navigation/markei_destination.dart';
 import 'pages/home_page.dart';
 import 'pages/analytics_page.dart';
+import 'pages/audit_page.dart';
 import 'pages/history_page.dart';
 import 'pages/lists_page.dart';
-import 'pages/native_closure_page.dart';
 import 'pages/products_page.dart';
 import 'pages/purchase_page.dart';
 import 'pages/settings_page.dart';
@@ -103,15 +103,8 @@ class _MarkeiAppState extends State<MarkeiApp> {
       icon: Icons.fact_check_outlined,
       label: 'Audit',
       group: MarkeiDestinationGroup.secondary,
-      description: 'Planned for C11-PH03.',
+      description: 'Recent local activity history.',
     ),
-    if (widget.composition.nativeClosureSurfaceEnabled)
-      const MarkeiDestination(
-        id: MarkeiDestinationId.closure,
-        icon: Icons.vpn_key_outlined,
-        label: 'Closure',
-        group: MarkeiDestinationGroup.secondary,
-      ),
   ];
 
   @override
@@ -191,20 +184,14 @@ class _MarkeiAppState extends State<MarkeiApp> {
       accountId: widget.composition.accountId,
       references: widget.composition.references,
       preferences: widget.composition.preferences,
+      accountSupport: widget.composition.settingsAccountSupport,
+      syncDeviceSupport: widget.composition.settingsSyncDeviceSupport,
       onChanged: () => setState(() => _refreshSignal++),
     ),
-    MarkeiDestinationId.audit: const _ReservedPage(
-      key: Key('audit.reserved'),
-      title: 'Audit',
-      body:
-          'Audit is planned for C11-PH03. It is not a diagnostic or Sync surface in this unit.',
-      icon: Icons.fact_check_outlined,
+    MarkeiDestinationId.audit: AuditPage(
+      controller: widget.composition.auditController,
+      visible: _visibleSelectedId == MarkeiDestinationId.audit,
     ),
-    if (widget.composition.nativeClosureSurfaceEnabled)
-      MarkeiDestinationId.closure: NativeClosurePage(
-        runner: widget.composition.nativeClosureRunner,
-        buildProvenance: widget.buildProvenance,
-      ),
   };
 
   MarkeiDestinationId get _visibleSelectedId {

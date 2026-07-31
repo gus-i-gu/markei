@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markei/application/audit.dart';
 import 'package:markei/application/closure_diagnostics.dart';
 import 'package:markei/domain/sync/canonical_json.dart';
 import 'package:markei/domain/shared/ids.dart';
@@ -505,6 +506,111 @@ void main() {
       'payload-shape-failure',
     );
   });
+
+  test('Audit page is two-query local read-only scoped and sanitized', () async {
+    final db = LocalDatabase.memory();
+    addTearDown(db.close);
+    await _seedAccount(db, accountA.value, deviceA.value);
+    await _seedAccount(db, accountB.value, deviceB.value);
+    final started = DateTime.utc(2026, 7, 31, 12);
+    final first = await _insertAttempt(
+      db,
+      accountId: accountA.value,
+      environment: environment,
+      startedAt: started,
+      resultCode: 'sync-completed',
+      correlationFingerprint: 'abcdef1234567890abcdef',
+    );
+    final second = await _insertAttempt(
+      db,
+      accountId: accountA.value,
+      environment: environment,
+      startedAt: started,
+      resultCode: 'sync-failed',
+      correlationFingerprint: '1234567890abcdef123456',
+    );
+    await _insertAttempt(
+      db,
+      accountId: accountB.value,
+      environment: environment,
+      startedAt: started.add(const Duration(minutes: 1)),
+      resultCode: 'other-account-secret-token',
+      correlationFingerprint: 'other-account-token',
+    );
+    await _insertAttempt(
+      db,
+      accountId: accountA.value,
+      environment: 'other-environment',
+      startedAt: started.add(const Duration(minutes: 2)),
+      resultCode: 'other-environment-secret-token',
+      correlationFingerprint: 'other-environment-token',
+    );
+    await _insertDiagnosticRow(
+      db,
+      attemptId: first,
+      code: 'MKS-OBS-001',
+      safeAction:
+          'inspect https://private.example.invalid/path token SELECT * FROM secrets abcdefabcdefabcdefabcdef',
+    );
+    await _insertDiagnosticRow(
+      db,
+      attemptId: second,
+      code: 'MKS-UI-001',
+      safeAction: 'review local evidence',
+    );
+
+    final repository = DriftClosureDiagnosticsRepository(
+      db,
+      accountId: accountA,
+      deviceId: deviceA,
+      environmentAlias: environment,
+      now: () => DateTime.utc(2026, 7, 31, 13),
+    );
+    final page = await repository.loadPage(
+      AuditPageRequest(
+        accountId: accountA,
+        environmentAlias: environment,
+        limit: 1,
+      ),
+    );
+    final next = await repository.loadPage(
+      AuditPageRequest(
+        accountId: accountA,
+        environmentAlias: environment,
+        cursor: page.nextCursor,
+        limit: 1,
+      ),
+    );
+
+    expect(page.queryCount, 2);
+    expect(page.networkCallCount, 0);
+    expect(page.writeCallCount, 0);
+    expect(page.records, hasLength(1));
+    expect(page.isPartialWindow, isTrue);
+    expect(page.records.single.id.value, second);
+    expect(next.records.single.id.value, first);
+    expect(
+      {page.records.single.id.value, next.records.single.id.value},
+      {first, second},
+    );
+    final combined = [...page.records, ...next.records]
+        .expand(
+          (attempt) => [
+            attempt.resultCode,
+            attempt.correlationReference ?? '',
+            ...attempt.events.expand(
+              (event) => [event.title, event.meaning, event.guidance],
+            ),
+          ],
+        )
+        .join(' ');
+    expect(combined, isNot(contains('other-account')));
+    expect(combined, isNot(contains('other-environment')));
+    expect(combined, isNot(contains('private.example.invalid')));
+    expect(combined, isNot(contains('token')));
+    expect(combined.toLowerCase(), isNot(contains('select')));
+    expect(combined, isNot(contains('abcdefabcdefabcdef')));
+  });
 }
 
 Future<void> _seedAccount(
@@ -732,4 +838,63 @@ Map<String, Object?> _validEvent(int sequence) {
     },
   };
   return {...content, 'contentHash': canonicalUtf8Sha256(content)};
+}
+
+Future<int> _insertAttempt(
+  LocalDatabase db, {
+  required String accountId,
+  required String environment,
+  required DateTime startedAt,
+  required String resultCode,
+  required String correlationFingerprint,
+}) {
+  return db
+      .into(db.syncAttempts)
+      .insert(
+        SyncAttemptsCompanion.insert(
+          accountId: accountId,
+          environmentAlias: environment,
+          operationKind: const Value('ordinary-sync'),
+          startedAt: startedAt,
+          completedAt: Value(startedAt.add(const Duration(seconds: 1))),
+          phase: 'completed',
+          latestStage: const Value('completed'),
+          resultCode: resultCode,
+          outcomeClass: 'completed',
+          correlationFingerprint: Value(correlationFingerprint),
+          responseHeadersReceived: const Value(false),
+        ),
+      );
+}
+
+Future<int> _insertDiagnosticRow(
+  LocalDatabase db, {
+  required int attemptId,
+  required String code,
+  required String safeAction,
+}) {
+  return db
+      .into(db.syncDiagnosticEvents)
+      .insert(
+        SyncDiagnosticEventsCompanion.insert(
+          attemptId: attemptId,
+          diagnosticVersion: const Value(1),
+          ordinal: 1,
+          code: code,
+          severity: 'INFO',
+          outcome: 'completed',
+          operationKind: 'ordinary-sync',
+          phase: 'terminal',
+          lastProvedPhase: const Value('completed'),
+          localMutationState: 'none',
+          providerContactState: 'not-started',
+          providerTransactionState: 'not-started',
+          trustedResponseState: 'not-received',
+          resultPersistenceState: const Value('committed'),
+          responseHeadersReceived: const Value(false),
+          safeAction: safeAction,
+          retryable: const Value(false),
+          recordedAt: DateTime.utc(2026, 7, 31, 12, 1),
+        ),
+      );
 }

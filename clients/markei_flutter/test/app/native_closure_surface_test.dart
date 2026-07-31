@@ -24,41 +24,28 @@ void main() {
     expect(find.byKey(const Key('nativeClosure.page')), findsNothing);
   });
 
-  testWidgets('native closure surface requires explicit development flag', (
+  testWidgets(
+    'native closure surface is absent with development flag enabled',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 1600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final composition = _composition(enabled: true);
+      addTearDown(composition.database.close);
+
+      await tester.pumpWidget(MarkeiApp(composition: composition));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Closure'), findsNothing);
+      expect(find.byKey(const Key('nativeClosure.page')), findsNothing);
+      expect(find.byKey(const Key('nativeClosure.Diagnostics')), findsNothing);
+    },
+  );
+
+  testWidgets('MarkeiApp does not expose Closure boot identity', (
     tester,
   ) async {
-    tester.view.physicalSize = const Size(1200, 1600);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    final composition = _composition(enabled: true);
-    addTearDown(composition.database.close);
-
-    await tester.pumpWidget(MarkeiApp(composition: composition));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Closure'));
-    await tester.pumpAndSettle();
-
-    expect(find.byKey(const Key('nativeClosure.page')), findsOneWidget);
-    expect(find.text('closure-disabled'), findsOneWidget);
-    expect(
-      find.byKey(const Key('nativeClosure.buildProvenance')),
-      findsOneWidget,
-    );
-    expect(find.text('Source identity unavailable'), findsOneWidget);
-    expect(find.byKey(const Key('nativeClosure.Diagnostics')), findsOneWidget);
-    expect(find.byKey(const Key('nativeClosure.Status')), findsNothing);
-    expect(find.byKey(const Key('nativeClosure.Query')), findsNothing);
-    expect(
-      find.byKey(const Key('nativeClosure.Refresh diagnostics')),
-      findsNothing,
-    );
-    await tester.tap(find.byKey(const Key('nativeClosure.Diagnostics')));
-    await tester.pumpAndSettle();
-    expect(find.text('diagnostics-configuration-missing'), findsOneWidget);
-  });
-
-  testWidgets('MarkeiApp propagates boot identity to Closure', (tester) async {
     tester.view.physicalSize = const Size(1200, 1600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -77,16 +64,15 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Closure'));
-    await tester.pumpAndSettle();
 
-    expect(find.text('Source revision #abcdef123456'), findsOneWidget);
+    expect(find.text('Closure'), findsNothing);
+    expect(find.text('Source revision #abcdef123456'), findsNothing);
     expect(
       find.text(
         'Source tree SHA-256 '
         'fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210',
       ),
-      findsOneWidget,
+      findsNothing,
     );
   });
 }

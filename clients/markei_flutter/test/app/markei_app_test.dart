@@ -499,7 +499,7 @@ void main() {
     expect(find.byKey(const Key('history.empty')), findsOneWidget);
   });
 
-  testWidgets('desktop rail reaches Closure at short height without overflow', (
+  testWidgets('desktop rail reaches Audit at short height without overflow', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(1200, 520);
@@ -523,18 +523,19 @@ void main() {
       matching: find.byType(Scrollable),
     );
     await tester.scrollUntilVisible(
-      find.text('Closure'),
+      find.text('Audit'),
       200,
       scrollable: railScrollable,
     );
-    await tester.tap(find.text('Closure'));
+    await tester.tap(find.text('Audit'));
     await _pumpReady(tester);
 
-    expect(find.byKey(const Key('nativeClosure.page')), findsOneWidget);
+    expect(find.byKey(const Key('audit.page')), findsOneWidget);
+    expect(find.text('Closure'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('desktop rail reaches Closure at tall height without overflow', (
+  testWidgets('desktop rail reaches Audit at tall height without overflow', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(1200, 1600);
@@ -553,10 +554,11 @@ void main() {
 
     await tester.pumpWidget(MarkeiApp(composition: composition));
     await _pumpReady(tester);
-    await tester.tap(find.text('Closure'));
+    await tester.tap(find.text('Audit'));
     await _pumpReady(tester);
 
-    expect(find.byKey(const Key('nativeClosure.page')), findsOneWidget);
+    expect(find.byKey(const Key('audit.page')), findsOneWidget);
+    expect(find.text('Closure'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 

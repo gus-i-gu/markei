@@ -2,7 +2,9 @@ import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 
 import '../application/catalogue_queries.dart';
+import '../application/audit.dart';
 import '../application/analytics_workspace.dart';
+import '../application/closure_diagnostics.dart';
 import '../application/history_export.dart';
 import '../application/hosted_auth_ports.dart';
 import '../application/hosted_enrollment_coordinator.dart';
@@ -45,6 +47,9 @@ final class MarkeiComposition {
     required this.productLists,
     required this.purchaseExports,
     AnalyticsWorkspaceController? analyticsWorkspace,
+    AuditController? auditController,
+    SettingsAccountSupportPort? settingsAccountSupport,
+    SettingsSyncDeviceSupportPort? settingsSyncDeviceSupport,
     required this.accountId,
     required this.deviceId,
     this.nativeAuthConfiguration = const NativeAuthConfigurationUnavailable(
@@ -58,7 +63,25 @@ final class MarkeiComposition {
              accountId: accountId,
              repository: LocalAnalyticsRepository(database),
              registry: localAnalyticsRegistry(),
-           );
+           ),
+       auditController =
+           auditController ??
+           AuditController(
+             accountId: accountId,
+             environmentAlias: 'provider-native',
+             repository: DriftClosureDiagnosticsRepository(
+               database,
+               accountId: accountId,
+               deviceId: deviceId,
+               environmentAlias: 'provider-native',
+             ),
+           ),
+       settingsAccountSupport =
+           settingsAccountSupport ??
+           _RunnerSettingsAccountSupport(nativeClosureRunner),
+       settingsSyncDeviceSupport =
+           settingsSyncDeviceSupport ??
+           _RunnerSettingsSyncDeviceSupport(nativeClosureRunner);
 
   final LocalDatabase database;
   final PurchaseRegistrationRepository purchaseRegistration;
@@ -69,11 +92,15 @@ final class MarkeiComposition {
   final ProductListProjectionRepository productLists;
   final PurchaseExportRepository purchaseExports;
   final AnalyticsWorkspaceController analyticsWorkspace;
+  final AuditController auditController;
+  final SettingsAccountSupportPort settingsAccountSupport;
+  final SettingsSyncDeviceSupportPort settingsSyncDeviceSupport;
   final AccountId accountId;
   final DeviceId deviceId;
   final NativeAuthConfigurationResult nativeAuthConfiguration;
   final NativeAuthClosureRunner nativeClosureRunner;
   final bool nativeClosureSurfaceEnabled;
+  var _closed = false;
 
   static Future<MarkeiComposition> appPrivate() async {
     final database = LocalDatabase.appPrivate();
@@ -234,6 +261,136 @@ final class MarkeiComposition {
           correlationSource: uuid.v4,
         ),
       ),
+    );
+  }
+
+  Future<void> close() async {
+    if (_closed) return;
+    _closed = true;
+    auditController.dispose();
+    await database.close();
+  }
+}
+
+final class _RunnerSettingsAccountSupport
+    implements SettingsAccountSupportPort {
+  const _RunnerSettingsAccountSupport(this._runner);
+
+  final NativeAuthClosureRunner _runner;
+
+  @override
+  bool get signInMayContactNetwork => true;
+
+  @override
+  bool get signOutMayWriteLocalState => true;
+
+  @override
+  Future<SettingsAccountStatus> accountStatus() async {
+    final status = await _runner.status();
+    return SettingsAccountStatus(
+      authenticationState: status.state,
+      updatedAtUtc: DateTime.now().toUtc(),
+    );
+  }
+
+  @override
+  Future<SettingsActionResult> signInToSync() async {
+    final result = await _runner.signIn();
+    return SettingsActionResult(
+      state: result.state,
+      message:
+          'Sign in to Sync finished with ${result.state}. Local Purchase data is not uploaded merely by opening sign-in.',
+      contactedNetwork: true,
+      mayHaveWritten: false,
+    );
+  }
+
+  @override
+  Future<SettingsActionResult> signOutOnThisDevice() async {
+    final result = await _runner.logout();
+    return SettingsActionResult(
+      state: result.state,
+      message:
+          'Sign out on this Device finished with ${result.state}. Local Purchase history and queued work remain according to existing local behavior.',
+      contactedNetwork: false,
+      mayHaveWritten: true,
+    );
+  }
+}
+
+final class _RunnerSettingsSyncDeviceSupport
+    implements SettingsSyncDeviceSupportPort {
+  const _RunnerSettingsSyncDeviceSupport(this._runner);
+
+  final NativeAuthClosureRunner _runner;
+
+  @override
+  bool get refreshMayContactNetwork => false;
+
+  @override
+  bool get connectMayContactNetwork => true;
+
+  @override
+  bool get syncMayContactNetwork => true;
+
+  @override
+  Future<SettingsSyncDeviceStatus> localStatus() async {
+    final snapshot = await _runner.diagnostics();
+    final now = DateTime.now().toUtc();
+    if (snapshot == null) {
+      return SettingsSyncDeviceStatus(
+        enrollmentState: 'unavailable',
+        syncReadiness: 'unavailable',
+        lastResult: 'unavailable',
+        lastSuccessfulSyncAtUtc: null,
+        deviceReference: null,
+        pending: 0,
+        uploading: 0,
+        failed: 0,
+        unknown: 0,
+        updatedAtUtc: now,
+      );
+    }
+    final currentDevice = snapshot.devices
+        .where((device) => device.isCurrent)
+        .firstOrNull;
+    return SettingsSyncDeviceStatus(
+      enrollmentState: snapshot.enrollmentState,
+      syncReadiness: snapshot.syncReadiness,
+      lastResult: snapshot.lastResult,
+      lastSuccessfulSyncAtUtc: snapshot.lastSuccessfulSyncAt?.toUtc(),
+      deviceReference: currentDevice == null
+          ? null
+          : '#${currentDevice.fingerprint}',
+      pending: snapshot.queueCounts.pending,
+      uploading: snapshot.queueCounts.uploading,
+      failed: snapshot.queueCounts.failed,
+      unknown: snapshot.queueCounts.unknown,
+      updatedAtUtc: snapshot.refreshedAt.toUtc(),
+    );
+  }
+
+  @override
+  Future<SettingsActionResult> connectThisDevice() async {
+    final result = await _runner.enrollOrQueryDevice();
+    return SettingsActionResult(
+      state: result.state,
+      message:
+          'Connect this Device finished with ${result.state}. This does not prove Sync succeeded.',
+      contactedNetwork: true,
+      mayHaveWritten: true,
+    );
+  }
+
+  @override
+  Future<SettingsActionResult> syncNow() async {
+    final result = await _runner.hostedSyncProbe();
+    return SettingsActionResult(
+      state: result.state,
+      message:
+          'Sync now finished with ${result.state}. No automatic retry or recovery was started.',
+      contactedNetwork: true,
+      mayHaveWritten: true,
     );
   }
 }

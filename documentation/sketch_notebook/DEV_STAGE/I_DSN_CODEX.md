@@ -1,4 +1,4 @@
-# I_DSN_CODEX - Final PH01 Layout and PH02 Analytics Architecture Evidence
+# I_DSN_CODEX - C11 PH03 Architecture Evidence
 
 Source stages:
 
@@ -6,92 +6,96 @@ Source stages:
 - `documentation/sketch_notebook/DEV_STAGE/E_DDC_STAGE.md`
 - `documentation/sketch_notebook/DEV_STAGE/F_DSN_STAGE.md`
 
+Activation marker:
+
+```text
+<!-- ACTIVATION_MARKER:C11-PH03-R01-2026-07-31 -->
+```
+
 Architecture implemented:
 
-- `domain/analytics/analytics_models.dart` owns Analytics identities, evidence
-  rows, datasets, determinants, variables, operation requests, operation
-  results, scopes, card configuration and typed unavailable reasons.
-- `domain/analytics/analytics_registry.dart` owns versioned operation
-  definitions `local.sum@1`, `local.mean@1`, `local.difference@1` and
-  `local.percentage@1`, including checked integer/rational arithmetic and typed
-  unavailable results.
-- `application/analytics.dart` owns the read-only evidence repository port and
-  typed History launch context.
-- `application/analytics_workspace.dart` owns session-local dataset, cards,
-  conditions, selection, focus, reset, retry, generation, 100-row pages,
-  500-ID selected-scope cap and request counts.
-- `infrastructure/local/local_analytics_repository.dart` owns the local
-  Account-predicated joined load across Purchase Items, Purchases, Products,
-  Stores, People and Payment Methods.
-- `app/pages/analytics_page.dart` and
-  `app/widgets/analytics_components.dart` own presentation only.
-- `markei_composition.dart` supplies the local adapter, registry and workspace.
-- `markei_app.dart` owns destination selection, visible destination state and
-  typed History-to-Analytics launch context.
-- `history_page.dart` owns selected Purchase IDs and handoff only; it imports no
-  Analytics registry, workspace controller or local adapter.
+- `application/audit.dart` owns the read-only Audit port, persisted projection
+  identities, composite cursor, request clamping, controller generations,
+  stale completion suppression and state transitions.
+- `infrastructure/local/closure_diagnostics_repository.dart` implements the
+  Audit read port using existing diagnostic attempt and event tables without
+  schema changes.
+- Audit page loading uses exactly one attempt query plus one child event query
+  per rendered page, with Account and environment predicates on the attempt
+  query and child event loading restricted to the selected attempt IDs.
+- The Audit cursor is an exclusive pair of UTC `startedAt` and attempt ID,
+  ordered descending to keep equal-timestamp paging stable.
+- The Audit projection reads the generated diagnostic registry only as safe
+  meaning authority; the registry is not regenerated or edited.
+- `app/pages/audit_page.dart` and `app/widgets/audit_components.dart` own
+  presentation only and do not import broad Closure/Auth/Sync capabilities.
+- `markei_app.dart` removes Closure from ordinary destinations and passes
+  visible destination state into Audit.
+- `markei_composition.dart` owns one Audit controller and idempotent
+  composition closure.
+- `settings_page.dart` remains presentation/controller logic over existing
+  local repositories and capability-narrow Account and Sync/Device ports.
+- `application/closure_diagnostics.dart` defines Settings-only capability
+  ports without changing Auth or Sync contracts.
 
-R02 lifecycle correction:
+Closure capability disposition:
 
-- `AnalyticsPage` now accepts visible destination state and defers the local
-  evidence read while hidden, preventing hidden app-shell tabs from owning
-  background SQLite resources in tests.
-- `test/app/markei_app_test.dart` helper scrolling now uses tester-owned
-  bounded `ensureVisible` calls. Assertions remained substantive.
-- No validation-owned Dart, Flutter or sqlite process remained after the
-  focused and full validation runs.
+- Ordinary product navigation exposes no Closure destination with
+  `MARKEI_NATIVE_CLOSURE_SURFACE` false.
+- Ordinary product navigation exposes no Closure destination with
+  `MARKEI_NATIVE_CLOSURE_SURFACE` true.
+- Broad `NativeAuthClosureRunner`, Recovery, Retry, delete-history, raw
+  diagnostics and hosted/protocol maintenance capabilities remain absent from
+  Audit.
+- Native Closure diagnostic pages and tests remain present as development
+  material where already authorized, but are not reachable from ordinary
+  navigation.
 
-Preserved boundaries:
+Forbidden-surface audit:
 
-- No schema, migration, generated source, dependency, lockfile, platform, API,
-  Auth, Sync, provider or diagnostic source changed.
-- Analytics cards remain session-local and are not serialized or synchronized.
-- Widgets remain repository-free and calculation-free.
-- Account scoping is enforced in the local repository join.
-- Evidence identity is based on persisted Purchase Item IDs, with Purchase total
-  kept separate from row Line total to avoid duplicate Purchase totals.
+- No schema or migration changed.
+- `local_database.dart` and generated Drift output did not change.
+- No dependency, pubspec, lockfile, font or asset changed.
+- Diagnostic contracts, generator and generated registry did not change.
+- Server/API, Auth, Sync contracts, providers, hosted resources, environment
+  configuration and secrets did not change.
+- Analytics and Purchase History calculation behavior did not change.
+- The former R07 causal/backend engine, new diagnostic ledger, hosted Audit,
+  provider observability, new Sync instrumentation, retention/export/restore,
+  GCM04, multiple-user work and Device revocation were not implemented.
 
-Evidence:
+Rollback:
 
-- Account-scoped join, complete evidence loading, request counts, no local
-  transition rereads, selected-scope cap, fixed-point operation behavior,
-  Difference B-minus-A, Percentage part-of-whole and overflow typed-block
-  behavior are covered by focused tests.
-- Ordinary and stress fixtures exercised 1,000/5,000 and 10,000/50,000
-  Purchase/Item datasets with 100-row rendering and 500-ID selected-scope
-  boundary evidence.
-- Wide/compact state shares one workspace/controller; visual foundation and
-  app-shell tests cover breakpoint retention and 200-percent text scale.
+- The PH03 implementation is bounded to the authorized app, application,
+  infrastructure-local, test and G/H/I paths. Reverting the single
+  implementation commit returns ordinary navigation, Settings and Audit to the
+  `256ee4dbbcb790419b816862ee42933a115ddd87` state.
 
-Residual limits:
+Evidence limits:
 
-- Screenshot-based rendered review was not performed.
-- Assistive-technology, human acceptance, locale and real-device review remain
-  absent.
+- Architecture evidence is automated through focused tests, full tests,
+  generator drift check, analysis, builds and path audits.
+- Human architecture review was not performed.
+- Live provider operations were not performed.
 
 ## Terminal
 
 ```text
-CYCLE=C11
-ROUND=C11-PH01-S02-R01+C11-PH02
-PH01_PRESENTATION_ARCHITECTURE=PASS
-PH01_SINGLE_SCROLL_OWNER=PASS
-PH01_HISTORY_SELECTION_SOURCE=PASS
-ANALYTICS_DEPENDENCY_DIRECTION=PASS
-ACCOUNT_SCOPED_JOIN=PASS
-EVIDENCE_ROW_IDENTITY=PASS
-PURCHASE_TOTAL_DEDUPLICATION=PASS
-REGISTRY_VERSIONING=PASS
-OPERATION_SPECIFIC_TYPES=PASS
-CHECKED_FIXED_POINT_ARITHMETIC=PASS
-SESSION_LOCAL_CARD_STATE=PASS
-HISTORY_PURCHASE_ID_HANDOFF=PASS
-RESPONSIVE_SHARED_STATE=PASS
-WIDGETS_REPOSITORY_AND_CALCULATION_FREE=PASS
-REPOSITORY_REQUEST_COUNT=initial_load:1; retry:+1; local_transitions:+0
+AUDIT_DEPENDENCY_DIRECTION=PASS
+AUDIT_PERSISTED_IDENTITY=PASS
+AUDIT_COMPOSITE_CURSOR=PASS
+AUDIT_QUERIES_PER_PAGE=2
+ACCOUNT_ENVIRONMENT_PREDICATES=PASS
+AUDIT_SANITIZED_PROJECTION=PASS
+AUDIT_CONTROLLER_LIFETIME=PASS
+SETTINGS_CAPABILITY_BOUNDARIES=PASS
+CLOSURE_CAPABILITY_DISPOSITION=PASS
+CLOSURE_DESTINATION_RETIRED=PASS
+COMPOSITION_DISPOSAL=PASS
 SCHEMA_MIGRATION=NONE
 GENERATED_SOURCE_CHANGED=NO
 DEPENDENCY_CHANGED=NO
-REMOTE_SYNC_DIAGNOSTIC_IMPORTS=ABSENT
-NEXT_DESIGN_REVIEW=Reconcile final Analytics architecture evidence into Design memory.
+API_AUTH_SYNC_PROVIDER_CHANGED=NO
+R07_ACTIVATED=NO
+NEXT_DESIGN_REVIEW=Reconcile PH03 architecture evidence into Design memory.
 ```
