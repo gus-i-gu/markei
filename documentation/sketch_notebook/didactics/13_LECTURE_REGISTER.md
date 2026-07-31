@@ -510,3 +510,248 @@ The next learner check is to explain why a Product reference identifies the reus
 
 <!-- TEMPORAL_MARKER:C09-S02-ENTRY-2026-07-14 -->
 > Temporal boundary — Cycle 09 Sprint 02 begins here. Content above is the reviewed pre-Sprint-02 baseline and retains its existing authority and semantic role. Content below belongs to Sprint 02 investigation, current-UI archival evidence, aesthetic reconciliation, staging, implementation, and later closure. This marker alone authorizes no source change, semantic promotion, or methodology revision.
+
+# Observation 010 — Cycle 10 Diagnostic Learning Registration
+
+```text
+Date: 2026-07-30
+Branch: grm-guarded-provisioning-20260727
+Registration anchor: f3bfd3e6829d0f42951e306c449564fb05d7cc9c
+Class: bounded permanent Didactic observation
+Primary evidence:
+  documentation/REC_DIAGNOSTICS.md — Records 001–021 and Appendix I
+  documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md — mutable prefix
+Historical provenance:
+  J_MAIN_STAGE.md — protected Legacy_Progress, selectively recovered
+Canonical reconciliation:
+  documentation/sketch_notebook/didactics/02_KANBAN.md — reviewed, unchanged
+Derived and checkpoint memory:
+  07_GLOSSARY.md and 08_CONCEPT_MAP.md — read-only orientation, unchanged
+```
+
+This registration records the learning progression exposed by Cycle 10 without
+turning the diagnostic registry into Didactic canon. It distinguishes concepts
+implemented in the product, concepts represented in the interface, concepts
+explained by the evidence, concepts practically demonstrated by the assays,
+and actual learner comprehension. The first four are strongly evidenced within
+the boundaries below. Direct learner explanation, prediction, debugging or
+transfer evidence sufficient for a KANBAN maturity transition was not
+recorded.
+
+## Ordered learning progression
+
+1. **Local-first product truth versus hosted coordination.** The early records
+   showed that a durable local queue and local Product/Purchase state can exist
+   while hosted readiness, provider contact or synchronization remains absent.
+   Later same-Device and reciprocal two-Device assays demonstrated that the
+   hosted system coordinates exchange and convergence; it does not become the
+   ordinary source of local product truth. Provenance: REC 001–006, 009–013,
+   018–021; J sections 2–4 and protected GCM02/GCM03 progression.
+
+2. **Readiness versus ordinary Sync.** Hosted-connection checks established
+   transport/readiness only. They did not upload, download, apply, acknowledge
+   or advance Last successful Sync. REC 003–006 corrected the earlier tendency
+   to read one successful readiness result as synchronization evidence.
+   Provenance: REC 001–006 and Appendix I progression rows 001–006.
+
+3. **Current action result versus preserved operation history.** Early Closure
+   surfaces displayed a current failed/notApplied inspection beside a newer
+   readiness result, exposing that one flat result field could not safely
+   identify the operation being discussed. Operation and correlation
+   fingerprints, grouped lifecycle rows and preserved attempt history restored
+   the distinction between the newest action terminal and older evidence.
+   Provenance: REC 001–008; Appendix I rows 001–008; J historical System
+   Diagnosis and diagnostic-tightening entries.
+
+4. **Product natural identity versus three other identities.** Cycle 10
+   separated the user-visible Product code, the immutable local Product UUID,
+   the natural identity used to reconcile semantically identical Products, and
+   the hosted event identity used for append-only delivery. REC 018–021
+   practically demonstrated that matching natural identity with different
+   local representations can converge as one Product without rewriting those
+   distinct responsibilities. Provenance: REC 018–021; J section 3 and
+   protected R03–R05 corrective lineage.
+
+5. **Transaction outcome versus diagnostic-persistence outcome.** A trusted
+   provider response or committed local apply is a causal result. A later
+   failure to persist or render diagnostics must not erase that result. REC
+   019–020 exposed this through trusted upload/download evidence followed by a
+   local apply conflict or unclassified runner terminal. The correction kept
+   transaction truth and diagnostic-history truth separately reportable.
+   Provenance: REC 019–020; Appendix I rows 018–020; J Cycle 10 capsule and
+   protected corrective history.
+
+6. **Outcome vocabulary became ordered rather than interchangeable.**
+   `blocked` means a prerequisite prevented an attempted phase;
+   `not-applied` means the business effect was not committed;
+   `applied` means the intended local effect committed;
+   `duplicate-equivalent` means replay required no second business effect
+   because the equivalent fact already existed; and `unknown` means the
+   available evidence cannot determine the outcome. These terms describe
+   evidence-bounded outcomes, not generic error severity. Provenance: REC
+   001–012 and Appendix I; J historical System Diagnosis catalogue and
+   diagnostic-tightening reconciliation.
+
+7. **Acknowledgement depends on committed local progress.** REC 019–020 showed
+   acknowledgement correctly absent when local application/cursor progress was
+   not durably established. REC 021 later showed authenticated acknowledgement
+   only after successful convergence and on golden no-op repeats. The learner
+   model is causal: provider download precedes local apply; committed apply and
+   cursor truth precede acknowledgement. Provenance: REC 019–021; J section 3.
+
+8. **Same-Device proof differs from reciprocal two-Device convergence.** GCM02
+   closed only after client, Render and provider evidence agreed for one hosted
+   Device. It did not prove a second Device. GCM03 then required two preserved
+   clients, both directions of convergence, natural-identity reconciliation,
+   stable projections, drained queues and one idempotent no-op repeat per
+   Device. Provenance: REC 009–017 for the boundary and REC 021 for reciprocal
+   closure; Appendix I; J sections 2–3.
+
+9. **Automated validation differs from practical human acceptance.** Tests,
+   builds and generated diagnostic contracts stabilized implementation and
+   vocabulary. The controlled human/client/Render assay established practical
+   convergence within its exact development scope. Neither kind of evidence
+   automatically proves learner mastery, and automated evidence alone cannot
+   substitute for the practical assay. Provenance: REC 018–021; J sections 3,
+   7 and 8; the standing KANBAN Evidence State and Validation Boundary rule.
+
+10. **Development acceptance differs from production acceptance.** The accepted
+    terminal is two Devices, one Account, development provider. Cross-Account
+    isolation, membership disable/revocation, outage and acknowledgement
+    uncertainty recovery, retention, snapshot/rebootstrap and production
+    deployment/lifecycle acceptance were not proved. Provenance: REC 021 and
+    Appendix I material evidence ceiling; J sections 2–3 and 8.
+
+## Important misconceptions and diagnostic corrections
+
+| Earlier or tempting interpretation | Evidence-backed correction |
+| --- | --- |
+| A ready hosted connection proves Sync | Readiness proves only its bounded control path; ordinary Sync has separate upload/download/apply/acknowledgement phases. |
+| One page-level result describes every visible card and attempt | Current action, last Sync result and historical attempts are separate projections and must be associated by operation evidence. |
+| A local pending row means synchronization occurred | It proves durable local delivery preparation only. |
+| A successful provider response means local application succeeded | Provider acceptance and local durable apply are separate causal phases. |
+| A later diagnostic failure may replace a prior trusted response | Diagnostic persistence may fail, but preserved causal evidence must retain the trusted response and committed outcome. |
+| Product code, Product UUID, natural identity and Event UUID are aliases | They identify different subjects or responsibilities and must not substitute for one another. |
+| `duplicate-equivalent` is another failure | It is an idempotent no-second-effect result when the equivalent fact already exists. |
+| `unknown` means rejected or failed | It means the supplied evidence cannot classify the outcome; safe action remains bounded until reconciled. |
+| Old failures override a newer successful terminal | History remains visible, but current state follows the newest correctly associated operation terminal. |
+| One Device success proves convergence | Same-Device closure and reciprocal two-Device convergence require different evidence. |
+| Passing tests/builds proves human or learner acceptance | It proves only the named automated/build boundary. |
+| GCM03 proves production lifecycle readiness | It proves the stated two-Device/one-Account development boundary only. |
+
+## Terminology whose meaning stabilized during Cycle 10
+
+- **Local-first truth:** durable local Product, Purchase, queue and projection
+  state owned by the client; not a synonym for isolated or never synchronized.
+- **Hosted coordination:** authenticated Account/Device exchange, ordering,
+  download and acknowledgement used to converge local truths.
+- **Product code:** immutable user-visible catalogue identifier; not the local
+  Product UUID, natural identity tuple or hosted event UUID.
+- **Natural Product identity:** deterministic semantic identity used to select
+  or merge the corresponding Product subject without fuzzy auto-merge.
+- **Current action result:** the terminal associated with the action currently
+  being inspected; it does not erase prior operation evidence.
+- **Historical operation evidence:** append-oriented diagnostic chronology that
+  remains available after newer terminals.
+- **Readiness:** ability to satisfy the bounded hosted-connection prerequisite;
+  explicitly not proof of ordinary Sync.
+- **Acknowledgement:** a post-apply declaration of committed local cursor
+  progress, not proof of all-Device convergence or backup.
+- **Golden no-op repeat:** an empty-queue ordinary Sync that downloads and
+  acknowledges without submitting or creating duplicate business effects.
+
+## Practical assay lessons
+
+- Freeze pre-action client, queue, sequence and evidence ceilings before
+  pressing a control.
+- Associate client and server evidence through sanitized operation/correlation
+  fingerprints rather than timestamps or page position alone.
+- Keep readiness, Diagnostics, ordinary Sync, Retry and Recovery as different
+  actions with different mutation and proof boundaries.
+- Preserve older failures for causal learning while using the newest correctly
+  associated operation to state current outcome.
+- Stop when an outcome is unknown, a cursor/apply result is not durable, or
+  expected counts/identity relationships disagree.
+- Demonstrate reciprocal convergence by checking both clients, stable
+  Catalogue/History projections, drained queues and idempotent repeats.
+- Treat client declarations as one evidence source; server logs and provider
+  inspection supply different evidence and cannot be inferred from the client.
+- Read-only or rolled-back provider inventory establishes only the captured
+  point in time. REC 021 intentionally does not claim a fresh final
+  provider-table recount.
+
+## Comprehension evidence and boundary
+
+The human assay sequence demonstrates practical adherence to bounded action
+packets: preserved clients were retained, prohibited recovery/provider repair
+was avoided, reciprocal actions were sequenced, and final projections were
+compared. This is evidence of disciplined practical participation and of
+confusions being corrected through successive records.
+
+It is not, by itself, direct evidence that the learner can independently
+explain, predict, debug or transfer every concept above. The repository records
+no explicit learner explanation evaluated against the KANBAN rubric.
+Therefore:
+
+```text
+CONCEPTS_IMPLEMENTED_OR_REPRESENTED=YES
+CONCEPTS_EXPLAINED_BY_EVIDENCE=YES
+CONCEPTS_PRACTICALLY_DEMONSTRATED=YES_WITHIN_DEVELOPMENT_SCOPE
+DIRECT_LEARNER_MASTERY_EVIDENCE=ABSENT
+KANBAN_TRANSITION=NONE
+```
+
+## Accepted evidence ceilings
+
+```text
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=CLOSED_TWO_DEVICE_DEVELOPMENT_SCOPE
+MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_ONE_ACCOUNT_DEVELOPMENT_SCOPE
+FINAL_POST_NO_OP_PROVIDER_TABLE_RECOUNT=NOT_COLLECTED
+PRODUCTION_ACCEPTANCE=ABSENT
+```
+
+The accepted GCM03 terminal does not prove:
+
+- two-Account isolation;
+- membership disable or Device revocation;
+- outage and acknowledgement-uncertainty recovery;
+- retention, snapshot or rebootstrap behavior;
+- production deployment, lifecycle, availability or acceptance.
+
+Those questions remain outside this Cycle 10 Didactic registration and are
+deferred to C12-PHASE02.
+
+## Unresolved learning questions
+
+1. Can the learner explain, without consulting the UI, why Product code, local
+   UUID, natural identity and Event UUID must remain separate?
+2. Can the learner predict when each of blocked, not-applied, applied,
+   duplicate-equivalent and unknown is correct from a short lifecycle trace?
+3. Can the learner distinguish a trusted provider response, committed local
+   apply, diagnostic persistence and displayed terminal when they disagree?
+4. Can the learner derive why acknowledgement must wait for committed cursor
+   progress?
+5. Can the learner design the minimum additional evidence for two-Account
+   isolation, revocation, outage recovery and rebootstrap without overclaiming
+   production acceptance?
+6. Can the learner explain why an older preserved failure remains valuable
+   without overriding the newest successful operation terminal?
+
+## PRC-01 classification summary
+
+| Candidate claim | Current state | Evidence and boundary | Semantic owner / destination | Result |
+| --- | --- | --- | --- | --- |
+| Cycle 10 produced an ordered learning and misconception-correction history | implemented and validated within Records 001–021 | REC chronology plus J historical provenance | Didactic observational / this Lecture Register | appended |
+| Identity, outcome, readiness, acknowledgement and evidence-ceiling distinctions are stable teaching material | accepted project meaning | REC 001–021, J Cycle 10 capsule, existing KANBAN identities | existing Didactic canon; observational interpretation here | no new concept identity |
+| Existing concept maturity should change | candidate | no direct learner explanation, prediction, debugging or transfer record | `02_KANBAN.md` | rejected; unchanged |
+| GCM03 supports production or lifecycle maturity | contradicted | REC 021 and Appendix I explicitly exclude those families | no canonical destination | rejected |
+| Runtime diagnostic rows should become Didactic canon | contradicted | runtime registry owns codes; REC owns chronology | no Didactic canonical destination | rejected |
+
+# Current Observation Boundary
+
+Cycle 10 is registered in permanent Didactic history at the exact same-Device
+and reciprocal two-Device development boundaries. This append does not claim
+production readiness, operational acceptance, architecture selection, learner
+mastery or a KANBAN maturity transition. Derived and checkpoint memory were
+intentionally left unchanged by the human-narrowed registration scope.
