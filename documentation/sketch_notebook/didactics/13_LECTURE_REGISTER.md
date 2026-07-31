@@ -1180,3 +1180,69 @@ limits adequately.
 This event records represented, automated, built and partially human-observed
 project evidence. It does not establish learner mastery. No KANBAN maturity
 transition is authorized. `KANBAN_TRANSITIONS=NONE`. `KANBAN_TRANSITIONS=NONE`.
+
+# Observation 015 — C11 Analytics correction learning and evidence event
+
+> Date: 2026-07-31
+> Branch: `grm-guarded-provisioning-20260727`
+> Implementation: `17fd65296e960112787b870363b40339f535f5b6`
+> Parent: `2cdb8a66bfa75918acbbcae324e8315e0b7b2658`
+> Authority: `0e647e76aa8275bda48cea1e9d08427e3d949134`
+> Evidence: complete `DEV_STAGE/H_DDC_CODEX.md`; J section 16
+> Sequence: SEQ-PRM-04 / PDR2-A
+> KANBAN result: `KANBAN_TRANSITIONS=NONE`
+
+## Learning event
+
+The bounded Analytics correction replaced the PH05 current implementation defect
+classification at the automated evidence ceiling. One visible `Variables` set
+now distinguishes:
+
+- categorical breakdowns: Purchased by and Payment method;
+- typed unavailable evidence: Purchased for, because recorded evidence does not
+  support it;
+- numeric measures: Quantity, Unit price, Price paid, Purchase total and
+  Evidence count.
+
+Categorical-only selection now explains that a numeric variable is required. It
+does not silently insert Evidence count, Quantity or another measure.
+Unsupported combinations name both the selected Operation and numeric Variable.
+
+Custom Timeframe uses inclusive `Initial date` and `Final date` fields in
+`dd-mm-yyyy`. Missing, invalid and reversed ranges provide the smallest
+correction-specific guidance.
+
+Saved analyses are immutable session records. Changing or clearing the live
+draft does not rewrite a saved record. Chart, Table, interpretation, CSV and PDF
+derive meaning from the same frozen record.
+
+## Learner-facing evidence and scales
+
+Results use readable decimal quantity, currency, currency-per-unit, percentage,
+signed Difference and integer Evidence-count scales. Compatibility keys,
+fixed-point storage integers and ordinary UUIDs are not learner-facing
+evidence. `Date-Time of purchase` and `Store name` remain visible evidence
+labels.
+
+The ten-case correction regression matrix passed. Automated tests validate
+selected-variable identity and projection integrity, compact/wide component
+behavior, 200-percent text containment and semantics. This supersedes the
+earlier screenshot mismatch as the current automated implementation
+classification; the screenshot remains preserved as the observation that
+triggered the correction.
+
+## Evidence ceiling and retained deviation
+
+Automated correction evidence does not establish screenshot acceptance,
+keyboard-only human acceptance, Narrator/TalkBack acceptance, locale or
+real-device acceptance, learner comprehension or transfer.
+
+The PH05 Guide remains implemented and automated as eight anchored sections,
+but its accepted learner sequence remains partially contradicted. Lists is not
+its own teaching boundary and other teaching responsibilities remain
+redistributed. This Analytics correction did not repair or reclassify the Guide.
+
+No concept maturity changed. The next learning boundary is human verification
+of the corrected Analytics reading path and direct comprehension of categorical
+breakdowns, numeric measures, inclusive dates, immutable saved records and
+shared frozen-record outputs.

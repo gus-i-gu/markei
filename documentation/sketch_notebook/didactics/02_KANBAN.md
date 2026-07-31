@@ -1196,3 +1196,29 @@ Canonical evidence boundaries:
   maturity claim.
 
 All 39 KANBAN maturity values remain unchanged. `KANBAN_TRANSITIONS=NONE`.
+
+# C11 Analytics Correction Canonical Absorption
+
+> Reconciliation date: 2026-07-31
+> Evidence: implementation `17fd65296e960112787b870363b40339f535f5b6`;
+> complete `DEV_STAGE/H_DDC_CODEX.md`; J section 16; relevant Analytics UI and tests
+> Evidence class: implemented and automated-validated at the named correction boundary
+> Maturity result: no transition
+
+The correction stabilizes learner-facing Analytics meaning without creating a
+new KANBAN identity or proving learner mastery.
+
+| Existing concept identifier | Stable canonical identity | Evidence-qualified correction | Maturity before → after |
+| --- | --- | --- | --- |
+| `&&&03`, `&&&05`, `&%%17` | Categorical evidence organizes a result; numeric evidence is calculated. | Purchased by and Payment method are categorical breakdowns; Purchased for is typed unavailable; Quantity, Unit price, Price paid, Purchase total and Evidence count are explicit numeric measures. Categorical-only input inserts no implicit measure. | Yellow / Red / Red → unchanged |
+| `&&&03`, `&&&05` | Invalid input must name the bounded problem and smallest correction. | Unsupported operations name the Operation and numeric Variable. Inclusive Initial/Final dates use `dd-mm-yyyy` and distinguish missing, invalid and reversed input. | Yellow / Red → unchanged |
+| `&&&05`, `&%%17` | A saved analytical result is immutable evidence, distinct from the live draft. | Changing or clearing the draft does not alter saved session records; Chart, Table, interpretation, CSV and PDF derive from the same frozen record. | Red / Red → unchanged |
+| `&&&03`, `&&&05`, `%%%07` | Learner-facing evidence uses readable scales and labels, not storage identity. | Quantity, currency, currency-per-unit, percentage, signed Difference and integer Evidence count are readable; compatibility keys, raw integers and ordinary UUIDs stay hidden; Date-Time of purchase and Store name remain visible. | Yellow / Red / Red → unchanged |
+| `&&&05`, `&%%17`, `%%%07` | Automated integrity and human understanding are separate evidence classes. | The ten-case matrix, projection-integrity tests, compact/wide behavior, 200-percent containment and semantics pass. Human screenshot, keyboard-only, assistive-technology, locale, real-device and comprehension acceptance remain unestablished. | Red / Red / Red → unchanged |
+
+The PH05 Guide sequence remains partially contradicted and outside this
+correction. The earlier Analytics screenshot mismatch is superseded only as the
+current automated implementation classification; its historical observation is
+preserved in Observation 014.
+
+All 39 KANBAN maturity values remain unchanged. `KANBAN_TRANSITIONS=NONE`.

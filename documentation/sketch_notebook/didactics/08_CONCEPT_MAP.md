@@ -183,100 +183,111 @@ production acceptance, Analytics behavior or Audit/Closure migration.
 
 <!-- TEMPORAL_MARKER:C11-PH02-DIDACTIC-2026-07-31 -->
 
-# Current Didactic Checkpoint — C11-PH05
+# Current Didactic Checkpoint — C11 Analytics Correction R01
 
 > Status: current conceptual checkpoint
 > Branch: `grm-guarded-provisioning-20260727`
-> Implementation: `426235d8b67ac719e494b53cfb23a6c3b06fb489`
+> Inspected implementation: `17fd65296e960112787b870363b40339f535f5b6`
+> Implementation parent: `2cdb8a66bfa75918acbbcae324e8315e0b7b2658`
+> Correction authority: `0e647e76aa8275bda48cea1e9d08427e3d949134`
 > Evidence: complete `DEV_STAGE/H_DDC_CODEX.md`
-> Main reconciliation: `e6ced7fe3945925bf5f314ee11c4538029e18d44` section 14
+> Main reconciliation: J section 16 at `34eb4b60fd4f9c6455c1774c055c1615581623af`
+> Observational event: `13_LECTURE_REGISTER.md` Observation 015
 > Sequence: SEQ-PRM-04 / PDR2-A
 > Learner maturity: unchanged
 
 ## Current terminal
 
 ```text
-C11_PH01_R01=PERMANENTLY_ABSORBED
-C11_PH02=PERMANENTLY_ABSORBED
-C11_PH03=PERMANENTLY_ABSORBED
-C11_PH05=IMPLEMENTED_AUTOMATED_AND_BUILT
-GUIDE_STRUCTURE=IMPLEMENTED_AND_AUTOMATED
-GUIDE_ACCEPTED_LEARNER_SEQUENCE=PARTIALLY_CONTRADICTED
-ANALYTICS_LEARNER_DEFECT=ACTIVE
-ANALYTICS_WRONG_VARIABLE_ROOT_CAUSE=NOT_ESTABLISHED
-ANALYTICS_CORRECTION_DIRECTION=ACCEPTED_NOT_IMPLEMENTED
+C11_ANALYTICS_CORRECTION_R01=IMPLEMENTED_AUTOMATED_VALIDATED
+TEN_CASE_REGRESSION_MATRIX=PASS
+SELECTED_VARIABLE_PROJECTION_INTEGRITY=PASS
+WIDE_COMPACT_COMPONENT_BEHAVIOR=PASS
+TEXT_SCALE_200_CONTAINMENT=PASS
+AUTOMATED_SEMANTICS=PASS
+HUMAN_SCREENSHOT_ACCEPTANCE=NOT_PERFORMED
+HUMAN_COMPREHENSION=NOT_ESTABLISHED
+GUIDE_ACCEPTED_SEQUENCE=PARTIALLY_CONTRADICTED_OUT_OF_SCOPE
 KANBAN_TRANSITIONS=NONE
 ```
 
-## Current learner-visible distinctions
+## Learner-facing Analytics model
 
-- `Optional purchase details` contains independent optional Person and Payment
-  Method metadata; required Store/date/time remain outside that optional group.
-- Catalogue detail activation is not ordinary selection.
-- History detail opening is independent from zero/one/many action selection.
-- `Select all shown` means the current filtered loaded recent-History window.
-- `Use in Analytics` transfers scope only; requested, matched and unavailable
-  counts expose reconciliation without automatic calculation.
-- Export creates a file after a final destination result; sharing is separate.
-- Audit uses `Readiness summary`, not provider Health.
-- Settings is Account-first.
-- Person codes are `@NNN`; Payment Method codes are `#NNN`.
+One visible `Variables` set contains:
 
-## Guide correction
+- categorical breakdowns: Purchased by and Payment method;
+- typed unavailable category: Purchased for, unsupported by recorded evidence;
+- numeric measures: Quantity, Unit price, Price paid, Purchase total and
+  Evidence count.
 
-The Guide has eight local anchored sections and focusable contents navigation.
-Its committed order is Home, Purchase, Catalogue, History, Analytics, Exports,
-Audit and Settings.
+Categorical-only selection asks for a numeric variable and inserts no implicit
+count or Quantity. Unsupported operations name the selected Operation and
+numeric Variable.
 
-The accepted learner sequence is not fully implemented: Lists is not preserved
-as its own teaching boundary, while Getting started and
-local-data/export/Sync-limit concepts are redistributed. Structure is
-implemented/automated; sequence fidelity is partially contradicted; Guide
-comprehension is unestablished.
+`Initial date` and `Final date` use inclusive `dd-mm-yyyy` local-calendar
+meaning. Missing, invalid and reversed ranges receive distinct correction
+guidance.
 
-## Active Analytics learner defect
+## Record and evidence integrity
 
-Human screenshots expose a result that may use or display a Quantity value/unit
-unrelated to the requested Variables and Operation. Current Analytics tests did
-not detect the mismatch. The wrong-variable cause is unknown; no calculation-integrity claim is
-authorized.
+`Run & save` creates an immutable session record. Changing or clearing the live
+draft does not change saved analyses.
 
-Accepted but not implemented correction direction:
+Chart, Table, interpretation, CSV and PDF derive meaning from the same frozen
+record. Results use readable quantity, currency, currency-per-unit, percentage,
+signed Difference and integer Evidence-count scales.
 
-- compact `Create analysis`;
-- unified typed `Variables`;
-- two `dd-mm-yyyy` date fields;
-- Date-Time of purchase and Store name in learner-facing evidence.
+Compatibility keys, raw storage integers and ordinary UUIDs are not
+learner-facing evidence. `Date-Time of purchase` and `Store name` are exposed
+as evidence labels.
 
-## Evidence ceiling
+## Evidence classification
 
-Implemented, automated and built are not learner-understood. Automated evidence
-covers the named responsive boundaries, compact More, Home 200-percent text,
-Guide anchors, History selection, focus semantics and non-color meaning.
+The ten-case regression matrix passed. Automated evidence validates
+selected-variable/projection integrity, compact and wide components,
+200-percent text containment and semantics.
+
+The earlier PH05 screenshot defect remains historical evidence but is
+superseded as the current automated implementation classification. No human
+screenshot acceptance was performed.
 
 Still unestablished:
 
-- complete screenshot-fidelity review;
-- keyboard-only human review;
-- Narrator and TalkBack;
-- locale and long-string review;
-- real-device review;
+- keyboard-only human acceptance;
+- Narrator and TalkBack acceptance;
+- locale and long-string acceptance;
+- real-device acceptance;
 - direct learner comprehension or transfer.
 
-No KANBAN maturity transition follows from PH05.
+Automated implementation evidence is not learner maturity.
+
+## Retained Guide deviation
+
+The PH05 Guide still has eight anchored sections and automated navigation, but
+its accepted learner sequence remains partially contradicted: Lists is not its
+own teaching boundary and other accepted concepts remain redistributed. This
+Analytics correction did not repair the Guide.
+
+## Maturity
+
+No KANBAN status changed. Existing concept identities absorb the corrected
+Variables, validation, immutable-record, readable-scale and evidence-label
+distinctions at the implemented/automated ceiling only.
+`KANBAN_TRANSITIONS=NONE`.
 
 ## Recovery pointers
 
-1. `02_KANBAN.md` — stable concept identity and unchanged maturity.
-2. `07_GLOSSARY.md` — concise PH05 terminology and evidence distinctions.
-3. `13_LECTURE_REGISTER.md` Observation 014 — PH05 chronology and defect.
-4. `DEV_STAGE/H_DDC_CODEX.md` — automated/build evidence and limits.
-5. J section 14 — Guide deviation, Analytics defect and next authority boundary.
-6. Relevant UI/tests — implementation truth at `426235d8…`.
+1. `02_KANBAN.md` — canonical correction truth and unchanged maturity.
+2. `07_GLOSSARY.md` — concise current Analytics correction terminology.
+3. `13_LECTURE_REGISTER.md` Observation 015 — learning/evidence chronology.
+4. Complete `DEV_STAGE/H_DDC_CODEX.md` — correction labels and automated evidence.
+5. J section 16 — Main correction reconciliation and evidence ceiling.
+6. `DEV_STAGE/E_DDC_STAGE.md` latest C11 Analytics correction authority.
+7. Relevant Analytics UI/tests at implementation `17fd6529…`.
 
 ## Next authority boundary
 
-Main must first verify the Operational, Didactic and Design PH05 permanent
-reconciliations. The Analytics correction requires a separate read-only
-end-to-end state-of-union before any new D/E/F authority. Human accessibility,
-locale, real-device and comprehension evidence remains a later gate.
+Main may reconcile the three permanent-domain correction commits and prepare
+final C11 continuity. Human work remains required for screenshot, keyboard-only,
+assistive-technology, locale, real-device and comprehension acceptance. The
+Guide sequence deviation remains a separate unresolved PH05 teaching question.

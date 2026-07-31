@@ -667,3 +667,118 @@ These classes are not interchangeable.
 - A complete screenshot set, keyboard-only review, Narrator/TalkBack, locale,
   real-device review and learner comprehension remain unestablished.
 - Learner maturity remains unchanged.\n\n`KANBAN_TRANSITIONS=NONE`.
+
+## C11 Analytics correction — current terminology
+
+### Variables
+
+The one learner-visible selection set containing categorical breakdowns and
+numeric measures. Selecting a category alone does not silently select or
+calculate a measure.
+
+### Purchased by
+
+A categorical breakdown derived from recorded Person metadata. It subdivides a
+numeric result and is not itself summed or averaged.
+
+### Purchased for
+
+A typed unavailable categorical field because current recorded evidence does
+not support it. Unavailable is not an empty label, zero or inferred person.
+
+### Payment method
+
+A categorical breakdown derived from recorded Payment Method metadata.
+
+### Quantity
+
+A numeric measure displayed as a readable decimal quantity with its canonical
+unit.
+
+### Unit price
+
+A numeric measure displayed as currency per canonical unit.
+
+### Price paid
+
+The learner-facing name for an Item line-total numeric measure, displayed as
+currency.
+
+### Purchase total
+
+A numeric measure for the whole Purchase, displayed as currency. It is distinct
+from one Item's Price paid.
+
+### Evidence count
+
+An explicit integer numeric measure counting contributing evidence rows. It is
+never an implicit fallback for categorical-only selection.
+
+### Categorical-only selection
+
+A Variables choice containing no numeric measure. The interface asks for at
+least one numeric variable and inserts neither Evidence count nor Quantity.
+
+### Unsupported operation
+
+A typed invalid combination whose guidance names the selected Operation and
+numeric Variable and states the smallest correction.
+
+### Initial date and Final date
+
+Inclusive local calendar boundaries entered as `dd-mm-yyyy`. Missing, invalid
+and reversed pairs receive distinct correction guidance.
+
+### Saved analysis
+
+An immutable session record created by `Run & save`. Later live-draft changes
+or `Clear draft` do not modify it.
+
+### Live draft
+
+The current unsaved Group by, Variables, Operation and Timeframe choices. It is
+not a saved analysis.
+
+### Frozen record
+
+The immutable saved analysis from which Chart, Table, interpretation, CSV and
+PDF derive the same selected-variable meaning and formatted values.
+
+### Readable result scales
+
+Decimal quantity, decimal currency, currency per unit, percentage, signed
+Difference and integer Evidence count. Raw fixed-point integers and
+compatibility keys are storage/dispatch details, not ordinary result labels.
+
+### Learner-facing evidence labels
+
+`Date-Time of purchase`, `Store name`, Purchased by, Purchased for, Payment
+method, Item count, Purchase total and Item facts. Ordinary relational UUIDs are
+not evidence labels.
+
+### Automated correction evidence
+
+The ten-case regression matrix plus selected-variable/projection integrity,
+compact/wide, 200-percent text containment and semantics tests. This evidence
+classifies current automated behavior; it does not establish human acceptance
+or comprehension.
+
+### Superseded screenshot defect classification
+
+The PH05 screenshot mismatch remains historical defect-finding evidence, but it
+no longer describes the current automated implementation after correction
+`17fd6529…`. No human screenshot acceptance follows.
+
+### Guide sequence deviation
+
+The PH05 Guide's anchored structure is implemented, while its accepted teaching
+sequence remains partially contradicted. The Analytics correction does not
+repair that deviation.
+
+## Current correction evidence boundary
+
+Implementation `17fd65296e960112787b870363b40339f535f5b6`, complete H and J
+section 16 establish the automated correction boundary. Screenshot acceptance,
+keyboard-only human acceptance, Narrator/TalkBack, locale, real-device
+acceptance, learner comprehension and transfer remain unestablished.
+`KANBAN_TRANSITIONS=NONE`.
