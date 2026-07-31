@@ -1516,3 +1516,307 @@ LIVE_PROVIDER_OPERATIONS=NOT_PERFORMED | CONTRADICTED
 PUBLICATION=PUSHED | NOT_PUSHED
 NEXT_MAIN_ACTION=Reconcile PH05 G/H/I and perform bounded human UI/export review.
 ```
+
+---
+
+<!-- MATERIALIZATION_AUTHORITY:C11-ANALYTICS-CORRECTION-R01-2026-07-31 -->
+
+# C11 Analytics Correction Round 01 — Operational Materialization Authority
+
+## 42. Precedence, activation and evidenced diagnosis
+
+This section is the controlling Operational authority for the bounded
+post-PH05 Analytics correction. It supersedes C11-PH04 sections 27–35 only where
+the later human decisions or this correction contract conflict. C11-PH05
+invariants remain active.
+
+```text
+REPOSITORY=gus-i-gu/markei
+BRANCH=grm-guarded-provisioning-20260727
+ACTIVATION_BASE=e6ced7fe3945925bf5f314ee11c4538029e18d44
+PH05_IMPLEMENTATION=426235d8b67ac719e494b53cfb23a6c3b06fb489
+PH05_AUTHORITY=b59b2ecdfb69ca98c431b9f36694f011332fbef3
+UNIT=C11-ANALYTICS-CORRECTION-R01
+```
+
+The human runtime evidence is accepted. Source inspection establishes a bounded
+diagnosis rather than an evidenced default-Quantity calculation leak:
+
+- grouped entries iterate only the measures in the current draft;
+- the immutable record copies the selected measures, breakdowns, operation and
+  timeframe;
+- Chart, Table, interpretation, CSV and PDF consume that frozen record;
+- no current source path evidences silent insertion of Quantity when it was not
+  selected;
+- result rendering and export do expose fixed-point storage integers and raw
+  compatibility keys. Quantity therefore appears as values such as
+  `5000000 quantity:mass:kg`, and money/unit-price results can likewise expose
+  internal minor-unit or compatibility representations;
+- existing tests assert individual paths, but do not prove one multi-variable
+  selection stays identical through every result and export projection.
+
+Treat raw fixed-point/internal-key presentation as the confirmed defect. Retain
+calculation-variable leakage as a regression risk that must be disproved by the
+required end-to-end tests; do not invent an unrelated replacement variable.
+
+The human also executed the diagnostic full suite on Windows with:
+
+```powershell
+flutter test --concurrency=1 --no-pub -r expanded
+```
+
+and recorded `TestExit=0`. This distinguishes the earlier bare-parallel
+procedure failure from an Analytics source regression. It does not establish
+rendered UI, Windows launch, accessibility or real-device acceptance.
+
+## 43. Correction work units
+
+### 43.1 Calculation and projection integrity
+
+Preserve one explicit path:
+
+```text
+visible composer selection
+→ one AnalyticsComposerDraft truth
+→ typed validation
+→ immutable AnalyticsRecord
+→ grouped entries
+→ Chart/Table
+→ interpretation
+→ CSV/PDF
+```
+
+Every consumer must expose exactly the determinant, categorical breakdowns,
+numeric measures, operation, scope and timeframe frozen in the selected record.
+Changing the live draft after saving must not mutate or relabel an existing
+record. Selecting another saved record must not reuse the current draft.
+
+Convert fixed-point values only for presentation:
+
+- Quantity: convert microunits through `NormalizedQuantity.factor` and show the
+  canonical user-facing unit;
+- Unit price: convert minor units per canonical unit and show currency per unit;
+- Price paid and Purchase total: convert currency minor units to a decimal money
+  value;
+- Evidence count: show an integer item-row count;
+- Percentage: convert basis points to percent;
+- Difference: preserve sign and use the selected measure's display scale;
+- compatibility keys remain internal identity and must not appear as the normal
+  unit/currency label.
+
+Chart scaling may continue to use exact integer values internally, but Chart
+semantics, Table, interpretation, CSV and PDF must use equivalent human-facing
+values and units. Pure export builders and one-write destination behavior remain.
+
+### 43.2 Compact composer and evidence status
+
+The visible primary order is:
+
+```text
+Group by | Variables | Operation | Timeframe | Run & save
+```
+
+Wide layouts use one compact primary row where space permits. Compact/mobile
+layouts use a responsive two-by-two control grid followed by a full-width
+`Run & save` action. Saved analyses follow immediately below the composer, then
+the selected result, then Variables evidence.
+
+Reduce the vertical cost of `Local evidence scope`; preserve its loaded/read
+failure state, requested/matched/unavailable handoff counts and Retry action.
+It may become a compact status strip or concise state block, but initial load is
+still one local repository request and each Retry adds exactly one. Local UI,
+selection, calculation and export add zero repository requests, database writes
+or network requests.
+
+Retain `Clear draft` as a compact secondary action near the composer. It resets
+only the live draft and preserves immutable saved analyses. Do not silently
+remove this behavior.
+
+### 43.3 Unified typed Variables behavior
+
+Expose one multi-select `Variables` control. Do not render separate visible
+pill banks for categorical breakdowns and numeric measures. Maintain one source
+of truth; a typed adapter may derive the existing breakdown and measure sets, or
+a single typed selection may replace them atomically. Do not keep two mutable
+selection owners.
+
+Mapping:
+
+| Visible choice | Typed role | Calculation behavior |
+| --- | --- | --- |
+| Purchased by | categorical | breakdown dimension |
+| Purchased for | categorical | unavailable with explanation until recorded data supports it |
+| Payment method | categorical | breakdown dimension |
+| Quantity | numeric | measure, unit-compatible buckets only |
+| Unit price | numeric | measure, currency/kind/unit-compatible buckets only |
+| Price paid | numeric | line-total money measure |
+| Purchase total | numeric | counted once per Purchase |
+| Evidence count | numeric | explicit item-row count; never an implicit fallback |
+
+Required states:
+
+- categorical-only: block Run & save and explain that a numeric variable is
+  required; never insert Evidence count;
+- numeric-only: valid when determinant keys, operation and timeframe are valid;
+- mixed categorical/numeric: categorical choices subdivide the selected numeric
+  measures;
+- multiple numeric units: calculate each compatible series independently;
+  disable Chart with an explanation when one comparable axis is impossible,
+  while Table/CSV/PDF retain all typed series;
+- unsupported operation/measure: block with a selection-specific explanation;
+- Difference/Percentage: require exactly two determinant groups and compatible
+  evidence; otherwise block or return typed unavailable evidence without
+  substituting another measure.
+
+### 43.4 Custom local-calendar timeframe
+
+Replace the user-facing ISO/UTC interval string with two fields:
+
+```text
+Initial date | Final date
+dd-mm-yyyy   | dd-mm-yyyy
+```
+
+Parsing must be strict and reject overflow-normalized dates. The user meaning is
+inclusive on both dates. Convert device-local calendar boundaries to the
+existing start-inclusive/end-exclusive UTC interval:
+
+```text
+startUtc = local midnight at Initial date converted to UTC
+endUtc   = local midnight on the calendar day after Final date converted to UTC
+```
+
+Construct the next local calendar day before converting to UTC so DST or offset
+changes do not truncate the final day. Invalid dates, missing paired fields and
+Final-before-Initial block `Run & save` with local guidance. Preserve internal
+UTC purchase timestamps and interval conditions.
+
+### 43.5 Variables evidence identity and columns
+
+Keep Purchase, Item, Product, Store and reference IDs internally for Account
+scope, selection, History handoff, paging, record reconstruction and widget keys.
+Remove UUIDs from ordinary user-facing wide tables and compact cards.
+
+Purchase projection presents separate `Date-Time of purchase` and `Store name`
+information plus Purchased by, Purchased for, Payment method, Item count and
+Purchase total as available. Item projection presents Date-Time of purchase,
+Product code/name/brand, Store name, relational facts, Quantity/unit, Unit price,
+Price paid and Promotion. Product, Purchase and Store UUIDs must not be embedded
+in visible labels. Compact cards carry the same facts at lower density.
+
+Use device-local, human-readable purchase date-time presentation while retaining
+stored UTC authority internally. Search, sort, pagination, selection, History
+scope and frozen-record evidence identity remain stable-ID based.
+
+## 44. Regression matrix
+
+Add focused tests for all cases below. Each test must assert requested draft,
+frozen record, grouped entries, Chart availability/semantics, Table labels,
+interpretation and CSV/PDF agreement where applicable.
+
+1. Product + Price paid and Quantity + Mean.
+2. Store + Price paid + Sum.
+3. Time by month + Quantity + Sum.
+4. Product + Payment method + compatible numeric variable.
+5. Purchase + Purchase total + Mean and Sum without duplicate item counting.
+6. one-day custom range includes the complete Final date.
+7. invalid date and reversed range block Run & save.
+8. multiple numeric variables with incompatible units retain separate typed
+   Table/export series and explain Chart unavailability.
+9. categorical-only selection blocks without implicit count/Quantity.
+10. History-selected Purchase scope preserves requested/matched/unavailable
+    counts and calculates only matched rows.
+
+Also assert draft changes do not mutate saved records, selecting records does not
+reuse the live draft, no UUID appears in Variables UI, and raw fixed-point values
+or compatibility keys do not appear in user-facing result/export fields.
+
+## 45. Writable paths and forbidden surfaces
+
+Authorized handwritten source/test paths:
+
+```text
+clients/markei_flutter/lib/domain/analytics/analytics_models.dart
+clients/markei_flutter/lib/domain/analytics/analytics_registry.dart
+clients/markei_flutter/lib/application/analytics.dart
+clients/markei_flutter/lib/application/analytics_workspace.dart
+clients/markei_flutter/lib/app/pages/analytics_page.dart
+clients/markei_flutter/lib/app/widgets/analytics_components.dart
+clients/markei_flutter/test/application/analytics_test.dart
+clients/markei_flutter/test/application/analytics_workspace_test.dart
+clients/markei_flutter/test/app/analytics_page_test.dart
+clients/markei_flutter/test/app/analytics_components_test.dart
+clients/markei_flutter/test/app/history_analytics_handoff_test.dart
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+```
+
+Change `analytics_registry.dart` only if typed compatibility/operation validation
+requires it. No new source or test file is authorized without a documented stop
+and Main approval.
+
+Forbidden:
+
+- schema, migrations, generated files, dependencies and native platform files;
+- Auth, API, Sync, provider, diagnostics, PH03, Closure or non-Analytics pages;
+- new repository/network/write authority;
+- a second Analytics controller, persistence owner or calculation path;
+- deletion of stable internal identities;
+- `documentation/GRM.md`, `documentation/G_SCRIPTS.md`,
+  `documentation/I_SCRIPTS.ps1`, `documentation/NS_COORDINATES.md` and
+  `documentation/DB_MGMT.sql`;
+- J, A/B/C, permanent domains and methodology.
+
+## 46. Validation, build/run boundary and required G report
+
+Run from `clients/markei_flutter`:
+
+```powershell
+flutter pub get
+git diff --exit-code -- pubspec.yaml pubspec.lock
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test --concurrency=1 --no-pub test/application/analytics_test.dart test/application/analytics_workspace_test.dart test/app/analytics_page_test.dart test/app/analytics_components_test.dart test/app/history_analytics_handoff_test.dart
+flutter test --concurrency=1 --no-pub
+flutter build windows --release
+flutter build apk --debug
+node ..\..\scripts\generate_sync_diagnostics.mjs --check
+```
+
+If the host cannot perform a platform build, report `NOT_PERFORMED` rather than
+claiming success. Do not invoke live Auth, provider or Sync operations. Do not
+edit the GRM/GS procedure family to make this implementation pass.
+
+Before publication, require a clean named-branch preflight, compatible ancestry,
+the exact allowlist, and no unrelated changes. Commit source/tests plus replaced
+G/H/I as one focused implementation commit and push without force or PR.
+
+G must report the diagnosis, changed paths, regression matrix, request/write
+counts, serial full-suite result, both build results, raw-value/UUID absence,
+date-boundary evidence, forbidden-surface audit and residual human gates.
+
+Required terminal:
+
+```text
+CYCLE=C11
+UNIT=C11-ANALYTICS-CORRECTION-R01
+CALCULATION_SELECTION_INTEGRITY=PASS | FAIL | BLOCKED
+RAW_FIXED_POINT_PRESENTATION=REMOVED | PRESENT
+UNIFIED_VARIABLES=PASS | FAIL | BLOCKED
+CUSTOM_DATE_RANGE=PASS | FAIL | BLOCKED
+FINAL_DATE_INCLUSIVE=PASS | FAIL | BLOCKED
+VISIBLE_UUIDS=ABSENT | PRESENT
+CHART_TABLE_EXPORT_PARITY=PASS | FAIL | BLOCKED
+ANALYTICS_REQUESTS=initial:1; retry:+1; other:+0
+ANALYTICS_DATABASE_WRITES=0 | CONTRADICTED
+ANALYTICS_NETWORK_CALLS=0 | CONTRADICTED
+SERIAL_FULL_FLUTTER_TEST=PASS | FAIL | BLOCKED_TIMEOUT
+WINDOWS_RELEASE_BUILD=PASS | FAIL | NOT_PERFORMED
+ANDROID_DEBUG_BUILD=PASS | FAIL | NOT_PERFORMED
+SCHEMA_MIGRATION=NONE | CONTRADICTED
+DEPENDENCY_GENERATED_PLATFORM_CHANGE=NO | YES
+GRM_GS_FILES_CHANGED=NO | CONTRADICTED
+PUBLICATION=PUSHED | NOT_PUSHED
+NEXT_MAIN_ACTION=Reconcile G/H/I and perform human wide/compact, keyboard, locale and real-device review.
+```

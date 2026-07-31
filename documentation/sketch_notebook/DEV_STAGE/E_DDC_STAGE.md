@@ -1151,3 +1151,205 @@ KANBAN_TRANSITIONS=NONE | CONTRADICTED
 PROHIBITED_CLAIMS=ABSENT | CONTRADICTED
 NEXT_DIDACTIC_REVIEW=Reconcile PH05 H and run bounded human comprehension/accessibility review.
 ```
+
+---
+
+<!-- MATERIALIZATION_AUTHORITY:C11-ANALYTICS-CORRECTION-R01-2026-07-31 -->
+
+# C11 Analytics Correction Round 01 — Didactic Materialization Authority
+
+## 40. Learner correction and precedence
+
+This section controls learner-facing Analytics correction after PH05. It
+supersedes PH04 sections 26–32 where the human correction decisions conflict and
+preserves the PH05 distinction between History scope handoff and calculation.
+
+The current runtime defect is not evidence that Quantity was silently inserted.
+Source inspection confirms the frozen record is built from selected measures;
+the confirmed learner-facing failure is that fixed-point integers and internal
+compatibility keys are shown as if they were ordinary values and units. The new
+interface must make selected-variable identity and display scale explicit while
+tests prove that no unrelated variable can leak through any projection.
+
+## 41. Compact reading order
+
+The first Analytics reading path is:
+
+```text
+Create analysis
+Group by | Variables | Operation | Timeframe | Run & save
+Saved analyses — this session
+Selected result
+Variables
+```
+
+Wide layouts keep the five primary actions in one compact row where possible.
+Compact/mobile layouts show four controls in a two-by-two arrangement and a
+full-width `Run & save`. The result and Variables evidence must not be pushed
+down by large explanatory cards or separate banks of chips.
+
+Keep local-evidence readiness and Retry visible but concise. Preserve requested,
+matched and unavailable Purchase counts for a History handoff. Keep `Clear
+draft` as a quiet secondary action with the meaning: reset current choices;
+saved analyses remain.
+
+## 42. Group by, Variables and Operation language
+
+`Group by` answers “which kind of thing organizes the result?” Its choices
+remain Product, Purchase, Store, Time and Time by month.
+
+One multi-select `Variables` control answers “which facts describe or calculate
+the result?” Its visible choices are:
+
+```text
+Purchased by
+Purchased for
+Payment method
+Quantity
+Unit price
+Price paid
+Purchase total
+Evidence count
+```
+
+Categorical choices subdivide the result. Numeric choices are calculated.
+`Evidence count` is an explicit user choice, never a hidden fallback.
+
+Required explanatory states:
+
+- categorical-only: `Choose at least one numeric variable. Categorical
+  variables break down a result but are not calculated.`
+- Purchased for unavailable: `Purchased for is unavailable in recorded data.`
+- incompatible operation: name the operation and selected variable; never say
+  only that “something” is invalid;
+- Difference: explain baseline A and comparison B and require exactly two groups;
+- Percentage: explain part and whole and require exactly two compatible groups;
+- incompatible chart axes: `Chart is unavailable because these results use
+  different units. Open Table to compare each result separately.`
+
+Never silently deselect, replace or calculate a different variable. Disabled
+states must explain the smallest correction the learner can make.
+
+## 43. Result values and traceability
+
+Human-facing values use ordinary scales:
+
+- Quantity displays a decimal quantity and named canonical unit;
+- Unit price displays decimal currency per canonical unit;
+- Price paid and Purchase total display decimal currency;
+- Evidence count displays item-row count;
+- Percentage displays percent;
+- Difference keeps an explicit sign and the selected variable's unit.
+
+Do not expose microunits, minor-unit integers, enum names or compatibility keys
+such as `quantity:mass:kg` as normal labels. The selected-result heading must
+name Group by, selected Variables, Operation and record fingerprint. Chart,
+Table, interpretation, CSV and PDF must describe the same frozen record.
+
+When multiple compatible series exist, identify each selected variable. When
+units are incompatible, keep the Table/export evidence separate and explain why
+one Chart is unavailable. Unavailable evidence is a typed result, not zero.
+
+## 44. Timeframe language
+
+The visible Timeframe choices are `All recorded time` and `Custom dates`.
+Custom dates reveal:
+
+```text
+Initial date — dd-mm-yyyy
+Final date   — dd-mm-yyyy
+```
+
+Both dates are included in the learner meaning. Do not ask the user for ISO,
+UTC timestamps or a slash-separated interval. Invalid text says which date is
+invalid. A missing pair asks for both dates. A reversed range says `Final date
+must be the same as or later than Initial date.`
+
+Internal UTC conversion remains implementation detail. Result metadata may say
+that local calendar dates were used, but must not imply that the user entered a
+UTC interval.
+
+## 45. Variables evidence vocabulary
+
+The user-facing Purchase projection uses:
+
+```text
+Date-Time of purchase
+Store name
+Purchased by
+Purchased for
+Payment method
+Item count
+Purchase total
+```
+
+The Item projection uses:
+
+```text
+Date-Time of purchase
+Product code / Product name / Brand
+Store name
+Purchased by
+Purchased for
+Payment method
+Quantity and unit
+Unit price
+Price paid
+Promotion
+```
+
+Do not show Purchase, Product, Store, Item or relational UUIDs in wide tables or
+compact cards. Stable identities remain internal and continue to support
+selection and History handoff. Compact cards must retain Date-Time and Store,
+not replace them with an ID.
+
+CSV/PDF are user-facing evidence. Use the same readable result scales and column
+meanings; do not make internal UUIDs or compatibility keys the learner's only
+way to understand an exported record. The record fingerprint may remain as
+traceability metadata.
+
+## 46. Responsive, accessibility and evidence ceiling
+
+Preserve one logical control order across breakpoints. Every multi-select item,
+disabled state, date field, saved record, presentation switch and export action
+requires an accessible name, visible focus, keyboard reachability and semantics
+that announces current selection/state. Error guidance must be associated with
+the relevant control and not depend on color.
+
+Automated widget/semantics tests are required at wide and compact dimensions,
+including 200% text scale without clipped primary actions. Human screenshot,
+keyboard-only, Narrator/TalkBack, locale, Windows launch and real-device review
+remain separate gates. `KANBAN_TRANSITIONS=NONE`.
+
+## 47. Prohibited claims and required H report
+
+Do not claim causal diagnosis, recommendation, forecasting, remote Analytics,
+persistent saved analyses, Account-wide History, native sharing, production
+acceptance, accessibility acceptance or learner comprehension.
+
+Replace H with final labels/messages, selection-to-result examples, formatted
+value examples, custom-date wording, wide/compact reading order, Variables
+columns, accessibility evidence and unresolved human gates.
+
+Required terminal:
+
+```text
+CYCLE=C11
+UNIT=C11-ANALYTICS-CORRECTION-R01
+COMPOSER_READING_ORDER=PASS | FAIL | BLOCKED
+UNIFIED_VARIABLES_LANGUAGE=PASS | FAIL | BLOCKED
+NO_IMPLICIT_VARIABLE_SUBSTITUTION=PASS | FAIL | BLOCKED
+DISPLAY_SCALE_LANGUAGE=PASS | FAIL | BLOCKED
+CUSTOM_DATE_LANGUAGE=PASS | FAIL | BLOCKED
+PURCHASE_PRODUCT_UUIDS_VISIBLE=NO | YES
+CHART_TABLE_EXPORT_MEANING=ALIGNED | CONTRADICTED
+CLEAR_DRAFT_MEANING=PRESERVED | CONTRADICTED
+WIDE_COMPACT_PARITY=PASS | FAIL | BLOCKED
+TEXT_SCALE_200=PASS | FAIL | BLOCKED
+KEYBOARD_SEMANTICS=PASS | FAIL | BLOCKED
+SCREENSHOT_REVIEW=NOT_PERFORMED | PERFORMED
+ASSISTIVE_TECH_REVIEW=NOT_PERFORMED | PERFORMED
+LOCALE_REAL_DEVICE_REVIEW=NOT_PERFORMED | PERFORMED
+HUMAN_COMPREHENSION=NOT_ESTABLISHED | ESTABLISHED
+KANBAN_TRANSITIONS=NONE | CONTRADICTED
+```

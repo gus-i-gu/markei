@@ -1351,3 +1351,211 @@ API_AUTH_SYNC_PROVIDER_DIAGNOSTIC_IMPORTS=ABSENT | PRESENT
 ROLLBACK=PH05_IMPLEMENTATION_CHAIN | CONTRADICTED
 NEXT_DESIGN_REVIEW=Reconcile PH05 I and retain deferred Android/human evidence gates.
 ```
+
+---
+
+<!-- MATERIALIZATION_AUTHORITY:C11-ANALYTICS-CORRECTION-R01-2026-07-31 -->
+
+# C11 Analytics Correction Round 01 — Design Materialization Authority
+
+## 43. Corrected responsibility map and diagnosis
+
+Preserve one composition-owned `AnalyticsWorkspaceController`, one Account-local
+dataset load, one live composer draft, immutable session-only records, and pure
+CSV/PDF builders behind the existing shared export destination.
+
+Current source establishes:
+
+```text
+AnalyticsComposerDraft.measures
+→ AnalyticsWorkspaceController._groupedEntries
+→ AnalyticsRecord.entries
+→ Chart/Table/interpretation/CSV/PDF
+```
+
+No source-derived default-Quantity insertion is present. The confirmed defect is
+at the presentation boundary: exact fixed-point integers and
+`AnalyticsCompatibilityKey.value` are projected directly into Table, semantics,
+CSV and PDF. Existing tests do not verify full multi-variable parity, so the
+correction must both introduce a typed display boundary and close the regression
+gap.
+
+Do not activate `executeAnalyticsCard` or any alternative engine as a second
+workspace calculation path. Registry definitions may continue to own operation
+support/version identity; workspace grouped calculation remains the single
+active session-record path unless Codex proves and reports a smaller
+single-owner consolidation within the authorized files.
+
+## 44. Unified variable selection architecture
+
+One typed selection owner must cover both categories:
+
+```text
+categorical: Purchased by | Purchased for | Payment method
+numeric: Quantity | Unit price | Price paid | Purchase total | Evidence count
+```
+
+The implementation may introduce a typed composer-variable enum/value in
+`analytics_models.dart` and derive existing `breakdowns`/`measures`, or retain
+those sets behind one atomic UI adapter. It must not maintain two independently
+mutable visible/internal selections.
+
+Required mapping:
+
+| Visible choice | Draft representation | Validator | Consumer |
+| --- | --- | --- | --- |
+| Product/Purchase/Store/Time/Time month | determinant + stable selected keys | nonempty, current keys | grouping key |
+| Purchased by | relational breakdown | available | group subdivision |
+| Purchased for | relational breakdown | unavailable in current evidence | no substituted group |
+| Payment method | relational breakdown | available | group subdivision |
+| Quantity | numeric measure | operation support + measurement compatibility | microunit aggregation |
+| Unit price | numeric measure | operation support + currency/kind/unit compatibility | minor-unit-per-unit aggregation |
+| Price paid | numeric measure | operation support + currency compatibility | line-total aggregation |
+| Purchase total | numeric measure | operation support + currency compatibility | once-per-Purchase aggregation |
+| Evidence count | numeric measure | explicit selection + operation support | item-row aggregation |
+| All recorded time | timeframe state | always valid | no period condition |
+| Custom dates | local-date draft → UTC half-open interval | strict valid inclusive date range | period condition |
+
+Validation blocks categorical-only, unsupported operation-variable pairs, stale
+determinant keys, invalid dates and malformed comparisons. Multiple incompatible
+numeric measures remain separate typed result series. Do not combine different
+compatibility keys or select a substitute measure. Chart availability is a
+projection capability; it does not delete valid Table/export series.
+
+## 45. Immutable record and display-value boundary
+
+At Run & save, defensively freeze determinant keys, all selected variables,
+operation, local-calendar timeframe semantics, evidence scope and grouped
+entries. Fingerprint input must continue to distinguish all configuration
+choices. Later draft changes or record selection cannot mutate a record.
+
+Introduce or centralize a pure display conversion used consistently by result
+Table, Chart semantics, interpretation, CSV and PDF:
+
+```text
+fixed-point storage value + selected measure + compatibility metadata
+→ display value + display unit/currency
+```
+
+The storage/calculation values remain integers. Do not convert to floating point
+before aggregation. Money conversion uses currency minor units; Quantity uses
+`NormalizedQuantity.factor`; Unit price uses minor units per canonical unit;
+Percentage uses basis points. Difference preserves signed exact integers until
+display. Compatibility keys remain comparison identity, not UI copy.
+
+Exports remain pure. If internal IDs are needed to reconstruct contributing rows,
+use them inside the builder, then project user-facing Date-Time, Store and Product
+facts. Do not remove IDs from domain models, repository queries, selection sets,
+fingerprints or widget keys solely because ordinary presentation hides them.
+
+## 46. Local-date/UTC boundary
+
+Represent custom input as two strict local calendar dates or an equivalent typed
+draft that can preserve invalid user text for guidance. Valid conversion is:
+
+```text
+localStart = local DateTime(initialYear, initialMonth, initialDay)
+localEndExclusive = local DateTime(finalYear, finalMonth, finalDay + 1)
+startUtc = localStart.toUtc()
+endUtc = localEndExclusive.toUtc()
+```
+
+Validate the entered day/month/year components round-trip before accepting a
+DateTime so Dart overflow normalization cannot accept an invalid date. Construct
+the next local day before UTC conversion. Preserve
+`AnalyticsUtcPeriodCondition` start-inclusive/end-exclusive behavior and stored
+UTC purchase timestamps. One-day ranges must include purchases throughout the
+selected local final day.
+
+## 47. Page/component topology
+
+`analytics_page.dart` retains page orchestration, single scroll ownership,
+repository-load future, Retry and export effect calls.
+
+`analytics_components.dart` owns responsive presentation:
+
+- compact local-evidence status;
+- wide one-row / compact two-by-two composer layout;
+- one unified Variables multi-select;
+- compact secondary Clear draft;
+- saved-record browser;
+- selected result and presentation capability explanation;
+- stable-ID-backed, UUID-hidden Variables projections.
+
+`analytics_workspace.dart` owns draft transitions, validation, grouping,
+immutable records, selection, record focus and request budget. It must not gain
+filesystem/network/database-write effects.
+
+`analytics.dart` owns pure export projection. `analytics_registry.dart` owns
+operation definitions/support identity only. `local_analytics_repository.dart`
+requires no change unless source evidence contradicts the one-read data contract;
+it is not authorized in this round.
+
+## 48. Test architecture and invariants
+
+Extend existing test files rather than creating a parallel Analytics test
+hierarchy. Cover:
+
+- exact visible-choice → draft → record → entry mapping for every variable;
+- all ten Operational matrix cases;
+- raw storage value retained while display conversion is readable;
+- Chart/Table/interpretation/CSV/PDF equivalence from one record;
+- Chart typed unavailable for incompatible axes without data loss;
+- strict local-date parsing, inclusive final day and UTC half-open boundaries;
+- UUID-hidden wide and compact projections with stable-ID selection/handoff;
+- draft/record immutability and selected-record isolation;
+- initial request 1, Retry +1, all other local transitions +0;
+- zero database/network writes and unchanged selected-scope cap;
+- responsive layout, semantics and 200% text scale.
+
+Use serial full-suite validation because the human Windows diagnostic passed with
+`--concurrency=1 --no-pub` after the bare parallel suite had one unidentified
+failure. This is validation-procedure evidence, not authority to suppress Drift
+warnings or alter production database behavior.
+
+## 49. Allowed surfaces, rollback and forbidden expansion
+
+The controlling allowlist is D section 45. Rollback is one correction commit to
+its exact parent; PH05 implementation remains the functional baseline.
+
+Forbidden architecture expansion:
+
+- schema/migration/generated/dependency/native changes;
+- second controller, repository, persistence owner, calculation engine or export
+  destination;
+- database/network writes from Analytics;
+- removing stable IDs from internal models;
+- floating-point aggregation;
+- silently coercing incompatible variables;
+- changing History handoff identity;
+- changes to GRM/GS procedures, Auth, API, Sync, provider, diagnostics, PH03,
+  Closure or unrelated pages.
+
+## 50. Required I report
+
+Replace I with the final draft/record/result topology, typed variable mapping,
+display conversion, date boundaries, internal/presentation identity split,
+changed paths, tests, request/effect counts, rollback and forbidden-surface audit.
+
+Required terminal:
+
+```text
+CYCLE=C11
+UNIT=C11-ANALYTICS-CORRECTION-R01
+COMPOSER_SELECTION_OWNER=SINGLE_TYPED | CONTRADICTED
+WORKSPACE_CONTROLLER_OWNER=SINGLE | CONTRADICTED
+CALCULATION_PATH=SINGLE_FROZEN_RECORD | CONTRADICTED
+DISPLAY_CONVERSION=PURE_SHARED | CONTRADICTED
+FIXED_POINT_AGGREGATION=UNCHANGED | CONTRADICTED
+COMPATIBILITY_KEYS_USER_VISIBLE=NO | YES
+CUSTOM_TIME_BOUNDARY=LOCAL_INCLUSIVE_TO_UTC_HALF_OPEN | CONTRADICTED
+INTERNAL_IDS=PRESERVED | CONTRADICTED
+VISIBLE_UUIDS=ABSENT | PRESENT
+CHART_INCOMPATIBLE_AXIS=TYPED_UNAVAILABLE | CONTRADICTED
+EXPORT_BUILDERS=PURE | CONTRADICTED
+ANALYTICS_EFFECTS=initial_read:1; retry:+1; writes:0; network:0
+SCHEMA_MIGRATION=NONE | CONTRADICTED
+DEPENDENCY_PLATFORM_CHANGE=NONE | CONTRADICTED
+SECOND_CONTROLLER_REPOSITORY_ENGINE=ABSENT | PRESENT
+ROLLBACK=PARENT_OF_CORRECTION_COMMIT | CONTRADICTED
+```
