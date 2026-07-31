@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:markei/app/widgets/analytics_components.dart';
 import 'package:markei/domain/analytics/analytics_models.dart';
 import 'package:markei/domain/shared/ids.dart';
+import 'package:markei/domain/shared/quantity.dart';
 
 void main() {
   testWidgets(
@@ -88,9 +89,87 @@ void main() {
     );
 
     expect(find.text('Variables'), findsOneWidget);
-    expect(find.textContaining('purchase-1'), findsOneWidget);
+    expect(find.textContaining('Store'), findsOneWidget);
+    expect(find.textContaining('purchase-1'), findsNothing);
     expect(find.textContaining('BRL 12.00'), findsOneWidget);
   });
+
+  testWidgets(
+    'Variables wide projection hides UUIDs and keeps Date-Time Store',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(textScaler: TextScaler.linear(2)),
+            child: Scaffold(
+              body: SingleChildScrollView(
+                child: AnalyticsVariablesView(
+                  state: AnalyticsVariablesState(
+                    projection: AnalyticsVariablesProjection.containedItems,
+                    search: '',
+                    sort: AnalyticsVariablesSort.timeDescending,
+                    pageIndex: 0,
+                    pageSize: 20,
+                    purchaseRows: const [],
+                    itemRows: [
+                      AnalyticsEvidenceRow(
+                        id: const PurchaseItemId('item-uuid-1'),
+                        accountId: const AccountId('account-1'),
+                        purchaseId: const PurchaseId('purchase-uuid-1'),
+                        purchaseOccurrenceTime: DateTime.utc(2026, 7, 31),
+                        purchaseTotal: const AnalyticsMoneyAmount(
+                          currencyCode: 'BRL',
+                          minorUnits: 1200,
+                        ),
+                        productId: const ProductId('product-uuid-1'),
+                        productCode: 'P-1',
+                        productName: 'Product',
+                        productBrand: 'Brand',
+                        storeId: const StoreId('store-uuid-1'),
+                        storeName: 'Store',
+                        purchasedBy: null,
+                        paymentMethod: null,
+                        quantity: const NormalizedQuantity(
+                          kind: MeasurementKind.mass,
+                          unit: CanonicalUnit.kg,
+                          microunits: NormalizedQuantity.factor,
+                        ),
+                        lineTotal: const AnalyticsMoneyAmount(
+                          currencyCode: 'BRL',
+                          minorUnits: 1200,
+                        ),
+                        unitPrice: null,
+                      ),
+                    ],
+                    selectedRowIds: const {},
+                  ),
+                  wide: true,
+                  onProjectionChanged: (_) {},
+                  onSearchChanged: (_) {},
+                  onSortChanged: (_) {},
+                  onPreviousPage: () {},
+                  onNextPage: () {},
+                  onTogglePurchase: (_) {},
+                  onToggleItem: (_) {},
+                  onUseSelectedRows: () {},
+                  onShowAll: () {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Date-Time of purchase'), findsOneWidget);
+      expect(find.text('Store name'), findsOneWidget);
+      expect(find.textContaining('2026'), findsOneWidget);
+      expect(find.textContaining('Store'), findsWidgets);
+      expect(find.textContaining('purchase-uuid-1'), findsNothing);
+      expect(find.textContaining('product-uuid-1'), findsNothing);
+      expect(find.textContaining('store-uuid-1'), findsNothing);
+    },
+  );
 }
 
 AnalyticsRecord _record() {

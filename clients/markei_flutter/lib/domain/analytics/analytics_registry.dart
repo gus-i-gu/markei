@@ -67,6 +67,9 @@ AnalyticsRegistry localAnalyticsRegistry() => AnalyticsRegistry([
       AnalyticsVariable.lineTotal ||
       AnalyticsVariable.purchaseTotal ||
       AnalyticsVariable.evidenceCount => true,
+      AnalyticsVariable.purchasedBy ||
+      AnalyticsVariable.purchasedFor ||
+      AnalyticsVariable.paymentMethod ||
       AnalyticsVariable.unitPrice => false,
     },
     execute: _sum,
@@ -80,6 +83,9 @@ AnalyticsRegistry localAnalyticsRegistry() => AnalyticsRegistry([
       AnalyticsVariable.unitPrice ||
       AnalyticsVariable.lineTotal ||
       AnalyticsVariable.purchaseTotal => true,
+      AnalyticsVariable.purchasedBy ||
+      AnalyticsVariable.purchasedFor ||
+      AnalyticsVariable.paymentMethod ||
       AnalyticsVariable.evidenceCount => false,
     },
     execute: _mean,
@@ -100,6 +106,9 @@ AnalyticsRegistry localAnalyticsRegistry() => AnalyticsRegistry([
       AnalyticsVariable.lineTotal ||
       AnalyticsVariable.purchaseTotal ||
       AnalyticsVariable.evidenceCount => true,
+      AnalyticsVariable.purchasedBy ||
+      AnalyticsVariable.purchasedFor ||
+      AnalyticsVariable.paymentMethod ||
       AnalyticsVariable.unitPrice => false,
     },
     execute: _percentage,
@@ -354,6 +363,9 @@ Map<AnalyticsCompatibilityKey, int> _valueFor(
   Set<String> purchaseSeen,
 ) {
   return switch (variable) {
+    AnalyticsVariable.purchasedBy ||
+    AnalyticsVariable.purchasedFor ||
+    AnalyticsVariable.paymentMethod => const {},
     AnalyticsVariable.quantity => {
       AnalyticsCompatibilityKey(
         'quantity:${row.quantity.kind.name}:${row.quantity.unit.name}',
@@ -523,6 +535,9 @@ int _checkedAdd(int left, int right) {
 int _checkedSubtract(int left, int right) => _checkedAdd(left, -right);
 
 String _variableLabel(AnalyticsVariable variable) => switch (variable) {
+  AnalyticsVariable.purchasedBy => 'Purchased by',
+  AnalyticsVariable.purchasedFor => 'Purchased for',
+  AnalyticsVariable.paymentMethod => 'Payment method',
   AnalyticsVariable.quantity => 'Quantity',
   AnalyticsVariable.unitPrice => 'Unit price',
   AnalyticsVariable.lineTotal => 'Line total',

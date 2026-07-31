@@ -11,8 +11,7 @@ class AnalyticsComposerView extends StatelessWidget {
     required this.options,
     required this.onDeterminantChanged,
     required this.onToggleDeterminantKey,
-    required this.onToggleBreakdown,
-    required this.onToggleMeasure,
+    required this.onToggleVariable,
     required this.onOperationChanged,
     required this.onTimeframeChanged,
     required this.onRun,
@@ -25,8 +24,7 @@ class AnalyticsComposerView extends StatelessWidget {
   final Map<AnalyticsDeterminantKind, List<AnalyticsOption>> options;
   final ValueChanged<AnalyticsDeterminantKind> onDeterminantChanged;
   final ValueChanged<String> onToggleDeterminantKey;
-  final ValueChanged<AnalyticsRelationalBreakdown> onToggleBreakdown;
-  final ValueChanged<AnalyticsMeasure> onToggleMeasure;
+  final ValueChanged<AnalyticsVariable> onToggleVariable;
   final ValueChanged<AnalyticsOperation> onOperationChanged;
   final ValueChanged<AnalyticsTimeframe> onTimeframeChanged;
   final VoidCallback onRun;
@@ -90,28 +88,17 @@ class AnalyticsComposerView extends StatelessWidget {
             spacing: MarkeiSpacing.xs,
             runSpacing: MarkeiSpacing.xs,
             children: [
-              const _GroupLabel('Break down the result'),
-              for (final breakdown in AnalyticsRelationalBreakdown.values)
+              for (final variable in AnalyticsVariable.values)
                 FilterChip(
-                  key: Key('analytics.breakdown.${breakdown.name}'),
-                  label: Text(_breakdownLabel(breakdown)),
-                  selected: draft.breakdowns.contains(breakdown),
-                  onSelected:
-                      breakdown == AnalyticsRelationalBreakdown.purchasedFor
+                  key: Key('analytics.variable.${variable.name}'),
+                  label: Text(_variableLabel(variable)),
+                  selected: draft.variables.contains(variable),
+                  onSelected: variable == AnalyticsVariable.purchasedFor
                       ? null
-                      : (_) => onToggleBreakdown(breakdown),
-                  tooltip:
-                      breakdown == AnalyticsRelationalBreakdown.purchasedFor
+                      : (_) => onToggleVariable(variable),
+                  tooltip: variable == AnalyticsVariable.purchasedFor
                       ? 'Purchased for is unavailable in recorded data.'
                       : null,
-                ),
-              const _GroupLabel('Measure'),
-              for (final measure in AnalyticsMeasure.values)
-                FilterChip(
-                  key: Key('analytics.measure.${measure.name}'),
-                  label: Text(_measureLabel(measure)),
-                  selected: draft.measures.contains(measure),
-                  onSelected: (_) => onToggleMeasure(measure),
                 ),
             ],
           ),
@@ -132,16 +119,47 @@ class AnalyticsComposerView extends StatelessWidget {
                 onSelected: (_) =>
                     onTimeframeChanged(const AnalyticsTimeframe.all()),
               ),
-              SizedBox(
-                width: 420,
-                child: TextField(
-                  key: const Key('analytics.timeframe.custom'),
-                  decoration: const InputDecoration(
-                    labelText: 'Custom UTC interval',
-                    hintText: '2026-07-01T00:00:00Z/2026-08-01T00:00:00Z',
+              ChoiceChip(
+                key: const Key('analytics.timeframe.customDates'),
+                label: const Text('Custom dates'),
+                selected:
+                    draft.timeframe.kind == AnalyticsTimeframeKind.customUtc,
+                onSelected: (_) => onTimeframeChanged(
+                  const AnalyticsTimeframe.invalid(
+                    'Enter both Initial date and Final date as dd-mm-yyyy.',
                   ),
-                  onChanged: (value) =>
-                      onTimeframeChanged(_parseTimeframeDraft(value)),
+                ),
+              ),
+              SizedBox(
+                width: 180,
+                child: TextField(
+                  key: const Key('analytics.timeframe.initialDate'),
+                  decoration: const InputDecoration(
+                    labelText: 'Initial date',
+                    hintText: 'dd-mm-yyyy',
+                  ),
+                  onChanged: (value) => onTimeframeChanged(
+                    _parseTimeframeDraft(
+                      value,
+                      draft.timeframe.finalLocalDate ?? '',
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 180,
+                child: TextField(
+                  key: const Key('analytics.timeframe.finalDate'),
+                  decoration: const InputDecoration(
+                    labelText: 'Final date',
+                    hintText: 'dd-mm-yyyy',
+                  ),
+                  onChanged: (value) => onTimeframeChanged(
+                    _parseTimeframeDraft(
+                      draft.timeframe.initialLocalDate ?? '',
+                      value,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -275,7 +293,7 @@ class SavedAnalysisBrowser extends StatelessWidget {
                               'Group by: ${_determinantLabel(record.draft.determinant)}',
                             ),
                             Text(
-                              'Variables: ${record.draft.measures.map(_measureLabel).join(', ')}',
+                              'Variables: ${record.draft.variables.map(_variableLabel).join(', ')}',
                             ),
                             Text('Timeframe: ${record.draft.timeframe.label}'),
                             const SizedBox(height: MarkeiSpacing.xs),
@@ -334,7 +352,7 @@ class AnalyticsResultView extends StatelessWidget {
     return MarkeiSection(
       key: const Key('analytics.result'),
       title:
-          '${_determinantLabel(record.draft.determinant)} · ${record.draft.measures.map(_measureLabel).join(', ')} · Record #${record.fingerprint}',
+          '${_determinantLabel(record.draft.determinant)} · ${record.draft.variables.map(_variableLabel).join(', ')} · Record #${record.fingerprint}',
       subtitle:
           '${record.executedAtUtc.toIso8601String()} · ${record.draft.timeframe.label} · ${record.eligibleCount}/${record.totalCount} evidence rows',
       child: Column(
@@ -414,12 +432,13 @@ class AnalyticsChartProjection extends StatelessWidget {
           (
             label: entry.groupKey.determinantLabel,
             value: (entry.value as AnalyticsIntegerResultValue).value,
-            unit: entry.compatibilityKey.value,
+            unit: analyticsDisplayValue(entry.measure, entry.value).unit,
+            display: analyticsDisplayValue(entry.measure, entry.value).value,
             series: _measureLabel(entry.measure),
           ),
     ];
     final summary =
-        'Chart for Record ${record.fingerprint}. Categories: ${values.map((v) => v.label).join(', ')}. Series: ${values.map((v) => v.series).toSet().join(', ')}. Unit ${values.isEmpty ? 'none' : values.first.unit}. Evidence count ${record.eligibleCount}.';
+        'Chart for Record ${record.fingerprint}. Categories: ${values.map((v) => v.label).join(', ')}. Series: ${values.map((v) => '${v.series} ${v.display} ${v.unit}').toSet().join(', ')}. Evidence count ${record.eligibleCount}.';
     return Semantics(
       key: const Key('analytics.chart.summary'),
       label: summary,
@@ -443,7 +462,10 @@ class AnalyticsChartProjection extends StatelessWidget {
 class _AnalyticsBarChartPainter extends CustomPainter {
   const _AnalyticsBarChartPainter({required this.values, required this.signed});
 
-  final List<({String label, int value, String unit, String series})> values;
+  final List<
+    ({String display, String label, String series, String unit, int value})
+  >
+  values;
   final bool signed;
 
   @override
@@ -513,8 +535,12 @@ class AnalyticsResultTable extends StatelessWidget {
                 ),
                 DataCell(Text(_measureLabel(entry.measure))),
                 DataCell(Text(_operationLabel(entry.operation))),
-                DataCell(Text(_resultValueLabel(entry.value))),
-                DataCell(Text(entry.compatibilityKey.value)),
+                DataCell(
+                  Text(analyticsDisplayValue(entry.measure, entry.value).value),
+                ),
+                DataCell(
+                  Text(analyticsDisplayValue(entry.measure, entry.value).unit),
+                ),
                 DataCell(Text(entry.eligibleCount.toString())),
                 DataCell(Text(entry.excludedCount.toString())),
                 DataCell(
@@ -699,7 +725,7 @@ class _PurchasesProjection extends StatelessWidget {
                   ),
                 ),
                 onChanged: (_) => onTogglePurchase(row.purchaseId.value),
-                title: Text(row.purchaseId.value),
+                title: Text(_formatLocal(row.occurrenceTime)),
                 subtitle: Text(
                   '${row.storeName} · ${_money(row.purchaseTotal)} · ${row.itemCount} item(s)',
                 ),
@@ -714,9 +740,8 @@ class _PurchasesProjection extends StatelessWidget {
         key: const Key('analytics.purchases.table'),
         columns: const [
           DataColumn(label: Text('Select')),
-          DataColumn(label: Text('Purchase ID')),
-          DataColumn(label: Text('Occurrence time')),
-          DataColumn(label: Text('Store')),
+          DataColumn(label: Text('Date-Time of purchase')),
+          DataColumn(label: Text('Store name')),
           DataColumn(label: Text('Purchased by')),
           DataColumn(label: Text('Purchased for')),
           DataColumn(label: Text('Payment method')),
@@ -737,8 +762,7 @@ class _PurchasesProjection extends StatelessWidget {
                     onChanged: (_) => onTogglePurchase(row.purchaseId.value),
                   ),
                 ),
-                DataCell(Text(row.purchaseId.value)),
-                DataCell(Text(_formatUtc(row.occurrenceTime))),
+                DataCell(Text(_formatLocal(row.occurrenceTime))),
                 DataCell(Text(row.storeName)),
                 DataCell(Text(row.purchasedBy?.displayLabel ?? 'Not assigned')),
                 const DataCell(Text('Unavailable in recorded data')),
@@ -788,7 +812,7 @@ class _ItemsProjection extends StatelessWidget {
                 onChanged: (_) => onToggleItem(row.id),
                 title: Text('${row.productCode} - ${row.productName}'),
                 subtitle: Text(
-                  '${row.purchaseId.value} · ${row.storeName} · ${_money(row.lineTotal)}',
+                  '${_formatLocal(row.purchaseOccurrenceTime)} · ${row.storeName} · ${_money(row.lineTotal)}',
                 ),
               ),
             ),
@@ -801,12 +825,12 @@ class _ItemsProjection extends StatelessWidget {
         key: const Key('analytics.items.table'),
         columns: const [
           DataColumn(label: Text('Select')),
-          DataColumn(label: Text('Purchase ID and date/time')),
-          DataColumn(label: Text('Product ID/code/name/brand')),
-          DataColumn(label: Text('Store ID/name')),
-          DataColumn(label: Text('Purchased-by ID/code/nickname')),
-          DataColumn(label: Text('Purchased-for')),
-          DataColumn(label: Text('Payment Method ID/code/nickname')),
+          DataColumn(label: Text('Date-Time of purchase')),
+          DataColumn(label: Text('Product code / Product name / Brand')),
+          DataColumn(label: Text('Store name')),
+          DataColumn(label: Text('Purchased by')),
+          DataColumn(label: Text('Purchased for')),
+          DataColumn(label: Text('Payment method')),
           DataColumn(label: Text('Quantity and unit')),
           DataColumn(label: Text('Unit price')),
           DataColumn(label: Text('Line total')),
@@ -822,17 +846,13 @@ class _ItemsProjection extends StatelessWidget {
                     onChanged: (_) => onToggleItem(row.id),
                   ),
                 ),
+                DataCell(Text(_formatLocal(row.purchaseOccurrenceTime))),
                 DataCell(
                   Text(
-                    '${row.purchaseId.value} · ${_formatUtc(row.purchaseOccurrenceTime)}',
+                    '${row.productCode} · ${row.productName} · ${row.productBrand.isEmpty ? 'Unavailable' : row.productBrand}',
                   ),
                 ),
-                DataCell(
-                  Text(
-                    '${row.productId.value} · ${row.productCode} · ${row.productName} · ${row.productBrand.isEmpty ? 'Unavailable' : row.productBrand}',
-                  ),
-                ),
-                DataCell(Text('${row.storeId.value} · ${row.storeName}')),
+                DataCell(Text(row.storeName)),
                 DataCell(Text(row.purchasedBy?.displayLabel ?? 'Not assigned')),
                 const DataCell(Text('Unavailable in recorded data')),
                 DataCell(
@@ -898,30 +918,6 @@ class _ChoiceMenu<T> extends StatelessWidget {
   }
 }
 
-class _GroupLabel extends StatelessWidget {
-  const _GroupLabel(this.label);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Text(label, style: MarkeiText.metadata),
-    );
-  }
-}
-
-String _resultValueLabel(AnalyticsResultValue value) {
-  return switch (value) {
-    AnalyticsIntegerResultValue() =>
-      '${value.value}${value.unitLabel == null ? '' : ' ${value.unitLabel}'}',
-    AnalyticsBasisPointResultValue() =>
-      '${(value.basisPoints / 100).toStringAsFixed(2)}%',
-    AnalyticsUnavailableResultValue() => value.message,
-  };
-}
-
 String _operationLabel(AnalyticsOperation operation) => switch (operation) {
   AnalyticsOperation.sum => 'Sum',
   AnalyticsOperation.mean => 'Mean',
@@ -937,12 +933,16 @@ String _measureLabel(AnalyticsMeasure measure) => switch (measure) {
   AnalyticsMeasure.evidenceCount => 'Evidence count',
 };
 
-String _breakdownLabel(AnalyticsRelationalBreakdown breakdown) =>
-    switch (breakdown) {
-      AnalyticsRelationalBreakdown.purchasedBy => 'Purchased by',
-      AnalyticsRelationalBreakdown.paymentMethod => 'Payment method',
-      AnalyticsRelationalBreakdown.purchasedFor => 'Purchased for',
-    };
+String _variableLabel(AnalyticsVariable variable) => switch (variable) {
+  AnalyticsVariable.purchasedBy => 'Purchased by',
+  AnalyticsVariable.purchasedFor => 'Purchased for',
+  AnalyticsVariable.paymentMethod => 'Payment method',
+  AnalyticsVariable.quantity => 'Quantity',
+  AnalyticsVariable.unitPrice => 'Unit price',
+  AnalyticsVariable.lineTotal => 'Price paid',
+  AnalyticsVariable.purchaseTotal => 'Purchase total',
+  AnalyticsVariable.evidenceCount => 'Evidence count',
+};
 
 String _determinantLabel(AnalyticsDeterminantKind determinant) =>
     switch (determinant) {
@@ -970,20 +970,53 @@ String _unitPrice(AnalyticsEvidenceRow row) {
   return '${price.currencyCode} ${(price.minorUnitsPerCanonicalUnit / 100).toStringAsFixed(2)} per ${price.unit.name}';
 }
 
-String _formatUtc(DateTime value) {
-  final utc = value.toUtc();
-  return '${utc.year.toString().padLeft(4, '0')}-${utc.month.toString().padLeft(2, '0')}-${utc.day.toString().padLeft(2, '0')} ${utc.hour.toString().padLeft(2, '0')}:${utc.minute.toString().padLeft(2, '0')} UTC';
+String _formatLocal(DateTime value) {
+  final local = value.toLocal();
+  return '${local.day.toString().padLeft(2, '0')}-${local.month.toString().padLeft(2, '0')}-${local.year.toString().padLeft(4, '0')} ${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
 }
 
-AnalyticsTimeframe _parseTimeframeDraft(String draft) {
-  final trimmed = draft.trim();
-  if (trimmed.isEmpty) return const AnalyticsTimeframe.all();
-  final parts = trimmed.split('/');
-  if (parts.length != 2) return AnalyticsTimeframe.invalid(trimmed);
-  final start = DateTime.tryParse(parts[0].trim())?.toUtc();
-  final end = DateTime.tryParse(parts[1].trim())?.toUtc();
-  if (start == null || end == null || !end.isAfter(start)) {
-    return AnalyticsTimeframe.invalid(trimmed);
+AnalyticsTimeframe _parseTimeframeDraft(String initial, String finalDate) {
+  final startText = initial.trim();
+  final endText = finalDate.trim();
+  if (startText.isEmpty && endText.isEmpty) {
+    return const AnalyticsTimeframe.all();
   }
-  return AnalyticsTimeframe.custom(startUtc: start, endUtc: end);
+  if (startText.isEmpty || endText.isEmpty) {
+    return const AnalyticsTimeframe.invalid(
+      'Enter both Initial date and Final date as dd-mm-yyyy.',
+    );
+  }
+  final start = _parseLocalDate(startText);
+  if (start == null) {
+    return AnalyticsTimeframe.invalid('Initial date must use dd-mm-yyyy.');
+  }
+  final end = _parseLocalDate(endText);
+  if (end == null) {
+    return AnalyticsTimeframe.invalid('Final date must use dd-mm-yyyy.');
+  }
+  if (end.isBefore(start)) {
+    return const AnalyticsTimeframe.invalid(
+      'Final date must be the same as or later than Initial date.',
+    );
+  }
+  final endExclusive = DateTime(end.year, end.month, end.day + 1);
+  return AnalyticsTimeframe.custom(
+    startUtc: start.toUtc(),
+    endUtc: endExclusive.toUtc(),
+    initialLocalDate: startText,
+    finalLocalDate: endText,
+  );
+}
+
+DateTime? _parseLocalDate(String value) {
+  final match = RegExp(r'^(\d{2})-(\d{2})-(\d{4})$').firstMatch(value);
+  if (match == null) return null;
+  final day = int.parse(match.group(1)!);
+  final month = int.parse(match.group(2)!);
+  final year = int.parse(match.group(3)!);
+  final parsed = DateTime(year, month, day);
+  if (parsed.year != year || parsed.month != month || parsed.day != day) {
+    return null;
+  }
+  return parsed;
 }

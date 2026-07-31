@@ -1,49 +1,47 @@
-# I_DSN_CODEX - C11-PH05-R01
+# I_DSN_CODEX - C11-ANALYTICS-CORRECTION-R01
 
 ## Design Result
 
-- `ExportDestinationPort` is the single application export destination boundary. `LocalExportDestination` is the single composition-injected platform adapter.
-- History and Analytics keep pure export builders separate from file writes. Only explicit export calls the destination.
-- History export now uses two set-based Account-scoped local reads for non-empty selected sets: attempts to reconstruct Purchases in one joined purchase read and contained Items in one joined item read.
-- Android public Downloads export is a typed unavailable result with zero writes. Windows uses the existing `path_provider` dependency to resolve Downloads and never overwrites collisions.
-- Home presentation is source-local static content with no repository, network, database or file dependency.
-- Catalogue selection owner was removed from ordinary UI. Product detail owner remains page-local.
-- History selection owner remains a single stable Purchase-ID set. Detail selection is a separate Purchase-ID.
-- Analytics keeps one composition-owned workspace/controller, existing record fingerprints, fixed-point semantics, Chart/Table parity, and zero Analytics database/network writes.
-- Guide content is a single local typed list owned by `guide_page.dart`; anchors use page-local focus nodes.
-- Audit cards depend only on loaded `AuditPageResult` state; no Audit network, write, broad auth, sync, retry/recovery or closure-runner capability was imported.
-- Settings controller ownership remains page-local. The support action lifecycle now refreshes Account/Sync status while the duplicate-action busy guard stays active.
-- Schema, generated Drift source, dependencies, platform files, Auth/API/Sync/provider/diagnostic contracts and PH03 Closure surfaces were not changed.
+- `AnalyticsWorkspaceController` remains the single composition-owned Analytics workspace controller.
+- The local dataset load remains Account-only and request-counted once per load, with Retry adding one more read.
+- `AnalyticsComposerDraft.variables` is the single typed selection owner; `breakdowns` and `measures` are derived compatibility views.
+- Run & save freezes determinant, selected keys, variables, operation, timeframe, evidence scope, selected labels and grouped entries into an immutable `AnalyticsRecord`.
+- Later draft changes and saved-record selection do not mutate existing records.
+- Grouping and calculation remain in the existing workspace path; `executeAnalyticsCard` was not activated as a second workspace calculation engine.
+- Display conversion is pure and shared through `analyticsDisplayValue`, converting storage integers only at the presentation/export boundary.
+- Fixed-point integer aggregation remains unchanged.
+- Compatibility keys remain internal comparison identity and are not normal user-facing units.
+- Local date conversion constructs local start and local day-after-final before converting to the existing UTC half-open period condition.
+- Stable IDs remain in models, keys, selection, History handoff, pagination, fingerprints and reconstruction; ordinary Variables labels hide UUIDs.
+- CSV/PDF builders remain pure; the shared export destination behavior is unchanged.
 
-## Rollback
+## Changed Architecture Boundary
 
-- Rollback is the single PH05 implementation chain from `b59b2ecdfb69ca98c431b9f36694f011332fbef3`.
+- `analytics_models.dart`: typed variables, local-date timeframe labels and pure display-value conversion.
+- `analytics_workspace.dart`: unified variable toggling, derived breakdowns/measures, validation messages, frozen-record seed and internal Purchase label presentation.
+- `analytics_components.dart`: compact unified Variables presentation, two custom date fields, formatted result/table/chart semantics and UUID-hidden Variables projections.
+- `analytics.dart`: formatted CSV/PDF result and evidence projection without ordinary UUID columns.
+- `analytics_registry.dart`: categorical variables explicitly unsupported for calculation definitions.
 
 ## Terminal
 
 ```text
 CYCLE=C11
-PHASE=C11-PH05
-ROUND=C11-PH05-R01
-HOME_PRESENTATION_OWNER=PASS
-PURCHASE_DRAFT_OWNER_UNCHANGED=PASS
-CATALOGUE_SELECTION_OWNER=REMOVED
-HISTORY_SELECTION_OWNER=SINGLE_STABLE_ID_SET
-HISTORY_DETAIL_SELECTION_ISOLATION=PASS
-ANALYTICS_TYPED_HANDOFF=PASS
-ANALYTICS_SECOND_CONTROLLER=ABSENT
-EXPORT_DESTINATION_OWNER=SINGLE_SHARED_PORT
-HISTORY_EXPORT_QUERY_BOUNDARY=TWO_SET_BASED
-ANDROID_EXPORT_WRITES=0
-GUIDE_CONTENT_OWNER=SINGLE_LOCAL_TYPED
-AUDIT_PROJECTION_DEPENDENCY=LOADED_LOCAL_STATE_ONLY
-SETTINGS_CONTROLLER_OWNER=UNCHANGED
-SETTINGS_ASYNC_REFRESH=PASS
-REFERENCE_IDENTITY=UUID_PLUS_STABLE_AT_HASH_CODES
-RESPONSIVE_SHARED_STATE=PASS
+UNIT=C11-ANALYTICS-CORRECTION-R01
+COMPOSER_SELECTION_OWNER=SINGLE_TYPED
+WORKSPACE_CONTROLLER_OWNER=SINGLE
+CALCULATION_PATH=SINGLE_FROZEN_RECORD
+DISPLAY_CONVERSION=PURE_SHARED
+FIXED_POINT_AGGREGATION=UNCHANGED
+COMPATIBILITY_KEYS_USER_VISIBLE=NO
+CUSTOM_TIME_BOUNDARY=LOCAL_INCLUSIVE_TO_UTC_HALF_OPEN
+INTERNAL_IDS=PRESERVED
+VISIBLE_UUIDS=ABSENT
+CHART_INCOMPATIBLE_AXIS=TYPED_UNAVAILABLE
+EXPORT_BUILDERS=PURE
+ANALYTICS_EFFECTS=initial_read:1; retry:+1; writes:0; network:0
 SCHEMA_MIGRATION=NONE
 DEPENDENCY_PLATFORM_CHANGE=NONE
-API_AUTH_SYNC_PROVIDER_DIAGNOSTIC_IMPORTS=ABSENT
-ROLLBACK=PH05_IMPLEMENTATION_CHAIN
-NEXT_DESIGN_REVIEW=Reconcile PH05 I and retain deferred Android/human evidence gates.
+SECOND_CONTROLLER_REPOSITORY_ENGINE=ABSENT
+ROLLBACK=PARENT_OF_CORRECTION_COMMIT
 ```

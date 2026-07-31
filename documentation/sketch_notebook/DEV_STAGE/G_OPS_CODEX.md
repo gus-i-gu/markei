@@ -1,71 +1,59 @@
-# G_OPS_CODEX - C11-PH05-R01
+# G_OPS_CODEX - C11-ANALYTICS-CORRECTION-R01
 
 ## Authority
 
-- Round: C11-PH05-R01
-- Activation marker: `<!-- ACTIVATION_MARKER:C11-PH05-R01-2026-07-31 -->`
-- Starting local HEAD: `b59b2ecdfb69ca98c431b9f36694f011332fbef3`
-- Starting remote HEAD: `b59b2ecdfb69ca98c431b9f36694f011332fbef3`
-- Direct authority: active D/E/F PH05 tails and J section 13 reconciliation.
+- Repository: `gus-i-gu/markei`
+- Branch: `grm-guarded-provisioning-20260727`
+- Starting remote HEAD: `2cdb8a66bfa75918acbbcae324e8315e0b7b2658`
+- Activation commit: `0e647e76aa8275bda48cea1e9d08427e3d949134`
+- Controlling source authority: latest `C11-ANALYTICS-CORRECTION-R01` sections in D/E/F.
+- PH05 evidence boundary: J section 14 only.
+
+## Diagnosis
+
+Confirmed diagnosis: Analytics calculation did not evidence silent default-Quantity insertion. The defect was user-facing projection of fixed-point storage integers and raw compatibility keys, plus insufficient end-to-end tests proving one frozen record controls Chart, Table, interpretation, CSV and PDF.
+
+Corrected competing hypothesis: wrong-variable display was not treated as evidence of a second calculation path or implicit Quantity fallback.
 
 ## Changed Paths
 
-- `clients/markei_flutter/lib/application/export_destination.dart`
-- `clients/markei_flutter/lib/application/home_content.dart`
+- `clients/markei_flutter/lib/domain/analytics/analytics_models.dart`
+- `clients/markei_flutter/lib/domain/analytics/analytics_registry.dart`
+- `clients/markei_flutter/lib/application/analytics.dart`
 - `clients/markei_flutter/lib/application/analytics_workspace.dart`
-- `clients/markei_flutter/lib/infrastructure/platform/local_export_destination.dart`
-- `clients/markei_flutter/lib/infrastructure/local/local_query_repository.dart`
-- `clients/markei_flutter/lib/app/markei_app.dart`
-- `clients/markei_flutter/lib/app/markei_composition.dart`
 - `clients/markei_flutter/lib/app/pages/analytics_page.dart`
-- `clients/markei_flutter/lib/app/pages/guide_page.dart`
-- `clients/markei_flutter/lib/app/pages/history_page.dart`
-- `clients/markei_flutter/lib/app/pages/home_page.dart`
-- `clients/markei_flutter/lib/app/pages/products_page.dart`
-- `clients/markei_flutter/lib/app/pages/purchase_page.dart`
-- `clients/markei_flutter/lib/app/pages/settings_page.dart`
-- `clients/markei_flutter/lib/app/widgets/audit_components.dart`
-- `clients/markei_flutter/test/application/export_destination_test.dart`
-- `clients/markei_flutter/test/infrastructure/local_query_repository_export_test.dart`
+- `clients/markei_flutter/lib/app/widgets/analytics_components.dart`
+- `clients/markei_flutter/test/application/analytics_workspace_test.dart`
 - `clients/markei_flutter/test/app/analytics_page_test.dart`
-- `clients/markei_flutter/test/app/audit_page_test.dart`
-- `clients/markei_flutter/test/app/guide_page_test.dart`
-- `clients/markei_flutter/test/app/history_analytics_handoff_test.dart`
-- `clients/markei_flutter/test/app/history_page_test.dart`
-- `clients/markei_flutter/test/app/markei_app_test.dart`
-- `clients/markei_flutter/test/app/markei_visual_foundation_test.dart`
-- `clients/markei_flutter/test/app/settings_page_test.dart`
+- `clients/markei_flutter/test/app/analytics_components_test.dart`
 - `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
 - `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
 - `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
 
 ## Operational Evidence
 
-- Home adds static local News and Updates follow-up cards. Home performs no repository, file, network or database operation.
-- Purchase keeps Store/time required and Person/Payment Method independent optional metadata under `Optional purchase details`.
-- Catalogue removed ordinary selection state, selected counter, generated DataTable row selection and selected-card highlight. Product detail remains reachable through identifying cells/cards and View details.
-- History keeps one selected-for-action Purchase-ID set separate from open detail. Final row can be unchecked. Filter changes prune selection to currently shown rows. Reload intersects selection and detail with returned rows.
-- History `Select all shown` applies only to the current filtered loaded recent-History window.
-- History `Use in Analytics` hands Purchase IDs only. Analytics reports requested, matched and unavailable Purchase counts and performs no calculation, saved-record creation or Purchase mutation from handoff.
-- Shared export boundary added: pure History/Analytics builders remain separate from the destination port and platform adapter.
-- Windows export writes one collision-safe final file in Downloads per explicit successful export. Android public Downloads returns typed unavailable and writes zero files.
-- History selected export reconstructs the selected bundle with two set-based Account-scoped local reads for non-empty selection; zero database writes and zero network calls.
-- Guide is local, anchored and eight-section, with contents navigation and focusable anchors.
-- Audit cards `System`, `Readiness summary` and `Diagnostics` project already loaded bounded local Audit state only.
-- Settings order is Account, Purchase references and shortage timeframe, Sync and Device, then visible non-collapsible Advanced. Support actions refresh status without overwriting the action result.
+- Preserved one `AnalyticsWorkspaceController`, one Account-local dataset load, one live draft, immutable session-only saved records and pure Analytics export builders.
+- Added one typed `AnalyticsVariable` selection owner. Purchased by and Payment method derive categorical breakdowns; Purchased for is unavailable; Quantity, Unit price, Price paid, Purchase total and Evidence count derive numeric measures.
+- Categorical-only selections block with guidance and do not insert Evidence count or Quantity.
+- Unsupported operation-variable combinations block with selection-specific guidance.
+- Compatible and incompatible numeric series remain separate. Incompatible axes default the selected record to Table while preserving Table/CSV/PDF evidence.
+- Replaced the ISO/UTC interval control with Initial date and Final date in strict `dd-mm-yyyy`; both dates are inclusive and convert to the existing UTC half-open interval.
+- Human-facing result/export formatting now converts microunits, minor currency units, unit-price minor units and basis points. Difference retains sign through exact integer aggregation before display.
+- Ordinary Variables presentation hides Purchase/Product/Store/Item UUIDs while retaining stable IDs internally for selection, History handoff, pagination, fingerprints and reconstruction.
+- Analytics request/effect budget remains: initial local evidence read 1, Retry +1, other local Analytics actions +0, database writes 0, network calls 0.
 
-## Counts And Measurements
+## Regression Matrix
 
-- Home I/O: 0.
-- Guide I/O: 0.
-- History selected export: 2 local reads, 0 database writes, 0 network calls.
-- Successful explicit export: 1 final file write.
-- Android unavailable export: 0 writes.
-- Analytics: initial evidence request 1, Retry +1, handoff/export/local UI +0 repository requests, 0 database writes, 0 network calls.
-- Audit: initial page 2 queries, Retry +2, projection +0, writes 0, network 0.
-- Settings: initial calls 5; local Refresh +2; duplicate actions blocked by `_busy`; post-action status refresh completed.
-- Ordinary Analytics fixture: 1,000 Purchases / 5,000 Items; rendered page size 20; load 50 ms; grouped calculation/record creation 56 ms; chart build 12 ms; table build 11 ms.
-- Stress Analytics fixture: 10,000 Purchases / 50,000 Items; selected scope 500; load 181 ms; grouped calculation/record creation 405 ms.
+- Product + Price paid and Quantity + Mean: PASS.
+- Store + Price paid + Sum: PASS.
+- Time by month + Quantity + Sum: PASS.
+- Product + Payment method + compatible numeric variable: PASS.
+- Purchase + Purchase total + Mean and Sum counted once per Purchase: PASS.
+- Inclusive one-day custom range: PASS.
+- Invalid and reversed dates: PASS.
+- Incompatible numeric units with Table/export retained and Chart unavailable by default: PASS.
+- Categorical-only selection without implicit count/Quantity: PASS.
+- History-selected Purchase scope requested/matched/unavailable counts and matched-row calculation: PASS.
 
 ## Validation
 
@@ -73,65 +61,42 @@
 - `git diff --exit-code -- pubspec.yaml pubspec.lock`: PASS.
 - `dart format --output=none --set-exit-if-changed lib test`: PASS.
 - `flutter analyze`: PASS.
-- `flutter test test/application/export_destination_test.dart --no-pub`: PASS.
-- `flutter test test/app/history_page_test.dart --no-pub`: PASS.
-- `flutter test test/app/history_analytics_handoff_test.dart --no-pub`: PASS.
-- `flutter test test/application/analytics_workspace_test.dart --no-pub`: PASS.
-- `flutter test test/app/analytics_page_test.dart --no-pub`: PASS.
-- `flutter test test/app/guide_page_test.dart --no-pub`: PASS.
-- `flutter test test/app/settings_page_test.dart --no-pub`: PASS.
-- `flutter test test/app/audit_page_test.dart --no-pub`: PASS.
-- `flutter test test/app/markei_visual_foundation_test.dart --concurrency=1 --no-pub`: PASS.
-- `flutter test test/app/markei_app_test.dart --concurrency=1 --no-pub`: PASS.
-- `flutter test test/app/analytics_components_test.dart --no-pub`: PASS.
-- `flutter test test/infrastructure/local_query_repository_export_test.dart`: PASS.
-- `flutter test --concurrency=1 --no-pub`: PASS, 278 passed and 4 skipped lab-gated tests.
-- `flutter build windows --release`: PASS; built `build\windows\x64\runner\Release\markei.exe`; existing Boost CMake policy warning only.
-- `flutter build apk --debug`: PASS; built `build\app\outputs\flutter-apk\app-debug.apk`; existing KGP deprecation warning only.
-- `node scripts/generate_sync_diagnostics.mjs --check`: PASS.
-- `git diff --check`: PASS.
+- Focused serial Analytics suite: PASS, 24 tests.
+- `flutter test --concurrency=1 --no-pub`: PASS, 286 passed and 4 lab-gated skips. Existing Drift multiple-database warnings appeared and were not suppressed.
+- `flutter build windows --release`: PASS; built `build\windows\x64\runner\Release\markei.exe`; existing Boost/CMake developer warning.
+- `flutter build apk --debug`: PASS; built `build\app\outputs\flutter-apk\app-debug.apk`; existing `auth0_flutter` KGP future-compatibility warning.
+- `node ..\..\scripts\generate_sync_diagnostics.mjs --check`: PASS.
 
-## Limits
+## Forbidden-Surface Audit
 
-- Screenshots: NOT_PERFORMED.
-- Keyboard-only manual review: NOT_PERFORMED.
-- Narrator/TalkBack review: NOT_PERFORMED.
-- Locale review: NOT_PERFORMED.
-- Real-device behavior: NOT_PERFORMED.
-- Human comprehension: NOT_ESTABLISHED.
-- Live Sign in, enrollment, hosted connection, Sync, Retry, Recovery, Auth0, Neon, Render and provider operations: NOT_PERFORMED.
+- Schema/migrations/generated files: unchanged.
+- Dependencies and `pubspec.yaml`/`pubspec.lock`: unchanged.
+- Native platform files: unchanged.
+- `documentation/GRM.md`, `documentation/G_SCRIPTS.md`, `documentation/I_SCRIPTS.ps1`, `documentation/NS_COORDINATES.md`, `documentation/DB_MGMT.sql`: unchanged.
+- J, A/B/C, permanent domains and methodology: unchanged.
+- Auth, API, Sync, provider, diagnostics, PH03, Closure and unrelated pages: unchanged.
 
 ## Terminal
 
 ```text
 CYCLE=C11
-PHASE=C11-PH05
-ROUND=C11-PH05-R01
-STARTING_HEAD=b59b2ecdfb69ca98c431b9f36694f011332fbef3
-PH04_IMPLEMENTATION_ANCESTOR=1aea7a5b531b56484e999aa8989978902b8db2c0
-HOME_LOCAL_INFORMATION=PASS
-PURCHASE_REDISTRIBUTION=PASS
-CATALOGUE_SELECTION_REMOVAL=PASS
-HISTORY_MULTI_SELECTION=PASS
-HISTORY_SET_EXPORT_READS=2
-ANALYTICS_SCOPE_HANDOFF=PASS
-WINDOWS_DOWNLOADS_EXPORT=PASS
-ANDROID_PUBLIC_DOWNLOADS=UNAVAILABLE_BY_AUTHORITY
-EXPORT_FINAL_WRITE_COUNT=1_PER_SUCCESS
-GUIDE=PASS
-AUDIT_PROJECTION_IO=initial:2; retry:+2; projection:+0; writes:0; network:0
-SETTINGS_INITIAL_CALLS=5
-SETTINGS_POST_ACTION_REFRESH=PASS
-REFERENCE_CODES=UNCHANGED
-FOCUSED_TESTS=PASS
-FULL_FLUTTER_TEST=PASS
+UNIT=C11-ANALYTICS-CORRECTION-R01
+CALCULATION_SELECTION_INTEGRITY=PASS
+RAW_FIXED_POINT_PRESENTATION=REMOVED
+UNIFIED_VARIABLES=PASS
+CUSTOM_DATE_RANGE=PASS
+FINAL_DATE_INCLUSIVE=PASS
+VISIBLE_UUIDS=ABSENT
+CHART_TABLE_EXPORT_PARITY=PASS
+ANALYTICS_REQUESTS=initial:1; retry:+1; other:+0
+ANALYTICS_DATABASE_WRITES=0
+ANALYTICS_NETWORK_CALLS=0
+SERIAL_FULL_FLUTTER_TEST=PASS
 WINDOWS_RELEASE_BUILD=PASS
 ANDROID_DEBUG_BUILD=PASS
 SCHEMA_MIGRATION=NONE
-GENERATED_SOURCE_CHANGED=NO
-DEPENDENCY_CHANGED=NO
-PLATFORM_FILES_CHANGED=NO
-LIVE_PROVIDER_OPERATIONS=NOT_PERFORMED
+DEPENDENCY_GENERATED_PLATFORM_CHANGE=NO
+GRM_GS_FILES_CHANGED=NO
 PUBLICATION=PUSHED
-NEXT_MAIN_ACTION=Reconcile PH05 G/H/I and perform bounded human UI/export review.
+NEXT_MAIN_ACTION=Reconcile G/H/I and perform human wide/compact, keyboard, locale and real-device review.
 ```

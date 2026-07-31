@@ -46,7 +46,7 @@ void main() {
 
       await tester.tap(find.byKey(const Key('analytics.choose.product-1')));
       await tester.pump();
-      await tester.tap(find.byKey(const Key('analytics.measure.lineTotal')));
+      await tester.tap(find.byKey(const Key('analytics.variable.lineTotal')));
       await tester.pump();
       await tester.tap(find.byKey(const Key('analytics.runSave')));
       await tester.pumpAndSettle();

@@ -1,52 +1,44 @@
-# H_DDC_CODEX - C11-PH05-R01
+# H_DDC_CODEX - C11-ANALYTICS-CORRECTION-R01
 
 ## Learner-Facing Result
 
-- Home now distinguishes static local information from commands through non-action News and Updates follow-up cards.
-- Purchase uses the phrase `Optional purchase details`; Person and Payment Method remain independent optional metadata.
-- Catalogue no longer teaches selection, counters or bulk actions. It teaches Product detail activation only.
-- History teaches zero/one/many action selection separately from detail opening. The final selected row can be unchecked.
-- `Select all shown` is explicitly bounded to the current filtered loaded recent-History window.
-- `Use in Analytics` communicates scope handoff only. Analytics reports requested, matched and unavailable Purchase counts and does not claim automatic analysis.
-- Export language names export, not sharing. Success is only reported after the destination returns a final file path.
-- Guide uses eight local sections with contents navigation and focusable anchors; no search or CMS claim was introduced.
-- Audit uses `Readiness summary`, not Health, and states local bounded read-only activity evidence without causal claims.
-- Settings order is Account first, then Purchase references/shortage timeframe, Sync and Device, and visible Advanced.
-- Reference code language remains `@NNN` for People and `#NNN` for Payment Methods. No `$NNN` language was introduced.
+- Composer reading order is `Create analysis`, `Group by | Variables | Operation | Timeframe | Run & save`, `Saved analyses - this session`, selected result, then `Variables`.
+- One visible Variables selection set now names Purchased by, Purchased for, Payment method, Quantity, Unit price, Price paid, Purchase total and Evidence count.
+- Purchased by and Payment method break down selected numeric results. Purchased for explains that recorded data does not support it.
+- Categorical-only selections say: `Choose at least one numeric variable. Categorical variables break down a result but are not calculated.`
+- Unsupported operation copy names the operation and selected numeric variable.
+- Custom Timeframe uses `Initial date` and `Final date` with `dd-mm-yyyy`; missing, invalid and reversed pairs explain the smallest correction.
+- Result values display ordinary scales: decimal quantity and unit, decimal currency, currency per unit, percent, signed Difference and integer Evidence count.
+- Compatibility keys such as `quantity:mass:kg`, fixed-point storage integers and ordinary UUIDs are absent from user-facing result/export assertions.
+- Variables evidence presents `Date-Time of purchase`, `Store name`, Purchased by, Purchased for, Payment method, Item count, Purchase total and item facts without ordinary Purchase/Product/Store/Item UUID labels.
+- Clear draft remains visible as a compact secondary action and preserves saved records.
 
-## Accessibility And Evidence Boundaries
+## Automated Learner Evidence
 
-- Automated widget tests cover 599/600/1023/1024 layout boundaries through existing visual-foundation tests, compact More navigation, Home 200-percent text behavior, Guide anchors and History selection semantics.
-- Disabled explanations are present for empty History action selection and existing Analytics composer validation.
-- Non-color distinction is preserved by explicit labels, button states and checkbox state; Catalogue no longer relies on colored selection state.
-- Human screenshot review, keyboard-only review, assistive-technology review, locale review, real-device review and comprehension review were not performed.
+- Focused Analytics tests prove draft changes do not mutate saved records and selected records do not reuse the live draft.
+- Result, interpretation, CSV and PDF assertions prove selected variables and formatted values agree from one frozen record.
+- Widget tests cover compact and wide Variables presentation, UUID hiding, Date-Time/Store visibility, and 200 percent text scale containment in the component harness.
+- Human screenshot, keyboard-only, Narrator/TalkBack, locale, real-device and comprehension reviews were not performed.
 
 ## Terminal
 
 ```text
 CYCLE=C11
-PHASE=C11-PH05
-ROUND=C11-PH05-R01
-HOME_STATIC_CLAIM_CEILING=PASS
-PURCHASE_REQUIRED_OPTIONAL_MEANING=PASS
-CATALOGUE_SELECTION_VOCABULARY_REMOVED=PASS
-HISTORY_ZERO_ONE_MANY_VOCABULARY=PASS
-HISTORY_SELECT_ALL_SHOWN_SCOPE=PASS
-USE_IN_ANALYTICS_COPY=PASS
-NO_AUTOMATIC_ANALYSIS_OR_RECORD=PASS
-EXPORT_DESTINATION_COPY=PASS
-EXPORT_SHARING_DISTINCTION=PASS
-GUIDE_EIGHT_SECTIONS=PASS
-AUDIT_READINESS_CLAIM_CEILING=PASS
-SETTINGS_CONCEPTUAL_ORDER=PASS
-REFERENCE_CODE_LANGUAGE=PASS
+UNIT=C11-ANALYTICS-CORRECTION-R01
+COMPOSER_READING_ORDER=PASS
+UNIFIED_VARIABLES_LANGUAGE=PASS
+NO_IMPLICIT_VARIABLE_SUBSTITUTION=PASS
+DISPLAY_SCALE_LANGUAGE=PASS
+CUSTOM_DATE_LANGUAGE=PASS
+PURCHASE_PRODUCT_UUIDS_VISIBLE=NO
+CHART_TABLE_EXPORT_MEANING=ALIGNED
+CLEAR_DRAFT_MEANING=PRESERVED
+WIDE_COMPACT_PARITY=PASS
 TEXT_SCALE_200=PASS
-KEYBOARD_FOCUS_SEMANTICS=PASS
+KEYBOARD_SEMANTICS=PASS
 SCREENSHOT_REVIEW=NOT_PERFORMED
 ASSISTIVE_TECH_REVIEW=NOT_PERFORMED
 LOCALE_REAL_DEVICE_REVIEW=NOT_PERFORMED
 HUMAN_COMPREHENSION=NOT_ESTABLISHED
 KANBAN_TRANSITIONS=NONE
-PROHIBITED_CLAIMS=ABSENT
-NEXT_DIDACTIC_REVIEW=Reconcile PH05 H and run bounded human comprehension/accessibility review.
 ```

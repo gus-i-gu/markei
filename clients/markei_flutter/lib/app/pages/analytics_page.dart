@@ -148,10 +148,8 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 setState(() => widget.controller.setDeterminant(value)),
             onToggleDeterminantKey: (value) =>
                 setState(() => widget.controller.toggleDeterminantKey(value)),
-            onToggleBreakdown: (value) =>
-                setState(() => widget.controller.toggleBreakdown(value)),
-            onToggleMeasure: (value) =>
-                setState(() => widget.controller.toggleMeasure(value)),
+            onToggleVariable: (value) =>
+                setState(() => widget.controller.toggleVariable(value)),
             onOperationChanged: (value) =>
                 setState(() => widget.controller.setOperation(value)),
             onTimeframeChanged: (value) =>

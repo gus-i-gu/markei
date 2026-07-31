@@ -151,15 +151,17 @@ final class AnalyticsWorkspaceController {
   AnalyticsWorkspaceSnapshot toggleBreakdown(
     AnalyticsRelationalBreakdown breakdown,
   ) {
-    final next = {..._draft.breakdowns};
-    if (!next.remove(breakdown)) next.add(breakdown);
-    return updateDraft(_draft.copyWith(breakdowns: next));
+    return toggleVariable(_variableForBreakdown(breakdown));
   }
 
   AnalyticsWorkspaceSnapshot toggleMeasure(AnalyticsMeasure measure) {
-    final next = {..._draft.measures};
-    if (!next.remove(measure)) next.add(measure);
-    return updateDraft(_draft.copyWith(measures: next));
+    return toggleVariable(_variableForMeasure(measure));
+  }
+
+  AnalyticsWorkspaceSnapshot toggleVariable(AnalyticsVariable variable) {
+    final next = {..._draft.variables};
+    if (!next.remove(variable)) next.add(variable);
+    return updateDraft(_draft.copyWith(variables: next));
   }
 
   AnalyticsWorkspaceSnapshot setOperation(AnalyticsOperation operation) {
@@ -221,8 +223,7 @@ final class AnalyticsWorkspaceController {
       registryVersion: _registry.definitionFor(_draft.operation).version,
       draft: _draft.copyWith(
         selectedDeterminantKeys: {..._draft.selectedDeterminantKeys},
-        breakdowns: {..._draft.breakdowns},
-        measures: {..._draft.measures},
+        variables: {..._draft.variables},
       ),
       selectedValues: selectedValues,
       entries: entries,
@@ -530,22 +531,25 @@ final class AnalyticsWorkspaceController {
     if (_draft.measures.isEmpty) {
       return const AnalyticsDraftValidation(
         canRun: false,
-        explanation: 'Choose at least one measure.',
+        explanation:
+            'Choose at least one numeric variable. Categorical variables break down a result but are not calculated.',
       );
     }
     if (!_draft.timeframe.isValid) {
-      return const AnalyticsDraftValidation(
+      return AnalyticsDraftValidation(
         canRun: false,
-        explanation: 'The end of the custom timeframe must be after its start.',
+        explanation:
+            _draft.timeframe.invalidDraft ??
+            'Enter both Initial date and Final date as dd-mm-yyyy.',
       );
     }
     final variables = _draft.measures.map(_variableFor).toSet();
     for (final variable in variables) {
       if (!_registry.supports(_draft.operation, variable)) {
-        return const AnalyticsDraftValidation(
+        return AnalyticsDraftValidation(
           canRun: false,
           explanation:
-              'This operation is unavailable for the selected measure.',
+              '${_operationLabel(_draft.operation)} is unavailable for ${_variableLabel(variable)}.',
         );
       }
     }
@@ -940,7 +944,7 @@ final class AnalyticsWorkspaceController {
       ),
       AnalyticsDeterminantKind.purchase => AnalyticsOption(
         key: row.purchaseId.value,
-        label: row.purchaseId.value,
+        label: '${_formatLocal(row.purchaseOccurrenceTime)} ${row.storeName}',
       ),
       AnalyticsDeterminantKind.store => AnalyticsOption(
         key: row.storeId.value,
@@ -1208,6 +1212,7 @@ final class AnalyticsWorkspaceController {
       'keys=${selectedValues.map((o) => o.key).join('|')}',
       'breakdowns=${draft.breakdowns.map((b) => b.name).toList()..sort()}',
       'measures=${draft.measures.map((m) => m.name).toList()..sort()}',
+      'variables=${draft.variables.map((v) => v.name).toList()..sort()}',
       'operation=${draft.operation.name}',
       'timeframe=${draft.timeframe.label}',
       'rows=${sortedRowIds.join('|')}',
@@ -1264,10 +1269,44 @@ String _measureLabel(AnalyticsMeasure measure) => switch (measure) {
   AnalyticsMeasure.evidenceCount => 'Evidence count',
 };
 
+String _variableLabel(AnalyticsVariable variable) => switch (variable) {
+  AnalyticsVariable.purchasedBy => 'Purchased by',
+  AnalyticsVariable.purchasedFor => 'Purchased for',
+  AnalyticsVariable.paymentMethod => 'Payment method',
+  AnalyticsVariable.quantity => 'Quantity',
+  AnalyticsVariable.unitPrice => 'Unit price',
+  AnalyticsVariable.lineTotal => 'Price paid',
+  AnalyticsVariable.purchaseTotal => 'Purchase total',
+  AnalyticsVariable.evidenceCount => 'Evidence count',
+};
+
 String _unitLabel(AnalyticsMeasure measure, AnalyticsCompatibilityKey key) {
-  if (measure == AnalyticsMeasure.evidenceCount) return 'item row';
-  return key.value;
+  return analyticsDisplayValue(
+    measure,
+    AnalyticsIntegerResultValue(
+      label: _measureLabel(measure),
+      value: 0,
+      compatibilityKey: key,
+    ),
+  ).unit;
 }
+
+AnalyticsVariable _variableForBreakdown(
+  AnalyticsRelationalBreakdown value,
+) => switch (value) {
+  AnalyticsRelationalBreakdown.purchasedBy => AnalyticsVariable.purchasedBy,
+  AnalyticsRelationalBreakdown.paymentMethod => AnalyticsVariable.paymentMethod,
+  AnalyticsRelationalBreakdown.purchasedFor => AnalyticsVariable.purchasedFor,
+};
+
+AnalyticsVariable _variableForMeasure(AnalyticsMeasure measure) =>
+    switch (measure) {
+      AnalyticsMeasure.quantity => AnalyticsVariable.quantity,
+      AnalyticsMeasure.unitPrice => AnalyticsVariable.unitPrice,
+      AnalyticsMeasure.lineTotal => AnalyticsVariable.lineTotal,
+      AnalyticsMeasure.purchaseTotal => AnalyticsVariable.purchaseTotal,
+      AnalyticsMeasure.evidenceCount => AnalyticsVariable.evidenceCount,
+    };
 
 String _operationLabel(AnalyticsOperation operation) => switch (operation) {
   AnalyticsOperation.sum => 'Sum',
@@ -1293,4 +1332,9 @@ String _utcDay(DateTime value) {
 String _utcMonth(DateTime value) {
   final utc = value.toUtc();
   return '${utc.year.toString().padLeft(4, '0')}-${utc.month.toString().padLeft(2, '0')}';
+}
+
+String _formatLocal(DateTime value) {
+  final local = value.toLocal();
+  return '${local.day.toString().padLeft(2, '0')}-${local.month.toString().padLeft(2, '0')}-${local.year.toString().padLeft(4, '0')} ${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
 }

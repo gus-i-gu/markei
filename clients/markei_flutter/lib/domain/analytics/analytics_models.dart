@@ -12,6 +12,9 @@ enum AnalyticsDeterminantKind {
 }
 
 enum AnalyticsVariable {
+  purchasedBy,
+  purchasedFor,
+  paymentMethod,
   quantity,
   unitPrice,
   lineTotal,
@@ -245,22 +248,30 @@ final class AnalyticsTimeframe {
     : kind = AnalyticsTimeframeKind.allRecordedTime,
       startUtc = null,
       endUtc = null,
+      initialLocalDate = null,
+      finalLocalDate = null,
       invalidDraft = null;
 
   const AnalyticsTimeframe.custom({
     required DateTime this.startUtc,
     required DateTime this.endUtc,
+    this.initialLocalDate,
+    this.finalLocalDate,
   }) : kind = AnalyticsTimeframeKind.customUtc,
        invalidDraft = null;
 
   const AnalyticsTimeframe.invalid(this.invalidDraft)
     : kind = AnalyticsTimeframeKind.customUtc,
       startUtc = null,
-      endUtc = null;
+      endUtc = null,
+      initialLocalDate = null,
+      finalLocalDate = null;
 
   final AnalyticsTimeframeKind kind;
   final DateTime? startUtc;
   final DateTime? endUtc;
+  final String? initialLocalDate;
+  final String? finalLocalDate;
   final String? invalidDraft;
 
   bool get isValid {
@@ -287,7 +298,10 @@ final class AnalyticsTimeframe {
       return 'All recorded time';
     }
     if (!isValid) return invalidDraft ?? 'Invalid custom timeframe';
-    return '${startUtc!.toUtc().toIso8601String()} to ${endUtc!.toUtc().toIso8601String()}';
+    if (initialLocalDate != null && finalLocalDate != null) {
+      return '$initialLocalDate to $finalLocalDate';
+    }
+    return 'Custom dates';
   }
 }
 
@@ -302,6 +316,7 @@ final class AnalyticsComposerDraft {
   const AnalyticsComposerDraft({
     this.determinant = AnalyticsDeterminantKind.product,
     this.selectedDeterminantKeys = const {},
+    this.variables = const {},
     this.breakdowns = const {},
     this.measures = const {},
     this.operation = AnalyticsOperation.sum,
@@ -311,6 +326,7 @@ final class AnalyticsComposerDraft {
 
   final AnalyticsDeterminantKind determinant;
   final Set<String> selectedDeterminantKeys;
+  final Set<AnalyticsVariable> variables;
   final Set<AnalyticsRelationalBreakdown> breakdowns;
   final Set<AnalyticsMeasure> measures;
   final AnalyticsOperation operation;
@@ -320,6 +336,7 @@ final class AnalyticsComposerDraft {
   AnalyticsComposerDraft copyWith({
     AnalyticsDeterminantKind? determinant,
     Set<String>? selectedDeterminantKeys,
+    Set<AnalyticsVariable>? variables,
     Set<AnalyticsRelationalBreakdown>? breakdowns,
     Set<AnalyticsMeasure>? measures,
     AnalyticsOperation? operation,
@@ -330,12 +347,41 @@ final class AnalyticsComposerDraft {
       determinant: determinant ?? this.determinant,
       selectedDeterminantKeys:
           selectedDeterminantKeys ?? this.selectedDeterminantKeys,
-      breakdowns: breakdowns ?? this.breakdowns,
-      measures: measures ?? this.measures,
+      variables: variables ?? this.variables,
+      breakdowns: breakdowns ?? _breakdownsFor(variables ?? this.variables),
+      measures: measures ?? _measuresFor(variables ?? this.variables),
       operation: operation ?? this.operation,
       timeframe: timeframe ?? this.timeframe,
       scope: scope ?? this.scope,
     );
+  }
+
+  static Set<AnalyticsRelationalBreakdown> _breakdownsFor(
+    Set<AnalyticsVariable> variables,
+  ) {
+    return {
+      if (variables.contains(AnalyticsVariable.purchasedBy))
+        AnalyticsRelationalBreakdown.purchasedBy,
+      if (variables.contains(AnalyticsVariable.purchasedFor))
+        AnalyticsRelationalBreakdown.purchasedFor,
+      if (variables.contains(AnalyticsVariable.paymentMethod))
+        AnalyticsRelationalBreakdown.paymentMethod,
+    };
+  }
+
+  static Set<AnalyticsMeasure> _measuresFor(Set<AnalyticsVariable> variables) {
+    return {
+      if (variables.contains(AnalyticsVariable.quantity))
+        AnalyticsMeasure.quantity,
+      if (variables.contains(AnalyticsVariable.unitPrice))
+        AnalyticsMeasure.unitPrice,
+      if (variables.contains(AnalyticsVariable.lineTotal))
+        AnalyticsMeasure.lineTotal,
+      if (variables.contains(AnalyticsVariable.purchaseTotal))
+        AnalyticsMeasure.purchaseTotal,
+      if (variables.contains(AnalyticsVariable.evidenceCount))
+        AnalyticsMeasure.evidenceCount,
+    };
   }
 }
 
@@ -432,6 +478,75 @@ final class AnalyticsUnavailableResultValue extends AnalyticsResultValue {
   final String label;
   final AnalyticsUnavailableReason reason;
   final String message;
+}
+
+final class AnalyticsDisplayValue {
+  const AnalyticsDisplayValue({required this.value, required this.unit});
+
+  final String value;
+  final String unit;
+}
+
+AnalyticsDisplayValue analyticsDisplayValue(
+  AnalyticsMeasure measure,
+  AnalyticsResultValue result,
+) {
+  return switch (result) {
+    AnalyticsIntegerResultValue() => _integerDisplayValue(measure, result),
+    AnalyticsBasisPointResultValue() => AnalyticsDisplayValue(
+      value: '${(result.basisPoints / 100).toStringAsFixed(2)}%',
+      unit: 'percent',
+    ),
+    AnalyticsUnavailableResultValue() => AnalyticsDisplayValue(
+      value: result.message,
+      unit: '',
+    ),
+  };
+}
+
+AnalyticsDisplayValue _integerDisplayValue(
+  AnalyticsMeasure measure,
+  AnalyticsIntegerResultValue result,
+) {
+  final key = result.compatibilityKey.value;
+  return switch (measure) {
+    AnalyticsMeasure.quantity => AnalyticsDisplayValue(
+      value: (result.value / NormalizedQuantity.factor).toStringAsFixed(3),
+      unit: _lastKeyPart(key),
+    ),
+    AnalyticsMeasure.unitPrice => AnalyticsDisplayValue(
+      value: _minorUnits(result.value),
+      unit: '${_keyPart(key, 1)} per ${_keyPart(key, 3)}',
+    ),
+    AnalyticsMeasure.lineTotal ||
+    AnalyticsMeasure.purchaseTotal => AnalyticsDisplayValue(
+      value: _minorUnits(result.value),
+      unit: _keyPart(key, 1),
+    ),
+    AnalyticsMeasure.evidenceCount => AnalyticsDisplayValue(
+      value: result.value.toString(),
+      unit: 'item rows',
+    ),
+  };
+}
+
+String _minorUnits(int value) {
+  final sign = value < 0 ? '-' : '';
+  final abs = value.abs();
+  final whole = abs ~/ 100;
+  final cents = (abs % 100).toString().padLeft(2, '0');
+  return '$sign$whole.$cents';
+}
+
+String _keyPart(String key, int index) {
+  final parts = key.split(':');
+  if (index >= parts.length) return '';
+  return parts[index];
+}
+
+String _lastKeyPart(String key) {
+  final parts = key.split(':');
+  return parts.isEmpty ? '' : parts.last;
 }
 
 final class AnalyticsGroupKey {

@@ -57,8 +57,8 @@ String analyticsRecordCsv(AnalyticsRecord record, AnalyticsDataset dataset) {
       entry.groupKey.breakdownLabels.values.join(' | '),
       entry.measure.name,
       entry.operation.name,
-      _csvValue(entry.value),
-      _csvUnit(entry.value),
+      analyticsDisplayValue(entry.measure, entry.value).value,
+      analyticsDisplayValue(entry.measure, entry.value).unit,
       entry.eligibleCount.toString(),
       entry.excludedCount.toString(),
       entry.value is AnalyticsUnavailableResultValue
@@ -69,14 +69,10 @@ String analyticsRecordCsv(AnalyticsRecord record, AnalyticsDataset dataset) {
   rows.addAll([
     [],
     [
-      'purchase_item_id',
-      'purchase_id',
-      'occurrence_time_utc',
-      'product_id',
+      'date_time_of_purchase',
       'product_code',
       'product_name',
       'product_brand',
-      'store_id',
       'store_name',
       'purchased_by',
       'purchased_for',
@@ -93,14 +89,10 @@ String analyticsRecordCsv(AnalyticsRecord record, AnalyticsDataset dataset) {
     (row) => contributing.contains(row.id.value),
   )) {
     rows.add([
-      row.id.value,
-      row.purchaseId.value,
-      row.purchaseOccurrenceTime.toUtc().toIso8601String(),
-      row.productId.value,
+      _formatLocal(row.purchaseOccurrenceTime),
       row.productCode,
       row.productName,
       row.productBrand.isEmpty ? 'Unavailable' : row.productBrand,
-      row.storeId.value,
       row.storeName,
       row.purchasedByLabel ?? 'Not assigned',
       'Unavailable in recorded data',
@@ -109,8 +101,8 @@ String analyticsRecordCsv(AnalyticsRecord record, AnalyticsDataset dataset) {
       row.quantity.unit.name,
       row.unitPrice == null
           ? 'Unavailable'
-          : '${row.unitPrice!.currencyCode} ${row.unitPrice!.minorUnitsPerCanonicalUnit}',
-      '${row.lineTotal.currencyCode} ${row.lineTotal.minorUnits}',
+          : '${_minorUnits(row.unitPrice!.minorUnitsPerCanonicalUnit)} ${row.unitPrice!.currencyCode} per ${row.unitPrice!.unit.name}',
+      '${_minorUnits(row.lineTotal.minorUnits)} ${row.lineTotal.currencyCode}',
       'Unavailable in recorded data',
     ]);
   }
@@ -139,7 +131,7 @@ List<int> analyticsRecordPdfBytes(AnalyticsRecord record) {
   for (final entry in record.entries) {
     text.writeln(
       '${entry.groupKey.determinantLabel} ${entry.groupKey.breakdownLabels.values.join(' ')} '
-      '${entry.measure.name} ${entry.operation.name}: ${_csvValue(entry.value)} ${_csvUnit(entry.value)} '
+      '${entry.measure.name} ${entry.operation.name}: ${analyticsDisplayValue(entry.measure, entry.value).value} ${analyticsDisplayValue(entry.measure, entry.value).unit} '
       'eligible=${entry.eligibleCount} excluded=${entry.excludedCount}',
     );
   }
@@ -153,18 +145,18 @@ String _csvCell(String value) {
   return mustQuote ? '"$escaped"' : escaped;
 }
 
-String _csvValue(AnalyticsResultValue value) => switch (value) {
-  AnalyticsIntegerResultValue() => value.value.toString(),
-  AnalyticsBasisPointResultValue() =>
-    '${(value.basisPoints / 100).toStringAsFixed(2)}%',
-  AnalyticsUnavailableResultValue() => value.message,
-};
+String _minorUnits(int value) {
+  final sign = value < 0 ? '-' : '';
+  final abs = value.abs();
+  final whole = abs ~/ 100;
+  final cents = (abs % 100).toString().padLeft(2, '0');
+  return '$sign$whole.$cents';
+}
 
-String _csvUnit(AnalyticsResultValue value) => switch (value) {
-  AnalyticsIntegerResultValue() => value.compatibilityKey.value,
-  AnalyticsBasisPointResultValue() => value.compatibilityKey.value,
-  AnalyticsUnavailableResultValue() => '',
-};
+String _formatLocal(DateTime value) {
+  final local = value.toLocal();
+  return '${local.day.toString().padLeft(2, '0')}-${local.month.toString().padLeft(2, '0')}-${local.year.toString().padLeft(4, '0')} ${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
+}
 
 List<int> _simplePdf(String text) {
   final escaped = text
