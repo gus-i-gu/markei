@@ -1149,3 +1149,105 @@ Human UI verification accepted PH03 as sufficient for documentation and permanen
 
 Screenshot sets, Narrator, TalkBack, locale coverage, real-device coverage, complete keyboard-only acceptance and broader human accessibility acceptance remain unvalidated. Build and widget evidence do not substitute for those gates. Cycle 10 production, GCM04, multiple-Account, revocation, outage recovery, retention/rebootstrap and provider acceptance remain deferred to C12-PHASE02.
 
+---
+
+## 2026-07-31 — C11-PH05 local product-surface and export materialization
+
+Sequence: `FLX-PRM-04` post-evidence Operational absorption  
+Role: Operational Chat [O]  
+Authority/rollback head: `b59b2ecdfb69ca98c431b9f36694f011332fbef3`  
+Implementation commit: `426235d8b67ac719e494b53cfb23a6c3b06fb489`  
+Main reconciliation: `J_MAIN_STAGE.md` section 14 at `e6ced7fe3945925bf5f314ee11c4538029e18d44`  
+Evidence: complete `DEV_STAGE/G_OPS_CODEX.md`, implementation diff, relevant source, tests and manifests  
+Evidence boundary: automated/widget evidence, static analysis, Windows release build and Android debug build; no manual export host proof, assistive-technology, locale, real-device or complete comprehension acceptance
+
+### Exact changed-path boundary
+
+The implementation commit changes exactly 28 paths: 15 handwritten Flutter library paths, 10 focused/regression test paths and the three Codex evidence reports.
+
+```text
+clients/markei_flutter/lib/application/export_destination.dart
+clients/markei_flutter/lib/application/home_content.dart
+clients/markei_flutter/lib/application/analytics_workspace.dart
+clients/markei_flutter/lib/infrastructure/platform/local_export_destination.dart
+clients/markei_flutter/lib/infrastructure/local/local_query_repository.dart
+clients/markei_flutter/lib/app/markei_app.dart
+clients/markei_flutter/lib/app/markei_composition.dart
+clients/markei_flutter/lib/app/pages/analytics_page.dart
+clients/markei_flutter/lib/app/pages/guide_page.dart
+clients/markei_flutter/lib/app/pages/history_page.dart
+clients/markei_flutter/lib/app/pages/home_page.dart
+clients/markei_flutter/lib/app/pages/products_page.dart
+clients/markei_flutter/lib/app/pages/purchase_page.dart
+clients/markei_flutter/lib/app/pages/settings_page.dart
+clients/markei_flutter/lib/app/widgets/audit_components.dart
+clients/markei_flutter/test/application/export_destination_test.dart
+clients/markei_flutter/test/infrastructure/local_query_repository_export_test.dart
+clients/markei_flutter/test/app/analytics_page_test.dart
+clients/markei_flutter/test/app/audit_page_test.dart
+clients/markei_flutter/test/app/guide_page_test.dart
+clients/markei_flutter/test/app/history_analytics_handoff_test.dart
+clients/markei_flutter/test/app/history_page_test.dart
+clients/markei_flutter/test/app/markei_app_test.dart
+clients/markei_flutter/test/app/markei_visual_foundation_test.dart
+clients/markei_flutter/test/app/settings_page_test.dart
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+```
+
+No source, test, evidence or repository path outside this exact boundary changed.
+
+### Implemented execution boundary
+
+- Home adds static local News and Updates follow-up cards and performs zero repository, database, file or network operations.
+- Guide is one local, anchored, focusable eight-section page and performs zero repository, database, file or network operations.
+- Purchase redistribution remains presentation-only; Catalogue ordinary selection ownership and generated selection chrome are removed while Product detail remains reachable.
+- History keeps one Purchase-ID action-selection set separate from detail state. Final-uncheck, filter pruning, reload intersection and current filtered loaded-window `Select all shown` behavior are implemented.
+- `Use in Analytics` transfers frozen Purchase scope only. Handoff, export and other local UI transitions add zero Analytics repository requests and do not calculate, save or mutate.
+- `ExportDestinationPort` and the composition-injected `LocalExportDestination` separate pure builders from file effects.
+- A non-empty History selected export reconstructs the bundle through two set-based Account-scoped reads, with zero database writes and zero network calls.
+- Each successful explicit History or Analytics export performs one final collision-safe file write.
+- Windows resolves the Downloads directory through the already-declared platform dependency. Android public Downloads returns a typed unavailable result and writes zero files.
+- Audit System, Readiness summary and Diagnostics cards derive only from the already-loaded bounded local Audit result.
+- Settings performs its post-support-action Account/Sync status refresh while retaining duplicate-action exclusion and the action result.
+- Stored `@NNN` and `#NNN` reference codes remain unchanged.
+
+### Operation budgets
+
+```text
+HOME_IO=0
+GUIDE_IO=0
+HISTORY_SELECTED_EXPORT=reads:2; database_writes:0; network:0
+SUCCESSFUL_EXPLICIT_EXPORT=final_file_writes:1
+ANDROID_PUBLIC_DOWNLOADS_UNAVAILABLE=file_writes:0
+ANALYTICS=initial_requests:1; retry:+1; handoff_export_local_ui:+0; database_writes:0; network:0
+AUDIT=initial_queries:2; retry:+2; projections:+0; writes:0; network:0
+SETTINGS=initial_calls:5; local_refresh:+2
+```
+
+### Validation and unchanged surfaces
+
+- `flutter pub get`: PASS; dependency-lock guard: PASS.
+- `dart format --output=none --set-exit-if-changed lib test`: PASS.
+- `flutter analyze`: PASS.
+- Focused export, History, handoff, Analytics workspace/page, Guide, Settings, Audit, visual-foundation, app-shell and local export-repository tests: PASS.
+- `flutter test --concurrency=1 --no-pub`: PASS, 278 tests passed and 4 lab-gated tests skipped.
+- `flutter build windows --release`: PASS; existing Boost CMake policy warning only.
+- `flutter build apk --debug`: PASS; existing Kotlin Gradle Plugin deprecation warning only.
+- `node scripts/generate_sync_diagnostics.mjs --check`: PASS.
+- `git diff --check`: PASS.
+- Schema, migrations, generated Drift source, dependencies, lockfile, native platform files, API/Auth/Sync/provider contracts and diagnostic registry authority remained unchanged.
+- No live Sign in, enrollment, hosted connection, Sync, Retry, Recovery, Auth0, Neon, Render or provider operation was performed.
+- Because the implementation is one commit with no schema, dependency, generated or native-platform conversion, rollback is one commit to `b59b2ecdfb69ca98c431b9f36694f011332fbef3`; no data repair is implied.
+
+### Evidence ceiling, defect and deferrals
+
+Windows Downloads is implemented and automated/build validated only. Manual Windows export, directory/permission/full-disk behavior and real-host file inspection remain unvalidated. Android public Downloads is intentionally unavailable in this build; no real-device public-storage behavior is established.
+
+Human runtime evidence shows an active Analytics wrong-variable/result defect. The root cause is not established, and passing Analytics tests do not prove calculation-variable integrity. The accepted compact composer, unified Variables control, two `dd-mm-yyyy` fields and Date-Time/Store evidence presentation are correction direction only, not implemented state.
+
+Guide ownership, navigation, anchors and zero-I/O structure are implemented. Its learner sequence is only partially faithful: Lists and explicit getting-started/local-data/export/Sync-limit boundaries are not represented as accepted. Human comprehension is not established.
+
+Screenshots were defect-finding rather than complete acceptance. Keyboard-only review, Narrator/TalkBack, locale behavior, real-device behavior, manual Windows export and broader comprehension remain unvalidated. These limits do not reopen the accepted automated/build PH05 boundary.
+

@@ -67,79 +67,79 @@ Read in this order:
 
 No source, client, database or provider mutation is authorized by this checkpoint.
 
-<!-- TEMPORAL_MARKER:C11-PH03-OPERATIONAL-2026-07-31 -->
-> Temporal boundary — Operational checkpoint after C11-PH03 materialization and Main section 11 reconciliation. Content above preserves earlier recovery checkpoints. Content below is the sole current compact Operational state and authorizes no source, provider, live-operation, Main-root, staging or methodology change.
+<!-- TEMPORAL_MARKER:C11-PH05-OPERATIONAL-2026-07-31 -->
+> Temporal boundary — Operational checkpoint after C11-PH05 implementation and Main section 14 reconciliation. Content above preserves earlier recovery context. Content below is the sole current compact Operational state and authorizes no source, provider, live-operation, Main-root, staging or methodology change.
 
-# Current Operational State — C11-PH03
+# Current Operational State — C11-PH05
 
 > Branch: `grm-guarded-provisioning-20260727`
-> Inspected remote head: `33dc1002b4a7b00fa67e863dfe98a43c97d66cee`
-> Implementation evidence head: `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`
+> Inspected remote head: `e6ced7fe3945925bf5f314ee11c4538029e18d44`
+> Implementation evidence head: `426235d8b67ac719e494b53cfb23a6c3b06fb489`
+> Rollback authority: `b59b2ecdfb69ca98c431b9f36694f011332fbef3`
 > Evidence report: complete `DEV_STAGE/G_OPS_CODEX.md`
-> Latest Main reconciliation: `J_MAIN_STAGE.md` section 11
+> Latest Main reconciliation: `J_MAIN_STAGE.md` section 14
 > Status: Active compact Operational checkpoint
 
 ## Accepted terminal
 
 ```text
 CYCLE10=CLOSED_AT_GCM03_TWO_DEVICE_DEVELOPMENT_SCOPE
-C11_PH01_R01=IMPLEMENTED_VALIDATED_AUTOMATED_BUILD_CEILING
-C11_PH02=IMPLEMENTED_VALIDATED_AUTOMATED_BUILD_CEILING
-C11_PH03=IMPLEMENTED_VALIDATED_AUTOMATED_BUILD_CEILING
-PH03_HUMAN_UI_ACCEPTANCE=ACCEPTED_BOUNDED
+C11_PH01_PH03=IMPLEMENTED_VALIDATED_AT_RECORDED_BOUNDARIES
+C11_PH05_SOURCE=IMPLEMENTED
+C11_PH05_AUTOMATED_BUILD_EVIDENCE=VALIDATED
+PH05_HUMAN_ACCEPTANCE=PARTIAL_DEFECT_FINDING
+ANALYTICS_WRONG_VARIABLE_RESULT=DEFECTIVE
+ANALYTICS_ROOT_CAUSE=NOT_ESTABLISHED
+ANDROID_PUBLIC_DOWNLOADS=BLOCKED_TYPED_UNAVAILABLE
 PRODUCTION_ACCEPTANCE=DEFERRED
 LIVE_OPERATION_AUTHORITY=NONE
 ```
 
-Cycle 10 remains closed at the accepted two-Device, one-Account development boundary. No C11 work reopens production, provider or Sync acceptance.
+Cycle 10 remains closed at its two-Device, one-Account development boundary. PH05 performed no live provider or Sync operation and does not reopen production acceptance.
 
 ## Implemented and validated
 
-- Settings loads persisted Account-scoped shortage threshold state, validates whole values from 0 through 365, preserves invalid drafts, separates local failure states, refreshes archived references and blocks duplicate asynchronous actions.
-- Capability-narrow Settings Account and Sync/Device adapters preserve existing behavior and expose action effects; no live support action was executed in PH03 validation.
-- Audit is local, read-only, Account/environment-scoped and sanitized.
-- Each Audit page and local Retry issue exactly two local queries, zero network calls and zero writes.
-- Audit uses a default 20-attempt page, hard maximum 50 and deterministic exclusive UTC-time-plus-attempt-ID cursor paging.
-- Visibility-gated loading, stale-completion suppression and disposal are validated.
-- Closure is absent from ordinary wide, medium and compact navigation under both feature-flag values.
-- Retained Closure implementation remains unreachable development/support material.
-- Full validation passed: focused tests; 264-pass/4-lab-skip Flutter suite; analysis; Windows release build; Android debug build; diagnostic-registry drift check; formatting and diff checks.
-- Schema, migration, generated source, dependencies, API, Auth, Sync and provider contracts remained unchanged.
+- Home and Guide are local zero-I/O surfaces.
+- History owns stable action selection separately from detail and reconstructs a selected export with two set-based Account-scoped reads, zero database writes and zero network calls.
+- A successful explicit export produces one final collision-safe file.
+- Windows Downloads is implemented at automated/build ceiling. Android public Downloads returns typed unavailable and writes zero files.
+- Analytics budgets are initial request `1`, Retry `+1`, and handoff/export/local UI `+0`; Analytics writes no database state and makes no network call.
+- Audit budgets are initial `2` queries, Retry `+2`, projections `+0`, writes `0`, network `0`.
+- Settings performs five initial capability calls and local Refresh `+2`; duplicate actions are blocked and completed support actions refresh status without losing the action result.
+- Focused tests, formatting, analysis, 278-pass/4-lab-skip full suite, Windows release build, Android debug build, diagnostic-registry check and diff check passed.
+- Schema, migrations, generated source, dependencies, lockfile, native platform files and API/Auth/Sync/provider contracts were unchanged.
+- Rollback is one implementation commit to `b59b2ecdfb69ca98c431b9f36694f011332fbef3`.
 
-## Evidence ceiling and remaining gates
+## Defective, blocked and host-unvalidated
 
-Bounded human UI verification is accepted for PH03 permanent absorption. Minor non-blocking visual refinements are deferred to C12-PH01 and do not reopen PH03.
-
-Still host-unvalidated or unperformed:
-
-- screenshot-set evidence;
-- complete keyboard-only and assistive-technology acceptance;
-- Narrator and TalkBack review;
-- locale-sensitive presentation review;
-- real Windows/Android Device and density/orientation review;
-- live Sign in, enrollment, hosted connection, Sync, protocol Retry, Recovery or provider operation.
-
-These are remaining evidence gates, not failed PH03 implementation.
+- Human runtime evidence exposes an Analytics wrong-variable/result defect. Root cause is unknown; passing Analytics tests do not prove calculation-variable integrity.
+- The compact composer, unified Variables control, two `dd-mm-yyyy` fields and Date-Time/Store evidence presentation are accepted correction direction, not implementation.
+- Guide structure, navigation and zero-I/O behavior are implemented, but its accepted learner sequence is only partially faithful and comprehension is not established.
+- Windows Downloads has no manual real-host export, permission/full-disk or visible-file acceptance.
+- Android public Downloads remains intentionally unavailable; no public-storage write or real-device acceptance exists.
+- Keyboard-only review, Narrator/TalkBack, locale, real-device behavior and complete human comprehension remain unvalidated.
+- No live Sign in, enrollment, hosted connection, Sync, Retry, Recovery, Auth0, Neon, Render or provider operation was performed.
 
 ## Current Operational work
 
-1. Complete the remaining human accessibility, locale and real-device gates.
-2. Confirm preserved-database Settings behavior and representative offline Audit portability without provider activity.
-3. Carry only minor visual refinement into C12-PH01.
-4. Keep GCM04, multiple-Account hosted work, revocation, outage recovery, retention/rebootstrap, conditional R07 and production lifecycle in C12-PHASE02.
+1. Complete the read-only Analytics draft-to-result/export state-of-union and establish root cause before corrective authority.
+2. Validate manual Windows Downloads and decide whether Android public Downloads receives a separately authorized mechanism.
+3. Resolve Guide learner-sequence disposition and complete keyboard, assistive-technology, locale, real-device and comprehension gates.
+4. Preserve all PH05 operation budgets and unchanged schema/dependency/provider boundaries through any corrective unit.
+5. Keep GCM04, conditional R07, multiple-Account hosted work, revocation, outage recovery, retention/rebootstrap and production lifecycle in C12-PHASE02.
 
 ## Recovery
 
 Read in this order:
 
 1. this checkpoint segment;
-2. `04_TODO.md` for remaining executable and deferred gates;
-3. `11_OPERATIONAL_RECORD.md`, “C11-PH03 Settings, Audit, and Closure disposition materialization”;
-4. `12_OPERATIONAL_MODEL.md`, “C11 Settings, Audit, and Closure Operational Rules”;
+2. `04_TODO.md` for corrective, host-validation and deferred gates;
+3. `11_OPERATIONAL_RECORD.md`, “C11-PH05 local product-surface and export materialization”;
+4. `12_OPERATIONAL_MODEL.md`, “C11 Local Product-Surface and Export Operational Rules”;
 5. complete `DEV_STAGE/G_OPS_CODEX.md`;
-6. `J_MAIN_STAGE.md` section 11;
-7. implementation commit `0924e743931ea7aba2c9cc5d2e28063e737b2ff5` only when execution detail is required.
+6. `J_MAIN_STAGE.md` section 14;
+7. implementation commit `426235d8b67ac719e494b53cfb23a6c3b06fb489` only when execution detail is required.
 
-Next valid route: preserve compatible Didactic and Design permanent reconciliations, then Main verifies all three domain commits and refreshes `00_PROJECT_STATE.md`, `05_SESSION_LOG.md` and `06_SESSION_SCHEME.md` before C12-PH01.
+Next valid route: Main verifies the Operational, Didactic and Design PH05 permanent reconciliations; separately complete the read-only Analytics correction state-of-union before any new D/E/F or Codex authority.
 
 No source, client, database, provider, Main-root, staging or methodology mutation is authorized by this checkpoint.

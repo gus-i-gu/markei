@@ -556,3 +556,28 @@ Local Analytics implementation and validation do not alter Sync, provider, produ
 - Automated tests, analysis and platform builds establish only their named execution boundary. Screenshot, assistive-technology, locale, real-device and keyboard-only acceptance require separate evidence.
 - Bounded human UI acceptance may close the implemented phase while explicitly deferring non-blocking visual refinements; it must not silently establish unperformed accessibility or platform gates.
 
+# C11 Local Product-Surface and Export Operational Rules
+
+## Static local surfaces and projection budgets
+
+- Static Home information and local Guide content must not acquire repository, database, file or network authority merely through navigation, scrolling, focus or responsive recomposition.
+- History action selection and detail ownership remain separate. A selected export operates on one frozen non-empty Purchase-ID set and reconstructs it with two set-based Account-scoped reads, zero database writes and zero network calls.
+- Audit interpretation cards derive from the already-loaded bounded Audit page. Projection and responsive transitions add no query, write or network authority.
+- Analytics handoff, export and local presentation transitions operate on loaded session state. Only the initial evidence load and explicit local Retry may increment the Analytics repository-request budget.
+- Settings page load and local status refresh remain bounded capability calls. A completed explicit support action may refresh Account and local Sync/Device status without overwriting its action result, while duplicate conflicting actions stay blocked.
+
+## Explicit export boundary
+
+- Pure History and Analytics builders remain separate from the application export-destination port and its platform adapter.
+- Preview, navigation, selection and unavailable preflight produce zero files. One successful explicit export produces exactly one final collision-safe file and must report success only after the destination confirms it.
+- Windows Downloads support requires a resolved user-visible Downloads directory and remains distinct from manual host acceptance.
+- Android public Downloads must fail as a typed unavailable result with zero writes until an explicitly authorized public-document mechanism exists. Temporary or app-specific storage must not be labelled public Downloads.
+- Export failures expose sanitized unavailable/failure state and must not overwrite an existing file or claim success.
+
+## Evidence integrity and acceptance
+
+- Automated Analytics calculation tests do not establish that a composed variable/operation request is faithfully represented end to end in the human-visible result. A runtime wrong-variable/result observation remains a defect until its draft-to-result/export path is traced and corrected.
+- Accepted corrective UI direction is not implementation evidence. Composer compactness, unified variable selection, date-entry format and evidence-label changes require their own materialization and validation.
+- A local Guide's section count, anchors and zero-I/O behavior do not establish faithful learner sequencing or comprehension. Content-contract and learner evidence remain separate gates.
+- Formatting, analysis, automated tests and platform builds remain distinct from manual Downloads, keyboard, assistive-technology, locale, real-device and comprehension acceptance.
+
