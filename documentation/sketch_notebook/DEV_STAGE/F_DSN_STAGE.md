@@ -433,3 +433,271 @@ DEPENDENCY_CHANGED=NO | YES
 REMOTE_SYNC_DIAGNOSTIC_IMPORTS=ABSENT | CONTRADICTED
 NEXT_DESIGN_REVIEW=<one exact action>
 ```
+<!-- ACTIVATION_MARKER:C11-PH03-R01-2026-07-31 -->
+
+# C11-PH03-R01 — Final Design Materialization Authority
+
+> Status: ACTIVE — CONTROLLING C11-PH03 ARCHITECTURE AUTHORITY
+> Pairing: the D and E append carrying this exact activation marker
+> Reversibility: high; no persistence migration or provider contract change
+
+## 18. Controlling responsibility map
+
+~~~text
+MarkeiShell / MarkeiDestinationId
+  -> SettingsPage
+       -> existing local reference and preference ports
+       -> capability-narrow AccountStatusPort
+       -> capability-narrow SyncDeviceSupportPort
+  -> AuditPage
+       -> page-owned AuditController
+       -> AuditReadPort
+       -> DriftClosureDiagnosticsRepository
+       -> SyncAttempts + SyncDiagnosticEvents
+       -> generated diagnostic registry (read-only safe mapping)
+
+Development support harness
+  -> capability-narrow adapters over NativeAuthClosureRunner
+  -> existing Auth / enrollment / Sync / recovery coordinators
+  -> no ordinary destination
+~~~
+
+Rules:
+
+- Audit presentation imports application Audit projections and presentation
+  primitives only.
+- AuditController imports AuditReadPort and safe registry meaning only. It
+  cannot import HTTP, Auth mutation, enrollment, Sync or recovery coordinators.
+- DriftClosureDiagnosticsRepository remains the single local evidence adapter;
+  do not create a second truth reconstruction.
+- Settings preserves existing reference/preference ownership.
+- Settings receives capability-narrow Account/status/action interfaces, never
+  the complete NativeAuthClosureRunner.
+- Advanced support receives only explicitly authorized existing action
+  capabilities.
+- composition owns injected clients, database, controllers and idempotent close.
+- Closure destination identity/page mapping is removed from ordinary app
+  navigation. Existing runner/page code may remain only behind non-navigation
+  development/test infrastructure.
+
+## 19. Audit application contract
+
+Implement explicit equivalents of:
+
+~~~text
+AuditAttemptId = persisted SyncAttempts identity
+AuditEventId = persisted SyncDiagnosticEvents identity
+AuditCursor(startedAtUtc, attemptId)
+AuditPageRequest(accountId, environmentAlias, cursor?, limit)
+AuditEventProjection
+AuditAttemptProjection
+AuditPageResult(records, nextCursor, loadedAtUtc, isPartialWindow)
+AuditUnavailableReason
+AuditReadPort.loadPage(request)
+AuditWorkspaceState = idle | loading | ready | empty | stale | unavailable
+AuditController
+~~~
+
+Invariants:
+
+- default limit 20; reject or clamp above 50 at the application boundary;
+- identity never uses row/list position;
+- Account and environment are mandatory request values;
+- Device attribution is typed optional/unavailable and never inferred;
+- records expose sanitized allowlisted values only;
+- raw payloads, secrets and raw identifiers never cross the port;
+- page result records the local load time and partial-window state;
+- controller retains one state across responsive layouts;
+- Retry repeats only the local page request;
+- stale generations cannot replace newer state;
+- no background refresh, timer, stream or provider query.
+
+## 20. Local query boundary
+
+Implement one attempt query plus one child-event query per page:
+
+1. fetch limit + 1 attempts for the requested Account/environment, ordered by
+   startedAt DESC then attempt ID DESC and bounded by an exclusive composite
+   cursor;
+2. fetch diagnostic events for the retained attempt IDs, ordered by attempt
+   membership then recordedAt ASC then event ID ASC;
+3. group in the adapter without extra repository calls.
+
+Do not load all attempts or issue one event query per attempt. Do not reuse the
+seven-query mixed Closure snapshot as Audit’s application contract.
+
+The existing generated diagnostic registry is read-only authority for known
+code/version meaning. Map only an allowlist of safe title/meaning/guidance.
+Unknown code/version becomes typed unavailable technical detail.
+
+No schema/index/migration is authorized. Measure equal-timestamp cursor
+stability, large histories and rendered row bounds. Stop if acceptable behavior
+cannot be achieved without persistence changes.
+
+## 21. Settings and support contracts
+
+Keep local Settings repositories and state unchanged except for D-authorized
+functional corrections.
+
+Introduce capability-narrow interfaces or adapters for:
+
+- reading current authentication/session status;
+- invoking existing Sign in and Sign out;
+- reading current local Sync/Device status;
+- invoking existing Connect this Device;
+- invoking existing ordinary Sync.
+
+Each interface declares whether it can contact the network or write local/hosted
+state. Presentation shows confirmation and result according to E.
+
+Do not expose through product Settings:
+
+- hosted connection probe;
+- query enrollment;
+- unknown-outcome retry;
+- failed/notApplied inspection or recovery;
+- clear diagnostic history;
+- raw lifecycle diagnostics;
+- broad NativeAuthClosureRunner access.
+
+Those paths remain development-only/test infrastructure unless removed. Their
+underlying behavior must not change.
+
+## 22. Final capability disposition
+
+| Capability family | Final PH03 disposition |
+| --- | --- |
+| Closure destination/label/page mapping | retired from ordinary product navigation |
+| reserved Audit placeholder | replaced by functional Audit |
+| recent attempts and diagnostic event phases | Audit, read-only paged local history |
+| Audit paging/reload/detail expansion | Audit; local reads only |
+| People, Payment Methods, shortage threshold | Settings Preferences; preserved and hardened |
+| authentication status, Sign in, Sign out | Settings Account |
+| local Sync/Device status, last local success | Settings Sync and Device |
+| Connect this Device, ordinary Sync now | explicit Settings Advanced support using existing contracts |
+| queue counts, Device summaries, safe current guidance | Settings current/Advanced projection |
+| current action result | session-local Settings Advanced state |
+| safe MKS reference, shortened fingerprints, safe build revision | progressively disclosed Advanced support |
+| hosted connection check and query enrollment | development-only |
+| unknown-outcome retry | development-only |
+| failed/notApplied inspection and recovery | development-only |
+| raw lifecycle/internal codes/exact digest | development-only |
+| clear diagnostic history | absent from product UI; retained maintenance method allowed |
+| raw IDs, payloads, credentials, SQL, URLs, exceptions | excluded |
+| NativeAuthClosureRunner | retained implementation adapter; no broad UI injection |
+| NativeClosurePage | non-navigation development/test harness or safely reduced; not a destination |
+
+## 23. State, composition and disposal
+
+- AuditController is created once for the destination, loads only when Audit
+  first becomes visible and is disposed by composition/app lifecycle.
+- breakpoint changes reuse the same controller and loaded page.
+- page/filter/disclosure changes do not acquire another repository or client.
+- Settings maintains one page-owned state across layouts.
+- composition has exactly one close owner for database and both HTTP clients
+  where owned; close is idempotent and does not outlive active callbacks.
+- do not create a second Account, environment or authentication source.
+- development support gating is independent from provider readiness and never
+  creates an ordinary destination.
+
+## 24. Authorized architecture surfaces
+
+The paired D section 23 is the exhaustive writable allowlist. Preferred mapping:
+
+| Path | Responsibility |
+| --- | --- |
+| application/audit.dart | Audit IDs, cursor, page/state, read port and controller |
+| infrastructure/local/closure_diagnostics_repository.dart | two-query Audit adapter plus existing support behavior |
+| app/pages/audit_page.dart | functional Audit composition |
+| app/widgets/audit_components.dart | typed presentation-only responsive components |
+| app/pages/settings_page.dart | preserved preferences plus capability-narrow Account/Sync sections |
+| app/native_auth_closure_runner.dart | existing behavior delegated through narrow adapters only |
+| application/closure_diagnostics.dart | shared safe status projections only when necessary |
+| app/markei_composition.dart | dependency supply and close ownership |
+| app/markei_app.dart | destination/page visibility and controller lifecycle |
+| app/navigation/markei_destination.dart | stable Settings/Audit identity and Closure retirement |
+| app/pages/native_closure_page.dart | remove ordinary-page assumptions; development harness only |
+| paired focused tests | dependency, state, scope, query, sanitization and lifecycle evidence |
+
+Shared widgets own no query, network, calculation or product state.
+
+## 25. Architecture tests and rollback
+
+Tests must establish every D gate plus:
+
+- AuditPage cannot be constructed with the runner or an HTTP/Auth/Sync
+  coordinator;
+- ordinary Audit dependency graph contains no remote/provider import;
+- persisted IDs and composite cursor survive equal timestamps;
+- exactly two queries per page and no duplicate/missing record across pages;
+- Settings adapters preserve current Auth/Sync behavior under fakes;
+- support-only capabilities are absent from ordinary semantics/navigation;
+- composition close executes once and suppresses use-after-dispose completion.
+
+Rollback boundaries:
+
+1. Audit port/adapter is additive and removable without data change.
+2. Audit presentation can revert to the reserved page without persistence work.
+3. Closure navigation removal can be reverted independently.
+4. Settings support placement delegates to existing actions and can be removed
+   without contract/schema rollback.
+5. lifecycle correction is isolated and must retain focused regression tests.
+
+## 26. Forbidden expansion and stop rules
+
+~~~text
+SCHEMA_CHANGE=NO
+MIGRATION_CHANGE=NO
+DEPENDENCY_CHANGE=NO
+GENERATED_SOURCE_CHANGE=NO
+API_CHANGE=NO
+AUTH_CONTRACT_CHANGE=NO
+SYNC_CONTRACT_CHANGE=NO
+PROVIDER_CHANGE=NO
+ORDINARY_AUDIT_NETWORK=NO
+R07_ACTIVATED=NO
+~~~
+
+Stop if implementation requires a new index, migration, package, generated
+contract, server route, token scope, Auth/Sync behavior, provider mutation,
+hosted Audit, causal lifecycle, automatic recovery, retention/export,
+cross-device aggregation or a path outside D section 23.
+
+## 27. Required I report
+
+Replace I_DSN_CODEX.md with one complete PH03 report containing:
+
+- final dependency direction and changed-path inventory;
+- Audit types, identity, cursor and query shape;
+- Account/environment predicates and sanitization boundary;
+- controller state/lifetime and responsive parity;
+- Settings/support capability interfaces and effect declarations;
+- complete Closure disposition;
+- composition ownership/disposal;
+- schema/dependency/generated/Auth/Sync/provider audit;
+- tests, rollback and residual architectural debt.
+
+Required terminal:
+
+~~~text
+CYCLE=C11
+PHASE=C11-PH03
+ROUND=C11-PH03-R01
+AUDIT_DEPENDENCY_DIRECTION=PASS | FAIL | BLOCKED
+AUDIT_PERSISTED_IDENTITY=PASS | FAIL | BLOCKED
+AUDIT_COMPOSITE_CURSOR=PASS | FAIL | BLOCKED
+AUDIT_QUERIES_PER_PAGE=<exact count>
+ACCOUNT_ENVIRONMENT_PREDICATES=PASS | FAIL | BLOCKED
+AUDIT_SANITIZED_PROJECTION=PASS | FAIL | BLOCKED
+AUDIT_CONTROLLER_LIFETIME=PASS | FAIL | BLOCKED
+SETTINGS_CAPABILITY_BOUNDARIES=PASS | FAIL | BLOCKED
+CLOSURE_CAPABILITY_DISPOSITION=PASS | PARTIAL | FAIL | BLOCKED
+CLOSURE_DESTINATION_RETIRED=PASS | FAIL | BLOCKED
+COMPOSITION_DISPOSAL=PASS | FAIL | BLOCKED
+SCHEMA_MIGRATION=NONE | CONTRADICTED
+GENERATED_SOURCE_CHANGED=NO | YES
+DEPENDENCY_CHANGED=NO | YES
+API_AUTH_SYNC_PROVIDER_CHANGED=NO | YES
+R07_ACTIVATED=NO | YES
+NEXT_DESIGN_REVIEW=<one exact action>
+~~~

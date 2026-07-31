@@ -577,3 +577,274 @@ LIVE_SYNC_OR_PROVIDER_OPERATION=NONE | CONTRADICTED
 PUBLICATION=PUSHED | NOT_PUSHED
 NEXT_MAIN_ACTION=<one exact action>
 ```
+<!-- ACTIVATION_MARKER:C11-PH03-R01-2026-07-31 -->
+
+# C11-PH03-R01 — Final Operational Materialization Authority
+
+> Sequence: FLX-INV-02 final activation after C11-PH03-R01 A/B/C reconciliation
+> Role: Main operational materialization stage
+> Required branch: grm-guarded-provisioning-20260727
+> Investigation baseline: e8723bec10836e37bc1a7cf22fcb6de21dd03cf4
+> A/B/C publication HEAD: b50c6f195800438f20073112e58503f70cb5d6ef
+> Codex starting HEAD: the synchronized D/E/F publication commit pinned by the initiation prompt
+> Authority: ACTIVE — CONTROLLING C11-PH03 IMPLEMENTATION AUTHORITY
+> Pairing: the E and F append carrying this exact activation marker
+
+## 18. Precedence and reconciled boundary
+
+This append supersedes earlier PH03 deferrals only for the bounded implementation
+below. Earlier PH01/PH02 authority and evidence remain historical; they do not
+expand this unit.
+
+C11-PH03 must:
+
+1. keep Settings functional and correct its demonstrated local-state defects;
+2. replace the reserved Audit page with a functional, sanitized, read-only,
+   Account/environment-scoped local activity-history view;
+3. remove Closure from ordinary wide, medium and compact navigation under every
+   feature-flag value;
+4. dispose every existing Closure capability through Audit, Settings,
+   explicitly gated development support, retained non-navigation infrastructure,
+   or product-UI retirement;
+5. preserve current Auth, enrollment, Sync, diagnostics and recovery contracts.
+
+PH03 does not authorize the former R07 causal/backend engine.
+
+## 19. Final product placement decisions
+
+Main resolves the A/B/C questions as follows:
+
+- Navigation label remains Audit. Page copy explains “recent local activity
+  history”; it must not imply compliance, completeness, causality, telemetry or
+  hosted cross-device truth.
+- Audit uses cursor-paged local attempts and diagnostic events: default page 20
+  attempts, hard maximum 50, plus-one cursor detection, deterministic order and
+  explicit local/window/freshness qualification.
+- Settings sections are Preferences, Account, Sync and Device, and Advanced
+  support.
+- Account status, Sign in to Sync and Sign out on this Device are ordinary
+  Settings capabilities using existing adapters.
+- Connect this Device and Sync now may appear only in the explicit Sync and
+  Device / Advanced disclosure, with exact effect copy, visible results and
+  confirmation where the existing action can change local or hosted state.
+- Current local authentication, enrollment, readiness, queue, Device and last
+  successful-Sync observations belong to Settings status, not Audit history.
+- Build information, fingerprints, MKS references and raw lifecycle details are
+  not ordinary content; safe summaries may appear only in Advanced support.
+- Hosted connection checks, query-enrollment, unknown-outcome retry,
+  failed/notApplied inspection or recovery, raw provider diagnostics and exact
+  build digests remain development-only and have no ordinary navigation entry.
+- Clear diagnostic history has no product UI in PH03. Its repository method may
+  remain as development/test infrastructure; Audit itself exposes no delete,
+  retry, recovery, enrollment, Sync or provider action.
+- NativeClosurePage and NativeAuthClosureRunner may remain only as
+  non-navigation implementation/support infrastructure while capability-narrow
+  adapters replace broad UI injection. Closure is not a product destination.
+
+## 20. Settings functional correction
+
+Preserve People, Payment Methods and shortage-threshold behavior and Account
+scope. Correct the established defects:
+
+- load and display the persisted shortage threshold instead of overwriting it
+  with the default;
+- accept only whole values from 0 through 365 and preserve invalid draft input
+  while displaying guidance;
+- distinguish loading, true empty, read failure, save failure and success;
+- refresh the affected list after archive and retain historical Purchase facts;
+- prevent duplicate async save/archive activation;
+- preserve entered values after failure;
+- perform no network, diagnostic or provider work for local preference actions;
+- retain one Settings state across responsive projections.
+
+Account and Sync/Device additions must delegate to existing composition
+capabilities. Do not change their domain contracts or persistence behavior.
+
+## 21. Audit read and runtime gates
+
+Ordinary Audit behavior is local-only and read-only.
+
+Required behavior:
+
+- visibility-gated first load; hidden IndexedStack pages perform no read;
+- one attempts query and one child-events query per page; no N+1;
+- Account and environment predicates on every attempt/event read;
+- persisted attempt/event identity, never list position;
+- attempts ordered by startedAt descending then persisted ID descending;
+- events ordered by recordedAt ascending then persisted ID ascending within an
+  attempt;
+- exclusive cursor using startedAt plus attempt ID;
+- explicit local refresh only; no timer, stream, polling or background refresh;
+- layout, filter, expansion and semantic transitions issue zero rereads;
+- stale async completion is ignored;
+- previous records remain visible in a typed stale state when appropriate;
+- loading, ready, empty, stale, partial-window and unavailable states are
+  distinct;
+- Audit Retry means retry the same local read only;
+- no HTTP client, access token, Auth mutation, enrollment, Sync, Retry, Recovery
+  or database write is reachable from Audit;
+- sanitized allowlist excludes tokens, credentials, raw payloads, SQL, paths,
+  stack traces, raw exceptions, full hashes, raw Account/Device/submission IDs,
+  private URLs and provider secrets;
+- unknown Device attribution renders unavailable rather than inferred.
+
+A failed performance fixture does not authorize an index or migration. Stop and
+report the measured blocker.
+
+## 22. Capability and lifecycle tests
+
+Focused evidence must prove:
+
+1. Closure absent from all ordinary navigation/layouts with
+   MARKEI_NATIVE_CLOSURE_SURFACE both false and true;
+2. Audit reachable from wide/medium navigation and compact More;
+3. Audit zero-network and zero-write using instrumented fakes and before/after
+   table counts or hashes;
+4. two-Account and mismatched-environment fixtures cannot leak hosted status,
+   attempts, events, queue or Device data;
+5. cursor stability with equal timestamps, plus-one page detection and no
+   duplicates across pages;
+6. fixed two-query page count and bounded rendered rows on large fixtures;
+7. local history caps/window/freshness and partial lifecycle meaning remain
+   honest;
+8. Settings persisted-threshold, validation, async, archive-refresh and
+   loading/empty/error behavior;
+9. existing Sign in, Sign out, Connect Device and Sync action delegation uses
+   fakes only and changes no existing contract;
+10. dangerous/support-only actions are absent from ordinary Settings/Audit;
+11. wide/compact state parity at 599, 600, 1023 and 1024 logical pixels and at
+    200-percent text;
+12. keyboard order, focus restoration, non-color meaning and semantic labels;
+13. controller generation/disposal and one idempotent composition close owner;
+14. generated diagnostic registry remains unchanged and passes its drift check;
+15. no regression to PH01/PH02, History, Analytics, Sync or provider boundaries.
+
+Live Sign in, enrollment, hosted connection, Sync, Retry, Recovery, Auth0, Neon
+and Render operations are forbidden during Codex validation.
+
+## 23. Authorized writable paths
+
+Codex may create or modify only these implementation/test/report paths:
+
+- clients/markei_flutter/lib/app/markei_app.dart
+- clients/markei_flutter/lib/app/markei_composition.dart
+- clients/markei_flutter/lib/app/navigation/markei_destination.dart
+- clients/markei_flutter/lib/app/pages/settings_page.dart
+- clients/markei_flutter/lib/app/pages/audit_page.dart
+- clients/markei_flutter/lib/app/pages/native_closure_page.dart
+- clients/markei_flutter/lib/app/widgets/audit_components.dart
+- clients/markei_flutter/lib/app/native_auth_closure_runner.dart
+- clients/markei_flutter/lib/application/audit.dart
+- clients/markei_flutter/lib/application/closure_diagnostics.dart
+- clients/markei_flutter/lib/infrastructure/local/closure_diagnostics_repository.dart
+- clients/markei_flutter/test/app/settings_page_test.dart
+- clients/markei_flutter/test/app/audit_page_test.dart
+- clients/markei_flutter/test/app/native_closure_surface_test.dart
+- clients/markei_flutter/test/app/native_closure_diagnostics_test.dart
+- clients/markei_flutter/test/app/markei_app_test.dart
+- clients/markei_flutter/test/app/markei_visual_foundation_test.dart
+- clients/markei_flutter/test/application/audit_test.dart
+- clients/markei_flutter/test/infrastructure/closure_diagnostics_repository_test.dart
+- clients/markei_flutter/test/infrastructure/native_auth_composition_test.dart
+- clients/markei_flutter/test/infrastructure/native_closure_sync_path_test.dart
+- documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+- documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+- documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+
+If an authorized new file proves unnecessary, do not create it. Stop before
+touching any other path and report the exact needed expansion.
+
+## 24. Forbidden surfaces and stop conditions
+
+Do not change:
+
+- database schema, migrations, local_database.dart or generated Drift output;
+- pubspec, lockfiles, packages, fonts or assets;
+- diagnostic contracts, generator or generated registry;
+- server/API, Auth contract, Sync contract, provider, environment or secrets;
+- Analytics, Purchase History calculations or Account identity;
+- methodology, permanent memory, A/B/C, D/E/F or J;
+- R07/GCM04, causal persistence, hosted Audit, telemetry, automatic repair,
+  retention, export, cross-device aggregation, multiple-user work or revocation.
+
+Stop on any need for those surfaces, on contradictory D/E/F, on missing
+Account/environment predicates, or when an ordinary Audit action can write or
+contact the network.
+
+## 25. Validation sequence
+
+From clients/markei_flutter:
+
+~~~text
+dart format --output=none --set-exit-if-changed lib test
+flutter analyze
+flutter test test/app/settings_page_test.dart
+flutter test test/app/audit_page_test.dart
+flutter test test/application/audit_test.dart
+flutter test test/infrastructure/closure_diagnostics_repository_test.dart
+flutter test test/app/native_closure_surface_test.dart
+flutter test test/app/native_closure_diagnostics_test.dart
+flutter test test/app/markei_app_test.dart
+flutter test test/app/markei_visual_foundation_test.dart
+flutter test test/infrastructure/native_auth_composition_test.dart
+flutter test test/infrastructure/native_closure_sync_path_test.dart
+flutter test
+flutter build windows --release
+flutter build apk --debug
+~~~
+
+From repository root:
+
+~~~text
+node scripts/generate_sync_diagnostics.mjs --check
+git diff --check
+git status --short
+~~~
+
+If the current host cannot build Windows, record NOT_PERFORMED with the exact
+host limitation; do not claim a pass. Android and Windows real-device,
+assistive-technology, locale and human comprehension remain separate evidence.
+
+## 26. Required G report
+
+Replace G_OPS_CODEX.md with one complete PH03 execution report containing:
+
+- starting and final HEAD;
+- exact changed paths;
+- capability-disposition result;
+- Audit read/write/network/request-count evidence;
+- Account/environment isolation and sanitization evidence;
+- Settings corrections and action delegation;
+- Closure navigation removal under both flag values;
+- performance fixtures and lifecycle/disposal;
+- every command and result;
+- live operations not performed;
+- blocked/skipped items and residual risk.
+
+Required terminal:
+
+~~~text
+CYCLE=C11
+PHASE=C11-PH03
+ROUND=C11-PH03-R01
+SETTINGS_FUNCTIONAL=PASS | PARTIAL | FAIL | BLOCKED
+AUDIT_FUNCTIONAL=PASS | PARTIAL | FAIL | BLOCKED
+AUDIT_LOCAL_READ_ONLY=PASS | FAIL | BLOCKED
+AUDIT_NETWORK_CALLS=<exact count>
+AUDIT_WRITE_CALLS=<exact count>
+AUDIT_QUERIES_PER_PAGE=<exact count>
+ACCOUNT_ENVIRONMENT_ISOLATION=PASS | FAIL | BLOCKED
+SANITIZATION=PASS | FAIL | BLOCKED
+CLOSURE_ORDINARY_NAVIGATION=ABSENT | PRESENT | BLOCKED
+DANGEROUS_PRODUCT_CONTROLS=ABSENT | PRESENT | BLOCKED
+SETTINGS_REGRESSION=PASS | FAIL | BLOCKED
+RESOURCE_DISPOSAL=PASS | FAIL | BLOCKED
+SCHEMA_MIGRATION=NONE | CONTRADICTED
+GENERATED_SOURCE_CHANGED=NO | YES
+DEPENDENCY_CHANGED=NO | YES
+AUTH_SYNC_PROVIDER_CONTRACT_CHANGED=NO | YES
+LIVE_PROVIDER_OPERATIONS=NOT_PERFORMED | PERFORMED
+WINDOWS_RELEASE_BUILD=PASS | FAIL | NOT_PERFORMED
+ANDROID_DEBUG_BUILD=PASS | FAIL | NOT_PERFORMED
+NEXT_OPERATIONAL_REVIEW=<one exact action>
+~~~

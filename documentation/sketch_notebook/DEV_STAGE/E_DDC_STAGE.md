@@ -384,3 +384,247 @@ KANBAN_TRANSITIONS=NONE | CONTRADICTED
 CHARTS_PREDICTION_RECOMMENDATIONS=ABSENT | CONTRADICTED
 NEXT_DIDACTIC_REVIEW=<one exact action>
 ```
+<!-- ACTIVATION_MARKER:C11-PH03-R01-2026-07-31 -->
+
+# C11-PH03-R01 — Final Didactic Materialization Authority
+
+> Status: ACTIVE — CONTROLLING C11-PH03 LEARNER-FACING AUTHORITY
+> Pairing: the D and F append carrying this exact activation marker
+> KANBAN_TRANSITIONS: NONE
+
+## 18. Accepted concept split
+
+Use these non-overlapping learner meanings:
+
+- Settings: choices and Account/Device actions the user can change or invoke.
+- Audit: recent, sanitized, read-only activity recorded locally for the active
+  Account and environment.
+- Purchase history: recorded Purchases and their facts; never application
+  operational evidence.
+- Current Sync status: the newest dated local observation of prerequisites and
+  outcomes; never durable history or provider-wide health.
+- Advanced support: progressively disclosed technical references and explicit
+  existing actions; never the default path.
+- Closure: no learner-facing product concept and no ordinary navigation label.
+
+The navigation label is Audit. Its title/subtitle must qualify it as recent
+local activity history. Do not rename the destination to Activity in this unit.
+
+## 19. Settings information architecture and wording
+
+Required section order:
+
+1. Preferences — People, Payment Methods and shortage threshold.
+2. Account — current sign-in state, Sign in to Sync, Sign out on this Device.
+3. Sync and Device — locally observed status, observation time, last locally
+   recorded successful Sync and Device connection state.
+4. Advanced support — progressively disclosed Connect this Device and Sync now
+   actions plus safe technical summaries approved by D/F.
+
+Required action meaning:
+
+- Sign in to Sync: opens the existing Account sign-in flow; local Purchase data
+  is not uploaded merely by opening sign-in.
+- Sign out on this Device: states what local Purchase data, Device registration
+  and queued work remain according to existing behavior before activation.
+- Connect this Device: registers this installation for the signed-in Account;
+  it does not prove Sync succeeded.
+- Sync now: states that local work may upload and downloaded facts may be
+  applied locally; confirmation and result must be explicit.
+- Refresh local status: reads locally recorded status only and contacts no
+  provider.
+
+Do not show generic Enroll, Diagnostics, Probe, Retry, Recover, Clear history,
+notApplied, lifecycle, or raw state-code labels in ordinary Settings.
+
+Settings state copy:
+
+| State | Required leading meaning |
+| --- | --- |
+| loading | Loading local settings… |
+| empty references | No People/Payment Methods saved for this Account. |
+| invalid threshold | Enter a whole number of days from 0 through 365. |
+| save failure | This setting could not be saved locally. Your entered value is still available. |
+| archive success | {label} archived. Existing Purchase history keeps its recorded label. |
+| status unavailable | Current Sync status is unavailable. |
+| signed out | Sign in is required before Device or Sync actions. |
+| Device unavailable | No connected Device is recorded locally for this Account. |
+| blocked action | This action did not start: {named prerequisite}. |
+| unresolved result | The final result could not be confirmed. No automatic retry was started. |
+
+Technical codes follow plain-language meaning and appear only in Advanced
+support when safe.
+
+## 20. Audit vocabulary and evidence ceiling
+
+Required title model:
+
+~~~text
+Audit
+Recent activity recorded locally for this Account and environment.
+~~~
+
+Required qualification:
+
+- show when the view was loaded or refreshed locally;
+- disclose the current page/window and that older records may exist;
+- describe an attempt as one locally recorded requested operation, not success;
+- describe a diagnostic code as a technical classification, not cause;
+- describe fingerprints as shortened references, not identities or secrets;
+- describe completed as completion of the named client operation only;
+- never infer hosted receipt, cross-device completeness or future success.
+
+Required state language:
+
+| State | Required leading copy |
+| --- | --- |
+| loading | Loading locally recorded activity… |
+| empty | No application activity has been recorded here yet. |
+| unavailable | Local activity could not be loaded. |
+| retry help | Try loading local activity again. No Purchase or Sync data will be changed. |
+| stale | Last loaded locally at {time}. Refresh to read local records again. |
+| partial window | Showing {count} recent local attempts. Older records may exist. |
+| missing detail | This technical detail was not recorded. |
+| unknown Device | Device attribution is unavailable for this record. |
+
+Audit’s only action is a local read/reload plus paging and disclosure controls.
+It has no Sign in, Connect, Sync, connection check, retry upload, recovery or
+delete-history control.
+
+## 21. Evidence-state distinctions
+
+Preserve distinct meanings:
+
+- unavailable: cannot obtain or present the value now;
+- not recorded: no durable local record is available;
+- stale: displayed evidence predates a named refresh boundary;
+- partial: only some evidence is present or the visible window is bounded;
+- blocked: a named prerequisite prevented the action from starting/continuing;
+- failed: the named attempt reached a classified failure;
+- unresolved: available evidence cannot classify the final outcome;
+- pending: local work is waiting, not hosted backlog;
+- completed: the named client operation met its completion contract, not a
+  provider-wide guarantee.
+
+Current status and historical evidence must be separate sections and semantics.
+Readiness never means successful Sync. A connection check never means provider
+health or future Sync success.
+
+## 22. Visibility and exclusion
+
+Visible by default:
+
+- Settings preferences and clear Account state;
+- dated current Sync/Device status;
+- last locally recorded successful Sync;
+- Audit attempt summary, result, timestamp and local-source qualification.
+
+Expandable:
+
+- operation phases;
+- queue meanings;
+- unavailable fields;
+- safe support explanation.
+
+Advanced support only:
+
+- shortened fingerprints;
+- MKS technical references after plain meaning;
+- safe build revision;
+- Connect this Device and Sync now actions.
+
+Development-only or absent from product UI:
+
+- provider-oriented connection probes;
+- query enrollment;
+- unknown-outcome retry;
+- failed/notApplied inspection and recovery;
+- raw lifecycle fields and internal state codes;
+- exact tree digest;
+- clear diagnostic history;
+- raw identifiers, payloads, tokens, URLs, SQL, paths, stack traces and
+  exceptions;
+- the Closure route.
+
+## 23. Responsive and accessibility gates
+
+Wide/medium/compact projections must expose the same concepts, records, states,
+actions, confirmations and results. Compact disclosure may collapse secondary
+technical detail but cannot remove it when that detail is within product scope.
+
+Tests must establish:
+
+- logical keyboard and screen-reader order;
+- visible focus and focus return after dialogs/disclosures;
+- non-color text/icon meaning for every state;
+- accessible names containing action, result, local source and timestamp;
+- headings/regions separating Preferences, Account, Sync and Device, Advanced
+  support, current status and Audit history;
+- paging controls announce page/window changes without excessive live updates;
+- 200-percent text reflow without clipped controls or page-level overflow;
+- state retention at 599/600/1023/1024 widths;
+- destructive/development-only actions absent from the semantics tree.
+
+Screenshots, Windows Narrator, Android TalkBack, keyboard-only human review,
+locale/date-time review, real-device review and comprehension remain
+NOT_PERFORMED unless Codex actually records them. Automated and build evidence
+cannot establish learner understanding.
+
+## 24. Forbidden claims and KANBAN
+
+Do not claim:
+
+- complete, immutable, compliance-grade or hosted Audit;
+- causal diagnosis, telemetry or provider observability;
+- readiness as success;
+- local queue as hosted backlog;
+- Device fingerprint as identity;
+- automatic repair or universally safe retry;
+- cross-device completeness;
+- raw-fact repair;
+- charts, prediction, ranking or recommendation;
+- human comprehension from passing tests/builds.
+
+KANBAN_TRANSITIONS=NONE. Codex changes representation and executable behavior
+only; permanent maturity requires later independent evidence and reconciliation.
+
+## 25. Required H report
+
+Replace H_DDC_CODEX.md with one complete PH03 report separating:
+
+1. Settings vocabulary and state/action copy;
+2. Audit versus Purchase History;
+3. current status versus historical evidence;
+4. local/bounded/freshness qualifications;
+5. every evidence-state distinction;
+6. capability visibility and dangerous-action absence;
+7. wide/compact semantic parity;
+8. focus, keyboard, semantics, non-color and 200-percent text evidence;
+9. automated, rendered, build and human evidence ceilings;
+10. KANBAN confirmation and forbidden-claim audit.
+
+Required terminal:
+
+~~~text
+CYCLE=C11
+PHASE=C11-PH03
+ROUND=C11-PH03-R01
+SETTINGS_PURPOSE_LEGIBLE=PASS | FAIL | BLOCKED
+AUDIT_PURPOSE_LEGIBLE=PASS | FAIL | BLOCKED
+AUDIT_VS_PURCHASE_HISTORY=PASS | FAIL | BLOCKED
+CURRENT_STATUS_VS_HISTORY=PASS | FAIL | BLOCKED
+LOCAL_BOUNDED_FRESHNESS_COPY=PASS | FAIL | BLOCKED
+EVIDENCE_STATE_VOCABULARY=PASS | FAIL | BLOCKED
+ACTION_EFFECT_LANGUAGE=PASS | FAIL | BLOCKED
+DANGEROUS_ACTIONS_ORDINARY_UI=ABSENT | PRESENT | BLOCKED
+WIDE_COMPACT_SEMANTIC_PARITY=PASS | FAIL | BLOCKED
+KEYBOARD_FOCUS_SEMANTICS=PASS | FAIL | BLOCKED
+TEXT_SCALE_200=PASS | FAIL | BLOCKED
+PH03_SCREENSHOTS=NOT_PERFORMED | PERFORMED
+HUMAN_ASSISTIVE_TECH_ACCEPTANCE=NOT_PERFORMED | PERFORMED
+LOCALE_REAL_DEVICE_REVIEW=NOT_PERFORMED | PERFORMED
+HUMAN_COMPREHENSION=NOT_ESTABLISHED | ESTABLISHED
+KANBAN_TRANSITIONS=NONE | CONTRADICTED
+CAUSAL_TELEMETRY_COMPLETE_AUDIT_CLAIMS=ABSENT | CONTRADICTED
+NEXT_DIDACTIC_REVIEW=<one exact action>
+~~~
