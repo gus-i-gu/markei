@@ -1,45 +1,68 @@
 # 10_OPERATIONAL_STATE.md
 
-> Version: Cycle 10 recovered Operational checkpoint
-> Branch: `intermid-cycle-recovery`
-> Evidence head: `75fbba66d19df722820b8667ac7886c09b64fb2b`
-> Status: Active Operational checkpoint
+> Version: C11-PH01 Operational checkpoint
+> Branch: `grm-guarded-provisioning-20260727`
+> Inspected repository head: `1422731e512ce073e7fda09451415803d12f3a4e`
+> Materialization evidence head: `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
+> Status: Active compact Operational checkpoint
 
 # Current State
 
-## Accepted local implementation evidence
-
-C10-S01B proved one disposable local synchronization path across isolated Drift databases, Flutter HTTP transport, loopback Fastify and PostgreSQL. The accepted boundary includes durable Submission retry identity, duplicate equivalence, ordered cursor download, atomic remote Purchase application, acknowledgement and reopen comparison.
-
-C10-S02 proved the local retention/recovery mechanism: forward-only migration 003, Device retention classification, compatible snapshot build and verification, coverage-gated cleanup, typed cursor expiry, resumable fresh-target rebootstrap, catch-up, acknowledgement and reopen convergence. Cleanup remains disabled in normal composition and no provider behavior follows from the local harness.
-
-C10-S03A added migration 004, additive Drift v7 hosted-identity state, a production-shaped compiled server entrypoint without fixture-auth fallback, JWT/JWKS-shaped verification, database membership/enrollment structures and basic synthetic enrollment/sync/revocation evidence. These components exist, but the unit is not hosted-ready.
-
-## Active contradiction and stop state
+## Accepted terminal
 
 ```text
-C10-S03A_CONTRADICTED_STOP
-MCG-02_HOSTED_PROOF_NOT_PERFORMED
+CYCLE10=CLOSED_AT_GCM03_TWO_DEVICE_DEVELOPMENT_SCOPE
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=CLOSED_TWO_DEVICE_DEVELOPMENT_SCOPE
+MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_ONE_ACCOUNT_DEVELOPMENT_SCOPE
+PRODUCTION_ACCEPTANCE=ABSENT
+LIVE_OPERATION_AUTHORITY=NONE
 ```
 
-Hosted authorization is resolved and committed before the protected operation transaction instead of rechecking membership, enrollment and Device authority inside that same mutation transaction. Membership-removal and revocation races therefore remain open. JWT/JWKS failure coverage, least-privilege decisive HTTP topology, two-Account isolation, concurrency/restart cases and Flutter hosted-auth composition are also incomplete.
+Cycle 10 acceptance is limited to two Devices, one Account and the development environment. Client/Render convergence is accepted within the recorded assay; no final provider-table recount followed the golden no-op repeats. GCM04, multiple-Account isolation, revocation, outage recovery, retention/rebootstrap and production lifecycle remain deferred to C12-PHASE02.
 
-No Auth0, Render or Neon hosted synchronization proof is accepted. Cycle 10 remains open.
+## C11-PH01-S01 state
 
-## Sanitized manual provider evidence
+Implemented and automated/build validated:
 
-MCG-01 is accepted only as sanitized development-environment evidence: an isolated Neon development branch and disposable database were used with PostgreSQL 18.4 in `us-west-2`; separate migration and runtime identities were observed; TLS, transactional rollback, explicit runtime CRUD, runtime DDL denial and probe cleanup passed. The development branch expiry requires reconfirmation.
+- stable destination identity;
+- compact `<600`, medium `600–1023` and wide `>=1024` shell policies;
+- retained page state through responsive layout changes;
+- shared visual foundation;
+- Home and Lists recomposition;
+- read-only Lists Retry limited to the local projection read;
+- focused tests, full Flutter tests, analysis, Windows release build and Android debug build.
 
-This does not prove migration 003/004 application, pooled RLS, hosted authentication, backup/PITR, provider availability or production acceptance.
+Unchanged by S01:
 
-MCG-02 reached provider-dashboard preparation only: provisional Auth0 Native Applications and API/audience preparation occurred for Android and Windows, and Render reached repository/service setup. No approved hosted secret set, Render deployment, Neon migration, real login, token acceptance, Device enrollment or hosted synchronization proof was completed.
+- business and persistence behavior;
+- Sync, diagnostics, recovery and provider behavior;
+- Settings and Closure behavior.
 
-## Provider and secret boundary
+Host-unvalidated or unperformed:
 
-Fixture authentication remains confined to tests/local laboratory composition. Distributed clients receive no database credentials or native client secret. Migration authority uses a direct migrator connection; web runtime uses a separately scoped pooled-intended runtime identity. Provider mutations are human-controlled and become project evidence only after sanitized capture, PRC-01 classification and Main reconciliation.
+- Windows and Android human visual acceptance;
+- Narrator, TalkBack and keyboard-only acceptance;
+- Android real-device/density acceptance;
+- approved golden or pixel-parity acceptance;
+- preserved-client launch and live provider operation.
 
-## Next
+## Current Operational work
 
-Execute a separately authorized C10-S03A-R1 corrective round. Only after corrected local evidence and new Main reconciliation may MCG-02 be reactivated. MCG-03 and MCG-04 are undefined and inactive.
+1. Perform bounded Windows/Android human-platform acceptance for the S01 shell, Home and Lists.
+2. Complete Catalogue, Purchase and History convergence through separately authorized PH01 units with the same automated/build/human evidence separation.
+3. Retain C11-PH02 Analytics and C11-PH03 Settings/Audit/Closure disposition as later work.
+4. Keep all backend resilience, multiple-Account, GCM04 and production lifecycle work in C12-PHASE02.
 
-Recovery: read `04_TODO.md`, the latest Cycle 10 entry in `11_OPERATIONAL_RECORD.md`, the provider/manual-gate rules in `12_OPERATIONAL_MODEL.md`, and `J_MAIN_STAGE.md` at `75fbba6`.
+## Recovery
+
+Read in this order:
+
+1. this checkpoint;
+2. `04_TODO.md` for current and deferred gates;
+3. `11_OPERATIONAL_RECORD.md`, “Cycle 10 — Permanent Operational Registration” and “C11-PH01-S01 visual foundation materialization”;
+4. `12_OPERATIONAL_MODEL.md`, “Cycle 10 Guarded Synchronization Operational Rules”;
+5. `DEV_STAGE/G_OPS_CODEX.md` for exact S01 commands, artifacts, changed paths and skipped acceptance;
+6. the current mutable `J_MAIN_STAGE.md` prefix for global scope and authority.
+
+No source, client, database or provider mutation is authorized by this checkpoint.
