@@ -14,6 +14,7 @@ class HistoryPage extends StatefulWidget {
     required this.history,
     required this.exports,
     required this.refreshSignal,
+    this.onAnalyzeSelected,
     super.key,
   });
 
@@ -21,6 +22,7 @@ class HistoryPage extends StatefulWidget {
   final PurchaseHistoryRepository history;
   final PurchaseExportRepository exports;
   final int refreshSignal;
+  final ValueChanged<Set<PurchaseId>>? onAnalyzeSelected;
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -290,6 +292,13 @@ class _HistoryPageState extends State<HistoryPage> {
       leading: Text('${_selectedIds.length} selected', style: MarkeiText.label),
       children: [
         FilledButton.tonal(
+          key: const Key('history.analyzeSelected'),
+          onPressed: _selectedIds.isEmpty || widget.onAnalyzeSelected == null
+              ? null
+              : () => widget.onAnalyzeSelected!(Set.unmodifiable(_selectedIds)),
+          child: const Text('Analyze selected purchases'),
+        ),
+        FilledButton.tonal(
           key: const Key('history.exportCsv'),
           onPressed: _selectedIds.isEmpty
               ? null
@@ -384,11 +393,11 @@ class _HistoryRows extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: DataTable(
           columns: const [
+            DataColumn(label: Text('Select')),
             DataColumn(label: Text('Store')),
             DataColumn(label: Text('Date / Time')),
             DataColumn(label: Text('Items')),
             DataColumn(label: Text('Recorded total')),
-            DataColumn(label: Text('Select')),
             DataColumn(label: Text('Detail')),
           ],
           rows: [
@@ -396,18 +405,18 @@ class _HistoryRows extends StatelessWidget {
               DataRow(
                 key: ValueKey('history.row.${entry.purchaseId.value}'),
                 selected: _containsPurchase(selectedIds, entry.purchaseId),
-                onSelectChanged: (_) => onToggle(entry.purchaseId),
+                onSelectChanged: (_) => onOpen(entry.purchaseId),
                 cells: [
-                  DataCell(Text(entry.storeName)),
-                  DataCell(Text(_formatOccurrence(entry.occurrenceTime))),
-                  DataCell(Text('${entry.itemCount}')),
-                  DataCell(Text(_formatMoney(entry))),
                   DataCell(
                     Checkbox(
                       value: _containsPurchase(selectedIds, entry.purchaseId),
                       onChanged: (_) => onToggle(entry.purchaseId),
                     ),
                   ),
+                  DataCell(Text(entry.storeName)),
+                  DataCell(Text(_formatOccurrence(entry.occurrenceTime))),
+                  DataCell(Text('${entry.itemCount} Purchase Item(s)')),
+                  DataCell(Text(_formatMoney(entry))),
                   DataCell(
                     TextButton(
                       key: Key('history.detail.${entry.purchaseId.value}'),
@@ -453,53 +462,59 @@ class _HistoryCards extends StatelessWidget {
             borderColor: activeDetailId?.value == entry.purchaseId.value
                 ? MarkeiColors.green
                 : null,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
+            child: InkWell(
+              onTap: () => onOpen(entry.purchaseId),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          entry.storeName,
+                          style: MarkeiText.sectionTitle,
+                        ),
+                      ),
+                      Checkbox(
+                        value: _containsPurchase(selectedIds, entry.purchaseId),
+                        onChanged: (_) => onToggle(entry.purchaseId),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: MarkeiSpacing.sm),
+                  Wrap(
+                    spacing: MarkeiSpacing.lg,
+                    runSpacing: MarkeiSpacing.xs,
+                    children: [
+                      MarkeiFact(
+                        label: 'Date / time',
+                        value: _formatOccurrence(entry.occurrenceTime),
+                      ),
+                      MarkeiFact(
+                        label: 'Items',
+                        value: '${entry.itemCount} Purchase Item(s)',
+                      ),
+                      MarkeiFact(
+                        label: 'Recorded total',
+                        value: _formatMoney(entry),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: MarkeiSpacing.sm),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: OutlinedButton(
+                      key: Key('history.detail.${entry.purchaseId.value}'),
+                      onPressed: () => onOpen(entry.purchaseId),
                       child: Text(
-                        entry.storeName,
-                        style: MarkeiText.sectionTitle,
+                        activeDetailId?.value == entry.purchaseId.value
+                            ? 'Detail open'
+                            : 'View detail',
                       ),
                     ),
-                    Checkbox(
-                      value: _containsPurchase(selectedIds, entry.purchaseId),
-                      onChanged: (_) => onToggle(entry.purchaseId),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: MarkeiSpacing.sm),
-                Wrap(
-                  spacing: MarkeiSpacing.lg,
-                  runSpacing: MarkeiSpacing.xs,
-                  children: [
-                    MarkeiFact(
-                      label: 'Date / time',
-                      value: _formatOccurrence(entry.occurrenceTime),
-                    ),
-                    MarkeiFact(label: 'Items', value: '${entry.itemCount}'),
-                    MarkeiFact(
-                      label: 'Recorded total',
-                      value: _formatMoney(entry),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: MarkeiSpacing.sm),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: OutlinedButton(
-                    key: Key('history.detail.${entry.purchaseId.value}'),
-                    onPressed: () => onOpen(entry.purchaseId),
-                    child: Text(
-                      activeDetailId?.value == entry.purchaseId.value
-                          ? 'Detail open'
-                          : 'View detail',
-                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           if (entry != entries.last) const SizedBox(height: MarkeiSpacing.sm),

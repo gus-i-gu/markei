@@ -903,6 +903,7 @@ class _PurchasePageState extends State<PurchasePage> {
               readOnly: true,
               decoration: const InputDecoration(labelText: 'Product name'),
             ),
+            const SizedBox(height: MarkeiSpacing.sm),
             TextField(
               key: const Key('product.brand'),
               controller: _brandController,
@@ -937,11 +938,13 @@ class _PurchasePageState extends State<PurchasePage> {
               controller: _nameController,
               decoration: const InputDecoration(labelText: 'Product name'),
             ),
+            const SizedBox(height: MarkeiSpacing.sm),
             TextField(
               key: const Key('product.brand'),
               controller: _brandController,
               decoration: const InputDecoration(labelText: 'Brand'),
             ),
+            const SizedBox(height: MarkeiSpacing.sm),
             if (!_bulk)
               Wrap(
                 spacing: MarkeiSpacing.md,

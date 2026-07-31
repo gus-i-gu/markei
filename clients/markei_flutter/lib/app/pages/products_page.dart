@@ -389,20 +389,26 @@ class _ProductsPageState extends State<ProductsPage> {
             controller: _codeController,
             decoration: const InputDecoration(labelText: 'Product code'),
           ),
+          const SizedBox(height: MarkeiSpacing.sm),
           TextField(
             key: const Key('products.create.name'),
             controller: _nameController,
             decoration: const InputDecoration(labelText: 'Product name'),
           ),
+          const SizedBox(height: MarkeiSpacing.sm),
           TextField(
             key: const Key('products.create.brand'),
             controller: _brandController,
             decoration: const InputDecoration(labelText: 'Brand'),
           ),
+          const SizedBox(height: MarkeiSpacing.sm),
           if (!_bulk)
-            Row(
+            Wrap(
+              spacing: MarkeiSpacing.sm,
+              runSpacing: MarkeiSpacing.sm,
               children: [
-                Expanded(
+                SizedBox(
+                  width: 220,
                   child: TextField(
                     key: const Key('products.create.packageAmount'),
                     controller: _packageAmountController,
@@ -411,8 +417,8 @@ class _ProductsPageState extends State<ProductsPage> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
+                SizedBox(
+                  width: 220,
                   child: TextField(
                     key: const Key('products.create.packageUnit'),
                     controller: _packageUnitController,

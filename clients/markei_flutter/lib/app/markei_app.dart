@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'build_provenance.dart';
+import '../application/analytics.dart';
+import '../domain/shared/ids.dart';
 import 'design/markei_theme.dart';
 import 'markei_composition.dart';
 import 'navigation/markei_destination.dart';
 import 'pages/home_page.dart';
+import 'pages/analytics_page.dart';
 import 'pages/history_page.dart';
 import 'pages/lists_page.dart';
 import 'pages/native_closure_page.dart';
@@ -31,6 +34,7 @@ class MarkeiApp extends StatefulWidget {
 class _MarkeiAppState extends State<MarkeiApp> {
   MarkeiDestinationId _selectedId = MarkeiDestinationId.home;
   int _refreshSignal = 0;
+  AnalyticsLaunchContext? _analyticsLaunchContext;
 
   List<MarkeiDestination> get _destinations => [
     const MarkeiDestination(
@@ -68,7 +72,6 @@ class _MarkeiAppState extends State<MarkeiApp> {
       icon: Icons.analytics_outlined,
       label: 'Analytics',
       group: MarkeiDestinationGroup.secondary,
-      description: 'Planned for C11-PH02.',
     ),
     const MarkeiDestination(
       id: MarkeiDestinationId.household,
@@ -161,13 +164,12 @@ class _MarkeiAppState extends State<MarkeiApp> {
       history: widget.composition.purchaseHistory,
       exports: widget.composition.purchaseExports,
       refreshSignal: _refreshSignal,
+      onAnalyzeSelected: _openAnalyticsForPurchases,
     ),
-    MarkeiDestinationId.analytics: const _ReservedPage(
-      key: Key('analytics.reserved'),
-      title: 'Analytics',
-      body:
-          'Analytics is planned for C11-PH02. No calculations or telemetry are active here yet.',
-      icon: Icons.analytics_outlined,
+    MarkeiDestinationId.analytics: AnalyticsPage(
+      controller: widget.composition.analyticsWorkspace,
+      launchContext: _analyticsLaunchContext,
+      visible: _visibleSelectedId == MarkeiDestinationId.analytics,
     ),
     MarkeiDestinationId.household: const _ReservedPage(
       key: Key('household.reserved'),
@@ -226,6 +228,19 @@ class _MarkeiAppState extends State<MarkeiApp> {
       return;
     }
     setState(() => _selectedId = id);
+  }
+
+  void _openAnalyticsForPurchases(Set<PurchaseId> purchaseIds) {
+    if (purchaseIds.isEmpty) {
+      return;
+    }
+    setState(() {
+      _analyticsLaunchContext = AnalyticsLaunchContext.purchaseSelection(
+        widget.composition.accountId,
+        Set.unmodifiable(purchaseIds),
+      );
+      _selectedId = MarkeiDestinationId.analytics;
+    });
   }
 }
 

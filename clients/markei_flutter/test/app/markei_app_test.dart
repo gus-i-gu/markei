@@ -1566,19 +1566,13 @@ Future<void> _enterVisibleText(
   Finder finder,
   String text,
 ) async {
-  await Scrollable.ensureVisible(
-    tester.element(finder),
-    duration: const Duration(milliseconds: 1),
-  );
+  await tester.ensureVisible(finder);
   await _pumpReady(tester);
   await tester.enterText(finder, text);
 }
 
 Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
-  await Scrollable.ensureVisible(
-    tester.element(finder),
-    duration: const Duration(milliseconds: 1),
-  );
+  await tester.ensureVisible(finder);
   await _pumpReady(tester);
   await tester.tap(finder);
 }

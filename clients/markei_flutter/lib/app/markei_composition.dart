@@ -2,6 +2,7 @@ import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 
 import '../application/catalogue_queries.dart';
+import '../application/analytics_workspace.dart';
 import '../application/history_export.dart';
 import '../application/hosted_auth_ports.dart';
 import '../application/hosted_enrollment_coordinator.dart';
@@ -15,6 +16,8 @@ import '../application/stable_device_enrollment_command_factory.dart';
 import '../application/sync/sync_ports.dart';
 import '../application/sync/sync_use_cases.dart';
 import '../domain/shared/ids.dart';
+import '../domain/analytics/analytics_registry.dart';
+import '../infrastructure/local/local_analytics_repository.dart';
 import '../infrastructure/auth/auth0_native_authentication.dart';
 import '../infrastructure/auth/native_auth_config.dart';
 import '../infrastructure/local/hosted_identity_repository.dart';
@@ -41,6 +44,7 @@ final class MarkeiComposition {
     required this.preferences,
     required this.productLists,
     required this.purchaseExports,
+    AnalyticsWorkspaceController? analyticsWorkspace,
     required this.accountId,
     required this.deviceId,
     this.nativeAuthConfiguration = const NativeAuthConfigurationUnavailable(
@@ -48,7 +52,13 @@ final class MarkeiComposition {
     ),
     this.nativeClosureRunner = const NativeAuthClosureRunner.unavailable(),
     this.nativeClosureSurfaceEnabled = false,
-  });
+  }) : analyticsWorkspace =
+           analyticsWorkspace ??
+           AnalyticsWorkspaceController(
+             accountId: accountId,
+             repository: LocalAnalyticsRepository(database),
+             registry: localAnalyticsRegistry(),
+           );
 
   final LocalDatabase database;
   final PurchaseRegistrationRepository purchaseRegistration;
@@ -58,6 +68,7 @@ final class MarkeiComposition {
   final AccountPreferenceRepository preferences;
   final ProductListProjectionRepository productLists;
   final PurchaseExportRepository purchaseExports;
+  final AnalyticsWorkspaceController analyticsWorkspace;
   final AccountId accountId;
   final DeviceId deviceId;
   final NativeAuthConfigurationResult nativeAuthConfiguration;

@@ -53,7 +53,7 @@ void main() {
 
     await tester.tap(find.text('Analytics').last);
     await _pumpReady(tester);
-    expect(find.byKey(const Key('analytics.reserved')), findsOneWidget);
+    expect(find.byKey(const Key('analytics.page')), findsOneWidget);
   });
 
   testWidgets('selected destination survives responsive boundary changes', (
