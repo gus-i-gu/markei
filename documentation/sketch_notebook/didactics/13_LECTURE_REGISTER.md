@@ -755,3 +755,128 @@ and reciprocal two-Device development boundaries. This append does not claim
 production readiness, operational acceptance, architecture selection, learner
 mastery or a KANBAN maturity transition. Derived and checkpoint memory were
 intentionally left unchanged by the human-narrowed registration scope.
+
+
+---
+
+# Observation 011 — C11-PH01-S01 Meaning and Learning Event
+
+```text
+Date: 2026-07-30
+Branch: grm-guarded-provisioning-20260727
+Implementation head: 1c7df53c095f4e7c1d85f278ba16c21fd95b25e6
+Class: bounded C11 presentation-meaning observation
+Primary evidence:
+  documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+  documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md — mutable prefix §§2, 5.2, 7–8
+Cycle 10 relationship:
+  Observation 010 remains the sole Cycle 10 learning-history registration
+Maturity effect: none
+```
+
+This event records the meaning made visible by C11-PH01-S01 without treating
+implementation, widget tests, builds or Main direction as learner mastery.
+It is distinct from Observation 010: Cycle 10 established synchronization and
+evidence-boundary vocabulary; this event records the first bounded presentation
+convergence for Home, Lists and the responsive shell.
+
+## Meaning represented by the implementation
+
+- Navigation uses ordinary destination names rather than internal maturity or
+  planning labels.
+- Home presents Markei as a local-first tool: register a Purchase first, then
+  inspect reusable Products, estimated Lists and Purchase history.
+- `Register purchase` is the primary Home action. `View lists`, `Browse
+  catalogue` and `Open purchase history` remain secondary.
+- Lists is an estimated projection from registered Purchase history. It is not
+  recorded inventory and does not claim measured remaining stock.
+- `Estimate` names a derived projection; `Approximate` qualifies uncertain
+  values; `Unavailable` means no usable estimate is present; `Not enough
+  history` means one compatible observation cannot form an interval; and
+  `Expected ended` is a projection state, not a recorded depletion fact.
+- Analytics is reserved for C11-PH02 and does not imply active calculations or
+  telemetry.
+- Audit is reserved for C11-PH03 and does not imply that the existing
+  diagnostic system has migrated into a user-facing audit feature.
+
+## Readable state distinctions
+
+Lists represents six different conditions rather than one generic empty/error
+surface:
+
+1. loading — the local projection request is in progress;
+2. read error — the local read failed and existing local data was not changed;
+3. first-use empty — no projection data exists yet;
+4. filtered empty — data may exist, but the current search has no match;
+5. insufficient history — a Product exists but lacks enough intervals;
+6. populated data — summary and responsive table/card projections are available.
+
+The Retry action belongs only to the read-error state. Its wording states that
+it repeats a read-only local projection request and that local data was not
+changed. It is not Sync, recovery, replay or provider mutation.
+
+## Responsive and accessibility meaning
+
+Wide tables and compact cards are two presentations of the same local
+projection, search and sort state. Responsive adaptation may change density,
+navigation container and grouping, but it must preserve information meaning,
+status semantics and reachable actions.
+
+Automated evidence covers exact 599/600/1023/1024 breakpoints, selected
+destination preservation, compact More reachability, medium tooltips, shared
+table/card state and a 200-percent text-scale Home render without a Flutter
+overflow/exception.
+
+The following remain unperformed and therefore unaccepted:
+
+- Windows Narrator;
+- Android TalkBack;
+- keyboard-only manual traversal;
+- real-device visual review;
+- human Windows or Android page-comprehension acceptance;
+- approved pixel/golden parity.
+
+## Learning and acceptance boundary
+
+```text
+ORDINARY_NAVIGATION_LABELS=IMPLEMENTED_AND_TEST_EVIDENCED
+HOME_LOCAL_FIRST_HIERARCHY=IMPLEMENTED_AND_TEST_EVIDENCED
+LISTS_PROJECTION_VOCABULARY=IMPLEMENTED_AND_TEST_EVIDENCED
+LISTS_STATE_DISTINCTIONS=IMPLEMENTED_AND_TEST_EVIDENCED
+RESPONSIVE_INFORMATION_EQUIVALENCE=AUTOMATED_EVIDENCE_ONLY
+HUMAN_PLATFORM_ACCEPTANCE=ABSENT
+DIRECT_LEARNER_COMPREHENSION_EVIDENCE=ABSENT
+KANBAN_TRANSITION=NONE
+```
+
+Passing builds demonstrate that the bounded presentation compiles for Windows
+and Android. Widget tests demonstrate named rendering and state contracts.
+Neither evidence class proves that a learner can independently explain the
+terms, that assistive technologies announce them correctly, or that people
+successfully comprehend the pages on real devices.
+
+## Remaining PH01 and inherited boundaries
+
+Catalogue, Purchase and History recomposition remain later C11-PH01 work.
+Functional Analytics remains C11-PH02. Settings/Audit redesign and Closure
+capability disposition remain C11-PH03. Business rules, Sync, diagnostics,
+recovery and provider behavior were unchanged by S01.
+
+## Misconceptions prevented
+
+| Tempting interpretation | Evidence-qualified correction |
+| --- | --- |
+| Lists records what is physically in storage | Lists estimates from Purchase history; it is not measured inventory. |
+| `Expected ended` records depletion | It is a projection state. |
+| Retry may change or recover data | This Retry repeats a read-only local request; the error copy states local data was not changed. |
+| Compact cards are a reduced feature set | Cards and wide tables preserve the same information and actions within the tested contract. |
+| A reserved Analytics destination means Analytics exists | Calculations remain PH02 and telemetry is not implied. |
+| Audit already owns diagnostics | Audit is reserved for PH03; diagnostic ownership is unchanged. |
+| Breakpoint and text-scale tests prove accessibility acceptance | Narrator, TalkBack, keyboard-only and real-device evidence remain absent. |
+
+# Current Observation Boundary
+
+C11-PH01-S01 supplies a stable presentation vocabulary and automated evidence
+for the shell, Home and Lists. It does not complete PH01, establish learner
+mastery, prove human platform acceptance, activate Analytics/Audit, or broaden
+Cycle 10 synchronization acceptance.

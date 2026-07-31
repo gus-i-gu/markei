@@ -1,146 +1,358 @@
 # 07_GLOSSARY.md
 
 > Domain: Didactic
-> Status: Persistent derivative — Cycle 09 Sprint 02
+> Status: Current derivative — reconciled through C11-PH01-S01
 > Authority source: `didactics/02_KANBAN.md`
 > Purpose: Compact terminology retrieval; no independent truth or maturity change
+> Maturity: unchanged
 
-## Evidence and execution
+## Evidence and acceptance
 
 ### Evidence state and validation boundary
 
 **KANBAN ID:** `&&&05`
-The strongest claim supported within a named environment and scope. Source presence, unit/widget tests, platform builds, manual workflows, accessibility checks and learner evidence are different levels.
+
+A claim is limited to the named environment, action and evidence obtained.
+Source presence, tests, builds, practical assays, human platform acceptance and
+learner evidence are distinct.
+
+### Automated/build evidence
+
+**KANBAN IDs:** `&&&05`, `%%%07`
+
+Passing tests or builds establish only their named automated or compilation
+boundary. They do not establish human comprehension, assistive-technology
+acceptance, real-device acceptance or learner mastery.
+
+### Development acceptance
+
+**KANBAN ID:** `&&&05`
+
+Acceptance inside a named development topology. Cycle 10 reached two Devices
+and one Account in development; production acceptance remains absent.
+
+### Client, server and provider evidence
+
+**KANBAN IDs:** `&&&05`, `&&&09`, `&%%14`
+
+Client declarations, server logs and provider inspection are independent
+evidence sources. One source does not prove the contents of another.
 
 ### Project evidence is not learner maturity
 
 **KANBAN ID:** `&&&05`
-Implementation and tests may stabilize project vocabulary and relationships. Green/Yellow/Red maturity requires direct learner explanation, application or transfer evidence.
 
-### Local queue is not synchronization
+Implementation, tests, builds and practical assays may stabilize project
+vocabulary. KANBAN maturity still requires direct learner explanation,
+application, prediction, debugging or transfer under the standing rubric.
 
-**KANBAN IDs:** `&%%11`–`&%%14`, `&&&09`
-A local event and pending row prepare later delivery; they do not prove API exchange, acknowledgement, cursor replay or convergence.
+## Local-first and synchronization
+
+### Local-first truth
+
+**KANBAN IDs:** `&&&02`, `&&&10`
+
+Durable Product, Purchase, queue and projection state owned locally by the
+client. Local-first does not mean isolated or never synchronized.
+
+### Hosted coordination
+
+**KANBAN IDs:** `&&&09`, `&%%14`
+
+Authenticated Account/Device exchange, ordering, download and acknowledgement
+used to converge autonomous local truths.
+
+### Readiness
+
+**KANBAN IDs:** `&&&05`, `&%%14`
+
+A bounded prerequisite/control result for hosted connectivity. It is not
+ordinary Sync and does not prove upload, download, apply, cursor progress or
+acknowledgement.
+
+### Ordinary Sync
+
+**KANBAN IDs:** `&&&09`, `&%%12`–`&%%14`
+
+The bounded exchange that may upload, download, durably apply facts, advance a
+cursor and acknowledge progress. A local queue row alone is preparation, not
+Sync.
+
+### Acknowledgement
+
+**KANBAN IDs:** `&&&09`, `&%%13`, `&%%14`
+
+A post-apply declaration of committed local cursor progress. It occurs only
+after durable local application and is not all-Device convergence or backup.
+
+### Same-Device proof
+
+**KANBAN IDs:** `&&&05`, `&&&09`, `&%%14`
+
+Hosted exchange evidence for one enrolled Device. It does not prove a second
+Device or reciprocal convergence.
+
+### Reciprocal two-Device convergence
+
+**KANBAN IDs:** `&&&05`, `&&&09`, `&%%14`
+
+Both preserved Devices exchange and apply facts in both directions with stable
+projections, drained queues and idempotent no-op repeats. Cycle 10 proved this
+only for one Account in development.
+
+### Golden no-op repeat
+
+**KANBAN IDs:** `&%%12`, `&%%14`
+
+An ordinary Sync with no pending upload that downloads/acknowledges without a
+duplicate business effect.
+
+## Result and diagnostic evidence
+
+### Current action result
+
+**KANBAN IDs:** `&&&05`, `&&&10`
+
+The terminal associated with the newest correctly identified action. It does
+not erase prior operation evidence.
+
+### Historical operation evidence
+
+**KANBAN ID:** `&&&10`
+
+Preserved chronological evidence from older actions. It remains useful for
+causal learning but does not override the current action terminal.
+
+### Transaction outcome
+
+**KANBAN IDs:** `&%%05`, `&&&05`
+
+Whether the intended business or protocol effect committed within its
+transaction boundary.
+
+### Diagnostic-persistence outcome
+
+**KANBAN IDs:** `&&&05`, `&&&10`
+
+Whether evidence about an operation was later stored and rendered. Failure here
+does not erase a trusted response or committed transaction outcome.
+
+### Blocked
+
+**KANBAN IDs:** `&&&03`, `&&&05`, `&%%14`
+
+A prerequisite prevented the named phase from proceeding.
+
+### Not-applied
+
+**KANBAN IDs:** `&&&03`, `&&&05`, `&%%14`
+
+The intended business effect was not committed.
+
+### Applied
+
+**KANBAN IDs:** `&&&03`, `&&&05`, `&%%14`
+
+The intended business effect committed within the stated boundary.
+
+### Duplicate-equivalent
+
+**KANBAN IDs:** `&%%12`, `&%%14`
+
+An idempotent result: the equivalent fact already exists, so replay creates no
+second business effect.
+
+### Unknown outcome
+
+**KANBAN IDs:** `&&&05`, `&%%12`, `&%%14`
+
+The available evidence cannot determine the outcome. It is not a synonym for
+rejected, failed or not-applied.
 
 ## Identity and catalogue
 
 ### Stable identity
 
 **KANBAN ID:** `&&&06`
-A durable identifier for one logical subject independent of mutable labels. Markei UUIDs are opaque relational identities.
+
+A durable identifier for one logical subject independent of mutable labels.
 
 ### Product code
 
 **KANBAN IDs:** `&&&03`, `&&&06`, `&%%08`
-A mandatory, user-established, immutable visible code for a new Product. It is not the Product UUID, local organizational reference code, nickname or exact identifying-field set.
 
-### Local organizational reference code
+The mandatory immutable user-visible code for a Product. It is not the local
+Product UUID, natural identity or Event UUID.
 
-**KANBAN IDs:** `&&&03`, `&&&06`
-A generated visible Account-local sequence such as `@001` for Person or `#001` for Payment Method. It aids recognition and is not the database primary/foreign-key identity.
+### Natural Product identity
 
-### Nickname
+**KANBAN IDs:** `&&&06`, `&%%08`
 
-**KANBAN IDs:** `&&&03`, `&&&06`
-The human-readable label paired with a Person or Payment Method reference. It may be shown as `@001 · Nickname`; `Archived` preserves historical meaning.
+The exact normalized semantic facts used to reconcile the Product subject.
+Similarity is advisory and never auto-merges.
+
+### Local Product UUID
+
+**KANBAN ID:** `&&&06`
+
+The opaque local relational identity for one Product record. It is not the
+Product code or hosted Event UUID.
+
+### Event UUID
+
+**KANBAN IDs:** `&&&06`, `&%%11`
+
+The immutable identity of one append-only synchronization event. It identifies
+the event, not the Product.
 
 ### Reusable Catalogue
 
 **KANBAN ID:** `&%%07`
-The Account-private set of recurring Products referenced by Purchases. Catalogue Products are reusable subjects, not Purchase Items.
 
-### Product identification set and normalization
+The Account-private set of recurring Products referenced by Purchases.
+Catalogue Products are reusable subjects, not Purchase Items.
 
-**KANBAN ID:** `&%%08`
-Exact normalized identity facts resolve one Product: PACKAGED uses name, Brand, package quantity and unit; BULK uses name and Brand. Similarity is advisory and never auto-merges.
-
-### Exact Product-code lookup
-
-**KANBAN IDs:** `&%%07`, `&%%08`
-An exact code match selects one existing Product and autofills immutable Product facts. It does not automatically add a staged Purchase Item.
-
-### Product selection, details and Item addition
-
-**KANBAN IDs:** `&&&03`, `&%%07`, `&%%10`
-Selection identifies the current Product; Product details presents its facts; adding a staged Item records transaction values. These are separate actions.
-
-## Purchase and history
-
-### Purchase aggregate
-
-**KANBAN ID:** `&%%09`
-The consistency boundary that owns one Purchase, its Items and required persistence effects.
+## Purchase, history and Lists
 
 ### Purchase occurrence time
 
 **KANBAN IDs:** `&&&03`, `&&&10`, `&%%09`
-The local civil date/time when buying happened, displayed as `dd/mm/yyyy · HH:mm`. It is distinct from database insertion/creation time and does not by itself decide storage-timezone architecture.
+
+The local civil date/time when buying happened, distinct from insertion time.
+
+### Purchase aggregate
+
+**KANBAN ID:** `&%%09`
+
+The consistency boundary owning one Purchase, its Items and required persistence
+effects.
 
 ### Purchase Item
 
 **KANBAN ID:** `&%%10`
-A Product-specific commercial observation inside one Purchase. It owns transaction quantities, rates and totals while retaining the Product reference.
 
-### PACKAGED Product and Item facts
-
-**KANBAN IDs:** `&%%08`, `&%%10`, `&%%15`
-Package quantity/unit belongs to Product identity; packages bought and amount bought belong to the Purchase Item.
-
-### BULK rate and calculated line total
-
-**KANBAN IDs:** `&%%10`, `&%%15`, `&%%16`
-The Item records amount bought and a rate in the same selected unit; fixed-point calculation derives a read-only line total rounded half-up to currency minor units.
+A Product-specific commercial observation inside one Purchase.
 
 ### Historical integrity
 
 **KANBAN ID:** `&&&10`
-Registered Purchase facts keep their original Product and optional reference identities. Archiving or relabelling does not make older History unassigned or editable.
 
-### History selection and details
-
-**KANBAN IDs:** `&&&03`, `%%%07`
-Checkbox/multi-selection chooses Purchases for actions. Opening/focusing details is separate; current History double-click opens/focuses detail rather than toggling selection.
-
-### Deterministic export and native share
-
-**KANBAN IDs:** `&&&05`, `&%%09`
-Selected Purchase DTOs can produce deterministic CSV/PDF bytes or a saved file. Native OS share completion is a separate, currently unimplemented boundary.
-
-## Lists and presentation
+Registered facts retain their original Product and optional reference meaning;
+later relabelling does not rewrite history.
 
 ### Lists projection
 
 **KANBAN IDs:** `&&&02`, `&%%17`
-A rebuildable view derived from registered Catalogue/Purchase history. Storage, Shortage/Ending soon and Market/Expected ended are personal estimates, not manually maintained or measured inventory.
 
-### No Purchase history
+A rebuildable estimate derived from registered Purchase history. It is not
+recorded or measured inventory.
+
+### Estimate
 
 **KANBAN IDs:** `&&&02`, `&%%17`
-No compatible registered observation exists for the Product, so no cycle can begin.
+
+A derived projection from compatible Purchase-history observations.
+
+### Approximate
+
+**KANBAN IDs:** `&&&03`, `&%%17`
+
+A qualifier stating that the displayed projection is uncertain rather than a
+recorded exact fact.
+
+### Unavailable
+
+**KANBAN IDs:** `&&&03`, `&%%17`
+
+No usable estimate is available under the current data boundary.
 
 ### Not enough history
 
 **KANBAN IDs:** `&&&02`, `&%%17`
-Exactly one compatible observation exists; the Product has history but not enough intervals to estimate a personal cycle.
 
-### Functional UI scaffold
+A Product has one compatible observation but not enough intervals to estimate a
+personal cycle.
 
-**KANBAN ID:** `%%%07`
-Current navigation and page controls support bounded workflows. Theme/component presence does not prove that pages use the system or match target images.
+### Expected ended
 
-### Responsive and accessible equivalence
+**KANBAN IDs:** `&&&02`, `&%%17`
+
+A projected state derived from Purchase history. It is not recorded depletion.
+
+## Presentation states and accessibility
+
+### Loading
+
+**KANBAN IDs:** `&&&03`, `%%%07`
+
+A local read/projection is still in progress; no empty or failure conclusion is
+yet justified.
+
+### Local read error
+
+**KANBAN IDs:** `&&&03`, `&&&05`, `%%%07`
+
+The local projection read failed. In Lists, the message states that local data
+was not changed.
+
+### First-use empty
+
+**KANBAN IDs:** `&&&03`, `&%%17`
+
+No projection data exists yet; this is not a filtered result.
+
+### Filtered empty
+
+**KANBAN IDs:** `&&&03`, `%%%07`
+
+Data may exist, but the current search/filter produces no visible match.
+
+### Read-only Retry
+
+**KANBAN IDs:** `&&&03`, `&&&05`, `%%%07`
+
+Repeats only the failed local projection request and does not mutate local data,
+perform Sync or contact a provider.
+
+### Responsive information equivalence
 
 **KANBAN IDs:** `%%%07`, `&&&05`
-Desktop and compact layouts should preserve meaning and reachable actions. Current keyboard, screen-reader and full accessibility equivalence remain unvalidated.
 
-### Error and recovery contract
+Wide tables and compact cards preserve the same meaning, state and reachable
+actions even when density and grouping change.
 
-**KANBAN IDs:** `&&&03`, `&&&05`, `&%%03`
-A user-facing failure identifies the operation/field, explains the known reason, preserves safe input, and offers a next action without raw database exceptions. Unknown outcomes require History verification before retry.
+### Accessibility evidence boundary
+
+**KANBAN IDs:** `%%%07`, `&&&05`
+
+Breakpoint, reachability and text-scale widget tests are automated evidence.
+Narrator, TalkBack, keyboard-only and real-device acceptance require separate
+human/platform evidence.
+
+## Reserved destinations
+
+### Analytics reservation
+
+**KANBAN IDs:** `&&&03`, `&&&05`, `&%%17`
+
+A destination reserved for C11-PH02. Its presence does not imply active
+calculations or telemetry.
+
+### Audit reservation
+
+**KANBAN IDs:** `&&&03`, `&&&05`
+
+A destination reserved for C11-PH03. Its presence does not transfer ownership
+of the runtime diagnostic registry or imply diagnostic migration.
 
 ## Current evidence boundary
 
-- Implemented/tested within reported scope: schema-v4 visible references, mandatory Product code, occurrence parsing, exact code autofill, same-unit BULK calculation, Lists unavailable-state distinction, selected CSV/PDF generation.
-- Partial/open: target visual composition, page consumption of shared components, History double-click semantics, native share and full relational Lists presentation.
-- Unvalidated: keyboard, screen-reader and complete manual accessibility equivalence.
-- Maturity: unchanged; consult `02_KANBAN.md` for canonical status and `08_CONCEPT_MAP.md` for current recovery.
+- Cycle 10: same-Device hosted scope and reciprocal two-Device/one-Account
+  development scope are closed; production acceptance is absent.
+- C11-PH01-S01: shell, Home and Lists vocabulary/state contracts are
+  implemented, widget-tested and Windows/Android build-validated.
+- Remaining PH01: Catalogue, Purchase and History recomposition plus human
+  Windows/Android visual and accessibility acceptance.
+- Later phases: functional Analytics in PH02; Settings/Audit and Closure
+  disposition in PH03.
+- Learner maturity: unchanged.

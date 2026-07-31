@@ -1,9 +1,9 @@
 # 02_KANBAN.md
 
 > Domain: Didactic
-> Status: Canonical concept register — Cycle 06 Sprint 02
+> Status: Canonical concept register — reconciled through Cycle 10 and C11-PH01-S01
 > Authority: Didactic Chat [A], reconciled through Main reference
-> Reconciliation sources: `DEV_STAGE/E_DDC_STAGE.md`, `DEV_STAGE/H_DDC_CODEX.md`, `DEV_STAGE/G_OPS_CODEX.md`, and `[M]_STAGE/J_[M]_STAGE.md`
+> Reconciliation sources: permanent observations, current J reconciliation, H evidence, and repository-backed concept history
 > Scope: Stable concepts evidenced by the contemporary Markei repository
 > Maturity rule: implementation success does not establish learner mastery
 
@@ -1028,3 +1028,60 @@ No KANBAN status changes. Repository behavior and passing tests strengthen proje
 
 <!-- TEMPORAL_MARKER:C09-S02-ENTRY-2026-07-14 -->
 > Temporal boundary — Cycle 09 Sprint 02 begins here. Content above is the reviewed pre-Sprint-02 baseline and retains its existing authority and semantic role. Content below belongs to Sprint 02 investigation, current-UI archival evidence, aesthetic reconciliation, staging, implementation, and later closure. This marker alone authorizes no source change, semantic promotion, or methodology revision.
+
+
+# Cycle 10 Canonical Reconciliation
+
+> Reconciliation date: 2026-07-30
+> Evidence: `13_LECTURE_REGISTER.md` Observation 010; `REC_DIAGNOSTICS.md`
+> Records 001–021 and Appendix I; current J mutable prefix §§2–5.2
+> Maturity result: no transition
+
+Cycle 10 did not create a new Didactic concept identity. It corrected or
+extended the current canonical wording of existing concepts while preserving
+their standing maturity. Observation 010 remains the chronological owner; this
+section owns only the stable concept and evidence boundaries.
+
+| Existing concept identifier | Previous canonical wording | Corrected or extended canonical wording | Exact Cycle 10 evidence | Maturity before → after |
+| --- | --- | --- | --- | --- |
+| `&&&05`, `&%%14` | Evidence boundaries and Sync protocol were defined generally. | Readiness is a bounded prerequisite/control result; ordinary Sync separately requires upload, download, durable local apply/cursor progress and acknowledgement. | REC 001–006; Observation 010 progression 1–2; J §§2–3 | Red / Red → unchanged |
+| `&&&05`, `&&&10` | Historical integrity preserved source facts; evidence state bounded claims. | A current action result names the correctly associated newest action terminal. Preserved historical operation evidence remains useful but does not override that terminal. | REC 001–008; Observation 010 progression 3 and misconception table; J §3 | Red / Red → unchanged |
+| `&%%05`, `&&&05`, `&&&10` | Workflow atomicity distinguished multi-step commit scope; evidence/history rules were general. | Transaction outcome and diagnostic-persistence outcome are independent evidence dimensions. A trusted response or committed effect is not erased by a later failure to persist or render diagnostics. | REC 019–020; Observation 010 progression 5; J §§3–4 | Red / Red / Red → unchanged |
+| `&&&03`, `&&&06`, `&%%08`, `&%%11` | Product code, stable UUID, normalized Product identity and Event identity existed as separate descriptions. | Product natural identity reconciles exact semantic Product facts; it is not the user-visible Product code, local Product UUID or append-only Event UUID. None may substitute for another. | REC 018–021; Observation 010 progression 4; J §3 | Yellow / Red / Red / Red → unchanged |
+| `&&&03`, `&&&05`, `&%%12`, `&%%14` | Retry/idempotency and protocol outcomes were described without the final five-state learner vocabulary. | `blocked` means a prerequisite prevented a phase; `not-applied` means no business effect committed; `applied` means the intended effect committed; `duplicate-equivalent` means replay caused no second effect; `unknown` means evidence cannot classify the outcome. | REC 001–012 and Appendix I; Observation 010 progression 6 | Yellow / Red / Red / Red → unchanged |
+| `&&&09`, `&%%13`, `&%%14` | Eventual consistency and cursor ordering named exchange progress. | Acknowledgement may occur only after downloaded facts are durably applied and cursor progress is committed. It is not proof of all-Device convergence or backup. | REC 019–021; Observation 010 progression 7; J §3 | Red / Red / Red → unchanged |
+| `&&&05`, `&&&09`, `&%%14` | Synchronization evidence was bounded but did not encode the final assay distinction. | Same-Device hosted proof and reciprocal two-Device convergence are different evidence classes. Two-Device proof requires both directions, stable projections, drained queues and idempotent no-op repeats. | REC 009–017 and 021; Observation 010 progression 8; J §§2–3 | Red / Red / Red → unchanged |
+| `&&&05`, `%%%07` | Automated, platform and human evidence were already non-equivalent. | Tests/builds establish their named automated boundary; a controlled human assay establishes only its recorded practical scope. Neither establishes learner mastery without direct explanation, prediction, debugging or transfer. | REC 018–021; Observation 010 progression 9 and comprehension boundary; J §§3, 7 | Red / Red → unchanged |
+| `&&&05` | Validation was limited by environment and scope. | Development acceptance and production acceptance are distinct. GCM03 proves only two Devices, one Account and the named development topology. | REC 021 and Appendix I; Observation 010 progression 10 and evidence ceilings; J §2 | Red → Red |
+| `&&&05`, `&&&09`, `&%%14` | Logs, tests and runtime results were evidence sources. | Client declarations, server logs and provider inspection are distinct evidence sources. One cannot be inferred from another, and an omitted final provider recount remains explicitly absent. | REC 018–021; Observation 010 practical assay lessons and evidence ceilings; J §§3–4 | Red / Red / Red → unchanged |
+
+Canonical Cycle 10 evidence ceilings remain:
+
+```text
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=CLOSED_TWO_DEVICE_DEVELOPMENT_SCOPE
+MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_ONE_ACCOUNT_DEVELOPMENT_SCOPE
+PRODUCTION_ACCEPTANCE=ABSENT
+```
+
+The evidence does not establish multiple-Account isolation, revocation, outage
+recovery, retention/rebootstrap or production lifecycle readiness.
+
+# C11-PH01-S01 Canonical Absorption
+
+> Evidence: `DEV_STAGE/H_DDC_CODEX.md`; J mutable prefix §§2, 5.2, 7–8;
+> `13_LECTURE_REGISTER.md` Observation 011
+> Evidence class: implemented, widget-tested and Windows/Android build-validated
+> for the named presentation scope
+> Maturity result: no transition
+
+| Existing concept identifier | Previous canonical wording | Corrected or extended canonical wording | C11-PH01-S01 evidence | Maturity before → after |
+| --- | --- | --- | --- | --- |
+| `&&&03`, `%%%07` | Naming and responsive composition were general UI contracts. | Ordinary destination labels and one primary Home action expose page purpose without internal maturity labels. Home presents local-first Purchase registration before secondary Catalogue, Lists and History inspection. | H “Wording And Labels”; Home/widget tests and builds summarized in H | Yellow / Red → unchanged |
+| `&&&02`, `&%%17` | Lists was a derived projection with zero/one-history boundaries. | Lists is explicitly an estimated Purchase-history projection, never recorded inventory. `Estimate`, `Approximate`, `Unavailable`, `Not enough history` and `Expected ended` retain projection-qualified meaning. | H “Wording And Labels” and “State Distinctions”; Lists tests | Yellow / Red → unchanged |
+| `&&&03`, `&&&05`, `&%%17` | Error, empty and projection states were not canonically enumerated. | Loading, local read error, first-use empty, filtered empty, insufficient history and populated data are distinct states. Read-error Retry repeats a read-only local projection request and states local data was not changed. | H “State Distinctions”; focused Lists tests | Yellow / Red / Red → unchanged |
+| `%%%07`, `&&&05` | Responsive equivalence and accessibility remained broadly unvalidated. | Wide tables and compact cards must preserve the same information/search/sort state. Breakpoint and 200-percent text-scale tests are automated evidence only; Narrator, TalkBack, keyboard-only and real-device acceptance remain absent. | H “Accessibility Evidence And Limits”; breakpoint/text-scale tests | Red / Red → unchanged |
+| `&&&03`, `&&&05`, `&%%17` | Versioned Analytics existed as a concept; future destination labels could imply implementation. | Analytics is reserved for PH02 without implying active calculations or telemetry. Audit is reserved for PH03 without implying diagnostic migration. | H “Wording And Labels” and “Requested But Not Implemented”; J §7 | Yellow / Red / Red → unchanged |
+
+No learner explanation, page-comprehension assay or transfer evidence was
+recorded. All maturity values remain exactly as before this reconciliation.
