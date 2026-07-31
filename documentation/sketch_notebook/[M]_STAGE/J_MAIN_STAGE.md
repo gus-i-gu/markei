@@ -1,8 +1,8 @@
-# J_MAIN_STAGE — Cycle 11 PH01/PH02 closure and PH03 activation
+# J_MAIN_STAGE — Cycle 11 PH03 post-materialization reconciliation
 
 > Sequence: FLX-PRM-04 / PRC-01 final conflictive reconciliation
 > Role: Main Chat [M]
-> Cycle / phase / active unit: C11 / C11-PH03 / functional investigation
+> Cycle / phase / active unit: C11 / C11-PH03 / permanent-domain reconciliation
 > Repository: `gus-i-gu/markei`
 > Branch: `grm-guarded-provisioning-20260727`
 > Cycle 10 accepted implementation boundary:
@@ -16,7 +16,7 @@
 > Authority: explicit human-directed Main final reconciliation
 > Mutable surface: this file
 > Extracted Cycle 10 history: `documentation/REC_LEGACY.md`
-> Status: **C11-PH01-R01 AND C11-PH02 PERMANENTLY ABSORBED; C11-PH03 FUNCTIONAL INVESTIGATION ACTIVE**
+> Status: **C11-PH03 IMPLEMENTED AND AUTOMATED/BUILD-VALIDATED; PERMANENT-DOMAIN ABSORPTION PENDING**
 
 ## 1. Recovery entrypoint
 
@@ -612,3 +612,250 @@ LIVE_SYNC_AUTHORITY=NONE
 PROVIDER_MUTATION_AUTHORITY=NONE
 NEXT_MAIN_ACTION=Seed and complete PH03 Operational Didactic Design investigations, then reconcile A/B/C before preparing any D/E/F.
 ```
+
+
+---
+
+<!-- TEMPORAL_MARKER:C11-PH03-POST-MATERIALIZATION-2026-07-31 -->
+> Temporal boundary — Main post-materialization reconciliation for C11-PH03. Sections above preserve PH01/PH02 closure, PH03 investigation and materialization authority. Section 11 is the latest chronological J orientation for permanent-domain reconciliation.
+
+## 11. C11-PH03 final materialization reconciliation
+
+### 11.1 Repository and evidence boundary
+
+~~~text
+REPOSITORY=gus-i-gu/markei
+BRANCH=grm-guarded-provisioning-20260727
+MATERIALIZATION_AUTHORITY_COMMIT=256ee4dbbcb790419b816862ee42933a115ddd87
+IMPLEMENTATION_COMMIT=0924e743931ea7aba2c9cc5d2e28063e737b2ff5
+IMPLEMENTATION_PARENT=256ee4dbbcb790419b816862ee42933a115ddd87
+ROUND=C11-PH03-R01
+PUBLICATION=PUSHED
+~~~
+
+The implementation is one descendant of the synchronized PH03 D/E/F authority.
+It changed exactly 19 authorized paths:
+
+- 9 Flutter source files;
+- 7 Flutter test files;
+- G_OPS_CODEX.md, H_DDC_CODEX.md and I_DSN_CODEX.md.
+
+No permanent-domain file, Main-root continuity file, methodology file, A/B/C,
+D/E/F, schema, migration, generated Drift source, dependency, lockfile,
+diagnostic contract/registry, server/API, provider or environment file changed.
+
+Controlling post-materialization evidence is:
+
+~~~text
+documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
+documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
+~~~
+
+A/B/C remain the investigative intent and disagreement record. D/E/F are
+consumed implementation authority and do not authorize a corrective PH03 source
+round. Final G/H/I and repository commit 0924e743 supersede pre-materialization
+claims that Audit was reserved or that PH03 remained investigation-only.
+
+### 11.2 Reconciled functional result
+
+Settings is implemented within the bounded PH03 product meaning:
+
+- persisted shortage threshold is loaded rather than overwritten;
+- only whole values from 0 through 365 are accepted;
+- invalid draft input remains available for correction;
+- loading, empty, read-error, save-error and saved states remain distinct;
+- reference lists refresh after archive;
+- duplicate asynchronous actions are blocked;
+- local preference actions remain Account-scoped and local;
+- Account and Sync/Device sections delegate through capability-narrow adapters
+  over existing behavior rather than changing Auth or Sync contracts.
+
+Audit is implemented as ordinary product activity history:
+
+- available from wide and medium navigation and compact More;
+- local, read-only, Account/environment-scoped and sanitized;
+- visibility-gated on first load with stale-completion suppression;
+- exactly one attempt query plus one child-event query per page;
+- default 20-attempt page and hard maximum 50;
+- deterministic exclusive cursor using UTC start time plus persisted attempt ID;
+- explicit loading, ready, empty, stale, bounded-window and unavailable meaning;
+- local Retry repeats only the same read;
+- zero Audit network calls and zero Audit writes;
+- no broad Closure runner, Auth mutation, enrollment, Sync, Recovery,
+  delete-history or provider capability enters Audit.
+
+Closure is retired from ordinary product navigation under both feature-flag
+values. Native Closure pages, runners and diagnostic infrastructure may remain
+only as unreachable development/support implementation where already present.
+No product-facing destructive or highly technical Closure control was
+introduced.
+
+### 11.3 Architecture and capability disposition
+
+The accepted PH03 dependency direction is:
+
+~~~text
+Audit presentation
+  -> Audit controller and capability-narrow read port
+  -> local diagnostic projection repository
+  -> existing persisted attempts/events and read-only diagnostic registry meaning
+~~~
+
+Settings presentation depends on existing local repositories and
+capability-narrow Account and Sync/Device support ports. Presentation does not
+own provider, Auth, Sync or causal authority.
+
+Accepted capability placement:
+
+| Capability | Reconciled disposition |
+| --- | --- |
+| local preferences and reference management | Settings |
+| current Account, Device and Sync readiness/actions already supported | Settings through narrow adapters |
+| recent sanitized local diagnostic attempts/events | Audit |
+| local Audit Retry | Audit read retry only |
+| Closure product destination | retired |
+| raw diagnostics, hosted probes, unknown-outcome recovery, delete-history and provider maintenance | absent from ordinary UI; development-only where retained |
+| former R07 causal/backend engine | not authorized and not implemented |
+
+Composition owns one Audit controller and idempotent database/controller
+disposal. Audit uses persisted identities, deterministic paging and bounded
+two-query loading without schema, migration, provider or generated-source work.
+
+### 11.4 Validation and evidence ceiling
+
+Committed automated/build evidence:
+
+- dependency and lockfile audit: PASS;
+- formatting: PASS;
+- flutter analyze: PASS;
+- all focused Settings, Audit, Closure-navigation, app-shell, visual-foundation,
+  composition and repository tests: PASS;
+- full Flutter suite with concurrency 1: PASS, 264 tests passed and 4 lab-only
+  tests skipped in 88.4 seconds;
+- Windows release build: PASS in 49.9 seconds;
+- Android debug build: PASS in 80.4 seconds;
+- diagnostic-registry drift check: PASS;
+- git diff check: PASS with line-ending warnings only;
+- resource disposal: PASS;
+- schema, migration, generated-source, dependency, API/Auth/Sync/provider
+  contract change: NONE;
+- live provider, hosted or Sync operation: NOT PERFORMED.
+
+Human direction after UI verification classifies the visible PH03 result as
+successful enough for documentation and permanent-domain absorption. Minor
+non-blocking UI refinements are deferred to C12-PH01 and do not reopen
+C11-PH03 implementation.
+
+That human direction does not establish unperformed evidence. Screenshot sets,
+Narrator/TalkBack, locale coverage, real-device coverage, full keyboard-only
+acceptance and learner comprehension remain absent unless separately recorded.
+No KANBAN maturity transition follows from implementation, tests, builds or the
+bounded UI acceptance statement.
+
+### 11.5 State-of-union and documentation drift
+
+C11-PH01-R01 and C11-PH02 remain permanently absorbed. C11-PH03 is now
+implemented and validated at the automated/build ceiling, with bounded human UI
+acceptance sufficient to proceed.
+
+The current permanent domain checkpoints and Main-root 00/05/06 still describe
+the pre-materialization PH03 investigation boundary. This is expected
+documentation lag, not source uncertainty.
+
+The next required transition is:
+
+~~~text
+J section 11
+-> Operational PDR
+-> Didactic PDR
+-> Design PDR
+-> Main verification of all three permanent commits
+-> 00_PROJECT_STATE / 05_SESSION_LOG / 06_SESSION_SCHEME closure refresh
+-> C12-PH01 bounded UI/UX fine-tuning entry
+~~~
+
+Do not update 00/05/06 before the three domain reconciliations are complete.
+Do not restage D/E/F or begin another C11 implementation round solely for minor
+UI refinements.
+
+### 11.6 Permanent-domain classification route
+
+Operational must absorb:
+
+- exact validation commands/results and the 264-pass/4-skip full-suite boundary;
+- Settings persistence, validation, local failure and duplicate-action behavior;
+- Audit two-query, zero-network, zero-write, Account/environment and sanitization
+  invariants;
+- Windows/Android build evidence, resource disposal and unchanged forbidden
+  surfaces;
+- human UI acceptance as bounded and minor C12-PH01 polish as deferred;
+- live provider/Sync and remaining platform/human gates as NOT PERFORMED.
+
+Didactic must absorb:
+
+- Settings as configuration and bounded Account/Device readiness, not recovery;
+- Audit as recent sanitized local activity history, distinct from Purchase
+  History and current status;
+- local, bounded, stale, empty and unavailable vocabulary;
+- Closure as retired product vocabulary;
+- technical classifications as safe guidance, not causal explanation;
+- wide/compact meaning, test-backed focus/text-scale evidence and bounded human
+  UI acceptance;
+- KANBAN transitions as NONE and learner comprehension as not established.
+
+Design must absorb:
+
+- AuditReadPort/controller/local-projection ownership and dependency direction;
+- persisted attempt/event identity and composite cursor paging;
+- fixed two-query page boundary, Account/environment predicates and sanitized
+  registry projection;
+- capability-narrow Settings ports, Closure navigation retirement and explicit
+  development-only capability retention;
+- composition lifecycle ownership and rollback boundary;
+- unchanged schema, generated, dependency, API/Auth/Sync/provider and R07
+  boundaries;
+- minor UI polish as C12-PH01 work rather than PH03 architectural reopening.
+
+Each role must reconcile from its checkpoint, paired A/B/C and G/H/I, this
+section 11 and its four permanent files. Each role may commit and push only its
+four permanent files. Compatible sibling-domain commits must be preserved
+without force; unrelated advancement is a stop condition.
+
+### 11.7 Current terminal
+
+~~~text
+CYCLE=C11
+C11_PH01_R01=PERMANENTLY_ABSORBED
+C11_PH02=PERMANENTLY_ABSORBED
+C11_PH03=IMPLEMENTED_VALIDATED_AUTOMATED_BUILD_CEILING
+PH03_IMPLEMENTATION_COMMIT=0924e743931ea7aba2c9cc5d2e28063e737b2ff5
+SETTINGS_FUNCTIONAL=PASS
+AUDIT_FUNCTIONAL=PASS
+AUDIT_LOCAL_READ_ONLY=PASS
+AUDIT_NETWORK_CALLS=0
+AUDIT_WRITE_CALLS=0
+AUDIT_QUERIES_PER_PAGE=2
+ACCOUNT_ENVIRONMENT_ISOLATION=PASS
+SANITIZATION=PASS
+CLOSURE_ORDINARY_NAVIGATION=ABSENT
+CLOSURE_CAPABILITY_DISPOSITION=PASS
+RESOURCE_DISPOSAL=PASS
+FOCUSED_TESTS=PASS
+FULL_FLUTTER_TEST=PASS_264_WITH_4_LAB_SKIPS
+FLUTTER_ANALYZE=PASS
+WINDOWS_RELEASE_BUILD=PASS
+ANDROID_DEBUG_BUILD=PASS
+SCHEMA_MIGRATION=NONE
+DEPENDENCY_GENERATED_API_AUTH_SYNC_PROVIDER_CHANGE=NO
+LIVE_PROVIDER_OR_SYNC_OPERATION=NOT_PERFORMED
+HUMAN_UI_VERIFICATION=ACCEPTED_WITH_MINOR_C12_PH01_CARRYOVER
+HUMAN_ASSISTIVE_TECH_LOCALE_REAL_DEVICE_COMPREHENSION=NOT_ESTABLISHED
+KANBAN_TRANSITIONS=NONE
+C11_D_E_F_AUTHORITY=CONSUMED
+C11_CORRECTIVE_SOURCE_ROUND=NOT_REQUIRED
+PERMANENT_DOMAIN_ABSORPTION=PENDING_PDR_O_A_D
+C12_PH01=NEXT_AFTER_DOMAIN_AND_MAIN_CLOSURE
+C12_PHASE02=BACKEND_GCM04_AND_CONDITIONAL_R07_DEFERRED
+NEXT_MAIN_ACTION=Run Operational Didactic and Design permanent reconciliations from J section 11, then verify all three commits before refreshing 00/05/06.
+~~~
