@@ -1,34 +1,34 @@
 final class HomeCardDescriptor {
-  const HomeCardDescriptor({required this.title, required this.body});
+  const HomeCardDescriptor({
+    required this.title,
+    required this.body,
+    required this.destinationId,
+  });
 
   final String title;
   final String body;
+  final String destinationId;
 }
 
 const homeCards = <HomeCardDescriptor>[
   HomeCardDescriptor(
-    title: 'Recent updates',
-    body: 'Markei is one evolving Flutter codebase for desktop and mobile.',
+    title: 'Register purchases',
+    body: 'Record household purchases locally first, then reuse Products.',
+    destinationId: 'purchase',
   ),
   HomeCardDescriptor(
-    title: 'Scheduled updates',
-    body: 'Sync, Analytics, Household and public distribution are future work.',
+    title: 'View lists',
+    body: 'Inspect Storage, Shortage, Market and All estimates from history.',
+    destinationId: 'lists',
   ),
   HomeCardDescriptor(
-    title: 'What Markei is for',
-    body: 'Register local purchases and compare Products from your history.',
+    title: 'Browse catalogue',
+    body: 'Maintain reusable Products for faster future purchase entries.',
+    destinationId: 'catalogue',
   ),
   HomeCardDescriptor(
-    title: 'Mid-term perspectives',
-    body:
-        'Lists and comparisons are estimates derived from registered history.',
-  ),
-  HomeCardDescriptor(
-    title: 'How Markei works',
-    body: 'Local offline-first storage is used; normal use needs no network.',
-  ),
-  HomeCardDescriptor(
-    title: 'For developers',
-    body: 'Local use currently sends no user data or usage analytics.',
+    title: 'Open purchase history',
+    body: 'Review registered Purchases and the Products recorded in them.',
+    destinationId: 'history',
   ),
 ];

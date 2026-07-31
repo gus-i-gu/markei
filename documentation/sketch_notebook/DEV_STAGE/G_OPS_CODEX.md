@@ -1,72 +1,110 @@
-# G_OPS_CODEX - C10-GCM03-S09-R06-CR02
+# G_OPS_CODEX — C11-PH01-S01 Operational Evidence
 
-Sequence: FLX-ORD-01
-Role: Codex operational evidence
-Round or unit: C10-GCM03-S09-R06-CR02
-Branch: grm-guarded-provisioning-20260727
-Baseline / inspected HEAD: 4be2df25e1b720b447adb41233c2989b0a8b3f46
-Authority: D_OPS_STAGE.md, E_DDC_STAGE.md, F_DSN_STAGE.md
-Writable surfaces: documentation/G_SCRIPTS.md and G/H/I reports only
-Evidence boundary: Windows process attribution and generated-plugin manifest correction only
+## Classification
 
-## Incident-To-Correction Mapping
-
-- CR01 defect 1: name-only `dart`/`flutter` detection could classify analysis activity as ownership. Correction: `GS-FLUTTER-WIN` now uses bounded process observations with `ProcessCandidate`, `DefiniteRelevantOwner`, `BenignAnalysisActivity`, and `UnknownMetadata`; only definite relevant ownership blocks pre-clean.
-- CR01 defect 2: plugin manifest verification used nonexistent `windows\flutter\ephemeral\generated_plugins.cmake`. Correction: manifest verification now uses `windows\flutter\generated_plugins.cmake`; the `auth0_flutter` symlink check remains under `windows\flutter\ephemeral\.plugin_symlinks\auth0_flutter`.
-
-## Files Changed
-
-- documentation/G_SCRIPTS.md
-- documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md
-- documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md
-- documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md
-
-## Commands Run And Results
-
-- `git fetch origin grm-guarded-provisioning-20260727` -> passed.
-- `git switch grm-guarded-provisioning-20260727` -> already on branch, up to date.
-- `git rev-parse HEAD` -> `4be2df25e1b720b447adb41233c2989b0a8b3f46`.
-- `git rev-list --left-right --count HEAD...origin/grm-guarded-provisioning-20260727` -> `0 0`.
-- `git merge-base --is-ancestor 5fef8a51ccb61dff00e773b3c8759062560d27da 4be2df25e1b720b447adb41233c2989b0a8b3f46` -> passed.
-- Required AGENTS/INDEX/D/E/F reads -> completed.
-- Extracted `GS-FLUTTER-WIN` from `documentation/G_SCRIPTS.md` using dispatcher-compatible heading/fence parsing; `[scriptblock]::Create(...)` -> passed, extracted length 18016.
-- Static termination inspection for `Stop-Process`, `taskkill`, `kill` -> 0 matches.
-- Static process-attribution inspection -> classifier states present; only `Classification -eq "DefiniteRelevantOwner"` blocks; analysis/language-server evidence is classified as benign without build/run ownership.
-- Static raw command-line output inspection -> no `Select-Object CommandLine` or `Format-* CommandLine` output.
-- Static cleanup gate inspection -> bounded cleanup and absence proof remain before actual `flutter pub get`.
-- Static cleanup target inspection -> `.dart_tool`, `windows\flutter\ephemeral`, and `build\windows` remain the exact cleanup targets.
-- Static plugin path inspection -> symlink path remains `windows\flutter\ephemeral\.plugin_symlinks\auth0_flutter`; generated manifest path is `windows\flutter\generated_plugins.cmake`; ephemeral manifest path is absent from `GS-FLUTTER-WIN`.
-- Static manifest-count inspection -> procedure asserts `$Auth0GeneratedMentions.Count -ne 1` as failure and reports `Auth0GeneratedTargets`.
-- Repository manifest inspection -> `clients\markei_flutter\windows\flutter\generated_plugins.cmake` exists and contains exactly one `auth0_flutter` entry; `clients\markei_flutter\windows\flutter\ephemeral\generated_plugins.cmake` does not exist.
-- Static R06 tail inspection -> `MARKEI_SOURCE_REVISION`, `MARKEI_SOURCE_TREE_SHA256`, `flutter analyze`, `flutter test`, `flutter build windows --release @FlutterDefines`, artifact hashing, callback registration, and exact executable launch remain present.
-
-## Skipped Actions
-
-- Did not run `GS-FLUTTER-WIN`, `flutter clean`, `flutter pub get`, Windows build, callback registration, or application launch.
-- Did not run a focused clean/pub-get exercise because doing so would mutate generated workspace state and static validation was sufficient for the CR02 procedure correction.
-- Did not terminate processes.
-- Did not run Sync, Retry, Recovery, Query, Enroll, new Purchase, provider mutation, database repair/reset/clear, preserved-client installation, preserved-client launch, full Flutter regression, Android build, GRIMOIRE, SQLite, Neon, Render, Auth0, or hosted-provider suites.
-
-## Remaining Human Checkpoint
-
-Rerun only the corrected `GS-FLUTTER-WIN` procedure from the pushed CR02 commit. Static validation must not be promoted into a Windows build claim.
-
-## Terminals
-
-C10_GCM03_S09_R06_CR02=IMPLEMENTED_VALIDATED
-CR01_PROCESS_ATTRIBUTION=PASS
-NAME_ONLY_DART_OWNERSHIP=NO
-ANALYSIS_SERVER_FALSE_POSITIVE=NO
-GENERATED_PLUGIN_MANIFEST_PATH=PASS
-PLUGIN_SYMLINK_PATH=PASS
-PUB_GET_GATED_BY_VERIFIED_CLEANUP=PASS
-AUTOMATIC_PROCESS_TERMINATION=NO
-R06_IDENTITY_CHAIN_PRESERVED=PASS
-WINDOWS_BUILD_REACHED_BY_CODEX=NO
-WINDOWS_BUILD_PROCEDURE_READY_FOR_HUMAN_RERUN=YES
-SYNC_SOURCE_CHANGED=NO
-PRESERVED_CLIENT_STATE_TOUCHED=NO
-LIVE_SYNC_EXECUTED=NO
+```text
+CYCLE=C11
+PHASE=C11-PH01
+UNIT=C11-PH01-S01
+STAGING_BASELINE=1e4cd0aa8e6f0eabd856decfadba21f67d04426c
+VISUAL_FOUNDATION=IMPLEMENTED
+STABLE_DESTINATION_IDENTITY=PASS
+COMPACT_MEDIUM_WIDE_SHELL=PASS
+HOME_RECOMPOSITION=PASS
+LISTS_RECOMPOSITION=PASS
+ANALYTICS_RESERVATION=PASS
+SETTINGS_PRESERVED=PASS
+AUDIT_RESERVATION=PASS
+CLOSURE_BEHAVIOR_CHANGED=NO
+BUSINESS_OR_SYNC_SOURCE_CHANGED=NO
+FOCUSED_TESTS=PASS
+FLUTTER_TEST=PASS
+FLUTTER_ANALYZE=PASS
+WINDOWS_BUILD=PASS
+ANDROID_BUILD=PASS
+HUMAN_WINDOWS_ACCEPTANCE=NOT_PERFORMED
+HUMAN_ANDROID_ACCEPTANCE=NOT_PERFORMED
 PROVIDER_MUTATION=NONE
-R07_IMPLEMENTATION=HELD
-NEXT_HUMAN_CHECK=RERUN_GS_FLUTTER_WIN_ONLY
+NEXT_MAIN_ACTION=human Windows and Android visual acceptance for C11-PH01-S01
+```
+
+## Changed Paths
+
+Implementation:
+
+- `clients/markei_flutter/lib/application/home_content.dart`
+- `clients/markei_flutter/lib/app/markei_app.dart`
+- `clients/markei_flutter/lib/app/design/markei_theme.dart`
+- `clients/markei_flutter/lib/app/navigation/markei_destination.dart`
+- `clients/markei_flutter/lib/app/widgets/markei_components.dart`
+- `clients/markei_flutter/lib/app/widgets/markei_shell.dart`
+- `clients/markei_flutter/lib/app/pages/home_page.dart`
+- `clients/markei_flutter/lib/app/pages/lists_page.dart`
+
+Tests:
+
+- `clients/markei_flutter/test/app/markei_visual_foundation_test.dart`
+- `clients/markei_flutter/test/app/lists_page_test.dart`
+
+Reports:
+
+- `documentation/sketch_notebook/DEV_STAGE/G_OPS_CODEX.md`
+- `documentation/sketch_notebook/DEV_STAGE/H_DDC_CODEX.md`
+- `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
+
+No files were deleted. No generated source, pubspec, lockfile, schema, platform manifest, provider, Sync, diagnostics, recovery, Purchase, Catalogue, History, Settings or Closure implementation file was changed.
+
+## Operational Mapping
+
+- Characterized and guarded current shell behavior with tests for compact More, boundary resizing, Closure gate insertion and existing destination reachability.
+- Replaced selected array index state with stable `MarkeiDestinationId` state.
+- Added compact `<600`, medium `600-1023`, wide `>=1024` shell policies.
+- Kept compact direct destinations as Home, Lists, Purchase, History and More.
+- Preserved `IndexedStack` retained page state.
+- Kept Settings page and Native Closure page implementations unchanged.
+- Preserved `ProductListProjectionRepository.productListProjection` as the only Lists projection read.
+- Added read-only Lists Retry that only repeats the Lists projection request.
+
+## Commands And Results
+
+- `git fetch origin grm-guarded-provisioning-20260727`: pass.
+- `git rev-parse HEAD`: `1e4cd0aa8e6f0eabd856decfadba21f67d04426c`.
+- `git rev-parse origin/grm-guarded-provisioning-20260727`: `1e4cd0aa8e6f0eabd856decfadba21f67d04426c`.
+- `git rev-list --count 4b1abc01a93351f5910ea8af5001782b59a784f7..1e4cd0aa8e6f0eabd856decfadba21f67d04426c`: `1`.
+- `git merge-base --is-ancestor 861c27fdaf6ade2093d481af312d27ff895b8dc0 1e4cd0aa8e6f0eabd856decfadba21f67d04426c`: pass.
+- `git diff-tree --no-commit-id --name-only -r 1e4cd0aa8e6f0eabd856decfadba21f67d04426c`: exactly the five staging files named by the prompt.
+- `git rev-list --left-right --count HEAD...origin/grm-guarded-provisioning-20260727`: `0 0`.
+- `flutter pub get`: pass; dependencies resolved, no dependency changes.
+- `dart format --output=none --set-exit-if-changed lib test`: pass, `Formatted 102 files (0 changed)`.
+- `flutter analyze`: pass, `No issues found!`.
+- `flutter test test/app/markei_visual_foundation_test.dart test/app/lists_page_test.dart`: pass, `All tests passed!`.
+- `flutter test test/app/markei_app_test.dart`: pass, `All tests passed!` with 26 tests.
+- `flutter test`: pass, `All tests passed!` with 245 passing and 4 skipped tests. The suite printed existing local Sync diagnostic/unit-test logs; no preserved client, live provider workflow or manual Sync action was executed by Codex.
+- `flutter build windows --release`: pass; built `build\windows\x64\runner\Release\markei.exe`. CMake emitted existing Boost policy warning.
+- `flutter build apk --debug`: pass; built `build\app\outputs\flutter-apk\app-debug.apk`. Flutter emitted existing Auth0 Kotlin Gradle Plugin future-warning.
+- `git diff --check`: pass; only Git LF-to-CRLF working-copy warnings were printed.
+- `git diff --name-status` plus `git ls-files --others --exclude-standard`: changed paths match D-authorized source/test/report scope.
+
+During validation, one timed-out Flutter widget-test run left Dart/flutter_tester processes holding `build/native_assets/windows/sqlite3.dll`. Codex stopped only those stale validation-tool PIDs before rerunning tests. No preserved client process was launched or terminated.
+
+## Built Artifacts
+
+- Windows Release executable: `clients/markei_flutter/build/windows/x64/runner/Release/markei.exe`
+  - Size: `97792` bytes
+  - SHA-256: `23C0A337594ECC51437FD6F950F1F8BEC04C40DE7737130DFBFB5EF62EAA3523`
+- Android Debug APK: `clients/markei_flutter/build/app/outputs/flutter-apk/app-debug.apk`
+  - Size: `179239697` bytes
+  - SHA-256: `B55E0FB4AAB70F5C08AC2E4826D7930AC79204B5F9B7F1BA45C3AD897F604983`
+
+## Skipped Or Not Performed
+
+- No golden images were added or rebaselined.
+- No Windows or Android human acceptance was performed.
+- No preserved-client installation or launch was performed.
+- No live provider mutation, credential inspection, database repair/reset/cleanup, Enroll, Query, Recovery or human acceptance action was performed.
+
+## Operational Risks
+
+- Visual parity with PNG references remains human-review evidence, not Codex-claimed pixel parity.
+- Full `flutter test` includes existing local Sync test files and diagnostic output because D required the command; this is not promoted to live Sync success.
+- Real Windows Narrator, Android TalkBack, device density and preserved-data acceptance remain human evidence.
