@@ -47,6 +47,8 @@ class AuditStateView extends StatelessWidget {
             action: onRetry,
           ),
         if (page != null) ...[
+          _AuditSummaryCards(page: page),
+          const SizedBox(height: 12),
           _AuditWindowHeader(page: page, onRetry: onRetry),
           const SizedBox(height: 12),
           if (page.records.isEmpty)
@@ -72,6 +74,86 @@ class AuditStateView extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+class _AuditSummaryCards extends StatelessWidget {
+  const _AuditSummaryCards({required this.page});
+
+  final AuditPageResult page;
+
+  @override
+  Widget build(BuildContext context) {
+    final diagnostics = page.records.fold<int>(
+      0,
+      (total, record) => total + record.events.length,
+    );
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        _AuditSummaryCard(
+          key: const Key('audit.card.system'),
+          title: 'System',
+          value:
+              '${page.records.length} local attempt(s), ${page.queryCount} query reads',
+          detail:
+              'Account and environment scoped. No network call or database write is performed by Audit.',
+        ),
+        _AuditSummaryCard(
+          key: const Key('audit.card.readiness'),
+          title: 'Readiness summary',
+          value: page.records.isEmpty
+              ? 'No local activity in this window'
+              : '${page.records.first.outcomeClass} latest outcome',
+          detail: page.isPartialWindow
+              ? 'Bounded local window. Older attempts may exist.'
+              : 'Current bounded local window loaded.',
+        ),
+        _AuditSummaryCard(
+          key: const Key('audit.card.diagnostics'),
+          title: 'Diagnostics',
+          value: '$diagnostics diagnostic event(s)',
+          detail:
+              'Diagnostic text is sanitized registry meaning, not a causal explanation.',
+        ),
+      ],
+    );
+  }
+}
+
+class _AuditSummaryCard extends StatelessWidget {
+  const _AuditSummaryCard({
+    required this.title,
+    required this.value,
+    required this.detail,
+    super.key,
+  });
+
+  final String title;
+  final String value;
+  final String detail;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 260,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 4),
+              Text(value),
+              const SizedBox(height: 4),
+              Text(detail),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

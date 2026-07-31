@@ -46,6 +46,15 @@ class HomePage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: MarkeiSpacing.lg),
+            MarkeiResponsiveGrid(
+              layoutClass: layoutClass,
+              minTileWidth: layoutClass == MarkeiLayoutClass.wide ? 520 : 300,
+              children: [
+                for (final card in homeFollowUpCards)
+                  _HomeInformationCard(descriptor: card),
+              ],
+            ),
+            const SizedBox(height: MarkeiSpacing.lg),
             const MarkeiStatePanel(
               key: Key('home.localFirst'),
               title: 'Local-first workspace',
@@ -66,6 +75,35 @@ class HomePage extends StatelessWidget {
       'history' => MarkeiDestinationId.history,
       _ => MarkeiDestinationId.purchase,
     };
+  }
+}
+
+class _HomeInformationCard extends StatelessWidget {
+  const _HomeInformationCard({required this.descriptor});
+
+  final HomeCardDescriptor descriptor;
+
+  @override
+  Widget build(BuildContext context) {
+    return MarkeiCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.info_outline,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          const SizedBox(height: MarkeiSpacing.sm),
+          Text(descriptor.title, style: MarkeiText.sectionTitle),
+          const SizedBox(height: MarkeiSpacing.xs),
+          Text(descriptor.body),
+          if (descriptor.badge != null) ...[
+            const SizedBox(height: MarkeiSpacing.sm),
+            Text(descriptor.badge!, style: MarkeiText.metadata),
+          ],
+        ],
+      ),
+    );
   }
 }
 

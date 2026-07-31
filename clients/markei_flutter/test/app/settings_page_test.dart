@@ -81,6 +81,10 @@ void main() {
   testWidgets('Settings archive refreshes list and support actions use fakes', (
     tester,
   ) async {
+    tester.view.physicalSize = const Size(1200, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     final references = _MemoryReferences()
       ..people.add(
         LocalReference(
@@ -127,11 +131,7 @@ void main() {
       findsOneWidget,
     );
 
-    await _tapVisible(
-      tester,
-      find.byKey(const Key('settings.advancedSupport')),
-    );
-    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('settings.advancedSupport')), findsOneWidget);
     await _tapVisible(tester, find.byKey(const Key('settings.connectDevice')));
     await tester.pumpAndSettle();
     expect(syncSupport.connectCount, 1);

@@ -5,6 +5,7 @@ import '../application/catalogue_queries.dart';
 import '../application/audit.dart';
 import '../application/analytics_workspace.dart';
 import '../application/closure_diagnostics.dart';
+import '../application/export_destination.dart';
 import '../application/history_export.dart';
 import '../application/hosted_auth_ports.dart';
 import '../application/hosted_enrollment_coordinator.dart';
@@ -30,6 +31,7 @@ import '../infrastructure/local/local_purchase_repository.dart';
 import '../infrastructure/local/local_query_repository.dart';
 import '../infrastructure/local/sync/local_sync_repositories.dart';
 import '../infrastructure/local/sync/remote_purchase_event_applier.dart';
+import '../infrastructure/platform/local_export_destination.dart';
 import '../infrastructure/remote/http_device_enrollment_transport.dart';
 import '../infrastructure/remote/hosted_http_policy.dart';
 import '../infrastructure/remote/http_hosted_connection_check.dart';
@@ -46,6 +48,7 @@ final class MarkeiComposition {
     required this.preferences,
     required this.productLists,
     required this.purchaseExports,
+    ExportDestinationPort? exportDestination,
     AnalyticsWorkspaceController? analyticsWorkspace,
     AuditController? auditController,
     SettingsAccountSupportPort? settingsAccountSupport,
@@ -57,7 +60,8 @@ final class MarkeiComposition {
     ),
     this.nativeClosureRunner = const NativeAuthClosureRunner.unavailable(),
     this.nativeClosureSurfaceEnabled = false,
-  }) : analyticsWorkspace =
+  }) : exportDestination = exportDestination ?? LocalExportDestination(),
+       analyticsWorkspace =
            analyticsWorkspace ??
            AnalyticsWorkspaceController(
              accountId: accountId,
@@ -91,6 +95,7 @@ final class MarkeiComposition {
   final AccountPreferenceRepository preferences;
   final ProductListProjectionRepository productLists;
   final PurchaseExportRepository purchaseExports;
+  final ExportDestinationPort exportDestination;
   final AnalyticsWorkspaceController analyticsWorkspace;
   final AuditController auditController;
   final SettingsAccountSupportPort settingsAccountSupport;

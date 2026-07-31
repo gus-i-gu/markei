@@ -33,7 +33,6 @@ class _SettingsPageState extends State<SettingsPage> {
   final _thresholdController = TextEditingController();
   var _loading = true;
   var _busy = false;
-  var _advanced = false;
   var _generation = 0;
   String? _message;
   String? _thresholdError;
@@ -216,23 +215,29 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
-  Future<void> _refreshLocalStatus() async {
-    if (_busy) return;
-    setState(() => _busy = true);
+  Future<bool> _refreshLocalStatus({bool fromBusyAction = false}) async {
+    if (_busy && !fromBusyAction) return false;
+    if (!fromBusyAction) {
+      setState(() => _busy = true);
+    }
     try {
       final account = await widget.accountSupport.accountStatus();
       final sync = await widget.syncDeviceSupport.localStatus();
-      if (!mounted) return;
+      if (!mounted) return false;
       setState(() {
         _accountStatus = account;
         _syncStatus = sync;
-        _message = 'Local status refreshed.';
+        if (!fromBusyAction) {
+          _message = 'Local status refreshed.';
+        }
       });
+      return true;
     } on Object {
-      if (!mounted) return;
+      if (!mounted) return false;
       setState(() => _message = 'Current Sync status is unavailable.');
+      return false;
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted && !fromBusyAction) setState(() => _busy = false);
     }
   }
 
@@ -244,8 +249,13 @@ class _SettingsPageState extends State<SettingsPage> {
     try {
       final result = await run();
       if (!mounted) return;
-      setState(() => _message = result.message);
-      await _refreshLocalStatus();
+      final refreshed = await _refreshLocalStatus(fromBusyAction: true);
+      if (!mounted) return;
+      setState(
+        () => _message = refreshed
+            ? '${result.message} Local status refreshed.'
+            : result.message,
+      );
     } on Object {
       if (!mounted) return;
       setState(
@@ -272,6 +282,15 @@ class _SettingsPageState extends State<SettingsPage> {
         if (_loading)
           const Text('Loading local settings...', key: Key('settings.loading'))
         else ...[
+          _AccountSection(
+            status: _accountStatus,
+            busy: _busy,
+            onSignIn: () =>
+                _runSupportAction(widget.accountSupport.signInToSync),
+            onSignOut: () =>
+                _runSupportAction(widget.accountSupport.signOutOnThisDevice),
+          ),
+          const Divider(height: 32),
           _PreferencesSection(
             people: _people,
             payments: _payments,
@@ -293,59 +312,19 @@ class _SettingsPageState extends State<SettingsPage> {
             onSaveThreshold: _saveThreshold,
           ),
           const Divider(height: 32),
-          _AccountSection(
-            status: _accountStatus,
-            busy: _busy,
-            onSignIn: () =>
-                _runSupportAction(widget.accountSupport.signInToSync),
-            onSignOut: () =>
-                _runSupportAction(widget.accountSupport.signOutOnThisDevice),
-          ),
-          const Divider(height: 32),
           _SyncDeviceSection(
             status: _syncStatus,
             busy: _busy,
             onRefresh: _refreshLocalStatus,
           ),
           const Divider(height: 32),
-          ExpansionTile(
+          _AdvancedSupportSection(
             key: const Key('settings.advancedSupport'),
-            initiallyExpanded: _advanced,
-            onExpansionChanged: (value) => setState(() => _advanced = value),
-            title: const Text('Advanced support'),
-            subtitle: const Text(
-              'Explicit existing Device and Sync actions with visible results.',
-            ),
-            children: [
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  FilledButton.tonal(
-                    key: const Key('settings.connectDevice'),
-                    onPressed: _busy
-                        ? null
-                        : () => _runSupportAction(
-                            widget.syncDeviceSupport.connectThisDevice,
-                          ),
-                    child: const Text('Connect this Device'),
-                  ),
-                  FilledButton.tonal(
-                    key: const Key('settings.syncNow'),
-                    onPressed: _busy
-                        ? null
-                        : () => _runSupportAction(
-                            widget.syncDeviceSupport.syncNow,
-                          ),
-                    child: const Text('Sync now'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Hosted connection checks, query enrollment, retry, recovery and clear diagnostic history are development-only or absent from product UI.',
-              ),
-            ],
+            busy: _busy,
+            onConnectDevice: () =>
+                _runSupportAction(widget.syncDeviceSupport.connectThisDevice),
+            onSyncNow: () =>
+                _runSupportAction(widget.syncDeviceSupport.syncNow),
           ),
         ],
         if (_message != null) ...[
@@ -567,6 +546,54 @@ class _SyncDeviceSection extends StatelessWidget {
           key: const Key('settings.refreshLocalStatus'),
           onPressed: busy ? null : onRefresh,
           child: const Text('Refresh local status'),
+        ),
+      ],
+    );
+  }
+}
+
+class _AdvancedSupportSection extends StatelessWidget {
+  const _AdvancedSupportSection({
+    required this.busy,
+    required this.onConnectDevice,
+    required this.onSyncNow,
+    super.key,
+  });
+
+  final bool busy;
+  final VoidCallback onConnectDevice;
+  final VoidCallback onSyncNow;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      key: const Key('settings.advancedSupport.content'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Advanced', style: Theme.of(context).textTheme.titleLarge),
+        const Text(
+          'Explicit existing Device and Sync actions with visible results.',
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            FilledButton.tonal(
+              key: const Key('settings.connectDevice'),
+              onPressed: busy ? null : onConnectDevice,
+              child: const Text('Connect this Device'),
+            ),
+            FilledButton.tonal(
+              key: const Key('settings.syncNow'),
+              onPressed: busy ? null : onSyncNow,
+              child: const Text('Sync now'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Hosted connection checks, query enrollment, retry, recovery and clear diagnostic history are development-only or absent from product UI.',
         ),
       ],
     );

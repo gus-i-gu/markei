@@ -2,12 +2,14 @@ final class HomeCardDescriptor {
   const HomeCardDescriptor({
     required this.title,
     required this.body,
-    required this.destinationId,
+    this.destinationId,
+    this.badge,
   });
 
   final String title;
   final String body;
-  final String destinationId;
+  final String? destinationId;
+  final String? badge;
 }
 
 const homeCards = <HomeCardDescriptor>[
@@ -30,5 +32,20 @@ const homeCards = <HomeCardDescriptor>[
     title: 'Open purchase history',
     body: 'Review registered Purchases and the Products recorded in them.',
     destinationId: 'history',
+  ),
+];
+
+const homeFollowUpCards = <HomeCardDescriptor>[
+  HomeCardDescriptor(
+    title: 'News',
+    body:
+        'Local beta work is focused on reliable purchase registration, evidence review and explicit export from this device.',
+    badge: 'Local information',
+  ),
+  HomeCardDescriptor(
+    title: 'Updates follow-up',
+    body:
+        'Next review gates cover human UI checks, accessibility review and platform export behavior that cannot be proven by automated tests alone.',
+    badge: 'Follow-up',
   ),
 ];

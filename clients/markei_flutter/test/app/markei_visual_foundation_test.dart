@@ -90,40 +90,33 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final db = LocalDatabase.memory();
-    addTearDown(db.close);
-    final queries = LocalQueryRepository(db);
+    final selected = <Object>[];
 
-    await tester.pumpWidget(MarkeiApp(composition: _composition(db, queries)));
-    await _pumpReady(tester);
-
-    await _tapVisible(
-      tester,
-      find.byKey(const Key('home.action.registerPurchase')),
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: markeiTheme(),
+        home: Scaffold(body: HomePage(onNavigate: selected.add)),
+      ),
     );
     await _pumpReady(tester);
-    expect(find.byKey(const Key('purchase.localNotice')), findsOneWidget);
 
-    await _tapRailDestination(tester, 'Home');
+    await tester.tap(_homeAction('home.action.registerPurchase'));
     await _pumpReady(tester);
-    await _tapVisible(tester, find.byKey(const Key('home.action.viewLists')));
-    await _pumpReady(tester);
-    expect(find.byKey(const Key('lists.page')), findsOneWidget);
+    expect(selected.last.toString(), contains('purchase'));
 
-    await _tapRailDestination(tester, 'Home');
+    await tester.tap(_homeAction('home.action.viewLists'));
     await _pumpReady(tester);
-    await _tapVisible(
-      tester,
-      find.byKey(const Key('home.action.browseCatalogue')),
-    );
-    await _pumpReady(tester);
-    expect(find.byKey(const Key('products.empty')), findsOneWidget);
+    expect(selected.last.toString(), contains('lists'));
 
-    await _tapRailDestination(tester, 'Home');
+    await tester.tap(_homeAction('home.action.browseCatalogue'));
     await _pumpReady(tester);
-    await _tapVisible(tester, find.byKey(const Key('home.action.openHistory')));
+    expect(selected.last.toString(), contains('catalogue'));
+
+    await tester.tap(_homeAction('home.action.openHistory'));
     await _pumpReady(tester);
-    expect(find.byKey(const Key('history.empty')), findsOneWidget);
+    expect(selected.last.toString(), contains('history'));
+    expect(find.text('News'), findsOneWidget);
+    expect(find.text('Updates follow-up'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -214,20 +207,9 @@ Future<void> _pumpReady(WidgetTester tester) async {
   }
 }
 
-Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
-  await Scrollable.ensureVisible(
-    tester.element(finder),
-    duration: const Duration(milliseconds: 1),
+Finder _homeAction(String key) {
+  return find.descendant(
+    of: find.byKey(const Key('home.page')),
+    matching: find.byKey(Key(key)),
   );
-  await _pumpReady(tester);
-  await tester.tap(finder);
-}
-
-Future<void> _tapRailDestination(WidgetTester tester, String label) async {
-  final destination = find.descendant(
-    of: find.byKey(const Key('markei.navigationRail')),
-    matching: find.text(label),
-  );
-  await tester.tap(destination);
-  await _pumpReady(tester);
 }

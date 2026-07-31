@@ -1,9 +1,10 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
 import '../../application/analytics.dart';
 import '../../application/analytics_workspace.dart';
+import '../../application/export_destination.dart';
 import '../../domain/analytics/analytics_models.dart';
 import '../../domain/shared/ids.dart';
 import '../design/markei_theme.dart';
@@ -14,12 +15,14 @@ class AnalyticsPage extends StatefulWidget {
   const AnalyticsPage({
     required this.controller,
     required this.launchContext,
+    required this.exportDestination,
     required this.visible,
     super.key,
   });
 
   final AnalyticsWorkspaceController controller;
   final AnalyticsLaunchContext? launchContext;
+  final ExportDestinationPort exportDestination;
   final bool visible;
 
   @override
@@ -30,7 +33,6 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   late Future<AnalyticsWorkspaceSnapshot> _loadFuture;
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _composerKey = GlobalKey();
-  int explicitExportFileWrites = 0;
 
   @override
   void initState() {
@@ -223,18 +225,18 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           rows: widget.controller.snapshot.rows,
         ),
       );
-      final file = File(
-        '${Directory.systemTemp.path}/markei-analytics-${record.fingerprint.toLowerCase()}.csv',
+      final result = await widget.exportDestination.write(
+        ExportDestinationRequest(
+          baseNameCue: 'markei-analytics-${record.fingerprint.toLowerCase()}',
+          extension: 'csv',
+          mediaType: 'text/csv',
+          bytes: utf8.encode(csv),
+        ),
       );
-      await file.writeAsString(csv);
-      explicitExportFileWrites++;
-      setState(() {
-        widget.controller.updateDraft(widget.controller.snapshot.draft);
-      });
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Exported CSV to ${file.path}')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(exportDestinationMessage('CSV', result))),
+        );
       }
     } on Object {
       if (mounted) {
@@ -251,15 +253,18 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     final record = widget.controller.snapshot.selectedRecord;
     if (record == null) return;
     try {
-      final file = File(
-        '${Directory.systemTemp.path}/markei-analytics-${record.fingerprint.toLowerCase()}.pdf',
+      final result = await widget.exportDestination.write(
+        ExportDestinationRequest(
+          baseNameCue: 'markei-analytics-${record.fingerprint.toLowerCase()}',
+          extension: 'pdf',
+          mediaType: 'application/pdf',
+          bytes: analyticsRecordPdfBytes(record),
+        ),
       );
-      await file.writeAsBytes(analyticsRecordPdfBytes(record));
-      explicitExportFileWrites++;
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Exported PDF to ${file.path}')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(exportDestinationMessage('PDF', result))),
+        );
       }
     } on Object {
       if (mounted) {

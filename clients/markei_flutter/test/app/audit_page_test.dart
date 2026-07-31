@@ -43,6 +43,8 @@ void main() {
     expect(find.textContaining('Older records may exist'), findsOneWidget);
     expect(find.textContaining('not a cause'), findsOneWidget);
 
+    await tester.ensureVisible(find.byKey(const Key('audit.retry')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('audit.retry')));
     await tester.pumpAndSettle();
     expect(repository.requests, hasLength(2));

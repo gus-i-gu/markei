@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:markei/application/app_failure.dart';
 import 'package:markei/application/catalogue_queries.dart';
+import 'package:markei/application/export_destination.dart';
 import 'package:markei/application/history_export.dart';
 import 'package:markei/application/local_references.dart';
 import 'package:markei/application/purchase_history.dart';
@@ -576,6 +577,7 @@ void main() {
           accountId: const AccountId('11111111-1111-4111-8111-111111111111'),
           history: _FailingThenEmptyHistory(),
           exports: _EmptyExportRepository(),
+          exportDestination: _FakeExportDestination(),
           refreshSignal: 0,
         ),
       ),
@@ -1273,6 +1275,20 @@ final class _EmptyExportRepository implements PurchaseExportRepository {
     Set<PurchaseId> purchaseIds,
   ) async {
     return const PurchaseExportBundle(purchases: []);
+  }
+}
+
+final class _FakeExportDestination implements ExportDestinationPort {
+  @override
+  Future<ExportDestinationResult> write(
+    ExportDestinationRequest request,
+  ) async {
+    return ExportDestinationSuccess(
+      destinationLabel: 'Downloads',
+      path:
+          'C:\\Users\\tester\\Downloads\\${request.baseNameCue}.${request.extension}',
+      bytesWritten: request.bytes.length,
+    );
   }
 }
 

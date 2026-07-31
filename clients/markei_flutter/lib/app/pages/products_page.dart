@@ -40,7 +40,6 @@ class _ProductsPageState extends State<ProductsPage> {
   bool _loading = true;
   bool _bulk = false;
   _ProductSort _sort = _ProductSort.az;
-  Product? _selectedProduct;
   Product? _selectedDetail;
   String? _message;
   bool _messageIsError = false;
@@ -278,32 +277,9 @@ class _ProductsPageState extends State<ProductsPage> {
                 icon: Icons.search_off,
               )
             else if (wide)
-              _ProductTable(
-                products: visible,
-                selectedProduct: _selectedProduct,
-                onSelect: (product) =>
-                    setState(() => _selectedProduct = product),
-                onDetail: _showProductDetail,
-              )
+              _ProductTable(products: visible, onDetail: _showProductDetail)
             else
-              _ProductCards(
-                products: visible,
-                selectedProduct: _selectedProduct,
-                onSelect: (product) =>
-                    setState(() => _selectedProduct = product),
-                onDetail: _showProductDetail,
-              ),
-            if (_selectedProduct != null) ...[
-              const SizedBox(height: MarkeiSpacing.md),
-              MarkeiActionBand(
-                leading: Text(
-                  'Selected ${_selectedProduct!.userProductCode.displayValue} · ${_selectedProduct!.displayName}',
-                  key: const Key('products.selected'),
-                  style: MarkeiText.label,
-                ),
-                children: const [],
-              ),
-            ],
+              _ProductCards(products: visible, onDetail: _showProductDetail),
             if (_selectedDetail != null) ...[
               const SizedBox(height: MarkeiSpacing.md),
               _ProductDetail(product: _selectedDetail!),
@@ -527,26 +503,16 @@ class _ProductsPageState extends State<ProductsPage> {
   }
 
   void _showProductDetail(Product product) {
-    setState(() {
-      _selectedProduct = product;
-      _selectedDetail = product;
-    });
+    setState(() => _selectedDetail = product);
   }
 }
 
 enum _ProductSort { az, za }
 
 class _ProductTable extends StatelessWidget {
-  const _ProductTable({
-    required this.products,
-    required this.selectedProduct,
-    required this.onSelect,
-    required this.onDetail,
-  });
+  const _ProductTable({required this.products, required this.onDetail});
 
   final List<Product> products;
-  final Product? selectedProduct;
-  final ValueChanged<Product> onSelect;
   final ValueChanged<Product> onDetail;
 
   @override
@@ -568,12 +534,14 @@ class _ProductTable extends StatelessWidget {
             for (final product in products)
               DataRow(
                 key: ValueKey('products.row.${product.id.value}'),
-                selected: selectedProduct?.id.value == product.id.value,
-                onSelectChanged: (_) => onSelect(product),
                 cells: [
-                  DataCell(Text(product.userProductCode.displayValue)),
+                  DataCell(
+                    Text(product.userProductCode.displayValue),
+                    onTap: () => onDetail(product),
+                  ),
                   DataCell(
                     Text('${product.displayName}\n${product.displayBrand}'),
+                    onTap: () => onDetail(product),
                   ),
                   DataCell(Text(_modeLabel(product))),
                   DataCell(Text(_packageLabel(product))),
@@ -595,16 +563,9 @@ class _ProductTable extends StatelessWidget {
 }
 
 class _ProductCards extends StatelessWidget {
-  const _ProductCards({
-    required this.products,
-    required this.selectedProduct,
-    required this.onSelect,
-    required this.onDetail,
-  });
+  const _ProductCards({required this.products, required this.onDetail});
 
   final List<Product> products;
-  final Product? selectedProduct;
-  final ValueChanged<Product> onSelect;
   final ValueChanged<Product> onDetail;
 
   @override
@@ -614,12 +575,8 @@ class _ProductCards extends StatelessWidget {
         for (final product in products) ...[
           MarkeiCard(
             key: Key('products.product.${product.id.value}'),
-            borderColor: selectedProduct?.id.value == product.id.value
-                ? MarkeiColors.green
-                : null,
             child: InkWell(
-              onTap: () => onSelect(product),
-              onLongPress: () => onDetail(product),
+              onTap: () => onDetail(product),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

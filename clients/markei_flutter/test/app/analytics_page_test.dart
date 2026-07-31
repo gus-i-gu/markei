@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:markei/application/export_destination.dart';
 import 'package:markei/app/pages/analytics_page.dart';
 import 'package:markei/application/analytics.dart';
 import 'package:markei/application/analytics_workspace.dart';
@@ -31,6 +30,7 @@ void main() {
             body: AnalyticsPage(
               controller: controller,
               launchContext: null,
+              exportDestination: exportDestination,
               visible: true,
             ),
           ),
@@ -61,20 +61,14 @@ void main() {
       expect(find.byKey(const Key('analytics.result')), findsOneWidget);
       expect(find.byKey(const Key('analytics.export.csv')), findsOneWidget);
       expect(find.byKey(const Key('analytics.export.pdf')), findsOneWidget);
-      final fingerprint = controller.snapshot.selectedRecord!.fingerprint
-          .toLowerCase();
-      final csvFile = File(
-        '${Directory.systemTemp.path}/markei-analytics-$fingerprint.csv',
-      );
-      final pdfFile = File(
-        '${Directory.systemTemp.path}/markei-analytics-$fingerprint.pdf',
-      );
       await tester.tap(find.byKey(const Key('analytics.export.csv')));
       await tester.pump(const Duration(milliseconds: 100));
-      expect(csvFile.existsSync(), isTrue);
+      expect(exportDestination.writeCount, 1);
+      expect(exportDestination.requests.single.extension, 'csv');
       await tester.tap(find.byKey(const Key('analytics.export.pdf')));
       await tester.pump(const Duration(milliseconds: 100));
-      expect(pdfFile.existsSync(), isTrue);
+      expect(exportDestination.writeCount, 2);
+      expect(exportDestination.requests.last.extension, 'pdf');
       await tester.drag(
         find.byKey(const Key('analytics.page')),
         const Offset(0, -900),
@@ -85,6 +79,27 @@ void main() {
       expect(find.byTooltip('Move card earlier'), findsNothing);
     },
   );
+}
+
+final exportDestination = _FakeExportDestination();
+
+final class _FakeExportDestination implements ExportDestinationPort {
+  final requests = <ExportDestinationRequest>[];
+
+  int get writeCount => requests.length;
+
+  @override
+  Future<ExportDestinationResult> write(
+    ExportDestinationRequest request,
+  ) async {
+    requests.add(request);
+    return ExportDestinationSuccess(
+      destinationLabel: 'Downloads',
+      path:
+          'C:\\Users\\tester\\Downloads\\${request.baseNameCue}.${request.extension}',
+      bytesWritten: request.bytes.length,
+    );
+  }
 }
 
 final class _Repository implements AnalyticsEvidenceRepository {

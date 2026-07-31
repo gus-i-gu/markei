@@ -1162,9 +1162,9 @@ final class AnalyticsWorkspaceController {
         .toSet();
     final stale = requested.length - matched.length;
     final base =
-        'Using ${matched.length} purchases from History. Analytics will calculate from their local evidence.';
+        'History scope received: requested ${requested.length}, matched ${matched.length}, unavailable $stale Purchase(s). Use in Analytics prepared the scope only; no analysis was calculated or saved.';
     if (stale <= 0) return base;
-    return '$base $stale transferred purchases were unavailable for this Account and were not used.';
+    return '$base Unavailable Purchases were not used because they are stale or outside this Account.';
   }
 
   AnalyticsResultPresentation _defaultPresentation(AnalyticsRecord record) {

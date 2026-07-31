@@ -9,6 +9,7 @@ import 'navigation/markei_destination.dart';
 import 'pages/home_page.dart';
 import 'pages/analytics_page.dart';
 import 'pages/audit_page.dart';
+import 'pages/guide_page.dart';
 import 'pages/history_page.dart';
 import 'pages/lists_page.dart';
 import 'pages/products_page.dart';
@@ -156,12 +157,14 @@ class _MarkeiAppState extends State<MarkeiApp> {
       accountId: widget.composition.accountId,
       history: widget.composition.purchaseHistory,
       exports: widget.composition.purchaseExports,
+      exportDestination: widget.composition.exportDestination,
       refreshSignal: _refreshSignal,
       onAnalyzeSelected: _openAnalyticsForPurchases,
     ),
     MarkeiDestinationId.analytics: AnalyticsPage(
       controller: widget.composition.analyticsWorkspace,
       launchContext: _analyticsLaunchContext,
+      exportDestination: widget.composition.exportDestination,
       visible: _visibleSelectedId == MarkeiDestinationId.analytics,
     ),
     MarkeiDestinationId.household: const _ReservedPage(
@@ -170,11 +173,7 @@ class _MarkeiAppState extends State<MarkeiApp> {
       body: 'Household tools are planned and secondary during this phase.',
       icon: Icons.groups_outlined,
     ),
-    MarkeiDestinationId.guide: const _StaticPage(
-      title: 'Guide',
-      body:
-          'Register purchases locally, then use Catalogue, History and Lists to inspect Products and estimates.',
-    ),
+    MarkeiDestinationId.guide: const GuidePage(),
     MarkeiDestinationId.documentation: const _StaticPage(
       title: 'Documentation',
       body:

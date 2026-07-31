@@ -703,7 +703,7 @@ class _PurchasePageState extends State<PurchasePage> {
 
   Widget _referenceSection() {
     return MarkeiSection(
-      title: 'Optional local labels',
+      title: 'Optional purchase details',
       subtitle: 'Person and payment references are presentation context only.',
       child: MarkeiControlBand(
         children: [

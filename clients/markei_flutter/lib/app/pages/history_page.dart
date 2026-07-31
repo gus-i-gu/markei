@@ -1,7 +1,8 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
+import '../../application/export_destination.dart';
 import '../../application/history_export.dart';
 import '../../application/purchase_history.dart';
 import '../../domain/shared/ids.dart';
@@ -13,6 +14,7 @@ class HistoryPage extends StatefulWidget {
     required this.accountId,
     required this.history,
     required this.exports,
+    required this.exportDestination,
     required this.refreshSignal,
     this.onAnalyzeSelected,
     super.key,
@@ -21,6 +23,7 @@ class HistoryPage extends StatefulWidget {
   final AccountId accountId;
   final PurchaseHistoryRepository history;
   final PurchaseExportRepository exports;
+  final ExportDestinationPort exportDestination;
   final int refreshSignal;
   final ValueChanged<Set<PurchaseId>>? onAnalyzeSelected;
 
@@ -38,6 +41,7 @@ class _HistoryPageState extends State<HistoryPage> {
   String _storeFilter = _allFilter;
   String _personFilter = _allFilter;
   String _paymentFilter = _allFilter;
+  bool _exportInProgress = false;
 
   static const _allFilter = 'All';
 
@@ -172,8 +176,16 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  Future<List<PurchaseHistoryEntry>> _loadHistory() {
-    return widget.history.listRecentPurchases(widget.accountId);
+  Future<List<PurchaseHistoryEntry>> _loadHistory() async {
+    final entries = await widget.history.listRecentPurchases(widget.accountId);
+    if (mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() => _reconcileSelection(entries));
+        }
+      });
+    }
+    return entries;
   }
 
   void _retryHistoryRead() {
@@ -194,14 +206,14 @@ class _HistoryPageState extends State<HistoryPage> {
             label: 'Store',
             value: _storeFilter,
             values: _filterValues(entries.map((entry) => entry.storeName)),
-            onChanged: (value) => setState(() => _storeFilter = value),
+            onChanged: (value) => _updateFilters(entries, store: value),
           ),
           _filterDropdown(
             key: const Key('history.filter.person'),
             label: 'Person',
             value: _personFilter,
             values: _filterValues(entries.map((entry) => entry.personLabel)),
-            onChanged: (value) => setState(() => _personFilter = value),
+            onChanged: (value) => _updateFilters(entries, person: value),
           ),
           _filterDropdown(
             key: const Key('history.filter.payment'),
@@ -210,15 +222,16 @@ class _HistoryPageState extends State<HistoryPage> {
             values: _filterValues(
               entries.map((entry) => entry.paymentMethodLabel),
             ),
-            onChanged: (value) => setState(() => _paymentFilter = value),
+            onChanged: (value) => _updateFilters(entries, payment: value),
           ),
           OutlinedButton(
             key: const Key('history.filters.clear'),
-            onPressed: () => setState(() {
-              _storeFilter = _allFilter;
-              _personFilter = _allFilter;
-              _paymentFilter = _allFilter;
-            }),
+            onPressed: () => _updateFilters(
+              entries,
+              store: _allFilter,
+              person: _allFilter,
+              payment: _allFilter,
+            ),
             child: const Text('Clear filters'),
           ),
         ],
@@ -288,50 +301,94 @@ class _HistoryPageState extends State<HistoryPage> {
           (entry) =>
               _selectedIds.any((id) => id.value == entry.purchaseId.value),
         );
-    return MarkeiActionBand(
-      leading: Text('${_selectedIds.length} selected', style: MarkeiText.label),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FilledButton.tonal(
-          key: const Key('history.analyzeSelected'),
-          onPressed: _selectedIds.isEmpty || widget.onAnalyzeSelected == null
-              ? null
-              : () => widget.onAnalyzeSelected!(Set.unmodifiable(_selectedIds)),
-          child: const Text('Analyze selected purchases'),
+        MarkeiActionBand(
+          leading: Text(
+            '${_selectedIds.length} selected for action',
+            style: MarkeiText.label,
+          ),
+          children: [
+            FilledButton.tonal(
+              key: const Key('history.analyzeSelected'),
+              onPressed:
+                  _selectedIds.isEmpty || widget.onAnalyzeSelected == null
+                  ? null
+                  : () => widget.onAnalyzeSelected!(
+                      Set.unmodifiable(_selectedIds),
+                    ),
+              child: const Text('Use in Analytics'),
+            ),
+            FilledButton.tonal(
+              key: const Key('history.exportCsv'),
+              onPressed: _selectedIds.isEmpty || _exportInProgress
+                  ? null
+                  : () => _exportSelected(format: 'CSV'),
+              child: const Text('Export CSV'),
+            ),
+            FilledButton.tonal(
+              key: const Key('history.exportPdf'),
+              onPressed: _selectedIds.isEmpty || _exportInProgress
+                  ? null
+                  : () => _exportSelected(format: 'PDF'),
+              child: const Text('Export PDF'),
+            ),
+            TextButton(
+              key: const Key('history.selectAll'),
+              onPressed: allVisibleSelected
+                  ? null
+                  : () => setState(() {
+                      _selectedIds
+                        ..clear()
+                        ..addAll(
+                          visibleEntries.map((entry) => entry.purchaseId),
+                        );
+                    }),
+              child: const Text('Select all shown'),
+            ),
+            TextButton(
+              key: const Key('history.clearSelection'),
+              onPressed: _selectedIds.isEmpty
+                  ? null
+                  : () => setState(_selectedIds.clear),
+              child: const Text('Clear selection'),
+            ),
+          ],
         ),
-        FilledButton.tonal(
-          key: const Key('history.exportCsv'),
-          onPressed: _selectedIds.isEmpty
-              ? null
-              : () => _exportCsv(_selectedIds),
-          child: const Text('Export CSV'),
-        ),
-        FilledButton.tonal(
-          key: const Key('history.sharePdf'),
-          onPressed: _selectedIds.isEmpty
-              ? null
-              : () => _sharePdf(_selectedIds),
-          child: const Text('Share list (PDF)'),
-        ),
-        TextButton(
-          key: const Key('history.selectAll'),
-          onPressed: allVisibleSelected
-              ? null
-              : () => setState(() {
-                  _selectedIds
-                    ..clear()
-                    ..addAll(visibleEntries.map((entry) => entry.purchaseId));
-                }),
-          child: const Text('Select all'),
-        ),
-        TextButton(
-          key: const Key('history.clearSelection'),
-          onPressed: _selectedIds.isEmpty
-              ? null
-              : () => setState(_selectedIds.clear),
-          child: const Text('Clear'),
-        ),
+        if (_selectedIds.isEmpty) ...[
+          const SizedBox(height: MarkeiSpacing.xs),
+          const Text(
+            'Select at least one shown Purchase to export or use in Analytics.',
+            key: Key('history.action.reason'),
+          ),
+        ],
       ],
     );
+  }
+
+  void _updateFilters(
+    List<PurchaseHistoryEntry> entries, {
+    String? store,
+    String? person,
+    String? payment,
+  }) {
+    setState(() {
+      if (store != null) _storeFilter = store;
+      if (person != null) _personFilter = person;
+      if (payment != null) _paymentFilter = payment;
+      _reconcileSelection(_filteredEntries(entries));
+    });
+  }
+
+  void _reconcileSelection(List<PurchaseHistoryEntry> entries) {
+    final loadedIds = {for (final entry in entries) entry.purchaseId.value};
+    _selectedIds.removeWhere((id) => !loadedIds.contains(id.value));
+    if (_selectedPurchaseId case final selected?) {
+      if (!loadedIds.contains(selected.value)) {
+        _selectedPurchaseId = null;
+      }
+    }
   }
 
   void _toggleSelection(PurchaseId purchaseId) {
@@ -351,22 +408,43 @@ class _HistoryPageState extends State<HistoryPage> {
     setState(() => _selectedPurchaseId = purchaseId);
   }
 
-  Future<void> _exportCsv(Set<PurchaseId> ids) async {
-    final bundle = await widget.exports.exportBundle(widget.accountId, ids);
-    final csv = purchaseBundleCsv(bundle);
-    final file = File(
-      '${Directory.systemTemp.path}/markei-selected-purchases.csv',
-    );
-    await file.writeAsString(csv);
-    setState(() => _message = 'CSV saved to ${file.path}.');
-  }
-
-  Future<void> _sharePdf(Set<PurchaseId> ids) async {
-    final bundle = await widget.exports.exportBundle(widget.accountId, ids);
-    final bytes = purchaseBundlePdfBytes(bundle);
-    final file = File('${Directory.systemTemp.path}/markei-selected-list.pdf');
-    await file.writeAsBytes(bytes);
-    setState(() => _message = 'PDF saved to ${file.path}. Share it manually.');
+  Future<void> _exportSelected({required String format}) async {
+    if (_exportInProgress) {
+      setState(() => _message = 'Another export is already in progress.');
+      return;
+    }
+    final ids = Set<PurchaseId>.unmodifiable(_selectedIds);
+    if (ids.isEmpty) {
+      setState(() => _message = 'Select at least one Purchase before export.');
+      return;
+    }
+    setState(() {
+      _exportInProgress = true;
+      _message = 'Preparing $format export from selected Purchases...';
+    });
+    try {
+      final bundle = await widget.exports.exportBundle(widget.accountId, ids);
+      final result = await widget.exportDestination.write(
+        ExportDestinationRequest(
+          baseNameCue: 'markei-selected-purchases',
+          extension: format.toLowerCase(),
+          mediaType: format == 'CSV' ? 'text/csv' : 'application/pdf',
+          bytes: format == 'CSV'
+              ? utf8.encode(purchaseBundleCsv(bundle))
+              : purchaseBundlePdfBytes(bundle),
+        ),
+      );
+      if (!mounted) return;
+      setState(() => _message = exportDestinationMessage(format, result));
+    } on Object {
+      if (!mounted) return;
+      setState(
+        () => _message =
+            'The export could not be completed. No completed file is available.',
+      );
+    } finally {
+      if (mounted) setState(() => _exportInProgress = false);
+    }
   }
 }
 
@@ -404,17 +482,26 @@ class _HistoryRows extends StatelessWidget {
             for (final entry in entries)
               DataRow(
                 key: ValueKey('history.row.${entry.purchaseId.value}'),
-                selected: _containsPurchase(selectedIds, entry.purchaseId),
-                onSelectChanged: (_) => onOpen(entry.purchaseId),
                 cells: [
                   DataCell(
-                    Checkbox(
-                      value: _containsPurchase(selectedIds, entry.purchaseId),
-                      onChanged: (_) => onToggle(entry.purchaseId),
+                    Semantics(
+                      label:
+                          '${_containsPurchase(selectedIds, entry.purchaseId) ? 'Deselect' : 'Select'} Purchase ${entry.purchaseId.value} for action',
+                      child: Checkbox(
+                        key: Key('history.select.${entry.purchaseId.value}'),
+                        value: _containsPurchase(selectedIds, entry.purchaseId),
+                        onChanged: (_) => onToggle(entry.purchaseId),
+                      ),
                     ),
                   ),
-                  DataCell(Text(entry.storeName)),
-                  DataCell(Text(_formatOccurrence(entry.occurrenceTime))),
+                  DataCell(
+                    Text(entry.storeName),
+                    onTap: () => onOpen(entry.purchaseId),
+                  ),
+                  DataCell(
+                    Text(_formatOccurrence(entry.occurrenceTime)),
+                    onTap: () => onOpen(entry.purchaseId),
+                  ),
                   DataCell(Text('${entry.itemCount} Purchase Item(s)')),
                   DataCell(Text(_formatMoney(entry))),
                   DataCell(

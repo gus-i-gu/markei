@@ -23,10 +23,12 @@ class LocalQueryRepository
         AccountPreferenceRepository,
         ProductListProjectionRepository,
         PurchaseExportRepository {
-  LocalQueryRepository(this._db, {Uuid? uuid}) : _uuid = uuid ?? const Uuid();
+  LocalQueryRepository(this._db, {Uuid? uuid, this.onExportRead})
+    : _uuid = uuid ?? const Uuid();
 
   final LocalDatabase _db;
   final Uuid _uuid;
+  final void Function()? onExportRead;
 
   @override
   Future<List<domain.Product>> listProducts(AccountId accountId) async {
@@ -410,17 +412,123 @@ class LocalQueryRepository
     AccountId accountId,
     Set<PurchaseId> purchaseIds,
   ) async {
-    final details = <PurchaseDetail>[];
-    for (final purchaseId in purchaseIds) {
-      final detail = await getPurchaseDetail(accountId, purchaseId);
-      if (detail != null) {
-        details.add(detail);
-      }
+    if (purchaseIds.isEmpty) {
+      return const PurchaseExportBundle(purchases: []);
     }
+    final requestedIds = purchaseIds.map((id) => id.value).toSet();
+    final purchaseQuery =
+        _db.select(_db.purchases).join([
+            innerJoin(
+              _db.stores,
+              _db.stores.id.equalsExp(_db.purchases.storeId),
+            ),
+            leftOuterJoin(
+              _db.people,
+              _db.people.id.equalsExp(_db.purchases.personId),
+            ),
+            leftOuterJoin(
+              _db.paymentMethods,
+              _db.paymentMethods.id.equalsExp(_db.purchases.paymentMethodId),
+            ),
+          ])
+          ..where(
+            _db.purchases.accountId.equals(accountId.value) &
+                _db.purchases.id.isIn(requestedIds),
+          )
+          ..orderBy([
+            OrderingTerm.asc(_db.purchases.occurrenceTime),
+            OrderingTerm.asc(_db.purchases.id),
+          ]);
+    onExportRead?.call();
+    final purchaseRows = await purchaseQuery.get();
+    final actualIds = purchaseRows
+        .map((row) => row.readTable(_db.purchases).id)
+        .toSet();
+    if (actualIds.isEmpty) {
+      onExportRead?.call();
+      await (_db.select(
+        _db.purchaseItems,
+      )..where((table) => table.purchaseId.equals('__none__'))).get();
+      return const PurchaseExportBundle(purchases: []);
+    }
+    final itemQuery =
+        _db.select(_db.purchaseItems).join([
+            innerJoin(
+              _db.products,
+              _db.products.id.equalsExp(_db.purchaseItems.productId),
+            ),
+          ])
+          ..where(_db.purchaseItems.purchaseId.isIn(actualIds))
+          ..orderBy([
+            OrderingTerm.asc(_db.purchaseItems.purchaseId),
+            OrderingTerm.asc(_db.products.displayName),
+            OrderingTerm.asc(_db.purchaseItems.id),
+          ]);
+    onExportRead?.call();
+    final itemRows = await itemQuery.get();
+    final itemsByPurchase = <String, List<PurchaseDetailItem>>{};
+    for (final row in itemRows) {
+      final item = row.readTable(_db.purchaseItems);
+      final product = row.readTable(_db.products);
+      itemsByPurchase
+          .putIfAbsent(item.purchaseId, () => [])
+          .add(
+            PurchaseDetailItem(
+              productId: ProductId(product.id),
+              productName: product.displayName ?? product.normalizedName,
+              productBrand: product.displayBrand ?? product.normalizedBrand,
+              productCode: product.userProductCode,
+              packageCount: item.packageCount,
+              measurementKind: item.measurementKind,
+              purchasedAmount: item.purchasedAmount,
+              purchasedUnit: item.purchasedUnit,
+              currencyCode: item.currencyCode,
+              lineTotalMinorUnits: item.lineTotalMinorUnits,
+            ),
+          );
+    }
+    final details = [
+      for (final row in purchaseRows)
+        _purchaseDetailFromJoinedRow(
+          row,
+          itemsByPurchase[row.readTable(_db.purchases).id] ?? const [],
+        ),
+    ];
     details.sort(
       (a, b) => a.entry.occurrenceTime.compareTo(b.entry.occurrenceTime),
     );
     return PurchaseExportBundle(purchases: details);
+  }
+
+  PurchaseDetail _purchaseDetailFromJoinedRow(
+    TypedResult row,
+    List<PurchaseDetailItem> items,
+  ) {
+    final purchase = row.readTable(_db.purchases);
+    final store = row.readTable(_db.stores);
+    final person = row.readTableOrNull(_db.people);
+    final paymentMethod = row.readTableOrNull(_db.paymentMethods);
+    return PurchaseDetail(
+      entry: PurchaseHistoryEntry(
+        purchaseId: PurchaseId(purchase.id),
+        storeName: store.displayName,
+        occurrenceTime: purchase.occurrenceTime,
+        currencyCode: purchase.currencyCode,
+        totalMinorUnits: purchase.totalMinorUnits,
+        itemCount: items.length,
+        personLabel: _referenceLabel(
+          person?.visibleCode,
+          person?.nickname,
+          person?.active,
+        ),
+        paymentMethodLabel: _referenceLabel(
+          paymentMethod?.visibleCode,
+          paymentMethod?.nickname,
+          paymentMethod?.active,
+        ),
+      ),
+      items: items,
+    );
   }
 
   @override
