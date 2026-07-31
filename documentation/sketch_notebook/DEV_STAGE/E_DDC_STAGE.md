@@ -101,7 +101,7 @@ append. PH03 vocabulary, KANBAN maturity, human-evidence limits and every
 provider/Sync boundary remain unchanged.
 
 The preliminary five-page source now exists at
-`2e59f35b9aad4ee10a2d1831902c80d904c5b066`; do not repeat the earlier A/B/C
+`2e59f35dd7b45902f707fcf33c73024e868787de`; do not repeat the earlier A/B/C
 claim that S02 is absent. Codex must report correction evidence separately
 from the preliminary implementation and must not convert automated or build
 evidence into human acceptance.

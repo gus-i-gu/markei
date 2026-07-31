@@ -131,7 +131,7 @@ repository-free shared presentation components.
 
 The former PH02 exclusion is superseded only for the architecture below. The
 preliminary five-page implementation at
-`2e59f35b9aad4ee10a2d1831902c80d904c5b066` is the remote baseline; Codex must
+`2e59f35dd7b45902f707fcf33c73024e868787de` is the remote baseline; Codex must
 correct it rather than reconstruct it from an old worktree.
 
 No PH01 redesign, PH03 structure, schema, migration, dependency, generated

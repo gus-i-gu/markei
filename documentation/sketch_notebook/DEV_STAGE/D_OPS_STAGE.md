@@ -250,7 +250,7 @@ Retained unchanged:
 
 Corrected by current repository truth:
 
-- `2e59f35b9aad4ee10a2d1831902c80d904c5b066` now contains the preliminary
+- `2e59f35dd7b45902f707fcf33c73024e868787de` now contains the preliminary
   five-page PH01 source/test/G/H/I materialization and is an ancestor of
   `510ecf3a768a110528f6c69c7f66251fbb095f89`;
 - the preliminary S02 baseline is therefore remote source at the combined
@@ -292,9 +292,9 @@ Before mutation:
 3. require that activation commit to have direct parent
    `510ecf3a768a110528f6c69c7f66251fbb095f89`;
 4. require the activation commit to change only D/E/F;
-5. verify `2e59f35b9aad4ee10a2d1831902c80d904c5b066`,
+5. verify `2e59f35dd7b45902f707fcf33c73024e868787de`,
    `f6c1ae653bc50449f1308de72516c4bda3e39ebc`,
-   `7056ed21c0fc2fdc6d25e87d113995a8f88e67fb`,
+   `7056ed2670ec21181da1fef3bb84c196f3577049`,
    `ca380632f5714ce4007d694a954568c3a57828cd` and
    `3801c8b6023bfe56c4c4c677e980b75405a7c132` are ancestors;
 6. report the resolved PH02 Operational commit SHA;
@@ -552,7 +552,7 @@ Do not open a pull request or create another branch.
 CYCLE=C11
 ROUND=C11-PH01-S02-R01+C11-PH02
 STARTING_HEAD=<activation commit>
-PH01_BASELINE_COMMIT=2e59f35b9aad4ee10a2d1831902c80d904c5b066
+PH01_BASELINE_COMMIT=2e59f35dd7b45902f707fcf33c73024e868787de
 PH01_CORRECTIONS=PASS | PARTIAL | FAIL | BLOCKED
 PURCHASE_VERTICAL_REACHABILITY=PASS | FAIL | BLOCKED
 CATALOGUE_VERTICAL_REACHABILITY=PASS | FAIL | BLOCKED
