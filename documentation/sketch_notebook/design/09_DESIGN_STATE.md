@@ -226,78 +226,85 @@ Recovery: Architecture §21; Decision Log Event 21; Model Overview current Cycle
 <!-- TEMPORAL_MARKER:C10-RECOVERED-PROMOTION-2026-07-15 -->
 > Temporal boundary retained; this is the single current Design checkpoint.
 
-# C11-PH01-S01 Design Checkpoint
+# C11-PH01-R01 and C11-PH02 Design Checkpoint
 
 > Sequence: FLX-PRM-04 / PDR2-D
 > Branch: `grm-guarded-provisioning-20260727`
-> J anchor: `1422731e512ce073e7fda09451415803d12f3a4e`
-> Inspected S01 implementation/evidence head: `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
-> Reconciliation repository HEAD: `e587872d1b231205a83dbd30c46fae84a21831ee`
-> Evidence: `DEV_STAGE/I_DSN_CODEX.md`
-> Main reconciliation: current mutable prefix of `[M]_STAGE/J_MAIN_STAGE.md`
+> Inspected implementation head: `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`
+> J reconciliation head: `0bfc02e8363d8119469a5e8627d8350fa97790b4`
+> Publication parent: `43a3d6af3e254a6e22092203c424ead2f5300821`
+> Evidence: complete `DEV_STAGE/I_DSN_CODEX.md`
+> Main reconciliation: `[M]_STAGE/J_MAIN_STAGE.md` section 9
 
 ## Current accepted architecture
 
-Cycle 10 remains closed only at reciprocal two-Device, one-Account development
-scope. Architecture §22 is the preserved historical contradicted stop; §23
-supersedes it within that bounded topology. Production, multiple-Account,
-revocation, resilience, retention/rebootstrap, GCM04 and R07 remain unaccepted
-or deferred.
+PH01-R01 completes the bounded Purchase, Catalogue and History corrections while
+preserving the responsive shell. PH02 Analytics is deterministic, read-only,
+local and active-Account-scoped.
 
-C11-PH01-S01 adds a presentation-only responsive foundation:
+~~~text
+presentation
+→ application workspace / read port / launch context
+→ Analytics domain models / versioned registry
+← Account-predicated local joined adapter
+← app-private SQLite Product and Purchase truth
+~~~
 
-- stable destination enum/ID selection instead of positional indexes;
-- compact `<600`, medium `600–1023`, wide `>=1024` shell policies;
-- retained page state through application-owned `IndexedStack`;
-- theme tokens and shared presentation primitives with no domain-state authority;
-- Home and Lists consumption of the shared foundation;
-- one Lists projection/search/sort state rendered as table or cards;
-- local-read-only Lists Retry;
-- reserved Analytics and Audit destinations without PH02/PH03 behavior.
+Hosted coordination, Sync, provider state and diagnostics are not Analytics
+authority.
 
-## Ownership and dependency direction
+## Ownership and invariants
 
-```text
-responsive presentation
-→ application composition and query/command ports
-→ domain facts
-← local adapters and SQLite truth
-
-Sync/authentication ports
-→ hosted coordination channel
-```
-
-`ProductListProjectionRepository` remains the Lists data boundary. Settings
-and Closure implementations are unchanged. Business, Sync, diagnostics and
-recovery ownership is unchanged.
+- persisted `PurchaseItemId` is evidence-row identity;
+- Purchase total is deduplicated by Purchase; Line total remains item-row-owned;
+- `local.sum@1`, `local.mean@1`, `local.difference@1` and
+  `local.percentage@1` own typed compatible calculation semantics;
+- Difference is B minus A; Percentage is part of whole;
+- checked integer/fixed-point boundaries yield typed zero/overflow outcomes;
+- application owns the complete session workspace and session-local cards;
+- one controller supplies wide and compact views;
+- local repository owns one Account-predicated complete join;
+- one initial visible read, one per Retry and zero local-transition rereads;
+- composition/app own dependency supply, visibility and typed launch context;
+- History owns Purchase selection/handoff only;
+- Analytics page/widgets are repository-free and calculation-free.
 
 ## Evidence state
 
 | Claim | State |
 | --- | --- |
-| S01 presentation topology | implemented |
-| focused/full tests | validated |
-| Windows release build | validated |
-| Android debug build | validated |
-| human Windows visual acceptance | absent |
-| human Android visual acceptance | absent |
-| pixel parity / golden policy | absent |
-| Catalogue, History, Purchase convergence | unfinished |
-| Analytics functionality | deferred to PH02 |
-| Settings/Audit completion and Closure relocation | deferred to PH03 |
+| PH01-R01 presentation corrections | implemented and validated |
+| PH02 Analytics topology and behavior | implemented and validated |
+| focused/full tests and analyze | validated |
+| Windows release / Android debug builds | validated |
+| request-count and ordinary/stress fixtures | validated on one Windows host |
+| screenshot/rendered human review | host-unvalidated |
+| assistive technology / keyboard-only | host-unvalidated |
+| locale / real-device review | host-unvalidated |
+| human visual/comprehension acceptance | host-unvalidated |
+| PH03 Audit/Settings/Closure disposition | deferred |
+| schema/Sync/provider/diagnostic changes | absent |
+
+## Preserved boundaries
+
+Cards are session-local and unsynchronized. No schema, migration, generated
+source, dependency, API, Auth, Sync, provider or diagnostic source changed.
+Charts, forecasting, recommendations, rankings, telemetry, external facts and
+raw-fact repair remain outside the accepted Analytics boundary. Cycle 10 remains
+accepted only for two Devices, one Account and development; its production and
+resilience families remain deferred.
 
 ## Next valid route
 
-C11-PH01-S02 is staged at `e587872d…` for Catalogue, History and Purchase
-convergence, but is not implemented or validated by this checkpoint. The next
-valid route is Codex execution under that explicit D/E/F authority, followed by
-new G/H/I and human Windows/Android visual and accessibility acceptance. Do not
-activate PH02, PH03, GCM04 or R07 from this checkpoint.
+Main should reconcile the completed Operational, Didactic and Design permanent
+absorptions, retain the human evidence gates, and select one bounded C11-PH03
+entry. This checkpoint authorizes no source work, PH03 materialization, GCM04
+or R07.
 
 ## Recovery pointers
 
-- Canonical: `design/01_ARCHITECTURE.md`, §§23–24.
+- Canonical: `design/01_ARCHITECTURE.md`, §§23–25.
 - Derived: `design/14_MODEL_OVERVIEW.md`, current C11 model.
-- Observational: `design/03_DECISION_LOG.md`, Events 23–24.
-- Evidence: `DEV_STAGE/I_DSN_CODEX.md`.
-- Main: mutable prefix of `[M]_STAGE/J_MAIN_STAGE.md`.
+- Observational: `design/03_DECISION_LOG.md`, Events 23–25.
+- Evidence: complete `DEV_STAGE/I_DSN_CODEX.md`.
+- Main: `[M]_STAGE/J_MAIN_STAGE.md`, section 9.

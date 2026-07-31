@@ -1423,3 +1423,109 @@ PH01_FIVE_PAGE_CONVERGENCE=INCOMPLETE
 PH02_ANALYTICS=DEFERRED
 PH03_AUDIT_SETTINGS_CLOSURE=DEFERRED
 ```
+
+# Event 25 — 2026-07-31 — C11-PH01-R01 and C11-PH02 Analytics Materialization
+
+## Decision boundary and provenance
+
+This event absorbs the final Design evidence at implementation commit
+`20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`, complete
+`DEV_STAGE/I_DSN_CODEX.md`, and J reconciliation section 9 at
+`0bfc02e8363d8119469a5e8627d8350fa97790b4`. It supersedes Event 24 only
+where Event 24 deferred PH01 five-page convergence and PH02 Analytics. It does
+not change Cycle 10, PH03, production, provider, Sync or diagnostic authority.
+
+## Accepted and materialized decisions
+
+- Analytics is deterministic, read-only, local and active-Account-scoped.
+- `analytics_models.dart` owns evidence identity, rows/datasets, determinants,
+  variables, conditions, evidence scopes, card identity/revision/configuration,
+  compatibility keys and typed result envelopes.
+- Persisted Purchase Item identity is the stable evidence-row identity.
+  Purchase identity remains separate for History handoff and Purchase-total
+  deduplication; Line total remains row-owned.
+- `analytics_registry.dart` owns `local.sum@1`, `local.mean@1`,
+  `local.difference@1` and `local.percentage@1`. Operation compatibility,
+  contribution units, B-minus-A Difference, part-of-whole Percentage, checked
+  integer/fixed-point arithmetic, zero-denominator and overflow outcomes are
+  versioned domain semantics.
+- The application layer owns the read-only evidence port, typed History launch
+  context and session workspace. Cards, filters, selection, focus, ordering and
+  results are session-local and unsynchronized.
+- `LocalAnalyticsRepository` owns one complete Account-predicated joined read
+  across Purchase Items, Purchases, Products, Stores, People and Payment
+  Methods. The request invariant is one initial read, one additional read per
+  Retry and zero reads for local filter/selection/execution/focus/reset/reorder
+  transitions.
+- Analytics page/widgets are presentation-only. One workspace/controller drives
+  wide and compact projections.
+- Composition supplies the adapter, registry and workspace. App composition owns
+  destination selection, visibility and the typed History-to-Analytics context.
+  History owns selected Purchase IDs and handoff only; it does not calculate.
+- Analytics loading is visibility-gated so a retained hidden destination does
+  not eagerly own SQLite work. The bounded tester-owned scrolling correction
+  restores deterministic test lifecycle without weakening assertions.
+- PH01 Purchase, Catalogue and History corrections are implemented and
+  validated at the same automated/build ceiling as Analytics.
+
+## Alternatives and rationale
+
+- A complete joined read was selected over History reuse or per-row composition
+  because it preserves a complete matrix, Account predicate and zero-N+1
+  request boundary. Incremental evidence remains reversible behind the read
+  port, but is deferred until it can preserve counts, focus and traceability.
+- Session-local cards were selected over persistence because persistence would
+  add schema, migration, version-lifecycle and Sync obligations without current
+  evidence of need.
+- Operation-specific typed semantics behind a versioned registry were selected
+  over generic calculators because invalid combinations, contribution units,
+  zero denominators and overflow require explicit outcomes.
+- Independent compatibility-keyed values were selected over a composite
+  multi-variable score because no accepted cross-variable meaning exists.
+- Purchase-ID History handoff was selected over evidence-row IDs or a new
+  filter model because History already owns stable Purchase selection and must
+  not acquire Analytics detail or calculation authority.
+- One shared workspace was selected over responsive-layout controllers because
+  layout changes must preserve cards, filters, selection, focus and results.
+
+## Reversibility, deviations and evidence ceiling
+
+The evidence port permits a later read strategy without moving calculation into
+infrastructure. Registry versions permit additive semantic evolution. The
+session workspace and presentation projections are replaceable without schema
+rollback. History handoff remains a narrow optional application context.
+
+The visibility gate and bounded test helper are lifecycle corrections rather
+than new product capabilities. No schema, migration, generated source,
+dependency, API, Auth, Sync, provider or diagnostic source changed.
+
+Named focused tests, the 258-test Flutter suite with four lab-gated skips,
+`flutter analyze`, Windows release build, Android debug build, request-count
+tests and ordinary/stress fixtures validate the implemented boundary. Screenshot
+review, assistive technology, locale, real-device and human visual/comprehension
+acceptance remain host-unvalidated. Fixture timings are evidence from one
+Windows validation host, not universal performance guarantees.
+
+## Decision disposition
+
+~~~text
+accepted
+  local Account-scoped Analytics authority
+  typed evidence and versioned operation ownership
+  application workspace and History handoff boundaries
+  one complete joined local read and request-count invariant
+  session-local unsynchronized cards
+  shared responsive state and presentation-only widgets
+  visibility-gated Analytics loading
+
+implemented and validated
+  PH01-R01 presentation corrections
+  PH02 Analytics at the automated/build ceiling
+  lifecycle/test correction at the same ceiling
+
+deferred
+  persisted cards, incremental evidence, charts, forecasting and advanced statistics
+  screenshot, assistive-technology, locale, real-device and human acceptance
+  PH03 Audit/Settings/Closure disposition
+  all unchanged Cycle 10 production/resilience boundaries
+~~~

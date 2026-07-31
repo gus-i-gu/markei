@@ -242,115 +242,99 @@ Recovery: Architecture §21; Decision Log Event 21; checkpoint `09_DESIGN_STATE.
 
 <!-- TEMPORAL_MARKER:C10-RECOVERED-PROMOTION-2026-07-15 -->
 > Temporal boundary retained; the rebuildable current model below supersedes the
-> older recovered Cycle 10 derived segment.
+> earlier Cycle 10/C11-S01 derived segment.
 
-# Current Model Overview — Cycle 10 Closure and C11-PH01-S01
+# Current Model Overview — C11 PH01-R01 and PH02
 
 > Branch: `grm-guarded-provisioning-20260727`
-> Inspected S01 source/evidence head: `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
-> Reconciliation repository HEAD: `e587872d1b231205a83dbd30c46fae84a21831ee`
-> Canonical owners: `design/01_ARCHITECTURE.md` §§23–24
-> Evidence: `DEV_STAGE/I_DSN_CODEX.md`
-> Main reconciliation: current mutable prefix of `[M]_STAGE/J_MAIN_STAGE.md`
+> Implementation head: `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`
+> J reconciliation head: `0bfc02e8363d8119469a5e8627d8350fa97790b4`
+> Publication parent: `43a3d6af3e254a6e22092203c424ead2f5300821`
+> Canonical owners: `design/01_ARCHITECTURE.md` §§23–25
+> Evidence: complete `DEV_STAGE/I_DSN_CODEX.md`
+> Main reconciliation: `[M]_STAGE/J_MAIN_STAGE.md` section 9
 
 ## 1. Current dependency topology
 
-```text
-compact / medium / wide Flutter shell
-→ stable destination-ID registry
-→ IndexedStack retained page composition
-→ shared theme tokens and presentation primitives
-→ Home and Lists presentation
-→ existing application commands and query ports
-→ domain facts and local Product/Purchase truth
-← app-private Drift/SQLite adapters
+~~~text
+compact / medium / wide shell
+→ stable destination IDs + IndexedStack retention
+→ Analytics page/widgets
+→ one application Analytics workspace
+→ read-only evidence port + typed History launch context
+→ Analytics domain models + local.*@1 registry
+← LocalAnalyticsRepository
+← Account-predicated SQLite join
 
-existing Sync/authentication ports
-→ authenticated hosted coordination API
-→ constrained PostgreSQL transactions
-```
+History selected Purchase IDs
+→ MarkeiApp typed handoff
+→ Analytics workspace selection
 
-Presentation depends inward on application/domain contracts. Neither the shell
-nor shared visual foundation owns business, Sync, diagnostic or recovery truth.
+Sync / provider / diagnostics
+  remain outside Analytics authority
+~~~
 
-## 2. Responsive navigation model
+## 2. Responsibility map
 
-| Layout | Width | Navigation |
-| --- | --- | --- |
-| Compact | `<600` | Home, Lists, Purchase, History and More |
-| Medium | `600–1023` | icon rail with tooltips |
-| Wide | `>=1024` | extended labelled rail and bounded canvas |
+| Layer/surface | Current owner |
+| --- | --- |
+| Domain models | evidence/card identities, datasets, scopes, compatibility and typed outcomes |
+| Versioned registry | Sum, Mean, Difference and Percentage v1 semantics |
+| Application | read port, launch context, complete session workspace and state transitions |
+| Local infrastructure | one Account-predicated complete joined evidence read |
+| Composition/app | dependency supply, destination, visibility and typed handoff |
+| History | Purchase selection and handoff only |
+| Analytics presentation | cards/matrix projection and callbacks only |
 
-Stable destination IDs, not indexes, own selection. `IndexedStack` owns page
-retention. Feature gates and resizing may alter visible navigation without
-changing selected-destination meaning.
+## 3. Evidence and calculation model
 
-## 3. Presentation ownership
+Persisted Purchase Item identity is the evidence-row identity. Purchase identity
+supports History handoff and Purchase-total deduplication. Line total stays
+item-row-owned.
 
-```text
-theme tokens
-→ colors / type / spacing / radius / breakpoints
-→ shared cards / headers / summary and state surfaces
-→ page-specific composition
-```
+~~~text
+complete Account dataset
+→ UTC/field conditions
+→ filtered or selected evidence scope
+→ versioned operation
+→ independent compatibility-keyed values
+→ contributing row IDs + counts + UTC period + interpretation inputs
+~~~
 
-These structures are presentation semantics only. They cannot create or
-reinterpret Product, Purchase, Account, Sync, diagnostics or recovery state.
+Money and quantities remain integer/fixed-point. Compatibility prevents implicit
+currency/unit mixing. Mean declares its contribution unit. Difference is B
+minus A. Percentage is part of whole in basis points. Zero denominator and
+overflow are typed unavailable outcomes.
 
-## 4. Home and Lists
+## 4. Session and responsive state
 
-Home consumes static application descriptors and navigation callbacks.
+One session-local workspace owns dataset, filters, selection, focus, cards,
+order, revisions and results. Cards are not persisted or synchronized. Wide and
+compact layouts are projections of this same state; widgets do not query or
+calculate.
 
-Lists preserves this direction:
+Analytics loading is visibility-gated inside retained `IndexedStack`
+composition. The request model is one initial visible load, one request per
+Retry and zero requests for local transitions. Rendering exposes at most 100
+rows per page; selected evidence is capped at 500 IDs.
 
-```text
-ProductListProjectionRepository
-→ one local projection result
-→ page-local search and sort
-→ shared filtered/sorted items
-→ wide table OR compact/medium cards
-```
-
-Retry repeats only the local projection read. It performs no mutation or Sync.
-
-## 5. Reserved and deferred destinations
+## 5. Current page and phase topology
 
 | Boundary | Current state |
 | --- | --- |
-| Analytics destination | reserved; PH02 functionality absent |
-| Audit destination | reserved; PH03 functionality absent |
-| Settings | implementation unchanged; PH03 completion deferred |
-| Closure | implementation/location unchanged; PH03 disposition deferred |
-| Catalogue | convergence unfinished in PH01 |
-| History | convergence unfinished in PH01 |
-| Purchase | convergence unfinished in PH01 |
+| Home / Lists | accepted PH01 shared presentation foundation |
+| Purchase / Catalogue / History | PH01-R01 corrections implemented and validated at automated/build ceiling |
+| Analytics | local Account-scoped PH02 implemented and validated at automated/build ceiling |
+| Audit / Settings / Closure | PH03 disposition deferred |
+| Cycle 10 Sync topology | unchanged; two Devices, one Account, development only |
 
-## 6. Preserved Cycle 10 topology
+## 6. Validation and remaining acceptance
 
-Cycle 10 remains accepted only for two Devices, one Account and development.
-Local SQLite remains autonomous Product/Purchase truth; hosted infrastructure is
-a bounded coordination channel. GCM04, R07, production, multiple-Account,
-revocation, resilience, retention and rebootstrap remain unaccepted or deferred.
+Focused tests, the 258-test suite with four lab-gated skips, analyze, Windows
+release build, Android debug build and ordinary/stress fixtures validate the
+named implementation scope. Fixture timing is Windows-host evidence only.
 
-Architecture §22 is historical. Architecture §23 supersedes its contradicted
-terminal only inside that development boundary.
-
-## 7. Validation and next boundaries
-
-Implemented/test/build evidence supports the S01 topology. Human Windows and
-Android visual acceptance, accessibility, pixel parity and golden-policy
-acceptance are absent.
-
-Next architectural boundaries. S02 is staged at `e587872d…` but has no Codex
-materialization evidence and is not promoted here:
-
-```text
-C11-PH01-S02
-  Catalogue + History + Purchase convergence
-C11-PH02
-  deterministic local/account-scoped Analytics
-C11-PH03
-  Settings + Audit completion and Closure disposition
-C12-PHASE02
-  GCM04 + multiple-Account assays + conditional R07
-```
+Screenshot, assistive-technology, keyboard-only, locale, real-device and human
+visual/comprehension acceptance remain host-unvalidated. No schema, migration,
+dependency, generated-source, API, Auth, Sync, provider or diagnostic change
+was introduced.

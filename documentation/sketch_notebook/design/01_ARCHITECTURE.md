@@ -1071,3 +1071,153 @@ Not accepted:
 - completion of all five PH01 core pages;
 - PH02/PH03 behavior;
 - production, resilience, GCM04 or R07.
+
+# 25. C11-PH01-R01 and C11-PH02 Local Analytics Architecture
+
+Evidence boundary: implementation commit
+`20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`, complete
+`DEV_STAGE/I_DSN_CODEX.md`, J section 9 at
+`0bfc02e8363d8119469a5e8627d8350fa97790b4`, and the named source/tests.
+The topology is implemented and validated only at the automated/build ceiling.
+Screenshot, assistive-technology, locale, real-device and human acceptance are
+host-unvalidated.
+
+## 25.1 Authority and dependency direction
+
+Analytics interprets autonomous local Product and Purchase facts for the active
+Account. Hosted coordination, Sync events, provider state, diagnostics and
+external facts are not Analytics authority.
+
+Stable dependency direction:
+
+~~~text
+Analytics presentation
+→ application workspace + read port + typed launch context
+→ Analytics domain models + versioned operation registry
+← local Account-predicated joined repository adapter
+← app-private SQLite Product/Purchase truth
+~~~
+
+Infrastructure maps persisted facts into domain evidence; it does not own
+calculation semantics. Presentation renders state and callbacks; it neither
+queries repositories nor calculates results.
+
+## 25.2 Domain identity, evidence and result ownership
+
+`analytics_models.dart` owns:
+
+- `AnalyticsEvidenceRowId` as persisted `PurchaseItemId`;
+- Account-scoped evidence rows and complete datasets;
+- determinant, variable, condition and evidence-scope types;
+- stable card identity, revision and configuration;
+- compatibility keys, money/unit-price values and typed result envelopes;
+- unavailable classifications for insufficient, incompatible,
+  zero-denominator and overflow outcomes.
+
+Evidence rows retain Purchase identity separately from row identity. Line total
+belongs to one Purchase Item row. Purchase total belongs to the Purchase and is
+deduplicated by distinct Purchase identity before aggregation. Result envelopes
+retain the registry identifier/version, configuration, contributing evidence
+IDs, eligible/total/excluded counts, UTC period and factual interpretation
+inputs.
+
+## 25.3 Versioned operation semantics
+
+The registry is the single executor authority for:
+
+| Definition | Accepted v1 boundary |
+| --- | --- |
+| `local.sum@1` | sums compatible quantity, Line total, Purchase total or item-row evidence count |
+| `local.mean@1` | integer/fixed-point mean per contributing item row, or per distinct Purchase for Purchase total |
+| `local.difference@1` | compatible aggregate for comparison B minus baseline A |
+| `local.percentage@1` | part of a named containing whole in basis points |
+
+Compatibility keys prevent implicit mixing of currencies, measurement kinds or
+canonical units. Multi-variable cards return independent typed values; no
+composite score is inferred. Checked integer operations produce typed overflow
+outcomes rather than wrapping or switching to floating point. Percentage with a
+zero denominator produces a typed unavailable result.
+
+## 25.4 Application workspace and lifetime
+
+The application layer owns `AnalyticsEvidenceRepository`,
+`AnalyticsLaunchContext` and `AnalyticsWorkspaceController`. The workspace
+owns the complete session dataset, UTC/field conditions, selected and focused
+evidence, ordered card configurations, results, 100-row rendered pages and the
+500-ID selected-scope cap.
+
+Cards and configurations are session-local, not serialized, persisted or
+synchronized. Editing preserves card identity and advances its revision;
+reordering and removal mutate only session state. One controller supplies all
+responsive projections so compact/wide changes do not fork calculation,
+selection or result truth.
+
+## 25.5 Joined local read and request invariant
+
+`LocalAnalyticsRepository` owns one Account-predicated join across Purchase
+Items, Purchases, Products, Stores, optional People and optional Payment
+Methods. It materializes stable item evidence and derives unit price using
+canonical fixed quantity only when quantity is positive.
+
+The accepted request invariant is:
+
+~~~text
+initial visible Analytics load = 1 complete joined request
+each explicit Retry            = +1 complete joined request
+filter / selection / execute / focus / reset / reorder = +0 requests
+~~~
+
+This prevents N+1 reads and History's 50-row projection from becoming Analytics
+authority. A later incremental strategy is deferred unless it preserves
+complete counts, focus, traceability and the same application port boundary.
+
+## 25.6 Composition, visibility and History handoff
+
+`MarkeiComposition` supplies the local adapter, registry and session workspace.
+`MarkeiApp` owns destination selection, visible-destination state and typed
+History-to-Analytics launch context. Analytics loading begins only when the
+retained destination becomes visible; hidden shell children do not eagerly own
+local database work.
+
+History owns selected `PurchaseId` values and invokes a typed handoff only.
+The app switches destination and passes the active Account plus immutable
+Purchase IDs. Analytics resolves item evidence and calculates later. History
+does not import the registry, workspace or local Analytics adapter.
+
+## 25.7 Presentation and unchanged boundaries
+
+`AnalyticsPage` and `analytics_components.dart` own cards, matrix
+presentation, disclosure, loading/error/empty states and callbacks only. Cards
+remain above the supporting evidence matrix; wide and compact layouts project
+the same workspace state and stable evidence identities.
+
+PH01 Purchase, Catalogue and History corrections inherit the accepted shell,
+theme and responsive system. No schema, migration, generated source,
+dependency, API, Auth, Sync, provider or diagnostic boundary changed. Analytics
+does not own fact repair, forecasting, recommendations, rankings, charts,
+telemetry or external knowledge. PH03 retains Audit, Settings and Closure
+disposition.
+
+## 25.8 Evidence and acceptance ceiling
+
+Accepted as implemented and validated within the named repository/host scope:
+
+- focused Analytics, workspace, repository, handoff and presentation tests;
+- full Flutter suite: 258 tests with four lab-gated skips;
+- `flutter analyze`;
+- Windows release and Android debug builds;
+- ordinary 1,000/5,000 and stress 10,000/50,000 Purchase/Item fixtures;
+- deterministic lifecycle correction and no remaining validation-owned
+  Dart/Flutter/SQLite process observed.
+
+Host-unvalidated and still required for human acceptance:
+
+- screenshot-based rendered review;
+- Narrator, TalkBack and other assistive-technology review;
+- keyboard-only acceptance;
+- locale behavior;
+- real Windows and Android device review;
+- human visual and comprehension acceptance.
+
+These limits do not contradict the accepted responsibility topology, but they
+prevent broader presentation, accessibility or device acceptance claims.
