@@ -1,105 +1,112 @@
 # 00_PROJECT_STATE.md
 
-> Version: Cycle 10 final reconciliation / C11-PH01-S02 state 4.0
-> Status: Active Global State Canon-Checkpoint
-> Persistence Class: Canon-Checkpoint
-> Knowledge Class: Main / Global
+> Version: C11-PH03 investigation checkpoint 5.0
+> Status: Active Global State
+> Persistence Class: Main / Current State
+> Knowledge Class: Main-synthesized
 > Authority: Main Chat [M]
 > Branch: `grm-guarded-provisioning-20260727`
-> Cycle 10 accepted implementation boundary: `97cec7f733926f669d2a844feb2b5e6e0b7e6bce`
-> GCM03 closure publication: `05e630cfe04aa03846bc635c524278d4fa9b7c39`
-> Permanent-memory reconciliation inspected through: `526e0de6e294c5fb969d8ee1f35e6eb53914902b`
-> C11-PH01-S01 materialization: `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
-> Scope: Current global state after final Cycle 10 permanent reconciliation and C11-PH01-S02 staging
+> Current domain head: `7ca62a06e3dd7b48c28bee93be51a42f66c1aad9`
+> Current reconciliation: J section 10
 
 ---
 
-<!-- TEMPORAL_MARKER:C10-PERMANENT-EXTRACTION-EXHAUSTED-C11-PH01-S02-2026-07-30 -->
+<!-- TEMPORAL_MARKER:C11-PH03-MAIN-ENTRY-2026-07-31 -->
 
-# Cycle 10 Final Permanent Reconciliation / C11-PH01-S02
+# C11-PH01/PH02 Permanent Closure and C11-PH03 Entry
 
 ## Current terminal
 
-Cycle 10 is closed at the proved two-Device, one-Account development boundary.
-GCM02 closed hosted same-Device Sync, and GCM03 closed reciprocal
-Windows/Android convergence with exact natural Product identity reconciliation,
-durable local apply/cursor progress before acknowledgement, drained queues and
-one ordinary no-op repeat per Device.
+Cycle 10 remains closed at the proved reciprocal two-Device, one-Account
+development boundary. Production acceptance remains absent. GCM04 and the
+conditional R07 reassessment remain deferred to `C12-PHASE02`.
+
+C11-PH01-R01 and C11-PH02 are implemented, automated/build validated and
+permanently absorbed by Operational, Design and Didactic memory.
 
 ```text
 CYCLE10=CLOSED_AT_GCM03_TWO_DEVICE_DEVELOPMENT_SCOPE
-MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_ONE_ACCOUNT_DEVELOPMENT_SCOPE
 PRODUCTION_ACCEPTANCE=ABSENT
+C11_PH01_R01=PERMANENTLY_ABSORBED
+C11_PH02=PERMANENTLY_ABSORBED
+C11_CURRENT_UNIT=C11-PH03-INVESTIGATION
+C11_PH03_SOURCE_AUTHORITY=NONE
 GCM04=DEFERRED_TO_C12_PHASE02
 R07_IMPLEMENTATION_AUTHORIZED=NO
 LIVE_SYNC_AUTHORITY=NONE
 PROVIDER_MUTATION_AUTHORITY=NONE
 ```
 
-The evidence ceiling remains development-only. No final provider-table recount
-followed the golden no-op repeats. Multiple-Account isolation, membership
-disablement, Device revocation, outage/acknowledgement-uncertainty recovery,
-retention, snapshot/rebootstrap and reproducible production lifecycle remain
-unproved.
+## Accepted C11 result through PH02
 
-## Permanent-documentation result
+The accepted product state includes:
 
-Cycle 10 information within Records 001–021 has been exhausted into the
-appropriate permanent layers:
+- the responsive shell and five core-page convergence;
+- reachable Purchase and Catalogue content under constrained height;
+- unambiguous History selection and separate detail activation;
+- deterministic, read-only, local, active-Account-scoped Analytics;
+- one complete joined evidence read, session-local cards and twelve supporting
+  evidence fields;
+- Product, Purchase, Store and UTC Time determinants;
+- Sum, Mean, Difference B-minus-A and Percentage part-of-whole operations;
+- typed unavailable outcomes for zero denominator and overflow;
+- typed History Purchase-ID handoff without History-side calculation;
+- 100-row pages, a 500-ID selected-scope cap and controlled request counts.
 
-- Operational Historical, Canonical, Derived and Checkpoint memory are current;
-- Didactic Historical, Canonical, Derived and Checkpoint memory are current;
-- Design Historical, Canonical, Derived and Checkpoint memory are current;
-- no Didactic maturity status changed;
-- the historical Design stop remains traceable and is explicitly superseded;
-- C11-PH01-S01 was absorbed as a separate C11 event by all three domains.
+Focused tests, the 26-test app-shell file, the 258-test/4-skip full suite,
+Flutter analysis, Windows release build and Android debug build passed in the
+recorded implementation round. Ordinary and stress measurements remain
+single-Windows-host evidence, not universal performance guarantees.
 
-No further full Cycle 10 Operational, Didactic or Design registration round is
-justified. Deferred backend/lifecycle boundaries are future work, not missing
-Cycle 10 promotion.
+No schema, migration, dependency, generated-source, API, Auth, Sync, provider or
+diagnostic authority changed.
 
-## Current Cycle 11 state
+## Permanent reconciliation result
 
-C11-PH01-S01 is implemented, automated/build validated and permanently
-absorbed. It established:
+The post-materialization J reconciliation is
+`0bfc02e8363d8119469a5e8627d8350fa97790b4`.
 
-- stable destination identity;
-- compact `<600`, medium `600–1023` and wide `>=1024` shell policies;
-- retained page state;
-- shared presentation tokens/components;
-- Home and Lists recomposition;
-- read-only Lists Retry limited to the local projection read;
-- passed focused/full Flutter tests, analysis, Windows release build and
-  Android debug build.
+Permanent-domain absorption completed through:
 
-Human Windows/Android visual acceptance, Narrator, TalkBack, keyboard-only,
-real-device and approved golden/pixel acceptance remain unperformed.
+- Operational: `43a3d6af3e254a6e22092203c424ead2f5300821`;
+- Design: `318209b3afd8407e42ace1703476311032628558`;
+- Didactic: `7ca62a06e3dd7b48c28bee93be51a42f66c1aad9`.
 
-C11-PH01-S02 is the current forward unit. It converges Home, Lists, Catalogue,
-History and Purchase on the accepted visual grammar while preserving all
-business, local-data, Sync, diagnostic, recovery, Settings and Closure
-boundaries.
+No KANBAN maturity changed. Human screenshot, assistive-technology,
+keyboard-only, locale, real-device, visual and comprehension acceptance remain
+not performed.
 
-The controlling S02 authority is the synchronized D/E/F-only branch head
-published immediately after this Main reconciliation and named by the Codex
-initiation prompt. If that exact head is displaced, source authority stops
-until Main explicitly republishes or reauthorizes it.
+## Active C11-PH03 state
+
+PH03 is active for functional investigation only:
+
+```text
+mandatory functional Settings
+mandatory functional Audit
+Audit replaces Closure in ordinary navigation
+complete Closure capability disposition
+```
+
+The required outcome is an explicit classification of every current Closure
+capability into Audit, Settings, Advanced/Support, development-only support,
+retirement or an unresolved Main/human decision.
+
+PH03 does not activate the old R07 causal/backend proposal. It does not
+authorize a new diagnostic ledger, schema/migration, Sync instrumentation,
+provider observability, hosted Audit, automatic Retry/Recovery or Account,
+Device, Auth0, Neon or Render mutation.
 
 ## Forward schedule
 
 ```text
-C11-PH01
-  shared visual system and five core-page convergence
-
-C11-PH02
-  deterministic local/account-scoped Analytics
-
 C11-PH03
-  mandatory Settings and Audit
-  complete Closure capability disposition
+  A/B/C capability, meaning and architecture investigation
+  Main reconciliation
+  bounded D/E/F only after investigation agreement
+  Codex materialization only after explicit authority
 
 C12-PHASE01
-  UI/UX fine tuning and polishing
+  measured UI/UX fine tuning and polishing
 
 C12-PHASE02
   backend fine tuning, multiple-user assays, deferred GCM04
@@ -110,21 +117,17 @@ C12-PHASE02
 
 Read next:
 
-1. `06_SESSION_SCHEME.md` for the active S02 execution checkpoint;
-2. `[M]_STAGE/J_MAIN_STAGE.md` for cross-domain authority and evidence ceilings;
-3. `DEV_STAGE/D_OPS_STAGE.md`, `E_DDC_STAGE.md` and `F_DSN_STAGE.md` for exact
-   S02 materialization authority;
-4. current domain checkpoints for Operational, Didactic and Design memory;
-5. G/H/I or source only when current checkpoints cannot resolve a claim.
+1. `06_SESSION_SCHEME.md` for the PH03 investigation checkpoint;
+2. `[M]_STAGE/J_MAIN_STAGE.md` section 10 for current authority;
+3. the current Operational, Didactic and Design checkpoints;
+4. fresh PH03 A/B/C staging when published;
+5. source only for evidence required by one bounded investigation.
 
 ```text
-CYCLE10_PERMANENT_INFORMATION=EXHAUSTED
-CYCLE10_DOMAIN_RERUN=NOT_REQUIRED
-CYCLE11=ACTIVE
-C11_CURRENT_UNIT=C11-PH01-S02
-C11_S02_SOURCE_AUTHORITY=CONDITIONAL_ON_SYNCHRONIZED_D_E_F_BRANCH_HEAD
-LIVE_SYNC_AUTHORITY=NONE
-PROVIDER_MUTATION_AUTHORITY=NONE
+PH03_STAGING_AUTHORITY=A_B_C_ONLY
+D_E_F_AUTHORITY=NONE
+CODEX_MATERIALIZATION_AUTHORITY=NONE
+NEXT_MAIN_ACTION=COMPLETE_PH03_A_B_C_AND_RECONCILE
 ```
 
 ---

@@ -1,8 +1,8 @@
-# J_MAIN_STAGE — Cycle 11 PH01 recovery and PH02 final reconciliation
+# J_MAIN_STAGE — Cycle 11 PH01/PH02 closure and PH03 activation
 
 > Sequence: FLX-PRM-04 / PRC-01 final conflictive reconciliation
 > Role: Main Chat [M]
-> Cycle / phase / active unit: C11 / C11-PH02 / permanent-domain reconciliation
+> Cycle / phase / active unit: C11 / C11-PH03 / functional investigation
 > Repository: `gus-i-gu/markei`
 > Branch: `grm-guarded-provisioning-20260727`
 > Cycle 10 accepted implementation boundary:
@@ -16,7 +16,7 @@
 > Authority: explicit human-directed Main final reconciliation
 > Mutable surface: this file
 > Extracted Cycle 10 history: `documentation/REC_LEGACY.md`
-> Status: **C11-PH01-R01 AND C11-PH02 MATERIALIZED AND VALIDATED; PERMANENT-DOMAIN ABSORPTION PENDING**
+> Status: **C11-PH01-R01 AND C11-PH02 PERMANENTLY ABSORBED; C11-PH03 FUNCTIONAL INVESTIGATION ACTIVE**
 
 ## 1. Recovery entrypoint
 
@@ -74,11 +74,13 @@ KANBAN_TRANSITIONS=NONE
 NEW_CYCLE10_DOMAIN_REGISTRATION_ROUND=NOT_REQUIRED
 
 CYCLE11=ACTIVE
-C11_PHASE=C11-PH01
-C11_COMPLETED_UNIT=C11-PH01-S01
-C11_CURRENT_UNIT=C11-PH01-S02
+C11_PHASE=C11-PH03
+C11_COMPLETED_UNIT=C11-PH02
+C11_CURRENT_UNIT=C11-PH03-INVESTIGATION
 C11_S01_PERMANENT_DOMAIN_ABSORPTION=COMPLETE
-C11_S02_AUTHORITY=CONDITIONAL_ON_SYNCHRONIZED_D_E_F_BRANCH_HEAD
+C11_PH01_R01_PH02_PERMANENT_DOMAIN_ABSORPTION=COMPLETE
+C11_PH03_STAGING_AUTHORITY=A_B_C_ONLY
+C11_PH03_SOURCE_AUTHORITY=NONE
 
 LIVE_SYNC_AUTHORITY=NONE
 PROVIDER_MUTATION_AUTHORITY=NONE
@@ -255,8 +257,11 @@ CYCLE10_PERMANENT_EXTRACTION=EXHAUSTED
 CYCLE10_STAGING_AUTHORITY=NONE
 CYCLE10_DOMAIN_RERUN=NOT_REQUIRED
 C11_S01_PERMANENT_ABSORPTION=COMPLETE
-C11_CURRENT_UNIT=C11-PH01-S02
-C11_S02_SOURCE_AUTHORITY=CONDITIONAL_ON_D_E_F_ONLY_BRANCH_HEAD
+C11_CURRENT_UNIT=C11-PH03-INVESTIGATION
+C11_S02_SOURCE_AUTHORITY=CONSUMED
+C11_PH01_R01_PH02_PERMANENT_ABSORPTION=COMPLETE
+C11_PH03_STAGING_AUTHORITY=A_B_C_ONLY
+C11_PH03_SOURCE_AUTHORITY=NONE
 LIVE_SYNC_AUTHORITY=NONE
 PROVIDER_MUTATION_AUTHORITY=NONE
 METHODOLOGY_MUTATION=NONE
@@ -476,4 +481,134 @@ HUMAN_ASSISTIVE_TECH_REAL_DEVICE_ACCEPTANCE=NOT_PERFORMED
 KANBAN_TRANSITIONS=NONE
 PERMANENT_DOMAIN_ABSORPTION=PENDING_PDR2_O_A_D
 NEXT_MAIN_ACTION=After all three domain commits are published, reconcile their permanent-memory results and select the bounded C11-PH03 entry.
+```
+
+
+---
+
+<!-- TEMPORAL_MARKER:C11-PH03-MAIN-ACTIVATION-2026-07-31 -->
+> Temporal boundary — Main permanent-absorption reconciliation and PH03 investigation activation. Section 9 remains the post-materialization record; section 10 is the latest chronological J authority.
+
+## 10. C11-PH01-R01 + C11-PH02 permanent closure and C11-PH03 activation
+
+### 10.1 Permanent-domain absorption verified
+
+Main inspected the branch descendants of the section 9 reconciliation:
+
+| Domain | Commit | Authorized permanent surface | Result |
+| --- | --- | --- | --- |
+| Operational | `43a3d6af3e254a6e22092203c424ead2f5300821` | four Operational permanent files | complete |
+| Design | `318209b3afd8407e42ace1703476311032628558` | four Design permanent files | complete |
+| Didactic | `7ca62a06e3dd7b48c28bee93be51a42f66c1aad9` | four Didactic permanent files | complete; KANBAN transitions none |
+
+The three commits descend from the section 9 reconciliation
+`0bfc02e8363d8119469a5e8627d8350fa97790b4`. Their combined change surface is
+exactly the twelve role-owned permanent files. No source, test, staging,
+methodology, Main-root, schema, dependency, generated-source, provider, Sync or
+diagnostic file changed.
+
+Operational, Didactic and Design checkpoints agree that C11-PH01-R01 and
+C11-PH02 are implemented and validated at the automated/build ceiling and that
+the next bounded unit is C11-PH03.
+
+### 10.2 Closed result and retained evidence ceiling
+
+C11-PH01-R01 and C11-PH02 are permanently absorbed. Their accepted result
+includes the five-page reachability corrections, deterministic local
+Account-scoped Analytics, typed History Purchase-ID handoff, checked
+fixed-point/rational outcomes, request-count invariants, ordinary/stress
+measurements, focused/full Flutter tests, analysis, Windows release build and
+Android debug build recorded by section 9 and G/H/I.
+
+The following remain explicit human or platform evidence gaps:
+
+- screenshot-based rendered review;
+- Narrator, TalkBack and other assistive-technology review;
+- keyboard-only human acceptance;
+- locale variation;
+- real Windows/Android device review;
+- human visual, interaction and learner-comprehension acceptance.
+
+These gaps do not reopen the materialized implementation and do not authorize a
+Didactic maturity transition. They remain bounded acceptance work for a later
+human-evidence pass.
+
+### 10.3 Selected PH03 product boundary
+
+C11-PH03 is selected as the next functional investigation:
+
+- Settings is a mandatory functional destination;
+- Audit is a mandatory functional destination and replaces Closure in ordinary
+  navigation;
+- every existing Closure capability must receive an explicit disposition:
+  Audit, Settings, an Advanced/Support surface, development-only support,
+  retirement, or an unresolved decision retained for Main/human review;
+- ordinary product navigation must not retain an ambiguous Closure destination
+  after approved materialization.
+
+PH03 is not the former R07 proposal under a new name. The investigation may use
+existing local truth and established diagnostic vocabulary, but it must not
+silently create a causal engine, diagnostic ledger, durable lifecycle, Sync
+instrumentation redesign, provider observability path or hosted cross-device
+Audit.
+
+The following remain deferred to `C12-PHASE02`:
+
+- multiple-Account and multiple-user assays;
+- membership disablement and Device revocation;
+- outage and acknowledgement-uncertainty recovery;
+- retention, snapshot and rebootstrap;
+- GCM04;
+- backend/provider fine tuning;
+- conditional R07 reassessment.
+
+### 10.4 Investigation authority and required questions
+
+Only fresh functional investigation is active. Authorized staging writers are:
+
+```text
+Operational Chat [O] -> DEV_STAGE/A_OPERATIONAL.md
+Didactic Chat [A]    -> DEV_STAGE/B_DIDACTIC.md
+Design Chat [D]      -> DEV_STAGE/C_DESIGN.md
+```
+
+The three investigations must determine, without source mutation:
+
+1. the complete current Closure/Settings/Audit capability and data inventory;
+2. safe read-only Audit history versus configuration, status, support and
+   recovery actions;
+3. Account scope, sanitization, freshness/staleness and no-network behavior;
+4. navigation, responsive, keyboard, assistive-technology and unavailable-state
+   meaning;
+5. the exact capability-disposition matrix and ownership/dependency direction;
+6. which controls are product-visible, Advanced/Support-only,
+   development-only, retired or still unresolved;
+7. the smallest schema-free, provider-free materialization boundary and its
+   validation gates.
+
+A/B/C may preserve disagreement. Their findings do not authorize D/E/F or
+source changes. Main must reconcile the completed investigations before any
+Codex prompt is prepared.
+
+### 10.5 Current terminal
+
+```text
+CYCLE=C11
+C11_PH01_R01=PERMANENTLY_ABSORBED
+C11_PH02=PERMANENTLY_ABSORBED
+OPERATIONAL_ABSORPTION=43a3d6af3e254a6e22092203c424ead2f5300821
+DESIGN_ABSORPTION=318209b3afd8407e42ace1703476311032628558
+DIDACTIC_ABSORPTION=7ca62a06e3dd7b48c28bee93be51a42f66c1aad9
+KANBAN_TRANSITIONS=NONE
+C11_CURRENT_UNIT=C11-PH03-INVESTIGATION
+PH03_SCOPE=MANDATORY_SETTINGS_FUNCTIONAL_AUDIT_CLOSURE_DISPOSITION
+PH03_STAGING_AUTHORITY=A_B_C_ONLY
+PH03_SOURCE_AUTHORITY=NONE
+D_E_F_AUTHORITY=NONE
+CODEX_MATERIALIZATION_AUTHORITY=NONE
+R07_IMPLEMENTATION_AUTHORIZED=NO
+GCM04=DEFERRED_TO_C12_PHASE02
+LIVE_SYNC_AUTHORITY=NONE
+PROVIDER_MUTATION_AUTHORITY=NONE
+NEXT_MAIN_ACTION=Seed and complete PH03 Operational Didactic Design investigations, then reconcile A/B/C before preparing any D/E/F.
 ```

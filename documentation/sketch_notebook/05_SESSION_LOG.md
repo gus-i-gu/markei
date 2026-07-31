@@ -1079,3 +1079,69 @@ LIVE_OPERATION_PERFORMED=NO
 PROVIDER_MUTATION=NO
 SOURCE_CHANGED=NO
 ```
+
+---
+
+<!-- TEMPORAL_MARKER:C11-PH01-PH02-PERMANENT-CLOSURE-PH03-ENTRY-2026-07-31 -->
+
+# C11-PH01/PH02 Permanent Closure and C11-PH03 Investigation Entry
+
+> Date: 2026-07-31
+> Branch: `grm-guarded-provisioning-20260727`
+> Implementation: `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`
+> Post-materialization J: `0bfc02e8363d8119469a5e8627d8350fa97790b4`
+> Permanent-domain head inspected: `7ca62a06e3dd7b48c28bee93be51a42f66c1aad9`
+
+## Closure chronology
+
+1. R02 corrected the PH01/app-shell lifecycle blocker without discarding the
+   carried PH01/PH02 implementation.
+2. Codex published PH01-R01 and PH02 with final G/H/I at `20e3d5f6`.
+3. Main reconciled the implementation and evidence ceiling in J section 9 at
+   `0bfc02e8`.
+4. Operational absorbed the result at `43a3d6af`.
+5. Design absorbed the result at `318209b3`.
+6. Didactic absorbed the result at `7ca62a06` without changing KANBAN
+   maturity.
+7. Main verified that the three domain commits changed only their twelve
+   authorized permanent files and selected bounded C11-PH03 investigation.
+
+## Accepted balance
+
+C11-PH01-R01 and C11-PH02 are closed at the automated/build ceiling. The
+permanent record accepts the five-page reachability corrections, deterministic
+local Account-scoped Analytics, checked operation semantics, typed History
+handoff, request-count invariants, measured ordinary/stress fixtures, focused
+and full Flutter tests, analysis and Windows/Android builds.
+
+Human screenshot, assistive-technology, keyboard-only, locale, real-device,
+visual and learner-comprehension acceptance remains not performed. This is an
+evidence ceiling, not a reopened implementation failure. No Didactic maturity
+transition occurred.
+
+## PH03 selection
+
+C11-PH03 is the bounded product-surface phase for mandatory functional Settings,
+mandatory functional Audit and complete disposition of the existing Closure
+capabilities. Audit replaces Closure in ordinary navigation after approved
+materialization.
+
+Fresh Operational, Didactic and Design investigations must inventory current
+truth and decide capability placement, user meaning, ownership, sanitization,
+Account scope, no-network behavior and validation. A/B/C may disagree; Main
+must reconcile them before any D/E/F or Codex authority exists.
+
+The deeper causal/backend R07 proposal, GCM04, multiple-user/provider work,
+revocation, resilience and retention/rebootstrap remain deferred to
+`C12-PHASE02`.
+
+```text
+C11_PH01_R01=PERMANENTLY_CLOSED
+C11_PH02=PERMANENTLY_CLOSED
+KANBAN_TRANSITIONS=NONE
+C11_CURRENT_UNIT=C11-PH03-INVESTIGATION
+PH03_STAGING_AUTHORITY=A_B_C_ONLY
+PH03_SOURCE_AUTHORITY=NONE
+NEXT_MAIN_ACTION=SEED_PH03_OPERATIONAL_DIDACTIC_DESIGN_INVESTIGATIONS
+```
+
