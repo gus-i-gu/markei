@@ -1,257 +1,655 @@
-# C_DESIGN — C11-PH01 Visual System and Core-Page Convergence
+# C_DESIGN — C11-PH02 Local Analytics Architecture
 
 > Role: Design Chat [D]
-> Cycle / phase: C11 / C11-PH01
-> Date: 2026-07-30
+> Cycle / phase: C11 / C11-PH02
+> Date: 2026-07-31
 > Repository / branch: `gus-i-gu/markei` / `grm-guarded-provisioning-20260727`
-> Inspected remote HEAD: `861c27fdaf6ade2093d481af312d27ff895b8dc0`
-> Required baseline: `861c27fdaf6ade2093d481af312d27ff895b8dc0`
-> Authority: Design investigation and Main handoff only
+> Inspected remote HEAD: `f6c1ae653bc50449f1308de72516c4bda3e39ebc`
 > Writable surface: `documentation/sketch_notebook/DEV_STAGE/C_DESIGN.md`
-> Status: COMPLETE PH01 DESIGN REPORT — NO SOURCE, D/E/F, CODEX, R07 OR GCM04 AUTHORITY
+> Status: proposed
 
-## 1. Recovered state and evidence boundary
+## 1. Recovered state and authority
 
-PRI-D and PMC-01 confirm this chat as Design [D]: it owns architectural interpretation, responsibility boundaries, dependency direction, invariants, alternatives, reversibility and design risks. The only active writable surface is this temporary C report. Permanent Design memory, source, methodology, Main continuity, D/E/F and Codex evidence remain prohibited.
+Design [D] owns architectural investigation: responsibility, dependency
+direction, identity, state lifetime, invariants, alternatives, reversibility and
+validation design. This MSU-02 round may replace only this temporary Design
+stage. It does not authorize source, tests, schemas, dependencies, G/H/I, J,
+permanent memory, methodology, provider operations or reconciliation.
 
-The explicit branch resolved to the required SHA. Comparison from `861c27f` to the branch was `identical` (ahead 0, behind 0); no default or older branch supplied evidence.
+Recovered Main state:
 
-Recovered direction:
+- Cycle 10 is accepted only within its documented two-Device, one-Account,
+  development scope.
+- C11-PH01-S01 is implemented and validated at
+  `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`.
+- C11-PH01-S02 is staged but not implemented at the inspected HEAD.
+- The branch advanced during this investigation from `f6566a4…` to
+  `f6c1ae6…` through one compatible PH01-S02-R01 D/E/F-only recovery staging
+  commit. It adds no remote source or materialization evidence and does not
+  overlap A/B/C.
+- C11-PH02 owns deterministic local, Account-scoped Analytics.
+- C11-PH03 retains Settings, Audit and Closure disposition.
+- hosted coordination, Sync, diagnostics and recovery are not Analytics
+  authority.
 
-- Cycle 10 is closed at GCM03 two-Device development scope.
-- C11 is in fresh A/B/C investigation; source authority is inactive.
-- PH01 owns responsive foundations and the five core-page redesigns.
-- PH02 owns functional local/account-scoped Analytics.
-- PH03 owns mandatory Settings and Audit, Closure disposition and removal of Closure from ordinary navigation.
-- C12-PHASE02 retains GCM04, multiple-user assays and R07 reassessment.
+Human direction in this round explicitly makes PH01 evidence a qualification,
+not a PH02 stop gate. This report therefore carries unfinished PH01 page
+convergence without redesigning the implemented shell, theme or responsive
+foundation.
 
-Evidence inspected: AGENTS, INDEX, PROMPT_COLLECTION (PRI-D/PMC-01), 00, 06, current Design checkpoint, latest C11 Main preparation in J, ALT_DEV 15.1–15.5, prior C report, all five target PNGs, named Flutter shell/theme/component/page/composition files, and the minimal Analytics registry. `I_DSN_CODEX.md` was not required: PH01 asks for current structure and the named source supplied it. No operational execution or visual parity is claimed.
+## 2. Hierarchical recovery and justified deeper reads
 
-## 2. Current UI topology
+Primary recovery followed the required order:
 
-`MarkeiApp` owns navigation, page construction and a cross-page integer refresh signal inside one stateful root. At width >=600 it renders a scrollable labelled `NavigationRail`; below 600 it renders Home, Lists, Purchase and History plus a More sheet. Destination identity is positional. Pages live in an `IndexedStack`.
+1. latest `J_MAIN_STAGE.md`;
+2. `00_PROJECT_STATE.md`;
+3. latest relevant `05_SESSION_LOG.md` segment;
+4. active `06_SESSION_SCHEME.md`;
+5. `design/09_DESIGN_STATE.md`.
 
-Current destinations mix stable product areas, planned placeholders, informational pages and a feature-gated native Closure page. Analytics and Household are disabled placeholders. Settings is present. Audit does not yet exist.
+Deeper reads and reasons:
 
-`MarkeiComposition` constructs application repositories, account/device scope, native authentication, enrollment, Sync, diagnostics and recovery coordinators. This is an application composition boundary and must not migrate into visual widgets.
+- G/H/I were required to separate PH01 implementation, automated validation,
+  rendered artifacts and human acceptance.
+- commit `1c7df53…` was required to verify PH01 changed paths.
+- `analytics_registry.dart` was required because the checkpoint does not define
+  a usable PH02 calculation contract.
+- `history_page.dart` and `purchase_history.dart` were required to classify the
+  present History selection and typed handoff seam.
+- `local_database.dart`, `local_query_repository.dart`, Purchase, quantity,
+  Catalogue and local-reference types were required to assign exact authority
+  for the twelve matrix fields and to detect absent facts.
+- shell, destination, theme and shared-component files were required only to
+  inherit implemented responsive ownership without redesign.
 
-The theme currently owns five colors and a small set of Material themes. Shared widgets currently comprise `MarkeiCard`, `MarkeiStatePanel` and `MarkeiStatusChip`. Most pages directly compose raw Material widgets and local private components.
+PMC-02 was not invoked: routing, semantic ownership and promotion authority are
+explicit in the invoking instruction and recovered surfaces.
 
-The five pages already delegate business work to application/repository ports, but their presentation composition is page-local:
+## 3. PH01 classification
 
-- Home renders static `homeCards`.
-- Lists requests a transient account-scoped projection and switches Storage/Shortage/Market/All.
-- Purchase owns dense draft interaction state while registration/catalogue/reference facts remain application-owned.
-- Catalogue uses catalogue query/mutation boundaries.
-- History uses purchase-history/export boundaries.
-- Closure currently combines account/session actions, Sync, diagnostic evidence, recovery controls and build provenance.
+Overall PH01 classification: **PARTIAL**.
 
-Architectural debt: positional navigation, shell/page construction coupling, a global refresh counter, duplicated spacing/state presentation, monolithic Purchase/Closure presentation, and no shared responsive projection contract.
-
-## 3. Proposed responsive shell
-
-Introduce a presentation-only shell model with stable destination identifiers rather than array positions. The registry should describe label, icon, ordinary-navigation visibility, compact priority and page builder. It must reserve `analytics`, `settings` and `audit` now without implementing their PH02/PH03 internals.
-
-Recommended destination groups:
-
-1. Core: Home, Lists, Purchase, Catalogue, History.
-2. Insight: Analytics (reserved).
-3. Administration: Settings and Audit (reserved).
-4. Support: Guide and Documentation.
-5. Planned/feature-gated: Household, outside primary PH01 emphasis.
-
-Wide layout should use a persistent labelled rail/sidebar and a bounded content canvas. Compact layout should retain four direct destinations plus More; Catalogue, Analytics, Settings and Audit remain discoverable in More. Destination IDs—not indexes—must preserve selection when feature gates or ordering change.
-
-Use breakpoint semantics rather than one magic width:
-
-- compact: single-column page, bottom navigation, cards and stacked actions;
-- medium: navigation rail, bounded content, adaptive two-column sections where safe;
-- wide: extended rail/sidebar, desktop tables, summary/action bands and optional supporting panes.
-
-Exact thresholds are an implementation choice to validate against available widths and text scaling; Design does not canonize 600 px. The shell owns navigation chrome, safe area, page title/action slot, content width and route selection. Pages own page-specific layout. Domain/application layers own truth and commands.
-
-## 4. Shared token and component model
-
-Token ownership belongs under `app/design`; components consume semantic tokens without importing domain repositories.
-
-Recommended token families:
-
-- semantic colors: primary/positive green, insight/accent purple, warning, danger, information, neutral ink, warm canvas and elevated surface;
-- type roles: display, page title, section title, body, label, metadata and numeric emphasis;
-- spacing scale, radii, borders/elevation, icon sizes, control heights;
-- content widths and responsive gutters;
-- motion/focus/disabled-state rules.
-
-Avoid page-specific literal colors and one-off font sizes. Semantic status colors must never determine meaning alone.
-
-Recommended shared component taxonomy:
-
-| Family | Responsibility |
-| --- | --- |
-| Shell | app frame, destination model, page header, compact More surface |
-| Layout | bounded content, responsive section/grid, desktop/mobile projection switch |
-| Surface | card, summary tile, section panel, disclosure panel |
-| Controls | filter bar/sheet, segmented selector, search, action group |
-| Data | desktop table frame, mobile record card, selection bar, key/value group |
-| State | loading skeleton/progress, empty, error, validation, partial/insufficient-history |
-| Feedback | semantic banner, status chip, confirmation surface |
-| Detail | expandable record/detail pane and metadata rows |
-
-Shared components accept already-classified presentation data and callbacks. They must not query repositories, infer Sync outcomes, rebuild Analytics, or translate raw exceptions independently.
-
-## 5. Five-page recomposition map
-
-| Page | Desktop composition | Compact composition | Preserved owner |
-| --- | --- | --- | --- |
-| Home | welcome header; two-column informational cards; wide “how it works” and developer/support rows | ordered single-column cards with concise copy | existing `home_content`; no invented telemetry or household facts |
-| Lists | view tabs; filter/sort/search/action band; summary tiles; selectable table; explanatory disclosure | view selector; summary cards; filter sheet; product cards and detail disclosure | `ProductListProjectionRepository`; projection remains transient/rebuildable |
-| Purchase | purchase-context band; find/select product; staged-item editor; classified feedback stack; staged-items table/review | explicit edit→review flow, stacked facts/items, fixed or prominent final action | registration, catalogue queries, local references and existing validation/application failures |
-| Catalogue | search/filter/sort/view band; dense product table; registration and similarity panels | search/filter controls, product cards, progressive registration/similarity surfaces | catalogue query/mutation boundaries and stable Product-ID selection |
-| History | filter band; selection/action band; expandable purchase rows with detail pane | stacked filters, selectable expandable cards, bottom/flow action group | purchase-history/export boundaries; Analytics handoff only reserved in PH01 |
-
-Desktop tables and mobile cards are two projections of the same page view model and stable record identity. They must not run different queries or compute different business classifications. Shared selection/filter state survives projection changes. Table column policy and card disclosure order belong to presentation adapters; fact derivation remains application-owned.
-
-The PNGs are compositional targets only. Unsupported categories, images, edit/delete actions, totals or telemetry must not be synthesized merely because they appear visually.
-
-## 6. Navigation reservations
-
-PH01 must create or define stable reservations for:
-
-- Analytics: ordinary destination, disabled/placeholder presentation allowed until PH02; no remote telemetry.
-- Settings: always-present ordinary destination; current settings behavior remains intact until PH03 recomposition.
-- Audit: always-present destination contract; its content can remain an explicit PH03 placeholder until ownership is materialized.
-
-Closure remains untouched and feature-gated during PH01. PH01 must not claim that reserving Audit replaces or relocates Closure capability.
-
-## 7. Provisional Closure capability matrix
-
-| Current capability | Provisional owner | PH01 disposition |
+| Evidence layer | Classification | Evidence |
 | --- | --- | --- |
-| Sign in / Logout | Settings/Advanced | preserve; classify only |
-| Enroll or query Device | Settings/Advanced | preserve; separate configuration/lifecycle from observed health |
-| Check hosted connection | Settings/Advanced | preserve as user-invoked connection check; last observation may be linked to Audit |
-| Ordinary Sync | Settings/Advanced | preserve existing command boundary; do not reconstruct outcome |
-| Diagnostics snapshot / Sync overview | Audit | read existing diagnostic authority |
-| Local queue counts and actionable events | Audit | present observed local state with evidence boundaries |
-| Recent attempts and grouped diagnostic timeline | Audit | primary operation-history surface |
-| Device diagnostic summary | Audit, with Settings summary link | Audit owns detailed observations; Settings may show bounded configuration summary |
-| Current action result / MKS meaning | Audit | reuse existing registry/diagnostic truth |
-| Build provenance | development-only support | keep out of ordinary product emphasis; Advanced/support placement later |
-| Retry unknown-outcome submission | unresolved | retain capability and tests; requires Operational/Design decision before ordinary exposure |
-| Inspect failed/notApplied recovery | development-only support | preserve outside ordinary navigation pending PH03 authority |
-| Recover failed/notApplied candidate | development-only support | preserve gated/manual semantics; do not relocate in PH01 |
-| Clear diagnostic history | Audit | user-controlled local history action with confirmation; retention/export policy needed |
-| “Native Closure” page/container | deliberate retirement candidate | retire only after every retained capability has a tested owner in PH03 |
+| S01 implementation | implemented | `1c7df53…` changes shell, theme, destinations, shared components, Home and Lists |
+| S01 automated validation | validated | focused tests, 245-test suite, analyze and diff checks recorded in G/H/I |
+| S01 rendered artifacts | validated | Windows release build and Android debug APK were produced with recorded hashes |
+| S01 human acceptance | ABSENT | no Windows/Android visual, real-device, screen-reader or keyboard-only acceptance |
+| S02 implementation | ABSENT | no Catalogue, History or Purchase convergence descendant is present |
+| complete five-page PH01 | PARTIAL | Home and Lists implemented; Catalogue, History and Purchase remain unavailable |
 
-Classification is COMPLETE as an inventory and PROVISIONAL as final product disposition. No capability is removed, relocated or reimplemented in PH01.
+The implemented responsive constitution is retained:
 
-## 8. Dependency and ownership rules
+- destination identity is enum/ID-based;
+- page state is retained by `IndexedStack`;
+- layout classes are compact `<600`, medium `600–1023`, wide `>=1024`;
+- tokens and shared components are presentation semantics;
+- shared widgets do not query repositories or calculate Analytics;
+- responsive projections must consume the same state.
 
-1. Shell and components depend inward on Flutter presentation primitives and semantic view data.
-2. Pages may depend on application ports and domain value types already required for interaction; shared visual widgets must not depend on repositories.
-3. Composition creates repositories/coordinators and injects them; navigation does not instantiate infrastructure.
-4. Business facts, validation, projections, exports, Sync outcomes and diagnostic categories remain owned by existing application/domain boundaries.
-5. Error adapters map typed application failures to presentation models once; widgets render severity, title, message and safe action.
-6. Unexpected exceptions remain sanitized and observable; visual widgets must not assign causal truth.
-7. Settings can invoke configuration/session commands and display bounded summaries, but cannot become diagnostic authority.
-8. Audit reads durable/local diagnostic projections and registry meanings; it cannot create an independent event model.
-9. Analytics in PH02 must use deterministic local/account-scoped query/calculation ports. Shared filters and surfaces may be reused, but PH01 must not add calculation behavior.
-10. No developer telemetry, remote behavioral collection or UI-derived Sync truth enters the dependency graph.
+Unavailable S02 structures qualify PH02 as follows:
 
-## 9. Implementation slices and reversibility
+- Analytics must use the implemented shell and tokens.
+- It must not depend on unfinished Catalogue, History or Purchase visual
+  recomposition.
+- The existing History page may gain only a typed navigation callback in a
+  later authorized slice; its broader PH01 redesign remains separate.
+- No claim of visual parity or human platform acceptance may be inherited.
 
-Recommended PH01 sequence:
+## 4. Inspected application surfaces
 
-1. Characterization tests: destination reachability, current callbacks, refresh behavior and key page states.
-2. Semantic tokens: expand theme while retaining aliases for current colors.
-3. Shell registry: stable IDs, grouped destinations and responsive shell behind a reversible presentation boundary.
-4. Shared layout/state primitives: bounded content, page header, responsive projection, state panels and action/filter shells.
-5. Home recomposition: lowest domain risk; proves shell/card language.
-6. Lists recomposition: proves summary/table-card/state patterns without changing projection semantics.
-7. Catalogue recomposition: proves data projection, selection and similarity surfaces.
-8. History recomposition: proves filters, selection, expandable detail and reserved Analytics action.
-9. Purchase recomposition: highest interaction risk; last, with edit/review/registration regressions.
-10. Reserved Analytics/Settings/Audit destinations and cross-width/accessibility characterization.
+| Surface | Current responsibility | PH02 consequence |
+| --- | --- | --- |
+| `domain/analytics/analytics_registry.dart` | version-keyed zero-input placeholder returning `0` | implemented registry shape is insufficient; retain versioned identity, replace placeholder execution contract |
+| `app/markei_composition.dart` | constructs local repositories and Account/Device scope | compose Analytics local evidence adapter here; no provider/Sync input |
+| `app/markei_app.dart` | stable destinations, retained pages and reserved Analytics page | replace reservation only in later authorized source work |
+| `app/pages/history_page.dart` | Account-scoped History, selected Purchase IDs, export and detail | typed Purchase-ID handoff is the lowest-coupling seam |
+| `application/purchase_history.dart` | History projections and price comparison | useful evidence precedent, not Analytics authority |
+| `infrastructure/local/local_database.dart` | authoritative local tables | local evidence authority |
+| `infrastructure/local/local_query_repository.dart` | Account-scoped joins/projections | precedent for one joined Analytics adapter; do not add per-row repository calls |
+| `domain/purchase/purchase.dart` | Purchase and Purchase Item facts | authoritative money, quantity and identity invariants |
+| `domain/shared/quantity.dart` | canonical quantity units and microunit scale | quantity/unit-price compatibility authority |
+| `domain/references/local_reference.dart` | person/payment labels and archived-state meaning | matrix labels remain facts resolved by ID |
+| theme/shell/shared components | responsive presentation foundation | inherited unchanged |
 
-Keep existing repository interfaces and page public constructors stable where possible. Introduce adapters incrementally, preserve old components until all consumers migrate, and avoid a single wholesale rewrite. Each page slice should be independently revertible. No schema, migration, API, provider or domain-model change is justified by PH01 aesthetics.
+## 5. Authority boundary and dependency direction
 
-## 10. Risks, alternatives and tradeoffs
-
-| Risk/choice | Tradeoff and disposition |
-| --- | --- |
-| One 600 px breakpoint | simple but fragile under text scale/window resizing; use semantic compact/medium/wide policy |
-| One widget tree with extensive conditionals | less duplication but unreadable monoliths; share view model/state and use explicit table/card projections |
-| Separate desktop/mobile pages | clear layouts but behavior drift; reject separate business controllers/queries |
-| Global refresh integer | cheap but broad and implicit; preserve initially, request later bounded invalidation design rather than coupling PH01 to state-management replacement |
-| Indexed positional navigation | easy but feature gates shift indexes; replace with stable destination IDs |
-| Giant “design system” first | consistency but delays evidence; build only primitives demanded by the five pages and PH02/PH03 reuse |
-| Pixel-copying PNGs | quick visual resemblance but invents unsupported behavior/data; treat references as composition vocabulary |
-| Moving Closure early | reduces navigation clutter but risks losing authority and recovery controls; prohibit until PH03 ownership/test mapping |
-| Purchase first | visibly valuable but highest regression density; stage it after primitives and lower-risk pages |
-| Full state-management migration | may improve maintainability but expands scope; reject for PH01 unless Main stages a proven prerequisite |
-
-## 11. Recommendations to Main
-
-1. Accept stable destination identity and a semantic three-layout shell as PH01 architecture.
-2. Stage tokens, shell and shared state/data primitives before page-by-page recomposition.
-3. Preserve application/repository constructors and business ownership; require characterization tests before visual replacement.
-4. Require desktop-table/mobile-card parity tests from one view model.
-5. Reserve Analytics, Settings and Audit destinations now, but prohibit their PH02/PH03 functionality.
-6. Keep Closure intact and feature-gated throughout PH01.
-7. Sequence pages Home → Lists → Catalogue → History → Purchase.
-8. Require visual/manual acceptance at representative compact, medium and wide widths without calling it operational validation in Design evidence.
-
-## 12. Dependencies requested from Operational and Didactic
-
-Operational:
-
-- identify supported Windows/Android window sizes, resize/orientation paths and feasible screenshot/golden strategy;
-- define build/test commands and regression gates for shell navigation, text scale, keyboard/focus and page workflows;
-- measure whether large tables/cards require paging or virtualization before PH01 changes query behavior;
-- inventory current test keys and feature-flag behavior, especially Closure.
-
-Didactic:
-
-- establish user-facing terminology for Catalogue/Product, Lists modes, insufficient history, Purchase edit/review and History selection;
-- define progressive-disclosure copy for filters, status chips, errors and empty states;
-- distinguish Settings configuration, Audit observation and Analytics interpretation;
-- verify accessibility wording does not encode meaning solely through color or icons.
-
-## 13. Unresolved decisions
-
-- Exact compact/medium/wide thresholds and maximum content widths.
-- Whether medium uses compact cards or reduced desktop tables per page.
-- Which four compact destinations remain direct once Analytics/Audit are active.
-- Whether Guide and Documentation remain destinations or move under support/settings later.
-- Whether Household stays visible as planned during C11.
-- Stable presentation-state mechanism after the global refresh signal; no PH01-wide framework migration is presently justified.
-- Whether product images are available local assets; references alone do not authorize them.
-- Final exposure of Retry/recovery and build provenance.
-- Audit export/retention/filter contract and diagnostic-history clearing policy.
-- Settings’ exact split between account/session, Sync controls and Advanced diagnostics.
-- Analytics filter model and History context-handoff contract, deferred to PH02.
-- Keyboard double-click/detail behavior and destructive-action policy where the references exceed current capability.
-
-## 14. PRI-D / PMC-01 terminal
-
-Confirmed role: Design [D].
-Current workflow: C11-PH01 fresh functional investigation before Main J and D/E/F.
-Authorized scope: inspect architecture and replace only C_DESIGN.
-Prohibited: source, permanent Design, methodology, Main files, D/E/F, Codex authorization and operational claims.
-Files consulted: prescribed methodology/state/J/ALT/C sources, five PNGs and named Flutter files.
-Remaining uncertainty: implementation thresholds, compact priority and final Closure disposition require Main plus O/A evidence.
+Proposed dependency direction:
 
 ```text
-CYCLE=C11
-PHASE=C11-PH01
-ROLE=DESIGN
-BASELINE_VERIFIED=YES
-C_REPORT_READY=YES
-CLOSURE_CLASSIFICATION=PROVISIONAL
-SOURCE_CHANGE_AUTHORIZED=NO
-D_E_F_AUTHORIZED=NO
-CODEX_AUTHORIZED=NO
-R07_AUTHORIZED=NO
-GCM04_AUTHORIZED=NO
-NEXT_MAIN_ACTION=Reconcile the completed C11-PH01 A/B/C reports into one append-only J_MAIN_STAGE section.
+Analytics page/widgets
+  -> Analytics workspace/controller
+  -> Analytics use cases and versioned registry
+  -> AnalyticsEvidenceRepository port
+  -> Drift local Analytics evidence adapter
+  -> Account-scoped local Product/Purchase tables
+```
+
+Rules:
+
+1. Local SQLite Product and Purchase facts are Analytics authority.
+2. Every evidence load requires an `AccountId`; the adapter applies the Account
+   predicate before returning rows.
+3. Remote transports, Sync events, submissions, diagnostics, Audit and hosted
+   identity are excluded from the graph.
+4. Widgets receive typed state, formatted values and callbacks. They do not
+   query repositories, normalize quantities, perform arithmetic or interpret
+   failure causes.
+5. The evidence adapter joins facts; the executor calculates results.
+6. History transfers typed context but never calculates an Analytics result.
+7. Results are reproducible from a configuration snapshot, registry
+   identifier/version and the referenced evidence-row identities.
+8. Missing facts remain unavailable; Analytics cannot repair raw data.
+
+## 6. Twelve-field evidence matrix
+
+The proposed supporting matrix is item-level because `purchase_items.id` is the
+smallest stable fact identity that relates Purchase, Product, quantity and
+money. Purchase-level values must be deduplicated by `purchaseId` where an
+operation explicitly uses a Purchase measure.
+
+| Field | Authoritative source | Evidence-row representation | State / qualification |
+| --- | --- | --- | --- |
+| Purchase | `purchases.id`, scoped by `purchases.account_id` | `PurchaseId purchaseId` | implemented fact |
+| date/time | `purchases.occurrence_time` | `DateTime occurrenceInstant` | implemented fact |
+| Product | `purchase_items.product_id` → `products.id` | `ProductId`, code, display name | implemented fact |
+| Brand | `products.display_brand`, fallback `normalized_brand` | nullable/display label | implemented fact |
+| Store | `purchases.store_id` → `stores.id` | `StoreId`, display name | implemented fact |
+| purchased by | `purchases.person_id` → `people.id` | nullable reference ID and historical label | implemented fact |
+| purchased for | no current field/table relation | unavailable state | blocked |
+| payment method | `purchases.payment_method_id` → `payment_methods.id` | nullable reference ID and historical label | implemented fact |
+| quantity | `purchase_items.purchased_amount`, `purchased_unit`, `measurement_kind` | fixed microunits + canonical unit/kind | implemented fact |
+| unit price | derived from line total / positive normalized quantity | fixed minor-units-per-canonical-unit | proposed derived evidence |
+| line total | `purchase_items.line_total_minor_units`, `currency_code` | fixed minor units + currency | implemented fact |
+| promotion | no current field/table relation | unavailable state | blocked |
+
+`purchased for` and `promotion` remain visible matrix columns with an explicit
+unavailable value. Their absence cannot be inferred from nickname, Product,
+price change, notes or Sync payloads.
+
+## 7. Proposed types and stable identities
+
+The exact filenames remain for Main/Codex staging. The architectural types are:
+
+```text
+AnalyticsEvidenceRowId
+  = PurchaseItemId
+
+AnalyticsEvidenceRow
+  rowId
+  accountId
+  purchaseId
+  product identity/facts
+  store identity/facts
+  occurrenceInstant
+  purchasedBy reference?
+  purchasedFor = unavailable
+  paymentMethod reference?
+  quantity
+  unitPrice outcome
+  lineTotal
+  promotion = unavailable
+
+AnalyticsDataset
+  accountId
+  rows
+  loadedAt
+  applicablePeriod
+
+AnalyticsCardId
+AnalyticsCardRevision
+AnalyticsRegistryIdentifier
+AnalyticsRegistryVersion
+
+AnalyticsCardConfiguration
+  cardId
+  revision
+  determinant
+  variables
+  operation
+  timeCondition?
+  evidenceScope
+
+AnalyticsResultEnvelope
+  registry identifier/version
+  configuration snapshot
+  values
+  factual interpretation inputs
+  evidence count
+  applicable period
+  evidence row IDs
+  unavailable/blocked outcomes
+```
+
+Identity rules:
+
+- row identity is the persisted Purchase Item ID, never a list index;
+- Purchase identity remains available for deduplication and History handoff;
+- card identity survives reordering and editing during the app session;
+- editing increments card revision;
+- removal discards the card/configuration/result;
+- registry identity and version identify calculation semantics;
+- result traceability stores the exact evidence-row IDs used, not only a count.
+
+## 8. Determinants, variables and compatibility
+
+Determinants are a closed type:
+
+- `ProductDeterminant(ProductId? grouping/focus)`;
+- `PurchaseDeterminant`;
+- `StoreDeterminant(StoreId? grouping/focus)`;
+- `TimeDeterminant(TimeGranularity)`.
+
+Time granularity is day, ISO week or month under the time policy in section 10.
+
+Relational variables are numeric measures related to the determinant:
+
+- `QuantityVariable`;
+- `UnitPriceVariable`;
+- `LineTotalVariable`;
+- `PurchaseTotalVariable`;
+- `EvidenceCountVariable`.
+
+Categorical matrix fields are determinants, labels or evidence conditions; they
+are not silently coerced into numbers.
+
+### Compatibility matrix
+
+| Variable | Sum | Mean | Difference | Percentage | Compatibility key |
+| --- | --- | --- | --- | --- | --- |
+| quantity | proposed | proposed | proposed | proposed | measurement kind + canonical unit |
+| unit price | proposed | proposed | proposed | proposed | currency + measurement kind + canonical unit |
+| line total | proposed | proposed | proposed | proposed | currency |
+| Purchase total | proposed | proposed | proposed | proposed | currency; distinct Purchase IDs |
+| evidence count | proposed | proposed | proposed | proposed | counting unit must be row or distinct Purchase, explicit in configuration |
+
+Rules:
+
+- Mixed currencies never combine into one money value. They produce independent
+  currency-keyed values or an explicit unavailable outcome.
+- Mixed quantity kinds/units never combine. Quantity and unit-price results are
+  keyed by compatible kind/unit, and unit price also by currency.
+- Multi-variable cards produce independent typed values under one common
+  determinant, evidence scope and period.
+- No implicit composite score or cross-variable arithmetic is permitted.
+- `PurchaseTotalVariable` deduplicates by `purchaseId`; item rows must not
+  multiply the Purchase total.
+
+## 9. Operation architecture
+
+Use operation-specific sealed configuration/result types behind one common
+registry definition envelope.
+
+### Sum
+
+For each variable, sum compatible values. Results remain separated by currency
+or quantity compatibility key.
+
+### Mean
+
+Mean is the arithmetic mean per contributing aggregation unit:
+
+- item row for quantity, unit price and line total;
+- distinct Purchase for Purchase total;
+- selected counting unit for evidence count.
+
+The result exposes numerator, contributing count and label such as “per
+Purchase Item” or “per Purchase”. Weighted mean is deferred.
+
+### Difference
+
+Difference has ordered operands:
+
+```text
+left  = one EvidenceScope
+right = one EvidenceScope
+```
+
+For each selected variable the registry applies the same aggregate semantics to
+both scopes, verifies identical compatibility keys, then returns
+`left - right`. Arbitrary user-entered scalars and cross-dimension operands are
+blocked.
+
+### Percentage
+
+Percentage has:
+
+```text
+numerator   = one EvidenceScope
+denominator = one EvidenceScope
+```
+
+Both use the same variable, aggregation semantics and compatibility key. The
+result is fixed basis points plus numerator and denominator inputs. A zero
+denominator returns a typed `zeroDenominator` unavailable outcome; it never
+returns zero, infinity or an exception-derived label.
+
+### Registry
+
+The current zero-input `calculate: () => 0` registry is implemented only as a
+placeholder. PH02 should retain version lookup but use definitions that own:
+
+- supported operation/configuration type;
+- compatibility validation;
+- executor;
+- result type;
+- factual interpretation-input builder;
+- registry identifier and version.
+
+Recommended registry identifiers are stable semantic strings such as
+`local.sum`, `local.mean`, `local.difference`, `local.percentage`, each at
+version `1`. Unknown identifier/version remains blocked.
+
+## 10. Time semantics
+
+Proposed PH02 policy:
+
+- occurrence authority is persisted `purchases.occurrence_time`;
+- execution uses the persisted instant in UTC;
+- optional time conditions use inclusive start and exclusive end;
+- Time determinant buckets are UTC day, ISO week beginning Monday, or calendar
+  month;
+- UI may display localized labels, but configuration/result envelopes retain
+  UTC bounds;
+- applicable period is the minimum/maximum contributing instant constrained by
+  the configured bounds;
+- an empty result reports the configured period and evidence count `0`.
+
+UTC bucketing is recommended because no Account timezone authority currently
+exists and device-local bucketing could change after timezone/device changes.
+An Account-timezone model remains deferred rather than inferred.
+
+## 11. Dataset, selection, filtering and card lifetime
+
+`AnalyticsWorkspaceController` is proposed as page-local shared state retained
+by the existing `IndexedStack`. It owns:
+
+- one complete Account-scoped `AnalyticsDataset`;
+- matrix filters and selected row IDs;
+- current focused evidence scope;
+- ordered cards;
+- card configuration revisions and results;
+- pending typed History launch context.
+
+State behavior:
+
+1. Loading establishes the complete matrix dataset for the Account.
+2. Matrix filters produce a filtered dataset without mutating raw rows.
+3. Selecting matrix rows initializes a new card with that selected-row scope.
+4. Creating from filters initializes a card with the filtered-dataset scope.
+5. Selecting a card focuses the matrix on the exact evidence rows used by its
+   latest result.
+6. Reset restores all loaded Account evidence, clears matrix filters/selection
+   and removes card focus; it does not reload or delete facts.
+7. Reordering changes only card order.
+8. Editing preserves `cardId`, increments revision and re-executes.
+9. Removing a card removes only session state.
+
+Cards are session-local and not persisted in PH02. This avoids schema/migration,
+Sync and cross-version lifecycle obligations. Persistence is deferred until
+real reuse evidence defines ownership and migration semantics.
+
+## 12. History handoff
+
+Alternatives:
+
+| Handoff | Benefit | Cost/coupling | Classification |
+| --- | --- | --- | --- |
+| Purchase IDs | already stable and selected by History; Account-scoped resolution; no calculation in History | Analytics expands Purchases to item rows | proposed |
+| evidence-row IDs | exact matrix focus | History does not own/expose all item IDs; forces Analytics detail into History | deferred |
+| filter context | expressive and compact | current History has no typed filter model; semantic drift risk | deferred |
+
+Recommended contract:
+
+```text
+AnalyticsLaunchContext.purchaseSelection(
+  accountId,
+  Set<PurchaseId>
+)
+```
+
+History supplies its selected IDs through a callback owned by `MarkeiApp`.
+`MarkeiApp` selects the Analytics destination and passes the typed context.
+Analytics validates Account scope, resolves rows through
+`AnalyticsEvidenceRepository`, initializes the matrix selection and creates no
+result until the user chooses a card configuration.
+
+History never imports the Analytics registry or executor.
+
+## 13. Responsive parity
+
+Analytics inherits the implemented shell, breakpoints, theme and shared
+components. No PH02 shell redesign is proposed.
+
+Wide:
+
+- repeatable cards above;
+- complete supporting matrix below;
+- card configuration may use a side disclosure;
+- matrix retains dense column projection and horizontal accommodation.
+
+Compact/medium:
+
+- same card order, configuration, results, focused scope and filters;
+- cards stack vertically;
+- configuration uses progressive disclosure;
+- matrix becomes a faithful row-card projection with all twelve fields
+  reachable through disclosure.
+
+The compact projection is not a summary that drops evidence. Both layouts use
+one workspace/controller and the same row identities. Shared widgets render
+state and callbacks only.
+
+## 14. Query boundary and N+1 prevention
+
+Recommended read contract:
+
+```text
+AnalyticsEvidenceRepository.loadDataset(
+  AccountId accountId,
+  AnalyticsEvidenceScope initialScope
+)
+```
+
+The Drift adapter performs one Account-predicated joined query across
+Purchases, Purchase Items, Products, Stores, People and Payment Methods.
+Nullable joins preserve unavailable references. It maps every item once,
+normalizes fixed quantity through the existing quantity authority and derives a
+typed unit-price outcome.
+
+Application composition then:
+
+- groups determinants;
+- applies filters/scopes;
+- deduplicates Purchase measures;
+- invokes registry executors;
+- returns result envelopes.
+
+No executor calls a repository per evidence row. Tests must assert one dataset
+request per load/retry and zero additional repository requests for filtering,
+selection, card focus or reordering.
+
+## 15. Alternatives, costs and recommendations
+
+| Alternative | Benefits | Costs / coupling / validation | Reversibility / compatibility | Recommendation |
+| --- | --- | --- | --- | --- |
+| joined local query | one consistent snapshot; avoids N+1; exact Account predicate | wider adapter mapping test | additive port/adapter, reversible | proposed |
+| application composition from existing History calls | reuses ports | per-Purchase detail calls, incomplete matrix, N+1 | easy initially, expensive later | contradicted |
+| complete in-memory dataset | matrix completeness; instant filter/card focus; deterministic session | memory/initial-load cost | reversible behind repository port; measure volumes | proposed |
+| incremental/paginated evidence | lower initial memory | cannot honestly expose complete matrix/count without server-like paging state | later adapter evolution possible | deferred |
+| session-local cards | no schema/Sync/migration; simple lifetime | no cross-session reuse | highly reversible | proposed |
+| locally persisted cards | reuse across sessions | schema, migration, registry-version and deletion semantics | more expensive to reverse | deferred |
+| operation-specific types | prevents invalid operands and typed zero states | more types/tests | additive and explicit | proposed |
+| one generic model | compact API | runtime validation and illegal combinations | easy to start, costly to harden | contradicted |
+| independent multi-variable results | preserves dimensions and traceability | more result entries | compatible with later composite views | proposed |
+| composite multi-variable score | compact display | invents semantics outside constitution | difficult to explain/reverse | contradicted |
+| compact disclosures | shares one state/model across widths | disclosure/accessibility tests | inherits PH01 foundation | proposed |
+| another compact data projection/controller | local layout freedom | state/query drift | conflicts with PH01 parity | contradicted |
+| direct calculators | minimal code | scattered semantics, weak version traceability | current placeholder shows the limit | contradicted |
+| versioned registry executor | stable semantics, reproducibility, compatibility gates | registry/config/result tests | extends current registry intent | proposed |
+
+## 16. Reversibility and configuration lifetime
+
+- The local evidence port isolates Drift joins from Analytics semantics.
+- Operation types and registry definitions are additive and replaceable by
+  version, not mutable global behavior.
+- Session-only cards require no rollback migration.
+- History handoff is an optional callback/context and does not change History
+  repository contracts.
+- Responsive Analytics widgets remain presentation-only and can evolve without
+  changing evidence/executor types.
+- Complete-dataset loading can later become incremental behind the port only
+  after a protocol preserves complete counts, focus and traceability.
+- No schema, dependency, Sync contract or provider topology is required by the
+  proposed PH02 baseline.
+
+## 17. Decisions and Main decisions required
+
+Proposed Design decisions:
+
+1. local Account-scoped joined evidence is the only Analytics source;
+2. item-level stable evidence identity is `PurchaseItemId`;
+3. operation-specific configs/results execute through a versioned registry;
+4. complete session dataset and session-local cards are the PH02 baseline;
+5. multi-variable results are independent, compatibility-keyed values;
+6. Difference and Percentage compare two explicit evidence scopes;
+7. Percentage zero denominator is typed unavailable state;
+8. History handoff uses typed Purchase IDs;
+9. UTC inclusive-start/exclusive-end time semantics are the deterministic
+   baseline;
+10. one workspace state drives cards and both matrix projections.
+
+Main decisions required:
+
+- accept UTC bucketing until an Account timezone exists;
+- accept complete in-memory evidence for the first bounded PH02 unit, subject to
+  volume evidence;
+- accept session-local cards and defer persistence;
+- accept Purchase-ID History handoff;
+- accept unavailable `purchased for` and `promotion` columns rather than schema
+  invention;
+- choose whether `EvidenceCountVariable` defaults to item rows or must always
+  require an explicit row/distinct-Purchase choice.
+
+## 18. Bounded implementation slices
+
+1. **Types and registry** — evidence identities, determinants, variables,
+   operations, compatibility keys, time conditions and typed outcomes.
+2. **Local evidence port/adapter** — one Account-scoped joined Drift query,
+   matrix mapping and N+1 characterization.
+3. **Executors** — Sum, Mean, Difference and Percentage with fixed arithmetic,
+   mixed compatibility and zero-state tests.
+4. **Workspace state** — dataset, filters, selection, focus, cards,
+   reorder/edit/remove/reset and traceability.
+5. **History handoff** — typed Purchase-ID context and destination callback.
+6. **Responsive presentation** — cards above complete matrix, common wide and
+   compact state, loading/empty/error/unavailable states.
+7. **Validation/evidence** — focused, full-suite, build, responsive and
+   architecture evidence.
+
+Each slice is independently testable and should remain source-bounded by Main.
+
+## 19. Non-goals
+
+Deferred or blocked:
+
+- forecasting, recommendations, rankings and advanced statistics;
+- charts;
+- telemetry;
+- hosted, provider, Sync-event or diagnostic-derived Analytics;
+- external facts;
+- repair or mutation of raw Product/Purchase facts;
+- persisted card dashboards;
+- weighted means;
+- Account-timezone schema;
+- `purchased for` or promotion schema invention;
+- PH01 Catalogue/History/Purchase visual convergence;
+- PH03 Settings, Audit or Closure work;
+- production, resilience, multiple-Account or provider acceptance.
+
+## 20. Claim/evidence matrix
+
+| Claim | Classification | Evidence |
+| --- | --- | --- |
+| local Product/Purchase facts are Analytics authority | accepted | J, 00, Design checkpoint and local schema |
+| S01 shell/theme/responsive foundation exists | implemented | `1c7df53…`, source and G/H/I |
+| S01 automated/build evidence exists | validated | G/H/I |
+| human PH01 acceptance exists | contradicted | G/H/I explicitly record none |
+| complete PH01 five-page convergence exists | contradicted | S02 implementation commit/source/evidence absent |
+| Analytics destination exists | implemented | destination enum and reserved page |
+| usable Analytics calculations exist | contradicted | placeholder registry returns zero; reserved page states none active |
+| joined evidence adapter and workspace types | proposed | this Design investigation |
+| purchased-for authority exists | blocked | no table/domain/projection field |
+| promotion authority exists | blocked | no table/domain/projection field |
+| History can hand off selected Purchase IDs | proposed | current `_selectedIds` and stable `PurchaseId` |
+| remote Analytics authority is needed | contradicted | retained local/account-scoped constitution |
+
+## 21. Proposed F gates and exact later I evidence
+
+Proposed F gates:
+
+1. exact writable paths and no schema/dependency/provider expansion;
+2. every evidence query requires `AccountId` and proves the predicate;
+3. one joined load; no per-row repository calls;
+4. stable Purchase Item row identity and Purchase deduplication tests;
+5. all twelve fields represented, with purchased-for/promotion unavailable;
+6. fixed integer money/quantity arithmetic only;
+7. compatibility tests for mixed currency, kind, unit and missing quantity;
+8. Mean contribution-unit tests;
+9. Difference operand-order and compatibility tests;
+10. Percentage numerator/denominator and zero-denominator tests;
+11. UTC time-boundary and bucket tests;
+12. independent multi-variable result and evidence-trace tests;
+13. session card add/edit/reorder/remove/reset/focus tests;
+14. Purchase-ID History context tests without History calculation imports;
+15. compact/medium/wide state-parity and complete-field-disclosure tests;
+16. full Flutter test/analyze/build gates without live provider operations.
+
+Later I must record:
+
+- exact source/test paths and changed-path inventory;
+- final type names, owners and dependency direction;
+- registry identifiers/versions and operation definitions;
+- query shape, Account predicate and observed request count;
+- evidence-row identity and Purchase-deduplication behavior;
+- compatibility and zero-state results;
+- time policy and boundary cases;
+- History handoff dependency check;
+- card lifetime and cross-width parity evidence;
+- confirmation that widgets contain no repository/calculation authority;
+- confirmation that remote/Sync/diagnostic imports are absent from Analytics;
+- focused/full test and build evidence;
+- any deviation, residual risk and human/rendered acceptance ceiling.
+
+## 22. Concise Main handoff
+
+PH01 is PARTIAL: S01 shell/Home/Lists are implemented and validated, while S02
+Catalogue/History/Purchase convergence and all human platform acceptance are
+absent. This does not block PH02. Main can reconcile Analytics around one
+Account-scoped joined evidence dataset, operation-specific versioned executors,
+session-local cards, Purchase-ID History handoff and shared responsive state.
+The six Main decisions in section 17 should be resolved before D/E/F.
+
+```text
+INSPECTED_REMOTE_HEAD=f6c1ae653bc50449f1308de72516c4bda3e39ebc
+PH01_IMPLEMENTATION_COMMIT=1c7df53c095f4e7c1d85f278ba16c21fd95b25e6
+PH01_MATERIALIZATION_GATE=PARTIAL
+PH01_HUMAN_ACCEPTANCE=ABSENT
+ANALYTICS_CURRENT_STATE=implemented-reservation;proposed-functionality
+LOCAL_ANALYTICS_AUTHORITY=accepted
+ACCOUNT_SCOPING=accepted
+EVIDENCE_MATRIX_FIELD_AUTHORITY=proposed
+OPERATION_COMPATIBILITY=proposed
+TIME_SEMANTICS=proposed
+HISTORY_HANDOFF=proposed-purchase-ids
+WIDE_COMPACT_STATE_PARITY=implemented-foundation;proposed-analytics
+STAGE_STATUS=proposed
+MAIN_DECISIONS_REQUIRED=UTC-time;complete-session-dataset;session-local-cards;Purchase-ID-handoff;unavailable-fields;explicit-counting-unit
+NEXT_MAIN_ACTION=Reconcile C11-PH01 evidence and the C11-PH02 A/B/C reports into one Main decision set before staging D/E/F.
+CHARTS_AUTHORIZED=NO
+PREDICTIVE_ANALYTICS_AUTHORIZED=NO
+REMOTE_ANALYTICS_AUTHORITY=NO
+SOURCE_CHANGED=NO
+PERMANENT_MEMORY_CHANGED=NO
+METHODOLOGY_CHANGED=NO
 ```
