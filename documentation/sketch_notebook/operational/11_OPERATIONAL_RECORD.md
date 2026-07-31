@@ -1032,3 +1032,60 @@ Not performed:
 Catalogue, Purchase and History recomposition remains later C11-PH01 work. Analytics calculations remain C11-PH02. Settings/Audit redesign and Closure capability disposition remain C11-PH03. GCM04, multiple-Account work, revocation, outage recovery, retention/rebootstrap and production lifecycle remain deferred to C12-PHASE02.
 
 No Cycle 10 terminal, chronology or Canon is restated by this event.
+
+---
+
+## 2026-07-31 — C11-PH01-R01 and C11-PH02 combined materialization
+
+Sequence: `FLX-PRM-04` post-evidence Operational absorption  
+Role: Operational Chat [O]  
+Implementation parent: `e802d435cf562e422b7f9118db929235488899bf`  
+Implementation commit: `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`  
+Main reconciliation: `J_MAIN_STAGE.md` section 9 at `0bfc02e8363d8119469a5e8627d8350fa97790b4`  
+Evidence: complete `DEV_STAGE/G_OPS_CODEX.md`, implementation diff, relevant source and tests  
+Evidence boundary: one Windows validation host, automated/widget evidence, static analysis, Windows release build and Android debug build; no screenshot, assistive-technology, real-device or human acceptance
+
+### PH01 correction and R02 lifecycle evidence
+
+- Purchase and Catalogue remained reachable under constrained height with bounded field separation, wrapping and geometry corrections while preserving the accepted PH01 visual system.
+- History retained one checkbox as the selection affordance and a separate row/card activation for detail in wide and compact presentations.
+- The R01 test timeout/process-lock cause was isolated to animated helper scrolling and eager loading of hidden Analytics content.
+- R02 changed the app-shell helper to tester-owned bounded `ensureVisible` behavior and gated Analytics evidence loading by visible destination. Substantive assertions remained active.
+- The formerly blocked Store-without-Item and Catalogue-create-to-Purchase-register cases passed independently; the app-shell suite passed 26 tests.
+
+### Analytics execution and request evidence
+
+- Analytics is deterministic, read-only, local and active-Account-scoped.
+- `LocalAnalyticsRepository.loadEvidence` performs one complete Account-predicated joined evidence query. It does not reuse History's 50-Purchase projection and does not issue an N+1 detail loop.
+- Initial Analytics load issued one repository request. Each local Retry added exactly one request. Filtering, selection, execution, card focus, reset and reorder added zero requests.
+- History transfers typed Purchase IDs; Analytics performs the calculation. Wide and compact layouts share one workspace/controller state.
+- Sum, Mean, Difference and Percentage passed compatibility coverage. Difference is comparison B minus baseline A. Percentage is part of a named whole.
+- Checked fixed-point/rational execution returned typed unavailable results for zero denominator and overflow; it did not wrap or substitute floating-point behavior.
+- The evidence matrix renders 100 rows at a time and bounds selected scope at 500 stable row IDs.
+
+### Validation and measured host evidence
+
+- Focused tests: PASS.
+- App-shell suite: PASS, 26 tests.
+- Full Flutter suite: PASS, 258 tests passed and 4 lab-gated skips, approximately 82.7 seconds.
+- `flutter analyze`: PASS.
+- Windows release build: PASS, existing Boost CMake development warning retained.
+- Android debug build: PASS, existing `auth0_flutter` Kotlin Gradle Plugin warning retained.
+- Dependency, lockfile, schema, generated-source, provider, Sync, authorized-path and whitespace audits: PASS.
+- Validation-owned Dart, Flutter and SQLite processes remaining after validation: none observed.
+
+Measured committed fixtures from the one Windows validation host:
+
+| Fixture | Purchases / Items | Rendered page | Selected scope | Complete load | Calculation | Result |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Ordinary Sum | 1,000 / 5,000 | 100 | 0 | 2 ms | 22 ms | PASS under 250 ms |
+| Stress Mean | 10,000 / 50,000 | 100 | 500 | 6 ms | 302 ms | PASS under 1 s |
+
+These timings are evidence from that host and fixture only; they are not universal device-performance guarantees.
+
+### Unchanged surfaces and remaining gates
+
+No schema, migration, dependency, lockfile, generated-source, platform, API, Auth, Sync, provider or diagnostic surface changed. No live Sync/provider operation occurred, and no Cycle 10 development or production acceptance boundary reopened.
+
+Still unperformed: screenshot-based rendered review; Narrator, TalkBack and other assistive-technology review; keyboard-only human acceptance; real Windows/Android device review; locale review; and human comprehension/visual acceptance. These are remaining validation gates, not failed implementation.
+

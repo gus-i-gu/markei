@@ -500,3 +500,29 @@ A bounded development closure may be accepted without a final provider recount o
 
 Deferred validation families remain distinct work: multiple-Account isolation; membership disablement and Device revocation; outage and acknowledgement-uncertainty recovery; retention, snapshot and rebootstrap; production deployment and lifecycle acceptance; GCM04 and any conditional R07 implementation. Evidence: REC Appendix I; J §§2–3 and §5.2.
 
+---
+
+# C11 Deterministic Local Analytics Operational Rules
+
+These rules are promoted from `DEV_STAGE/G_OPS_CODEX.md`, `J_MAIN_STAGE.md` section 9, implementation commit `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`, and the named Analytics source/tests.
+
+## Complete local evidence-read boundary
+
+A deterministic local analysis begins with one complete active-Account-predicated joined evidence read. A truncated History projection or per-Purchase detail loop is not Analytics query authority. Account filtering belongs in the repository query, not only in presentation filtering. Evidence: `local_analytics_repository.dart`, `local_analytics_repository_test.dart`, G request-count evidence and J §9.2–9.3.
+
+Initial load issues one repository read; each explicit local Retry repeats exactly that read once. Filtering, row selection, calculation, card focus, reset, reorder and responsive recomposition operate on the loaded session dataset and must not issue repository requests. Retry is a local Analytics read, not protocol Retry, Sync or Recovery. Evidence: `analytics_workspace.dart`, `analytics_workspace_test.dart`, G and J §9.3.
+
+## Bounded evidence and typed calculation
+
+The evidence matrix may page presentation independently from the complete loaded calculation dataset. Stable row identity must survive filtering, selection and responsive layout. Selected scope is explicitly bounded, and History transfers typed Purchase IDs without calculating Analytics. Wide and compact presentations share one workspace state. Evidence: `analytics_workspace.dart`, `history_page.dart`, History handoff tests, G and J §9.2.
+
+Analytics arithmetic remains checked fixed-point/rational. Quantity compatibility is enforced before calculation. Difference keeps explicit baseline-A/comparison-B ordering; Percentage uses a named part and containing whole. Zero denominators and overflow return typed unavailable results rather than wrapping, substituting floating-point behavior or repairing source facts. Evidence: `analytics_registry.dart`, `analytics_registry_test.dart`, G and J §9.2.
+
+## Lifecycle, performance and acceptance gates
+
+Hidden destinations must not start expensive local reads merely because their widgets exist in the retained shell. Visibility-gated loading and tester-owned bounded scrolling are lifecycle requirements when retained page state and native resources could keep tests unfinished. Evidence: `markei_app.dart`, `markei_app_test.dart`, G R02 evidence and J §9.4.
+
+Performance claims must name fixture size, operation, rendered-page size, selected scope, host and measured load/calculation times. A passing Windows-host fixture is not a universal device guarantee. Automated tests, widget layout assertions, static analysis, platform builds, screenshots, assistive technology, keyboard use, real-device execution, locale review and human acceptance remain separate gates. Evidence: G ordinary/stress fixtures and evidence limits; J §9.3–9.5.
+
+Local Analytics implementation and validation do not alter Sync, provider, production or Cycle 10 acceptance. No live operation or remote authority may be inferred from local analysis evidence. Evidence: G forbidden-surface audit and J §9.5.
+

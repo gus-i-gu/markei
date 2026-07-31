@@ -1,44 +1,46 @@
 # 04_TODO.md
 
-> Version: C11-PH01 Operational work view
+> Version: C11-PH02 Operational work view
 > Branch: `grm-guarded-provisioning-20260727`
-> Evidence: Cycle 10 permanent registration plus `DEV_STAGE/G_OPS_CODEX.md`
+> Inspected implementation: `20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6`
+> Evidence: `DEV_STAGE/G_OPS_CODEX.md` plus `J_MAIN_STAGE.md` section 9
 > Status: Active derived Operational view
 
 # Current and Deferred Work
 
-## Closed evidence boundary
+## Closed automated/build boundary
 
-- Cycle 10 is closed at `GCM03=CLOSED_TWO_DEVICE_DEVELOPMENT_SCOPE`.
-- Accepted Sync evidence remains limited to two Devices, one Account and the development environment.
-- Production acceptance and a final provider-table recount after the golden no-op repeats remain absent.
-- C11-PH01-S01 implemented stable destination identity, compact/medium/wide shell policies, the shared visual foundation, and Home/Lists recomposition.
-- Focused tests, the full Flutter suite, analysis, Windows release build and Android debug build passed for S01.
-- Lists Retry repeats only its local projection read; no live Sync/provider behavior was changed or exercised.
+- Cycle 10 remains closed at GCM03's two-Device, one-Account development scope; production acceptance remains absent.
+- C11-PH01-R01 Purchase/Catalogue reachability and History single-selection corrections are implemented and validated at automated/build scope.
+- The R02 test-helper and hidden-Analytics lifecycle correction is implemented and validated.
+- C11-PH02 local active-Account-scoped Analytics, complete joined load, typed History handoff, fixed-point operations, responsive state parity, 100-row presentation page and 500-ID selection bound are implemented and validated.
+- Focused tests, the 26-test app-shell suite, the full 258-pass/4-skip suite, analysis, Windows release build and Android debug build passed.
+- One Windows validation host established the committed ordinary and stress fixture timings; those timings do not generalize to all Devices.
 
-## P0 — C11-PH01-S01 human-platform acceptance
+## P0 — PH01 and PH02 human/rendered acceptance
 
-- Review Home, Lists and shell behavior on Windows at compact, medium and wide boundaries.
-- Review compact Android layout on a real Device, including density, orientation and retained destination/page state.
+- Perform screenshot-based review of Purchase, Catalogue, History and Analytics at compact, medium and wide boundaries.
+- Confirm Purchase/Catalogue field reachability and History checkbox-versus-detail behavior through human interaction.
+- Exercise Analytics matrix/card initialization, focus, reset, filtering, selection and typed History handoff in wide and compact layouts.
 - Exercise Windows keyboard-only navigation and Narrator.
-- Exercise Android TalkBack.
-- Check loading, read-error, first-use-empty, filtered-empty, insufficient-history and populated Lists states.
-- Confirm that visual review does not activate Sync, protocol Retry, Recovery, Query or Enroll.
-- Record any platform defect as new evidence; do not promote build success into human acceptance.
+- Exercise Android TalkBack and real-device density/orientation behavior.
+- Review human comprehension of Difference ordering, Percentage part/whole, unavailable results, evidence counts and periods.
+- Review locale-sensitive presentation without changing deterministic stored facts.
+- Record platform or comprehension defects as new evidence; do not restate automated/build success as human acceptance.
 
-## P0 — Remaining C11-PH01 page convergence
+## P0 — Operational portability and bounded-performance confirmation
 
-- Recompose Catalogue, Purchase and History within the accepted shared visual language.
-- Preserve their existing business commands, local persistence, selection, projection and export behavior.
-- Add focused responsive/widget coverage and rerun the full test, analysis and Windows/Android build gates.
-- Perform human Windows/Android visual, keyboard and assistive-technology acceptance after each bounded implementation unit.
-- Treat approved golden coverage as a separate future gate; none exists from S01.
+- Repeat the ordinary and stress fixtures on representative slower Windows and Android hardware when a performance-acceptance target is authorized.
+- Confirm that initial load remains one joined Account-scoped request, each local Retry adds one request and local transitions add none.
+- Confirm visibility gating prevents hidden Analytics reads during shell navigation and retained page-state transitions.
+- Confirm 100-row rendering and the 500-ID selected-scope boundary remain responsive on a real Android Device.
+- Keep any index/schema optimization as a separately evidenced and authorized change; the current implementation required none.
 
 ## Later C11 work retained
 
-- C11-PH02: implement and validate deterministic local/account-scoped Analytics and History-to-Analytics context handoff.
-- C11-PH03: make Settings and Audit functional and complete the tested disposition of Closure capabilities.
-- Keep Analytics/Audit destination reservation distinct from implemented functionality.
+- Enter C11-PH03 only after Main reconciles all PH01/PH02 permanent-domain results.
+- Make Settings and Audit functional and complete the tested disposition of Closure capabilities under separate staging.
+- Preserve local Analytics, History handoff and PH01 visual behavior while PH03 is investigated.
 
 ## Deferred to C12-PHASE02
 
