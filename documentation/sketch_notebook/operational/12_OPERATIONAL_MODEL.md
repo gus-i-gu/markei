@@ -424,3 +424,79 @@ Manual `dd/mm/yyyy` and `HH:mm` represent Purchase occurrence, distinct from ins
 Catalogue click/tap selects and details remain explicit; History selection is checkbox/tap/keyboard owned, while double-click currently focuses detail. Lists language repair is not full relational/visual composition. Theme/components are infrastructure, not visual convergence. Oversized pages must be extracted before expansion.
 
 Tests, analysis, migration, build, bounded launch, manual workflow, accessibility, lifecycle and release are separate gates. Windows build/hidden launch is not manual acceptance; absent Java leaves Android host-unvalidated; deterministic PDF/export is not native OS sharing.
+
+---
+
+# Cycle 10 Guarded Synchronization Operational Rules
+
+The following reusable rules are promoted from `REC_DIAGNOSTICS.md` Records 001–021 and Appendix I, with acceptance and deferral boundaries reconciled by the current `J_MAIN_STAGE.md` prefix §§2–5.
+
+## Guarded execution route and ownership
+
+The stable human-to-execution route is:
+
+```text
+GRM procedure
+→ G_SCRIPTS guarded launcher
+→ NS_COORDINATES non-secret selection
+→ I_SCRIPTS implementation helper
+→ client / Render / DB_MGMT evidence surface
+→ REC chronological record
+→ J sequence reconciliation
+```
+
+`DB_MGMT` owns bounded manual SQL management and explicitly read-only or rollback provider evidence. Runtime diagnostic definitions are owned by the registry; `ERR_DIAGNOSTICS.md` is its generated readable projection; REC owns sanitized assay chronology; J `Legacy_Progress` owns superseded sequence and corrective provenance. None is a substitute for another. Evidence: REC Appendix I; J §4 and `Legacy_Progress` GRIMOIRE/coordinate-system entries.
+
+Before an authorized procedure, resolve the exact branch/head, verify required ancestry, identify the environment and Device/Account scope, freeze pre-action client and provider baselines where relevant, name the one permitted action, and state explicit stop conditions. Recheck the remote head before publication. Evidence: REC Records 009–017; J §5.2.
+
+## Operation and projection separation
+
+Readiness, ordinary Sync, Retry and Recovery are different operations:
+
+- readiness proves only its bounded connection/configuration response;
+- ordinary Sync owns upload, download, local apply, cursor and acknowledgement phases;
+- Retry re-executes eligible queued work with the same durable identity;
+- Recovery is separately authorized state repair/reconciliation and is never implied by failed readiness or a visible candidate.
+
+Current action result, historical operation evidence and readiness projection must not overwrite one another. A current action outcome and the persistence of its diagnostic record are also separate outcomes. Evidence: REC Records 001–008 and 018–020.
+
+A trusted server/provider response remains true when a later local apply, acknowledgement or diagnostic-persistence phase fails. Terminal projection must preserve the latest proved phase and classify later planes independently. Evidence: REC Records 019–020; J `Legacy_Progress` R03–R05 reconciliations.
+
+## Evidence ladder and proof boundaries
+
+Classify each surface independently:
+
+```text
+source implemented
+→ automated tests validated
+→ artifact built
+→ client operation observed
+→ Render/API request correlated
+→ provider state reconciled
+→ same-Device workflow accepted
+→ reciprocal two-Device workflow accepted
+→ production/lifecycle accepted
+```
+
+No rung implies a later rung. Correlate client, server and provider evidence by bounded time window and sanitized operation/correlation fingerprints; do not join them from order or similar wording alone. Provider counts require a named read-only/rollback procedure and cannot be inferred from client or Render success. Evidence: REC Records 001–003, 009–012, 017 and 021.
+
+Same-Device proof establishes one Device's hosted round trip only. Two-Device proof requires both directions, stable identity mapping, matching projections, drained queues and separately bounded no-op/idempotency evidence. Two Devices on one Account do not prove multiple-Account isolation. Evidence: REC Records 011–017 and 021; J §§2–3.
+
+Development acceptance never implies production acceptance. Every terminal must retain environment, Device count, Account count, provider-evidence time and any missing final recount. Evidence: REC Record 021 and Appendix I; J §3.
+
+## Transaction, acknowledgement and diagnostic rules
+
+Remote local application, affected facts, inbox/applied identity and cursor progress must commit before acknowledgement begins. If apply rolls back, acknowledgement remains not started. Diagnostic persistence may fail or degrade without changing the already-established transaction or trusted-response result; its own failure must remain visible. Evidence: REC Records 019–020; J `Legacy_Progress` R03–R05.
+
+Natural Product identity convergence may merge equivalent remote/local references only under the implemented accepted identity rules. Observed human convergence does not generalize to untested ambiguity, conflicting code/identity, established UUID mutation or multiple-Account cases. Evidence: REC Records 018–021.
+
+Diagnostic history is append-oriented. Runtime definitions begin in the registry and regenerate the readable projection; REC records sanitized operations; J retains historical investigation and sequence decisions. Do not duplicate the registry row-by-row into permanent Operational memory. Evidence: REC Appendix I; J §4.
+
+## Safe stops and closure conditions
+
+Stop before or during a guarded assay on branch/ancestry drift, ambiguous Device or Account binding, unexpected queue/cursor/sequence movement, timeout or unknown outcome outside the authorized packet, missing correlation, inconsistent provider counts, duplicate/missing Purchase or Product, unclassified local apply, or any required Retry/Recovery/provider mutation not separately authorized. Preserve the state and reconcile evidence before the next action. Evidence: REC Records 001–020 and J `Legacy_Progress` gate packets.
+
+A bounded development closure may be accepted without a final provider recount only when that omission is explicit and the claim is limited to the client/Render evidence actually collected. It must not be restated as provider-final or production closure. Evidence: REC Record 021 assessment; J §3.
+
+Deferred validation families remain distinct work: multiple-Account isolation; membership disablement and Device revocation; outage and acknowledgement-uncertainty recovery; retention, snapshot and rebootstrap; production deployment and lifecycle acceptance; GCM04 and any conditional R07 implementation. Evidence: REC Appendix I; J §§2–3 and §5.2.
+
