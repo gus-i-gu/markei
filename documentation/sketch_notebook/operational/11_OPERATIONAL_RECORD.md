@@ -919,3 +919,76 @@ Promoted: schema v4; mandatory immutable Product codes; Account-scoped `@001...`
 Inherited evidence: migration tests 3, repository tests 6, application focused tests 5, app widgets 7, full Flutter suite 43, clean analysis, five protected Python tests, Windows release build and bounded hidden launch. Android was host-blocked by absent Java.
 
 Boundaries: Windows is not manually/visually accepted; Android, manual accessibility/keyboard/screen reader and native sharing remain unvalidated; PDF/export is fallback; Lists lacks target composition; History double-click focuses detail rather than toggling selection; visual convergence and oversized-page debt remain open.
+
+---
+
+# Cycle 10 — Permanent Operational Registration
+
+## 2026-07-30 — Guarded hosted synchronization and two-Device development closure
+
+Registration authority: human-directed `SEQ-PRM-04` / `PRC-01` Operational reconciliation. Primary evidence: `documentation/REC_DIAGNOSTICS.md` Records 001–021 and Appendix I; Main orientation: `J_MAIN_STAGE.md` current prefix §§2–5 and protected `Legacy_Progress` entries dated 2026-07-23 through 2026-07-30. Registration anchor: `f3bfd3e6829d0f42951e306c449564fb05d7cc9c`.
+
+### Ordered execution and assay chronology
+
+1. **Initial failed/notApplied state and readiness controls — Records 001–006.** Windows began authenticated and enrolled with a local queue of `0/0/2/0`, next Device sequence 3, and one inspection-only two-member recovery candidate. Records 001–003 established that a prior hosted-readiness result, the current failed/notApplied inspection, and ordinary Sync history were different projections. A hosted connection check could time out without queue mutation or proof of Render ingress; after the intended Render deployment, a later readiness check returned trusted HTTP 200 but still proved no Sync. Records 004–006 then separated cold/warm readiness from one bounded ordinary-Sync control and exposed that flat or stale UI projections could not safely attribute current action, history, provider contact, or sequence ownership.
+
+2. **Diagnostic correction and durable binding — Records 007–009.** Consolidated lifecycle presentation made grouped evidence inspectable, while preserving the ceiling that UI alone did not prove provider truth. Post-enrollment correction established durable client binding and corrected current-action projection. Exact identity and transactionally read-only provider inspection then established the bounded binding/provider baseline required for controlled hosted work. J `Legacy_Progress` preserves the DIAG-01 and Gate 12.7 corrective lineage; Appendix I assigns the maintained runtime registry to `contracts/shared_beta/diagnostics_v1/diagnostics.registry.json` and the generated readable projection to `ERR_DIAGNOSTICS.md`.
+
+3. **Same-Device hosted control and GCM02 closure — Records 010–012.** A frozen Windows local preflight preceded one controlled same-Device ordinary Sync and provider postflight. Client, Render/API and provider evidence were correlated rather than inferred from one surface. Render lifecycle correlation closed `GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE`; this was development-scope hosted evidence, not production acceptance.
+
+4. **Second-Device preparation and exact two-Device baseline — Records 013–017.** Windows candidate state was frozen before Android enrollment. Android authentication, pre-enrollment state, cold-boot readiness and post-restart durable enrollment were checked without creating an Android Purchase or executing Sync. Record 016 accepted client-scope durable enrollment but explicitly held exact hosted binding. Record 017 then proved token acceptance, exact Android Device binding, one Account with two active Device rows, consistent Account/Device cursor and sequence baselines, and zero Android submissions/events through a `BEGIN`/`ROLLBACK` provider inspection. The launcher did not independently prove the human-readable Neon branch alias; that coordinate-provenance ceiling remains recorded.
+
+5. **Preserved-client acceptance and corrective failure chain — Records 018–020.** The preserved Android installation passed offline Purchase selection/review/registration and created one pending event without an observed duplicate Product. Its first hosted operation received trusted upload and download responses, but local apply stopped on a typed natural-identity conflict and acknowledgement did not start. Windows then received trusted upload/download responses but ended in an unclassified runner terminal that incorrectly projected trusted response as absent. These observations justified the R03–R05 corrective line: natural-identity convergence, remote-reference mapping, apply rollback translation, separation of committed transaction truth from diagnostic-persistence truth, preservation of causal/trusted-response evidence, and acknowledgement only after committed local apply/cursor progress. Trusted provider success was not erased by a later local or diagnostic failure.
+
+6. **Reciprocal convergence and golden no-op repeats — Record 021.** Matching preserved Android and Windows source identities completed Windows-to-Android and Android-to-Windows convergence for one Account. The former conflict converged to one natural-identity Product; no duplicate Product or Purchase was observed; both Histories and Catalogue projections converged; both queues settled at `0/0/0/0`. One ordinary no-op repeat per Device produced distinct operation fingerprints, no submission route in the supplied Render window, and authenticated HTTP 200 download/acknowledgement responses. No Retry, Recovery, Query, repeated Enroll, database repair, or provider repair was used.
+
+### Accepted terminals and validation classes
+
+```text
+GCM02=CLOSED_HOSTED_SAME_DEVICE_SCOPE
+GCM03=CLOSED_TWO_DEVICE_DEVELOPMENT_SCOPE
+MVP_SYNC_ACCEPTANCE=PASS_TWO_DEVICE_ONE_ACCOUNT_DEVELOPMENT_SCOPE
+PRODUCT_NATURAL_IDENTITY_MERGE=PASS_HUMAN_ASSAY
+CLIENT_QUEUES_FINAL=0_0_0_0_BOTH
+NO_OP_REPEAT_PER_DEVICE=PASS_CLIENT_RENDER
+DIAGNOSTIC_HISTORY_PRESERVED=YES
+```
+
+Evidence classes remain separate:
+
+- **local/client:** queue counts, Device sequence, authentication/enrollment projection, operation lifecycle, Catalogue/History convergence and preserved diagnostic history;
+- **Render/API:** request correlation, authenticated child routes, trusted HTTP terminals and the absence of a submission route during the golden no-op window;
+- **provider/database:** exact binding and bounded row/cursor/sequence inventories collected by explicitly read-only or rollback procedures;
+- **automated test/source:** R03–R05 implementation and regression evidence retained in the corresponding G/H/I and J `Legacy_Progress` entries;
+- **build:** source/artifact provenance supported the preserved-client assay, but build success alone did not establish practical convergence;
+- **human assay:** Purchase acceptance, reciprocal History/Catalogue convergence, natural-identity merge and absence of observed duplicates;
+- **host-unvalidated/unproved:** every claim outside the named development fixture and supplied evidence windows.
+
+### Superseded procedures, contradictions and safe-stop history
+
+- Readiness checks were superseded as evidence for ordinary Sync: readiness may prove bounded reachability/response only and must not advance last-successful-Sync or mutate queues.
+- A flat `Last result`, stale current-action card, or generic terminal was superseded as an evidence join. Correlation fingerprints and grouped lifecycle evidence became required.
+- Recovery execution remained held while the failed/notApplied candidate lacked bounded ownership and evidence; Cycle 10 closure did not require pressing Retry or Recovery.
+- Record 016's changed Device fingerprint was explicitly classified as the expected local-to-hosted identity handoff, not lost enrollment and not proof of exact hosted binding.
+- Record 020's terminal claim that no trusted response was received contradicted its own recorded download-response phase and Render HTTP 200. Later correction preserved the trusted provider plane and classified local apply, acknowledgement and diagnostic persistence separately.
+- Record 021's contemporaneous terminal still said `CYCLE10=OPEN` and `GCM04=READY_FOR_DEFINITION`. Later human/Main reconciliation in J §§2–3 superseded those sequence-control labels with Cycle 10 closed at GCM03 and GCM04 deferred to C12-PHASE02; the underlying Record 021 observations were not rewritten.
+- No final provider-table recount followed the golden no-op repeats. Final practical client/Render convergence is accepted; a fresh final provider inventory is not inferred.
+
+### Evidence ceiling and deferred Operational work
+
+Acceptance is limited to **two Devices, one Account, development environment**. It does not prove multiple-Account isolation; membership disablement or Device revocation; outage, timeout or acknowledgement-uncertainty recovery; retention, snapshot or rebootstrap; production deployment, lifecycle or release acceptance; GCM04; or conditional R07 work. These remain deferred to C12-PHASE02 under separate authority.
+
+### Stable operational ownership pointers
+
+- `GRM`: human-readable guarded procedure entrypoints and ordered assay instructions.
+- `G_SCRIPTS`: executable guarded launchers selected by GRM.
+- `NS_COORDINATES`: non-secret coordinate and environment selection consumed by the launch chain.
+- `I_SCRIPTS`: implementation helpers behind guarded launchers; not the ordinary human entrypoint.
+- `DB_MGMT`: bounded manual SQL management and read-only/rollback provider queries.
+- runtime diagnostic registry: sole source of stable diagnostic definitions.
+- `ERR_DIAGNOSTICS.md`: generated/readable diagnostic projection.
+- `REC_DIAGNOSTICS.md`: sanitized client/server/provider assay chronology.
+- J `Legacy_Progress`: append-only Main sequence provenance, superseded gates and corrective progression.
+
+This registration reproduces neither the runtime diagnostic registry nor J's historical catalogue.
+
