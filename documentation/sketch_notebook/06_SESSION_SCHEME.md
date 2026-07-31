@@ -1,144 +1,182 @@
 # 06_SESSION_SCHEME.md
 
-> Version: C11-PH03 permanent closure / C11-PH04 authority 6.0
-> Status: Active Forward Checkpoint — PH04 Analytics fine-tuning materialization
+> Version: C11-PH05 permanent absorption / Analytics correction authority 7.0
+> Status: Active Forward Checkpoint — final Cycle 11 correction
 > Persistence Class: Forward Checkpoint
 > Knowledge Class: Main / Prospective
 > Authority: Main Chat [M]
 > Branch: `grm-guarded-provisioning-20260727`
-> C11-PH03 implementation: `0924e743931ea7aba2c9cc5d2e28063e737b2ff5`
-> PH03 post-materialization J: `33dc1002b4a7b00fa67e863dfe98a43c97d66cee`
-> PH03 permanent-domain head: `cc53e6ef063d43342394a55165dd188ddd4ce491`
-> C11-PH04 D/E/F activation: `35cf23602060fd3a186a2470d7ac322c795e5fce`
+> PH05 implementation: `426235d8b67ac719e494b53cfb23a6c3b06fb489`
+> PH05 permanent-domain head: `74638c33a71eb4bc4e5e16aca49526496d3a3610`
+> J section 15: `d6c565edcd0504f382262a3f2c7018e2c63cd47b`
+> Analytics correction activation: `0e647e76aa8275bda48cea1e9d08427e3d949134`
+> Guarded procedure alignment: `a8ee40f83eac376c100555c2cd6dc2a98660a733`
 > Current-state source: `00_PROJECT_STATE.md`
 
 ---
 
-<!-- TEMPORAL_MARKER:C11-PH03-CLOSED-C11-PH04-ACTIVE-2026-07-31 -->
+<!-- TEMPORAL_MARKER:C11-PH05-ABSORBED-ANALYTICS-CORRECTION-ACTIVE-2026-07-31 -->
 
-# Cycle 11 — C11-PH04 Analytics Fine-Tuning
+# Cycle 11 — Final Analytics Correction and Closure Route
 
 ## 1. Status and authority
 
-C11-PH01-R01, C11-PH02 and C11-PH03 are permanently absorbed by all three
-functional domains. PH03 remains closed to corrective source work.
+C11-PH01-R01, C11-PH02, C11-PH03 and PH05 are permanently absorbed by all three
+functional domains at their named evidence ceilings.
 
-C11-PH04-R01 is active through the synchronized D/E/F append carrying:
+`C11-ANALYTICS-CORRECTION-R01` is the only active Cycle 11 implementation unit.
+Its controlling authority is the synchronized D/E/F append at
+`0e647e76aa8275bda48cea1e9d08427e3d949134`.
 
-```text
-ACTIVATION_MARKER:C11-PH04-R01-2026-07-31
-```
-
-The activation commit is `35cf23602060fd3a186a2470d7ac322c795e5fce`.
-Later PH03 domain and Main-only continuity commits are compatible ancestry when
-they leave D/E/F, source, tests and G/H/I unchanged.
+Later compatible Main-only J, 00/05/06 and G_SCRIPTS commits may precede Codex
+when they do not overlap D/E/F, source, tests or G/H/I. The current compatible
+documentation chain is J section 15 at `d6c565ed…` plus guarded procedure
+alignment at `a8ee40f8…`.
 
 ## 2. Product mission
 
-> Fine-tune the implemented Analytics page into the approved functional
-> composer, saved-session-record, result-projection and Variables composition
-> without changing its local deterministic authority.
+> Correct the implemented Analytics composer and result presentation so the
+> learner's selected variables, operation, timeframe and scope remain identical
+> across one frozen record and every result/export projection.
 
-The controlling product direction is:
+Required outcomes:
 
-- an explicit `Create analysis` composer with Group by, chosen determinant
-  values, variables, operation, timeframe and valid operand disclosure;
-- immutable newest-first `Saved analyses — this session` records with bounded
-  fingerprint meaning and previous/next browsing;
-- one dominant selected result with Chart/Table semantic parity and explicit
-  CSV/PDF export;
-- factual interpretation, timeframe, contribution and exclusion counts;
-- a lower `Variables` surface separating Purchases from contained Items and
-  retaining stable selection handoff;
-- one shared responsive workspace and one page-owned vertical scroll.
+- compact wide and compact/mobile composer;
+- one typed multi-select Variables owner;
+- no implicit Quantity, Evidence count, Price or other variable;
+- typed blocking of categorical-only and unsupported combinations;
+- strict inclusive Initial/Final `dd-mm-yyyy` local calendar dates;
+- readable fixed-point display conversion without changing integer aggregation;
+- one frozen-record source for Chart, Table, interpretation, CSV and PDF;
+- UUID-hidden ordinary evidence presentation with stable internal identity;
+- retained Account-local, request-count, zero-write, zero-network and History
+  handoff boundaries.
 
-The approved proposal is a composition target, not a literal bitmap or
-hard-coded aesthetic. Lists supplies the current theme, typography, spacing,
-content width, cards, tables and control-band vocabulary.
+The confirmed defect is raw fixed-point/internal compatibility presentation.
+Silent default-Quantity insertion is not evidenced. End-to-end variable integrity
+must still be proved by the required regression matrix.
 
 ## 3. Materialization and evidence outputs
 
-Codex must materialize only the PH04 activation-marker tails in D/E/F and
-replace G/H/I with PH04 evidence. Required evidence includes:
+Codex reads the latest `C11-ANALYTICS-CORRECTION-R01` sections in D/E/F and
+replaces G/H/I with correction evidence.
 
-- composer option/compatibility and determinant-value selection;
-- immutable record identity, canonical fingerprint and session lifetime;
-- Chart/Table shared-source parity and exact export boundaries;
-- Purchase/contained-Item projections and stable Variables selection;
-- retained PH02 calculations, Account isolation and request-count invariants;
-- responsive, keyboard/focus, 200-percent text and build evidence;
-- exact changed paths, forbidden-surface audits and rollback classification.
+Required evidence includes:
 
-After materialization, Main reconciles G/H/I and schedules bounded human
-rendered comparison. No KANBAN transition follows from implementation or tests.
+- visible choice → typed draft → immutable record → grouped entries → every
+  projection mapping;
+- all ten Operational regression cases;
+- raw fixed-point and compatibility-key absence from user-facing results;
+- UUID-hidden wide and compact Variables presentation;
+- strict local-date parsing and inclusive final-day conversion;
+- Chart unavailability for incompatible axes without Table/export loss;
+- request/write/network counts;
+- schema/dependency/platform/provider forbidden-surface audit;
+- focused and full serial tests;
+- Windows release and Android debug builds;
+- residual human wide/compact, keyboard, assistive-technology, locale, launch and
+  real-device gates.
 
-## 4. Stable constraints
+## 4. Validation and guarded build/run route
 
-PH04 must not become a second Analytics implementation or a backend feature.
-Explicit non-goals:
+Run from `clients/markei_flutter` using the explicit D-section command set.
+The controlling full-suite gate is:
 
-- prediction, recommendation, ranking, causality or advanced statistics;
-- persisted, hosted or synchronized analysis records;
-- a second dataset, controller, calculation or result truth;
-- schema, migration, generated-source or dependency change;
-- new chart libraries;
-- Auth, Sync, provider, diagnostic or hosted Analytics authority;
-- PH03 Settings, Audit or Closure source changes;
-- GCM04 or production acceptance.
-
-Existing PH02 calculation, fixed-point, compatibility, Account-scope,
-single-load, History-handoff and evidence-identity rules remain unchanged.
-
-## 5. Evidence boundary carried forward
-
-C11-PH03 passed focused tests, a 264-pass/4-lab-skip full Flutter suite,
-analysis, Windows release build, Android debug build, registry drift and
-resource-disposal checks. Bounded human UI verification accepted PH03 for
-documentation closure.
-
-Formal screenshot-set, assistive-technology, locale, real-device, complete
-keyboard-only and comprehension evidence remain unestablished. They must not be
-misreported as passed during PH04 materialization.
-
-## 6. Handoff sequence
-
-```text
-PH03 implementation and G/H/I
--> J section 11
--> Operational / Didactic / Design permanent absorption
--> Main J/00/05/06 closure
--> PH04 D/E/F authority at 35cf236
--> Codex PH04 implementation and G/H/I
--> Main PH04 reconciliation
--> bounded human rendered review
+```powershell
+flutter test --concurrency=1 --no-pub
 ```
 
-Do not reuse PH03 G/H/I as PH04 evidence after materialization. Do not restage
-PH03 or broaden the PH04 Analytics-only changed-path boundary.
+Human Windows diagnosis already recorded `TestExit=0` with serial expanded
+reporting. Bare parallel `flutter test` is not the controlling gate.
 
-## 7. Entry and stop terminal
+At `a8ee40f8…`, Main aligned the same serial/no-pub arguments in:
+
+- `GS-BUILD-02`;
+- `GS-FLUTTER-WIN`;
+- `GS-FLUTTER-AND`.
+
+Do not suppress Drift warnings or change production database behavior.
+`GRM.md` and `I_SCRIPTS.ps1` require no change.
+
+## 5. Stable constraints
+
+The correction must not introduce:
+
+- a second Analytics controller, repository, calculation engine, persistence
+  owner or export destination;
+- schema, migration, generated-source, dependency or native-platform changes;
+- Auth, API, Sync, provider, diagnostics, PH03, Closure or unrelated page work;
+- network or database writes from Analytics;
+- floating-point aggregation;
+- removal of stable internal identity;
+- persistent, hosted or synchronized saved analyses;
+- prediction, recommendation, ranking, causality or production claims;
+- Guide content-sequence changes.
+
+The fixed-point calculation boundary, Account scope, selected-scope cap, History
+Purchase-ID handoff, pure export builders and one-write destination behavior
+remain.
+
+## 6. Evidence boundary carried forward
+
+PH05 evidence: 278 tests passed, four lab-gated skips, analysis, Windows release
+build, Android debug build and diagnostic registry passed.
+
+Still unestablished:
+
+- corrected human wide/compact screenshot fidelity;
+- keyboard-only manual acceptance;
+- Narrator/TalkBack;
+- locale and long-string review;
+- Windows launch/manual export;
+- Android real-device behavior;
+- Guide and Analytics learner comprehension;
+- live Auth0, Neon, Render, provider and Sync acceptance;
+- production readiness.
+
+No KANBAN transition follows from implementation, tests or builds alone.
+
+## 7. Handoff sequence
+
+```text
+PH05 implementation 426235d8
+-> J section 14 e6ced7fe
+-> three PDR2 commits / twelve permanent files
+-> PH05 permanent head 74638c33
+-> Analytics correction D/E/F 0e647e76
+-> J section 15 d6c565ed
+-> G_SCRIPTS serial gate alignment a8ee40f8
+-> Main 00/05/06 refresh
+-> Codex correction implementation and G/H/I
+-> Main G/H/I reconciliation
+-> correction-delta PDR2 where permanent truth changed
+-> bounded human review
+-> final C11 closure
+-> C12-PHASE01, with backend scope retained for C12-PHASE02
+```
+
+## 8. Entry and stop terminal
 
 ```text
 CYCLE10=CLOSED_AT_GCM03_DEVELOPMENT_SCOPE
-C11=ACTIVE
-C11_COMPLETED_THROUGH=C11-PH03_PERMANENT_CLOSURE
-C11_CURRENT_UNIT=C11-PH04-R01
-PH03_PERMANENT_MEMORY=COMPLETE
-PH03_SOURCE_AUTHORITY=CONSUMED
-PH04_SCOPE=ANALYTICS_FINE_TUNING_ONLY
-PH04_D_E_F_ACTIVATION=35cf23602060fd3a186a2470d7ac322c795e5fce
-PH04_D_E_F_AUTHORITY=ACTIVE
-PH04_CODEX_AUTHORITY=ACTIVE
+C11=ACTIVE_FINAL_CORRECTION
+C11_COMPLETED_THROUGH=PH05_PERMANENT_ABSORPTION
+C11_CURRENT_UNIT=C11-ANALYTICS-CORRECTION-R01
+CORRECTION_D_E_F_ACTIVATION=0e647e76aa8275bda48cea1e9d08427e3d949134
+CORRECTION_CODEX_AUTHORITY=ACTIVE_BOUNDED
+SERIAL_FULL_SUITE_GATE=REQUIRED
+G_SCRIPTS_SERIAL_GATE_ALIGNMENT=COMPLETE
 R07_IMPLEMENTATION_AUTHORIZED=NO
 GCM04=DEFERRED_TO_C12_PHASE02
 LIVE_SYNC_AUTHORITY=NONE
 PROVIDER_MUTATION_AUTHORITY=NONE
 ```
 
-Stop and return to Main on branch divergence, an unexplained descendant, a path
-outside the PH04 D/E/F allowlist, schema/migration/dependency/generated change,
-PH03 source change, provider operation, live Sync or a requirement for a new
-notebook file or methodology change.
+Stop and return to Main on unexplained branch advancement, source/test overlap
+outside the D allowlist, schema/migration/dependency/generated/native change,
+GRM/GS mutation by Codex, provider operation, live Sync, a second Analytics
+owner, new notebook file, methodology change, or a platform build that cannot be
+reported honestly.
 
 ---
 

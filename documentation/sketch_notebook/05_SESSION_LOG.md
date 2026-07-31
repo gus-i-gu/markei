@@ -1200,3 +1200,79 @@ C11_CURRENT_UNIT=C11-PH04-R01
 C11_PH04_AUTHORITY=ACTIVE_D_E_F_AT_35CF236
 NEXT_MAIN_ACTION=MATERIALIZE_PH04_THEN_RECONCILE_G_H_I_AND_HUMAN_RENDERED_EVIDENCE
 ```
+
+---
+
+<!-- TEMPORAL_MARKER:C11-PH05-PERMANENT-ABSORPTION-ANALYTICS-CORRECTION-ENTRY-2026-07-31 -->
+
+# C11-PH05 Permanent Absorption and Analytics Correction Entry
+
+> Date: 2026-07-31
+> Branch: `grm-guarded-provisioning-20260727`
+> PH05 implementation: `426235d8b67ac719e494b53cfb23a6c3b06fb489`
+> PH05 post-materialization J: `e6ced7fe3945925bf5f314ee11c4538029e18d44`, section 14
+> PH05 permanent-domain head: `74638c33a71eb4bc4e5e16aca49526496d3a3610`
+> Analytics correction authority: `0e647e76aa8275bda48cea1e9d08427e3d949134`
+> Main reconciliation: `d6c565edcd0504f382262a3f2c7018e2c63cd47b`, section 15
+> Guarded procedure correction: `a8ee40f83eac376c100555c2cd6dc2a98660a733`
+
+## Reconciliation chronology
+
+1. PH05 materialized at `426235d8…` and J section 14 classified its implemented
+   automated/build result, Guide sequence deviation and human Analytics defect.
+2. Operational, Design and Didactic completed a linear three-commit PDR2 chain
+   ending at `74638c33…`.
+3. Main verified exactly twelve permanent-domain paths in that chain and no
+   source, staging, Main-root or methodology overlap.
+4. The read-only Analytics investigation narrowed the root-cause classification:
+   no default-Quantity insertion is evidenced; raw fixed-point/internal-key
+   presentation is confirmed, while complete variable integrity remains a
+   regression obligation.
+5. Main staged the bounded correction authority in D/E/F at `0e647e76…`.
+6. J section 15 at `d6c565ed…` accepted PH05 permanent absorption and activated
+   the final Analytics correction route.
+7. Human Windows diagnosis passed the serial full suite with `TestExit=0`.
+8. Main aligned the three guarded full-suite commands in
+   `documentation/G_SCRIPTS.md` at `a8ee40f8…`.
+
+## Accepted global balance
+
+PH05 is permanently absorbed at its named evidence ceiling: 278 tests passed,
+four lab-gated skips, formatting and analysis passed, Windows release and
+Android debug builds passed, and no schema/dependency/platform/provider contract
+changed.
+
+The permanent record preserves one shared export boundary, two-read History
+selected export, one final write, typed Android unavailable behavior, stable
+History selection/detail identities, scope-only Analytics handoff, local Guide,
+Audit and Settings ownership, unchanged fixed-point/schema boundaries and no
+KANBAN transition.
+
+The Guide sequence remains partially contradicted. Accessibility, locale,
+real-device, complete keyboard-only and comprehension evidence remains
+unestablished. No live provider or Sync acceptance was performed.
+
+## Active correction and procedure disposition
+
+Cycle 11 remains open only for `C11-ANALYTICS-CORRECTION-R01` and final
+reconciliation. Its controlling D/E/F authority is `0e647e76…`.
+
+The correction must replace raw fixed-point/internal-key presentation, establish
+selected-variable parity across every projection, compact the composer, unify
+Variables, implement inclusive local-calendar date fields and hide ordinary
+UUID presentation while preserving stable internal identity.
+
+The serial test-gate correction belongs to G_SCRIPTS and is complete at
+`a8ee40f8…`. GRM/I dispatch, Drift warning policy and production database
+behavior were not changed.
+
+```text
+C11_PH05=PERMANENTLY_ABSORBED
+C11_PH05_DOMAIN_FILES=12_OF_12
+KANBAN_TRANSITIONS=NONE
+C11_CURRENT_UNIT=C11-ANALYTICS-CORRECTION-R01
+C11_CORRECTION_AUTHORITY=ACTIVE_D_E_F_AT_0E647E76
+G_SCRIPTS_SERIAL_GATE_ALIGNMENT=COMPLETE
+C11_CLOSURE=PENDING_FINAL_CORRECTION_RECONCILIATION
+NEXT_MAIN_ACTION=MATERIALIZE_CORRECTION_THEN_RECONCILE_G_H_I_DOMAIN_DELTA_AND_C11_CLOSURE
+```
