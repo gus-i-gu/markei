@@ -763,6 +763,18 @@ Manual provider observations become durable only through sanitized evidence, exp
 C10-S03A_CONTRADICTED_STOP
 MCG-02_HOSTED_PROOF_NOT_PERFORMED
 ```
+## 22.3 Historical supersession marker
+
+Section 22 and its terminal `C10-S03A_CONTRADICTED_STOP` are preserved as
+the historical recovered stop state that preceded the later convergence
+evidence. Section 23 supersedes that terminal for current Cycle 10 architecture,
+but only within the accepted two-Device, one-Account development boundary.
+
+This supersession does not accept production, multiple-Account isolation,
+membership disablement, Device revocation, outage or acknowledgement-
+uncertainty resilience, retention, snapshot/rebootstrap, GCM04 or R07. Those
+boundaries remain unaccepted or deferred exactly as stated in section 23.9.
+
 ---
 
 # 23. Cycle 10 Accepted Coordination and Convergence Architecture
@@ -965,3 +977,97 @@ alternatives and reversibility remain open; no Cycle 10 result preselects a
 production lifecycle or resilience design.
 
 Evidence pointer: REC 021 and Appendix I; J sections 2, 3, 5.4 and 8.
+
+# 24. C11-PH01-S01 Responsive Presentation Architecture
+
+Evidence boundary: `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`
+at materialization head `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
+and the C11-PH01-S01 capsule in the mutable prefix of
+`documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md`. The topology is
+implemented, test-validated and Windows/Android build-validated. Human Windows
+and Android visual acceptance, pixel parity and golden-policy acceptance are
+absent.
+
+## 24.1 Destination identity and retained composition
+
+Navigation selection is owned by stable enum/ID destination identity rather
+than positional array indexes. One destination registry supplies compact,
+medium and wide navigation policies. Selection therefore survives responsive
+layout changes and feature-gated destination insertion or removal.
+
+Retained page state remains owned by application-level `IndexedStack`
+composition with stable children. Navigation identity does not become domain
+identity, and presentation layout does not own page data or business state.
+
+## 24.2 Responsive shell policy
+
+The accepted presentation layout classes are:
+
+| Layout | Width | Shell policy |
+| --- | --- | --- |
+| Compact | `<600` | bottom navigation plus a More surface |
+| Medium | `600–1023` | icon rail with tooltips |
+| Wide | `>=1024` | extended labelled rail and bounded content canvas |
+
+The shell owns layout-class resolution, destination presentation and responsive
+content framing. It does not query repositories, translate provider state,
+reconstruct Sync truth or alter domain/application commands.
+
+## 24.3 Visual foundation ownership
+
+Theme tokens and shared presentation primitives own presentation semantics:
+color, typography, spacing, radius, breakpoints, content framing, cards,
+headers, summary surfaces and visible loading/empty/error states. They are not
+sources of Product, Purchase, Account, Sync, diagnostic or recovery truth.
+
+Home consumes static application descriptors and navigation callbacks through
+this foundation. Lists consumes the same foundation without moving its data
+boundary into presentation.
+
+## 24.4 Lists projection and retry boundary
+
+`ProductListProjectionRepository` remains the Lists data boundary. One
+projection result feeds page-local search and sort state; wide tables and
+compact/medium cards are alternative presentations of the same filtered and
+sorted projection.
+
+Lists Retry repeats only the local read request. It owns no mutation, upload,
+download, acknowledgement, recovery or Sync orchestration. Loading, read error,
+first-use empty, filtered empty, insufficient-history and populated states are
+presentation classifications over repository-owned facts.
+
+## 24.5 Reserved and unchanged boundaries
+
+Analytics and Audit destination identities are reserved without activating
+C11-PH02 Analytics or C11-PH03 Audit behavior. Settings and Closure
+implementations remain unchanged; Closure relocation or disposition remains
+C11-PH03 work.
+
+Purchase, Catalogue, History, business, Sync, diagnostics and recovery
+responsibilities remain with their existing application/domain/infrastructure
+owners. Catalogue, History and Purchase visual convergence is unfinished.
+Analytics functionality is PH02; Settings/Audit completion and Closure
+relocation are PH03.
+
+## 24.6 Reversibility and evidence ceiling
+
+The responsive shell, destination registry and shared presentation foundation
+are schema-free presentation structures. They may be replaced without changing
+domain identities, repository contracts, local persistence or hosted protocol
+topology, provided stable destination semantics and retained page-state
+behavior are preserved.
+
+Accepted only:
+
+- implemented presentation topology;
+- named automated test evidence;
+- Windows release and Android debug build evidence.
+
+Not accepted:
+
+- human Windows or Android visual quality;
+- accessibility or real screen-reader behavior;
+- pixel parity or a golden-test policy;
+- completion of all five PH01 core pages;
+- PH02/PH03 behavior;
+- production, resilience, GCM04 or R07.

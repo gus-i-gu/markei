@@ -224,33 +224,80 @@ Recovery: Architecture §21; Decision Log Event 21; Model Overview current Cycle
 ---
 
 <!-- TEMPORAL_MARKER:C10-RECOVERED-PROMOTION-2026-07-15 -->
-# Cycle 10 Recovered Design Checkpoint
+> Temporal boundary retained; this is the single current Design checkpoint.
 
-## Materialized locally
+# C11-PH01-S01 Design Checkpoint
 
-- Offline-first Flutter application ports with Drift and HTTP adapters.
-- Protocol v3 append-only `purchase.registered` convergence and recovery format 1 local proofs.
-- PostgreSQL migrations 001–003 preserved; forward-only migration 004 adds identity, membership and enrollment structures.
-- Drift schema v7 adds hosted state without resetting facts, queues, cursors or recovery state.
-- Server JWT-verifier abstraction, RS256-shaped local fixtures, fail-closed hosted configuration and fixture-auth exclusion.
-- External subject, Account membership, InstallationId and DeviceId remain distinct.
+> Sequence: FLX-PRM-04 / PDR2-D
+> Branch: `grm-guarded-provisioning-20260727`
+> J anchor: `1422731e512ce073e7fda09451415803d12f3a4e`
+> Inspected S01 implementation/evidence head: `1c7df53c095f4e7c1d85f278ba16c21fd95b25e6`
+> Reconciliation repository HEAD: `e587872d1b231205a83dbd30c46fae84a21831ee`
+> Evidence: `DEV_STAGE/I_DSN_CODEX.md`
+> Main reconciliation: current mutable prefix of `[M]_STAGE/J_MAIN_STAGE.md`
 
-## Evidence states
+## Current accepted architecture
 
-MCG-01 is accepted only as sanitized development capability: disposable Neon development database, PostgreSQL 18.4, TLS, direct migrator, pooled-intended runtime, rollback, runtime CRUD and runtime DDL denial. Migration 003/004 application, pooled RLS, backup/PITR, deployment and production behavior remain unproved.
+Cycle 10 remains closed only at reciprocal two-Device, one-Account development
+scope. Architecture §22 is the preserved historical contradicted stop; §23
+supersedes it within that bounded topology. Production, multiple-Account,
+revocation, resilience, retention/rebootstrap, GCM04 and R07 remain unaccepted
+or deferred.
 
-MCG-02 is partial dashboard preparation: public Android/Windows Native Applications, custom API/audience preparation and Render service-form preparation. No provider identifier or secret is retained here.
+C11-PH01-S01 adds a presentation-only responsive foundation:
 
-## Contradicted and unresolved
+- stable destination enum/ID selection instead of positional indexes;
+- compact `<600`, medium `600–1023`, wide `>=1024` shell policies;
+- retained page state through application-owned `IndexedStack`;
+- theme tokens and shared presentation primitives with no domain-state authority;
+- Home and Lists consumption of the shared foundation;
+- one Lists projection/search/sort state rendered as table or cards;
+- local-read-only Lists Retry;
+- reserved Analytics and Audit destinations without PH02/PH03 behavior.
 
-- Transaction-time membership/enrollment/Device reauthorization is not established inside every protected operation transaction.
-- The decisive least-privilege, adversarial and cross-Account hosted topology is incomplete.
-- Real Auth0 login/token acceptance, Neon migration/runtime, Render deployment and hosted synchronization were not performed.
-- Hosted readiness, provider acceptance, MCG-03/04, Cycle 10 closure and learner maturity are not promoted.
+## Ownership and dependency direction
 
 ```text
-C10-S03A_CONTRADICTED_STOP
-MCG-02_HOSTED_PROOF_NOT_PERFORMED
+responsive presentation
+→ application composition and query/command ports
+→ domain facts
+← local adapters and SQLite truth
+
+Sync/authentication ports
+→ hosted coordination channel
 ```
 
-Next valid route: Main-authorized C10-S03A-R1 correction and reconciliation before any provider activity. Recovery: Architecture §22; Decision Log Event 22; Model Overview Cycle 10 section; J at `75fbba66`.
+`ProductListProjectionRepository` remains the Lists data boundary. Settings
+and Closure implementations are unchanged. Business, Sync, diagnostics and
+recovery ownership is unchanged.
+
+## Evidence state
+
+| Claim | State |
+| --- | --- |
+| S01 presentation topology | implemented |
+| focused/full tests | validated |
+| Windows release build | validated |
+| Android debug build | validated |
+| human Windows visual acceptance | absent |
+| human Android visual acceptance | absent |
+| pixel parity / golden policy | absent |
+| Catalogue, History, Purchase convergence | unfinished |
+| Analytics functionality | deferred to PH02 |
+| Settings/Audit completion and Closure relocation | deferred to PH03 |
+
+## Next valid route
+
+C11-PH01-S02 is staged at `e587872d…` for Catalogue, History and Purchase
+convergence, but is not implemented or validated by this checkpoint. The next
+valid route is Codex execution under that explicit D/E/F authority, followed by
+new G/H/I and human Windows/Android visual and accessibility acceptance. Do not
+activate PH02, PH03, GCM04 or R07 from this checkpoint.
+
+## Recovery pointers
+
+- Canonical: `design/01_ARCHITECTURE.md`, §§23–24.
+- Derived: `design/14_MODEL_OVERVIEW.md`, current C11 model.
+- Observational: `design/03_DECISION_LOG.md`, Events 23–24.
+- Evidence: `DEV_STAGE/I_DSN_CODEX.md`.
+- Main: mutable prefix of `[M]_STAGE/J_MAIN_STAGE.md`.

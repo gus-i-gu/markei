@@ -1372,3 +1372,54 @@ rejected alternative
 unresolved boundary
     GCM04, conditional R07 and all production/resilience families listed above
 ```
+
+# Event 24 — 2026-07-30 — C11-PH01-S01 Responsive Foundation Materialization
+
+## Decision boundary and provenance
+
+This event is distinct from Cycle 10 Event 23. It records only
+C11-PH01-S01 presentation architecture evidenced by
+`DEV_STAGE/I_DSN_CODEX.md` at
+`1c7df53c095f4e7c1d85f278ba16c21fd95b25e6` and reconciled by the
+C11-PH01-S01 capsule in the mutable J prefix.
+
+## Accepted and materialized decisions
+
+- destination selection uses stable enum/ID identity, not positional indexes;
+- selection persists across feature-gate and responsive-layout changes;
+- compact, medium and wide shell policies use `<600`, `600–1023` and `>=1024`;
+- application-level `IndexedStack` composition retains page state;
+- theme tokens and shared primitives own presentation semantics only;
+- Home and Lists consume the shared visual foundation;
+- Lists table and card modes share one projection/search/sort state;
+- `ProductListProjectionRepository` remains the Lists read boundary;
+- Lists Retry is a local read retry and owns neither mutation nor Sync;
+- Analytics and Audit are reserved destinations without PH02/PH03 behavior.
+
+## Preserved boundaries and reversibility
+
+Settings and Closure behavior did not change. Purchase, Catalogue, History,
+business, Sync, diagnostics and recovery ownership did not move. The additions
+are presentation-only and schema-free; they remain reversible without changing
+domain identity, persistence or hosted protocol contracts.
+
+## Deviations and deferred work
+
+Natural-height responsive wrapping was selected over fixed-aspect tiles to
+protect large-text behavior. Catalogue, History and Purchase convergence
+remains unfinished. Analytics functionality remains PH02. Settings/Audit
+completion and Closure relocation remain PH03.
+
+## Evidence ceiling and disposition
+
+The structure is implemented, focused/full-test validated and Windows/Android
+build validated. Human Windows/Android visual acceptance, pixel parity,
+golden-policy acceptance and real screen-reader behavior were not performed.
+
+```text
+C11_PH01_S01_PRESENTATION_TOPOLOGY=ACCEPTED_IMPLEMENTED_VALIDATED
+HUMAN_PLATFORM_ACCEPTANCE=ABSENT
+PH01_FIVE_PAGE_CONVERGENCE=INCOMPLETE
+PH02_ANALYTICS=DEFERRED
+PH03_AUDIT_SETTINGS_CLOSURE=DEFERRED
+```
