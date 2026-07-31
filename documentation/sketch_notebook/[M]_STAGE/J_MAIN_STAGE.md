@@ -1192,3 +1192,232 @@ PH05_D_E_F_AUTHORITY=ACTIVE
 CODEX_AUTHORITY=ACTIVE_AFTER_THIS_COMMIT
 NEXT_MAIN_ACTION=Wait for Codex PH05 implementation and G/H/I, then perform bounded human review and post-materialization reconciliation.
 ```
+
+---
+
+<!-- RECONCILIATION_MARKER:C11-PH05-R02-2026-07-31 -->
+
+# Cycle 11 PH05 Round 02 — Post-Materialization Main Reconciliation
+
+## 14.1 Identity, publication and evidence boundary
+
+```text
+ROLE=Main Chat [M]
+SEQUENCE=FLX-PRM-04_PREPARATION
+REPOSITORY=gus-i-gu/markei
+BRANCH=grm-guarded-provisioning-20260727
+PH05_AUTHORITY=b59b2ecdfb69ca98c431b9f36694f011332fbef3
+PH05_IMPLEMENTATION=426235d8b67ac719e494b53cfb23a6c3b06fb489
+PH05_IMPLEMENTATION_PARENT=b59b2ecdfb69ca98c431b9f36694f011332fbef3
+PH05_REMOTE_DELTA=ONE_COMMIT
+PH05_G_H_I=REPLACED_AND_PUBLISHED
+```
+
+The remote branch advanced from the PH05 authority to the implementation by one
+commit with no intervening history. This reconciliation compares section 13 and
+the active D/E/F packet with committed source, tests and PH05 G/H/I.
+
+This section authorizes the three functional chats to run their paired PDR2
+permanent-domain reconciliations. It does not authorize source changes,
+methodology changes, Main-root 00/05/06 changes, a new D/E/F packet or another
+Codex round.
+
+## 14.2 Implemented and validated PH05 state
+
+The following outcomes are implemented and supported by the recorded
+automated/build evidence:
+
+- Home exposes static local News and Updates follow-up content with zero I/O.
+- Purchase uses `Optional purchase details`; Person and Payment Method remain
+  independent optional metadata.
+- Catalogue ordinary selection ownership, generated checkbox chrome, counter and
+  selected highlight are removed while Product detail activation remains.
+- History owns one stable selected-for-action Purchase-ID set separate from
+  detail state. Final-uncheck, filter pruning, reload intersection and bounded
+  `Select all shown` behavior are covered.
+- `Use in Analytics` transfers Purchase scope only and exposes requested,
+  matched and unavailable counts without calculating, saving or mutating.
+- one shared `ExportDestinationPort` and one composition-injected
+  `LocalExportDestination` separate pure History/Analytics builders from file
+  effects;
+- non-empty History selected export performs two set-based Account-scoped local
+  reads, zero database writes and zero network calls;
+- one successful explicit export produces one collision-safe final file;
+  Windows resolves Downloads, while Android public Downloads returns a typed
+  unavailable result and writes zero files;
+- Audit System, Readiness summary and Diagnostics cards project the already
+  loaded bounded local state with no new read, write or network authority;
+- Settings is Account-first and its support-action lifecycle refreshes status
+  while retaining the duplicate-action guard;
+- stored `@NNN` and `#NNN` references remain unchanged.
+
+Recorded validation passed: dependency-lock guard, formatting, analysis, focused
+PH05 and affected regression tests, the full Flutter suite with 278 passed and
+4 lab-gated skips, Windows release build, Android debug build, diagnostic
+registry drift check and diff check. No schema, migration, generated Drift,
+dependency, native platform, Auth, API, Sync, provider, diagnostics contract or
+Closure expansion was introduced.
+
+Recorded operation ceilings remain:
+
+```text
+HOME_IO=0
+GUIDE_IO=0
+HISTORY_SELECTED_EXPORT_READS=2
+HISTORY_SELECTED_EXPORT_DATABASE_WRITES=0
+HISTORY_SELECTED_EXPORT_NETWORK_CALLS=0
+SUCCESSFUL_EXPORT_FINAL_WRITES=1
+ANDROID_UNAVAILABLE_EXPORT_WRITES=0
+ANALYTICS_REQUESTS=initial:1; retry:+1; handoff_export_local_ui:+0
+ANALYTICS_DATABASE_WRITES=0
+ANALYTICS_NETWORK_CALLS=0
+AUDIT_IO=initial_queries:2; retry:+2; projection:+0; writes:0; network:0
+SETTINGS_CALLS=initial:5; local_refresh:+2
+```
+
+## 14.3 Defects, deviations and claim ceiling
+
+PH05 is not classified as completely human-validated.
+
+First, committed `guide_page.dart` contains eight local anchored sections and
+therefore establishes the structural owner, navigation and zero-I/O result.
+However, its section sequence is Home, Purchase, Catalogue, History, Analytics,
+Exports, Audit and Settings. This does not fully materialize E section 35's
+accepted learner sequence: the Lists teaching boundary is absent, and the
+Getting-started plus local-data/export/Sync-limit boundaries are redistributed.
+Accordingly:
+
+```text
+GUIDE_STRUCTURE=IMPLEMENTED_AND_AUTOMATED
+GUIDE_EIGHT_SECTION_COUNT=VALIDATED
+GUIDE_ACCEPTED_LEARNER_SEQUENCE=PARTIALLY_CONTRADICTED
+GUIDE_HUMAN_COMPREHENSION=NOT_ESTABLISHED
+```
+
+Second, later human runtime screenshots expose an Analytics defect and
+composition mismatch that the passing PH04/PH05 tests did not detect. The
+visible result may present a Quantity value/unit unrelated to the requested
+variables and operation; the composer remains vertically expensive and splits
+breakdowns/measures into pill banks; custom time uses a raw interval field; and
+the evidence view exposes Purchase identifiers where Date-Time of purchase and
+Store name are required.
+
+The human has accepted the correction direction: one compact Group by /
+Variables / Operation / Timeframe composer, a unified typed Variables control,
+two custom date fields in `dd-mm-yyyy`, and user-facing Date-Time plus Store
+identity while retaining stable IDs internally. Those decisions are accepted
+human direction, not implemented PH05 state.
+
+The wrong-variable root cause is not established. It may not be described as a
+visual-only defect, nor may current tests be used to claim calculation-variable
+integrity. A read-only Main state-of-union must trace composer draft through
+validation, immutable record, grouped execution, chart/table, interpretation
+and CSV/PDF before any corrective J/D/E/F authority is written.
+
+Human screenshot review is therefore partial and defect-finding, not acceptance.
+Keyboard-only manual review, Narrator/TalkBack, locale review, real-device
+behavior and learner comprehension remain not established. Windows/Android
+build success does not establish real-device export acceptance or Android
+public-Downloads support.
+
+## 14.4 Permanent-domain classification route
+
+Operational must reconcile:
+
+- the exact PH05 commands, 278-pass/4-skip suite boundary and both build results;
+- Home/Guide zero-I/O, History two-read/zero-write/zero-network export and one
+  final-write semantics;
+- Analytics, Audit and Settings request/query/call budgets;
+- Windows Downloads as implemented and automated at the recorded ceiling, with
+  manual host/real-device behavior still unvalidated;
+- Android public Downloads as typed unavailable with zero writes;
+- unchanged schema/dependency/platform/provider surfaces and one-commit
+  rollback boundary;
+- the human-observed Analytics wrong-variable defect as active corrective work
+  with root cause unestablished;
+- remaining rendered, keyboard, assistive-technology, locale, real-device and
+  comprehension gates.
+
+Didactic must reconcile:
+
+- final PH05 vocabulary: Optional purchase details, Select all shown, Use in
+  Analytics, Readiness summary, export-not-sharing and `@NNN`/`#NNN`;
+- selection/detail and Analytics scope/calculation distinctions;
+- represented/tested/built versus human-observed/learner-understood evidence;
+- Guide as eight-section anchored implementation but not faithful completion of
+  the accepted learner sequence;
+- the Analytics composer/result mismatch as a learner-facing defect;
+- unified Variables and two-date-field direction as accepted but not
+  implemented;
+- `KANBAN_TRANSITIONS=NONE` unless independent evidence justifies a specific
+  transition.
+
+Design must reconcile:
+
+- the single shared export port/adapter and pure-builder dependency direction;
+- two-query set reconstruction, stable History selection/detail ownership and
+  scope-only Analytics handoff;
+- one composition-owned Analytics workspace and unchanged fixed-point/schema
+  boundaries;
+- local Guide typed owner, loaded-state-only Audit projections and unchanged
+  Settings controller ownership;
+- the Guide content-model deviation from the accepted learner contract;
+- Analytics variable integrity as a current defect requiring typed end-to-end
+  investigation, without presuming a second controller or schema change;
+- rollback to `b59b2ecdfb69ca98c431b9f36694f011332fbef3` and all deferred
+  native/provider boundaries.
+
+Each role must run `SEQ-PRM-04` and its selected `PDR2-O`, `PDR2-A` or
+`PDR2-D` route. Each role may commit and push only its four permanent files.
+Compatible sibling-domain permanent reconciliations may advance the branch and
+must be preserved. Unrelated advancement or source overlap is a stop condition.
+No role may edit J, A/B/C, D/E/F, G/H/I, Main-root files, methodology or source.
+
+## 14.5 State of union and next transition
+
+PH05 source work is complete at the recorded automated/build ceiling. Its D/E/F
+authority is consumed. Permanent memory is now stale until the three domain
+PDR2 commits absorb both the achieved state and the preserved defects.
+
+The Analytics correction remains a separate prospective bounded round. Permanent
+reconciliation may proceed now because it will classify, not erase, that defect.
+A new Main D/E/F packet must wait for the read-only Analytics state-of-union and
+root-cause contract already requested by the human.
+
+Do not refresh 00_PROJECT_STATE, 05_SESSION_LOG or 06_SESSION_SCHEME until all
+three permanent-domain commits have been verified by Main. Do not activate a
+corrective Codex round from this section.
+
+## 14.6 Current terminal
+
+```text
+CYCLE=C11
+PHASE=C11-PH05_POST_MATERIALIZATION
+ROUND=C11-PH05-R02
+PH05_AUTHORITY=b59b2ecdfb69ca98c431b9f36694f011332fbef3
+PH05_IMPLEMENTATION=426235d8b67ac719e494b53cfb23a6c3b06fb489
+PH05_PUBLICATION=PUSHED
+PH05_AUTOMATED_BUILD_EVIDENCE=PASS
+FULL_FLUTTER_TEST=PASS_278_WITH_4_LAB_SKIPS
+WINDOWS_RELEASE_BUILD=PASS
+ANDROID_DEBUG_BUILD=PASS
+SCHEMA_MIGRATION=NONE
+DEPENDENCY_GENERATED_PLATFORM_PROVIDER_CHANGE=NO
+HISTORY_EXPORT_QUERY_BOUNDARY=TWO_SET_BASED
+EXPORT_DESTINATION_OWNER=SINGLE_SHARED_PORT
+ANDROID_PUBLIC_DOWNLOADS=UNAVAILABLE_BY_AUTHORITY
+GUIDE_STRUCTURE=IMPLEMENTED
+GUIDE_LEARNER_SEQUENCE=PARTIALLY_CONTRADICTED
+ANALYTICS_HUMAN_RUNTIME_RESULT=DEFECT_OBSERVED
+ANALYTICS_WRONG_VARIABLE_ROOT_CAUSE=NOT_ESTABLISHED
+ANALYTICS_CORRECTION_DIRECTION=ACCEPTED_NOT_IMPLEMENTED
+HUMAN_ASSISTIVE_TECH_LOCALE_REAL_DEVICE_COMPREHENSION=NOT_ESTABLISHED
+KANBAN_TRANSITIONS=NONE
+PH05_D_E_F_AUTHORITY=CONSUMED
+CODEX_AUTHORITY=NONE
+PERMANENT_DOMAIN_ABSORPTION=PENDING_PDR2_O_A_D
+ANALYTICS_CORRECTION_CONTEXT=READ_ONLY_STATE_OF_UNION_REQUIRED
+MAIN_ROOT_REFRESH=AFTER_THREE_DOMAIN_COMMITS
+NEXT_MAIN_ACTION=Run PH05 Operational Didactic and Design PDR2 reconciliations, then verify all three commits; separately complete the read-only Analytics correction state-of-union before any new D/E/F authority.
+```
+
