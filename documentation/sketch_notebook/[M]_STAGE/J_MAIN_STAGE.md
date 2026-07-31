@@ -1,8 +1,8 @@
-# J_MAIN_STAGE — Cycle 10 final reconciliation / C11-PH01-S02 handoff
+# J_MAIN_STAGE — Cycle 11 PH01 recovery and PH02 final reconciliation
 
 > Sequence: FLX-PRM-04 / PRC-01 final conflictive reconciliation
 > Role: Main Chat [M]
-> Cycle / phase / active unit: C11 / C11-PH01 / C11-PH01-S02
+> Cycle / phase / active unit: C11 / C11-PH02 / permanent-domain reconciliation
 > Repository: `gus-i-gu/markei`
 > Branch: `grm-guarded-provisioning-20260727`
 > Cycle 10 accepted implementation boundary:
@@ -16,8 +16,7 @@
 > Authority: explicit human-directed Main final reconciliation
 > Mutable surface: this file
 > Extracted Cycle 10 history: `documentation/REC_LEGACY.md`
-> Status: **CYCLE 10 PERMANENT EXTRACTION EXHAUSTED; C11-PH01-S02 IS THE
-> CURRENT FORWARD UNIT**
+> Status: **C11-PH01-R01 AND C11-PH02 MATERIALIZED AND VALIDATED; PERMANENT-DOMAIN ABSORPTION PENDING**
 
 ## 1. Recovery entrypoint
 
@@ -264,3 +263,217 @@ METHODOLOGY_MUTATION=NONE
 ```
 
 ---
+<!-- TEMPORAL_MARKER:C11-PH02-MAIN-2026-07-31 -->
+> Temporal boundary — Main post-materialization reconciliation. Sections above preserve the pre-PH02 boundary. This section is the latest chronological J authority for C11-PH01-R01 and C11-PH02 permanent-domain reconciliation.
+
+## 9. C11-PH01-R01 + C11-PH02 final materialization reconciliation
+
+### 9.1 Evidence boundary
+
+Repository and branch:
+
+```text
+REPOSITORY=gus-i-gu/markei
+BRANCH=grm-guarded-provisioning-20260727
+IMPLEMENTATION_PARENT=e802d435cf562e422b7f9118db929235488899bf
+IMPLEMENTATION_COMMIT=20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6
+PUBLICATION=PUSHED
+```
+
+Controlling evidence:
+
+```text
+DEV_STAGE/D_OPS_STAGE.md
+DEV_STAGE/E_DDC_STAGE.md
+DEV_STAGE/F_DSN_STAGE.md
+DEV_STAGE/G_OPS_CODEX.md
+DEV_STAGE/H_DDC_CODEX.md
+DEV_STAGE/I_DSN_CODEX.md
+```
+
+A/B/C remain pre-materialization investigation, intent and contrary-evidence
+inputs. Any earlier claim that the PH01 corrective source or PH02 Analytics was
+absent is superseded by the implementation commit and final G/H/I evidence.
+D/E/F retain historical materialization authority but do not authorize a new
+implementation round.
+
+The implementation commit changed 23 authorized paths: 12 Flutter source files,
+8 Flutter test files, and G/H/I. R02 added
+`clients/markei_flutter/test/app/markei_app_test.dart` beyond the carried R01
+path set to correct deterministic test lifecycle behavior without weakening
+substantive assertions.
+
+### 9.2 Reconciled implementation state
+
+PH01-R01 is implemented and validated at the automated/build ceiling:
+
+- Purchase and Catalogue retain the accepted PH01 visual system while correcting
+  constrained-height reachability, field separation, wrapping and geometry.
+- History exposes one checkbox selection affordance and a separate detail
+  activation in wide and compact presentations.
+- Home and Lists remain preserved except for bounded shared-presentation
+  compatibility.
+
+PH02 Analytics is implemented and validated at the automated/build ceiling:
+
+- deterministic, read-only, local and active-Account-scoped;
+- one complete joined evidence load, with no History 50-row reuse or N+1 path;
+- session-local repeatable cards above a twelve-field supporting evidence
+  matrix;
+- Product, Purchase, Store and UTC Time determinants;
+- Sum, Mean, Difference and Percentage operations;
+- Difference means comparison B minus baseline A;
+- Percentage means part of a named containing whole, not percentage change;
+- checked fixed-point/rational behavior with typed unavailable results for zero
+  denominator and overflow;
+- typed History Purchase-ID handoff with no History-side calculation;
+- 100-row rendered pages and a 500-ID selected-scope cap;
+- shared workspace/controller state across wide and compact layouts.
+
+The final dependency direction is accepted for permanent-domain classification:
+
+```text
+presentation
+  -> application workspace and read port
+  -> analytics domain models and versioned registry
+  -> local Account-predicated repository adapter
+```
+
+History owns selection and typed handoff only. Analytics widgets remain
+repository-free and calculation-free. Analytics cards remain session-local and
+are neither serialized nor synchronized.
+
+### 9.3 Validation and measured evidence
+
+Final evidence records:
+
+- focused tests: PASS;
+- formerly blocked `markei_app_test.dart --concurrency=1`: PASS, 26 tests;
+- full Flutter suite: PASS, 258 tests with 4 lab-gated skips, approximately
+  82.7 seconds;
+- `flutter analyze`: PASS;
+- Windows release build: PASS;
+- Android debug build: PASS;
+- dependency, lockfile, schema, generated-source, provider, Sync, authorized-path
+  and whitespace audits: PASS;
+- validation-owned Dart, Flutter and SQLite processes remaining: none observed.
+
+Repository request evidence:
+
+```text
+initial complete load=1
+each Retry=+1
+filtering/selection/execution/focus/reset/reorder=+0
+```
+
+Measured Windows-host fixtures:
+
+| Fixture | Purchases / Items | Page | Selected scope | Load | Calculation | Gate |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| Ordinary Sum | 1,000 / 5,000 | 100 | 0 | 2 ms | 22 ms | PASS under 250 ms |
+| Stress Mean | 10,000 / 50,000 | 100 | 500 | 6 ms | 302 ms | PASS under 1 s |
+
+These measurements are committed test evidence from one Windows validation host;
+they are not universal device-performance guarantees.
+
+### 9.4 Corrective lifecycle classification
+
+The R01 publication blocker was diagnosed as animated test-helper scrolling plus
+eager loading of hidden Analytics content, which could leave app-shell tests
+unfinished and retain SQLite/native tester resources.
+
+R02 applied the bounded correction:
+
+- tester-owned bounded `ensureVisible` behavior in the app-shell test helper;
+- Analytics evidence loading gated by destination visibility;
+- substantive assertions preserved;
+- overflow converted to a typed unavailable result rather than wrapping or
+  substituting floating-point behavior.
+
+This is a validated lifecycle/testability correction, not a new product
+capability or a redesign of the Analytics contract.
+
+### 9.5 Evidence ceiling and non-claims
+
+The following remain NOT_PERFORMED:
+
+- screenshot-based rendered review;
+- Narrator, TalkBack or other assistive-technology review;
+- keyboard-only human acceptance;
+- real Windows/Android device review;
+- human comprehension and visual acceptance;
+- locale review.
+
+Widget/layout assertions and build artifacts are evidence, but they do not
+substitute for those human or real-device checks. No KANBAN maturity transition
+is implied by implementation alone.
+
+The implementation introduced no schema, migration, dependency, lockfile,
+generated-source, platform, API, Auth, Sync, provider or diagnostic change. It
+provides no live Sync/provider evidence and changes no Cycle 10 or production
+acceptance boundary.
+
+### 9.6 Permanent-domain classification route
+
+Run the ordinary post-Codex route through `SEQ-PRM-04` and the applicable
+PDR2 prompt. Each functional chat must compare its checkpoint, paired G/H/I,
+this latest J section, paired A/B/C context, relevant repository truth and its
+four permanent semantic-role files.
+
+Operational absorption should classify:
+
+- the exact validation ladder, lifecycle correction, request counts, fixture
+  sizes/timings, builds and forbidden-surface audits;
+- the Windows-host measurement boundary;
+- remaining screenshot, assistive-technology, real-device and human acceptance
+  work as explicit gates rather than implementation failures.
+
+Didactic absorption should classify:
+
+- learner-visible twelve-field evidence vocabulary and honest unavailable states;
+- determinant and operation meanings, especially B-minus-A and part-of-whole;
+- History context transfer and responsive semantic parity;
+- implementation/test evidence separately from learner mastery;
+- KANBAN transitions as NONE unless independent promotion evidence exists.
+
+Design absorption should classify:
+
+- domain/application/infrastructure/presentation ownership;
+- Account-predicated joined-read boundary and request-count invariant;
+- evidence identity, Purchase-total deduplication and operation-specific types;
+- session-local state, History handoff and visibility-gated lifecycle ownership;
+- unchanged schema/dependency/provider/Sync boundaries.
+
+Each role may commit and push only its four permanent files. Remote advancement
+from another domain reconciliation must be integrated safely without force and
+without rewriting another domain's commit.
+
+### 9.7 Current terminal
+
+```text
+CYCLE=C11
+C11_PH01_R01=IMPLEMENTED_VALIDATED_AUTOMATED_BUILD_CEILING
+C11_PH02=IMPLEMENTED_VALIDATED_AUTOMATED_BUILD_CEILING
+IMPLEMENTATION_COMMIT=20e3d5f6c2f973d138e3b2680aa8adf96f17d0b6
+PH01_CORRECTIONS=PASS
+ANALYTICS_LOCAL_ACCOUNT_SCOPE=PASS
+ACCOUNT_SCOPED_JOIN=PASS
+OPERATION_COMPATIBILITY=PASS
+CHECKED_FIXED_POINT_AND_OVERFLOW=PASS
+HISTORY_PURCHASE_ID_HANDOFF=PASS
+REPOSITORY_REQUEST_COUNT=initial:1; retry:+1; local_transitions:+0
+ORDINARY_FIXTURE=PASS
+STRESS_FIXTURE=PASS
+FOCUSED_TESTS=PASS
+FULL_FLUTTER_TEST=PASS
+FLUTTER_ANALYZE=PASS
+WINDOWS_BUILD=PASS
+ANDROID_BUILD=PASS
+SCHEMA_MIGRATION=NONE
+DEPENDENCY_OR_GENERATED_CHANGE=NO
+LIVE_SYNC_OR_PROVIDER_OPERATION=NONE
+HUMAN_ASSISTIVE_TECH_REAL_DEVICE_ACCEPTANCE=NOT_PERFORMED
+KANBAN_TRANSITIONS=NONE
+PERMANENT_DOMAIN_ABSORPTION=PENDING_PDR2_O_A_D
+NEXT_MAIN_ACTION=After all three domain commits are published, reconcile their permanent-memory results and select the bounded C11-PH03 entry.
+```
