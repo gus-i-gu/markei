@@ -1466,3 +1466,76 @@ Provider, real-device, assistive-technology, keyboard-only, locale, learner-
 comprehension and broad human acceptance remain host-unvalidated. Android
 shared-document/native-sharing integration and the Analytics corrective
 materialization remain deferred.
+
+# 28. C11 Analytics correction architecture
+
+Evidence boundary: implementation
+`17fd65296e960112787b870363b40339f535f5b6`, complete
+`DEV_STAGE/I_DSN_CODEX.md`, J section 16 at
+`34eb4b60fd4f9c6455c1774c055c1615581623af`, and the named handwritten
+Analytics source and focused tests.
+
+## 28.1 Ownership and dependency direction
+
+~~~text
+Analytics presentation
+→ one composition-owned AnalyticsWorkspaceController
+→ one Account-local AnalyticsEvidenceRepository read
+→ immutable AnalyticsRecord
+→ Chart / Table / interpretation / pure CSV-PDF projection
+~~~
+
+The workspace controller is the single owner of dataset load, draft, saved
+records, selection and projection state. Initial load performs one local read;
+Retry performs one additional read. Draft changes, record selection, paging and
+presentation changes perform no repository reads.
+
+`AnalyticsComposerDraft.variables` is the single mutable typed selection owner.
+Breakdowns and measures are derived compatibility views. No second controller,
+repository, persistence owner or calculation engine participates in the
+workspace.
+
+## 28.2 Immutable record and calculation invariants
+
+`Run & save` creates a new immutable `AnalyticsRecord` that freezes
+determinant, variables, operation, timeframe, evidence scope, selected labels
+and grouped entries. Later draft changes and saved-record selection cannot
+mutate or reuse an existing record.
+
+Grouping and fixed-point integer calculation remain on the workspace path.
+Registry definitions own operation identity and support rules; the separate
+registry executor remains inactive for workspace records. Compatibility keys
+remain internal aggregation/comparison identity.
+
+## 28.3 Presentation, time and identity boundaries
+
+`analyticsDisplayValue` is the shared pure conversion from stored result
+values to learner-facing quantity, currency, per-unit currency, percentage,
+signed Difference and integer evidence-count values. Conversion occurs only at
+presentation/export boundaries; aggregation stays fixed-point.
+
+Custom time accepts strict inclusive local calendar dates. The application
+constructs local midnight at the start and local midnight after the final date,
+then converts both to the existing UTC half-open interval.
+
+Stable Purchase, Product and Purchase Item IDs remain internal identities for
+selection, History handoff, paging, fingerprints and reconstruction. Ordinary
+Variables labels and CSV/PDF evidence omit UUID presentation. CSV/PDF builders
+remain pure and destination ownership remains unchanged.
+
+## 28.4 Projection capability and preserved effects
+
+Incompatible numeric axes produce typed Chart unavailability while Table and
+export evidence remain available. Unsupported or categorical-only selections
+block explicitly; no implicit numeric measure is inserted.
+
+Analytics continues to own one Account-local read boundary, zero database
+writes and zero network effects. Schema, migrations, generated source,
+dependencies, native platform files, export destination ownership,
+Auth/API/Sync/provider contracts, PH05 Guide/Audit/Settings architecture and
+C12-PHASE02 distributed/backend boundaries remain unchanged.
+
+Rollback to `2cdb8a66bfa75918acbbcae324e8315e0b7b2658` requires no data conversion,
+schema rollback or provider-contract rollback. Automated correction evidence
+does not establish screenshot fidelity, accessibility, locale, real-device,
+learner-comprehension or live-provider acceptance.

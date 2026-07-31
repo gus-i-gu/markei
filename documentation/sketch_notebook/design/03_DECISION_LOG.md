@@ -1784,3 +1784,103 @@ deferred
   compact composer correction materialization
   provider and broad human/real-device acceptance
 ~~~
+
+<!-- TEMPORAL_MARKER:C11-ANALYTICS-CORRECTION-2026-07-31 -->
+> Reviewed temporal boundary — C11 Analytics correction permanent Design reconciliation (2026-07-31). Earlier decisions remain historical and recoverable above.
+
+# Event 28 — C11 Analytics correction architecture reconciliation
+
+## Evidence and classification
+
+Design reconciled implementation `17fd65296e960112787b870363b40339f535f5b6`
+against its parent `2cdb8a66bfa75918acbbcae324e8315e0b7b2658`,
+correction authority `0e647e76aa8275bda48cea1e9d08427e3d949134`,
+complete `DEV_STAGE/I_DSN_CODEX.md`, J section 16, the controlling
+`C11 Analytics Correction Round 01` Design stage, handwritten Analytics
+models/application/presentation/local adapter and focused tests.
+
+The former Analytics defect is corrected at the automated evidence boundary:
+
+- raw fixed-point storage integers and internal compatibility keys no longer
+  define ordinary presentation or export values;
+- one end-to-end regression matrix now establishes that explicit variable and
+  operation selection controls the frozen record and its projections;
+- categorical-only selection blocks without silently inserting Quantity;
+- the dormant registry executor remains unactivated, so no second workspace
+  calculation path was introduced.
+
+The earlier human screenshot remains valid chronology but is superseded as the
+current implementation classification. Wide/compact screenshot fidelity and
+the other human acceptance gates were not performed.
+
+## Accepted decisions
+
+1. **Single composition owner retained.** One
+   `AnalyticsWorkspaceController` owns the Account-local dataset, live draft,
+   immutable session records, selected record, result projection and
+   request-counted Retry lifecycle. Initial load performs one read; Retry adds
+   one read; local draft/result transitions add none.
+
+2. **One typed selection owner.** `AnalyticsComposerDraft.variables` is the
+   only mutable variable selection. `breakdowns` and `measures` are derived
+   compatibility views, not peer authorities.
+
+3. **Immutable execution boundary.** `Run & save` freezes determinant,
+   variables, operation, timeframe, evidence scope, labels and grouped entries
+   into one new immutable `AnalyticsRecord`. Later draft mutation and saved
+   record selection neither mutate nor reuse an existing record.
+
+4. **One grouping/calculation path.** Workspace grouping and calculation remain
+   the active path. `executeAnalyticsCard` remains a registry-level dormant
+   capability and was not activated as another controller or engine.
+
+5. **Presentation conversion boundary.** `analyticsDisplayValue` is a pure
+   shared conversion at presentation/export boundaries. Storage and aggregation
+   remain fixed-point integer based; compatibility keys remain internal
+   identities.
+
+6. **Calendar boundary.** Strict inclusive local Initial/Final dates are
+   converted by constructing local start and local day-after-final before UTC
+   conversion, preserving the existing half-open UTC filter.
+
+7. **Identity and evidence boundary.** Stable Purchase, Product and Purchase
+   Item IDs remain internal for selection, History handoff, paging,
+   fingerprints and reconstruction. Ordinary labels and exports hide UUIDs.
+   CSV/PDF builders remain pure.
+
+8. **Projection capability.** Incompatible numeric axes retain Table/CSV/PDF
+   evidence while Chart returns typed unavailability. Projection failure does
+   not erase valid evidence.
+
+## Alternatives and rejected expansion
+
+Rejected alternatives were a second Analytics controller, a separate
+repository or persistence owner, activation of a generic parallel calculator,
+floating-point aggregation, removal of internal IDs, implicit substitute
+measures, and schema/provider changes. They duplicate authority or weaken
+identity and evidence invariants without correction evidence.
+
+## Preserved boundaries and reversibility
+
+Analytics remains one local Account-scoped read owner with zero database writes
+and zero network effects. Schema, migrations, generated source, dependencies,
+lockfiles, native platform files, export destination ownership,
+Auth/API/Sync/provider contracts, PH05 Guide/Audit/Settings architecture and
+C12-PHASE02 distributed/backend ownership are unchanged.
+
+Rollback is the correction parent
+`2cdb8a66bfa75918acbbcae324e8315e0b7b2658`. It restores the prior Analytics
+presentation/selection behavior without data conversion, schema rollback,
+dependency rollback or provider-contract rollback.
+
+## Evidence ceiling and remaining decisions
+
+Automated source/tests/build evidence validates the corrected presentation and
+calculation-selection boundary. It does not validate wide/compact screenshot
+fidelity, keyboard-only use, assistive technology, locale/long strings, Windows
+launch, Android real-device behavior, learner comprehension, or live provider
+and Sync operation.
+
+Main must preserve those gates, carry the unrelated PH05 Guide content-contract
+deviation, verify all three correction-domain reconciliations, and perform final
+C11 permanent absorption and Main continuity refresh before opening C12.

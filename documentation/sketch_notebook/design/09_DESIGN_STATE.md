@@ -227,111 +227,85 @@ Recovery: Architecture §21; Decision Log Event 21; Model Overview current Cycle
 
 > Temporal boundary retained; this is the single current Design checkpoint.
 
-# C11-PH05 Design Checkpoint
+# C11 Analytics Correction Design Checkpoint
 
 > Sequence: FLX-PRM-04 / PDR2-D
 > Branch: `grm-guarded-provisioning-20260727`
-> Inspected implementation head: `426235d8b67ac719e494b53cfb23a6c3b06fb489`
-> J reconciliation head: `e6ced7fe3945925bf5f314ee11c4538029e18d44`
-> PH05 authority / rollback: `b59b2ecdfb69ca98c431b9f36694f011332fbef3`
+> Inspected implementation: `17fd65296e960112787b870363b40339f535f5b6`
+> Implementation parent / rollback: `2cdb8a66bfa75918acbbcae324e8315e0b7b2658`
+> Correction authority: `0e647e76aa8275bda48cea1e9d08427e3d949134`
 > Evidence: complete `DEV_STAGE/I_DSN_CODEX.md`
-> Main reconciliation: `[M]_STAGE/J_MAIN_STAGE.md` section 14
+> Main reconciliation: `[M]_STAGE/J_MAIN_STAGE.md` section 16
 
 ## Current accepted architecture
 
-- `ExportDestinationPort` is the single application export boundary;
-  composition injects one `LocalExportDestination`.
-- History and Analytics keep pure builders separate from explicit destination
-  effects; one successful export produces one collision-safe final write.
-- non-empty selected History export uses two set-based Account-scoped reads:
-  one joined Purchase query and one joined Item query.
-- Android public Downloads is a typed unavailable outcome with zero writes;
-  Windows Downloads is implemented within the existing dependency boundary.
-- History owns one stable selected-for-action `Set<PurchaseId>`; detail
-  identity is separate.
-- History hands typed Account/Purchase scope only to the one composition-owned
-  Analytics workspace.
-- Analytics fixed-point/rational semantics, record fingerprints, Chart/Table
-  parity, internal stable IDs and schema boundaries remain unchanged.
-- Guide has one local typed presentation owner and page-local anchor/focus
-  lifecycle.
-- Audit summaries depend only on loaded bounded local state.
-- Settings keeps its page-local controller and existing narrow ports; guarded
-  support actions now refresh local status correctly.
+- one composition-owned `AnalyticsWorkspaceController` owns dataset, draft,
+  immutable session records, selection and projections;
+- the Account-local dataset load is request-counted once; Retry adds one read;
+- `AnalyticsComposerDraft.variables` is the single typed selection owner;
+  breakdowns and measures are derived compatibility views;
+- `Run & save` freezes determinant, variables, operation, timeframe, evidence
+  scope, labels and grouped entries into one new immutable
+  `AnalyticsRecord`;
+- later draft changes and saved-record selection neither mutate nor reuse an
+  existing record;
+- grouping and calculation remain on the single workspace path;
+- pure shared display conversion occurs only at presentation/export boundaries;
+- fixed-point integer aggregation and internal compatibility identity remain
+  unchanged;
+- inclusive local calendar dates convert through local start and
+  day-after-final into the existing UTC half-open interval;
+- stable IDs remain internal for selection, History handoff, paging,
+  fingerprints and reconstruction;
+- CSV/PDF builders remain pure;
+- incompatible axes retain Table/export evidence and produce typed Chart
+  unavailability.
 
-## Implemented deviation
-
-Guide owns eight sections structurally, but its content does not fully match E
-section 35. Lists is absent as a separate learner section. Getting-started,
-local-data/export and Sync-limit responsibilities are redistributed. This is a
-content-contract deviation within one Guide owner, not an infrastructure defect
-or authority for a second owner.
-
-## Active defect
-
-Human runtime evidence indicates that selected Analytics variables or operation
-may not control the displayed result correctly. Root cause is not established.
-
-The next investigation must be read-only and trace:
-
-~~~text
-draft → validation → immutable record → grouping → operation
-→ Chart/Table → interpretation → CSV/PDF
-~~~
-
-Do not infer draft, validation, grouping, fixed-point display, record reuse or
-projection as the cause. The compact composer, unified Variables control and two
-custom date fields are accepted correction direction, not implemented
-architecture. Stable Purchase/Product/Item IDs remain internal identities.
-Do not introduce a second controller, schema change or persistence owner without
-evidence.
-
-## Evidence state
+## Defect and evidence state
 
 | Claim | State |
 | --- | --- |
-| export port/adapter and pure-builder boundary | implemented and validated |
-| two-read History export and one final write | implemented and validated |
-| stable History selection/detail split and typed handoff | implemented and validated |
-| one Analytics workspace and unchanged calculation/schema boundaries | implemented |
-| Guide local owner and eight-section structure | implemented and validated |
-| Guide content contract against E §35 | implemented deviation |
-| Audit loaded-state projection and Settings refresh | implemented and validated |
-| Analytics variable integrity | defective; root cause unresolved |
-| Android public Downloads | blocked; typed unavailable with zero writes |
-| compact Analytics correction direction | accepted, not implemented |
-| provider/real-device/accessibility/locale/comprehension | host-unvalidated |
-| Android shared-document/native sharing | deferred |
+| raw fixed-point/internal-key presentation | corrected; automated-validated |
+| calculation-selection integrity | validated by end-to-end automated regression |
+| silent default-Quantity insertion | not evidenced |
+| second workspace calculation path | not evidenced |
+| human wide/compact screenshot acceptance | host-unvalidated |
+| keyboard-only and assistive-technology review | host-unvalidated |
+| locale and long-string review | host-unvalidated |
+| Windows launch and Android real-device behavior | host-unvalidated |
+| learner comprehension | host-unvalidated |
+| live provider and Sync operation | host-unvalidated |
 
-## Unchanged boundaries and rollback
+The earlier human screenshot is retained as chronology but is superseded as the
+current defect classification. Automated evidence does not substitute for the
+remaining human gates.
 
-No schema, migration, generated source, dependency, native platform file,
-API/Auth/Sync/provider contract, diagnostic registry, stored identity or
-fixed-point calculation boundary changed. Rollback to
-`b59b2ecdfb69ca98c431b9f36694f011332fbef3` restores pre-PH05 behavior
-without data conversion or contract rollback.
+## Preserved boundaries and rollback
+
+Analytics retains one local read owner, zero database writes and zero network
+effects. Schema, migrations, generated source, dependencies, lockfiles, native
+platform files, export destination ownership, Auth/API/Sync/provider contracts,
+PH05 Guide/Audit/Settings architecture and C12-PHASE02 distributed/backend
+boundaries are unchanged.
+
+Rollback to `2cdb8a66bfa75918acbbcae324e8315e0b7b2658` restores the prior
+Analytics correction state without data conversion, schema rollback,
+dependency rollback or provider-contract rollback.
 
 ## Next valid route and authority
 
-PH05 D/E/F authority is consumed and Codex has no active authority. Main must
-verify the three PH05 permanent-domain commits, preserve this checkpoint's Guide
-deviation and Analytics defect, and complete the separate read-only Analytics
-state-of-union before any corrective J/D/E/F packet.
-
-Remaining Main/human decisions:
-
-1. whether and when to correct the Guide content sequence;
-2. whether Android shared-document/native-sharing work receives separate
-   platform authority;
-3. the Analytics root cause and smallest corrective ownership boundary;
-4. the outstanding real-device, assistive-technology, locale and comprehension
-   acceptance plan.
+Correction D/E/F authority is consumed and Codex has no active correction
+authority. Main must verify the Operational, Didactic and Design correction
+reconciliations, carry the unrelated PH05 Guide content-contract deviation,
+plan the outstanding human/platform acceptance gates, and perform final C11
+permanent absorption plus 00/05/06 refresh before opening C12.
 
 ## Recovery pointers
 
-- Canonical: `design/01_ARCHITECTURE.md`, §§23–27.
-- Derived: `design/14_MODEL_OVERVIEW.md`, current C11-PH05 model.
-- Observational: `design/03_DECISION_LOG.md`, Events 23–27.
+- Canonical: `design/01_ARCHITECTURE.md`, §28.
+- Derived: `design/14_MODEL_OVERVIEW.md`, current correction model.
+- Observational: `design/03_DECISION_LOG.md`, Event 28.
 - Evidence: complete `DEV_STAGE/I_DSN_CODEX.md`.
-- Main: `[M]_STAGE/J_MAIN_STAGE.md`, section 14.
-- Pre-materialization intent/deviation context: `DEV_STAGE/C_DESIGN.md`, PH05.
+- Main: `[M]_STAGE/J_MAIN_STAGE.md`, section 16.
+- Authority/intent: `DEV_STAGE/F_DSN_STAGE.md`, C11 Analytics Correction Round
+  01.

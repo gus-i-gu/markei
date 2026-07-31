@@ -242,114 +242,93 @@ Recovery: Architecture §21; Decision Log Event 21; checkpoint `09_DESIGN_STATE.
 
 <!-- TEMPORAL_MARKER:C10-RECOVERED-PROMOTION-2026-07-15 -->
 
-> Temporal boundary retained; the rebuildable current model below supersedes the
-> earlier Cycle 10/C11-PH01/PH02/PH03 derived segment.
+> Temporal boundary retained; this rebuildable current model supersedes the
+> earlier C11-PH05 Analytics-defect segment while preserving PH05 architecture.
 
-# Current Model Overview — C11 PH05
+# Current Model Overview — C11 Analytics Correction
 
 > Branch: `grm-guarded-provisioning-20260727`
-> Implementation head: `426235d8b67ac719e494b53cfb23a6c3b06fb489`
-> J reconciliation head: `e6ced7fe3945925bf5f314ee11c4538029e18d44`
-> PH05 authority / rollback: `b59b2ecdfb69ca98c431b9f36694f011332fbef3`
+> Implementation: `17fd65296e960112787b870363b40339f535f5b6`
+> Implementation parent / rollback: `2cdb8a66bfa75918acbbcae324e8315e0b7b2658`
+> Correction authority: `0e647e76aa8275bda48cea1e9d08427e3d949134`
 > Evidence: complete `DEV_STAGE/I_DSN_CODEX.md`
-> Main reconciliation: `[M]_STAGE/J_MAIN_STAGE.md` section 14
-> Canonical owners: `design/01_ARCHITECTURE.md` §§23–27
+> Main reconciliation: `[M]_STAGE/J_MAIN_STAGE.md` section 16
+> Canonical owner: `design/01_ARCHITECTURE.md` §28
 
-## 1. Current responsibility topology
-
-~~~text
-History
-├─ stable selected-for-action Set<PurchaseId>
-├─ separate detail PurchaseId
-├─ two set-based Account-scoped export reads
-├─ pure CSV/PDF builders
-└─ typed Purchase-scope handoff to Analytics
-
-Analytics
-├─ one composition-owned session workspace
-├─ existing fixed-point registry and record fingerprints
-├─ Chart/Table + interpretation + CSV/PDF projections
-└─ shared ExportDestinationPort for explicit file effects
-
-ExportDestinationPort
-← one LocalExportDestination
-→ Windows Downloads: collision-safe single final write
-→ Android public Downloads: typed unavailable, zero writes
-
-Guide
-└─ one local typed presentation owner + page-local anchors/focus
-
-Audit
-└─ System/Readiness/Diagnostics projections of loaded bounded local state
-
-Settings
-└─ existing page-local state + narrow ports + guarded async status refresh
-~~~
-
-## 2. Export and History model
-
-Pure builders own content; the shared destination adapter owns availability,
-name sanitization, collision avoidance and the one final write. Non-empty
-History selected export performs exactly one joined Purchase read plus one
-joined Item read, with Account predicates, zero database writes and zero network
-calls.
-
-Purchase IDs own selected action identity. Detail identity is separate. Filter
-and refresh prune unavailable IDs; sort and responsive layout preserve the set.
-History transfers Purchase scope only. Analytics resolves stable Purchase Item
-evidence internally and neither calculation nor saved-record creation occurs
-during navigation.
-
-## 3. Analytics model and active defect
-
-One session workspace continues to own dataset, draft, records, selection and
-responsive projections. Fixed-point/rational arithmetic, operation registry,
-fingerprints, Chart/Table parity, stable internal Purchase/Product/Item IDs and
-schema boundaries are unchanged.
-
-Human runtime evidence indicates that selected variables or operation may not
-control the displayed result correctly. Root cause is unresolved. The next
-read-only route is:
+## 1. Current Analytics topology
 
 ~~~text
-draft → validation → immutable record → grouping → operation
-→ Chart/Table → interpretation → CSV/PDF
+AnalyticsPage / Analytics components
+→ one AnalyticsWorkspaceController
+├─ one Account-local dataset load; Retry +1 read
+├─ one AnalyticsComposerDraft.variables selection
+├─ derived breakdown and measure compatibility views
+├─ grouping + fixed-point calculation
+└─ immutable session-only AnalyticsRecord
+   ├─ Chart capability
+   ├─ Table evidence
+   ├─ interpretation
+   └─ pure CSV/PDF builders
 ~~~
 
-The compact composer, unified Variables control and two custom date fields are
-accepted direction but are not implemented architecture. No second controller,
-schema change or persistence owner is justified without evidence.
+Composition, repository ownership and export destination effects remain as
+accepted in PH05. No second controller, repository, persistence owner or
+calculation engine was introduced.
 
-## 4. Guide deviation and local projections
+## 2. Draft-to-record ownership
 
-Guide structurally owns eight local typed sections and page-local anchor/focus
-lifecycle with zero I/O. Its content does not fully match E section 35: Lists is
-absent as a separate section, and getting-started, local-data/export and
-Sync-limit responsibilities are redistributed. This is one owner's
-content-contract deviation.
+The typed Variables set is the only mutable variable selection. Categorical
+breakdowns and numeric measures are derived from it. Validation blocks
+categorical-only and unsupported operation-variable combinations without
+inserting a substitute Quantity measure.
 
-Audit summary cards derive only from the loaded bounded local result and add no
-I/O. Settings preserves its existing controller and ports; support-action
-refresh now completes while the busy guard remains active.
+`Run & save` freezes determinant, variables, operation, timeframe, evidence
+scope, selected labels and grouped entries into a new immutable record. Later
+draft changes and record selection do not mutate or reuse existing records.
+Grouping and calculation remain on the workspace path.
 
-## 5. Preserved contracts and evidence ceiling
+## 3. Value, calendar and identity boundaries
 
-PH05 changes no schema, migration, generated source, dependency, native host,
-API/Auth/Sync/provider contract, diagnostic registry or stored identity.
-Rollback to `b59b2ecd...` restores the prior PH05 behavior without data
-conversion.
+Fixed-point integer aggregation is unchanged. Pure
+`analyticsDisplayValue` conversion formats ordinary presentation and export;
+compatibility keys stay internal.
 
-Automated tests, analysis, Windows release build and Android debug build validate
-the implemented topology at the recorded ceiling. Android public Downloads is
-blocked by authority and returns typed unavailable with zero writes. Android
-shared-document/native-sharing work, provider/real-device evidence,
-assistive-technology, keyboard-only, locale, learner comprehension and broad
-human acceptance remain deferred or host-unvalidated.
+Custom Initial and Final dates are inclusive local calendar dates. Local start
+and local day-after-final convert to the existing UTC half-open interval.
+
+Stable Purchase, Product and Purchase Item IDs remain internal for selection,
+History handoff, paging, fingerprints and reconstruction. Ordinary Variables
+labels and exports hide UUIDs. Pure CSV/PDF builders and the shared destination
+boundary are unchanged.
+
+## 4. Result capability and defect classification
+
+Incompatible numeric axes retain Table/CSV/PDF evidence and return typed Chart
+unavailability.
+
+The former raw fixed-point/internal-key presentation defect is corrected and
+automated-validated. Calculation-selection integrity now has end-to-end
+automated regression evidence. Silent default-Quantity insertion and a second
+workspace calculation path are not evidenced. Human screenshot acceptance
+remains unperformed.
+
+## 5. Preserved architecture and evidence ceiling
+
+Analytics effects remain initial read 1, Retry +1, other local transitions +0,
+writes 0 and network 0. Schema, migrations, generated source, dependencies,
+native platform files, export destination ownership, Auth/API/Sync/provider
+contracts, PH05 Guide/Audit/Settings architecture and C12-PHASE02 boundaries are
+unchanged.
+
+Rollback to `2cdb8a66...` restores the prior correction state without data or
+contract conversion. Wide/compact screenshot fidelity, keyboard-only use,
+assistive technology, locale, Windows launch, Android real-device behavior,
+learner comprehension and live provider/Sync operation remain host- or
+human-unvalidated.
 
 ## 6. Recovery and next route
 
-Use Architecture §27 for stable rules, Decision Log Event 27 for chronology and
+Use Architecture §28 for stable rules, Decision Log Event 28 for chronology and
 alternatives, and `09_DESIGN_STATE.md` for the compact checkpoint. Main must
-preserve the Analytics defect and Guide deviation, complete the requested
-read-only Analytics state-of-union, and only then decide whether new corrective
-D/E/F authority is justified.
+verify all three correction-domain reconciliations, retain unrelated PH05
+qualifications, and complete final C11 permanent absorption and 00/05/06 refresh.
