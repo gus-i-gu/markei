@@ -4284,7 +4284,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
     flutter analyze
     if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
-    flutter test
+    flutter test --concurrency=1 --no-pub
     if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
     flutter build windows --release
     if ($LASTEXITCODE -ne 0) { throw "Windows release build failed." }
@@ -4751,7 +4751,7 @@ try {
     flutter analyze
     if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
 
-    flutter test
+    flutter test --concurrency=1 --no-pub
     if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
 
     flutter build windows --release @FlutterDefines
@@ -5596,7 +5596,7 @@ package:flutter/material.dart. Stop before analysis and repair the Flutter SDK.
     & $FlutterExecutable analyze
     if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
 
-    & $FlutterExecutable test
+    & $FlutterExecutable test --concurrency=1 --no-pub
     if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
 
     & $FlutterExecutable build apk --debug @FlutterDefines
