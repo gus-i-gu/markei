@@ -417,7 +417,7 @@ Begin with hierarchical recovery:
    06_SESSION_SCHEME.md;
 6. read current operational, didactic, and design checkpoints;
 7. read documentation/ALT_DEV.md;
-8. inspect current A/B/C, J, relevant G/H/I, REC_DIAGNOSTICS.md, and
+8. inspect current A/B/C, J, relevant G/H/I, REC_LEGACY.md, and
    task-named R05/R06/R07 evidence only as needed;
 9. inspect source only where implementation truth or drift remains uncertain.
 

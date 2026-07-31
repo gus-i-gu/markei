@@ -1033,7 +1033,7 @@ No KANBAN status changes. Repository behavior and passing tests strengthen proje
 # Cycle 10 Canonical Reconciliation
 
 > Reconciliation date: 2026-07-30
-> Evidence: `13_LECTURE_REGISTER.md` Observation 010; `REC_DIAGNOSTICS.md`
+> Evidence: `13_LECTURE_REGISTER.md` Observation 010; `REC_LEGACY.md`
 > Records 001–021 and Appendix I; current J mutable prefix §§2–5.2
 > Maturity result: no transition
 

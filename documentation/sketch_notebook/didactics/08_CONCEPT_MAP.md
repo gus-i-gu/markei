@@ -170,7 +170,7 @@ No current destination label authorizes these deferred behaviors.
 3. `13_LECTURE_REGISTER.md` Observation 010 — Cycle 10 learning history.
 4. `13_LECTURE_REGISTER.md` Observation 011 — C11 S01 meaning event.
 5. `DEV_STAGE/H_DDC_CODEX.md` — C11 S01 implementation/test/build evidence.
-6. `documentation/REC_DIAGNOSTICS.md` — exact Cycle 10 assay chronology.
+6. `documentation/REC_LEGACY.md` — exact Cycle 10 assay chronology.
 7. current J mutable prefix §§2–5.2 and 7–8 — Main terminal and evidence ceiling.
 
 ## Next valid route

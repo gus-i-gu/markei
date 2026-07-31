@@ -429,7 +429,7 @@ Tests, analysis, migration, build, bounded launch, manual workflow, accessibilit
 
 # Cycle 10 Guarded Synchronization Operational Rules
 
-The following reusable rules are promoted from `REC_DIAGNOSTICS.md` Records 001–021 and Appendix I, with acceptance and deferral boundaries reconciled by the current `J_MAIN_STAGE.md` prefix §§2–5.
+The following reusable rules are promoted from `REC_LEGACY.md` Records 001–021 and Appendix I, with acceptance and deferral boundaries reconciled by the current `J_MAIN_STAGE.md` prefix §§2–5.
 
 ## Guarded execution route and ownership
 

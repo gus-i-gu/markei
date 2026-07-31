@@ -926,7 +926,7 @@ Boundaries: Windows is not manually/visually accepted; Android, manual accessibi
 
 ## 2026-07-30 — Guarded hosted synchronization and two-Device development closure
 
-Registration authority: human-directed `SEQ-PRM-04` / `PRC-01` Operational reconciliation. Primary evidence: `documentation/REC_DIAGNOSTICS.md` Records 001–021 and Appendix I; Main orientation: `J_MAIN_STAGE.md` current prefix §§2–5 and protected `Legacy_Progress` entries dated 2026-07-23 through 2026-07-30. Registration anchor: `f3bfd3e6829d0f42951e306c449564fb05d7cc9c`.
+Registration authority: human-directed `SEQ-PRM-04` / `PRC-01` Operational reconciliation. Primary evidence: `documentation/REC_LEGACY.md` Records 001–021 and Appendix I; Main orientation: `J_MAIN_STAGE.md` current prefix §§2–5 and the consolidated Cycle 10 historical track record. Registration anchor: `f3bfd3e6829d0f42951e306c449564fb05d7cc9c`.
 
 ### Ordered execution and assay chronology
 
@@ -987,7 +987,7 @@ Acceptance is limited to **two Devices, one Account, development environment**. 
 - `DB_MGMT`: bounded manual SQL management and read-only/rollback provider queries.
 - runtime diagnostic registry: sole source of stable diagnostic definitions.
 - `ERR_DIAGNOSTICS.md`: generated/readable diagnostic projection.
-- `REC_DIAGNOSTICS.md`: sanitized client/server/provider assay chronology.
+- `REC_LEGACY.md`: sanitized client/server/provider assay chronology.
 - J `Legacy_Progress`: append-only Main sequence provenance, superseded gates and corrective progression.
 
 This registration reproduces neither the runtime diagnostic registry nor J's historical catalogue.

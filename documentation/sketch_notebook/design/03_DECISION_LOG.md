@@ -1182,7 +1182,7 @@ stop. It is observational history, not an expansion of the proved scope.
 
 Primary provenance:
 
-- `documentation/REC_DIAGNOSTICS.md`, Records 001–021 and Appendix I;
+- `documentation/REC_LEGACY.md`, Records 001–021 and Appendix I;
 - `documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md`, mutable-prefix
   sections 2–5.4 and 8;
 - protected J `Legacy_Progress`, especially the GCM02 ST08–ST10 entries,

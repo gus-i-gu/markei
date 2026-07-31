@@ -779,7 +779,7 @@ boundaries remain unaccepted or deferred exactly as stated in section 23.9.
 
 # 23. Cycle 10 Accepted Coordination and Convergence Architecture
 
-Evidence boundary: `documentation/REC_DIAGNOSTICS.md` Records 009–021 and
+Evidence boundary: `documentation/REC_LEGACY.md` Records 009–021 and
 Appendix I; `documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md`
 mutable-prefix sections 2–5.4 and 8; protected J `Legacy_Progress` GCM02,
 GCM03 and R03–R05 lineage. The accepted terminal is development-only:
@@ -943,7 +943,7 @@ contracts/shared_beta/diagnostics_v1/diagnostics.registry.json
 → documentation/ERR_DIAGNOSTICS.md readable projection
 
 runtime evidence
-→ sanitized REC_DIAGNOSTICS.md chronology
+→ sanitized REC_LEGACY.md chronology
 → Design/Operational/Didactic interpretation
 
 J Legacy_Progress

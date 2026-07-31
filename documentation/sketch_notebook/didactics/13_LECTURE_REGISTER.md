@@ -519,7 +519,7 @@ Branch: grm-guarded-provisioning-20260727
 Registration anchor: f3bfd3e6829d0f42951e306c449564fb05d7cc9c
 Class: bounded permanent Didactic observation
 Primary evidence:
-  documentation/REC_DIAGNOSTICS.md — Records 001–021 and Appendix I
+  documentation/REC_LEGACY.md — Records 001–021 and Appendix I
   documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md — mutable prefix
 Historical provenance:
   J_MAIN_STAGE.md — protected Legacy_Progress, selectively recovered
