@@ -482,8 +482,29 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 ### `GRM-FLUTTER-WIN`
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-FLUTTER-WIN"
+$RepositoryRoot = (& git rev-parse --show-toplevel).Trim()
+if ($LASTEXITCODE -ne 0 -or
+    [string]::IsNullOrWhiteSpace($RepositoryRoot)) {
+    throw "Run this command from inside the Markei repository."
+}
+
+$LauncherPath = Join-Path $RepositoryRoot "documentation\I_SCRIPTS.ps1"
+if (-not (Test-Path -LiteralPath $LauncherPath -PathType Leaf)) {
+    throw "Markei procedure launcher not found at $LauncherPath."
+}
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass `
+    -File $LauncherPath `
+    -Procedure "GS-FLUTTER-WIN"
+if ($LASTEXITCODE -ne 0) {
+    throw "GS-FLUTTER-WIN failed."
+}
 ```
+
+This invocation is valid from any directory inside the Markei repository. It
+resolves the tracked launcher first; the canonical procedure then validates,
+builds, registers, starts the exact Release executable from its artifact
+directory, and returns only after observing a live top-level Markei window.
 
 ### `GRM-FLUTTER-DBW`
 
