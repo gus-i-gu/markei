@@ -4317,6 +4317,43 @@ if (-not (Test-Path (Join-Path $ClientRoot "pubspec.yaml"))) {
     throw "Flutter client not found at $ClientRoot."
 }
 
+$RepositoryDirectory = Get-Item -LiteralPath $RepositoryRoot
+$ClientDirectory = Get-Item -LiteralPath $ClientRoot
+$RepositoryRoot = $RepositoryDirectory.FullName
+$ClientRoot = $ClientDirectory.FullName
+$CandidateDirectory = $ClientDirectory
+$ClientInsideRepository = $false
+while ($null -ne $CandidateDirectory) {
+    if ([string]::Equals(
+        $CandidateDirectory.FullName.TrimEnd([char[]]@('\', '/')),
+        $RepositoryDirectory.FullName.TrimEnd([char[]]@('\', '/')),
+        [System.StringComparison]::OrdinalIgnoreCase
+    )) {
+        $ClientInsideRepository = $true
+        break
+    }
+    $CandidateDirectory = $CandidateDirectory.Parent
+}
+if (-not $ClientInsideRepository) {
+    throw "Resolved Flutter client is outside the repository root."
+}
+
+$Branch = (& git -C $RepositoryRoot branch --show-current).Trim()
+if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($Branch)) {
+    throw "Could not determine the active Git branch."
+}
+$InspectedHead = (
+    & git -C $RepositoryRoot rev-parse HEAD
+).Trim().ToLowerInvariant()
+if ($LASTEXITCODE -ne 0 -or $InspectedHead -notmatch '^[a-f0-9]{40}$') {
+    throw "Could not determine the inspected Git HEAD."
+}
+
+Write-Host "Repository root: $RepositoryRoot"
+Write-Host "Flutter client root: $ClientRoot"
+Write-Host "Active branch: $Branch"
+Write-Host "Inspected HEAD: $InspectedHead"
+
 $NsPath = Join-Path $RepositoryRoot "documentation\NS_COORDINATES.md"
 if (-not (Test-Path -LiteralPath $NsPath -PathType Leaf)) {
     throw "Coordinate file not found at $NsPath."
@@ -4344,6 +4381,37 @@ $Auth0Domain = Get-NsCoordinate "Auth0TenantDomain"
 $Auth0Audience = Get-NsCoordinate "Auth0Audience"
 $WindowsClientId = Get-NsCoordinate "Auth0WindowsClientId"
 $HostedOrigin = Get-NsCoordinate "RenderPublicOrigin"
+$ExpectedBranch = Get-NsCoordinate "RepositoryBranch"
+$RequiredPublishedAncestor = "4c8b993220a0e9a2e4f636ca77bcad2999461114"
+
+if ($Branch -ne $ExpectedBranch) {
+    throw "Active branch '$Branch' does not match reviewed coordinate '$ExpectedBranch'."
+}
+& git -C $RepositoryRoot merge-base `
+    --is-ancestor `
+    $RequiredPublishedAncestor `
+    $InspectedHead
+if ($LASTEXITCODE -ne 0) {
+    throw "Inspected HEAD does not contain the required post-C11 baseline."
+}
+
+$DirtyOverlap = @(
+    & git -C $RepositoryRoot status --porcelain -- `
+        "clients/markei_flutter/lib" `
+        "clients/markei_flutter/test" `
+        "clients/markei_flutter/tool" `
+        "clients/markei_flutter/windows" `
+        "clients/markei_flutter/pubspec.yaml" `
+        "clients/markei_flutter/pubspec.lock" `
+        "documentation/GRM.md" `
+        "documentation/G_SCRIPTS.md" `
+        "documentation/I_SCRIPTS.ps1" `
+        "documentation/NS_COORDINATES.md"
+)
+if ($DirtyOverlap.Count -gt 0) {
+    $DirtyOverlap | ForEach-Object { Write-Host $_ }
+    throw "Dirty source overlap affects Flutter or Windows build-provenance inputs."
+}
 
 $SourceIdentityHelper = Join-Path `
     $ClientRoot `
@@ -4363,14 +4431,68 @@ if ($SourceIdentity.SourceRevision -notmatch '^[a-f0-9]{40}$' -or
     throw "Shared Markei source identity returned malformed fields."
 }
 
-flutter config --enable-windows-desktop
+$FlutterCommandCandidates = @(
+    Get-Command flutter.bat `
+        -CommandType Application `
+        -All `
+        -ErrorAction SilentlyContinue |
+        ForEach-Object { [string]$_.Source } |
+        Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+        Select-Object -Unique
+)
+$UsableFlutterCandidates = @()
+foreach ($FlutterCommandCandidate in $FlutterCommandCandidates) {
+    if (-not (Test-Path -LiteralPath $FlutterCommandCandidate -PathType Leaf)) {
+        continue
+    }
+    $CandidateFlutterSdkRoot = Split-Path -Parent (
+        Split-Path -Parent $FlutterCommandCandidate
+    )
+    $CandidateMaterialLibrary = Join-Path `
+        $CandidateFlutterSdkRoot `
+        "packages\flutter\lib\material.dart"
+    if (Test-Path -LiteralPath $CandidateMaterialLibrary -PathType Leaf) {
+        $UsableFlutterCandidates += [pscustomobject]@{
+            Executable = $FlutterCommandCandidate
+            SdkRoot = $CandidateFlutterSdkRoot
+            MaterialLibrary = $CandidateMaterialLibrary
+        }
+    }
+}
+if ($UsableFlutterCandidates.Count -eq 0) {
+    throw @"
+No usable Flutter SDK was resolved from PATH.
+The procedure requires flutter.bat whose SDK contains
+packages\flutter\lib\material.dart. Repair Flutter PATH/SDK installation,
+open a new terminal, and rerun GS-FLUTTER-WIN.
+"@
+}
+
+$SelectedFlutter = $UsableFlutterCandidates[0]
+$FlutterExecutable = [string]$SelectedFlutter.Executable
+$FlutterSdkRoot = [string]$SelectedFlutter.SdkRoot
+$FlutterMaterialLibrary = [string]$SelectedFlutter.MaterialLibrary
+
+[pscustomobject][ordered]@{
+    FlutterCommandCandidates = $FlutterCommandCandidates.Count
+    UsableFlutterSdks = $UsableFlutterCandidates.Count
+    FlutterSdkSelected = $true
+    FlutterMaterialLibraryPresent = (
+        Test-Path -LiteralPath $FlutterMaterialLibrary -PathType Leaf
+    )
+}
+
+& $FlutterExecutable config --enable-windows-desktop
 if ($LASTEXITCODE -ne 0) {
     throw "Could not enable Flutter Windows desktop support."
 }
 
-flutter doctor -v
+& $FlutterExecutable doctor -v
+if ($LASTEXITCODE -ne 0) {
+    throw "Selected Flutter SDK failed doctor inspection."
+}
 
-$WindowsDevices = (& flutter devices 2>&1 | Out-String)
+$WindowsDevices = (& $FlutterExecutable devices 2>&1 | Out-String)
 if ($LASTEXITCODE -ne 0) {
     throw "Could not inspect Flutter devices."
 }
@@ -4737,24 +4859,24 @@ Push-Location $ClientRoot
 try {
     Assert-NoRelevantWindowsBuildOwners -Stage "pre-clean preflight"
 
-    flutter clean
+    & $FlutterExecutable clean
     if ($LASTEXITCODE -ne 0) { throw "flutter clean failed." }
 
     Remove-BoundedGeneratedState
     Assert-GeneratedTargetsAbsent -Stage "before flutter pub get"
 
-    flutter pub get
+    & $FlutterExecutable pub get
     if ($LASTEXITCODE -ne 0) { throw "flutter pub get failed." }
 
     Assert-WindowsPluginRegeneration
 
-    flutter analyze
+    & $FlutterExecutable analyze
     if ($LASTEXITCODE -ne 0) { throw "flutter analyze failed." }
 
-    flutter test --concurrency=1 --no-pub
+    & $FlutterExecutable test --concurrency=1 --no-pub
     if ($LASTEXITCODE -ne 0) { throw "flutter test failed." }
 
-    flutter build windows --release @FlutterDefines
+    & $FlutterExecutable build windows --release @FlutterDefines
     if ($LASTEXITCODE -ne 0) {
         throw "Windows Closure release build failed."
     }
@@ -4783,21 +4905,72 @@ try {
     Write-Host "Windows release artifact SHA-256: $($MarkeiExecutableHash.Hash)"
     Write-Host "Source revision visible in Closure: #$($SourceIdentity.DisplayRevision)"
     Write-Host "Source tree SHA-256 visible in Closure: $($SourceIdentity.SourceTreeSha256)"
-    & $MarkeiExecutable
+
+    $MarkeiArtifactDirectory = Split-Path -Parent $MarkeiExecutable
+    $MarkeiProcess = Start-Process `
+        -FilePath $MarkeiExecutable `
+        -WorkingDirectory $MarkeiArtifactDirectory `
+        -PassThru
+    if ($null -eq $MarkeiProcess) {
+        throw "Windows did not return a Markei launch process."
+    }
+
+    $LaunchDeadline = [DateTime]::UtcNow.AddSeconds(30)
+    $WindowObserved = $false
+    do {
+        Start-Sleep -Milliseconds 250
+        $MarkeiProcess.Refresh()
+        if ($MarkeiProcess.HasExited) {
+            throw "Markei exited during startup with code $($MarkeiProcess.ExitCode)."
+        }
+        if ($MarkeiProcess.MainWindowHandle -ne [IntPtr]::Zero) {
+            $WindowObserved = $true
+            break
+        }
+    } while ([DateTime]::UtcNow -lt $LaunchDeadline)
+
+    if (-not $WindowObserved) {
+        throw @"
+Markei process $($MarkeiProcess.Id) remained alive but no top-level window was
+observed within 30 seconds. Inspect that process and Windows startup diagnostics
+before rerunning GS-FLUTTER-WIN.
+"@
+    }
+
+    [pscustomobject][ordered]@{
+        LaunchProcessId = $MarkeiProcess.Id
+        ProcessAlive = -not $MarkeiProcess.HasExited
+        TopLevelWindowObserved = $WindowObserved
+        MainWindowTitle = $MarkeiProcess.MainWindowTitle
+        ArtifactWorkingDirectory = $MarkeiArtifactDirectory
+    }
+
+    Write-Host "Required human verification:"
+    Write-Host "  Closure destination is visible."
+    Write-Host "  Source revision shows #$($SourceIdentity.DisplayRevision)."
+    Write-Host "  Source tree SHA-256 shows $($SourceIdentity.SourceTreeSha256)."
+    Write-Host "  Consolidated Diagnostics surface is visible."
+    Write-Host "Do not Enroll, Sync, Retry, recover, clear storage, or sign out."
 }
 finally {
     Pop-Location
 }
 ```
 
-This is the full recovery path. It verifies the Windows device, provisions
-`vcpkg`/`cpprestsdk` only when absent, exposes the native CMake paths, loads
-the public Closure coordinates without printing values, cleans, validates,
-builds, registers the per-user `auth0flutter` callback, and launches the
-resulting release executable with the mandatory Closure Dart definition. If the
-`Closure` destination is absent after launch, this procedure has not passed and
+This is the full Windows recovery path. It resolves and reports the repository
+root, client root, branch and inspected HEAD; rejects relevant dirty source
+overlap; binds one usable Flutter SDK for the complete run; verifies the Windows
+device; provisions `vcpkg`/`cpprestsdk` only when absent; exposes the native
+CMake paths; loads the public Closure coordinates without printing values;
+cleans, regenerates, validates and builds; registers the per-user
+`auth0flutter` callback; and starts the exact Release executable from its own
+artifact directory with the mandatory Closure and source-identity Dart
+definitions. The procedure fails on early process exit or when no top-level
+Markei window appears within 30 seconds. A detected window proves launch, not
+human acceptance: if the `Closure` destination, visible source identity, or
+consolidated `Diagnostics` surface is absent, this procedure has not passed and
 no Gate action may continue. Launching the client does not authorize Enroll,
-Query, Retry, or Sync; those remain separate human actions.
+Query, Retry, recovery, storage clear, sign-out, or Sync.
 
 ### `GS-FLUTTER-DBW` — Prepare VS Code Windows Closure debugging
 
