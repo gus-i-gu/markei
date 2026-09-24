@@ -42,7 +42,7 @@ has been independently verified. Do not invent missing values.
 ```text
 CoordinateSchemaVersion: 2
 RepositorySlug: gus-i-gu/markei
-RepositoryBranch: grm-guarded-provisioning-20260727
+RepositoryBranch: markei-season-02
 ApiRootDirectory: services/markei_sync_api
 MigrationDirectory: services/markei_sync_api/migrations
 ```

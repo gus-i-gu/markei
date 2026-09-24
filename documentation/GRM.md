@@ -20,6 +20,11 @@ human copies one GRM-* block
 The interface is hemi-automated. Scripts own mechanical execution; the human
 owns target confirmation, interpretation, and mutation authority.
 
+Copied `GRM-*` invocation blocks that use
+`.\documentation\I_SCRIPTS.ps1` must be run from the repository root.
+The expanded `GS-*` procedures remain responsible for resolving their internal
+package, client, data, and artifact locations.
+
 ### 1.1 Ordered command glossary
 
 This is the complete active command sequence. Select the `GRM-*` code here,

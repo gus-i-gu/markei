@@ -5,7 +5,7 @@
 > Persistence Class: Main-root continuity
 > Knowledge Class: Predictive / next-session recovery
 > Authority: Main Chat
-> Branch: grm-guarded-provisioning-20260727
+> Branch: markei-season-02
 > Final C11 J reconciliation: 35881bdf076ed1dcfebb0b7cbd35486d3116899e, section 17
 > Final C11 permanent-domain head: 9359200464b9218d336850225445fb40ea055763
 
@@ -37,24 +37,22 @@ Do not recover from the default branch. Require final C11 domain head
 `93592004…`, J section 17 `35881bdf…`, implementation `17fd6529…` and correction
 authority `0e647e76…` to remain ancestors.
 
-## 3. First procedural prerequisite
+## 3. First procedural prerequisite — resolved boundary
 
-The guarded Windows launch command is currently location-sensitive:
+Commit `ad3102a5d9d3fa29fd8cf8fb3f2b4f99a45c569d` normalized the
+active Windows GRM dispatcher invocation to the repository-root form.
 
-- the GRM copy command uses a relative path to
-  `documentation/I_SCRIPTS.ps1`;
-- from `clients/markei_flutter`, PowerShell resolves that path beneath the
-  Flutter subdirectory and fails before the launcher executes;
-- `I_SCRIPTS.ps1` correctly resolves the repository root after launch;
-- `G_SCRIPTS.md` correctly owns the serial `GS-FLUTTER-WIN` procedure.
+The operational rule is:
 
-The next bounded procedural solution must make the outer GRM invocation
-repository-root-independent or explicitly establish repository-root execution.
-It must preserve procedure identifiers and dispatch unless fresh evidence
-contradicts this diagnosis.
+- open the Season 02 repository root;
+- run copied GRM commands from that root;
+- let `I_SCRIPTS.ps1` dispatch exactly one reviewed `GS-*` procedure;
+- let the selected procedure resolve its internal client, package, and artifact
+  locations.
 
-No solution is authorized by this checkpoint alone. Main must stage or directly
-authorize the exact documentation surface before mutation.
+The earlier diagnosis remains preserved in J section 17 and session history.
+It no longer blocks repository-root GRM execution. This disposition does not
+constitute Windows launch or human acceptance evidence.
 
 ## 4. C12 phase boundaries
 
@@ -120,7 +118,8 @@ These are selection inputs for C12, not automatic defects or source authority.
 ## 7. C12 activation sequence
 
 1. Verify the live branch and final C11 ancestry.
-2. Resolve or explicitly defer the GRM launcher invocation defect.
+2. Require the normalized repository-root GRM invocation boundary at
+   `ad3102…`; reopen it only if fresh execution evidence contradicts it.
 3. Select one C12 phase and one bounded unit.
 4. Run the required Operational, Didactic and Design state-of-union only for
    that unit.
@@ -152,10 +151,10 @@ FINAL_C11_IMPLEMENTATION=17fd65296e960112787b870363b40339f535f5b6
 FINAL_C11_DOMAIN_HEAD=9359200464b9218d336850225445fb40ea055763
 FINAL_C11_J=35881bdf076ed1dcfebb0b7cbd35486d3116899e
 C11_SOURCE_AUTHORITY=NONE
-GRM_FLUTTER_WIN_LAUNCHER_PATH=DIAGNOSED_UNRESOLVED
+GRM_FLUTTER_WIN_LAUNCHER_PATH=NORMALIZED_ROOT_EXECUTION_AT_AD3102
 C12=ENTRY_PREPARATION
 C12_ACTIVE_PHASE=UNSELECTED
 C12_ACTIVE_UNIT=UNSELECTED
 C12_SOURCE_AUTHORITY=NONE
-NEXT_MAIN_ACTION=Bound and solve or defer the GRM launcher invocation, then select the first C12 phase.
+NEXT_MAIN_ACTION=Complete the Season 02 repository-entry boundary, then separately authorize development-provider reconstruction.
 ~~~

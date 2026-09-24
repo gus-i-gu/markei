@@ -5,7 +5,7 @@
 > Persistence Class: Observational
 > Knowledge Class: Main / Global
 > Authority: Main Chat [M]
-> Branch: `grm-guarded-provisioning-20260727`
+> Branch: `markei-season-02`
 > Current-state source: `00_PROJECT_STATE.md`
 > Domain-history sources: `operational/11_OPERATIONAL_RECORD.md`, `didactics/13_LECTURE_REGISTER.md`, and `design/03_DECISION_LOG.md`
 > Scope: Main-level chronology, reconciliation events, corrections, and cycle continuity
@@ -1423,4 +1423,45 @@ KANBAN_TRANSITIONS=NONE
 GRM_LAUNCHER_PATH_DIAGNOSIS=OPEN_FOR_BOUNDED_SOLUTION
 C12_ENTRY=PREPARED
 C12_ACTIVE_UNIT=UNSELECTED
+~~~
+
+---
+
+<!-- TEMPORAL_MARKER:SEASON02-LOCAL-RETRIEVAL-2026-09-24 -->
+
+# Season 02 Local Retrieval and Repository Re-entry
+
+> Date: 2026-09-24
+> Branch: `markei-season-02`
+> Retrieved baseline: `ad3102a5d9d3fa29fd8cf8fb3f2b4f99a45c569d`
+> Class: clean local recovery and procedural continuity reconciliation
+
+A fresh single-branch clone was created at
+`H:\Users\Gus\source\repo\markei-season-02`.
+
+Local and remote history returned `0 0` divergence. Flutter `3.44.6`, Dart
+`3.12.2`, and the locked project dependencies resolved successfully.
+`flutter analyze` completed with no issues.
+
+The Windows generated-plugin files were touched mechanically by dependency
+resolution but contained no reportable content diff. They are excluded from
+the Season 02 repository-entry boundary.
+
+The repository coordinate was changed from
+`grm-guarded-provisioning-20260727` to `markei-season-02`. Historical Render,
+Neon, Auth0, and migration coordinates remain unchanged pending separately
+verified development-provider reconstruction.
+
+Commit `ad3102…` is accepted as the procedural disposition of the earlier
+Windows GRM invocation diagnosis: copied dispatcher commands are operated from
+the repository root. No Windows launch, Render, Neon, Auth0, Sync, or production
+acceptance follows from this local recovery.
+
+~~~text
+SEASON02_LOCAL_CLONE=ALIGNED_AT_AD3102
+LOCAL_REMOTE_DIVERGENCE=0_0
+FLUTTER_ANALYZE=PASS
+REPOSITORY_BRANCH_COORDINATE=markei-season-02
+GRM_FLUTTER_WIN_LAUNCHER_PATH=NORMALIZED_ROOT_EXECUTION_AT_AD3102
+LIVE_PROVIDER_SYNC_VALIDATION=NOT_PERFORMED
 ~~~

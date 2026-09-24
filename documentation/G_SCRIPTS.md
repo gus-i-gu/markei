@@ -1,7 +1,7 @@
 # Markei General Scripts
 
 > Canonical executable catalogue for the human-supervised GRM interface.
-> Repository: `gus-i-gu/markei`; branch: `grm-guarded-provisioning-20260727`.
+> Repository: `gus-i-gu/markei`; branch: `markei-season-02`.
 
 ## 0. Execution contract
 

@@ -5,7 +5,7 @@
 > Persistence Class: Main-root continuity
 > Knowledge Class: Global current-state checkpoint
 > Authority: Main Chat
-> Branch: grm-guarded-provisioning-20260727
+> Branch: markei-season-02
 > Latest J reconciliation: 35881bdf076ed1dcfebb0b7cbd35486d3116899e, section 17
 > C11 implementation: 17fd65296e960112787b870363b40339f535f5b6
 > C11 final permanent-domain head: 9359200464b9218d336850225445fb40ea055763
@@ -21,9 +21,10 @@ permanently absorbed by Operational, Didactic and Design memory.
 All C11 D/E/F and Codex source authority is consumed. No active source,
 provider or live-operation packet exists.
 
-Cycle 12 is at entry preparation. Its first bounded work has not yet been
-selected. A diagnosed GRM Windows launcher-path defect should be dispositioned
-before guarded run evidence is relied upon.
+Cycle 12 remains at entry preparation with no source or live-provider authority.
+Season 02 repository re-entry is active at the documentation and local-validation
+boundary. The earlier GRM Windows launcher-path diagnosis has been dispositioned
+through the repository-root invocation rule materialized at `ad3102…`.
 
 Cycle 10 remains closed at the two-Device, one-Account development boundary.
 
@@ -114,17 +115,20 @@ The PH05 Guide sequence remains partially contradicted. Android public
 Downloads remains typed unavailable. These are carried constraints, not active
 C11 source failures.
 
-## 6. GRM Windows launcher diagnosis
+## 6. GRM Windows launcher disposition
 
-The GRM copy command addresses `documentation/I_SCRIPTS.ps1` relative to the
-current directory. When invoked from `clients/markei_flutter`, PowerShell looks
-for a nonexistent nested `documentation` path and stops before the launcher,
-`GS-FLUTTER-WIN` or Flutter runs.
+Commit `ad3102a5d9d3fa29fd8cf8fb3f2b4f99a45c569d` normalized the
+active `GRM-FLUTTER-WIN` invocation to the canonical repository-root
+dispatcher form.
 
-`I_SCRIPTS.ps1` dispatch and the serial `G_SCRIPTS.md` procedure are correct.
-The remaining defect is the location-sensitive outer invocation documented in
-`GRM.md`. Diagnosis is complete; no solution has yet been authorized or
-materialized.
+Copied GRM commands that address
+`.\documentation\I_SCRIPTS.ps1` are explicitly operated from the repository
+root. `I_SCRIPTS.ps1` continues to own dispatch, while the selected `GS-*`
+procedure owns internal repository, client, and artifact resolution.
+
+This closes the recorded invocation-path contradiction at the procedural
+documentation boundary. It does not prove a Windows application launch, human
+acceptance, or hosted-provider behavior.
 
 ## 7. C12 boundary
 
@@ -134,8 +138,8 @@ backend resilience, outage recovery, retention/rebootstrap and production
 lifecycle.
 
 Main must select the first C12 unit before new A/B/C or D/E/F authority. The
-GRM launcher correction is a bounded procedural prerequisite, not permission
-to reopen Analytics, Sync or provider source.
+repository-root GRM invocation boundary is resolved; it creates no permission
+to reopen Analytics, Sync, or provider source.
 
 ## 8. Recovery route
 
@@ -153,7 +157,7 @@ C11_ANALYTICS_CORRECTION=PERMANENTLY_ABSORBED
 C11_FINAL_DOMAIN_HEAD=9359200464b9218d336850225445fb40ea055763
 KANBAN_TRANSITIONS=NONE
 C11_SOURCE_AUTHORITY=NONE
-GRM_FLUTTER_WIN_LAUNCHER_PATH=DIAGNOSED_UNRESOLVED
+GRM_FLUTTER_WIN_LAUNCHER_PATH=NORMALIZED_ROOT_EXECUTION_AT_AD3102
 C12=ENTRY_PREPARATION
 C12_ACTIVE_UNIT=UNSELECTED
 C12_PHASE02_BACKEND_SCOPE=DEFERRED_AND_PRESERVED
