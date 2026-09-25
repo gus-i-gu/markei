@@ -50,12 +50,12 @@ MigrationDirectory: services/markei_sync_api/migrations
 ### 2.2 Render development service
 
 ```text
-RenderEnvironment: development
+RenderEnvironment: Season 02
 RenderServiceName: markei-sync-api-s02-dev
-RenderServiceId: srv-d9darq6rnols73f55450
-RenderPublicOrigin: https://markei-sync-api-dev.onrender.com
+RenderServiceId: srv-dar7ou3tqb8s73frrkj0
+RenderPublicOrigin: https://markei-sync-api-s02-dev.onrender.com
 RenderRegion: Oregon (US West)
-RenderDeployBranch: grm-guarded-provisioning-20260727
+RenderDeployBranch: markei-season-02
 RenderLivePath: /health/live
 RenderReadyPath: /health/ready
 RenderIdentityPath: /v1/identity
@@ -223,7 +223,7 @@ Before any provider mutation, independently confirm:
 
 ```text
 Environment = development
-BranchAlias = markei-c10
+BranchAlias = markei-season-02
 Database = markei_sync_dev
 RenderDeployBranch = grm-guarded-provisioning-20260727
 ```
