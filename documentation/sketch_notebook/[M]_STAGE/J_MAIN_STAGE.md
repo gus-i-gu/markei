@@ -5,7 +5,8 @@
 > Cycle / Sprint / Alter-Sprint / Inner-Sprint: C12 / S00 / AS02 / IS01
 > Repository: `gus-i-gu/markei`
 > Required branch: `markei-season-02`
-> Starting remote HEAD: `7b05f0427cda3e2ed3126b71c1b973d423e4866f`
+> Repository checkpoint predecessor: `7b05f0427cda3e2ed3126b71c1b973d423e4866f`
+> Authorized staging-lineage anchor: `06231eaaaa5aecdeec1370f50a4ba261a438e9ef`
 > Authority: explicit human-directed Main staging, 2026-09-25
 > Mutable surface: none
 > Status: **ACTIVE — READ-ONLY CODEX DIAGNOSIS**
@@ -31,8 +32,11 @@ inspection to unrelated application or provider surfaces.
 
 ## 2. Observed evidence
 
-- C12-S00 repository checkpoint had a clean aligned `markei-season-02`
-  branch at the starting HEAD.
+- C12-S00 repository checkpoint was clean and aligned on `markei-season-02`
+  at predecessor `7b05f0427cda3e2ed3126b71c1b973d423e4866f`. The later
+  `06231eaaaa5aecdeec1370f50a4ba261a438e9ef` commit published this J stage
+  and its classified legacy append; it is an authorized documentation-only
+  advance, not a repository discrepancy.
 - `GS-FLUTTER-WIN` previously completed. `GS-FLUTTER-AND` stopped before
   an Android artifact because its source-identity guard reported relevant
   inputs dirty.
@@ -61,6 +65,8 @@ clients/markei_flutter/windows/flutter/generated_plugins.cmake
 
 1. Re-establish the current local repository baseline: branch, full HEAD,
    upstream divergence, ordinary porcelain status, and the three named paths.
+   Confirm that HEAD descends from the authorized staging-lineage anchor and
+   that the intervening changes are limited to this J-stage correction.
 2. Independently verify exact index/worktree equivalence for the named paths,
    plus the relevant Git configuration and index/stat-refresh behavior.
 3. Read
@@ -85,8 +91,11 @@ This is not authority to:
   outside this J stage, providers, Auth0, Neon, Render, credentials, or devices;
 - infer a compromise from a Git index refresh message alone.
 
-Stop and hand back if the baseline is not clean, the branch/HEAD has changed
-unexpectedly, or exact worktree/index equivalence cannot be established.
+Stop and hand back if the baseline is not clean, HEAD does not descend from the
+authorized staging-lineage anchor, an intervening change is outside the J-stage
+correction, or exact worktree/index equivalence cannot be established. A clean
+J-stage-only descendant is expected and must not itself be classified as an
+unexpected HEAD change.
 
 ## 5. Required handback
 
