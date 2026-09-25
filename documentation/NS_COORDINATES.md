@@ -51,7 +51,7 @@ MigrationDirectory: services/markei_sync_api/migrations
 
 ```text
 RenderEnvironment: development
-RenderServiceName: markei-sync-api-dev
+RenderServiceName: markei-sync-api-s02-dev
 RenderServiceId: srv-d9darq6rnols73f55450
 RenderPublicOrigin: https://markei-sync-api-dev.onrender.com
 RenderRegion: Oregon (US West)
@@ -95,17 +95,17 @@ the proven launcher remains compatible.
 
 ```text
 Environment: development
-ProjectAlias: Markei
-ProjectId: long-wind-52737031
-BranchAlias: markei-c10
-BranchId: br-aged-brook-afvksd9g
+ProjectAlias: Markei Season 02
+ProjectId: odd-math-36635854
+BranchAlias: markei-season-02
+BranchId: br-old-sound-aksay1zj
 ParentBranchAlias: production
-BranchExpiration: 2026-08-26
+BranchExpiration: none
 Region: aws-us-west-2
 PostgreSQLVersion: 18
-EndpointId: ep-hidden-field-afjt7hp8
-Host: ep-hidden-field-afjt7hp8.c-2.us-west-2.aws.neon.tech
-PooledHost: ep-hidden-field-afjt7hp8-pooler.c-2.us-west-2.aws.neon.tech
+EndpointId: ep-red-rain-ak8oxd76
+Host: ep-red-rain-ak8oxd76.c-3.us-west-2.aws.neon.tech
+PooledHost: ep-red-rain-ak8oxd76-pooler.c-3.us-west-2.aws.neon.tech
 Port: 5432
 Database: markei_sync_dev
 DatabaseSchema: public
