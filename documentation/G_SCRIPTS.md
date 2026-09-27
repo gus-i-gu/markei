@@ -499,6 +499,490 @@ finally {
 }
 ```
 
+### `GS-GIT-03` — Guarded review and publication of explicit local changes
+
+Default invocation is a dry run: path names, classifications, index/worktree
+state, and divergence only. `git fetch --prune origin` updates Git metadata;
+it does not integrate remote content. `-Publish` enables interactive review,
+never blanket mutation approval. The repository is bound to the dispatcher
+root, the `gus-i-gu/markei` origin, and branch `markei-season-02`.
+
+This minimal version validates Markdown and PowerShell changes: text/secret
+screening, whitespace checks, PowerShell syntax, and embedded PowerShell fences.
+Other selected file types STOP pending a reviewed, non-writing validator.
+Binary, generated, private configuration, database, payload, symlink, submodule,
+ambiguous path, sparse/assume-unchanged, active hook, and content-filter cases
+STOP. Unselected and ignored residue must be explicitly acknowledged and stays
+untouched. Ignored paths can never be selected. Rename review includes both
+source and destination paths; existing staged paths must all be selected.
+
+Supply a JSON array of exact repository-relative paths when prompted. There
+are no directory, wildcard, all-files, force, or alternate-target options.
+Existing local-only commits require separate exact SHA-list approval and the
+same path/content validation. The push set is those reviewed commits plus at
+most one new normal commit. An existing-commit-only retry supplies the exact
+paths changed by those commits and creates no new commit.
+
+Confirmations are case-sensitive: `REVIEW <state digest>` acknowledges every
+remaining path and absence of private/user data; `STAGE <state digest>` approves
+only the selected dirty paths; `COMMIT <tree SHA>` approves the displayed staged
+delta; `PUSH <comma-separated full SHAs>` approves precisely the displayed
+outgoing commits. Anything else stops. The commit message is requested separately.
+
+Preflight STOPs preserve the initial worktree and index. After an authorized
+stage or commit, STOP preserves that last authorized state: commit refusal
+leaves reviewed staging; push refusal leaves the local commit. No rollback,
+cleanup, automatic retry, or remote integration is attempted. A concurrent
+change causes STOP, not repair. Run with exclusive access to the repository;
+Git's normal index/ref locks do not form a transaction across review prompts.
+Secret screening is conservative defense in depth, not proof: the operator must
+review the exact files and certify that they contain no sensitive data before
+any content is shown. Failed Git diagnostics are suppressed to avoid echoing
+credentials or hook output. No bypass of hooks is offered; active hooks STOP.
+
+Successful outcomes are `published-clean` (Git reports no tracked/untracked
+delta) or `published-with-local-changes`. Ignored paths are always reported
+separately and never removed. This procedure cannot promise remote stability
+after its final fetch, and never claims deployment or application acceptance.
+
+```powershell
+[CmdletBinding()]
+param([switch]$Publish)
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+$Git03Root = (Get-Location).Path
+$Git03Branch = "markei-season-02"
+$Git03Remote = "refs/remotes/origin/$Git03Branch"
+$Git03Utf8 = New-Object System.Text.UTF8Encoding($false, $true)
+$Git03Exe = (Get-Command git.exe -CommandType Application).Source
+
+function Invoke-Git03 {
+    param([string[]]$Arguments, [int[]]$AllowedExit = @(0))
+    # A closed command vocabulary; no caller-supplied Git options or shell.
+    if ($Arguments[0] -notin @('rev-parse','symbolic-ref','config','status',
+            'ls-files','ls-tree','check-attr','fetch','rev-list','diff','show','add',
+            'write-tree','hash-object','commit','push')) { throw "STOP: forbidden Git command." }
+    $Start = New-Object System.Diagnostics.ProcessStartInfo
+    $Start.FileName = $Git03Exe
+    $Start.WorkingDirectory = $Git03Root
+    $Start.UseShellExecute = $false
+    $Start.CreateNoWindow = $true
+    $Start.RedirectStandardOutput = $true
+    $Start.RedirectStandardError = $true
+    $Start.RedirectStandardInput = $true
+    $Start.StandardOutputEncoding = $Git03Utf8
+    $Start.StandardErrorEncoding = $Git03Utf8
+    $All = @('--no-pager','--no-optional-locks','--no-replace-objects','--literal-pathspecs',
+        '-c','credential.interactive=false','-c','core.fsmonitor=false',
+        '-c','core.untrackedCache=false','-c','core.autocrlf=false',
+        '-c','color.ui=false','-c','fetch.recurseSubmodules=false',
+        '-c','submodule.recurse=false','-c','push.followTags=false',
+        '-c','push.recurseSubmodules=no') + $Arguments
+    $Start.Arguments = ($All | ForEach-Object {
+        '"' + [regex]::Replace([regex]::Replace($_, '(\\*)"', '$1$1\"'),
+            '(\\+)$', '$1$1') + '"'
+    }) -join ' '
+    $Process = New-Object System.Diagnostics.Process
+    $Process.StartInfo = $Start
+    try {
+        $null = $Process.Start()
+        $Process.StandardInput.Close()
+        $OutTask = $Process.StandardOutput.ReadToEndAsync()
+        $ErrTask = $Process.StandardError.ReadToEndAsync()
+        $Process.WaitForExit()
+        $OutputText = $OutTask.GetAwaiter().GetResult()
+        $null = $ErrTask.GetAwaiter().GetResult()
+        if ($Process.ExitCode -notin $AllowedExit) {
+            throw "STOP: Git $($Arguments[0]) failed; raw diagnostics suppressed."
+        }
+        return $OutputText
+    }
+    finally { $Process.Dispose() }
+}
+
+function Get-Git03Digest {
+    param([string]$Text)
+    $Hasher = [Security.Cryptography.SHA256]::Create()
+    try { return ([BitConverter]::ToString($Hasher.ComputeHash(
+        $Git03Utf8.GetBytes($Text)))).Replace('-', '').ToLowerInvariant() }
+    finally { $Hasher.Dispose() }
+}
+
+function Assert-Git03Path {
+    param([string]$Path)
+    if ($Path -notmatch '^[A-Za-z0-9_.][A-Za-z0-9_ .()/@+-]*$' -or
+        $Path -match '(^|/)\.\.?(/|$)|//|[. /]$') {
+        throw "STOP: path cannot be classified safely (including broad pathspecs)."
+    }
+}
+
+function Get-Git03Class {
+    param([string]$Path)
+    Assert-Git03Path $Path
+    if ($Path -match '(?i)(secret|credential|token|password|private|payload|snapshot|queue|database|NS_COORDINATES|(^|/)(data|env|\.env|\.ssh)(/|\.|$)|\.(db|sqlite\w*|pem|key|pfx|p12|env|dump|bak|log|csv|zip)$)') {
+        return 'protected'
+    }
+    if ($Path -match '(?i)(^|/)(build|dist|node_modules|__pycache__|\.dart_tool|ephemeral)(/|$)|generated|\.g\.(dart|cs)$|\.(pyc|dll|exe|apk|aab)$') {
+        return 'generated'
+    }
+    return 'review-required'
+}
+
+function Get-Git03State {
+    $Raw = Invoke-Git03 @('status','--porcelain=v2','-z','--untracked-files=all',
+        '--ignored=matching','--ignore-submodules=none')
+    $Items = New-Object System.Collections.Generic.List[object]
+    $Records = $Raw.Split([char]0)
+    for ($i = 0; $i -lt $Records.Length; $i++) {
+        $Record = $Records[$i]
+        if ($Record.Length -eq 0) { continue }
+        $Kind = $Record.Substring(0, 1)
+        if ($Kind -eq 'u') { throw 'STOP: unresolved conflict.' }
+        if ($Kind -in @('1','2')) {
+            $Fields = $Record -split ' ', $(if ($Kind -eq '1') { 9 } else { 10 })
+            $Path = $Fields[-1]
+            if ($Fields[2] -cne 'N...' -or $Fields[3..5] -contains '160000' -or
+                $Fields[3..5] -contains '120000') { throw 'STOP: submodule or symlink state.' }
+            if ($Fields[1] -notmatch '^[.MADRTCU]{2}$') { throw 'STOP: unknown status.' }
+            $Paths = @($Path)
+            if ($Kind -eq '2') {
+                $i++
+                if ($i -ge $Records.Length -or !$Records[$i]) { throw 'STOP: invalid rename.' }
+                $Paths += $Records[$i]
+            }
+            foreach ($Name in $Paths) {
+                $Items.Add([pscustomobject]@{Path=$Name; XY=$Fields[1];
+                    Kind=$Kind; Class=(Get-Git03Class $Name)})
+            }
+        }
+        elseif ($Kind -in @('?','!')) {
+            $Name = $Record.Substring(2).TrimEnd('/')
+            Assert-Git03Path $Name
+            $Items.Add([pscustomobject]@{Path=$Name; XY=$Kind; Kind=$Kind;
+                Class=$(if ($Kind -eq '!') {'ignored-preserve'} else {Get-Git03Class $Name})})
+        }
+        else { throw 'STOP: unknown porcelain record.' }
+    }
+    return [pscustomobject]@{Raw=$Raw; Items=@($Items.ToArray())}
+}
+
+function Assert-Git03Repository {
+    foreach ($Name in @('GIT_DIR','GIT_WORK_TREE','GIT_INDEX_FILE','GIT_COMMON_DIR',
+            'GIT_OBJECT_DIRECTORY','GIT_ALTERNATE_OBJECT_DIRECTORIES','GIT_CONFIG_PARAMETERS')) {
+        if ([Environment]::GetEnvironmentVariable($Name)) { throw 'STOP: Git environment override.' }
+    }
+    $ConfigCount = [Environment]::GetEnvironmentVariable('GIT_CONFIG_COUNT')
+    if ($ConfigCount) {
+        if ($ConfigCount -notmatch '^\d{1,3}$') { throw 'STOP: Git config override.' }
+        for ($i = 0; $i -lt [int]$ConfigCount; $i++) {
+            if ([Environment]::GetEnvironmentVariable("GIT_CONFIG_KEY_$i") -cne 'safe.directory') {
+                throw 'STOP: Git config override.'
+            }
+        }
+    }
+    $Root = (Invoke-Git03 @('rev-parse','--show-toplevel')).Trim()
+    if ([IO.Path]::GetFullPath($Root) -ine [IO.Path]::GetFullPath($Git03Root) -or
+        !(Test-Path -LiteralPath (Join-Path $Root 'AGENTS.md')) -or
+        !(Test-Path -LiteralPath (Join-Path $Root 'documentation/GRM.md'))) {
+        throw 'STOP: wrong or unresolved repository.'
+    }
+    if ((Invoke-Git03 @('symbolic-ref','--short','HEAD')).Trim() -cne $Git03Branch) {
+        throw 'STOP: wrong branch.'
+    }
+    $Origin = (Invoke-Git03 @('config','--get','remote.origin.url')).Trim()
+    if ($Origin -cnotin @('https://github.com/gus-i-gu/markei.git',
+            'git@github.com:gus-i-gu/markei.git')) { throw 'STOP: wrong origin repository.' }
+    foreach ($Marker in @('MERGE_HEAD','CHERRY_PICK_HEAD','REVERT_HEAD','BISECT_LOG',
+            'rebase-apply','rebase-merge','sequencer','index.lock','HEAD.lock',
+            'MERGE_AUTOSTASH','info/grafts','shallow')) {
+        $Path = (Invoke-Git03 @('rev-parse','--git-path',$Marker)).Trim()
+        if (Test-Path -LiteralPath $Path) { throw "STOP: active Git operation or lock: $Marker" }
+    }
+    # Reject routes that can execute arbitrary hooks, filters, or redirect refs.
+    $Config = Invoke-Git03 @('config','--get-regexp',
+        '^(core\.(hooksPath|attributesFile)|remote\.origin\.(pushurl|mirror)|url\.|include|extensions\.|core\.sparseCheckout)') @(0,1)
+    if ($Config) { throw 'STOP: custom hooks, filters, transport, or repository configuration.' }
+    $Hooks = (Invoke-Git03 @('rev-parse','--git-path','hooks')).Trim()
+    if (Test-Path -LiteralPath $Hooks) {
+        if (@(Get-ChildItem -LiteralPath $Hooks -File | Where-Object {
+            $_.Name -notlike '*.sample' }).Count) { throw 'STOP: active hooks require independent review.' }
+    }
+    $Refspecs = (Invoke-Git03 @('config','--get-all','remote.origin.fetch')).Trim() -split '\r?\n'
+    foreach ($Refspec in $Refspecs) {
+        if ($Refspec -cnotin @('+refs/heads/*:refs/remotes/origin/*',
+                '+refs/heads/markei-season-02:refs/remotes/origin/markei-season-02')) {
+            throw 'STOP: fetch refspec could update unexpected refs.'
+        }
+    }
+    $Tracked = (Invoke-Git03 @('ls-files','--stage','-z')).Split([char]0)
+    if (@($Tracked | Where-Object { $_ -match '^(160000|120000) ' }).Count) {
+        throw 'STOP: repository contains submodules or symlinks.'
+    }
+    $Flags = (Invoke-Git03 @('ls-files','-v','-z')).Split([char]0)
+    if (@($Flags | Where-Object { $_ -cmatch '^[a-zS] ' }).Count) {
+        throw 'STOP: hidden index flags or sparse state.'
+    }
+}
+
+function Get-Git03Ahead {
+    $Counts = (Invoke-Git03 @('rev-list','--left-right','--count',
+        "$Git03Remote...HEAD")).Trim() -split '\s+'
+    if ($Counts.Count -ne 2 -or $Counts[0] -notmatch '^\d+$' -or
+        $Counts[1] -notmatch '^\d+$') { throw 'STOP: invalid divergence.' }
+    Write-Host "Divergence behind/ahead: $($Counts -join ' ')"
+    if ([int]$Counts[0] -ne 0) { throw 'STOP: remote ahead or histories diverged.' }
+    return @((Invoke-Git03 @('rev-list','--reverse',"$Git03Remote..HEAD")).Trim() `
+        -split '\r?\n' | Where-Object { $_ })
+}
+
+function Assert-Git03Text {
+    param([string]$Text)
+    if ($Text.Length -gt 2000000 -or $Text -match '[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]') {
+        throw 'STOP: binary, control characters, or oversized review content.'
+    }
+    $Patterns = @('-----BEGIN [A-Z ]*PRIVATE KEY-----',
+        '(?i)(gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[A-Z0-9]{16})',
+        '(?i)\beyJ[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}\.',
+        '(?i)(postgres(?:ql)?|https?)://[^\s/@:]+:[^\s/@]+@',
+        '(?i)(password|passwd|secret|api[_-]?key|access[_-]?token)\s*[=:]\s*["'']?[A-Za-z0-9+/=_-]{12,}',
+        '\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b')
+    foreach ($Pattern in $Patterns) {
+        if ($Text -match $Pattern) { throw 'STOP: possible sensitive content; nothing printed.' }
+    }
+}
+
+function Assert-Git03Document {
+    param([string]$Path, [string]$Text)
+    if ((Get-Git03Class $Path) -cne 'review-required') { throw 'STOP: forbidden candidate file class.' }
+    Assert-Git03Text $Text
+    $Bodies = @()
+    if ($Path -match '\.ps1$') { $Bodies = @($Text) }
+    elseif ($Path -match '\.md$') {
+        $Bodies = @([regex]::Matches($Text,
+            '(?ms)^```powershell[^\r\n]*\r?\n(.*?)^```[ \t]*\r?$') |
+            ForEach-Object { $_.Groups[1].Value })
+    }
+    else { throw 'STOP: selected file has no supported non-writing validator.' }
+    foreach ($Body in $Bodies) {
+        $Tokens = $null; $Errors = $null
+        $null = [Management.Automation.Language.Parser]::ParseInput($Body,
+            [ref]$Tokens, [ref]$Errors)
+        if ($Errors.Count) { throw 'STOP: PowerShell syntax validation failed; content suppressed.' }
+    }
+}
+
+function Get-Git03DeltaPaths {
+    param([string[]]$Range)
+    return @((Invoke-Git03 (@('diff','--no-ext-diff','--no-textconv',
+        '--no-renames','--name-only','-z') + $Range + @('--'))).Split([char]0) |
+        Where-Object { $_ })
+}
+
+function Confirm-Git03 {
+    param([string]$Expected)
+    if ((Read-Host "Type '$Expected' or STOP") -cne $Expected) {
+        throw 'STOP: confirmation refused; last authorized state retained.'
+    }
+}
+
+try {
+    Assert-Git03Repository
+    $Initial = Get-Git03State
+    $InitialHead = (Invoke-Git03 @('rev-parse','HEAD')).Trim()
+    Write-Host 'DRY RUN: complete path inventory (no file contents):'
+    foreach ($Item in $Initial.Items) {
+        Write-Host "$($Item.XY) $($Item.Class) $($Item.Path)"
+    }
+    Write-Host 'Fetching/pruning origin: Git metadata only; no worktree integration.'
+    $null = Invoke-Git03 @('fetch','--prune','origin')
+    $OldCommits = @(Get-Git03Ahead)
+    Write-Host "Local-only commit SHAs: $($OldCommits -join ',')"
+    if (!$Publish) { Write-Host 'dry-run: no staging, commit, or push.'; return }
+
+    $DirtyPaths = @($Initial.Items | Where-Object {$_.Kind -ne '!'} |
+        ForEach-Object {$_.Path} | Sort-Object -Unique)
+    $HistoryPaths = @()
+    foreach ($Sha in $OldCommits) {
+        $Parents = (Invoke-Git03 @('rev-list','--parents','-n','1',$Sha)).Trim() -split ' '
+        if ($Parents.Count -ne 2) { throw 'STOP: outgoing merge/root commit unsupported.' }
+        $HistoryPaths += Get-Git03DeltaPaths @("$Sha^",$Sha)
+    }
+    $InputPaths = Read-Host 'Exact reviewed paths as JSON array; include outgoing-history paths'
+    if ($InputPaths -notmatch '^\s*\[') { throw 'STOP: explicit JSON path set required.' }
+    $Reviewed = ConvertFrom-Json -InputObject $InputPaths
+    if ($Reviewed -isnot [array] -or !$Reviewed.Count) { throw 'STOP: explicit reviewed path set required.' }
+    foreach ($Path in $Reviewed) {
+        if ($Path -isnot [string]) { throw 'STOP: paths must be strings.' }
+        Assert-Git03Path $Path
+        if ($Path -cnotin ($DirtyPaths + $HistoryPaths)) { throw 'STOP: path is not an exact candidate.' }
+        if ((Get-Git03Class $Path) -cne 'review-required') { throw 'STOP: forbidden candidate file class.' }
+        if ($Path -notmatch '\.(md|ps1)$') { throw 'STOP: selected file has no supported non-writing validator.' }
+        if (@($Initial.Items | Where-Object {$_.Kind -eq '!' -and $_.Path -ceq $Path}).Count) {
+            throw 'STOP: ignored candidate.'
+        }
+    }
+    if (@($Reviewed | Sort-Object -Unique).Count -ne $Reviewed.Count) { throw 'STOP: duplicate paths.' }
+    foreach ($Path in $HistoryPaths) {
+        if ($Path -cnotin $Reviewed) { throw 'STOP: outgoing history contains unreviewed paths.' }
+    }
+    $Selected = @($Reviewed | Where-Object {$_ -cin $DirtyPaths} | Sort-Object)
+    $StagedBefore = @(Get-Git03DeltaPaths @('--cached'))
+    foreach ($Path in $StagedBefore) {
+        if ($Path -cnotin $Selected) { throw 'STOP: pre-existing staging outside approved set.' }
+    }
+    # Both rename endpoints must be present, not merely the visible destination.
+    foreach ($Item in $Initial.Items | Where-Object {$_.Kind -eq '2'}) {
+        if ($Item.Path -cnotin $Selected) { throw 'STOP: review both rename endpoints.' }
+    }
+    $Digest = Get-Git03Digest ($InitialHead + $Initial.Raw + ($Reviewed -join "`0"))
+    Write-Host "Selected dirty paths: $($Selected -join ', ')"
+    Write-Host 'Remaining paths (preserved; acknowledge generated/private/ignored residue):'
+    foreach ($Item in $Initial.Items | Where-Object {$_.Path -cnotin $Selected}) {
+        Write-Host "$($Item.XY) $($Item.Class) $($Item.Path)"
+    }
+    Write-Host 'Certify selected files and outgoing commits contain no secrets or user data.'
+    Confirm-Git03 "REVIEW $Digest"
+
+    foreach ($Sha in $OldCommits) {
+        foreach ($Path in @(Get-Git03DeltaPaths @("$Sha^",$Sha))) {
+            # Review both deleted and added content, including secrets removed later.
+            foreach ($Revision in @("$Sha^",$Sha)) {
+                $Mode = Invoke-Git03 @('ls-tree','-z',$Revision,'--',$Path)
+                if ($Mode -and $Mode -notmatch '^100(644|755) blob ') {
+                    throw 'STOP: outgoing history contains a non-regular file.'
+                }
+                $Blob = Invoke-Git03 @('show',"${Revision}:$Path") @(0,128)
+                Assert-Git03Document $Path $Blob
+            }
+        }
+        $Patch = Invoke-Git03 @('diff','--no-ext-diff','--no-textconv',"$Sha^",$Sha,'--')
+        Assert-Git03Text $Patch
+        Write-Host "Reviewed outgoing commit: $Sha"
+        Write-Host $Patch
+    }
+    if ($OldCommits.Count) { Confirm-Git03 "HISTORY $($OldCommits -join ',')" }
+    $ReviewedBlobs = @{}
+    foreach ($Path in $Selected) {
+        $Attributes = Invoke-Git03 @('check-attr','-z','--all','--',$Path)
+        if ($Attributes) { throw 'STOP: candidate attributes require independent review.' }
+        $Full = Join-Path $Git03Root $Path
+        $Ancestor = Split-Path -Parent $Full
+        while ($Ancestor -and $Ancestor -ine $Git03Root) {
+            if ((Test-Path -LiteralPath $Ancestor) -and
+                (Get-Item -LiteralPath $Ancestor -Force).Attributes -band
+                [IO.FileAttributes]::ReparsePoint) { throw 'STOP: reparse point ancestor.' }
+            $Ancestor = Split-Path -Parent $Ancestor
+        }
+        if (Test-Path -LiteralPath $Full) {
+            $Entry = Get-Item -LiteralPath $Full -Force
+            if ($Entry.PSIsContainer -or $Entry.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+                throw 'STOP: directory or reparse point candidate.'
+            }
+            Assert-Git03Document $Path ([IO.File]::ReadAllText($Full,$Git03Utf8))
+            $ReviewedBlobs[$Path] = (Invoke-Git03 @('hash-object','--no-filters','--',$Path)).Trim()
+        }
+        else { $ReviewedBlobs[$Path] = 'deleted' }
+        Assert-Git03Document $Path (Invoke-Git03 @('show',"HEAD:$Path") @(0,128))
+        Assert-Git03Document $Path (Invoke-Git03 @('show',":$Path") @(0,128))
+    }
+    if ($Selected.Count) {
+        $null = Invoke-Git03 (@('diff','--no-ext-diff','--no-textconv','--check','--') + $Selected)
+        $null = Invoke-Git03 (@('diff','--no-ext-diff','--no-textconv','--cached','--check','--') + $Selected)
+    }
+    if ((Get-Git03State).Raw -cne $Initial.Raw -or
+        (Invoke-Git03 @('rev-parse','HEAD')).Trim() -cne $InitialHead) { throw 'STOP: state changed during review.' }
+    Assert-Git03Repository
+    if ($Selected.Count) {
+        Confirm-Git03 "STAGE $Digest"
+        Assert-Git03Repository
+        if ((Get-Git03State).Raw -cne $Initial.Raw -or
+            (Invoke-Git03 @('rev-parse','HEAD')).Trim() -cne $InitialHead) {
+            throw 'STOP: state changed before staging.'
+        }
+        foreach ($Path in $Selected) {
+            $CurrentBlob = if (Test-Path -LiteralPath (Join-Path $Git03Root $Path)) {
+                (Invoke-Git03 @('hash-object','--no-filters','--',$Path)).Trim()
+            } else { 'deleted' }
+            if ($CurrentBlob -cne $ReviewedBlobs[$Path]) { throw 'STOP: reviewed content changed before staging.' }
+        }
+        # An already-staged deletion/rename source is absent from both disk and
+        # index. Preserve that reviewed entry instead of passing a missing path.
+        $IndexedPaths = (Invoke-Git03 @('ls-files','-z')).Split([char]0)
+        $ToAdd = @($Selected | Where-Object {
+            (Test-Path -LiteralPath (Join-Path $Git03Root $_)) -or $_ -cin $IndexedPaths
+        })
+        if ($ToAdd.Count) { $null = Invoke-Git03 (@('add','--') + $ToAdd) }
+        $Staged = @(Get-Git03DeltaPaths @('--cached') | Sort-Object)
+        if (($Staged -join "`0") -cne ($Selected -join "`0")) { throw 'STOP: staged set differs from approved set.' }
+        $Patch = Invoke-Git03 @('diff','--no-ext-diff','--no-textconv','--cached','--')
+        Assert-Git03Text $Patch
+        foreach ($Path in $Staged) {
+            Assert-Git03Document $Path (Invoke-Git03 @('show',":$Path") @(0,128))
+            if ($ReviewedBlobs[$Path] -cne 'deleted' -and
+                (Invoke-Git03 @('rev-parse',":$Path")).Trim() -cne $ReviewedBlobs[$Path]) {
+                throw 'STOP: staged bytes differ from reviewed worktree bytes.'
+            }
+        }
+        $null = Invoke-Git03 @('diff','--no-ext-diff','--no-textconv','--cached','--check')
+        Write-Host "Staged paths: $($Staged -join ', ')"
+        Write-Host (Invoke-Git03 @('diff','--no-ext-diff','--no-textconv','--cached','--stat'))
+        Write-Host $Patch
+        $BeforeCommit = Get-Git03State
+        Write-Host 'State after staging; remaining unstaged/untracked/ignored paths included:'
+        foreach ($Item in $BeforeCommit.Items) { Write-Host "$($Item.XY) $($Item.Path)" }
+        $Tree = (Invoke-Git03 @('write-tree')).Trim()
+        $Message = Read-Host 'Commit message (one normal commit)'
+        if ([string]::IsNullOrWhiteSpace($Message)) { throw 'STOP: empty commit message.' }
+        Assert-Git03Text $Message
+        Confirm-Git03 "COMMIT $Tree"
+        Assert-Git03Repository
+        if ((Invoke-Git03 @('write-tree')).Trim() -cne $Tree -or
+            (Get-Git03State).Raw -cne $BeforeCommit.Raw -or
+            (Invoke-Git03 @('rev-parse','HEAD')).Trim() -cne $InitialHead) { throw 'STOP: commit review changed.' }
+        $null = Invoke-Git03 @('commit','-m',$Message)
+        $NewHead = (Invoke-Git03 @('rev-parse','HEAD')).Trim()
+        $Parent = (Invoke-Git03 @('rev-parse','HEAD^')).Trim()
+        if ($Parent -cne $InitialHead -or
+            (Invoke-Git03 @('rev-parse','HEAD^{tree}')).Trim() -cne $Tree) {
+            throw 'STOP: committed result differs from review.'
+        }
+        $ExpectedCommits = @($OldCommits) + @($NewHead)
+    }
+    else { $ExpectedCommits = @($OldCommits) }
+    if (!$ExpectedCommits.Count) { throw 'STOP: no nonempty reviewed commit to publish.' }
+    Assert-Git03Repository
+    $null = Invoke-Git03 @('fetch','--prune','origin')
+    $Outgoing = @(Get-Git03Ahead)
+    if (($Outgoing -join ',') -cne ($ExpectedCommits -join ',')) { throw 'STOP: outgoing commit set changed.' }
+    $PushHead = (Invoke-Git03 @('rev-parse','HEAD')).Trim()
+    $PushState = Get-Git03State
+    Write-Host "Commits to publish: $($Outgoing -join ',')"
+    Confirm-Git03 "PUSH $($Outgoing -join ',')"
+    Assert-Git03Repository
+    if ((Invoke-Git03 @('rev-parse','HEAD')).Trim() -cne $PushHead -or
+        (Get-Git03State).Raw -cne $PushState.Raw) { throw 'STOP: state changed before push.' }
+    $null = Invoke-Git03 @('push','--porcelain','origin',
+        'refs/heads/markei-season-02:refs/heads/markei-season-02')
+    $null = Invoke-Git03 @('fetch','--prune','origin')
+    $FinalAhead = @(Get-Git03Ahead)
+    if ($FinalAhead.Count -ne 0 -or
+        (Invoke-Git03 @('rev-parse',$Git03Remote)).Trim() -cne $PushHead -or
+        (Invoke-Git03 @('rev-parse','HEAD')).Trim() -cne $PushHead) { throw 'STOP: final alignment failed after push.' }
+    $Final = Get-Git03State
+    foreach ($Item in $Final.Items) { Write-Host "$($Item.XY) $($Item.Class) $($Item.Path)" }
+    if (@($Final.Items | Where-Object {$_.Kind -ne '!'}).Count) {
+        Write-Host 'published-with-local-changes: HEAD equality and divergence 0 0.'
+    }
+    else { Write-Host 'published-clean: HEAD equality and divergence 0 0; ignored paths preserved.' }
+}
+catch {
+    if ($_.Exception.Message.StartsWith('STOP:')) { throw $_.Exception.Message }
+    throw 'STOP: inspection or validation failed; raw diagnostics suppressed.'
+}
+finally { Set-Location -LiteralPath $Git03Root }
+```
+
 ### `GS-GIT-BRN` — Guarded branch handoff with updates reconciliation
 
 This procedure requests the exact destination branch in the terminal. It does

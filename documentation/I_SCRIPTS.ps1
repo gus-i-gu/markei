@@ -3,6 +3,8 @@ param(
     [ValidatePattern("^GS-[A-Z0-9-]+$")]
     [string]$Procedure,
 
+    [switch]$Publish,
+
     [ValidateSet("runtime", "migrator", "dbowner")]
     [string]$Role,
 
@@ -33,6 +35,10 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+
+if ($Publish -and $Procedure -cne "GS-GIT-03") {
+    throw "-Publish is supported only by GS-GIT-03."
+}
 
 $ScriptDirectory = $PSScriptRoot
 if ([string]::IsNullOrWhiteSpace($ScriptDirectory)) {
@@ -92,8 +98,22 @@ if (-not [string]::IsNullOrWhiteSpace($Procedure)) {
     }
 
     try {
+        if ($Procedure -ceq "GS-GIT-03") {
+            $InvocationRoot = @(& git rev-parse --show-toplevel 2>$null)
+            if ($LASTEXITCODE -ne 0 -or $InvocationRoot.Count -ne 1 -or
+                [IO.Path]::GetFullPath($InvocationRoot[0]) -ine
+                [IO.Path]::GetFullPath($RepositoryRoot)) {
+                throw "GS-GIT-03 must be invoked inside this repository."
+            }
+        }
         Set-Location -LiteralPath $RepositoryRoot
-        & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
+        if ($Procedure -ceq "GS-GIT-03") {
+            & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value)) `
+                -Publish:$Publish
+        }
+        else {
+            & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))
+        }
     }
     finally {
         Set-Location -LiteralPath $RepositoryRoot

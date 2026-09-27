@@ -48,6 +48,7 @@ the matching `GS-*` section of `G_SCRIPTS.md`.
 | `GRM-MIG-01`      | Ordered open-ended migration walker     |
 | `GRM-GIT-01`      | Exact Git-alignment verification        |
 | `GRM-GIT-02`      | Fast-forward pull and verification      |
+| `GRM-GIT-03`      | Review and publish explicit local changes |
 | `GRM-GIT-BRN`     | Guarded branch handoff and reconciliation |
 | `GRM-APP-01`      | Read-only runtime provenance and Android readiness |
 | `GRM-SQLITE-01`   | Local SQLite CLI verification           |
@@ -347,6 +348,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 | ------------ | ------------------- | ------------------------------------------- |
 | `GRM-GIT-01`  | `GS-GIT-01`        | Verify exact Git alignment                 |
 | `GRM-GIT-02`  | `GS-GIT-02`        | Fast-forward pull and verify               |
+| `GRM-GIT-03`  | `GS-GIT-03`        | Review and publish explicit local changes |
 | `GRM-GIT-BRN` | `GS-GIT-BRN`       | Hand off branches and reconcile local work |
 
 ### `GRM-GIT-01`
@@ -360,6 +362,17 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-GIT-02"
 ```
+
+### `GRM-GIT-03`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-GIT-03"
+```
+
+Default: dry-run inspection, including a metadata-only fetch. To enter the
+reviewed publication workflow, append `-Publish` to this invocation. This only
+enables the separate path-review, staging, commit, and push confirmations.
+Read `GS-GIT-03` for supported validation, STOP gates, and retained-state rules.
 
 ### `GRM-GIT-BRN`
 
