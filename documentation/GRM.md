@@ -49,6 +49,7 @@ the matching `GS-*` section of `G_SCRIPTS.md`.
 | `GRM-GIT-01`      | Exact Git-alignment verification        |
 | `GRM-GIT-02`      | Fast-forward pull and verification      |
 | `GRM-GIT-BRN`     | Guarded branch handoff and reconciliation |
+| `GRM-APP-01`      | Read-only runtime provenance and Android readiness |
 | `GRM-SQLITE-01`   | Local SQLite CLI verification           |
 | `GRM-SQLITE-02`   | Verified Gate 12.6 copy creation        |
 | `GRM-SQLITE-03`   | Sanitized classification probe          |
@@ -377,6 +378,18 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 | `GRM-SQLITE-05` | `GS-SQLITE-05`      | Create verified Android snapshot      |
 | `GRM-SQLITE-06` | `GS-SQLITE-06`      | Run sanitized Android state probe     |
 | `GRM-SQLITE-07` | `GS-SQLITE-07`      | Correlate Android apply state         |
+
+### `GRM-APP-01`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-APP-01"
+```
+
+Read-only C12-S00-IS01 evidence for C12-S00-AS05-ST06. Reports source
+configuration separately from unresolved runtime/database ownership and a
+sanitized Android bridge classification. It neither starts Markei nor extracts
+a snapshot. Only `one-ready` clears the bridge prerequisite; every other state
+preserves STOP. Even `one-ready` does not prove enrollment or authorize recovery.
 
 ### `GRM-SQLITE-01`
 

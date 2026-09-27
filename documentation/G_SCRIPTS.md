@@ -964,6 +964,230 @@ reapplied uncommitted work. Therefore `GRM-GIT-01` should be used only after
 reviewing, committing, and intentionally publishing or otherwise reconciling
 the destination.
 
+### `GS-APP-01` — Read-only runtime provenance and Android bridge readiness
+
+C12-S00-IS01 supplies observational evidence to C12-S00-AS05-ST06. This
+procedure reads tracked source declarations and runs only `adb devices`, with
+a ten-second process deadline and bounded stream completion. It does not run
+Flutter, start/stop Markei, inspect database contents, create snapshots, or
+contact providers. ADB may start its own host bridge service.
+
+Discovery follows the existing SQLite 05 policy: an executable on PATH, then
+ANDROID_SDK_ROOT, ANDROID_HOME and the standard local Android SDK. Duplicate
+locations collapse; multiple distinct SDK executables are unresolved. No PATH
+change, SDK scan, install, emulator launch or target selection is performed.
+
+The result contains only closed classifications, fixed public application
+names, the expected branch and an abbreviated Git HEAD. Source-pattern matches
+describe the checkout, not a running binary. Build readiness, hosted origin,
+application-support root, and Windows GRM database/runtime correlation remain
+`unresolved`: this procedure has no runtime attestation channel. In particular,
+the July database timestamp cannot prove current runtime ownership.
+
+`AndroidTargetState` is exactly one of `adb-unavailable`, `zero-targets`,
+`one-ready`, `unauthorized`, `offline`, `multiple-targets`, or `unresolved`.
+Unknown inventory syntax, execution failure or timeout is unresolved. Only
+`one-ready` clears the bridge prerequisite; all other states preserve STOP.
+Successful report generation is not an operational success gate: consumers
+must inspect `ReturnClassification`. The command never invokes SQLite 05.
+
+AS05-ST06 may be reconsidered only after a fresh `one-ready` report and Main's
+review of unresolved runtime provenance. Existing SQLite 05 package/run-as,
+snapshot and integrity guards remain mandatory under separate execution
+authority. SQLite 06/07 still require a verified manifest; SQLite 04 still
+requires its unique failed/notApplied candidate. Nothing here proves Device
+enrollment, authenticated ownership, synchronization, or current Neon membership.
+
+GRM-REC-01 remains unimplemented and outside this packet. AS06 must decide
+authenticated Account ownership, provider incarnation/recovery generation,
+allowed metadata reconstruction, enrollment semantics, idempotency,
+duplicate/conflict prevention, sequence/cursor reconciliation, queue staleness,
+rollback and post-recovery verification before any recovery write.
+
+```powershell
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+function Resolve-MarkeiProofAdb {
+    # Private return value: never serialize or print this discovery object.
+    try {
+        $Commands = @(Get-Command adb.exe -CommandType Application `
+            -ErrorAction SilentlyContinue)
+        if ($Commands.Count -eq 1) {
+            return @{ Class = 'path'; Executable = $Commands[0].Source }
+        }
+        if ($Commands.Count -gt 1) {
+            return @{ Class = 'ambiguous'; Executable = $null }
+        }
+        $Roots = @(
+            @{ Class = 'sdk-root'; Root = $env:ANDROID_SDK_ROOT }
+            @{ Class = 'android-home'; Root = $env:ANDROID_HOME }
+            if (-not [string]::IsNullOrWhiteSpace($env:LOCALAPPDATA)) {
+                @{ Class = 'standard-local-sdk'; Root = (
+                    Join-Path $env:LOCALAPPDATA 'Android\Sdk'
+                ) }
+            }
+        )
+        $Found = @{}
+        foreach ($Root in $Roots) {
+            if ([string]::IsNullOrWhiteSpace($Root.Root)) { continue }
+            $Candidate = Join-Path $Root.Root 'platform-tools\adb.exe'
+            if (Test-Path -LiteralPath $Candidate -PathType Leaf) {
+                $Resolved = (Get-Item -LiteralPath $Candidate).FullName
+                if (-not $Found.ContainsKey($Resolved)) {
+                    $Found[$Resolved] = $Root.Class
+                }
+            }
+        }
+        if ($Found.Count -eq 0) {
+            return @{ Class = 'unavailable'; Executable = $null }
+        }
+        if ($Found.Count -ne 1) {
+            return @{ Class = 'ambiguous'; Executable = $null }
+        }
+        $Executable = @($Found.Keys)[0]
+        return @{ Class = $Found[$Executable]; Executable = $Executable }
+    }
+    catch { return @{ Class = 'unresolved'; Executable = $null } }
+}
+
+function ConvertTo-MarkeiTargetReadiness {
+    param([AllowEmptyString()] [string]$Inventory)
+    $Unknown = @{ State = 'unresolved'; Count = $null }
+    if ($null -eq $Inventory -or $Inventory.Length -gt 16384) {
+        return $Unknown
+    }
+    $Lines = @($Inventory -split '\r?\n' | ForEach-Object { $_.Trim() } |
+        Where-Object { $_.Length -gt 0 })
+    if ($Lines.Count -eq 0 -or
+        $Lines[0] -cne 'List of devices attached') { return $Unknown }
+    $Rows = @($Lines | Select-Object -Skip 1)
+    $States = @()
+    foreach ($Row in $Rows) {
+        $Match = [regex]::Match($Row,
+            '^[A-Za-z0-9._:-]+\s+(device|unauthorized|offline)$')
+        if (-not $Match.Success) { return $Unknown }
+        $States += $Match.Groups[1].Value
+    }
+    $State = if ($States.Count -eq 0) { 'zero-targets' }
+        elseif ($States.Count -gt 1) { 'multiple-targets' }
+        elseif ($States[0] -ceq 'device') { 'one-ready' }
+        else { $States[0] }
+    return @{ State = $State; Count = $States.Count }
+}
+
+function Get-MarkeiProofAndroidState {
+    param([Parameter(Mandatory)] [hashtable]$Bridge)
+    if ($Bridge.Class -eq 'unavailable') {
+        return @{ State = 'adb-unavailable'; Count = $null }
+    }
+    $Unknown = @{ State = 'unresolved'; Count = $null }
+    if ($Bridge.Class -notin @('path', 'sdk-root', 'android-home',
+            'standard-local-sdk') -or
+        [string]::IsNullOrWhiteSpace($Bridge.Executable)) { return $Unknown }
+    $Process = New-Object System.Diagnostics.Process
+    try {
+        $StartInfo = New-Object System.Diagnostics.ProcessStartInfo
+        $StartInfo.FileName = $Bridge.Executable
+        $StartInfo.Arguments = 'devices'
+        $StartInfo.UseShellExecute = $false
+        $StartInfo.CreateNoWindow = $true
+        $StartInfo.RedirectStandardOutput = $true
+        $StartInfo.RedirectStandardError = $true
+        $Process.StartInfo = $StartInfo
+        if (-not $Process.Start()) { return $Unknown }
+        $OutputTask = $Process.StandardOutput.ReadToEndAsync()
+        $ErrorTask = $Process.StandardError.ReadToEndAsync()
+        if (-not $Process.WaitForExit(10000)) {
+            $Process.Kill()
+            return $Unknown
+        }
+        if ($Process.ExitCode -ne 0 -or -not $OutputTask.Wait(1000) -or
+            -not $ErrorTask.Wait(1000)) { return $Unknown }
+        # Neither stderr nor unparsed stdout crosses the public boundary.
+        return ConvertTo-MarkeiTargetReadiness `
+            -Inventory $OutputTask.GetAwaiter().GetResult()
+    }
+    catch { return $Unknown }
+    finally { $Process.Dispose() }
+}
+
+$ProofRoot = $null
+try {
+    $ProofRoot = (& git rev-parse --show-toplevel 2>$null | Out-String).Trim()
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($ProofRoot)) {
+        throw 'Repository unavailable.'
+    }
+    Set-Location -LiteralPath $ProofRoot
+    $Branch = (& git branch --show-current 2>$null | Out-String).Trim()
+    $Head = (& git rev-parse --short=12 HEAD 2>$null | Out-String).Trim()
+    if ($LASTEXITCODE -ne 0 -or $Branch -cne 'markei-season-02' -or
+        $Head -cnotmatch '^[0-9a-f]{12}$') { throw 'Repository mismatch.' }
+
+    $SourceRoot = Join-Path $ProofRoot 'clients/markei_flutter'
+    $Entry = Get-Content -LiteralPath (Join-Path $SourceRoot 'lib/main.dart') -Raw
+    $Composition = Get-Content -LiteralPath (Join-Path $SourceRoot `
+        'lib/app/markei_composition.dart') -Raw
+    $Database = Get-Content -LiteralPath (Join-Path $SourceRoot `
+        'lib/infrastructure/local/local_database.dart') -Raw
+    $Android = Get-Content -LiteralPath (Join-Path $SourceRoot `
+        'android/app/build.gradle.kts') -Raw
+    $SourceMatches = $Entry.Contains('await MarkeiComposition.appPrivate()') -and
+        $Composition.Contains('final database = LocalDatabase.appPrivate()') -and
+        $Database.Contains('await getApplicationSupportDirectory()') -and
+        $Database.Contains("p.join(directory.path, 'markei_shared_beta.sqlite')")
+    $Bridge = Resolve-MarkeiProofAdb
+    $Targets = Get-MarkeiProofAndroidState -Bridge $Bridge
+    $Gate = if ($Targets.State -ceq 'one-ready' -and $SourceMatches) {
+        'rerun-authorized-after-one-ready-proof'
+    } else { 'preserve-stop' }
+    [pscustomobject][ordered]@{
+        Procedure = 'GS-APP-01'
+        Evidence = 'checkout-source-and-bridge-only'
+        Branch = 'markei-season-02'
+        HeadAbbreviated = $Head
+        HostPlatform = $(if ($env:OS -eq 'Windows_NT') { 'windows' }
+            else { 'unsupported' })
+        AndroidPackageSource = $(if ($Android.Contains(
+            'applicationId = "com.gusigu.markei"')) { 'com.gusigu.markei' }
+            else { 'unresolved' })
+        EnvironmentAliasSource = $(if ($Composition.Contains(
+            "const environmentAlias = 'provider-native'")) { 'provider-native' }
+            else { 'unresolved' })
+        DatabaseBasenameSource = $(if ($SourceMatches) {
+            'markei_shared_beta.sqlite' } else { 'unresolved' })
+        DatabaseSelectionSource = $(if ($SourceMatches) {
+            'application-support-source-pattern' } else { 'unresolved' })
+        RuntimeConfigurationReadiness = 'unresolved'
+        RunningBuildIdentity = 'unresolved'
+        HostedOriginRuntimeMatch = 'unresolved'
+        ApplicationSupportRuntimeMatch = 'unresolved'
+        WindowsGrmDatabaseRuntimeMatch = 'unresolved'
+        AdbDiscoveryClass = $Bridge.Class
+        AndroidTargetState = $Targets.State
+        AndroidTargetCount = $Targets.Count
+        ReturnStep = 'C12-S00-AS05-ST06'
+        ReturnClassification = $Gate
+        TerminalLocation = 'repository-root'
+    }
+}
+catch {
+    # Never print exception text: it can contain private paths or tool output.
+    [pscustomobject]@{
+        Procedure = 'GS-APP-01'
+        Evidence = 'unresolved'
+        AndroidTargetState = 'unresolved'
+        ReturnStep = 'C12-S00-AS05-ST06'
+        ReturnClassification = 'preserve-stop'
+    }
+}
+finally {
+    if (-not [string]::IsNullOrWhiteSpace($ProofRoot)) {
+        Set-Location -LiteralPath $ProofRoot
+    }
+}
+```
+
 ## 3. Local SQLite diagnostics
 
 `GS-SQLITE-02/03/04` operate only on the Windows application database used by
