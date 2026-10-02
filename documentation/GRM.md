@@ -49,6 +49,8 @@ the matching `GS-*` section of `G_SCRIPTS.md`.
 | `GRM-GIT-01`      | Exact Git-alignment verification        |
 | `GRM-GIT-02`      | Fast-forward pull and verification      |
 | `GRM-GIT-03`      | Review and publish explicit local changes |
+| `GRM-GIT-04`      | Guarded local divergence reconciliation |
+| `GRM-GIT-05`      | Classify, orchestrate, and verify closure |
 | `GRM-GIT-BRN`     | Guarded branch handoff and reconciliation |
 | `GRM-APP-01`      | Read-only runtime provenance and Android readiness |
 | `GRM-SQLITE-01`   | Local SQLite CLI verification           |
@@ -349,6 +351,8 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIP
 | `GRM-GIT-01`  | `GS-GIT-01`        | Verify exact Git alignment                 |
 | `GRM-GIT-02`  | `GS-GIT-02`        | Fast-forward pull and verify               |
 | `GRM-GIT-03`  | `GS-GIT-03`        | Review and publish explicit local changes |
+| `GRM-GIT-04`  | `GS-GIT-04`        | Reconcile clean divergence locally |
+| `GRM-GIT-05`  | `GS-GIT-05`        | Classify and verify exact final alignment |
 | `GRM-GIT-BRN` | `GS-GIT-BRN`       | Hand off branches and reconcile local work |
 
 ### `GRM-GIT-01`
@@ -373,6 +377,48 @@ Default: dry-run inspection, including a metadata-only fetch. To enter the
 reviewed publication workflow, append `-Publish` to this invocation. This only
 enables the separate path-review, staging, commit, and push confirmations.
 Read `GS-GIT-03` for supported validation, STOP gates, and retained-state rules.
+One pre-existing two-parent merge is supported only when its first parent
+terminates the reviewed linear local lineage and its second parent is the fresh
+remote tip. Both parent diffs and all endpoint blobs require review, followed by
+distinct MERGE-HISTORY, HISTORY, and PUSH confirmations. Roots, octopus, nested,
+additional, and unresolved merges remain STOP. File types remain Markdown and
+PowerShell only; GIT-03 never integrates remote history. A linear chain of normal
+one-parent commits may follow that merge, including an outgoing-only retry after
+a failed push. Literal canonical `[M]_STAGE/` paths are supported; other bracket
+paths, Unicode and leading-dash publication paths remain outside the allowlist.
+
+### `GRM-GIT-04`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-GIT-04"
+```
+
+Default: dry-run inventory and conflict preflight for clean two-sided divergence.
+Append `-Execute -Strategy Merge` for independently confirmed local reconciliation.
+Merge is the default; exceptional `-Strategy Rebase` requires certification that
+the exact linear commit set has never been shared. Safety refs are retained.
+No push occurs. Execution captures ignored-artifact integrity evidence before
+reconciliation and verifies it after success or abort recovery. Clean
+aligned/remote-ahead/local-ahead states route to 01/02/03; dirty divergence
+stops. Unsupported content/topology also stops.
+
+### `GRM-GIT-05`
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File ".\documentation\I_SCRIPTS.ps1" -Procedure "GS-GIT-05"
+```
+
+Default: read-only classification after a metadata fetch. Aligned-clean verifies
+through GIT-01. `-Execute` enters bounded routing: remote-ahead-clean to GIT-02,
+reviewable local work to GIT-03, diverged-clean to GIT-04 followed by a separate
+publication transition. All delegated confirmations remain mandatory. Optional
+`-Strategy Rebase` applies only to divergence. Dirty state with remote history,
+conflicts, active operations, protected content, and unresolved states stop.
+Final PASS requires a fresh exact full-HEAD equality, 0 0, ordinary cleanliness,
+and matching ignored-artifact integrity evidence. Dry runs list ignored paths
+without reading their contents. Execution captures and rechecks ignored paths,
+types, link targets, and streaming SHA-256 values without following links. See
+G_SCRIPTS for classifications, confirmations, abort boundaries, and evidence ceilings.
 
 ### `GRM-GIT-BRN`
 

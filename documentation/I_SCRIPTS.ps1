@@ -5,6 +5,11 @@ param(
 
     [switch]$Publish,
 
+    [switch]$Execute,
+
+    [ValidateSet('Merge', 'Rebase')]
+    [string]$Strategy = 'Merge',
+
     [ValidateSet("runtime", "migrator", "dbowner")]
     [string]$Role,
 
@@ -36,8 +41,13 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-if ($Publish -and $Procedure -cne "GS-GIT-03") {
+if ($PSBoundParameters.ContainsKey('Publish') -and $Procedure -cne "GS-GIT-03") {
     throw "-Publish is supported only by GS-GIT-03."
+}
+if (($PSBoundParameters.ContainsKey('Execute') -or
+     $PSBoundParameters.ContainsKey('Strategy')) -and
+    $Procedure -cnotin @('GS-GIT-04', 'GS-GIT-05')) {
+    throw '-Execute and -Strategy are supported only by GS-GIT-04/05.'
 }
 
 $ScriptDirectory = $PSScriptRoot
@@ -78,7 +88,26 @@ if (-not [string]::IsNullOrWhiteSpace($Procedure)) {
         throw "Canonical procedure catalogue not found: $CataloguePath"
     }
 
-    $Catalogue = Get-Content -LiteralPath $CataloguePath -Raw
+    $Catalogue = Get-Content -LiteralPath $CataloguePath -Raw -Encoding UTF8
+    function Get-GrmProcedure {
+        param([string]$Id)
+        $Sections = [regex]::Matches($Catalogue,
+            '(?ms)^### `' + [regex]::Escape($Id) +
+            '`[^\r\n]*\r?\n(?<Section>.*?)(?=^### `GS-|\z)')
+        if ($Sections.Count -ne 1) { throw 'STOP: ambiguous procedure registration.' }
+        $Body = [regex]::Match($Sections[0].Groups['Section'].Value,
+            '(?ms)^```powershell[ \t]*\r?\n(?<Code>.*?)^```[ \t]*\r?$')
+        if (!$Body.Success) { throw 'STOP: missing procedure body.' }
+        return [scriptblock]::Create($Body.Groups['Code'].Value)
+    }
+    function Get-GrmGitSupport {
+        # Only the explicitly delimited definitions are loaded, never GIT-03's
+        # publication entry point. Delegation retains the same catalogue snapshot.
+        $Body = (Get-GrmProcedure 'GS-GIT-03').ToString()
+        $Parts = $Body -split '(?m)^# GRM-GIT-SUPPORT-END\r?$', 2
+        if ($Parts.Count -ne 2) { throw 'STOP: missing Git support boundary.' }
+        return [scriptblock]::Create($Parts[0])
+    }
     $HeadingPattern = '(?ms)^### `' +
         [regex]::Escape($Procedure) +
         '`[^\r\n]*\r?\n(?<Section>.*?)(?=^### `GS-|\z)'
@@ -98,7 +127,7 @@ if (-not [string]::IsNullOrWhiteSpace($Procedure)) {
     }
 
     try {
-        if ($Procedure -ceq "GS-GIT-03") {
+        if ($Procedure -cin @('GS-GIT-03','GS-GIT-04','GS-GIT-05')) {
             $InvocationRoot = @(& git rev-parse --show-toplevel 2>$null)
             if ($LASTEXITCODE -ne 0 -or $InvocationRoot.Count -ne 1 -or
                 [IO.Path]::GetFullPath($InvocationRoot[0]) -ine
@@ -110,6 +139,9 @@ if (-not [string]::IsNullOrWhiteSpace($Procedure)) {
         if ($Procedure -ceq "GS-GIT-03") {
             & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value)) `
                 -Publish:$Publish
+        }
+        elseif ($Procedure -cin @('GS-GIT-04','GS-GIT-05')) {
+            & (Get-GrmProcedure $Procedure) -Execute:$Execute -Strategy $Strategy
         }
         else {
             & ([scriptblock]::Create($FenceMatch.Groups["Code"].Value))

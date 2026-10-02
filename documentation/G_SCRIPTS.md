@@ -42,8 +42,8 @@ alter PowerShell execution policy:
 powershell.exe -NoProfile -ExecutionPolicy Bypass `
   -File ".\documentation\I_SCRIPTS.ps1" `
   -ConfigPath ".\documentation\NS_COORDINATES.md" `
-  -Role <runtime|migrator|dbowner> `
-  -Action <action>
+  -Role "<runtime|migrator|dbowner>" `
+  -Action "<action>"
 ```
 
 Passwords are requested through `Read-Host -AsSecureString`, converted only
@@ -512,9 +512,19 @@ screening, whitespace checks, PowerShell syntax, and embedded PowerShell fences.
 Other selected file types STOP pending a reviewed, non-writing validator.
 Binary, generated, private configuration, database, payload, symlink, submodule,
 ambiguous path, sparse/assume-unchanged, active hook, and content-filter cases
-STOP. Unselected and ignored residue must be explicitly acknowledged and stays
-untouched. Ignored paths can never be selected. Rename review includes both
+STOP. Inventory preserves literal Windows paths including spaces, Unicode,
+ampersands, brackets, and leading dashes; publication uses a separate narrower
+path allowlist. Unselected and ignored residue must be explicitly acknowledged
+and stays untouched. Ignored paths can never be selected. Rename review includes both
 source and destination paths; existing staged paths must all be selected.
+
+Historical parsing has one compatibility exception: revision
+`8143e4bde109427d63670057cd6612b89292474e`, blob
+`01ff7975e99d798169edc997e178fea3d99a3c46`, path
+`documentation/G_SCRIPTS.md`, and exactly one each of the original
+`-Role <runtime|migrator|dbowner>` and `-Action <action>` lines. Only a temporary
+parsing copy quotes those two forms, and use is reported. Candidate and staged
+content uses normal validation; every other historical case stops.
 
 Supply a JSON array of exact repository-relative paths when prompted. There
 are no directory, wildcard, all-files, force, or alternate-target options.
@@ -545,6 +555,20 @@ delta) or `published-with-local-changes`. Ignored paths are always reported
 separately and never removed. This procedure cannot promise remote stability
 after its final fetch, and never claims deployment or application acceptance.
 
+Topology extension: outgoing history is read in reverse topological order.
+Normal commits retain sole-parent review. At most one pre-existing merge is
+accepted within an otherwise linear outgoing chain, with two parents: the reviewed linear
+local tip first and the freshly fetched remote tip second. A unique genuine
+divergence base is required. Roots, octopus, additional/nested merges, non-linear
+lineages, replaced/grafted/shallow/alternate history, and remote movement stop.
+The operator approves the union of paths changed against both parents, plus all
+preceding outgoing changes. Each parent/result blob and each per-parent patch is
+screened before display. `MERGE-HISTORY <merge> <parent1> <parent2>` is a separate
+confirmation before the complete HISTORY confirmation; it never authorizes push.
+Following commits must each have one parent on that same chain, allowing retry
+after a reviewed merge plus a later normal commit. No trailer is trusted as
+topology evidence. Unsupported file types remain STOP.
+
 ```powershell
 [CmdletBinding()]
 param([switch]$Publish)
@@ -555,14 +579,19 @@ $Git03Root = (Get-Location).Path
 $Git03Branch = "markei-season-02"
 $Git03Remote = "refs/remotes/origin/$Git03Branch"
 $Git03Utf8 = New-Object System.Text.UTF8Encoding($false, $true)
-$Git03Exe = (Get-Command git.exe -CommandType Application).Source
+$Git03Exe = (Get-Command git.exe -CommandType Application | Select-Object -First 1).Source
 
 function Invoke-Git03 {
-    param([string[]]$Arguments, [int[]]$AllowedExit = @(0))
+    param([string[]]$Arguments, [int[]]$AllowedExit = @(0), [switch]$Reconcile)
     # A closed command vocabulary; no caller-supplied Git options or shell.
     if ($Arguments[0] -notin @('rev-parse','symbolic-ref','config','status',
             'ls-files','ls-tree','check-attr','fetch','rev-list','diff','show','add',
-            'write-tree','hash-object','commit','push')) { throw "STOP: forbidden Git command." }
+            'write-tree','hash-object','commit','push','merge-base','merge-tree',
+            'for-each-ref')) {
+        if (!$Reconcile -or $Arguments[0] -notin @('merge','rebase','update-ref')) {
+            throw "STOP: forbidden Git command."
+        }
+    }
     $Start = New-Object System.Diagnostics.ProcessStartInfo
     $Start.FileName = $Git03Exe
     $Start.WorkingDirectory = $Git03Root
@@ -611,9 +640,25 @@ function Get-Git03Digest {
 
 function Assert-Git03Path {
     param([string]$Path)
-    if ($Path -notmatch '^[A-Za-z0-9_.][A-Za-z0-9_ .()/@+-]*$' -or
-        $Path -match '(^|/)\.\.?(/|$)|//|[. /]$') {
-        throw "STOP: path cannot be classified safely (including broad pathspecs)."
+    if ([string]::IsNullOrEmpty($Path) -or $Path.StartsWith('/') -or
+        $Path.Contains('\') -or $Path -match '[<>:"|?*\x00-\x1F\x7F]' -or
+        $Path -match '(^|/)\.\.?(/|$)|//|(^|/)[. ]$|/$') {
+        throw 'STOP: path cannot be inventoried safely.'
+    }
+}
+
+function Assert-Git03PublishPath {
+    param([string]$Path)
+    Assert-Git03Path $Path
+    $PolicyPath = $Path
+    $CanonicalPrefix = 'documentation/sketch_notebook/[M]_STAGE/'
+    if ($Path.StartsWith($CanonicalPrefix, [StringComparison]::Ordinal)) {
+        # Literal canonical segment only; all other brackets remain outside policy.
+        $PolicyPath = 'documentation/sketch_notebook/M_STAGE/' +
+            $Path.Substring($CanonicalPrefix.Length)
+    }
+    if ($PolicyPath -notmatch '^[A-Za-z0-9_.][A-Za-z0-9_ .()/@+-]*$') {
+        throw 'STOP: path is inventoried but outside the reviewed publication path policy.'
     }
 }
 
@@ -668,8 +713,11 @@ function Get-Git03State {
 }
 
 function Assert-Git03Repository {
+    param([switch]$AllowOperation)
     foreach ($Name in @('GIT_DIR','GIT_WORK_TREE','GIT_INDEX_FILE','GIT_COMMON_DIR',
-            'GIT_OBJECT_DIRECTORY','GIT_ALTERNATE_OBJECT_DIRECTORIES','GIT_CONFIG_PARAMETERS')) {
+            'GIT_OBJECT_DIRECTORY','GIT_ALTERNATE_OBJECT_DIRECTORIES','GIT_CONFIG_PARAMETERS',
+            'GIT_CONFIG','GIT_CONFIG_SYSTEM','GIT_CONFIG_GLOBAL','GIT_SSH','GIT_SSH_COMMAND',
+            'GIT_PROXY_COMMAND','GIT_REPLACE_REF_BASE','GIT_ATTR_SOURCE','GIT_EXEC_PATH')) {
         if ([Environment]::GetEnvironmentVariable($Name)) { throw 'STOP: Git environment override.' }
     }
     $ConfigCount = [Environment]::GetEnvironmentVariable('GIT_CONFIG_COUNT')
@@ -687,22 +735,48 @@ function Assert-Git03Repository {
         !(Test-Path -LiteralPath (Join-Path $Root 'documentation/GRM.md'))) {
         throw 'STOP: wrong or unresolved repository.'
     }
-    if ((Invoke-Git03 @('symbolic-ref','--short','HEAD')).Trim() -cne $Git03Branch) {
-        throw 'STOP: wrong branch.'
+    $CurrentBranch = (Invoke-Git03 @('symbolic-ref','--short','HEAD') @(0,1)).Trim()
+    if ($CurrentBranch -cne $Git03Branch) {
+        $ActiveRebase = (Test-Path -LiteralPath (Invoke-Git03 @('rev-parse','--git-path','rebase-merge')).Trim()) -or
+            (Test-Path -LiteralPath (Invoke-Git03 @('rev-parse','--git-path','rebase-apply')).Trim())
+        if (!$AllowOperation -or $CurrentBranch -or !$ActiveRebase) { throw 'STOP: wrong branch or detached HEAD.' }
     }
     $Origin = (Invoke-Git03 @('config','--get','remote.origin.url')).Trim()
     if ($Origin -cnotin @('https://github.com/gus-i-gu/markei.git',
             'git@github.com:gus-i-gu/markei.git')) { throw 'STOP: wrong origin repository.' }
     foreach ($Marker in @('MERGE_HEAD','CHERRY_PICK_HEAD','REVERT_HEAD','BISECT_LOG',
             'rebase-apply','rebase-merge','sequencer','index.lock','HEAD.lock',
-            'MERGE_AUTOSTASH','info/grafts','shallow')) {
+            'MERGE_AUTOSTASH','info/grafts','shallow','objects/info/alternates',
+            'objects/info/http-alternates','info/sparse-checkout')) {
         $Path = (Invoke-Git03 @('rev-parse','--git-path',$Marker)).Trim()
-        if (Test-Path -LiteralPath $Path) { throw "STOP: active Git operation or lock: $Marker" }
+        if (Test-Path -LiteralPath $Path) {
+            if (!$AllowOperation -or $Marker -in @('info/grafts','shallow',
+                    'objects/info/alternates','objects/info/http-alternates','info/sparse-checkout')) {
+                throw "STOP: active Git operation or unsupported state: $Marker"
+            }
+        }
     }
     # Reject routes that can execute arbitrary hooks, filters, or redirect refs.
     $Config = Invoke-Git03 @('config','--get-regexp',
-        '^(core\.(hooksPath|attributesFile)|remote\.origin\.(pushurl|mirror)|url\.|include|extensions\.|core\.sparseCheckout)') @(0,1)
+        '^(core\.(hooksPath|attributesFile|sshCommand|gitProxy)|remote\.origin\.(pushurl|mirror|uploadpack|receivepack|proxy|vcs)|url\.|include|extensions\.|core\.sparseCheckout|merge\.(.*\.driver|autoStash)|pull\.autoStash|rebase\.|branch\..*\.mergeOptions)') @(0,1)
     if ($Config) { throw 'STOP: custom hooks, filters, transport, or repository configuration.' }
+    # Git for Windows installs these dormant defaults. Candidate attributes are
+    # independently rejected; no selected/integrated path may activate a filter.
+    $Filters = (Invoke-Git03 @('config','--get-regexp','^filter\.') @(0,1)).Trim()
+    foreach ($Filter in @($Filters -split '\r?\n' | Where-Object {$_})) {
+        if ($Filter -cnotin @('filter.lfs.clean git-lfs clean -- %f',
+                'filter.lfs.smudge git-lfs smudge -- %f',
+                'filter.lfs.process git-lfs filter-process','filter.lfs.required true')) {
+            throw 'STOP: unexpected content filter.'
+        }
+    }
+    if (Invoke-Git03 @('for-each-ref','--format=%(refname)','refs/replace/')) {
+        throw 'STOP: replace objects.'
+    }
+    $GitDirectory = (Invoke-Git03 @('rev-parse','--absolute-git-dir')).Trim()
+    if (!$AllowOperation -and @(Get-ChildItem -LiteralPath $GitDirectory -Filter '*.lock' -Recurse -Force -File).Count) {
+        throw 'STOP: Git lock present.'
+    }
     $Hooks = (Invoke-Git03 @('rev-parse','--git-path','hooks')).Trim()
     if (Test-Path -LiteralPath $Hooks) {
         if (@(Get-ChildItem -LiteralPath $Hooks -File | Where-Object {
@@ -732,7 +806,7 @@ function Get-Git03Ahead {
         $Counts[1] -notmatch '^\d+$') { throw 'STOP: invalid divergence.' }
     Write-Host "Divergence behind/ahead: $($Counts -join ' ')"
     if ([int]$Counts[0] -ne 0) { throw 'STOP: remote ahead or histories diverged.' }
-    return @((Invoke-Git03 @('rev-list','--reverse',"$Git03Remote..HEAD")).Trim() `
+    return @((Invoke-Git03 @('rev-list','--topo-order','--reverse',"$Git03Remote..HEAD")).Trim() `
         -split '\r?\n' | Where-Object { $_ })
 }
 
@@ -772,6 +846,52 @@ function Assert-Git03Document {
     }
 }
 
+function Get-Git03BlobId {
+    param([string]$Text)
+    $Bytes = $Git03Utf8.GetBytes($Text)
+    $Header = $Git03Utf8.GetBytes("blob $($Bytes.Length)`0")
+    $Payload = New-Object byte[] ($Header.Length + $Bytes.Length)
+    [Array]::Copy($Header, 0, $Payload, 0, $Header.Length)
+    [Array]::Copy($Bytes, 0, $Payload, $Header.Length, $Bytes.Length)
+    $Hasher = [Security.Cryptography.SHA1]::Create()
+    try { return ([BitConverter]::ToString($Hasher.ComputeHash($Payload))).Replace('-', '').ToLowerInvariant() }
+    finally { $Hasher.Dispose() }
+}
+
+function Assert-Git03HistoricalDocument {
+    param([string]$Revision, [string]$Path, [string]$Text)
+    $LegacyForms = @(
+        '  -Role <runtime|migrator|dbowner> `',
+        '  -Action <action>'
+    )
+    $Counts = @($LegacyForms | ForEach-Object {
+        [regex]::Matches($Text, [regex]::Escape($_)).Count
+    })
+    if (($Counts -join ',') -eq '0,0') {
+        Assert-Git03Document $Path $Text
+        return
+    }
+    $BlobSpec = if ($Revision -ceq 'INDEX') { ":$Path" } else { "$Revision`:$Path" }
+    $Blob = (Invoke-Git03 @('rev-parse',$BlobSpec)).Trim()
+    $SourceRevision = if ($Revision -ceq 'INDEX') {
+        (Invoke-Git03 @('rev-parse','HEAD')).Trim()
+    } else { $Revision }
+    if ($SourceRevision -cne '8143e4bde109427d63670057cd6612b89292474e' -or
+        $Path -cne 'documentation/G_SCRIPTS.md' -or
+        $Blob -cne '01ff7975e99d798169edc997e178fea3d99a3c46' -or
+        (Get-Git03BlobId $Text) -cne $Blob -or
+        ($Counts -join ',') -cne '1,1') {
+        throw 'STOP: unexpected historical document compatibility case.'
+    }
+    $HistoricalParseText = $Text
+    foreach ($Form in $LegacyForms) {
+        $Replacement = $Form.Replace('<', '"<').Replace('>', '>"')
+        $HistoricalParseText = $HistoricalParseText.Replace($Form, $Replacement)
+    }
+    Write-Host "Historical compatibility used: revision=$SourceRevision source=$Revision blob=01ff7975e99d798169edc997e178fea3d99a3c46 path=$Path forms=2"
+    Assert-Git03Document $Path $HistoricalParseText
+}
+
 function Get-Git03DeltaPaths {
     param([string[]]$Range)
     return @((Invoke-Git03 (@('diff','--no-ext-diff','--no-textconv',
@@ -786,6 +906,189 @@ function Confirm-Git03 {
     }
 }
 
+function Get-Git03History {
+    param([string[]]$Commits, [string]$RemoteTip)
+    $Previous = $null
+    $MergeCount = 0
+    $Rows = @{}
+    foreach ($Sha in $Commits) {
+        $Fields = (Invoke-Git03 @('rev-list','--parents','-n','1',$Sha)).Trim() -split ' '
+        if ($Fields.Count -eq 1) { throw 'STOP: unsupported-root.' }
+        if ($Fields.Count -gt 3) { throw 'STOP: unsupported-octopus.' }
+        if ($Fields.Count -lt 2) { throw 'STOP: unresolved topology.' }
+        if ($Fields.Count -eq 3) { $MergeCount++ }
+        $Rows[$Sha] = $Fields
+    }
+    if ($MergeCount -gt 1) { throw 'STOP: unsupported-additional-merge.' }
+    foreach ($Sha in $Commits) {
+        $Fields = $Rows[$Sha]
+        $Parents = @($Fields | Select-Object -Skip 1)
+        $Kind = 'normal-one-parent'
+        if ($Parents.Count -eq 2) {
+            if (!$Previous -or
+                $Parents[0] -cne $Previous -or $Parents[1] -cne $RemoteTip) {
+                throw 'STOP: unsupported merge topology or second parent.'
+            }
+            $Bases = @((Invoke-Git03 @('merge-base','--all',$Parents[0],$Parents[1])).Trim() -split '\r?\n')
+            if ($Bases.Count -ne 1 -or $Bases[0] -cin $Parents) {
+                throw 'STOP: ambiguous or non-divergent merge.'
+            }
+            $Kind = 'approved-two-parent-git04-merge'
+        }
+        elseif ($Previous -and $Parents[0] -cne $Previous) {
+            throw 'STOP: outgoing lineage is not linear.'
+        }
+        if (!$Previous) {
+            $Boundary = (Invoke-Git03 @('merge-base','--all',$Parents[0],$RemoteTip)).Trim()
+            if ($Boundary -cne $Parents[0]) { throw 'STOP: unresolved outgoing boundary.' }
+        }
+        $Paths = @()
+        foreach ($Parent in $Parents) { $Paths += Get-Git03DeltaPaths @($Parent,$Sha) }
+        [pscustomobject]@{Sha=$Sha; Parents=$Parents; Kind=$Kind;
+            Paths=@($Paths | Sort-Object -Unique)}
+        $Previous = $Sha
+    }
+}
+
+function Assert-Git03Revision {
+    param([string]$Revision, [string[]]$Paths)
+    foreach ($Path in $Paths) {
+        Assert-Git03PublishPath $Path
+        if ((Get-Git03Class $Path) -cne 'review-required' -or $Path -notmatch '\.(md|ps1)$') {
+            throw 'STOP: unsupported or protected history path.'
+        }
+        $Mode = Invoke-Git03 @('ls-tree','-z',$Revision,'--',$Path)
+        if (!$Mode) { continue } # Explicit absent blob: addition/deletion endpoint.
+        if ($Mode -notmatch '^100(644|755) blob ') { throw 'STOP: non-regular history blob.' }
+        if (Invoke-Git03 @('check-attr',"--source=$Revision",'-z','--all','--',$Path)) {
+            throw 'STOP: history attributes require independent review.'
+        }
+        Assert-Git03HistoricalDocument $Revision $Path (Invoke-Git03 @('show',"${Revision}:$Path"))
+    }
+}
+
+function Get-GitProtocolState {
+    Assert-Git03Repository -AllowOperation
+    $Raw = Invoke-Git03 @('status','--porcelain=v2','-z','--untracked-files=all')
+    $Kind = $null
+    if (@($Raw.Split([char]0) | Where-Object {$_ -like 'u *'}).Count) { $Kind = 'conflicted' }
+    foreach ($Marker in @('MERGE_HEAD','CHERRY_PICK_HEAD','REVERT_HEAD','BISECT_LOG',
+            'rebase-apply','rebase-merge','sequencer','MERGE_AUTOSTASH')) {
+        if (Test-Path -LiteralPath (Invoke-Git03 @('rev-parse','--git-path',$Marker)).Trim()) {
+            if (!$Kind) { $Kind = 'operation-active' }
+        }
+    }
+    $Dir = (Invoke-Git03 @('rev-parse','--absolute-git-dir')).Trim()
+    if (!$Kind -and @(Get-ChildItem -LiteralPath $Dir -Filter '*.lock' -Recurse -Force -File).Count) {
+        $Kind = 'operation-active'
+    }
+    if ($Kind) { return [pscustomobject]@{Kind=$Kind; Route='STOP'} }
+    Assert-Git03Repository
+    $State = Get-Git03State
+    foreach ($Item in $State.Items) { Write-Host "$($Item.Class) $($Item.Path)" }
+    if (@($State.Items | Where-Object {$_.Class -in @('protected','generated')}).Count) {
+        throw 'STOP: protected or generated ordinary paths.'
+    }
+    $null = Invoke-Git03 @('fetch','--prune','origin')
+    Assert-Git03Repository
+    $AfterFetch = Get-Git03State
+    if ($AfterFetch.Raw -cne $State.Raw) { throw 'STOP: ordinary or ignored state changed during fetch.' }
+    $State = $AfterFetch
+    $Local = (Invoke-Git03 @('rev-parse','HEAD')).Trim()
+    $Remote = (Invoke-Git03 @('rev-parse',$Git03Remote)).Trim()
+    $Counts = (Invoke-Git03 @('rev-list','--left-right','--count',"$Remote...$Local")).Trim() -split '\s+'
+    if ($Counts.Count -ne 2 -or $Counts[0] -notmatch '^\d+$' -or $Counts[1] -notmatch '^\d+$') {
+        throw 'STOP: unresolved divergence.'
+    }
+    $Behind = [int]$Counts[0]; $Ahead = [int]$Counts[1]
+    $Stem = if ($Behind -and $Ahead) {'diverged'} elseif ($Behind) {'remote-ahead'} elseif ($Ahead) {'local-ahead'} else {'aligned'}
+    $Dirty = @($State.Items | Where-Object {$_.Kind -ne '!'}).Count -gt 0
+    $Kind = $Stem + $(if ($Dirty) {'-dirty'} else {'-clean'})
+    $Route = switch ($Stem) {
+        aligned {if ($Dirty) {'GS-GIT-03'} else {'GS-GIT-01'}}
+        remote-ahead {if ($Dirty) {'STOP'} else {'GS-GIT-02'}}
+        local-ahead {'GS-GIT-03'}
+        diverged {if ($Dirty) {'STOP'} else {'GS-GIT-04'}}
+    }
+    return [pscustomobject]@{Kind=$Kind; Route=$Route; Local=$Local; Remote=$Remote;
+        Behind=$Behind; Ahead=$Ahead; State=$State}
+}
+
+function Get-GitProtocolPathEvidence {
+    param([string[]]$Paths)
+    $Records = New-Object 'System.Collections.Generic.List[string]'
+    foreach ($Path in @($Paths | Where-Object {$_} | Sort-Object -Unique)) {
+        Assert-Git03Path $Path
+        $Full = Join-Path $Git03Root $Path
+        $Item = Get-Item -LiteralPath $Full -Force -ErrorAction Stop
+        if ($Item.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+            if ($Item.LinkType -cne 'SymbolicLink' -or $Item.Target -isnot [string]) {
+                throw 'STOP: snapshot contains an unsupported link type.'
+            }
+            $LinkBytes = $Git03Utf8.GetBytes($Item.Target)
+            $Hasher = [Security.Cryptography.SHA256]::Create()
+            try { $Hash = [BitConverter]::ToString($Hasher.ComputeHash($LinkBytes)).Replace('-','') }
+            finally { $Hasher.Dispose() }
+            $Records.Add("L`0$Path`0$Hash")
+        }
+        elseif ($Item.PSIsContainer) {
+            $Records.Add("D`0$Path`0")
+        }
+        else {
+            $Hasher = [Security.Cryptography.SHA256]::Create()
+            $Stream = [IO.File]::Open($Full, [IO.FileMode]::Open, [IO.FileAccess]::Read,
+                [IO.FileShare]::ReadWrite -bor [IO.FileShare]::Delete)
+            try { $Hash = [BitConverter]::ToString($Hasher.ComputeHash($Stream)).Replace('-','') }
+            finally { $Stream.Dispose(); $Hasher.Dispose() }
+            $Records.Add("F`0$Path`0$Hash")
+        }
+    }
+    return ($Records -join "`0")
+}
+
+function Get-GitProtocolIgnoredSnapshot {
+    # Called only after an execution confirmation; dry runs inventory names only.
+    $Paths = (Invoke-Git03 @('ls-files','-z','--others','--ignored','--exclude-standard')).Split([char]0)
+    return Get-Git03Digest (Get-GitProtocolPathEvidence $Paths)
+}
+
+function Get-GitProtocolSnapshot {
+    # Raw bytes, including ignored operational files, plus logical index entries.
+    # Index stat-cache bytes may change during normal Git operations.
+    $Paths = @((Invoke-Git03 @('ls-files','-z','--cached','--others','--exclude-standard')).Split([char]0)) +
+        @((Invoke-Git03 @('ls-files','-z','--others','--ignored','--exclude-standard')).Split([char]0))
+    $Evidence = Get-GitProtocolPathEvidence $Paths
+    return Get-Git03Digest ($Evidence + "`0" + (Invoke-Git03 @('ls-files','--stage','-z')))
+}
+
+function Assert-GitProtocolIncoming {
+    param([string]$Local, [string]$Remote, $State)
+    $Paths = @(Get-Git03DeltaPaths @($Local,$Remote))
+    Assert-Git03Revision $Local $Paths
+    Assert-Git03Revision $Remote $Paths
+    foreach ($Item in $State.Items | Where-Object {$_.Kind -eq '!'}) {
+        foreach ($Path in $Paths) {
+            if ($Path -ieq $Item.Path -or $Path.StartsWith($Item.Path + '/', [StringComparison]::OrdinalIgnoreCase) -or
+                $Item.Path.StartsWith($Path + '/', [StringComparison]::OrdinalIgnoreCase)) {
+                throw 'STOP: incoming history overlaps ignored operational artifacts.'
+            }
+        }
+    }
+}
+
+function Assert-GitProtocolTips {
+    param([string]$Local, [string]$Remote)
+    Assert-Git03Repository
+    $null = Invoke-Git03 @('fetch','--prune','origin')
+    if ((Invoke-Git03 @('rev-parse','HEAD')).Trim() -cne $Local -or
+        (Invoke-Git03 @('rev-parse',$Git03Remote)).Trim() -cne $Remote -or
+        @((Get-Git03State).Items | Where-Object {$_.Kind -ne '!'}).Count) {
+        throw 'STOP: reviewed tips or clean state changed.'
+    }
+}
+
+# GRM-GIT-SUPPORT-END
+
 try {
     Assert-Git03Repository
     $Initial = Get-Git03State
@@ -797,24 +1100,22 @@ try {
     Write-Host 'Fetching/pruning origin: Git metadata only; no worktree integration.'
     $null = Invoke-Git03 @('fetch','--prune','origin')
     $OldCommits = @(Get-Git03Ahead)
+    $ReviewedRemote = (Invoke-Git03 @('rev-parse',$Git03Remote)).Trim()
     Write-Host "Local-only commit SHAs: $($OldCommits -join ',')"
     if (!$Publish) { Write-Host 'dry-run: no staging, commit, or push.'; return }
 
     $DirtyPaths = @($Initial.Items | Where-Object {$_.Kind -ne '!'} |
         ForEach-Object {$_.Path} | Sort-Object -Unique)
-    $HistoryPaths = @()
-    foreach ($Sha in $OldCommits) {
-        $Parents = (Invoke-Git03 @('rev-list','--parents','-n','1',$Sha)).Trim() -split ' '
-        if ($Parents.Count -ne 2) { throw 'STOP: outgoing merge/root commit unsupported.' }
-        $HistoryPaths += Get-Git03DeltaPaths @("$Sha^",$Sha)
-    }
+    $History = @(Get-Git03History $OldCommits $ReviewedRemote)
+    $HistoryPaths = @($History | ForEach-Object {$_.Paths} | Sort-Object -Unique)
+    foreach ($Entry in $History) { Write-Host "$($Entry.Kind) $($Entry.Sha) parents=$($Entry.Parents -join ',')" }
     $InputPaths = Read-Host 'Exact reviewed paths as JSON array; include outgoing-history paths'
     if ($InputPaths -notmatch '^\s*\[') { throw 'STOP: explicit JSON path set required.' }
     $Reviewed = ConvertFrom-Json -InputObject $InputPaths
     if ($Reviewed -isnot [array] -or !$Reviewed.Count) { throw 'STOP: explicit reviewed path set required.' }
     foreach ($Path in $Reviewed) {
         if ($Path -isnot [string]) { throw 'STOP: paths must be strings.' }
-        Assert-Git03Path $Path
+        Assert-Git03PublishPath $Path
         if ($Path -cnotin ($DirtyPaths + $HistoryPaths)) { throw 'STOP: path is not an exact candidate.' }
         if ((Get-Git03Class $Path) -cne 'review-required') { throw 'STOP: forbidden candidate file class.' }
         if ($Path -notmatch '\.(md|ps1)$') { throw 'STOP: selected file has no supported non-writing validator.' }
@@ -844,22 +1145,20 @@ try {
     Write-Host 'Certify selected files and outgoing commits contain no secrets or user data.'
     Confirm-Git03 "REVIEW $Digest"
 
-    foreach ($Sha in $OldCommits) {
-        foreach ($Path in @(Get-Git03DeltaPaths @("$Sha^",$Sha))) {
-            # Review both deleted and added content, including secrets removed later.
-            foreach ($Revision in @("$Sha^",$Sha)) {
-                $Mode = Invoke-Git03 @('ls-tree','-z',$Revision,'--',$Path)
-                if ($Mode -and $Mode -notmatch '^100(644|755) blob ') {
-                    throw 'STOP: outgoing history contains a non-regular file.'
-                }
-                $Blob = Invoke-Git03 @('show',"${Revision}:$Path") @(0,128)
-                Assert-Git03Document $Path $Blob
-            }
+    foreach ($Entry in $History) {
+        foreach ($Revision in @($Entry.Parents) + @($Entry.Sha)) {
+            Assert-Git03Revision $Revision $Entry.Paths
         }
-        $Patch = Invoke-Git03 @('diff','--no-ext-diff','--no-textconv',"$Sha^",$Sha,'--')
-        Assert-Git03Text $Patch
-        Write-Host "Reviewed outgoing commit: $Sha"
-        Write-Host $Patch
+        # Screen every parent and result before displaying either patch.
+        $Patches = @($Entry.Parents | ForEach-Object {
+            Invoke-Git03 @('diff','--no-ext-diff','--no-textconv',$_,$Entry.Sha,'--')
+        })
+        foreach ($Patch in $Patches) { Assert-Git03Text $Patch }
+        Write-Host "Reviewed outgoing commit: $($Entry.Sha)"
+        foreach ($Patch in $Patches) { Write-Host $Patch }
+        if ($Entry.Parents.Count -eq 2) {
+            Confirm-Git03 "MERGE-HISTORY $($Entry.Sha) $($Entry.Parents -join ' ')"
+        }
     }
     if ($OldCommits.Count) { Confirm-Git03 "HISTORY $($OldCommits -join ',')" }
     $ReviewedBlobs = @{}
@@ -883,8 +1182,9 @@ try {
             $ReviewedBlobs[$Path] = (Invoke-Git03 @('hash-object','--no-filters','--',$Path)).Trim()
         }
         else { $ReviewedBlobs[$Path] = 'deleted' }
-        Assert-Git03Document $Path (Invoke-Git03 @('show',"HEAD:$Path") @(0,128))
-        Assert-Git03Document $Path (Invoke-Git03 @('show',":$Path") @(0,128))
+        Assert-Git03HistoricalDocument $InitialHead $Path `
+            (Invoke-Git03 @('show',"HEAD:$Path") @(0,128))
+        Assert-Git03HistoricalDocument 'INDEX' $Path (Invoke-Git03 @('show',":$Path") @(0,128))
     }
     if ($Selected.Count) {
         $null = Invoke-Git03 (@('diff','--no-ext-diff','--no-textconv','--check','--') + $Selected)
@@ -953,6 +1253,9 @@ try {
     if (!$ExpectedCommits.Count) { throw 'STOP: no nonempty reviewed commit to publish.' }
     Assert-Git03Repository
     $null = Invoke-Git03 @('fetch','--prune','origin')
+    if ((Invoke-Git03 @('rev-parse',$Git03Remote)).Trim() -cne $ReviewedRemote) {
+        throw 'STOP: remote moved after review.'
+    }
     $Outgoing = @(Get-Git03Ahead)
     if (($Outgoing -join ',') -cne ($ExpectedCommits -join ',')) { throw 'STOP: outgoing commit set changed.' }
     $PushHead = (Invoke-Git03 @('rev-parse','HEAD')).Trim()
@@ -960,6 +1263,10 @@ try {
     Write-Host "Commits to publish: $($Outgoing -join ',')"
     Confirm-Git03 "PUSH $($Outgoing -join ',')"
     Assert-Git03Repository
+    $null = Invoke-Git03 @('fetch','--prune','origin')
+    if ((Invoke-Git03 @('rev-parse',$Git03Remote)).Trim() -cne $ReviewedRemote) {
+        throw 'STOP: remote moved before push.'
+    }
     if ((Invoke-Git03 @('rev-parse','HEAD')).Trim() -cne $PushHead -or
         (Get-Git03State).Raw -cne $PushState.Raw) { throw 'STOP: state changed before push.' }
     $null = Invoke-Git03 @('push','--porcelain','origin',
@@ -979,6 +1286,359 @@ try {
 catch {
     if ($_.Exception.Message.StartsWith('STOP:')) { throw $_.Exception.Message }
     throw 'STOP: inspection or validation failed; raw diagnostics suppressed.'
+}
+finally { Set-Location -LiteralPath $Git03Root }
+```
+
+### `GS-GIT-04` — Guarded local divergence reconciliation
+
+Default: metadata-only fetch, inventory, and merge preflight. Use the dispatcher
+with `-Execute` to enter independent confirmations; `-Strategy Merge` is the
+default. `-Strategy Rebase` is exceptional and requires a certification naming
+every rewritten commit. Neither strategy pushes. Only clean genuine divergence
+is eligible; other clean states route to 01/02/03. Dirty divergence stops.
+
+The dispatcher loads the delimited GIT-03 safety definitions without executing
+its publication body. Both sides and the proposed tree use the same conservative
+Markdown/PowerShell validator. Unsupported paths, attributes, topology, secret
+risk, custom hooks/filters/transports, hidden index state, shallow/grafted/replaced
+history, submodules, symlinks, conflicts, and active operations stop. Run with
+exclusive operator access. Git locks are not a transaction across prompts.
+The standard dormant Git for Windows LFS filter definitions are recognized;
+attributes that would activate any filter on a reviewed path still stop.
+
+Inventory contains hashes and screened paths, never unscreened file contents.
+Merge preflight uses `merge-tree --write-tree`: it may add Git objects but never
+changes the principal index/worktree. An unavailable or inconclusive preflight
+stops. Predicted conflicts stop before safety references or worktree mutation.
+
+Exact case-sensitive confirmations:
+
+- `EXCLUSIVE <local> <remote>` certifies exclusive access and reviewed safe content.
+- `MERGE <local> <remote> <base> <predicted-tree>` authorizes the no-commit merge.
+- `MERGE-COMMIT <local> <remote> <tree>` separately approves its commit.
+- `REBASE-UNPUBLISHED <comma-separated-old-SHAs> ONTO <remote>` certifies that the
+  displayed linear commits have never been published/shared.
+- `REBASE <local> <remote> <base> <comma-separated-old-SHAs>` separately approves replay.
+
+References `refs/markei-safety/git04/<UTC-timestamp>-<random>/local`, `/remote`,
+and `/base` are created with create-only expected values, verified, and retained.
+Partial reference creation also remains retained on STOP. Refusal before merge
+does not mutate files; refusal at MERGE-COMMIT retains the reviewed staged merge
+and MERGE_HEAD for human inspection. No automatic cleanup follows a refusal.
+
+Dry runs inventory ignored path names without reading file contents. On
+execution, ignored artifact paths, types, symlink targets, and streaming SHA-256
+values are captured before reconciliation; success and abort recovery must
+reproduce that evidence. Only an unexpected merge/rebase failure invokes its
+matching `--abort` route.
+For merge, HEAD must still equal the original tip; for rebase, its recorded
+original tip and branch must match this invocation. A pre-mutation snapshot hashes
+all tracked/untracked/ignored file bytes and logical index entries. After abort,
+HEAD, ordinary cleanliness, and that snapshot must match. Index stat-cache bytes
+are not expected to match. Abort failure or unverifiable restoration stops with
+the remaining state preserved; no reset/restore/clean/stash or conflict winner is
+used. Safety refs are never deleted. A successful rebase reports ordered old/new
+SHA pairs and requires the same number of linear commits (empty commits retained).
+
+Evidence ceiling: conservative content screening and observed local Git state,
+not a proof that arbitrary text is secret-free or that the remote stays fixed
+after the final fetch. Merge output is mechanically compatible with GIT-03's
+two-parent topology gate. Local completion is `local-ahead-clean`, not final PASS.
+Use GIT-03 or GIT-05 for separately confirmed publication. GIT-BRN remains the
+existing branch-handoff procedure; GIT-04/05 never invoke its stash route.
+GIT-05 dry runs likewise report ignored names without reading contents; execution
+captures and rechecks ignored path, type, link-target, and streaming SHA-256
+evidence at its final gate and after delegated failures. Link targets are read as
+link metadata only and are never followed; unsupported reparse-point types stop.
+
+```powershell
+[CmdletBinding()]
+param([switch]$Execute, [ValidateSet('Merge','Rebase')][string]$Strategy = 'Merge')
+. (Get-GrmGitSupport)
+
+function Stop-Git04Failure {
+    param([string]$Mode, [string]$Original, [string]$Snapshot, [string]$IgnoredSnapshot)
+    $Marker = if ($Mode -eq 'Merge') {'MERGE_HEAD'} else {'rebase-merge'}
+    $Active = Test-Path -LiteralPath (Invoke-Git03 @('rev-parse','--git-path',$Marker)).Trim()
+    if (!$Active -and $Mode -eq 'Rebase') {
+        $Active = Test-Path -LiteralPath (Invoke-Git03 @('rev-parse','--git-path','rebase-apply')).Trim()
+    }
+    # Never abort over a concurrently advanced HEAD or unrelated dirty work.
+    if ((Invoke-Git03 @('rev-parse','HEAD')).Trim() -cne $Original -and $Mode -eq 'Merge') {
+        throw 'STOP: unexpected HEAD; state retained, no abort attempted.'
+    }
+    if ($Active -and $Mode -eq 'Rebase') {
+        $RebaseDirectory = (Invoke-Git03 @('rev-parse','--git-path','rebase-merge')).Trim()
+        if (!(Test-Path -LiteralPath $RebaseDirectory)) {
+            $RebaseDirectory = (Invoke-Git03 @('rev-parse','--git-path','rebase-apply')).Trim()
+        }
+        $OriginalFile = Join-Path $RebaseDirectory 'orig-head'
+        $BranchFile = Join-Path $RebaseDirectory 'head-name'
+        if (!(Test-Path -LiteralPath $OriginalFile) -or !(Test-Path -LiteralPath $BranchFile) -or
+            ([IO.File]::ReadAllText((Resolve-Path -LiteralPath $OriginalFile).Path)).Trim() -cne $Original -or
+            ([IO.File]::ReadAllText((Resolve-Path -LiteralPath $BranchFile).Path)).Trim() -cne "refs/heads/$Git03Branch") {
+            throw 'STOP: rebase ownership unproved; no abort attempted.'
+        }
+    }
+    if ($Active) {
+        try { $null = Invoke-Git03 @($Mode.ToLowerInvariant(),'--abort') -Reconcile }
+        catch { throw 'STOP: reviewed abort failed; remaining state and safety refs retained.' }
+    }
+    Assert-Git03Repository
+    if ((Invoke-Git03 @('rev-parse','HEAD')).Trim() -cne $Original -or
+        @((Get-Git03State).Items | Where-Object {$_.Kind -ne '!'}).Count -or
+        (Get-GitProtocolSnapshot) -cne $Snapshot) {
+        throw 'STOP: exact file/index restoration unproved; remaining state retained.'
+    }
+    if ((Get-GitProtocolIgnoredSnapshot) -cne $IgnoredSnapshot) {
+        throw 'STOP: ignored artifact integrity failed after abort; remaining state retained.'
+    }
+    throw 'STOP: reconciliation failed; original HEAD, file bytes and logical index verified; safety refs retained.'
+}
+
+try {
+    $Initial = Get-GitProtocolState
+    Write-Host "Classification: $($Initial.Kind); route: $($Initial.Route)"
+    if ($Initial.Kind -cne 'diverged-clean') {
+        if ($Initial.Kind -in @('aligned-clean','remote-ahead-clean','local-ahead-clean')) { return }
+        throw 'STOP: GIT-04 requires clean genuine divergence.'
+    }
+    $Local = $Initial.Local; $Remote = $Initial.Remote
+    $Bases = @((Invoke-Git03 @('merge-base','--all',$Local,$Remote)).Trim() -split '\r?\n')
+    if ($Bases.Count -ne 1 -or $Bases[0] -notmatch '^[a-f0-9]{40,64}$') {
+        throw 'STOP: ambiguous ancestry.'
+    }
+    $Base = $Bases[0]
+    $LocalCommits = @((Invoke-Git03 @('rev-list','--topo-order','--reverse',"$Remote..$Local")).Trim() -split '\r?\n')
+    $RemoteCommits = @((Invoke-Git03 @('rev-list','--topo-order','--reverse',"$Local..$Remote")).Trim() -split '\r?\n')
+    Write-Host "Local=$Local Remote=$Remote Base=$Base Strategy=$Strategy"
+    Write-Host "Local-only ($($LocalCommits.Count)): $($LocalCommits -join ',')"
+    Write-Host "Remote-only ($($RemoteCommits.Count)): $($RemoteCommits -join ',')"
+    # Local lineage must be publishable by GIT-03 after a single merge/rebase.
+    $Previous = $Base
+    foreach ($Sha in $LocalCommits) {
+        $Parents = (Invoke-Git03 @('rev-list','--parents','-n','1',$Sha)).Trim() -split ' '
+        if ($Parents.Count -ne 2 -or $Parents[1] -cne $Previous) {
+            throw 'STOP: local merge or unsupported non-linear topology.'
+        }
+        $Previous = $Sha
+    }
+    $RemoteMerges = (Invoke-Git03 @('rev-list','--merges',"$Local..$Remote")).Trim()
+    Write-Host "Local merges: absent; remote merges present: $([bool]$RemoteMerges)"
+    $RemoteRefs = Invoke-Git03 @('for-each-ref','--format=%(refname) %(objectname)','refs/remotes/')
+    $Reachable = $false
+    foreach ($Sha in $LocalCommits) {
+        $Refs = (Invoke-Git03 @('for-each-ref',"--contains=$Sha",'--format=%(refname)','refs/remotes/')).Trim()
+        Write-Host "Local commit $Sha reachable from reviewed remote refs: $([bool]$Refs)"
+        if ($Refs) { $Reachable = $true }
+    }
+    if ($Strategy -eq 'Rebase' -and $Reachable) { throw 'STOP: local commit reachable from remote ref.' }
+    $Paths = @()
+    foreach ($Side in @(@{Name='local';Tip=$Local},@{Name='remote';Tip=$Remote})) {
+        $SidePaths = @(Get-Git03DeltaPaths @($Base,$Side.Tip))
+        foreach ($Path in $SidePaths) { Write-Host "$($Side.Name) $(Get-Git03Class $Path) $Path" }
+        $Paths += $SidePaths
+    }
+    # Include intermediate changes and both parents of any remote merge.
+    foreach ($Sha in @($LocalCommits) + @($RemoteCommits)) {
+        $Fields = (Invoke-Git03 @('rev-list','--parents','-n','1',$Sha)).Trim() -split ' '
+        if ($Fields.Count -lt 2 -or $Fields.Count -gt 3) { throw 'STOP: unsupported remote topology.' }
+        foreach ($Parent in @($Fields | Select-Object -Skip 1)) {
+            $Delta = @(Get-Git03DeltaPaths @($Parent,$Sha))
+            $Paths += $Delta
+            Assert-Git03Revision $Parent $Delta
+            Assert-Git03Revision $Sha $Delta
+            Assert-Git03Text (Invoke-Git03 @('diff','--no-ext-diff','--no-textconv',$Parent,$Sha,'--'))
+        }
+    }
+    $Paths = @($Paths | Sort-Object -Unique)
+    foreach ($Revision in @($Base,$Local,$Remote)) { Assert-Git03Revision $Revision $Paths }
+    foreach ($Item in $Initial.State.Items | Where-Object {$_.Kind -eq '!'}) {
+        foreach ($Path in $Paths) {
+            if ($Path -ieq $Item.Path -or $Path.StartsWith($Item.Path + '/', [StringComparison]::OrdinalIgnoreCase) -or
+                $Item.Path.StartsWith($Path + '/', [StringComparison]::OrdinalIgnoreCase)) {
+                throw 'STOP: incoming history overlaps ignored operational artifacts.'
+            }
+        }
+    }
+    $Prediction = (Invoke-Git03 @('merge-tree','--write-tree',$Local,$Remote) @(0,1)).Trim()
+    $CleanPrediction = $Prediction -match '^[a-f0-9]{40,64}$'
+    Write-Host "Merge preflight clean: $CleanPrediction"
+    if ($Strategy -eq 'Merge' -and !$CleanPrediction) { throw 'STOP: predicted merge conflict; principal worktree untouched.' }
+    if ($CleanPrediction) {
+        Assert-Git03Revision $Prediction $Paths
+        Write-Host "Predicted tree: $Prediction"
+    }
+    if (!$Execute) { Write-Host 'dry-run: no integration, safety refs, commit, or push.'; return }
+    Confirm-Git03 "EXCLUSIVE $Local $Remote"
+    if ($Strategy -eq 'Merge') { Confirm-Git03 "MERGE $Local $Remote $Base $Prediction" }
+    else {
+        Confirm-Git03 "REBASE-UNPUBLISHED $($LocalCommits -join ',') ONTO $Remote"
+        Confirm-Git03 "REBASE $Local $Remote $Base $($LocalCommits -join ',')"
+    }
+    Assert-GitProtocolTips $Local $Remote
+    if ((Invoke-Git03 @('for-each-ref','--format=%(refname) %(objectname)','refs/remotes/')) -cne $RemoteRefs) {
+        throw 'STOP: reviewed remote refs changed.'
+    }
+    $Snapshot = Get-GitProtocolSnapshot
+    $IgnoredSnapshot = Get-GitProtocolIgnoredSnapshot
+    $Run = [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffffffZ') + '-' + [Guid]::NewGuid().ToString('N')
+    $Prefix = "refs/markei-safety/git04/$Run"
+    foreach ($Pair in @(@{Name='local';Sha=$Local},@{Name='remote';Sha=$Remote},@{Name='base';Sha=$Base})) {
+        $Ref = "$Prefix/$($Pair.Name)"
+        $null = Invoke-Git03 @('update-ref',$Ref,$Pair.Sha,('0' * $Pair.Sha.Length)) -Reconcile
+        Write-Host "Retained safety reference: $Ref"
+        if ((Invoke-Git03 @('rev-parse',$Ref)).Trim() -cne $Pair.Sha) { throw 'STOP: safety reference validation failed.' }
+    }
+    Assert-GitProtocolTips $Local $Remote
+    if ((Get-GitProtocolSnapshot) -cne $Snapshot) { throw 'STOP: files changed before integration.' }
+    if ($Strategy -eq 'Merge') {
+        try { $null = Invoke-Git03 @('merge','--no-ff','--no-commit','--no-autostash','--no-overwrite-ignore',$Remote) -Reconcile }
+        catch { Stop-Git04Failure 'Merge' $Local $Snapshot $IgnoredSnapshot }
+        $Tree = (Invoke-Git03 @('write-tree')).Trim()
+        if ($Tree -cne $Prediction) { throw 'STOP: proposed merge tree differs from preflight; staged merge retained.' }
+        Assert-Git03Revision $Tree $Paths
+        $null = Invoke-Git03 @('diff','--cached','--check')
+        $MergeSnapshot = Get-GitProtocolSnapshot
+        Confirm-Git03 "MERGE-COMMIT $Local $Remote $Tree"
+        Assert-Git03Repository -AllowOperation
+        $null = Invoke-Git03 @('fetch','--prune','origin')
+        if ((Invoke-Git03 @('rev-parse','HEAD')).Trim() -cne $Local -or
+            (Invoke-Git03 @('rev-parse','MERGE_HEAD')).Trim() -cne $Remote -or
+            (Invoke-Git03 @('rev-parse',$Git03Remote)).Trim() -cne $Remote -or
+            (Invoke-Git03 @('write-tree')).Trim() -cne $Tree -or
+            (Get-GitProtocolSnapshot) -cne $MergeSnapshot) { throw 'STOP: merge review changed; staged merge retained.' }
+        $null = Invoke-Git03 @('commit','-m','GRM-GIT-04 reviewed divergence merge')
+        $Parents = (Invoke-Git03 @('rev-list','--parents','-n','1','HEAD')).Trim() -split ' '
+        if ($Parents.Count -ne 3 -or $Parents[1] -cne $Local -or $Parents[2] -cne $Remote) {
+            throw 'STOP: unexpected merge parent ordering.'
+        }
+        Write-Host "Merge topology: $($Parents -join ' ')"
+    }
+    else {
+        try {
+            $null = Invoke-Git03 @('rebase','--no-autostash','--reapply-cherry-picks',
+                '--keep-empty','--empty=keep','--onto',$Remote,$Base) -Reconcile
+        }
+        catch { Stop-Git04Failure 'Rebase' $Local $Snapshot $IgnoredSnapshot }
+        $New = @((Invoke-Git03 @('rev-list','--topo-order','--reverse',"$Remote..HEAD")).Trim() -split '\r?\n')
+        if ($New.Count -ne $LocalCommits.Count) { throw 'STOP: rebase mapping count mismatch.' }
+        $Previous = $Remote
+        for ($i = 0; $i -lt $New.Count; $i++) {
+            $Parents = (Invoke-Git03 @('rev-list','--parents','-n','1',$New[$i])).Trim() -split ' '
+            if ($Parents.Count -ne 2 -or $Parents[1] -cne $Previous) { throw 'STOP: unexpected rebase topology.' }
+            Assert-Git03Revision $New[$i] $Paths
+            Write-Host "Rebase mapping: $($LocalCommits[$i]) -> $($New[$i])"
+            $Previous = $New[$i]
+        }
+    }
+    $Final = Get-GitProtocolState
+    if ($Final.Kind -cne 'local-ahead-clean' -or $Final.Remote -cne $Remote) {
+        throw 'STOP: reconciliation closure or remote stability failed.'
+    }
+    if ((Get-GitProtocolIgnoredSnapshot) -cne $IgnoredSnapshot) {
+        throw 'STOP: ignored artifact integrity failed after successful reconciliation.'
+    }
+    Write-Host 'local-ahead-clean: no push; continue through GS-GIT-03 or GS-GIT-05.'
+}
+catch {
+    if ($_.Exception.Message.StartsWith('STOP:')) { throw $_.Exception.Message }
+    throw 'STOP: reconciliation inspection failed; raw diagnostics suppressed.'
+}
+finally { Set-Location -LiteralPath $Git03Root }
+```
+
+### `GS-GIT-05` — Classify, orchestrate, and verify final alignment
+
+Default: fetch and classify only; aligned-clean additionally verifies through
+GIT-01 and a final fresh checked fetch. `-Execute` enters the routed procedure
+but is never blanket approval. `-Strategy Merge|Rebase` is forwarded only when
+the state calls for GIT-04. GIT-03 receives `-Publish` internally only after the
+separate `PUBLISH <local> <remote>` transition, retaining all its own prompts.
+
+| Classification | Bounded route |
+| --- | --- |
+| aligned-clean | GIT-01 then final equality gate |
+| aligned-dirty | GIT-03 reviewed publication |
+| remote-ahead-clean | `FAST-FORWARD <local> <remote>`, GIT-02, then GIT-01 |
+| remote-ahead-dirty | STOP |
+| local-ahead-clean / local-ahead-dirty | GIT-03 reviewed publication |
+| diverged-clean | GIT-04, separate PUBLISH transition, GIT-03, GIT-01 |
+| diverged-dirty | STOP |
+| conflicted / operation-active / unresolved | STOP |
+
+Protected ordinary paths and inspection failures classify unresolved. Ignored
+paths are reported separately and preserved. The final gate rechecks repository,
+branch, conflicts/operations, full tips, exact 0 0, and all ordinary paths after
+GIT-01. PASS certifies only the observed fetched state; later remote movement is
+outside the evidence boundary. No integration or publication is duplicated here.
+GIT-01/02 retain their existing standalone responsibilities; BRN is unchanged.
+The GIT-05 fast-forward route screens incoming Markdown/PowerShell paths and
+rejects overlap with ignored artifacts before delegation. Other incoming file
+types require independent review and stop. GIT-02 performs its own fetch; if
+the remote moves during that delegation, GIT-05 stops with the resulting state
+retained. No rollback or attempt to manufacture cleanliness follows that race.
+
+```powershell
+[CmdletBinding()]
+param([switch]$Execute, [ValidateSet('Merge','Rebase')][string]$Strategy = 'Merge')
+. (Get-GrmGitSupport)
+$Classified = $false
+$IgnoredSnapshot = $null
+try {
+    $State = Get-GitProtocolState
+    $Classified = $true
+    Write-Host "Classification: $($State.Kind); route: $($State.Route)"
+    if ($State.Route -eq 'STOP') { throw 'STOP: state requires human reconciliation.' }
+    if ($Execute) {
+        $IgnoredSnapshot = Get-GitProtocolIgnoredSnapshot
+        Write-Host 'Ignored artifact byte-integrity evidence captured for this execution.'
+    }
+    if ($State.Kind -cne 'aligned-clean') {
+        if (!$Execute) { Write-Host 'dry-run: no integration, staging, commit, or push.'; return }
+        if ($State.Route -eq 'GS-GIT-02') {
+            Assert-GitProtocolIncoming $State.Local $State.Remote $State.State
+            Confirm-Git03 "FAST-FORWARD $($State.Local) $($State.Remote)"
+            Assert-GitProtocolTips $State.Local $State.Remote
+            & (Get-GrmProcedure 'GS-GIT-02')
+            if ((Invoke-Git03 @('rev-parse','HEAD')).Trim() -cne $State.Remote -or
+                (Invoke-Git03 @('rev-parse',$Git03Remote)).Trim() -cne $State.Remote) {
+                throw 'STOP: remote moved during delegated fast-forward; resulting state retained.'
+            }
+        }
+        else {
+            if ($State.Route -eq 'GS-GIT-04') {
+                & (Get-GrmProcedure 'GS-GIT-04') -Execute -Strategy $Strategy
+                $State = Get-GitProtocolState
+                if ($State.Kind -cne 'local-ahead-clean') { throw 'STOP: local reconciliation incomplete.' }
+            }
+            Confirm-Git03 "PUBLISH $($State.Local) $($State.Remote)"
+            & (Get-GrmProcedure 'GS-GIT-03') -Publish
+        }
+    }
+    & (Get-GrmProcedure 'GS-GIT-01')
+    $Final = Get-GitProtocolState
+    if ($Final.Kind -cne 'aligned-clean' -or $Final.Local -cne $Final.Remote -or
+        $Final.Behind -ne 0 -or $Final.Ahead -ne 0) { throw 'STOP: final exact equality failed.' }
+    if ($null -ne $IgnoredSnapshot -and
+        (Get-GitProtocolIgnoredSnapshot) -cne $IgnoredSnapshot) {
+        throw 'STOP: ignored artifact integrity failed at the GIT-05 final gate.'
+    }
+    Set-Location -LiteralPath $Git03Root
+    Write-Host "PASS: aligned-clean; LocalHead=$($Final.Local); RemoteHead=$($Final.Remote); Behind=0 Ahead=0; ignored artifact bytes preserved."
+}
+catch {
+    if ($null -ne $IgnoredSnapshot) {
+        try { $IgnoredNow = Get-GitProtocolIgnoredSnapshot }
+        catch { throw 'STOP: ignored artifact integrity could not be verified after orchestration failure.' }
+        if ($IgnoredNow -cne $IgnoredSnapshot) {
+            throw 'STOP: ignored artifact integrity failed after orchestration failure.'
+        }
+    }
+    if (!$Classified) { Write-Host 'Classification: unresolved; route: STOP' }
+    if ($_.Exception.Message.StartsWith('STOP:')) { throw $_.Exception.Message }
+    throw 'STOP: orchestration or final verification failed; raw diagnostics suppressed.'
 }
 finally { Set-Location -LiteralPath $Git03Root }
 ```

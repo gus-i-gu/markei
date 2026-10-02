@@ -1353,3 +1353,17 @@ LOCALE_REAL_DEVICE_REVIEW=NOT_PERFORMED | PERFORMED
 HUMAN_COMPREHENSION=NOT_ESTABLISHED | ESTABLISHED
 KANBAN_TRANSITIONS=NONE | CONTRADICTED
 ```
+# GRM-GIT-03–05 acceptance — current Main packet (2026-09-30)
+
+Sequence: FLX-ORD-01. Human/Main mission overrides historical C11 authority below;
+retain that history. Controlling writable scope and operational matrix are the
+dated GRM acceptance section in D_OPS_STAGE.md.
+Distinguish reproduced defects, static concerns, untested cases and tested PASS.
+Actual production-body disposable-repository tests are required; mocked helpers
+alone cannot establish acceptance. Synthetic secrets only; suppress their content.
+Report Windows PowerShell/Git requirements, supported publication classes,
+confirmation semantics, transport substitution ceiling and broader source-validator
+support as a separate proposed packet. Append H evidence without semantic promotion.
+Missing referenced five questions remain a clarification gate for full handback.
+
+---

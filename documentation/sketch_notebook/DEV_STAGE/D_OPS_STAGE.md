@@ -1820,3 +1820,33 @@ GRM_GS_FILES_CHANGED=NO | CONTRADICTED
 PUBLICATION=PUSHED | NOT_PUSHED
 NEXT_MAIN_ACTION=Reconcile G/H/I and perform human wide/compact, keyboard, locale and real-device review.
 ```
+# GRM-GIT-03–05 acceptance — current Main packet (2026-09-30)
+
+Sequence: FLX-ORD-01. Role: Codex materialization under the human/Main packet.
+Branch: markei-season-02. Refreshed HEAD/cached/fresh origin: 8143e4bde109427d63670057cd6612b89292474e.
+This mission supersedes historical C11 authority below for current action; all historical evidence is retained.
+
+Preserve the existing three-file GRM delta and unread, unstaged .vscode/mcp.json.
+Allowed implementation: documentation/GRM.md, documentation/G_SCRIPTS.md,
+documentation/I_SCRIPTS.ps1 and documentation/tests/GRM_GIT_03_05.Acceptance.ps1.
+Scratch fixtures: .grm-git-acceptance-work/ under the task workspace.
+Allowed evidence: existing DEV_STAGE/G_OPS_CODEX.md, H_DDC_CODEX.md, I_DSN_CODEX.md;
+append a dated mission section, preserving prior reports. No permanent-memory promotion.
+No real-clone staging, commit, push, merge, rebase, cleanup or topology mutation.
+All mutation tests use disposable repositories and a local bare remote; no fixture writes to GitHub.
+Keep methodology, permanent domain memory, application/API, migrations, provider
+state, real databases/queues, NS_COORDINATES.md and .vscode outside writable scope.
+
+Execute the four phases in the human packet: baseline/reproduction, minimum
+demonstrated corrections, actual-procedure behavioral matrix, acceptance handback.
+Validate registration, PowerShell 5.1 syntax, current-file publishability,
+literal canonical bracket paths, exact revision/blob compatibility and installed
+Git capabilities. Capability failure is STOP. Unexpected overlapping edits are STOP.
+Preserve separate confirmations, merge default, certified unpublished rebase,
+non-force push, safety refs and fail-closed unsupported validators.
+Use only harness-local transport substitution, disclose its evidence ceiling.
+Report exact deltas, test outcomes, unsupported classes, unresolved gates and a
+separate publication plan. No automatic publication is authorized.
+The referenced five questions are absent from the packet; clarification is pending.
+
+---

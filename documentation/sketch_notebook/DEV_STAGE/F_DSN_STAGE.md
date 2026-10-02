@@ -1559,3 +1559,19 @@ DEPENDENCY_PLATFORM_CHANGE=NONE | CONTRADICTED
 SECOND_CONTROLLER_REPOSITORY_ENGINE=ABSENT | PRESENT
 ROLLBACK=PARENT_OF_CORRECTION_COMMIT | CONTRADICTED
 ```
+# GRM-GIT-03–05 acceptance — current Main packet (2026-09-30)
+
+Sequence: FLX-ORD-01. Human/Main mission overrides historical C11 authority below;
+retain that history. Controlling allowlist and test matrix are the dated GRM
+acceptance section in D_OPS_STAGE.md. Production guards must not gain test bypasses.
+Use dispatcher-extracted production bodies, disposable fixtures and a local bare
+remote through harness-local transport substitution. Preserve repository/origin/
+branch policy, standalone GIT-01/02 contracts, independent approvals, merge default,
+exceptional unpublished rebase, non-force publication, safety refs and abort evidence.
+Correct only reproduced defects, including literal canonical bracket paths and
+actual-source revision/blob binding. No conflict-winner selection or cleanup.
+Assert HEAD, logical index, worktree bytes, ignored bytes/metadata, refs and remote
+state. Append I evidence and next gate; preserve prior records and protected surfaces.
+No broader source validators, permanent-memory updates or publication are activated.
+
+---
