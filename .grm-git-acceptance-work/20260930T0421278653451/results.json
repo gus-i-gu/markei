@@ -1,5 +1,0 @@
-﻿{
-    "Test":  "GIT05 delegation remote-ahead",
-    "Result":  "FAIL",
-    "Reason":  "Delegation failed: ignored-preserve ignored\nClassification: remote-ahead-clean; route: GS-GIT-02\nIgnored artifact byte-integrity evidence captured for this execution.\nUpdating 68af9da..e8e6451\nFast-forward\n remote.md | 1 +\n 1 file changed, 1 insertion(+)\n create mode 100644 remote.md\nSTOP: orchestration or final verification failed; raw diagnostics suppressed."
-}
