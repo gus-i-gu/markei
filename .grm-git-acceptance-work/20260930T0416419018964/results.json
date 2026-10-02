@@ -1,0 +1,132 @@
+﻿[
+    {
+        "Test":  "exact path STOP duplicate",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "exact path STOP staging-outside",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "exact path STOP rename-missing-endpoint",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "exact path STOP unsupported-type",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "exact path STOP unicode",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "exact path STOP leading-dash",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "exact path STOP arbitrary-bracket",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "exact path publication deletion",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "exact path publication rename",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "exact path publication pre-staged",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "exact path publication residue",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "GIT05 delegation aligned",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "GIT05 delegation remote-ahead",
+        "Result":  "FAIL",
+        "Reason":  "Delegation failed: ignored-preserve ignored\nClassification: remote-ahead-clean; route: GS-GIT-02\nIgnored artifact byte-integrity evidence captured for this execution.\nUpdating cf43b0f..900cbe3\nFast-forward\n remote.md | 1 +\n 1 file changed, 1 insertion(+)\n create mode 100644 remote.md\nSTOP: orchestration or final verification failed; raw diagnostics suppressed."
+    },
+    {
+        "Test":  "GIT05 delegation local-ahead",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "GIT05 delegation diverged",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "GIT04 refusal Merge EXCLUSIVE",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "GIT04 refusal Merge MERGE",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "GIT04 refusal Merge MERGE-COMMIT",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "GIT04 refusal Rebase EXCLUSIVE",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "GIT04 refusal Rebase REBASE-UNPUBLISHED",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "GIT04 refusal Rebase REBASE",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "predicted merge conflict",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "actual rebase conflict and verified abort",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "published local commit refuses rebase",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "merge plus following commit failed-push retry",
+        "Result":  "FAIL",
+        "Reason":  "Retry of production-created lineage failed: DRY RUN: complete path inventory (no file contents):\n! ignored-preserve ignored\nFetching/pruning origin: Git metadata only; no worktree integration.\nDivergence behind/ahead: 0 3\nLocal-only commit SHAs: cfef715bb892fb61e21d12aa4c58f9900bbdf6ec,5f0a46fe46a03f408492f88251c28438bf900b16,8e3d28717b9359d139ab89e6303f66edaa291fff\nSTOP: unsupported merge topology or second parent."
+    },
+    {
+        "Test":  "concurrent selected bytes STAGE",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "concurrent selected bytes COMMIT",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "concurrent selected bytes PUSH",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "remote movement REVIEW",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "remote movement STAGE",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "remote movement COMMIT",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "remote movement PUSH",
+        "Result":  "PASS"
+    }
+]

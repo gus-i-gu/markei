@@ -1,0 +1,5 @@
+﻿{
+    "Test":  "supported ignored symbolic link preservation",
+    "Result":  "FAIL",
+    "Reason":  "Administrator privilege required for this operation."
+}

@@ -1,0 +1,62 @@
+﻿[
+    {
+        "Test":  "registration/syntax GS-GIT-01",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-02",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-03",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-04",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-05",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "current publishability documentation/GRM.md",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "current publishability documentation/G_SCRIPTS.md",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "current publishability documentation/I_SCRIPTS.ps1",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "canonical bracket publication policy",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "historical caller uses actual HEAD revision",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "noncanonical brackets remain rejected",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "merge plus following commit failed-push retry",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "unsupported outgoing topology octopus",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "unsupported outgoing topology additional-merge",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "unsupported outgoing topology wrong-second-parent",
+        "Result":  "PASS"
+    }
+]

@@ -1,0 +1,197 @@
+﻿[
+    {
+        "Test":  "registration/syntax GS-GIT-01",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-02",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-03",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-04",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-05",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "current publishability documentation/GRM.md",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "current publishability documentation/G_SCRIPTS.md",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "current publishability documentation/I_SCRIPTS.ps1",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "canonical bracket publication policy",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "noncanonical brackets remain rejected",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "classification aligned dirty=False",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-1\\remote.git"
+    },
+    {
+        "Test":  "classification aligned dirty=True",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-2\\remote.git"
+    },
+    {
+        "Test":  "classification remote-ahead dirty=False",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-3\\remote.git"
+    },
+    {
+        "Test":  "classification remote-ahead dirty=True",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-4\\remote.git"
+    },
+    {
+        "Test":  "classification local-ahead dirty=False",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-5\\remote.git"
+    },
+    {
+        "Test":  "classification local-ahead dirty=True",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-6\\remote.git"
+    },
+    {
+        "Test":  "classification diverged dirty=False",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-7\\remote.git"
+    },
+    {
+        "Test":  "classification diverged dirty=True",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-8\\remote.git"
+    },
+    {
+        "Test":  "guard wrong-branch",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-9\\remote.git"
+    },
+    {
+        "Test":  "guard detached",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-10\\remote.git"
+    },
+    {
+        "Test":  "guard wrong-origin",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-11\\remote.git"
+    },
+    {
+        "Test":  "guard lock",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-12\\remote.git"
+    },
+    {
+        "Test":  "guard operation",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-13\\remote.git"
+    },
+    {
+        "Test":  "guard assume",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-14\\remote.git"
+    },
+    {
+        "Test":  "guard skip",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-15\\remote.git"
+    },
+    {
+        "Test":  "guard hook",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-16\\remote.git"
+    },
+    {
+        "Test":  "guard filter",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-17\\remote.git"
+    },
+    {
+        "Test":  "guard shallow",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-18\\remote.git"
+    },
+    {
+        "Test":  "guard replace",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-19\\remote.git"
+    },
+    {
+        "Test":  "normal publication note.md",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-20\\remote.git"
+    },
+    {
+        "Test":  "normal publication documentation/space name.md",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-21\\remote.git"
+    },
+    {
+        "Test":  "normal publication documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-22\\remote.git"
+    },
+    {
+        "Test":  "refusal REVIEW",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-23\\remote.git"
+    },
+    {
+        "Test":  "refusal STAGE",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-24\\remote.git"
+    },
+    {
+        "Test":  "refusal COMMIT",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-25\\remote.git"
+    },
+    {
+        "Test":  "refusal PUSH",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-26\\remote.git"
+    },
+    {
+        "Test":  "outgoing-only retry",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-27\\remote.git"
+    },
+    {
+        "Test":  "failed push retains local commit",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-28\\remote.git"
+    },
+    {
+        "Test":  "reconciliation Merge",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-29\\remote.git"
+    },
+    {
+        "Test":  "reconciliation Rebase",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-30\\remote.git"
+    },
+    {
+        "Test":  "synthetic secret suppression",
+        "Result":  "FAIL",
+        "Reason":  "To H:\\Users\\Gus\\source\\repo\\markei-season-02\\.grm-git-acceptance-work\\20260930T0352305346076\\case-31\\remote.git"
+    }
+]

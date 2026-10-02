@@ -1,0 +1,170 @@
+﻿[
+    {
+        "Test":  "registration/syntax GS-GIT-01",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-02",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-03",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-04",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "registration/syntax GS-GIT-05",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "current publishability documentation/GRM.md",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "current publishability documentation/G_SCRIPTS.md",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "current publishability documentation/I_SCRIPTS.ps1",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "canonical bracket publication policy",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "historical caller uses actual HEAD revision",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "noncanonical brackets remain rejected",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "classification aligned dirty=False",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "classification aligned dirty=True",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "classification remote-ahead dirty=False",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "classification remote-ahead dirty=True",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "classification local-ahead dirty=False",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "classification local-ahead dirty=True",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "classification diverged dirty=False",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "classification diverged dirty=True",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "guard wrong-branch",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "guard detached",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "guard wrong-origin",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "guard lock",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "guard operation",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "guard assume",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "guard skip",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "guard hook",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "guard filter",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "guard shallow",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "guard replace",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "normal publication note.md",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "normal publication documentation/space name.md",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "normal publication documentation/sketch_notebook/[M]_STAGE/J_MAIN_STAGE.md",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "refusal REVIEW",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "refusal STAGE",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "refusal COMMIT",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "refusal PUSH",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "outgoing-only retry",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "failed push retains local commit",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "reconciliation Merge",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "reconciliation Rebase",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "synthetic secret suppression",
+        "Result":  "PASS"
+    }
+]

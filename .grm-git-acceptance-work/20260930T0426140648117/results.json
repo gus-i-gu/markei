@@ -1,0 +1,26 @@
+﻿[
+    {
+        "Test":  "existing conflicts classify STOP",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "unsupported outgoing topology octopus",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "unsupported outgoing topology additional-merge",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "unsupported outgoing topology wrong-second-parent",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "GIT05 transition refusal FAST-FORWARD",
+        "Result":  "PASS"
+    },
+    {
+        "Test":  "GIT05 transition refusal PUBLISH",
+        "Result":  "PASS"
+    }
+]
