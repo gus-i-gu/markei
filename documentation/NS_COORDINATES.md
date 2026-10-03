@@ -51,9 +51,9 @@ MigrationDirectory: services/markei_sync_api/migrations
 
 ```text
 RenderEnvironment: Season 02
-RenderServiceName: markei-sync-api-s02-dev
-RenderServiceId: srv-dar7ou3tqb8s73frrkj0
-RenderPublicOrigin: https://markei-sync-api-s02-dev.onrender.com
+RenderServiceName: marc-sync-api
+RenderServiceId: srv-db0ncigu01pc73b4ljo0
+RenderPublicOrigin: https://marc-sync-api.onrender.com
 RenderRegion: Oregon (US West)
 RenderDeployBranch: markei-season-02
 RenderLivePath: /health/live
@@ -61,8 +61,8 @@ RenderReadyPath: /health/ready
 RenderIdentityPath: /v1/identity
 RenderSyncSubmissionsPath: /v1/sync/submissions
 RenderNodeMajor: 24
-RenderBuildCommand: npm ci --include=dev && npm run build
-RenderStartCommand: npm start
+RenderBuildCommand: cd services/markei_sync_api && npm ci --include=dev && npm run build
+RenderStartCommand: cd services/markei_sync_api && MARKEI_PUBLIC_ORIGIN="$RENDER_EXTERNAL_URL" npm start
 ```
 
 `RenderServiceId` is optional and should remain a placeholder until a reviewed
@@ -72,17 +72,17 @@ Render API/CLI procedure actually consumes it.
 
 ```text
 Auth0Environment: development
-Auth0TenantDomain: dev-3konqrvsitqugd48.us.auth0.com
-Auth0Issuer: https://dev-3konqrvsitqugd48.us.auth0.com/
-Auth0Audience: https://api.markei.invalid/development-r2
-Auth0ApiName: Markei Development API R2
+Auth0TenantDomain: dev-vxt0inrppc8jfz45.us.auth0.com
+Auth0Issuer: https://dev-vxt0inrppc8jfz45.us.auth0.com/
+Auth0Audience: https://marc-sync-api.onrender.com
+Auth0ApiName: Markei Sync API
 Auth0Algorithm: RS256
 Auth0DiscoveryPath: /.well-known/openid-configuration
 Auth0JwksPath: /.well-known/jwks.json
-Auth0AndroidApplicationName: Markei Android Development R2
-Auth0AndroidClientId: VuW4Y9Vbi8Lpyctjgc1A743YKsYyyRO3
-Auth0WindowsApplicationName: Markei Windows Development R2
-Auth0WindowsClientId: o1Xh2pce1AFg0kPQNUQFRm4Gk39MgCgh
+Auth0AndroidApplicationName: Markei Android
+Auth0AndroidClientId: CGtzRAydx0yXcARro4AuvEK3nAdhUAFT
+Auth0WindowsApplicationName: Markei Windows
+Auth0WindowsClientId: qYQtjDqeUS9aNzNiz2djJE5OBGTRhOwP
 ```
 
 The discovery and JWKS URLs are derived from `Auth0Issuer` plus their stored

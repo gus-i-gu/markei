@@ -111,7 +111,7 @@ class _MarkeiAppState extends State<MarkeiApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Markei',
+      title: 'Marc',
       theme: markeiTheme(),
       home: MarkeiShell(
         destinations: _destinations,
@@ -177,6 +177,11 @@ class _MarkeiAppState extends State<MarkeiApp> {
     MarkeiDestinationId.documentation: const _StaticPage(
       title: 'Documentation',
       body:
+          'Marc is an unfinished beta. Features are still under development, '
+          'and malfunctions may occur. High server load may cause slow responses, '
+          'failed sign-ins, or delayed or interrupted synchronization.\n\n'
+          'The official release is tentatively planned for around October 21, '
+          '2026. This is an estimate, not a confirmed release date, and may change.\n\n'
           'This beta uses local offline-first storage for purchase registration and review.',
     ),
     MarkeiDestinationId.settings: SettingsPage(

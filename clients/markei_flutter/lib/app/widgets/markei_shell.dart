@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../design/markei_theme.dart';
 import '../navigation/markei_destination.dart';
 import 'markei_components.dart';
+import 'marc_brand.dart';
 
 class MarkeiShell extends StatelessWidget {
   const MarkeiShell({
@@ -30,6 +31,7 @@ class MarkeiShell extends StatelessWidget {
         if (layoutClass == MarkeiLayoutClass.compact) {
           return Scaffold(
             appBar: AppBar(
+              leading: const MarcBrand(compact: true),
               title: Text(_selectedDestination.label),
               centerTitle: true,
               scrolledUnderElevation: 0,
@@ -74,6 +76,7 @@ class MarkeiShell extends StatelessWidget {
 
         final rail = NavigationRail(
           key: const Key('markei.navigationRail'),
+          leading: MarcBrand(compact: layoutClass != MarkeiLayoutClass.wide),
           selectedIndex: _selectedRailIndex,
           onDestinationSelected: (index) =>
               _selectDestination(destinations[index]),

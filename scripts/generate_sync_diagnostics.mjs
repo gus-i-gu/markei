@@ -46,7 +46,8 @@ let stale = false;
 for (const [path, content] of outputs) {
   if (check) {
     const current = existsSync(path) ? readFileSync(path, "utf8") : "";
-    if (current !== content) {
+    // Git may check generated files out with CRLF on Windows.
+    if (current.replaceAll("\r\n", "\n") !== content.replaceAll("\r\n", "\n")) {
       console.error(`stale generated output: ${relative(root, path)}`);
       stale = true;
     }
