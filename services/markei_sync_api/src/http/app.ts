@@ -222,7 +222,10 @@ export function buildApp(options: {
 
   app.get("/health/live", async () => ({ status: "live" }));
   app.get("/health/ready", async () => ({
-    status: await readyStatus(options.database),
+    status: await readyStatus(
+      options.database,
+      options.authorization.kind === "hosted",
+    ),
   }));
   app.register(sensible);
   app.addHook("onRequest", async (request) => {
@@ -981,11 +984,13 @@ function operationClass(request: FastifyRequest) {
   return descriptor?.operation ?? "unclassified";
 }
 
-async function readyStatus(database: Database | undefined) {
+async function readyStatus(database: Database | undefined, onboarding = false) {
   if (!database) return "not-ready";
   try {
     const result = await database.pool.query(
-      "select public.markei_hosted_runtime_ready_v2() as ready",
+      onboarding
+        ? "select public.markei_hosted_runtime_ready_v3() as ready"
+        : "select public.markei_hosted_runtime_ready_v2() as ready",
     );
     return result.rows[0]?.ready === true ? "ready" : "not-ready";
   } catch {

@@ -110,6 +110,7 @@ ORDER BY type, name;
 -- DBM-MIGRATION|005|005_hosted_authorization_fence|c10-s03a-r2-hosted-authorization-fence-v1|services/markei_sync_api/migrations/005_hosted_authorization_fence.sql|E99F20BC7C718BA8B4614DB0E370F0E1535E5B357770DC2E402D0A8BBC5B312C|NONE|NONE
 -- DBM-MIGRATION|006|006_hosted_authorization_r3|c10-s03a-r3-hosted-authorization-v1|services/markei_sync_api/migrations/006_hosted_authorization_r3.sql|7B83DC34464559D9BA7335E27CDA106B34D64EBB49BC2FAC155112A2E78DF87F|NONE|NONE
 -- DBM-MIGRATION|007|007_account_cursor_provisioning|c10-mcg02-account-cursor-provisioning-v1|services/markei_sync_api/migrations/007_account_cursor_provisioning.sql|89AB11302F8B860C52AA1C74FBFEDF6A4DB3A0EE62FE7CB715B20B74AEF99AC6|NONE|NONE
+-- DBM-MIGRATION|008|008_automatic_membership|lp-c00-automatic-membership-v1|services/markei_sync_api/migrations/008_automatic_membership.sql|988DCED0B75271E025E2DEA262342CE075E312DF942B36D622589766B07FE56E|services/markei_sync_api/migrations/008_automatic_membership.down.sql|50B847DF6EB8862FB7C6D7CBBE24EAA1AC69C974FD99D9FC5D0A356BDA8670B6
 
 -- ============================================================================
 -- DBM-AUTO-01 | SANITIZED CONNECTION PROOF

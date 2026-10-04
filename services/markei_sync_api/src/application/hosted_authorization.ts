@@ -157,13 +157,14 @@ export class HostedIdentityService {
           "before-identity-membership-fence",
           transactionContext,
         );
-        const membership = await resolveOneMembership(client, principal);
+        const membership = await resolveEnrollmentMembership(client, principal);
         Object.assign(transactionContext, {
           accountId: membership.accountId,
           identityId: membership.identityId,
         });
         await this.barrier.reach("after-membership-lock", transactionContext);
         await setAccount(client, membership.accountId);
+        await setIdentity(client, membership.identityId);
         const hash = canonicalHash(body);
         const existing = await client.query(
           `select request_hash, stored_result, state
@@ -435,6 +436,28 @@ type DeviceTargetSnapshot = {
   enrollmentState: "active" | "revoked" | "replaced";
   generation: number;
 };
+
+async function resolveEnrollmentMembership(
+  client: PoolClient,
+  principal: ExternalPrincipal,
+): Promise<Membership> {
+  const result = await client.query(
+    "select identity_id, account_id, role from public.markei_onboard_identity_membership($1,$2)",
+    [principal.issuer, principal.subject],
+  );
+  if (result.rows.length === 0) {
+    throw new HostedAuthError("membership-required", 403);
+  }
+  if (result.rows.length > 1) {
+    throw new HostedAuthError("account-selection-required", 409);
+  }
+  const row = result.rows[0];
+  return {
+    identityId: String(row.identity_id),
+    accountId: String(row.account_id),
+    role: row.role as "owner" | "member",
+  };
+}
 
 async function resolveOneMembership(
   client: PoolClient,

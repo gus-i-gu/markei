@@ -17,7 +17,8 @@
     "lab:recovery": "tsx src/recovery_lab.ts",
     "test:hosted-local": "tsx src/hosted_local_harness.ts",
     "typecheck": "tsc --noEmit",
-    "test": "node --test --import tsx test/*.test.ts"
+    "test": "node --test --import tsx test/*.test.ts",
+    "test:onboarding": "node --test --import tsx test/automatic_membership.postgres.ts"
   },
   "dependencies": {
     "@fastify/sensible": "6.0.3",
