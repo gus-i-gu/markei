@@ -1,0 +1,62 @@
+{
+  "archive_date": "2026-10-04",
+  "source_commit": "fdd901f8ebeab7f530f4c277e0add39cb6a5b52a",
+  "source_branch": "markei-season-02",
+  "capture_utc": "2026-10-04T03:14:27.451628+00:00",
+  "scope": "Public-schema metadata and migration ledger only; all rendered reference SQL commented; no application data or credentials",
+  "provider_writes_performed": false,
+  "restore_tested": false,
+  "counts": {
+    "tables": 17,
+    "columns": 126,
+    "constraints": 194,
+    "indexes": 33,
+    "policies": 15,
+    "application_functions": 5,
+    "triggers": 1
+  },
+  "canonical_migrations": [
+    {
+      "file": "source-migrations/001_init.sql",
+      "source_path": "services/markei_sync_api/migrations/001_init.sql",
+      "sha256": "f48a9e5d097be5bd758ff76ff83d8ce8f81f364050f7df4e3b463d26c18bd0cd",
+      "bytes": 2685
+    },
+    {
+      "file": "source-migrations/002_coordination_hardening.sql",
+      "source_path": "services/markei_sync_api/migrations/002_coordination_hardening.sql",
+      "sha256": "32a0215e553585f48c8f9a8d50a622e34296a3f0d94fcdaf60a9ded278bed923",
+      "bytes": 4335
+    },
+    {
+      "file": "source-migrations/003_retention_snapshot_recovery.sql",
+      "source_path": "services/markei_sync_api/migrations/003_retention_snapshot_recovery.sql",
+      "sha256": "b5ba579866cf0c2b3376eb3fb35d208772970adf6f570d9cb8a5569cbbd80c1d",
+      "bytes": 7576
+    },
+    {
+      "file": "source-migrations/004_hosted_identity_enrollment.sql",
+      "source_path": "services/markei_sync_api/migrations/004_hosted_identity_enrollment.sql",
+      "sha256": "937a2a6b2f23d1c2c3e3926c5d925a840a4f8382e75de04321a1a56185fbebdc",
+      "bytes": 5349
+    },
+    {
+      "file": "source-migrations/005_hosted_authorization_fence.sql",
+      "source_path": "services/markei_sync_api/migrations/005_hosted_authorization_fence.sql",
+      "sha256": "e99f20bc7c718ba8b4614db0e370f0e1535e5b357770dc2e402d0a8bbc5b312c",
+      "bytes": 3368
+    },
+    {
+      "file": "source-migrations/006_hosted_authorization_r3.sql",
+      "source_path": "services/markei_sync_api/migrations/006_hosted_authorization_r3.sql",
+      "sha256": "7b83dc34464559d9ba7335e27cda106b34d64ebb49bc2fac155112a2e78df87f",
+      "bytes": 797
+    },
+    {
+      "file": "source-migrations/007_account_cursor_provisioning.sql",
+      "source_path": "services/markei_sync_api/migrations/007_account_cursor_provisioning.sql",
+      "sha256": "89ab11302f8b860c52aa1c74fbfedf6a4db3a0ee62fe7cb715b20b74aef99ac6",
+      "bytes": 2860
+    }
+  ]
+}

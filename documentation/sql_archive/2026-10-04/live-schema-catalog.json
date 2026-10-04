@@ -1,0 +1,3028 @@
+{
+  "enums": null,
+  "views": null,
+  "tables": [
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_recovery_worker=r/markei_migrator,markei_runtime=r/markei_migrator}",
+      "kind": "r",
+      "name": "account_cursor_state",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "next_cursor",
+          "type": "bigint",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator}",
+      "kind": "r",
+      "name": "account_memberships",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "identity_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "role",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "membership_version",
+          "type": "bigint",
+          "default": "1",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator,markei_recovery_worker=arw/markei_migrator}",
+      "kind": "r",
+      "name": "account_retention_state",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "earliest_incremental_cursor",
+          "type": "bigint",
+          "default": "1",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "current_snapshot_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "policy_version",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "recovery_format_version",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator,markei_recovery_worker=r/markei_migrator}",
+      "kind": "r",
+      "name": "accounts",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_recovery_worker=arw/markei_migrator}",
+      "kind": "r",
+      "name": "cleanup_runs",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "cleanup_run_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "policy_version",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "snapshot_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "proposed_through_cursor",
+          "type": "bigint",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "committed_through_cursor",
+          "type": "bigint",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "state",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "attempts",
+          "type": "integer",
+          "default": "0",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "deleted_count",
+          "type": "integer",
+          "default": "0",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "started_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "finished_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator,markei_recovery_worker=r/markei_migrator}",
+      "kind": "r",
+      "name": "device_acknowledgements",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "device_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "greatest_contiguous_cursor",
+          "type": "bigint",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator}",
+      "kind": "r",
+      "name": "device_enrollment_requests",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "identity_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "enrollment_request_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "installation_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "request_hash",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "state",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "device_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "stored_result",
+          "type": "jsonb",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator}",
+      "kind": "r",
+      "name": "device_enrollments",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "installation_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "device_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "identity_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "state",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "generation",
+          "type": "bigint",
+          "default": "1",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=ar/markei_migrator}",
+      "kind": "r",
+      "name": "device_security_events",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "event_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "actor_identity_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "target_device_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "event_type",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "correlation_id",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "occurred_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator,markei_recovery_worker=r/markei_migrator}",
+      "kind": "r",
+      "name": "devices",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "device_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "next_expected_sequence",
+          "type": "bigint",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "last_seen_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "lease_expires_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator}",
+      "kind": "r",
+      "name": "external_identities",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "identity_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "issuer",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "subject",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": false
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator}",
+      "kind": "r",
+      "name": "migration_ledger",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "migration_id",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "checksum",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "applied_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": false
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator}",
+      "kind": "r",
+      "name": "rebootstrap_sessions",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "device_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "recovery_session_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "snapshot_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "request_hash",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "state",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "stored_result",
+          "type": "jsonb",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "last_chunk_index",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "completed_cursor",
+          "type": "bigint",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator,markei_recovery_worker=arwd/markei_migrator}",
+      "kind": "r",
+      "name": "recovery_snapshot_chunks",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "snapshot_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "chunk_index",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "byte_length",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "content_hash",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "chunk_bytes",
+          "type": "bytea",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator,markei_recovery_worker=arw/markei_migrator}",
+      "kind": "r",
+      "name": "recovery_snapshots",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "snapshot_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "state",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "covered_through_cursor",
+          "type": "bigint",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "captured_high_water_cursor",
+          "type": "bigint",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "recovery_format_version",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "compatible_event_version",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "compatible_schema_version",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "chunk_count",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "total_bytes",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "manifest_hash",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "total_hash",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "fact_counts",
+          "type": "jsonb",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "supersedes_snapshot_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "built_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "validated_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        },
+        {
+          "name": "published_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "identity": "",
+          "not_null": false,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator}",
+      "kind": "r",
+      "name": "submissions",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "device_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "submission_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "request_hash",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "stored_result",
+          "type": "jsonb",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    },
+    {
+      "acl": "{markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator,markei_recovery_worker=rd/markei_migrator}",
+      "kind": "r",
+      "name": "sync_events",
+      "owner": "markei_migrator",
+      "columns": [
+        {
+          "name": "event_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "account_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "device_id",
+          "type": "uuid",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "device_sequence",
+          "type": "bigint",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "server_cursor",
+          "type": "bigint",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "event_type",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "payload_version",
+          "type": "integer",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "occurrence_time",
+          "type": "timestamp with time zone",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "payload",
+          "type": "jsonb",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "content_hash",
+          "type": "text",
+          "default": null,
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        },
+        {
+          "name": "received_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "identity": "",
+          "not_null": true,
+          "generated": ""
+        }
+      ],
+      "rls_forced": false,
+      "rls_enabled": true
+    }
+  ],
+  "indexes": [
+    {
+      "indexdef": "CREATE UNIQUE INDEX account_cursor_state_pkey ON public.account_cursor_state USING btree (account_id)",
+      "indexname": "account_cursor_state_pkey",
+      "tablename": "account_cursor_state"
+    },
+    {
+      "indexdef": "CREATE INDEX account_memberships_identity_active_idx ON public.account_memberships USING btree (identity_id, status, account_id)",
+      "indexname": "account_memberships_identity_active_idx",
+      "tablename": "account_memberships"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX account_memberships_pkey ON public.account_memberships USING btree (account_id, identity_id)",
+      "indexname": "account_memberships_pkey",
+      "tablename": "account_memberships"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX account_retention_state_pkey ON public.account_retention_state USING btree (account_id)",
+      "indexname": "account_retention_state_pkey",
+      "tablename": "account_retention_state"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX accounts_pkey ON public.accounts USING btree (account_id)",
+      "indexname": "accounts_pkey",
+      "tablename": "accounts"
+    },
+    {
+      "indexdef": "CREATE INDEX cleanup_runs_claim_idx ON public.cleanup_runs USING btree (account_id, state, started_at)",
+      "indexname": "cleanup_runs_claim_idx",
+      "tablename": "cleanup_runs"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX cleanup_runs_pkey ON public.cleanup_runs USING btree (account_id, cleanup_run_id)",
+      "indexname": "cleanup_runs_pkey",
+      "tablename": "cleanup_runs"
+    },
+    {
+      "indexdef": "CREATE INDEX device_acknowledgements_lookup_idx ON public.device_acknowledgements USING btree (account_id, device_id, greatest_contiguous_cursor)",
+      "indexname": "device_acknowledgements_lookup_idx",
+      "tablename": "device_acknowledgements"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX device_acknowledgements_pkey ON public.device_acknowledgements USING btree (account_id, device_id)",
+      "indexname": "device_acknowledgements_pkey",
+      "tablename": "device_acknowledgements"
+    },
+    {
+      "indexdef": "CREATE INDEX device_enrollment_requests_lookup_idx ON public.device_enrollment_requests USING btree (account_id, identity_id, enrollment_request_id, state)",
+      "indexname": "device_enrollment_requests_lookup_idx",
+      "tablename": "device_enrollment_requests"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX device_enrollment_requests_pkey ON public.device_enrollment_requests USING btree (account_id, identity_id, enrollment_request_id)",
+      "indexname": "device_enrollment_requests_pkey",
+      "tablename": "device_enrollment_requests"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX device_enrollments_account_id_device_id_key ON public.device_enrollments USING btree (account_id, device_id)",
+      "indexname": "device_enrollments_account_id_device_id_key",
+      "tablename": "device_enrollments"
+    },
+    {
+      "indexdef": "CREATE INDEX device_enrollments_identity_idx ON public.device_enrollments USING btree (identity_id, state)",
+      "indexname": "device_enrollments_identity_idx",
+      "tablename": "device_enrollments"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX device_enrollments_pkey ON public.device_enrollments USING btree (account_id, installation_id)",
+      "indexname": "device_enrollments_pkey",
+      "tablename": "device_enrollments"
+    },
+    {
+      "indexdef": "CREATE INDEX device_security_events_account_time_idx ON public.device_security_events USING btree (account_id, occurred_at DESC)",
+      "indexname": "device_security_events_account_time_idx",
+      "tablename": "device_security_events"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX device_security_events_pkey ON public.device_security_events USING btree (event_id)",
+      "indexname": "device_security_events_pkey",
+      "tablename": "device_security_events"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX devices_pkey ON public.devices USING btree (account_id, device_id)",
+      "indexname": "devices_pkey",
+      "tablename": "devices"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX external_identities_issuer_subject_key ON public.external_identities USING btree (issuer, subject)",
+      "indexname": "external_identities_issuer_subject_key",
+      "tablename": "external_identities"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX external_identities_pkey ON public.external_identities USING btree (identity_id)",
+      "indexname": "external_identities_pkey",
+      "tablename": "external_identities"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX migration_ledger_pkey ON public.migration_ledger USING btree (migration_id)",
+      "indexname": "migration_ledger_pkey",
+      "tablename": "migration_ledger"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX rebootstrap_sessions_pkey ON public.rebootstrap_sessions USING btree (account_id, device_id, recovery_session_id)",
+      "indexname": "rebootstrap_sessions_pkey",
+      "tablename": "rebootstrap_sessions"
+    },
+    {
+      "indexdef": "CREATE INDEX rebootstrap_sessions_replay_idx ON public.rebootstrap_sessions USING btree (account_id, device_id, recovery_session_id, request_hash)",
+      "indexname": "rebootstrap_sessions_replay_idx",
+      "tablename": "rebootstrap_sessions"
+    },
+    {
+      "indexdef": "CREATE INDEX recovery_snapshot_chunks_order_idx ON public.recovery_snapshot_chunks USING btree (account_id, snapshot_id, chunk_index)",
+      "indexname": "recovery_snapshot_chunks_order_idx",
+      "tablename": "recovery_snapshot_chunks"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX recovery_snapshot_chunks_pkey ON public.recovery_snapshot_chunks USING btree (account_id, snapshot_id, chunk_index)",
+      "indexname": "recovery_snapshot_chunks_pkey",
+      "tablename": "recovery_snapshot_chunks"
+    },
+    {
+      "indexdef": "CREATE INDEX recovery_snapshots_available_idx ON public.recovery_snapshots USING btree (account_id, recovery_format_version, state, covered_through_cursor)",
+      "indexname": "recovery_snapshots_available_idx",
+      "tablename": "recovery_snapshots"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX recovery_snapshots_pkey ON public.recovery_snapshots USING btree (account_id, snapshot_id)",
+      "indexname": "recovery_snapshots_pkey",
+      "tablename": "recovery_snapshots"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX submissions_pkey ON public.submissions USING btree (account_id, device_id, submission_id)",
+      "indexname": "submissions_pkey",
+      "tablename": "submissions"
+    },
+    {
+      "indexdef": "CREATE INDEX submissions_replay_idx ON public.submissions USING btree (account_id, device_id, submission_id, request_hash)",
+      "indexname": "submissions_replay_idx",
+      "tablename": "submissions"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX sync_events_account_id_device_id_device_sequence_key ON public.sync_events USING btree (account_id, device_id, device_sequence)",
+      "indexname": "sync_events_account_id_device_id_device_sequence_key",
+      "tablename": "sync_events"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX sync_events_account_id_server_cursor_key ON public.sync_events USING btree (account_id, server_cursor)",
+      "indexname": "sync_events_account_id_server_cursor_key",
+      "tablename": "sync_events"
+    },
+    {
+      "indexdef": "CREATE INDEX sync_events_download_idx ON public.sync_events USING btree (account_id, server_cursor)",
+      "indexname": "sync_events_download_idx",
+      "tablename": "sync_events"
+    },
+    {
+      "indexdef": "CREATE UNIQUE INDEX sync_events_pkey ON public.sync_events USING btree (event_id)",
+      "indexname": "sync_events_pkey",
+      "tablename": "sync_events"
+    },
+    {
+      "indexdef": "CREATE INDEX sync_events_replay_idx ON public.sync_events USING btree (account_id, event_id, content_hash)",
+      "indexname": "sync_events_replay_idx",
+      "tablename": "sync_events"
+    }
+  ],
+  "database": "markei_sync_dev",
+  "policies": [
+    {
+      "cmd": "ALL",
+      "qual": "((account_id)::text = current_setting('markei.account_id'::text, true))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "account_cursor_state",
+      "permissive": "PERMISSIVE",
+      "policyname": "account_cursor_state_account_isolation",
+      "with_check": "((account_id)::text = current_setting('markei.account_id'::text, true))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "(((account_id)::text = current_setting('markei.account_id'::text, true)) OR ((identity_id)::text = current_setting('markei.identity_id'::text, true)))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "account_memberships",
+      "permissive": "PERMISSIVE",
+      "policyname": "account_memberships_context_isolation",
+      "with_check": "((account_id)::text = current_setting('markei.account_id'::text, true))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "((account_id)::text = current_setting('markei.account_id'::text, true))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "account_retention_state",
+      "permissive": "PERMISSIVE",
+      "policyname": "account_retention_state_account_isolation",
+      "with_check": "((account_id)::text = current_setting('markei.account_id'::text, true))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "((account_id)::text = current_setting('markei.account_id'::text, true))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "accounts",
+      "permissive": "PERMISSIVE",
+      "policyname": "accounts_account_isolation",
+      "with_check": null
+    },
+    {
+      "cmd": "ALL",
+      "qual": "((account_id)::text = current_setting('markei.account_id'::text, true))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "cleanup_runs",
+      "permissive": "PERMISSIVE",
+      "policyname": "cleanup_runs_account_isolation",
+      "with_check": "((account_id)::text = current_setting('markei.account_id'::text, true))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "(((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true)))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "device_acknowledgements",
+      "permissive": "PERMISSIVE",
+      "policyname": "device_acknowledgements_account_isolation",
+      "with_check": "(((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true)))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "((account_id)::text = current_setting('markei.account_id'::text, true))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "device_enrollment_requests",
+      "permissive": "PERMISSIVE",
+      "policyname": "device_enrollment_requests_account_isolation",
+      "with_check": "((account_id)::text = current_setting('markei.account_id'::text, true))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "(((account_id)::text = current_setting('markei.account_id'::text, true)) AND (((device_id)::text = current_setting('markei.device_id'::text, true)) OR (current_setting('markei.operation'::text, true) = 'device-management'::text) OR ((identity_id)::text = current_setting('markei.identity_id'::text, true))))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "device_enrollments",
+      "permissive": "PERMISSIVE",
+      "policyname": "device_enrollments_account_isolation",
+      "with_check": "(((account_id)::text = current_setting('markei.account_id'::text, true)) AND (((device_id)::text = current_setting('markei.device_id'::text, true)) OR (current_setting('markei.operation'::text, true) = 'device-management'::text) OR ((identity_id)::text = current_setting('markei.identity_id'::text, true))))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "((account_id)::text = current_setting('markei.account_id'::text, true))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "device_security_events",
+      "permissive": "PERMISSIVE",
+      "policyname": "device_security_events_account_isolation",
+      "with_check": "((account_id)::text = current_setting('markei.account_id'::text, true))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "(((account_id)::text = current_setting('markei.account_id'::text, true)) AND (((device_id)::text = current_setting('markei.device_id'::text, true)) OR (current_setting('markei.operation'::text, true) = 'device-management'::text)))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "devices",
+      "permissive": "PERMISSIVE",
+      "policyname": "devices_account_isolation",
+      "with_check": "(((account_id)::text = current_setting('markei.account_id'::text, true)) AND (((device_id)::text = current_setting('markei.device_id'::text, true)) OR (current_setting('markei.operation'::text, true) = 'device-management'::text)))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "(((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true)))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "rebootstrap_sessions",
+      "permissive": "PERMISSIVE",
+      "policyname": "rebootstrap_sessions_account_isolation",
+      "with_check": "(((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true)))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "((account_id)::text = current_setting('markei.account_id'::text, true))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "recovery_snapshot_chunks",
+      "permissive": "PERMISSIVE",
+      "policyname": "recovery_snapshot_chunks_account_isolation",
+      "with_check": "((account_id)::text = current_setting('markei.account_id'::text, true))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "((account_id)::text = current_setting('markei.account_id'::text, true))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "recovery_snapshots",
+      "permissive": "PERMISSIVE",
+      "policyname": "recovery_snapshots_account_isolation",
+      "with_check": "((account_id)::text = current_setting('markei.account_id'::text, true))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "(((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true)))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "submissions",
+      "permissive": "PERMISSIVE",
+      "policyname": "submissions_account_isolation",
+      "with_check": "(((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true)))"
+    },
+    {
+      "cmd": "ALL",
+      "qual": "((account_id)::text = current_setting('markei.account_id'::text, true))",
+      "roles": [
+        "public"
+      ],
+      "tablename": "sync_events",
+      "permissive": "PERMISSIVE",
+      "policyname": "sync_events_account_isolation",
+      "with_check": "(((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true)))"
+    }
+  ],
+  "triggers": [
+    {
+      "name": "accounts_provision_cursor_state_after_insert",
+      "table": "accounts",
+      "enabled": "O",
+      "definition": "CREATE TRIGGER accounts_provision_cursor_state_after_insert AFTER INSERT ON public.accounts FOR EACH ROW EXECUTE FUNCTION markei_provision_account_cursor_state()"
+    }
+  ],
+  "functions": [
+    {
+      "acl": "{markei_migrator=X/markei_migrator,markei_runtime=X/markei_migrator}",
+      "name": "markei_authorize_identity_membership",
+      "owner": "markei_migrator",
+      "settings": [
+        "search_path=pg_catalog, public"
+      ],
+      "definition": "CREATE OR REPLACE FUNCTION public.markei_authorize_identity_membership(p_issuer text, p_subject text)\n RETURNS TABLE(identity_id uuid, account_id uuid, role text)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\r\ndeclare\r\n  v_identity_id uuid;\r\nbegin\r\n  if p_issuer is null or length(p_issuer) < 12 or length(p_issuer) > 512 then\r\n    return;\r\n  end if;\r\n  if p_subject is null or length(p_subject) < 1 or length(p_subject) > 256 then\r\n    return;\r\n  end if;\r\n\r\n  select ei.identity_id\r\n    into v_identity_id\r\n    from public.external_identities ei\r\n   where ei.issuer = p_issuer\r\n     and ei.subject = p_subject\r\n     and ei.status = 'active'\r\n   for update;\r\n\r\n  if v_identity_id is null then\r\n    return;\r\n  end if;\r\n\r\n  return query\r\n    select am.identity_id, am.account_id, am.role\r\n      from public.account_memberships am\r\n     where am.identity_id = v_identity_id\r\n       and am.status = 'active'\r\n     order by am.account_id\r\n     for update;\r\nend;\r\n$function$\n",
+      "security_definer": true,
+      "identity_arguments": "p_issuer text, p_subject text"
+    },
+    {
+      "acl": "{markei_migrator=X/markei_migrator,markei_runtime=X/markei_migrator}",
+      "name": "markei_hosted_runtime_ready",
+      "owner": "markei_migrator",
+      "settings": [
+        "search_path=pg_catalog, public"
+      ],
+      "definition": "CREATE OR REPLACE FUNCTION public.markei_hosted_runtime_ready()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\r\n  select exists (\r\n    select 1\r\n      from public.migration_ledger ml\r\n     where ml.migration_id = '006_hosted_authorization_r3'\r\n       and ml.checksum = 'c10-s03a-r3-hosted-authorization-v1'\r\n  );\r\n$function$\n",
+      "security_definer": true,
+      "identity_arguments": ""
+    },
+    {
+      "acl": "{markei_migrator=X/markei_migrator,markei_runtime=X/markei_migrator}",
+      "name": "markei_hosted_runtime_ready_v2",
+      "owner": "markei_migrator",
+      "settings": [
+        "search_path=pg_catalog, public"
+      ],
+      "definition": "CREATE OR REPLACE FUNCTION public.markei_hosted_runtime_ready_v2()\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\r\n  select exists (\r\n    select 1\r\n      from public.migration_ledger ml\r\n     where ml.migration_id = '006_hosted_authorization_r3'\r\n       and ml.checksum = 'c10-s03a-r3-hosted-authorization-v1'\r\n  )\r\n  and exists (\r\n    select 1\r\n      from public.migration_ledger ml\r\n     where ml.migration_id = '007_account_cursor_provisioning'\r\n       and ml.checksum = 'c10-mcg02-account-cursor-provisioning-v1'\r\n  );\r\n$function$\n",
+      "security_definer": true,
+      "identity_arguments": ""
+    },
+    {
+      "acl": "{markei_migrator=X/markei_migrator}",
+      "name": "markei_provision_account_cursor_state",
+      "owner": "markei_migrator",
+      "settings": [
+        "search_path=pg_catalog, public"
+      ],
+      "definition": "CREATE OR REPLACE FUNCTION public.markei_provision_account_cursor_state()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\r\nbegin\r\n  insert into public.account_cursor_state(account_id, next_cursor)\r\n  values (new.account_id, 1)\r\n  on conflict(account_id) do nothing;\r\n  return new;\r\nend;\r\n$function$\n",
+      "security_definer": true,
+      "identity_arguments": ""
+    },
+    {
+      "acl": "{markei_migrator=X/markei_migrator}",
+      "name": "markei_required_migration_present",
+      "owner": "markei_migrator",
+      "settings": [
+        "search_path=pg_catalog, public"
+      ],
+      "definition": "CREATE OR REPLACE FUNCTION public.markei_required_migration_present(p_migration_id text)\n RETURNS boolean\n LANGUAGE sql\n STABLE SECURITY DEFINER\n SET search_path TO 'pg_catalog', 'public'\nAS $function$\r\n  select exists (\r\n    select 1\r\n      from public.migration_ledger ml\r\n     where ml.migration_id = p_migration_id\r\n  );\r\n$function$\n",
+      "security_definer": true,
+      "identity_arguments": "p_migration_id text"
+    }
+  ],
+  "read_only": "on",
+  "sequences": null,
+  "extensions": [
+    {
+      "name": "plpgsql",
+      "version": "1.0"
+    }
+  ],
+  "schema_acl": "{pg_database_owner=UC/pg_database_owner,=U/pg_database_owner,markei_migrator=UC/pg_database_owner,markei_runtime=U/pg_database_owner}",
+  "capture_utc": "2026-10-04T03:14:27.451628+00:00",
+  "constraints": [
+    {
+      "name": "account_cursor_state_account_id_fkey",
+      "type": "f",
+      "table": "account_cursor_state",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(account_id)"
+    },
+    {
+      "name": "account_cursor_state_account_id_not_null",
+      "type": "n",
+      "table": "account_cursor_state",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "account_cursor_state_next_cursor_check",
+      "type": "c",
+      "table": "account_cursor_state",
+      "validated": true,
+      "definition": "CHECK ((next_cursor > 0))"
+    },
+    {
+      "name": "account_cursor_state_next_cursor_not_null",
+      "type": "n",
+      "table": "account_cursor_state",
+      "validated": true,
+      "definition": "NOT NULL next_cursor"
+    },
+    {
+      "name": "account_cursor_state_pkey",
+      "type": "p",
+      "table": "account_cursor_state",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "name": "account_memberships_account_id_fkey",
+      "type": "f",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(account_id)"
+    },
+    {
+      "name": "account_memberships_account_id_not_null",
+      "type": "n",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "account_memberships_created_at_not_null",
+      "type": "n",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "NOT NULL created_at"
+    },
+    {
+      "name": "account_memberships_identity_id_fkey",
+      "type": "f",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "FOREIGN KEY (identity_id) REFERENCES external_identities(identity_id)"
+    },
+    {
+      "name": "account_memberships_identity_id_not_null",
+      "type": "n",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "NOT NULL identity_id"
+    },
+    {
+      "name": "account_memberships_membership_version_check",
+      "type": "c",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "CHECK ((membership_version > 0))"
+    },
+    {
+      "name": "account_memberships_membership_version_not_null",
+      "type": "n",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "NOT NULL membership_version"
+    },
+    {
+      "name": "account_memberships_pkey",
+      "type": "p",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id, identity_id)"
+    },
+    {
+      "name": "account_memberships_role_check",
+      "type": "c",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "CHECK ((role = ANY (ARRAY['owner'::text, 'member'::text])))"
+    },
+    {
+      "name": "account_memberships_role_not_null",
+      "type": "n",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "NOT NULL role"
+    },
+    {
+      "name": "account_memberships_status_check",
+      "type": "c",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'disabled'::text, 'removed'::text])))"
+    },
+    {
+      "name": "account_memberships_status_not_null",
+      "type": "n",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "NOT NULL status"
+    },
+    {
+      "name": "account_memberships_updated_at_not_null",
+      "type": "n",
+      "table": "account_memberships",
+      "validated": true,
+      "definition": "NOT NULL updated_at"
+    },
+    {
+      "name": "account_retention_state_account_id_fkey",
+      "type": "f",
+      "table": "account_retention_state",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(account_id)"
+    },
+    {
+      "name": "account_retention_state_account_id_not_null",
+      "type": "n",
+      "table": "account_retention_state",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "account_retention_state_earliest_incremental_cursor_check",
+      "type": "c",
+      "table": "account_retention_state",
+      "validated": true,
+      "definition": "CHECK ((earliest_incremental_cursor > 0))"
+    },
+    {
+      "name": "account_retention_state_earliest_incremental_cursor_not_null",
+      "type": "n",
+      "table": "account_retention_state",
+      "validated": true,
+      "definition": "NOT NULL earliest_incremental_cursor"
+    },
+    {
+      "name": "account_retention_state_pkey",
+      "type": "p",
+      "table": "account_retention_state",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "name": "account_retention_state_policy_version_not_null",
+      "type": "n",
+      "table": "account_retention_state",
+      "validated": true,
+      "definition": "NOT NULL policy_version"
+    },
+    {
+      "name": "account_retention_state_recovery_format_version_check",
+      "type": "c",
+      "table": "account_retention_state",
+      "validated": true,
+      "definition": "CHECK ((recovery_format_version = 1))"
+    },
+    {
+      "name": "account_retention_state_recovery_format_version_not_null",
+      "type": "n",
+      "table": "account_retention_state",
+      "validated": true,
+      "definition": "NOT NULL recovery_format_version"
+    },
+    {
+      "name": "account_retention_state_updated_at_not_null",
+      "type": "n",
+      "table": "account_retention_state",
+      "validated": true,
+      "definition": "NOT NULL updated_at"
+    },
+    {
+      "name": "accounts_account_id_not_null",
+      "type": "n",
+      "table": "accounts",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "accounts_created_at_not_null",
+      "type": "n",
+      "table": "accounts",
+      "validated": true,
+      "definition": "NOT NULL created_at"
+    },
+    {
+      "name": "accounts_pkey",
+      "type": "p",
+      "table": "accounts",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id)"
+    },
+    {
+      "name": "cleanup_runs_account_id_fkey",
+      "type": "f",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(account_id)"
+    },
+    {
+      "name": "cleanup_runs_account_id_not_null",
+      "type": "n",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "cleanup_runs_attempts_check",
+      "type": "c",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "CHECK ((attempts >= 0))"
+    },
+    {
+      "name": "cleanup_runs_attempts_not_null",
+      "type": "n",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "NOT NULL attempts"
+    },
+    {
+      "name": "cleanup_runs_cleanup_run_id_not_null",
+      "type": "n",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "NOT NULL cleanup_run_id"
+    },
+    {
+      "name": "cleanup_runs_deleted_count_check",
+      "type": "c",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "CHECK ((deleted_count >= 0))"
+    },
+    {
+      "name": "cleanup_runs_deleted_count_not_null",
+      "type": "n",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "NOT NULL deleted_count"
+    },
+    {
+      "name": "cleanup_runs_pkey",
+      "type": "p",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id, cleanup_run_id)"
+    },
+    {
+      "name": "cleanup_runs_policy_version_not_null",
+      "type": "n",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "NOT NULL policy_version"
+    },
+    {
+      "name": "cleanup_runs_proposed_through_cursor_check",
+      "type": "c",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "CHECK ((proposed_through_cursor > 0))"
+    },
+    {
+      "name": "cleanup_runs_proposed_through_cursor_not_null",
+      "type": "n",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "NOT NULL proposed_through_cursor"
+    },
+    {
+      "name": "cleanup_runs_started_at_not_null",
+      "type": "n",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "NOT NULL started_at"
+    },
+    {
+      "name": "cleanup_runs_state_check",
+      "type": "c",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "CHECK ((state = ANY (ARRAY['planned'::text, 'committed'::text, 'failed'::text])))"
+    },
+    {
+      "name": "cleanup_runs_state_not_null",
+      "type": "n",
+      "table": "cleanup_runs",
+      "validated": true,
+      "definition": "NOT NULL state"
+    },
+    {
+      "name": "device_acknowledgements_account_id_not_null",
+      "type": "n",
+      "table": "device_acknowledgements",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "device_acknowledgements_device_fk",
+      "type": "f",
+      "table": "device_acknowledgements",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id)"
+    },
+    {
+      "name": "device_acknowledgements_device_id_not_null",
+      "type": "n",
+      "table": "device_acknowledgements",
+      "validated": true,
+      "definition": "NOT NULL device_id"
+    },
+    {
+      "name": "device_acknowledgements_greatest_contiguous_cursor_check",
+      "type": "c",
+      "table": "device_acknowledgements",
+      "validated": true,
+      "definition": "CHECK ((greatest_contiguous_cursor > 0))"
+    },
+    {
+      "name": "device_acknowledgements_greatest_contiguous_cursor_not_null",
+      "type": "n",
+      "table": "device_acknowledgements",
+      "validated": true,
+      "definition": "NOT NULL greatest_contiguous_cursor"
+    },
+    {
+      "name": "device_acknowledgements_pkey",
+      "type": "p",
+      "table": "device_acknowledgements",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id, device_id)"
+    },
+    {
+      "name": "device_acknowledgements_updated_at_not_null",
+      "type": "n",
+      "table": "device_acknowledgements",
+      "validated": true,
+      "definition": "NOT NULL updated_at"
+    },
+    {
+      "name": "device_enrollment_requests_account_id_device_id_fkey",
+      "type": "f",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id)"
+    },
+    {
+      "name": "device_enrollment_requests_account_id_identity_id_fkey",
+      "type": "f",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id, identity_id) REFERENCES account_memberships(account_id, identity_id)"
+    },
+    {
+      "name": "device_enrollment_requests_account_id_installation_id_fkey",
+      "type": "f",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id, installation_id) REFERENCES device_enrollments(account_id, installation_id) DEFERRABLE INITIALLY DEFERRED"
+    },
+    {
+      "name": "device_enrollment_requests_account_id_not_null",
+      "type": "n",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "device_enrollment_requests_created_at_not_null",
+      "type": "n",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "NOT NULL created_at"
+    },
+    {
+      "name": "device_enrollment_requests_enrollment_request_id_not_null",
+      "type": "n",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "NOT NULL enrollment_request_id"
+    },
+    {
+      "name": "device_enrollment_requests_expires_at_not_null",
+      "type": "n",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "NOT NULL expires_at"
+    },
+    {
+      "name": "device_enrollment_requests_identity_id_fkey",
+      "type": "f",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "FOREIGN KEY (identity_id) REFERENCES external_identities(identity_id)"
+    },
+    {
+      "name": "device_enrollment_requests_identity_id_not_null",
+      "type": "n",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "NOT NULL identity_id"
+    },
+    {
+      "name": "device_enrollment_requests_installation_id_not_null",
+      "type": "n",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "NOT NULL installation_id"
+    },
+    {
+      "name": "device_enrollment_requests_pkey",
+      "type": "p",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id, identity_id, enrollment_request_id)"
+    },
+    {
+      "name": "device_enrollment_requests_request_hash_check",
+      "type": "c",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "CHECK ((length(request_hash) = 64))"
+    },
+    {
+      "name": "device_enrollment_requests_request_hash_not_null",
+      "type": "n",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "NOT NULL request_hash"
+    },
+    {
+      "name": "device_enrollment_requests_state_check",
+      "type": "c",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "CHECK ((state = ANY (ARRAY['pending'::text, 'completed'::text, 'failed'::text, 'expired'::text, 'rate-limited'::text])))"
+    },
+    {
+      "name": "device_enrollment_requests_state_not_null",
+      "type": "n",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "NOT NULL state"
+    },
+    {
+      "name": "device_enrollment_requests_updated_at_not_null",
+      "type": "n",
+      "table": "device_enrollment_requests",
+      "validated": true,
+      "definition": "NOT NULL updated_at"
+    },
+    {
+      "name": "device_enrollments_account_id_device_id_fkey",
+      "type": "f",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id)"
+    },
+    {
+      "name": "device_enrollments_account_id_device_id_key",
+      "type": "u",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "UNIQUE (account_id, device_id)"
+    },
+    {
+      "name": "device_enrollments_account_id_not_null",
+      "type": "n",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "device_enrollments_created_at_not_null",
+      "type": "n",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "NOT NULL created_at"
+    },
+    {
+      "name": "device_enrollments_device_id_not_null",
+      "type": "n",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "NOT NULL device_id"
+    },
+    {
+      "name": "device_enrollments_generation_check",
+      "type": "c",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "CHECK ((generation > 0))"
+    },
+    {
+      "name": "device_enrollments_generation_not_null",
+      "type": "n",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "NOT NULL generation"
+    },
+    {
+      "name": "device_enrollments_identity_id_fkey",
+      "type": "f",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "FOREIGN KEY (identity_id) REFERENCES external_identities(identity_id)"
+    },
+    {
+      "name": "device_enrollments_identity_id_not_null",
+      "type": "n",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "NOT NULL identity_id"
+    },
+    {
+      "name": "device_enrollments_installation_id_not_null",
+      "type": "n",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "NOT NULL installation_id"
+    },
+    {
+      "name": "device_enrollments_pkey",
+      "type": "p",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id, installation_id)"
+    },
+    {
+      "name": "device_enrollments_state_check",
+      "type": "c",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "CHECK ((state = ANY (ARRAY['active'::text, 'revoked'::text, 'replaced'::text])))"
+    },
+    {
+      "name": "device_enrollments_state_not_null",
+      "type": "n",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "NOT NULL state"
+    },
+    {
+      "name": "device_enrollments_updated_at_not_null",
+      "type": "n",
+      "table": "device_enrollments",
+      "validated": true,
+      "definition": "NOT NULL updated_at"
+    },
+    {
+      "name": "device_security_events_account_id_fkey",
+      "type": "f",
+      "table": "device_security_events",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(account_id)"
+    },
+    {
+      "name": "device_security_events_account_id_not_null",
+      "type": "n",
+      "table": "device_security_events",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "device_security_events_account_id_target_device_id_fkey",
+      "type": "f",
+      "table": "device_security_events",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id, target_device_id) REFERENCES devices(account_id, device_id)"
+    },
+    {
+      "name": "device_security_events_actor_identity_id_fkey",
+      "type": "f",
+      "table": "device_security_events",
+      "validated": true,
+      "definition": "FOREIGN KEY (actor_identity_id) REFERENCES external_identities(identity_id)"
+    },
+    {
+      "name": "device_security_events_correlation_id_check",
+      "type": "c",
+      "table": "device_security_events",
+      "validated": true,
+      "definition": "CHECK (((length(correlation_id) >= 1) AND (length(correlation_id) <= 128)))"
+    },
+    {
+      "name": "device_security_events_correlation_id_not_null",
+      "type": "n",
+      "table": "device_security_events",
+      "validated": true,
+      "definition": "NOT NULL correlation_id"
+    },
+    {
+      "name": "device_security_events_event_id_not_null",
+      "type": "n",
+      "table": "device_security_events",
+      "validated": true,
+      "definition": "NOT NULL event_id"
+    },
+    {
+      "name": "device_security_events_event_type_check",
+      "type": "c",
+      "table": "device_security_events",
+      "validated": true,
+      "definition": "CHECK ((event_type = ANY (ARRAY['device-enrolled'::text, 'device-revoked'::text])))"
+    },
+    {
+      "name": "device_security_events_event_type_not_null",
+      "type": "n",
+      "table": "device_security_events",
+      "validated": true,
+      "definition": "NOT NULL event_type"
+    },
+    {
+      "name": "device_security_events_occurred_at_not_null",
+      "type": "n",
+      "table": "device_security_events",
+      "validated": true,
+      "definition": "NOT NULL occurred_at"
+    },
+    {
+      "name": "device_security_events_pkey",
+      "type": "p",
+      "table": "device_security_events",
+      "validated": true,
+      "definition": "PRIMARY KEY (event_id)"
+    },
+    {
+      "name": "devices_account_id_fkey",
+      "type": "f",
+      "table": "devices",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(account_id)"
+    },
+    {
+      "name": "devices_account_id_not_null",
+      "type": "n",
+      "table": "devices",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "devices_created_at_not_null",
+      "type": "n",
+      "table": "devices",
+      "validated": true,
+      "definition": "NOT NULL created_at"
+    },
+    {
+      "name": "devices_device_id_not_null",
+      "type": "n",
+      "table": "devices",
+      "validated": true,
+      "definition": "NOT NULL device_id"
+    },
+    {
+      "name": "devices_next_expected_sequence_check",
+      "type": "c",
+      "table": "devices",
+      "validated": true,
+      "definition": "CHECK ((next_expected_sequence > 0))"
+    },
+    {
+      "name": "devices_next_expected_sequence_not_null",
+      "type": "n",
+      "table": "devices",
+      "validated": true,
+      "definition": "NOT NULL next_expected_sequence"
+    },
+    {
+      "name": "devices_pkey",
+      "type": "p",
+      "table": "devices",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id, device_id)"
+    },
+    {
+      "name": "devices_status_check",
+      "type": "c",
+      "table": "devices",
+      "validated": true,
+      "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'revoked'::text])))"
+    },
+    {
+      "name": "devices_status_not_null",
+      "type": "n",
+      "table": "devices",
+      "validated": true,
+      "definition": "NOT NULL status"
+    },
+    {
+      "name": "external_identities_created_at_not_null",
+      "type": "n",
+      "table": "external_identities",
+      "validated": true,
+      "definition": "NOT NULL created_at"
+    },
+    {
+      "name": "external_identities_identity_id_not_null",
+      "type": "n",
+      "table": "external_identities",
+      "validated": true,
+      "definition": "NOT NULL identity_id"
+    },
+    {
+      "name": "external_identities_issuer_check",
+      "type": "c",
+      "table": "external_identities",
+      "validated": true,
+      "definition": "CHECK (((length(issuer) >= 12) AND (length(issuer) <= 512)))"
+    },
+    {
+      "name": "external_identities_issuer_not_null",
+      "type": "n",
+      "table": "external_identities",
+      "validated": true,
+      "definition": "NOT NULL issuer"
+    },
+    {
+      "name": "external_identities_issuer_subject_key",
+      "type": "u",
+      "table": "external_identities",
+      "validated": true,
+      "definition": "UNIQUE (issuer, subject)"
+    },
+    {
+      "name": "external_identities_pkey",
+      "type": "p",
+      "table": "external_identities",
+      "validated": true,
+      "definition": "PRIMARY KEY (identity_id)"
+    },
+    {
+      "name": "external_identities_status_check",
+      "type": "c",
+      "table": "external_identities",
+      "validated": true,
+      "definition": "CHECK ((status = ANY (ARRAY['active'::text, 'disabled'::text])))"
+    },
+    {
+      "name": "external_identities_status_not_null",
+      "type": "n",
+      "table": "external_identities",
+      "validated": true,
+      "definition": "NOT NULL status"
+    },
+    {
+      "name": "external_identities_subject_check",
+      "type": "c",
+      "table": "external_identities",
+      "validated": true,
+      "definition": "CHECK (((length(subject) >= 1) AND (length(subject) <= 256)))"
+    },
+    {
+      "name": "external_identities_subject_not_null",
+      "type": "n",
+      "table": "external_identities",
+      "validated": true,
+      "definition": "NOT NULL subject"
+    },
+    {
+      "name": "external_identities_updated_at_not_null",
+      "type": "n",
+      "table": "external_identities",
+      "validated": true,
+      "definition": "NOT NULL updated_at"
+    },
+    {
+      "name": "migration_ledger_applied_at_not_null",
+      "type": "n",
+      "table": "migration_ledger",
+      "validated": true,
+      "definition": "NOT NULL applied_at"
+    },
+    {
+      "name": "migration_ledger_checksum_not_null",
+      "type": "n",
+      "table": "migration_ledger",
+      "validated": true,
+      "definition": "NOT NULL checksum"
+    },
+    {
+      "name": "migration_ledger_migration_id_not_null",
+      "type": "n",
+      "table": "migration_ledger",
+      "validated": true,
+      "definition": "NOT NULL migration_id"
+    },
+    {
+      "name": "migration_ledger_pkey",
+      "type": "p",
+      "table": "migration_ledger",
+      "validated": true,
+      "definition": "PRIMARY KEY (migration_id)"
+    },
+    {
+      "name": "rebootstrap_sessions_account_id_device_id_fkey",
+      "type": "f",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id)"
+    },
+    {
+      "name": "rebootstrap_sessions_account_id_not_null",
+      "type": "n",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "rebootstrap_sessions_account_id_snapshot_id_fkey",
+      "type": "f",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id, snapshot_id) REFERENCES recovery_snapshots(account_id, snapshot_id)"
+    },
+    {
+      "name": "rebootstrap_sessions_created_at_not_null",
+      "type": "n",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "NOT NULL created_at"
+    },
+    {
+      "name": "rebootstrap_sessions_device_id_not_null",
+      "type": "n",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "NOT NULL device_id"
+    },
+    {
+      "name": "rebootstrap_sessions_expires_at_not_null",
+      "type": "n",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "NOT NULL expires_at"
+    },
+    {
+      "name": "rebootstrap_sessions_pkey",
+      "type": "p",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id, device_id, recovery_session_id)"
+    },
+    {
+      "name": "rebootstrap_sessions_recovery_session_id_not_null",
+      "type": "n",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "NOT NULL recovery_session_id"
+    },
+    {
+      "name": "rebootstrap_sessions_request_hash_check",
+      "type": "c",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "CHECK ((length(request_hash) = 64))"
+    },
+    {
+      "name": "rebootstrap_sessions_request_hash_not_null",
+      "type": "n",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "NOT NULL request_hash"
+    },
+    {
+      "name": "rebootstrap_sessions_snapshot_id_not_null",
+      "type": "n",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "NOT NULL snapshot_id"
+    },
+    {
+      "name": "rebootstrap_sessions_state_check",
+      "type": "c",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "CHECK ((state = ANY (ARRAY['preparing'::text, 'downloading'::text, 'downloaded'::text, 'applying'::text, 'catching-up'::text, 'recovery-completed'::text, 'recovery-interrupted'::text])))"
+    },
+    {
+      "name": "rebootstrap_sessions_state_not_null",
+      "type": "n",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "NOT NULL state"
+    },
+    {
+      "name": "rebootstrap_sessions_stored_result_not_null",
+      "type": "n",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "NOT NULL stored_result"
+    },
+    {
+      "name": "rebootstrap_sessions_updated_at_not_null",
+      "type": "n",
+      "table": "rebootstrap_sessions",
+      "validated": true,
+      "definition": "NOT NULL updated_at"
+    },
+    {
+      "name": "recovery_snapshot_chunks_account_id_not_null",
+      "type": "n",
+      "table": "recovery_snapshot_chunks",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "recovery_snapshot_chunks_account_id_snapshot_id_fkey",
+      "type": "f",
+      "table": "recovery_snapshot_chunks",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id, snapshot_id) REFERENCES recovery_snapshots(account_id, snapshot_id) ON DELETE CASCADE"
+    },
+    {
+      "name": "recovery_snapshot_chunks_byte_length_check",
+      "type": "c",
+      "table": "recovery_snapshot_chunks",
+      "validated": true,
+      "definition": "CHECK ((byte_length > 0))"
+    },
+    {
+      "name": "recovery_snapshot_chunks_byte_length_not_null",
+      "type": "n",
+      "table": "recovery_snapshot_chunks",
+      "validated": true,
+      "definition": "NOT NULL byte_length"
+    },
+    {
+      "name": "recovery_snapshot_chunks_chunk_bytes_not_null",
+      "type": "n",
+      "table": "recovery_snapshot_chunks",
+      "validated": true,
+      "definition": "NOT NULL chunk_bytes"
+    },
+    {
+      "name": "recovery_snapshot_chunks_chunk_index_check",
+      "type": "c",
+      "table": "recovery_snapshot_chunks",
+      "validated": true,
+      "definition": "CHECK ((chunk_index >= 0))"
+    },
+    {
+      "name": "recovery_snapshot_chunks_chunk_index_not_null",
+      "type": "n",
+      "table": "recovery_snapshot_chunks",
+      "validated": true,
+      "definition": "NOT NULL chunk_index"
+    },
+    {
+      "name": "recovery_snapshot_chunks_content_hash_check",
+      "type": "c",
+      "table": "recovery_snapshot_chunks",
+      "validated": true,
+      "definition": "CHECK ((length(content_hash) = 64))"
+    },
+    {
+      "name": "recovery_snapshot_chunks_content_hash_not_null",
+      "type": "n",
+      "table": "recovery_snapshot_chunks",
+      "validated": true,
+      "definition": "NOT NULL content_hash"
+    },
+    {
+      "name": "recovery_snapshot_chunks_pkey",
+      "type": "p",
+      "table": "recovery_snapshot_chunks",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id, snapshot_id, chunk_index)"
+    },
+    {
+      "name": "recovery_snapshot_chunks_snapshot_id_not_null",
+      "type": "n",
+      "table": "recovery_snapshot_chunks",
+      "validated": true,
+      "definition": "NOT NULL snapshot_id"
+    },
+    {
+      "name": "recovery_snapshots_account_id_fkey",
+      "type": "f",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id) REFERENCES accounts(account_id)"
+    },
+    {
+      "name": "recovery_snapshots_account_id_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "recovery_snapshots_captured_high_water_cursor_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL captured_high_water_cursor"
+    },
+    {
+      "name": "recovery_snapshots_check",
+      "type": "c",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "CHECK ((captured_high_water_cursor >= covered_through_cursor))"
+    },
+    {
+      "name": "recovery_snapshots_chunk_count_check",
+      "type": "c",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "CHECK ((chunk_count > 0))"
+    },
+    {
+      "name": "recovery_snapshots_chunk_count_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL chunk_count"
+    },
+    {
+      "name": "recovery_snapshots_compatible_event_version_check",
+      "type": "c",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "CHECK ((compatible_event_version = 3))"
+    },
+    {
+      "name": "recovery_snapshots_compatible_event_version_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL compatible_event_version"
+    },
+    {
+      "name": "recovery_snapshots_compatible_schema_version_check",
+      "type": "c",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "CHECK ((compatible_schema_version = 6))"
+    },
+    {
+      "name": "recovery_snapshots_compatible_schema_version_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL compatible_schema_version"
+    },
+    {
+      "name": "recovery_snapshots_covered_through_cursor_check",
+      "type": "c",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "CHECK ((covered_through_cursor > 0))"
+    },
+    {
+      "name": "recovery_snapshots_covered_through_cursor_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL covered_through_cursor"
+    },
+    {
+      "name": "recovery_snapshots_fact_counts_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL fact_counts"
+    },
+    {
+      "name": "recovery_snapshots_manifest_hash_check",
+      "type": "c",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "CHECK ((length(manifest_hash) = 64))"
+    },
+    {
+      "name": "recovery_snapshots_manifest_hash_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL manifest_hash"
+    },
+    {
+      "name": "recovery_snapshots_pkey",
+      "type": "p",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id, snapshot_id)"
+    },
+    {
+      "name": "recovery_snapshots_recovery_format_version_check",
+      "type": "c",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "CHECK ((recovery_format_version = 1))"
+    },
+    {
+      "name": "recovery_snapshots_recovery_format_version_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL recovery_format_version"
+    },
+    {
+      "name": "recovery_snapshots_snapshot_id_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL snapshot_id"
+    },
+    {
+      "name": "recovery_snapshots_state_check",
+      "type": "c",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "CHECK ((state = ANY (ARRAY['building'::text, 'validating'::text, 'available'::text, 'failed'::text, 'superseded'::text])))"
+    },
+    {
+      "name": "recovery_snapshots_state_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL state"
+    },
+    {
+      "name": "recovery_snapshots_total_bytes_check",
+      "type": "c",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "CHECK ((total_bytes > 0))"
+    },
+    {
+      "name": "recovery_snapshots_total_bytes_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL total_bytes"
+    },
+    {
+      "name": "recovery_snapshots_total_hash_check",
+      "type": "c",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "CHECK ((length(total_hash) = 64))"
+    },
+    {
+      "name": "recovery_snapshots_total_hash_not_null",
+      "type": "n",
+      "table": "recovery_snapshots",
+      "validated": true,
+      "definition": "NOT NULL total_hash"
+    },
+    {
+      "name": "submissions_account_id_not_null",
+      "type": "n",
+      "table": "submissions",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "submissions_created_at_not_null",
+      "type": "n",
+      "table": "submissions",
+      "validated": true,
+      "definition": "NOT NULL created_at"
+    },
+    {
+      "name": "submissions_device_fk",
+      "type": "f",
+      "table": "submissions",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id)"
+    },
+    {
+      "name": "submissions_device_id_not_null",
+      "type": "n",
+      "table": "submissions",
+      "validated": true,
+      "definition": "NOT NULL device_id"
+    },
+    {
+      "name": "submissions_pkey",
+      "type": "p",
+      "table": "submissions",
+      "validated": true,
+      "definition": "PRIMARY KEY (account_id, device_id, submission_id)"
+    },
+    {
+      "name": "submissions_request_hash_check",
+      "type": "c",
+      "table": "submissions",
+      "validated": true,
+      "definition": "CHECK ((length(request_hash) = 64))"
+    },
+    {
+      "name": "submissions_request_hash_not_null",
+      "type": "n",
+      "table": "submissions",
+      "validated": true,
+      "definition": "NOT NULL request_hash"
+    },
+    {
+      "name": "submissions_stored_result_not_null",
+      "type": "n",
+      "table": "submissions",
+      "validated": true,
+      "definition": "NOT NULL stored_result"
+    },
+    {
+      "name": "submissions_submission_id_not_null",
+      "type": "n",
+      "table": "submissions",
+      "validated": true,
+      "definition": "NOT NULL submission_id"
+    },
+    {
+      "name": "sync_events_account_id_device_id_device_sequence_key",
+      "type": "u",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "UNIQUE (account_id, device_id, device_sequence)"
+    },
+    {
+      "name": "sync_events_account_id_not_null",
+      "type": "n",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "NOT NULL account_id"
+    },
+    {
+      "name": "sync_events_account_id_server_cursor_key",
+      "type": "u",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "UNIQUE (account_id, server_cursor)"
+    },
+    {
+      "name": "sync_events_content_hash_check",
+      "type": "c",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "CHECK ((length(content_hash) = 64))"
+    },
+    {
+      "name": "sync_events_content_hash_not_null",
+      "type": "n",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "NOT NULL content_hash"
+    },
+    {
+      "name": "sync_events_device_fk",
+      "type": "f",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id)"
+    },
+    {
+      "name": "sync_events_device_id_not_null",
+      "type": "n",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "NOT NULL device_id"
+    },
+    {
+      "name": "sync_events_device_sequence_check",
+      "type": "c",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "CHECK ((device_sequence > 0))"
+    },
+    {
+      "name": "sync_events_device_sequence_not_null",
+      "type": "n",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "NOT NULL device_sequence"
+    },
+    {
+      "name": "sync_events_event_id_not_null",
+      "type": "n",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "NOT NULL event_id"
+    },
+    {
+      "name": "sync_events_event_type_not_null",
+      "type": "n",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "NOT NULL event_type"
+    },
+    {
+      "name": "sync_events_occurrence_time_not_null",
+      "type": "n",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "NOT NULL occurrence_time"
+    },
+    {
+      "name": "sync_events_payload_not_null",
+      "type": "n",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "NOT NULL payload"
+    },
+    {
+      "name": "sync_events_payload_version_not_null",
+      "type": "n",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "NOT NULL payload_version"
+    },
+    {
+      "name": "sync_events_pkey",
+      "type": "p",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "PRIMARY KEY (event_id)"
+    },
+    {
+      "name": "sync_events_received_at_not_null",
+      "type": "n",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "NOT NULL received_at"
+    },
+    {
+      "name": "sync_events_server_cursor_check",
+      "type": "c",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "CHECK ((server_cursor > 0))"
+    },
+    {
+      "name": "sync_events_server_cursor_not_null",
+      "type": "n",
+      "table": "sync_events",
+      "validated": true,
+      "definition": "NOT NULL server_cursor"
+    }
+  ],
+  "migration_ledger": [
+    {
+      "checksum": "c10-s01b-forward-only-v1",
+      "applied_at": "2026-09-25T15:45:37.294335+00:00",
+      "migration_id": "002_coordination_hardening"
+    },
+    {
+      "checksum": "c10-s02-retention-snapshot-recovery-v1",
+      "applied_at": "2026-09-25T15:51:30.317899+00:00",
+      "migration_id": "003_retention_snapshot_recovery"
+    },
+    {
+      "checksum": "c10-s03a-hosted-identity-v1",
+      "applied_at": "2026-09-25T15:51:48.77183+00:00",
+      "migration_id": "004_hosted_identity_enrollment"
+    },
+    {
+      "checksum": "c10-s03a-r2-hosted-authorization-fence-v1",
+      "applied_at": "2026-09-25T15:52:03.964685+00:00",
+      "migration_id": "005_hosted_authorization_fence"
+    },
+    {
+      "checksum": "c10-s03a-r3-hosted-authorization-v1",
+      "applied_at": "2026-09-25T15:52:17.037288+00:00",
+      "migration_id": "006_hosted_authorization_r3"
+    },
+    {
+      "checksum": "c10-mcg02-account-cursor-provisioning-v1",
+      "applied_at": "2026-09-25T15:52:28.273743+00:00",
+      "migration_id": "007_account_cursor_provisioning"
+    }
+  ],
+  "postgres_version": "18.6 (4e955f5)",
+  "application_roles": [
+    {
+      "name": "markei_migrator",
+      "can_login": true,
+      "create_db": false,
+      "superuser": false,
+      "bypass_rls": false,
+      "create_role": false
+    },
+    {
+      "name": "markei_runtime",
+      "can_login": true,
+      "create_db": false,
+      "superuser": false,
+      "bypass_rls": false,
+      "create_role": false
+    },
+    {
+      "name": "neondb_owner",
+      "can_login": true,
+      "create_db": true,
+      "superuser": false,
+      "bypass_rls": true,
+      "create_role": true
+    }
+  ],
+  "default_privileges": [
+    {
+      "acl": "{neon_superuser=a*r*w*d*D*x*t*m*/cloud_admin}",
+      "role": "cloud_admin",
+      "schema": "public",
+      "object_type": "r"
+    },
+    {
+      "acl": "{neon_superuser=r*w*U*/cloud_admin}",
+      "role": "cloud_admin",
+      "schema": "public",
+      "object_type": "S"
+    }
+  ]
+}
+

@@ -1,0 +1,543 @@
+-- Marc live public-schema reference, captured 2026-10-04T03:14:27.451628+00:00
+-- Study archive: every SQL statement below is commented out.
+-- Captured structure is evidence; canonical migrations remain the execution authority.
+-- This is not a pg_dump backup or a validated restore script.
+-- Role credentials, business rows, storage settings and platform objects are excluded.
+-- 
+-- CREATE TABLE public."account_cursor_state" (
+--   "account_id" uuid NOT NULL,
+--   "next_cursor" bigint NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_recovery_worker=r/markei_migrator,markei_runtime=r/markei_migrator}
+-- ALTER TABLE public."account_cursor_state" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."account_memberships" (
+--   "account_id" uuid NOT NULL,
+--   "identity_id" uuid NOT NULL,
+--   "role" text NOT NULL,
+--   "status" text NOT NULL,
+--   "membership_version" bigint DEFAULT 1 NOT NULL,
+--   "created_at" timestamp with time zone DEFAULT now() NOT NULL,
+--   "updated_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator}
+-- ALTER TABLE public."account_memberships" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."account_retention_state" (
+--   "account_id" uuid NOT NULL,
+--   "earliest_incremental_cursor" bigint DEFAULT 1 NOT NULL,
+--   "current_snapshot_id" uuid,
+--   "policy_version" integer NOT NULL,
+--   "recovery_format_version" integer NOT NULL,
+--   "updated_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator,markei_recovery_worker=arw/markei_migrator}
+-- ALTER TABLE public."account_retention_state" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."accounts" (
+--   "account_id" uuid NOT NULL,
+--   "created_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator,markei_recovery_worker=r/markei_migrator}
+-- ALTER TABLE public."accounts" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."cleanup_runs" (
+--   "account_id" uuid NOT NULL,
+--   "cleanup_run_id" uuid NOT NULL,
+--   "policy_version" integer NOT NULL,
+--   "snapshot_id" uuid,
+--   "proposed_through_cursor" bigint NOT NULL,
+--   "committed_through_cursor" bigint,
+--   "state" text NOT NULL,
+--   "attempts" integer DEFAULT 0 NOT NULL,
+--   "deleted_count" integer DEFAULT 0 NOT NULL,
+--   "started_at" timestamp with time zone DEFAULT now() NOT NULL,
+--   "finished_at" timestamp with time zone
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_recovery_worker=arw/markei_migrator}
+-- ALTER TABLE public."cleanup_runs" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."device_acknowledgements" (
+--   "account_id" uuid NOT NULL,
+--   "device_id" uuid NOT NULL,
+--   "greatest_contiguous_cursor" bigint NOT NULL,
+--   "updated_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator,markei_recovery_worker=r/markei_migrator}
+-- ALTER TABLE public."device_acknowledgements" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."device_enrollment_requests" (
+--   "account_id" uuid NOT NULL,
+--   "identity_id" uuid NOT NULL,
+--   "enrollment_request_id" uuid NOT NULL,
+--   "installation_id" uuid NOT NULL,
+--   "request_hash" text NOT NULL,
+--   "state" text NOT NULL,
+--   "device_id" uuid,
+--   "stored_result" jsonb,
+--   "expires_at" timestamp with time zone NOT NULL,
+--   "created_at" timestamp with time zone DEFAULT now() NOT NULL,
+--   "updated_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator}
+-- ALTER TABLE public."device_enrollment_requests" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."device_enrollments" (
+--   "account_id" uuid NOT NULL,
+--   "installation_id" uuid NOT NULL,
+--   "device_id" uuid NOT NULL,
+--   "identity_id" uuid NOT NULL,
+--   "state" text NOT NULL,
+--   "generation" bigint DEFAULT 1 NOT NULL,
+--   "created_at" timestamp with time zone DEFAULT now() NOT NULL,
+--   "updated_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator}
+-- ALTER TABLE public."device_enrollments" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."device_security_events" (
+--   "event_id" uuid NOT NULL,
+--   "account_id" uuid NOT NULL,
+--   "actor_identity_id" uuid,
+--   "target_device_id" uuid,
+--   "event_type" text NOT NULL,
+--   "correlation_id" text NOT NULL,
+--   "occurred_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=ar/markei_migrator}
+-- ALTER TABLE public."device_security_events" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."devices" (
+--   "account_id" uuid NOT NULL,
+--   "device_id" uuid NOT NULL,
+--   "status" text NOT NULL,
+--   "next_expected_sequence" bigint NOT NULL,
+--   "created_at" timestamp with time zone DEFAULT now() NOT NULL,
+--   "last_seen_at" timestamp with time zone,
+--   "lease_expires_at" timestamp with time zone
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator,markei_recovery_worker=r/markei_migrator}
+-- ALTER TABLE public."devices" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."external_identities" (
+--   "identity_id" uuid NOT NULL,
+--   "issuer" text NOT NULL,
+--   "subject" text NOT NULL,
+--   "status" text NOT NULL,
+--   "created_at" timestamp with time zone DEFAULT now() NOT NULL,
+--   "updated_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator}
+-- 
+-- CREATE TABLE public."migration_ledger" (
+--   "migration_id" text NOT NULL,
+--   "checksum" text NOT NULL,
+--   "applied_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator}
+-- 
+-- CREATE TABLE public."rebootstrap_sessions" (
+--   "account_id" uuid NOT NULL,
+--   "device_id" uuid NOT NULL,
+--   "recovery_session_id" uuid NOT NULL,
+--   "snapshot_id" uuid NOT NULL,
+--   "request_hash" text NOT NULL,
+--   "state" text NOT NULL,
+--   "expires_at" timestamp with time zone NOT NULL,
+--   "stored_result" jsonb NOT NULL,
+--   "last_chunk_index" integer,
+--   "completed_cursor" bigint,
+--   "created_at" timestamp with time zone DEFAULT now() NOT NULL,
+--   "updated_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator}
+-- ALTER TABLE public."rebootstrap_sessions" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."recovery_snapshot_chunks" (
+--   "account_id" uuid NOT NULL,
+--   "snapshot_id" uuid NOT NULL,
+--   "chunk_index" integer NOT NULL,
+--   "byte_length" integer NOT NULL,
+--   "content_hash" text NOT NULL,
+--   "chunk_bytes" bytea NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator,markei_recovery_worker=arwd/markei_migrator}
+-- ALTER TABLE public."recovery_snapshot_chunks" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."recovery_snapshots" (
+--   "account_id" uuid NOT NULL,
+--   "snapshot_id" uuid NOT NULL,
+--   "state" text NOT NULL,
+--   "covered_through_cursor" bigint NOT NULL,
+--   "captured_high_water_cursor" bigint NOT NULL,
+--   "recovery_format_version" integer NOT NULL,
+--   "compatible_event_version" integer NOT NULL,
+--   "compatible_schema_version" integer NOT NULL,
+--   "chunk_count" integer NOT NULL,
+--   "total_bytes" integer NOT NULL,
+--   "manifest_hash" text NOT NULL,
+--   "total_hash" text NOT NULL,
+--   "fact_counts" jsonb NOT NULL,
+--   "supersedes_snapshot_id" uuid,
+--   "built_at" timestamp with time zone,
+--   "validated_at" timestamp with time zone,
+--   "published_at" timestamp with time zone
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=r/markei_migrator,markei_recovery_worker=arw/markei_migrator}
+-- ALTER TABLE public."recovery_snapshots" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."submissions" (
+--   "account_id" uuid NOT NULL,
+--   "device_id" uuid NOT NULL,
+--   "submission_id" uuid NOT NULL,
+--   "request_hash" text NOT NULL,
+--   "stored_result" jsonb NOT NULL,
+--   "created_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator}
+-- ALTER TABLE public."submissions" ENABLE ROW LEVEL SECURITY;
+-- 
+-- CREATE TABLE public."sync_events" (
+--   "event_id" uuid NOT NULL,
+--   "account_id" uuid NOT NULL,
+--   "device_id" uuid NOT NULL,
+--   "device_sequence" bigint NOT NULL,
+--   "server_cursor" bigint NOT NULL,
+--   "event_type" text NOT NULL,
+--   "payload_version" integer NOT NULL,
+--   "occurrence_time" timestamp with time zone NOT NULL,
+--   "payload" jsonb NOT NULL,
+--   "content_hash" text NOT NULL,
+--   "received_at" timestamp with time zone DEFAULT now() NOT NULL
+-- );
+-- owner=markei_migrator; observed ACL={markei_migrator=arwdDxtm/markei_migrator,markei_runtime=arw/markei_migrator,markei_recovery_worker=rd/markei_migrator}
+-- ALTER TABLE public."sync_events" ENABLE ROW LEVEL SECURITY;
+-- 
+-- ALTER TABLE public."account_cursor_state" ADD CONSTRAINT "account_cursor_state_account_id_fkey" FOREIGN KEY (account_id) REFERENCES accounts(account_id);
+-- ALTER TABLE public."account_cursor_state" ADD CONSTRAINT "account_cursor_state_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."account_cursor_state" ADD CONSTRAINT "account_cursor_state_next_cursor_check" CHECK ((next_cursor > 0));
+-- ALTER TABLE public."account_cursor_state" ADD CONSTRAINT "account_cursor_state_next_cursor_not_null" NOT NULL next_cursor;
+-- ALTER TABLE public."account_cursor_state" ADD CONSTRAINT "account_cursor_state_pkey" PRIMARY KEY (account_id);
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_account_id_fkey" FOREIGN KEY (account_id) REFERENCES accounts(account_id);
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_created_at_not_null" NOT NULL created_at;
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_identity_id_fkey" FOREIGN KEY (identity_id) REFERENCES external_identities(identity_id);
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_identity_id_not_null" NOT NULL identity_id;
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_membership_version_check" CHECK ((membership_version > 0));
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_membership_version_not_null" NOT NULL membership_version;
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_pkey" PRIMARY KEY (account_id, identity_id);
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_role_check" CHECK ((role = ANY (ARRAY['owner'::text, 'member'::text])));
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_role_not_null" NOT NULL role;
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_status_check" CHECK ((status = ANY (ARRAY['active'::text, 'disabled'::text, 'removed'::text])));
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_status_not_null" NOT NULL status;
+-- ALTER TABLE public."account_memberships" ADD CONSTRAINT "account_memberships_updated_at_not_null" NOT NULL updated_at;
+-- ALTER TABLE public."account_retention_state" ADD CONSTRAINT "account_retention_state_account_id_fkey" FOREIGN KEY (account_id) REFERENCES accounts(account_id);
+-- ALTER TABLE public."account_retention_state" ADD CONSTRAINT "account_retention_state_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."account_retention_state" ADD CONSTRAINT "account_retention_state_earliest_incremental_cursor_check" CHECK ((earliest_incremental_cursor > 0));
+-- ALTER TABLE public."account_retention_state" ADD CONSTRAINT "account_retention_state_earliest_incremental_cursor_not_null" NOT NULL earliest_incremental_cursor;
+-- ALTER TABLE public."account_retention_state" ADD CONSTRAINT "account_retention_state_pkey" PRIMARY KEY (account_id);
+-- ALTER TABLE public."account_retention_state" ADD CONSTRAINT "account_retention_state_policy_version_not_null" NOT NULL policy_version;
+-- ALTER TABLE public."account_retention_state" ADD CONSTRAINT "account_retention_state_recovery_format_version_check" CHECK ((recovery_format_version = 1));
+-- ALTER TABLE public."account_retention_state" ADD CONSTRAINT "account_retention_state_recovery_format_version_not_null" NOT NULL recovery_format_version;
+-- ALTER TABLE public."account_retention_state" ADD CONSTRAINT "account_retention_state_updated_at_not_null" NOT NULL updated_at;
+-- ALTER TABLE public."accounts" ADD CONSTRAINT "accounts_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."accounts" ADD CONSTRAINT "accounts_created_at_not_null" NOT NULL created_at;
+-- ALTER TABLE public."accounts" ADD CONSTRAINT "accounts_pkey" PRIMARY KEY (account_id);
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_account_id_fkey" FOREIGN KEY (account_id) REFERENCES accounts(account_id);
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_attempts_check" CHECK ((attempts >= 0));
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_attempts_not_null" NOT NULL attempts;
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_cleanup_run_id_not_null" NOT NULL cleanup_run_id;
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_deleted_count_check" CHECK ((deleted_count >= 0));
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_deleted_count_not_null" NOT NULL deleted_count;
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_pkey" PRIMARY KEY (account_id, cleanup_run_id);
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_policy_version_not_null" NOT NULL policy_version;
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_proposed_through_cursor_check" CHECK ((proposed_through_cursor > 0));
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_proposed_through_cursor_not_null" NOT NULL proposed_through_cursor;
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_started_at_not_null" NOT NULL started_at;
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_state_check" CHECK ((state = ANY (ARRAY['planned'::text, 'committed'::text, 'failed'::text])));
+-- ALTER TABLE public."cleanup_runs" ADD CONSTRAINT "cleanup_runs_state_not_null" NOT NULL state;
+-- ALTER TABLE public."device_acknowledgements" ADD CONSTRAINT "device_acknowledgements_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."device_acknowledgements" ADD CONSTRAINT "device_acknowledgements_device_fk" FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id);
+-- ALTER TABLE public."device_acknowledgements" ADD CONSTRAINT "device_acknowledgements_device_id_not_null" NOT NULL device_id;
+-- ALTER TABLE public."device_acknowledgements" ADD CONSTRAINT "device_acknowledgements_greatest_contiguous_cursor_check" CHECK ((greatest_contiguous_cursor > 0));
+-- ALTER TABLE public."device_acknowledgements" ADD CONSTRAINT "device_acknowledgements_greatest_contiguous_cursor_not_null" NOT NULL greatest_contiguous_cursor;
+-- ALTER TABLE public."device_acknowledgements" ADD CONSTRAINT "device_acknowledgements_pkey" PRIMARY KEY (account_id, device_id);
+-- ALTER TABLE public."device_acknowledgements" ADD CONSTRAINT "device_acknowledgements_updated_at_not_null" NOT NULL updated_at;
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_account_id_device_id_fkey" FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id);
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_account_id_identity_id_fkey" FOREIGN KEY (account_id, identity_id) REFERENCES account_memberships(account_id, identity_id);
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_account_id_installation_id_fkey" FOREIGN KEY (account_id, installation_id) REFERENCES device_enrollments(account_id, installation_id) DEFERRABLE INITIALLY DEFERRED;
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_created_at_not_null" NOT NULL created_at;
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_enrollment_request_id_not_null" NOT NULL enrollment_request_id;
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_expires_at_not_null" NOT NULL expires_at;
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_identity_id_fkey" FOREIGN KEY (identity_id) REFERENCES external_identities(identity_id);
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_identity_id_not_null" NOT NULL identity_id;
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_installation_id_not_null" NOT NULL installation_id;
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_pkey" PRIMARY KEY (account_id, identity_id, enrollment_request_id);
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_request_hash_check" CHECK ((length(request_hash) = 64));
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_request_hash_not_null" NOT NULL request_hash;
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_state_check" CHECK ((state = ANY (ARRAY['pending'::text, 'completed'::text, 'failed'::text, 'expired'::text, 'rate-limited'::text])));
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_state_not_null" NOT NULL state;
+-- ALTER TABLE public."device_enrollment_requests" ADD CONSTRAINT "device_enrollment_requests_updated_at_not_null" NOT NULL updated_at;
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_account_id_device_id_fkey" FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id);
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_account_id_device_id_key" UNIQUE (account_id, device_id);
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_created_at_not_null" NOT NULL created_at;
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_device_id_not_null" NOT NULL device_id;
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_generation_check" CHECK ((generation > 0));
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_generation_not_null" NOT NULL generation;
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_identity_id_fkey" FOREIGN KEY (identity_id) REFERENCES external_identities(identity_id);
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_identity_id_not_null" NOT NULL identity_id;
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_installation_id_not_null" NOT NULL installation_id;
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_pkey" PRIMARY KEY (account_id, installation_id);
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_state_check" CHECK ((state = ANY (ARRAY['active'::text, 'revoked'::text, 'replaced'::text])));
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_state_not_null" NOT NULL state;
+-- ALTER TABLE public."device_enrollments" ADD CONSTRAINT "device_enrollments_updated_at_not_null" NOT NULL updated_at;
+-- ALTER TABLE public."device_security_events" ADD CONSTRAINT "device_security_events_account_id_fkey" FOREIGN KEY (account_id) REFERENCES accounts(account_id);
+-- ALTER TABLE public."device_security_events" ADD CONSTRAINT "device_security_events_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."device_security_events" ADD CONSTRAINT "device_security_events_account_id_target_device_id_fkey" FOREIGN KEY (account_id, target_device_id) REFERENCES devices(account_id, device_id);
+-- ALTER TABLE public."device_security_events" ADD CONSTRAINT "device_security_events_actor_identity_id_fkey" FOREIGN KEY (actor_identity_id) REFERENCES external_identities(identity_id);
+-- ALTER TABLE public."device_security_events" ADD CONSTRAINT "device_security_events_correlation_id_check" CHECK (((length(correlation_id) >= 1) AND (length(correlation_id) <= 128)));
+-- ALTER TABLE public."device_security_events" ADD CONSTRAINT "device_security_events_correlation_id_not_null" NOT NULL correlation_id;
+-- ALTER TABLE public."device_security_events" ADD CONSTRAINT "device_security_events_event_id_not_null" NOT NULL event_id;
+-- ALTER TABLE public."device_security_events" ADD CONSTRAINT "device_security_events_event_type_check" CHECK ((event_type = ANY (ARRAY['device-enrolled'::text, 'device-revoked'::text])));
+-- ALTER TABLE public."device_security_events" ADD CONSTRAINT "device_security_events_event_type_not_null" NOT NULL event_type;
+-- ALTER TABLE public."device_security_events" ADD CONSTRAINT "device_security_events_occurred_at_not_null" NOT NULL occurred_at;
+-- ALTER TABLE public."device_security_events" ADD CONSTRAINT "device_security_events_pkey" PRIMARY KEY (event_id);
+-- ALTER TABLE public."devices" ADD CONSTRAINT "devices_account_id_fkey" FOREIGN KEY (account_id) REFERENCES accounts(account_id);
+-- ALTER TABLE public."devices" ADD CONSTRAINT "devices_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."devices" ADD CONSTRAINT "devices_created_at_not_null" NOT NULL created_at;
+-- ALTER TABLE public."devices" ADD CONSTRAINT "devices_device_id_not_null" NOT NULL device_id;
+-- ALTER TABLE public."devices" ADD CONSTRAINT "devices_next_expected_sequence_check" CHECK ((next_expected_sequence > 0));
+-- ALTER TABLE public."devices" ADD CONSTRAINT "devices_next_expected_sequence_not_null" NOT NULL next_expected_sequence;
+-- ALTER TABLE public."devices" ADD CONSTRAINT "devices_pkey" PRIMARY KEY (account_id, device_id);
+-- ALTER TABLE public."devices" ADD CONSTRAINT "devices_status_check" CHECK ((status = ANY (ARRAY['active'::text, 'revoked'::text])));
+-- ALTER TABLE public."devices" ADD CONSTRAINT "devices_status_not_null" NOT NULL status;
+-- ALTER TABLE public."external_identities" ADD CONSTRAINT "external_identities_created_at_not_null" NOT NULL created_at;
+-- ALTER TABLE public."external_identities" ADD CONSTRAINT "external_identities_identity_id_not_null" NOT NULL identity_id;
+-- ALTER TABLE public."external_identities" ADD CONSTRAINT "external_identities_issuer_check" CHECK (((length(issuer) >= 12) AND (length(issuer) <= 512)));
+-- ALTER TABLE public."external_identities" ADD CONSTRAINT "external_identities_issuer_not_null" NOT NULL issuer;
+-- ALTER TABLE public."external_identities" ADD CONSTRAINT "external_identities_issuer_subject_key" UNIQUE (issuer, subject);
+-- ALTER TABLE public."external_identities" ADD CONSTRAINT "external_identities_pkey" PRIMARY KEY (identity_id);
+-- ALTER TABLE public."external_identities" ADD CONSTRAINT "external_identities_status_check" CHECK ((status = ANY (ARRAY['active'::text, 'disabled'::text])));
+-- ALTER TABLE public."external_identities" ADD CONSTRAINT "external_identities_status_not_null" NOT NULL status;
+-- ALTER TABLE public."external_identities" ADD CONSTRAINT "external_identities_subject_check" CHECK (((length(subject) >= 1) AND (length(subject) <= 256)));
+-- ALTER TABLE public."external_identities" ADD CONSTRAINT "external_identities_subject_not_null" NOT NULL subject;
+-- ALTER TABLE public."external_identities" ADD CONSTRAINT "external_identities_updated_at_not_null" NOT NULL updated_at;
+-- ALTER TABLE public."migration_ledger" ADD CONSTRAINT "migration_ledger_applied_at_not_null" NOT NULL applied_at;
+-- ALTER TABLE public."migration_ledger" ADD CONSTRAINT "migration_ledger_checksum_not_null" NOT NULL checksum;
+-- ALTER TABLE public."migration_ledger" ADD CONSTRAINT "migration_ledger_migration_id_not_null" NOT NULL migration_id;
+-- ALTER TABLE public."migration_ledger" ADD CONSTRAINT "migration_ledger_pkey" PRIMARY KEY (migration_id);
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_account_id_device_id_fkey" FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id);
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_account_id_snapshot_id_fkey" FOREIGN KEY (account_id, snapshot_id) REFERENCES recovery_snapshots(account_id, snapshot_id);
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_created_at_not_null" NOT NULL created_at;
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_device_id_not_null" NOT NULL device_id;
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_expires_at_not_null" NOT NULL expires_at;
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_pkey" PRIMARY KEY (account_id, device_id, recovery_session_id);
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_recovery_session_id_not_null" NOT NULL recovery_session_id;
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_request_hash_check" CHECK ((length(request_hash) = 64));
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_request_hash_not_null" NOT NULL request_hash;
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_snapshot_id_not_null" NOT NULL snapshot_id;
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_state_check" CHECK ((state = ANY (ARRAY['preparing'::text, 'downloading'::text, 'downloaded'::text, 'applying'::text, 'catching-up'::text, 'recovery-completed'::text, 'recovery-interrupted'::text])));
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_state_not_null" NOT NULL state;
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_stored_result_not_null" NOT NULL stored_result;
+-- ALTER TABLE public."rebootstrap_sessions" ADD CONSTRAINT "rebootstrap_sessions_updated_at_not_null" NOT NULL updated_at;
+-- ALTER TABLE public."recovery_snapshot_chunks" ADD CONSTRAINT "recovery_snapshot_chunks_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."recovery_snapshot_chunks" ADD CONSTRAINT "recovery_snapshot_chunks_account_id_snapshot_id_fkey" FOREIGN KEY (account_id, snapshot_id) REFERENCES recovery_snapshots(account_id, snapshot_id) ON DELETE CASCADE;
+-- ALTER TABLE public."recovery_snapshot_chunks" ADD CONSTRAINT "recovery_snapshot_chunks_byte_length_check" CHECK ((byte_length > 0));
+-- ALTER TABLE public."recovery_snapshot_chunks" ADD CONSTRAINT "recovery_snapshot_chunks_byte_length_not_null" NOT NULL byte_length;
+-- ALTER TABLE public."recovery_snapshot_chunks" ADD CONSTRAINT "recovery_snapshot_chunks_chunk_bytes_not_null" NOT NULL chunk_bytes;
+-- ALTER TABLE public."recovery_snapshot_chunks" ADD CONSTRAINT "recovery_snapshot_chunks_chunk_index_check" CHECK ((chunk_index >= 0));
+-- ALTER TABLE public."recovery_snapshot_chunks" ADD CONSTRAINT "recovery_snapshot_chunks_chunk_index_not_null" NOT NULL chunk_index;
+-- ALTER TABLE public."recovery_snapshot_chunks" ADD CONSTRAINT "recovery_snapshot_chunks_content_hash_check" CHECK ((length(content_hash) = 64));
+-- ALTER TABLE public."recovery_snapshot_chunks" ADD CONSTRAINT "recovery_snapshot_chunks_content_hash_not_null" NOT NULL content_hash;
+-- ALTER TABLE public."recovery_snapshot_chunks" ADD CONSTRAINT "recovery_snapshot_chunks_pkey" PRIMARY KEY (account_id, snapshot_id, chunk_index);
+-- ALTER TABLE public."recovery_snapshot_chunks" ADD CONSTRAINT "recovery_snapshot_chunks_snapshot_id_not_null" NOT NULL snapshot_id;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_account_id_fkey" FOREIGN KEY (account_id) REFERENCES accounts(account_id);
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_captured_high_water_cursor_not_null" NOT NULL captured_high_water_cursor;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_check" CHECK ((captured_high_water_cursor >= covered_through_cursor));
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_chunk_count_check" CHECK ((chunk_count > 0));
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_chunk_count_not_null" NOT NULL chunk_count;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_compatible_event_version_check" CHECK ((compatible_event_version = 3));
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_compatible_event_version_not_null" NOT NULL compatible_event_version;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_compatible_schema_version_check" CHECK ((compatible_schema_version = 6));
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_compatible_schema_version_not_null" NOT NULL compatible_schema_version;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_covered_through_cursor_check" CHECK ((covered_through_cursor > 0));
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_covered_through_cursor_not_null" NOT NULL covered_through_cursor;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_fact_counts_not_null" NOT NULL fact_counts;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_manifest_hash_check" CHECK ((length(manifest_hash) = 64));
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_manifest_hash_not_null" NOT NULL manifest_hash;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_pkey" PRIMARY KEY (account_id, snapshot_id);
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_recovery_format_version_check" CHECK ((recovery_format_version = 1));
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_recovery_format_version_not_null" NOT NULL recovery_format_version;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_snapshot_id_not_null" NOT NULL snapshot_id;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_state_check" CHECK ((state = ANY (ARRAY['building'::text, 'validating'::text, 'available'::text, 'failed'::text, 'superseded'::text])));
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_state_not_null" NOT NULL state;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_total_bytes_check" CHECK ((total_bytes > 0));
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_total_bytes_not_null" NOT NULL total_bytes;
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_total_hash_check" CHECK ((length(total_hash) = 64));
+-- ALTER TABLE public."recovery_snapshots" ADD CONSTRAINT "recovery_snapshots_total_hash_not_null" NOT NULL total_hash;
+-- ALTER TABLE public."submissions" ADD CONSTRAINT "submissions_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."submissions" ADD CONSTRAINT "submissions_created_at_not_null" NOT NULL created_at;
+-- ALTER TABLE public."submissions" ADD CONSTRAINT "submissions_device_fk" FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id);
+-- ALTER TABLE public."submissions" ADD CONSTRAINT "submissions_device_id_not_null" NOT NULL device_id;
+-- ALTER TABLE public."submissions" ADD CONSTRAINT "submissions_pkey" PRIMARY KEY (account_id, device_id, submission_id);
+-- ALTER TABLE public."submissions" ADD CONSTRAINT "submissions_request_hash_check" CHECK ((length(request_hash) = 64));
+-- ALTER TABLE public."submissions" ADD CONSTRAINT "submissions_request_hash_not_null" NOT NULL request_hash;
+-- ALTER TABLE public."submissions" ADD CONSTRAINT "submissions_stored_result_not_null" NOT NULL stored_result;
+-- ALTER TABLE public."submissions" ADD CONSTRAINT "submissions_submission_id_not_null" NOT NULL submission_id;
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_account_id_device_id_device_sequence_key" UNIQUE (account_id, device_id, device_sequence);
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_account_id_not_null" NOT NULL account_id;
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_account_id_server_cursor_key" UNIQUE (account_id, server_cursor);
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_content_hash_check" CHECK ((length(content_hash) = 64));
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_content_hash_not_null" NOT NULL content_hash;
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_device_fk" FOREIGN KEY (account_id, device_id) REFERENCES devices(account_id, device_id);
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_device_id_not_null" NOT NULL device_id;
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_device_sequence_check" CHECK ((device_sequence > 0));
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_device_sequence_not_null" NOT NULL device_sequence;
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_event_id_not_null" NOT NULL event_id;
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_event_type_not_null" NOT NULL event_type;
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_occurrence_time_not_null" NOT NULL occurrence_time;
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_payload_not_null" NOT NULL payload;
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_payload_version_not_null" NOT NULL payload_version;
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_pkey" PRIMARY KEY (event_id);
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_received_at_not_null" NOT NULL received_at;
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_server_cursor_check" CHECK ((server_cursor > 0));
+-- ALTER TABLE public."sync_events" ADD CONSTRAINT "sync_events_server_cursor_not_null" NOT NULL server_cursor;
+-- CREATE INDEX account_memberships_identity_active_idx ON public.account_memberships USING btree (identity_id, status, account_id);
+-- CREATE INDEX cleanup_runs_claim_idx ON public.cleanup_runs USING btree (account_id, state, started_at);
+-- CREATE INDEX device_acknowledgements_lookup_idx ON public.device_acknowledgements USING btree (account_id, device_id, greatest_contiguous_cursor);
+-- CREATE INDEX device_enrollment_requests_lookup_idx ON public.device_enrollment_requests USING btree (account_id, identity_id, enrollment_request_id, state);
+-- CREATE INDEX device_enrollments_identity_idx ON public.device_enrollments USING btree (identity_id, state);
+-- CREATE INDEX device_security_events_account_time_idx ON public.device_security_events USING btree (account_id, occurred_at DESC);
+-- CREATE INDEX rebootstrap_sessions_replay_idx ON public.rebootstrap_sessions USING btree (account_id, device_id, recovery_session_id, request_hash);
+-- CREATE INDEX recovery_snapshot_chunks_order_idx ON public.recovery_snapshot_chunks USING btree (account_id, snapshot_id, chunk_index);
+-- CREATE INDEX recovery_snapshots_available_idx ON public.recovery_snapshots USING btree (account_id, recovery_format_version, state, covered_through_cursor);
+-- CREATE INDEX submissions_replay_idx ON public.submissions USING btree (account_id, device_id, submission_id, request_hash);
+-- CREATE INDEX sync_events_download_idx ON public.sync_events USING btree (account_id, server_cursor);
+-- CREATE INDEX sync_events_replay_idx ON public.sync_events USING btree (account_id, event_id, content_hash);
+-- 
+-- CREATE OR REPLACE FUNCTION public.markei_authorize_identity_membership(p_issuer text, p_subject text)
+--  RETURNS TABLE(identity_id uuid, account_id uuid, role text)
+--  LANGUAGE plpgsql
+--  SECURITY DEFINER
+--  SET search_path TO 'pg_catalog', 'public'
+-- AS $function$
+-- declare
+--   v_identity_id uuid;
+-- begin
+--   if p_issuer is null or length(p_issuer) < 12 or length(p_issuer) > 512 then
+--     return;
+--   end if;
+--   if p_subject is null or length(p_subject) < 1 or length(p_subject) > 256 then
+--     return;
+--   end if;
+-- 
+--   select ei.identity_id
+--     into v_identity_id
+--     from public.external_identities ei
+--    where ei.issuer = p_issuer
+--      and ei.subject = p_subject
+--      and ei.status = 'active'
+--    for update;
+-- 
+--   if v_identity_id is null then
+--     return;
+--   end if;
+-- 
+--   return query
+--     select am.identity_id, am.account_id, am.role
+--       from public.account_memberships am
+--      where am.identity_id = v_identity_id
+--        and am.status = 'active'
+--      order by am.account_id
+--      for update;
+-- end;
+-- $function$
+-- ;
+-- observed function ACL={markei_migrator=X/markei_migrator,markei_runtime=X/markei_migrator}
+-- CREATE OR REPLACE FUNCTION public.markei_hosted_runtime_ready()
+--  RETURNS boolean
+--  LANGUAGE sql
+--  STABLE SECURITY DEFINER
+--  SET search_path TO 'pg_catalog', 'public'
+-- AS $function$
+--   select exists (
+--     select 1
+--       from public.migration_ledger ml
+--      where ml.migration_id = '006_hosted_authorization_r3'
+--        and ml.checksum = 'c10-s03a-r3-hosted-authorization-v1'
+--   );
+-- $function$
+-- ;
+-- observed function ACL={markei_migrator=X/markei_migrator,markei_runtime=X/markei_migrator}
+-- CREATE OR REPLACE FUNCTION public.markei_hosted_runtime_ready_v2()
+--  RETURNS boolean
+--  LANGUAGE sql
+--  STABLE SECURITY DEFINER
+--  SET search_path TO 'pg_catalog', 'public'
+-- AS $function$
+--   select exists (
+--     select 1
+--       from public.migration_ledger ml
+--      where ml.migration_id = '006_hosted_authorization_r3'
+--        and ml.checksum = 'c10-s03a-r3-hosted-authorization-v1'
+--   )
+--   and exists (
+--     select 1
+--       from public.migration_ledger ml
+--      where ml.migration_id = '007_account_cursor_provisioning'
+--        and ml.checksum = 'c10-mcg02-account-cursor-provisioning-v1'
+--   );
+-- $function$
+-- ;
+-- observed function ACL={markei_migrator=X/markei_migrator,markei_runtime=X/markei_migrator}
+-- CREATE OR REPLACE FUNCTION public.markei_provision_account_cursor_state()
+--  RETURNS trigger
+--  LANGUAGE plpgsql
+--  SECURITY DEFINER
+--  SET search_path TO 'pg_catalog', 'public'
+-- AS $function$
+-- begin
+--   insert into public.account_cursor_state(account_id, next_cursor)
+--   values (new.account_id, 1)
+--   on conflict(account_id) do nothing;
+--   return new;
+-- end;
+-- $function$
+-- ;
+-- observed function ACL={markei_migrator=X/markei_migrator}
+-- CREATE OR REPLACE FUNCTION public.markei_required_migration_present(p_migration_id text)
+--  RETURNS boolean
+--  LANGUAGE sql
+--  STABLE SECURITY DEFINER
+--  SET search_path TO 'pg_catalog', 'public'
+-- AS $function$
+--   select exists (
+--     select 1
+--       from public.migration_ledger ml
+--      where ml.migration_id = p_migration_id
+--   );
+-- $function$
+-- ;
+-- observed function ACL={markei_migrator=X/markei_migrator}
+-- CREATE TRIGGER accounts_provision_cursor_state_after_insert AFTER INSERT ON public.accounts FOR EACH ROW EXECUTE FUNCTION markei_provision_account_cursor_state();
+-- CREATE POLICY "account_cursor_state_account_isolation" ON public."account_cursor_state" AS PERMISSIVE FOR ALL TO PUBLIC USING (((account_id)::text = current_setting('markei.account_id'::text, true))) WITH CHECK (((account_id)::text = current_setting('markei.account_id'::text, true)));
+-- CREATE POLICY "account_memberships_context_isolation" ON public."account_memberships" AS PERMISSIVE FOR ALL TO PUBLIC USING ((((account_id)::text = current_setting('markei.account_id'::text, true)) OR ((identity_id)::text = current_setting('markei.identity_id'::text, true)))) WITH CHECK (((account_id)::text = current_setting('markei.account_id'::text, true)));
+-- CREATE POLICY "account_retention_state_account_isolation" ON public."account_retention_state" AS PERMISSIVE FOR ALL TO PUBLIC USING (((account_id)::text = current_setting('markei.account_id'::text, true))) WITH CHECK (((account_id)::text = current_setting('markei.account_id'::text, true)));
+-- CREATE POLICY "accounts_account_isolation" ON public."accounts" AS PERMISSIVE FOR ALL TO PUBLIC USING (((account_id)::text = current_setting('markei.account_id'::text, true)));
+-- CREATE POLICY "cleanup_runs_account_isolation" ON public."cleanup_runs" AS PERMISSIVE FOR ALL TO PUBLIC USING (((account_id)::text = current_setting('markei.account_id'::text, true))) WITH CHECK (((account_id)::text = current_setting('markei.account_id'::text, true)));
+-- CREATE POLICY "device_acknowledgements_account_isolation" ON public."device_acknowledgements" AS PERMISSIVE FOR ALL TO PUBLIC USING ((((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true)))) WITH CHECK ((((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true))));
+-- CREATE POLICY "device_enrollment_requests_account_isolation" ON public."device_enrollment_requests" AS PERMISSIVE FOR ALL TO PUBLIC USING (((account_id)::text = current_setting('markei.account_id'::text, true))) WITH CHECK (((account_id)::text = current_setting('markei.account_id'::text, true)));
+-- CREATE POLICY "device_enrollments_account_isolation" ON public."device_enrollments" AS PERMISSIVE FOR ALL TO PUBLIC USING ((((account_id)::text = current_setting('markei.account_id'::text, true)) AND (((device_id)::text = current_setting('markei.device_id'::text, true)) OR (current_setting('markei.operation'::text, true) = 'device-management'::text) OR ((identity_id)::text = current_setting('markei.identity_id'::text, true))))) WITH CHECK ((((account_id)::text = current_setting('markei.account_id'::text, true)) AND (((device_id)::text = current_setting('markei.device_id'::text, true)) OR (current_setting('markei.operation'::text, true) = 'device-management'::text) OR ((identity_id)::text = current_setting('markei.identity_id'::text, true)))));
+-- CREATE POLICY "device_security_events_account_isolation" ON public."device_security_events" AS PERMISSIVE FOR ALL TO PUBLIC USING (((account_id)::text = current_setting('markei.account_id'::text, true))) WITH CHECK (((account_id)::text = current_setting('markei.account_id'::text, true)));
+-- CREATE POLICY "devices_account_isolation" ON public."devices" AS PERMISSIVE FOR ALL TO PUBLIC USING ((((account_id)::text = current_setting('markei.account_id'::text, true)) AND (((device_id)::text = current_setting('markei.device_id'::text, true)) OR (current_setting('markei.operation'::text, true) = 'device-management'::text)))) WITH CHECK ((((account_id)::text = current_setting('markei.account_id'::text, true)) AND (((device_id)::text = current_setting('markei.device_id'::text, true)) OR (current_setting('markei.operation'::text, true) = 'device-management'::text))));
+-- CREATE POLICY "rebootstrap_sessions_account_isolation" ON public."rebootstrap_sessions" AS PERMISSIVE FOR ALL TO PUBLIC USING ((((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true)))) WITH CHECK ((((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true))));
+-- CREATE POLICY "recovery_snapshot_chunks_account_isolation" ON public."recovery_snapshot_chunks" AS PERMISSIVE FOR ALL TO PUBLIC USING (((account_id)::text = current_setting('markei.account_id'::text, true))) WITH CHECK (((account_id)::text = current_setting('markei.account_id'::text, true)));
+-- CREATE POLICY "recovery_snapshots_account_isolation" ON public."recovery_snapshots" AS PERMISSIVE FOR ALL TO PUBLIC USING (((account_id)::text = current_setting('markei.account_id'::text, true))) WITH CHECK (((account_id)::text = current_setting('markei.account_id'::text, true)));
+-- CREATE POLICY "submissions_account_isolation" ON public."submissions" AS PERMISSIVE FOR ALL TO PUBLIC USING ((((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true)))) WITH CHECK ((((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true))));
+-- CREATE POLICY "sync_events_account_isolation" ON public."sync_events" AS PERMISSIVE FOR ALL TO PUBLIC USING (((account_id)::text = current_setting('markei.account_id'::text, true))) WITH CHECK ((((account_id)::text = current_setting('markei.account_id'::text, true)) AND ((device_id)::text = current_setting('markei.device_id'::text, true))));
+
