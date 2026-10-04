@@ -18,18 +18,60 @@ class HomePage extends StatelessWidget {
         return ListView(
           key: const Key('home.page'),
           children: [
-            const MarkeiPageHeader(
-              title: 'Home',
-              purpose:
-                  'Register purchases locally first and inspect reusable Products, estimates and history.',
-              icon: Icons.home_outlined,
-            ),
-            const SizedBox(height: MarkeiSpacing.lg),
-            FilledButton.icon(
-              key: const Key('home.action.registerPurchase'),
-              onPressed: () => onNavigate(MarkeiDestinationId.purchase),
-              icon: const Icon(Icons.add_shopping_cart),
-              label: const Text('Register purchase'),
+            MarkeiCard(
+              key: const Key('home.brandHero'),
+              color: MarkeiColors.brandDeepGreen,
+              borderColor: MarkeiColors.brandDeepGreen,
+              padding: EdgeInsets.all(
+                layoutClass == MarkeiLayoutClass.compact ? 24 : 32,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'MARC / HOUSEHOLD GOVERNANCE',
+                    style: TextStyle(
+                      fontSize: 11,
+                      letterSpacing: 1.6,
+                      color: MarkeiColors.brandLime,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Your household,\na little clearer.',
+                    style: TextStyle(
+                      fontSize: layoutClass == MarkeiLayoutClass.compact
+                          ? 32
+                          : 42,
+                      height: 1.12,
+                      letterSpacing: -1.2,
+                      color: MarkeiColors.cream,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Register purchases. Find your rhythm.\nKeep everyday essentials in view.',
+                    style: TextStyle(
+                      fontSize: 15,
+                      height: 1.5,
+                      color: MarkeiColors.brandLime,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  FilledButton.icon(
+                    key: const Key('home.action.registerPurchase'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: MarkeiColors.brandLime,
+                      foregroundColor: MarkeiColors.brandDeepGreen,
+                    ),
+                    onPressed: () => onNavigate(MarkeiDestinationId.purchase),
+                    icon: const Icon(Icons.add_shopping_cart_outlined),
+                    label: const Text('Register purchase'),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: MarkeiSpacing.lg),
             MarkeiResponsiveGrid(
@@ -86,13 +128,12 @@ class _HomeInformationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MarkeiCard(
+      color: MarkeiColors.lavenderTint,
+      borderColor: MarkeiColors.lavender.withValues(alpha: 0.18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.info_outline,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          Icon(Icons.info_outline, color: MarkeiColors.lavender),
           const SizedBox(height: MarkeiSpacing.sm),
           Text(descriptor.title, style: MarkeiText.sectionTitle),
           const SizedBox(height: MarkeiSpacing.xs),
@@ -133,11 +174,24 @@ class _HomeTaskCard extends StatelessWidget {
         'Register purchase',
       ),
     };
+    final tone = descriptor.destinationId == 'lists'
+        ? MarkeiSummaryTone.primary
+        : descriptor.destinationId == 'catalogue'
+        ? MarkeiSummaryTone.info
+        : MarkeiSummaryTone.secondary;
     return MarkeiCard(
+      borderColor: tone.foreground.withValues(alpha: 0.22),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(destination.$1, color: Theme.of(context).colorScheme.secondary),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: tone.background,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(destination.$1, color: tone.foreground),
+          ),
           const SizedBox(height: MarkeiSpacing.sm),
           Text(descriptor.title, style: MarkeiText.sectionTitle),
           const SizedBox(height: MarkeiSpacing.xs),

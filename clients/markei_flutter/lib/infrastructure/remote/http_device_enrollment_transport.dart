@@ -143,6 +143,28 @@ final class HttpDeviceEnrollmentTransport implements DeviceEnrollmentTransport {
   };
 
   DeviceEnrollmentTransportResult _decode(http.Response response) {
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      var code = response.statusCode == 401
+          ? 'authentication-required'
+          : 'enrollment-forbidden';
+      try {
+        final parsed = jsonDecode(response.body);
+        if (parsed is Map<String, Object?> &&
+            const {
+              'membership-required',
+              'account-selection-required',
+              'device-revoked',
+              'authentication-required',
+              'token-expired',
+              'token-rejected',
+            }.contains(parsed['code'])) {
+          code = parsed['code'] as String;
+        }
+      } on FormatException {
+        // Provider text is never copied into permanent state or UI.
+      }
+      return DeviceEnrollmentTransportRejected(code);
+    }
     if (response.statusCode == 409) {
       return const DeviceEnrollmentTransportConflict();
     }

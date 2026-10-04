@@ -141,6 +141,13 @@ void main() {
       find.byKey(const Key('home.action.registerPurchase')),
       findsOneWidget,
     );
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('home.action.viewLists')),
+      250,
+    );
+    await tester.ensureVisible(find.byKey(const Key('home.action.viewLists')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('home.action.viewLists')));
     expect(find.byKey(const Key('home.action.viewLists')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

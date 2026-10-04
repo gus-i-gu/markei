@@ -233,18 +233,41 @@ class MarkeiPageHeader extends StatelessWidget {
             ],
           ],
         );
-        return Row(
+        return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (icon != null) ...[
-              Icon(icon, color: theme.colorScheme.primary, size: 30),
-              const SizedBox(width: MarkeiSpacing.sm),
-            ],
-            Expanded(child: titleBlock),
-            if (inlineTrailing) ...[
-              const SizedBox(width: MarkeiSpacing.sm),
-              trailing!,
-            ],
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (icon != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: MarkeiColors.greenTint,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      icon,
+                      color: theme.colorScheme.primary,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: MarkeiSpacing.sm),
+                ],
+                Expanded(child: titleBlock),
+                if (inlineTrailing) ...[
+                  const SizedBox(width: MarkeiSpacing.sm),
+                  trailing!,
+                ],
+              ],
+            ),
+            const SizedBox(height: MarkeiSpacing.md),
+            Row(
+              children: [
+                Container(width: 40, height: 2, color: MarkeiColors.green),
+                const Expanded(child: Divider(height: 2)),
+              ],
+            ),
           ],
         );
       },
@@ -270,13 +293,9 @@ class MarkeiSummaryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = switch (tone) {
-      MarkeiSummaryTone.primary => MarkeiColors.green,
-      MarkeiSummaryTone.secondary => MarkeiColors.lavender,
-      MarkeiSummaryTone.warning => MarkeiColors.warning,
-      MarkeiSummaryTone.info => MarkeiColors.information,
-    };
+    final color = tone.foreground;
     return MarkeiCard(
+      color: tone.background,
       borderColor: color.withValues(alpha: 0.35),
       child: Row(
         children: [
@@ -308,7 +327,26 @@ class MarkeiSummaryTile extends StatelessWidget {
   }
 }
 
-enum MarkeiSummaryTone { primary, secondary, warning, info }
+enum MarkeiSummaryTone {
+  primary,
+  secondary,
+  warning,
+  info;
+
+  Color get foreground => switch (this) {
+    primary => MarkeiColors.green,
+    secondary => MarkeiColors.lavender,
+    warning => MarkeiColors.warning,
+    info => MarkeiColors.information,
+  };
+
+  Color get background => switch (this) {
+    primary => MarkeiColors.greenTint,
+    secondary => MarkeiColors.lavenderTint,
+    warning => MarkeiColors.warningTint,
+    info => MarkeiColors.informationTint,
+  };
+}
 
 class MarkeiStatePanel extends StatelessWidget {
   const MarkeiStatePanel({
@@ -328,6 +366,8 @@ class MarkeiStatePanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return MarkeiCard(
+      color: MarkeiColors.lavenderTint,
+      borderColor: MarkeiColors.lavender.withValues(alpha: 0.18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -361,15 +401,24 @@ class MarkeiStatePanel extends StatelessWidget {
 }
 
 class MarkeiStatusChip extends StatelessWidget {
-  const MarkeiStatusChip({required this.label, super.key});
+  const MarkeiStatusChip({
+    required this.label,
+    this.tone = MarkeiSummaryTone.secondary,
+    super.key,
+  });
 
   final String label;
+  final MarkeiSummaryTone tone;
 
   @override
   Widget build(BuildContext context) {
     return Chip(
-      label: Text(label),
-      side: BorderSide(color: Theme.of(context).colorScheme.secondary),
+      label: Text(
+        label,
+        style: MarkeiText.label.copyWith(color: tone.foreground),
+      ),
+      backgroundColor: tone.background,
+      side: BorderSide.none,
       visualDensity: VisualDensity.compact,
     );
   }

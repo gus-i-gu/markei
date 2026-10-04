@@ -5,6 +5,117 @@ import 'package:markei/infrastructure/local/hosted_identity_repository.dart';
 import 'package:markei/infrastructure/local/local_database.dart';
 
 void main() {
+  for (final initiallySignedIn in [true, false]) {
+    test(
+      'enrollment reuses valid session or signs in once: $initiallySignedIn',
+      () async {
+        final db = LocalDatabase.memory();
+        addTearDown(db.close);
+        final session = _CountingAuthentication(initiallySignedIn);
+        final repository = DriftHostedIdentityRepository(db);
+        final coordinator = HostedEnrollmentCoordinator(
+          authenticationSession: session,
+          tokenSource: LabAccessTokenSource.accepted('synthetic-token'),
+          transport: _FakeEnrollmentTransport(
+            result: const DeviceEnrollmentResult(
+              status: 'device-enrolled',
+              installationId: '33333333-3333-4333-8333-333333333333',
+              deviceId: '22222222-2222-4222-8222-222222222222',
+              accountId: '11111111-1111-4111-8111-111111111111',
+              generation: 1,
+            ),
+          ),
+          repository: repository,
+          now: () => DateTime.utc(2026, 10, 3),
+        );
+        final result = await coordinator.enroll(
+          environmentAlias: 'test',
+          command: _command(),
+        );
+        expect(result.status, 'hosted-restart-required');
+        expect(session.signIns, initiallySignedIn ? 0 : 1);
+        expect(
+          (await repository.load('test'))?.enrollmentState,
+          'device-enrolled',
+        );
+      },
+    );
+  }
+
+  test(
+    'startup scope distinguishes missing enrollment from new or changed binding',
+    () async {
+      final db = LocalDatabase.memory();
+      addTearDown(db.close);
+      final repository = DriftHostedIdentityRepository(db);
+      final unbound = DriftHostedSyncGuard(
+        repository,
+        requireStartupBinding: true,
+      );
+      expect(
+        (await unbound.evaluate('test')).blockedReason,
+        'enrollment-required',
+      );
+      HostedIdentityState state({int generation = 1}) => HostedIdentityState(
+        environmentAlias: 'test',
+        installationId: '33333333-3333-4333-8333-333333333333',
+        enrollmentState: 'device-enrolled',
+        accountId: '11111111-1111-4111-8111-111111111111',
+        serverDeviceId: '22222222-2222-4222-8222-222222222222',
+        generation: generation,
+        updatedAt: DateTime.utc(2026, 10, 3),
+      );
+      await repository.save(state());
+      expect(
+        (await unbound.evaluate('test')).blockedReason,
+        'hosted-restart-required',
+      );
+      final binding = await repository.loadActiveBinding('test');
+      final bound = DriftHostedSyncGuard(
+        repository,
+        requireStartupBinding: true,
+        startupBinding: binding,
+      );
+      expect((await bound.evaluate('test')).blockedReason, isNull);
+      await repository.save(state(generation: 2));
+      expect(
+        (await bound.evaluate('test')).blockedReason,
+        'hosted-restart-required',
+      );
+    },
+  );
+
+  test(
+    'rejected enrollment persists a specific closed state without a binding',
+    () async {
+      final db = LocalDatabase.memory();
+      addTearDown(db.close);
+      final repository = DriftHostedIdentityRepository(db);
+      final coordinator = HostedEnrollmentCoordinator(
+        authenticationSession: _CountingAuthentication(true),
+        tokenSource: LabAccessTokenSource.accepted('synthetic-token'),
+        transport: _FakeEnrollmentTransport(
+          overrideResult: const DeviceEnrollmentTransportRejected(
+            'membership-required',
+          ),
+        ),
+        repository: repository,
+        now: () => DateTime.utc(2026, 10, 3),
+      );
+      expect(
+        (await coordinator.enroll(
+          environmentAlias: 'test',
+          command: _command(),
+        )).reason,
+        'membership-required',
+      );
+      expect(
+        (await repository.load('test'))?.enrollmentState,
+        'membership-required',
+      );
+      expect(await repository.loadActiveBinding('test'), isNull);
+    },
+  );
   test(
     'stores hosted InstallationId and server Device binding by environment',
     () async {
@@ -367,5 +478,25 @@ final class _FakeEnrollmentTransport implements DeviceEnrollmentTransport {
     final value = result;
     if (value == null) return const DeviceEnrollmentTransportUnknown();
     return DeviceEnrollmentTransportSuccess(value);
+  }
+}
+
+final class _CountingAuthentication implements ExternalAuthenticationSession {
+  _CountingAuthentication(this.signedIn);
+  bool signedIn;
+  int signIns = 0;
+  @override
+  Future<ExternalAuthenticationState> currentState() async =>
+      signedIn ? const SignedIn() : const SignedOut();
+  @override
+  Future<ExternalAuthenticationState> signIn() async {
+    signIns++;
+    signedIn = true;
+    return const SignedIn();
+  }
+
+  @override
+  Future<void> logout() async {
+    signedIn = false;
   }
 }

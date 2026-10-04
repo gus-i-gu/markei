@@ -16,7 +16,7 @@ import '../application/sync/sync_ports.dart';
 
 typedef NativeClosureLifecycleSink = void Function(String line);
 
-final class NativeAuthClosureRunner {
+final class NativeAuthClosureRunner implements AuthenticatedUserProfileSource {
   NativeAuthClosureRunner({
     required ExternalAuthenticationSession authenticationSession,
     required HostedEnrollmentCoordinator enrollmentCoordinator,
@@ -71,6 +71,18 @@ final class NativeAuthClosureRunner {
   final bool _unavailable;
   final Uuid? _uuid;
   static const ordinarySyncClientDeadline = Duration(seconds: 35);
+
+  @override
+  Future<AuthenticatedUserProfile?> currentProfile() async {
+    final session = _authenticationSession;
+    if (session == null || await session.currentState() is! SignedIn) {
+      return null;
+    }
+    if (session is AuthenticatedUserProfileSource) {
+      return (session as AuthenticatedUserProfileSource).currentProfile();
+    }
+    return null;
+  }
 
   int get ordinarySyncClientDeadlineMs =>
       ordinarySyncClientDeadline.inMilliseconds;
@@ -680,7 +692,9 @@ final class NativeAuthClosureRunner {
       'sync-server-timeout' => 'timeout',
       'sync-failed' => 'failed',
       'authentication-required' => 'blocked',
-      'device-enrollment-required' || 'device-revoked' => 'blocked',
+      'device-enrollment-required' ||
+      'device-revoked' ||
+      'sync-restart-required' => 'blocked',
       _ => 'failed',
     };
   }
@@ -693,6 +707,7 @@ final class NativeAuthClosureRunner {
       'sync-rejected' => 'rejected',
       'authentication-required' => 'authentication',
       'device-enrollment-required' || 'device-revoked' => 'enrollment',
+      'sync-restart-required' => 'binding',
       _ => 'sync',
     };
   }
@@ -702,6 +717,7 @@ final class NativeAuthClosureRunner {
       'sync-completed' || 'sync-no-new-events' => null,
       'authentication-required' => 'sign-in-required',
       'device-enrollment-required' => 'enroll-or-query-device',
+      'sync-restart-required' => 'restart-and-sign-in',
       'device-revoked' => 'device-not-allowed',
       'sync-rejected' => 'preserve-evidence-and-review-rejection',
       'sync-server-timeout' => 'preserve-evidence-and-review-server-deadline',

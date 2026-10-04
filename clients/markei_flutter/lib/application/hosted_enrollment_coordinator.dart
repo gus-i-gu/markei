@@ -38,7 +38,10 @@ final class HostedEnrollmentCoordinator {
         updatedAt: _now(),
       ),
     );
-    final authState = await _authenticationSession.signIn();
+    final currentAuthState = await _authenticationSession.currentState();
+    final authState = currentAuthState is SignedIn
+        ? currentAuthState
+        : await _authenticationSession.signIn();
     if (authState is! SignedIn) {
       await _mark(environmentAlias, command, 'authentication-cancelled');
       return const HostedEnrollmentOutcome.notApplied(
@@ -64,6 +67,10 @@ final class HostedEnrollmentCoordinator {
     if (result is DeviceEnrollmentTransportConflict) {
       await _mark(environmentAlias, command, 'conflict');
       return const HostedEnrollmentOutcome.notApplied('conflict');
+    }
+    if (result is DeviceEnrollmentTransportRejected) {
+      await _mark(environmentAlias, command, result.code);
+      return HostedEnrollmentOutcome.notApplied(result.code);
     }
     final state = result is DeviceEnrollmentTransportUnavailable
         ? 'service-unavailable'
@@ -102,6 +109,10 @@ final class HostedEnrollmentCoordinator {
     if (result is DeviceEnrollmentTransportConflict) {
       await _markExisting(state, 'conflict');
       return const HostedEnrollmentOutcome.notApplied('conflict');
+    }
+    if (result is DeviceEnrollmentTransportRejected) {
+      await _markExisting(state, result.code);
+      return HostedEnrollmentOutcome.notApplied(result.code);
     }
     if (result is DeviceEnrollmentTransportUnavailable) {
       await _markExisting(state, 'service-unavailable');

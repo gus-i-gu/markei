@@ -95,9 +95,15 @@ final class DriftHostedIdentityRepository implements HostedIdentityRepository {
 }
 
 final class DriftHostedSyncGuard implements HostedSyncGuard {
-  DriftHostedSyncGuard(this._repository);
+  DriftHostedSyncGuard(
+    this._repository, {
+    this.requireStartupBinding = false,
+    this.startupBinding,
+  });
 
   final HostedIdentityRepository _repository;
+  final bool requireStartupBinding;
+  final HostedIdentityBinding? startupBinding;
 
   @override
   Future<HostedSyncDecision> evaluate(String environmentAlias) async {
@@ -117,6 +123,17 @@ final class DriftHostedSyncGuard implements HostedSyncGuard {
     );
     if (binding == null) {
       return const HostedSyncDecision.blocked('binding-invalid');
+    }
+    // A successful enrollment cannot rebind an already running Account's
+    // repositories or upload its offline purchases into another Account.
+    final startup = startupBinding;
+    if (requireStartupBinding &&
+        (startup == null ||
+            startup.accountId != binding.accountId ||
+            startup.serverDeviceId != binding.serverDeviceId ||
+            startup.installationId != binding.installationId ||
+            startup.generation != binding.generation)) {
+      return const HostedSyncDecision.blocked('hosted-restart-required');
     }
     return HostedSyncDecision.allowedBinding(binding);
   }

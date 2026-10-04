@@ -207,9 +207,15 @@ class _ProjectionView extends StatelessWidget {
             ),
           )
         else if (layoutClass == MarkeiLayoutClass.wide)
-          _ListsTable(items: visibleItems)
+          _ListsTable(
+            items: visibleItems,
+            shortageThreshold: projection.shortageThresholdDays,
+          )
         else
-          _ListsCards(items: visibleItems),
+          _ListsCards(
+            items: visibleItems,
+            shortageThreshold: projection.shortageThresholdDays,
+          ),
       ],
     );
   }
@@ -284,22 +290,48 @@ class _ViewSelector extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: SegmentedButton<ProductListView>(
         key: const Key('lists.viewSelector'),
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? _viewTone(selected).background
+                : MarkeiColors.surface,
+          ),
+          foregroundColor: WidgetStateProperty.all(
+            _viewTone(selected).foreground,
+          ),
+        ),
         segments: const [
           ButtonSegment(
             value: ProductListView.storage,
-            label: Text('Storage', key: Key('lists.view.storage')),
+            label: Text(
+              'Storage',
+              key: Key('lists.view.storage'),
+              style: TextStyle(color: MarkeiColors.green),
+            ),
           ),
           ButtonSegment(
             value: ProductListView.shortage,
-            label: Text('Shortage', key: Key('lists.view.shortage')),
+            label: Text(
+              'Shortage',
+              key: Key('lists.view.shortage'),
+              style: TextStyle(color: MarkeiColors.warning),
+            ),
           ),
           ButtonSegment(
             value: ProductListView.market,
-            label: Text('Market', key: Key('lists.view.market')),
+            label: Text(
+              'Market',
+              key: Key('lists.view.market'),
+              style: TextStyle(color: MarkeiColors.information),
+            ),
           ),
           ButtonSegment(
             value: ProductListView.all,
-            label: Text('All', key: Key('lists.view.all')),
+            label: Text(
+              'All',
+              key: Key('lists.view.all'),
+              style: TextStyle(color: MarkeiColors.lavender),
+            ),
           ),
         ],
         selected: {selected},
@@ -334,6 +366,7 @@ class _SummaryBand extends StatelessWidget {
         label: _viewLabel(projection.view),
         value: projection.items.length.toString(),
         detail: 'Returned Products',
+        tone: _viewTone(projection.view),
       ),
       MarkeiSummaryTile(
         key: const Key('lists.summary.estimated'),
@@ -341,7 +374,7 @@ class _SummaryBand extends StatelessWidget {
         label: 'With estimates',
         value: available.toString(),
         detail: 'Derived cycle available',
-        tone: MarkeiSummaryTone.info,
+        tone: MarkeiSummaryTone.secondary,
       ),
       MarkeiSummaryTile(
         key: const Key('lists.summary.insufficient'),
@@ -357,26 +390,16 @@ class _SummaryBand extends StatelessWidget {
         label: 'Approximate next purchase',
         value: total,
         detail: 'Estimate, not a recorded total',
-        tone: MarkeiSummaryTone.warning,
+        tone: MarkeiSummaryTone.info,
       ),
     ];
     if (layoutClass == MarkeiLayoutClass.wide) {
       return MarkeiSummaryStrip(children: tiles);
     }
-    return Column(
-      children: [
-        Row(
-          children: [
-            for (final tile in tiles.take(3)) ...[
-              Expanded(child: tile),
-              if (tile != tiles.take(3).last)
-                const SizedBox(width: MarkeiSpacing.xs),
-            ],
-          ],
-        ),
-        const SizedBox(height: MarkeiSpacing.sm),
-        tiles.last,
-      ],
+    return MarkeiResponsiveGrid(
+      layoutClass: layoutClass,
+      minTileWidth: 240,
+      children: tiles,
     );
   }
 }
@@ -451,9 +474,10 @@ class _Controls extends StatelessWidget {
 }
 
 class _ListsTable extends StatelessWidget {
-  const _ListsTable({required this.items});
+  const _ListsTable({required this.items, required this.shortageThreshold});
 
   final List<ProductListProjectionItem> items;
+  final int shortageThreshold;
 
   @override
   Widget build(BuildContext context) {
@@ -490,7 +514,12 @@ class _ListsTable extends StatelessWidget {
                   DataCell(Text(_cycleText(item))),
                   DataCell(Text(_expectedText(item))),
                   DataCell(Text(_remainingText(item))),
-                  DataCell(_StatusChip(item: item)),
+                  DataCell(
+                    _StatusChip(
+                      item: item,
+                      shortageThreshold: shortageThreshold,
+                    ),
+                  ),
                 ],
               ),
           ],
@@ -501,9 +530,10 @@ class _ListsTable extends StatelessWidget {
 }
 
 class _ListsCards extends StatelessWidget {
-  const _ListsCards({required this.items});
+  const _ListsCards({required this.items, required this.shortageThreshold});
 
   final List<ProductListProjectionItem> items;
+  final int shortageThreshold;
 
   @override
   Widget build(BuildContext context) {
@@ -533,7 +563,12 @@ class _ListsCards extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: MarkeiSpacing.sm),
-                    _StatusChip(item: item),
+                    Flexible(
+                      child: _StatusChip(
+                        item: item,
+                        shortageThreshold: shortageThreshold,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: MarkeiSpacing.sm),
@@ -600,9 +635,10 @@ class _Fact extends StatelessWidget {
 }
 
 class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.item});
+  const _StatusChip({required this.item, required this.shortageThreshold});
 
   final ProductListProjectionItem item;
+  final int shortageThreshold;
 
   @override
   Widget build(BuildContext context) {
@@ -611,16 +647,34 @@ class _StatusChip extends StatelessWidget {
     }
     final remaining = item.cycle.remainingDays!;
     if (remaining < 0) {
-      return const MarkeiStatusChip(label: 'Expected ended');
+      return const MarkeiStatusChip(
+        label: 'Expected ended',
+        tone: MarkeiSummaryTone.info,
+      );
     }
     if (remaining == 0) {
-      return const MarkeiStatusChip(label: 'Due today');
+      return const MarkeiStatusChip(
+        label: 'Due today',
+        tone: MarkeiSummaryTone.warning,
+      );
     }
-    return MarkeiStatusChip(label: 'Estimate: $remaining day(s)');
+    return MarkeiStatusChip(
+      label: 'Estimate: $remaining day(s)',
+      tone: remaining <= shortageThreshold
+          ? MarkeiSummaryTone.warning
+          : MarkeiSummaryTone.primary,
+    );
   }
 }
 
 enum ProductListSort { remaining, name, code, latestPrice }
+
+MarkeiSummaryTone _viewTone(ProductListView view) => switch (view) {
+  ProductListView.storage => MarkeiSummaryTone.primary,
+  ProductListView.shortage => MarkeiSummaryTone.warning,
+  ProductListView.market => MarkeiSummaryTone.info,
+  ProductListView.all => MarkeiSummaryTone.secondary,
+};
 
 String _viewLabel(ProductListView view) {
   return switch (view) {

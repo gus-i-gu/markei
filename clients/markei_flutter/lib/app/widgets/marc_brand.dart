@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/markei_theme.dart';
 
 /// Approved Marc artwork; the emblem stays readable in compact navigation.
 class MarcBrand extends StatelessWidget {
@@ -18,6 +19,7 @@ class MarcBrand extends StatelessWidget {
           onTap: () => showAboutDialog(
             context: context,
             applicationName: 'Marc',
+            applicationVersion: '1.1.0 · development',
             children: [
               Center(
                 child: Image.asset(
@@ -34,19 +36,54 @@ class MarcBrand extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(8),
-            child: Image.asset(
-              compact
-                  ? 'assets/branding/marc-emblem.png'
-                  : 'assets/branding/marc-logo.png',
-              width: compact ? 36 : 112,
-              height: compact ? 40 : 140,
-              fit: BoxFit.contain,
-              excludeFromSemantics: true,
-              filterQuality: FilterQuality.high,
-            ),
+            child: compact
+                ? _emblem()
+                : SizedBox(
+                    width: 190,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            _emblem(),
+                            const SizedBox(width: 12),
+                            const Text(
+                              'MARC',
+                              style: TextStyle(
+                                fontSize: 25,
+                                letterSpacing: 2.8,
+                                fontWeight: FontWeight.w500,
+                                color: MarkeiColors.brandDeepGreen,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'HOUSEHOLD GOVERNANCE',
+                          style: TextStyle(
+                            fontSize: 9,
+                            letterSpacing: 1.2,
+                            color: MarkeiColors.mutedInk,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Divider(),
+                      ],
+                    ),
+                  ),
           ),
         ),
       ),
     );
   }
+
+  Widget _emblem() => Image.asset(
+    'assets/branding/marc-emblem.png',
+    width: 36,
+    height: 44,
+    fit: BoxFit.contain,
+    excludeFromSemantics: true,
+    filterQuality: FilterQuality.high,
+  );
 }

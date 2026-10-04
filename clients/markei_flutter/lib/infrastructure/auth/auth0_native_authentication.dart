@@ -10,7 +10,10 @@ typedef Auth0ClientFactory =
     NativeAuth0Client Function(NativeAuthConfiguration configuration);
 
 final class NativeAuth0Authentication
-    implements ExternalAuthenticationSession, AccessTokenSource {
+    implements
+        ExternalAuthenticationSession,
+        AccessTokenSource,
+        AuthenticatedUserProfileSource {
   NativeAuth0Authentication({
     required NativeAuthConfiguration configuration,
     Auth0ClientFactory clientFactory = SdkNativeAuth0Client.new,
@@ -24,6 +27,16 @@ final class NativeAuth0Authentication
   final DateTime Function() _now;
   NativeAuthCredentials? _credentials;
   bool _signingIn = false;
+
+  @override
+  Future<AuthenticatedUserProfile?> currentProfile() async {
+    if (await currentState() is! SignedIn) return null;
+    final credentials = _credentials!;
+    return AuthenticatedUserProfile(
+      name: credentials.name,
+      email: credentials.email,
+    );
+  }
 
   @override
   Future<ExternalAuthenticationState> currentState() async {
@@ -146,11 +159,15 @@ final class SdkNativeAuth0Client implements NativeAuth0Client {
         NativeAuthPlatform.android =>
           await _auth0
               .webAuthentication(scheme: 'https', useCredentialsManager: false)
-              .login(audience: audience),
+              .login(
+                audience: audience,
+                scopes: {'openid', 'profile', 'email'},
+              ),
         NativeAuthPlatform.windows =>
           await _auth0.windowsWebAuthentication().login(
             appCustomURL: windowsCallbackUrl,
             audience: audience,
+            scopes: {'openid', 'profile', 'email'},
           ),
         NativeAuthPlatform.unsupported => throw const NativeAuthUnavailable(),
       };
@@ -236,6 +253,8 @@ final class NativeAuthCredentials {
     required this.accessToken,
     required this.idToken,
     required this.expiresAt,
+    this.name,
+    this.email,
   });
 
   factory NativeAuthCredentials.fromSdk(Credentials credentials) {
@@ -243,12 +262,16 @@ final class NativeAuthCredentials {
       accessToken: credentials.accessToken,
       idToken: credentials.idToken,
       expiresAt: credentials.expiresAt.toUtc(),
+      name: credentials.user.name ?? credentials.user.nickname,
+      email: credentials.user.email,
     );
   }
 
   final String accessToken;
   final String idToken;
   final DateTime expiresAt;
+  final String? name;
+  final String? email;
 }
 
 final class InMemoryAuth0CredentialsManager extends CredentialsManager {

@@ -20,6 +20,32 @@ import 'package:markei/infrastructure/local/hosted_identity_repository.dart';
 import 'package:markei/infrastructure/local/local_database.dart';
 
 void main() {
+  test(
+    'signed-in profile is memory-only and cleared by logout or expiry',
+    () async {
+      var now = DateTime.utc(2026, 7, 18, 12);
+      final auth = _auth(
+        _FakeNativeAuth0Client(
+          credentials: NativeAuthCredentials(
+            accessToken: 'synthetic-api-token',
+            idToken: 'synthetic-id-token',
+            expiresAt: DateTime.utc(2026, 7, 18, 13),
+            name: 'Alex',
+            email: 'alex@example.invalid',
+          ),
+        ),
+        now: () => now,
+      );
+      expect(await auth.currentProfile(), isNull);
+      await auth.signIn();
+      expect((await auth.currentProfile())?.email, 'alex@example.invalid');
+      await auth.logout();
+      expect(await auth.currentProfile(), isNull);
+      await auth.signIn();
+      now = DateTime.utc(2026, 7, 18, 14);
+      expect(await auth.currentProfile(), isNull);
+    },
+  );
   group('native auth configuration', () {
     test('accepts valid Android and Windows configuration', () {
       final android = NativeAuthConfiguration.validate(

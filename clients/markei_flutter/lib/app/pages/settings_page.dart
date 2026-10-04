@@ -249,6 +249,19 @@ class _SettingsPageState extends State<SettingsPage> {
     try {
       final result = await run();
       if (!mounted) return;
+      if (result.state == 'sync-completed' ||
+          result.state == 'sync-no-new-events') {
+        await _refreshReferences();
+        if (!mounted) return;
+      }
+      if (const {
+        'sync-completed',
+        'sync-no-new-events',
+        'signed-in',
+        'signed-out-cleared',
+      }.contains(result.state)) {
+        widget.onChanged();
+      }
       final refreshed = await _refreshLocalStatus(fromBusyAction: true);
       if (!mounted) return;
       setState(

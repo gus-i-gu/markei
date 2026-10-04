@@ -53,6 +53,7 @@ final class MarkeiComposition {
     AuditController? auditController,
     SettingsAccountSupportPort? settingsAccountSupport,
     SettingsSyncDeviceSupportPort? settingsSyncDeviceSupport,
+    AuthenticatedUserProfileSource? householdProfileSource,
     required this.accountId,
     required this.deviceId,
     this.nativeAuthConfiguration = const NativeAuthConfigurationUnavailable(
@@ -85,7 +86,8 @@ final class MarkeiComposition {
            _RunnerSettingsAccountSupport(nativeClosureRunner),
        settingsSyncDeviceSupport =
            settingsSyncDeviceSupport ??
-           _RunnerSettingsSyncDeviceSupport(nativeClosureRunner);
+           _RunnerSettingsSyncDeviceSupport(nativeClosureRunner),
+       householdProfileSource = householdProfileSource ?? nativeClosureRunner;
 
   final LocalDatabase database;
   final PurchaseRegistrationRepository purchaseRegistration;
@@ -100,6 +102,7 @@ final class MarkeiComposition {
   final AuditController auditController;
   final SettingsAccountSupportPort settingsAccountSupport;
   final SettingsSyncDeviceSupportPort settingsSyncDeviceSupport;
+  final AuthenticatedUserProfileSource householdProfileSource;
   final AccountId accountId;
   final DeviceId deviceId;
   final NativeAuthConfigurationResult nativeAuthConfiguration;
@@ -216,7 +219,7 @@ final class MarkeiComposition {
       applicationId: config.configuration.platform == NativeAuthPlatform.android
           ? NativeAuthConfiguration.defaultAndroidApplicationId
           : 'markei.windows',
-      applicationVersion: '1.0.0',
+      applicationVersion: '1.1.0',
     );
     return NativeAuthClosureRunner(
       authenticationSession: authentication,
@@ -235,9 +238,11 @@ final class MarkeiComposition {
       syncAttemptRecorder: diagnostics,
       hostedSyncCoordinator: HostedSyncCoordinator(
         authenticationSession: authentication,
-        syncGuard: binding == null
-            ? const BlockedHostedSyncGuard('hosted-restart-required')
-            : DriftHostedSyncGuard(repository),
+        syncGuard: DriftHostedSyncGuard(
+          repository,
+          requireStartupBinding: true,
+          startupBinding: binding,
+        ),
         applier: remoteApplier,
         recoverFailedNotApplied: RecoverFailedNotApplied(syncOutbox),
         uploadPendingEvents: UploadPendingEvents(syncOutbox, syncTransport),
@@ -252,9 +257,11 @@ final class MarkeiComposition {
       ),
       failedNotAppliedRecoveryCoordinator: FailedNotAppliedRecoveryCoordinator(
         authenticationSession: authentication,
-        syncGuard: binding == null
-            ? const BlockedHostedSyncGuard('hosted-restart-required')
-            : DriftHostedSyncGuard(repository),
+        syncGuard: DriftHostedSyncGuard(
+          repository,
+          requireStartupBinding: true,
+          startupBinding: binding,
+        ),
         diagnosticsQuery: diagnostics,
         outbox: syncOutbox,
         transport: syncTransport,
@@ -380,8 +387,24 @@ final class _RunnerSettingsSyncDeviceSupport
     final result = await _runner.enrollOrQueryDevice();
     return SettingsActionResult(
       state: result.state,
-      message:
+      message: switch (result.state) {
+        'hosted-restart-required' =>
+          'Device connection is recorded. Close Marc normally, reopen it, sign in again, then Sync now. Purchases made before connection remain in the offline workspace.',
+        'service-unavailable' =>
+          'The server could not confirm this Device connection. Your local purchases are safe. Sync is blocked until connection succeeds.',
+        'authentication-required' || 'token-expired' || 'token-rejected' =>
+          'The server did not accept this sign-in for Device connection. Sign in again, then connect. Your local purchases are safe.',
+        'membership-required' =>
+          'Sign-in succeeded, but this Account needs active membership before this Device can connect.',
+        'account-selection-required' =>
+          'Sign-in succeeded, but the server requires an Account selection before this Device can connect.',
+        'enrollment-forbidden' =>
+          'The server refused this Device connection. Sign-in alone does not establish Device enrollment. Your local purchases are safe.',
+        'duplicate-equivalent' =>
+          'This Device connection is already recorded. This does not prove Sync succeeded.',
+        _ =>
           'Connect this Device finished with ${result.state}. This does not prove Sync succeeded.',
+      },
       contactedNetwork: true,
       mayHaveWritten: true,
     );
@@ -392,8 +415,20 @@ final class _RunnerSettingsSyncDeviceSupport
     final result = await _runner.hostedSyncProbe();
     return SettingsActionResult(
       state: result.state,
-      message:
+      message: switch (result.state) {
+        'sync-completed' =>
+          'Sync completed. Purchase history and Lists have been refreshed.',
+        'sync-no-new-events' =>
+          'Sync completed. There are no new events to transfer.',
+        'sync-restart-required' =>
+          'Device connection is recorded, but this session needs to restart. Close Marc normally, reopen it, sign in again, then Sync now.',
+        'device-enrollment-required' =>
+          'This Device has no active connection for Sync. Check the enrollment status and use Connect this Device. No purchase upload was started.',
+        'authentication-required' =>
+          'Sign in to Sync first. Your local purchases are safe.',
+        _ =>
           'Sync now finished with ${result.state}. No automatic retry or recovery was started.',
+      },
       contactedNetwork: true,
       mayHaveWritten: true,
     );

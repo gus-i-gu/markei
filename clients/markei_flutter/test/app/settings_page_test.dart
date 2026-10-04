@@ -8,6 +8,42 @@ import 'package:markei/domain/shared/ids.dart';
 
 void main() {
   const account = AccountId('11111111-1111-4111-8111-111111111111');
+  for (final outcome in [
+    'sync-completed',
+    'sync-no-new-events',
+    'device-enrollment-required',
+  ]) {
+    testWidgets(
+      'Settings refreshes purchase projections only after successful Sync: $outcome',
+      (tester) async {
+        var changes = 0;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SettingsPage(
+                accountId: account,
+                references: _MemoryReferences(),
+                preferences: _MemoryPreferences(2),
+                accountSupport: _FakeAccountSupport(),
+                syncDeviceSupport: _FakeSyncDeviceSupport(syncState: outcome),
+                onChanged: () => changes++,
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(
+          find.byKey(const Key('settings.syncNow')),
+          300,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await _tapVisible(tester, find.byKey(const Key('settings.syncNow')));
+        await tester.pumpAndSettle();
+        expect(changes, outcome == 'device-enrollment-required' ? 0 : 1);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
 
   testWidgets(
     'Settings loads persisted threshold and preserves invalid draft',
@@ -265,6 +301,8 @@ final class _FakeAccountSupport implements SettingsAccountSupportPort {
 }
 
 final class _FakeSyncDeviceSupport implements SettingsSyncDeviceSupportPort {
+  _FakeSyncDeviceSupport({this.syncState = 'sync-unavailable'});
+  final String syncState;
   int connectCount = 0;
 
   @override
@@ -304,8 +342,8 @@ final class _FakeSyncDeviceSupport implements SettingsSyncDeviceSupportPort {
       );
 
   @override
-  Future<SettingsActionResult> syncNow() async => const SettingsActionResult(
-    state: 'sync-unavailable',
+  Future<SettingsActionResult> syncNow() async => SettingsActionResult(
+    state: syncState,
     message:
         'Sync now finished with sync-unavailable. No automatic retry or recovery was started.',
     contactedNetwork: true,

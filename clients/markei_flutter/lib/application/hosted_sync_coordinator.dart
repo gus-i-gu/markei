@@ -95,6 +95,9 @@ final class HostedSyncCoordinator {
           deviceBlocker == 'device-expired') {
         return const HostedSyncOutcome.deviceRevoked();
       }
+      if (deviceBlocker == 'hosted-restart-required') {
+        return const HostedSyncOutcome.restartRequired();
+      }
       return const HostedSyncOutcome.deviceEnrollmentRequired();
     }
     await diagnostics?.recordPhase(
@@ -276,6 +279,8 @@ final class HostedSyncOutcome {
 
   const HostedSyncOutcome.deviceEnrollmentRequired()
     : this._('device-enrollment-required');
+
+  const HostedSyncOutcome.restartRequired() : this._('sync-restart-required');
 
   const HostedSyncOutcome.noNewEvents() : this._('sync-no-new-events');
 

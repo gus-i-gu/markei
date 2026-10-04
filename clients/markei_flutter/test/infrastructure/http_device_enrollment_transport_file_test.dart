@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:markei/application/hosted_auth_ports.dart';
@@ -17,6 +19,27 @@ import 'package:markei/infrastructure/local/local_purchase_repository.dart';
 import 'package:markei/infrastructure/remote/http_device_enrollment_transport.dart';
 
 void main() {
+  for (final entry in [
+    (401, '{}', 'authentication-required'),
+    (403, '{"code":"membership-required"}', 'membership-required'),
+    (403, '{"code":"untrusted-provider-text"}', 'enrollment-forbidden'),
+  ]) {
+    test(
+      'enrollment HTTP ${entry.$1} is rejected with closed code ${entry.$3}',
+      () async {
+        final transport = HttpDeviceEnrollmentTransport(
+          origin: Uri.parse('https://example.invalid'),
+          client: MockClient((_) async => http.Response(entry.$2, entry.$1)),
+        );
+        final result = await transport.enroll(
+          _enrollmentCommand(),
+          'synthetic-token',
+        );
+        expect(result, isA<DeviceEnrollmentTransportRejected>());
+        expect((result as DeviceEnrollmentTransportRejected).code, entry.$3);
+      },
+    );
+  }
   test(
     'real HTTP transport preserves file-backed enrollment and local outbox',
     () async {

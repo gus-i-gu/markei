@@ -8,6 +8,16 @@ abstract interface class AccessTokenSource {
   Future<AccessTokenResult> accessToken();
 }
 
+abstract interface class AuthenticatedUserProfileSource {
+  Future<AuthenticatedUserProfile?> currentProfile();
+}
+
+final class AuthenticatedUserProfile {
+  const AuthenticatedUserProfile({this.name, this.email});
+  final String? name;
+  final String? email;
+}
+
 abstract interface class DeviceEnrollmentTransport {
   Future<DeviceEnrollmentTransportResult> enroll(
     DeviceEnrollmentCommand command,
@@ -118,6 +128,12 @@ final class DeviceEnrollmentTransportSuccess
 final class DeviceEnrollmentTransportConflict
     extends DeviceEnrollmentTransportResult {
   const DeviceEnrollmentTransportConflict();
+}
+
+final class DeviceEnrollmentTransportRejected
+    extends DeviceEnrollmentTransportResult {
+  const DeviceEnrollmentTransportRejected(this.code);
+  final String code;
 }
 
 final class DeviceEnrollmentTransportUnavailable

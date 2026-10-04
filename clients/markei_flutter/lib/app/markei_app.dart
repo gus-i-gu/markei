@@ -7,6 +7,7 @@ import 'design/markei_theme.dart';
 import 'markei_composition.dart';
 import 'navigation/markei_destination.dart';
 import 'pages/home_page.dart';
+import 'pages/household_page.dart';
 import 'pages/analytics_page.dart';
 import 'pages/audit_page.dart';
 import 'pages/guide_page.dart';
@@ -167,11 +168,10 @@ class _MarkeiAppState extends State<MarkeiApp> {
       exportDestination: widget.composition.exportDestination,
       visible: _visibleSelectedId == MarkeiDestinationId.analytics,
     ),
-    MarkeiDestinationId.household: const _ReservedPage(
-      key: Key('household.reserved'),
-      title: 'Household',
-      body: 'Household tools are planned and secondary during this phase.',
-      icon: Icons.groups_outlined,
+    MarkeiDestinationId.household: HouseholdPage(
+      profileSource: widget.composition.householdProfileSource,
+      refreshSignal: _refreshSignal,
+      onOpenSettings: () => _selectDestination(MarkeiDestinationId.settings),
     ),
     MarkeiDestinationId.guide: const GuidePage(),
     MarkeiDestinationId.documentation: const _StaticPage(
@@ -232,30 +232,6 @@ class _MarkeiAppState extends State<MarkeiApp> {
       );
       _selectedId = MarkeiDestinationId.analytics;
     });
-  }
-}
-
-class _ReservedPage extends StatelessWidget {
-  const _ReservedPage({
-    required this.title,
-    required this.body,
-    required this.icon,
-    super.key,
-  });
-
-  final String title;
-  final String body;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        MarkeiPageHeader(title: title, purpose: body, icon: icon),
-        const SizedBox(height: MarkeiSpacing.lg),
-        MarkeiStatePanel(title: '$title reserved', message: body, icon: icon),
-      ],
-    );
   }
 }
 
