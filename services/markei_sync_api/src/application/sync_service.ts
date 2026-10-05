@@ -166,6 +166,17 @@ async function validateCompleteSubmission(
         correlationId,
       );
     }
+    if (
+      event.eventType === "product.list-note.recorded" &&
+      !validListNoteEvent(event, auth.accountId)
+    ) {
+      return failure(
+        "invalid-list-note",
+        "upload-submission",
+        false,
+        correlationId,
+      );
+    }
     const eventContent = { ...event };
     delete eventContent.contentHash;
     if (event.contentHash !== canonicalHash(eventContent)) {
@@ -242,7 +253,7 @@ export async function downloadEvents(
     );
     const snapshot = snapshotTable.rows[0]?.table_name
       ? await client.query(
-          "select snapshot_id from recovery_snapshots where account_id=$1 and state='available' and recovery_format_version=1 order by covered_through_cursor desc limit 1",
+          "select snapshot_id from recovery_snapshots where account_id=$1 and state='available' and recovery_format_version in (1,2) order by covered_through_cursor desc limit 1",
           [auth.accountId],
         )
       : { rowCount: 0 };
@@ -355,4 +366,43 @@ function diagnosticCodeForFailure(code: string, operation: string): string {
   if (code === "sequence-gap") return "MKS-UPL-005";
   if (code === "service-unavailable") return "MKS-PDB-001";
   return "MKS-UPL-001";
+}
+
+export function validListNoteEvent(
+  event: Record<string, unknown>,
+  accountId: string,
+): boolean {
+  if (
+    event.payloadVersion !== 1 ||
+    !event.payload ||
+    typeof event.payload !== "object"
+  )
+    return false;
+  const payload = event.payload as Record<string, unknown>;
+  const note = payload.listNote as Record<string, unknown> | undefined;
+  const snapshots = payload.productSnapshots as
+    | Array<Record<string, unknown>>
+    | undefined;
+  return (
+    !!note &&
+    note.id === event.eventId &&
+    typeof note.productId === "string" &&
+    typeof note.note === "string" &&
+    note.note.length <= 2000 &&
+    Array.isArray(note.tags) &&
+    note.tags.length <= 20 &&
+    note.tags.every(
+      (tag: unknown) =>
+        typeof tag === "string" && tag.trim().length > 0 && tag.length <= 64,
+    ) &&
+    Array.isArray(note.replaces) &&
+    note.replaces.length <= 100 &&
+    note.replaces.every(
+      (id: unknown) => typeof id === "string" && id !== note.id,
+    ) &&
+    Array.isArray(snapshots) &&
+    snapshots.length === 1 &&
+    snapshots[0]?.accountId === accountId &&
+    snapshots[0]?.id === note.productId
+  );
 }

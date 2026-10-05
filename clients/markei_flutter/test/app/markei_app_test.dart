@@ -80,7 +80,13 @@ void main() {
     await tester.tap(find.byKey(const Key('purchase.register')));
     await _pumpReady(tester);
 
-    expect(find.text('Purchase registered locally.'), findsOneWidget);
+    await _ensureVisible(tester, find.byKey(const Key('purchase.message')));
+    expect(
+      find.text(
+        'Purchase saved on this device. Sync it to share it with your other devices.',
+      ),
+      findsOneWidget,
+    );
     expect(find.textContaining('Device sequence'), findsNothing);
 
     await tester.tap(find.text('History'));
@@ -157,11 +163,6 @@ void main() {
     );
     await _enterVisibleText(
       tester,
-      find.byKey(const Key('item.quantity')),
-      '2',
-    );
-    await _enterVisibleText(
-      tester,
       find.byKey(const Key('item.lineTotal')),
       '15.50',
     );
@@ -184,7 +185,7 @@ void main() {
     final item = detail!.items.single;
     expect(item.productId.value, product.id.value);
     expect(item.packageCount, 3);
-    expect(item.purchasedAmount, '2.000000');
+    expect(item.purchasedAmount, '3.000000');
     expect(item.lineTotalMinorUnits, 1550);
   });
 
@@ -301,6 +302,7 @@ void main() {
     await tester.tap(find.text('Purchase'));
     await _pumpReady(tester);
 
+    await _ensureVisible(tester, find.byKey(const Key('purchase.message')));
     expect(
       find.textContaining('product-selection-invalidated'),
       findsOneWidget,
@@ -977,6 +979,16 @@ void main() {
     await tester.tap(find.text('Purchase'));
     await _pumpReady(tester);
 
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('purchase.message')),
+      300,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const Key('purchase.page')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
     expect(find.textContaining('store-selection-invalidated'), findsOneWidget);
     expect(find.text('Selected Store: Mercado Central'), findsNothing);
   });
@@ -1097,7 +1109,13 @@ void main() {
     await _tapVisible(tester, find.byKey(const Key('purchase.register')));
     await _pumpReady(tester);
 
-    expect(find.text('Purchase registered locally.'), findsOneWidget);
+    await _ensureVisible(tester, find.byKey(const Key('purchase.message')));
+    expect(
+      find.text(
+        'Purchase saved on this device. Sync it to share it with your other devices.',
+      ),
+      findsOneWidget,
+    );
     expect(await db.select(db.purchases).get(), hasLength(1));
     expect(await db.select(db.syncEvents).get(), hasLength(1));
     expect(await db.select(db.pendingEvents).get(), hasLength(1));
@@ -1584,15 +1602,31 @@ Future<void> _enterVisibleText(
   Finder finder,
   String text,
 ) async {
-  await tester.ensureVisible(finder);
+  await _ensureVisible(tester, finder);
   await _pumpReady(tester);
   await tester.enterText(finder, text);
 }
 
 Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
-  await tester.ensureVisible(finder);
+  await _ensureVisible(tester, finder);
   await _pumpReady(tester);
   await tester.tap(finder);
+}
+
+Future<void> _ensureVisible(WidgetTester tester, Finder finder) async {
+  if (finder.evaluate().isEmpty) {
+    final purchaseScrollables = find.descendant(
+      of: find.byKey(const Key('purchase.page')),
+      matching: find.byType(Scrollable),
+    );
+    final scrollable = purchaseScrollables.evaluate().isNotEmpty
+        ? purchaseScrollables.first
+        : find.byType(Scrollable).first;
+    await tester.drag(scrollable, const Offset(0, 20000));
+    await _pumpReady(tester);
+    await tester.scrollUntilVisible(finder, 300, scrollable: scrollable);
+  }
+  await tester.ensureVisible(finder);
 }
 
 Future<void> _pumpReady(WidgetTester tester) async {

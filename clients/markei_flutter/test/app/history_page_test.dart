@@ -1,3 +1,4 @@
+import 'package:markei/application/content_sharing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:markei/application/export_destination.dart';
@@ -7,6 +8,68 @@ import 'package:markei/app/pages/history_page.dart';
 import 'package:markei/domain/shared/ids.dart';
 
 void main() {
+  testWidgets(
+    'History sharing is consented, selected and independent of export',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final exports = _Exports();
+      final sharing = _Sharing();
+      final destination = _Destination();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: HistoryPage(
+              accountId: const AccountId('account-1'),
+              history: _History(),
+              exports: exports,
+              exportDestination: destination,
+              contentSharing: sharing,
+              refreshSignal: 0,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<PopupMenuButton<String>>(
+              find.byKey(const Key('history.share')),
+            )
+            .enabled,
+        isFalse,
+      );
+      await tester.tap(find.byKey(const Key('history.select.purchase-1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('history.share')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Share CSV'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('share.cancel')));
+      await tester.pumpAndSettle();
+      expect(sharing.requests, isEmpty);
+      expect(
+        find.text('Sharing cancelled. Your data is unchanged.'),
+        findsOneWidget,
+      );
+      expect(exports.calls, 0);
+      await tester.tap(find.byKey(const Key('history.share')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Share PDF'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('share.confirm')));
+      await tester.pumpAndSettle();
+      expect(exports.lastIds, {'purchase-1'});
+      expect(sharing.requests.single.file!.extension, 'pdf');
+      expect(sharing.requests.single.file!.bytes.take(4), [37, 80, 68, 70]);
+      expect(destination.writeCount, 0);
+      expect(find.text('1 selected for action'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('History selection is action-only and export uses destination', (
     tester,
   ) async {
@@ -179,5 +242,14 @@ final class _Destination implements ExportDestinationPort {
           'C:\\Users\\tester\\Downloads\\${request.baseNameCue}.${request.extension}',
       bytesWritten: request.bytes.length,
     );
+  }
+}
+
+final class _Sharing implements ContentSharingPort {
+  final requests = <ContentShareRequest>[];
+  @override
+  Future<ContentShareResult> share(ContentShareRequest request) async {
+    requests.add(request);
+    return ContentShareResult.handedOff;
   }
 }

@@ -1,3 +1,4 @@
+import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../application/hosted_auth_ports.dart';
@@ -65,7 +66,7 @@ class _HouseholdPageState extends State<HouseholdPage> {
                   'Your sign-in profile could not be read. Open Settings to check your session.',
               action: OutlinedButton(
                 onPressed: widget.onOpenSettings,
-                child: const Text('Open Settings'),
+                child: const MarcText('Open Settings'),
               ),
             );
           }
@@ -78,7 +79,7 @@ class _HouseholdPageState extends State<HouseholdPage> {
                   'Sign in through Settings to see your name and email here.',
               action: FilledButton(
                 onPressed: widget.onOpenSettings,
-                child: const Text('Sign in through Settings'),
+                child: const MarcText('Sign in through Settings'),
               ),
             );
           }
@@ -90,7 +91,7 @@ class _HouseholdPageState extends State<HouseholdPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                MarcText(
                   'MARC / YOUR SPACE',
                   style: MarkeiText.label.copyWith(
                     color: MarkeiColors.lavender,
@@ -115,7 +116,7 @@ class _HouseholdPageState extends State<HouseholdPage> {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: Text(
+                      child: MarcText(
                         name == null || name.isEmpty
                             ? 'Welcome to your household'
                             : 'Welcome, $name',
@@ -128,11 +129,11 @@ class _HouseholdPageState extends State<HouseholdPage> {
                 const SizedBox(height: 24),
                 const Divider(),
                 const SizedBox(height: 16),
-                const Text('Signed-in email', style: MarkeiText.metadata),
+                const MarcText('Signed-in email', style: MarkeiText.metadata),
                 const SizedBox(height: 8),
                 SelectableText(
                   email == null || email.isEmpty
-                      ? 'Email was not provided by your sign-in.'
+                      ? context.tr('Email was not provided by your sign-in.')
                       : email,
                   key: const Key('household.email'),
                   style: MarkeiText.body.copyWith(fontSize: 16),
@@ -158,7 +159,7 @@ class _HouseholdPageState extends State<HouseholdPage> {
         child: OutlinedButton.icon(
           onPressed: widget.onOpenSettings,
           icon: const Icon(Icons.settings_outlined),
-          label: const Text('Open Settings'),
+          label: const MarcText('Open Settings'),
         ),
       ),
     ],

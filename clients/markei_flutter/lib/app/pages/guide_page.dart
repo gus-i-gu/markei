@@ -1,3 +1,4 @@
+import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../design/markei_theme.dart';
@@ -53,7 +54,7 @@ class _GuidePageState extends State<GuidePage> {
                 OutlinedButton(
                   key: Key('guide.anchor.${index + 1}'),
                   onPressed: () => _focusSection(index),
-                  child: Text(_guideSections[index].title),
+                  child: MarcText(_guideSections[index].title),
                 ),
             ],
           ),
@@ -106,8 +107,8 @@ class _GuideSectionView extends StatelessWidget {
         focusNode: focusNode,
         child: Semantics(
           header: true,
-          label: 'Guide section $index, ${section.title}',
-          child: Text(section.body, key: Key('guide.section.$index')),
+          label: context.tr('Guide section $index, ${section.title}'),
+          child: MarcText(section.body, key: Key('guide.section.$index')),
         ),
       ),
     );

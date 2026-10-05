@@ -8,6 +8,8 @@ import '../../../domain/sync/canonical_json.dart';
 import '../../../domain/sync/sync_event.dart';
 import '../local_database.dart';
 import 'remote_purchase_fact_writer.dart';
+import '../../../application/list_notes.dart';
+import '../local_list_notes_repository.dart';
 
 final class DriftRemoteEventApplier implements RemoteEventApplier {
   DriftRemoteEventApplier(this._db)
@@ -58,7 +60,26 @@ final class DriftRemoteEventApplier implements RemoteEventApplier {
           if (await _isEquivalentInbox(accountId, eventId, hash)) {
             continue;
           }
-          await _facts.applyPurchaseRegistered(item.event);
+          if (item.event['eventType'] == listNoteEventType) {
+            final payload = item.event['payload'] as Map<String, Object?>;
+            final note = payload['listNote'] as Map<String, Object?>;
+            if (note['id'] != eventId) {
+              throw const FormatException('List note identity mismatch.');
+            }
+            final snapshots = (payload['productSnapshots'] as List)
+                .cast<Map<String, Object?>>();
+            if (snapshots.length != 1 ||
+                snapshots.single['id'] != note['productId']) {
+              throw const FormatException('List note product mismatch.');
+            }
+            final productId = await _facts.resolveListNoteProduct(
+              snapshots.single,
+              accountId,
+            );
+            await insertListNoteRevision(_db, accountId, productId, note);
+          } else {
+            await _facts.applyPurchaseRegistered(item.event);
+          }
           await _db
               .into(_db.syncInbox)
               .insert(
@@ -160,8 +181,10 @@ final class DriftRemoteEventApplier implements RemoteEventApplier {
       if (eventId == null ||
           hash == null ||
           event['accountId'] != accountId ||
-          event['eventType'] != 'purchase.registered' ||
-          event['payloadVersion'] != 3) {
+          !((event['eventType'] == 'purchase.registered' &&
+                  event['payloadVersion'] == 3) ||
+              (event['eventType'] == listNoteEventType &&
+                  event['payloadVersion'] == 1))) {
         return _conflict();
       }
       final content = Map<String, Object?>.from(event)..remove('contentHash');

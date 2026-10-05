@@ -1,3 +1,4 @@
+import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 import '../design/markei_theme.dart';
 
@@ -11,15 +12,15 @@ class MarcBrand extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: 'About Marc',
+      label: context.tr('About Marc'),
       child: Tooltip(
-        message: 'About Marc',
+        message: context.tr('About Marc'),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () => showAboutDialog(
             context: context,
             applicationName: 'Marc',
-            applicationVersion: '1.1.0 · development',
+            applicationVersion: '1.2.0 · MVP beta',
             children: [
               Center(
                 child: Image.asset(
@@ -31,7 +32,7 @@ class MarcBrand extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text('Household governance'),
+              const MarcText('Household governance'),
             ],
           ),
           child: Padding(
@@ -47,7 +48,7 @@ class MarcBrand extends StatelessWidget {
                           children: [
                             _emblem(),
                             const SizedBox(width: 12),
-                            const Text(
+                            const MarcText(
                               'MARC',
                               style: TextStyle(
                                 fontSize: 25,
@@ -59,7 +60,7 @@ class MarcBrand extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        const Text(
+                        const MarcText(
                           'HOUSEHOLD GOVERNANCE',
                           style: TextStyle(
                             fontSize: 9,

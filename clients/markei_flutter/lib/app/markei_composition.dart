@@ -1,3 +1,5 @@
+import '../application/content_sharing.dart';
+import '../infrastructure/platform/native_content_sharing.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,6 +15,8 @@ import '../application/hosted_sync_coordinator.dart';
 import '../application/failed_not_applied_recovery_coordinator.dart';
 import '../application/local_references.dart';
 import '../application/product_lists.dart';
+import '../application/list_notes.dart';
+import '../infrastructure/local/local_list_notes_repository.dart';
 import '../application/purchase_history.dart';
 import '../application/register_purchase.dart';
 import '../application/stable_device_enrollment_command_factory.dart';
@@ -37,6 +41,8 @@ import '../infrastructure/remote/hosted_http_policy.dart';
 import '../infrastructure/remote/http_hosted_connection_check.dart';
 import '../infrastructure/remote/http_sync_transport.dart';
 import 'native_auth_closure_runner.dart';
+import '../application/language_preference.dart';
+import '../infrastructure/platform/file_language_preference.dart';
 
 final class MarkeiComposition {
   MarkeiComposition({
@@ -48,6 +54,9 @@ final class MarkeiComposition {
     required this.preferences,
     required this.productLists,
     required this.purchaseExports,
+    ListNotesRepository? listNotes,
+    LanguagePreferenceRepository? languagePreferences,
+    ContentSharingPort? contentSharing,
     ExportDestinationPort? exportDestination,
     AnalyticsWorkspaceController? analyticsWorkspace,
     AuditController? auditController,
@@ -61,7 +70,11 @@ final class MarkeiComposition {
     ),
     this.nativeClosureRunner = const NativeAuthClosureRunner.unavailable(),
     this.nativeClosureSurfaceEnabled = false,
-  }) : exportDestination = exportDestination ?? LocalExportDestination(),
+  }) : languagePreferences =
+           languagePreferences ?? FileLanguagePreferenceRepository(),
+       listNotes = listNotes ?? LocalListNotesRepository(database),
+       contentSharing = contentSharing ?? NativeContentSharing(),
+       exportDestination = exportDestination ?? LocalExportDestination(),
        analyticsWorkspace =
            analyticsWorkspace ??
            AnalyticsWorkspaceController(
@@ -90,6 +103,8 @@ final class MarkeiComposition {
        householdProfileSource = householdProfileSource ?? nativeClosureRunner;
 
   final LocalDatabase database;
+  final LanguagePreferenceRepository languagePreferences;
+  final ListNotesRepository listNotes;
   final PurchaseRegistrationRepository purchaseRegistration;
   final CatalogueQueryRepository catalogueQueries;
   final PurchaseHistoryRepository purchaseHistory;
@@ -97,6 +112,7 @@ final class MarkeiComposition {
   final AccountPreferenceRepository preferences;
   final ProductListProjectionRepository productLists;
   final PurchaseExportRepository purchaseExports;
+  final ContentSharingPort contentSharing;
   final ExportDestinationPort exportDestination;
   final AnalyticsWorkspaceController analyticsWorkspace;
   final AuditController auditController;
@@ -219,7 +235,7 @@ final class MarkeiComposition {
       applicationId: config.configuration.platform == NativeAuthPlatform.android
           ? NativeAuthConfiguration.defaultAndroidApplicationId
           : 'markei.windows',
-      applicationVersion: '1.1.0',
+      applicationVersion: '1.2.0',
     );
     return NativeAuthClosureRunner(
       authenticationSession: authentication,

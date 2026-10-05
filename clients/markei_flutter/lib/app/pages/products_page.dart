@@ -1,3 +1,4 @@
+import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../application/catalogue_queries.dart';
@@ -7,6 +8,7 @@ import '../../domain/shared/quantity.dart';
 import '../../domain/store/store.dart';
 import '../design/markei_theme.dart';
 import '../widgets/markei_components.dart';
+import '../widgets/quantity_unit_picker.dart';
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({
@@ -200,16 +202,8 @@ class _ProductsPageState extends State<ProductsPage> {
     );
   }
 
-  MeasurementKind _measurementKindFromUnit() {
-    final unit = _packageUnitController.text.trim().toLowerCase();
-    if (unit == 'l' || unit == 'ml') {
-      return MeasurementKind.volume;
-    }
-    if (unit == 'un' || unit == 'unit') {
-      return MeasurementKind.count;
-    }
-    return MeasurementKind.mass;
-  }
+  MeasurementKind _measurementKindFromUnit() =>
+      measurementKindForDisplayUnit(_packageUnitController.text);
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +245,7 @@ class _ProductsPageState extends State<ProductsPage> {
               purpose:
                   'Manage reusable Products and supporting Stores for purchase registration.',
               icon: Icons.inventory_2_outlined,
-              trailing: Text(
+              trailing: MarcText(
                 '${_products.length} Product(s)',
                 style: MarkeiText.metadata,
               ),
@@ -315,10 +309,10 @@ class _ProductsPageState extends State<ProductsPage> {
           child: TextField(
             key: const Key('products.search'),
             controller: _searchController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               prefixIcon: Icon(Icons.search),
               labelText: 'Search Products',
-            ),
+            ).localized(context),
             onChanged: (_) => setState(() {}),
           ),
         ),
@@ -328,10 +322,10 @@ class _ProductsPageState extends State<ProductsPage> {
             key: const Key('products.sort'),
             initialValue: _sort,
             isExpanded: true,
-            decoration: const InputDecoration(labelText: 'Sort'),
+            decoration: InputDecoration(labelText: 'Sort').localized(context),
             items: const [
-              DropdownMenuItem(value: _ProductSort.az, child: Text('A-Z')),
-              DropdownMenuItem(value: _ProductSort.za, child: Text('Z-A')),
+              DropdownMenuItem(value: _ProductSort.az, child: MarcText('A-Z')),
+              DropdownMenuItem(value: _ProductSort.za, child: MarcText('Z-A')),
             ],
             onChanged: (value) {
               if (value != null) {
@@ -353,8 +347,8 @@ class _ProductsPageState extends State<ProductsPage> {
         children: [
           SegmentedButton<bool>(
             segments: const [
-              ButtonSegment(value: false, label: Text('Packaged')),
-              ButtonSegment(value: true, label: Text('Bulk')),
+              ButtonSegment(value: false, label: MarcText('Packaged')),
+              ButtonSegment(value: true, label: MarcText('Bulk')),
             ],
             selected: {_bulk},
             onSelectionChanged: (value) => setState(() => _bulk = value.single),
@@ -363,19 +357,23 @@ class _ProductsPageState extends State<ProductsPage> {
           TextField(
             key: const Key('products.create.code'),
             controller: _codeController,
-            decoration: const InputDecoration(labelText: 'Product code'),
+            decoration: InputDecoration(
+              labelText: 'Product code',
+            ).localized(context),
           ),
           const SizedBox(height: MarkeiSpacing.sm),
           TextField(
             key: const Key('products.create.name'),
             controller: _nameController,
-            decoration: const InputDecoration(labelText: 'Product name'),
+            decoration: InputDecoration(
+              labelText: 'Product name',
+            ).localized(context),
           ),
           const SizedBox(height: MarkeiSpacing.sm),
           TextField(
             key: const Key('products.create.brand'),
             controller: _brandController,
-            decoration: const InputDecoration(labelText: 'Brand'),
+            decoration: InputDecoration(labelText: 'Brand').localized(context),
           ),
           const SizedBox(height: MarkeiSpacing.sm),
           if (!_bulk)
@@ -388,19 +386,21 @@ class _ProductsPageState extends State<ProductsPage> {
                   child: TextField(
                     key: const Key('products.create.packageAmount'),
                     controller: _packageAmountController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Package size',
-                    ),
+                    ).localized(context),
                   ),
                 ),
                 SizedBox(
                   width: 220,
-                  child: TextField(
+                  child: QuantityUnitPicker(
                     key: const Key('products.create.packageUnit'),
-                    controller: _packageUnitController,
-                    decoration: const InputDecoration(
+                    value: _packageUnitController.text,
+                    onChanged: (unit) =>
+                        setState(() => _packageUnitController.text = unit),
+                    decoration: InputDecoration(
                       labelText: 'Package unit',
-                    ),
+                    ).localized(context),
                   ),
                 ),
               ],
@@ -411,23 +411,23 @@ class _ProductsPageState extends State<ProductsPage> {
               FilledButton(
                 key: const Key('products.create'),
                 onPressed: () => _createProduct(createAnyway: false),
-                child: const Text('Create Product'),
+                child: const MarcText('Create Product'),
               ),
               FilledButton.tonal(
                 key: const Key('products.createAnyway'),
                 onPressed: () => _createProduct(createAnyway: true),
-                child: const Text('Create anyway'),
+                child: const MarcText('Create anyway'),
               ),
               OutlinedButton(
                 key: const Key('products.retry'),
                 onPressed: _loadProducts,
-                child: const Text('Retry'),
+                child: const MarcText('Retry'),
               ),
             ],
           ),
           if (_message != null) ...[
             const SizedBox(height: 12),
-            Text(
+            MarcText(
               _message!,
               key: const Key('products.message'),
               style: TextStyle(
@@ -447,7 +447,7 @@ class _ProductsPageState extends State<ProductsPage> {
       title: 'Similar product found',
       subtitle: 'Choose an existing Product or explicitly create anyway.',
       child: _warnings.isEmpty
-          ? const Text(
+          ? const MarcText(
               'No unresolved similarity decision.',
               key: Key('products.similar.empty'),
             )
@@ -472,7 +472,7 @@ class _ProductsPageState extends State<ProductsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (_stores.isEmpty)
-            const Text('No Stores yet.', key: Key('stores.empty'))
+            const MarcText('No Stores yet.', key: Key('stores.empty'))
           else
             Wrap(
               spacing: MarkeiSpacing.xs,
@@ -489,13 +489,15 @@ class _ProductsPageState extends State<ProductsPage> {
           TextField(
             key: const Key('stores.create.name'),
             controller: _storeNameController,
-            decoration: const InputDecoration(labelText: 'Store name'),
+            decoration: InputDecoration(
+              labelText: 'Store name',
+            ).localized(context),
           ),
           const SizedBox(height: MarkeiSpacing.sm),
           FilledButton(
             key: const Key('stores.create'),
             onPressed: _createStore,
-            child: const Text('Create Store'),
+            child: const MarcText('Create Store'),
           ),
         ],
       ),
@@ -523,12 +525,12 @@ class _ProductTable extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: DataTable(
           columns: const [
-            DataColumn(label: Text('Product code')),
-            DataColumn(label: Text('Product / Brand')),
-            DataColumn(label: Text('Mode')),
-            DataColumn(label: Text('Package')),
-            DataColumn(label: Text('Measurement')),
-            DataColumn(label: Text('Details')),
+            DataColumn(label: MarcText('Product code')),
+            DataColumn(label: MarcText('Product / Brand')),
+            DataColumn(label: MarcText('Mode')),
+            DataColumn(label: MarcText('Package')),
+            DataColumn(label: MarcText('Measurement')),
+            DataColumn(label: MarcText('Details')),
           ],
           rows: [
             for (final product in products)
@@ -543,14 +545,14 @@ class _ProductTable extends StatelessWidget {
                     Text('${product.displayName}\n${product.displayBrand}'),
                     onTap: () => onDetail(product),
                   ),
-                  DataCell(Text(_modeLabel(product))),
-                  DataCell(Text(_packageLabel(product))),
-                  DataCell(Text(product.measurementKind.name)),
+                  DataCell(MarcText(_modeLabel(product))),
+                  DataCell(MarcText(_packageLabel(product))),
+                  DataCell(MarcText(product.measurementKind.name)),
                   DataCell(
                     TextButton(
                       key: Key('products.view.${product.id.value}'),
                       onPressed: () => onDetail(product),
-                      child: const Text('View details'),
+                      child: const MarcText('View details'),
                     ),
                   ),
                 ],
@@ -592,7 +594,10 @@ class _ProductCards extends StatelessWidget {
                     spacing: MarkeiSpacing.lg,
                     runSpacing: MarkeiSpacing.xs,
                     children: [
-                      MarkeiFact(label: 'Mode', value: _modeLabel(product)),
+                      MarkeiFact(
+                        label: 'Mode',
+                        value: context.tr(_modeLabel(product)),
+                      ),
                       MarkeiFact(
                         label: 'Package',
                         value: _packageLabel(product),
@@ -607,7 +612,7 @@ class _ProductCards extends StatelessWidget {
                   OutlinedButton(
                     key: Key('products.view.${product.id.value}'),
                     onPressed: () => onDetail(product),
-                    child: const Text('View details'),
+                    child: const MarcText('View details'),
                   ),
                 ],
               ),
@@ -636,7 +641,7 @@ class _ProductDetail extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Product details', style: MarkeiText.sectionTitle),
+            const MarcText('Product details', style: MarkeiText.sectionTitle),
             const SizedBox(height: MarkeiSpacing.sm),
             Wrap(
               spacing: MarkeiSpacing.lg,
@@ -648,7 +653,10 @@ class _ProductDetail extends StatelessWidget {
                 ),
                 MarkeiFact(label: 'Name', value: product.displayName),
                 MarkeiFact(label: 'Brand', value: product.displayBrand),
-                MarkeiFact(label: 'Mode', value: _modeLabel(product)),
+                MarkeiFact(
+                  label: 'Mode',
+                  value: context.tr(_modeLabel(product)),
+                ),
                 if (package != null)
                   MarkeiFact(
                     label: 'Package',

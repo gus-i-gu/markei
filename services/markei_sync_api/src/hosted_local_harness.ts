@@ -105,6 +105,7 @@ async function migrate(pool: pg.Pool) {
       "006_hosted_authorization_r3",
       "007_account_cursor_provisioning",
       "008_automatic_membership",
+      "009_list_note_recovery",
     ]) {
       const path = new URL(`../migrations/${id}.sql`, import.meta.url);
       await client.query(readFileSync(path, "utf8"));

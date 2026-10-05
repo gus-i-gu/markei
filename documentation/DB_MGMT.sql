@@ -111,6 +111,7 @@ ORDER BY type, name;
 -- DBM-MIGRATION|006|006_hosted_authorization_r3|c10-s03a-r3-hosted-authorization-v1|services/markei_sync_api/migrations/006_hosted_authorization_r3.sql|7B83DC34464559D9BA7335E27CDA106B34D64EBB49BC2FAC155112A2E78DF87F|NONE|NONE
 -- DBM-MIGRATION|007|007_account_cursor_provisioning|c10-mcg02-account-cursor-provisioning-v1|services/markei_sync_api/migrations/007_account_cursor_provisioning.sql|89AB11302F8B860C52AA1C74FBFEDF6A4DB3A0EE62FE7CB715B20B74AEF99AC6|NONE|NONE
 -- DBM-MIGRATION|008|008_automatic_membership|lp-c00-automatic-membership-v1|services/markei_sync_api/migrations/008_automatic_membership.sql|988DCED0B75271E025E2DEA262342CE075E312DF942B36D622589766B07FE56E|services/markei_sync_api/migrations/008_automatic_membership.down.sql|50B847DF6EB8862FB7C6D7CBBE24EAA1AC69C974FD99D9FC5D0A356BDA8670B6
+-- DBM-MIGRATION|009|009_list_note_recovery|c02-list-note-recovery-v1|services/markei_sync_api/migrations/009_list_note_recovery.sql|E1247AB94E64C230C0D13DF2AF8C903A36224A8919E0CB741B8E28689076F651|services/markei_sync_api/migrations/009_list_note_recovery.down.sql|BEC5A71E4084C931E84A8714C6639AFB13A7EBDE7353306C517F974E03D621A0
 
 -- ============================================================================
 -- DBM-AUTO-01 | SANITIZED CONNECTION PROOF

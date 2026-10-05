@@ -5,6 +5,8 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import 'list_notes_schema.dart';
+
 part 'local_database.g.dart';
 
 typedef DriftV8RepairHook = Future<void> Function(String phase);
@@ -443,12 +445,13 @@ class LocalDatabase extends _$LocalDatabase {
       LocalDatabase(NativeDatabase.createInBackground(file));
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (migrator) async {
       await migrator.createAll();
+      await customStatement(listNotesTableSql);
       await into(migrationLedger).insert(
         MigrationLedgerCompanion.insert(
           schemaName: 'shared_beta_local',
@@ -690,7 +693,20 @@ SELECT id, 5, strftime('%s','now') * 1000 FROM local_accounts
           ),
         );
       }
-      if (from > 12) {
+      if (from < 13) {
+        await customStatement(listNotesTableSql);
+        await into(migrationLedger).insert(
+          MigrationLedgerCompanion.insert(
+            schemaName: 'shared_beta_local',
+            schemaVersion: to,
+            fromVersion: Value(from),
+            toVersion: const Value(13),
+            migrationId: const Value('v12-to-v13-list-note-revisions'),
+            appliedAt: DateTime.now().toUtc(),
+          ),
+        );
+      }
+      if (from > 13) {
         throw UnsupportedError(
           'Unsupported local database migration $from to $to.',
         );

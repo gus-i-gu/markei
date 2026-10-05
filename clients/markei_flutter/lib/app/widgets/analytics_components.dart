@@ -1,6 +1,8 @@
+import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../domain/analytics/analytics_models.dart';
+import '../../l10n/analytics_copy.dart';
 import '../design/markei_theme.dart';
 import 'markei_components.dart';
 
@@ -16,6 +18,8 @@ class AnalyticsComposerView extends StatelessWidget {
     required this.onTimeframeChanged,
     required this.onRun,
     required this.onClear,
+    this.onAxisChanged,
+    this.onSelectAllDeterminants,
     super.key,
   });
 
@@ -29,6 +33,8 @@ class AnalyticsComposerView extends StatelessWidget {
   final ValueChanged<AnalyticsTimeframe> onTimeframeChanged;
   final VoidCallback onRun;
   final VoidCallback onClear;
+  final void Function(int, AnalyticsAxis)? onAxisChanged;
+  final VoidCallback? onSelectAllDeterminants;
 
   @override
   Widget build(BuildContext context) {
@@ -38,51 +44,105 @@ class AnalyticsComposerView extends StatelessWidget {
       key: const Key('analytics.composer'),
       title: 'Create analysis',
       subtitle:
-          'Choose local evidence, variables and an operation before calculation.',
+          'Set the rows, up to two comparison dimensions, then choose a value and statistic.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Wrap(
-            spacing: MarkeiSpacing.sm,
-            runSpacing: MarkeiSpacing.sm,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              _ChoiceMenu<AnalyticsDeterminantKind>(
-                key: const Key('analytics.groupBy'),
-                label: 'Group by',
-                value: draft.determinant,
-                values: AnalyticsDeterminantKind.values,
-                onChanged: onDeterminantChanged,
-                labelFor: _determinantLabel,
-              ),
-              _ChoiceMenu<AnalyticsOperation>(
-                key: const Key('analytics.operation'),
-                label: 'Operation',
-                value: draft.operation,
-                values: AnalyticsOperation.values,
-                onChanged: onOperationChanged,
-                labelFor: _operationLabel,
-              ),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final width = constraints.maxWidth >= 850
+                  ? (constraints.maxWidth - 32) / 3
+                  : constraints.maxWidth;
+              return Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                children: [
+                  SizedBox(
+                    width: width,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DropdownButtonFormField<AnalyticsDeterminantKind>(
+                          key: const Key('analytics.groupBy'),
+                          decoration: InputDecoration(
+                            labelText: 'Determinants / rows',
+                          ).localized(context),
+                          initialValue: draft.determinant,
+                          isExpanded: true,
+                          style: MarkeiText.label.copyWith(
+                            color: MarkeiColors.ink,
+                          ),
+                          items: [
+                            for (final kind in AnalyticsDeterminantKind.values)
+                              DropdownMenuItem(
+                                value: kind,
+                                child: MarcText(_determinantLabel(kind)),
+                              ),
+                          ],
+                          onChanged: (value) {
+                            if (value != null) onDeterminantChanged(value);
+                          },
+                        ),
+                        if (_isTimeDimension(draft.determinant))
+                          const Padding(
+                            padding: EdgeInsets.only(top: 12),
+                            child: MarcText(
+                              'Rows include the recorded dates within the timeframe below.',
+                              style: MarkeiText.metadata,
+                            ),
+                          )
+                        else ...[
+                          _AnalyticsSearchChoice(
+                            key: ValueKey(
+                              'determinant.${draft.determinant.name}',
+                            ),
+                            options: determinantOptions,
+                            selected: draft.selectedDeterminantKeys,
+                            keyPrefix: 'analytics.choose',
+                            onToggle: onToggleDeterminantKey,
+                            label: 'Search code or name',
+                          ),
+                          TextButton(
+                            onPressed: onSelectAllDeterminants,
+                            child: const MarcText('Use all recorded rows'),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  for (var i = 0; i < 2; i++)
+                    SizedBox(
+                      width: width,
+                      child: _AnalyticsAxisView(
+                        index: i,
+                        axis: draft.axes[i],
+                        options: options,
+                        excluded: {
+                          draft.determinant,
+                          if (draft.axes[1 - i].kind != null)
+                            draft.axes[1 - i].kind!,
+                        },
+                        onChanged: (axis) => onAxisChanged?.call(i, axis),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
           const SizedBox(height: MarkeiSpacing.sm),
-          Text('Choose', style: MarkeiText.metadata),
-          const SizedBox(height: MarkeiSpacing.xs),
-          Wrap(
-            spacing: MarkeiSpacing.xs,
-            runSpacing: MarkeiSpacing.xs,
-            children: [
-              for (final option in determinantOptions)
-                FilterChip(
-                  key: Key('analytics.choose.${option.key}'),
-                  label: Text(option.label),
-                  selected: draft.selectedDeterminantKeys.contains(option.key),
-                  onSelected: (_) => onToggleDeterminantKey(option.key),
-                ),
-            ],
+          _ChoiceMenu<AnalyticsOperation>(
+            key: const Key('analytics.operation'),
+            label: 'Operation',
+            value: draft.operation,
+            values: AnalyticsOperation.values,
+            onChanged: onOperationChanged,
+            labelFor: _operationLabel,
           ),
           const SizedBox(height: MarkeiSpacing.sm),
-          Text('Variables', style: MarkeiText.metadata),
+          MarcText(
+            'Values to calculate / optional breakdowns',
+            style: MarkeiText.metadata,
+          ),
           const SizedBox(height: MarkeiSpacing.xs),
           Wrap(
             spacing: MarkeiSpacing.xs,
@@ -91,7 +151,7 @@ class AnalyticsComposerView extends StatelessWidget {
               for (final variable in AnalyticsVariable.values)
                 FilterChip(
                   key: Key('analytics.variable.${variable.name}'),
-                  label: Text(_variableLabel(variable)),
+                  label: MarcText(_variableLabel(variable)),
                   selected: draft.variables.contains(variable),
                   onSelected: variable == AnalyticsVariable.purchasedFor
                       ? null
@@ -103,71 +163,14 @@ class AnalyticsComposerView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: MarkeiSpacing.sm),
-          Text('Timeframe', style: MarkeiText.metadata),
-          const SizedBox(height: MarkeiSpacing.xs),
-          Wrap(
-            spacing: MarkeiSpacing.sm,
-            runSpacing: MarkeiSpacing.xs,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              ChoiceChip(
-                key: const Key('analytics.timeframe.all'),
-                label: const Text('All recorded time'),
-                selected:
-                    draft.timeframe.kind ==
-                    AnalyticsTimeframeKind.allRecordedTime,
-                onSelected: (_) =>
-                    onTimeframeChanged(const AnalyticsTimeframe.all()),
-              ),
-              ChoiceChip(
-                key: const Key('analytics.timeframe.customDates'),
-                label: const Text('Custom dates'),
-                selected:
-                    draft.timeframe.kind == AnalyticsTimeframeKind.customUtc,
-                onSelected: (_) => onTimeframeChanged(
-                  const AnalyticsTimeframe.invalid(
-                    'Enter both Initial date and Final date as dd-mm-yyyy.',
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 180,
-                child: TextField(
-                  key: const Key('analytics.timeframe.initialDate'),
-                  decoration: const InputDecoration(
-                    labelText: 'Initial date',
-                    hintText: 'dd-mm-yyyy',
-                  ),
-                  onChanged: (value) => onTimeframeChanged(
-                    _parseTimeframeDraft(
-                      value,
-                      draft.timeframe.finalLocalDate ?? '',
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 180,
-                child: TextField(
-                  key: const Key('analytics.timeframe.finalDate'),
-                  decoration: const InputDecoration(
-                    labelText: 'Final date',
-                    hintText: 'dd-mm-yyyy',
-                  ),
-                  onChanged: (value) => onTimeframeChanged(
-                    _parseTimeframeDraft(
-                      draft.timeframe.initialLocalDate ?? '',
-                      value,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          _AnalyticsTimeframeRange(
+            timeframe: draft.timeframe,
+            onChanged: onTimeframeChanged,
           ),
           const SizedBox(height: MarkeiSpacing.sm),
           Semantics(
             liveRegion: true,
-            child: Text(
+            child: MarcText(
               validation.explanation,
               key: const Key('analytics.disabledReason'),
               style: MarkeiText.metadata,
@@ -182,13 +185,13 @@ class AnalyticsComposerView extends StatelessWidget {
                 key: const Key('analytics.runSave'),
                 onPressed: validation.canRun ? onRun : null,
                 icon: const Icon(Icons.play_arrow),
-                label: const Text('Run & save analysis'),
+                label: const MarcText('Run & save analysis'),
               ),
               OutlinedButton.icon(
                 key: const Key('analytics.clearDraft'),
                 onPressed: onClear,
                 icon: const Icon(Icons.clear),
-                label: const Text('Clear draft'),
+                label: const MarcText('Clear draft'),
               ),
             ],
           ),
@@ -245,9 +248,11 @@ class SavedAnalysisBrowser extends StatelessWidget {
             children: [
               IconButton(
                 key: const Key('analytics.record.older'),
-                tooltip: selectedIndex == records.length - 1
-                    ? 'No older saved analysis'
-                    : 'Select older saved analysis',
+                tooltip: context.tr(
+                  selectedIndex == records.length - 1
+                      ? 'No older saved analysis'
+                      : 'Select older saved analysis',
+                ),
                 onPressed:
                     selectedIndex >= 0 && selectedIndex < records.length - 1
                     ? onOlder
@@ -256,9 +261,11 @@ class SavedAnalysisBrowser extends StatelessWidget {
               ),
               IconButton(
                 key: const Key('analytics.record.newer'),
-                tooltip: selectedIndex <= 0
-                    ? 'No newer saved analysis'
-                    : 'Select newer saved analysis',
+                tooltip: context.tr(
+                  selectedIndex <= 0
+                      ? 'No newer saved analysis'
+                      : 'Select newer saved analysis',
+                ),
                 onPressed: selectedIndex > 0 ? onNewer : null,
                 icon: const Icon(Icons.chevron_right),
               ),
@@ -275,33 +282,36 @@ class SavedAnalysisBrowser extends StatelessWidget {
                       key: Key('analytics.record.${record.fingerprint}'),
                       child: Semantics(
                         selected: selected?.id.value == record.id.value,
-                        label:
-                            'Saved record ${record.fingerprint}, group by ${_determinantLabel(record.draft.determinant)}',
+                        label: context.tr(
+                          'Saved record ${record.fingerprint}, group by ${context.tr(_determinantLabel(record.draft.determinant))}',
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            MarcText(
                               'Record #${record.fingerprint}',
                               style: MarkeiText.sectionTitle,
                             ),
-                            Text(
+                            MarcText(
                               record.executedAtUtc.toIso8601String(),
                               style: MarkeiText.metadata,
                             ),
                             const SizedBox(height: MarkeiSpacing.xs),
-                            Text(
-                              'Group by: ${_determinantLabel(record.draft.determinant)}',
+                            MarcText(
+                              'Group by: ${context.tr(_determinantLabel(record.draft.determinant))}',
                             ),
-                            Text(
-                              'Variables: ${record.draft.variables.map(_variableLabel).join(', ')}',
+                            MarcText(
+                              'Variables: ${record.draft.variables.map((v) => context.tr(_variableLabel(v))).join(', ')}',
                             ),
-                            Text('Timeframe: ${record.draft.timeframe.label}'),
+                            MarcText(
+                              'Timeframe: ${context.tr(record.draft.timeframe.label)}',
+                            ),
                             const SizedBox(height: MarkeiSpacing.xs),
                             const Row(
                               children: [
                                 Icon(Icons.lock_outline, size: 16),
                                 SizedBox(width: MarkeiSpacing.xs),
-                                Text('Saved record'),
+                                MarcText('Saved record'),
                               ],
                             ),
                           ],
@@ -325,6 +335,7 @@ class AnalyticsResultView extends StatelessWidget {
     required this.onPresentationChanged,
     required this.onExportCsv,
     required this.onExportPdf,
+    this.onShare,
     super.key,
   });
 
@@ -333,6 +344,7 @@ class AnalyticsResultView extends StatelessWidget {
   final ValueChanged<AnalyticsResultPresentation> onPresentationChanged;
   final VoidCallback onExportCsv;
   final VoidCallback onExportPdf;
+  final ValueChanged<String>? onShare;
 
   @override
   Widget build(BuildContext context) {
@@ -352,7 +364,7 @@ class AnalyticsResultView extends StatelessWidget {
     return MarkeiSection(
       key: const Key('analytics.result'),
       title:
-          '${_determinantLabel(record.draft.determinant)} · ${record.draft.variables.map(_variableLabel).join(', ')} · Record #${record.fingerprint}',
+          '${context.tr(_determinantLabel(record.draft.determinant))} · ${record.draft.variables.map((v) => context.tr(_variableLabel(v))).join(', ')} · Record #${record.fingerprint}',
       subtitle:
           '${record.executedAtUtc.toIso8601String()} · ${record.draft.timeframe.label} · ${record.eligibleCount}/${record.totalCount} evidence rows',
       child: Column(
@@ -366,12 +378,12 @@ class AnalyticsResultView extends StatelessWidget {
                 segments: const [
                   ButtonSegment(
                     value: AnalyticsResultPresentation.chart,
-                    label: Text('Chart'),
+                    label: MarcText('Chart'),
                     icon: Icon(Icons.bar_chart),
                   ),
                   ButtonSegment(
                     value: AnalyticsResultPresentation.table,
-                    label: Text('Table'),
+                    label: MarcText('Table'),
                     icon: Icon(Icons.table_chart),
                   ),
                 ],
@@ -383,14 +395,42 @@ class AnalyticsResultView extends StatelessWidget {
                 key: const Key('analytics.export.csv'),
                 onPressed: onExportCsv,
                 icon: const Icon(Icons.download),
-                label: const Text('Export CSV'),
+                label: const MarcText('Export CSV'),
               ),
               OutlinedButton.icon(
                 key: const Key('analytics.export.pdf'),
                 onPressed: onExportPdf,
                 icon: const Icon(Icons.picture_as_pdf),
-                label: const Text('Export PDF'),
+                label: const MarcText('Export PDF'),
               ),
+              if (onShare != null)
+                PopupMenuButton<String>(
+                  key: const Key('analytics.share'),
+                  enabled: onShare != null,
+                  tooltip: context.tr('Share saved result'),
+                  onSelected: onShare,
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'PDF',
+                      child: Text(context.tr('Share PDF')),
+                    ),
+                    PopupMenuItem(
+                      value: 'CSV',
+                      child: Text(context.tr('Share CSV')),
+                    ),
+                  ],
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.share_outlined),
+                        const SizedBox(width: 8),
+                        Text(context.tr('Share saved result')),
+                      ],
+                    ),
+                  ),
+                ),
             ],
           ),
           const SizedBox(height: MarkeiSpacing.sm),
@@ -400,8 +440,11 @@ class AnalyticsResultView extends StatelessWidget {
           else
             AnalyticsResultTable(record: record),
           const SizedBox(height: MarkeiSpacing.sm),
-          Text(
-            record.interpretation,
+          MarcText(
+            localizedAnalyticsInterpretation(
+              record,
+              MarcLocalizations.of(context),
+            ),
             key: const Key('analytics.result.interpretation'),
           ),
         ],
@@ -419,79 +462,170 @@ class AnalyticsResultView extends StatelessWidget {
   }
 }
 
-class AnalyticsChartProjection extends StatelessWidget {
+class AnalyticsChartProjection extends StatefulWidget {
   const AnalyticsChartProjection({required this.record, super.key});
 
   final AnalyticsRecord record;
 
   @override
+  State<AnalyticsChartProjection> createState() =>
+      _AnalyticsChartProjectionState();
+}
+
+class _AnalyticsChartProjectionState extends State<AnalyticsChartProjection> {
+  int _page = 0;
+  static const _pageSize = 36;
+  @override
+  void didUpdateWidget(covariant AnalyticsChartProjection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.record.fingerprint != widget.record.fingerprint) _page = 0;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final record = widget.record;
     final values = [
       for (final entry in record.entries)
         if (entry.value is AnalyticsIntegerResultValue)
           (
             label: entry.groupKey.determinantLabel,
             value: (entry.value as AnalyticsIntegerResultValue).value,
-            unit: analyticsDisplayValue(entry.measure, entry.value).unit,
-            display: analyticsDisplayValue(entry.measure, entry.value).value,
-            series: _measureLabel(entry.measure),
+            unit: context.tr(
+              analyticsDisplayValue(entry.measure, entry.value).unit,
+            ),
+            display: MarcLocalizations.of(context).numericCopy(
+              analyticsDisplayValue(entry.measure, entry.value).value,
+            ),
+            series:
+                '${entry.groupKey.contextLabel} ${context.tr(_measureLabel(entry.measure))}'
+                    .trim(),
           ),
     ];
     final summary =
         'Chart for Record ${record.fingerprint}. Categories: ${values.map((v) => v.label).join(', ')}. Series: ${values.map((v) => '${v.series} ${v.display} ${v.unit}').toSet().join(', ')}. Evidence count ${record.eligibleCount}.';
+    final pageCount = (values.length / _pageSize).ceil().clamp(1, 100000);
+    final visible = values.skip(_page * _pageSize).take(_pageSize).toList();
+    final maxAbs = values.fold<int>(
+      1,
+      (max, value) => value.value.abs() > max ? value.value.abs() : max,
+    );
     return Semantics(
       key: const Key('analytics.chart.summary'),
-      label: summary,
-      child: SizedBox(
-        height: 260,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: CustomPaint(
-            size: Size((values.length * 88).clamp(360, 2400).toDouble(), 240),
-            painter: _AnalyticsBarChartPainter(
-              values: values,
-              signed: record.draft.operation == AnalyticsOperation.difference,
+      label: context.tr(summary),
+      child: Column(
+        children: [
+          if (pageCount > 1)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  key: const Key('analytics.chart.previous'),
+                  tooltip: context.tr('Previous chart page'),
+                  onPressed: _page > 0 ? () => setState(() => _page--) : null,
+                  icon: const Icon(Icons.chevron_left),
+                ),
+                MarcText('Chart page ${_page + 1} of $pageCount'),
+                IconButton(
+                  key: const Key('analytics.chart.next'),
+                  tooltip: context.tr('Next chart page'),
+                  onPressed: _page + 1 < pageCount
+                      ? () => setState(() => _page++)
+                      : null,
+                  icon: const Icon(Icons.chevron_right),
+                ),
+              ],
+            ),
+          SizedBox(
+            height: 350,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: CustomPaint(
+                size: Size(
+                  (visible.length * 130).clamp(360, 5000).toDouble(),
+                  330,
+                ),
+                painter: _AnalyticsBarChartPainter(
+                  values: visible,
+                  maxAbs: maxAbs,
+                  seriesKeys: values.map((v) => v.series).toSet().toList(),
+                  signed:
+                      record.draft.operation == AnalyticsOperation.difference,
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
 class _AnalyticsBarChartPainter extends CustomPainter {
-  const _AnalyticsBarChartPainter({required this.values, required this.signed});
+  const _AnalyticsBarChartPainter({
+    required this.values,
+    required this.signed,
+    required this.maxAbs,
+    required this.seriesKeys,
+  });
 
   final List<
     ({String display, String label, String series, String unit, int value})
   >
   values;
   final bool signed;
+  final int maxAbs;
+  final List<String> seriesKeys;
 
   @override
   void paint(Canvas canvas, Size size) {
     final axis = Paint()
       ..color = Colors.black87
       ..strokeWidth = 1;
-    final fill = Paint()..color = Colors.teal.shade600;
+    const palette = [
+      MarkeiColors.lavender,
+      MarkeiColors.information,
+      MarkeiColors.green,
+      MarkeiColors.warning,
+    ];
+    final series = seriesKeys;
+    final fill = Paint();
     final stroke = Paint()
       ..color = Colors.black87
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
-    final maxAbs = values.fold<int>(
-      1,
-      (max, value) => value.value.abs() > max ? value.value.abs() : max,
-    );
-    final zeroY = signed ? size.height / 2 : size.height - 34;
+    final zeroY = signed ? 138.0 : size.height - 105;
     canvas.drawLine(Offset(24, zeroY), Offset(size.width - 12, zeroY), axis);
     final barWidth = 28.0;
     for (var i = 0; i < values.length; i++) {
       final entry = values[i];
-      final x = 48 + i * 88.0;
+      final x = 48 + i * 130.0;
       final height = (entry.value.abs() / maxAbs) * (signed ? 88 : 170);
       final top = entry.value >= 0 ? zeroY - height : zeroY;
       final rect = Rect.fromLTWH(x, top, barWidth, height);
-      canvas.drawRect(rect, fill);
+      fill.color = palette[series.indexOf(entry.series) % palette.length];
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, const Radius.circular(3)),
+        fill,
+      );
+      void label(String text, double y, {Color color = MarkeiColors.ink}) {
+        final painter = TextPainter(
+          text: TextSpan(
+            text: text,
+            style: MarkeiText.metadata.copyWith(fontSize: 11, color: color),
+          ),
+          textDirection: TextDirection.ltr,
+          maxLines: 3,
+          ellipsis: '…',
+        )..layout(maxWidth: 120);
+        painter.paint(canvas, Offset(x - 12, y));
+      }
+
+      label(
+        '${entry.display} ${entry.unit}',
+        entry.value < 0 ? top + height + 2 : top - 32,
+      );
+      label(entry.label, signed ? 265 : zeroY + 5);
+      label(entry.series, signed ? 288 : zeroY + 30, color: fill.color);
       canvas.drawRect(rect, stroke);
       canvas.drawCircle(Offset(x + barWidth / 2, top), 3, stroke);
     }
@@ -499,7 +633,9 @@ class _AnalyticsBarChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _AnalyticsBarChartPainter oldDelegate) {
-    return values != oldDelegate.values || signed != oldDelegate.signed;
+    return values != oldDelegate.values ||
+        signed != oldDelegate.signed ||
+        maxAbs != oldDelegate.maxAbs;
   }
 }
 
@@ -515,34 +651,36 @@ class AnalyticsResultTable extends StatelessWidget {
       child: DataTable(
         key: const Key('analytics.result.table'),
         columns: const [
-          DataColumn(label: Text('Group')),
-          DataColumn(label: Text('Breakdowns')),
-          DataColumn(label: Text('Measure')),
-          DataColumn(label: Text('Operation')),
-          DataColumn(label: Text('Value')),
-          DataColumn(label: Text('Unit/currency')),
-          DataColumn(label: Text('Eligible')),
-          DataColumn(label: Text('Excluded')),
-          DataColumn(label: Text('Unavailable reason')),
+          DataColumn(label: MarcText('Group')),
+          DataColumn(label: MarcText('Analytics 01 / 02')),
+          DataColumn(label: MarcText('Measure')),
+          DataColumn(label: MarcText('Operation')),
+          DataColumn(label: MarcText('Value')),
+          DataColumn(label: MarcText('Unit/currency')),
+          DataColumn(label: MarcText('Eligible')),
+          DataColumn(label: MarcText('Excluded')),
+          DataColumn(label: MarcText('Unavailable reason')),
         ],
         rows: [
           for (final entry in record.entries)
             DataRow(
               cells: [
                 DataCell(Text(entry.groupKey.determinantLabel)),
+                DataCell(Text(entry.groupKey.contextLabel)),
+                DataCell(MarcText(_measureLabel(entry.measure))),
+                DataCell(MarcText(_operationLabel(entry.operation))),
                 DataCell(
-                  Text(entry.groupKey.breakdownLabels.values.join(', ')),
-                ),
-                DataCell(Text(_measureLabel(entry.measure))),
-                DataCell(Text(_operationLabel(entry.operation))),
-                DataCell(
-                  Text(analyticsDisplayValue(entry.measure, entry.value).value),
+                  MarcText(
+                    analyticsDisplayValue(entry.measure, entry.value).value,
+                  ),
                 ),
                 DataCell(
-                  Text(analyticsDisplayValue(entry.measure, entry.value).unit),
+                  MarcText(
+                    analyticsDisplayValue(entry.measure, entry.value).unit,
+                  ),
                 ),
-                DataCell(Text(entry.eligibleCount.toString())),
-                DataCell(Text(entry.excludedCount.toString())),
+                DataCell(MarcText(entry.eligibleCount.toString())),
+                DataCell(MarcText(entry.excludedCount.toString())),
                 DataCell(
                   Text(
                     entry.value is AnalyticsUnavailableResultValue
@@ -598,11 +736,14 @@ class AnalyticsVariablesView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (state.message != null) ...[
-            Text(state.message!, key: const Key('analytics.variables.focus')),
+            MarcText(
+              state.message!,
+              key: const Key('analytics.variables.focus'),
+            ),
             TextButton(
               key: const Key('analytics.variables.showAll'),
               onPressed: onShowAll,
-              child: const Text('Show all variables'),
+              child: const MarcText('Show all variables'),
             ),
           ],
           Wrap(
@@ -615,11 +756,11 @@ class AnalyticsVariablesView extends StatelessWidget {
                 segments: const [
                   ButtonSegment(
                     value: AnalyticsVariablesProjection.purchases,
-                    label: Text('Purchases'),
+                    label: MarcText('Purchases'),
                   ),
                   ButtonSegment(
                     value: AnalyticsVariablesProjection.containedItems,
-                    label: Text('Contained items'),
+                    label: MarcText('Contained items'),
                   ),
                 ],
                 selected: {state.projection},
@@ -630,7 +771,9 @@ class AnalyticsVariablesView extends StatelessWidget {
                 width: 260,
                 child: TextField(
                   key: const Key('analytics.variables.search'),
-                  decoration: const InputDecoration(labelText: 'Search'),
+                  decoration: InputDecoration(
+                    labelText: 'Search',
+                  ).localized(context),
                   onChanged: onSearchChanged,
                 ),
               ),
@@ -644,7 +787,7 @@ class AnalyticsVariablesView extends StatelessWidget {
             ],
           ),
           const SizedBox(height: MarkeiSpacing.sm),
-          Text('${state.selectedCount} selected row(s)'),
+          MarcText('${state.selectedCount} selected row(s)'),
           const SizedBox(height: MarkeiSpacing.xs),
           if (state.projection == AnalyticsVariablesProjection.purchases)
             _PurchasesProjection(
@@ -668,19 +811,19 @@ class AnalyticsVariablesView extends StatelessWidget {
                 key: const Key('analytics.variables.previous'),
                 onPressed: state.hasPrevious ? onPreviousPage : null,
                 icon: const Icon(Icons.chevron_left),
-                label: const Text('Previous page'),
+                label: const MarcText('Previous page'),
               ),
               OutlinedButton.icon(
                 key: const Key('analytics.variables.next'),
                 onPressed: state.hasNext ? onNextPage : null,
                 icon: const Icon(Icons.chevron_right),
-                label: const Text('Next page'),
+                label: const MarcText('Next page'),
               ),
               FilledButton.icon(
                 key: const Key('analytics.variables.useSelected'),
                 onPressed: state.selectedCount > 0 ? onUseSelectedRows : null,
                 icon: const Icon(Icons.input),
-                label: const Text('Use selected rows'),
+                label: const MarcText('Use selected rows'),
               ),
             ],
           ),
@@ -725,9 +868,9 @@ class _PurchasesProjection extends StatelessWidget {
                   ),
                 ),
                 onChanged: (_) => onTogglePurchase(row.purchaseId.value),
-                title: Text(_formatLocal(row.occurrenceTime)),
+                title: MarcText(_formatLocal(row.occurrenceTime)),
                 subtitle: Text(
-                  '${row.storeName} · ${_money(row.purchaseTotal)} · ${row.itemCount} item(s)',
+                  '${row.storeName} · ${MarcLocalizations.of(context).numericCopy(_money(row.purchaseTotal))} · ${context.message('{p0} item(s)', [row.itemCount])}',
                 ),
               ),
             ),
@@ -739,14 +882,14 @@ class _PurchasesProjection extends StatelessWidget {
       child: DataTable(
         key: const Key('analytics.purchases.table'),
         columns: const [
-          DataColumn(label: Text('Select')),
-          DataColumn(label: Text('Date-Time of purchase')),
-          DataColumn(label: Text('Store name')),
-          DataColumn(label: Text('Purchased by')),
-          DataColumn(label: Text('Purchased for')),
-          DataColumn(label: Text('Payment method')),
-          DataColumn(label: Text('Item count')),
-          DataColumn(label: Text('Purchase total')),
+          DataColumn(label: MarcText('Select')),
+          DataColumn(label: MarcText('Date-Time of purchase')),
+          DataColumn(label: MarcText('Store name')),
+          DataColumn(label: MarcText('Purchased by')),
+          DataColumn(label: MarcText('Purchased for')),
+          DataColumn(label: MarcText('Payment method')),
+          DataColumn(label: MarcText('Item count')),
+          DataColumn(label: MarcText('Purchase total')),
         ],
         rows: [
           for (final row in rows)
@@ -762,15 +905,22 @@ class _PurchasesProjection extends StatelessWidget {
                     onChanged: (_) => onTogglePurchase(row.purchaseId.value),
                   ),
                 ),
-                DataCell(Text(_formatLocal(row.occurrenceTime))),
+                DataCell(MarcText(_formatLocal(row.occurrenceTime))),
                 DataCell(Text(row.storeName)),
-                DataCell(Text(row.purchasedBy?.displayLabel ?? 'Not assigned')),
-                const DataCell(Text('Unavailable in recorded data')),
                 DataCell(
-                  Text(row.paymentMethod?.displayLabel ?? 'Not assigned'),
+                  Text(
+                    row.purchasedBy?.displayLabel ?? context.tr('Not assigned'),
+                  ),
                 ),
-                DataCell(Text(row.itemCount.toString())),
-                DataCell(Text(_money(row.purchaseTotal))),
+                const DataCell(MarcText('Unavailable in recorded data')),
+                DataCell(
+                  Text(
+                    row.paymentMethod?.displayLabel ??
+                        context.tr('Not assigned'),
+                  ),
+                ),
+                DataCell(MarcText(row.itemCount.toString())),
+                DataCell(MarcText(_money(row.purchaseTotal))),
               ],
             ),
         ],
@@ -812,7 +962,7 @@ class _ItemsProjection extends StatelessWidget {
                 onChanged: (_) => onToggleItem(row.id),
                 title: Text('${row.productCode} - ${row.productName}'),
                 subtitle: Text(
-                  '${_formatLocal(row.purchaseOccurrenceTime)} · ${row.storeName} · ${_money(row.lineTotal)}',
+                  '${_formatLocal(row.purchaseOccurrenceTime)} · ${row.storeName} · ${MarcLocalizations.of(context).numericCopy(_money(row.lineTotal))}',
                 ),
               ),
             ),
@@ -824,17 +974,17 @@ class _ItemsProjection extends StatelessWidget {
       child: DataTable(
         key: const Key('analytics.items.table'),
         columns: const [
-          DataColumn(label: Text('Select')),
-          DataColumn(label: Text('Date-Time of purchase')),
-          DataColumn(label: Text('Product code / Product name / Brand')),
-          DataColumn(label: Text('Store name')),
-          DataColumn(label: Text('Purchased by')),
-          DataColumn(label: Text('Purchased for')),
-          DataColumn(label: Text('Payment method')),
-          DataColumn(label: Text('Quantity and unit')),
-          DataColumn(label: Text('Unit price')),
-          DataColumn(label: Text('Line total')),
-          DataColumn(label: Text('Promotion')),
+          DataColumn(label: MarcText('Select')),
+          DataColumn(label: MarcText('Date-Time of purchase')),
+          DataColumn(label: MarcText('Product code / Product name / Brand')),
+          DataColumn(label: MarcText('Store name')),
+          DataColumn(label: MarcText('Purchased by')),
+          DataColumn(label: MarcText('Purchased for')),
+          DataColumn(label: MarcText('Payment method')),
+          DataColumn(label: MarcText('Quantity and unit')),
+          DataColumn(label: MarcText('Unit price')),
+          DataColumn(label: MarcText('Line total')),
+          DataColumn(label: MarcText('Promotion')),
         ],
         rows: [
           for (final row in rows)
@@ -846,24 +996,31 @@ class _ItemsProjection extends StatelessWidget {
                     onChanged: (_) => onToggleItem(row.id),
                   ),
                 ),
-                DataCell(Text(_formatLocal(row.purchaseOccurrenceTime))),
+                DataCell(MarcText(_formatLocal(row.purchaseOccurrenceTime))),
                 DataCell(
                   Text(
                     '${row.productCode} · ${row.productName} · ${row.productBrand.isEmpty ? 'Unavailable' : row.productBrand}',
                   ),
                 ),
                 DataCell(Text(row.storeName)),
-                DataCell(Text(row.purchasedBy?.displayLabel ?? 'Not assigned')),
-                const DataCell(Text('Unavailable in recorded data')),
                 DataCell(
-                  Text(row.paymentMethod?.displayLabel ?? 'Not assigned'),
+                  Text(
+                    row.purchasedBy?.displayLabel ?? context.tr('Not assigned'),
+                  ),
+                ),
+                const DataCell(MarcText('Unavailable in recorded data')),
+                DataCell(
+                  Text(
+                    row.paymentMethod?.displayLabel ??
+                        context.tr('Not assigned'),
+                  ),
                 ),
                 DataCell(
                   Text('${row.quantity.decimalText} ${row.quantity.unit.name}'),
                 ),
-                DataCell(Text(_unitPrice(row))),
-                DataCell(Text(_money(row.lineTotal))),
-                const DataCell(Text('Unavailable in recorded data')),
+                DataCell(MarcText(_unitPrice(row))),
+                DataCell(MarcText(_money(row.lineTotal))),
+                const DataCell(MarcText('Unavailable in recorded data')),
               ],
             ),
         ],
@@ -894,25 +1051,27 @@ class _ChoiceMenu<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 260,
-      child: DropdownButton<T>(
-        value: value,
-        isExpanded: true,
-        underline: const SizedBox.shrink(),
-        items: [
-          for (final item in values)
-            DropdownMenuItem(
-              value: item,
-              child: Text(
-                '$label: ${labelFor(item)}',
-                overflow: TextOverflow.ellipsis,
+    return LayoutBuilder(
+      builder: (context, constraints) => SizedBox(
+        width: constraints.maxWidth.clamp(0, 300),
+        child: DropdownButton<T>(
+          value: value,
+          isExpanded: true,
+          underline: const SizedBox.shrink(),
+          items: [
+            for (final item in values)
+              DropdownMenuItem(
+                value: item,
+                child: MarcText(
+                  '$label: ${labelFor(item)}',
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-            ),
-        ],
-        onChanged: (value) {
-          if (value != null) onChanged(value);
-        },
+          ],
+          onChanged: (value) {
+            if (value != null) onChanged(value);
+          },
+        ),
       ),
     );
   }
@@ -975,6 +1134,137 @@ String _formatLocal(DateTime value) {
   return '${local.day.toString().padLeft(2, '0')}-${local.month.toString().padLeft(2, '0')}-${local.year.toString().padLeft(4, '0')} ${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
 }
 
+bool _isTimeDimension(AnalyticsDeterminantKind? kind) =>
+    kind == AnalyticsDeterminantKind.timeDayUtc ||
+    kind == AnalyticsDeterminantKind.timeMonthUtc;
+
+class _AnalyticsTimeframeRange extends StatefulWidget {
+  const _AnalyticsTimeframeRange({
+    required this.timeframe,
+    required this.onChanged,
+  });
+
+  final AnalyticsTimeframe timeframe;
+  final ValueChanged<AnalyticsTimeframe> onChanged;
+
+  @override
+  State<_AnalyticsTimeframeRange> createState() =>
+      _AnalyticsTimeframeRangeState();
+}
+
+class _AnalyticsTimeframeRangeState extends State<_AnalyticsTimeframeRange> {
+  final _start = TextEditingController();
+  final _end = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _syncFields();
+  }
+
+  @override
+  void didUpdateWidget(covariant _AnalyticsTimeframeRange oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _syncFields();
+  }
+
+  void _syncFields() {
+    final timeframe = widget.timeframe;
+    _syncText(
+      _start,
+      timeframe.initialLocalDate ?? _localDate(timeframe.startUtc),
+    );
+    _syncText(
+      _end,
+      timeframe.finalLocalDate ??
+          _localDate(
+            timeframe.endUtc?.subtract(const Duration(microseconds: 1)),
+          ),
+    );
+  }
+
+  static String _localDate(DateTime? value) {
+    if (value == null) return '';
+    final local = value.toLocal();
+    return '${local.day.toString().padLeft(2, '0')}-'
+        '${local.month.toString().padLeft(2, '0')}-'
+        '${local.year.toString().padLeft(4, '0')}';
+  }
+
+  static void _syncText(TextEditingController controller, String text) {
+    if (controller.text == text) return;
+    controller.value = TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
+  }
+
+  void _changed(String _) =>
+      widget.onChanged(_parseTimeframeDraft(_start.text, _end.text));
+
+  @override
+  void dispose() {
+    _start.dispose();
+    _end.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      MarcText('Timeframe', style: MarkeiText.metadata),
+      const SizedBox(height: MarkeiSpacing.xs),
+      LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth < 180
+              ? constraints.maxWidth
+              : 180.0;
+          return Wrap(
+            spacing: MarkeiSpacing.sm,
+            runSpacing: MarkeiSpacing.sm,
+            children: [
+              SizedBox(
+                width: width,
+                child: TextField(
+                  key: const Key('analytics.timeframe.initialDate'),
+                  controller: _start,
+                  keyboardType: TextInputType.datetime,
+                  decoration: InputDecoration(
+                    labelText: 'Start date',
+                    hintText: 'dd-mm-yyyy',
+                    prefixIcon: Icon(Icons.calendar_today_outlined, size: 18),
+                  ).localized(context),
+                  onChanged: _changed,
+                ),
+              ),
+              SizedBox(
+                width: width,
+                child: TextField(
+                  key: const Key('analytics.timeframe.finalDate'),
+                  controller: _end,
+                  keyboardType: TextInputType.datetime,
+                  decoration: InputDecoration(
+                    labelText: 'End date',
+                    hintText: 'dd-mm-yyyy',
+                    prefixIcon: Icon(Icons.calendar_today_outlined, size: 18),
+                  ).localized(context),
+                  onChanged: _changed,
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      const SizedBox(height: MarkeiSpacing.xs),
+      const MarcText(
+        'Both dates are included. Leave both blank to use all recorded time.',
+        style: MarkeiText.metadata,
+      ),
+    ],
+  );
+}
+
 AnalyticsTimeframe _parseTimeframeDraft(String initial, String finalDate) {
   final startText = initial.trim();
   final endText = finalDate.trim();
@@ -982,29 +1272,41 @@ AnalyticsTimeframe _parseTimeframeDraft(String initial, String finalDate) {
     return const AnalyticsTimeframe.all();
   }
   if (startText.isEmpty || endText.isEmpty) {
-    return const AnalyticsTimeframe.invalid(
-      'Enter both Initial date and Final date as dd-mm-yyyy.',
+    return AnalyticsTimeframe.invalid(
+      'Enter both Start date and End date as dd-mm-yyyy.',
+      initialLocalDate: initial,
+      finalLocalDate: finalDate,
     );
   }
   final start = _parseLocalDate(startText);
   if (start == null) {
-    return AnalyticsTimeframe.invalid('Initial date must use dd-mm-yyyy.');
+    return AnalyticsTimeframe.invalid(
+      'Start date must be a valid date in dd-mm-yyyy format.',
+      initialLocalDate: initial,
+      finalLocalDate: finalDate,
+    );
   }
   final end = _parseLocalDate(endText);
   if (end == null) {
-    return AnalyticsTimeframe.invalid('Final date must use dd-mm-yyyy.');
+    return AnalyticsTimeframe.invalid(
+      'End date must be a valid date in dd-mm-yyyy format.',
+      initialLocalDate: initial,
+      finalLocalDate: finalDate,
+    );
   }
   if (end.isBefore(start)) {
-    return const AnalyticsTimeframe.invalid(
-      'Final date must be the same as or later than Initial date.',
+    return AnalyticsTimeframe.invalid(
+      'End date must be the same as or later than Start date.',
+      initialLocalDate: initial,
+      finalLocalDate: finalDate,
     );
   }
   final endExclusive = DateTime(end.year, end.month, end.day + 1);
   return AnalyticsTimeframe.custom(
     startUtc: start.toUtc(),
     endUtc: endExclusive.toUtc(),
-    initialLocalDate: startText,
-    finalLocalDate: endText,
+    initialLocalDate: initial,
+    finalLocalDate: finalDate,
   );
 }
 
@@ -1019,4 +1321,161 @@ DateTime? _parseLocalDate(String value) {
     return null;
   }
   return parsed;
+}
+
+class _AnalyticsAxisView extends StatelessWidget {
+  const _AnalyticsAxisView({
+    required this.index,
+    required this.axis,
+    required this.options,
+    required this.excluded,
+    required this.onChanged,
+  });
+  final int index;
+  final AnalyticsAxis axis;
+  final Map<AnalyticsDeterminantKind, List<AnalyticsOption>> options;
+  final Set<AnalyticsDeterminantKind> excluded;
+  final ValueChanged<AnalyticsAxis> onChanged;
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      DropdownButtonFormField<AnalyticsDeterminantKind>(
+        key: ValueKey('analytics.axis.$index.${axis.kind?.name}'),
+        initialValue: axis.kind,
+        isExpanded: true,
+        decoration: InputDecoration(
+          labelText: 'Analytics 0${index + 1}',
+          filled: true,
+          fillColor: MarkeiColors.lavender.withValues(alpha: 0.035),
+        ).localized(context),
+        hint: const MarcText('No second dimension'),
+        items: [
+          const DropdownMenuItem(value: null, child: MarcText('None')),
+          for (final kind in AnalyticsDeterminantKind.values.where(
+            (kind) => !excluded.contains(kind),
+          ))
+            DropdownMenuItem(
+              value: kind,
+              child: MarcText(_determinantLabel(kind)),
+            ),
+        ],
+        onChanged: (kind) => onChanged(AnalyticsAxis(kind: kind)),
+      ),
+      if (_isTimeDimension(axis.kind))
+        const Padding(
+          padding: EdgeInsets.only(top: 12),
+          child: MarcText(
+            'Comparison dates follow the timeframe below.',
+            style: MarkeiText.metadata,
+          ),
+        )
+      else if (axis.kind != null) ...[
+        _AnalyticsSearchChoice(
+          key: ValueKey('axis.$index.${axis.kind!.name}'),
+          options: options[axis.kind] ?? const [],
+          selected: axis.selectedKeys,
+          keyPrefix: 'analytics.axis.$index.choose',
+          label: 'Search comparison values',
+          onToggle: (key) {
+            final next = {...axis.selectedKeys};
+            if (!next.remove(key)) next.add(key);
+            onChanged(AnalyticsAxis(kind: axis.kind, selectedKeys: next));
+          },
+        ),
+        MarcText(
+          axis.selectedKeys.isEmpty
+              ? 'All recorded values form comparison series.'
+              : '${axis.selectedKeys.length} selected comparison value(s).',
+          style: MarkeiText.metadata,
+        ),
+        TextButton(
+          onPressed: () => onChanged(AnalyticsAxis(kind: axis.kind)),
+          child: const MarcText('Use all values'),
+        ),
+      ],
+    ],
+  );
+}
+
+class _AnalyticsSearchChoice extends StatefulWidget {
+  const _AnalyticsSearchChoice({
+    required this.options,
+    required this.selected,
+    required this.onToggle,
+    required this.keyPrefix,
+    required this.label,
+    super.key,
+  });
+  final List<AnalyticsOption> options;
+  final Set<String> selected;
+  final ValueChanged<String> onToggle;
+  final String keyPrefix;
+  final String label;
+  @override
+  State<_AnalyticsSearchChoice> createState() => _AnalyticsSearchChoiceState();
+}
+
+class _AnalyticsSearchChoiceState extends State<_AnalyticsSearchChoice> {
+  String _search = '';
+  @override
+  Widget build(BuildContext context) {
+    final matches = widget.options
+        .where(
+          (o) => o.label.toLowerCase().contains(_search.trim().toLowerCase()),
+        )
+        .toList();
+    final selected = widget.options.where(
+      (o) => widget.selected.contains(o.key),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        TextField(
+          key: Key('${widget.keyPrefix}.search'),
+          decoration: InputDecoration(
+            labelText: widget.label,
+            prefixIcon: const Icon(Icons.search),
+          ).localized(context),
+          onChanged: (value) => setState(() => _search = value),
+        ),
+        if (selected.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                for (final option in selected)
+                  InputChip(
+                    label: Text(option.label),
+                    onDeleted: () => widget.onToggle(option.key),
+                  ),
+              ],
+            ),
+          ),
+        for (final option in matches.take(4))
+          CheckboxListTile(
+            key: Key('${widget.keyPrefix}.${option.key}'),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            title: Text(option.label, style: MarkeiText.body),
+            value: widget.selected.contains(option.key),
+            onChanged: (_) => widget.onToggle(option.key),
+          ),
+        if (matches.length > 4)
+          MarcText(
+            '${matches.length} matches. Type more to narrow the list.',
+            style: MarkeiText.metadata,
+          ),
+        if (matches.isEmpty)
+          const MarcText(
+            'No recorded values match this search.',
+            style: MarkeiText.metadata,
+          ),
+      ],
+    );
+  }
 }

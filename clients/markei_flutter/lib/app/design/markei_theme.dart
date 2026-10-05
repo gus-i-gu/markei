@@ -197,10 +197,10 @@ ThemeData markeiTheme() {
       foregroundColor: MarkeiColors.ink,
       elevation: 0,
     ),
-    chipTheme: const ChipThemeData(
+    chipTheme: ChipThemeData(
       backgroundColor: MarkeiColors.lavenderTint,
       side: BorderSide.none,
-      labelStyle: TextStyle(color: MarkeiColors.lavender),
+      labelStyle: MarkeiText.label.copyWith(color: MarkeiColors.lavender),
     ),
     dataTableTheme: const DataTableThemeData(
       headingRowHeight: MarkeiSpacing.tableHeadingHeight,

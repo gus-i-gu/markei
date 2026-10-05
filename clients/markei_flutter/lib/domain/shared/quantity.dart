@@ -5,8 +5,9 @@ enum CanonicalUnit { kg, l, unit }
 enum DisplayUnit {
   kg('kg'),
   g('g'),
+  mg('mg'),
   l('L'),
-  ml('ml'),
+  ml('mL'),
   unit('un');
 
   const DisplayUnit(this.label);
@@ -65,7 +66,12 @@ NormalizedQuantity normalizeDisplayQuantity({
     MeasurementKind.mass when rawUnit == 'g' => NormalizedQuantity(
       kind: kind,
       unit: CanonicalUnit.kg,
-      microunits: rawMicros ~/ 1000,
+      microunits: _exactSubunitQuantity(rawMicros, 1000),
+    ),
+    MeasurementKind.mass when rawUnit == 'mg' => NormalizedQuantity(
+      kind: kind,
+      unit: CanonicalUnit.kg,
+      microunits: _exactSubunitQuantity(rawMicros, 1000000),
     ),
     MeasurementKind.mass when rawUnit == 'kg' => NormalizedQuantity(
       kind: kind,
@@ -75,7 +81,7 @@ NormalizedQuantity normalizeDisplayQuantity({
     MeasurementKind.volume when rawUnit == 'ml' => NormalizedQuantity(
       kind: kind,
       unit: CanonicalUnit.l,
-      microunits: rawMicros ~/ 1000,
+      microunits: _exactSubunitQuantity(rawMicros, 1000),
     ),
     MeasurementKind.volume when rawUnit == 'l' => NormalizedQuantity(
       kind: kind,
@@ -92,6 +98,24 @@ NormalizedQuantity normalizeDisplayQuantity({
   };
 }
 
+int _exactSubunitQuantity(int value, int divisor) {
+  if (value % divisor != 0) {
+    throw ArgumentError(
+      'Quantity is too precise. Use whole mg, or at most three decimals for g/mL.',
+    );
+  }
+  return value ~/ divisor;
+}
+
+MeasurementKind measurementKindForDisplayUnit(String unit) {
+  return switch (unit.trim().toLowerCase()) {
+    'mg' || 'g' || 'kg' => MeasurementKind.mass,
+    'ml' || 'l' => MeasurementKind.volume,
+    'un' || 'unit' => MeasurementKind.count,
+    _ => throw ArgumentError('Use mL, mg, g, L, kg or un for the unit.'),
+  };
+}
+
 int parseDisplayDecimalMicrounits(String decimal) {
   final trimmed = decimal.trim();
   if (trimmed.contains(',') && trimmed.contains('.')) {
@@ -102,10 +126,15 @@ int parseDisplayDecimalMicrounits(String decimal) {
   if (match == null) {
     throw ArgumentError('Invalid fixed decimal quantity: $decimal');
   }
-  final whole = int.parse(match.group(1)!);
+  final whole = BigInt.parse(match.group(1)!);
   final fraction = (match.group(2) ?? '').padRight(
     NormalizedQuantity.scale,
     '0',
   );
-  return whole * NormalizedQuantity.factor + int.parse(fraction);
+  final value =
+      whole * BigInt.from(NormalizedQuantity.factor) + BigInt.parse(fraction);
+  if (value > BigInt.from(0x7fffffffffffffff)) {
+    throw ArgumentError('Quantity is outside the supported range.');
+  }
+  return value.toInt();
 }

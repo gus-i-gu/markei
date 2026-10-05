@@ -49,6 +49,26 @@ final class RemotePurchaseFactWriter {
     );
   }
 
+  Future<String> resolveListNoteProduct(
+    Map<String, Object?> product,
+    String accountId,
+  ) async {
+    if (product['accountId'] != accountId) {
+      throw const RemoteIdentityConflict('remote-product-account-conflict');
+    }
+    await _db
+        .into(_db.localAccounts)
+        .insert(
+          LocalAccountsCompanion.insert(
+            id: accountId,
+            defaultCurrencyCode: 'BRL',
+            createdAt: DateTime.now().toUtc(),
+          ),
+          mode: InsertMode.insertOrIgnore,
+        );
+    return _resolveProduct(product);
+  }
+
   Future<String> _resolveStore(Map<String, Object?> store) async {
     final id = store['id'] as String;
     final accountId = store['accountId'] as String;

@@ -3,6 +3,50 @@ import 'package:markei/domain/shared/quantity.dart';
 
 void main() {
   test(
+    'mg, g and kg normalize to the same canonical mass without truncation',
+    () {
+      for (final entry in {'mg': '500000', 'g': '500', 'kg': '0.5'}.entries) {
+        final quantity = normalizeDisplayQuantity(
+          kind: MeasurementKind.mass,
+          amount: entry.value,
+          unit: entry.key,
+        );
+        expect(quantity.unit, CanonicalUnit.kg);
+        expect(quantity.microunits, 500000);
+      }
+      expect(
+        normalizeDisplayQuantity(
+          kind: MeasurementKind.mass,
+          amount: '1',
+          unit: 'mg',
+        ).microunits,
+        1,
+      );
+      expect(
+        normalizeDisplayQuantity(
+          kind: MeasurementKind.volume,
+          amount: '1500',
+          unit: 'mL',
+        ).microunits,
+        1500000,
+      );
+      for (final unit in ['mg', 'g', 'mL']) {
+        expect(
+          () => normalizeDisplayQuantity(
+            kind: measurementKindForDisplayUnit(unit),
+            amount: '0.000001',
+            unit: unit,
+          ),
+          throwsArgumentError,
+        );
+      }
+      expect(
+        () => parseDisplayDecimalMicrounits('999999999999999999999'),
+        throwsArgumentError,
+      );
+    },
+  );
+  test(
     'display quantity accepts comma or point and rejects mixed separators',
     () {
       final comma = normalizeDisplayQuantity(

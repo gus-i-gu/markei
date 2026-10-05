@@ -1,4 +1,5 @@
 import '../domain/shared/quantity.dart';
+import 'purchase_pricing.dart';
 
 int bulkLineTotalMinorUnits({
   required MeasurementKind kind,
@@ -7,13 +8,11 @@ int bulkLineTotalMinorUnits({
   required String pricePerSelectedUnit,
 }) {
   final unit = amountUnit.trim().toLowerCase();
-  final amountMicros = _amountMicrosForSelectedUnit(
-    kind: kind,
+  _amountMicrosForSelectedUnit(kind: kind, amount: amount, unit: unit);
+  return purchaseLineTotalMinorUnits(
     amount: amount,
-    unit: unit,
+    unitPrice: pricePerSelectedUnit,
   );
-  final rateMicroMinor = _parseRateMicroMinor(pricePerSelectedUnit);
-  return (amountMicros * rateMicroMinor + 500000000000) ~/ 1000000000000;
 }
 
 int _amountMicrosForSelectedUnit({
@@ -21,7 +20,8 @@ int _amountMicrosForSelectedUnit({
   required String amount,
   required String unit,
 }) {
-  if (kind == MeasurementKind.mass && (unit == 'kg' || unit == 'g')) {
+  if (kind == MeasurementKind.mass &&
+      (unit == 'kg' || unit == 'g' || unit == 'mg')) {
     return parseDisplayDecimalMicrounits(amount);
   }
   if (kind == MeasurementKind.volume && (unit == 'l' || unit == 'ml')) {
@@ -31,19 +31,4 @@ int _amountMicrosForSelectedUnit({
     return parseDisplayDecimalMicrounits(amount);
   }
   throw ArgumentError('Price unit must match the selected amount unit.');
-}
-
-int _parseRateMicroMinor(String value) {
-  final trimmed = value.trim();
-  if (trimmed.contains(',') && trimmed.contains('.')) {
-    throw ArgumentError('Use one decimal separator for price.');
-  }
-  final normalized = trimmed.replaceAll(',', '.');
-  final match = RegExp(r'^(\d+)(?:\.(\d{1,6}))?$').firstMatch(normalized);
-  if (match == null) {
-    throw ArgumentError('Enter price per selected unit.');
-  }
-  final major = int.parse(match.group(1)!);
-  final fraction = (match.group(2) ?? '').padRight(6, '0');
-  return (major * 1000000 + int.parse(fraction)) * 100;
 }

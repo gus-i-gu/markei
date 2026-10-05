@@ -1,4 +1,5 @@
 import '../domain/shared/ids.dart';
+import '../domain/catalogue/product.dart';
 
 enum ProductListView { storage, shortage, market, all }
 
@@ -34,8 +35,12 @@ final class ProductListProjectionItem {
     required this.cycle,
     required this.latestCurrencyCode,
     required this.latestLineTotalMinorUnits,
+    this.productMode,
+    this.daysSinceLastPurchase,
   });
 
+  final ProductMode? productMode;
+  final int? daysSinceLastPurchase;
   final ProductId productId;
   final String productCode;
   final String productName;
@@ -123,4 +128,14 @@ bool itemBelongsToView(
     ProductListView.market => remaining < 0,
     ProductListView.all => true,
   };
+}
+
+/// Civil calendar days, independent of daylight-saving offsets.
+int? daysFromLastPurchase(DateTime? latest, DateTime today) {
+  if (latest == null) return null;
+  return DateTime.utc(
+    today.year,
+    today.month,
+    today.day,
+  ).difference(DateTime.utc(latest.year, latest.month, latest.day)).inDays;
 }

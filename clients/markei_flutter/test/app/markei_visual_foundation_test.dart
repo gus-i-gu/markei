@@ -115,6 +115,9 @@ void main() {
     await tester.tap(_homeAction('home.action.openHistory'));
     await _pumpReady(tester);
     expect(selected.last.toString(), contains('history'));
+    // Home now includes the requested translation review notice above the grid.
+    await tester.drag(find.byKey(const Key('home.page')), const Offset(0, -350));
+    await _pumpReady(tester);
     expect(find.text('News'), findsOneWidget);
     expect(find.text('Updates follow-up'), findsOneWidget);
     expect(tester.takeException(), isNull);

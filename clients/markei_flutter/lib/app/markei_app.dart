@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import '../l10n/marc_localizations.dart';
+import '../l10n/language_controller.dart';
 
 import 'build_provenance.dart';
 import '../application/analytics.dart';
@@ -34,6 +37,20 @@ class MarkeiApp extends StatefulWidget {
 }
 
 class _MarkeiAppState extends State<MarkeiApp> {
+  late final LanguageController _language;
+  @override
+  void initState() {
+    super.initState();
+    _language = LanguageController(widget.composition.languagePreferences);
+    _language.load();
+  }
+
+  @override
+  void dispose() {
+    _language.dispose();
+    super.dispose();
+  }
+
   MarkeiDestinationId _selectedId = MarkeiDestinationId.home;
   int _refreshSignal = 0;
   AnalyticsLaunchContext? _analyticsLaunchContext;
@@ -111,22 +128,31 @@ class _MarkeiAppState extends State<MarkeiApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Marc',
-      theme: markeiTheme(),
-      home: MarkeiShell(
-        destinations: _destinations,
-        selectedId: _visibleSelectedId,
-        onDestinationSelected: _selectDestination,
-        content: IndexedStack(
-          index: _selectedPageIndex,
-          children: [
-            for (final entry in _pages.entries)
-              KeyedSubtree(
-                key: ValueKey('markei.page.${entry.key.name}'),
-                child: entry.value,
-              ),
-          ],
+    return ListenableBuilder(
+      listenable: _language,
+      builder: (context, child) => MaterialApp(
+        title: 'Marc',
+        locale: _language.locale,
+        supportedLocales: MarcLocalizations.supportedLocales,
+        localizationsDelegates: const [
+          MarcLocalizations.delegate,
+          ...GlobalMaterialLocalizations.delegates,
+        ],
+        theme: markeiTheme(),
+        home: MarkeiShell(
+          destinations: _destinations,
+          selectedId: _visibleSelectedId,
+          onDestinationSelected: _selectDestination,
+          content: IndexedStack(
+            index: _selectedPageIndex,
+            children: [
+              for (final entry in _pages.entries)
+                KeyedSubtree(
+                  key: ValueKey('markei.page.${entry.key.name}'),
+                  child: entry.value,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -135,6 +161,9 @@ class _MarkeiAppState extends State<MarkeiApp> {
   Map<MarkeiDestinationId, Widget> get _pages => {
     MarkeiDestinationId.home: HomePage(onNavigate: _selectDestination),
     MarkeiDestinationId.lists: ListsPage(
+      contentSharing: widget.composition.contentSharing,
+      deviceId: widget.composition.deviceId,
+      notes: widget.composition.listNotes,
       accountId: widget.composition.accountId,
       projections: widget.composition.productLists,
       refreshSignal: _refreshSignal,
@@ -155,6 +184,7 @@ class _MarkeiAppState extends State<MarkeiApp> {
       onChanged: () => setState(() => _refreshSignal++),
     ),
     MarkeiDestinationId.history: HistoryPage(
+      contentSharing: widget.composition.contentSharing,
       accountId: widget.composition.accountId,
       history: widget.composition.purchaseHistory,
       exports: widget.composition.purchaseExports,
@@ -163,6 +193,7 @@ class _MarkeiAppState extends State<MarkeiApp> {
       onAnalyzeSelected: _openAnalyticsForPurchases,
     ),
     MarkeiDestinationId.analytics: AnalyticsPage(
+      contentSharing: widget.composition.contentSharing,
       controller: widget.composition.analyticsWorkspace,
       launchContext: _analyticsLaunchContext,
       exportDestination: widget.composition.exportDestination,
@@ -185,6 +216,7 @@ class _MarkeiAppState extends State<MarkeiApp> {
           'This beta uses local offline-first storage for purchase registration and review.',
     ),
     MarkeiDestinationId.settings: SettingsPage(
+      languageController: _language,
       accountId: widget.composition.accountId,
       references: widget.composition.references,
       preferences: widget.composition.preferences,

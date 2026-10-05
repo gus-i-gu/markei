@@ -1,3 +1,4 @@
+import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../application/audit.dart';
@@ -25,7 +26,7 @@ class AuditStateView extends StatelessWidget {
         if (state.kind == AuditWorkspaceKind.loading)
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
-            child: Text(
+            child: MarcText(
               'Loading locally recorded activity...',
               key: Key('audit.loading.copy'),
             ),
@@ -62,13 +63,13 @@ class AuditStateView extends StatelessWidget {
               OutlinedButton(
                 key: const Key('audit.retry'),
                 onPressed: onRetry,
-                child: const Text('Load local activity again'),
+                child: const MarcText('Load local activity again'),
               ),
               const SizedBox(width: 8),
               FilledButton.tonal(
                 key: const Key('audit.nextPage'),
                 onPressed: page.nextCursor == null ? null : onNextPage,
-                child: const Text('Older local attempts'),
+                child: const MarcText('Older local attempts'),
               ),
             ],
           ),
@@ -145,11 +146,11 @@ class _AuditSummaryCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: Theme.of(context).textTheme.titleMedium),
+              MarcText(title, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 4),
               Text(value),
               const SizedBox(height: 4),
-              Text(detail),
+              MarcText(detail),
             ],
           ),
         ),
@@ -169,24 +170,25 @@ class _AuditWindowHeader extends StatelessWidget {
     final count = page.records.length;
     return Semantics(
       container: true,
-      label:
-          'Audit local activity window loaded at ${page.loadedAtUtc.toUtc().toIso8601String()} showing $count attempts',
+      label: context.tr(
+        'Audit local activity window loaded at ${page.loadedAtUtc.toUtc().toIso8601String()} showing $count attempts',
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          MarcText(
             'Loaded locally at ${page.loadedAtUtc.toUtc().toIso8601String()}',
             key: const Key('audit.loadedAt'),
           ),
           const SizedBox(height: 4),
-          Text(
+          MarcText(
             page.isPartialWindow
                 ? 'Showing $count recent local attempts. Older records may exist.'
                 : 'Showing $count recent local attempts in this local window.',
             key: const Key('audit.window.copy'),
           ),
           const SizedBox(height: 4),
-          const Text(
+          const MarcText(
             'A diagnostic code is a technical classification, not a cause. This view is local to this Account and environment.',
           ),
         ],
@@ -200,7 +202,7 @@ class _EmptyAudit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
+    return const MarcText(
       'No application activity has been recorded here yet.',
       key: Key('audit.empty'),
     );
@@ -218,36 +220,36 @@ class _AuditAttemptCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ExpansionTile(
         key: Key('audit.attempt.${record.id.value}'),
-        title: Text('${record.operationKind}: ${record.resultCode}'),
-        subtitle: Text(
+        title: MarcText('${record.operationKind}: ${record.resultCode}'),
+        subtitle: MarcText(
           '${record.outcomeClass} / ${record.latestStage} / ${record.startedAtUtc.toUtc().toIso8601String()}',
         ),
         children: [
           ListTile(
-            title: const Text('Reference'),
-            subtitle: Text(
+            title: const MarcText('Reference'),
+            subtitle: MarcText(
               record.correlationReference ??
                   'This technical detail was not recorded.',
             ),
           ),
           ListTile(
-            title: const Text('Device'),
-            subtitle: Text(
+            title: const MarcText('Device'),
+            subtitle: MarcText(
               record.deviceReference ??
                   'Device attribution is unavailable for this record.',
             ),
           ),
           if (record.events.isEmpty)
             const ListTile(
-              title: Text('Diagnostic events'),
-              subtitle: Text('This technical detail was not recorded.'),
+              title: MarcText('Diagnostic events'),
+              subtitle: MarcText('This technical detail was not recorded.'),
             )
           else
             for (final event in record.events)
               ListTile(
                 key: Key('audit.event.${event.id.value}'),
                 title: Text('${event.code}: ${event.title}'),
-                subtitle: Text(
+                subtitle: MarcText(
                   '${event.meaning}\n${event.guidance}\n${event.phase} / ${event.severity} / ${event.outcome}',
                 ),
               ),
@@ -274,13 +276,13 @@ class _StatusPanel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title),
+        MarcText(title),
         const SizedBox(height: 8),
-        Text(message),
+        MarcText(message),
         const SizedBox(height: 8),
         OutlinedButton(
           onPressed: action,
-          child: const Text('Retry local read'),
+          child: const MarcText('Retry local read'),
         ),
       ],
     );

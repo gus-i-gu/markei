@@ -1,3 +1,4 @@
+import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../design/markei_theme.dart';
@@ -32,7 +33,7 @@ class MarkeiShell extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               leading: const MarcBrand(compact: true),
-              title: Text(_selectedDestination.label),
+              title: MarcText(_selectedDestination.label),
               centerTitle: true,
               scrolledUnderElevation: 0,
             ),
@@ -43,30 +44,30 @@ class MarkeiShell extends StatelessWidget {
                 selectedIndex: _compactSelectedIndex,
                 onDestinationSelected: (index) =>
                     _selectCompactDestination(index, barContext),
-                destinations: const [
+                destinations: [
                   NavigationDestination(
                     icon: Icon(Icons.home_outlined),
                     selectedIcon: Icon(Icons.home),
-                    label: 'Home',
+                    label: context.tr('Home'),
                   ),
                   NavigationDestination(
                     icon: Icon(Icons.checklist_outlined),
                     selectedIcon: Icon(Icons.checklist),
-                    label: 'Lists',
+                    label: context.tr('Lists'),
                   ),
                   NavigationDestination(
                     icon: Icon(Icons.add_shopping_cart_outlined),
                     selectedIcon: Icon(Icons.add_shopping_cart),
-                    label: 'Purchase',
+                    label: context.tr('Purchase'),
                   ),
                   NavigationDestination(
                     icon: Icon(Icons.history_outlined),
                     selectedIcon: Icon(Icons.history),
-                    label: 'History',
+                    label: context.tr('History'),
                   ),
                   NavigationDestination(
                     icon: Icon(Icons.more_horiz),
-                    label: 'More',
+                    label: context.tr('More'),
                   ),
                 ],
               ),
@@ -90,14 +91,14 @@ class MarkeiShell extends StatelessWidget {
             for (final destination in destinations)
               NavigationRailDestination(
                 icon: Tooltip(
-                  message: destination.label,
+                  message: context.tr(destination.label),
                   child: Icon(destination.icon),
                 ),
                 selectedIcon: Tooltip(
-                  message: destination.label,
+                  message: context.tr(destination.label),
                   child: Icon(destination.icon),
                 ),
-                label: Text(destination.label),
+                label: MarcText(destination.label),
               ),
           ],
         );
@@ -168,10 +169,10 @@ class MarkeiShell extends StatelessWidget {
                 key: Key('markei.more.${destination.id.name}'),
                 enabled: destination.enabled,
                 leading: Icon(destination.icon),
-                title: Text(destination.label),
+                title: MarcText(destination.label),
                 subtitle: destination.description == null
                     ? null
-                    : Text(destination.description!),
+                    : MarcText(destination.description!),
                 onTap: destination.enabled
                     ? () {
                         Navigator.of(context).pop();

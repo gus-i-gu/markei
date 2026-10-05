@@ -1,0 +1,3245 @@
+{
+  "@@locale": "en",
+  "mf655acfa070d": " (archived)",
+  "@mf655acfa070d": {
+    "description": "lib\\domain\\analytics\\analytics_models.dart:107"
+  },
+  "m04420b9dfe3f": " · {p0}",
+  "@m04420b9dfe3f": {
+    "description": "lib\\application\\analytics_workspace.dart:1098"
+  },
+  "m679bfc59dbd0": "- {p0} {p1}: {p2} {p3} {p4} {p5}",
+  "@m679bfc59dbd0": {
+    "description": "lib\\application\\history_export.dart:73"
+  },
+  "m7b275411db08": "1.1.0 · development",
+  "@m7b275411db08": {
+    "description": "lib\\app\\widgets\\marc_brand.dart:22"
+  },
+  "mc7e0aefd3497": "@person, #payment, custom tags · separate with commas",
+  "@mc7e0aefd3497": {
+    "description": "lib\\app\\pages\\lists_page.dart:203"
+  },
+  "m7c671a83bbac": "A comparison selection is no longer available. Choose it again.",
+  "@m7c671a83bbac": {
+    "description": "lib\\application\\analytics_workspace.dart:638"
+  },
+  "m692cd1047d83": "A considered space for you and your everyday essentials.",
+  "@m692cd1047d83": {
+    "description": "lib\\app\\pages\\household_page.dart:46"
+  },
+  "md06b5f38427a": "A diagnostic code is a technical classification, not a cause. This view is local to this Account and environment.",
+  "@md06b5f38427a": {
+    "description": "lib\\app\\widgets\\audit_components.dart:190"
+  },
+  "madce99d3613e": "A safe export name could not be created. No existing file was replaced.",
+  "@madce99d3613e": {
+    "description": "lib\\infrastructure\\platform\\local_export_destination.dart:105"
+  },
+  "m11508a93417c": "A-Z",
+  "@m11508a93417c": {
+    "description": "lib\\app\\pages\\products_page.dart:326"
+  },
+  "m23ea098166c4": "About Marc",
+  "@m23ea098166c4": {
+    "description": "lib\\app\\widgets\\marc_brand.dart:14; lib\\app\\widgets\\marc_brand.dart:16"
+  },
+  "m7e1b0d5641f2": "Account",
+  "@m7e1b0d5641f2": {
+    "description": "lib\\app\\pages\\settings_page.dart:500"
+  },
+  "me6adf27ad4c7": "Account and environment scoped. No network call or database write is performed by Audit.",
+  "@me6adf27ad4c7": {
+    "description": "lib\\app\\widgets\\audit_components.dart:102"
+  },
+  "m335c5a698c57": "Account, references, Sync and Device.",
+  "@m335c5a698c57": {
+    "description": "lib\\app\\pages\\guide_page.dart:174"
+  },
+  "m3a0e612f48a0": "Actionable events",
+  "@m3a0e612f48a0": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1192"
+  },
+  "mff8059dc6752": "Actions",
+  "@mff8059dc6752": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1635"
+  },
+  "m92340695899b": "Active",
+  "@m92340695899b": {
+    "description": "lib\\app\\pages\\settings_page.dart:459"
+  },
+  "m721a018814d0": "Add a price: enter either unit price or total price. Marc calculates the other and the comparison price.",
+  "@m721a018814d0": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1410"
+  },
+  "ma38bbee2ed24": "Add at least one Item before reviewing this Purchase.",
+  "@ma38bbee2ed24": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1586"
+  },
+  "mcd67b1d07e17": "Add selected Product",
+  "@mcd67b1d07e17": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1176"
+  },
+  "mcc0abaf44f72": "Add staged Item",
+  "@mcc0abaf44f72": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1441"
+  },
+  "m9f088dbebd6c": "Advanced",
+  "@m9f088dbebd6c": {
+    "description": "lib\\app\\pages\\settings_page.dart:586"
+  },
+  "ma52ace420f21": "All",
+  "@ma52ace420f21": {
+    "description": "lib\\app\\pages\\history_page.dart:46; lib\\app\\pages\\lists_page.dart:494"
+  },
+  "m27218b9ee59a": "All Products projection",
+  "@m27218b9ee59a": {
+    "description": "lib\\app\\pages\\lists_page.dart:905"
+  },
+  "mbd05eff49c3d": "All local Account evidence is available.",
+  "@mbd05eff49c3d": {
+    "description": "lib\\app\\pages\\analytics_page.dart:124"
+  },
+  "m2362db96effc": "All recorded time",
+  "@m2362db96effc": {
+    "description": "lib\\domain\\analytics\\analytics_models.dart:299"
+  },
+  "m133ff07ae511": "All recorded values form comparison series.",
+  "@m133ff07ae511": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1316"
+  },
+  "mc38fb7581dc6": "All variables are shown. Saved analyses were not changed.",
+  "@mc38fb7581dc6": {
+    "description": "lib\\application\\analytics_workspace.dart:323"
+  },
+  "me50279191852": "Allocated only to new local Device events",
+  "@me50279191852": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1099"
+  },
+  "md0fda17b0da3": "Amount bought",
+  "@md0fda17b0da3": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1308"
+  },
+  "m94c116ee118a": "Analytics",
+  "@m94c116ee118a": {
+    "description": "lib\\app\\markei_app.dart:75; lib\\app\\pages\\analytics_page.dart:105; lib\\app\\pages\\guide_page.dart:155"
+  },
+  "mb8141b06d11c": "Analytics 01 / 02",
+  "@mb8141b06d11c": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:609"
+  },
+  "m138a4ce4e91c": "Analytics 0{p0}",
+  "@m138a4ce4e91c": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1279"
+  },
+  "mcaf4b57ff979": "Another export is already in progress.",
+  "@mcaf4b57ff979": {
+    "description": "lib\\app\\pages\\history_page.dart:413"
+  },
+  "mbeae6d621d91": "Approximate next purchase",
+  "@mbeae6d621d91": {
+    "description": "lib\\app\\pages\\lists_page.dart:553"
+  },
+  "m66f4804ee23d": "Archive",
+  "@m66f4804ee23d": {
+    "description": "lib\\app\\pages\\settings_page.dart:464"
+  },
+  "mbdb86505f806": "Archived",
+  "@mbdb86505f806": {
+    "description": "lib\\app\\pages\\settings_page.dart:459"
+  },
+  "mbb6aea287396": "Audit",
+  "@mbb6aea287396": {
+    "description": "lib\\app\\markei_app.dart:106; lib\\app\\pages\\audit_page.dart:57; lib\\app\\pages\\guide_page.dart:167"
+  },
+  "m31c85eeaf54f": "Audit local activity window loaded at {p0} showing {p1} attempts",
+  "@m31c85eeaf54f": {
+    "description": "lib\\app\\widgets\\audit_components.dart:173"
+  },
+  "m03bb9de9f8b2": "Audit shows bounded local activity for this Account and environment. It does not contact the network or repair data.",
+  "@m03bb9de9f8b2": {
+    "description": "lib\\app\\pages\\guide_page.dart:170"
+  },
+  "m66880d2d8216": "Authentication",
+  "@m66880d2d8216": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:849"
+  },
+  "m3ad8f1611510": "BRL",
+  "@m3ad8f1611510": {
+    "description": "lib\\app\\pages\\purchase_page.dart:394; lib\\app\\pages\\purchase_page.dart:611"
+  },
+  "m7bfd409d54c3": "BULK",
+  "@m7bfd409d54c3": {
+    "description": "lib\\app\\pages\\history_page.dart:668; lib\\app\\pages\\purchase_page.dart:1757"
+  },
+  "m52790a39b760": "Back to edit",
+  "@m52790a39b760": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1504"
+  },
+  "m90310b65a540": "Both dates are included. Leave both blank to use all recorded time.",
+  "@m90310b65a540": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1192"
+  },
+  "m583db22c420d": "Both selected rows need evidence in this comparison context.",
+  "@m583db22c420d": {
+    "description": "lib\\application\\analytics_workspace.dart:734"
+  },
+  "m26fbf7b62d6c": "Bounded local window. Older attempts may exist.",
+  "@m26fbf7b62d6c": {
+    "description": "lib\\app\\widgets\\audit_components.dart:111"
+  },
+  "m090ed4316f1d": "Brand",
+  "@m090ed4316f1d": {
+    "description": "lib\\app\\pages\\products_page.dart:371; lib\\app\\pages\\products_page.dart:645; lib\\app\\pages\\purchase_page.dart:1162; lib\\app\\pages\\purchase_page.dart:1204"
+  },
+  "m485225c746e3": "Browse catalogue",
+  "@m485225c746e3": {
+    "description": "lib\\app\\pages\\home_page.dart:164; lib\\application\\home_content.dart:27"
+  },
+  "m3140100df131": "Bulk",
+  "@m3140100df131": {
+    "description": "lib\\app\\pages\\lists_page.dart:981; lib\\app\\pages\\products_page.dart:350; lib\\app\\pages\\products_page.dart:662; lib\\app\\pages\\products_page.dart:668; lib\\app\\pages\\purchase_page.dart:1182"
+  },
+  "meb6b42f54c42": "CSV",
+  "@meb6b42f54c42": {
+    "description": "lib\\app\\pages\\analytics_page.dart:240; lib\\app\\pages\\history_page.dart:327; lib\\app\\pages\\history_page.dart:431; lib\\app\\pages\\history_page.dart:432"
+  },
+  "m73546d2f8a45": "CSV export failed. Record was preserved.",
+  "@m73546d2f8a45": {
+    "description": "lib\\app\\pages\\analytics_page.dart:247"
+  },
+  "mab0ad968e785": "Calculated · based on total contents",
+  "@mab0ad968e785": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1369"
+  },
+  "m19766ed6ccb2": "Cancel",
+  "@m19766ed6ccb2": {
+    "description": "lib\\app\\pages\\lists_page.dart:229; lib\\app\\pages\\native_closure_page.dart:262; lib\\app\\pages\\native_closure_page.dart:351; lib\\app\\pages\\native_closure_page.dart:399"
+  },
+  "m103451395067": "Catalogue",
+  "@m103451395067": {
+    "description": "lib\\app\\markei_app.dart:63; lib\\app\\pages\\guide_page.dart:143; lib\\app\\pages\\products_page.dart:243"
+  },
+  "m411585e54454": "Catalogue keeps reusable Product facts and Stores. Product details can be opened without selecting rows for bulk action.",
+  "@m411585e54454": {
+    "description": "lib\\app\\pages\\guide_page.dart:146"
+  },
+  "m3e5b90ae053f": "Chart",
+  "@m3e5b90ae053f": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:370"
+  },
+  "m2de8b1cb6218": "Chart for Record {p0}. Categories: {p1}. Series: {p2}. Evidence count {p3}.",
+  "@m2de8b1cb6218": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:459"
+  },
+  "m55f0d31c5790": "Chart page {p0} of {p1}",
+  "@m55f0d31c5790": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:481"
+  },
+  "m31ac93957b1e": "Check hosted connection",
+  "@m31ac93957b1e": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:40"
+  },
+  "m5da2bc077457": "Check the Product details and try again.",
+  "@m5da2bc077457": {
+    "description": "lib\\app\\pages\\products_page.dart:125; lib\\app\\pages\\purchase_page.dart:220"
+  },
+  "m7b2cb1cdffce": "Check the quantity, unit and price before adding this item.",
+  "@m7b2cb1cdffce": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1885"
+  },
+  "me56953d2baa4": "Choices for this Account and this Device. Local labels remain on this device unless existing Sync actions are explicitly used.",
+  "@me56953d2baa4": {
+    "description": "lib\\app\\pages\\settings_page.dart:292"
+  },
+  "mb390016a6bec": "Choose Store and time first, add optional Person and Payment Method details when useful, then stage Items and register the Purchase locally.",
+  "@mb390016a6bec": {
+    "description": "lib\\app\\pages\\guide_page.dart:140"
+  },
+  "m0ee5cca3ccc2": "Choose a staged Item to edit before saving.",
+  "@m0ee5cca3ccc2": {
+    "description": "lib\\app\\pages\\purchase_page.dart:361"
+  },
+  "m04bf3c5a6518": "Choose a store and purchase time. Person and payment method are optional.",
+  "@m04bf3c5a6518": {
+    "description": "lib\\app\\pages\\purchase_page.dart:904"
+  },
+  "m067e3c5cc026": "Choose an existing Product or explicitly create anyway.",
+  "@m067e3c5cc026": {
+    "description": "lib\\app\\pages\\products_page.dart:443; lib\\app\\pages\\purchase_page.dart:1546"
+  },
+  "m544eb0f42104": "Choose at least one Product, Purchase or Store.",
+  "@m544eb0f42104": {
+    "description": "lib\\application\\analytics_workspace.dart:598"
+  },
+  "mfc7b362c8edf": "Choose at least one numeric variable. Categorical variables break down a result but are not calculated.",
+  "@mfc7b362c8edf": {
+    "description": "lib\\application\\analytics_workspace.dart:605"
+  },
+  "m8ebe1f51c258": "Choose different dimensions for Determinants, Analytics 01 and Analytics 02.",
+  "@m8ebe1f51c258": {
+    "description": "lib\\application\\analytics_workspace.dart:627"
+  },
+  "m83b12c2216ef": "Clear",
+  "@m83b12c2216ef": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:404"
+  },
+  "med3ea5bf2efa": "Clear diagnostic history",
+  "@med3ea5bf2efa": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:135; lib\\app\\pages\\native_closure_page.dart:394"
+  },
+  "m8e9c3b1cc15d": "Clear draft",
+  "@m8e9c3b1cc15d": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:192"
+  },
+  "m7179ea0035fc": "Clear filters",
+  "@m7179ea0035fc": {
+    "description": "lib\\app\\pages\\history_page.dart:235"
+  },
+  "m3b7ea51793e9": "Clear search",
+  "@m3b7ea51793e9": {
+    "description": "lib\\app\\pages\\lists_page.dart:357"
+  },
+  "mcea4d2e010b8": "Clear selection",
+  "@mcea4d2e010b8": {
+    "description": "lib\\app\\pages\\history_page.dart:355"
+  },
+  "m9b78c95fc82e": "Client child correlation",
+  "@m9b78c95fc82e": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:877"
+  },
+  "m045b02edf4e9": "Client result code",
+  "@m045b02edf4e9": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:861"
+  },
+  "m376e335f5878": "Closure actions",
+  "@m376e335f5878": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:88"
+  },
+  "m340f463033e0": "Code",
+  "@m340f463033e0": {
+    "description": "lib\\app\\pages\\products_page.dart:641"
+  },
+  "m571527339d0e": "Comparison",
+  "@m571527339d0e": {
+    "description": "lib\\application\\analytics_workspace.dart:731"
+  },
+  "m447f8afb3711": "Comparison / statistic",
+  "@m447f8afb3711": {
+    "description": "lib\\application\\analytics.dart:225"
+  },
+  "m63fe2e31161b": "Comparison dates follow the timeframe below.",
+  "@m63fe2e31161b": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1297"
+  },
+  "m3f1dc4ece2d7": "Concurrent edits · combine notes",
+  "@m3f1dc4ece2d7": {
+    "description": "lib\\app\\pages\\lists_page.dart:1010"
+  },
+  "m8cdba641c76a": "Configured deadline",
+  "@m8cdba641c76a": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:871"
+  },
+  "m9e1015ce0e8a": "Connect this Device",
+  "@m9e1015ce0e8a": {
+    "description": "lib\\app\\pages\\settings_page.dart:598"
+  },
+  "m5804f66a5c3f": "Connect this Device finished with {p0}. This does not prove Sync succeeded.",
+  "@m5804f66a5c3f": {
+    "description": "lib\\app\\markei_composition.dart:411"
+  },
+  "m33c632d0806f": "Contained items",
+  "@m33c632d0806f": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:710"
+  },
+  "m437aea62a5bd": "Contents",
+  "@m437aea62a5bd": {
+    "description": "lib\\app\\pages\\guide_page.dart:46"
+  },
+  "mba072cdc2d34": "Contents per package, e.g. 500",
+  "@mba072cdc2d34": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1268"
+  },
+  "m70654792546e": "Contiguous membership",
+  "@m70654792546e": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:680"
+  },
+  "m7439b76544aa": "Create Product",
+  "@m7439b76544aa": {
+    "description": "lib\\app\\pages\\products_page.dart:409"
+  },
+  "m7358da46b8bc": "Create Store",
+  "@m7358da46b8bc": {
+    "description": "lib\\app\\pages\\products_page.dart:493"
+  },
+  "m16c28ee726c9": "Create a Store and reusable Product before registering purchases.",
+  "@m16c28ee726c9": {
+    "description": "lib\\app\\pages\\products_page.dart:260"
+  },
+  "m5d83b155bb3e": "Create a reusable Product below.",
+  "@m5d83b155bb3e": {
+    "description": "lib\\app\\pages\\products_page.dart:261"
+  },
+  "mf31e7d12d2f3": "Create analysis",
+  "@mf31e7d12d2f3": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:43"
+  },
+  "m9c7ac399fbdc": "Create anyway",
+  "@m9c7ac399fbdc": {
+    "description": "lib\\app\\pages\\products_page.dart:414; lib\\app\\pages\\purchase_page.dart:1447"
+  },
+  "mc462de4c561e": "Create new Product",
+  "@mc462de4c561e": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1121"
+  },
+  "m937d5d995300": "Create reusable Product facts for future Purchases.",
+  "@m937d5d995300": {
+    "description": "lib\\app\\pages\\products_page.dart:343"
+  },
+  "m6e90a4f42416": "Created UTC: {p0}",
+  "@m6e90a4f42416": {
+    "description": "lib\\application\\analytics.dart:119"
+  },
+  "me0d1b68224bf": "Current",
+  "@me0d1b68224bf": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1170"
+  },
+  "mf4dbbf0dc126": "Current Sync status is unavailable.",
+  "@mf4dbbf0dc126": {
+    "description": "lib\\app\\pages\\settings_page.dart:237; lib\\app\\pages\\settings_page.dart:502; lib\\app\\pages\\settings_page.dart:544"
+  },
+  "ma48cd5705adc": "Current action result",
+  "@ma48cd5705adc": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:624"
+  },
+  "m0c09cf1f24f1": "Current bounded local window loaded.",
+  "@m0c09cf1f24f1": {
+    "description": "lib\\app\\widgets\\audit_components.dart:112"
+  },
+  "m5a5e4921636a": "Current sign-in state: {p0}",
+  "@m5a5e4921636a": {
+    "description": "lib\\app\\pages\\settings_page.dart:502"
+  },
+  "m9c855cef6fe0": "Custom dates",
+  "@m9c855cef6fe0": {
+    "description": "lib\\domain\\analytics\\analytics_models.dart:305"
+  },
+  "m518653530449": "Cycle",
+  "@m518653530449": {
+    "description": "lib\\app\\pages\\lists_page.dart:683; lib\\app\\pages\\lists_page.dart:802"
+  },
+  "m99c40ab40592": "Date",
+  "@m99c40ab40592": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1475"
+  },
+  "me00e3ca4fd1d": "Date / Time",
+  "@me00e3ca4fd1d": {
+    "description": "lib\\app\\pages\\history_page.dart:476"
+  },
+  "md9f98be47bb4": "Date / time",
+  "@md9f98be47bb4": {
+    "description": "lib\\app\\pages\\history_page.dart:577"
+  },
+  "m24c7b3b41578": "Date-Time of purchase",
+  "@m24c7b3b41578": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:831; lib\\app\\widgets\\analytics_components.dart:916"
+  },
+  "m72f803a53a49": "Days from last purchase",
+  "@m72f803a53a49": {
+    "description": "lib\\app\\pages\\lists_page.dart:955"
+  },
+  "mf8aa3e1c3331": "Decimals allowed, e.g. 2.5",
+  "@mf8aa3e1c3331": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1309"
+  },
+  "mb250aa930ada": "Declaration scope",
+  "@mb250aa930ada": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:858"
+  },
+  "m0512f90f1960": "Derived cycle available",
+  "@m0512f90f1960": {
+    "description": "lib\\app\\pages\\lists_page.dart:539"
+  },
+  "m142174c19457": "Deselect",
+  "@m142174c19457": {
+    "description": "lib\\app\\pages\\history_page.dart:489"
+  },
+  "mfb5f27d5457c": "Detail",
+  "@mfb5f27d5457c": {
+    "description": "lib\\app\\pages\\history_page.dart:479"
+  },
+  "m28fd3c61caf5": "Detail open",
+  "@m28fd3c61caf5": {
+    "description": "lib\\app\\pages\\history_page.dart:598"
+  },
+  "m45989de49fb7": "Details",
+  "@m45989de49fb7": {
+    "description": "lib\\app\\pages\\products_page.dart:526"
+  },
+  "m44b398cc5199": "Determinants / rows",
+  "@m44b398cc5199": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:66"
+  },
+  "ma9699d8ef229": "Deterministic local calculations over this Account's recorded Purchase evidence.",
+  "@ma9699d8ef229": {
+    "description": "lib\\app\\pages\\analytics_page.dart:107"
+  },
+  "m6ba0bdeccb42": "Device",
+  "@m6ba0bdeccb42": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1170; lib\\app\\widgets\\audit_components.dart:234"
+  },
+  "m68e655329033": "Device attribution is unavailable for this record.",
+  "@m68e655329033": {
+    "description": "lib\\app\\widgets\\audit_components.dart:237"
+  },
+  "maf111d2c7b07": "Device connection is recorded, but this session needs to restart. Close Marc normally, reopen it, sign in again, then Sync now.",
+  "@maf111d2c7b07": {
+    "description": "lib\\app\\markei_composition.dart:429"
+  },
+  "m3e2dc2f79467": "Device connection is recorded. Close Marc normally, reopen it, sign in again, then Sync now. Purchases made before connection remain in the offline workspace.",
+  "@m3e2dc2f79467": {
+    "description": "lib\\app\\markei_composition.dart:397"
+  },
+  "m6d26c457d891": "Device scope",
+  "@m6d26c457d891": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:684"
+  },
+  "mbcf1eca13786": "Device: {p0}",
+  "@mbcf1eca13786": {
+    "description": "lib\\app\\pages\\settings_page.dart:549"
+  },
+  "m4ba5121d4d1b": "Devices",
+  "@m4ba5121d4d1b": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1159"
+  },
+  "m66d5cc15243c": "Diagnostic events",
+  "@m66d5cc15243c": {
+    "description": "lib\\app\\widgets\\audit_components.dart:242"
+  },
+  "m2fce0524eea0": "Diagnostic meaning unavailable.",
+  "@m2fce0524eea0": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:527; lib\\app\\pages\\native_closure_page.dart:565; lib\\infrastructure\\local\\closure_diagnostics_repository.dart:114"
+  },
+  "m91be9908b6d9": "Diagnostic text is sanitized registry meaning, not a causal explanation.",
+  "@m91be9908b6d9": {
+    "description": "lib\\app\\widgets\\audit_components.dart:119"
+  },
+  "m9386058c0b74": "Diagnostic: {p0}",
+  "@m9386058c0b74": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1534"
+  },
+  "m268f14bbfe11": "Diagnostics",
+  "@m268f14bbfe11": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:96; lib\\app\\widgets\\audit_components.dart:116"
+  },
+  "m4d280a451d04": "Difference",
+  "@m4d280a451d04": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1014; lib\\application\\analytics_workspace.dart:1470; lib\\domain\\analytics\\analytics_registry.dart:551"
+  },
+  "m29b199b78e7f": "Difference needs exactly two comparable groups: baseline A and comparison B.",
+  "@m29b199b78e7f": {
+    "description": "lib\\application\\analytics_workspace.dart:655"
+  },
+  "m6171e7e7ae0b": "Displayed evidence is stale.",
+  "@m6171e7e7ae0b": {
+    "description": "lib\\app\\widgets\\audit_components.dart:44"
+  },
+  "mc205924de0fe": "Documentation",
+  "@mc205924de0fe": {
+    "description": "lib\\app\\markei_app.dart:94; lib\\app\\markei_app.dart:180"
+  },
+  "md5fdc1af021e": "Downloads",
+  "@md5fdc1af021e": {
+    "description": "lib\\infrastructure\\platform\\local_export_destination.dart:79"
+  },
+  "m50bfd85e9e9c": "Downloads export is unavailable on this platform. No file was created.",
+  "@m50bfd85e9e9c": {
+    "description": "lib\\infrastructure\\platform\\local_export_destination.dart:36"
+  },
+  "m0c231ea08841": "Downloads is unavailable. No file was created.",
+  "@m0c231ea08841": {
+    "description": "lib\\infrastructure\\platform\\local_export_destination.dart:44; lib\\infrastructure\\platform\\local_export_destination.dart:52"
+  },
+  "m384a2959ad25": "Draft cleared. Saved analyses remain.",
+  "@m384a2959ad25": {
+    "description": "lib\\application\\analytics_workspace.dart:203"
+  },
+  "m19e82138c35f": "Due today",
+  "@m19e82138c35f": {
+    "description": "lib\\app\\pages\\lists_page.dart:878"
+  },
+  "md98ee0e5f939": "ERROR",
+  "@md98ee0e5f939": {
+    "description": "lib\\app\\native_auth_closure_runner.dart:249; lib\\app\\native_auth_closure_runner.dart:416; lib\\app\\native_auth_closure_runner.dart:480; lib\\app\\native_auth_closure_runner.dart:603; lib\\app\\native_auth_closure_runner.dart:1126; lib\\app\\native_auth_closure_runner.dart:1274; lib\\app\\native_auth_closure_runner.dart:1274; lib\\app\\native_auth_closure_runner.dart:1274; lib\\app\\pages\\native_closure_page.dart:1065"
+  },
+  "m841d9a37e857": "Edit staged Item",
+  "@m841d9a37e857": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1739"
+  },
+  "md124e0dc1dcb": "Edit tags and note",
+  "@md124e0dc1dcb": {
+    "description": "lib\\app\\pages\\lists_page.dart:1022"
+  },
+  "me9d69b98f532": "Editing new Item",
+  "@me9d69b98f532": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1432"
+  },
+  "mbf9e965d8114": "Editing staged Item",
+  "@mbf9e965d8114": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1432"
+  },
+  "mba56bddd9ea6": "Editing staged Item.",
+  "@mba56bddd9ea6": {
+    "description": "lib\\app\\pages\\purchase_page.dart:459"
+  },
+  "m1889cf762800": "Eligible",
+  "@m1889cf762800": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:614"
+  },
+  "mc4391536d1a7": "Email was not provided by your sign-in.",
+  "@mc4391536d1a7": {
+    "description": "lib\\app\\pages\\household_page.dart:135"
+  },
+  "m14303aa0c4a0": "End date",
+  "@m14303aa0c4a0": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1179"
+  },
+  "m80bb9e068c7d": "End date must be a valid date in dd-mm-yyyy format.",
+  "@m80bb9e068c7d": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1223"
+  },
+  "m261079eb2c81": "End date must be the same as or later than Start date.",
+  "@m261079eb2c81": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1230"
+  },
+  "m11edf9e1e378": "Enroll",
+  "@m11edf9e1e378": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:39"
+  },
+  "m2d91aa44edb6": "Enrollment",
+  "@m2d91aa44edb6": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:850"
+  },
+  "mec7cb071128b": "Enrollment: {p0}",
+  "@mec7cb071128b": {
+    "description": "lib\\app\\pages\\settings_page.dart:544"
+  },
+  "md1c463a49e2b": "Enter a quantity greater than zero.",
+  "@md1c463a49e2b": {
+    "description": "lib\\application\\purchase_pricing.dart:55"
+  },
+  "m7246163db1f0": "Enter a total price with up to two decimals.",
+  "@m7246163db1f0": {
+    "description": "lib\\application\\purchase_pricing.dart:41"
+  },
+  "mcbd033d79250": "Enter a unit price or a total price.",
+  "@mcbd033d79250": {
+    "description": "lib\\app\\pages\\purchase_page.dart:382"
+  },
+  "m7d6648f29b9c": "Enter a valid Purchase date and time.",
+  "@m7d6648f29b9c": {
+    "description": "lib\\application\\purchase_occurrence.dart:35"
+  },
+  "mc3e06f2b2a7a": "Enter a valid calendar date.",
+  "@mc3e06f2b2a7a": {
+    "description": "lib\\app\\pages\\purchase_page.dart:894"
+  },
+  "m3461ee0cdac3": "Enter a whole number of days from 0 through 365.",
+  "@m3461ee0cdac3": {
+    "description": "lib\\app\\pages\\settings_page.dart:190"
+  },
+  "me14bd3e059e1": "Enter both Start date and End date as dd-mm-yyyy.",
+  "@me14bd3e059e1": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1207; lib\\application\\analytics_workspace.dart:581"
+  },
+  "mb20363537786": "Enter either a unit price or a total price. Marc calculates the other.",
+  "@mb20363537786": {
+    "description": "lib\\app\\pages\\purchase_page.dart:235"
+  },
+  "m4d6ff5e4c94d": "Enter either price",
+  "@m4d6ff5e4c94d": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1339; lib\\app\\pages\\purchase_page.dart:1355"
+  },
+  "mbfb90add5718": "Enter the amount bought and either price. The other price is calculated.",
+  "@mbfb90add5718": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1227"
+  },
+  "mec7788d1acf1": "Enter whole packages and either price. Unit size is the contents of one package.",
+  "@mec7788d1acf1": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1228"
+  },
+  "mcb3c78481023": "Estimate Storage, Shortage, Market and All Products from registered Purchase history.",
+  "@mcb3c78481023": {
+    "description": "lib\\app\\pages\\lists_page.dart:84"
+  },
+  "mad58c0c5d2d7": "Estimate, not a recorded total",
+  "@mad58c0c5d2d7": {
+    "description": "lib\\app\\pages\\lists_page.dart:555"
+  },
+  "m31351a23961f": "Estimate: {p0} day(s)",
+  "@m31351a23961f": {
+    "description": "lib\\app\\pages\\lists_page.dart:883; lib\\app\\pages\\lists_page.dart:914"
+  },
+  "m01188e52aaf2": "Estimates use registered Purchase history. Shortage threshold: {p0} day(s).",
+  "@m01188e52aaf2": {
+    "description": "lib\\app\\pages\\lists_page.dart:331"
+  },
+  "m8c33c3797cd8": "Event states",
+  "@m8c33c3797cd8": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:688"
+  },
+  "m6fe451952efe": "Evidence count",
+  "@m6fe451952efe": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1023; lib\\app\\widgets\\analytics_components.dart:1034; lib\\application\\analytics_workspace.dart:1425; lib\\application\\analytics_workspace.dart:1436; lib\\domain\\analytics\\analytics_registry.dart:545"
+  },
+  "m34006da97666": "Evidence: {p0}/{p1}; excluded {p2}",
+  "@m34006da97666": {
+    "description": "lib\\application\\analytics.dart:127"
+  },
+  "m7c1c24a25d87": "Exception class",
+  "@m7c1c24a25d87": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:700"
+  },
+  "mbef1fd9e5cae": "Excluded",
+  "@mbef1fd9e5cae": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:615"
+  },
+  "m6d017517793b": "Expected ended",
+  "@m6d017517793b": {
+    "description": "lib\\app\\pages\\lists_page.dart:872"
+  },
+  "m43db620db6d6": "Expected next purchase",
+  "@m43db620db6d6": {
+    "description": "lib\\app\\pages\\lists_page.dart:954"
+  },
+  "mc81f30a3dc49": "Explicit existing Device and Sync actions with visible results.",
+  "@mc81f30a3dc49": {
+    "description": "lib\\app\\pages\\settings_page.dart:588"
+  },
+  "m91f71c14c8d6": "Export CSV",
+  "@m91f71c14c8d6": {
+    "description": "lib\\app\\pages\\history_page.dart:328; lib\\app\\widgets\\analytics_components.dart:387"
+  },
+  "m7aad9d490352": "Export PDF",
+  "@m7aad9d490352": {
+    "description": "lib\\app\\pages\\history_page.dart:335; lib\\app\\widgets\\analytics_components.dart:393"
+  },
+  "me363994d528f": "Export creates a file only after an explicit action. Windows writes to Downloads. Android public Downloads export is unavailable in this build.",
+  "@me363994d528f": {
+    "description": "lib\\app\\pages\\guide_page.dart:164"
+  },
+  "m9a3bb87253f7": "Exported {p0} to {p1}: {p2}.",
+  "@m9a3bb87253f7": {
+    "description": "lib\\application\\export_destination.dart:54"
+  },
+  "m2f4dcf59ff0c": "Exports",
+  "@m2f4dcf59ff0c": {
+    "description": "lib\\app\\pages\\guide_page.dart:161"
+  },
+  "m031a8f0f659d": "Failed",
+  "@m031a8f0f659d": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:664; lib\\app\\pages\\native_closure_page.dart:1091"
+  },
+  "m546ebb8eb993": "Filters",
+  "@m546ebb8eb993": {
+    "description": "lib\\app\\pages\\history_page.dart:200"
+  },
+  "ma721587354a7": "Find an existing Product or stage a new reusable Product.",
+  "@ma721587354a7": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1079"
+  },
+  "mdbe4a45042e1": "Find code",
+  "@mdbe4a45042e1": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1105"
+  },
+  "m09b2d9cd1123": "Follow-up",
+  "@m09b2d9cd1123": {
+    "description": "lib\\application\\home_content.dart:49"
+  },
+  "m84fcd273624f": "From Catalogue",
+  "@m84fcd273624f": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1267"
+  },
+  "m34ca0e766088": "Group",
+  "@m34ca0e766088": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:608"
+  },
+  "m5f89fb3d5031": "Group by: {p0}",
+  "@m5f89fb3d5031": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:294; lib\\application\\analytics.dart:123"
+  },
+  "m9ec46c38da52": "Grouped diagnostic lifecycle",
+  "@m9ec46c38da52": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:722"
+  },
+  "m8dd65d0952ed": "Guide",
+  "@m8dd65d0952ed": {
+    "description": "lib\\app\\markei_app.dart:88; lib\\app\\pages\\guide_page.dart:39"
+  },
+  "m44de3beeda38": "Guide section {p0}, {p1}",
+  "@m44de3beeda38": {
+    "description": "lib\\app\\pages\\guide_page.dart:109"
+  },
+  "m8f9140fcce5a": "HOUSEHOLD GOVERNANCE",
+  "@m8f9140fcce5a": {
+    "description": "lib\\app\\widgets\\marc_brand.dart:63"
+  },
+  "m8ba1ab06d0d4": "Historical operation",
+  "@m8ba1ab06d0d4": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:982"
+  },
+  "m0e7696009337": "History",
+  "@m0e7696009337": {
+    "description": "lib\\app\\markei_app.dart:69; lib\\app\\pages\\guide_page.dart:149; lib\\app\\widgets\\markei_shell.dart:65"
+  },
+  "mfa5a3afbcfb2": "History read failed",
+  "@mfa5a3afbcfb2": {
+    "description": "lib\\app\\pages\\history_page.dart:100"
+  },
+  "mb255ce8b549e": "History scope received: requested {p0}, matched {p1}, unavailable {p2} Purchase(s). Use in Analytics prepared the scope only; no analysis was calculated or saved.",
+  "@mb255ce8b549e": {
+    "description": "lib\\application\\analytics_workspace.dart:1324"
+  },
+  "mad723db8518a": "History selection is for actions only. Opening detail is separate. Select all shown means the currently filtered loaded recent-History window.",
+  "@mad723db8518a": {
+    "description": "lib\\app\\pages\\guide_page.dart:152"
+  },
+  "m3a78695388b3": "Home",
+  "@m3a78695388b3": {
+    "description": "lib\\app\\markei_app.dart:44; lib\\app\\pages\\guide_page.dart:131; lib\\app\\widgets\\markei_shell.dart:50"
+  },
+  "m185b5f208897": "Home summarizes local-first purchase work and shows static News and Updates follow-up cards. Opening Home does not read or write data.",
+  "@m185b5f208897": {
+    "description": "lib\\app\\pages\\guide_page.dart:134"
+  },
+  "m4175f6489ed3": "Hosted connection checks, query enrollment, retry, recovery and clear diagnostic history are development-only or absent from product UI.",
+  "@m4175f6489ed3": {
+    "description": "lib\\app\\pages\\settings_page.dart:609"
+  },
+  "ma1c6c97f415f": "Household",
+  "@ma1c6c97f415f": {
+    "description": "lib\\app\\markei_app.dart:81; lib\\app\\pages\\household_page.dart:45"
+  },
+  "m31d61369bdcd": "Household governance",
+  "@m31d61369bdcd": {
+    "description": "lib\\app\\widgets\\marc_brand.dart:34"
+  },
+  "m4c0353ff45cc": "Household sharing tools are planned. Your signed-in profile is available here today; invitations and member management are still being prepared.",
+  "@m4c0353ff45cc": {
+    "description": "lib\\app\\pages\\household_page.dart:152"
+  },
+  "mcda14d0b2d95": "INFO",
+  "@mcda14d0b2d95": {
+    "description": "lib\\app\\native_auth_closure_runner.dart:416; lib\\app\\native_auth_closure_runner.dart:770; lib\\app\\native_auth_closure_runner.dart:965"
+  },
+  "m076422abb631": "Immutable analysis records are retained only while this workspace lives.",
+  "@m076422abb631": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:223"
+  },
+  "m5b16bf418ce4": "Inspect Storage, Shortage, Market and All estimates from history.",
+  "@m5b16bf418ce4": {
+    "description": "lib\\application\\home_content.dart:23"
+  },
+  "m49d2492ad0f0": "Inspect failed/notApplied recovery",
+  "@m49d2492ad0f0": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:116"
+  },
+  "m2c0ad1e30581": "Invalid custom timeframe",
+  "@m2c0ad1e30581": {
+    "description": "lib\\domain\\analytics\\analytics_models.dart:301"
+  },
+  "mc8058e9ad4aa": "Item count",
+  "@mc8058e9ad4aa": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:836"
+  },
+  "mfb8e7a1a3cb7": "Items",
+  "@mfb8e7a1a3cb7": {
+    "description": "lib\\app\\pages\\history_page.dart:477; lib\\app\\pages\\history_page.dart:581"
+  },
+  "mbdcc59838e10": "Items staged in the current editable draft.",
+  "@mbdcc59838e10": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1594"
+  },
+  "m6ef8f3c003c1": "Jump to a local Guide section.",
+  "@m6ef8f3c003c1": {
+    "description": "lib\\app\\pages\\guide_page.dart:47"
+  },
+  "m72dfcfb0c470": "L",
+  "@m72dfcfb0c470": {
+    "description": "lib\\app\\pages\\purchase_page.dart:325; lib\\app\\pages\\purchase_page.dart:1220; lib\\app\\widgets\\quantity_unit_picker.dart:24; lib\\app\\widgets\\quantity_unit_picker.dart:67"
+  },
+  "m0e66373f45dc": "Label",
+  "@m0e66373f45dc": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1049"
+  },
+  "ma76bd733c0ce": "Last loaded locally at {p0}. Refresh to read local records again.",
+  "@ma76bd733c0ce": {
+    "description": "lib\\application\\audit.dart:291"
+  },
+  "mb9f722048f9c": "Last local result: {p0}",
+  "@mb9f722048f9c": {
+    "description": "lib\\app\\pages\\settings_page.dart:547"
+  },
+  "m8e81e7bf0fbb": "Last proved phase",
+  "@m8e81e7bf0fbb": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:633; lib\\app\\pages\\native_closure_page.dart:866"
+  },
+  "mab9c681a6929": "Last result",
+  "@mab9c681a6929": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:852"
+  },
+  "m75a9949d4d6f": "Last successful Sync: {p0}",
+  "@m75a9949d4d6f": {
+    "description": "lib\\app\\pages\\settings_page.dart:555"
+  },
+  "m613f4bd0ec0b": "Last successful sync",
+  "@m613f4bd0ec0b": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:854"
+  },
+  "m430a38b1d916": "Latest price",
+  "@m430a38b1d916": {
+    "description": "lib\\app\\pages\\lists_page.dart:636; lib\\app\\pages\\lists_page.dart:682; lib\\app\\pages\\lists_page.dart:796"
+  },
+  "mab8055a39c03": "Line total",
+  "@mab8055a39c03": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1634; lib\\app\\pages\\purchase_page.dart:1697; lib\\app\\widgets\\analytics_components.dart:924; lib\\domain\\analytics\\analytics_registry.dart:543"
+  },
+  "mbfda026e6c59": "Linked",
+  "@mbfda026e6c59": {
+    "description": "lib\\app\\pages\\purchase_page.dart:856"
+  },
+  "m308d5a0903f2": "Lists",
+  "@m308d5a0903f2": {
+    "description": "lib\\app\\markei_app.dart:50; lib\\app\\pages\\lists_page.dart:82; lib\\app\\widgets\\markei_shell.dart:55"
+  },
+  "mb07f8bbdeddf": "Lists estimates could not be loaded. Local data was not changed.",
+  "@mb07f8bbdeddf": {
+    "description": "lib\\app\\pages\\lists_page.dart:114"
+  },
+  "m494dfa6d34ca": "Lists read failed",
+  "@m494dfa6d34ca": {
+    "description": "lib\\app\\pages\\lists_page.dart:112"
+  },
+  "md9c7cc03574d": "Live means the API process answered. Ready means the API database readiness contract passed. Neither proves Sync success.",
+  "@md9c7cc03574d": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:886"
+  },
+  "mde4c53fcd056": "Load local activity again",
+  "@mde4c53fcd056": {
+    "description": "lib\\app\\widgets\\audit_components.dart:65"
+  },
+  "m606e28a0a065": "Loaded locally at {p0}",
+  "@m606e28a0a065": {
+    "description": "lib\\app\\widgets\\audit_components.dart:178"
+  },
+  "m277be7e9cd41": "Loaded once from local Account evidence. Analyses are session-only and not synchronized.",
+  "@m277be7e9cd41": {
+    "description": "lib\\app\\pages\\analytics_page.dart:118"
+  },
+  "mcd16e13df6aa": "Loading Catalogue",
+  "@mcd16e13df6aa": {
+    "description": "lib\\app\\pages\\products_page.dart:212"
+  },
+  "m5b6e1d218108": "Loading History",
+  "@m5b6e1d218108": {
+    "description": "lib\\app\\pages\\history_page.dart:92"
+  },
+  "m6e0217ebd43f": "Loading Lists",
+  "@m6e0217ebd43f": {
+    "description": "lib\\app\\pages\\lists_page.dart:105"
+  },
+  "mca787696d84f": "Loading Products and Stores.",
+  "@mca787696d84f": {
+    "description": "lib\\app\\pages\\products_page.dart:213"
+  },
+  "mf6d1b46e1f5a": "Loading Products, Stores and optional local labels.",
+  "@mf6d1b46e1f5a": {
+    "description": "lib\\app\\pages\\purchase_page.dart:776"
+  },
+  "m25e4f9be76f2": "Loading Purchase details...",
+  "@m25e4f9be76f2": {
+    "description": "lib\\app\\pages\\history_page.dart:632"
+  },
+  "mc94981bdf1f5": "Loading estimated Product lists.",
+  "@mc94981bdf1f5": {
+    "description": "lib\\app\\pages\\lists_page.dart:106"
+  },
+  "md3a0e13df37b": "Loading local settings...",
+  "@md3a0e13df37b": {
+    "description": "lib\\app\\pages\\settings_page.dart:63; lib\\app\\pages\\settings_page.dart:296"
+  },
+  "m39f1a0086439": "Loading locally recorded activity...",
+  "@m39f1a0086439": {
+    "description": "lib\\app\\widgets\\audit_components.dart:29"
+  },
+  "m15e6cdf1eab8": "Loading price comparison...",
+  "@m15e6cdf1eab8": {
+    "description": "lib\\app\\pages\\history_page.dart:709"
+  },
+  "m8b317d65429f": "Loading purchase setup",
+  "@m8b317d65429f": {
+    "description": "lib\\app\\pages\\purchase_page.dart:775"
+  },
+  "mf6c60b379299": "Loading registered Purchases.",
+  "@mf6c60b379299": {
+    "description": "lib\\app\\pages\\history_page.dart:93"
+  },
+  "m5a4e21639178": "Loading your current sign-in profile.",
+  "@m5a4e21639178": {
+    "description": "lib\\app\\pages\\household_page.dart:57"
+  },
+  "ma2a774c10a74": "Local Purchase evidence could not be loaded. No Purchase data was changed.",
+  "@ma2a774c10a74": {
+    "description": "lib\\application\\analytics_workspace.dart:127"
+  },
+  "m37a729a43393": "Local activity could not be loaded.",
+  "@m37a729a43393": {
+    "description": "lib\\app\\widgets\\audit_components.dart:36; lib\\application\\audit.dart:283"
+  },
+  "ma3669af923e1": "Local beta work is focused on reliable purchase registration, evidence review and explicit export from this device.",
+  "@ma3669af923e1": {
+    "description": "lib\\application\\home_content.dart:42"
+  },
+  "m2890f881ddf7": "Local evidence scope",
+  "@m2890f881ddf7": {
+    "description": "lib\\app\\pages\\analytics_page.dart:116"
+  },
+  "m690f3d4d7360": "Local help for registering purchases, reviewing evidence and exporting files from this device.",
+  "@m690f3d4d7360": {
+    "description": "lib\\app\\pages\\guide_page.dart:41"
+  },
+  "m15ff5543b302": "Local information",
+  "@m15ff5543b302": {
+    "description": "lib\\application\\home_content.dart:43"
+  },
+  "mf0135ab6c722": "Local mutation",
+  "@mf0135ab6c722": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:634"
+  },
+  "me4f02b213eb6": "Local queue",
+  "@me4f02b213eb6": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1086"
+  },
+  "ma287adaf4021": "Local settings could not be loaded.",
+  "@ma287adaf4021": {
+    "description": "lib\\app\\pages\\settings_page.dart:98"
+  },
+  "m4a7cb0f6207d": "Local status and follow-up cards.",
+  "@m4a7cb0f6207d": {
+    "description": "lib\\app\\pages\\guide_page.dart:132"
+  },
+  "me90b98bb97ed": "Local status refreshed.",
+  "@me90b98bb97ed": {
+    "description": "lib\\app\\pages\\settings_page.dart:231"
+  },
+  "mae6086d37707": "Local-first workspace",
+  "@mae6086d37707": {
+    "description": "lib\\app\\pages\\home_page.dart:102"
+  },
+  "md0527e4b3d65": "Logout",
+  "@md0527e4b3d65": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:42"
+  },
+  "m7438b9ca16be": "MARC",
+  "@m7438b9ca16be": {
+    "description": "lib\\app\\widgets\\marc_brand.dart:51"
+  },
+  "ma4c14b7a215d": "MARC / HOUSEHOLD GOVERNANCE",
+  "@ma4c14b7a215d": {
+    "description": "lib\\app\\pages\\home_page.dart:32"
+  },
+  "ma11ed7e39a9f": "MARC / YOUR SPACE",
+  "@ma11ed7e39a9f": {
+    "description": "lib\\app\\pages\\household_page.dart:94"
+  },
+  "m30a56b439d79": "MKS code",
+  "@m30a56b439d79": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:630"
+  },
+  "m7f531c658c0e": "MKS-REC",
+  "@m7f531c658c0e": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:529"
+  },
+  "md473930806eb": "Maintain reusable Products for faster future purchase entries.",
+  "@md473930806eb": {
+    "description": "lib\\application\\home_content.dart:28"
+  },
+  "m36719e950dae": "Manage reusable Products and supporting Stores for purchase registration.",
+  "@m36719e950dae": {
+    "description": "lib\\app\\pages\\products_page.dart:245"
+  },
+  "m88c3cf364123": "Marc",
+  "@m88c3cf364123": {
+    "description": "lib\\app\\markei_app.dart:115; lib\\app\\widgets\\marc_brand.dart:21"
+  },
+  "m3cb49795ff85": "Marc Analytics record",
+  "@m3cb49795ff85": {
+    "description": "lib\\application\\analytics.dart:116"
+  },
+  "me09f2171a057": "Marc is an unfinished beta. Features are still under development, and malfunctions may occur. High server load may cause slow responses, failed sign-ins, or delayed or interrupted synchronization.\n\nThe official release is tentatively planned for around October 21, 2026. This is an estimate, not a confirmed release date, and may change.\n\nThis beta uses local offline-first storage for purchase registration and review.",
+  "@me09f2171a057": {
+    "description": "lib\\app\\markei_app.dart:182"
+  },
+  "m7a55a630b9aa": "Marc logo",
+  "@m7a55a630b9aa": {
+    "description": "lib\\app\\widgets\\marc_brand.dart:30"
+  },
+  "md71bc0e7c9a2": "Marc · Comparison chart · {p0}",
+  "@md71bc0e7c9a2": {
+    "description": "lib\\application\\analytics.dart:296"
+  },
+  "m92c82cc0eb61": "Marc · Record {p0} · Page {p1}",
+  "@m92c82cc0eb61": {
+    "description": "lib\\application\\analytics.dart:201"
+  },
+  "m6df02e5cc088": "MarcRoboto",
+  "@m6df02e5cc088": {
+    "description": "lib\\app\\design\\markei_theme.dart:73; lib\\app\\design\\markei_theme.dart:80; lib\\app\\design\\markei_theme.dart:87; lib\\app\\design\\markei_theme.dart:93; lib\\app\\design\\markei_theme.dart:99; lib\\app\\design\\markei_theme.dart:105; lib\\app\\design\\markei_theme.dart:112; lib\\app\\design\\markei_theme.dart:128; lib\\app\\design\\markei_theme.dart:185"
+  },
+  "m357ce743056b": "Markei could not write to Downloads. Check access and try again.",
+  "@m357ce743056b": {
+    "description": "lib\\infrastructure\\platform\\local_export_destination.dart:92"
+  },
+  "m3f15c9c22871": "Markei keeps purchase registration available on this device. Lists are estimates derived from registered Purchase history, and Catalogue keeps reusable Products and Stores.",
+  "@m3f15c9c22871": {
+    "description": "lib\\app\\pages\\home_page.dart:104"
+  },
+  "me294c021719a": "Markei selected purchase list\n\n",
+  "@me294c021719a": {
+    "description": "lib\\application\\history_export.dart:62"
+  },
+  "m5238d9bd03d5": "Market",
+  "@m5238d9bd03d5": {
+    "description": "lib\\app\\pages\\lists_page.dart:486"
+  },
+  "m011bd3f1feed": "Market projection",
+  "@m011bd3f1feed": {
+    "description": "lib\\app\\pages\\lists_page.dart:904"
+  },
+  "m727a7d114f4d": "Mean",
+  "@m727a7d114f4d": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1013; lib\\application\\analytics_workspace.dart:1469; lib\\domain\\analytics\\analytics_registry.dart:550"
+  },
+  "mebf940f2b3ea": "Measure",
+  "@mebf940f2b3ea": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:610"
+  },
+  "m385165e2ff59": "Measurement",
+  "@m385165e2ff59": {
+    "description": "lib\\app\\pages\\products_page.dart:525; lib\\app\\pages\\products_page.dart:596"
+  },
+  "m1044a4c056d0": "Members",
+  "@m1044a4c056d0": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:666"
+  },
+  "m5e23ec6a300d": "Mode",
+  "@m5e23ec6a300d": {
+    "description": "lib\\app\\pages\\products_page.dart:523; lib\\app\\pages\\products_page.dart:590; lib\\app\\pages\\products_page.dart:646; lib\\app\\pages\\purchase_page.dart:1632; lib\\app\\pages\\purchase_page.dart:1692"
+  },
+  "m48651b92291e": "Mode unavailable",
+  "@m48651b92291e": {
+    "description": "lib\\app\\pages\\lists_page.dart:983"
+  },
+  "m4e508d298032": "Mode: {p0} · {p1}",
+  "@m4e508d298032": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1166"
+  },
+  "md47d7cb0e4f8": "More",
+  "@md47d7cb0e4f8": {
+    "description": "lib\\app\\widgets\\markei_shell.dart:69"
+  },
+  "mdcd1d5223f73": "Name",
+  "@mdcd1d5223f73": {
+    "description": "lib\\app\\pages\\products_page.dart:644"
+  },
+  "m74d0cfd98ba2": "Native closure",
+  "@m74d0cfd98ba2": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:49"
+  },
+  "m75b2b335269f": "Native state",
+  "@m75b2b335269f": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:657"
+  },
+  "m795effd87c98": "New Product",
+  "@m795effd87c98": {
+    "description": "lib\\app\\pages\\purchase_page.dart:747"
+  },
+  "mf95432e0b7c6": "New purchase",
+  "@mf95432e0b7c6": {
+    "description": "lib\\app\\pages\\purchase_page.dart:788"
+  },
+  "mffb6f5764bdd": "Newest first",
+  "@mffb6f5764bdd": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1048"
+  },
+  "ma3d4b1308d40": "Newest operation",
+  "@ma3d4b1308d40": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:982"
+  },
+  "m69752f2313b2": "News",
+  "@m69752f2313b2": {
+    "description": "lib\\application\\home_content.dart:40"
+  },
+  "mc0d112ef84c0": "Next Device sequence",
+  "@mc0d112ef84c0": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1094"
+  },
+  "mb9d8804db60e": "Next chart page",
+  "@mb9d8804db60e": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:484"
+  },
+  "mc08ac736a5e2": "Next page",
+  "@mc08ac736a5e2": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:765"
+  },
+  "mf0bd94206971": "Next review gates cover human UI checks, accessibility review and platform export behavior that cannot be proven by automated tests alone.",
+  "@mf0bd94206971": {
+    "description": "lib\\application\\home_content.dart:48"
+  },
+  "m30e2615e9379": "Next sequence",
+  "@m30e2615e9379": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:672"
+  },
+  "md720f61c8c5e": "Nickname",
+  "@md720f61c8c5e": {
+    "description": "lib\\app\\pages\\settings_page.dart:470"
+  },
+  "m1ea442a134b2": "No",
+  "@m1ea442a134b2": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1307"
+  },
+  "mf52433e2f7f8": "No People/Payment Methods saved for this Account.",
+  "@mf52433e2f7f8": {
+    "description": "lib\\app\\pages\\settings_page.dart:91"
+  },
+  "m1ed2ce7d8613": "No Product matches this exact code. Check details or create a new Product.",
+  "@m1ed2ce7d8613": {
+    "description": "lib\\app\\pages\\purchase_page.dart:281"
+  },
+  "mb0efca448a29": "No Products in this List",
+  "@mb0efca448a29": {
+    "description": "lib\\app\\pages\\lists_page.dart:339"
+  },
+  "m1318171477c5": "No Products yet",
+  "@m1318171477c5": {
+    "description": "lib\\app\\pages\\products_page.dart:258"
+  },
+  "ma9fb4f22882b": "No Products yet. Create a Product to stage an Item.",
+  "@ma9fb4f22882b": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1111"
+  },
+  "m92389107161a": "No Purchase evidence yet. Register a Purchase to begin local Analytics.",
+  "@m92389107161a": {
+    "description": "lib\\application\\analytics_workspace.dart:573"
+  },
+  "m16db29358a7e": "No Purchases yet",
+  "@m16db29358a7e": {
+    "description": "lib\\app\\pages\\history_page.dart:115"
+  },
+  "m78870b73a31e": "No Stores yet.",
+  "@m78870b73a31e": {
+    "description": "lib\\app\\pages\\products_page.dart:470"
+  },
+  "md626cab1e288": "No Stores yet. Create one in Catalogue before registering a purchase.",
+  "@md626cab1e288": {
+    "description": "lib\\app\\pages\\purchase_page.dart:910"
+  },
+  "m28b2f7e44162": "No accepted members",
+  "@m28b2f7e44162": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:692"
+  },
+  "ma12c4c9fff44": "No active overlap",
+  "@ma12c4c9fff44": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:696"
+  },
+  "m5b67a3587fd1": "No application activity has been recorded here yet.",
+  "@m5b67a3587fd1": {
+    "description": "lib\\app\\widgets\\audit_components.dart:204"
+  },
+  "ma4bac6d2676a": "No connected Device is recorded locally for this Account.",
+  "@ma4bac6d2676a": {
+    "description": "lib\\app\\pages\\settings_page.dart:549"
+  },
+  "m2b68852951be": "No local activity in this window",
+  "@m2b68852951be": {
+    "description": "lib\\app\\widgets\\audit_components.dart:108"
+  },
+  "m5105a94024ab": "No locally recorded attempt history",
+  "@m5105a94024ab": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:66; lib\\app\\pages\\native_closure_page.dart:1119"
+  },
+  "mf696d479c069": "No locally recorded diagnostic events",
+  "@mf696d479c069": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:725"
+  },
+  "m824ffb286acc": "No matching Product",
+  "@m824ffb286acc": {
+    "description": "lib\\app\\pages\\products_page.dart:267"
+  },
+  "mf33bd9bf0308": "No matching Purchases",
+  "@mf33bd9bf0308": {
+    "description": "lib\\app\\pages\\history_page.dart:147"
+  },
+  "mcc4ec9825997": "No newer saved analysis",
+  "@mcc4ec9825997": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:261"
+  },
+  "m3eec7dad4845": "No older saved analysis",
+  "@m3eec7dad4845": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:250"
+  },
+  "m3e44c346aae3": "No pending, failed or unknown events",
+  "@m3e44c346aae3": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1195"
+  },
+  "m6ffcd1faf849": "No purchase history",
+  "@m6ffcd1faf849": {
+    "description": "lib\\app\\pages\\lists_page.dart:988"
+  },
+  "m1055c9dd2992": "No recorded purchases match this timeframe and comparisons. Change the dates or comparisons.",
+  "@m1055c9dd2992": {
+    "description": "lib\\application\\analytics_workspace.dart:597; lib\\application\\analytics_workspace.dart:647"
+  },
+  "m71442e9ce482": "No recorded values match this search.",
+  "@m71442e9ce482": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1403"
+  },
+  "m50d1739f3a9b": "No returned Product currently belongs to this view. Register Purchases to build estimate history.",
+  "@m50d1739f3a9b": {
+    "description": "lib\\app\\pages\\lists_page.dart:341"
+  },
+  "m49858313f6a9": "No saved analyses this session",
+  "@m49858313f6a9": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:226"
+  },
+  "m4767377fe6f4": "No search results",
+  "@m4767377fe6f4": {
+    "description": "lib\\app\\pages\\lists_page.dart:347"
+  },
+  "m44fd704267b3": "No second dimension",
+  "@m44fd704267b3": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1283"
+  },
+  "m9f86bd04979c": "No selected result",
+  "@m9f86bd04979c": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:344"
+  },
+  "me2eb52162b5f": "No similar Product found.",
+  "@me2eb52162b5f": {
+    "description": "lib\\app\\pages\\products_page.dart:116; lib\\app\\pages\\purchase_page.dart:210"
+  },
+  "mb5f184ade1ab": "No staged Items yet",
+  "@mb5f184ade1ab": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1585"
+  },
+  "m07dd6f14bc6d": "No unresolved similarity decision.",
+  "@m07dd6f14bc6d": {
+    "description": "lib\\app\\pages\\products_page.dart:446"
+  },
+  "m166fdaadc745": "No variable rows are selected.",
+  "@m166fdaadc745": {
+    "description": "lib\\application\\analytics_workspace.dart:374; lib\\application\\analytics_workspace.dart:419"
+  },
+  "m484628839237": "No variables match these filters.",
+  "@m484628839237": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:799; lib\\app\\widgets\\analytics_components.dart:888"
+  },
+  "m81de7f5753ef": "No {p0} saved for this Account.",
+  "@m81de7f5753ef": {
+    "description": "lib\\app\\pages\\settings_page.dart:454"
+  },
+  "mdc937b598926": "None",
+  "@mdc937b598926": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1285"
+  },
+  "m13075c233611": "Not assigned",
+  "@m13075c233611": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:855; lib\\app\\widgets\\analytics_components.dart:858; lib\\app\\widgets\\analytics_components.dart:944; lib\\app\\widgets\\analytics_components.dart:947; lib\\application\\analytics.dart:99; lib\\application\\analytics.dart:101; lib\\application\\analytics_workspace.dart:1126; lib\\application\\analytics_workspace.dart:1133; lib\\application\\history_export.dart:44; lib\\application\\history_export.dart:45; lib\\application\\history_export.dart:51; lib\\application\\history_export.dart:67; lib\\application\\history_export.dart:69"
+  },
+  "m518e19660bd3": "Not enough comparable evidence for this operation.",
+  "@m518e19660bd3": {
+    "description": "lib\\domain\\analytics\\analytics_registry.dart:198; lib\\domain\\analytics\\analytics_registry.dart:248; lib\\domain\\analytics\\analytics_registry.dart:417"
+  },
+  "mbfb1fceb6ad8": "Not enough comparable purchases.",
+  "@mbfb1fceb6ad8": {
+    "description": "lib\\app\\pages\\history_page.dart:730"
+  },
+  "mf092f638aa4e": "Not enough history",
+  "@mf092f638aa4e": {
+    "description": "lib\\app\\pages\\lists_page.dart:545; lib\\app\\pages\\lists_page.dart:867; lib\\app\\pages\\lists_page.dart:912"
+  },
+  "m1e1008b61d19": "Not enough history for this Product estimate yet.",
+  "@m1e1008b61d19": {
+    "description": "lib\\app\\pages\\lists_page.dart:822"
+  },
+  "mb37c7879f6c3": "Not recorded",
+  "@mb37c7879f6c3": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1295"
+  },
+  "md8da2c49df39": "Note",
+  "@md8da2c49df39": {
+    "description": "lib\\app\\pages\\lists_page.dart:213"
+  },
+  "me352708362be": "Note saved on this device. Use Sync now to share it.",
+  "@me352708362be": {
+    "description": "lib\\app\\pages\\lists_page.dart:272"
+  },
+  "m4e70dbbd46c9": "Notes could not be read. Your purchases are unchanged.",
+  "@m4e70dbbd46c9": {
+    "description": "lib\\app\\pages\\lists_page.dart:162"
+  },
+  "mfe18013d93d2": "Now",
+  "@mfe18013d93d2": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1483"
+  },
+  "m8d9c962aa0b9": "Older local attempts",
+  "@m8d9c962aa0b9": {
+    "description": "lib\\app\\widgets\\audit_components.dart:71"
+  },
+  "m6e2ebdab3c02": "Oldest first",
+  "@m6e2ebdab3c02": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1047"
+  },
+  "m123ffe6253fe": "Only local Sync attempt history will be cleared.",
+  "@m123ffe6253fe": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:395"
+  },
+  "med077f3d8125": "Open",
+  "@med077f3d8125": {
+    "description": "lib\\app\\pages\\history_page.dart:513"
+  },
+  "m3f940108cb1e": "Open Settings",
+  "@m3f940108cb1e": {
+    "description": "lib\\app\\pages\\household_page.dart:68; lib\\app\\pages\\household_page.dart:161"
+  },
+  "m65bc5a433439": "Open purchase history",
+  "@m65bc5a433439": {
+    "description": "lib\\app\\pages\\home_page.dart:169; lib\\application\\home_content.dart:32"
+  },
+  "m0f044feb6ca7": "Operation",
+  "@m0f044feb6ca7": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:638; lib\\app\\pages\\native_closure_page.dart:873; lib\\app\\widgets\\analytics_components.dart:133; lib\\app\\widgets\\analytics_components.dart:611"
+  },
+  "m8bc6fd5421de": "Operation kind",
+  "@m8bc6fd5421de": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:859"
+  },
+  "mab346b624557": "Operation: {p0}",
+  "@mab346b624557": {
+    "description": "lib\\application\\analytics.dart:124"
+  },
+  "m59be71333c96": "Optional",
+  "@m59be71333c96": {
+    "description": "lib\\app\\pages\\purchase_page.dart:854"
+  },
+  "m4e80abb5b146": "Outcome",
+  "@m4e80abb5b146": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:632"
+  },
+  "m1d393b0081b6": "PDF",
+  "@m1d393b0081b6": {
+    "description": "lib\\app\\pages\\analytics_page.dart:268; lib\\app\\pages\\history_page.dart:334"
+  },
+  "md54d5168ea7b": "PDF export failed. Record was preserved.",
+  "@md54d5168ea7b": {
+    "description": "lib\\app\\pages\\analytics_page.dart:275"
+  },
+  "m59de121db1b8": "Package",
+  "@m59de121db1b8": {
+    "description": "lib\\app\\pages\\products_page.dart:524; lib\\app\\pages\\products_page.dart:592; lib\\app\\pages\\products_page.dart:649"
+  },
+  "mdf358ee3f08e": "Package size",
+  "@mdf358ee3f08e": {
+    "description": "lib\\app\\pages\\products_page.dart:385"
+  },
+  "m755018ad7e36": "Package unit",
+  "@m755018ad7e36": {
+    "description": "lib\\app\\pages\\products_page.dart:397"
+  },
+  "mf0019af46dc6": "Packaged",
+  "@mf0019af46dc6": {
+    "description": "lib\\app\\pages\\products_page.dart:349; lib\\app\\pages\\products_page.dart:662; lib\\app\\pages\\purchase_page.dart:1181"
+  },
+  "ma450462941cf": "Packaged / per unit",
+  "@ma450462941cf": {
+    "description": "lib\\app\\pages\\lists_page.dart:982"
+  },
+  "m7048f38b33f1": "Payment",
+  "@m7048f38b33f1": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1493"
+  },
+  "mde79b19544be": "Payment Method saved locally.",
+  "@mde79b19544be": {
+    "description": "lib\\app\\pages\\settings_page.dart:122"
+  },
+  "m36c86dcf5eda": "Payment Method: {p0}",
+  "@m36c86dcf5eda": {
+    "description": "lib\\application\\history_export.dart:69"
+  },
+  "m9f4e2cbe3be2": "Payment Methods",
+  "@m9f4e2cbe3be2": {
+    "description": "lib\\app\\pages\\settings_page.dart:399"
+  },
+  "mb948ac04b854": "Payment method",
+  "@mb948ac04b854": {
+    "description": "lib\\app\\pages\\history_page.dart:220; lib\\app\\pages\\purchase_page.dart:1028; lib\\app\\widgets\\analytics_components.dart:835; lib\\app\\widgets\\analytics_components.dart:921; lib\\app\\widgets\\analytics_components.dart:1029; lib\\application\\analytics_workspace.dart:1431; lib\\domain\\analytics\\analytics_registry.dart:540"
+  },
+  "mc9151a04056d": "Payment not assigned",
+  "@mc9151a04056d": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1041"
+  },
+  "m331551b0de41": "Pending",
+  "@m331551b0de41": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:662; lib\\app\\pages\\native_closure_page.dart:1089"
+  },
+  "mc0b36cb9131d": "Pending {p0}, uploading {p1}, failed {p2}, unknown {p3}",
+  "@mc0b36cb9131d": {
+    "description": "lib\\app\\pages\\settings_page.dart:552"
+  },
+  "m7db20897053b": "People",
+  "@m7db20897053b": {
+    "description": "lib\\app\\pages\\settings_page.dart:389"
+  },
+  "m379db318f5b4": "Percentage",
+  "@m379db318f5b4": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1015; lib\\application\\analytics_workspace.dart:816; lib\\application\\analytics_workspace.dart:1471; lib\\domain\\analytics\\analytics_registry.dart:452; lib\\domain\\analytics\\analytics_registry.dart:552"
+  },
+  "me631ce42bbee": "Percentage needs a named part contained in a named whole.",
+  "@me631ce42bbee": {
+    "description": "lib\\application\\analytics_workspace.dart:663"
+  },
+  "m843a4be704b6": "Percentage unavailable - the total is zero.",
+  "@m843a4be704b6": {
+    "description": "lib\\application\\analytics_workspace.dart:818; lib\\domain\\analytics\\analytics_registry.dart:454"
+  },
+  "m6007db63e18e": "Person",
+  "@m6007db63e18e": {
+    "description": "lib\\app\\pages\\history_page.dart:213; lib\\app\\pages\\purchase_page.dart:997; lib\\app\\pages\\purchase_page.dart:1488"
+  },
+  "m2632f052c7b8": "Person not assigned",
+  "@m2632f052c7b8": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1008"
+  },
+  "m60a1e51b85f9": "Person saved locally.",
+  "@m60a1e51b85f9": {
+    "description": "lib\\app\\pages\\settings_page.dart:121"
+  },
+  "m6d7943b207cd": "Person: {p0}",
+  "@m6d7943b207cd": {
+    "description": "lib\\application\\history_export.dart:67"
+  },
+  "m171713285f0b": "Planned household tools.",
+  "@m171713285f0b": {
+    "description": "lib\\app\\markei_app.dart:83"
+  },
+  "m66962f72a088": "Preferences",
+  "@m66962f72a088": {
+    "description": "lib\\app\\pages\\settings_page.dart:386"
+  },
+  "mfe2ad85ed793": "Preparing {p0} export from selected Purchases...",
+  "@mfe2ad85ed793": {
+    "description": "lib\\app\\pages\\history_page.dart:423"
+  },
+  "m7fccf1d9f1e6": "Presentation filters use the loaded History only.",
+  "@m7fccf1d9f1e6": {
+    "description": "lib\\app\\pages\\history_page.dart:201"
+  },
+  "mb6a3ee8213dc": "Previous chart page",
+  "@mb6a3ee8213dc": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:477"
+  },
+  "m1208ec01f223": "Previous page",
+  "@m1208ec01f223": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:759"
+  },
+  "m758af4680183": "Price cannot be negative.",
+  "@m758af4680183": {
+    "description": "lib\\application\\purchase_pricing.dart:23"
+  },
+  "m8bb5f2fda318": "Price change in your purchases could not be loaded.",
+  "@m8bb5f2fda318": {
+    "description": "lib\\app\\pages\\history_page.dart:715"
+  },
+  "mc94394e62745": "Price change in your purchases: {p0} from {p1} to {p2}.",
+  "@mc94394e62745": {
+    "description": "lib\\app\\pages\\history_page.dart:722"
+  },
+  "me285f9ef00df": "Price is outside the supported range.",
+  "@me285f9ef00df": {
+    "description": "lib\\application\\purchase_pricing.dart:65"
+  },
+  "mae058fa2cb7a": "Price paid",
+  "@mae058fa2cb7a": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1021; lib\\app\\widgets\\analytics_components.dart:1032; lib\\application\\analytics_workspace.dart:1423; lib\\application\\analytics_workspace.dart:1434"
+  },
+  "m62322f268cc6": "Price per {p0} (BRL)",
+  "@m62322f268cc6": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1367"
+  },
+  "meb555c94ee91": "Prices ready. You can change either price; Marc keeps the last one you edit.",
+  "@meb555c94ee91": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1411"
+  },
+  "mfb9ef894175c": "Product",
+  "@mfb9ef894175c": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1078; lib\\app\\pages\\purchase_page.dart:1631; lib\\app\\widgets\\analytics_components.dart:1039; lib\\application\\analytics_workspace.dart:1476"
+  },
+  "mbd2a2ffd3cc5": "Product / Brand",
+  "@mbd2a2ffd3cc5": {
+    "description": "lib\\app\\pages\\lists_page.dart:681; lib\\app\\pages\\products_page.dart:522"
+  },
+  "meda375001fce": "Product code",
+  "@meda375001fce": {
+    "description": "lib\\app\\pages\\lists_page.dart:632; lib\\app\\pages\\lists_page.dart:680; lib\\app\\pages\\products_page.dart:359; lib\\app\\pages\\products_page.dart:521; lib\\app\\pages\\purchase_page.dart:1097"
+  },
+  "m4a958d39fa49": "Product code / Product name / Brand",
+  "@m4a958d39fa49": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:917"
+  },
+  "md431f0c48d3e": "Product code lookup failed. Check the code and try again.",
+  "@md431f0c48d3e": {
+    "description": "lib\\app\\pages\\purchase_page.dart:302"
+  },
+  "m6d502c99eece": "Product could not be created. Check the details and try again.",
+  "@m6d502c99eece": {
+    "description": "lib\\app\\pages\\products_page.dart:159"
+  },
+  "m18bc83eaae7a": "Product created locally.",
+  "@m18bc83eaae7a": {
+    "description": "lib\\app\\pages\\products_page.dart:145"
+  },
+  "mfd294f8ad383": "Product details",
+  "@mfd294f8ad383": {
+    "description": "lib\\app\\pages\\products_page.dart:634"
+  },
+  "mec0d6284319d": "Product facts filled. Add staged Item when ready.",
+  "@mec0d6284319d": {
+    "description": "lib\\app\\pages\\purchase_page.dart:293"
+  },
+  "mbfa93eb4d4fe": "Product name",
+  "@mbfa93eb4d4fe": {
+    "description": "lib\\app\\pages\\lists_page.dart:628; lib\\app\\pages\\products_page.dart:365; lib\\app\\pages\\purchase_page.dart:1155; lib\\app\\pages\\purchase_page.dart:1197"
+  },
+  "m57d05807f866": "Product remains visible",
+  "@m57d05807f866": {
+    "description": "lib\\app\\pages\\lists_page.dart:547"
+  },
+  "m8a3b476a801a": "Products and Stores could not be loaded. Try again.",
+  "@m8a3b476a801a": {
+    "description": "lib\\app\\pages\\purchase_page.dart:194"
+  },
+  "m3362fbe71876": "Products could not be loaded. Try again.",
+  "@m3362fbe71876": {
+    "description": "lib\\app\\pages\\products_page.dart:98"
+  },
+  "m158e5a22a48c": "Profile unavailable",
+  "@m158e5a22a48c": {
+    "description": "lib\\app\\pages\\household_page.dart:63"
+  },
+  "m8c6a0024dad9": "Promotion",
+  "@m8c6a0024dad9": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:925"
+  },
+  "m754257315b52": "Provider contact",
+  "@m754257315b52": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:635"
+  },
+  "meb6ac2117a5f": "Public Downloads export is unavailable on this Android build. No file was created.",
+  "@meb6ac2117a5f": {
+    "description": "lib\\infrastructure\\platform\\local_export_destination.dart:29"
+  },
+  "m5b5e9c65b400": "Purchase",
+  "@m5b5e9c65b400": {
+    "description": "lib\\app\\markei_app.dart:56; lib\\app\\pages\\guide_page.dart:137; lib\\app\\widgets\\analytics_components.dart:1040; lib\\app\\widgets\\markei_shell.dart:60; lib\\application\\analytics_workspace.dart:1477"
+  },
+  "mfa59168706fc": "Purchase at {p0}",
+  "@mfa59168706fc": {
+    "description": "lib\\app\\pages\\history_page.dart:652"
+  },
+  "me42377388901": "Purchase date",
+  "@me42377388901": {
+    "description": "lib\\app\\pages\\purchase_page.dart:971"
+  },
+  "m5bdc9eb99d75": "Purchase dated {p0} day(s) ahead",
+  "@m5bdc9eb99d75": {
+    "description": "lib\\app\\pages\\lists_page.dart:989"
+  },
+  "md05b9dba10cd": "Purchase detail",
+  "@md05b9dba10cd": {
+    "description": "lib\\app\\pages\\history_page.dart:651"
+  },
+  "m850e001b1674": "Purchase detail is not available.",
+  "@m850e001b1674": {
+    "description": "lib\\app\\pages\\history_page.dart:645"
+  },
+  "m8a7b2d4d02df": "Purchase details",
+  "@m8a7b2d4d02df": {
+    "description": "lib\\app\\pages\\purchase_page.dart:902"
+  },
+  "m7073b35bc13c": "Purchase details could not be loaded.",
+  "@m7073b35bc13c": {
+    "description": "lib\\app\\pages\\history_page.dart:638"
+  },
+  "m3cbb5966fdfa": "Purchase history",
+  "@m3cbb5966fdfa": {
+    "description": "lib\\app\\pages\\history_page.dart:126"
+  },
+  "mab5f4fb94af1": "Purchase history could not be loaded.",
+  "@mab5f4fb94af1": {
+    "description": "lib\\app\\pages\\history_page.dart:101"
+  },
+  "m6ab024c3da87": "Purchase needs attention",
+  "@m6ab024c3da87": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1523"
+  },
+  "m8877e54dfff2": "Purchase projection",
+  "@m8877e54dfff2": {
+    "description": "lib\\application\\analytics_workspace.dart:1239"
+  },
+  "m401d7cfb48b1": "Purchase saved on this device. Sync it to share it with your other devices.",
+  "@m401d7cfb48b1": {
+    "description": "lib\\app\\pages\\purchase_page.dart:627"
+  },
+  "mabc35de9078c": "Purchase total",
+  "@mabc35de9078c": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:837; lib\\app\\widgets\\analytics_components.dart:1022; lib\\app\\widgets\\analytics_components.dart:1033; lib\\application\\analytics_workspace.dart:1424; lib\\application\\analytics_workspace.dart:1435; lib\\domain\\analytics\\analytics_registry.dart:544"
+  },
+  "m508563cc7a55": "Purchase update",
+  "@m508563cc7a55": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1524"
+  },
+  "m159caf8fd5b5": "Purchase-level facts disagree across contained items. This Purchase is visible but unavailable for summary calculation.",
+  "@m159caf8fd5b5": {
+    "description": "lib\\application\\analytics_workspace.dart:1242"
+  },
+  "m09ad34e3b8a8": "Purchased by",
+  "@m09ad34e3b8a8": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:833; lib\\app\\widgets\\analytics_components.dart:919; lib\\app\\widgets\\analytics_components.dart:1027; lib\\application\\analytics_workspace.dart:1429; lib\\domain\\analytics\\analytics_registry.dart:538"
+  },
+  "mef0e1e232f49": "Purchased for",
+  "@mef0e1e232f49": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:834; lib\\app\\widgets\\analytics_components.dart:920; lib\\app\\widgets\\analytics_components.dart:1028; lib\\application\\analytics_workspace.dart:1430; lib\\domain\\analytics\\analytics_registry.dart:539"
+  },
+  "m7e8fe7ce9936": "Purchased for is unavailable in recorded data.",
+  "@m7e8fe7ce9936": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:158; lib\\application\\analytics_workspace.dart:587"
+  },
+  "ma0718ef8e427": "Purchases",
+  "@ma0718ef8e427": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:706"
+  },
+  "m82b68c9fd14e": "Purchases are registered locally first on this device. After an unknown result, check History before retrying.",
+  "@m82b68c9fd14e": {
+    "description": "lib\\app\\pages\\purchase_page.dart:795"
+  },
+  "m822bab8d41bc": "Quantity",
+  "@m822bab8d41bc": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1633; lib\\app\\pages\\purchase_page.dart:1695; lib\\app\\widgets\\analytics_components.dart:1019; lib\\app\\widgets\\analytics_components.dart:1030; lib\\application\\analytics_workspace.dart:1421; lib\\application\\analytics_workspace.dart:1432; lib\\domain\\analytics\\analytics_registry.dart:541"
+  },
+  "m6cae54cdb121": "Quantity and price",
+  "@m6cae54cdb121": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1225"
+  },
+  "m8cfc01fadbdc": "Quantity and unit",
+  "@m8cfc01fadbdc": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:922"
+  },
+  "md11be33ea227": "Quantity and unit size must be greater than zero.",
+  "@md11be33ea227": {
+    "description": "lib\\app\\pages\\purchase_page.dart:497"
+  },
+  "m3938db33ae2e": "Quantity is outside the supported range.",
+  "@m3938db33ae2e": {
+    "description": "lib\\app\\pages\\purchase_page.dart:504"
+  },
+  "m77ac325c5438": "Raw lifecycle declarations are ordered evidence, not an error count.",
+  "@m77ac325c5438": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:732"
+  },
+  "mb4abcc6cf96c": "Read-only local activity projection.",
+  "@mb4abcc6cf96c": {
+    "description": "lib\\app\\pages\\guide_page.dart:168"
+  },
+  "md53d98c17749": "Readiness",
+  "@md53d98c17749": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:851"
+  },
+  "md988922e5ad7": "Readiness summary",
+  "@md988922e5ad7": {
+    "description": "lib\\app\\widgets\\audit_components.dart:106"
+  },
+  "m3651c4322fe7": "Readiness: {p0}",
+  "@m3651c4322fe7": {
+    "description": "lib\\app\\pages\\settings_page.dart:546"
+  },
+  "m8d6016ccbe12": "Recent Closure attempts",
+  "@m8d6016ccbe12": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1116"
+  },
+  "m8de98998a6aa": "Recent activity recorded locally for this Account and environment.",
+  "@m8de98998a6aa": {
+    "description": "lib\\app\\pages\\audit_page.dart:59"
+  },
+  "m36b0ce238d3c": "Recent local activity history.",
+  "@m36b0ce238d3c": {
+    "description": "lib\\app\\markei_app.dart:108"
+  },
+  "mae2a7e6d5c4d": "Record #{p0}",
+  "@mae2a7e6d5c4d": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:285; lib\\application\\analytics.dart:118"
+  },
+  "m38cbac271a22": "Record #{p0} saved for this session.",
+  "@m38cbac271a22": {
+    "description": "lib\\application\\analytics_workspace.dart:270"
+  },
+  "m5400148bfeff": "Record fingerprints distinguish session records; they are not security or authenticity proofs.",
+  "@m5400148bfeff": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:240"
+  },
+  "m3cf358c0257d": "Record household purchases locally first, then reuse Products.",
+  "@m3cf358c0257d": {
+    "description": "lib\\application\\home_content.dart:18"
+  },
+  "m5d3daaa72d70": "Recorded total",
+  "@m5d3daaa72d70": {
+    "description": "lib\\app\\pages\\history_page.dart:478; lib\\app\\pages\\history_page.dart:585; lib\\app\\pages\\history_page.dart:657"
+  },
+  "m0c5327fd45c7": "Recover",
+  "@m0c5327fd45c7": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:356"
+  },
+  "m2481256b82f9": "Recover failed/notApplied candidate",
+  "@m2481256b82f9": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:125; lib\\app\\pages\\native_closure_page.dart:335"
+  },
+  "m95b9b77f2ed6": "Recovery guidance",
+  "@m95b9b77f2ed6": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:857"
+  },
+  "m71bf90935fc2": "Reference",
+  "@m71bf90935fc2": {
+    "description": "lib\\app\\widgets\\audit_components.dart:227"
+  },
+  "mbe8927c28ee8": "Refresh local status",
+  "@mbe8927c28ee8": {
+    "description": "lib\\app\\pages\\settings_page.dart:561"
+  },
+  "mf552ad68021f": "Register a Purchase to build local History.",
+  "@mf552ad68021f": {
+    "description": "lib\\app\\pages\\history_page.dart:116"
+  },
+  "m2bba9096b903": "Register a local Purchase draft.",
+  "@m2bba9096b903": {
+    "description": "lib\\app\\pages\\guide_page.dart:138"
+  },
+  "m909186631574": "Register product",
+  "@m909186631574": {
+    "description": "lib\\app\\pages\\products_page.dart:342"
+  },
+  "m074a04e38ced": "Register purchase",
+  "@m074a04e38ced": {
+    "description": "lib\\app\\pages\\home_page.dart:71; lib\\app\\pages\\home_page.dart:174; lib\\app\\pages\\purchase_page.dart:1575"
+  },
+  "mcb76f8817c96": "Register purchases",
+  "@mcb76f8817c96": {
+    "description": "lib\\application\\home_content.dart:17"
+  },
+  "maa1f8fb0f58f": "Register purchases. Find your rhythm.\nKeep everyday essentials in view.",
+  "@maa1f8fb0f58f": {
+    "description": "lib\\app\\pages\\home_page.dart:55"
+  },
+  "m69ace6e752a1": "Registered Purchase evidence available locally for analysis.",
+  "@m69ace6e752a1": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:684"
+  },
+  "mfb215bcbff00": "Registering purchase locally...",
+  "@mfb215bcbff00": {
+    "description": "lib\\app\\pages\\purchase_page.dart:602"
+  },
+  "mb82dc928587f": "Registry: {p0}@{p1}",
+  "@mb82dc928587f": {
+    "description": "lib\\application\\analytics.dart:121"
+  },
+  "mf3e4352a5df6": "Remaining",
+  "@mf3e4352a5df6": {
+    "description": "lib\\app\\pages\\lists_page.dart:690; lib\\app\\pages\\lists_page.dart:807"
+  },
+  "m52e852045cee": "Remaining estimate",
+  "@m52e852045cee": {
+    "description": "lib\\app\\pages\\lists_page.dart:624"
+  },
+  "m68c3539d8e25": "Remove staged Item",
+  "@m68c3539d8e25": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1745"
+  },
+  "mdefa9726eda9": "Request hash equality",
+  "@mdefa9726eda9": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:676"
+  },
+  "m4850b174b713": "Required",
+  "@m4850b174b713": {
+    "description": "lib\\app\\pages\\purchase_page.dart:857; lib\\app\\pages\\purchase_page.dart:1472"
+  },
+  "m2d6f3320d6b6": "Result interpretation",
+  "@m2d6f3320d6b6": {
+    "description": "lib\\app\\pages\\analytics_page.dart:184"
+  },
+  "m6f885849ce0e": "Result persistence",
+  "@m6f885849ce0e": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:659"
+  },
+  "mb91329355b81": "Results table",
+  "@mb91329355b81": {
+    "description": "lib\\application\\analytics.dart:220"
+  },
+  "m942087cc2d41": "Retry",
+  "@m942087cc2d41": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:267; lib\\app\\pages\\products_page.dart:419"
+  },
+  "m0a92f567cd50": "Retry History read",
+  "@m0a92f567cd50": {
+    "description": "lib\\app\\pages\\history_page.dart:107"
+  },
+  "me1c4a9296dde": "Retry Lists read",
+  "@me1c4a9296dde": {
+    "description": "lib\\app\\pages\\lists_page.dart:120"
+  },
+  "m6888030d6cde": "Retry local evidence read",
+  "@m6888030d6cde": {
+    "description": "lib\\app\\pages\\analytics_page.dart:135"
+  },
+  "m0853744e85c9": "Retry local read",
+  "@m0853744e85c9": {
+    "description": "lib\\app\\widgets\\audit_components.dart:283"
+  },
+  "m854c496ccdc6": "Retry unknown-outcome submission",
+  "@m854c496ccdc6": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:109; lib\\app\\pages\\native_closure_page.dart:250"
+  },
+  "mb7743d374769": "Returned Products",
+  "@mb7743d374769": {
+    "description": "lib\\app\\pages\\lists_page.dart:531"
+  },
+  "m9989ae154d67": "Reusable Product and Store facts.",
+  "@m9989ae154d67": {
+    "description": "lib\\app\\pages\\guide_page.dart:144"
+  },
+  "m9c83c3ff3f31": "Review purchase",
+  "@m9c83c3ff3f31": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1452; lib\\app\\pages\\purchase_page.dart:1461"
+  },
+  "mb744e179e123": "Review registered Purchases and the Products recorded in them.",
+  "@mb744e179e123": {
+    "description": "lib\\application\\home_content.dart:33"
+  },
+  "m8b590410b8f6": "Review registered Purchases, select records and export the current selection.",
+  "@m8b590410b8f6": {
+    "description": "lib\\app\\pages\\history_page.dart:128"
+  },
+  "mcf7eef5c72b8": "Review these Items before registration.",
+  "@mcf7eef5c72b8": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1593"
+  },
+  "ma0c44472b802": "Review, select and export registered Purchases.",
+  "@ma0c44472b802": {
+    "description": "lib\\app\\pages\\guide_page.dart:150"
+  },
+  "mc6fc00a0b510": "Room to grow",
+  "@mc6fc00a0b510": {
+    "description": "lib\\app\\pages\\household_page.dart:150"
+  },
+  "m95110d74c4c0": "Row",
+  "@m95110d74c4c0": {
+    "description": "lib\\application\\analytics.dart:224"
+  },
+  "mf8bbd44e0a9d": "Rows include the recorded dates within the timeframe below.",
+  "@mf8bbd44e0a9d": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:88"
+  },
+  "m905d9e39fb21": "Run & save analysis",
+  "@m905d9e39fb21": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:186"
+  },
+  "m9ceebad6a79f": "Run & save analysis becomes available when the draft is complete.",
+  "@m9ceebad6a79f": {
+    "description": "lib\\application\\analytics_workspace.dart:548"
+  },
+  "m86406fb88a8f": "Run & save analysis creates immutable records until this workspace closes.",
+  "@m86406fb88a8f": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:228"
+  },
+  "mb573bc8307c2": "Run & save analysis is available.",
+  "@mb573bc8307c2": {
+    "description": "lib\\application\\analytics_workspace.dart:676"
+  },
+  "mce0f599a2685": "Run & save analysis to create a session record.",
+  "@mce0f599a2685": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:345"
+  },
+  "m414af0027d5f": "Same scale on all chart pages. Evidence {p0}/{p1}.",
+  "@m414af0027d5f": {
+    "description": "lib\\application\\analytics.dart:329"
+  },
+  "m02b7b4e36644": "Sanitized raw lifecycle ({p0})",
+  "@m02b7b4e36644": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:800"
+  },
+  "md766e22e6ed2": "Sanitized technical details",
+  "@md766e22e6ed2": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:653"
+  },
+  "m1509f561f241": "Save",
+  "@m1509f561f241": {
+    "description": "lib\\app\\pages\\lists_page.dart:260"
+  },
+  "m3588180ab5d1": "Save Item",
+  "@m3588180ab5d1": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1441"
+  },
+  "mfd42bf7e58f7": "Save Payment Method",
+  "@mfd42bf7e58f7": {
+    "description": "lib\\app\\pages\\settings_page.dart:402"
+  },
+  "mbec760509747": "Save Person",
+  "@mbec760509747": {
+    "description": "lib\\app\\pages\\settings_page.dart:392"
+  },
+  "m7e4fef53469a": "Save threshold",
+  "@m7e4fef53469a": {
+    "description": "lib\\app\\pages\\settings_page.dart:421"
+  },
+  "me83b5144babd": "Saved analyses — this session",
+  "@me83b5144babd": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:221; lib\\app\\widgets\\analytics_components.dart:238"
+  },
+  "m52d1bb03f8f7": "Saved locally first. Use Sync now to share across this Account.",
+  "@m52d1bb03f8f7": {
+    "description": "lib\\app\\pages\\lists_page.dart:217"
+  },
+  "m7c4a7d6e5a59": "Saved record",
+  "@m7c4a7d6e5a59": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:305"
+  },
+  "ma04ac0fbb426": "Saved record {p0}, group by {p1}",
+  "@ma04ac0fbb426": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:280"
+  },
+  "m49c266baaaa7": "Search",
+  "@m49c266baaaa7": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:721"
+  },
+  "m3ab00231c5e2": "Search Products",
+  "@m3ab00231c5e2": {
+    "description": "lib\\app\\pages\\lists_page.dart:610; lib\\app\\pages\\products_page.dart:313"
+  },
+  "m46c282cb6443": "Search code or name",
+  "@m46c282cb6443": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:101"
+  },
+  "m986a0add35dc": "Search comparison values",
+  "@m986a0add35dc": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1307"
+  },
+  "m2a78025de6aa": "Select",
+  "@m2a78025de6aa": {
+    "description": "lib\\app\\pages\\history_page.dart:474; lib\\app\\pages\\history_page.dart:489; lib\\app\\widgets\\analytics_components.dart:830; lib\\app\\widgets\\analytics_components.dart:915"
+  },
+  "m4c135bb9c649": "Select Store",
+  "@m4c135bb9c649": {
+    "description": "lib\\app\\pages\\purchase_page.dart:935"
+  },
+  "m42dc8674c375": "Select all shown",
+  "@m42dc8674c375": {
+    "description": "lib\\app\\pages\\history_page.dart:348"
+  },
+  "mefe627e065ca": "Select at least one Purchase before export.",
+  "@mefe627e065ca": {
+    "description": "lib\\app\\pages\\history_page.dart:418"
+  },
+  "m638e42e755cd": "Select at least one shown Purchase to export or use in Analytics.",
+  "@m638e42e755cd": {
+    "description": "lib\\app\\pages\\history_page.dart:362"
+  },
+  "ma13dabdba21d": "Select newer saved analysis",
+  "@ma13dabdba21d": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:262"
+  },
+  "m7613155a7566": "Select older saved analysis",
+  "@m7613155a7566": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:251"
+  },
+  "m27ddec8a6fb0": "Select up to 500 evidence rows, or use filtered evidence.",
+  "@m27ddec8a6fb0": {
+    "description": "lib\\application\\analytics_workspace.dart:367"
+  },
+  "m2a58d63578fa": "Selected Store: {p0}",
+  "@m2a58d63578fa": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1065"
+  },
+  "m91951145bb4a": "Selected rows prepared a new analysis draft.",
+  "@m91951145bb4a": {
+    "description": "lib\\application\\analytics_workspace.dart:420"
+  },
+  "m3610fc7f995b": "Sequence meaning",
+  "@m3610fc7f995b": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1098"
+  },
+  "m2503ac869bc8": "Sequence range",
+  "@m2503ac869bc8": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:668"
+  },
+  "me8d7c2f4c0f5": "Server request",
+  "@me8d7c2f4c0f5": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:864"
+  },
+  "m8f7a828cf6d1": "Set the rows, up to two comparison dimensions, then choose a value and statistic.",
+  "@m8f7a828cf6d1": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:45"
+  },
+  "m74a883a037bc": "Settings",
+  "@m74a883a037bc": {
+    "description": "lib\\app\\markei_app.dart:100; lib\\app\\pages\\guide_page.dart:173; lib\\app\\pages\\settings_page.dart:289"
+  },
+  "m37d4cde063eb": "Settings starts with Account state, then Purchase references and shortage timeframe, then Sync and Device status, followed by visible Advanced actions.",
+  "@m37d4cde063eb": {
+    "description": "lib\\app\\pages\\guide_page.dart:176"
+  },
+  "m91a7ae692db7": "Shortage",
+  "@m91a7ae692db7": {
+    "description": "lib\\app\\pages\\lists_page.dart:478"
+  },
+  "mc6fbeda95d9d": "Shortage projection",
+  "@mc6fbeda95d9d": {
+    "description": "lib\\app\\pages\\lists_page.dart:903"
+  },
+  "m7034e727b69e": "Shortage threshold days",
+  "@m7034e727b69e": {
+    "description": "lib\\app\\pages\\settings_page.dart:413"
+  },
+  "mce90dcf09502": "Shortage threshold saved locally.",
+  "@mce90dcf09502": {
+    "description": "lib\\app\\pages\\settings_page.dart:204"
+  },
+  "m8f6de42a1216": "Show all variables",
+  "@m8f6de42a1216": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:693"
+  },
+  "m4d863d5a374d": "Showing all variables.",
+  "@m4d863d5a374d": {
+    "description": "lib\\application\\analytics_workspace.dart:313"
+  },
+  "m36fdc4d742d9": "Showing variables that contributed to Record #{p0}.",
+  "@m36fdc4d742d9": {
+    "description": "lib\\application\\analytics_workspace.dart:1197"
+  },
+  "m6692114c9efe": "Showing {p0} recent local attempts in this local window.",
+  "@m6692114c9efe": {
+    "description": "lib\\app\\widgets\\audit_components.dart:185"
+  },
+  "m1ecb179e4037": "Showing {p0} recent local attempts. Older records may exist.",
+  "@m1ecb179e4037": {
+    "description": "lib\\app\\widgets\\audit_components.dart:184"
+  },
+  "mbfd402b2f6f3": "Sign in",
+  "@mbfd402b2f6f3": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:38"
+  },
+  "m2405c226cc12": "Sign in through Settings",
+  "@m2405c226cc12": {
+    "description": "lib\\app\\pages\\household_page.dart:81"
+  },
+  "mdaaf1385e1f2": "Sign in through Settings to see your name and email here.",
+  "@mdaaf1385e1f2": {
+    "description": "lib\\app\\pages\\household_page.dart:78"
+  },
+  "m0ebeb59b39fc": "Sign in to Sync",
+  "@m0ebeb59b39fc": {
+    "description": "lib\\app\\pages\\settings_page.dart:512"
+  },
+  "mfea6ddeaf906": "Sign in to Sync finished with {p0}. Local Purchase data is not uploaded merely by opening sign-in.",
+  "@mfea6ddeaf906": {
+    "description": "lib\\app\\markei_composition.dart:319"
+  },
+  "mf6874d608a53": "Sign in to Sync first. Your local purchases are safe.",
+  "@mf6874d608a53": {
+    "description": "lib\\app\\markei_composition.dart:433"
+  },
+  "mab171c9b5c3f": "Sign out on this Device",
+  "@mab171c9b5c3f": {
+    "description": "lib\\app\\pages\\settings_page.dart:517"
+  },
+  "m35db289f7131": "Sign out on this Device finished with {p0}. Local Purchase history and queued work remain according to existing local behavior.",
+  "@m35db289f7131": {
+    "description": "lib\\app\\markei_composition.dart:331"
+  },
+  "md86929ca42e5": "Sign-in succeeded, but the server requires an Account selection before this Device can connect.",
+  "@md86929ca42e5": {
+    "description": "lib\\app\\markei_composition.dart:405"
+  },
+  "m8591baf69408": "Sign-in succeeded, but this Account needs active membership before this Device can connect.",
+  "@m8591baf69408": {
+    "description": "lib\\app\\markei_composition.dart:403"
+  },
+  "m8e64d7619189": "Signed-in email",
+  "@m8e64d7619189": {
+    "description": "lib\\app\\pages\\household_page.dart:131"
+  },
+  "m619a9622875e": "Signed-in profile",
+  "@m619a9622875e": {
+    "description": "lib\\app\\pages\\household_page.dart:141"
+  },
+  "m225283564a12": "Similar Product found",
+  "@m225283564a12": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1544"
+  },
+  "m28beb6a97858": "Similar Product found. Choose a Product or create anyway.",
+  "@m28beb6a97858": {
+    "description": "lib\\app\\pages\\purchase_page.dart:212"
+  },
+  "mc1278010e321": "Similar Product found. Use an existing Product or create anyway.",
+  "@mc1278010e321": {
+    "description": "lib\\app\\pages\\products_page.dart:117"
+  },
+  "m052522d5bacd": "Similar product found",
+  "@m052522d5bacd": {
+    "description": "lib\\app\\pages\\products_page.dart:442"
+  },
+  "mbec69036aa27": "Sort",
+  "@mbec69036aa27": {
+    "description": "lib\\app\\pages\\products_page.dart:324; lib\\app\\widgets\\analytics_components.dart:726"
+  },
+  "mc9129025bd3f": "Sort by",
+  "@mc9129025bd3f": {
+    "description": "lib\\app\\pages\\lists_page.dart:620"
+  },
+  "mcf061f7e5bd4": "Source identity unavailable",
+  "@mcf061f7e5bd4": {
+    "description": "lib\\app\\build_provenance.dart:47; lib\\app\\build_provenance.dart:51; lib\\app\\pages\\native_closure_page.dart:431"
+  },
+  "m797bf716552c": "Source revision #{p0}",
+  "@m797bf716552c": {
+    "description": "lib\\app\\build_provenance.dart:46"
+  },
+  "m2cb1ca6286a2": "Source tree SHA-256 {p0}",
+  "@m2cb1ca6286a2": {
+    "description": "lib\\app\\build_provenance.dart:50"
+  },
+  "m2251868b9a58": "Stage local Purchase Items, review the draft and register once.",
+  "@m2251868b9a58": {
+    "description": "lib\\app\\pages\\purchase_page.dart:790"
+  },
+  "ma05b1e174a0c": "Staged Item removed.",
+  "@ma05b1e174a0c": {
+    "description": "lib\\app\\pages\\purchase_page.dart:470"
+  },
+  "mc5087d382c2a": "Staged Item saved.",
+  "@mc5087d382c2a": {
+    "description": "lib\\app\\pages\\purchase_page.dart:419"
+  },
+  "md6aeda0e536c": "Staged Items",
+  "@md6aeda0e536c": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1591"
+  },
+  "m51008ca16fa8": "Staged total BRL {p0}",
+  "@m51008ca16fa8": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1567"
+  },
+  "m8169693101a4": "Start date",
+  "@m8169693101a4": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1165"
+  },
+  "ma69fdabb4221": "Start date must be a valid date in dd-mm-yyyy format.",
+  "@ma69fdabb4221": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1215"
+  },
+  "m920e413c7d41": "Status",
+  "@m920e413c7d41": {
+    "description": "lib\\app\\pages\\lists_page.dart:691"
+  },
+  "ma69c4dece144": "Storage",
+  "@ma69c4dece144": {
+    "description": "lib\\app\\pages\\lists_page.dart:470"
+  },
+  "md3f960f49191": "Storage projection",
+  "@md3f960f49191": {
+    "description": "lib\\app\\pages\\lists_page.dart:902"
+  },
+  "mee7da936b5cb": "Store",
+  "@mee7da936b5cb": {
+    "description": "lib\\app\\pages\\history_page.dart:206; lib\\app\\pages\\history_page.dart:475; lib\\app\\pages\\purchase_page.dart:930; lib\\app\\pages\\purchase_page.dart:1471; lib\\app\\widgets\\analytics_components.dart:1041; lib\\application\\analytics_workspace.dart:1478"
+  },
+  "mc61113295c4a": "Store could not be created. Enter a Store name.",
+  "@mc61113295c4a": {
+    "description": "lib\\app\\pages\\products_page.dart:186"
+  },
+  "m7addd52d67d1": "Store created locally.",
+  "@m7addd52d67d1": {
+    "description": "lib\\app\\pages\\products_page.dart:175"
+  },
+  "m1898b02b365d": "Store name",
+  "@m1898b02b365d": {
+    "description": "lib\\app\\pages\\products_page.dart:487; lib\\app\\widgets\\analytics_components.dart:832; lib\\app\\widgets\\analytics_components.dart:918"
+  },
+  "m200a67a45196": "Store selected.",
+  "@m200a67a45196": {
+    "description": "lib\\app\\pages\\purchase_page.dart:953"
+  },
+  "mf35f08b73c77": "Stores",
+  "@mf35f08b73c77": {
+    "description": "lib\\app\\pages\\products_page.dart:464"
+  },
+  "ma21d7df04c33": "Sum",
+  "@ma21d7df04c33": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1012; lib\\application\\analytics_workspace.dart:1468; lib\\domain\\analytics\\analytics_registry.dart:549"
+  },
+  "m6f3de2e206c8": "Supporting local Store names used by Purchases.",
+  "@m6f3de2e206c8": {
+    "description": "lib\\app\\pages\\products_page.dart:465"
+  },
+  "m8d261a372fde": "Sync",
+  "@m8d261a372fde": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:41"
+  },
+  "m44d19c593d39": "Sync and Device",
+  "@m44d19c593d39": {
+    "description": "lib\\app\\pages\\settings_page.dart:542"
+  },
+  "m5c22c8e20808": "Sync completed. Purchase history and Lists have been refreshed.",
+  "@m5c22c8e20808": {
+    "description": "lib\\app\\markei_composition.dart:425"
+  },
+  "m42398f1b5929": "Sync completed. There are no new events to transfer.",
+  "@m42398f1b5929": {
+    "description": "lib\\app\\markei_composition.dart:427"
+  },
+  "m885e8f48bd70": "Sync now",
+  "@m885e8f48bd70": {
+    "description": "lib\\app\\pages\\settings_page.dart:603"
+  },
+  "ma9ba15e4ed86": "Sync now finished with {p0}. No automatic retry or recovery was started.",
+  "@ma9ba15e4ed86": {
+    "description": "lib\\app\\markei_composition.dart:435"
+  },
+  "md7ee40c89346": "Sync overview",
+  "@md7ee40c89346": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:64; lib\\app\\pages\\native_closure_page.dart:843"
+  },
+  "m6725e7bbcd28": "System",
+  "@m6725e7bbcd28": {
+    "description": "lib\\app\\widgets\\audit_components.dart:98"
+  },
+  "m16d1c9050a0b": "Table",
+  "@m16d1c9050a0b": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:375"
+  },
+  "m1331275bc537": "Tags",
+  "@m1331275bc537": {
+    "description": "lib\\app\\pages\\lists_page.dart:201"
+  },
+  "md4ad44194274": "Tags / note",
+  "@md4ad44194274": {
+    "description": "lib\\app\\pages\\lists_page.dart:692"
+  },
+  "m7c34d92430a8": "The current History filters produced no result.",
+  "@m7c34d92430a8": {
+    "description": "lib\\app\\pages\\history_page.dart:148"
+  },
+  "m59d64103c27a": "The current search produced no Product in this Catalogue.",
+  "@m59d64103c27a": {
+    "description": "lib\\app\\pages\\products_page.dart:269"
+  },
+  "m37bc87d29e20": "The current search produced no Product result.",
+  "@m37bc87d29e20": {
+    "description": "lib\\app\\pages\\lists_page.dart:348"
+  },
+  "md9084f1ddf1f": "The export could not be completed. No completed file is available.",
+  "@md9084f1ddf1f": {
+    "description": "lib\\app\\pages\\history_page.dart:443; lib\\infrastructure\\platform\\local_export_destination.dart:75; lib\\infrastructure\\platform\\local_export_destination.dart:98"
+  },
+  "mf05e9b622e49": "The last price you edit is kept when the quantity changes. Totals are rounded to cents.",
+  "@mf05e9b622e49": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1385"
+  },
+  "m80c36d5bc4f1": "The note was not saved. Keep your text and try again.",
+  "@m80c36d5bc4f1": {
+    "description": "lib\\app\\pages\\lists_page.dart:255"
+  },
+  "m4521a12cb89b": "The selected rows are stale or unavailable for this Account.",
+  "@m4521a12cb89b": {
+    "description": "lib\\application\\analytics_workspace.dart:671"
+  },
+  "maff8d4a4133a": "The server could not confirm this Device connection. Your local purchases are safe. Sync is blocked until connection succeeds.",
+  "@maff8d4a4133a": {
+    "description": "lib\\app\\markei_composition.dart:399"
+  },
+  "m65a01e80ad6a": "The server did not accept this sign-in for Device connection. Sign in again, then connect. Your local purchases are safe.",
+  "@m65a01e80ad6a": {
+    "description": "lib\\app\\markei_composition.dart:401"
+  },
+  "m21d5839188c5": "The server refused this Device connection. Sign-in alone does not establish Device enrollment. Your local purchases are safe.",
+  "@m21d5839188c5": {
+    "description": "lib\\app\\markei_composition.dart:407"
+  },
+  "m383d6cbb9970": "This Device connection is already recorded. This does not prove Sync succeeded.",
+  "@m383d6cbb9970": {
+    "description": "lib\\app\\markei_composition.dart:409"
+  },
+  "mddd49949b0a2": "This Device has no active connection for Sync. Check the enrollment status and use Connect this Device. No purchase upload was started.",
+  "@mddd49949b0a2": {
+    "description": "lib\\app\\markei_composition.dart:431"
+  },
+  "mffe447d6113e": "This action did not start: local support action unavailable.",
+  "@mffe447d6113e": {
+    "description": "lib\\app\\pages\\settings_page.dart:276"
+  },
+  "m1b6e0d60e469": "This determinant, variable and operation cannot be combined.",
+  "@m1b6e0d60e469": {
+    "description": "lib\\domain\\analytics\\analytics_registry.dart:134"
+  },
+  "mc4aee6be4c4f": "This draft is read-only until you go back to edit.",
+  "@mc4aee6be4c4f": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1462"
+  },
+  "mc5256258ca91": "This result could not be calculated. The evidence and card were preserved.",
+  "@mc5256258ca91": {
+    "description": "lib\\domain\\analytics\\analytics_registry.dart:146"
+  },
+  "mf1d8b41eda45": "This result could not be calculated. The evidence and record were preserved.",
+  "@mf1d8b41eda45": {
+    "description": "lib\\application\\analytics_workspace.dart:928"
+  },
+  "m5a4301096f24": "This setting could not be saved locally.",
+  "@m5a4301096f24": {
+    "description": "lib\\app\\pages\\settings_page.dart:157"
+  },
+  "m3a449474971a": "This setting could not be saved locally. Your entered value is still available.",
+  "@m3a449474971a": {
+    "description": "lib\\app\\pages\\settings_page.dart:129; lib\\app\\pages\\settings_page.dart:211"
+  },
+  "m1555d33136c6": "This technical detail was not recorded.",
+  "@m1555d33136c6": {
+    "description": "lib\\app\\widgets\\audit_components.dart:230; lib\\app\\widgets\\audit_components.dart:243; lib\\infrastructure\\local\\closure_diagnostics_repository.dart:1147"
+  },
+  "m1b3a9879b0bf": "This will retry the same unresolved submission without changing local events. Events {p0}-{p1}; next local sequence {p2}; submission #{p3}. Hosted outcome is unresolved.",
+  "@m1b3a9879b0bf": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:252"
+  },
+  "mc88cfccfad48": "This will revalidate the current Account and Device, change the local failed candidate to a recovered upload batch, send at most one provider upload request, persist that upload result, and stop. It will not run download, acknowledgement, enrollment, repair, cleanup, ordinary Sync, or automatic retry. Cancel changes nothing. Events {p0}-{p1}; next Device sequence {p2}; candidate #{p3}.",
+  "@mc88cfccfad48": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:337"
+  },
+  "m33b93476cf59": "Time",
+  "@m33b93476cf59": {
+    "description": "lib\\app\\pages\\purchase_page.dart:988; lib\\app\\pages\\purchase_page.dart:1481; lib\\app\\widgets\\analytics_components.dart:1042"
+  },
+  "m74807c15f77c": "Time by month",
+  "@m74807c15f77c": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1043"
+  },
+  "mf580cb76d847": "Timeframe",
+  "@mf580cb76d847": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1147"
+  },
+  "m61cd7b995fe3": "Timeframe and evidence counts",
+  "@m61cd7b995fe3": {
+    "description": "lib\\app\\pages\\analytics_page.dart:185"
+  },
+  "m1456106ff7ab": "Timeframe: {p0}",
+  "@m1456106ff7ab": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:299; lib\\application\\analytics.dart:125"
+  },
+  "m7e8cd2056da7": "Title",
+  "@m7e8cd2056da7": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:631"
+  },
+  "m2b065c7c9ce4": "Today",
+  "@m2b065c7c9ce4": {
+    "description": "lib\\app\\pages\\lists_page.dart:934; lib\\app\\pages\\lists_page.dart:990; lib\\app\\pages\\purchase_page.dart:1477"
+  },
+  "mc9b3c38247f7": "Total",
+  "@mc9b3c38247f7": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1050"
+  },
+  "m497373b6ade9": "Total contents ({p0})",
+  "@m497373b6ade9": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1293"
+  },
+  "mc832d2143398": "Total price (BRL)",
+  "@mc832d2143398": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1353"
+  },
+  "m9e410d3f0b1a": "Trusted response",
+  "@m9e410d3f0b1a": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:636"
+  },
+  "me9add964a697": "Try loading local activity again. No Purchase or Sync data will be changed.",
+  "@me9add964a697": {
+    "description": "lib\\app\\widgets\\audit_components.dart:38; lib\\app\\widgets\\audit_components.dart:46"
+  },
+  "m85e809d261dc": "Two devices edited this product independently. Both notes are shown. Save to combine them.",
+  "@m85e809d261dc": {
+    "description": "lib\\app\\pages\\lists_page.dart:195"
+  },
+  "m868354687ff8": "UTC day",
+  "@m868354687ff8": {
+    "description": "lib\\application\\analytics_workspace.dart:1479"
+  },
+  "mbc4e57c848c8": "UTC month",
+  "@mbc4e57c848c8": {
+    "description": "lib\\application\\analytics_workspace.dart:1480"
+  },
+  "mca1844969742": "Unavailable",
+  "@mca1844969742": {
+    "description": "lib\\app\\pages\\lists_page.dart:520; lib\\app\\pages\\lists_page.dart:920; lib\\app\\pages\\lists_page.dart:941; lib\\app\\pages\\native_closure_page.dart:701; lib\\app\\pages\\native_closure_page.dart:1095; lib\\app\\pages\\native_closure_page.dart:1161; lib\\app\\pages\\native_closure_page.dart:1303; lib\\app\\pages\\native_closure_page.dart:1306; lib\\app\\pages\\native_closure_page.dart:1311; lib\\app\\widgets\\analytics_components.dart:940; lib\\app\\widgets\\analytics_components.dart:1059; lib\\application\\analytics.dart:97; lib\\application\\analytics.dart:105"
+  },
+  "mc9a4811f357c": "Unavailable in recorded data",
+  "@mc9a4811f357c": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:856; lib\\app\\widgets\\analytics_components.dart:945; lib\\app\\widgets\\analytics_components.dart:954; lib\\application\\analytics.dart:100; lib\\application\\analytics.dart:108; lib\\application\\analytics_workspace.dart:1140"
+  },
+  "mfbe2f481d68e": "Unavailable reason",
+  "@mfbe2f481d68e": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:616"
+  },
+  "m4e545960f1bf": "Unit",
+  "@m4e545960f1bf": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1276; lib\\app\\pages\\purchase_page.dart:1317; lib\\app\\widgets\\quantity_unit_picker.dart:11; lib\\application\\analytics.dart:227"
+  },
+  "me5018fc94505": "Unit price",
+  "@me5018fc94505": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:923; lib\\app\\widgets\\analytics_components.dart:1020; lib\\app\\widgets\\analytics_components.dart:1031; lib\\application\\analytics_workspace.dart:1422; lib\\application\\analytics_workspace.dart:1433; lib\\domain\\analytics\\analytics_registry.dart:542"
+  },
+  "m536ad7bacdab": "Unit price (BRL/package)",
+  "@m536ad7bacdab": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1337"
+  },
+  "mf5398cb76c2a": "Unit price (BRL/{p0})",
+  "@mf5398cb76c2a": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1336"
+  },
+  "m163e10fae6ea": "Unit size",
+  "@m163e10fae6ea": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1265"
+  },
+  "mca2a7b473358": "Unit/currency",
+  "@mca2a7b473358": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:613"
+  },
+  "mceb7ac38a890": "Units bought",
+  "@mceb7ac38a890": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1250"
+  },
+  "m44db78af01b1": "Units bought must be a whole number.",
+  "@m44db78af01b1": {
+    "description": "lib\\app\\pages\\purchase_page.dart:477"
+  },
+  "m9e6e2e54f20a": "Units bought must be greater than zero.",
+  "@m9e6e2e54f20a": {
+    "description": "lib\\app\\pages\\purchase_page.dart:481"
+  },
+  "m086623f9eea8": "Units bought × unit size",
+  "@m086623f9eea8": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1295"
+  },
+  "mb764cdc0eab7": "Unknown",
+  "@mb764cdc0eab7": {
+    "description": "lib\\app\\pages\\lists_page.dart:928; lib\\app\\pages\\native_closure_page.dart:665; lib\\app\\pages\\native_closure_page.dart:1092"
+  },
+  "mbe9c008575bf": "Unknown analytic definition {p0}@{p1}.",
+  "@mbe9c008575bf": {
+    "description": "lib\\domain\\analytics\\analytics_registry.dart:42"
+  },
+  "m1c43b59d6dbc": "Unsupported analytic operation {p0}.",
+  "@m1c43b59d6dbc": {
+    "description": "lib\\domain\\analytics\\analytics_registry.dart:50"
+  },
+  "m4fe81b9b0d22": "Updated from purchase history",
+  "@m4fe81b9b0d22": {
+    "description": "lib\\app\\pages\\lists_page.dart:87"
+  },
+  "m91ba9865847d": "Updates follow-up",
+  "@m91ba9865847d": {
+    "description": "lib\\application\\home_content.dart:46"
+  },
+  "m8b898ca34ce7": "Uploading",
+  "@m8b898ca34ce7": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:663; lib\\app\\pages\\native_closure_page.dart:1090"
+  },
+  "m645f0b31aa05": "Use HH:mm for Purchase time.",
+  "@m645f0b31aa05": {
+    "description": "lib\\application\\purchase_occurrence.dart:22"
+  },
+  "m2e90f012a508": "Use a time from 00:00 to 23:59.",
+  "@m2e90f012a508": {
+    "description": "lib\\app\\pages\\purchase_page.dart:895"
+  },
+  "m6181c45d1326": "Use all recorded rows",
+  "@m6181c45d1326": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:105"
+  },
+  "m6e31ece702a2": "Use all values",
+  "@m6e31ece702a2": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1322"
+  },
+  "m76241387b39f": "Use dd/mm/yyyy for Purchase date.",
+  "@m76241387b39f": {
+    "description": "lib\\application\\purchase_occurrence.dart:16"
+  },
+  "me610a4d35e89": "Use existing Product",
+  "@me610a4d35e89": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1116"
+  },
+  "m0d3dbd329e6e": "Use in Analytics",
+  "@m0d3dbd329e6e": {
+    "description": "lib\\app\\pages\\history_page.dart:321"
+  },
+  "mb91b6b795a14": "Use in Analytics prepares a local scope from selected Purchases. It does not calculate, save an analysis record or mutate a Purchase.",
+  "@mb91b6b795a14": {
+    "description": "lib\\app\\pages\\guide_page.dart:158"
+  },
+  "m3e770270671c": "Use selected History Purchases as scope.",
+  "@m3e770270671c": {
+    "description": "lib\\app\\pages\\guide_page.dart:156"
+  },
+  "m52d5d53627dc": "Use selected rows",
+  "@m52d5d53627dc": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:771"
+  },
+  "m5cf2cce99778": "Use this Product",
+  "@m5cf2cce99778": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1556"
+  },
+  "m8e37953d23da": "Value",
+  "@m8e37953d23da": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:612; lib\\application\\analytics.dart:226"
+  },
+  "mb9743e8aad0c": "Values to calculate / optional breakdowns",
+  "@mb9743e8aad0c": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:141"
+  },
+  "m02db55bac5e3": "Variables",
+  "@m02db55bac5e3": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:683"
+  },
+  "mfb8fafeec7b8": "Variables: {p0}",
+  "@mfb8fafeec7b8": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:297"
+  },
+  "mdcc839a4015c": "View",
+  "@mdcc839a4015c": {
+    "description": "lib\\app\\pages\\history_page.dart:514"
+  },
+  "mf30d54343b36": "View detail",
+  "@mf30d54343b36": {
+    "description": "lib\\app\\pages\\history_page.dart:599"
+  },
+  "md1bf045bb524": "View details",
+  "@md1bf045bb524": {
+    "description": "lib\\app\\pages\\products_page.dart:548; lib\\app\\pages\\products_page.dart:605"
+  },
+  "mfad4c25135f3": "View lists",
+  "@mfad4c25135f3": {
+    "description": "lib\\app\\pages\\home_page.dart:160; lib\\application\\home_content.dart:22"
+  },
+  "m4581a549bcf8": "Welcome to your household",
+  "@m4581a549bcf8": {
+    "description": "lib\\app\\pages\\household_page.dart:120"
+  },
+  "ma1891149b936": "Welcome, {p0}",
+  "@ma1891149b936": {
+    "description": "lib\\app\\pages\\household_page.dart:121"
+  },
+  "m3664b1cbb9d7": "Whole packages, e.g. 2",
+  "@m3664b1cbb9d7": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1251"
+  },
+  "mf159f6831d69": "With estimates",
+  "@mf159f6831d69": {
+    "description": "lib\\app\\pages\\lists_page.dart:537"
+  },
+  "mf78353ab2cd6": "Write explicit local files.",
+  "@mf78353ab2cd6": {
+    "description": "lib\\app\\pages\\guide_page.dart:162"
+  },
+  "m85a39ab345d6": "Yes",
+  "@m85a39ab345d6": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1307"
+  },
+  "m8c05a8dbed0a": "Your code; fixed once saved",
+  "@m8c05a8dbed0a": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1098"
+  },
+  "mf90df741e588": "Your household starts with you",
+  "@mf90df741e588": {
+    "description": "lib\\app\\pages\\household_page.dart:76"
+  },
+  "m5a632c50191e": "Your household,\na little clearer.",
+  "@m5a632c50191e": {
+    "description": "lib\\app\\pages\\home_page.dart:42"
+  },
+  "m528d89ad72cb": "Your profile",
+  "@m528d89ad72cb": {
+    "description": "lib\\app\\pages\\household_page.dart:56"
+  },
+  "m5d3999f4dca0": "Your sign-in profile could not be read. Open Settings to check your session.",
+  "@m5d3999f4dca0": {
+    "description": "lib\\app\\pages\\household_page.dart:65"
+  },
+  "me0d9d32bdacb": "Z-A",
+  "@me0d9d32bdacb": {
+    "description": "lib\\app\\pages\\products_page.dart:327"
+  },
+  "m747476e81a74": "child evidence unavailable locally",
+  "@m747476e81a74": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:879"
+  },
+  "m5532b604f3e0": "client declaration only; inspect causal diagnostic before action",
+  "@m5532b604f3e0": {
+    "description": "lib\\app\\native_auth_closure_runner.dart:906"
+  },
+  "m9f2165ca7f03": "continue ordinary Sync",
+  "@m9f2165ca7f03": {
+    "description": "lib\\app\\native_auth_closure_runner.dart:166; lib\\app\\native_auth_closure_runner.dart:987"
+  },
+  "m57e0f3b6b299": "hold for Gate 12.7 reconciliation; do not execute recovery",
+  "@m57e0f3b6b299": {
+    "description": "lib\\app\\native_auth_closure_runner.dart:443"
+  },
+  "m7e3906b9d9ca": "individual units",
+  "@m7e3906b9d9ca": {
+    "description": "lib\\app\\widgets\\quantity_unit_picker.dart:26"
+  },
+  "m954464dd756a": "item rows",
+  "@m954464dd756a": {
+    "description": "lib\\domain\\analytics\\analytics_models.dart:547"
+  },
+  "mdd0caa401e35": "item-required: Stage at least one Item.",
+  "@mdd0caa401e35": {
+    "description": "lib\\app\\pages\\purchase_page.dart:580; lib\\app\\pages\\purchase_page.dart:705"
+  },
+  "m2919216c6dd7": "mL: millilitres · mg: milligrams · g: grams · L: litres · kg: kilograms · un: individual units",
+  "@m2919216c6dd7": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1379"
+  },
+  "md80fb4683736": "n / excluded",
+  "@md80fb4683736": {
+    "description": "lib\\application\\analytics.dart:228"
+  },
+  "m34afbf55d839": "not aggregate success",
+  "@m34afbf55d839": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:864"
+  },
+  "m14e7759b1cb5": "not applicable - see child requests",
+  "@m14e7759b1cb5": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1139; lib\\app\\pages\\native_closure_page.dart:1140"
+  },
+  "mea80f83bbd64": "not recorded",
+  "@mea80f83bbd64": {
+    "description": "lib\\app\\pages\\settings_page.dart:555"
+  },
+  "m9faac355ae5a": "per Purchase",
+  "@m9faac355ae5a": {
+    "description": "lib\\domain\\analytics\\analytics_registry.dart:557"
+  },
+  "m222113c20106": "per Purchase Item",
+  "@m222113c20106": {
+    "description": "lib\\domain\\analytics\\analytics_registry.dart:558"
+  },
+  "md1ef49551333": "preserve evidence and inspect diagnostics",
+  "@md1ef49551333": {
+    "description": "lib\\app\\native_auth_closure_runner.dart:274; lib\\app\\native_auth_closure_runner.dart:444; lib\\app\\native_auth_closure_runner.dart:506; lib\\app\\native_auth_closure_runner.dart:613; lib\\app\\native_auth_closure_runner.dart:1178; lib\\app\\pages\\native_closure_page.dart:537; lib\\infrastructure\\local\\closure_diagnostics_repository.dart:1113"
+  },
+  "m262e52982aa2": "product-selection-conflict: Product projection contains conflicting repeated IDs. Refresh Catalogue before choosing that Product.",
+  "@m262e52982aa2": {
+    "description": "lib\\app\\pages\\purchase_page.dart:168"
+  },
+  "md24c87e6758f": "product-selection-invalidated: Found Product is not available in the current Purchase projection. Refresh Catalogue and try again.",
+  "@md24c87e6758f": {
+    "description": "lib\\app\\pages\\purchase_page.dart:290"
+  },
+  "m598eddd0c994": "product-selection-invalidated: Selected Product is ambiguous in the current projection. Choose a Product again.",
+  "@m598eddd0c994": {
+    "description": "lib\\app\\pages\\purchase_page.dart:173"
+  },
+  "ma37e7bb3ff7d": "product-selection-invalidated: Selected Product is no longer available for this account. Choose a Product again.",
+  "@ma37e7bb3ff7d": {
+    "description": "lib\\app\\pages\\purchase_page.dart:177"
+  },
+  "md82d6397ce7e": "product-selection-invalidated: Selected Product is not available. Choose a Product again.",
+  "@md82d6397ce7e": {
+    "description": "lib\\app\\pages\\purchase_page.dart:1143"
+  },
+  "m0d885e233531": "purchase-registration-unknown: Purchase registration failed. The result is unknown; keep the draft and check History before retrying. The draft is still available.",
+  "@m0d885e233531": {
+    "description": "lib\\app\\pages\\purchase_page.dart:649"
+  },
+  "m7b5c2ad81aad": "store-selection-invalidated: Selected Store is no longer available for this account. Choose a Store again.",
+  "@m7b5c2ad81aad": {
+    "description": "lib\\app\\pages\\purchase_page.dart:181; lib\\app\\pages\\purchase_page.dart:691"
+  },
+  "m46391ed5a0ad": "store-selection-required: Select a Store for this purchase.",
+  "@m46391ed5a0ad": {
+    "description": "lib\\app\\pages\\purchase_page.dart:687"
+  },
+  "mb01c35300426": "unknown terminal",
+  "@mb01c35300426": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1058"
+  },
+  "m2238d209bb3b": "{p0}\n{p1}",
+  "@m2238d209bb3b": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m4ec493a8279f": "{p0}\n{p1}\n{p2} / {p3} / {p4}",
+  "@m4ec493a8279f": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "mf7a7220f8c27": "{p0}\n{p1} · {p2}",
+  "@mf7a7220f8c27": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "me8554a9262f8": "{p0} ",
+  "@me8554a9262f8": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m9d066be43ed4": "{p0} #{p1}",
+  "@m9d066be43ed4": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m319e1e812bf3": "{p0} - {p1}",
+  "@m319e1e812bf3": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "ma4c878617c98": "{p0} - {p1} - {p2} {p3}",
+  "@ma4c878617c98": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "mc45a0bf3fb71": "{p0} - {p1}{p2}",
+  "@mc45a0bf3fb71": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m7eef3ce0066f": "{p0} / next {p1}",
+  "@m7eef3ce0066f": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1174"
+  },
+  "mca4877e6892d": "{p0} / sequence {p1}",
+  "@mca4877e6892d": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:1207"
+  },
+  "m1110bdd690ba": "{p0} / {p1}",
+  "@m1110bdd690ba": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m46744d401078": "{p0} / {p1} / {p2}",
+  "@m46744d401078": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m6877bbfd5a9a": "{p0} Local status refreshed.",
+  "@m6877bbfd5a9a": {
+    "description": "lib\\app\\pages\\settings_page.dart:269"
+  },
+  "m37886bef763f": "{p0} Product(s)",
+  "@m37886bef763f": {
+    "description": "lib\\app\\pages\\products_page.dart:248"
+  },
+  "mae00fad35844": "{p0} Purchase Item(s)",
+  "@mae00fad35844": {
+    "description": "lib\\app\\pages\\history_page.dart:505; lib\\app\\pages\\history_page.dart:582"
+  },
+  "m6857302e1d72": "{p0} Purchase {p1} for action",
+  "@m6857302e1d72": {
+    "description": "lib\\app\\pages\\history_page.dart:489"
+  },
+  "m84b1022b622e": "{p0} Purchase(s)",
+  "@m84b1022b622e": {
+    "description": "lib\\app\\pages\\history_page.dart:131"
+  },
+  "me1040db08ed7": "{p0} Unavailable Purchases were not used because they are stale or outside this Account.",
+  "@me1040db08ed7": {
+    "description": "lib\\application\\analytics_workspace.dart:1326"
+  },
+  "m01a6889dd777": "{p0} archived. Existing Purchase history keeps its recorded label.",
+  "@m01a6889dd777": {
+    "description": "lib\\app\\pages\\settings_page.dart:152"
+  },
+  "m8e3f0638995e": "{p0} contained item(s)",
+  "@m8e3f0638995e": {
+    "description": "lib\\app\\pages\\analytics_page.dart:110"
+  },
+  "m7ed5a537f976": "{p0} day(s)",
+  "@m7ed5a537f976": {
+    "description": "lib\\app\\pages\\lists_page.dart:936; lib\\app\\pages\\lists_page.dart:990"
+  },
+  "m695bcb58def0": "{p0} day(s) overdue",
+  "@m695bcb58def0": {
+    "description": "lib\\app\\pages\\lists_page.dart:931"
+  },
+  "mf255adf95354": "{p0} diagnostic event(s)",
+  "@mf255adf95354": {
+    "description": "lib\\app\\widgets\\audit_components.dart:117"
+  },
+  "mec0763d30ad9": "{p0} estimated",
+  "@mec0763d30ad9": {
+    "description": "lib\\app\\pages\\lists_page.dart:922"
+  },
+  "me6b9f3608362": "{p0} is unavailable for this group.",
+  "@me6b9f3608362": {
+    "description": "lib\\application\\analytics_workspace.dart:1031"
+  },
+  "m6ed652524bdc": "{p0} is unavailable for {p1}.",
+  "@m6ed652524bdc": {
+    "description": "lib\\application\\analytics_workspace.dart:614"
+  },
+  "m4825dc40f670": "{p0} latest outcome",
+  "@m4825dc40f670": {
+    "description": "lib\\app\\widgets\\audit_components.dart:109"
+  },
+  "mc16ebaba960a": "{p0} local attempt(s), {p1} query reads",
+  "@mc16ebaba960a": {
+    "description": "lib\\app\\widgets\\audit_components.dart:100"
+  },
+  "m080c6113bfb4": "{p0} matches. Type more to narrow the list.",
+  "@m080c6113bfb4": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1398"
+  },
+  "mcb16782bc00f": "{p0} minus {p1}",
+  "@mcb16782bc00f": {
+    "description": "lib\\application\\analytics_workspace.dart:778"
+  },
+  "m4b56f7eb58a1": "{p0} minus {p1} {p2}",
+  "@m4b56f7eb58a1": {
+    "description": "lib\\application\\analytics_workspace.dart:785; lib\\domain\\analytics\\analytics_registry.dart:424"
+  },
+  "m96a92d9777eb": "{p0} of {p1}. Based on {p2} of {p3} evidence rows.",
+  "@m96a92d9777eb": {
+    "description": "lib\\domain\\analytics\\analytics_registry.dart:511"
+  },
+  "m007f578cf4f8": "{p0} package(s)",
+  "@m007f578cf4f8": {
+    "description": "lib\\app\\pages\\history_page.dart:668; lib\\app\\pages\\purchase_page.dart:1758"
+  },
+  "m43a7a23a18ba": "{p0} per {p1}",
+  "@m43a7a23a18ba": {
+    "description": "lib\\domain\\analytics\\analytics_models.dart:538"
+  },
+  "m17d00ce9fa85": "{p0} selected comparison value(s).",
+  "@m17d00ce9fa85": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1317"
+  },
+  "m8d3a26de4377": "{p0} selected for action",
+  "@m8d3a26de4377": {
+    "description": "lib\\app\\pages\\history_page.dart:309"
+  },
+  "mff34e5fcb359": "{p0} selected row(s)",
+  "@mff34e5fcb359": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:735"
+  },
+  "m0bbae451b60e": "{p0} share of {p1}",
+  "@m0bbae451b60e": {
+    "description": "lib\\application\\analytics_workspace.dart:810; lib\\application\\analytics_workspace.dart:841"
+  },
+  "m88972d0a1ffb": "{p0} share of {p1} {p2}",
+  "@m88972d0a1ffb": {
+    "description": "lib\\application\\analytics_workspace.dart:848; lib\\domain\\analytics\\analytics_registry.dart:464"
+  },
+  "mdb67227395e1": "{p0} to {p1}",
+  "@mdb67227395e1": {
+    "description": "lib\\domain\\analytics\\analytics_models.dart:303"
+  },
+  "m84f0e01a0220": "{p0} unavailable",
+  "@m84f0e01a0220": {
+    "description": "lib\\domain\\analytics\\analytics_registry.dart:343"
+  },
+  "m9ed2c6dc0aa6": "{p0} variable row(s) selected.",
+  "@m9ed2c6dc0aa6": {
+    "description": "lib\\application\\analytics_workspace.dart:375"
+  },
+  "m8cbaa55a52ef": "{p0} {p1}",
+  "@m8cbaa55a52ef": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m223eaceafee7": "{p0} {p1} grouped by {p2}. Calculated from {p3} contained items across {p4} group(s).",
+  "@m223eaceafee7": {
+    "description": "lib\\application\\analytics_workspace.dart:1389"
+  },
+  "m22762e8a99e3": "{p0} {p1} incompatible or unavailable values are listed in Table.",
+  "@m22762e8a99e3": {
+    "description": "lib\\application\\analytics_workspace.dart:1391"
+  },
+  "m45fb3c8b3f16": "{p0} {p1} per {p2}",
+  "@m45fb3c8b3f16": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:1060; lib\\application\\analytics.dart:106"
+  },
+  "m542e783f2e45": "{p0} {p1} {p2}",
+  "@m542e783f2e45": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m9a3ea989bc3a": "{p0} · Tags and note",
+  "@m9a3ea989bc3a": {
+    "description": "lib\\app\\pages\\lists_page.dart:186"
+  },
+  "mae04d0e6f63d": "{p0} · {p1}",
+  "@mae04d0e6f63d": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "mdafba3bc0bac": "{p0} · {p1} {p2}",
+  "@mdafba3bc0bac": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m2793a0b2e310": "{p0} · {p1} · Record #{p2}",
+  "@m2793a0b2e310": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:356"
+  },
+  "m61791a3671b0": "{p0} · {p1} · {p2}",
+  "@m61791a3671b0": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m7496d4ec05be": "{p0} · {p1} · {p2} item(s)",
+  "@m7496d4ec05be": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:818"
+  },
+  "m664415f54190": "{p0} · {p1} · {p2} {p3}",
+  "@m664415f54190": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m24e5db8e8ee2": "{p0} · {p1} · {p2}/{p3} evidence rows",
+  "@m24e5db8e8ee2": {
+    "description": "lib\\app\\widgets\\analytics_components.dart:358"
+  },
+  "m3e02d40cf671": "{p0} — {p1}",
+  "@m3e02d40cf671": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "mf4b6fcb40b46": "{p0}-{p1}-{p2} {p3}:{p4}",
+  "@mf4b6fcb40b46": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "mb18102e1f028": "{p0}. {p1} / {p2}",
+  "@mb18102e1f028": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m83e01ce09104": "{p0}. {p1}: {p2}",
+  "@m83e01ce09104": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m07e3a63ea0ed": "{p0}: {p1}",
+  "@m07e3a63ea0ed": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m8b4fcd0349c4": "{p0}: {p1} #{p2}",
+  "@m8b4fcd0349c4": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "mb5759a871c92": "{p0}: {p1} The draft is still available.",
+  "@mb5759a871c92": {
+    "description": "lib\\app\\pages\\purchase_page.dart:639"
+  },
+  "m3e2911b064f0": "{p0}ms client",
+  "@m3e2911b064f0": {
+    "description": "lib\\app\\pages\\native_closure_page.dart:871"
+  },
+  "ma4fe65264ef7": "Language",
+  "@ma4fe65264ef7": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m9ef767a32782": "Registering...",
+  "@m9ef767a32782": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m1dd6611ca85c": "Device language",
+  "@m1dd6611ca85c": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m0644ad722b45": "Saved on this device. Changing language does not change your purchases.",
+  "@m0644ad722b45": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m7430c073d409": "The saved language could not be read. Device language is being used.",
+  "@m7430c073d409": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m96b57557e908": "Language could not be saved. Your previous preference is still active.",
+  "@m96b57557e908": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "mf5948d6275a8": "Translations under review",
+  "@mf5948d6275a8": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "mb425b2d1fa8f": "Portuguese and Spanish translations will receive human review for the first official app update.",
+  "@mb425b2d1fa8f": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "meea4a6606e64": "millilitres",
+  "@meea4a6606e64": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m3e243d0dfb7c": "milligrams",
+  "@m3e243d0dfb7c": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m7c06c42706d5": "grams",
+  "@m7c06c42706d5": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m159270cac26c": "litres",
+  "@m159270cac26c": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "mbd537762ddfd": "kilograms",
+  "@mbd537762ddfd": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m6c35493a2b93": "count",
+  "@m6c35493a2b93": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m4084a32b9bba": "mass",
+  "@m4084a32b9bba": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m62d7a6b1211d": "volume",
+  "@m62d7a6b1211d": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m4ba5d66f21f3": "PACKAGED",
+  "@m4ba5d66f21f3": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m5723985772a5": "Bulk / packaged",
+  "@m5723985772a5": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m038e472923ed": "dd/mm/yyyy",
+  "@m038e472923ed": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m661208029c5f": "dd-mm-yyyy",
+  "@m661208029c5f": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "mda0d1495dc19": "Unsupported unit {p0} for {p1}.",
+  "@mda0d1495dc19": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m3b5bcdbcfaec": "Quantity must be greater than zero.",
+  "@m3b5bcdbcfaec": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "mf02adb4dabc7": "Unit size must be greater than zero.",
+  "@mf02adb4dabc7": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m35bbd7316d2d": "Enter a number with up to six decimals.",
+  "@m35bbd7316d2d": {
+    "description": "Application-owned presentation copy. Preserve placeholders and technical codes."
+  },
+  "m23e39291d613": "Saving…",
+  "@m23e39291d613": {
+    "description": "Application validation or progress copy."
+  },
+  "m3908fde84f10": "Fractional COUNT is not accepted in this unit.",
+  "@m3908fde84f10": {
+    "description": "Application validation or progress copy."
+  },
+  "maed1870744ef": "Quantity is too precise. Use whole mg, or at most three decimals for g/mL.",
+  "@maed1870744ef": {
+    "description": "Application validation or progress copy."
+  },
+  "m6432e1089623": "Use mL, mg, g, L, kg or un for the unit.",
+  "@m6432e1089623": {
+    "description": "Application validation or progress copy."
+  },
+  "ma3b962d6130d": "Ambiguous decimal separator: {p0}",
+  "@ma3b962d6130d": {
+    "description": "Application validation or progress copy."
+  },
+  "mf9dcc9a1420f": "Invalid fixed decimal quantity: {p0}",
+  "@mf9dcc9a1420f": {
+    "description": "Application validation or progress copy."
+  },
+  "mfd86717aca41": "percent",
+  "@mfd86717aca41": {
+    "description": "Report unit or Purchase explanatory status."
+  },
+  "m8789d73ad150": "Purchase registration failed. The operation was not applied. The operation was rolled back. Keep the draft and report this code.",
+  "@m8789d73ad150": {
+    "description": "Report unit or Purchase explanatory status."
+  },
+  "me2ecbb5a5a8e": "No People saved for this Account.",
+  "@me2ecbb5a5a8e": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "me4ee94b7c88f": "No Payment Methods saved for this Account.",
+  "@me4ee94b7c88f": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "m61fd4a13dc1b": "{p0} item(s)",
+  "@m61fd4a13dc1b": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "mba691ba042bc": "unavailable",
+  "@mba691ba042bc": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "m91600e13d106": "configuration-missing",
+  "@m91600e13d106": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "m7636aed42b28": "signed-in",
+  "@m7636aed42b28": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "m9a2c08d0e8ce": "signed-out",
+  "@m9a2c08d0e8ce": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "m3fa34c2581e6": "device-enrolled",
+  "@m3fa34c2581e6": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "m29a77fe1bae2": "device-enrollment-required",
+  "@m29a77fe1bae2": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "m66da140b57eb": "authentication-required",
+  "@m66da140b57eb": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "m1dcb005f4787": "authentication-cancelled",
+  "@m1dcb005f4787": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "m71d2eeaeca7b": "ready-no-local-work",
+  "@m71d2eeaeca7b": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "m0fb8c04cad51": "ready-with-pending-work",
+  "@m0fb8c04cad51": {
+    "description": "Visible status label. Source codes and model values remain unchanged."
+  },
+  "m619bc70230f7": "Content handed to the selected app. Delivery is not confirmed by Marc.",
+  "m606ae27ded6a": "Sharing cancelled. Your data is unchanged.",
+  "m2d6a30d4e64c": "Sharing outcome could not be confirmed. You can try again or export the file.",
+  "mfa4064edc37d": "Sharing could not be opened. Your data is unchanged. Try exporting instead.",
+  "m77ef79569694": "Another sharing action is already open.",
+  "m1c66fd8915ff": "Review before sharing",
+  "m496766cb410b": "The chosen app and recipient will receive a copy. Sharing does not invite them into your Household.",
+  "m442fb01b9981": "Choose app",
+  "md92f6098d448": "Only shown products, prices and estimates are included. Private notes and tags are excluded.",
+  "m776b7725e90d": "Estimates from purchase history; not a confirmed stock count.",
+  "m180e0fb3993a": "Marc List",
+  "mf1d06c767730": "Last price",
+  "mb9636a80fd39": "Share shown List",
+  "m54a82187f502": "Share selected Purchases",
+  "mec74b2b34375": "Share PDF",
+  "mcaeace9e9b19": "Share CSV",
+  "m3a10f9da3b62": "Share saved result",
+  "me6be095d4cf8": "Share {p0} selected Purchase(s) as {p1}. This includes products, prices, stores, dates and any assigned person/payment labels.",
+  "m1a9461b36292": "Marc Purchase history",
+  "md75f334fbd8e": "Share this saved Analytics result as {p0}. It includes the selected context, calculated values and product/store labels.",
+  "mb67d4948b23b": "Marc Analytics",
+  "mf30a3faaad34": "NF / NF-e Scan · under study",
+  "mc88b3c8b757a": "Scanning Brazilian fiscal receipts and NF-e is under study. If technically viable, it may arrive in the first app updates. It is not available in this MVP.",
+  "m8876f4b6e30f": "Marc pour Resto · preview",
+  "m3dacb94a14e5": "A restaurant edition is planned for exploration over the coming months: advanced statistics and analytics, possible secure institutional messaging, and potential Receita Federal / CNPJ integration to simplify supply-chain declarations. Scope and availability remain subject to research and validation.",
+  "ma819ec201725": "1.2.0 · MVP beta"
+}

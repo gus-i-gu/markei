@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart';
 import '../../../application/sync/sync_ports.dart';
 import '../../../domain/sync/sync_event.dart';
 import '../local_database.dart' hide RecoveryChunk, RecoverySession;
+import '../local_list_notes_repository.dart';
 
 final class DriftLocalRecoveryGuard implements LocalRecoveryGuard {
   DriftLocalRecoveryGuard(this.db);
@@ -150,6 +151,16 @@ final class DriftSnapshotFactApplier implements SnapshotFactApplier {
           in (facts['purchaseItems'] as List<Object?>)
               .cast<Map<String, Object?>>()) {
         await _applyPurchaseItem(item);
+      }
+      for (final note
+          in (facts['listNotes'] as List<Object?>? ?? const [])
+              .cast<Map<String, Object?>>()) {
+        await insertListNoteRevision(
+          db,
+          manifest.accountId,
+          note['productId'] as String,
+          note,
+        );
       }
       await db
           .into(db.syncState)

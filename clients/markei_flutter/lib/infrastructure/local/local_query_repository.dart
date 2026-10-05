@@ -795,6 +795,10 @@ class LocalQueryRepository
             productCode: product.userProductCode,
             productName: product.displayName ?? product.normalizedName,
             productBrand: product.displayBrand ?? product.normalizedBrand,
+            productMode: product.mode == 'BULK'
+                ? domain.ProductMode.bulk
+                : domain.ProductMode.packaged,
+            daysSinceLastPurchase: daysFromLastPurchase(latest?.date, today),
             cycle: cycle,
             latestCurrencyCode: latest?.currencyCode,
             latestLineTotalMinorUnits: latest?.lineTotalMinorUnits,

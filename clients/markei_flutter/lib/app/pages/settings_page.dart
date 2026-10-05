@@ -1,9 +1,11 @@
+import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../application/closure_diagnostics.dart';
 import '../../application/local_references.dart';
 import '../../domain/references/local_reference.dart';
 import '../../domain/shared/ids.dart';
+import '../../l10n/language_controller.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
@@ -13,6 +15,7 @@ class SettingsPage extends StatefulWidget {
     required this.accountSupport,
     required this.syncDeviceSupport,
     required this.onChanged,
+    this.languageController,
     super.key,
   });
 
@@ -22,6 +25,7 @@ class SettingsPage extends StatefulWidget {
   final SettingsAccountSupportPort accountSupport;
   final SettingsSyncDeviceSupportPort syncDeviceSupport;
   final VoidCallback onChanged;
+  final LanguageController? languageController;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -286,14 +290,21 @@ class _SettingsPageState extends State<SettingsPage> {
       key: const Key('settings.page'),
       padding: const EdgeInsets.all(16),
       children: [
-        Text('Settings', style: Theme.of(context).textTheme.headlineSmall),
+        MarcText('Settings', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 8),
-        const Text(
+        const MarcText(
           'Choices for this Account and this Device. Local labels remain on this device unless existing Sync actions are explicitly used.',
         ),
+        if (widget.languageController != null) ...[
+          const Divider(height: 32),
+          _LanguageSection(controller: widget.languageController!),
+        ],
         const Divider(height: 32),
         if (_loading)
-          const Text('Loading local settings...', key: Key('settings.loading'))
+          const MarcText(
+            'Loading local settings...',
+            key: Key('settings.loading'),
+          )
         else ...[
           _AccountSection(
             status: _accountStatus,
@@ -342,11 +353,56 @@ class _SettingsPageState extends State<SettingsPage> {
         ],
         if (_message != null) ...[
           const SizedBox(height: 12),
-          Text(_message!, key: const Key('settings.message')),
+          MarcText(_message!, key: const Key('settings.message')),
         ],
       ],
     );
   }
+}
+
+class _LanguageSection extends StatelessWidget {
+  const _LanguageSection({required this.controller});
+  final LanguageController controller;
+
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: controller,
+    builder: (context, child) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const MarcText('Language'),
+        const SizedBox(height: 8),
+        DropdownButtonFormField<String>(
+          key: ValueKey(
+            'settings.language.${controller.selection ?? 'device'}.${controller.busy}',
+          ),
+          initialValue: controller.selection ?? 'device',
+          isExpanded: true,
+          decoration: InputDecoration(labelText: context.tr('Language')),
+          items: [
+            DropdownMenuItem(
+              value: 'device',
+              child: MarcText('Device language'),
+            ),
+            const DropdownMenuItem(value: 'en', child: Text('English')),
+            const DropdownMenuItem(
+              value: 'pt_BR',
+              child: Text('Português (Brasil)'),
+            ),
+            const DropdownMenuItem(value: 'es', child: Text('Español')),
+          ],
+          onChanged: controller.busy
+              ? null
+              : (value) => controller.select(value == 'device' ? null : value),
+        ),
+        const SizedBox(height: 8),
+        const MarcText(
+          'Saved on this device. Changing language does not change your purchases.',
+        ),
+        if (controller.error != null) MarcText(controller.error!),
+      ],
+    ),
+  );
 }
 
 class _PreferencesSection extends StatelessWidget {
@@ -383,7 +439,7 @@ class _PreferencesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Preferences', style: Theme.of(context).textTheme.titleLarge),
+        MarcText('Preferences', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
         _ReferenceList(
           title: 'People',
@@ -412,13 +468,13 @@ class _PreferencesSection extends StatelessWidget {
           decoration: InputDecoration(
             labelText: 'Shortage threshold days',
             errorText: thresholdError,
-          ),
+          ).localized(context),
         ),
         const SizedBox(height: 8),
         FilledButton(
           key: const Key('settings.saveThreshold'),
           onPressed: busy ? null : onSaveThreshold,
-          child: const Text('Save threshold'),
+          child: const MarcText('Save threshold'),
         ),
       ],
     );
@@ -449,30 +505,30 @@ class _ReferenceList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: Theme.of(context).textTheme.titleMedium),
+        MarcText(title, style: Theme.of(context).textTheme.titleMedium),
         if (references.isEmpty)
-          Text('No $title saved for this Account.')
+          MarcText('No $title saved for this Account.')
         else
           for (final reference in references)
             ListTile(
               title: Text(reference.historyLabel),
-              subtitle: Text(reference.active ? 'Active' : 'Archived'),
+              subtitle: MarcText(reference.active ? 'Active' : 'Archived'),
               trailing: reference.active
                   ? TextButton(
                       key: Key('settings.archive.${reference.id}'),
                       onPressed: busy ? null : () => onArchive(reference),
-                      child: const Text('Archive'),
+                      child: const MarcText('Archive'),
                     )
                   : null,
             ),
         TextField(
           controller: controller,
-          decoration: const InputDecoration(labelText: 'Nickname'),
+          decoration: InputDecoration(labelText: 'Nickname').localized(context),
         ),
         const SizedBox(height: 8),
         FilledButton.tonal(
           onPressed: busy ? null : onSave,
-          child: Text(saveLabel),
+          child: MarcText(saveLabel),
         ),
       ],
     );
@@ -497,9 +553,9 @@ class _AccountSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Account', style: Theme.of(context).textTheme.titleLarge),
-        Text(
-          'Current sign-in state: ${status?.authenticationState ?? 'Current Sync status is unavailable.'}',
+        MarcText('Account', style: Theme.of(context).textTheme.titleLarge),
+        MarcText(
+          'Current sign-in state: ${context.tr(status?.authenticationState ?? 'Current Sync status is unavailable.')}',
         ),
         const SizedBox(height: 8),
         Wrap(
@@ -509,12 +565,12 @@ class _AccountSection extends StatelessWidget {
             FilledButton.tonal(
               key: const Key('settings.signInToSync'),
               onPressed: busy ? null : onSignIn,
-              child: const Text('Sign in to Sync'),
+              child: const MarcText('Sign in to Sync'),
             ),
             OutlinedButton(
               key: const Key('settings.signOutOnThisDevice'),
               onPressed: busy ? null : onSignOut,
-              child: const Text('Sign out on this Device'),
+              child: const MarcText('Sign out on this Device'),
             ),
           ],
         ),
@@ -539,26 +595,31 @@ class _SyncDeviceSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Sync and Device', style: Theme.of(context).textTheme.titleLarge),
-        Text(
-          'Enrollment: ${status?.enrollmentState ?? 'Current Sync status is unavailable.'}',
+        MarcText(
+          'Sync and Device',
+          style: Theme.of(context).textTheme.titleLarge,
         ),
-        Text('Readiness: ${status?.syncReadiness ?? 'unavailable'}'),
-        Text('Last local result: ${status?.lastResult ?? 'unavailable'}'),
-        Text(
-          'Device: ${status?.deviceReference ?? 'No connected Device is recorded locally for this Account.'}',
+        MarcText(
+          'Enrollment: ${context.tr(status?.enrollmentState ?? 'Current Sync status is unavailable.')}',
         ),
-        Text(
+        MarcText(
+          'Readiness: ${context.tr(status?.syncReadiness ?? 'unavailable')}',
+        ),
+        MarcText('Last local result: ${status?.lastResult ?? 'unavailable'}'),
+        MarcText(
+          'Device: ${status?.deviceReference ?? context.tr('No connected Device is recorded locally for this Account.')}',
+        ),
+        MarcText(
           'Pending ${status?.pending ?? 0}, uploading ${status?.uploading ?? 0}, failed ${status?.failed ?? 0}, unknown ${status?.unknown ?? 0}',
         ),
-        Text(
-          'Last successful Sync: ${status?.lastSuccessfulSyncAtUtc?.toIso8601String() ?? 'not recorded'}',
+        MarcText(
+          'Last successful Sync: ${status?.lastSuccessfulSyncAtUtc?.toIso8601String() ?? context.tr('not recorded')}',
         ),
         const SizedBox(height: 8),
         OutlinedButton(
           key: const Key('settings.refreshLocalStatus'),
           onPressed: busy ? null : onRefresh,
-          child: const Text('Refresh local status'),
+          child: const MarcText('Refresh local status'),
         ),
       ],
     );
@@ -583,8 +644,8 @@ class _AdvancedSupportSection extends StatelessWidget {
       key: const Key('settings.advancedSupport.content'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Advanced', style: Theme.of(context).textTheme.titleLarge),
-        const Text(
+        MarcText('Advanced', style: Theme.of(context).textTheme.titleLarge),
+        const MarcText(
           'Explicit existing Device and Sync actions with visible results.',
         ),
         const SizedBox(height: 8),
@@ -595,17 +656,17 @@ class _AdvancedSupportSection extends StatelessWidget {
             FilledButton.tonal(
               key: const Key('settings.connectDevice'),
               onPressed: busy ? null : onConnectDevice,
-              child: const Text('Connect this Device'),
+              child: const MarcText('Connect this Device'),
             ),
             FilledButton.tonal(
               key: const Key('settings.syncNow'),
               onPressed: busy ? null : onSyncNow,
-              child: const Text('Sync now'),
+              child: const MarcText('Sync now'),
             ),
           ],
         ),
         const SizedBox(height: 8),
-        const Text(
+        const MarcText(
           'Hosted connection checks, query enrollment, retry, recovery and clear diagnostic history are development-only or absent from product UI.',
         ),
       ],

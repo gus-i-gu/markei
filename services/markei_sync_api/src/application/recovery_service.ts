@@ -23,13 +23,13 @@ export type RecoveryComposition = {
 export type RecoveryManifest = {
   accountId: string;
   snapshotId: string;
-  formatVersion: 1;
+  formatVersion: 1 | 2;
   coveredThroughCursor: string;
   compatibleEventTypes: Array<{
-    eventType: "purchase.registered";
-    payloadVersion: 3;
+    eventType: "purchase.registered" | "product.list-note.recorded";
+    payloadVersion: 1 | 3;
   }>;
-  compatibleSchemaVersion: 6;
+  compatibleSchemaVersion: 6 | 13;
   chunks: Array<{ index: number; length: number; hash: string }>;
   totalBytes: number;
   totalHash: string;
@@ -41,12 +41,13 @@ export type RecoveryManifest = {
     paymentMethods: number;
     purchases: number;
     purchaseItems: number;
+    listNotes?: number;
   };
 };
 
 export type CapabilitiesResult = {
   status: "incremental-available" | "full-rebootstrap-required";
-  recoveryFormatVersion: 1;
+  recoveryFormatVersion: 1 | 2;
   eventPayloadVersion: 3;
   cursorToken: "c10b";
   highWaterCursor: string;
@@ -143,7 +144,7 @@ export async function getCapabilities(
       snapshot && retention.earliestIncrementalCursor > 1
         ? "full-rebootstrap-required"
         : "incremental-available",
-    recoveryFormatVersion: 1,
+    recoveryFormatVersion: snapshot?.manifest.formatVersion ?? 1,
     eventPayloadVersion: 3,
     cursorToken: "c10b",
     highWaterCursor: encodeCursor(highWater),
@@ -166,12 +167,14 @@ export async function startRebootstrap(
   if (typeof deviceClass !== "string") {
     return deviceClass;
   }
-  if (!request.supportedSnapshotFormats.includes(1)) {
-    return failure("protocol-upgrade-required", "start-rebootstrap", false);
-  }
   const snapshot = await availableSnapshot(client, auth.accountId);
   if (!snapshot) {
     return failure("recovery-unavailable", "start-rebootstrap", true);
+  }
+  if (
+    !request.supportedSnapshotFormats.includes(snapshot.manifest.formatVersion)
+  ) {
+    return failure("protocol-upgrade-required", "start-rebootstrap", false);
   }
   const existing = await client.query(
     `select request_hash, stored_result
@@ -348,12 +351,20 @@ export async function buildAndPublishSnapshot(
   const manifest: RecoveryManifest = {
     accountId: auth.accountId,
     snapshotId,
-    formatVersion: 1,
+    formatVersion: facts.listNotes.length ? 2 : 1,
     coveredThroughCursor: encodeCursor(highWater),
     compatibleEventTypes: [
       { eventType: "purchase.registered", payloadVersion: 3 },
+      ...(facts.listNotes.length
+        ? [
+            {
+              eventType: "product.list-note.recorded" as const,
+              payloadVersion: 1 as const,
+            },
+          ]
+        : []),
     ],
-    compatibleSchemaVersion: 6,
+    compatibleSchemaVersion: facts.listNotes.length ? 13 : 6,
     chunks: chunks.map((chunk, index) => ({
       index,
       length: chunk.byteLength,
@@ -369,6 +380,7 @@ export async function buildAndPublishSnapshot(
       paymentMethods: facts.paymentMethods.length,
       purchases: facts.purchases.length,
       purchaseItems: facts.purchaseItems.length,
+      ...(facts.listNotes.length ? { listNotes: facts.listNotes.length } : {}),
     },
   };
   await client.query(
@@ -378,7 +390,7 @@ export async function buildAndPublishSnapshot(
        compatible_event_version, compatible_schema_version, chunk_count,
        total_bytes, manifest_hash, total_hash, fact_counts, built_at,
        validated_at, published_at
-     ) values($1,$2,'available',$3,$3,1,3,6,$4,$5,$6,$7,$8,$9,$9,$9)
+     ) values($1,$2,'available',$3,$3,${manifest.formatVersion},3,${manifest.compatibleSchemaVersion},$4,$5,$6,$7,$8,$9,$9,$9)
      on conflict(account_id, snapshot_id) do nothing`,
     [
       auth.accountId,
@@ -574,7 +586,7 @@ async function availableSnapshot(client: PoolClient, accountId: string) {
   const row = await client.query(
     `select s.snapshot_id, s.covered_through_cursor, s.compatible_schema_version,
             s.chunk_count, s.total_bytes, s.total_hash, s.fact_counts,
-            s.manifest_hash
+            s.manifest_hash, s.recovery_format_version
        from recovery_snapshots s
       where s.account_id=$1 and s.state='available'
       order by s.covered_through_cursor desc
@@ -595,12 +607,21 @@ async function availableSnapshot(client: PoolClient, accountId: string) {
   const manifest: RecoveryManifest = {
     accountId,
     snapshotId: String(snapshot.snapshot_id),
-    formatVersion: 1,
+    formatVersion: Number(snapshot.recovery_format_version ?? 1) === 2 ? 2 : 1,
     coveredThroughCursor: encodeCursor(Number(snapshot.covered_through_cursor)),
     compatibleEventTypes: [
       { eventType: "purchase.registered", payloadVersion: 3 },
+      ...(Number(snapshot.recovery_format_version) === 2
+        ? [
+            {
+              eventType: "product.list-note.recorded" as const,
+              payloadVersion: 1 as const,
+            },
+          ]
+        : []),
     ],
-    compatibleSchemaVersion: 6,
+    compatibleSchemaVersion:
+      Number(snapshot.compatible_schema_version) === 13 ? 13 : 6,
     chunks: chunks.rows.map((chunk) => ({
       index: Number(chunk.chunk_index),
       length: Number(chunk.byte_length),
@@ -639,7 +660,7 @@ async function sessionWithSnapshot(
   };
 }
 
-function foldPurchaseFacts(
+export function foldPurchaseFacts(
   accountId: string,
   rows: Array<Record<string, unknown>>,
 ) {
@@ -647,11 +668,18 @@ function foldPurchaseFacts(
   const stores = new Map<string, Record<string, unknown>>();
   const purchases = new Map<string, Record<string, unknown>>();
   const purchaseItems = new Map<string, Record<string, unknown>>();
+  const listNotes = new Map<string, Record<string, unknown>>();
   for (const row of rows) {
     const payload = row.payload as {
+      listNote?: Record<string, unknown>;
       purchase?: Record<string, unknown>;
       productSnapshots?: Array<Record<string, unknown>>;
     };
+    if (payload.listNote?.id)
+      listNotes.set(String(payload.listNote.id), payload.listNote);
+    for (const product of payload.productSnapshots ?? []) {
+      if (product.id) products.set(String(product.id), product);
+    }
     const purchase = payload.purchase;
     if (!purchase) continue;
     const store = purchase.store as Record<string, unknown> | undefined;
@@ -674,6 +702,7 @@ function foldPurchaseFacts(
     paymentMethods: [] as Record<string, unknown>[],
     purchases: [...purchases.values()].sort(byId),
     purchaseItems: [...purchaseItems.values()].sort(byId),
+    listNotes: [...listNotes.values()].sort(byId),
   };
 }
 

@@ -1,3 +1,4 @@
+import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../application/closure_diagnostics.dart';
@@ -46,11 +47,14 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
       key: const Key('nativeClosure.page'),
       padding: const EdgeInsets.all(16),
       children: [
-        Text('Native closure', style: Theme.of(context).textTheme.titleLarge),
+        MarcText(
+          'Native closure',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         const SizedBox(height: 12),
         _BuildProvenanceView(buildProvenance: widget.buildProvenance),
         const SizedBox(height: 12),
-        Text(
+        MarcText(
           _running ? 'action-running' : _state,
           key: const Key('nativeClosure.state'),
         ),
@@ -62,7 +66,7 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
         if (snapshot == null)
           const _DiagnosticsCard(
             title: 'Sync overview',
-            child: Text(
+            child: MarcText(
               'No locally recorded attempt history',
               key: Key('nativeClosure.diagnostics.empty'),
             ),
@@ -93,27 +97,27 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
               OutlinedButton(
                 key: const Key('nativeClosure.Diagnostics'),
                 onPressed: _running ? null : _runDiagnostics,
-                child: const Text('Diagnostics'),
+                child: const MarcText('Diagnostics'),
               ),
               for (final action in actions)
                 FilledButton(
                   key: Key('nativeClosure.${action.label}'),
                   onPressed: _running ? null : () => _run(action),
-                  child: Text(action.label),
+                  child: MarcText(action.label),
                 ),
               OutlinedButton(
                 key: const Key(
                   'nativeClosure.Retry unknown-outcome submission',
                 ),
                 onPressed: _running ? null : _confirmRetryUnknownOutcome,
-                child: const Text('Retry unknown-outcome submission'),
+                child: const MarcText('Retry unknown-outcome submission'),
               ),
               OutlinedButton(
                 key: const Key(
                   'nativeClosure.Inspect failed/notApplied recovery',
                 ),
                 onPressed: _running ? null : _inspectFailedNotApplied,
-                child: const Text('Inspect failed/notApplied recovery'),
+                child: const MarcText('Inspect failed/notApplied recovery'),
               ),
               FilledButton(
                 key: const Key(
@@ -122,17 +126,17 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
                 onPressed: _running || _failedRecoveryAttempted
                     ? null
                     : _confirmRecoverFailedNotApplied,
-                child: const Text('Recover failed/notApplied candidate'),
+                child: const MarcText('Recover failed/notApplied candidate'),
               ),
               if (_failedRecoveryAttempted)
-                const Text(
+                const MarcText(
                   'failed-not-applied-recovery-session-locked',
                   key: Key('nativeClosure.failedRecovery.locked'),
                 ),
               OutlinedButton(
                 key: const Key('nativeClosure.Clear diagnostic history'),
                 onPressed: _running ? null : _confirmClearHistory,
-                child: const Text('Clear diagnostic history'),
+                child: const MarcText('Clear diagnostic history'),
               ),
             ],
           ),
@@ -247,8 +251,8 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Retry unknown-outcome submission'),
-        content: Text(
+        title: const MarcText('Retry unknown-outcome submission'),
+        content: MarcText(
           'This will retry the same unresolved submission without changing '
           'local events. Events ${preflight.firstDeviceSequence}-'
           '${preflight.lastDeviceSequence}; next local sequence '
@@ -259,12 +263,12 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const MarcText('Cancel'),
           ),
           FilledButton(
             key: const Key('nativeClosure.retry.confirm'),
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Retry'),
+            child: const MarcText('Retry'),
           ),
         ],
       ),
@@ -332,8 +336,8 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Recover failed/notApplied candidate'),
-        content: Text(
+        title: const MarcText('Recover failed/notApplied candidate'),
+        content: MarcText(
           'This will revalidate the current Account and Device, change the '
           'local failed candidate to a recovered upload batch, send at most '
           'one provider upload request, persist that upload result, and stop. '
@@ -348,12 +352,12 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const MarcText('Cancel'),
           ),
           FilledButton(
             key: const Key('nativeClosure.failedRecovery.confirm'),
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Recover'),
+            child: const MarcText('Recover'),
           ),
         ],
       ),
@@ -391,17 +395,19 @@ class _NativeClosurePageState extends State<NativeClosurePage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Clear diagnostic history'),
-        content: const Text('Only local Sync attempt history will be cleared.'),
+        title: const MarcText('Clear diagnostic history'),
+        content: const MarcText(
+          'Only local Sync attempt history will be cleared.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const MarcText('Cancel'),
           ),
           FilledButton(
             key: const Key('nativeClosure.clear.confirm'),
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Clear'),
+            child: const MarcText('Clear'),
           ),
         ],
       ),
@@ -427,7 +433,7 @@ final class _BuildProvenanceView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!buildProvenance.isAvailable) {
-      return const Text(
+      return const MarcText(
         'Source identity unavailable',
         key: Key('nativeClosure.buildProvenance'),
       );
@@ -436,9 +442,9 @@ final class _BuildProvenanceView extends StatelessWidget {
       key: const Key('nativeClosure.buildProvenance'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(buildProvenance.sourceRevisionLabel),
+        MarcText(buildProvenance.sourceRevisionLabel),
         const SizedBox(height: 4),
-        Text(buildProvenance.sourceTreeSha256Label),
+        MarcText(buildProvenance.sourceTreeSha256Label),
       ],
     );
   }
@@ -641,16 +647,19 @@ final class _CurrentActionCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(diagnostic.meaning, key: const Key('nativeClosure.mks.meaning')),
+          MarcText(
+            diagnostic.meaning,
+            key: const Key('nativeClosure.mks.meaning'),
+          ),
           const SizedBox(height: 8),
-          Text(
+          MarcText(
             diagnostic.safeAction,
             key: const Key('nativeClosure.mks.safeAction'),
           ),
           const SizedBox(height: 8),
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
-            title: const Text('Sanitized technical details'),
+            title: const MarcText('Sanitized technical details'),
             children: [
               _KeyValueGrid(
                 children: [
@@ -721,14 +730,14 @@ final class _DiagnosticTimeline extends StatelessWidget {
     return _DiagnosticsCard(
       title: 'Grouped diagnostic lifecycle',
       child: groups.isEmpty
-          ? const Text(
+          ? const MarcText(
               'No locally recorded diagnostic events',
               key: Key('nativeClosure.diagnosticTimeline.empty'),
             )
           : Column(
               key: const Key('nativeClosure.diagnosticTimeline'),
               children: [
-                const Text(
+                const MarcText(
                   'Raw lifecycle declarations are ordered evidence, not an '
                   'error count.',
                   key: Key('nativeClosure.diagnosticTimeline.guidance'),
@@ -755,13 +764,13 @@ final class _OperationDiagnosticTile extends StatelessWidget {
       key: Key('nativeClosure.operationGroup.${group.operationFingerprint}'),
       tilePadding: EdgeInsets.zero,
       initiallyExpanded: group.isNewest,
-      title: Text(
+      title: MarcText(
         title,
         key: Key(
           'nativeClosure.operationGroup.${group.operationFingerprint}.title',
         ),
       ),
-      subtitle: Text(
+      subtitle: MarcText(
         '${group.status} / ${group.terminalResult} / '
         '${group.phaseCount} phases / latest ${group.latestProvedPhase}',
         key: Key(
@@ -782,10 +791,10 @@ final class _OperationDiagnosticTile extends StatelessWidget {
                 ),
                 dense: true,
                 contentPadding: EdgeInsets.zero,
-                title: Text(
+                title: MarcText(
                   '${phase.ordinal}. ${phase.phase}: ${phase.nativeCode}',
                 ),
-                subtitle: Text(
+                subtitle: MarcText(
                   '${phase.outcome} / ${phase.severity} / '
                   'last ${phase.lastProvedPhase}',
                 ),
@@ -797,14 +806,16 @@ final class _OperationDiagnosticTile extends StatelessWidget {
             'nativeClosure.operationGroup.${group.operationFingerprint}.raw',
           ),
           tilePadding: EdgeInsets.zero,
-          title: Text('Sanitized raw lifecycle (${group.rawEvents.length})'),
+          title: MarcText(
+            'Sanitized raw lifecycle (${group.rawEvents.length})',
+          ),
           children: [
             for (final event in group.rawEvents)
               ListTile(
                 dense: true,
                 contentPadding: EdgeInsets.zero,
                 title: Text('${event.ordinal}. ${event.code} / ${event.phase}'),
-                subtitle: Text(
+                subtitle: MarcText(
                   '${event.nativeCode ?? 'native-code-unavailable'} / '
                   '${event.severity} / ${event.outcome} / '
                   'last ${event.lastProvedPhase}\n'
@@ -882,7 +893,7 @@ final class _SyncOverview extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          const Text(
+          const MarcText(
             'Live means the API process answered. Ready means the API database '
             'readiness contract passed. Neither proves Sync success.',
             key: Key('nativeClosure.health.guidance'),
@@ -1115,7 +1126,7 @@ final class _Attempts extends StatelessWidget {
     return _DiagnosticsCard(
       title: 'Recent Closure attempts',
       child: attempts.isEmpty
-          ? const Text(
+          ? const MarcText(
               'No locally recorded attempt history',
               key: Key('nativeClosure.attempts.empty'),
             )
@@ -1126,11 +1137,11 @@ final class _Attempts extends StatelessWidget {
                   ListTile(
                     dense: true,
                     contentPadding: EdgeInsets.zero,
-                    title: Text(
+                    title: MarcText(
                       '${attempt.operationKind}: ${attempt.resultCode} '
                       '#${attempt.fingerprint}',
                     ),
-                    subtitle: Text(
+                    subtitle: MarcText(
                       '${attempt.outcomeClass} / ${attempt.latestStage} / '
                       '${attempt.recoveryCode ?? 'no-recovery-code'}\n'
                       'scope client-operation / deadline-owner client / '
@@ -1158,7 +1169,10 @@ final class _Devices extends StatelessWidget {
     return _DiagnosticsCard(
       title: 'Devices',
       child: devices.isEmpty
-          ? const Text('Unavailable', key: Key('nativeClosure.devices.empty'))
+          ? const MarcText(
+              'Unavailable',
+              key: Key('nativeClosure.devices.empty'),
+            )
           : Column(
               key: const Key('nativeClosure.devices'),
               children: [
@@ -1166,11 +1180,11 @@ final class _Devices extends StatelessWidget {
                   ListTile(
                     dense: true,
                     contentPadding: EdgeInsets.zero,
-                    title: Text(
+                    title: MarcText(
                       '${device.isCurrent ? 'Current' : 'Device'} '
                       '#${device.fingerprint}',
                     ),
-                    subtitle: Text(
+                    subtitle: MarcText(
                       '${device.enrollmentState} / next ${device.nextSequence}',
                     ),
                   ),
@@ -1191,7 +1205,7 @@ final class _ActionableEvents extends StatelessWidget {
     return _DiagnosticsCard(
       title: 'Actionable events',
       child: events.isEmpty
-          ? const Text(
+          ? const MarcText(
               'No pending, failed or unknown events',
               key: Key('nativeClosure.events.empty'),
             )
@@ -1202,8 +1216,8 @@ final class _ActionableEvents extends StatelessWidget {
                   ListTile(
                     dense: true,
                     contentPadding: EdgeInsets.zero,
-                    title: Text('${event.eventType} #${event.fingerprint}'),
-                    subtitle: Text(
+                    title: MarcText('${event.eventType} #${event.fingerprint}'),
+                    subtitle: MarcText(
                       '${event.state} / sequence ${event.deviceSequence}',
                     ),
                   ),
@@ -1228,7 +1242,7 @@ final class _DiagnosticsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleMedium),
+            MarcText(title, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             child,
           ],
@@ -1281,7 +1295,7 @@ final class _DiagnosticValue extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(label, style: Theme.of(context).textTheme.labelMedium),
+            MarcText(label, style: Theme.of(context).textTheme.labelMedium),
             const SizedBox(height: 4),
             Text(value, overflow: TextOverflow.ellipsis),
           ],

@@ -126,3 +126,14 @@ Internal testing does not establish production readiness. Complete initial
 account/membership provisioning, device enrollment, restart, cross-device sync,
 account isolation, privacy/deletion review and applicable Play Console checks
 before broader beta distribution. Successful compilation is not a security audit.
+
+
+## Marc MVP beta 1.2.0+4
+
+Includes the approved Purchase/Lists/Analytics refinements, English/PT-BR/Spanish preference, and native OS sharing for filtered Lists, selected History PDF/CSV and frozen Analytics PDF/CSV. Sharing is explicit: preview/confirm, choose recipient app, then report cancellation/handoff/unconfirmed/failure without claiming delivery. It grants no Household membership. Invitations are deferred by human direction.
+
+Native sharing uses app-owned temporary files, retained for recipient reads and cleaned after one day on a later file share. It requires no broad storage permission or hosted sharing endpoint. Private List notes/tags are excluded; History sharing includes any assigned person/payment labels. The existing Downloads export remains available on Windows.
+
+Before Account-wide note/tag tests, apply the previously prepared migration 009_list_note_recovery (checksum c02-list-note-recovery-v1), deploy the matching API source and update every Device in that Account. Source validation is not evidence that migration 009 was applied to Neon. Platform sharing does not require this migration.
+
+The Home roadmap distinguishes studied NF/NF-e scanning and exploratory Marc pour Resto features from current functionality. This is a test candidate: Play production acceptance, privacy/account-deletion requirements, provider rollout and fresh physical-device checks remain separate gates.

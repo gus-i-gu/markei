@@ -127,7 +127,7 @@ final class HttpSyncTransport implements SyncTransport, RecoveryTransport {
     final response = await _sendJson('POST', '/v1/sync/rebootstrap', {
       'recoverySessionId': recoverySessionId,
       'requestHash': requestHash,
-      'supportedSnapshotFormats': [1],
+      'supportedSnapshotFormats': [1, 2],
     });
     if (response == null) {
       throw StateError('recovery start outcome is unknown');

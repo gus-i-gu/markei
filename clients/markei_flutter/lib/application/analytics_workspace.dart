@@ -138,9 +138,34 @@ final class AnalyticsWorkspaceController {
 
   AnalyticsWorkspaceSnapshot setDeterminant(AnalyticsDeterminantKind value) {
     return updateDraft(
-      _draft.copyWith(determinant: value, selectedDeterminantKeys: {}),
+      _draft.copyWith(
+        determinant: value,
+        selectedDeterminantKeys: {},
+        analytics01: _draft.analytics01.kind == value
+            ? const AnalyticsAxis()
+            : _draft.analytics01,
+        analytics02: _draft.analytics02.kind == value
+            ? const AnalyticsAxis()
+            : _draft.analytics02,
+      ),
     );
   }
+
+  AnalyticsWorkspaceSnapshot setAxis(int index, AnalyticsAxis value) =>
+      updateDraft(
+        _draft.copyWith(
+          analytics01: index == 0 ? value.frozen() : null,
+          analytics02: index == 1 ? value.frozen() : null,
+        ),
+      );
+
+  AnalyticsWorkspaceSnapshot selectAllDeterminants() => updateDraft(
+    _draft.copyWith(
+      selectedDeterminantKeys: _options()[_draft.determinant]!
+          .map((o) => o.key)
+          .toSet(),
+    ),
+  );
 
   AnalyticsWorkspaceSnapshot toggleDeterminantKey(String key) {
     final next = {..._draft.selectedDeterminantKeys};
@@ -222,8 +247,12 @@ final class AnalyticsWorkspaceController {
       registryIdentifier: _registry.definitionFor(_draft.operation).identifier,
       registryVersion: _registry.definitionFor(_draft.operation).version,
       draft: _draft.copyWith(
-        selectedDeterminantKeys: {..._draft.selectedDeterminantKeys},
-        variables: {..._draft.variables},
+        selectedDeterminantKeys: Set.unmodifiable(
+          _draft.selectedDeterminantKeys,
+        ),
+        variables: Set.unmodifiable(_draft.variables),
+        analytics01: _draft.analytics01.frozen(),
+        analytics02: _draft.analytics02.frozen(),
       ),
       selectedValues: selectedValues,
       entries: entries,
@@ -413,6 +442,7 @@ final class AnalyticsWorkspaceController {
         scrollToComposer: scrollToComposer,
       );
     }
+    _normalizeTimeDimensions(dataset);
     final rows = dataset.rows;
     final variables = _variablesState();
     final visibleRows = variables.itemRows.take(renderedPageSize).toList();
@@ -443,6 +473,34 @@ final class AnalyticsWorkspaceController {
       historyContextMessage: _historyContextMessage(dataset),
       scrollToComposer: scrollToComposer,
     );
+  }
+
+  void _normalizeTimeDimensions(AnalyticsDataset dataset) {
+    bool isTime(AnalyticsDeterminantKind? kind) =>
+        kind == AnalyticsDeterminantKind.timeDayUtc ||
+        kind == AnalyticsDeterminantKind.timeMonthUtc;
+
+    // The shared range controls dates; date checklists are no longer needed.
+    _draft = _draft.copyWith(
+      measures: _draft.measures,
+      breakdowns: _draft.breakdowns,
+      analytics01: isTime(_draft.analytics01.kind)
+          ? AnalyticsAxis(kind: _draft.analytics01.kind)
+          : null,
+      analytics02: isTime(_draft.analytics02.kind)
+          ? AnalyticsAxis(kind: _draft.analytics02.kind)
+          : null,
+    );
+    if (isTime(_draft.determinant)) {
+      _draft = _draft.copyWith(
+        measures: _draft.measures,
+        breakdowns: _draft.breakdowns,
+        selectedDeterminantKeys: {
+          for (final row in _rowsForDraft(dataset))
+            _determinantOption(row, _draft.determinant).key,
+        },
+      );
+    }
   }
 
   AnalyticsWorkspaceSnapshot _snapshotWith({
@@ -515,6 +573,14 @@ final class AnalyticsWorkspaceController {
             'No Purchase evidence yet. Register a Purchase to begin local Analytics.',
       );
     }
+    if (!_draft.timeframe.isValid) {
+      return AnalyticsDraftValidation(
+        canRun: false,
+        explanation:
+            _draft.timeframe.invalidDraft ??
+            'Enter both Start date and End date as dd-mm-yyyy.',
+      );
+    }
     if (_draft.breakdowns.contains(AnalyticsRelationalBreakdown.purchasedFor)) {
       return const AnalyticsDraftValidation(
         canRun: false,
@@ -522,10 +588,14 @@ final class AnalyticsWorkspaceController {
       );
     }
     if (_draft.selectedDeterminantKeys.isEmpty) {
-      return const AnalyticsDraftValidation(
+      final temporal =
+          _draft.determinant == AnalyticsDeterminantKind.timeDayUtc ||
+          _draft.determinant == AnalyticsDeterminantKind.timeMonthUtc;
+      return AnalyticsDraftValidation(
         canRun: false,
-        explanation:
-            'Choose at least one Product, Purchase, Store, date or period.',
+        explanation: temporal
+            ? 'No recorded purchases match this timeframe and comparisons. Change the dates or comparisons.'
+            : 'Choose at least one Product, Purchase or Store.',
       );
     }
     if (_draft.measures.isEmpty) {
@@ -533,14 +603,6 @@ final class AnalyticsWorkspaceController {
         canRun: false,
         explanation:
             'Choose at least one numeric variable. Categorical variables break down a result but are not calculated.',
-      );
-    }
-    if (!_draft.timeframe.isValid) {
-      return AnalyticsDraftValidation(
-        canRun: false,
-        explanation:
-            _draft.timeframe.invalidDraft ??
-            'Enter both Initial date and Final date as dd-mm-yyyy.',
       );
     }
     final variables = _draft.measures.map(_variableFor).toSet();
@@ -553,12 +615,36 @@ final class AnalyticsWorkspaceController {
         );
       }
     }
+    final axisKinds = _draft.axes
+        .map((axis) => axis.kind)
+        .whereType<AnalyticsDeterminantKind>()
+        .toList();
+    if (axisKinds.toSet().length != axisKinds.length ||
+        axisKinds.contains(_draft.determinant)) {
+      return const AnalyticsDraftValidation(
+        canRun: false,
+        explanation:
+            'Choose different dimensions for Determinants, Analytics 01 and Analytics 02.',
+      );
+    }
+    for (final axis in _draft.axes) {
+      if (axis.kind != null &&
+          !axis.selectedKeys.every(
+            _options()[axis.kind]!.map((o) => o.key).toSet().contains,
+          )) {
+        return const AnalyticsDraftValidation(
+          canRun: false,
+          explanation:
+              'A comparison selection is no longer available. Choose it again.',
+        );
+      }
+    }
     final filtered = _rowsForDraft(dataset);
     if (filtered.isEmpty) {
       return const AnalyticsDraftValidation(
         canRun: false,
         explanation:
-            'Choose at least one Product, Purchase, Store, date or period.',
+            'No recorded purchases match this timeframe and comparisons. Change the dates or comparisons.',
       );
     }
     if (_draft.operation == AnalyticsOperation.difference &&
@@ -619,6 +705,51 @@ final class AnalyticsWorkspaceController {
     AnalyticsComposerDraft draft,
     Map<String, _GroupBucket> groups,
   ) {
+    if (!groups.values.any((group) => group.key.value.contains('|'))) {
+      return _comparisonEntriesCore(definition, draft, groups);
+    }
+    final contexts = <String, Map<String, _GroupBucket>>{};
+    for (final group in groups.values) {
+      final parts = group.key.value.split('|');
+      contexts.putIfAbsent(parts.skip(1).join('|'), () => {})[parts.first] =
+          group;
+    }
+    final result = <AnalyticsGroupedResultEntry>[];
+    for (final pair in contexts.values) {
+      if (draft.selectedDeterminantKeys.every(pair.containsKey)) {
+        result.addAll(_comparisonEntriesCore(definition, draft, pair));
+      } else {
+        final group = pair.values.first;
+        for (final measure in draft.measures) {
+          result.add(
+            AnalyticsGroupedResultEntry(
+              groupKey: group.key,
+              measure: measure,
+              operation: draft.operation,
+              compatibilityKey: const AnalyticsCompatibilityKey('none'),
+              value: const AnalyticsUnavailableResultValue(
+                label: 'Comparison',
+                reason: AnalyticsUnavailableReason.insufficientEvidence,
+                message:
+                    'Both selected rows need evidence in this comparison context.',
+              ),
+              eligibleCount: 0,
+              totalCount: group.rows.length,
+              excludedCount: group.rows.length,
+              contributingRowIds: group.rows.map((row) => row.id).toSet(),
+            ),
+          );
+        }
+      }
+    }
+    return List.unmodifiable(result);
+  }
+
+  List<AnalyticsGroupedResultEntry> _comparisonEntriesCore(
+    AnalyticDefinition definition,
+    AnalyticsComposerDraft draft,
+    Map<String, _GroupBucket> groups,
+  ) {
     final keys = draft.selectedDeterminantKeys.toList()..sort();
     if (keys.length != 2) return const [];
     final baseline = groups[keys[0]];
@@ -641,6 +772,8 @@ final class AnalyticsWorkspaceController {
             AnalyticsGroupedResultEntry(
               groupKey: AnalyticsGroupKey(
                 value: '${baseline.key.value}->${comparison.key.value}',
+                seriesLabels: baseline.key.seriesLabels,
+                breakdownLabels: baseline.key.breakdownLabels,
                 determinantLabel:
                     '${comparison.key.determinantLabel} minus ${baseline.key.determinantLabel}',
               ),
@@ -671,6 +804,8 @@ final class AnalyticsWorkspaceController {
               AnalyticsGroupedResultEntry(
                 groupKey: AnalyticsGroupKey(
                   value: '${baseline.key.value}/${comparison.key.value}',
+                  seriesLabels: baseline.key.seriesLabels,
+                  breakdownLabels: baseline.key.breakdownLabels,
                   determinantLabel:
                       '${baseline.key.determinantLabel} share of ${comparison.key.determinantLabel}',
                 ),
@@ -700,6 +835,8 @@ final class AnalyticsWorkspaceController {
             AnalyticsGroupedResultEntry(
               groupKey: AnalyticsGroupKey(
                 value: '${baseline.key.value}/${comparison.key.value}',
+                seriesLabels: baseline.key.seriesLabels,
+                breakdownLabels: baseline.key.breakdownLabels,
                 determinantLabel:
                     '${baseline.key.determinantLabel} share of ${comparison.key.determinantLabel}',
               ),
@@ -747,6 +884,13 @@ final class AnalyticsWorkspaceController {
     final determinant = _determinantOption(row, draft.determinant);
     final breakdownLabels = <AnalyticsRelationalBreakdown, String>{};
     final parts = <String>[determinant.key];
+    final seriesLabels = <String>[];
+    for (final axis in draft.axes) {
+      if (axis.kind == null) continue;
+      final option = _determinantOption(row, axis.kind!);
+      parts.add('${axis.kind!.name}:${option.key}');
+      seriesLabels.add(option.label);
+    }
     for (final breakdown in draft.breakdowns) {
       final option = _breakdownOption(row, breakdown);
       breakdownLabels[breakdown] = option.label;
@@ -756,6 +900,7 @@ final class AnalyticsWorkspaceController {
       value: parts.join('|'),
       determinantLabel: determinant.label,
       breakdownLabels: breakdownLabels,
+      seriesLabels: seriesLabels,
     );
   }
 
@@ -901,6 +1046,15 @@ final class AnalyticsWorkspaceController {
               return false;
             }
           }
+          for (final axis in _draft.axes) {
+            if (axis.kind != null &&
+                axis.selectedKeys.isNotEmpty &&
+                !axis.selectedKeys.contains(
+                  _determinantOption(row, axis.kind!).key,
+                )) {
+              return false;
+            }
+          }
           return true;
         })
         .toList(growable: false);
@@ -940,7 +1094,8 @@ final class AnalyticsWorkspaceController {
     return switch (kind) {
       AnalyticsDeterminantKind.product => AnalyticsOption(
         key: row.productId.value,
-        label: '${row.productCode} - ${row.productName}',
+        label:
+            '${row.productCode} - ${row.productName}${row.productBrand.isEmpty ? '' : ' · ${row.productBrand}'}',
       ),
       AnalyticsDeterminantKind.purchase => AnalyticsOption(
         key: row.purchaseId.value,
@@ -1213,6 +1368,7 @@ final class AnalyticsWorkspaceController {
       'breakdowns=${draft.breakdowns.map((b) => b.name).toList()..sort()}',
       'measures=${draft.measures.map((m) => m.name).toList()..sort()}',
       'variables=${draft.variables.map((v) => v.name).toList()..sort()}',
+      'axes=${draft.axes.map((a) => '${a.kind?.name}:${a.selectedKeys.toList()..sort()}').join('|')}',
       'operation=${draft.operation.name}',
       'timeframe=${draft.timeframe.label}',
       'rows=${sortedRowIds.join('|')}',

@@ -1,3 +1,4 @@
+import 'package:markei/application/content_sharing.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:markei/application/export_destination.dart';
@@ -17,6 +18,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
+      final sharing = _Sharing();
       final controller = AnalyticsWorkspaceController(
         accountId: const AccountId('account-1'),
         repository: const _Repository(),
@@ -31,6 +33,7 @@ void main() {
               controller: controller,
               launchContext: null,
               exportDestination: exportDestination,
+              contentSharing: sharing,
               visible: true,
             ),
           ),
@@ -40,22 +43,41 @@ void main() {
 
       expect(find.byKey(const Key('analytics.page')), findsOneWidget);
       expect(find.text('Create analysis'), findsOneWidget);
-      expect(find.text('Saved analyses — this session'), findsOneWidget);
-      expect(find.text('Variables'), findsOneWidget);
       expect(find.text('Supporting evidence matrix'), findsNothing);
 
       await tester.tap(find.byKey(const Key('analytics.choose.product-1')));
       await tester.pump();
+      await tester.ensureVisible(
+        find.byKey(const Key('analytics.variable.lineTotal')),
+      );
       await tester.tap(find.byKey(const Key('analytics.variable.lineTotal')));
       await tester.pump();
+      await tester.ensureVisible(find.byKey(const Key('analytics.runSave')));
       await tester.tap(find.byKey(const Key('analytics.runSave')));
       await tester.pumpAndSettle();
 
       expect(controller.snapshot.records, hasLength(1));
       expect(find.textContaining('Record #'), findsWidgets);
-      await tester.drag(
-        find.byKey(const Key('analytics.page')),
-        const Offset(0, -700),
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('analytics.records')),
+        250,
+        scrollable: find
+            .descendant(
+              of: find.byKey(const Key('analytics.page')),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      expect(find.text('Saved analyses — this session'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('analytics.export.csv')),
+        300,
+        scrollable: find
+            .descendant(
+              of: find.byKey(const Key('analytics.page')),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('analytics.result')), findsOneWidget);
@@ -69,9 +91,27 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
       expect(exportDestination.writeCount, 2);
       expect(exportDestination.requests.last.extension, 'pdf');
-      await tester.drag(
-        find.byKey(const Key('analytics.page')),
-        const Offset(0, -900),
+      final fingerprint = controller.snapshot.selectedRecord!.fingerprint;
+      await tester.tap(find.byKey(const Key('analytics.share')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Share CSV'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('share.confirm')));
+      await tester.pumpAndSettle();
+      expect(sharing.requests.single.file!.extension, 'csv');
+      expect(controller.snapshot.selectedRecord!.fingerprint, fingerprint);
+      expect(controller.snapshot.records, hasLength(1));
+      expect(exportDestination.writeCount, 2);
+
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('analytics.items.table')),
+        300,
+        scrollable: find
+            .descendant(
+              of: find.byKey(const Key('analytics.page')),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('analytics.items.table')), findsOneWidget);
@@ -145,5 +185,14 @@ final class _Repository implements AnalyticsEvidenceRepository {
         ),
       ],
     );
+  }
+}
+
+final class _Sharing implements ContentSharingPort {
+  final requests = <ContentShareRequest>[];
+  @override
+  Future<ContentShareResult> share(ContentShareRequest request) async {
+    requests.add(request);
+    return ContentShareResult.handedOff;
   }
 }

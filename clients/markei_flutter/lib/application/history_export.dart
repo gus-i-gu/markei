@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../l10n/marc_messages.dart';
 
 import '../domain/shared/ids.dart';
 import 'purchase_history.dart';
@@ -16,7 +17,10 @@ abstract interface class PurchaseExportRepository {
   );
 }
 
-String purchaseBundleCsv(PurchaseExportBundle bundle) {
+String purchaseBundleCsv(
+  PurchaseExportBundle bundle, {
+  MarcMessages messages = MarcMessages.english,
+}) {
   final rows = <List<String>>[
     [
       'purchase_id',
@@ -41,14 +45,14 @@ String purchaseBundleCsv(PurchaseExportBundle bundle) {
         detail.entry.purchaseId.value,
         detail.entry.occurrenceTime.toUtc().toIso8601String(),
         detail.entry.storeName,
-        detail.entry.personLabel ?? 'Not assigned',
-        detail.entry.paymentMethodLabel ?? 'Not assigned',
+        detail.entry.personLabel ?? messages.display('Not assigned'),
+        detail.entry.paymentMethodLabel ?? messages.display('Not assigned'),
         detail.entry.currencyCode,
         detail.entry.totalMinorUnits.toString(),
         item.productCode,
         item.productName,
         item.productBrand,
-        item.packageCount?.toString() ?? 'Not assigned',
+        item.packageCount?.toString() ?? messages.display('Not assigned'),
         item.purchasedAmount,
         item.purchasedUnit,
         item.lineTotalMinorUnits.toString(),
@@ -58,19 +62,30 @@ String purchaseBundleCsv(PurchaseExportBundle bundle) {
   return rows.map((row) => row.map(_csvCell).join(',')).join('\r\n');
 }
 
-List<int> purchaseBundlePdfBytes(PurchaseExportBundle bundle) {
-  final text = StringBuffer('Markei selected purchase list\n\n');
+List<int> purchaseBundlePdfBytes(
+  PurchaseExportBundle bundle, {
+  MarcMessages messages = MarcMessages.english,
+}) {
+  final text = StringBuffer(
+    messages.display('Markei selected purchase list\n\n'),
+  );
   for (final detail in bundle.purchases) {
     text.writeln(
-      '${detail.entry.storeName} - ${detail.entry.occurrenceTime.toLocal()} - ${detail.entry.currencyCode} ${(detail.entry.totalMinorUnits / 100).toStringAsFixed(2)}',
+      '${detail.entry.storeName} - ${detail.entry.occurrenceTime.toLocal()} - ${detail.entry.currencyCode} ${messages.numericCopy((detail.entry.totalMinorUnits / 100).toStringAsFixed(2))}',
     );
-    text.writeln('Person: ${detail.entry.personLabel ?? 'Not assigned'}');
     text.writeln(
-      'Payment Method: ${detail.entry.paymentMethodLabel ?? 'Not assigned'}',
+      messages.message('Person: {p0}', [
+        detail.entry.personLabel ?? messages.display('Not assigned'),
+      ]),
+    );
+    text.writeln(
+      messages.message('Payment Method: {p0}', [
+        detail.entry.paymentMethodLabel ?? messages.display('Not assigned'),
+      ]),
     );
     for (final item in detail.items) {
       text.writeln(
-        '- ${item.productCode} ${item.productName}: ${item.purchasedAmount} ${item.purchasedUnit} ${item.currencyCode} ${(item.lineTotalMinorUnits / 100).toStringAsFixed(2)}',
+        '- ${item.productCode} ${item.productName}: ${item.purchasedAmount} ${item.purchasedUnit} ${item.currencyCode} ${messages.numericCopy((item.lineTotalMinorUnits / 100).toStringAsFixed(2))}',
       );
     }
     text.writeln();
@@ -87,19 +102,16 @@ String _csvCell(String value) {
 
 List<int> _simplePdf(String text) {
   final escaped = text
-      .replaceAll('\\', r'\\')
-      .replaceAll('(', r'\(')
-      .replaceAll(')', r'\)')
       .replaceAll('\r', '')
       .split('\n')
-      .map((line) => '($line) Tj T*')
+      .map((line) => '(${_pdfLiteral(line)}) Tj T*')
       .join('\n');
   final stream = 'BT /F1 10 Tf 40 780 Td 14 TL\n$escaped\nET';
   final objects = <String>[
     '1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n',
     '2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj\n',
     '3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >> endobj\n',
-    '4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n',
+    '4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >> endobj\n',
     '5 0 obj << /Length ${ascii.encode(stream).length} >> stream\n$stream\nendstream endobj\n',
   ];
   final buffer = StringBuffer('%PDF-1.4\n');
@@ -120,4 +132,20 @@ List<int> _simplePdf(String text) {
     'trailer << /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n$xrefOffset\n%%EOF\n',
   );
   return ascii.encode(buffer.toString());
+}
+
+String _pdfLiteral(String value) {
+  final buffer = StringBuffer();
+  for (final rune in value.runes) {
+    if (rune == 40 || rune == 41 || rune == 92) {
+      buffer.write('\\${String.fromCharCode(rune)}');
+    } else if (rune >= 32 && rune <= 126) {
+      buffer.writeCharCode(rune);
+    } else if (rune >= 160 && rune <= 255) {
+      buffer.write('\\${rune.toRadixString(8).padLeft(3, '0')}');
+    } else {
+      buffer.write('?');
+    }
+  }
+  return buffer.toString();
 }

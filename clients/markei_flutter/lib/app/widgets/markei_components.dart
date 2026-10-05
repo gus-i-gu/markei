@@ -1,3 +1,4 @@
+import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../design/markei_theme.dart';
@@ -63,10 +64,10 @@ class MarkeiSection extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: MarkeiText.sectionTitle),
+                    MarcText(title, style: MarkeiText.sectionTitle),
                     if (subtitle != null) ...[
                       const SizedBox(height: MarkeiSpacing.xxs),
-                      Text(subtitle!, style: MarkeiText.metadata),
+                      MarcText(subtitle!, style: MarkeiText.metadata),
                     ],
                   ],
                 ),
@@ -134,7 +135,7 @@ class MarkeiFact extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: MarkeiText.metadata),
+          MarcText(label, style: MarkeiText.metadata),
           const SizedBox(height: MarkeiSpacing.xxs),
           Text(value, style: MarkeiText.label),
         ],
@@ -224,9 +225,9 @@ class MarkeiPageHeader extends StatelessWidget {
         final titleBlock = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: MarkeiText.pageTitle),
+            MarcText(title, style: MarkeiText.pageTitle),
             const SizedBox(height: MarkeiSpacing.xs),
-            Text(purpose, style: theme.textTheme.bodyMedium),
+            MarcText(purpose, style: theme.textTheme.bodyMedium),
             if (trailing != null && !inlineTrailing) ...[
               const SizedBox(height: MarkeiSpacing.xs),
               trailing!,
@@ -311,12 +312,12 @@ class MarkeiSummaryTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: MarkeiText.label),
+                MarcText(label, style: MarkeiText.label),
                 const SizedBox(height: MarkeiSpacing.xxs),
                 Text(value, style: MarkeiText.numeric),
                 if (detail != null) ...[
                   const SizedBox(height: MarkeiSpacing.xxs),
-                  Text(detail!, style: MarkeiText.metadata),
+                  MarcText(detail!, style: MarkeiText.metadata),
                 ],
               ],
             ),
@@ -381,10 +382,10 @@ class MarkeiStatePanel extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (title != null) ...[
-                      Text(title!, style: MarkeiText.sectionTitle),
+                      MarcText(title!, style: MarkeiText.sectionTitle),
                       const SizedBox(height: MarkeiSpacing.xs),
                     ],
-                    Text(message),
+                    MarcText(message),
                   ],
                 ),
               ),
@@ -413,7 +414,7 @@ class MarkeiStatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Chip(
-      label: Text(
+      label: MarcText(
         label,
         style: MarkeiText.label.copyWith(color: tone.foreground),
       ),

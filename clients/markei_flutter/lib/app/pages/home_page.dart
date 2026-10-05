@@ -1,3 +1,4 @@
+import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../application/home_content.dart';
@@ -28,7 +29,7 @@ class HomePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  const MarcText(
                     'MARC / HOUSEHOLD GOVERNANCE',
                     style: TextStyle(
                       fontSize: 11,
@@ -38,7 +39,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  Text(
+                  MarcText(
                     'Your household,\na little clearer.',
                     style: TextStyle(
                       fontSize: layoutClass == MarkeiLayoutClass.compact
@@ -51,7 +52,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                  const MarcText(
                     'Register purchases. Find your rhythm.\nKeep everyday essentials in view.',
                     style: TextStyle(
                       fontSize: 15,
@@ -68,10 +69,18 @@ class HomePage extends StatelessWidget {
                     ),
                     onPressed: () => onNavigate(MarkeiDestinationId.purchase),
                     icon: const Icon(Icons.add_shopping_cart_outlined),
-                    label: const Text('Register purchase'),
+                    label: const MarcText('Register purchase'),
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: MarkeiSpacing.lg),
+            const MarkeiStatePanel(
+              key: Key('home.translationReview'),
+              title: 'Translations under review',
+              message:
+                  'Portuguese and Spanish translations will receive human review for the first official app update.',
+              icon: Icons.translate_outlined,
             ),
             const SizedBox(height: MarkeiSpacing.lg),
             MarkeiResponsiveGrid(
@@ -95,6 +104,22 @@ class HomePage extends StatelessWidget {
                 for (final card in homeFollowUpCards)
                   _HomeInformationCard(descriptor: card),
               ],
+            ),
+            const SizedBox(height: MarkeiSpacing.lg),
+            const MarkeiStatePanel(
+              key: Key('home.scanRoadmap'),
+              title: 'NF / NF-e Scan · under study',
+              message:
+                  'Scanning Brazilian fiscal receipts and NF-e is under study. If technically viable, it may arrive in the first app updates. It is not available in this MVP.',
+              icon: Icons.qr_code_scanner_outlined,
+            ),
+            const SizedBox(height: MarkeiSpacing.lg),
+            const MarkeiStatePanel(
+              key: Key('home.restoRoadmap'),
+              title: 'Marc pour Resto · preview',
+              message:
+                  'A restaurant edition is planned for exploration over the coming months: advanced statistics and analytics, possible secure institutional messaging, and potential Receita Federal / CNPJ integration to simplify supply-chain declarations. Scope and availability remain subject to research and validation.',
+              icon: Icons.restaurant_outlined,
             ),
             const SizedBox(height: MarkeiSpacing.lg),
             const MarkeiStatePanel(
@@ -135,12 +160,12 @@ class _HomeInformationCard extends StatelessWidget {
         children: [
           Icon(Icons.info_outline, color: MarkeiColors.lavender),
           const SizedBox(height: MarkeiSpacing.sm),
-          Text(descriptor.title, style: MarkeiText.sectionTitle),
+          MarcText(descriptor.title, style: MarkeiText.sectionTitle),
           const SizedBox(height: MarkeiSpacing.xs),
-          Text(descriptor.body),
+          MarcText(descriptor.body),
           if (descriptor.badge != null) ...[
             const SizedBox(height: MarkeiSpacing.sm),
-            Text(descriptor.badge!, style: MarkeiText.metadata),
+            MarcText(descriptor.badge!, style: MarkeiText.metadata),
           ],
         ],
       ),
@@ -193,16 +218,16 @@ class _HomeTaskCard extends StatelessWidget {
             child: Icon(destination.$1, color: tone.foreground),
           ),
           const SizedBox(height: MarkeiSpacing.sm),
-          Text(descriptor.title, style: MarkeiText.sectionTitle),
+          MarcText(descriptor.title, style: MarkeiText.sectionTitle),
           const SizedBox(height: MarkeiSpacing.xs),
-          Text(descriptor.body),
+          MarcText(descriptor.body),
           const SizedBox(height: MarkeiSpacing.sm),
           Align(
             alignment: Alignment.centerLeft,
             child: OutlinedButton(
               key: Key(destination.$2),
               onPressed: onTap,
-              child: Text(destination.$3),
+              child: MarcText(destination.$3),
             ),
           ),
         ],

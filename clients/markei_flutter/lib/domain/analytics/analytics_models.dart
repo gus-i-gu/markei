@@ -260,12 +260,13 @@ final class AnalyticsTimeframe {
   }) : kind = AnalyticsTimeframeKind.customUtc,
        invalidDraft = null;
 
-  const AnalyticsTimeframe.invalid(this.invalidDraft)
-    : kind = AnalyticsTimeframeKind.customUtc,
-      startUtc = null,
-      endUtc = null,
-      initialLocalDate = null,
-      finalLocalDate = null;
+  const AnalyticsTimeframe.invalid(
+    this.invalidDraft, {
+    this.initialLocalDate,
+    this.finalLocalDate,
+  }) : kind = AnalyticsTimeframeKind.customUtc,
+       startUtc = null,
+       endUtc = null;
 
   final AnalyticsTimeframeKind kind;
   final DateTime? startUtc;
@@ -312,10 +313,21 @@ final class AnalyticsOption {
   final String label;
 }
 
+/// An optional comparison dimension. Empty keys include all its recorded values.
+final class AnalyticsAxis {
+  const AnalyticsAxis({this.kind, this.selectedKeys = const {}});
+  final AnalyticsDeterminantKind? kind;
+  final Set<String> selectedKeys;
+  AnalyticsAxis frozen() =>
+      AnalyticsAxis(kind: kind, selectedKeys: Set.unmodifiable(selectedKeys));
+}
+
 final class AnalyticsComposerDraft {
   const AnalyticsComposerDraft({
     this.determinant = AnalyticsDeterminantKind.product,
     this.selectedDeterminantKeys = const {},
+    this.analytics01 = const AnalyticsAxis(),
+    this.analytics02 = const AnalyticsAxis(),
     this.variables = const {},
     this.breakdowns = const {},
     this.measures = const {},
@@ -326,6 +338,9 @@ final class AnalyticsComposerDraft {
 
   final AnalyticsDeterminantKind determinant;
   final Set<String> selectedDeterminantKeys;
+  final AnalyticsAxis analytics01;
+  final AnalyticsAxis analytics02;
+  List<AnalyticsAxis> get axes => [analytics01, analytics02];
   final Set<AnalyticsVariable> variables;
   final Set<AnalyticsRelationalBreakdown> breakdowns;
   final Set<AnalyticsMeasure> measures;
@@ -336,6 +351,8 @@ final class AnalyticsComposerDraft {
   AnalyticsComposerDraft copyWith({
     AnalyticsDeterminantKind? determinant,
     Set<String>? selectedDeterminantKeys,
+    AnalyticsAxis? analytics01,
+    AnalyticsAxis? analytics02,
     Set<AnalyticsVariable>? variables,
     Set<AnalyticsRelationalBreakdown>? breakdowns,
     Set<AnalyticsMeasure>? measures,
@@ -345,6 +362,8 @@ final class AnalyticsComposerDraft {
   }) {
     return AnalyticsComposerDraft(
       determinant: determinant ?? this.determinant,
+      analytics01: analytics01 ?? this.analytics01,
+      analytics02: analytics02 ?? this.analytics02,
       selectedDeterminantKeys:
           selectedDeterminantKeys ?? this.selectedDeterminantKeys,
       variables: variables ?? this.variables,
@@ -554,11 +573,16 @@ final class AnalyticsGroupKey {
     required this.value,
     required this.determinantLabel,
     Map<AnalyticsRelationalBreakdown, String> breakdownLabels = const {},
-  }) : breakdownLabels = Map.unmodifiable(breakdownLabels);
+    List<String> seriesLabels = const [],
+  }) : breakdownLabels = Map.unmodifiable(breakdownLabels),
+       seriesLabels = List.unmodifiable(seriesLabels);
 
   final String value;
   final String determinantLabel;
   final Map<AnalyticsRelationalBreakdown, String> breakdownLabels;
+  final List<String> seriesLabels;
+  String get contextLabel =>
+      [...seriesLabels, ...breakdownLabels.values].join(" · ");
 }
 
 final class AnalyticsGroupedResultEntry {

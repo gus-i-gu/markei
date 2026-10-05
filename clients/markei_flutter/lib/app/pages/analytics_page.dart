@@ -1,3 +1,7 @@
+import '../../application/content_sharing.dart';
+import '../widgets/content_share_dialog.dart';
+import '../../l10n/marc_localizations.dart';
+import '../../l10n/analytics_copy.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -17,6 +21,7 @@ class AnalyticsPage extends StatefulWidget {
     required this.launchContext,
     required this.exportDestination,
     required this.visible,
+    this.contentSharing,
     super.key,
   });
 
@@ -24,6 +29,8 @@ class AnalyticsPage extends StatefulWidget {
   final AnalyticsLaunchContext? launchContext;
   final ExportDestinationPort exportDestination;
   final bool visible;
+
+  final ContentSharingPort? contentSharing;
 
   @override
   State<AnalyticsPage> createState() => _AnalyticsPageState();
@@ -33,6 +40,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   late Future<AnalyticsWorkspaceSnapshot> _loadFuture;
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _composerKey = GlobalKey();
+  bool _sharing = false;
 
   @override
   void initState() {
@@ -106,7 +114,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           purpose:
               'Deterministic local calculations over this Account\'s recorded Purchase evidence.',
           icon: Icons.analytics_outlined,
-          trailing: Text(
+          trailing: MarcText(
             '${state.rows.length} contained item(s)',
             style: MarkeiText.metadata,
           ),
@@ -119,20 +127,20 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              MarcText(
                 state.historyContextMessage ??
                     'All local Account evidence is available.',
               ),
               if (state.message != null) ...[
                 const SizedBox(height: MarkeiSpacing.xs),
-                Text(state.message!, key: const Key('analytics.message')),
+                MarcText(state.message!, key: const Key('analytics.message')),
               ],
               const SizedBox(height: MarkeiSpacing.sm),
               OutlinedButton.icon(
                 key: const Key('analytics.retry'),
                 onPressed: _retry,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Retry local evidence read'),
+                label: const MarcText('Retry local evidence read'),
               ),
             ],
           ),
@@ -150,6 +158,10 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
                 setState(() => widget.controller.toggleDeterminantKey(value)),
             onToggleVariable: (value) =>
                 setState(() => widget.controller.toggleVariable(value)),
+            onSelectAllDeterminants: () =>
+                setState(widget.controller.selectAllDeterminants),
+            onAxisChanged: (index, axis) =>
+                setState(() => widget.controller.setAxis(index, axis)),
             onOperationChanged: (value) =>
                 setState(() => widget.controller.setOperation(value)),
             onTimeframeChanged: (value) =>
@@ -173,13 +185,21 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               setState(() => widget.controller.setPresentation(value)),
           onExportCsv: _exportCsv,
           onExportPdf: _exportPdf,
+          onShare: widget.contentSharing == null || _sharing
+              ? null
+              : _shareRecord,
         ),
         const SizedBox(height: MarkeiSpacing.md),
         if (state.selectedRecord != null)
           MarkeiSection(
             title: 'Result interpretation',
             subtitle: 'Timeframe and evidence counts',
-            child: Text(state.selectedRecord!.interpretation),
+            child: Text(
+              localizedAnalyticsInterpretation(
+                state.selectedRecord!,
+                MarcLocalizations.of(context),
+              ),
+            ),
           ),
         const SizedBox(height: MarkeiSpacing.xl),
         AnalyticsVariablesView(
@@ -212,7 +232,60 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
     });
   }
 
+  Future<void> _shareRecord(String format) async {
+    final record = widget.controller.snapshot.selectedRecord;
+    if (record == null || _sharing || widget.contentSharing == null) return;
+    final messages = MarcLocalizations.of(context);
+    final dataset = AnalyticsDataset(
+      accountId: const AccountId('export-snapshot'),
+      rows: widget.controller.snapshot.rows,
+    );
+    setState(() => _sharing = true);
+    try {
+      final approved = await confirmContentShare(
+        context,
+        description: messages.message(
+          'Share this saved Analytics result as {p0}. It includes the selected context, calculated values and product/store labels.',
+          [format],
+        ),
+      );
+      if (!approved || !mounted) return;
+      final request = ExportDestinationRequest(
+        baseNameCue: 'marc-analytics-${record.fingerprint.toLowerCase()}',
+        extension: format.toLowerCase(),
+        mediaType: format == 'PDF' ? 'application/pdf' : 'text/csv',
+        bytes: format == 'PDF'
+            ? analyticsRecordPdfBytes(record, messages: messages)
+            : utf8.encode(
+                analyticsRecordCsv(record, dataset, messages: messages),
+              ),
+      );
+      final result = await widget.contentSharing!.share(
+        ContentShareRequest(
+          title: messages.display('Marc Analytics'),
+          file: request,
+        ),
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: MarcText(contentShareMessage(result))),
+        );
+      }
+    } on Object {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: MarcText(contentShareMessage(ContentShareResult.failed)),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _sharing = false);
+    }
+  }
+
   Future<void> _exportCsv() async {
+    final messages = MarcLocalizations.of(context);
     final record = widget.controller.snapshot.selectedRecord;
     if (record == null) return;
     try {
@@ -222,6 +295,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           accountId: const AccountId('export-snapshot'),
           rows: widget.controller.snapshot.rows,
         ),
+        messages: messages,
       );
       final result = await widget.exportDestination.write(
         ExportDestinationRequest(
@@ -233,14 +307,14 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(exportDestinationMessage('CSV', result))),
+          SnackBar(content: MarcText(exportDestinationMessage('CSV', result))),
         );
       }
     } on Object {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('CSV export failed. Record was preserved.'),
+            content: MarcText('CSV export failed. Record was preserved.'),
           ),
         );
       }
@@ -248,6 +322,7 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
   }
 
   Future<void> _exportPdf() async {
+    final messages = MarcLocalizations.of(context);
     final record = widget.controller.snapshot.selectedRecord;
     if (record == null) return;
     try {
@@ -256,19 +331,19 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           baseNameCue: 'markei-analytics-${record.fingerprint.toLowerCase()}',
           extension: 'pdf',
           mediaType: 'application/pdf',
-          bytes: analyticsRecordPdfBytes(record),
+          bytes: analyticsRecordPdfBytes(record, messages: messages),
         ),
       );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(exportDestinationMessage('PDF', result))),
+          SnackBar(content: MarcText(exportDestinationMessage('PDF', result))),
         );
       }
     } on Object {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('PDF export failed. Record was preserved.'),
+            content: MarcText('PDF export failed. Record was preserved.'),
           ),
         );
       }
