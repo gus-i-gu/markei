@@ -147,3 +147,90 @@ Fresh source evidence: analysis reports no issues; full serial client suite pass
 Packaging boundary: prepare signed APK, upload-signed AAB and Windows setup from this source, then publish as an MVP beta test candidate. Exact artifact hashes/signatures and packaging outcomes are recorded in the task's outputs/Marc-MVP-1.2.0-4-manifest.json when produced. The accompanying testing guide names direct-device updates, Play internal testing and Play App Signing/Auth0 fingerprint verification. Windows publisher signing remains unconfigured; Google Play acceptance and real-device sharing remain human gates. No production launch is claimed by tests/compilation.
 
 Existing provider rollout remains separate: the earlier List note/tag changes need migration 009_list_note_recovery and the matching API deployment before Account-wide note tests; all Devices in that Account must use updated clients. This Step adds no new backend migration. No Neon, Auth0, Render or Play Console mutation is claimed. Test users still need fresh onboarding/isolation acceptance, and C01 privacy/account-deletion/store requirements remain open. This observational append preserves prior evidence and does not promote canonical semantics.
+
+
+---
+
+## 2026-10-05 — C02 statistics, Household and disclosure refinement / Marc 1.2.1+5
+
+**Class:** observational materialization and beta release evidence; no canonical promotion. This dated entry follows the existing C02 materializations in `documentation/sketch_notebook/DEV_STAGE/I_DSN_CODEX.md`.
+
+### Authority, recovery and bounded scope
+
+Direct human instructions authorized the Analytics usability correction, Household/Settings People and Payment Method refinements, two Lists date interpretations, a future-Purchase review gate, and accurate in-app data/permissions/provider documentation. The human confirmed version **1.2.1+5**, Device-local payment assignments, and the labels **Most recent Purchase Registered** / **Last Purchase up to date**. After viewing the real-widget preview, the human confirmed the Variables table as the remaining section to refine, then approved the result and requested wrap-up. These instructions govern this bounded follow-up; the historical C11 D/E/F material remains unchanged and is not represented as newly granted C02 authority.
+
+Recovery used repository `AGENTS.md`, Sketch `INDEX.md`, the existing C02 evidence in `I_DSN_CODEX.md`, and relevant implementation/test/build evidence. Main/root and domain checkpoints retain older C11/C12 planning context; this report exposes the new observations without silently rewriting those checkpoints or declaring Cycle 13 definitive UI acceptance.
+
+Base: `81c958a4fba9370f47c2dcdbc173cbd177d0248c` on the active `markei-season-02` lineage. Reproducible candidate source: **`8d707ef3b52738b9b6e38b975b2c3793bf42d070`**, committed in the isolated matching checkout. Git tree object: `7a0c53a800d2ebc131a0c41aad9e18f976e1fc21`. Source-tree SHA-256: `cc90eed11552b5fcae07d63ee5c534d64d5abc951bd32870bd3de092ef7d167c`, using UTF-8 `markei-source-tree-v1`, LF, the tree object ID, LF. The candidate's 45 changed files are confined to `clients/markei_flutter`; no API or hosted migration source changed in this refinement. Source identity is recorded in `outputs/Marc-1.2.1-5-source.json`. The clean canonical checkout was fast-forwarded without rewriting history; GitHub beta source and all 11 asset digests were verified. Notebook reconciliation is a documentation-only follow-up whose client tree matches this build commit.
+
+### Completed behavior
+
+- **Statistics:** identical configuration and normalized evidence cannot create another analysis until configuration or actual evidence values change. Input order alone does not create a distinct run. Frozen saved analyses retain their evidence and selections; selecting a card restores its configuration and result without recalculation. Compact cards show two lines. The controls use **Determinant**, **Analytics**, and **Analytics constraint**, with a type dropdown and a searchable, scrollable five-row checklist of recorded values plus all-record selection. The selected statistic remains separate. `Statistics: …` identifies the selected measures. Interpretation uses a subheader and body explaining the selected rows, contexts, counts, measure units, and formula. Purchase Total is counted once per purchase within a group; monetary/quantity comparisons retain compatible units and currency. Undefined zero-denominator results disclose eligibility rather than fabricate a value.
+- **Variables table:** wide and compact layouts now display actual recorded Purchase/item values in a horizontally scrollable table with a persistent visible scrollbar. Purchase rows include date/time, Store, Purchased by, Purchased for availability, Payment Method, item count and Purchase Total. Item rows additionally expose separate product code/name/brand, quantity, Unit Price and Price paid. Item Price paid and whole Purchase Total are distinguished; the latter may repeat visually across item rows without being summed repeatedly by the purchase-grain calculation. Search, sort, pagination and selection remain active, with paging based on the complete filtered count. **Purchased for** remains explicitly unavailable until actual recipient data exists; descriptive tags are not reinterpreted as a person identity.
+- **Dates:** Analytics inserts `-` during date entry, retains strict calendar validation, and preserves the prior inclusive start/end date range. Future Purchase dates remain permitted, but registration first opens Review/Confirm; Review or dismissal preserves the draft without a database write, and Confirm performs one registration. Submission is locked while the confirmation/write is active.
+- **Lists:** Cycle presents the existing estimate alongside **Most recent Purchase Registered** (latest entry order) and **Last Purchase up to date** (latest purchase occurrence on or before today, excluding future dates). These presentation choices leave forecasts and price projection policy intact; shared List text identifies the selected Cycle interpretation.
+- **Household/Settings:** local People cards expose name/code, an expandable assigned-payment list and latest locally registered Purchase. Assignment to one active Account-local Person is editable or clearable in Settings. Archive/unarchive preserves reference identity and historical Purchase associations; archived variables are unavailable for new use. Local SQLite schema **13 → 14** adds the nullable assignment relation without rewriting history. Assignments, People and Payment Methods remain local to this Device, as the human requested. No assignment Sync event or shared-reference protocol was added.
+- **Documentation:** eight local topics explain business records, local technical/Sync data, explicit sharing/login/Sync, permissions, database/backup limitations, provider involvement, responsibilities and unresolved publication details. Five provider-policy links are readable/copyable; opening Documentation itself initiates no provider request. Copy does not claim zero metadata, database encryption, guaranteed recipient delivery, or blanket immunity from mandatory rights. It records the absence of current camera/microphone/location/contact access; Internet and inherited biometric/fingerprint/receiver permissions are disclosed, with no current biometric-template authentication call found. There is currently no in-app Account deletion. EN, PT-BR and ES catalogues each contain **922** validated messages, including the new controls, disclosures and interpretation text. Human language review remains a release gate.
+
+“Evidence” here means the recorded Purchase/item facts actually loaded and used by a calculation, with identity, scope, units and counts. It does not certify factual truth, external audit, legal compliance, hosted deployment, or physical-device acceptance.
+
+### Fresh validation and packaging observations
+
+| Scope | Observed result | Evidence ceiling |
+| --- | --- | --- |
+| Integrated client suite before final Variables presentation follow-up | **368 passed; four existing skips**, serial run | Complete regression evidence for the pre-follow-up client; `refinement-client-acceptance.log` |
+| Final affected Variables/component/localization checks | **17 passed**; additional actual-widget preview **1 passed** | Final follow-up coverage, not a second full-suite run; `refinement-variables-final.log` |
+| Static analysis | **No issues found** | Local Dart/Flutter analysis; `refinement-analyze-final.log` |
+| Locale generation/parity | **922 messages** per EN/PT-BR/ES catalogue | Keys/placeholders/local copy, not independent human translation approval |
+| Source whitespace | `git diff --check` passed | No source syntax guarantee by itself |
+| Android release candidate | Signed APK built, `com.gusigu.markei`, `versionName=1.2.1`, `versionCode=5`, min SDK 24/target 36; label Marc | Packaging proof, not installed runtime proof |
+| Android signature/native packaging | Existing RSA-3072 certificate retained, one signer; CRC and native ELF/ZIP 16 KB alignment passed | `refinement-apk-signature.txt`, `refinement-apk-manifest.txt`, `refinement-apk-native-validation.json` |
+| Windows release/setup | Release build and installer passed; setup version 1.2.1.5 | Existing installer/update identity retained; Authenticode status NotSigned |
+| Play internal-testing bundle | AAB built; Google bundletool validation, release/package/version manifest and jarsigner verification passed | Upload is a separate human action; self-signed certificate/timestamp/stream warnings are recorded |
+| GitHub beta publication | v1.2.1-mvp-beta.5 points to build source 8d707ef; all 11 uploaded asset SHA-256 digests match local bytes | Prerelease publication, not store or hosted acceptance |
+| Visual review | Real Flutter desktop/phone widgets rendered with synthetic fixture records; human approved final Variables refinement | Not a live Account or physical Windows/TL10 acceptance test |
+
+Commands/procedures exercised: dependency resolution, locale generator, Drift generation, Flutter analysis, serial client tests (`--concurrency=1`), affected Analytics/widget/localization tests, temporary fixture preview rendering, release APK build with ignored public definitions, Android package/signature/native checks, and Git diff/source-tree inspection. Shared Flutter caches were serialized; initial concurrent timing/cache interference was corrected without relaxing acceptance thresholds. Temporary preview test code was removed. Private signing/configuration material remains ignored and is not part of the source commit or this report.
+
+**Not repeated:** API tests/provider checks, because no API/provider source changed in this unit. The earlier 64 API tests and migration 009 fixture are inherited evidence only. Migration **009_list_note_recovery**, compatible API deployment and updated clients still govern Account-wide notes/tags; this report does not assert that 009 is applied to Neon or that the matching service is deployed. Earlier human Windows↔TL10 Purchase Sync remains historical evidence, not fresh proof for 1.2.1.
+
+### Changed-file inventory
+
+All paths below are relative to `clients/markei_flutter/`.
+
+Modified application/UI: `lib/app/markei_app.dart`, `lib/app/markei_composition.dart`, `lib/app/pages/analytics_page.dart`, `lib/app/pages/household_page.dart`, `lib/app/pages/lists_page.dart`, `lib/app/pages/purchase_page.dart`, `lib/app/pages/settings_page.dart`, `lib/app/widgets/analytics_components.dart`, `lib/app/widgets/marc_brand.dart`.
+
+Modified application/domain: `lib/application/analytics.dart`, `lib/application/analytics_workspace.dart`, `lib/application/local_references.dart`, `lib/application/product_lists.dart`, `lib/domain/analytics/analytics_models.dart`, `lib/domain/analytics/analytics_registry.dart`, `lib/domain/references/local_reference.dart`.
+
+Modified local persistence: `lib/infrastructure/local/local_database.dart`, generated `lib/infrastructure/local/local_database.g.dart`, `lib/infrastructure/local/local_purchase_repository.dart`, `lib/infrastructure/local/local_query_repository.dart`.
+
+Modified localization/version: `lib/l10n/analytics_copy.dart`, `lib/l10n/marc_messages.dart`, generated `lib/l10n/messages.g.dart`, `lib/l10n/strings_en.arb`, `lib/l10n/strings_es.arb`, `lib/l10n/strings_pt_BR.arb`, `pubspec.yaml`.
+
+Modified tests: `test/app/analytics_components_test.dart`, `test/app/analytics_page_test.dart`, `test/app/analytics_timeframe_test.dart`, `test/app/household_page_test.dart`, `test/app/lists_page_test.dart`, `test/app/localization_test.dart`, `test/app/markei_app_test.dart`, `test/app/purchase_refinement_test.dart`, `test/app/settings_page_test.dart`, `test/application/analytics_axes_test.dart`, `test/application/analytics_workspace_test.dart`, `test/infrastructure/local_database_migration_test.dart`, `test/local_purchase_repository_test.dart`.
+
+Created: `lib/app/pages/documentation_page.dart`, `lib/application/household.dart`, `test/app/documentation_page_test.dart`, `test/infrastructure/local_household_repository_test.dart`, `test/infrastructure/local_list_dates_test.dart`. Deleted tracked files: none.
+
+### Handoff, stop conditions and remaining gates
+
+1. Complete and verify both update artifacts; record exact byte sizes/SHA-256 and final manifest. Windows publisher signing remains unconfigured unless separately established. Preserve Android signing/package/update identity. Do not replace build verification with fixture previews.
+2. Transfer the reviewed source only against unchanged canonical baseline, then publish through the existing non-force guarded Git procedure and verify remote identity. If canonical HEAD/bytes/index diverge or unrelated edits appear, STOP and reconcile. Keep notebook/release metadata follow-up in a separate commit; verify `clients/markei_flutter` tree remains identical to the build source so a report commit cannot falsely masquerade as newly built code.
+3. Update the existing Notion C02 tracklog (`3f0a3e26-eacd-818d-b42a-f6399252d4fe`) with a dated superseding status, retaining earlier fixture evidence. Its old unimplemented-language/share/no-rebuild wording is stale after these implemented steps. C02 root is `3f0a3e26-eacd-81f7-9568-c559a94ae2d4`; do not create a duplicate cycle or tracklog.
+4. Install/update on actual Windows/TL10 and verify database upgrade, Person/payment assignment/archive/restore, both Lists date options, future-date Review/Confirm, saved-analysis restoration, duplicate-run guard, Variables scrolling, EN/PT-BR/ES, exports/sharing and bidirectional repeat/empty Sync. Fresh-user automatic onboarding and declared Account/Device isolation remain independently required; no emulator workaround is claimed as their acceptance.
+5. Refresh IP/release preparation from the exact approved source/artifacts, preserving the earlier 1.2.0 dossier as historical. INPI software copyright/trademark and conditional patent/PCT/Madrid routes remain distinct. No filing, registered right, patentability conclusion, WIPO global protection, provider change, store approval or production launch is created by this report.
+6. Before public store launch, resolve publisher/contact, retention/deletion workflow, provider disclosures/legal basis/international transfer, final policies, signing/store requirements and human language review. Existing code supports local use and explicit Sync/sharing; unresolved publication policy must not be represented as complete merely because app tests pass.
+
+Stop boundary: reviewed client refinement, reproducible beta artifacts and observational release/documentation follow-up. No provider mutation, secret entry, hosted migration, Auth0/Render/Neon change, household invitation implementation, fiscal scan, Resto feature, account reset or irreversible IP filing is part of this unit. Methodology, permanent domain semantics and branch topology remain unchanged.
+
+### Verified release artifacts and IP preparation
+
+Release: https://github.com/gus-i-gu/markei/releases/tag/v1.2.1-mvp-beta.5. All 11 remote SHA-256 digests match local artifact bytes.
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Marc-Android-1.2.1-5.apk | 71369740 | 3d8c599aea551c08f7312433201b5592af0bbc73cb3ff9b1912a22b2d7d778e5 |
+| Marc-Windows-1.2.1-5-x64.exe | 16574510 | 5e800292a0398068b3a1e3a708407e90e9ef6ba99fe70c19feef0864b3ad36be |
+| Marc-Play-1.2.1-5.aab | 67825909 | cad14ae72753c7f65865d3220278afa06e2fcb1812969b10fd5735cd34a1c301 |
+
+The local Marc-IP-preparation-1.2.1-5.zip contains a 353-file source candidate matching the build commit. Exact source ZIP SHA-256: 43E097E50E2D905AA4C5C8D07153C83244A03B7BF0283959E63CA58464B3973F. SHA-512: 93AFAE7BD8DB0AB8C08915F31E0E53BEAE4D04FD06630F84DB9D55E70E0D4D6A92A694B9A545CF5B4909C9724C65240B4E1E91C6BA28FD8A4BC21FD8B798D706. The 1.2.0 packet remains unchanged. Owner/authors/scope/classification/qualified-signature approval is pending; no INPI/PCT/Madrid filing is claimed.
+
+Source, beta downloads and version-specific IP preparation are complete. The current human step is the actual Windows/TL10 update and release-guide acceptance. Hosted notes rollout, fresh-user/Account isolation, publisher/privacy/store and legal filing gates remain independent.
