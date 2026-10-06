@@ -284,17 +284,7 @@ List<AnalyticsEvidenceRow> _applyConditions(
             case AnalyticsUtcPeriodCondition():
               if (!condition.contains(row.purchaseOccurrenceTime)) return false;
             case AnalyticsFieldCondition():
-              final value = switch (condition.field) {
-                AnalyticsDeterminantKind.product => row.productId.value,
-                AnalyticsDeterminantKind.purchase => row.purchaseId.value,
-                AnalyticsDeterminantKind.store => row.storeId.value,
-                AnalyticsDeterminantKind.timeDayUtc => _utcDay(
-                  row.purchaseOccurrenceTime,
-                ),
-                AnalyticsDeterminantKind.timeMonthUtc => _utcMonth(
-                  row.purchaseOccurrenceTime,
-                ),
-              };
+              final value = analyticsDimensionOption(row, condition.field).key;
               if (value != condition.value) return false;
           }
         }
@@ -556,16 +546,6 @@ String _contributionUnit(AnalyticsVariable variable) {
   return variable == AnalyticsVariable.purchaseTotal
       ? 'per Purchase'
       : 'per Purchase Item';
-}
-
-String _utcDay(DateTime value) {
-  final utc = value.toUtc();
-  return '${utc.year.toString().padLeft(4, '0')}-${utc.month.toString().padLeft(2, '0')}-${utc.day.toString().padLeft(2, '0')}';
-}
-
-String _utcMonth(DateTime value) {
-  final utc = value.toUtc();
-  return '${utc.year.toString().padLeft(4, '0')}-${utc.month.toString().padLeft(2, '0')}';
 }
 
 final class AnalyticsOverflow implements Exception {

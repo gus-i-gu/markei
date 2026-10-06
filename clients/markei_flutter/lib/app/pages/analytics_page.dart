@@ -1,7 +1,6 @@
 import '../../application/content_sharing.dart';
 import '../widgets/content_share_dialog.dart';
 import '../../l10n/marc_localizations.dart';
-import '../../l10n/analytics_copy.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -176,6 +175,8 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
           selected: state.selectedRecord,
           onOlder: () => setState(widget.controller.selectOlderRecord),
           onNewer: () => setState(widget.controller.selectNewerRecord),
+          onSelected: (id) =>
+              setState(() => widget.controller.selectRecord(id)),
         ),
         const SizedBox(height: MarkeiSpacing.md),
         AnalyticsResultView(
@@ -190,17 +191,6 @@ class _AnalyticsPageState extends State<AnalyticsPage> {
               : _shareRecord,
         ),
         const SizedBox(height: MarkeiSpacing.md),
-        if (state.selectedRecord != null)
-          MarkeiSection(
-            title: 'Result interpretation',
-            subtitle: 'Timeframe and evidence counts',
-            child: Text(
-              localizedAnalyticsInterpretation(
-                state.selectedRecord!,
-                MarcLocalizations.of(context),
-              ),
-            ),
-          ),
         const SizedBox(height: MarkeiSpacing.xl),
         AnalyticsVariablesView(
           state: state.variables,

@@ -9,6 +9,13 @@ enum AnalyticsDeterminantKind {
   store,
   timeDayUtc,
   timeMonthUtc,
+  purchasedBy,
+  purchasedFor,
+  paymentMethod,
+  quantity,
+  unitPrice,
+  pricePaid,
+  purchaseTotal,
 }
 
 enum AnalyticsVariable {
@@ -313,6 +320,109 @@ final class AnalyticsOption {
   final String label;
 }
 
+String analyticsDimensionLabel(AnalyticsDeterminantKind kind) => switch (kind) {
+  AnalyticsDeterminantKind.product => 'Product',
+  AnalyticsDeterminantKind.purchase => 'Purchase',
+  AnalyticsDeterminantKind.store => 'Store',
+  AnalyticsDeterminantKind.timeDayUtc => 'Time',
+  AnalyticsDeterminantKind.timeMonthUtc => 'Time by month',
+  AnalyticsDeterminantKind.purchasedBy => 'Purchased by',
+  AnalyticsDeterminantKind.purchasedFor => 'Purchased for',
+  AnalyticsDeterminantKind.paymentMethod => 'Payment method',
+  AnalyticsDeterminantKind.quantity => 'Quantity',
+  AnalyticsDeterminantKind.unitPrice => 'Unit price',
+  AnalyticsDeterminantKind.pricePaid => 'Price paid',
+  AnalyticsDeterminantKind.purchaseTotal => 'Purchase total',
+};
+
+/// Numeric dimensions select exact values, keeping distinct currencies and
+/// canonical quantity units separate. They are grouping keys, not measures.
+AnalyticsOption analyticsDimensionOption(
+  AnalyticsEvidenceRow row,
+  AnalyticsDeterminantKind kind,
+) {
+  var day = '';
+  if (kind == AnalyticsDeterminantKind.timeDayUtc ||
+      kind == AnalyticsDeterminantKind.timeMonthUtc) {
+    final utc = row.purchaseOccurrenceTime.toUtc();
+    day =
+        '${utc.year.toString().padLeft(4, '0')}-'
+        '${utc.month.toString().padLeft(2, '0')}-'
+        '${utc.day.toString().padLeft(2, '0')}';
+  }
+  String purchaseLabel() {
+    final local = row.purchaseOccurrenceTime.toLocal();
+    return '${local.day.toString().padLeft(2, '0')}-${local.month.toString().padLeft(2, '0')}-${local.year} ${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')} ${row.storeName}';
+  }
+
+  AnalyticsOption reference(String prefix, AnalyticsReference? value) =>
+      value == null
+      ? AnalyticsOption(key: '$prefix:none', label: 'Not assigned')
+      : AnalyticsOption(key: '$prefix:${value.id}', label: value.displayLabel);
+  AnalyticsOption money(String prefix, AnalyticsMoneyAmount amount) =>
+      AnalyticsOption(
+        key: '$prefix:${amount.currencyCode}:${amount.minorUnits}',
+        label: '${_minorUnits(amount.minorUnits)} ${amount.currencyCode}',
+      );
+  return switch (kind) {
+    AnalyticsDeterminantKind.product => AnalyticsOption(
+      key: row.productId.value,
+      label:
+          '${row.productCode} - ${row.productName}${row.productBrand.isEmpty ? '' : ' · ${row.productBrand}'}',
+    ),
+    AnalyticsDeterminantKind.purchase => AnalyticsOption(
+      key: row.purchaseId.value,
+      label: purchaseLabel(),
+    ),
+    AnalyticsDeterminantKind.store => AnalyticsOption(
+      key: row.storeId.value,
+      label: row.storeName,
+    ),
+    AnalyticsDeterminantKind.timeDayUtc => AnalyticsOption(
+      key: day,
+      label: day,
+    ),
+    AnalyticsDeterminantKind.timeMonthUtc => AnalyticsOption(
+      key: day.substring(0, 7),
+      label: day.substring(0, 7),
+    ),
+    AnalyticsDeterminantKind.purchasedBy => reference(
+      'person',
+      row.purchasedBy,
+    ),
+    AnalyticsDeterminantKind.paymentMethod => reference(
+      'payment',
+      row.paymentMethod,
+    ),
+    AnalyticsDeterminantKind.purchasedFor => const AnalyticsOption(
+      key: 'purchasedFor:unavailable',
+      label: 'Unavailable in recorded data',
+    ),
+    AnalyticsDeterminantKind.quantity => AnalyticsOption(
+      key:
+          'quantity:${row.quantity.kind.name}:${row.quantity.unit.name}:${row.quantity.microunits}',
+      label: '${row.quantity.decimalText} ${row.quantity.unit.name}',
+    ),
+    AnalyticsDeterminantKind.unitPrice =>
+      row.unitPrice == null
+          ? const AnalyticsOption(
+              key: 'unitPrice:unavailable',
+              label: 'Unavailable in recorded data',
+            )
+          : AnalyticsOption(
+              key:
+                  'unitPrice:${row.unitPrice!.currencyCode}:${row.unitPrice!.kind.name}:${row.unitPrice!.unit.name}:${row.unitPrice!.minorUnitsPerCanonicalUnit}',
+              label:
+                  '${_minorUnits(row.unitPrice!.minorUnitsPerCanonicalUnit)} ${row.unitPrice!.currencyCode} per ${row.unitPrice!.unit.name}',
+            ),
+    AnalyticsDeterminantKind.pricePaid => money('pricePaid', row.lineTotal),
+    AnalyticsDeterminantKind.purchaseTotal => money(
+      'purchaseTotal',
+      row.purchaseTotal,
+    ),
+  };
+}
+
 /// An optional comparison dimension. Empty keys include all its recorded values.
 final class AnalyticsAxis {
   const AnalyticsAxis({this.kind, this.selectedKeys = const {}});
@@ -347,6 +457,15 @@ final class AnalyticsComposerDraft {
   final AnalyticsOperation operation;
   final AnalyticsTimeframe timeframe;
   final AnalyticsEvidenceScope scope;
+
+  Set<AnalyticsVariable> get selectedVariables => variables.isNotEmpty
+      ? variables
+      : {
+          for (final measure in measures)
+            AnalyticsVariable.values.byName(measure.name),
+          for (final breakdown in breakdowns)
+            AnalyticsVariable.values.byName(breakdown.name),
+        };
 
   AnalyticsComposerDraft copyWith({
     AnalyticsDeterminantKind? determinant,
@@ -655,9 +774,17 @@ final class AnalyticsRecord {
     required this.totalCount,
     required this.excludedCount,
     required this.interpretation,
+    List<AnalyticsEvidenceRow> evidenceRows = const [],
+    List<List<AnalyticsOption>> selectedAxisValues = const [],
   }) : selectedValues = List.unmodifiable(selectedValues),
        entries = List.unmodifiable(entries),
-       contributingRowIds = Set.unmodifiable(contributingRowIds);
+       contributingRowIds = Set.unmodifiable(contributingRowIds),
+       evidenceRows = List.unmodifiable(evidenceRows),
+       selectedAxisValues = List.unmodifiable(
+         selectedAxisValues.map(
+           (values) => List<AnalyticsOption>.unmodifiable(values),
+         ),
+       );
 
   final AnalyticsRecordId id;
   final AnalyticsRecordFingerprint fingerprint;
@@ -672,6 +799,10 @@ final class AnalyticsRecord {
   final int totalCount;
   final int excludedCount;
   final String interpretation;
+
+  /// Snapshot evidence used by this immutable session record and its exports.
+  final List<AnalyticsEvidenceRow> evidenceRows;
+  final List<List<AnalyticsOption>> selectedAxisValues;
 }
 
 final class AnalyticsPurchaseProjectionRow {
@@ -712,9 +843,15 @@ final class AnalyticsVariablesState {
     required Set<AnalyticsEvidenceRowId> selectedRowIds,
     this.focusedRecord,
     this.message,
+    int? filteredCount,
   }) : purchaseRows = List.unmodifiable(purchaseRows),
        itemRows = List.unmodifiable(itemRows),
-       selectedRowIds = Set.unmodifiable(selectedRowIds);
+       selectedRowIds = Set.unmodifiable(selectedRowIds),
+       filteredCount =
+           filteredCount ??
+           (projection == AnalyticsVariablesProjection.purchases
+               ? purchaseRows.length
+               : itemRows.length);
 
   final AnalyticsVariablesProjection projection;
   final String search;
@@ -727,12 +864,10 @@ final class AnalyticsVariablesState {
   final AnalyticsRecord? focusedRecord;
   final String? message;
 
+  /// Total matching rows before page slicing for the active projection.
+  final int filteredCount;
+
   int get selectedCount => selectedRowIds.length;
   bool get hasPrevious => pageIndex > 0;
-  bool get hasNext {
-    final length = projection == AnalyticsVariablesProjection.purchases
-        ? purchaseRows.length
-        : itemRows.length;
-    return (pageIndex + 1) * pageSize < length;
-  }
+  bool get hasNext => (pageIndex + 1) * pageSize < filteredCount;
 }

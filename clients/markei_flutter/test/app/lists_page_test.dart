@@ -10,6 +10,54 @@ import 'package:markei/domain/shared/ids.dart';
 
 void main() {
   testWidgets(
+    'Cycle dates change locally without rereading or changing prices',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final repository = _CountingListsRepository(
+        _projection([
+          _item(
+            id: 'coffee',
+            code: 'C-1',
+            name: 'Coffee',
+            brand: 'Marc',
+            remaining: 2,
+          ),
+        ]),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: markeiTheme(),
+          home: Scaffold(
+            body: ListsPage(
+              accountId: const AccountId('account-1'),
+              projections: repository,
+              refreshSignal: 0,
+            ),
+          ),
+        ),
+      );
+      await _pumpReady(tester);
+      final picker = find.byKey(const Key('lists.cycleDisplay'));
+      await tester.ensureVisible(picker);
+      await tester.tap(picker);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Most recent Purchase Registered').last);
+      await tester.pumpAndSettle();
+      expect(find.text('02/08/2026'), findsOneWidget);
+      await tester.ensureVisible(picker);
+      await tester.tap(picker);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Last Purchase up to date').last);
+      await tester.pumpAndSettle();
+      expect(find.text('04/08/2026'), findsOneWidget);
+      expect(repository.calls, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
+  testWidgets(
     'List sharing freezes filtered products and cancels without handoff',
     (tester) async {
       tester.view.physicalSize = const Size(390, 900);
@@ -96,6 +144,8 @@ void main() {
       final notes = _Notes();
       await tester.pumpWidget(_app(repository, notes: notes));
       await _pumpReady(tester);
+      await tester.ensureVisible(find.byKey(const Key('lists.timeDisplay')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('lists.timeDisplay')));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Days from last purchase').last);
@@ -323,6 +373,8 @@ ProductListProjectionItem _item({
     productBrand: brand,
     productMode: ProductMode.packaged,
     daysSinceLastPurchase: 17,
+    lastRegisteredPurchaseDate: DateTime(2026, 8, 2),
+    lastPurchaseUpToDate: DateTime(2026, 8, 4),
     cycle: cycle,
     latestCurrencyCode: 'BRL',
     latestLineTotalMinorUnits: 1000,

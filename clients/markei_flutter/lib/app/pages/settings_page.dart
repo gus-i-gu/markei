@@ -52,6 +52,15 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   @override
+  void didUpdateWidget(covariant SettingsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.accountId != widget.accountId ||
+        oldWidget.references != widget.references) {
+      _load();
+    }
+  }
+
+  @override
   void dispose() {
     _generation++;
     _personController.dispose();
@@ -144,16 +153,29 @@ class _SettingsPageState extends State<SettingsPage> {
     if (_busy) return;
     setState(() => _busy = true);
     try {
-      await widget.references.archiveReference(
-        accountId: widget.accountId,
-        kind: kind,
-        id: reference.id,
-      );
+      if (reference.active) {
+        await widget.references.archiveReference(
+          accountId: widget.accountId,
+          kind: kind,
+          id: reference.id,
+        );
+      } else {
+        await widget.references.saveReference(
+          accountId: widget.accountId,
+          kind: kind,
+          id: reference.id,
+          nickname: reference.nickname,
+        );
+      }
       await _refreshReferences();
       if (!mounted) return;
       setState(() {
-        _message =
-            '${reference.historyLabel} archived. Existing Purchase history keeps its recorded label.';
+        _message = reference.active
+            ? context.message(
+                '{p0} archived. Existing Purchase history keeps its recorded label.',
+                [reference.displayLabel],
+              )
+            : context.message('{p0} unarchived.', [reference.displayLabel]);
       });
       widget.onChanged();
     } on Object {
@@ -180,6 +202,29 @@ class _SettingsPageState extends State<SettingsPage> {
       _people = people;
       _payments = payments;
     });
+  }
+
+  Future<void> _assignPayment(LocalReference payment, String? personId) async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      await widget.references.assignPaymentMethod(
+        accountId: widget.accountId,
+        paymentMethodId: payment.id,
+        personId: personId,
+      );
+      await _refreshReferences();
+      if (!mounted) return;
+      setState(
+        () => _message = 'Payment Method assignment saved on this device.',
+      );
+      widget.onChanged();
+    } on Object {
+      if (!mounted) return;
+      setState(() => _message = 'This setting could not be saved locally.');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
   Future<void> _saveThreshold() async {
@@ -293,7 +338,7 @@ class _SettingsPageState extends State<SettingsPage> {
         MarcText('Settings', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 8),
         const MarcText(
-          'Choices for this Account and this Device. Local labels remain on this device unless existing Sync actions are explicitly used.',
+          'People and Payment Methods are saved on this device for this Account.',
         ),
         if (widget.languageController != null) ...[
           const Divider(height: 32),
@@ -333,6 +378,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 _archiveReference(LocalReferenceKind.person, reference),
             onArchivePayment: (reference) =>
                 _archiveReference(LocalReferenceKind.paymentMethod, reference),
+            onAssignPayment: _assignPayment,
             onSaveThreshold: _saveThreshold,
           ),
           const Divider(height: 32),
@@ -418,6 +464,7 @@ class _PreferencesSection extends StatelessWidget {
     required this.onSavePayment,
     required this.onArchivePerson,
     required this.onArchivePayment,
+    required this.onAssignPayment,
     required this.onSaveThreshold,
   });
 
@@ -432,6 +479,7 @@ class _PreferencesSection extends StatelessWidget {
   final VoidCallback onSavePayment;
   final ValueChanged<LocalReference> onArchivePerson;
   final ValueChanged<LocalReference> onArchivePayment;
+  final void Function(LocalReference, String?) onAssignPayment;
   final VoidCallback onSaveThreshold;
 
   @override
@@ -458,6 +506,8 @@ class _PreferencesSection extends StatelessWidget {
           saveLabel: 'Save Payment Method',
           onSave: onSavePayment,
           onArchive: onArchivePayment,
+          people: people,
+          onAssign: onAssignPayment,
           busy: busy,
         ),
         const SizedBox(height: 16),
@@ -490,6 +540,8 @@ class _ReferenceList extends StatelessWidget {
     required this.onSave,
     required this.onArchive,
     required this.busy,
+    this.people = const [],
+    this.onAssign,
   });
 
   final String title;
@@ -499,6 +551,8 @@ class _ReferenceList extends StatelessWidget {
   final VoidCallback onSave;
   final ValueChanged<LocalReference> onArchive;
   final bool busy;
+  final List<LocalReference> people;
+  final void Function(LocalReference, String?)? onAssign;
 
   @override
   Widget build(BuildContext context) {
@@ -510,17 +564,88 @@ class _ReferenceList extends StatelessWidget {
           MarcText('No $title saved for this Account.')
         else
           for (final reference in references)
-            ListTile(
-              title: Text(reference.historyLabel),
-              subtitle: MarcText(reference.active ? 'Active' : 'Archived'),
-              trailing: reference.active
-                  ? TextButton(
-                      key: Key('settings.archive.${reference.id}'),
+            onAssign == null
+                ? ListTile(
+                    title: Text(_referenceDisplay(context, reference)),
+                    subtitle: MarcText(
+                      reference.active ? 'Active' : 'Archived',
+                    ),
+                    trailing: TextButton(
+                      key: Key(
+                        'settings.${reference.active ? 'archive' : 'unarchive'}.${reference.id}',
+                      ),
                       onPressed: busy ? null : () => onArchive(reference),
-                      child: const MarcText('Archive'),
-                    )
-                  : null,
-            ),
+                      child: MarcText(
+                        reference.active ? 'Archive' : 'Unarchive',
+                      ),
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(_referenceDisplay(context, reference)),
+                        MarcText(reference.active ? 'Active' : 'Archived'),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 8,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 280,
+                              child: DropdownButtonFormField<String>(
+                                key: Key(
+                                  'settings.assign.${reference.id}.${reference.assignedPersonId ?? 'none'}',
+                                ),
+                                initialValue: reference.assignedPersonId ?? '',
+                                isExpanded: true,
+                                decoration: InputDecoration(
+                                  labelText: context.tr('Assign Person'),
+                                ),
+                                items: [
+                                  const DropdownMenuItem(
+                                    value: '',
+                                    child: MarcText('Not assigned'),
+                                  ),
+                                  for (final person in people)
+                                    if (person.active ||
+                                        person.id == reference.assignedPersonId)
+                                      DropdownMenuItem(
+                                        value: person.id,
+                                        enabled: person.active,
+                                        child: Text(
+                                          _referenceDisplay(context, person),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                ],
+                                onChanged: busy || !reference.active
+                                    ? null
+                                    : (value) => onAssign!(
+                                        reference,
+                                        value == '' ? null : value,
+                                      ),
+                              ),
+                            ),
+                            TextButton(
+                              key: Key(
+                                'settings.${reference.active ? 'archive' : 'unarchive'}.${reference.id}',
+                              ),
+                              onPressed: busy
+                                  ? null
+                                  : () => onArchive(reference),
+                              child: MarcText(
+                                reference.active ? 'Archive' : 'Unarchive',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
         TextField(
           controller: controller,
           decoration: InputDecoration(labelText: 'Nickname').localized(context),
@@ -534,6 +659,11 @@ class _ReferenceList extends StatelessWidget {
     );
   }
 }
+
+String _referenceDisplay(BuildContext context, LocalReference reference) =>
+    reference.active
+    ? reference.displayLabel
+    : context.message('{p0} (archived)', [reference.displayLabel]);
 
 class _AccountSection extends StatelessWidget {
   const _AccountSection({

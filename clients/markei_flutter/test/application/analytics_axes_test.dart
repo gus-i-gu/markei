@@ -6,6 +6,8 @@ import 'package:markei/domain/analytics/analytics_models.dart';
 import 'package:markei/domain/analytics/analytics_registry.dart';
 import 'package:markei/domain/shared/ids.dart';
 import 'package:markei/domain/shared/quantity.dart';
+import 'package:markei/l10n/analytics_copy.dart';
+import 'package:markei/l10n/marc_messages.dart';
 
 void main() {
   test(
@@ -118,6 +120,30 @@ void main() {
           AnalyticsRelationalBreakdown.paymentMethod,
         });
         expect(controller.snapshot.validation.canRun, isTrue);
+        controller.runAndSave();
+        final record = controller.snapshot.selectedRecord!;
+        expect(record.draft.variables, isEmpty);
+        expect(record.draft.measures, {AnalyticsMeasure.lineTotal});
+        expect(record.draft.breakdowns, {
+          AnalyticsRelationalBreakdown.paymentMethod,
+        });
+        expect(
+          () => record.draft.measures.add(AnalyticsMeasure.quantity),
+          throwsUnsupportedError,
+        );
+        expect(
+          () => record.draft.breakdowns.add(
+            AnalyticsRelationalBreakdown.purchasedBy,
+          ),
+          throwsUnsupportedError,
+        );
+        final interpretation = localizedAnalyticsInterpretation(
+          record,
+          MarcMessages.english,
+        );
+        expect(interpretation, record.interpretation);
+        expect(interpretation, contains('Price paid'));
+        expect(interpretation, contains('Payment method'));
       }
     },
   );

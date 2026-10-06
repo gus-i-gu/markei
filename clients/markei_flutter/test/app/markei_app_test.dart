@@ -1338,6 +1338,13 @@ final class _EmptyReferences implements LocalReferenceRepository {
   const _EmptyReferences();
 
   @override
+  Future<void> assignPaymentMethod({
+    required AccountId accountId,
+    required String paymentMethodId,
+    String? personId,
+  }) async {}
+
+  @override
   Future<void> archiveReference({
     required AccountId accountId,
     required LocalReferenceKind kind,

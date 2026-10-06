@@ -8,6 +8,7 @@ import 'analytics.dart';
 import '../domain/analytics/analytics_models.dart';
 import '../domain/analytics/analytics_registry.dart';
 import '../domain/shared/ids.dart';
+import '../l10n/analytics_copy.dart';
 
 enum AnalyticsWorkspaceStatus {
   loading,
@@ -83,6 +84,8 @@ final class AnalyticsWorkspaceController {
   final AnalyticsClock _clock;
   AnalyticsLaunchContext? _launchContext;
   AnalyticsDataset? _dataset;
+  String _evidenceSignature = '';
+  Map<AnalyticsDeterminantKind, List<AnalyticsOption>>? _optionCache;
   AnalyticsComposerDraft _draft = const AnalyticsComposerDraft();
   Set<AnalyticsEvidenceRowId> _selectedRowIds = {};
   Set<AnalyticsEvidenceRowId>? _focusedRowIds;
@@ -92,6 +95,7 @@ final class AnalyticsWorkspaceController {
   AnalyticsVariablesSort _variablesSort = AnalyticsVariablesSort.timeDescending;
   int _variablesPageIndex = 0;
   final List<AnalyticsRecord> _records = [];
+  final Map<String, AnalyticsRecord> _recordsByExecution = {};
   AnalyticsRecordId? _selectedRecordId;
   AnalyticsResultPresentation _presentation = AnalyticsResultPresentation.table;
   int _nextRecordId = 1;
@@ -116,6 +120,8 @@ final class AnalyticsWorkspaceController {
       final dataset = await _repository.loadEvidence(_accountId);
       if (generation != _generation) return _snapshot;
       _dataset = dataset;
+      _evidenceSignature = _datasetSignature(dataset);
+      _optionCache = null;
       _applyLaunchContext();
       _snapshot = _buildSnapshot();
       return _snapshot;
@@ -206,6 +212,10 @@ final class AnalyticsWorkspaceController {
   }
 
   AnalyticsWorkspaceSnapshot runAndSave() {
+    final duplicate = _matchingRecord;
+    if (duplicate != null) {
+      return selectRecord(duplicate.id);
+    }
     final validation = _validateDraft();
     if (!validation.canRun) {
       _snapshot = _buildSnapshot(
@@ -231,14 +241,32 @@ final class AnalyticsWorkspaceController {
       for (final entry in entries)
         for (final id in entry.contributingRowIds) id,
     };
-    final eligible = entries.fold<int>(
-      0,
-      (total, entry) => total + entry.eligibleCount,
-    );
-    final excluded = entries.fold<int>(
-      0,
-      (total, entry) => total + entry.excludedCount,
-    );
+    final evidenceRows = _rowsForDraft(dataset)
+        .where(
+          (row) => _draft.selectedDeterminantKeys.contains(
+            _determinantOption(row, _draft.determinant).key,
+          ),
+        )
+        .toList();
+    final eligibleIds = {
+      for (final entry in entries.where(
+        (entry) => entry.value is! AnalyticsUnavailableResultValue,
+      ))
+        for (final rowId in entry.contributingRowIds) rowId.value,
+    };
+    final eligible = eligibleIds.length;
+    final excluded = evidenceRows.length - eligible;
+    final selectedAxisValues = [
+      for (final axis in _draft.axes)
+        axis.kind == null
+            ? <AnalyticsOption>[]
+            : [
+                for (final option in _options()[axis.kind]!)
+                  if (axis.selectedKeys.isEmpty ||
+                      axis.selectedKeys.contains(option.key))
+                    option,
+              ],
+    ];
     final fingerprint = _fingerprint(recordSeed, _records);
     final record = AnalyticsRecord(
       id: id,
@@ -251,18 +279,32 @@ final class AnalyticsWorkspaceController {
           _draft.selectedDeterminantKeys,
         ),
         variables: Set.unmodifiable(_draft.variables),
+        measures: Set.unmodifiable(_draft.measures),
+        breakdowns: Set.unmodifiable(_draft.breakdowns),
         analytics01: _draft.analytics01.frozen(),
         analytics02: _draft.analytics02.frozen(),
+        scope: _freezeScope(_draft.scope),
       ),
       selectedValues: selectedValues,
       entries: entries,
       contributingRowIds: contributing,
       eligibleCount: eligible,
-      totalCount: _rowsForDraft(dataset).length,
+      totalCount: evidenceRows.length,
       excludedCount: excluded,
-      interpretation: _interpretation(_draft, entries),
+      interpretation: analyticsContextualInterpretation(
+        draft: _draft,
+        selectedValues: selectedValues,
+        selectedAxisValues: selectedAxisValues,
+        entries: entries,
+        evidenceRows: evidenceRows,
+        eligibleCount: eligible,
+        excludedCount: excluded,
+      ),
+      evidenceRows: evidenceRows,
+      selectedAxisValues: selectedAxisValues,
     );
     _records.insert(0, record);
+    _recordsByExecution[_executionSignature()] = record;
     _selectedRecordId = record.id;
     _focusedRowIds = record.contributingRowIds;
     _presentation = _defaultPresentation(record);
@@ -272,14 +314,27 @@ final class AnalyticsWorkspaceController {
     return _snapshot;
   }
 
+  /// Restores the frozen result; selection never executes another analysis.
+  AnalyticsWorkspaceSnapshot selectRecord(AnalyticsRecordId id) {
+    final record = _records
+        .where((record) => record.id.value == id.value)
+        .firstOrNull;
+    if (record == null) return _snapshot;
+    _selectedRecordId = record.id;
+    _draft = record.draft;
+    _focusedRowIds = record.contributingRowIds;
+    _presentation = _defaultPresentation(record);
+    _variablesPageIndex = 0;
+    _snapshot = _buildSnapshot();
+    return _snapshot;
+  }
+
   AnalyticsWorkspaceSnapshot selectOlderRecord() {
     final selected = _selectedRecord;
     if (selected == null) return _snapshot;
     final index = _records.indexWhere((r) => r.id.value == selected.id.value);
     if (index >= 0 && index < _records.length - 1) {
-      _selectedRecordId = _records[index + 1].id;
-      _focusedRowIds = _records[index + 1].contributingRowIds;
-      _presentation = _defaultPresentation(_records[index + 1]);
+      return selectRecord(_records[index + 1].id);
     }
     _snapshot = _buildSnapshot();
     return _snapshot;
@@ -290,9 +345,7 @@ final class AnalyticsWorkspaceController {
     if (selected == null) return _snapshot;
     final index = _records.indexWhere((r) => r.id.value == selected.id.value);
     if (index > 0) {
-      _selectedRecordId = _records[index - 1].id;
-      _focusedRowIds = _records[index - 1].contributingRowIds;
-      _presentation = _defaultPresentation(_records[index - 1]);
+      return selectRecord(_records[index - 1].id);
     }
     _snapshot = _buildSnapshot();
     return _snapshot;
@@ -581,10 +634,15 @@ final class AnalyticsWorkspaceController {
             'Enter both Start date and End date as dd-mm-yyyy.',
       );
     }
-    if (_draft.breakdowns.contains(AnalyticsRelationalBreakdown.purchasedFor)) {
+    if (_draft.breakdowns.contains(AnalyticsRelationalBreakdown.purchasedFor) ||
+        _draft.determinant == AnalyticsDeterminantKind.purchasedFor ||
+        _draft.axes.any(
+          (axis) => axis.kind == AnalyticsDeterminantKind.purchasedFor,
+        )) {
       return const AnalyticsDraftValidation(
         canRun: false,
-        explanation: 'Purchased for is unavailable in recorded data.',
+        explanation:
+            'Purchased for will use tags in a future update; recorded data has no recipient tags yet.',
       );
     }
     if (_draft.selectedDeterminantKeys.isEmpty) {
@@ -595,7 +653,7 @@ final class AnalyticsWorkspaceController {
         canRun: false,
         explanation: temporal
             ? 'No recorded purchases match this timeframe and comparisons. Change the dates or comparisons.'
-            : 'Choose at least one Product, Purchase or Store.',
+            : 'Choose at least one recorded value for the Determinant.',
       );
     }
     if (_draft.measures.isEmpty) {
@@ -624,7 +682,7 @@ final class AnalyticsWorkspaceController {
       return const AnalyticsDraftValidation(
         canRun: false,
         explanation:
-            'Choose different dimensions for Determinants, Analytics 01 and Analytics 02.',
+            'Choose different types for Determinant, Analytics and Analytics constraint.',
       );
     }
     for (final axis in _draft.axes) {
@@ -669,6 +727,13 @@ final class AnalyticsWorkspaceController {
         canRun: false,
         explanation:
             'The selected rows are stale or unavailable for this Account.',
+      );
+    }
+    if (_matchingRecord != null) {
+      return const AnalyticsDraftValidation(
+        canRun: false,
+        explanation:
+            'This configuration and evidence are already saved. Change a selection or refresh changed evidence to run again.',
       );
     }
     return const AnalyticsDraftValidation(
@@ -757,8 +822,16 @@ final class AnalyticsWorkspaceController {
     if (baseline == null || comparison == null) return const [];
     final entries = <AnalyticsGroupedResultEntry>[];
     for (final measure in draft.measures) {
-      final a = _aggregateValues(baseline.rows, measure, mean: false);
-      final b = _aggregateValues(comparison.rows, measure, mean: false);
+      final a = _aggregateValues(
+        baseline.rows,
+        measure,
+        mean: measure == AnalyticsMeasure.unitPrice,
+      );
+      final b = _aggregateValues(
+        comparison.rows,
+        measure,
+        mean: measure == AnalyticsMeasure.unitPrice,
+      );
       if (draft.operation == AnalyticsOperation.difference) {
         for (final bValue in b.values) {
           final aValue = a[bValue.compatibilityKey.value];
@@ -768,6 +841,22 @@ final class AnalyticsWorkspaceController {
             );
             continue;
           }
+          final eligibleA = _eligibleRows(
+            baseline.rows,
+            measure,
+            bValue.compatibilityKey,
+          );
+          final eligibleB = _eligibleRows(
+            comparison.rows,
+            measure,
+            bValue.compatibilityKey,
+          );
+          final eligibleSamples =
+              _sampleCount(eligibleA, measure) +
+              _sampleCount(eligibleB, measure);
+          final totalSamples =
+              _sampleCount(baseline.rows, measure) +
+              _sampleCount(comparison.rows, measure);
           entries.add(
             AnalyticsGroupedResultEntry(
               groupKey: AnalyticsGroupKey(
@@ -786,12 +875,11 @@ final class AnalyticsWorkspaceController {
                 value: _checkedSubtract(bValue.value, aValue.value),
                 compatibilityKey: bValue.compatibilityKey,
               ),
-              eligibleCount: baseline.rows.length + comparison.rows.length,
-              totalCount: baseline.rows.length + comparison.rows.length,
-              excludedCount: 0,
+              eligibleCount: eligibleSamples,
+              totalCount: totalSamples,
+              excludedCount: totalSamples - eligibleSamples,
               contributingRowIds: {
-                for (final row in [...baseline.rows, ...comparison.rows])
-                  row.id,
+                for (final row in [...eligibleA, ...eligibleB]) row.id,
               },
             ),
           );
@@ -800,6 +888,9 @@ final class AnalyticsWorkspaceController {
         for (final whole in b.values) {
           final part = a[whole.compatibilityKey.value];
           if (whole.value == 0) {
+            final totalSamples =
+                _sampleCount(baseline.rows, measure) +
+                _sampleCount(comparison.rows, measure);
             entries.add(
               AnalyticsGroupedResultEntry(
                 groupKey: AnalyticsGroupKey(
@@ -807,7 +898,7 @@ final class AnalyticsWorkspaceController {
                   seriesLabels: baseline.key.seriesLabels,
                   breakdownLabels: baseline.key.breakdownLabels,
                   determinantLabel:
-                      '${baseline.key.determinantLabel} share of ${comparison.key.determinantLabel}',
+                      '${baseline.key.determinantLabel} as a percentage of ${comparison.key.determinantLabel}',
                 ),
                 measure: measure,
                 operation: draft.operation,
@@ -817,10 +908,13 @@ final class AnalyticsWorkspaceController {
                   reason: AnalyticsUnavailableReason.zeroDenominator,
                   message: 'Percentage unavailable - the total is zero.',
                 ),
-                eligibleCount: comparison.rows.length,
-                totalCount: comparison.rows.length,
-                excludedCount: baseline.rows.length,
-                contributingRowIds: {for (final row in comparison.rows) row.id},
+                eligibleCount: 0,
+                totalCount: totalSamples,
+                excludedCount: totalSamples,
+                contributingRowIds: {
+                  for (final row in [...baseline.rows, ...comparison.rows])
+                    row.id,
+                },
               ),
             );
             continue;
@@ -831,6 +925,22 @@ final class AnalyticsWorkspaceController {
             );
             continue;
           }
+          final eligibleA = _eligibleRows(
+            baseline.rows,
+            measure,
+            whole.compatibilityKey,
+          );
+          final eligibleB = _eligibleRows(
+            comparison.rows,
+            measure,
+            whole.compatibilityKey,
+          );
+          final eligibleSamples =
+              _sampleCount(eligibleA, measure) +
+              _sampleCount(eligibleB, measure);
+          final totalSamples =
+              _sampleCount(baseline.rows, measure) +
+              _sampleCount(comparison.rows, measure);
           entries.add(
             AnalyticsGroupedResultEntry(
               groupKey: AnalyticsGroupKey(
@@ -838,23 +948,25 @@ final class AnalyticsWorkspaceController {
                 seriesLabels: baseline.key.seriesLabels,
                 breakdownLabels: baseline.key.breakdownLabels,
                 determinantLabel:
-                    '${baseline.key.determinantLabel} share of ${comparison.key.determinantLabel}',
+                    '${baseline.key.determinantLabel} as a percentage of ${comparison.key.determinantLabel}',
               ),
               measure: measure,
               operation: draft.operation,
               compatibilityKey: whole.compatibilityKey,
               value: AnalyticsBasisPointResultValue(
                 label:
-                    '${baseline.key.determinantLabel} share of ${comparison.key.determinantLabel} ${_measureLabel(measure)}',
+                    '${baseline.key.determinantLabel} as a percentage of ${comparison.key.determinantLabel} ${_measureLabel(measure)}',
                 basisPoints: (part.value * 10000) ~/ whole.value,
                 part: part.value,
                 whole: whole.value,
                 compatibilityKey: whole.compatibilityKey,
               ),
-              eligibleCount: comparison.rows.length,
-              totalCount: comparison.rows.length,
-              excludedCount: comparison.rows.length - baseline.rows.length,
-              contributingRowIds: {for (final row in comparison.rows) row.id},
+              eligibleCount: eligibleSamples,
+              totalCount: totalSamples,
+              excludedCount: totalSamples - eligibleSamples,
+              contributingRowIds: {
+                for (final row in [...eligibleA, ...eligibleB]) row.id,
+              },
             ),
           );
         }
@@ -943,13 +1055,47 @@ final class AnalyticsWorkspaceController {
           operation: operation,
           compatibilityKey: value.compatibilityKey,
           value: value,
-          eligibleCount: group.rows.length,
-          totalCount: group.rows.length,
-          excludedCount: 0,
-          contributingRowIds: {for (final row in group.rows) row.id},
+          eligibleCount: _sampleCount(
+            _eligibleRows(group.rows, measure, value.compatibilityKey),
+            measure,
+          ),
+          totalCount: _sampleCount(group.rows, measure),
+          excludedCount:
+              _sampleCount(group.rows, measure) -
+              _sampleCount(
+                _eligibleRows(group.rows, measure, value.compatibilityKey),
+                measure,
+              ),
+          contributingRowIds: {
+            for (final row in _eligibleRows(
+              group.rows,
+              measure,
+              value.compatibilityKey,
+            ))
+              row.id,
+          },
         ),
     ];
   }
+
+  int _sampleCount(List<AnalyticsEvidenceRow> rows, AnalyticsMeasure measure) =>
+      measure == AnalyticsMeasure.purchaseTotal
+      ? rows.map((row) => row.purchaseId.value).toSet().length
+      : rows.length;
+
+  List<AnalyticsEvidenceRow> _eligibleRows(
+    List<AnalyticsEvidenceRow> rows,
+    AnalyticsMeasure measure,
+    AnalyticsCompatibilityKey compatibility,
+  ) => rows
+      .where(
+        (row) => _valueFor(
+          measure,
+          row,
+          <String>{},
+        ).keys.any((key) => key.value == compatibility.value),
+      )
+      .toList();
 
   Map<String, AnalyticsIntegerResultValue> _aggregateValues(
     List<AnalyticsEvidenceRow> rows,
@@ -1067,6 +1213,8 @@ final class AnalyticsWorkspaceController {
   }
 
   Map<AnalyticsDeterminantKind, List<AnalyticsOption>> _options() {
+    final cached = _optionCache;
+    if (cached != null) return cached;
     final rows = _dataset?.rows ?? const <AnalyticsEvidenceRow>[];
     final result = <AnalyticsDeterminantKind, Map<String, AnalyticsOption>>{
       for (final kind in AnalyticsDeterminantKind.values)
@@ -1078,7 +1226,7 @@ final class AnalyticsWorkspaceController {
         result[kind]![option.key] = option;
       }
     }
-    return {
+    return _optionCache = {
       for (final entry in result.entries)
         entry.key:
             (entry.value.values.toList()
@@ -1091,29 +1239,7 @@ final class AnalyticsWorkspaceController {
     AnalyticsEvidenceRow row,
     AnalyticsDeterminantKind kind,
   ) {
-    return switch (kind) {
-      AnalyticsDeterminantKind.product => AnalyticsOption(
-        key: row.productId.value,
-        label:
-            '${row.productCode} - ${row.productName}${row.productBrand.isEmpty ? '' : ' · ${row.productBrand}'}',
-      ),
-      AnalyticsDeterminantKind.purchase => AnalyticsOption(
-        key: row.purchaseId.value,
-        label: '${_formatLocal(row.purchaseOccurrenceTime)} ${row.storeName}',
-      ),
-      AnalyticsDeterminantKind.store => AnalyticsOption(
-        key: row.storeId.value,
-        label: row.storeName,
-      ),
-      AnalyticsDeterminantKind.timeDayUtc => AnalyticsOption(
-        key: _utcDay(row.purchaseOccurrenceTime),
-        label: _utcDay(row.purchaseOccurrenceTime),
-      ),
-      AnalyticsDeterminantKind.timeMonthUtc => AnalyticsOption(
-        key: _utcMonth(row.purchaseOccurrenceTime),
-        label: _utcMonth(row.purchaseOccurrenceTime),
-      ),
-    };
+    return analyticsDimensionOption(row, kind);
   }
 
   AnalyticsOption _breakdownOption(
@@ -1156,7 +1282,13 @@ final class AnalyticsWorkspaceController {
 
   AnalyticsVariablesState _variablesState() {
     final dataset = _dataset;
-    final rows = dataset?.rows ?? const <AnalyticsEvidenceRow>[];
+    final record = _selectedRecord;
+    final rows =
+        _focusedRowIds != null &&
+            record != null &&
+            record.evidenceRows.isNotEmpty
+        ? record.evidenceRows
+        : dataset?.rows ?? const <AnalyticsEvidenceRow>[];
     final focused = _focusedRowIds;
     final focusedValues = focused == null
         ? null
@@ -1176,6 +1308,14 @@ final class AnalyticsWorkspaceController {
     }).toList();
     itemRows.sort(_compareItems);
     final purchases = _purchaseProjection(itemRows)..sort(_comparePurchases);
+    final filteredCount =
+        _variablesProjection == AnalyticsVariablesProjection.purchases
+        ? purchases.length
+        : itemRows.length;
+    final finalPage = filteredCount == 0
+        ? 0
+        : (filteredCount - 1) ~/ renderedPageSize;
+    _variablesPageIndex = _variablesPageIndex.clamp(0, finalPage);
     final pageStart = _variablesPageIndex * renderedPageSize;
     final pagedItems = itemRows.skip(pageStart).take(renderedPageSize).toList();
     final pagedPurchases = purchases
@@ -1188,6 +1328,7 @@ final class AnalyticsWorkspaceController {
       sort: _variablesSort,
       pageIndex: _variablesPageIndex,
       pageSize: renderedPageSize,
+      filteredCount: filteredCount,
       purchaseRows: pagedPurchases,
       itemRows: pagedItems,
       selectedRowIds: _selectedRowIds,
@@ -1352,6 +1493,112 @@ final class AnalyticsWorkspaceController {
     return '${digest.substring(0, 16)}-${existing.length + 1}';
   }
 
+  AnalyticsRecord? get _matchingRecord =>
+      _dataset == null ? null : _recordsByExecution[_executionSignature()];
+
+  /// Separate from the display fingerprint, which intentionally contains time
+  /// and record identity. Include values and labels, not only stable row IDs.
+  String _executionSignature() {
+    List<String> sorted(Iterable<String> values) => values.toList()..sort();
+    final scope = _draft.scope;
+    final definition = _registry.definitionFor(_draft.operation);
+    return sha256
+        .convert(
+          utf8.encode(
+            jsonEncode([
+              _accountId.value,
+              definition.identifier,
+              definition.version,
+              _draft.determinant.name,
+              sorted(_draft.selectedDeterminantKeys),
+              [
+                for (final axis in _draft.axes)
+                  [axis.kind?.name, sorted(axis.selectedKeys)],
+              ],
+              sorted(_draft.variables.map((value) => value.name)),
+              sorted(_draft.measures.map((value) => value.name)),
+              sorted(_draft.breakdowns.map((value) => value.name)),
+              _draft.operation.name,
+              [
+                _draft.timeframe.kind.name,
+                _draft.timeframe.startUtc?.toUtc().toIso8601String(),
+                _draft.timeframe.endUtc?.toUtc().toIso8601String(),
+              ],
+              switch (scope) {
+                SelectedAnalyticsEvidenceScope() => [
+                  'selected',
+                  sorted(scope.rowIds.map((id) => id.value)),
+                ],
+                ComparisonAnalyticsEvidenceScope() => [
+                  'comparison',
+                  scope.baselineLabel,
+                  sorted(scope.baselineRowIds.map((id) => id.value)),
+                  scope.comparisonLabel,
+                  sorted(scope.comparisonRowIds.map((id) => id.value)),
+                ],
+                PercentageAnalyticsEvidenceScope() => [
+                  'percentage',
+                  scope.partLabel,
+                  sorted(scope.partRowIds.map((id) => id.value)),
+                  scope.wholeLabel,
+                  sorted(scope.wholeRowIds.map((id) => id.value)),
+                ],
+                FilteredAnalyticsEvidenceScope() => 'filtered',
+              },
+              _evidenceSignature,
+            ]),
+          ),
+        )
+        .toString();
+  }
+
+  String _datasetSignature(AnalyticsDataset dataset) {
+    Object? reference(AnalyticsReference? value) => value == null
+        ? null
+        : [value.id, value.code, value.label, value.archived];
+    final rows = [...dataset.rows]
+      ..sort((a, b) => a.id.value.compareTo(b.id.value));
+    return sha256
+        .convert(
+          utf8.encode(
+            jsonEncode([
+              for (final row in rows)
+                [
+                  row.id.value,
+                  row.accountId.value,
+                  row.purchaseId.value,
+                  row.purchaseOccurrenceTime.toUtc().toIso8601String(),
+                  row.purchaseTotal.currencyCode,
+                  row.purchaseTotal.minorUnits,
+                  row.productId.value,
+                  row.productCode,
+                  row.productName,
+                  row.productBrand,
+                  row.storeId.value,
+                  row.storeName,
+                  reference(row.purchasedBy),
+                  reference(row.paymentMethod),
+                  row.quantity.kind.name,
+                  row.quantity.unit.name,
+                  row.quantity.microunits,
+                  row.lineTotal.currencyCode,
+                  row.lineTotal.minorUnits,
+                  if (row.unitPrice == null)
+                    null
+                  else
+                    [
+                      row.unitPrice!.currencyCode,
+                      row.unitPrice!.kind.name,
+                      row.unitPrice!.unit.name,
+                      row.unitPrice!.minorUnitsPerCanonicalUnit,
+                    ],
+                ],
+            ]),
+          ),
+        )
+        .toString();
+  }
+
   String _recordSeed(
     AnalyticsRecordId id,
     DateTime executedAt,
@@ -1374,22 +1621,6 @@ final class AnalyticsWorkspaceController {
       'rows=${sortedRowIds.join('|')}',
     ].join('\n');
   }
-
-  String _interpretation(
-    AnalyticsComposerDraft draft,
-    List<AnalyticsGroupedResultEntry> entries,
-  ) {
-    final measures = draft.measures.map(_measureLabel).join(', ');
-    final groups = entries.map((entry) => entry.groupKey.value).toSet().length;
-    final excluded = entries.fold<int>(
-      0,
-      (total, entry) => total + entry.excludedCount,
-    );
-    final base =
-        '${_operationLabel(draft.operation)} $measures grouped by ${_determinantLabel(draft.determinant)}. Calculated from ${entries.fold<int>(0, (total, entry) => total + entry.eligibleCount)} contained items across $groups group(s).';
-    if (excluded == 0) return base;
-    return '$base $excluded incompatible or unavailable values are listed in Table.';
-  }
 }
 
 final class _GroupBucket {
@@ -1398,6 +1629,26 @@ final class _GroupBucket {
   final AnalyticsGroupKey key;
   final List<AnalyticsEvidenceRow> rows;
 }
+
+AnalyticsEvidenceScope _freezeScope(AnalyticsEvidenceScope scope) =>
+    switch (scope) {
+      FilteredAnalyticsEvidenceScope() => scope,
+      SelectedAnalyticsEvidenceScope() => SelectedAnalyticsEvidenceScope(
+        Set.unmodifiable(scope.rowIds),
+      ),
+      ComparisonAnalyticsEvidenceScope() => ComparisonAnalyticsEvidenceScope(
+        baselineLabel: scope.baselineLabel,
+        baselineRowIds: Set.unmodifiable(scope.baselineRowIds),
+        comparisonLabel: scope.comparisonLabel,
+        comparisonRowIds: Set.unmodifiable(scope.comparisonRowIds),
+      ),
+      PercentageAnalyticsEvidenceScope() => PercentageAnalyticsEvidenceScope(
+        partLabel: scope.partLabel,
+        partRowIds: Set.unmodifiable(scope.partRowIds),
+        wholeLabel: scope.wholeLabel,
+        wholeRowIds: Set.unmodifiable(scope.wholeRowIds),
+      ),
+    };
 
 AnalyticsVariable _variableFor(AnalyticsMeasure measure) => switch (measure) {
   AnalyticsMeasure.quantity => AnalyticsVariable.quantity,
@@ -1470,27 +1721,3 @@ String _operationLabel(AnalyticsOperation operation) => switch (operation) {
   AnalyticsOperation.difference => 'Difference',
   AnalyticsOperation.percentage => 'Percentage',
 };
-
-String _determinantLabel(AnalyticsDeterminantKind determinant) =>
-    switch (determinant) {
-      AnalyticsDeterminantKind.product => 'Product',
-      AnalyticsDeterminantKind.purchase => 'Purchase',
-      AnalyticsDeterminantKind.store => 'Store',
-      AnalyticsDeterminantKind.timeDayUtc => 'UTC day',
-      AnalyticsDeterminantKind.timeMonthUtc => 'UTC month',
-    };
-
-String _utcDay(DateTime value) {
-  final utc = value.toUtc();
-  return '${utc.year.toString().padLeft(4, '0')}-${utc.month.toString().padLeft(2, '0')}-${utc.day.toString().padLeft(2, '0')}';
-}
-
-String _utcMonth(DateTime value) {
-  final utc = value.toUtc();
-  return '${utc.year.toString().padLeft(4, '0')}-${utc.month.toString().padLeft(2, '0')}';
-}
-
-String _formatLocal(DateTime value) {
-  final local = value.toLocal();
-  return '${local.day.toString().padLeft(2, '0')}-${local.month.toString().padLeft(2, '0')}-${local.year.toString().padLeft(4, '0')} ${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
-}

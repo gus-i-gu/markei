@@ -19,7 +19,7 @@ import 'pages/lists_page.dart';
 import 'pages/products_page.dart';
 import 'pages/purchase_page.dart';
 import 'pages/settings_page.dart';
-import 'widgets/markei_components.dart';
+import 'pages/documentation_page.dart';
 import 'widgets/markei_shell.dart';
 
 class MarkeiApp extends StatefulWidget {
@@ -200,21 +200,16 @@ class _MarkeiAppState extends State<MarkeiApp> {
       visible: _visibleSelectedId == MarkeiDestinationId.analytics,
     ),
     MarkeiDestinationId.household: HouseholdPage(
+      accountId: widget.composition.accountId,
+      references: widget.composition.references,
+      household: widget.composition.household,
+      onChanged: () => setState(() => _refreshSignal++),
       profileSource: widget.composition.householdProfileSource,
       refreshSignal: _refreshSignal,
       onOpenSettings: () => _selectDestination(MarkeiDestinationId.settings),
     ),
     MarkeiDestinationId.guide: const GuidePage(),
-    MarkeiDestinationId.documentation: const _StaticPage(
-      title: 'Documentation',
-      body:
-          'Marc is an unfinished beta. Features are still under development, '
-          'and malfunctions may occur. High server load may cause slow responses, '
-          'failed sign-ins, or delayed or interrupted synchronization.\n\n'
-          'The official release is tentatively planned for around October 21, '
-          '2026. This is an estimate, not a confirmed release date, and may change.\n\n'
-          'This beta uses local offline-first storage for purchase registration and review.',
-    ),
+    MarkeiDestinationId.documentation: const DocumentationPage(),
     MarkeiDestinationId.settings: SettingsPage(
       languageController: _language,
       accountId: widget.composition.accountId,
@@ -264,19 +259,5 @@ class _MarkeiAppState extends State<MarkeiApp> {
       );
       _selectedId = MarkeiDestinationId.analytics;
     });
-  }
-}
-
-class _StaticPage extends StatelessWidget {
-  const _StaticPage({required this.title, required this.body});
-
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: [MarkeiPageHeader(title: title, purpose: body)],
-    );
   }
 }

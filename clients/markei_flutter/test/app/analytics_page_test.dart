@@ -45,6 +45,11 @@ void main() {
       expect(find.text('Create analysis'), findsOneWidget);
       expect(find.text('Supporting evidence matrix'), findsNothing);
 
+      await tester.tap(find.byKey(const Key('analytics.choose.dropdown')));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(
+        find.byKey(const Key('analytics.choose.product-1')),
+      );
       await tester.tap(find.byKey(const Key('analytics.choose.product-1')));
       await tester.pump();
       await tester.ensureVisible(

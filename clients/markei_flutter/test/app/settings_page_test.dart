@@ -5,9 +5,117 @@ import 'package:markei/application/closure_diagnostics.dart';
 import 'package:markei/application/local_references.dart';
 import 'package:markei/domain/references/local_reference.dart';
 import 'package:markei/domain/shared/ids.dart';
+import 'package:markei/infrastructure/local/local_database.dart';
+import 'package:markei/infrastructure/local/local_query_repository.dart';
 
 void main() {
   const account = AccountId('11111111-1111-4111-8111-111111111111');
+  testWidgets(
+    'Assign Person offers active people, preserves archived assignment, and allows clearing',
+    (tester) async {
+      final db = LocalDatabase.memory();
+      addTearDown(db.close);
+      final repository = LocalQueryRepository(db);
+      final active = await repository.saveReference(
+        accountId: account,
+        kind: LocalReferenceKind.person,
+        nickname: 'Ana',
+      );
+      final archived = await repository.saveReference(
+        accountId: account,
+        kind: LocalReferenceKind.person,
+        nickname: 'Archived person',
+      );
+      await repository.archiveReference(
+        accountId: account,
+        kind: LocalReferenceKind.person,
+        id: archived.id,
+      );
+      final payment = await repository.saveReference(
+        accountId: account,
+        kind: LocalReferenceKind.paymentMethod,
+        nickname: 'Card',
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SettingsPage(
+              accountId: account,
+              references: repository,
+              preferences: repository,
+              accountSupport: _FakeAccountSupport(),
+              syncDeviceSupport: _FakeSyncDeviceSupport(),
+              onChanged: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      Finder assignment(String? id) =>
+          find.byKey(Key('settings.assign.${payment.id}.${id ?? 'none'}'));
+      DropdownButton<String> dropdown(String? id) =>
+          tester.widget<DropdownButton<String>>(
+            find.descendant(
+              of: assignment(id),
+              matching: find.byType(DropdownButton<String>),
+            ),
+          );
+      final initial = dropdown(null);
+      expect(initial.items!.map((item) => item.value), ['', active.id]);
+      await _tapVisible(tester, assignment(null));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(active.displayLabel).last);
+      await tester.pumpAndSettle();
+      expect(
+        (await repository.listReferences(
+          account,
+          LocalReferenceKind.paymentMethod,
+        )).single.assignedPersonId,
+        active.id,
+      );
+      await _tapVisible(
+        tester,
+        find.byKey(Key('settings.archive.${active.id}')),
+      );
+      await tester.pumpAndSettle();
+      final current = dropdown(active.id);
+      expect(current.items!.map((item) => item.value), ['', active.id]);
+      expect(
+        current.items!.singleWhere((item) => item.value == active.id).enabled,
+        isFalse,
+      );
+      expect(
+        (await repository.listReferences(
+          account,
+          LocalReferenceKind.paymentMethod,
+        )).single.assignedPersonId,
+        active.id,
+      );
+      await _tapVisible(tester, assignment(active.id));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Not assigned').last);
+      await tester.pumpAndSettle();
+      expect(
+        (await repository.listReferences(
+          account,
+          LocalReferenceKind.paymentMethod,
+        )).single.assignedPersonId,
+        isNull,
+      );
+      await _tapVisible(
+        tester,
+        find.byKey(Key('settings.archive.${payment.id}')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<DropdownButtonFormField<String>>(assignment(null))
+            .onChanged,
+        isNull,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
   for (final outcome in [
     'sync-completed',
     'sync-no-new-events',
@@ -158,6 +266,11 @@ void main() {
     await _tapVisible(tester, find.byKey(const Key('settings.archive.p1')));
     await tester.pumpAndSettle();
     expect(find.text('Archived'), findsOneWidget);
+    await _tapVisible(tester, find.byKey(const Key('settings.unarchive.p1')));
+    await tester.pumpAndSettle();
+    expect(find.text('Active'), findsOneWidget);
+    expect(references.people.single.id, 'p1');
+    expect(references.people.single.visibleCode, '@001');
 
     await _tapVisible(tester, find.byKey(const Key('settings.signInToSync')));
     await tester.pumpAndSettle();
@@ -191,6 +304,29 @@ final class _MemoryReferences implements LocalReferenceRepository {
   final payments = <LocalReference>[];
 
   @override
+  Future<void> assignPaymentMethod({
+    required AccountId accountId,
+    required String paymentMethodId,
+    required String? personId,
+  }) async {
+    final index = payments.indexWhere((item) => item.id == paymentMethodId);
+    final previous = payments[index];
+    payments[index] = LocalReference(
+      id: previous.id,
+      accountId: previous.accountId,
+      kind: previous.kind,
+      visibleCode: previous.visibleCode,
+      nickname: previous.nickname,
+      normalizedNickname: previous.normalizedNickname,
+      active: previous.active,
+      createdAt: previous.createdAt,
+      updatedAt: previous.updatedAt,
+      archivedAt: previous.archivedAt,
+      assignedPersonId: personId,
+    );
+  }
+
+  @override
   Future<void> archiveReference({
     required AccountId accountId,
     required LocalReferenceKind kind,
@@ -209,6 +345,7 @@ final class _MemoryReferences implements LocalReferenceRepository {
       createdAt: list[index].createdAt,
       updatedAt: DateTime.utc(2026, 7, 31),
       archivedAt: DateTime.utc(2026, 7, 31),
+      assignedPersonId: list[index].assignedPersonId,
     );
   }
 
@@ -233,18 +370,27 @@ final class _MemoryReferences implements LocalReferenceRepository {
     bool active = true,
   }) async {
     final list = kind == LocalReferenceKind.person ? people : payments;
+    final index = list.indexWhere((item) => item.id == id);
+    final existing = index < 0 ? null : list[index];
     final reference = LocalReference(
       id: id ?? 'ref-${list.length + 1}',
       accountId: accountId,
       kind: kind,
-      visibleCode: kind == LocalReferenceKind.person ? '@002' : '#001',
+      visibleCode:
+          existing?.visibleCode ??
+          (kind == LocalReferenceKind.person ? '@002' : '#001'),
       nickname: nickname.trim(),
       normalizedNickname: nickname.trim().toLowerCase(),
       active: active,
-      createdAt: DateTime.utc(2026, 7, 31),
+      createdAt: existing?.createdAt ?? DateTime.utc(2026, 7, 31),
       updatedAt: DateTime.utc(2026, 7, 31),
+      assignedPersonId: existing?.assignedPersonId,
     );
-    list.add(reference);
+    if (index < 0) {
+      list.add(reference);
+    } else {
+      list[index] = reference;
+    }
     return reference;
   }
 }

@@ -57,8 +57,9 @@ void main() {
         const MarcMessages('pt'),
       );
       expect(translated, contains('Média'));
-      expect(translated, contains('2 itens contidos'));
-      expect(translated, contains('2 grupo(s)'));
+      expect(translated, contains('2 itens de 2 compras distintas'));
+      expect(translated, contains('2026-01, 2026-02'));
+      expect(translated, contains('2 elegíveis, 0 excluídos'));
       final pdf = ascii.decode(
         analyticsRecordPdfBytes(record, messages: const MarcMessages('pt')),
       );

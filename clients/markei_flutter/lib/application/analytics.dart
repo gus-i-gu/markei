@@ -46,6 +46,14 @@ String analyticsRecordCsv(
     ['eligible_count', record.eligibleCount.toString()],
     ['total_count', record.totalCount.toString()],
     ['excluded_count', record.excludedCount.toString()],
+    [
+      'raw_evidence_snapshot',
+      messages.display(
+        record.evidenceRows.isEmpty
+            ? 'Raw evidence snapshot unavailable for this older record; saved results are preserved.'
+            : 'Frozen evidence snapshot',
+      ),
+    ],
     [],
     [
       'group_label',
@@ -93,7 +101,8 @@ String analyticsRecordCsv(
     ],
   ]);
   final contributing = {for (final id in record.contributingRowIds) id.value};
-  for (final row in dataset.rows.where(
+  final evidence = record.evidenceRows;
+  for (final row in evidence.where(
     (row) => contributing.contains(row.id.value),
   )) {
     rows.add([

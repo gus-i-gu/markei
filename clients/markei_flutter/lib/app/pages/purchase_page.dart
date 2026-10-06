@@ -29,6 +29,7 @@ class PurchasePage extends StatefulWidget {
     required this.references,
     required this.refreshSignal,
     required this.onRegistered,
+    this.now,
     super.key,
   });
 
@@ -39,6 +40,7 @@ class PurchasePage extends StatefulWidget {
   final LocalReferenceRepository references;
   final int refreshSignal;
   final VoidCallback onRegistered;
+  final DateTime Function()? now;
 
   @override
   State<PurchasePage> createState() => _PurchasePageState();
@@ -597,6 +599,42 @@ class _PurchasePageState extends State<PurchasePage> {
         _feedback = _PurchaseFeedback.error(error.message);
       });
       return;
+    }
+    // Lock the draft while asking for confirmation as well as while writing it.
+    setState(() => _submitting = true);
+    if (occurrenceTime.isAfter(
+      (widget.now?.call() ?? DateTime.now()).toUtc(),
+    )) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          key: const Key('purchase.futureConfirmation'),
+          title: const MarcText('Review future purchase'),
+          content: const MarcText(
+            'This purchase is projected into the future. Registered purchases cannot currently be edited or deleted in Marc. Review the date and time before confirming.',
+          ),
+          actions: [
+            TextButton(
+              key: const Key('purchase.reviewFuture'),
+              onPressed: () => Navigator.pop(context, false),
+              child: const MarcText('Review purchase'),
+            ),
+            FilledButton(
+              key: const Key('purchase.confirmFuture'),
+              onPressed: () => Navigator.pop(context, true),
+              child: const MarcText('Confirm'),
+            ),
+          ],
+        ),
+      );
+      if (!mounted) return;
+      if (confirmed != true) {
+        setState(() {
+          _submitting = false;
+          _reviewing = false;
+        });
+        return;
+      }
     }
     setState(() {
       _submitting = true;

@@ -416,6 +416,65 @@ void main() {
     },
   );
 
+  for (final kind in LocalReferenceKind.values) {
+    test(
+      'archived $kind is rejected for a new purchase until restored',
+      () async {
+        final db = LocalDatabase.memory();
+        addTearDown(db.close);
+        final queries = LocalQueryRepository(db);
+        final repository = LocalPurchaseRepository(db);
+        final fixture = loadFixture('purchase_aggregate.json');
+        final accountId = AccountId(fixture['accountId']! as String);
+        final reference = await queries.saveReference(
+          accountId: accountId,
+          kind: kind,
+          nickname: 'Local label',
+        );
+        await queries.archiveReference(
+          accountId: accountId,
+          kind: kind,
+          id: reference.id,
+        );
+        RegisterPurchaseCommand command() => _command(
+          fixture,
+          items: [_riceItem()],
+          personId: kind == LocalReferenceKind.person ? reference.id : null,
+          paymentMethodId: kind == LocalReferenceKind.paymentMethod
+              ? reference.id
+              : null,
+        );
+        await expectLater(
+          repository.registerPurchase(command()),
+          throwsA(isA<AppFailure>()),
+        );
+        expect(await db.select(db.purchases).get(), isEmpty);
+        expect(await db.select(db.pendingEvents).get(), isEmpty);
+        await queries.saveReference(
+          accountId: accountId,
+          kind: kind,
+          id: reference.id,
+          nickname: reference.nickname,
+        );
+        await repository.registerPurchase(command());
+        final local = (await db.select(db.purchases).get()).single;
+        expect(
+          kind == LocalReferenceKind.person
+              ? local.personId
+              : local.paymentMethodId,
+          reference.id,
+        );
+        final event = (await db.select(db.syncEvents).get()).single;
+        final payload = jsonDecode(event.payloadJson) as Map<String, Object?>;
+        final purchase =
+            (payload['payload']! as Map<String, Object?>)['purchase']!
+                as Map<String, Object?>;
+        expect(purchase['personId'], isNull);
+        expect(purchase['paymentMethodId'], isNull);
+      },
+    );
+  }
+
   test('archived local references remain resolvable in history', () async {
     final db = LocalDatabase.memory();
     addTearDown(db.close);
@@ -516,6 +575,7 @@ RegisterPurchaseCommand _command(
   Map<String, Object?> fixture, {
   required List<PurchaseItemDraft> items,
   String? personId,
+  String? paymentMethodId,
 }) {
   return RegisterPurchaseCommand(
     accountId: AccountId(fixture['accountId']! as String),
@@ -524,6 +584,7 @@ RegisterPurchaseCommand _command(
     occurrenceTime: DateTime.parse(fixture['occurrenceTime']! as String),
     currencyCode: fixture['currencyCode']! as String,
     personId: personId,
+    paymentMethodId: paymentMethodId,
     items: items,
   );
 }

@@ -9,6 +9,21 @@ import 'package:markei/domain/shared/ids.dart';
 import 'package:markei/domain/shared/quantity.dart';
 
 void main() {
+  testWidgets(
+    'date input inserts separators and preserves strict calendar validation',
+    (tester) async {
+      final controller = await _controller();
+      await _pumpComposer(tester, controller);
+      await _enterDate(tester, 'initialDate', '31072026');
+      await _enterDate(tester, 'finalDate', '31072026');
+      expect(_dateText(tester, 'initialDate'), '31-07-2026');
+      expect(_dateText(tester, 'finalDate'), '31-07-2026');
+      expect(controller.snapshot.validation.canRun, isTrue);
+      await _enterDate(tester, 'initialDate', '31022026');
+      expect(_dateText(tester, 'initialDate'), '31-02-2026');
+      expect(controller.snapshot.validation.canRun, isFalse);
+    },
+  );
   for (final width in [360.0, 1200.0]) {
     testWidgets(
       'date range retains sequential drafts and clears at width $width',

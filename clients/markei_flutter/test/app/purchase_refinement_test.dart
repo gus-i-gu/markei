@@ -15,6 +15,39 @@ const device = DeviceId('22222222-2222-4222-8222-222222222222');
 
 void main() {
   testWidgets(
+    'future purchase review preserves draft and confirmation writes once',
+    (tester) async {
+      final queries = await openPurchase(tester, now: DateTime(2026, 10, 5));
+      await enter(tester, 'product.code', 'FUTURE');
+      await enter(tester, 'product.name', 'Coffee');
+      await enter(tester, 'item.lineTotal', '10');
+      await tap(tester, 'product.createAnyway');
+      await tap(tester, 'purchase.store.select');
+      await tester.tap(find.text('Test Market').last);
+      await settle(tester);
+      await enter(tester, 'purchase.date', '05102027');
+      await enter(tester, 'purchase.time', '0930');
+      await tap(tester, 'purchase.review');
+      await tap(tester, 'purchase.register');
+      expect(
+        find.byKey(const Key('purchase.futureConfirmation')),
+        findsOneWidget,
+      );
+      expect(await queries.listRecentPurchases(account), isEmpty);
+      await tap(tester, 'purchase.reviewFuture');
+      expect(text(tester, 'purchase.date'), '05/10/2027');
+      expect(
+        find.byKey(const Key('purchase.futureConfirmation')),
+        findsNothing,
+      );
+      await tap(tester, 'purchase.review');
+      await tap(tester, 'purchase.register');
+      await tap(tester, 'purchase.confirmFuture');
+      expect(await queries.listRecentPurchases(account), hasLength(1));
+      expect(tester.takeException(), isNull);
+    },
+  );
+  testWidgets(
     'complete invalid dates and missing price are explained before staging',
     (tester) async {
       final queries = await openPurchase(tester);
@@ -205,6 +238,7 @@ Future<LocalQueryRepository> openPurchase(
   WidgetTester tester, {
   bool bulkProduct = false,
   Size size = const Size(1200, 1800),
+  DateTime? now,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -240,6 +274,7 @@ Future<LocalQueryRepository> openPurchase(
             references: queries,
             refreshSignal: 0,
             onRegistered: () {},
+            now: () => now ?? DateTime(2026, 10, 6),
           ),
         ),
       ),

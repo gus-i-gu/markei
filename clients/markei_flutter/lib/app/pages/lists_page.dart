@@ -37,6 +37,7 @@ class _ListsPageState extends State<ListsPage> {
   ProductListView _view = ProductListView.shortage;
   ProductListSort _sort = ProductListSort.remaining;
   _ListTimeDisplay _timeDisplay = _ListTimeDisplay.expected;
+  _ListCycleDisplay _cycleDisplay = _ListCycleDisplay.estimate;
   late final TextEditingController _searchController;
   late Future<ProductListProjection> _projectionFuture;
   int _seenRefreshSignal = 0;
@@ -144,6 +145,9 @@ class _ListsPageState extends State<ListsPage> {
                     searchText: _searchController.text,
                     sort: _sort,
                     timeDisplay: _timeDisplay,
+                    cycleDisplay: _cycleDisplay,
+                    onCycleDisplayChanged: (value) =>
+                        setState(() => _cycleDisplay = value),
                     onTimeDisplayChanged: (value) =>
                         setState(() => _timeDisplay = value),
                     onSearchChanged: (value) => setState(() {}),
@@ -299,14 +303,15 @@ class _ListsPageState extends State<ListsPage> {
       text.writeln('\n${item.productName} · ${item.productBrand}');
       text.writeln(messages.display(_modeText(item)));
       text.writeln(
+        '${messages.display(_cycleDisplay.label)}: ${messages.display(_cycleText(item, _cycleDisplay))}',
+      );
+      text.writeln(
         '${messages.display(_timeDisplay.label)}: ${messages.display(_timeText(item, _timeDisplay))}',
       );
       if (item.latestCurrencyCode != null &&
           item.latestLineTotalMinorUnits != null) {
         text.writeln(
-          '${messages.display('Last price')}: ${messages.numericCopy(
-                '${item.latestCurrencyCode} ${(item.latestLineTotalMinorUnits! / 100).toStringAsFixed(2)}',
-              )}',
+          '${messages.display('Last price')}: ${messages.numericCopy('${item.latestCurrencyCode} ${(item.latestLineTotalMinorUnits! / 100).toStringAsFixed(2)}')}',
         );
       }
     }
@@ -359,7 +364,9 @@ class _ProjectionView extends StatelessWidget {
     required this.searchText,
     required this.sort,
     required this.timeDisplay,
+    required this.cycleDisplay,
     required this.onTimeDisplayChanged,
+    required this.onCycleDisplayChanged,
     required this.onSearchChanged,
     required this.onSortChanged,
   });
@@ -373,7 +380,9 @@ class _ProjectionView extends StatelessWidget {
   final String searchText;
   final ProductListSort sort;
   final _ListTimeDisplay timeDisplay;
+  final _ListCycleDisplay cycleDisplay;
   final ValueChanged<_ListTimeDisplay> onTimeDisplayChanged;
+  final ValueChanged<_ListCycleDisplay> onCycleDisplayChanged;
   final ValueChanged<String> onSearchChanged;
   final ValueChanged<ProductListSort> onSortChanged;
 
@@ -389,7 +398,9 @@ class _ProjectionView extends StatelessWidget {
           controller: searchController,
           sort: sort,
           timeDisplay: timeDisplay,
+          cycleDisplay: cycleDisplay,
           onTimeDisplayChanged: onTimeDisplayChanged,
+          onCycleDisplayChanged: onCycleDisplayChanged,
           showTimePicker: layoutClass != MarkeiLayoutClass.wide,
           onSearchChanged: onSearchChanged,
           onSortChanged: onSortChanged,
@@ -437,10 +448,12 @@ class _ProjectionView extends StatelessWidget {
         else if (layoutClass == MarkeiLayoutClass.wide)
           _ListsTable(
             onTimeDisplayChanged: onTimeDisplayChanged,
+            onCycleDisplayChanged: onCycleDisplayChanged,
             items: visibleItems,
             notes: notes,
             onEditNote: onEditNote,
             timeDisplay: timeDisplay,
+            cycleDisplay: cycleDisplay,
             shortageThreshold: projection.shortageThresholdDays,
           )
         else
@@ -449,6 +462,7 @@ class _ProjectionView extends StatelessWidget {
             notes: notes,
             onEditNote: onEditNote,
             timeDisplay: timeDisplay,
+            cycleDisplay: cycleDisplay,
             shortageThreshold: projection.shortageThresholdDays,
           ),
       ],
@@ -649,7 +663,9 @@ class _Controls extends StatelessWidget {
     required this.controller,
     required this.sort,
     required this.timeDisplay,
+    required this.cycleDisplay,
     required this.onTimeDisplayChanged,
+    required this.onCycleDisplayChanged,
     required this.showTimePicker,
     required this.onSearchChanged,
     required this.onSortChanged,
@@ -658,7 +674,9 @@ class _Controls extends StatelessWidget {
   final TextEditingController controller;
   final ProductListSort sort;
   final _ListTimeDisplay timeDisplay;
+  final _ListCycleDisplay cycleDisplay;
   final ValueChanged<_ListTimeDisplay> onTimeDisplayChanged;
+  final ValueChanged<_ListCycleDisplay> onCycleDisplayChanged;
   final bool showTimePicker;
   final ValueChanged<String> onSearchChanged;
   final ValueChanged<ProductListSort> onSortChanged;
@@ -671,6 +689,11 @@ class _Controls extends StatelessWidget {
         runSpacing: MarkeiSpacing.sm,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
+          if (showTimePicker)
+            _ListCyclePicker(
+              value: cycleDisplay,
+              onChanged: onCycleDisplayChanged,
+            ),
           if (showTimePicker)
             _ListTimePicker(
               value: timeDisplay,
@@ -730,13 +753,16 @@ class _Controls extends StatelessWidget {
 
 class _ListsTable extends StatelessWidget {
   final ValueChanged<_ListTimeDisplay> onTimeDisplayChanged;
+  final ValueChanged<_ListCycleDisplay> onCycleDisplayChanged;
   const _ListsTable({
     required this.items,
     required this.notes,
     required this.onEditNote,
     required this.shortageThreshold,
     required this.timeDisplay,
+    required this.cycleDisplay,
     required this.onTimeDisplayChanged,
+    required this.onCycleDisplayChanged,
   });
 
   final List<ProductListProjectionItem> items;
@@ -744,6 +770,7 @@ class _ListsTable extends StatelessWidget {
   final ValueChanged<ProductListProjectionItem>? onEditNote;
   final int shortageThreshold;
   final _ListTimeDisplay timeDisplay;
+  final _ListCycleDisplay cycleDisplay;
 
   @override
   Widget build(BuildContext context) {
@@ -759,7 +786,12 @@ class _ListsTable extends StatelessWidget {
             DataColumn(label: MarcText('Product code')),
             DataColumn(label: MarcText('Product / Brand')),
             DataColumn(label: MarcText('Latest price')),
-            DataColumn(label: MarcText('Cycle')),
+            DataColumn(
+              label: _ListCyclePicker(
+                value: cycleDisplay,
+                onChanged: onCycleDisplayChanged,
+              ),
+            ),
             DataColumn(
               label: _ListTimePicker(
                 value: timeDisplay,
@@ -789,7 +821,7 @@ class _ListsTable extends StatelessWidget {
                       ),
                     ),
                   ),
-                  DataCell(MarcText(_cycleText(item))),
+                  DataCell(MarcText(_cycleText(item, cycleDisplay))),
                   DataCell(MarcText(_timeText(item, timeDisplay))),
                   DataCell(MarcText(_remainingText(item))),
                   DataCell(
@@ -821,6 +853,7 @@ class _ListsCards extends StatelessWidget {
     required this.onEditNote,
     required this.shortageThreshold,
     required this.timeDisplay,
+    required this.cycleDisplay,
   });
 
   final List<ProductListProjectionItem> items;
@@ -828,6 +861,7 @@ class _ListsCards extends StatelessWidget {
   final ValueChanged<ProductListProjectionItem>? onEditNote;
   final int shortageThreshold;
   final _ListTimeDisplay timeDisplay;
+  final _ListCycleDisplay cycleDisplay;
 
   @override
   Widget build(BuildContext context) {
@@ -878,7 +912,10 @@ class _ListsCards extends StatelessWidget {
                         item.latestLineTotalMinorUnits,
                       ),
                     ),
-                    _Fact(label: 'Cycle', value: _cycleText(item)),
+                    _Fact(
+                      label: cycleDisplay.label,
+                      value: _cycleText(item, cycleDisplay),
+                    ),
                     _Fact(
                       label: timeDisplay.label,
                       value: _timeText(item, timeDisplay),
@@ -985,7 +1022,15 @@ String _viewLabel(ProductListView view) {
   };
 }
 
-String _cycleText(ProductListProjectionItem item) {
+String _cycleText(ProductListProjectionItem item, _ListCycleDisplay display) {
+  if (display == _ListCycleDisplay.lastRegistered) {
+    final date = item.lastRegisteredPurchaseDate;
+    return date == null ? 'No purchase history' : _date(date);
+  }
+  if (display == _ListCycleDisplay.upToDate) {
+    final date = item.lastPurchaseUpToDate;
+    return date == null ? 'No purchase on or before today' : _date(date);
+  }
   final cycle = item.cycle;
   if (!cycle.isAvailable) {
     return 'Not enough history';
@@ -1027,6 +1072,47 @@ String _date(DateTime date) {
   final day = local.day.toString().padLeft(2, '0');
   final month = local.month.toString().padLeft(2, '0');
   return '$day/$month/${local.year}';
+}
+
+enum _ListCycleDisplay {
+  estimate('Cycle estimate'),
+  lastRegistered('Most recent Purchase Registered'),
+  upToDate('Last Purchase up to date');
+
+  const _ListCycleDisplay(this.label);
+  final String label;
+}
+
+class _ListCyclePicker extends StatelessWidget {
+  const _ListCyclePicker({required this.value, required this.onChanged});
+  final _ListCycleDisplay value;
+  final ValueChanged<_ListCycleDisplay> onChanged;
+
+  @override
+  Widget build(BuildContext context) => ConstrainedBox(
+    constraints: const BoxConstraints(maxWidth: 320),
+    child: DropdownButton<_ListCycleDisplay>(
+      key: const Key('lists.cycleDisplay'),
+      value: value,
+      isExpanded: true,
+      itemHeight: 72,
+      style: MarkeiText.body.copyWith(color: MarkeiColors.ink),
+      items: [
+        for (final choice in _ListCycleDisplay.values)
+          DropdownMenuItem(
+            value: choice,
+            child: MarcText(
+              choice.label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+      ],
+      onChanged: (value) {
+        if (value != null) onChanged(value);
+      },
+    ),
+  );
 }
 
 enum _ListTimeDisplay {

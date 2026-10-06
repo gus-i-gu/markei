@@ -37,10 +37,19 @@ final class ProductListProjectionItem {
     required this.latestLineTotalMinorUnits,
     this.productMode,
     this.daysSinceLastPurchase,
+    this.lastRegisteredPurchaseDate,
+    this.lastPurchaseUpToDate,
   });
 
   final ProductMode? productMode;
   final int? daysSinceLastPurchase;
+
+  /// Occurrence date of the purchase most recently entered on this device.
+  /// This does not replace the occurrence-date based cycle estimate.
+  final DateTime? lastRegisteredPurchaseDate;
+
+  /// Latest occurrence on or before the current local calendar date.
+  final DateTime? lastPurchaseUpToDate;
   final ProductId productId;
   final String productCode;
   final String productName;

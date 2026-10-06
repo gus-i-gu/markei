@@ -15,7 +15,11 @@ final class MarcMessages {
           'quantity': 'Quantity',
           'unitPrice': 'Unit price',
           'lineTotal': 'Price paid',
+          'pricePaid': 'Price paid',
           'purchaseTotal': 'Purchase total',
+          'purchasedBy': 'Purchased by',
+          'purchasedFor': 'Purchased for',
+          'paymentMethod': 'Payment Method',
           'evidenceCount': 'Evidence count',
           'product': 'Product',
           'purchase': 'Purchase',
@@ -70,6 +74,10 @@ final class MarcMessages {
       for (var i = 1; i <= match.groupCount; i++) {
         final value = match[i] ?? '';
         final knownCopy =
+            (const {
+              '{p0} is unavailable for {p1}.',
+              'Operation: {p0}',
+            }.contains(template.source)) ||
             (const {
                   '{p0} Local status refreshed.',
                   'Group by: {p0}',

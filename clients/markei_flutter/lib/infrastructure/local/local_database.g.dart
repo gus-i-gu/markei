@@ -2555,6 +2555,20 @@ class $PaymentMethodsTable extends PaymentMethods
     type: DriftSqlType.dateTime,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _assignedPersonIdMeta = const VerificationMeta(
+    'assignedPersonId',
+  );
+  @override
+  late final GeneratedColumn<String> assignedPersonId = GeneratedColumn<String>(
+    'assigned_person_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES people (id) ON DELETE RESTRICT',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2566,6 +2580,7 @@ class $PaymentMethodsTable extends PaymentMethods
     createdAt,
     updatedAt,
     archivedAt,
+    assignedPersonId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2650,6 +2665,15 @@ class $PaymentMethodsTable extends PaymentMethods
         archivedAt.isAcceptableOrUnknown(data['archived_at']!, _archivedAtMeta),
       );
     }
+    if (data.containsKey('assigned_person_id')) {
+      context.handle(
+        _assignedPersonIdMeta,
+        assignedPersonId.isAcceptableOrUnknown(
+          data['assigned_person_id']!,
+          _assignedPersonIdMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -2699,6 +2723,10 @@ class $PaymentMethodsTable extends PaymentMethods
         DriftSqlType.dateTime,
         data['${effectivePrefix}archived_at'],
       ),
+      assignedPersonId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}assigned_person_id'],
+      ),
     );
   }
 
@@ -2718,6 +2746,7 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? archivedAt;
+  final String? assignedPersonId;
   const PaymentMethod({
     required this.id,
     required this.accountId,
@@ -2728,6 +2757,7 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
     required this.createdAt,
     required this.updatedAt,
     this.archivedAt,
+    this.assignedPersonId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2742,6 +2772,9 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
     map['updated_at'] = Variable<DateTime>(updatedAt);
     if (!nullToAbsent || archivedAt != null) {
       map['archived_at'] = Variable<DateTime>(archivedAt);
+    }
+    if (!nullToAbsent || assignedPersonId != null) {
+      map['assigned_person_id'] = Variable<String>(assignedPersonId);
     }
     return map;
   }
@@ -2759,6 +2792,9 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
       archivedAt: archivedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(archivedAt),
+      assignedPersonId: assignedPersonId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(assignedPersonId),
     );
   }
 
@@ -2779,6 +2815,7 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       archivedAt: serializer.fromJson<DateTime?>(json['archivedAt']),
+      assignedPersonId: serializer.fromJson<String?>(json['assignedPersonId']),
     );
   }
   @override
@@ -2794,6 +2831,7 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'archivedAt': serializer.toJson<DateTime?>(archivedAt),
+      'assignedPersonId': serializer.toJson<String?>(assignedPersonId),
     };
   }
 
@@ -2807,6 +2845,7 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
     DateTime? createdAt,
     DateTime? updatedAt,
     Value<DateTime?> archivedAt = const Value.absent(),
+    Value<String?> assignedPersonId = const Value.absent(),
   }) => PaymentMethod(
     id: id ?? this.id,
     accountId: accountId ?? this.accountId,
@@ -2817,6 +2856,9 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
     archivedAt: archivedAt.present ? archivedAt.value : this.archivedAt,
+    assignedPersonId: assignedPersonId.present
+        ? assignedPersonId.value
+        : this.assignedPersonId,
   );
   PaymentMethod copyWithCompanion(PaymentMethodsCompanion data) {
     return PaymentMethod(
@@ -2835,6 +2877,9 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
       archivedAt: data.archivedAt.present
           ? data.archivedAt.value
           : this.archivedAt,
+      assignedPersonId: data.assignedPersonId.present
+          ? data.assignedPersonId.value
+          : this.assignedPersonId,
     );
   }
 
@@ -2849,7 +2894,8 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
           ..write('active: $active, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('archivedAt: $archivedAt')
+          ..write('archivedAt: $archivedAt, ')
+          ..write('assignedPersonId: $assignedPersonId')
           ..write(')'))
         .toString();
   }
@@ -2865,6 +2911,7 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
     createdAt,
     updatedAt,
     archivedAt,
+    assignedPersonId,
   );
   @override
   bool operator ==(Object other) =>
@@ -2878,7 +2925,8 @@ class PaymentMethod extends DataClass implements Insertable<PaymentMethod> {
           other.active == this.active &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
-          other.archivedAt == this.archivedAt);
+          other.archivedAt == this.archivedAt &&
+          other.assignedPersonId == this.assignedPersonId);
 }
 
 class PaymentMethodsCompanion extends UpdateCompanion<PaymentMethod> {
@@ -2891,6 +2939,7 @@ class PaymentMethodsCompanion extends UpdateCompanion<PaymentMethod> {
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<DateTime?> archivedAt;
+  final Value<String?> assignedPersonId;
   final Value<int> rowid;
   const PaymentMethodsCompanion({
     this.id = const Value.absent(),
@@ -2902,6 +2951,7 @@ class PaymentMethodsCompanion extends UpdateCompanion<PaymentMethod> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.archivedAt = const Value.absent(),
+    this.assignedPersonId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   PaymentMethodsCompanion.insert({
@@ -2914,6 +2964,7 @@ class PaymentMethodsCompanion extends UpdateCompanion<PaymentMethod> {
     required DateTime createdAt,
     required DateTime updatedAt,
     this.archivedAt = const Value.absent(),
+    this.assignedPersonId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        accountId = Value(accountId),
@@ -2932,6 +2983,7 @@ class PaymentMethodsCompanion extends UpdateCompanion<PaymentMethod> {
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<DateTime>? archivedAt,
+    Expression<String>? assignedPersonId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2944,6 +2996,7 @@ class PaymentMethodsCompanion extends UpdateCompanion<PaymentMethod> {
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (archivedAt != null) 'archived_at': archivedAt,
+      if (assignedPersonId != null) 'assigned_person_id': assignedPersonId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2958,6 +3011,7 @@ class PaymentMethodsCompanion extends UpdateCompanion<PaymentMethod> {
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
     Value<DateTime?>? archivedAt,
+    Value<String?>? assignedPersonId,
     Value<int>? rowid,
   }) {
     return PaymentMethodsCompanion(
@@ -2970,6 +3024,7 @@ class PaymentMethodsCompanion extends UpdateCompanion<PaymentMethod> {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       archivedAt: archivedAt ?? this.archivedAt,
+      assignedPersonId: assignedPersonId ?? this.assignedPersonId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3004,6 +3059,9 @@ class PaymentMethodsCompanion extends UpdateCompanion<PaymentMethod> {
     if (archivedAt.present) {
       map['archived_at'] = Variable<DateTime>(archivedAt.value);
     }
+    if (assignedPersonId.present) {
+      map['assigned_person_id'] = Variable<String>(assignedPersonId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3022,6 +3080,7 @@ class PaymentMethodsCompanion extends UpdateCompanion<PaymentMethod> {
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('archivedAt: $archivedAt, ')
+          ..write('assignedPersonId: $assignedPersonId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -16183,6 +16242,24 @@ final class $$PeopleTableReferences
     );
   }
 
+  static MultiTypedResultKey<$PaymentMethodsTable, List<PaymentMethod>>
+  _paymentMethodsRefsTable(_$LocalDatabase db) => MultiTypedResultKey.fromTable(
+    db.paymentMethods,
+    aliasName: 'people__id__payment_methods__assigned_person_id',
+  );
+
+  $$PaymentMethodsTableProcessedTableManager get paymentMethodsRefs {
+    final manager = $$PaymentMethodsTableTableManager($_db, $_db.paymentMethods)
+        .filter(
+          (f) => f.assignedPersonId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(_paymentMethodsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
   static MultiTypedResultKey<$PurchasesTable, List<Purchase>>
   _purchasesRefsTable(_$LocalDatabase db) => MultiTypedResultKey.fromTable(
     db.purchases,
@@ -16272,6 +16349,31 @@ class $$PeopleTableFilterComposer
           ),
     );
     return composer;
+  }
+
+  Expression<bool> paymentMethodsRefs(
+    Expression<bool> Function($$PaymentMethodsTableFilterComposer f) f,
+  ) {
+    final $$PaymentMethodsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.paymentMethods,
+      getReferencedColumn: (t) => t.assignedPersonId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PaymentMethodsTableFilterComposer(
+            $db: $db,
+            $table: $db.paymentMethods,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 
   Expression<bool> purchasesRefs(
@@ -16435,6 +16537,31 @@ class $$PeopleTableAnnotationComposer
     return composer;
   }
 
+  Expression<T> paymentMethodsRefs<T extends Object>(
+    Expression<T> Function($$PaymentMethodsTableAnnotationComposer a) f,
+  ) {
+    final $$PaymentMethodsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.paymentMethods,
+      getReferencedColumn: (t) => t.assignedPersonId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PaymentMethodsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.paymentMethods,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
   Expression<T> purchasesRefs<T extends Object>(
     Expression<T> Function($$PurchasesTableAnnotationComposer a) f,
   ) {
@@ -16474,7 +16601,11 @@ class $$PeopleTableTableManager
           $$PeopleTableUpdateCompanionBuilder,
           (PeopleData, $$PeopleTableReferences),
           PeopleData,
-          PrefetchHooks Function({bool accountId, bool purchasesRefs})
+          PrefetchHooks Function({
+            bool accountId,
+            bool paymentMethodsRefs,
+            bool purchasesRefs,
+          })
         > {
   $$PeopleTableTableManager(_$LocalDatabase db, $PeopleTable table)
     : super(
@@ -16541,63 +16672,98 @@ class $$PeopleTableTableManager
                     (e.readTable(table), $$PeopleTableReferences(db, table, e)),
               )
               .toList(),
-          prefetchHooksCallback: ({accountId = false, purchasesRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (purchasesRefs) db.purchases],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (accountId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.accountId,
-                                referencedTable: $$PeopleTableReferences
-                                    ._accountIdTable(db),
-                                referencedColumn: $$PeopleTableReferences
-                                    ._accountIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({
+                accountId = false,
+                paymentMethodsRefs = false,
+                purchasesRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (paymentMethodsRefs) db.paymentMethods,
+                    if (purchasesRefs) db.purchases,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (accountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.accountId,
+                                    referencedTable: $$PeopleTableReferences
+                                        ._accountIdTable(db),
+                                    referencedColumn: $$PeopleTableReferences
+                                        ._accountIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (paymentMethodsRefs)
+                        await $_getPrefetchedData<
+                          PeopleData,
+                          $PeopleTable,
+                          PaymentMethod
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PeopleTableReferences
+                              ._paymentMethodsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PeopleTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).paymentMethodsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.assignedPersonId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (purchasesRefs)
+                        await $_getPrefetchedData<
+                          PeopleData,
+                          $PeopleTable,
+                          Purchase
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PeopleTableReferences
+                              ._purchasesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PeopleTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).purchasesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.personId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (purchasesRefs)
-                    await $_getPrefetchedData<
-                      PeopleData,
-                      $PeopleTable,
-                      Purchase
-                    >(
-                      currentTable: table,
-                      referencedTable: $$PeopleTableReferences
-                          ._purchasesRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$PeopleTableReferences(db, table, p0).purchasesRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.personId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -16614,7 +16780,11 @@ typedef $$PeopleTableProcessedTableManager =
       $$PeopleTableUpdateCompanionBuilder,
       (PeopleData, $$PeopleTableReferences),
       PeopleData,
-      PrefetchHooks Function({bool accountId, bool purchasesRefs})
+      PrefetchHooks Function({
+        bool accountId,
+        bool paymentMethodsRefs,
+        bool purchasesRefs,
+      })
     >;
 typedef $$PaymentMethodsTableCreateCompanionBuilder =
     PaymentMethodsCompanion Function({
@@ -16627,6 +16797,7 @@ typedef $$PaymentMethodsTableCreateCompanionBuilder =
       required DateTime createdAt,
       required DateTime updatedAt,
       Value<DateTime?> archivedAt,
+      Value<String?> assignedPersonId,
       Value<int> rowid,
     });
 typedef $$PaymentMethodsTableUpdateCompanionBuilder =
@@ -16640,6 +16811,7 @@ typedef $$PaymentMethodsTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
       Value<DateTime?> archivedAt,
+      Value<String?> assignedPersonId,
       Value<int> rowid,
     });
 
@@ -16664,6 +16836,23 @@ final class $$PaymentMethodsTableReferences
       $_db.localAccounts,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_accountIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $PeopleTable _assignedPersonIdTable(_$LocalDatabase db) =>
+      db.people.createAlias('payment_methods__assigned_person_id__people__id');
+
+  $$PeopleTableProcessedTableManager? get assignedPersonId {
+    final $_column = $_itemColumn<String>('assigned_person_id');
+    if ($_column == null) return null;
+    final manager = $$PeopleTableTableManager(
+      $_db,
+      $_db.people,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_assignedPersonIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -16751,6 +16940,29 @@ class $$PaymentMethodsTableFilterComposer
           }) => $$LocalAccountsTableFilterComposer(
             $db: $db,
             $table: $db.localAccounts,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$PeopleTableFilterComposer get assignedPersonId {
+    final $$PeopleTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.assignedPersonId,
+      referencedTable: $db.people,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PeopleTableFilterComposer(
+            $db: $db,
+            $table: $db.people,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -16857,6 +17069,29 @@ class $$PaymentMethodsTableOrderingComposer
     );
     return composer;
   }
+
+  $$PeopleTableOrderingComposer get assignedPersonId {
+    final $$PeopleTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.assignedPersonId,
+      referencedTable: $db.people,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PeopleTableOrderingComposer(
+            $db: $db,
+            $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$PaymentMethodsTableAnnotationComposer
@@ -16921,6 +17156,29 @@ class $$PaymentMethodsTableAnnotationComposer
     return composer;
   }
 
+  $$PeopleTableAnnotationComposer get assignedPersonId {
+    final $$PeopleTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.assignedPersonId,
+      referencedTable: $db.people,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PeopleTableAnnotationComposer(
+            $db: $db,
+            $table: $db.people,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   Expression<T> purchasesRefs<T extends Object>(
     Expression<T> Function($$PurchasesTableAnnotationComposer a) f,
   ) {
@@ -16960,7 +17218,11 @@ class $$PaymentMethodsTableTableManager
           $$PaymentMethodsTableUpdateCompanionBuilder,
           (PaymentMethod, $$PaymentMethodsTableReferences),
           PaymentMethod,
-          PrefetchHooks Function({bool accountId, bool purchasesRefs})
+          PrefetchHooks Function({
+            bool accountId,
+            bool assignedPersonId,
+            bool purchasesRefs,
+          })
         > {
   $$PaymentMethodsTableTableManager(
     _$LocalDatabase db,
@@ -16986,6 +17248,7 @@ class $$PaymentMethodsTableTableManager
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<DateTime?> archivedAt = const Value.absent(),
+                Value<String?> assignedPersonId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => PaymentMethodsCompanion(
                 id: id,
@@ -16997,6 +17260,7 @@ class $$PaymentMethodsTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 archivedAt: archivedAt,
+                assignedPersonId: assignedPersonId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -17010,6 +17274,7 @@ class $$PaymentMethodsTableTableManager
                 required DateTime createdAt,
                 required DateTime updatedAt,
                 Value<DateTime?> archivedAt = const Value.absent(),
+                Value<String?> assignedPersonId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => PaymentMethodsCompanion.insert(
                 id: id,
@@ -17021,6 +17286,7 @@ class $$PaymentMethodsTableTableManager
                 createdAt: createdAt,
                 updatedAt: updatedAt,
                 archivedAt: archivedAt,
+                assignedPersonId: assignedPersonId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -17031,70 +17297,91 @@ class $$PaymentMethodsTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({accountId = false, purchasesRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (purchasesRefs) db.purchases],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (accountId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.accountId,
-                                referencedTable: $$PaymentMethodsTableReferences
-                                    ._accountIdTable(db),
-                                referencedColumn:
-                                    $$PaymentMethodsTableReferences
-                                        ._accountIdTable(db)
-                                        .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({
+                accountId = false,
+                assignedPersonId = false,
+                purchasesRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [if (purchasesRefs) db.purchases],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (accountId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.accountId,
+                                    referencedTable:
+                                        $$PaymentMethodsTableReferences
+                                            ._accountIdTable(db),
+                                    referencedColumn:
+                                        $$PaymentMethodsTableReferences
+                                            ._accountIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
+                        if (assignedPersonId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.assignedPersonId,
+                                    referencedTable:
+                                        $$PaymentMethodsTableReferences
+                                            ._assignedPersonIdTable(db),
+                                    referencedColumn:
+                                        $$PaymentMethodsTableReferences
+                                            ._assignedPersonIdTable(db)
+                                            .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (purchasesRefs)
+                        await $_getPrefetchedData<
+                          PaymentMethod,
+                          $PaymentMethodsTable,
+                          Purchase
+                        >(
+                          currentTable: table,
+                          referencedTable: $$PaymentMethodsTableReferences
+                              ._purchasesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$PaymentMethodsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).purchasesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.paymentMethodId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (purchasesRefs)
-                    await $_getPrefetchedData<
-                      PaymentMethod,
-                      $PaymentMethodsTable,
-                      Purchase
-                    >(
-                      currentTable: table,
-                      referencedTable: $$PaymentMethodsTableReferences
-                          ._purchasesRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$PaymentMethodsTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).purchasesRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where(
-                            (e) => e.paymentMethodId == item.id,
-                          ),
-                      typedResults: items,
-                    ),
-                ];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -17111,7 +17398,11 @@ typedef $$PaymentMethodsTableProcessedTableManager =
       $$PaymentMethodsTableUpdateCompanionBuilder,
       (PaymentMethod, $$PaymentMethodsTableReferences),
       PaymentMethod,
-      PrefetchHooks Function({bool accountId, bool purchasesRefs})
+      PrefetchHooks Function({
+        bool accountId,
+        bool assignedPersonId,
+        bool purchasesRefs,
+      })
     >;
 typedef $$AccountPreferencesTableCreateCompanionBuilder =
     AccountPreferencesCompanion Function({

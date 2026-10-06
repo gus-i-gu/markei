@@ -2,6 +2,10 @@ import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
 
 import '../../application/hosted_auth_ports.dart';
+import '../../application/household.dart';
+import '../../application/local_references.dart';
+import '../../domain/references/local_reference.dart';
+import '../../domain/shared/ids.dart';
 import '../design/markei_theme.dart';
 import '../widgets/markei_components.dart';
 
@@ -10,11 +14,19 @@ class HouseholdPage extends StatefulWidget {
     required this.profileSource,
     required this.refreshSignal,
     required this.onOpenSettings,
+    this.accountId,
+    this.references,
+    this.household,
+    this.onChanged,
     super.key,
   });
   final AuthenticatedUserProfileSource profileSource;
   final int refreshSignal;
   final VoidCallback onOpenSettings;
+  final AccountId? accountId;
+  final LocalReferenceRepository? references;
+  final HouseholdQueryRepository? household;
+  final VoidCallback? onChanged;
 
   @override
   State<HouseholdPage> createState() => _HouseholdPageState();
@@ -22,11 +34,15 @@ class HouseholdPage extends StatefulWidget {
 
 class _HouseholdPageState extends State<HouseholdPage> {
   late Future<AuthenticatedUserProfile?> _profile;
+  late Future<List<HouseholdPersonSummary>> _people;
+  var _busy = false;
+  String? _message;
 
   @override
   void initState() {
     super.initState();
     _profile = widget.profileSource.currentProfile();
+    _people = _loadPeople();
   }
 
   @override
@@ -35,6 +51,53 @@ class _HouseholdPageState extends State<HouseholdPage> {
     if (oldWidget.profileSource != widget.profileSource ||
         oldWidget.refreshSignal != widget.refreshSignal) {
       _profile = widget.profileSource.currentProfile();
+    }
+    if (oldWidget.accountId != widget.accountId ||
+        oldWidget.household != widget.household ||
+        oldWidget.refreshSignal != widget.refreshSignal) {
+      _people = _loadPeople();
+      _message = null;
+    }
+  }
+
+  Future<List<HouseholdPersonSummary>> _loadPeople() async {
+    final account = widget.accountId;
+    final repository = widget.household;
+    if (account == null || repository == null) return const [];
+    return repository.householdPeople(account);
+  }
+
+  Future<void> _toggleArchived(LocalReference reference) async {
+    final account = widget.accountId;
+    final repository = widget.references;
+    if (_busy || account == null || repository == null) return;
+    setState(() => _busy = true);
+    try {
+      if (reference.active) {
+        await repository.archiveReference(
+          accountId: account,
+          kind: reference.kind,
+          id: reference.id,
+        );
+      } else {
+        await repository.saveReference(
+          accountId: account,
+          kind: reference.kind,
+          id: reference.id,
+          nickname: reference.nickname,
+        );
+      }
+      if (!mounted || account != widget.accountId) return;
+      setState(() {
+        _people = _loadPeople();
+        _message = null;
+      });
+      widget.onChanged?.call();
+    } on Object {
+      if (!mounted || account != widget.accountId) return;
+      setState(() => _message = 'This setting could not be saved locally.');
+    } finally {
+      if (mounted) setState(() => _busy = false);
     }
   }
 
@@ -146,13 +209,56 @@ class _HouseholdPageState extends State<HouseholdPage> {
         },
       ),
       const SizedBox(height: 24),
-      const MarkeiStatePanel(
-        key: Key('household.reserved'),
-        title: 'Room to grow',
-        message:
-            'Household sharing tools are planned. Your signed-in profile is available here today; invitations and member management are still being prepared.',
-        icon: Icons.auto_awesome_outlined,
+      FutureBuilder<List<HouseholdPersonSummary>>(
+        future: _people,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const MarkeiStatePanel(
+              title: 'People',
+              message: 'Loading people for this Account.',
+              icon: Icons.groups_outlined,
+            );
+          }
+          if (snapshot.hasError) {
+            return const MarkeiStatePanel(
+              title: 'People unavailable',
+              message:
+                  'People could not be loaded. Open Settings to try again.',
+              icon: Icons.groups_outlined,
+            );
+          }
+          final people = snapshot.data ?? const [];
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const MarcText('People', style: MarkeiText.sectionTitle),
+              const SizedBox(height: 8),
+              const MarcText(
+                'People and Payment Methods are saved on this device for this Account.',
+              ),
+              const SizedBox(height: 16),
+              if (people.isEmpty)
+                const MarkeiStatePanel(
+                  key: Key('household.empty'),
+                  title: 'Your everyday people',
+                  message:
+                      'Register people in Settings to see their cards here.',
+                  icon: Icons.groups_outlined,
+                )
+              else
+                for (final summary in people) ...[
+                  _PersonCard(
+                    summary: summary,
+                    busy: _busy || widget.references == null,
+                    onToggleArchived: _toggleArchived,
+                  ),
+                  const SizedBox(height: 16),
+                ],
+            ],
+          );
+        },
       ),
+      if (_message != null) MarcText(_message!),
       const SizedBox(height: 24),
       Align(
         alignment: Alignment.centerLeft,
@@ -164,4 +270,105 @@ class _HouseholdPageState extends State<HouseholdPage> {
       ),
     ],
   );
+}
+
+class _PersonCard extends StatelessWidget {
+  const _PersonCard({
+    required this.summary,
+    required this.busy,
+    required this.onToggleArchived,
+  });
+
+  final HouseholdPersonSummary summary;
+  final bool busy;
+  final ValueChanged<LocalReference> onToggleArchived;
+
+  @override
+  Widget build(BuildContext context) {
+    final person = summary.person;
+    final purchase = summary.latestPurchase;
+    return MarkeiCard(
+      key: Key('household.person.${person.id}'),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 16,
+            runSpacing: 8,
+            children: [
+              Text(
+                '${person.nickname} · ${person.visibleCode}',
+                style: MarkeiText.sectionTitle,
+              ),
+              MarkeiStatusChip(label: person.active ? 'Active' : 'Archived'),
+              TextButton(
+                key: Key(
+                  'household.${person.active ? 'archive' : 'unarchive'}.${person.id}',
+                ),
+                onPressed: busy ? null : () => onToggleArchived(person),
+                child: MarcText(person.active ? 'Archive' : 'Unarchive'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (summary.paymentMethods.isEmpty)
+            const MarcText('No Payment Methods assigned.')
+          else
+            ExpansionTile(
+              key: PageStorageKey('household.payments.${person.id}'),
+              maintainState: true,
+              tilePadding: EdgeInsets.zero,
+              title: const MarcText('Payment Methods'),
+              children: [
+                for (final payment in summary.paymentMethods)
+                  ListTile(
+                    title: Text(
+                      payment.active
+                          ? payment.displayLabel
+                          : context.message('{p0} (archived)', [
+                              payment.displayLabel,
+                            ]),
+                    ),
+                    trailing: TextButton(
+                      key: Key(
+                        'household.${payment.active ? 'archive' : 'unarchive'}.${payment.id}',
+                      ),
+                      onPressed: busy ? null : () => onToggleArchived(payment),
+                      child: MarcText(payment.active ? 'Archive' : 'Unarchive'),
+                    ),
+                  ),
+              ],
+            ),
+          const SizedBox(height: 16),
+          const MarcText(
+            'Last registered purchase',
+            style: MarkeiText.metadata,
+          ),
+          const SizedBox(height: 8),
+          if (purchase == null)
+            const MarcText(
+              'No purchase recorded for this person on this device.',
+            )
+          else ...[
+            Text(purchase.storeName),
+            MarcText(_purchaseDisplay(context, purchase)),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _purchaseDisplay(
+    BuildContext context,
+    HouseholdPurchaseSummary purchase,
+  ) {
+    final date = purchase.occurrenceTime.toLocal();
+    final day = MaterialLocalizations.of(context).formatCompactDate(date);
+    final total =
+        '${purchase.totalMinorUnits ~/ 100}.${(purchase.totalMinorUnits % 100).toString().padLeft(2, '0')}';
+    return '$day · ${purchase.currencyCode} $total';
+  }
 }

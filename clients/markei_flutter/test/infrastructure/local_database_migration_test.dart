@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:markei/infrastructure/local/local_database.dart';
 
 void main() {
-  test('migrates v1 database to v13 with transport observability', () async {
+  test('migrates v1 database to v14 with transport observability', () async {
     final temp = await Directory.systemTemp.createTemp('markei_migration_');
     addTearDown(() => temp.delete(recursive: true));
     final file = File('${temp.path}/markei.sqlite');
@@ -15,7 +15,7 @@ void main() {
     );
     addTearDown(migratingDb.close);
 
-    expect(migratingDb.schemaVersion, 13);
+    expect(migratingDb.schemaVersion, 14);
     final products = await migratingDb.select(migratingDb.products).get();
     final ledger = await migratingDb.select(migratingDb.migrationLedger).get();
 
@@ -26,8 +26,11 @@ void main() {
     expect(products.single.exactIdentityKey, contains('|v3|'));
     expect(products.single.displayName, 'arroz branco');
     expect(ledger.last.fromVersion, 1);
-    expect(ledger.last.toVersion, 13);
-    expect(ledger.last.migrationId, 'v12-to-v13-list-note-revisions');
+    expect(ledger.last.toVersion, 14);
+    expect(
+      ledger.last.migrationId,
+      'v13-to-v14-local-payment-person-assignment',
+    );
     expect(
       await migratingDb.select(migratingDb.installationMetadata).get(),
       isEmpty,
@@ -52,12 +55,12 @@ void main() {
   });
 
   test(
-    'fresh v13 database creates local, recovery, hosted auth and attempt tables',
+    'fresh v14 database creates local, recovery, hosted auth and attempt tables',
     () async {
       final db = LocalDatabase.memory();
       addTearDown(db.close);
 
-      expect(db.schemaVersion, 13);
+      expect(db.schemaVersion, 14);
       expect(await db.select(db.people).get(), isEmpty);
       expect(await db.select(db.paymentMethods).get(), isEmpty);
       expect(await db.select(db.accountPreferences).get(), isEmpty);
@@ -70,7 +73,7 @@ void main() {
     },
   );
 
-  test('migrates file-backed v2 database to v13 and reopens', () async {
+  test('migrates file-backed v2 database to v14 and reopens', () async {
     final temp = await Directory.systemTemp.createTemp('markei_migration_v2_');
     addTearDown(() => temp.delete(recursive: true));
     final file = File('${temp.path}/markei.sqlite');
@@ -86,7 +89,10 @@ void main() {
     expect(products.single.normalizationVersion, 3);
     expect(products.single.exactIdentityKey, contains('|v3|'));
     expect(items.single.packageCount, 1);
-    expect(ledger.last.migrationId, 'v12-to-v13-list-note-revisions');
+    expect(
+      ledger.last.migrationId,
+      'v13-to-v14-local-payment-person-assignment',
+    );
     expect(
       await migratingDb.select(migratingDb.installationMetadata).get(),
       hasLength(1),
@@ -137,7 +143,10 @@ void main() {
       hasLength(1),
     );
     final ledger = await migratingDb.select(migratingDb.migrationLedger).get();
-    expect(ledger.last.migrationId, 'v12-to-v13-list-note-revisions');
+    expect(
+      ledger.last.migrationId,
+      'v13-to-v14-local-payment-person-assignment',
+    );
     await migratingDb.close();
 
     final reopened = LocalDatabase.file(file);
@@ -185,7 +194,7 @@ void main() {
   });
 
   test(
-    'reopening an already migrated v13 database does not rewrite rows',
+    'reopening an already migrated v14 database does not rewrite rows',
     () async {
       final temp = await Directory.systemTemp.createTemp(
         'markei_migration_v8_idempotent_',
@@ -218,7 +227,7 @@ void main() {
     },
   );
 
-  test('migrates v8 database to v13 attempt ledger without reset', () async {
+  test('migrates v8 database to v14 attempt ledger without reset', () async {
     final temp = await Directory.systemTemp.createTemp(
       'markei_migration_v8_to_v9_',
     );
@@ -229,7 +238,7 @@ void main() {
       NativeDatabase.createInBackground(file, setup: _createV8Database),
     );
 
-    expect(migratingDb.schemaVersion, 13);
+    expect(migratingDb.schemaVersion, 14);
     expect(await migratingDb.select(migratingDb.syncAttempts).get(), isEmpty);
     expect(await migratingDb.select(migratingDb.pendingEvents).get(), isEmpty);
     expect(
@@ -238,8 +247,11 @@ void main() {
     );
     final ledger = await migratingDb.select(migratingDb.migrationLedger).get();
     expect(ledger.last.fromVersion, 8);
-    expect(ledger.last.toVersion, 13);
-    expect(ledger.last.migrationId, 'v12-to-v13-list-note-revisions');
+    expect(ledger.last.toVersion, 14);
+    expect(
+      ledger.last.migrationId,
+      'v13-to-v14-local-payment-person-assignment',
+    );
     await migratingDb.close();
 
     final reopened = LocalDatabase.file(file);
@@ -249,7 +261,7 @@ void main() {
   });
 
   test(
-    'migrates v9 attempts to v13 observability columns without reset',
+    'migrates v9 attempts to v14 observability columns without reset',
     () async {
       final temp = await Directory.systemTemp.createTemp(
         'markei_migration_v9_to_v10_',
@@ -261,7 +273,7 @@ void main() {
         NativeDatabase.createInBackground(file, setup: _createV9Database),
       );
 
-      expect(migratingDb.schemaVersion, 13);
+      expect(migratingDb.schemaVersion, 14);
       final attempts = await migratingDb.select(migratingDb.syncAttempts).get();
       expect(attempts, hasLength(1));
       expect(attempts.single.phase, 'transport-or-closure');
@@ -274,8 +286,11 @@ void main() {
           .select(migratingDb.migrationLedger)
           .get();
       expect(ledger.last.fromVersion, 9);
-      expect(ledger.last.toVersion, 13);
-      expect(ledger.last.migrationId, 'v12-to-v13-list-note-revisions');
+      expect(ledger.last.toVersion, 14);
+      expect(
+        ledger.last.migrationId,
+        'v13-to-v14-local-payment-person-assignment',
+      );
       await migratingDb.close();
 
       final reopened = LocalDatabase.file(file);
@@ -876,6 +891,23 @@ CREATE TABLE local_accounts (
   created_at INTEGER NOT NULL
 );
 ''');
+  // References have belonged to the local schema since v3.
+  for (final table in ['people', 'payment_methods']) {
+    database.execute('''
+CREATE TABLE $table (
+  id TEXT NOT NULL PRIMARY KEY,
+  account_id TEXT NOT NULL REFERENCES local_accounts(id) ON DELETE RESTRICT,
+  visible_code TEXT NOT NULL,
+  nickname TEXT NOT NULL,
+  normalized_nickname TEXT NOT NULL,
+  active INTEGER NOT NULL DEFAULT 1,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  archived_at INTEGER,
+  UNIQUE(account_id, visible_code)
+);
+''');
+  }
   database.execute('''
 CREATE TABLE devices (
   id TEXT NOT NULL PRIMARY KEY,

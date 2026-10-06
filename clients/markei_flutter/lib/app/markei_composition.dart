@@ -33,6 +33,7 @@ import '../infrastructure/local/local_database.dart';
 import '../infrastructure/local/local_device_identity_repository.dart';
 import '../infrastructure/local/local_purchase_repository.dart';
 import '../infrastructure/local/local_query_repository.dart';
+import '../application/household.dart';
 import '../infrastructure/local/sync/local_sync_repositories.dart';
 import '../infrastructure/local/sync/remote_purchase_event_applier.dart';
 import '../infrastructure/platform/local_export_destination.dart';
@@ -63,6 +64,7 @@ final class MarkeiComposition {
     SettingsAccountSupportPort? settingsAccountSupport,
     SettingsSyncDeviceSupportPort? settingsSyncDeviceSupport,
     AuthenticatedUserProfileSource? householdProfileSource,
+    HouseholdQueryRepository? household,
     required this.accountId,
     required this.deviceId,
     this.nativeAuthConfiguration = const NativeAuthConfigurationUnavailable(
@@ -100,7 +102,8 @@ final class MarkeiComposition {
        settingsSyncDeviceSupport =
            settingsSyncDeviceSupport ??
            _RunnerSettingsSyncDeviceSupport(nativeClosureRunner),
-       householdProfileSource = householdProfileSource ?? nativeClosureRunner;
+       householdProfileSource = householdProfileSource ?? nativeClosureRunner,
+       household = household ?? LocalQueryRepository(database);
 
   final LocalDatabase database;
   final LanguagePreferenceRepository languagePreferences;
@@ -119,6 +122,7 @@ final class MarkeiComposition {
   final SettingsAccountSupportPort settingsAccountSupport;
   final SettingsSyncDeviceSupportPort settingsSyncDeviceSupport;
   final AuthenticatedUserProfileSource householdProfileSource;
+  final HouseholdQueryRepository household;
   final AccountId accountId;
   final DeviceId deviceId;
   final NativeAuthConfigurationResult nativeAuthConfiguration;
@@ -235,7 +239,7 @@ final class MarkeiComposition {
       applicationId: config.configuration.platform == NativeAuthPlatform.android
           ? NativeAuthConfiguration.defaultAndroidApplicationId
           : 'markei.windows',
-      applicationVersion: '1.2.0',
+      applicationVersion: '1.2.1',
     );
     return NativeAuthClosureRunner(
       authenticationSession: authentication,

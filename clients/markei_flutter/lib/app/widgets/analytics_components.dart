@@ -1,5 +1,6 @@
 import '../../l10n/marc_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../domain/analytics/analytics_models.dart';
 import '../../l10n/analytics_copy.dart';
@@ -65,7 +66,7 @@ class AnalyticsComposerView extends StatelessWidget {
                         DropdownButtonFormField<AnalyticsDeterminantKind>(
                           key: const Key('analytics.groupBy'),
                           decoration: InputDecoration(
-                            labelText: 'Determinants / rows',
+                            labelText: 'Determinant',
                           ).localized(context),
                           initialValue: draft.determinant,
                           isExpanded: true,
@@ -76,6 +77,9 @@ class AnalyticsComposerView extends StatelessWidget {
                             for (final kind in AnalyticsDeterminantKind.values)
                               DropdownMenuItem(
                                 value: kind,
+                                enabled:
+                                    kind !=
+                                    AnalyticsDeterminantKind.purchasedFor,
                                 child: MarcText(_determinantLabel(kind)),
                               ),
                           ],
@@ -100,11 +104,8 @@ class AnalyticsComposerView extends StatelessWidget {
                             selected: draft.selectedDeterminantKeys,
                             keyPrefix: 'analytics.choose',
                             onToggle: onToggleDeterminantKey,
+                            onSelectAll: onSelectAllDeterminants,
                             label: 'Search code or name',
-                          ),
-                          TextButton(
-                            onPressed: onSelectAllDeterminants,
-                            child: const MarcText('Use all recorded rows'),
                           ),
                         ],
                       ],
@@ -140,7 +141,7 @@ class AnalyticsComposerView extends StatelessWidget {
           ),
           const SizedBox(height: MarkeiSpacing.sm),
           MarcText(
-            'Values to calculate / optional breakdowns',
+            'Filter Pills / Breakdown / Additional constraints',
             style: MarkeiText.metadata,
           ),
           const SizedBox(height: MarkeiSpacing.xs),
@@ -157,7 +158,7 @@ class AnalyticsComposerView extends StatelessWidget {
                       ? null
                       : (_) => onToggleVariable(variable),
                   tooltip: variable == AnalyticsVariable.purchasedFor
-                      ? 'Purchased for is unavailable in recorded data.'
+                      ? 'Purchased for will use tags in a future update; recorded data has no recipient tags yet.'
                       : null,
                 ),
             ],
@@ -207,6 +208,7 @@ class SavedAnalysisBrowser extends StatelessWidget {
     required this.selected,
     required this.onOlder,
     required this.onNewer,
+    this.onSelected,
     super.key,
   });
 
@@ -214,6 +216,7 @@ class SavedAnalysisBrowser extends StatelessWidget {
   final AnalyticsRecord? selected;
   final VoidCallback onOlder;
   final VoidCallback onNewer;
+  final ValueChanged<AnalyticsRecordId>? onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -238,8 +241,7 @@ class SavedAnalysisBrowser extends StatelessWidget {
     return MarkeiSection(
       key: const Key('analytics.records'),
       title: 'Saved analyses — this session',
-      subtitle:
-          'Record fingerprints distinguish session records; they are not security or authenticity proofs.',
+      subtitle: 'Select a saved analysis to restore its result.',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -277,44 +279,40 @@ class SavedAnalysisBrowser extends StatelessWidget {
               children: [
                 for (final record in records)
                   SizedBox(
-                    width: 280,
+                    width: 260,
                     child: MarkeiCard(
                       key: Key('analytics.record.${record.fingerprint}'),
+                      padding: const EdgeInsets.all(10),
+                      borderColor: selected?.id.value == record.id.value
+                          ? MarkeiColors.lavender
+                          : null,
                       child: Semantics(
                         selected: selected?.id.value == record.id.value,
+                        button: true,
                         label: context.tr(
                           'Saved record ${record.fingerprint}, group by ${context.tr(_determinantLabel(record.draft.determinant))}',
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            MarcText(
-                              'Record #${record.fingerprint}',
-                              style: MarkeiText.sectionTitle,
-                            ),
-                            MarcText(
-                              record.executedAtUtc.toIso8601String(),
-                              style: MarkeiText.metadata,
-                            ),
-                            const SizedBox(height: MarkeiSpacing.xs),
-                            MarcText(
-                              'Group by: ${context.tr(_determinantLabel(record.draft.determinant))}',
-                            ),
-                            MarcText(
-                              'Variables: ${record.draft.variables.map((v) => context.tr(_variableLabel(v))).join(', ')}',
-                            ),
-                            MarcText(
-                              'Timeframe: ${context.tr(record.draft.timeframe.label)}',
-                            ),
-                            const SizedBox(height: MarkeiSpacing.xs),
-                            const Row(
-                              children: [
-                                Icon(Icons.lock_outline, size: 16),
-                                SizedBox(width: MarkeiSpacing.xs),
-                                MarcText('Saved record'),
-                              ],
-                            ),
-                          ],
+                        child: InkWell(
+                          onTap: onSelected == null
+                              ? null
+                              : () => onSelected!(record.id),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '#${record.fingerprint} · ${_formatLocal(record.executedAtUtc)}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: MarkeiText.label,
+                              ),
+                              Text(
+                                '${context.tr(_operationLabel(record.draft.operation))} · ${record.draft.selectedVariables.map((v) => context.tr(_variableLabel(v))).join(', ')}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: MarkeiText.metadata,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -363,10 +361,18 @@ class AnalyticsResultView extends StatelessWidget {
         : AnalyticsResultPresentation.table;
     return MarkeiSection(
       key: const Key('analytics.result'),
-      title:
-          '${context.tr(_determinantLabel(record.draft.determinant))} · ${record.draft.variables.map((v) => context.tr(_variableLabel(v))).join(', ')} · Record #${record.fingerprint}',
-      subtitle:
-          '${record.executedAtUtc.toIso8601String()} · ${record.draft.timeframe.label} · ${record.eligibleCount}/${record.totalCount} evidence rows',
+      title: context.message('Statistics: {p0}', [
+        record.draft.selectedVariables
+            .map((v) => context.tr(_variableLabel(v)))
+            .join(', '),
+      ]),
+      subtitle: context
+          .message('Record #{p0} · {p1} · {p2}/{p3} evidence rows', [
+            record.fingerprint,
+            context.tr(record.draft.timeframe.label),
+            record.eligibleCount,
+            record.totalCount,
+          ]),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -440,12 +446,22 @@ class AnalyticsResultView extends StatelessWidget {
           else
             AnalyticsResultTable(record: record),
           const SizedBox(height: MarkeiSpacing.sm),
+          const MarcText(
+            'Result interpretation',
+            style: MarkeiText.sectionTitle,
+          ),
+          const SizedBox(height: MarkeiSpacing.xs),
           MarcText(
             localizedAnalyticsInterpretation(
               record,
               MarcLocalizations.of(context),
             ),
             key: const Key('analytics.result.interpretation'),
+          ),
+          const SizedBox(height: MarkeiSpacing.sm),
+          const MarcText(
+            'Other basic chart compositions will be added in future updates.',
+            style: MarkeiText.metadata,
           ),
         ],
       ),
@@ -646,8 +662,8 @@ class AnalyticsResultTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    return _HorizontalAnalyticsTable(
+      key: const Key('analytics.result.scroll'),
       child: DataTable(
         key: const Key('analytics.result.table'),
         columns: const [
@@ -789,6 +805,19 @@ class AnalyticsVariablesView extends StatelessWidget {
           const SizedBox(height: MarkeiSpacing.sm),
           MarcText('${state.selectedCount} selected row(s)'),
           const SizedBox(height: MarkeiSpacing.xs),
+          const MarcText(
+            'Each row is a recorded purchase or item. Scroll horizontally to inspect all values.',
+            style: MarkeiText.metadata,
+          ),
+          if (state.projection ==
+              AnalyticsVariablesProjection.containedItems) ...[
+            const SizedBox(height: MarkeiSpacing.xs),
+            const MarcText(
+              'Price paid is the item total; Purchase total covers the whole purchase and may repeat across its items.',
+              style: MarkeiText.metadata,
+            ),
+          ],
+          const SizedBox(height: MarkeiSpacing.sm),
           if (state.projection == AnalyticsVariablesProjection.purchases)
             _PurchasesProjection(
               rows: state.purchaseRows,
@@ -855,32 +884,16 @@ class _PurchasesProjection extends StatelessWidget {
         icon: Icons.search_off,
       );
     }
-    if (!wide) {
-      return Column(
-        children: [
-          for (final row in rows)
-            MarkeiCard(
-              key: Key('analytics.purchase.card.${row.purchaseId.value}'),
-              child: CheckboxListTile(
-                value: row.itemIds.every(
-                  (id) => selectedRowIds.any(
-                    (selected) => selected.value == id.value,
-                  ),
-                ),
-                onChanged: (_) => onTogglePurchase(row.purchaseId.value),
-                title: MarcText(_formatLocal(row.occurrenceTime)),
-                subtitle: Text(
-                  '${row.storeName} · ${MarcLocalizations.of(context).numericCopy(_money(row.purchaseTotal))} · ${context.message('{p0} item(s)', [row.itemCount])}',
-                ),
-              ),
-            ),
-        ],
-      );
-    }
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    return _HorizontalAnalyticsTable(
+      key: const Key('analytics.purchases.scroll'),
       child: DataTable(
         key: const Key('analytics.purchases.table'),
+        horizontalMargin: wide ? 24 : 12,
+        columnSpacing: wide ? 40 : 24,
+        headingTextStyle: MarkeiText.tableLabel,
+        dataTextStyle: wide
+            ? MarkeiText.body
+            : MarkeiText.body.copyWith(fontSize: 12),
         columns: const [
           DataColumn(label: MarcText('Select')),
           DataColumn(label: MarcText('Date-Time of purchase')),
@@ -951,40 +964,30 @@ class _ItemsProjection extends StatelessWidget {
         icon: Icons.search_off,
       );
     }
-    if (!wide) {
-      return Column(
-        children: [
-          for (final row in rows)
-            MarkeiCard(
-              key: Key('analytics.item.card.${row.id.value}'),
-              child: CheckboxListTile(
-                value: _contains(row.id),
-                onChanged: (_) => onToggleItem(row.id),
-                title: Text('${row.productCode} - ${row.productName}'),
-                subtitle: Text(
-                  '${_formatLocal(row.purchaseOccurrenceTime)} · ${row.storeName} · ${MarcLocalizations.of(context).numericCopy(_money(row.lineTotal))}',
-                ),
-              ),
-            ),
-        ],
-      );
-    }
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    return _HorizontalAnalyticsTable(
+      key: const Key('analytics.items.scroll'),
       child: DataTable(
         key: const Key('analytics.items.table'),
+        horizontalMargin: wide ? 24 : 12,
+        columnSpacing: wide ? 40 : 24,
+        headingTextStyle: MarkeiText.tableLabel,
+        dataTextStyle: wide
+            ? MarkeiText.body
+            : MarkeiText.body.copyWith(fontSize: 12),
         columns: const [
           DataColumn(label: MarcText('Select')),
           DataColumn(label: MarcText('Date-Time of purchase')),
-          DataColumn(label: MarcText('Product code / Product name / Brand')),
+          DataColumn(label: MarcText('Product code')),
+          DataColumn(label: MarcText('Product name')),
+          DataColumn(label: MarcText('Brand')),
           DataColumn(label: MarcText('Store name')),
           DataColumn(label: MarcText('Purchased by')),
           DataColumn(label: MarcText('Purchased for')),
           DataColumn(label: MarcText('Payment method')),
           DataColumn(label: MarcText('Quantity and unit')),
           DataColumn(label: MarcText('Unit price')),
-          DataColumn(label: MarcText('Line total')),
-          DataColumn(label: MarcText('Promotion')),
+          DataColumn(label: MarcText('Price paid')),
+          DataColumn(label: MarcText('Purchase total')),
         ],
         rows: [
           for (final row in rows)
@@ -997,9 +1000,13 @@ class _ItemsProjection extends StatelessWidget {
                   ),
                 ),
                 DataCell(MarcText(_formatLocal(row.purchaseOccurrenceTime))),
+                DataCell(Text(row.productCode)),
+                DataCell(Text(row.productName)),
                 DataCell(
                   Text(
-                    '${row.productCode} · ${row.productName} · ${row.productBrand.isEmpty ? 'Unavailable' : row.productBrand}',
+                    row.productBrand.isEmpty
+                        ? context.tr('Unavailable')
+                        : row.productBrand,
                   ),
                 ),
                 DataCell(Text(row.storeName)),
@@ -1020,7 +1027,7 @@ class _ItemsProjection extends StatelessWidget {
                 ),
                 DataCell(MarcText(_unitPrice(row))),
                 DataCell(MarcText(_money(row.lineTotal))),
-                const DataCell(MarcText('Unavailable in recorded data')),
+                DataCell(MarcText(_money(row.purchaseTotal))),
               ],
             ),
         ],
@@ -1062,8 +1069,8 @@ class _ChoiceMenu<T> extends StatelessWidget {
             for (final item in values)
               DropdownMenuItem(
                 value: item,
-                child: MarcText(
-                  '$label: ${labelFor(item)}',
+                child: Text(
+                  '${context.tr(label)}: ${context.tr(labelFor(item))}',
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1104,13 +1111,7 @@ String _variableLabel(AnalyticsVariable variable) => switch (variable) {
 };
 
 String _determinantLabel(AnalyticsDeterminantKind determinant) =>
-    switch (determinant) {
-      AnalyticsDeterminantKind.product => 'Product',
-      AnalyticsDeterminantKind.purchase => 'Purchase',
-      AnalyticsDeterminantKind.store => 'Store',
-      AnalyticsDeterminantKind.timeDayUtc => 'Time',
-      AnalyticsDeterminantKind.timeMonthUtc => 'Time by month',
-    };
+    analyticsDimensionLabel(determinant);
 
 String _sortLabel(AnalyticsVariablesSort sort) => switch (sort) {
   AnalyticsVariablesSort.timeAscending => 'Oldest first',
@@ -1229,6 +1230,7 @@ class _AnalyticsTimeframeRangeState extends State<_AnalyticsTimeframeRange> {
                 child: TextField(
                   key: const Key('analytics.timeframe.initialDate'),
                   controller: _start,
+                  inputFormatters: [_AnalyticsDateFormatter()],
                   keyboardType: TextInputType.datetime,
                   decoration: InputDecoration(
                     labelText: 'Start date',
@@ -1243,6 +1245,7 @@ class _AnalyticsTimeframeRangeState extends State<_AnalyticsTimeframeRange> {
                 child: TextField(
                   key: const Key('analytics.timeframe.finalDate'),
                   controller: _end,
+                  inputFormatters: [_AnalyticsDateFormatter()],
                   keyboardType: TextInputType.datetime,
                   decoration: InputDecoration(
                     labelText: 'End date',
@@ -1345,18 +1348,19 @@ class _AnalyticsAxisView extends StatelessWidget {
         initialValue: axis.kind,
         isExpanded: true,
         decoration: InputDecoration(
-          labelText: 'Analytics 0${index + 1}',
+          labelText: index == 0 ? 'Analytics' : 'Analytics constraint',
           filled: true,
           fillColor: MarkeiColors.lavender.withValues(alpha: 0.035),
         ).localized(context),
         hint: const MarcText('No second dimension'),
         items: [
           const DropdownMenuItem(value: null, child: MarcText('None')),
-          for (final kind in AnalyticsDeterminantKind.values.where(
-            (kind) => !excluded.contains(kind),
-          ))
+          for (final kind in AnalyticsDeterminantKind.values)
             DropdownMenuItem(
               value: kind,
+              enabled:
+                  !excluded.contains(kind) &&
+                  kind != AnalyticsDeterminantKind.purchasedFor,
               child: MarcText(_determinantLabel(kind)),
             ),
         ],
@@ -1377,6 +1381,7 @@ class _AnalyticsAxisView extends StatelessWidget {
           selected: axis.selectedKeys,
           keyPrefix: 'analytics.axis.$index.choose',
           label: 'Search comparison values',
+          onSelectAll: () => onChanged(AnalyticsAxis(kind: axis.kind)),
           onToggle: (key) {
             final next = {...axis.selectedKeys};
             if (!next.remove(key)) next.add(key);
@@ -1388,10 +1393,6 @@ class _AnalyticsAxisView extends StatelessWidget {
               ? 'All recorded values form comparison series.'
               : '${axis.selectedKeys.length} selected comparison value(s).',
           style: MarkeiText.metadata,
-        ),
-        TextButton(
-          onPressed: () => onChanged(AnalyticsAxis(kind: axis.kind)),
-          child: const MarcText('Use all values'),
         ),
       ],
     ],
@@ -1405,6 +1406,7 @@ class _AnalyticsSearchChoice extends StatefulWidget {
     required this.onToggle,
     required this.keyPrefix,
     required this.label,
+    this.onSelectAll,
     super.key,
   });
   final List<AnalyticsOption> options;
@@ -1412,12 +1414,20 @@ class _AnalyticsSearchChoice extends StatefulWidget {
   final ValueChanged<String> onToggle;
   final String keyPrefix;
   final String label;
+  final VoidCallback? onSelectAll;
   @override
   State<_AnalyticsSearchChoice> createState() => _AnalyticsSearchChoiceState();
 }
 
 class _AnalyticsSearchChoiceState extends State<_AnalyticsSearchChoice> {
   String _search = '';
+  final _scroll = ScrollController();
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final matches = widget.options
@@ -1428,8 +1438,14 @@ class _AnalyticsSearchChoiceState extends State<_AnalyticsSearchChoice> {
     final selected = widget.options.where(
       (o) => widget.selected.contains(o.key),
     );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ExpansionTile(
+      key: Key('${widget.keyPrefix}.dropdown'),
+      tilePadding: EdgeInsets.zero,
+      title: const MarcText('Choose recorded values'),
+      subtitle: Text(
+        context.message('{p0} selected value(s)', [widget.selected.length]),
+      ),
+      childrenPadding: const EdgeInsets.only(bottom: 8),
       children: [
         const SizedBox(height: 12),
         TextField(
@@ -1455,27 +1471,124 @@ class _AnalyticsSearchChoiceState extends State<_AnalyticsSearchChoice> {
               ],
             ),
           ),
-        for (final option in matches.take(4))
-          CheckboxListTile(
-            key: Key('${widget.keyPrefix}.${option.key}'),
-            dense: true,
-            contentPadding: EdgeInsets.zero,
-            controlAffinity: ListTileControlAffinity.leading,
-            title: Text(option.label, style: MarkeiText.body),
-            value: widget.selected.contains(option.key),
-            onChanged: (_) => widget.onToggle(option.key),
+        if (matches.isNotEmpty)
+          SizedBox(
+            height:
+                (matches.length < 5 ? matches.length : 5) *
+                56 *
+                MediaQuery.textScalerOf(context).scale(1),
+            child: Scrollbar(
+              controller: _scroll,
+              thumbVisibility: true,
+              child: ListView.builder(
+                controller: _scroll,
+                primary: false,
+                itemExtent: 56 * MediaQuery.textScalerOf(context).scale(1),
+                itemCount: matches.length,
+                itemBuilder: (context, index) {
+                  final option = matches[index];
+                  return CheckboxListTile(
+                    key: Key('${widget.keyPrefix}.${option.key}'),
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text(
+                      option.label,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: MarkeiText.body,
+                    ),
+                    value: widget.selected.contains(option.key),
+                    onChanged: (_) => widget.onToggle(option.key),
+                  );
+                },
+              ),
+            ),
           ),
-        if (matches.length > 4)
-          MarcText(
-            '${matches.length} matches. Type more to narrow the list.',
-            style: MarkeiText.metadata,
-          ),
+        TextButton(
+          onPressed: widget.onSelectAll,
+          child: const MarcText('Use all records'),
+        ),
         if (matches.isEmpty)
           const MarcText(
             'No recorded values match this search.',
             style: MarkeiText.metadata,
           ),
       ],
+    );
+  }
+}
+
+class _HorizontalAnalyticsTable extends StatefulWidget {
+  const _HorizontalAnalyticsTable({required this.child, super.key});
+  final Widget child;
+  @override
+  State<_HorizontalAnalyticsTable> createState() =>
+      _HorizontalAnalyticsTableState();
+}
+
+class _HorizontalAnalyticsTableState extends State<_HorizontalAnalyticsTable> {
+  final _scroll = ScrollController();
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Scrollbar(
+    controller: _scroll,
+    thumbVisibility: true,
+    trackVisibility: true,
+    scrollbarOrientation: ScrollbarOrientation.bottom,
+    child: SingleChildScrollView(
+      controller: _scroll,
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.only(bottom: 16),
+      child: widget.child,
+    ),
+  );
+}
+
+/// Inserts separators without accepting invalid calendar dates; validation is
+/// still performed by the existing strict local-date parser.
+class _AnalyticsDateFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.composing.isValid && !newValue.composing.isCollapsed) {
+      return newValue;
+    }
+    // Keep explicitly separated drafts intact so existing strict validation
+    // reports malformed pasted dates instead of silently coercing them.
+    if (newValue.text.contains(RegExp(r'[^0-9-]'))) return newValue;
+    final digits = newValue.text.replaceAll('-', '');
+    if (digits.length > 8) return newValue;
+    var formatted = digits;
+    if (digits.length > 4) {
+      formatted =
+          '${digits.substring(0, 2)}-${digits.substring(2, 4)}-${digits.substring(4)}';
+    } else if (digits.length > 2) {
+      formatted = '${digits.substring(0, 2)}-${digits.substring(2)}';
+    }
+    if (newValue.text == formatted) return newValue;
+    final cursor = newValue.selection.extentOffset.clamp(
+      0,
+      newValue.text.length,
+    );
+    final before = newValue.text
+        .substring(0, cursor)
+        .replaceAll('-', '')
+        .length;
+    final offset = (before + (before > 2 ? 1 : 0) + (before > 4 ? 1 : 0)).clamp(
+      0,
+      formatted.length,
+    );
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: offset),
     );
   }
 }

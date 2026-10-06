@@ -417,7 +417,7 @@ class LocalPurchaseRepository implements PurchaseRegistrationRepository {
     }
     final row = await _db
         .customSelect(
-          'SELECT id FROM $tableName WHERE account_id = ? AND id = ?',
+          'SELECT id FROM $tableName WHERE account_id = ? AND id = ? AND active = 1',
           variables: [
             Variable.withString(accountId.value),
             Variable.withString(id),

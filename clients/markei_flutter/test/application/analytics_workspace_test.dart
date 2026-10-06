@@ -8,6 +8,38 @@ import 'package:markei/domain/shared/quantity.dart';
 
 void main() {
   test(
+    'opening a saved result restores its draft without creating a new record',
+    () async {
+      final controller = AnalyticsWorkspaceController(
+        accountId: const AccountId('account-1'),
+        repository: _CountingRepository(_rows(2, purchaseCount: 2)),
+        registry: localAnalyticsRegistry(),
+      );
+      await controller.load();
+      controller.selectAllDeterminants();
+      controller.toggleVariable(AnalyticsVariable.lineTotal);
+      controller.runAndSave();
+      final first = controller.snapshot.selectedRecord!;
+      controller.setOperation(AnalyticsOperation.mean);
+      controller.runAndSave();
+      expect(controller.snapshot.draft.operation, AnalyticsOperation.mean);
+      controller.selectOlderRecord();
+      expect(controller.snapshot.draft.operation, first.draft.operation);
+      expect(controller.snapshot.draft.variables, first.draft.variables);
+      expect(
+        controller.snapshot.draft.selectedDeterminantKeys,
+        first.draft.selectedDeterminantKeys,
+      );
+      expect(controller.snapshot.records, hasLength(2));
+      controller.selectNewerRecord();
+      expect(controller.snapshot.draft.operation, AnalyticsOperation.mean);
+      controller.selectRecord(first.id);
+      expect(controller.snapshot.draft.operation, first.draft.operation);
+      expect(controller.snapshot.draft.variables, first.draft.variables);
+      expect(controller.snapshot.records, hasLength(2));
+    },
+  );
+  test(
     'workspace loads once and keeps local transitions request-free',
     () async {
       final repository = _CountingRepository(_rows(5));
@@ -73,7 +105,7 @@ void main() {
 
     expect(
       controller.snapshot.validation.explanation,
-      contains('Choose at least one Product'),
+      contains('Choose at least one recorded value'),
     );
     controller.toggleDeterminantKey('product-0');
     expect(
@@ -83,7 +115,7 @@ void main() {
     controller.toggleVariable(AnalyticsVariable.purchasedFor);
     expect(
       controller.snapshot.validation.explanation,
-      'Purchased for is unavailable in recorded data.',
+      'Purchased for will use tags in a future update; recorded data has no recipient tags yet.',
     );
   });
 
@@ -178,7 +210,7 @@ void main() {
         (controller.snapshot.selectedRecord!.entries.single.value
                 as AnalyticsBasisPointResultValue)
             .label,
-        contains('share of'),
+        contains('as a percentage of'),
       );
     },
   );
@@ -258,6 +290,100 @@ void main() {
     expect(csv, contains('date_time_of_purchase'));
     expect(String.fromCharCodes(pdf.take(8)), '%PDF-1.4');
   });
+
+  test(
+    'percentage zero denominators exclude all samples at the measure grain',
+    () async {
+      final controller = AnalyticsWorkspaceController(
+        accountId: const AccountId('account-1'),
+        repository: _CountingRepository([
+          _row('0', productId: 'a', purchaseId: 'baseline'),
+          _row('1', productId: 'a', purchaseId: 'baseline'),
+          _row(
+            '2',
+            productId: 'b',
+            purchaseId: 'comparison',
+            lineMinorUnits: 0,
+            purchaseMinorUnits: 0,
+          ),
+          _row(
+            '3',
+            productId: 'b',
+            purchaseId: 'comparison',
+            lineMinorUnits: 0,
+            purchaseMinorUnits: 0,
+          ),
+        ]),
+        registry: localAnalyticsRegistry(),
+      );
+      await controller.load();
+      controller.selectAllDeterminants();
+      controller.toggleVariable(AnalyticsVariable.purchaseTotal);
+      controller.toggleVariable(AnalyticsVariable.lineTotal);
+      controller.setOperation(AnalyticsOperation.percentage);
+      controller.runAndSave();
+      final record = controller.snapshot.selectedRecord!;
+      expect(record.totalCount, 4);
+      expect(record.eligibleCount, 0);
+      expect(record.excludedCount, 4);
+      expect(record.contributingRowIds, hasLength(4));
+      for (final entry in record.entries) {
+        expect(
+          (entry.value as AnalyticsUnavailableResultValue).reason,
+          AnalyticsUnavailableReason.zeroDenominator,
+        );
+        final total = entry.measure == AnalyticsMeasure.purchaseTotal ? 2 : 4;
+        expect(entry.eligibleCount, 0);
+        expect(entry.totalCount, total);
+        expect(entry.excludedCount, total);
+      }
+    },
+  );
+
+  test(
+    'Variables pagination uses the complete filtered projection and preserves selection',
+    () async {
+      final repository = _CountingRepository(_rows(45, purchaseCount: 25));
+      final controller = AnalyticsWorkspaceController(
+        accountId: const AccountId('account-1'),
+        repository: repository,
+        registry: localAnalyticsRegistry(),
+      );
+      await controller.load();
+      expect(controller.snapshot.variables.filteredCount, 45);
+      expect(controller.snapshot.variables.itemRows, hasLength(20));
+      expect(controller.snapshot.variables.hasNext, isTrue);
+      final selected = controller.snapshot.variables.itemRows.first.id;
+      controller.toggleItemSelection(selected);
+      controller.variablesNextPage();
+      expect(controller.snapshot.variables.pageIndex, 1);
+      expect(controller.snapshot.variables.itemRows, hasLength(20));
+      expect(controller.snapshot.variables.hasNext, isTrue);
+      controller.variablesNextPage();
+      expect(controller.snapshot.variables.pageIndex, 2);
+      expect(controller.snapshot.variables.itemRows, hasLength(5));
+      expect(controller.snapshot.variables.hasNext, isFalse);
+      controller.variablesNextPage();
+      expect(controller.snapshot.variables.pageIndex, 2);
+      controller.variablesPreviousPage();
+      expect(controller.snapshot.variables.pageIndex, 1);
+      expect(controller.snapshot.selectedRowIds.single.value, selected.value);
+      controller.setVariablesSearch('Product 3');
+      expect(controller.snapshot.variables.pageIndex, 0);
+      expect(controller.snapshot.variables.filteredCount, 11);
+      expect(controller.snapshot.variables.hasNext, isFalse);
+      controller.setVariablesSearch('');
+      controller.setVariablesProjection(AnalyticsVariablesProjection.purchases);
+      expect(controller.snapshot.variables.filteredCount, 25);
+      expect(controller.snapshot.variables.purchaseRows, hasLength(20));
+      expect(controller.snapshot.variables.hasNext, isTrue);
+      controller.variablesNextPage();
+      expect(controller.snapshot.variables.purchaseRows, hasLength(5));
+      expect(controller.snapshot.variables.hasNext, isFalse);
+      expect(controller.snapshot.selectedRowIds.single.value, selected.value);
+      expect(repository.requestCount, 1);
+    },
+  );
 
   test(
     'D44 result matrix preserves selected variables and display scale',
@@ -468,7 +594,7 @@ void main() {
   );
 
   test(
-    'saved records are immutable and selected records ignore live draft',
+    'saved records are immutable and selection restores their configuration',
     () async {
       final controller = AnalyticsWorkspaceController(
         accountId: const AccountId('account-1'),
@@ -489,10 +615,7 @@ void main() {
         controller.snapshot.selectedRecord!.fingerprint,
         first.fingerprint,
       );
-      expect(
-        controller.snapshot.draft.variables,
-        contains(AnalyticsVariable.quantity),
-      );
+      expect(controller.snapshot.draft.variables, first.draft.variables);
     },
   );
 
@@ -523,6 +646,214 @@ void main() {
       expect(csv, isNot(contains('store_id')));
       expect(pdfText, isNot(contains('quantity:mass:kg')));
       expect(record.interpretation, contains('Quantity'));
+    },
+  );
+
+  test(
+    'identical saves are suppressed, changed same-ID evidence remains runnable and old exports stay frozen',
+    () async {
+      final repository = _CountingRepository(_rows(2));
+      final controller = AnalyticsWorkspaceController(
+        accountId: const AccountId('account-1'),
+        repository: repository,
+        registry: localAnalyticsRegistry(),
+      );
+      await controller.load();
+      controller.selectAllDeterminants();
+      controller.toggleVariable(AnalyticsVariable.lineTotal);
+      controller.runAndSave();
+      final first = controller.snapshot.selectedRecord!;
+      expect(controller.snapshot.validation.canRun, isFalse);
+      controller.runAndSave();
+      controller.runAndSave();
+      expect(controller.snapshot.records, hasLength(1));
+      expect(controller.snapshot.selectedRecord, same(first));
+      expect(repository.requestCount, 1);
+
+      repository.rows.setAll(0, repository.rows.reversed.toList());
+      await controller.retry();
+      expect(controller.snapshot.validation.canRun, isFalse);
+      repository.rows[1] = _row('0', lineMinorUnits: 900);
+      await controller.retry();
+      expect(controller.snapshot.validation.canRun, isTrue);
+      controller.runAndSave();
+      expect(controller.snapshot.records, hasLength(2));
+      final changed = controller.snapshot.selectedRecord!;
+      expect(
+        changed.entries.map(
+          (entry) => (entry.value as AnalyticsIntegerResultValue).value,
+        ),
+        contains(900),
+      );
+      controller.selectRecord(first.id);
+      expect(controller.snapshot.selectedRecord, same(first));
+      expect(controller.snapshot.records, hasLength(2));
+      expect(repository.requestCount, 3);
+      final oldCsv = analyticsRecordCsv(
+        first,
+        AnalyticsDataset(
+          accountId: const AccountId('account-1'),
+          rows: repository.rows,
+        ),
+      );
+      expect(oldCsv, contains('1.00 BRL'));
+      expect(oldCsv, isNot(contains('9.00 BRL')));
+      expect(
+        controller.snapshot.variables.itemRows
+            .where((row) => row.id.value == 'item-0')
+            .single
+            .lineTotal
+            .minorUnits,
+        100,
+      );
+    },
+  );
+
+  test(
+    'record evidence counts are distinct and purchase mean deduplicates repeated contained items',
+    () async {
+      final controller = AnalyticsWorkspaceController(
+        accountId: const AccountId('account-1'),
+        repository: _CountingRepository([
+          _row(
+            '0',
+            productId: 'one',
+            purchaseId: 'shared',
+            purchaseMinorUnits: 100,
+          ),
+          _row(
+            '1',
+            productId: 'one',
+            purchaseId: 'shared',
+            purchaseMinorUnits: 100,
+          ),
+          _row('2', productId: 'one', purchaseMinorUnits: 300),
+        ]),
+        registry: localAnalyticsRegistry(),
+      );
+      await controller.load();
+      controller.selectAllDeterminants();
+      controller.toggleVariable(AnalyticsVariable.purchaseTotal);
+      controller.toggleVariable(AnalyticsVariable.lineTotal);
+      controller.setOperation(AnalyticsOperation.mean);
+      controller.runAndSave();
+      final record = controller.snapshot.selectedRecord!;
+      expect(record.eligibleCount, 3);
+      expect(record.totalCount, 3);
+      final total = record.entries.singleWhere(
+        (entry) => entry.measure == AnalyticsMeasure.purchaseTotal,
+      );
+      expect((total.value as AnalyticsIntegerResultValue).value, 200);
+      expect(total.eligibleCount, 2);
+      expect(
+        record.interpretation,
+        contains('3 contained items from 2 distinct purchases'),
+      );
+      expect(record.interpretation, contains('group totals are not additive'));
+    },
+  );
+
+  test(
+    'new categorical and exact numeric dimensions preserve fixed-point and currency semantics',
+    () async {
+      final controller = AnalyticsWorkspaceController(
+        accountId: const AccountId('account-1'),
+        repository: _CountingRepository([
+          _row(
+            '0',
+            person: const AnalyticsReference(id: 'person-a', label: 'Alex'),
+            payment: const AnalyticsReference(id: 'cash', label: 'Cash'),
+          ),
+          _row(
+            '1',
+            person: const AnalyticsReference(id: 'person-b', label: 'Alex'),
+            payment: const AnalyticsReference(id: 'card', label: 'Card'),
+            currency: 'USD',
+          ),
+          _row('2', lineMinorUnits: 200, purchaseMinorUnits: 500),
+        ]),
+        registry: localAnalyticsRegistry(),
+      );
+      await controller.load();
+      for (final kind in [
+        AnalyticsDeterminantKind.purchasedBy,
+        AnalyticsDeterminantKind.paymentMethod,
+        AnalyticsDeterminantKind.quantity,
+        AnalyticsDeterminantKind.unitPrice,
+        AnalyticsDeterminantKind.pricePaid,
+        AnalyticsDeterminantKind.purchaseTotal,
+      ]) {
+        controller.setDeterminant(kind);
+        controller.selectAllDeterminants();
+        controller.updateDraft(
+          controller.snapshot.draft.copyWith(
+            variables: {AnalyticsVariable.evidenceCount},
+          ),
+        );
+        expect(
+          controller.snapshot.validation.canRun,
+          isTrue,
+          reason: kind.name,
+        );
+        controller.runAndSave();
+        expect(
+          controller.snapshot.selectedRecord!.entries.fold<int>(
+            0,
+            (total, entry) =>
+                total + (entry.value as AnalyticsIntegerResultValue).value,
+          ),
+          3,
+        );
+      }
+      expect(
+        controller.snapshot.options[AnalyticsDeterminantKind.purchasedBy]!
+            .map((option) => option.key)
+            .toSet(),
+        {'person:person-a', 'person:person-b', 'person:none'},
+      );
+      expect(
+        controller.snapshot.options[AnalyticsDeterminantKind.pricePaid]!.map(
+          (option) => option.label,
+        ),
+        containsAll(['1.00 BRL', '1.00 USD', '2.00 BRL']),
+      );
+      controller.setDeterminant(AnalyticsDeterminantKind.product);
+      controller.selectAllDeterminants();
+      controller.setAxis(
+        0,
+        const AnalyticsAxis(
+          kind: AnalyticsDeterminantKind.paymentMethod,
+          selectedKeys: {'payment:cash'},
+        ),
+      );
+      controller.setAxis(
+        1,
+        AnalyticsAxis(
+          kind: AnalyticsDeterminantKind.pricePaid,
+          selectedKeys: {'pricePaid:BRL:100'},
+        ),
+      );
+      controller.runAndSave();
+      expect(controller.snapshot.selectedRecord!.totalCount, 1);
+      expect(
+        controller
+            .snapshot
+            .selectedRecord!
+            .entries
+            .single
+            .groupKey
+            .contextLabel,
+        contains('Cash'),
+      );
+      controller.setAxis(
+        1,
+        const AnalyticsAxis(kind: AnalyticsDeterminantKind.purchasedFor),
+      );
+      expect(controller.snapshot.validation.canRun, isFalse);
+      expect(
+        controller.snapshot.validation.explanation,
+        contains('future update'),
+      );
     },
   );
 
@@ -559,6 +890,44 @@ void main() {
     expect(loadWatch.elapsedMilliseconds, lessThan(250));
     expect(calcWatch.elapsedMilliseconds, lessThan(250));
   });
+
+  test(
+    'unit-price difference compares means and missing prices are excluded from each sample',
+    () async {
+      final controller = AnalyticsWorkspaceController(
+        accountId: const AccountId('account-1'),
+        repository: _CountingRepository([
+          _row('0', productId: 'a', lineMinorUnits: 100),
+          _row('1', productId: 'a', lineMinorUnits: 300),
+          _row('2', productId: 'b', lineMinorUnits: 400),
+          _row('3', productId: 'b', hasUnitPrice: false),
+        ]),
+        registry: localAnalyticsRegistry(),
+      );
+      await controller.load();
+      controller.selectAllDeterminants();
+      controller.toggleVariable(AnalyticsVariable.unitPrice);
+      controller.setOperation(AnalyticsOperation.difference);
+      controller.runAndSave();
+      expect(
+        (controller.snapshot.selectedRecord!.entries.single.value
+                as AnalyticsIntegerResultValue)
+            .value,
+        200,
+      );
+      controller.setOperation(AnalyticsOperation.mean);
+      controller.runAndSave();
+      final record = controller.snapshot.selectedRecord!;
+      final b = record.entries.singleWhere(
+        (entry) => entry.groupKey.value == 'b',
+      );
+      expect(b.eligibleCount, 1);
+      expect(b.totalCount, 2);
+      expect(b.excludedCount, 1);
+      expect(record.eligibleCount, 3);
+      expect(record.excludedCount, 1);
+    },
+  );
 
   test('stress fixture measures 10000 Purchases and 50000 Items', () async {
     final rows = _rows(50000, purchaseCount: 10000);
@@ -625,15 +994,19 @@ AnalyticsEvidenceRow _row(
   String? purchaseId,
   AnalyticsReference? person,
   AnalyticsReference? payment,
+  int lineMinorUnits = 100,
+  int purchaseMinorUnits = 100,
+  String currency = 'BRL',
+  bool hasUnitPrice = true,
 }) {
   return AnalyticsEvidenceRow(
     id: PurchaseItemId('item-$id'),
     accountId: const AccountId('account-1'),
     purchaseId: PurchaseId(purchaseId ?? 'purchase-$id'),
     purchaseOccurrenceTime: DateTime.utc(2026, 7, 31, 12, int.parse(id) % 60),
-    purchaseTotal: const AnalyticsMoneyAmount(
-      currencyCode: 'BRL',
-      minorUnits: 100,
+    purchaseTotal: AnalyticsMoneyAmount(
+      currencyCode: currency,
+      minorUnits: purchaseMinorUnits,
     ),
     productId: ProductId(productId ?? 'product-$id'),
     productCode: 'P-$id',
@@ -648,12 +1021,17 @@ AnalyticsEvidenceRow _row(
       unit: CanonicalUnit.kg,
       microunits: NormalizedQuantity.factor,
     ),
-    lineTotal: const AnalyticsMoneyAmount(currencyCode: 'BRL', minorUnits: 100),
-    unitPrice: const AnalyticsUnitPrice(
-      currencyCode: 'BRL',
-      minorUnitsPerCanonicalUnit: 100,
-      kind: MeasurementKind.mass,
-      unit: CanonicalUnit.kg,
+    lineTotal: AnalyticsMoneyAmount(
+      currencyCode: currency,
+      minorUnits: lineMinorUnits,
     ),
+    unitPrice: !hasUnitPrice
+        ? null
+        : AnalyticsUnitPrice(
+            currencyCode: currency,
+            minorUnitsPerCanonicalUnit: lineMinorUnits,
+            kind: MeasurementKind.mass,
+            unit: CanonicalUnit.kg,
+          ),
   );
 }

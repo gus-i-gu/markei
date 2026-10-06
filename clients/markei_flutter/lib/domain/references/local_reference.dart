@@ -14,6 +14,7 @@ final class LocalReference {
     required this.createdAt,
     required this.updatedAt,
     this.archivedAt,
+    this.assignedPersonId,
   });
 
   final String id;
@@ -26,6 +27,7 @@ final class LocalReference {
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime? archivedAt;
+  final String? assignedPersonId;
 
   String get displayLabel => '$visibleCode · $nickname';
 

@@ -21,6 +21,12 @@ abstract interface class LocalReferenceRepository {
     required LocalReferenceKind kind,
     required String id,
   });
+
+  Future<void> assignPaymentMethod({
+    required AccountId accountId,
+    required String paymentMethodId,
+    required String? personId,
+  });
 }
 
 abstract interface class AccountPreferenceRepository {

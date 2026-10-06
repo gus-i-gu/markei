@@ -147,6 +147,8 @@ class PaymentMethods extends Table {
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime()();
   DateTimeColumn get archivedAt => dateTime().nullable()();
+  TextColumn get assignedPersonId =>
+      text().nullable().references(People, #id, onDelete: KeyAction.restrict)();
 
   @override
   Set<Column<Object>> get primaryKey => {id};
@@ -445,7 +447,7 @@ class LocalDatabase extends _$LocalDatabase {
       LocalDatabase(NativeDatabase.createInBackground(file));
 
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -706,7 +708,25 @@ SELECT id, 5, strftime('%s','now') * 1000 FROM local_accounts
           ),
         );
       }
-      if (from > 13) {
+      if (from < 14) {
+        await migrator.addColumn(
+          paymentMethods,
+          paymentMethods.assignedPersonId,
+        );
+        await into(migrationLedger).insert(
+          MigrationLedgerCompanion.insert(
+            schemaName: 'shared_beta_local',
+            schemaVersion: to,
+            fromVersion: Value(from),
+            toVersion: const Value(14),
+            migrationId: const Value(
+              'v13-to-v14-local-payment-person-assignment',
+            ),
+            appliedAt: DateTime.now().toUtc(),
+          ),
+        );
+      }
+      if (from > 14) {
         throw UnsupportedError(
           'Unsupported local database migration $from to $to.',
         );

@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import '../../application/catalogue_queries.dart';
 import '../../application/app_failure.dart';
 import '../../application/history_export.dart';
+import '../../application/household.dart';
 import '../../application/local_references.dart';
 import '../../application/product_lists.dart';
 import '../../application/purchase_history.dart';
@@ -19,6 +20,7 @@ class LocalQueryRepository
     implements
         CatalogueQueryRepository,
         PurchaseHistoryRepository,
+        HouseholdQueryRepository,
         LocalReferenceRepository,
         AccountPreferenceRepository,
         ProductListProjectionRepository,
@@ -581,17 +583,72 @@ class LocalQueryRepository
       throw ArgumentError('Nickname is required.');
     }
     return _db.transaction(() async {
+      if (id != null) {
+        final normalized = normalizeReferenceNickname(trimmed);
+        if (kind == LocalReferenceKind.person) {
+          final changed =
+              await (_db.update(_db.people)..where(
+                    (table) =>
+                        table.accountId.equals(accountId.value) &
+                        table.id.equals(id),
+                  ))
+                  .write(
+                    PeopleCompanion(
+                      nickname: Value(trimmed),
+                      normalizedNickname: Value(normalized),
+                      active: Value(active),
+                      updatedAt: Value(now),
+                      archivedAt: Value(active ? null : now),
+                    ),
+                  );
+          if (changed != 1) {
+            throw StateError('Person is unavailable for this Account.');
+          }
+          final row =
+              await (_db.select(_db.people)..where(
+                    (table) =>
+                        table.accountId.equals(accountId.value) &
+                        table.id.equals(id),
+                  ))
+                  .getSingle();
+          return _referenceFromRow(kind, row);
+        }
+        final changed =
+            await (_db.update(_db.paymentMethods)..where(
+                  (table) =>
+                      table.accountId.equals(accountId.value) &
+                      table.id.equals(id),
+                ))
+                .write(
+                  PaymentMethodsCompanion(
+                    nickname: Value(trimmed),
+                    normalizedNickname: Value(normalized),
+                    active: Value(active),
+                    updatedAt: Value(now),
+                    archivedAt: Value(active ? null : now),
+                  ),
+                );
+        if (changed != 1) {
+          throw StateError('Payment Method is unavailable for this Account.');
+        }
+        final row =
+            await (_db.select(_db.paymentMethods)..where(
+                  (table) =>
+                      table.accountId.equals(accountId.value) &
+                      table.id.equals(id),
+                ))
+                .getSingle();
+        return _referenceFromRow(kind, row);
+      }
       await _ensureAccount(accountId, now);
       await _ensureAccountPreferences(accountId, now);
       final normalized = normalizeReferenceNickname(trimmed);
-      final referenceId = id ?? _uuid.v4();
+      final referenceId = _uuid.v4();
       if (kind == LocalReferenceKind.person) {
-        final visibleCode = id == null
-            ? await _allocateReferenceCode(accountId, LocalReferenceKind.person)
-            : (await (_db.select(_db.people)
-                        ..where((table) => table.id.equals(referenceId)))
-                      .getSingle())
-                  .visibleCode;
+        final visibleCode = await _allocateReferenceCode(
+          accountId,
+          LocalReferenceKind.person,
+        );
         await _db
             .into(_db.people)
             .insert(
@@ -613,15 +670,10 @@ class LocalQueryRepository
         )..where((table) => table.id.equals(referenceId))).getSingle();
         return _referenceFromRow(kind, row);
       }
-      final visibleCode = id == null
-          ? await _allocateReferenceCode(
-              accountId,
-              LocalReferenceKind.paymentMethod,
-            )
-          : (await (_db.select(
-                  _db.paymentMethods,
-                )..where((table) => table.id.equals(referenceId))).getSingle())
-                .visibleCode;
+      final visibleCode = await _allocateReferenceCode(
+        accountId,
+        LocalReferenceKind.paymentMethod,
+      );
       await _db
           .into(_db.paymentMethods)
           .insert(
@@ -709,6 +761,111 @@ class LocalQueryRepository
   }
 
   @override
+  Future<void> assignPaymentMethod({
+    required AccountId accountId,
+    required String paymentMethodId,
+    required String? personId,
+  }) => _db.transaction(() async {
+    final payment =
+        await (_db.select(_db.paymentMethods)..where(
+              (table) =>
+                  table.accountId.equals(accountId.value) &
+                  table.id.equals(paymentMethodId),
+            ))
+            .getSingleOrNull();
+    if (payment == null) {
+      throw StateError('Payment Method is unavailable for this Account.');
+    }
+    if (personId != null) {
+      if (!payment.active) {
+        throw StateError(
+          'Unarchive this Payment Method before assigning a Person.',
+        );
+      }
+      final person =
+          await (_db.select(_db.people)..where(
+                (table) =>
+                    table.accountId.equals(accountId.value) &
+                    table.id.equals(personId) &
+                    table.active.equals(true),
+              ))
+              .getSingleOrNull();
+      if (person == null) {
+        throw StateError('Choose an active Person for this Account.');
+      }
+    }
+    await (_db.update(_db.paymentMethods)..where(
+          (table) =>
+              table.accountId.equals(accountId.value) &
+              table.id.equals(paymentMethodId),
+        ))
+        .write(
+          PaymentMethodsCompanion(
+            assignedPersonId: Value(personId),
+            updatedAt: Value(DateTime.now().toUtc()),
+          ),
+        );
+  });
+
+  @override
+  Future<List<HouseholdPersonSummary>> householdPeople(
+    AccountId accountId,
+  ) async {
+    final people = await listReferences(
+      accountId,
+      LocalReferenceKind.person,
+      includeArchived: true,
+    );
+    final payments = await listReferences(
+      accountId,
+      LocalReferenceKind.paymentMethod,
+      includeArchived: true,
+    );
+    final rows =
+        await (_db.select(_db.purchases).join([
+                innerJoin(
+                  _db.stores,
+                  _db.stores.id.equalsExp(_db.purchases.storeId) &
+                      _db.stores.accountId.equals(accountId.value),
+                ),
+              ])
+              ..where(
+                _db.purchases.accountId.equals(accountId.value) &
+                    _db.purchases.personId.isNotNull(),
+              )
+              ..orderBy([
+                OrderingTerm.desc(_db.purchases.createdAt),
+                OrderingTerm.desc(_db.purchases.id),
+              ]))
+            .get();
+    final latest = <String, HouseholdPurchaseSummary>{};
+    for (final row in rows) {
+      final purchase = row.readTable(_db.purchases);
+      latest.putIfAbsent(
+        purchase.personId!,
+        () => HouseholdPurchaseSummary(
+          purchaseId: PurchaseId(purchase.id),
+          storeName: row.readTable(_db.stores).displayName,
+          occurrenceTime: purchase.occurrenceTime,
+          currencyCode: purchase.currencyCode,
+          totalMinorUnits: purchase.totalMinorUnits,
+        ),
+      );
+    }
+    return people
+        .map(
+          (person) => HouseholdPersonSummary(
+            person: person,
+            paymentMethods: payments
+                .where((payment) => payment.assignedPersonId == person.id)
+                .toList(growable: false),
+            latestPurchase: latest[person.id],
+          ),
+        )
+        .toList(growable: false);
+  }
+
+  @override
   Future<int> shortageThresholdDays(AccountId accountId) async {
     final row =
         await (_db.select(_db.accountPreferences)
@@ -766,12 +923,16 @@ class LocalQueryRepository
       productRows[product.id] = product;
       final purchase = row.readTableOrNull(_db.purchases);
       final item = row.readTableOrNull(_db.purchaseItems);
-      if (purchase != null && item != null) {
+      if (purchase != null &&
+          item != null &&
+          purchase.accountId == accountId.value) {
         observations
             .putIfAbsent(product.id, () => [])
             .add(
               _ListObservation(
                 date: purchase.occurrenceTime.toLocal(),
+                registeredAt: purchase.createdAt,
+                purchaseId: purchase.id,
                 currencyCode: item.currencyCode,
                 lineTotalMinorUnits: item.lineTotalMinorUnits,
               ),
@@ -790,6 +951,23 @@ class LocalQueryRepository
               : productObservations.reduce(
                   (a, b) => a.date.isAfter(b.date) ? a : b,
                 );
+          final lastRegistered = productObservations.isEmpty
+              ? null
+              : productObservations.reduce((a, b) {
+                  final order = a.registeredAt.compareTo(b.registeredAt);
+                  return order > 0 ||
+                          (order == 0 &&
+                              a.purchaseId.compareTo(b.purchaseId) > 0)
+                      ? a
+                      : b;
+                });
+          final endOfToday = DateTime(today.year, today.month, today.day + 1);
+          final occurred = productObservations.where(
+            (observation) => observation.date.isBefore(endOfToday),
+          );
+          final lastUpToDate = occurred.isEmpty
+              ? null
+              : occurred.reduce((a, b) => a.date.isAfter(b.date) ? a : b);
           return ProductListProjectionItem(
             productId: ProductId(product.id),
             productCode: product.userProductCode,
@@ -799,6 +977,8 @@ class LocalQueryRepository
                 ? domain.ProductMode.bulk
                 : domain.ProductMode.packaged,
             daysSinceLastPurchase: daysFromLastPurchase(latest?.date, today),
+            lastRegisteredPurchaseDate: lastRegistered?.date,
+            lastPurchaseUpToDate: lastUpToDate?.date,
             cycle: cycle,
             latestCurrencyCode: latest?.currencyCode,
             latestLineTotalMinorUnits: latest?.lineTotalMinorUnits,
@@ -941,6 +1121,9 @@ class LocalQueryRepository
       createdAt: row.createdAt as DateTime,
       updatedAt: row.updatedAt as DateTime,
       archivedAt: row.archivedAt as DateTime?,
+      assignedPersonId: kind == LocalReferenceKind.paymentMethod
+          ? row.assignedPersonId as String?
+          : null,
     );
   }
 
@@ -1010,11 +1193,15 @@ class LocalQueryRepository
 final class _ListObservation {
   const _ListObservation({
     required this.date,
+    required this.registeredAt,
+    required this.purchaseId,
     required this.currencyCode,
     required this.lineTotalMinorUnits,
   });
 
   final DateTime date;
+  final DateTime registeredAt;
+  final String purchaseId;
   final String currencyCode;
   final int lineTotalMinorUnits;
 }
