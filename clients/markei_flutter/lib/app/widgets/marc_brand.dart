@@ -20,7 +20,7 @@ class MarcBrand extends StatelessWidget {
           onTap: () => showAboutDialog(
             context: context,
             applicationName: 'Marc',
-            applicationVersion: '1.2.1 · MVP beta',
+            applicationVersion: '1.2.6 · data autonomy beta',
             children: [
               Center(
                 child: Image.asset(

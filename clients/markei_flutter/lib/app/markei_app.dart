@@ -211,6 +211,18 @@ class _MarkeiAppState extends State<MarkeiApp> {
     MarkeiDestinationId.guide: const GuidePage(),
     MarkeiDestinationId.documentation: const DocumentationPage(),
     MarkeiDestinationId.settings: SettingsPage(
+      dataAccess: widget.composition.userDataAccess,
+      syncPrivacy: widget.composition.syncPrivacy,
+      exportDestination: widget.composition.exportDestination,
+      contentSharing: widget.composition.contentSharing,
+      profileSource: widget.composition.householdProfileSource,
+      onDocumentation: () =>
+          _selectDestination(MarkeiDestinationId.documentation),
+      onDiagnosticsCleared: () {
+        if (!mounted) return;
+        widget.composition.auditController.loadFirstPage();
+        setState(() => _refreshSignal++);
+      },
       languageController: _language,
       accountId: widget.composition.accountId,
       references: widget.composition.references,

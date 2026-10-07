@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -13,13 +14,152 @@ import 'package:markei/application/failed_not_applied_recovery_coordinator.dart'
 import 'package:markei/application/stable_device_enrollment_command_factory.dart';
 import 'package:markei/application/sync/sync_ports.dart';
 import 'package:markei/application/sync/sync_use_cases.dart';
+import 'package:markei/application/sync_privacy.dart';
 import 'package:markei/domain/sync/sync_event.dart';
 import 'package:markei/infrastructure/auth/auth0_native_authentication.dart';
 import 'package:markei/infrastructure/auth/native_auth_config.dart';
 import 'package:markei/infrastructure/local/hosted_identity_repository.dart';
 import 'package:markei/infrastructure/local/local_database.dart';
+import 'package:markei/infrastructure/platform/file_sync_privacy.dart';
 
 void main() {
+  group('native runner Sync privacy boundary', () {
+    late Directory directory;
+    late File preference;
+
+    setUp(() async {
+      directory = await Directory.systemTemp.createTemp('marc-runner-privacy-');
+      preference = File('${directory.path}/marc-privacy.json');
+    });
+    tearDown(() => directory.delete(recursive: true));
+
+    test(
+      'pause blocks every provider action before callbacks or queue writes',
+      () async {
+        final policy = FileSyncPrivacyPolicy.atFile(preference);
+        await policy.setPaused(true);
+        final fixture = _PrivacyRunnerFixture(policy);
+        expect((await fixture.runner.signIn()).state, 'authenticated');
+        for (final action in [
+          fixture.runner.enrollOrQueryDevice,
+          fixture.runner.queryEnrollment,
+          fixture.runner.hostedSyncProbe,
+          fixture.runner.checkHostedConnection,
+          fixture.runner.retryUnresolvedSubmission,
+        ]) {
+          expect((await action()).state, 'sync-paused');
+        }
+        final recovery = await fixture.runner.recoverFailedNotAppliedCandidate(
+          _privacyRecoveryInspection,
+        );
+        expect(recovery.state, 'sync-paused');
+        expect(recovery.diagnosticCode, 'MKS-PRV-001');
+        expect(recovery.operationFingerprint, 'not-started');
+        fixture.expectNoProviderOrQueueActivity();
+
+        // These surfaces inspect only local state and remain available paused.
+        await fixture.runner.status();
+        await fixture.runner.unknownRetryPreflight();
+        await fixture.runner.inspectFailedNotAppliedRecovery();
+        await fixture.runner.diagnostics();
+        await fixture.runner.clearDiagnosticHistory();
+        expect(fixture.diagnostics.preflightCalls, 1);
+        expect(fixture.diagnostics.inspectionCalls, 1);
+        expect(fixture.diagnostics.snapshotCalls, 1);
+        expect((await fixture.runner.logout()).state, 'signed-out-cleared');
+        expect(fixture.authClient.loginAudiences, hasLength(1));
+        expect(fixture.authClient.logoutCount, 1);
+        expect(await policy.readPaused(), isTrue);
+      },
+    );
+
+    test(
+      'malformed preference returns safe unavailable statuses and leaves queues alone',
+      () async {
+        await preference.writeAsString('{"syncPaused":"not-a-boolean"}');
+        final fixture = _PrivacyRunnerFixture(
+          FileSyncPrivacyPolicy.atFile(preference),
+        );
+        for (final action in [
+          fixture.runner.enrollOrQueryDevice,
+          fixture.runner.queryEnrollment,
+          fixture.runner.hostedSyncProbe,
+          fixture.runner.checkHostedConnection,
+          fixture.runner.retryUnresolvedSubmission,
+        ]) {
+          expect((await action()).state, 'sync-choice-unavailable');
+        }
+        final recovery = await fixture.runner.recoverFailedNotAppliedCandidate(
+          _privacyRecoveryInspection,
+        );
+        expect(recovery.state, 'sync-choice-unavailable');
+        expect(recovery.diagnosticCode, 'MKS-PRV-002');
+        fixture.expectNoProviderOrQueueActivity();
+        expect((await fixture.runner.signIn()).state, 'authenticated');
+        expect((await fixture.runner.logout()).state, 'signed-out-cleared');
+      },
+    );
+
+    test(
+      'pause waits for a live provider check and rejects an already queued Sync',
+      () async {
+        final policy = FileSyncPrivacyPolicy.atFile(preference);
+        final check = _BlockingPrivacyConnectionCheck();
+        final fixture = _PrivacyRunnerFixture(policy, hostedCheck: check);
+        final active = fixture.runner.checkHostedConnection();
+        await check.started.future;
+        final queuedSync = fixture.runner.hostedSyncProbe();
+        var pauseCompleted = false;
+        final pause = policy.setPaused(true).then((_) {
+          pauseCompleted = true;
+        });
+        expect(
+          (await fixture.runner.enrollOrQueryDevice()).state,
+          'sync-paused',
+        );
+        expect(pauseCompleted, isFalse);
+        expect(fixture.commandCalls, 0);
+        expect(fixture.outbox.leaseCount, 0);
+        check.release.complete();
+        expect((await active).state, 'hosted-connection-ready');
+        expect((await queuedSync).state, 'sync-paused');
+        await pause;
+        expect(check.calls, 1);
+        expect(fixture.outbox.leaseCount, 0);
+        expect(fixture.transport.downloadCount, 0);
+        expect(fixture.transport.acknowledgeCount, 0);
+        expect(await policy.readPaused(), isTrue);
+      },
+    );
+
+    test(
+      'explicit resume restores manual Sync and retry without re-entering its gate',
+      () async {
+        final policy = FileSyncPrivacyPolicy.atFile(preference);
+        await policy.setPaused(true);
+        final fixture = _PrivacyRunnerFixture(policy);
+        await fixture.runner.signIn();
+        await policy.setPaused(false);
+        expect(
+          (await fixture.runner.enrollOrQueryDevice()).state,
+          'hosted-restart-required',
+        );
+        expect(fixture.commandCalls, 1);
+        expect(fixture.enrollment.enrollCount, 1);
+        fixture.diagnostics.retryEligible = true;
+        expect(
+          (await fixture.runner.retryUnresolvedSubmission().timeout(
+            const Duration(seconds: 5),
+          )).state,
+          'sync-completed',
+        );
+        expect(fixture.outbox.leaseCount, 1);
+        expect(fixture.transport.downloadCount, 1);
+        expect(fixture.transport.acknowledgeCount, 1);
+        expect(fixture.diagnostics.attemptCalls, greaterThan(0));
+      },
+    );
+  });
   test(
     'signed-in profile is memory-only and cleared by logout or expiry',
     () async {
@@ -785,12 +925,15 @@ final class _FakeEnrollmentTransport implements DeviceEnrollmentTransport {
   _FakeEnrollmentTransport({required this.result});
 
   final DeviceEnrollmentResult result;
+  int enrollCount = 0;
+  int queryCount = 0;
 
   @override
   Future<DeviceEnrollmentTransportResult> enroll(
     DeviceEnrollmentCommand command,
     String bearerCredential,
   ) async {
+    enrollCount++;
     return DeviceEnrollmentTransportSuccess(result);
   }
 
@@ -799,6 +942,7 @@ final class _FakeEnrollmentTransport implements DeviceEnrollmentTransport {
     String enrollmentRequestId,
     String bearerCredential,
   ) async {
+    queryCount++;
     return DeviceEnrollmentTransportSuccess(result);
   }
 }
@@ -806,12 +950,14 @@ final class _FakeEnrollmentTransport implements DeviceEnrollmentTransport {
 final class _MemoryHostedIdentityRepository
     implements HostedIdentityRepository {
   HostedIdentityState? _state;
+  int saveCount = 0;
 
   @override
   Future<HostedIdentityState?> load(String environmentAlias) async => _state;
 
   @override
   Future<void> save(HostedIdentityState state) async {
+    saveCount++;
     _state = state;
   }
 }
@@ -837,14 +983,20 @@ final class _MemorySyncGuard implements HostedSyncGuard {
 }
 
 final class _EmptyOutbox implements SyncOutboxRepository {
+  int leaseCount = 0;
+  int recoveryCount = 0;
+
   @override
-  Future<SyncUploadSubmission?> leasePending({required int limit}) async =>
-      null;
+  Future<SyncUploadSubmission?> leasePending({required int limit}) async {
+    leaseCount++;
+    return null;
+  }
 
   @override
   Future<FailedNotAppliedRecoveredBatch> recoverExactFailedNotAppliedCandidate(
     FailedNotAppliedRecoveryConfirmation confirmation,
   ) {
+    recoveryCount++;
     throw UnimplementedError();
   }
 
@@ -866,12 +1018,15 @@ final class _EmptyOutbox implements SyncOutboxRepository {
   }
 
   @override
-  Future<SyncResult> recoverOneFailedNotApplied() async => const SyncResult(
-    code: SyncStatusCode.noRecoverableFailure,
-    outcome: SyncOutcome.notApplied,
-    retryable: false,
-    protocolCode: 'no-recoverable-failure',
-  );
+  Future<SyncResult> recoverOneFailedNotApplied() async {
+    recoveryCount++;
+    return const SyncResult(
+      code: SyncStatusCode.noRecoverableFailure,
+      outcome: SyncOutcome.notApplied,
+      retryable: false,
+      protocolCode: 'no-recoverable-failure',
+    );
+  }
 }
 
 final class _OneOutbox implements SyncOutboxRepository {
@@ -1011,6 +1166,12 @@ Map<String, Object?> _syncEvent() {
 
 final class _FakeClosureDiagnostics
     implements ClosureDiagnosticsQuery, SyncAttemptRecorder {
+  int attemptCalls = 0;
+  int preflightCalls = 0;
+  int inspectionCalls = 0;
+  int snapshotCalls = 0;
+  bool retryEligible = false;
+
   @override
   Future<int> beginSyncAttempt() async => 1;
 
@@ -1021,7 +1182,10 @@ final class _FakeClosureDiagnostics
     required String resultCode,
     required String outcomeClass,
     required String correlationFingerprint,
-  }) async => 1;
+  }) async {
+    attemptCalls++;
+    return 1;
+  }
 
   @override
   Future<void> completeSyncAttempt(
@@ -1059,6 +1223,7 @@ final class _FakeClosureDiagnostics
     required String authenticationState,
     required String operationFingerprint,
   }) async {
+    inspectionCalls++;
     return const FailedNotAppliedRecoveryInspection.blocked(
       diagnosticCode: 'MKS-REC-012',
       state: 'failed-not-applied-no-candidate',
@@ -1075,6 +1240,16 @@ final class _FakeClosureDiagnostics
   Future<UnknownSubmissionRetryPreflight> unknownSubmissionRetryPreflight({
     required String authenticationState,
   }) async {
+    preflightCalls++;
+    if (retryEligible) {
+      return const UnknownSubmissionRetryPreflight.eligible(
+        submissionFingerprint: 'fixture-submission',
+        eventCount: 1,
+        firstDeviceSequence: 1,
+        lastDeviceSequence: 1,
+        nextLocalDeviceSequence: 2,
+      );
+    }
     return const UnknownSubmissionRetryPreflight.blocked(
       state: 'unknown-retry-no-unresolved-submission',
       guidance: 'no-local-sync-action-needed',
@@ -1085,6 +1260,7 @@ final class _FakeClosureDiagnostics
   Future<ClosureDiagnosticsSnapshot> snapshot({
     required String authenticationState,
   }) async {
+    snapshotCalls++;
     return ClosureDiagnosticsSnapshot(
       authenticationState: authenticationState,
       enrollmentState: 'device-enrolled',
@@ -1134,5 +1310,138 @@ final class _FakeHostedConnectionCheck implements HostedConnectionCheckPort {
       responseHeadersReceived: true,
       httpStatus: 200,
     );
+  }
+}
+
+const _privacyRecoveryInspection = FailedNotAppliedRecoveryInspection.blocked(
+  diagnosticCode: 'MKS-REC-012',
+  state: 'failed-not-applied-no-candidate',
+  queueCounts: ClosureQueueCounts(
+    pending: 0,
+    uploading: 0,
+    failed: 0,
+    unknown: 0,
+  ),
+);
+
+final class _PrivacyRunnerFixture {
+  _PrivacyRunnerFixture(
+    SyncPrivacyPolicy policy, {
+    HostedConnectionCheckPort? hostedCheck,
+  }) {
+    final authentication = _auth(authClient);
+    runner = NativeAuthClosureRunner(
+      authenticationSession: authentication,
+      enrollmentCoordinator: HostedEnrollmentCoordinator(
+        authenticationSession: authentication,
+        tokenSource: authentication,
+        transport: enrollment,
+        repository: identities,
+        now: () => DateTime.utc(2026, 7, 18),
+      ),
+      environmentAlias: 'native',
+      commandFactory: () async {
+        commandCalls++;
+        return _command();
+      },
+      diagnosticsQuery: diagnostics,
+      syncAttemptRecorder: diagnostics,
+      hostedSyncCoordinator: HostedSyncCoordinator(
+        authenticationSession: authentication,
+        syncGuard: const _MemorySyncGuard.allowing(),
+        applier: applier,
+        recoverFailedNotApplied: RecoverFailedNotApplied(outbox),
+        uploadPendingEvents: UploadPendingEvents(outbox, transport),
+        downloadAndApplyEvents: DownloadAndApplyEvents(transport, applier),
+        acknowledgeAppliedCursor: AcknowledgeAppliedCursor(transport, applier),
+      ),
+      failedNotAppliedRecoveryCoordinator: FailedNotAppliedRecoveryCoordinator(
+        authenticationSession: authentication,
+        syncGuard: const _MemorySyncGuard.allowing(),
+        diagnosticsQuery: diagnostics,
+        outbox: outbox,
+        transport: transport,
+      ),
+      hostedConnectionCheck: hostedCheck ?? connectionCheck,
+      syncPrivacyPolicy: policy,
+      lifecycleSink: (_) {
+        lifecycleCalls++;
+      },
+    );
+  }
+
+  late final NativeAuthClosureRunner runner;
+  final authClient = _FakeNativeAuth0Client();
+  final enrollment = _FakeEnrollmentTransport(
+    result: const DeviceEnrollmentResult(
+      status: 'device-enrolled',
+      installationId: '33333333-3333-4333-8333-333333333333',
+      deviceId: '22222222-2222-4222-8222-222222222222',
+      accountId: '11111111-1111-4111-8111-111111111111',
+      generation: 1,
+    ),
+  );
+  final identities = _MemoryHostedIdentityRepository();
+  final outbox = _EmptyOutbox();
+  final applier = _MemoryApplier(cursor: 'c10b:1');
+  final transport = _RecordingSyncTransport(downloadEvents: const []);
+  final diagnostics = _FakeClosureDiagnostics();
+  final connectionCheck = _RecordingPrivacyConnectionCheck();
+  int commandCalls = 0;
+  int lifecycleCalls = 0;
+
+  void expectNoProviderOrQueueActivity() {
+    expect(commandCalls, 0);
+    expect(enrollment.enrollCount, 0);
+    expect(enrollment.queryCount, 0);
+    expect(identities.saveCount, 0);
+    expect(outbox.leaseCount, 0);
+    expect(outbox.recoveryCount, 0);
+    expect(applier.applyCount, 0);
+    expect(transport.uploadCount, 0);
+    expect(transport.downloadCount, 0);
+    expect(transport.acknowledgeCount, 0);
+    expect(connectionCheck.calls, 0);
+    expect(diagnostics.attemptCalls, 0);
+    expect(diagnostics.preflightCalls, 0);
+    expect(lifecycleCalls, 0);
+  }
+}
+
+final class _RecordingPrivacyConnectionCheck
+    implements HostedConnectionCheckPort {
+  int calls = 0;
+
+  @override
+  HostedConnectionCorrelation createCorrelation() =>
+      const _FakeHostedConnectionCheck().createCorrelation();
+
+  @override
+  Future<HostedConnectionCheckResult> check(
+    HostedConnectionCorrelation correlation,
+  ) {
+    calls++;
+    return const _FakeHostedConnectionCheck().check(correlation);
+  }
+}
+
+final class _BlockingPrivacyConnectionCheck
+    implements HostedConnectionCheckPort {
+  final started = Completer<void>();
+  final release = Completer<void>();
+  int calls = 0;
+
+  @override
+  HostedConnectionCorrelation createCorrelation() =>
+      const _FakeHostedConnectionCheck().createCorrelation();
+
+  @override
+  Future<HostedConnectionCheckResult> check(
+    HostedConnectionCorrelation correlation,
+  ) async {
+    calls++;
+    started.complete();
+    await release.future;
+    return const _FakeHostedConnectionCheck().check(correlation);
   }
 }

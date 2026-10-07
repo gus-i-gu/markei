@@ -13,6 +13,7 @@ import '../application/hosted_enrollment_coordinator.dart';
 import '../application/hosted_connection_check.dart';
 import '../application/hosted_sync_coordinator.dart';
 import '../application/sync/sync_ports.dart';
+import '../application/sync_privacy.dart';
 
 typedef NativeClosureLifecycleSink = void Function(String line);
 
@@ -28,6 +29,7 @@ final class NativeAuthClosureRunner implements AuthenticatedUserProfileSource {
     required FailedNotAppliedRecoveryCoordinator
     failedNotAppliedRecoveryCoordinator,
     required HostedConnectionCheckPort hostedConnectionCheck,
+    SyncPrivacyPolicy? syncPrivacyPolicy,
     NativeClosureLifecycleSink? lifecycleSink,
   }) : _authenticationSession = authenticationSession,
        _enrollmentCoordinator = enrollmentCoordinator,
@@ -39,6 +41,7 @@ final class NativeAuthClosureRunner implements AuthenticatedUserProfileSource {
        _failedNotAppliedRecoveryCoordinator =
            failedNotAppliedRecoveryCoordinator,
        _hostedConnectionCheck = hostedConnectionCheck,
+       _syncPrivacyPolicy = syncPrivacyPolicy,
        _lifecycleSink = lifecycleSink ?? _terminalLifecycleSink,
        _unavailable = false,
        _uuid = const Uuid();
@@ -53,6 +56,7 @@ final class NativeAuthClosureRunner implements AuthenticatedUserProfileSource {
       _hostedSyncCoordinator = null,
       _failedNotAppliedRecoveryCoordinator = null,
       _hostedConnectionCheck = null,
+      _syncPrivacyPolicy = null,
       _lifecycleSink = null,
       _unavailable = true,
       _uuid = null;
@@ -67,6 +71,7 @@ final class NativeAuthClosureRunner implements AuthenticatedUserProfileSource {
   final FailedNotAppliedRecoveryCoordinator?
   _failedNotAppliedRecoveryCoordinator;
   final HostedConnectionCheckPort? _hostedConnectionCheck;
+  final SyncPrivacyPolicy? _syncPrivacyPolicy;
   final NativeClosureLifecycleSink? _lifecycleSink;
   final bool _unavailable;
   final Uuid? _uuid;
@@ -114,7 +119,12 @@ final class NativeAuthClosureRunner implements AuthenticatedUserProfileSource {
     return NativeClosureStatus(_stateName(state));
   }
 
-  Future<NativeClosureStatus> enrollOrQueryDevice() async {
+  Future<NativeClosureStatus> enrollOrQueryDevice() => _providerAction(
+    _enrollOrQueryDeviceAllowed,
+    (state) => NativeClosureStatus(state),
+  );
+
+  Future<NativeClosureStatus> _enrollOrQueryDeviceAllowed() async {
     if (_unavailable) {
       return const NativeClosureStatus('configuration-missing');
     }
@@ -125,7 +135,12 @@ final class NativeAuthClosureRunner implements AuthenticatedUserProfileSource {
     return NativeClosureStatus(_outcomeName(outcome));
   }
 
-  Future<NativeClosureStatus> queryEnrollment() async {
+  Future<NativeClosureStatus> queryEnrollment() => _providerAction(
+    _queryEnrollmentAllowed,
+    (state) => NativeClosureStatus(state),
+  );
+
+  Future<NativeClosureStatus> _queryEnrollmentAllowed() async {
     if (_unavailable) {
       return const NativeClosureStatus('configuration-missing');
     }
@@ -135,7 +150,12 @@ final class NativeAuthClosureRunner implements AuthenticatedUserProfileSource {
     return NativeClosureStatus(_outcomeName(outcome));
   }
 
-  Future<NativeClosureStatus> hostedSyncProbe() async {
+  Future<NativeClosureStatus> hostedSyncProbe() => _providerAction(
+    _hostedSyncProbeAllowed,
+    (state) => NativeClosureStatus(state),
+  );
+
+  Future<NativeClosureStatus> _hostedSyncProbeAllowed() async {
     if (_unavailable) {
       return const NativeClosureStatus('configuration-missing');
     }
@@ -316,7 +336,12 @@ final class NativeAuthClosureRunner implements AuthenticatedUserProfileSource {
     }
   }
 
-  Future<NativeClosureStatus> checkHostedConnection() async {
+  Future<NativeClosureStatus> checkHostedConnection() => _providerAction(
+    _checkHostedConnectionAllowed,
+    (state) => NativeClosureStatus(state),
+  );
+
+  Future<NativeClosureStatus> _checkHostedConnectionAllowed() async {
     if (_unavailable) {
       return const NativeClosureStatus('configuration-missing');
     }
@@ -529,15 +554,33 @@ final class NativeAuthClosureRunner implements AuthenticatedUserProfileSource {
     }
   }
 
-  Future<NativeClosureStatus> retryUnresolvedSubmission() async {
+  Future<NativeClosureStatus> retryUnresolvedSubmission() => _providerAction(
+    _retryUnresolvedSubmissionAllowed,
+    (state) => NativeClosureStatus(state),
+  );
+
+  Future<NativeClosureStatus> _retryUnresolvedSubmissionAllowed() async {
     final preflight = await unknownRetryPreflight();
     if (!preflight.eligible) {
       return NativeClosureStatus(preflight.state);
     }
-    return hostedSyncProbe();
+    // The whole retry already holds the privacy gate. Re-entering the gate
+    // here would wait for itself instead of settling the active operation.
+    return _hostedSyncProbeAllowed();
   }
 
   Future<NativeClosureFailedRecovery> recoverFailedNotAppliedCandidate(
+    FailedNotAppliedRecoveryInspection confirmedInspection,
+  ) => _providerAction(
+    () => _recoverFailedNotAppliedCandidateAllowed(confirmedInspection),
+    (state) => NativeClosureFailedRecovery(
+      state: state,
+      diagnosticCode: state == 'sync-paused' ? 'MKS-PRV-001' : 'MKS-PRV-002',
+      operationFingerprint: 'not-started',
+    ),
+  );
+
+  Future<NativeClosureFailedRecovery> _recoverFailedNotAppliedCandidateAllowed(
     FailedNotAppliedRecoveryInspection confirmedInspection,
   ) async {
     if (_unavailable) {
@@ -631,6 +674,19 @@ final class NativeAuthClosureRunner implements AuthenticatedUserProfileSource {
         diagnosticCode: 'MKS-UI-006',
         operationFingerprint: operationFingerprint,
       );
+    }
+  }
+
+  Future<T> _providerAction<T>(
+    Future<T> Function() action,
+    T Function(String state) blocked,
+  ) async {
+    final privacy = _syncPrivacyPolicy;
+    if (privacy == null || _unavailable) return action();
+    try {
+      return await privacy.runWhenAllowed(action, () => blocked('sync-paused'));
+    } on SyncPrivacyChoiceUnavailable {
+      return blocked('sync-choice-unavailable');
     }
   }
 

@@ -94,6 +94,11 @@ class _DocumentationPageState extends State<DocumentationPage> {
                       for (final policy in _policies)
                         _PolicyReference(policy: policy),
                     ],
+                    if (_sections[index].id == 'rights') ...[
+                      const SizedBox(height: MarkeiSpacing.md),
+                      for (final reference in _legalReferences)
+                        _PolicyReference(policy: reference),
+                    ],
                   ],
                 ),
               ),
@@ -140,13 +145,13 @@ class _PolicyReference extends StatelessWidget {
           OutlinedButton.icon(
             key: Key('documentation.policy.${policy.id}.copy'),
             icon: const Icon(Icons.copy_outlined),
-            label: const MarcText('Copy policy link'),
+            label: const MarcText('Copy link'),
             onPressed: () async {
               await Clipboard.setData(ClipboardData(text: policy.url));
               if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: MarcText('Policy link copied.')),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: MarcText('Link copied.')));
             },
           ),
         ],
@@ -192,6 +197,7 @@ const _sections = [
       'Sign in opens the Auth0 sign-in page. Auth0 and any identity provider you choose there process the login information. Marc requests identity, profile and email access, receives authentication tokens and may display your name and email. This client keeps its authentication tokens in memory for the session.',
       'Connect this Device sends an installation identifier, enrollment request identifier, platform, application identifier and version to the hosted service. The service records identity-to-Account membership and Device enrollment. Follow the restart instructions shown after connection. Records created before connection remain in the offline workspace.',
       'Sync now is an explicit action. It sends queued Purchase, Product, Store and List-note records for the connected Account, and receives that Account\'s records from connected Devices. It also exchanges authentication, Device, event, submission, sequence, hash, cursor and request identifiers. It does not upload the entire local database; optional Person and Payment Method references currently remain local.',
+      'Pausing Sync in Settings is a preference for this Device that remains after restarting Marc. While paused, Device connection, uploads, downloads, recovery and hosted connection checks are blocked until you resume. Sign-in and sign-out can still contact Auth0; signing in while paused does not upload queued records. Pausing does not remove records already stored online or pause another Device.',
     ],
   ),
   _DocumentationSection(
@@ -207,7 +213,7 @@ const _sections = [
     id: 'permissions',
     title: 'Device permissions',
     paragraphs: [
-      'The Android release declares Internet access for sign-in and synchronization. Its dependencies also declare biometric and fingerprint authentication support, but the current Marc sign-in flow does not invoke biometric authentication or collect biometric templates. An internal signature permission protects an app receiver.',
+      'The Android release declares Internet access for sign-in and synchronization. This build removes unused biometric and fingerprint permission declarations. Marc uses browser sign-in; it does not invoke biometric authentication or collect biometric templates. An internal signature permission protects an app receiver.',
       'The current release does not request camera, microphone, location, contacts, notification or broad storage access. Native sharing gives the chosen recipient access to the selected text or temporary file. Windows export writes to your Downloads folder and uses your existing folder access.',
     ],
   ),
@@ -220,11 +226,22 @@ const _sections = [
     ],
   ),
   _DocumentationSection(
+    id: 'settings-controls',
+    title: 'Data controls in Settings',
+    paragraphs: [
+      'Export data on this Device creates a JSON snapshot of the selected local workspace. It includes locally stored business records, archived People and Payment Methods, preferences and technical records. It excludes authentication tokens and session-memory data. It is not a full export of the hosted database, Auth0 identity records, provider logs or backups.',
+      'The JSON export is a readable copy, not an import or restore feature. Keep exported files protected and remove unwanted copies using your operating system. They can contain personal and financial information about you or people named in your records.',
+      'Clear local diagnostic history removes the local troubleshooting history. It preserves Purchases, Products, Stores, People, Payment Methods, List notes and queued Sync records. It does not clear all local data, erase a hosted Account or remove provider logs.',
+      'Copy privacy request prepares an editable request draft in your clipboard. It does not send the request or create a receipt. Review it before sharing, and never include authentication tokens or passwords. A verified publisher contact and hosted request procedure remain necessary before this becomes an operational rights channel.',
+    ],
+  ),
+  _DocumentationSection(
     id: 'storage',
     title: 'Storage, backup and deletion',
     paragraphs: [
-      'The local database is stored in the app\'s support directory. This client does not add separate database encryption; protection also depends on your operating system, Device access controls and backups. Android may include local app data in system backup or Device transfer, depending on your settings and platform. The app currently has no custom Android backup exclusions.',
-      'Signing out ends the Marc session; it does not erase Purchases, hosted Account data or provider logs. Removing local app data does not request deletion of hosted records, backups or recipient copies. This MVP does not provide an in-app Account deletion action.',
+      'The local database is stored in the app\'s support directory. This client does not add separate database encryption; protection also depends on your operating system and Device access controls. This release disables Android app backup and configures cloud-backup and Device-transfer exclusions for app-private and external app files. These settings do not erase previous backups or prevent every operating-system, manufacturer or root-level copying tool.',
+      'Signing out clears Marc\'s authentication tokens from session memory and attempts Auth0 logout. A separate browser or identity-provider session may remain. Sign-out preserves local Purchases, queued Sync records and hosted Account data; it does not erase provider logs. Removing local app data does not request deletion of hosted records, backups or recipient copies.',
+      'This build lets you clear local diagnostic history, but does not provide full local workspace deletion or hosted Account deletion in the app. Hosted erasure needs a separate authenticated procedure, appropriate Account and membership checks, and defined handling of provider records and backups.',
       'A hosted retention schedule, backup-deletion procedure and dedicated privacy contact for the Marc publisher have not yet been published here. Provider log and backup lifetimes depend on the services and their configuration. This page does not promise immediate or complete deletion.',
     ],
   ),
@@ -241,6 +258,8 @@ const _sections = [
     title: 'Your privacy rights',
     paragraphs: [
       'Applicable privacy law may give you rights to confirmation and access, correction, portability, information about sharing, and anonymization, blocking or deletion in the cases allowed by law. Where processing relies on consent, you may withdraw it. You may also contact the competent data-protection authority.',
+      'Brazil\'s LGPD and the EU GDPR apply according to their territorial and processing rules. California\'s CCPA, as amended by CPRA, applies to qualifying covered businesses; separate CalOPPA privacy-notice duties may apply to commercial online services. Rights depend on the processing, legal basis and permitted exceptions. These Settings controls do not certify legal compliance.',
+      'A local export provides the records stored in the selected workspace. It does not replace a request for access to all personal data held by the publisher or its providers. Archiving a Person or Payment Method preserves its history and is not erasure. A paused Sync preference stops transfers on this Device; it is not itself a completed legal restriction or deletion request.',
       'These rights and mandatory consumer protections remain in force. The Marc publisher must still identify the responsible person and publish a contact and practical request procedure; provider policy links alone do not supply that missing information.',
     ],
   ),
@@ -271,5 +290,23 @@ const _policies = [
     'neon-processing',
     'Neon processing and service terms',
     'https://neon.com/platform-terms',
+  ),
+];
+
+const _legalReferences = [
+  _ProviderPolicy(
+    'lgpd',
+    'Brazil LGPD and data rights',
+    'https://www.gov.br/anpd/pt-br/assuntos/titular-de-dados/direito-dos-titulares',
+  ),
+  _ProviderPolicy(
+    'gdpr',
+    'EU GDPR data protection rights',
+    'https://www.edpb.europa.eu/topics/key-gdpr-concepts/data-subject-rights_en',
+  ),
+  _ProviderPolicy(
+    'california',
+    'California CCPA and CPRA rules',
+    'https://cppa.ca.gov/regulations/',
   ),
 ];

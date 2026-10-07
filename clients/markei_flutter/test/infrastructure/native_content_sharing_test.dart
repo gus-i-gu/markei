@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:share_plus/share_plus.dart';
@@ -50,6 +51,92 @@ void main() {
         contentShareMessage(result),
         contains('Delivery is not confirmed'),
       );
+    },
+  );
+  test(
+    'JSON access report retains UTF-8 bytes and application/json on native handoff',
+    () async {
+      final temp = await Directory.systemTemp.createTemp('marc-json-sharing-');
+      addTearDown(() => temp.delete(recursive: true));
+      final bytes = utf8.encode(
+        jsonEncode({
+          'format': 'marc-local-account-access',
+          'account_id': 'synthetic-account',
+          'datasets': {
+            'list_note_revisions': [
+              {'note': 'Café da manhã'},
+            ],
+          },
+        }),
+      );
+      ShareParams? captured;
+      final sharing = NativeContentSharing(
+        platformOverride: 'android',
+        temporaryDirectory: () async => temp,
+        invoke: (params) async {
+          captured = params;
+          return const ShareResult('', ShareResultStatus.success);
+        },
+      );
+      final result = await sharing.share(
+        ContentShareRequest(
+          title: 'Marc local data export',
+          file: ExportDestinationRequest(
+            baseNameCue: 'marc-my-local-data',
+            extension: 'json',
+            mediaType: 'application/json',
+            bytes: bytes,
+          ),
+        ),
+      );
+      expect(result, ContentShareResult.handedOff);
+      expect(captured!.text, isNull);
+      expect(captured!.title, 'Marc local data export');
+      final file = captured!.files!.single;
+      expect(file.path, endsWith('marc-my-local-data.json'));
+      expect(file.mimeType, 'application/json');
+      expect(await File(file.path).readAsBytes(), bytes);
+      final actual = jsonDecode(await File(file.path).readAsString());
+      expect(
+        actual['datasets']['list_note_revisions'].single['note'],
+        'Café da manhã',
+      );
+      expect(
+        contentShareMessage(result),
+        contains('Delivery is not confirmed'),
+      );
+    },
+  );
+  test(
+    'JSON with a mismatched MIME type is rejected before cache access or native invocation',
+    () async {
+      var directoryReads = 0;
+      var invocations = 0;
+      final sharing = NativeContentSharing(
+        platformOverride: 'android',
+        temporaryDirectory: () async {
+          directoryReads++;
+          throw StateError('No directory should be requested');
+        },
+        invoke: (_) async {
+          invocations++;
+          return const ShareResult('', ShareResultStatus.success);
+        },
+      );
+      final result = await sharing.share(
+        ContentShareRequest(
+          title: 'Local data',
+          file: ExportDestinationRequest(
+            baseNameCue: 'marc-my-local-data',
+            extension: 'json',
+            mediaType: 'text/plain',
+            bytes: utf8.encode('{"format":"marc-local-account-access"}'),
+          ),
+        ),
+      );
+      expect(result, ContentShareResult.failed);
+      expect(directoryReads, 0);
+      expect(invocations, 0);
     },
   );
   test(

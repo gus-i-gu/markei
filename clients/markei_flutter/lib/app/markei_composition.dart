@@ -44,6 +44,10 @@ import '../infrastructure/remote/http_sync_transport.dart';
 import 'native_auth_closure_runner.dart';
 import '../application/language_preference.dart';
 import '../infrastructure/platform/file_language_preference.dart';
+import '../application/sync_privacy.dart';
+import '../application/user_data_access.dart';
+import '../infrastructure/platform/file_sync_privacy.dart';
+import '../infrastructure/local/local_user_data_access.dart';
 
 final class MarkeiComposition {
   MarkeiComposition({
@@ -57,6 +61,8 @@ final class MarkeiComposition {
     required this.purchaseExports,
     ListNotesRepository? listNotes,
     LanguagePreferenceRepository? languagePreferences,
+    SyncPrivacyPolicy? syncPrivacy,
+    UserDataAccessRepository? userDataAccess,
     ContentSharingPort? contentSharing,
     ExportDestinationPort? exportDestination,
     AnalyticsWorkspaceController? analyticsWorkspace,
@@ -74,6 +80,9 @@ final class MarkeiComposition {
     this.nativeClosureSurfaceEnabled = false,
   }) : languagePreferences =
            languagePreferences ?? FileLanguagePreferenceRepository(),
+       syncPrivacy = syncPrivacy ?? FileSyncPrivacyPolicy(),
+       userDataAccess =
+           userDataAccess ?? LocalUserDataAccessRepository(database),
        listNotes = listNotes ?? LocalListNotesRepository(database),
        contentSharing = contentSharing ?? NativeContentSharing(),
        exportDestination = exportDestination ?? LocalExportDestination(),
@@ -107,6 +116,8 @@ final class MarkeiComposition {
 
   final LocalDatabase database;
   final LanguagePreferenceRepository languagePreferences;
+  final SyncPrivacyPolicy syncPrivacy;
+  final UserDataAccessRepository userDataAccess;
   final ListNotesRepository listNotes;
   final PurchaseRegistrationRepository purchaseRegistration;
   final CatalogueQueryRepository catalogueQueries;
@@ -134,6 +145,7 @@ final class MarkeiComposition {
     final database = LocalDatabase.appPrivate();
     final queries = LocalQueryRepository(database);
     final nativeConfig = NativeAuthConfiguration.fromEnvironment();
+    final syncPrivacy = FileSyncPrivacyPolicy();
     const environmentAlias = 'provider-native';
     final hostedRepository = DriftHostedIdentityRepository(database);
     final hostedBinding = await hostedRepository.loadActiveBinding(
@@ -155,6 +167,7 @@ final class MarkeiComposition {
       database,
       nativeConfig,
       activeBinding: hostedBinding,
+      syncPrivacy: syncPrivacy,
     );
     final nativeClosureSurfaceEnabled =
         const bool.fromEnvironment('MARKEI_NATIVE_CLOSURE_SURFACE') &&
@@ -171,6 +184,7 @@ final class MarkeiComposition {
       accountId: accountId,
       deviceId: deviceId,
       nativeAuthConfiguration: nativeConfig,
+      syncPrivacy: syncPrivacy,
       nativeClosureRunner: nativeClosureRunner,
       nativeClosureSurfaceEnabled: nativeClosureSurfaceEnabled,
     );
@@ -180,6 +194,7 @@ final class MarkeiComposition {
     LocalDatabase database,
     NativeAuthConfigurationResult config, {
     HostedIdentityBinding? activeBinding,
+    required SyncPrivacyPolicy syncPrivacy,
   }) {
     if (config is! NativeAuthConfigurationReady) {
       return NativeAuthClosureRunner.unavailable();
@@ -239,7 +254,7 @@ final class MarkeiComposition {
       applicationId: config.configuration.platform == NativeAuthPlatform.android
           ? NativeAuthConfiguration.defaultAndroidApplicationId
           : 'markei.windows',
-      applicationVersion: '1.2.1',
+      applicationVersion: '1.2.6',
     );
     return NativeAuthClosureRunner(
       authenticationSession: authentication,
@@ -293,6 +308,7 @@ final class MarkeiComposition {
           correlationSource: uuid.v4,
         ),
       ),
+      syncPrivacyPolicy: syncPrivacy,
     );
   }
 
@@ -344,7 +360,7 @@ final class _RunnerSettingsAccountSupport
       state: result.state,
       message:
           'Sign out on this Device finished with ${result.state}. Local Purchase history and queued work remain according to existing local behavior.',
-      contactedNetwork: false,
+      contactedNetwork: result.state != 'configuration-missing',
       mayHaveWritten: true,
     );
   }
@@ -408,6 +424,10 @@ final class _RunnerSettingsSyncDeviceSupport
     return SettingsActionResult(
       state: result.state,
       message: switch (result.state) {
+        'sync-paused' =>
+          'Sync is paused on this Device. Resume it in Your data & privacy before connecting or syncing.',
+        'sync-choice-unavailable' =>
+          'Sync choice could not be read. No transfer was started. Open Your data & privacy to save your choice again.',
         'hosted-restart-required' =>
           'Device connection is recorded. Close Marc normally, reopen it, sign in again, then Sync now. Purchases made before connection remain in the offline workspace.',
         'service-unavailable' =>
@@ -425,8 +445,12 @@ final class _RunnerSettingsSyncDeviceSupport
         _ =>
           'Connect this Device finished with ${result.state}. This does not prove Sync succeeded.',
       },
-      contactedNetwork: true,
-      mayHaveWritten: true,
+      contactedNetwork:
+          result.state != 'sync-paused' &&
+          result.state != 'sync-choice-unavailable',
+      mayHaveWritten:
+          result.state != 'sync-paused' &&
+          result.state != 'sync-choice-unavailable',
     );
   }
 
@@ -436,6 +460,10 @@ final class _RunnerSettingsSyncDeviceSupport
     return SettingsActionResult(
       state: result.state,
       message: switch (result.state) {
+        'sync-paused' =>
+          'Sync is paused on this Device. Resume it in Your data & privacy before connecting or syncing.',
+        'sync-choice-unavailable' =>
+          'Sync choice could not be read. No transfer was started. Open Your data & privacy to save your choice again.',
         'sync-completed' =>
           'Sync completed. Purchase history and Lists have been refreshed.',
         'sync-no-new-events' =>
@@ -449,8 +477,12 @@ final class _RunnerSettingsSyncDeviceSupport
         _ =>
           'Sync now finished with ${result.state}. No automatic retry or recovery was started.',
       },
-      contactedNetwork: true,
-      mayHaveWritten: true,
+      contactedNetwork:
+          result.state != 'sync-paused' &&
+          result.state != 'sync-choice-unavailable',
+      mayHaveWritten:
+          result.state != 'sync-paused' &&
+          result.state != 'sync-choice-unavailable',
     );
   }
 }

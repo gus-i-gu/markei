@@ -37,7 +37,9 @@ final class NativeContentSharing implements ContentSharingPort {
         if (content.bytes.isEmpty ||
             content.bytes.length > 25 * 1024 * 1024 ||
             !RegExp(r'^[a-zA-Z0-9_-]{1,100}$').hasMatch(content.baseNameCue) ||
-            !const {'pdf', 'csv', 'txt'}.contains(content.extension)) {
+            !const {'pdf', 'csv', 'txt', 'json'}.contains(content.extension) ||
+            (content.extension == 'json' &&
+                content.mediaType != 'application/json')) {
           return ContentShareResult.failed;
         }
         final root = Directory(

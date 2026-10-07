@@ -6,6 +6,13 @@ import '../../application/local_references.dart';
 import '../../domain/references/local_reference.dart';
 import '../../domain/shared/ids.dart';
 import '../../l10n/language_controller.dart';
+import '../../application/user_data_access.dart';
+import '../../application/sync_privacy.dart';
+import '../../application/export_destination.dart';
+import '../../application/content_sharing.dart';
+import '../../application/hosted_auth_ports.dart';
+import '../widgets/markei_components.dart';
+import '../widgets/user_data_settings.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({
@@ -16,6 +23,13 @@ class SettingsPage extends StatefulWidget {
     required this.syncDeviceSupport,
     required this.onChanged,
     this.languageController,
+    this.dataAccess,
+    this.syncPrivacy,
+    this.exportDestination,
+    this.contentSharing,
+    this.profileSource,
+    this.onDocumentation,
+    this.onDiagnosticsCleared,
     super.key,
   });
 
@@ -26,6 +40,13 @@ class SettingsPage extends StatefulWidget {
   final SettingsSyncDeviceSupportPort syncDeviceSupport;
   final VoidCallback onChanged;
   final LanguageController? languageController;
+  final UserDataAccessRepository? dataAccess;
+  final SyncPrivacyPolicy? syncPrivacy;
+  final ExportDestinationPort? exportDestination;
+  final ContentSharingPort? contentSharing;
+  final AuthenticatedUserProfileSource? profileSource;
+  final VoidCallback? onDocumentation;
+  final VoidCallback? onDiagnosticsCleared;
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -37,6 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
   final _thresholdController = TextEditingController();
   var _loading = true;
   var _busy = false;
+  var _privacyBusy = false;
   var _generation = 0;
   String? _message;
   String? _thresholdError;
@@ -293,7 +315,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _runSupportAction(
     Future<SettingsActionResult> Function() run,
   ) async {
-    if (_busy) return;
+    if (_busy || _privacyBusy) return;
     setState(() => _busy = true);
     try {
       final result = await run();
@@ -341,25 +363,52 @@ class _SettingsPageState extends State<SettingsPage> {
           'People and Payment Methods are saved on this device for this Account.',
         ),
         if (widget.languageController != null) ...[
-          const Divider(height: 32),
-          _LanguageSection(controller: widget.languageController!),
+          const SizedBox(height: 16),
+          MarkeiCard(
+            child: _LanguageSection(controller: widget.languageController!),
+          ),
         ],
-        const Divider(height: 32),
+        const SizedBox(height: 16),
         if (_loading)
           const MarcText(
             'Loading local settings...',
             key: Key('settings.loading'),
           )
         else ...[
-          _AccountSection(
-            status: _accountStatus,
-            busy: _busy,
-            onSignIn: () =>
-                _runSupportAction(widget.accountSupport.signInToSync),
-            onSignOut: () =>
-                _runSupportAction(widget.accountSupport.signOutOnThisDevice),
+          MarkeiCard(
+            child: _AccountSection(
+              status: _accountStatus,
+              busy: _busy || _privacyBusy,
+              onSignIn: () =>
+                  _runSupportAction(widget.accountSupport.signInToSync),
+              onSignOut: () =>
+                  _runSupportAction(widget.accountSupport.signOutOnThisDevice),
+            ),
           ),
-          const Divider(height: 32),
+          const SizedBox(height: 16),
+          if (widget.dataAccess != null &&
+              widget.syncPrivacy != null &&
+              widget.exportDestination != null &&
+              widget.contentSharing != null &&
+              widget.profileSource != null &&
+              widget.onDocumentation != null) ...[
+            UserDataSettings(
+              accountId: widget.accountId,
+              dataAccess: widget.dataAccess!,
+              syncPrivacy: widget.syncPrivacy!,
+              exportDestination: widget.exportDestination!,
+              contentSharing: widget.contentSharing!,
+              profileSource: widget.profileSource!,
+              onDocumentation: widget.onDocumentation!,
+              onDiagnosticsCleared:
+                  widget.onDiagnosticsCleared ?? widget.onChanged,
+              busy: _busy,
+              onBusyChanged: (value) {
+                if (mounted) setState(() => _privacyBusy = value);
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
           _PreferencesSection(
             people: _people,
             payments: _payments,
@@ -367,7 +416,7 @@ class _SettingsPageState extends State<SettingsPage> {
             paymentController: _paymentController,
             thresholdController: _thresholdController,
             thresholdError: _thresholdError,
-            busy: _busy,
+            busy: _busy || _privacyBusy,
             onSavePerson: () =>
                 _saveReference(LocalReferenceKind.person, _personController),
             onSavePayment: () => _saveReference(
@@ -381,20 +430,24 @@ class _SettingsPageState extends State<SettingsPage> {
             onAssignPayment: _assignPayment,
             onSaveThreshold: _saveThreshold,
           ),
-          const Divider(height: 32),
-          _SyncDeviceSection(
-            status: _syncStatus,
-            busy: _busy,
-            onRefresh: _refreshLocalStatus,
+          const SizedBox(height: 16),
+          MarkeiCard(
+            child: _SyncDeviceSection(
+              status: _syncStatus,
+              busy: _busy || _privacyBusy,
+              onRefresh: _refreshLocalStatus,
+            ),
           ),
-          const Divider(height: 32),
-          _AdvancedSupportSection(
-            key: const Key('settings.advancedSupport'),
-            busy: _busy,
-            onConnectDevice: () =>
-                _runSupportAction(widget.syncDeviceSupport.connectThisDevice),
-            onSyncNow: () =>
-                _runSupportAction(widget.syncDeviceSupport.syncNow),
+          const SizedBox(height: 16),
+          MarkeiCard(
+            child: _AdvancedSupportSection(
+              key: const Key('settings.advancedSupport'),
+              busy: _busy || _privacyBusy,
+              onConnectDevice: () =>
+                  _runSupportAction(widget.syncDeviceSupport.connectThisDevice),
+              onSyncNow: () =>
+                  _runSupportAction(widget.syncDeviceSupport.syncNow),
+            ),
           ),
         ],
         if (_message != null) ...[
@@ -489,42 +542,53 @@ class _PreferencesSection extends StatelessWidget {
       children: [
         MarcText('Preferences', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 12),
-        _ReferenceList(
-          title: 'People',
-          references: people,
-          controller: personController,
-          saveLabel: 'Save Person',
-          onSave: onSavePerson,
-          onArchive: onArchivePerson,
-          busy: busy,
+        MarkeiCard(
+          child: _ReferenceList(
+            title: 'People',
+            references: people,
+            controller: personController,
+            saveLabel: 'Save Person',
+            onSave: onSavePerson,
+            onArchive: onArchivePerson,
+            busy: busy,
+          ),
         ),
         const SizedBox(height: 16),
-        _ReferenceList(
-          title: 'Payment Methods',
-          references: payments,
-          controller: paymentController,
-          saveLabel: 'Save Payment Method',
-          onSave: onSavePayment,
-          onArchive: onArchivePayment,
-          people: people,
-          onAssign: onAssignPayment,
-          busy: busy,
+        MarkeiCard(
+          child: _ReferenceList(
+            title: 'Payment Methods',
+            references: payments,
+            controller: paymentController,
+            saveLabel: 'Save Payment Method',
+            onSave: onSavePayment,
+            onArchive: onArchivePayment,
+            people: people,
+            onAssign: onAssignPayment,
+            busy: busy,
+          ),
         ),
         const SizedBox(height: 16),
-        TextField(
-          key: const Key('settings.shortageThreshold'),
-          controller: thresholdController,
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            labelText: 'Shortage threshold days',
-            errorText: thresholdError,
-          ).localized(context),
-        ),
-        const SizedBox(height: 8),
-        FilledButton(
-          key: const Key('settings.saveThreshold'),
-          onPressed: busy ? null : onSaveThreshold,
-          child: const MarcText('Save threshold'),
+        MarkeiCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                key: const Key('settings.shortageThreshold'),
+                controller: thresholdController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: 'Shortage threshold days',
+                  errorText: thresholdError,
+                ).localized(context),
+              ),
+              const SizedBox(height: 8),
+              FilledButton(
+                key: const Key('settings.saveThreshold'),
+                onPressed: busy ? null : onSaveThreshold,
+                child: const MarcText('Save threshold'),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -588,60 +652,66 @@ class _ReferenceList extends StatelessWidget {
                         Text(_referenceDisplay(context, reference)),
                         MarcText(reference.active ? 'Active' : 'Archived'),
                         const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 12,
-                          runSpacing: 8,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 280,
-                              child: DropdownButtonFormField<String>(
-                                key: Key(
-                                  'settings.assign.${reference.id}.${reference.assignedPersonId ?? 'none'}',
-                                ),
-                                initialValue: reference.assignedPersonId ?? '',
-                                isExpanded: true,
-                                decoration: InputDecoration(
-                                  labelText: context.tr('Assign Person'),
-                                ),
-                                items: [
-                                  const DropdownMenuItem(
-                                    value: '',
-                                    child: MarcText('Not assigned'),
+                        LayoutBuilder(
+                          builder: (context, constraints) => Wrap(
+                            spacing: 12,
+                            runSpacing: 8,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: constraints.maxWidth < 280
+                                    ? constraints.maxWidth
+                                    : 280,
+                                child: DropdownButtonFormField<String>(
+                                  key: Key(
+                                    'settings.assign.${reference.id}.${reference.assignedPersonId ?? 'none'}',
                                   ),
-                                  for (final person in people)
-                                    if (person.active ||
-                                        person.id == reference.assignedPersonId)
-                                      DropdownMenuItem(
-                                        value: person.id,
-                                        enabled: person.active,
-                                        child: Text(
-                                          _referenceDisplay(context, person),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                  initialValue:
+                                      reference.assignedPersonId ?? '',
+                                  isExpanded: true,
+                                  decoration: InputDecoration(
+                                    labelText: context.tr('Assign Person'),
+                                  ),
+                                  items: [
+                                    const DropdownMenuItem(
+                                      value: '',
+                                      child: MarcText('Not assigned'),
+                                    ),
+                                    for (final person in people)
+                                      if (person.active ||
+                                          person.id ==
+                                              reference.assignedPersonId)
+                                        DropdownMenuItem(
+                                          value: person.id,
+                                          enabled: person.active,
+                                          child: Text(
+                                            _referenceDisplay(context, person),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
-                                      ),
-                                ],
-                                onChanged: busy || !reference.active
+                                  ],
+                                  onChanged: busy || !reference.active
+                                      ? null
+                                      : (value) => onAssign!(
+                                          reference,
+                                          value == '' ? null : value,
+                                        ),
+                                ),
+                              ),
+                              TextButton(
+                                key: Key(
+                                  'settings.${reference.active ? 'archive' : 'unarchive'}.${reference.id}',
+                                ),
+                                onPressed: busy
                                     ? null
-                                    : (value) => onAssign!(
-                                        reference,
-                                        value == '' ? null : value,
-                                      ),
+                                    : () => onArchive(reference),
+                                child: MarcText(
+                                  reference.active ? 'Archive' : 'Unarchive',
+                                ),
                               ),
-                            ),
-                            TextButton(
-                              key: Key(
-                                'settings.${reference.active ? 'archive' : 'unarchive'}.${reference.id}',
-                              ),
-                              onPressed: busy
-                                  ? null
-                                  : () => onArchive(reference),
-                              child: MarcText(
-                                reference.active ? 'Archive' : 'Unarchive',
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),

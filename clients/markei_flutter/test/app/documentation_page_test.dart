@@ -9,6 +9,7 @@ const _topicIds = [
   'providers',
   'permissions',
   'sharing',
+  'settings-controls',
   'storage',
   'responsibility',
   'rights',
@@ -43,58 +44,60 @@ void main() {
     }
   });
 
-  testWidgets(
-    'provider policies are visible and copied only by explicit action',
-    (tester) async {
-      final copied = <String>[];
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+  testWidgets('provider and legal references are copied only by explicit action', (
+    tester,
+  ) async {
+    final copied = <String>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          copied.add((call.arguments as Map)['text'] as String);
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
         SystemChannels.platform,
-        (call) async {
-          if (call.method == 'Clipboard.setData') {
-            copied.add((call.arguments as Map)['text'] as String);
-          }
-          return null;
-        },
-      );
-      addTearDown(
-        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-          SystemChannels.platform,
-          null,
-        ),
-      );
-      await tester.pumpWidget(
-        const MaterialApp(home: Scaffold(body: DocumentationPage())),
-      );
+        null,
+      ),
+    );
+    await tester.pumpWidget(
+      const MaterialApp(home: Scaffold(body: DocumentationPage())),
+    );
 
-      const policies = {
-        'auth0': 'https://www.okta.com/legal/privacy-policy/',
-        'auth0-processing':
-            'https://auth0.com/docs/secure/data-privacy-and-compliance/data-processing',
-        'render': 'https://render.com/privacy',
-        'neon': 'https://neon.com/privacy-policy',
-        'neon-processing': 'https://neon.com/platform-terms',
-      };
-      for (final policy in policies.entries) {
-        final visibleUrl = tester.widget<SelectableText>(
-          find.byKey(Key('documentation.policy.${policy.key}.url')),
-        );
-        expect(visibleUrl.data, policy.value);
-      }
-      expect(copied, isEmpty);
+    const policies = {
+      'auth0': 'https://www.okta.com/legal/privacy-policy/',
+      'auth0-processing':
+          'https://auth0.com/docs/secure/data-privacy-and-compliance/data-processing',
+      'render': 'https://render.com/privacy',
+      'neon': 'https://neon.com/privacy-policy',
+      'neon-processing': 'https://neon.com/platform-terms',
+      'lgpd':
+          'https://www.gov.br/anpd/pt-br/assuntos/titular-de-dados/direito-dos-titulares',
+      'gdpr':
+          'https://www.edpb.europa.eu/topics/key-gdpr-concepts/data-subject-rights_en',
+      'california': 'https://cppa.ca.gov/regulations/',
+    };
+    for (final policy in policies.entries) {
+      final visibleUrl = tester.widget<SelectableText>(
+        find.byKey(Key('documentation.policy.${policy.key}.url')),
+      );
+      expect(visibleUrl.data, policy.value);
+    }
+    expect(copied, isEmpty);
 
-      for (final policy in policies.entries) {
-        final button = find.byKey(
-          Key('documentation.policy.${policy.key}.copy'),
-        );
-        await tester.ensureVisible(button);
-        await tester.pumpAndSettle();
-        await tester.tap(button);
-        await tester.pumpAndSettle();
-        expect(copied.last, policy.value);
-      }
-      expect(copied, policies.values.toList());
-    },
-  );
+    for (final policy in policies.entries) {
+      final button = find.byKey(Key('documentation.policy.${policy.key}.copy'));
+      await tester.ensureVisible(button);
+      await tester.pumpAndSettle();
+      await tester.tap(button);
+      await tester.pumpAndSettle();
+      expect(copied.last, policy.value);
+    }
+    expect(copied, policies.values.toList());
+  });
 
   testWidgets(
     'disclosure explains operational processing and deletion limits',
@@ -105,13 +108,30 @@ void main() {
 
       expect(find.textContaining('IP addresses'), findsOneWidget);
       expect(find.textContaining('operational logs'), findsOneWidget);
-      expect(find.textContaining('current Marc sign-in flow'), findsOneWidget);
+      expect(find.textContaining('removes unused biometric'), findsOneWidget);
       expect(
-        find.textContaining('system backup or Device transfer'),
+        find.textContaining('do not erase previous backups'),
         findsOneWidget,
       );
       expect(
-        find.textContaining('in-app Account deletion action'),
+        find.textContaining('does not provide full local workspace deletion'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('selected local workspace'), findsOneWidget);
+      expect(
+        find.textContaining('not an import or restore feature'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('does not send the request'), findsOneWidget);
+      expect(find.textContaining('until you resume'), findsOneWidget);
+      expect(find.textContaining('preserves local Purchases'), findsOneWidget);
+      expect(
+        find.textContaining('preserves Purchases, Products'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('is not erasure'), findsOneWidget);
+      expect(
+        find.textContaining('do not certify legal compliance'),
         findsOneWidget,
       );
       expect(
