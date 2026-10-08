@@ -234,3 +234,48 @@ Release: https://github.com/gus-i-gu/markei/releases/tag/v1.2.1-mvp-beta.5. All 
 The local Marc-IP-preparation-1.2.1-5.zip contains a 353-file source candidate matching the build commit. Exact source ZIP SHA-256: 43E097E50E2D905AA4C5C8D07153C83244A03B7BF0283959E63CA58464B3973F. SHA-512: 93AFAE7BD8DB0AB8C08915F31E0E53BEAE4D04FD06630F84DB9D55E70E0D4D6A92A694B9A545CF5B4909C9724C65240B4E1E91C6BA28FD8A4BC21FD8B798D706. The 1.2.0 packet remains unchanged. Owner/authors/scope/classification/qualified-signature approval is pending; no INPI/PCT/Madrid filing is claimed.
 
 Source, beta downloads and version-specific IP preparation are complete. The current human step is the actual Windows/TL10 update and release-guide acceptance. Hosted notes rollout, fresh-user/Account isolation, publisher/privacy/store and legal filing gates remain independent.
+
+
+---
+
+## 2026-10-07 — C02 data autonomy / Marc 1.2.6+6
+
+**Class:** observational materialization and beta release evidence; no canonical promotion. This entry preserves earlier C02 and C11/C12 evidence. Local observation date is America/Sao_Paulo; the release metadata retains the actual UTC publication timestamp.
+
+### Authority, recovery and bounded scope
+
+The human requested Marc **1.2.6+**, practical user autonomy under Brazilian LGPD, EU GDPR and California rules, and the US **software copyright** preparation route. The latest steering requires multiple Settings cards while preserving Marc's original palette, fonts and visual logic. Earlier authority covers matched beta artifacts, GitHub publication and release tracklog reconciliation. Source implementation proceeded in an isolated clone; canonical source remained unchanged until validation and guarded fast-forward. Repository AGENTS, Sketch INDEX, existing task observations and source recovered the state. The other accessible chat, “Review Marc support compliance,” owns the filing worksheets; this unit supplies code/build evidence without overwriting those worksheets or sending messages to that chat.
+
+Base `82a2f40ad6238b490f38d541191ba1d2a238e504`; build commit **`e31b7570e6aa27a6574e74e0935794ed5dda9e61`** on `markei-season-02`; Git tree `39d7e64757837c0b2cef1c756cbdeb67eac418a3`; source-tree SHA-256 `bc79427718d50e15f7294b6e232e230fadb5d5d5cb37a458f2451202bd72d478`. Hash method: UTF-8 `markei-source-tree-v1`, LF, Git tree object ID, LF. The 26 changed source/test files are confined to `clients/markei_flutter`. Local DB schema remains 14. No hosted API, SQL migration, Auth0, Neon, Render or store configuration changed. Ignore-only release/signing files were not committed or included in the source archive.
+
+### Completed controls and limits
+
+- Settings groups Account, language, local data/privacy, People, Payment Methods, shortage preferences, Sync status and explicit connection actions into existing theme cards. No palette/token/font/navigation redesign.
+- Local JSON access copy uses one transaction and a fixed column allowlist across 21 Account-scoped datasets. Cross-Account child references are excluded or scrubbed. It includes local business records, archives, notes and technical metadata; excludes credentials, hosted-only/provider records, raw replay payloads, raw diagnostic text, Device-wide language/privacy choice, migration ledger and session-only Analytics/drafts. It is not a restore file or a complete hosted rights response. Windows can save directly; native sharing is explicit and limited to 25 MiB, with handoff distinct from delivery.
+- One shared file-backed Device-wide pause policy guards provider commands before factories/attempts/network actions, including enrollment query, Connect, Sync, provider checks, retry and recovery. It persists across restart, closes on unreadable/corrupt/interrupted/indirect files, and serializes with an in-flight command. Explicit Auth0 sign-in/out remain possible. Resume only permits later user-initiated actions; pause does not erase online records or affect other Devices.
+- Diagnostic clearing is confirmed and transactionally removes only current Account Sync attempts/events, preserving business records, queue/cursors/enrollment and other Accounts. UI callbacks are guarded after asynchronous disposal. This is not Account deletion or secure erasure.
+- Privacy request drafting is local and unsent. The optional sign-in email is a contact hint, not identity proof. The UI discloses missing configured request channel and hosted deletion. It never claims receipt or completion. Archive preserves historical records; registered purchases remain immutable.
+- EN/PT-BR/ES documentation accurately describes local/provider/technical data, permissions, backups, sharing, rights and conditional applicability. Android's packaged manifest disables backup, references verified cloud/Device-transfer exclusion rules, and removes unused biometric/fingerprint permissions. Manufacturer/root/previous/provider/export copies remain distinct; no independent database encryption or blanket zero-metadata claim is made.
+
+### Fresh machine and fixture evidence
+
+Full client suite: **402 passed, four existing skipped**, serialized to avoid an unrelated inherited Analytics timing threshold under parallel CPU load. Final analysis: **no issues found**. Process-only Git trust resolved ownership mismatch in the existing Windows runtime test; no global trust setting or test threshold was weakened. Six additional final native-sharing/real-widget preview checks passed. Each locale has **996 validated messages**. Preview files render real Settings widgets with synthetic records; they are not hosted or physical-device acceptance.
+
+Matched builds: signed Android release APK, Windows x64 executable **1.2.6.6**/upgrade installer, and signed Play AAB. Android package `com.gusigu.markei`, versionCode 6, minSDK 24, targetSDK 36, existing certificate SHA-256 `c2f29928ce2fd23543cedc0bdf851495bd6de21bea6a031dedfcafa9698ceb57`. APK signature, ZIP CRC/alignment, 16 KiB ELF/ZIP checks, AAB bundletool/manifest/signature and compiled backup resource references passed. Windows publisher code-signing remains absent. Flutter's inherited Auth0 Kotlin migration warning is a future SDK maintenance item; the current build succeeded.
+
+Release: https://github.com/gus-i-gu/markei/releases/tag/v1.2.6-data-autonomy-beta.6. Remote assets: **14 SHA-256 digests verified** against the local bytes. Build source remains immutable; any following notebook commit is documentation-only and must preserve the client tree. Source JSON, client archive, change map, review guide and artifact manifest are available with the beta. These are evidence inputs, not a completed US copyright deposit or registration.
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Marc-Android-1.2.6-6.apk | 71796964 | 62eb9cef9d3d2d412130efc87d2d7315fe44a69501d5242875d4f8f8cf5fe126 |
+| Marc-Windows-1.2.6-6-x64.exe | 16621632 | 35ec73f6823261e6141d4e6accd86369514c7dc191fa0a4fd2f9f66e19f0966b |
+| Marc-Play-1.2.6-6.aab | 68232246 | c51282dbe8a81d94054bcf80b7e56f3be5fc59c3c58016950e5c9649bc733780 |
+
+### Handoff and stop boundary
+
+1. Update actual Windows/TL10 installations without uninstalling. Confirm a known Purchase, explicit JSON export, pause/restart/blocked command/resume, diagnostic clearing preserving History/queue, and translations. Fresh-user onboarding and declared Account/Device isolation remain independently unaccepted where no fresh tester evidence exists.
+2. Establish publisher/controller identity and a reachable privacy channel, including an alternative for users unable to sign in. Implement authenticated hosted rights/deletion with membership/records/Auth0 coordination, shared authority, queue replay, re-enrollment, backups and justified retention. Logout, archive, pause and diagnostic clear must not be advertised as Account erasure.
+3. Resolve legal bases, retention, provider agreements/regions/transfers, final notices and Google/Microsoft declarations. LGPD, GDPR territorial applicability, CCPA/CPRA thresholds and CalOPPA notice duties are distinct. The Settings controls are not a legal compliance certification.
+4. Continue US software copyright preparation in the existing compliance chat using this exact source. Confirm human authorship, ownership/right chain, AI/preexisting/third-party exclusions, version-specific publication date/nation and readable representative source deposit. No copyright filing/payment, trademark/patent conclusion or international monopoly is claimed.
+
+Stop: tested client beta, matched artifacts and observational notebook/Notion reconciliation. No store upload, provider erasure/migration, permanent methodology semantics or branch-topology change.
